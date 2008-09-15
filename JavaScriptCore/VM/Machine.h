@@ -169,6 +169,7 @@ namespace JSC {
         static JSValue* SFX_CALL cti_op_resolve_func(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_sub(CTI_ARGS);
         static void SFX_CALL cti_op_put_by_val(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_val_array(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_lesseq(CTI_ARGS);
         static int SFX_CALL cti_op_loop_if_true(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_resolve_base(CTI_ARGS);

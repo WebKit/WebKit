@@ -76,6 +76,21 @@ namespace JSC {
 #endif
     };
 
+    struct StructureStubInfo {
+        StructureStubInfo(unsigned opcodeIndex)
+            : opcodeIndex(opcodeIndex)
+            , stubRoutine(0)
+            , callReturnLocation(0)
+            , hotPathBegin(0)
+        {
+        }
+    
+        unsigned opcodeIndex;
+        void* stubRoutine;
+        void* callReturnLocation;
+        void* hotPathBegin;
+    };
+
     struct StringJumpTable {
         typedef HashMap<RefPtr<UString::Rep>, OffsetLocation> StringOffsetTable;
         StringOffsetTable offsetTable;
@@ -199,6 +214,20 @@ namespace JSC {
         void refStructureIDs(Instruction* vPC) const;
         void derefStructureIDs(Instruction* vPC) const;
 
+        StructureStubInfo& getStubInfo(void* returnAddress)
+        {
+            // FIXME: would a binary chop be faster here?
+            for (unsigned i = 0; i < structureIDInstructions.size(); ++i) {
+                if (structureIDInstructions[i].callReturnLocation == returnAddress)
+                    return structureIDInstructions[i];
+            }
+            
+            ASSERT_NOT_REACHED();
+            // keep the compiler happy.
+            static StructureStubInfo duff(0);
+            return duff;
+        }
+
         ScopeNode* ownerNode;
         JSGlobalData* globalData;
 #if ENABLE(CTI)
@@ -218,8 +247,7 @@ namespace JSC {
         unsigned sourceOffset;
 
         Vector<Instruction> instructions;
-        Vector<size_t> structureIDInstructions;
-        Vector<void*> structureIDAccessStubs;
+        Vector<StructureStubInfo> structureIDInstructions;
 
         // Constant pool
         Vector<Identifier> identifiers;

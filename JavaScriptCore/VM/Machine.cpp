@@ -3812,7 +3812,7 @@ NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBl
         vPC[6] = chain;
         vPC[7] = slot.cachedOffset();
         codeBlock->refStructureIDs(vPC);
-        ctiRepatchCallByReturnAddress(returnAddress, CTI::compilePutByIdTransition(this, exec, codeBlock, structureID->previousID(), structureID, slot.cachedOffset(), chain));
+        CTI::compilePutByIdTransition(this, exec, codeBlock, structureID->previousID(), structureID, slot.cachedOffset(), chain, returnAddress);
         return;
     }
     
@@ -3821,7 +3821,12 @@ NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBl
     vPC[5] = slot.cachedOffset();
     codeBlock->refStructureIDs(vPC);
 
-    ctiRepatchCallByReturnAddress(returnAddress, CTI::compilePutByIdReplace(this, exec, codeBlock, structureID, slot.cachedOffset()));
+#if USE(CTI_REPATCH_PIC)
+    UNUSED_PARAM(exec);
+    CTI::patchPutByIdReplace(codeBlock, structureID, slot.cachedOffset(), returnAddress);
+#else
+    CTI::compilePutByIdReplace(this, exec, codeBlock, structureID, slot.cachedOffset(), returnAddress);
+#endif
 }
 
 void* Machine::getCTIArrayLengthTrampoline(ExecState* exec, CodeBlock* codeBlock)
@@ -3845,10 +3850,16 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
 
     if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
+#if USE(CTI_REPATCH_PIC)
+        CTI::compilePatchGetArrayLength(this, exec, codeBlock, returnAddress);
+#else
         ctiRepatchCallByReturnAddress(returnAddress, getCTIArrayLengthTrampoline(exec, codeBlock));
+#endif
         return;
     }
     if (isJSString(baseValue) && propertyName == exec->propertyNames().length) {
+        // The tradeoff of compiling an repatched inline string length access routine does not seem
+        // to pay off, so we currently only do this for arrays.
         ctiRepatchCallByReturnAddress(returnAddress, getCTIStringLengthTrampoline(exec, codeBlock));
         return;
     }
@@ -3888,7 +3899,11 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
         vPC[5] = slot.cachedOffset();
         codeBlock->refStructureIDs(vPC);
         
-        ctiRepatchCallByReturnAddress(returnAddress, CTI::compileGetByIdSelf(this, exec, codeBlock, structureID, slot.cachedOffset()));
+#if USE(CTI_REPATCH_PIC)
+        CTI::patchGetByIdSelf(codeBlock, structureID, slot.cachedOffset(), returnAddress);
+#else
+        CTI::compileGetByIdSelf(this, exec, codeBlock, structureID, slot.cachedOffset(), returnAddress);
+#endif
         return;
     }
 
@@ -3911,7 +3926,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
         vPC[6] = slot.cachedOffset();
         codeBlock->refStructureIDs(vPC);
 
-        ctiRepatchCallByReturnAddress(returnAddress, CTI::compileGetByIdProto(this, exec, codeBlock, structureID, slotBaseObject->structureID(), slot.cachedOffset()));
+        CTI::compileGetByIdProto(this, exec, codeBlock, structureID, slotBaseObject->structureID(), slot.cachedOffset(), returnAddress);
         return;
     }
 
@@ -3953,7 +3968,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
     vPC[7] = slot.cachedOffset();
     codeBlock->refStructureIDs(vPC);
 
-    ctiRepatchCallByReturnAddress(returnAddress, CTI::compileGetByIdChain(this, exec, codeBlock, structureID, chain, count, slot.cachedOffset()));
+    CTI::compileGetByIdChain(this, exec, codeBlock, structureID, chain, count, slot.cachedOffset(), returnAddress);
 }
 
 
@@ -4631,6 +4646,30 @@ void Machine::cti_op_put_by_val(CTI_ARGS)
             baseValue->put(exec, i, value);
     } else {
         Identifier property(exec, subscript->toString(exec));
+        if (!exec->hadException()) { // Don't put to an object if toString threw an exception.
+            PutPropertySlot slot;
+            baseValue->put(exec, property, value, slot);
+        }
+    }
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+void Machine::cti_op_put_by_val_array(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    JSValue* baseValue = ARG_src1;
+    int i = ARG_int2;
+    JSValue* value = ARG_src3;
+
+    ASSERT(exec->machine()->isJSArray(baseValue));
+
+    if (LIKELY(i >= 0))
+        static_cast<JSArray*>(baseValue)->JSArray::put(exec, i, value);
+    else {
+        Identifier property(exec, JSImmediate::from(i)->toString(exec));
+        // FIXME: can toString throw an exception here?
         if (!exec->hadException()) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
             baseValue->put(exec, property, value, slot);

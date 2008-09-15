@@ -35,6 +35,78 @@
 
         Reviewed by Sam Weinig.
 
+        Accelerated property accesses.
+
+        Inline more of the array access code into the JIT code for get/put_by_val.
+        Accelerate get/put_by_id by speculatively inlining a disable direct access
+        into the hot path of the code, and repatch this with the correct StructureID
+        and property map offset once these are known.  In the case of accesses to the
+        prototype and reading the array-length a trampoline is genertaed, and the
+        branch to the slow-case is relinked to jump to this.
+
+        By repatching, we mean rewriting the x86 instruction stream.  Instructions are
+        only modified in a simple fasion - altering immediate operands, memory access
+        deisplacements, and branch offsets.
+        
+        For regular get_by_id/put_by_id accesses to an object, a StructureID in an
+        instruction's immediate operant is updateded, and a memory access operation's
+        displacement is updated to access the correct field on the object.  In the case
+        of more complex accesses (array length and get_by_id_prototype) the offset on
+        the branch to slow-case is updated, to now jump to a trampoline.
+
+        +2.8% sunspider, +13% v8-tests
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitCall):
+        (JSC::CTI::emitJumpSlowCaseIfNotJSCell):
+        (JSC::CTI::CTI):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileArrayLengthTrampoline):
+        (JSC::CTI::privateCompileStringLengthTrampoline):
+        (JSC::CTI::patchGetByIdSelf):
+        (JSC::CTI::patchPutByIdReplace):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        (JSC::CTI::privateCompilePatchGetStringLength):
+        * VM/CTI.h:
+        (JSC::CTI::compileGetByIdSelf):
+        (JSC::CTI::compileGetByIdProto):
+        (JSC::CTI::compileGetByIdChain):
+        (JSC::CTI::compilePutByIdReplace):
+        (JSC::CTI::compilePutByIdTransition):
+        (JSC::CTI::compileArrayLengthTrampoline):
+        (JSC::CTI::compileStringLengthTrampoline):
+        (JSC::CTI::compilePatchGetArrayLength):
+        (JSC::CTI::compilePatchGetStringLength):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::~CodeBlock):
+        * VM/CodeBlock.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::CodeBlock::getStubInfo):
+        * VM/Machine.cpp:
+        (JSC::Machine::tryCTICachePutByID):
+        (JSC::Machine::tryCTICacheGetByID):
+        (JSC::Machine::cti_op_put_by_val_array):
+        * VM/Machine.h:
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::cmpl_i8m):
+        (JSC::X86Assembler::emitUnlinkedJa):
+        (JSC::X86Assembler::getRelocatedAddress):
+        (JSC::X86Assembler::getDifferenceBetweenLabels):
+        (JSC::X86Assembler::emitModRm_opmsib):
+
+2008-09-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove unnecessary virtual function call from cti_op_call_JSFunction -
         ~5% on richards, ~2.5% on v8-tests, ~0.5% on sunspider.
 

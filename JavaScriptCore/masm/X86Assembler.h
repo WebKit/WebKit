@@ -209,6 +209,7 @@ public:
         OP2_JE_rel32    = 0x84,
         OP2_JNE_rel32   = 0x85,
         OP2_JBE_rel32   = 0x86,
+        OP2_JA_rel32    = 0x87,
         OP2_JL_rel32    = 0x8C,
         OP2_JGE_rel32   = 0x8D,
         OP2_JLE_rel32   = 0x8E,
@@ -369,6 +370,13 @@ public:
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opm(GROUP1_OP_CMP, addr);
         m_buffer->putInt(imm);
+    }
+
+    void cmpl_i8m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_buffer->putByte(OP_GROUP1_EvIb);
+        emitModRm_opmsib(GROUP1_OP_CMP, base, index, scale, offset);
+        m_buffer->putByte(imm);
     }
 
     void cmpw_rm(RegisterID src, RegisterID base, RegisterID index, int scale)
@@ -741,6 +749,14 @@ public:
         return JmpSrc(m_buffer->getOffset());
     }
     
+    JmpSrc emitUnlinkedJa()
+    {
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_JA_rel32);
+        m_buffer->putInt(0);
+        return JmpSrc(m_buffer->getOffset());
+    }
+    
     JmpSrc emitUnlinkedJae()
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
@@ -785,14 +801,39 @@ public:
         ((int*)((ptrdiff_t)code + from.m_offset))[-1] = (ptrdiff_t)to - ((ptrdiff_t)code + from.m_offset);
     }
     
-    void* getRelocatedAddress(void* code, JmpSrc jump)
+    static void* getRelocatedAddress(void* code, JmpSrc jump)
     {
         return reinterpret_cast<void*>((ptrdiff_t)code + jump.m_offset);
     }
     
-    void* getRelocatedAddress(void* code, JmpDst jump)
+    static void* getRelocatedAddress(void* code, JmpDst jump)
     {
         return reinterpret_cast<void*>((ptrdiff_t)code + jump.m_offset);
+    }
+    
+    static int getDifferenceBetweenLabels(JmpDst src, JmpDst dst)
+    {
+        return dst.m_offset - src.m_offset;
+    }
+    
+    static int getDifferenceBetweenLabels(JmpDst src, JmpSrc dst)
+    {
+        return dst.m_offset - src.m_offset;
+    }
+    
+    static void repatchImmediate(intptr_t where, int32_t value)
+    {
+        reinterpret_cast<int32_t*>(where)[-1] = value;
+    }
+    
+    static void repatchDisplacement(intptr_t where, intptr_t value)
+    {
+        reinterpret_cast<intptr_t*>(where)[-1] = value;
+    }
+    
+    static void repatchBranchOffset(intptr_t where, void* destination)
+    {
+        reinterpret_cast<intptr_t*>(where)[-1] = (reinterpret_cast<intptr_t>(destination) - where);
     }
     
     void* copy() 
@@ -929,6 +970,11 @@ private:
     void emitModRm_opm(OpcodeID opcode, void* addr)
     {
         emitModRm_rm(static_cast<RegisterID>(opcode), addr);
+    }
+
+    void emitModRm_opmsib(OpcodeID opcode, RegisterID base, RegisterID index, int scale, int offset)
+    {
+        emitModRm_rmsib(static_cast<RegisterID>(opcode), base, index, scale, offset);
     }
 
     JITCodeBuffer* m_buffer;
