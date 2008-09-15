@@ -1,5 +1,18 @@
 2008-09-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed a typo in op_get_by_id_chain that caused it to miss every time
+        in the interpreter.
+        
+        Also, a little cleanup.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute): Set up baseObject before entering the
+        loop, so we compare against the right values.
+
+2008-09-15  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Removed the CalledAsConstructor flag from the call frame header. Now,

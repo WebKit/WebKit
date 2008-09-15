@@ -1228,7 +1228,13 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
     // Recursive invocation may already have specialized this instruction.
     if (vPC[0].u.opcode != getOpcode(op_get_by_id))
         return;
-        
+
+    // FIXME: Cache property access for immediates.
+    if (JSImmediate::isImmediate(baseValue)) {
+        vPC[0] = getOpcode(op_get_by_id_generic);
+        return;
+    }
+
     if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
         vPC[0] = getOpcode(op_get_array_length);
         return;
@@ -1241,12 +1247,6 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
-        return;
-    }
-
-    // FIXME: Cache property access for immediates.
-    if (JSImmediate::isImmediate(baseValue)) {
         vPC[0] = getOpcode(op_get_by_id_generic);
         return;
     }
@@ -2459,9 +2459,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
                 size_t count = vPC[6].u.operand;
                 RefPtr<StructureID>* end = it + count;
 
+                JSObject* baseObject = static_cast<JSObject*>(baseCell);
                 while (1) {
-                    ASSERT(baseCell->isObject());
-                    JSObject* baseObject = static_cast<JSObject*>(baseCell->structureID()->prototypeForLookup(exec));
+                    baseObject = static_cast<JSObject*>(baseObject->structureID()->prototypeForLookup(exec));
                     if (UNLIKELY(baseObject->structureID() != (*it).get()))
                         break;
 
@@ -3870,7 +3870,14 @@ void* Machine::getCTIStringLengthTrampoline(ExecState* exec, CodeBlock* codeBloc
 
 NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBlock, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot& slot)
 {
-    // The interpreter checks for recursion here; I do not believe this can occur in CTI.
+    // FIXME: Write a test that proves we need to check for recursion here just
+    // like the interpreter does, then add a check for recursion.
+
+    // FIXME: Cache property access for immediates.
+    if (JSImmediate::isImmediate(baseValue)) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        return;
+    }
 
     if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
 #if USE(CTI_REPATCH_PIC)
@@ -3889,12 +3896,6 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
-        return;
-    }
-
-    // FIXME: Cache property access for immediates.
-    if (JSImmediate::isImmediate(baseValue)) {
         ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
         return;
     }
