@@ -1,3 +1,55 @@
+2008-09-14  Dave Hyatt  <hyatt@apple.com>
+
+        Refactor PlatformScrollbarWin's painting so that it is now done by ScrollbarThemeWin.  PlatformScrollbarSafari
+        is still painting itself (a subsequent patch will move its painting into ScrollbarThemeSafari).
+       
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::client):
+        (WebCore::Scrollbar::currentPos):
+        (WebCore::Scrollbar::totalSize):
+        * platform/ScrollbarTheme.h:
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::pageForScrollView):
+        (WebCore::ScrollbarThemeComposite::paint):
+        * platform/ScrollbarThemeComposite.h:
+        (WebCore::ScrollbarThemeComposite::trackIsSinglePiece):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        * platform/win/PlatformScrollBarWin.cpp:
+        * platform/win/ScrollbarThemeSafari.h:
+        (WebCore::ScrollbarThemeSafari::hasButtons):
+        (WebCore::ScrollbarThemeSafari::hasThumb):
+        (WebCore::ScrollbarThemeSafari::backButtonRect):
+        (WebCore::ScrollbarThemeSafari::forwardButtonRect):
+        (WebCore::ScrollbarThemeSafari::trackRect):
+        (WebCore::ScrollbarThemeSafari::splitTrack):
+        (WebCore::ScrollbarThemeSafari::paintTrack):
+        (WebCore::ScrollbarThemeSafari::paintButton):
+        (WebCore::ScrollbarThemeSafari::paintThumb):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::isRunningOnVistaOrLater):
+        (WebCore::checkAndInitScrollbarTheme):
+        (WebCore::ScrollbarThemeWin::ScrollbarThemeWin):
+        (WebCore::ScrollbarThemeWin::themeChanged):
+        (WebCore::ScrollbarThemeWin::hasThumb):
+        (WebCore::ScrollbarThemeWin::backButtonRect):
+        (WebCore::ScrollbarThemeWin::forwardButtonRect):
+        (WebCore::ScrollbarThemeWin::trackRect):
+        (WebCore::ScrollbarThemeWin::splitTrack):
+        (WebCore::ScrollbarThemeWin::paintTrack):
+        (WebCore::ScrollbarThemeWin::paintButton):
+        (WebCore::gripperRect):
+        (WebCore::paintGripper):
+        (WebCore::ScrollbarThemeWin::paintThumb):
+        (WebCore::ScrollbarThemeWin::thumbPosition):
+        (WebCore::ScrollbarThemeWin::thumbLength):
+        (WebCore::ScrollbarThemeWin::trackLength):
+        * platform/win/ScrollbarThemeWin.h:
+        (WebCore::ScrollbarThemeWin::hasButtons):
+        (WebCore::ScrollbarThemeWin::trackIsSinglePiece):
+
 2008-09-14  Anthony Ricaud  <rik24d@gmail.com>
 
         Moving all resource graphs under the same container for future scalable feature.

@@ -68,18 +68,12 @@ private:
     IntRect forwardButtonRect() const;
     IntRect trackRect() const;
     IntRect thumbRect() const;
-    IntRect gripperRect(const IntRect& thumbRect) const;    
     void splitTrack(const IntRect& trackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect) const;
 
     int thumbPosition() const;
     int thumbLength() const;
     int trackLength() const;
-
-    void paintButton(GraphicsContext*, const IntRect& buttonRect, bool start, const IntRect& damageRect) const;
-    void paintTrack(GraphicsContext*, const IntRect& trackRect, bool start, const IntRect& damageRect) const;
-    void paintThumb(GraphicsContext*, const IntRect& thumbRect, const IntRect& damageRect) const;
-    void paintGripper(HDC, const IntRect& gripperRect) const;
-    
+   
     ScrollbarPart hitTest(const PlatformMouseEvent&);
 
     bool thumbUnderMouse();

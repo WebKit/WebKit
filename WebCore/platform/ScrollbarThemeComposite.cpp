@@ -26,11 +26,121 @@
 #include "config.h"
 #include "ScrollbarThemeComposite.h"
 
+#include "ChromeClient.h"
+#include "Frame.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "Page.h"
+#include "Scrollbar.h"
+#include "ScrollbarClient.h"
+#include "Settings.h"
+
 namespace WebCore {
 
-bool ScrollbarThemeComposite::paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect)
+static Page* pageForScrollView(ScrollView* view)
 {
-    return false;
+    if (!view)
+        return 0;
+    if (!view->isFrameView())
+        return 0;
+    FrameView* frameView = static_cast<FrameView*>(view);
+    if (!frameView->frame())
+        return 0;
+    return frameView->frame()->page();
+}
+
+bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
+{
+    // Create the ScrollbarControlPartMask based on the damageRect
+    ScrollbarControlPartMask scrollMask = NoPart;
+
+    IntRect backButtonPaintRect;
+    IntRect forwardButtonPaintRect;
+    if (hasButtons(scrollbar)) {
+        backButtonPaintRect = backButtonRect(scrollbar, true);
+        if (damageRect.intersects(backButtonPaintRect))
+            scrollMask |= BackButtonPart;
+        forwardButtonPaintRect = forwardButtonRect(scrollbar, true);
+        if (damageRect.intersects(forwardButtonPaintRect))
+            scrollMask |= ForwardButtonPart;
+    }
+
+    IntRect startTrackRect;
+    IntRect thumbRect;
+    IntRect endTrackRect;
+    IntRect trackPaintRect = trackRect(scrollbar, true);
+    bool thumbPresent = hasThumb(scrollbar);
+    if (thumbPresent) {
+        IntRect track = trackRect(scrollbar);
+        splitTrack(scrollbar, track, startTrackRect, thumbRect, endTrackRect);
+        if (damageRect.intersects(thumbRect)) {
+            scrollMask |= ThumbPart;
+            if (trackIsSinglePiece()) {
+                // The track is a single strip that paints under the thumb.
+                // Add both components of the track to the mask.
+                scrollMask |= BackTrackPart;
+                scrollMask |= ForwardTrackPart;
+            }
+        }
+        if (damageRect.intersects(startTrackRect))
+            scrollMask |= BackTrackPart;
+        if (damageRect.intersects(endTrackRect))
+            scrollMask |= ForwardTrackPart;
+    } else if (damageRect.intersects(trackPaintRect)) {
+        scrollMask |= BackTrackPart;
+        scrollMask |= ForwardTrackPart;
+    }
+
+    // FIXME: This API makes the assumption that the custom scrollbar's metrics will match
+    // the theme's metrics.  This is not a valid assumption.  The ability for a client to paint
+    // custom scrollbars should be removed once scrollbars can be styled via CSS.
+    if (Page* page = pageForScrollView(scrollbar->parent())) {
+        if (page->settings()->shouldPaintCustomScrollbars()) {
+            float proportion = static_cast<float>(scrollbar->visibleSize()) / scrollbar->totalSize();
+            float value = scrollbar->currentPos() / static_cast<float>(scrollbar->maximum());
+            ScrollbarControlState s = 0;
+            if (scrollbar->client()->isActive())
+                s |= ActiveScrollbarState;
+            if (scrollbar->isEnabled())
+                s |= EnabledScrollbarState;
+            if (scrollbar->pressedPart() != NoPart)
+                s |= PressedScrollbarState;
+            if (page->chrome()->client()->paintCustomScrollbar(graphicsContext,
+                                                               scrollbar->frameGeometry(), 
+                                                               scrollbar->controlSize(),
+                                                               s, 
+                                                               scrollbar->pressedPart(), 
+                                                               scrollbar->orientation() == VerticalScrollbar,
+                                                               value,
+                                                               proportion,
+                                                               scrollMask))
+                return true;
+        }
+    }
+
+    // Paint the track.
+    if ((scrollMask & ForwardTrackPart) || (scrollMask & BackTrackPart)) {
+        if (!thumbPresent || trackIsSinglePiece())
+            paintTrack(graphicsContext, scrollbar, trackPaintRect, ForwardTrackPart | BackTrackPart);
+        else {
+            if (scrollMask & BackTrackPart)
+                paintTrack(graphicsContext, scrollbar, startTrackRect, BackTrackPart);
+            if (scrollMask & ForwardTrackPart)
+                paintTrack(graphicsContext, scrollbar, endTrackRect, ForwardTrackPart);
+        }
+    }
+
+    // Paint the back and forward buttons.
+    if (scrollMask & BackButtonPart)
+        paintButton(graphicsContext, scrollbar, backButtonPaintRect, BackButtonPart);
+    if (scrollMask & ForwardButtonPart)
+        paintButton(graphicsContext, scrollbar, forwardButtonPaintRect, ForwardButtonPart);
+    
+    // Paint the thumb.
+    if (scrollMask & ThumbPart)
+        paintThumb(graphicsContext, scrollbar, thumbRect);
+
+    return true;
 }
 
 }

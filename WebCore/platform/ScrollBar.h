@@ -52,11 +52,14 @@ public:
     virtual ~Scrollbar();
 
     void setClient(ScrollbarClient* client) { m_client = client; }
+    ScrollbarClient* client() const { return m_client; }
 
     ScrollbarOrientation orientation() const { return m_orientation; }
     
     int value() const { return lroundf(m_currentPos); }
+    float currentPos() const { return m_currentPos; }
     int visibleSize() const { return m_visibleSize; }
+    int totalSize() const { return m_totalSize; }
     int maximum() const { return m_totalSize - m_visibleSize; }        
     ScrollbarControlSize controlSize() const { return m_controlSize; }
 
@@ -110,8 +113,6 @@ protected:
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
     
-    ScrollbarClient* client() const { return m_client; }
-
     ScrollbarClient* m_client;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;

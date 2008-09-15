@@ -26,6 +26,8 @@
 #ifndef ScrollbarThemeSafari_h
 #define ScrollbarThemeSafari_h
 
+#if USE(SAFARI_THEME)
+
 #include "ScrollbarThemeComposite.h"
 
 namespace WebCore {
@@ -37,7 +39,24 @@ public:
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     
     virtual bool supportsControlTints() const { return true; }
+
+protected:
+    // FIXME: Implement the following functions to complete the theme.
+    virtual bool hasButtons(Scrollbar*) { return true; }
+    virtual bool hasThumb(Scrollbar*) { return true; }
+
+    virtual IntRect backButtonRect(Scrollbar*, bool painting = false) { return IntRect(); }
+    virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false) { return IntRect(); }
+    virtual IntRect trackRect(Scrollbar*, bool painting = false) { return IntRect(); }
+
+    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack) {};
+
+    virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask) {};
+    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask) {};
+    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&) {};
 };
 
 }
+#endif
+
 #endif

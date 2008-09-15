@@ -32,11 +32,34 @@ namespace WebCore {
 
 class ScrollbarThemeWin : public ScrollbarThemeComposite {
 public:
+    ScrollbarThemeWin();
     virtual ~ScrollbarThemeWin();
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
     virtual void themeChanged();
+
+protected:
+    virtual bool hasButtons(Scrollbar*) { return true; }
+    virtual bool hasThumb(Scrollbar*);
+
+    virtual IntRect backButtonRect(Scrollbar*, bool painting = false);
+    virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false);
+    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+
+    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
+    
+    virtual bool trackIsSinglePiece() { return false; }
+
+    virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
+
+private:
+    int thumbPosition(Scrollbar*);
+    int thumbLength(Scrollbar*);
+    int trackLength(Scrollbar*);
+
 };
 
 }
