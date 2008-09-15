@@ -112,15 +112,6 @@ static Page* pageForScrollView(ScrollView* view)
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
     : Scrollbar(client, orientation, size)
 {
-    // Obtain the correct scrollbar sizes from the system.
-    if (!cHorizontalWidth) {
-        // FIXME: Get metics from SafariTheme
-    }
-
-    if (orientation == VerticalScrollbar)
-        Widget::setFrameGeometry(IntRect(0, 0, cVerticalWidth[controlSize()], cVerticalHeight[controlSize()]));
-    else
-        Widget::setFrameGeometry(IntRect(0, 0, cHorizontalWidth[controlSize()], cHorizontalHeight[controlSize()]));
 }
 
 PlatformScrollbar::~PlatformScrollbar()

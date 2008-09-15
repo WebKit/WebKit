@@ -49,6 +49,21 @@ public:
     virtual void themeChanged() {}
     
     virtual bool invalidateOnMouseEnterExit() { return false; }
+
+    void invalidateParts(Scrollbar* scrollbar, ScrollbarControlPartMask mask)
+    {
+        if (mask & BackButtonPart)
+            invalidatePart(scrollbar, BackButtonPart);
+        if (mask & BackTrackPart)
+            invalidatePart(scrollbar, BackTrackPart);
+        if (mask & ThumbPart)
+            invalidatePart(scrollbar, ThumbPart);
+        if (mask & ForwardTrackPart)
+            invalidatePart(scrollbar, ForwardTrackPart);
+        if (mask & ForwardButtonPart)
+            invalidatePart(scrollbar, ForwardButtonPart);
+    }
+
     virtual void invalidatePart(Scrollbar*, ScrollbarPart) {}
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }

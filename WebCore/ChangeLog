@@ -1,3 +1,31 @@
+2008-09-15  Dave Hyatt  <hyatt@apple.com>
+
+        Convert PlatformScrollbarWin to use ScrollbarTheme for hit testing.  PlatformScrollbarQt/Gtk still
+        need to be converted.
+        
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::updateThumbPosition):
+        (WebCore::Scrollbar::updateThumbProportion):
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::startTimerIfNeeded):
+        * platform/ScrollBar.h:
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::invalidateParts):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::hitTest):
+        (WebCore::ScrollbarThemeComposite::invalidatePart):
+        (WebCore::ScrollbarThemeComposite::thumbPosition):
+        (WebCore::ScrollbarThemeComposite::thumbLength):
+        (WebCore::ScrollbarThemeComposite::trackLength):
+        * platform/ScrollbarThemeComposite.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        * platform/win/PlatformScrollBarWin.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+
 2008-09-15  David Smith  <catfish.man@gmail.com>
 
         "Just do it"'d by Mark Rowe
