@@ -472,11 +472,19 @@ function runTest() {
     }
     context.closePath();
 
+    var canvas2 = document.createElement('canvas');
+    canvas2.width = 0;
+    canvas2.height = 0;
+    try {
+        var pattern = ctx.createPattern(canvas2, 'repeat');
+        fail("did not throw exception on createPattern with 0x0 canvas.")
+    } catch (e) {
+        pass("threw exception code " + e.code + " on createPattern with 0x0 canvas.")
+    }
     if (!failed) {
         context.fillStyle = '#0f0';
         context.fillRect(0, 0, canvas.width, canvas.height);
     }
-
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 }

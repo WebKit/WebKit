@@ -1,3 +1,16 @@
+2008-09-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+        
+        <rdar://problem/6163988> 
+        https://bugs.webkit.org/show_bug.cgi?id=20457
+        Canvas: createPattern crashes WebKit in WTF::RefPtr<WebCore::Image>::operator!() const + 9 with a 1D pattern
+        
+        Add test for createPattern where the canvas passed in has a zero height/width.
+        
+        * fast/canvas/canvas-with-incorrect-args-expected.txt:
+        * fast/canvas/canvas-with-incorrect-args.html:
+
 2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

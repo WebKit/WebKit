@@ -56,4 +56,5 @@ PASS did not throw exception on bezierCurveTo(20, 20, NaN, 30, 30, 30).
 PASS did not throw exception on bezierCurveTo(NaN, NaN, 20, 20, 30, 30).
 PASS did not throw exception on bezierCurveTo(20, NaN, 20, 20, 30, 30).
 PASS did not throw exception on bezierCurveTo(NaN, 20, 20, 20, 30, 30).
+PASS threw exception code undefined on createPattern with 0x0 canvas.
 

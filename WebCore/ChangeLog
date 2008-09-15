@@ -1,3 +1,16 @@
+2008-09-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/6163988> 
+        https://bugs.webkit.org/show_bug.cgi?id=20457
+        Canvas: createPattern crashes WebKit in WTF::RefPtr<WebCore::Image>::operator!() const + 9 with a 1D pattern
+        
+        Check the width and height and throw an exception if any of them are 0.
+        
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+
 2008-09-15  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
