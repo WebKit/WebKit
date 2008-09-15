@@ -1,3 +1,17 @@
+2008-09-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=20844
+        Speed up parseInt for numbers
+
+        Sunspider reports this as 1.029x as fast overall and 1.37x as fast on string-unpack-code.
+        No change on the v8 suite.
+
+        * kjs/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt): Don't convert numbers to strings just to
+        convert them back to numbers.
+
 2008-09-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
