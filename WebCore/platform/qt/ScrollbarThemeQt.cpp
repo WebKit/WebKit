@@ -95,7 +95,7 @@ static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
 
 bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
-    QOptionSlider* opt = styleOptionSlider(scrollbar);
+    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     QRect clip = opt->rect.intersected(damageRect);
 
     QPainter* p = graphicsContext->platformContext();
