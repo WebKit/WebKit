@@ -1,3 +1,25 @@
+2008-09-15  Eli Fidler  <eli@staikos.net>
+
+        Reviewed by Simon.
+
+        Yahoo assumes non-RFC compliant HTTP redirect behaviour. QtWebKit is (more)
+        compliant, so broken. I think the Yahoo-assumed behaviour is real-world standard.
+
+        Basically, Yahoo's login procedure for flickr looks like this:
+        1. load flickr.com, click "sign in"
+        2. this is a Yahoo page with a form
+        (https://login.yahoo.com/config/login?.src=flickr...)
+        when you click the "Sign In" button, the form submits to a yahoo.com POST URL
+        3. The POST returns with a 302 (redirect) to another yahoo.com URL
+        4. If you POST the redirected Location:, it all breaks. Yahoo assumes you will
+        convert the method to GET, which works fine but is definitely not
+        RFC-compliant. It would be compliant for 303, and the RFC says that many
+        implementations treat 302 and 303 the same way (for HTTP/1.0 compliance), but
+        converting to GET is explicitly wrong for 302.
+
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::started):
+
 2008-09-15  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
