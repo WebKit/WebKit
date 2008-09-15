@@ -122,37 +122,37 @@ static inline TransformOperations blendFunc(const AnimationBase* anim, const Tra
 {    
     TransformOperations result;
 
-   // If we have a transform function list, use that to do a per-function animation. Otherwise do a Matrix animation
-   if (anim->isTransformFunctionListValid()) {
-       unsigned fromSize = from.size();
-       unsigned toSize = to.size();
-       unsigned size = max(fromSize, toSize);
-       for (unsigned i = 0; i < size; i++) {
-           RefPtr<TransformOperation> fromOp = (i < fromSize && !from[i]->isIdentity()) ? from[i].get() : 0;
-           RefPtr<TransformOperation> toOp = (i < toSize && !to[i]->isIdentity()) ? to[i].get() : 0;
-           RefPtr<TransformOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : 0);
-           if (blendedOp)
-               result.append(blendedOp);
-           else {
-               RefPtr<TransformOperation> identityOp = IdentityTransformOperation::create();
-               if (progress > 0.5)
-                   result.append(toOp ? toOp : identityOp);
-               else
-                   result.append(fromOp ? fromOp : identityOp);
-           }
-       }
-   } else {
-       // Convert the TransformOperations into matrices
-       IntSize size = anim->renderer()->borderBox().size();
-       AffineTransform fromT;
-       AffineTransform toT;
-       from.apply(size, fromT);
-       to.apply(size, toT);
-       
-       toT.blend(fromT, progress);
-       
-       // Append the result
-       result.append(MatrixTransformOperation::create(toT.a(), toT.b(), toT.c(), toT.d(), toT.e(), toT.f()));
+    // If we have a transform function list, use that to do a per-function animation. Otherwise do a Matrix animation
+    if (anim->isTransformFunctionListValid()) {
+        unsigned fromSize = from.size();
+        unsigned toSize = to.size();
+        unsigned size = max(fromSize, toSize);
+        for (unsigned i = 0; i < size; i++) {
+            RefPtr<TransformOperation> fromOp = (i < fromSize && !from[i]->isIdentity()) ? from[i].get() : 0;
+            RefPtr<TransformOperation> toOp = (i < toSize && !to[i]->isIdentity()) ? to[i].get() : 0;
+            RefPtr<TransformOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : 0);
+            if (blendedOp)
+                result.append(blendedOp);
+            else {
+                RefPtr<TransformOperation> identityOp = IdentityTransformOperation::create();
+                if (progress > 0.5)
+                    result.append(toOp ? toOp : identityOp);
+                else
+                    result.append(fromOp ? fromOp : identityOp);
+            }
+        }
+    } else {
+        // Convert the TransformOperations into matrices
+        IntSize size = anim->renderer()->borderBox().size();
+        AffineTransform fromT;
+        AffineTransform toT;
+        from.apply(size, fromT);
+        to.apply(size, toT);
+        
+        toT.blend(fromT, progress);
+        
+        // Append the result
+        result.append(MatrixTransformOperation::create(toT.a(), toT.b(), toT.c(), toT.d(), toT.e(), toT.f()));
     }
     return result;
 }

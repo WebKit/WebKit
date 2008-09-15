@@ -1,3 +1,12 @@
+2008-09-15  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Coding style violation!!!! Cleanup AnimationBase.cpp
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+
 2008-09-15  David Hyatt  <hyatt@apple.com>
 
         Move all hit testing code for scrollbars into the base class.  Refactor
