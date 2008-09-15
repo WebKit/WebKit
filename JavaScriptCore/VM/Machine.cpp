@@ -4232,19 +4232,19 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     int firstArg = ARG_int3;
     int argCount = ARG_int4;
 
-    CallData callData;
+    // In the JIT code before entering this function we wil have checked the vptr,
+    // and know this is an object of type JSFunction.
 #ifndef NDEBUG
-    CallType callType =
+    CallData callData;
 #endif
-        funcVal->getCallData(callData);
-
-    ASSERT(callType == CallTypeJS);
+    ASSERT(funcVal->getCallData(callData) == CallTypeJS);
 
     if (*ARG_profilerReference)
         (*ARG_profilerReference)->willExecute(exec, static_cast<JSObject*>(funcVal));
 
-    ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
-    FunctionBodyNode* functionBodyNode = callData.js.functionBody;
+    ScopeChainNode* callDataScopeChain = static_cast<JSFunction*>(funcVal)->m_scopeChain.node();
+    FunctionBodyNode* functionBodyNode = static_cast<JSFunction*>(funcVal)->m_body.get();
+
     CodeBlock* newCodeBlock = &functionBodyNode->byteCode(callDataScopeChain);
 
     r[firstArg] = thisValue;
