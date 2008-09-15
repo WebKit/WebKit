@@ -805,6 +805,16 @@ bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, s
     return true;
 }
 
+RegisterID* CodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base, RegisterID* basePrototype)
+{ 
+    emitOpcode(op_instanceof);
+    instructions().append(dst->index());
+    instructions().append(value->index());
+    instructions().append(base->index());
+    instructions().append(basePrototype->index());
+    return dst;
+}
+
 RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& property)
 {
     size_t depth = 0;

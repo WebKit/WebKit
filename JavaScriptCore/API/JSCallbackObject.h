@@ -60,7 +60,7 @@ private:
     virtual bool deleteProperty(ExecState*, unsigned);
 
     virtual bool implementsHasInstance() const;
-    virtual bool hasInstance(ExecState *exec, JSValue *value);
+    virtual bool hasInstance(ExecState* exec, JSValue* value, JSValue* proto);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 

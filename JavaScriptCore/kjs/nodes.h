@@ -1427,6 +1427,8 @@ namespace JSC {
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_instanceof; }
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
+
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class InNode : public ThrowableBinaryOpNode {

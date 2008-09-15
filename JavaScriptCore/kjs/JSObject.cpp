@@ -389,9 +389,8 @@ bool JSObject::implementsHasInstance() const
     return false;
 }
 
-bool JSObject::hasInstance(ExecState* exec, JSValue* value)
+bool JSObject::hasInstance(ExecState* exec, JSValue* value, JSValue* proto)
 {
-    JSValue* proto = get(exec, exec->propertyNames().prototype);
     if (!proto->isObject()) {
         throwError(exec, TypeError, "instanceof called on an object with an invalid prototype property.");
         return false;

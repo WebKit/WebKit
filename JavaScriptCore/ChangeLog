@@ -1,3 +1,36 @@
+2008-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - split the "prototype" lookup for hasInstance into opcode stream so it can be cached
+        
+        ~5% speedup on v8 earley-boyer test
+
+        * API/JSCallbackObject.h: Add a parameter for the pre-looked-up prototype.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::hasInstance): Ditto.
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOfConstructor): Look up and pass in prototype.
+        * JavaScriptCore.exp:
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass): Pass along prototype.
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Print third arg.
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitInstanceOf): Implement this, now that there
+        is a third argument.
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute): Pass along the prototype.
+        (JSC::Machine::cti_op_instanceof): ditto
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::hasInstance): Expect to get a pre-looked-up prototype.
+        * kjs/JSObject.h:
+        * kjs/nodes.cpp:
+        (JSC::InstanceOfNode::emitCode): Emit a get_by_id of the prototype
+        property and pass that register to instanceof.
+        * kjs/nodes.h:
+
 2008-09-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

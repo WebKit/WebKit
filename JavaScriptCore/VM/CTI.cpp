@@ -630,9 +630,10 @@ void CTI::privateCompileMainPass()
         case op_instanceof: {
             emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
             emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
+            emitGetPutArg(instruction[i + 4].u.operand, 8, X86::ecx);
             emitCall(i, Machine::cti_op_instanceof);
             emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            i += 5;
             break;
         }
         case op_del_by_id: {

@@ -794,6 +794,15 @@ RegisterID* ThrowableBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID
     return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src1.get(), src2);
 }
 
+RegisterID* InstanceOfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
+    RefPtr<RegisterID> src2 = generator.emitNode(m_expr2.get());
+    RegisterID* src2Prototype = generator.emitGetById(generator.newTemporary(), src2.get(), generator.globalExec()->propertyNames().prototype);
+    generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
+    return generator.emitInstanceOf(generator.finalDestination(dst, src1.get()), src1.get(), src2.get(), src2Prototype);
+}
+
 // ------------------------------ Binary Logical Nodes ----------------------------
 
 RegisterID* LogicalOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
