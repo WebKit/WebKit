@@ -2132,27 +2132,27 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     opacity: 0.35;
 }
 
-.resource-sidebar-tree-item.resources-category-documents .resources-graph-bar {
+.resources-category-documents .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillBlue.png) 6 7 6 7;
 }
 
-.resource-sidebar-tree-item.resources-category-stylesheets .resources-graph-bar {
+.resources-category-stylesheets .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillGreen.png) 6 7 6 7;
 }
 
-.resource-sidebar-tree-item.resources-category-images .resources-graph-bar {
+.resources-category-images .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillPurple.png) 6 7 6 7;
 }
 
-.resource-sidebar-tree-item.resources-category-fonts .resources-graph-bar {
+.resources-category-fonts .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillRed.png) 6 7 6 7;
 }
 
-.resource-sidebar-tree-item.resources-category-scripts .resources-graph-bar {
+.resources-category-scripts .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillOrange.png) 6 7 6 7;
 }
 
-.resource-sidebar-tree-item.resources-category-xhr .resources-graph-bar {
+.resources-category-xhr .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
 }
 
@@ -2387,7 +2387,7 @@ body.inactive .sidebar-tree-item.selected .status .bubble {
     color: rgb(159, 159, 159) !important;
 }
 
-.sidebar-tree.small .sidebar-tree-item, .sidebar-tree .children.small .sidebar-tree-item, .sidebar-tree-item.small {
+.sidebar-tree.small .sidebar-tree-item, .sidebar-tree .children.small .sidebar-tree-item, .sidebar-tree-item.small, .small .resources-graph-side {
     height: 20px;
     line-height: 18px;
 }
@@ -2458,14 +2458,26 @@ body.inactive .sidebar-tree-item.selected {
     color: rgba(255, 255, 255, 0.9);
 }
 
-.sidebar-tree-item .resources-graph-side {
+#resources-graphs {
     position: absolute;
-    height: 100%;
-    top: 0;
+    left: 0;
     right: 0;
+    max-height: 100%;
+    top: 112px;
+    z-index: -100;
 }
 
-.sidebar-tree-item .resources-graph-bar-area {
+.resources-graph-side {
+    position: relative;
+    height: 36px;
+    padding: 0 5px 0 5px;
+    white-space: nowrap;
+    margin-top: 1px;
+    line-height: 34px;
+    border-top: 1px solid transparent;
+}
+
+.resources-graph-bar-area {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -2477,12 +2489,8 @@ body.inactive .sidebar-tree-item.selected {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-#resources-container:not(.viewing-resource) .resource-sidebar-tree-item:nth-of-type(2n) .resources-graph-side {
+#resources-container:not(.viewing-resource) .resources-graph-side:nth-of-type(2n) {
     background-color: rgba(0, 0, 0, 0.05);
-}
-
-#resources-container.viewing-resource #resources-sidebar .sidebar-tree-item .resources-graph-side {
-    display: none;
 }
 
 .resources-time-graph-sidebar-item .icon {

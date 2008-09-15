@@ -1,3 +1,16 @@
+2008-09-14  Anthony Ricaud  <rik24d@gmail.com>
+
+        Moving all resource graphs under the same container for future scalable feature.
+        This is a speedup on resize but maybe a loss on changing the sorting function.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20555
+
+        Reviewed by Timothy Hatcher.
+
+        * page/inspector/ResourcesPanel.js: Added a container for all resource graphs.
+        Added WebInspector.ResourceGraph. No more _updateGraphBars on resize.
+        * page/inspector/inspector.css: Edited corresponding rules and removed unnecessaries.
+
 2008-09-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
