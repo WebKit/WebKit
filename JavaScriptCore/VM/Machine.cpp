@@ -4531,7 +4531,7 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
 
     ASSERT(constructType == ConstructTypeNone);
 
-    exec->setException(createNotAConstructorError(exec, constrVal, ARG_instr4, ARG_codeBlock));
+    exec->setException(createNotAConstructorError(exec, constrVal, ARG_instr5, ARG_codeBlock));
     VM_CHECK_EXCEPTION_AT_END();
     return 0;
 }

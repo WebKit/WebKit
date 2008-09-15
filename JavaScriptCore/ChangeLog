@@ -1,3 +1,13 @@
+2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix a crash in fast/js/exception-expression-offset.html caused by not
+        updating all mentions of the length of op_construct in r36427.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+
 2008-09-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
