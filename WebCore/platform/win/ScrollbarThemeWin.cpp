@@ -185,23 +185,6 @@ IntRect ScrollbarThemeWin::trackRect(Scrollbar* scrollbar, bool)
     return IntRect(scrollbar->x(), scrollbar->y() + thickness, thickness, scrollbar->height() - 2 * thickness);
 }
 
-void ScrollbarThemeWin::splitTrack(Scrollbar* scrollbar, const IntRect& trackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect)
-{
-    // This function won't even get called unless we're big enough to have some combination of these three rects where at least
-    // one of them is non-empty.
-    int thickness = scrollbarThickness();
-    int thumbPos = thumbPosition(scrollbar);
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        thumbRect = IntRect(trackRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness);
-        beforeThumbRect = IntRect(trackRect.x(), trackRect.y(), thumbPos, trackRect.height());
-        afterThumbRect = IntRect(thumbRect.x() + thumbRect.width(), trackRect.y(), trackRect.right() - thumbRect.right(), trackRect.height());
-    } else {
-        thumbRect = IntRect(trackRect.x() + (trackRect.width() - thickness) / 2, trackRect.y() + thumbPos, thickness, thumbLength(scrollbar));
-        beforeThumbRect = IntRect(trackRect.x(), trackRect.y(), trackRect.width(), thumbPos);
-        afterThumbRect = IntRect(trackRect.x(), thumbRect.y() + thumbRect.height(), trackRect.width(), trackRect.bottom() - thumbRect.bottom());
-    }
-}
-
 void ScrollbarThemeWin::paintTrack(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarControlPartMask mask)
 {
     checkAndInitScrollbarTheme();
@@ -353,32 +336,6 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext* context, Scrollbar* scrollba
     } else
         ::DrawEdge(hdc, &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
     context->releaseWindowsContext(hdc, rect, alphaBlend);
-}
-
-int ScrollbarThemeWin::thumbPosition(Scrollbar* scrollbar)
-{
-    if (scrollbar->isEnabled())
-        return scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum();
-    return 0;
-}
-
-int ScrollbarThemeWin::thumbLength(Scrollbar* scrollbar)
-{
-    if (!scrollbar->isEnabled())
-        return 0;
-    float proportion = (float)(scrollbar->visibleSize()) / scrollbar->totalSize();
-    int trackLen = trackLength(scrollbar);
-    int length = proportion * trackLen;
-    int minLength = (scrollbar->orientation() == HorizontalScrollbar) ? scrollbarThickness() : scrollbarThickness();
-    length = max(length, minLength);
-    if (length > trackLen)
-        length = 0; // Once the thumb is below the track length, it just goes away (to make more room for the track).
-    return length;
-}
-
-int ScrollbarThemeWin::trackLength(Scrollbar* scrollbar)
-{
-    return (scrollbar->orientation() == HorizontalScrollbar) ? trackRect(scrollbar).width() : trackRect(scrollbar).height();
 }
 
 }

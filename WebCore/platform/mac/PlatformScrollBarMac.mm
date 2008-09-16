@@ -46,8 +46,6 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
 {
     if (size == SmallScrollbar)
         return NSSmallControlSize;
-    if (size == MiniScrollbar)
-        return NSMiniControlSize;
     return NSRegularControlSize;
 }
 

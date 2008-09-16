@@ -48,19 +48,12 @@ protected:
     virtual IntRect backButtonRect(Scrollbar*, bool painting = false);
     virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false);
     virtual IntRect trackRect(Scrollbar*, bool painting = false);
-
-    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
-    
+   
     virtual bool trackIsSinglePiece() { return false; }
 
     virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
     virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
     virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
-
-private:
-    int thumbPosition(Scrollbar*);
-    int thumbLength(Scrollbar*);
-    int trackLength(Scrollbar*);
 };
 
 }

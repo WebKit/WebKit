@@ -1,3 +1,46 @@
+2008-09-15  Dave Hyatt  <hyatt@apple.com>
+
+        Completely switch Windows scrollbars over to ScrollbarTheme.  The Aqua windows scrollbar and native scrollbar
+        now share most of their code.
+       
+        Also removing mini size scrollbar support, since it would have crashed Windows had it ever been used, and it
+        also is never used in our code anyway.
+       
+        Reviewed by Sam Weinig
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/ScrollTypes.h:
+        (WebCore::):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::splitTrack):
+        (WebCore::ScrollbarThemeComposite::thumbLength):
+        (WebCore::ScrollbarThemeComposite::minimumThumbLength):
+        * platform/ScrollbarThemeComposite.h:
+        * platform/mac/PlatformScrollBarMac.mm:
+        (NSControlSizeForScrollBarControlSize):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp: Removed.
+        * platform/win/PlatformScrollBarWin.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        * platform/win/ScrollbarThemeSafari.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::):
+        (WebCore::scrollbarControlStateFromThemeState):
+        (WebCore::ScrollbarThemeSafari::hasButtons):
+        (WebCore::ScrollbarThemeSafari::hasThumb):
+        (WebCore::buttonRepaintRect):
+        (WebCore::ScrollbarThemeSafari::backButtonRect):
+        (WebCore::ScrollbarThemeSafari::forwardButtonRect):
+        (WebCore::trackRepaintRect):
+        (WebCore::ScrollbarThemeSafari::trackRect):
+        (WebCore::ScrollbarThemeSafari::minimumThumbLength):
+        (WebCore::ScrollbarThemeSafari::paintTrack):
+        (WebCore::ScrollbarThemeSafari::paintButton):
+        (WebCore::ScrollbarThemeSafari::paintThumb):
+        * platform/win/ScrollbarThemeSafari.h:
+        * platform/win/ScrollbarThemeWin.cpp:
+        * platform/win/ScrollbarThemeWin.h:
+
 2008-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler, Beth Dakin

@@ -26,12 +26,34 @@
 #include "config.h"
 #include "ScrollbarThemeSafari.h"
 
-#include "ScrollbarThemeWin.h"
-#include "Settings.h"
-
 #if USE(SAFARI_THEME)
 
+#include "GraphicsContext.h"
+#include "IntRect.h"
+#include "Page.h"
+#include "PlatformMouseEvent.h"
+#include "Scrollbar.h"
+#include "ScrollbarClient.h"
+#include "ScrollbarThemeWin.h"
+#include "Settings.h"
+#include "SoftLinking.h"
+
+#include <CoreGraphics/CoreGraphics.h>
+
+// If you have an empty placeholder SafariThemeConstants.h, then include SafariTheme.h
+// This is a workaround until a version of WebKitSupportLibrary is released with an updated SafariThemeConstants.h 
+#include <SafariTheme/SafariThemeConstants.h>
+#ifndef SafariThemeConstants_h
+#include <SafariTheme/SafariTheme.h>
+#endif
+
+// FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
+
+using namespace std;
+
 namespace WebCore {
+
+using namespace SafariTheme;
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
@@ -43,7 +65,35 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 }
 
 // FIXME: Get these numbers from CoreUI.
-static int cScrollbarThickness[] = { 15, 11, 11 };
+static int cScrollbarThickness[] = { 15, 11 };
+static int cRealButtonLength[] = { 28, 21 };
+static int cButtonInset[] = { 14, 11 };
+static int cButtonHitInset[] = { 3, 2 };
+// cRealButtonLength - cButtonInset
+static int cButtonLength[] = { 14, 10 };
+static int cThumbMinLength[] = { 26, 20 };
+
+#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
+#else
+SOFT_LINK_LIBRARY(SafariTheme)
+#endif
+
+SOFT_LINK(SafariTheme, paintThemePart, void, __stdcall, 
+            (ThemePart part, CGContextRef context, const CGRect& rect, NSControlSize size, ThemeControlState state),
+            (part, context, rect, size, state))
+
+static ScrollbarControlState scrollbarControlStateFromThemeState(ThemeControlState state)
+{
+    ScrollbarControlState s = 0;
+    if (state & ActiveState)
+        s |= ActiveScrollbarState;
+    if (state & EnabledState)
+        s |= EnabledScrollbarState;
+    if (state & PressedState)
+        s |= PressedScrollbarState;
+    return s;
+}
 
 ScrollbarThemeSafari::~ScrollbarThemeSafari()
 {
@@ -52,6 +102,145 @@ ScrollbarThemeSafari::~ScrollbarThemeSafari()
 int ScrollbarThemeSafari::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     return cScrollbarThickness[controlSize];
+}
+
+bool ScrollbarThemeSafari::hasButtons(Scrollbar* scrollbar)
+{
+    return scrollbar->isEnabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
+             scrollbar->width() : 
+             scrollbar->height()) >= 2 * (cRealButtonLength[scrollbar->controlSize()] - cButtonHitInset[scrollbar->controlSize()]);
+}
+
+bool ScrollbarThemeSafari::hasThumb(Scrollbar* scrollbar)
+{
+    return scrollbar->isEnabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
+             scrollbar->width() : 
+             scrollbar->height()) >= 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
+}
+
+static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, bool start)
+{
+    IntRect paintRect(buttonRect);
+    if (orientation == HorizontalScrollbar) {
+        paintRect.setWidth(cRealButtonLength[controlSize]);
+        if (!start)
+            paintRect.setX(buttonRect.x() - (cRealButtonLength[controlSize] - buttonRect.width()));
+    } else {
+        paintRect.setHeight(cRealButtonLength[controlSize]);
+        if (!start)
+            paintRect.setY(buttonRect.y() - (cRealButtonLength[controlSize] - buttonRect.height()));
+    }
+
+    return paintRect;
+}
+
+IntRect ScrollbarThemeSafari::backButtonRect(Scrollbar* scrollbar, bool painting)
+{
+    IntRect result;
+    int thickness = scrollbarThickness(scrollbar->controlSize());
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        result = IntRect(scrollbar->x(), scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
+    else
+        result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cButtonLength[scrollbar->controlSize()]);
+    if (painting)
+        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), true);
+    return result;
+}
+
+IntRect ScrollbarThemeSafari::forwardButtonRect(Scrollbar* scrollbar, bool painting)
+{
+    IntRect result;
+    int thickness = scrollbarThickness(scrollbar->controlSize());
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        result = IntRect(scrollbar->x() + scrollbar->width() - cButtonLength[scrollbar->controlSize()], scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
+    else
+        result = IntRect(scrollbar->x(), scrollbar->y() + scrollbar->height() - cButtonLength[scrollbar->controlSize()], thickness, cButtonLength[scrollbar->controlSize()]);
+    if (painting)
+        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), false);
+    return result;
+}
+
+static IntRect trackRepaintRect(const IntRect& trackRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+{
+    IntRect paintRect(trackRect);
+    if (orientation == HorizontalScrollbar)
+        paintRect.inflateX(cButtonLength[controlSize]);
+    else
+        paintRect.inflateY(cButtonLength[controlSize]);
+
+    return paintRect;
+}
+
+IntRect ScrollbarThemeSafari::trackRect(Scrollbar* scrollbar, bool painting)
+{
+    IntRect result;
+    int thickness = scrollbarThickness(scrollbar->controlSize());
+    if (scrollbar->orientation() == HorizontalScrollbar) {
+        if (!hasButtons(scrollbar))
+            result = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), thickness);
+        else
+            result = IntRect(scrollbar->x() + cButtonLength[scrollbar->controlSize()], scrollbar->y(), scrollbar->width() - 2 * cButtonLength[scrollbar->controlSize()], thickness);
+    } else if (!hasButtons(scrollbar))
+        result = IntRect(scrollbar->x(), scrollbar->y(), thickness, scrollbar->height());
+    else
+        result = IntRect(scrollbar->x(), scrollbar->y() + cButtonLength[scrollbar->controlSize()], thickness, scrollbar->height() - 2 * cButtonLength[scrollbar->controlSize()]);
+    if (painting)
+        return trackRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize());
+    return result;
+}
+
+int ScrollbarThemeSafari::minimumThumbLength(Scrollbar* scrollbar)
+{
+    return cThumbMinLength[scrollbar->controlSize()];
+}
+
+void ScrollbarThemeSafari::paintTrack(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& trackRect, ScrollbarControlPartMask)
+{
+    if (!SafariThemeLibrary())
+        return;
+    NSControlSize size = scrollbar->controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
+    ThemeControlState state = 0;
+    if (scrollbar->client()->isActive())
+        state |= ActiveState;
+    if (hasButtons(scrollbar))
+        state |= EnabledState;
+    paintThemePart(scrollbar->orientation() == VerticalScrollbar ? VScrollTrackPart : HScrollTrackPart, graphicsContext->platformContext(), trackRect, size, state); 
+}
+
+void ScrollbarThemeSafari::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarControlPartMask mask)
+{
+    if (!SafariThemeLibrary())
+        return;
+    NSControlSize size = scrollbar->controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
+    ThemeControlState state = 0;
+    if (scrollbar->client()->isActive())
+        state |= ActiveState;
+    if (hasButtons(scrollbar))
+        state |= EnabledState;
+    if (scrollbar->pressedPart() & mask)
+        state |= PressedState;
+    if (mask & BackButtonPart)
+        paintThemePart(scrollbar->orientation() == VerticalScrollbar ? ScrollUpArrowPart : ScrollLeftArrowPart, graphicsContext->platformContext(),
+                       buttonRect, size, state);
+    if (mask & ForwardButtonPart)
+        paintThemePart(scrollbar->orientation() == VerticalScrollbar ? ScrollDownArrowPart : ScrollRightArrowPart, graphicsContext->platformContext(),
+                       buttonRect, size, state);
+}
+
+void ScrollbarThemeSafari::paintThumb(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& thumbRect)
+{
+    if (!SafariThemeLibrary())
+        return;
+    NSControlSize size = scrollbar->controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
+    ThemeControlState state = 0;
+    if (scrollbar->client()->isActive())
+        state |= ActiveState;
+    if (hasThumb(scrollbar))
+        state |= EnabledState;
+    if (scrollbar->pressedPart() == ThumbPart)
+        state |= PressedState;
+    paintThemePart(scrollbar->orientation() == VerticalScrollbar ? VScrollThumbPart : HScrollThumbPart, graphicsContext->platformContext(), 
+                   thumbRect, size, state);
 }
 
 }

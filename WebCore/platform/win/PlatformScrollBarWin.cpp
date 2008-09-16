@@ -25,28 +25,17 @@
  */
 
 #include "config.h"
-
-#if !USE(SAFARI_THEME)
-
 #include "PlatformScrollBar.h"
 
-#include "EventHandler.h"
 #include "FrameView.h"
-#include "Frame.h"
-#include "GraphicsContext.h"
-#include "IntRect.h"
-#include "PlatformMouseEvent.h"
-#include "SoftLinking.h"
-#include "RenderThemeWin.h"
+#include "ScrollbarClient.h"
+#include "ScrollbarTheme.h"
 
 namespace WebCore {
 
-PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
-    : Scrollbar(client, orientation, size)
-{
-}
-
-PlatformScrollbar::~PlatformScrollbar()
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size,
+                                     ScrollbarTheme* theme)
+    : Scrollbar(client, orientation, size, theme)
 {
 }
 
@@ -104,6 +93,4 @@ IntRect PlatformScrollbar::windowClipRect() const
 }
 
 }
-
-#endif
 

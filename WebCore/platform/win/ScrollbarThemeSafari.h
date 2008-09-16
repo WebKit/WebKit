@@ -41,19 +41,18 @@ public:
     virtual bool supportsControlTints() const { return true; }
 
 protected:
-    // FIXME: Implement the following functions to complete the theme.
-    virtual bool hasButtons(Scrollbar*) { return true; }
-    virtual bool hasThumb(Scrollbar*) { return true; }
+    virtual bool hasButtons(Scrollbar*);
+    virtual bool hasThumb(Scrollbar*);
 
-    virtual IntRect backButtonRect(Scrollbar*, bool painting = false) { return IntRect(); }
-    virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false) { return IntRect(); }
-    virtual IntRect trackRect(Scrollbar*, bool painting = false) { return IntRect(); }
+    virtual IntRect backButtonRect(Scrollbar*, bool painting = false);
+    virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false);
+    virtual IntRect trackRect(Scrollbar*, bool painting = false);
 
-    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack) {};
+    virtual int minimumThumbLength(Scrollbar*);
 
-    virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask) {};
-    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask) {};
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&) {};
+    virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
 };
 
 }
