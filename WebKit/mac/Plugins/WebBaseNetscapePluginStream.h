@@ -33,6 +33,7 @@
 #import <WebKit/WebPlugInStreamLoaderDelegate.h>
 #import <wtf/RefCounted.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebCore {
     class FrameLoader;
@@ -54,7 +55,11 @@ public:
     
     // FIXME: These should all be private once WebBaseNetscapePluginStream is history...
 public:
-    
+    RetainPtr<NSMutableData> m_deliveryData;
+    RetainPtr<NSURL> m_requestURL;
+    RetainPtr<NSURL> m_responseURL;
+    RetainPtr<NSString> m_mimeType;
+
 private:
     WebNetscapePluginStream()
     {
@@ -62,12 +67,7 @@ private:
 };
 
 @interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
-{
-    NSMutableData *deliveryData;
-    NSURL *requestURL;
-    NSURL *responseURL;
-    NSString *MIMEType;
-    
+{    
     NPP plugin;
     uint16 transferMode;
     int32 offset;

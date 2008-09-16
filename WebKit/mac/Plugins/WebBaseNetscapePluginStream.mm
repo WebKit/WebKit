@@ -88,10 +88,10 @@ static StreamMap& streams()
 - (NSError *)_pluginCancelledConnectionError
 {
     return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
-                                           contentURL:responseURL != nil ? responseURL : requestURL
+                                           contentURL:_impl->m_responseURL ? _impl->m_responseURL.get() : _impl->m_requestURL.get()
                                         pluginPageURL:nil
                                            pluginName:[[pluginView pluginPackage] name]
-                                             MIMEType:MIMEType] autorelease];
+                                             MIMEType:_impl->m_mimeType.get()] autorelease];
 }
 
 - (NSError *)errorForReason:(NPReason)theReason
@@ -102,7 +102,7 @@ static StreamMap& streams()
     if (theReason == NPRES_USER_BREAK) {
         return [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                           code:NSURLErrorCancelled 
-                                           URL:responseURL != nil ? responseURL : requestURL];
+                                           URL:_impl->m_responseURL ? _impl->m_responseURL.get() : _impl->m_requestURL.get()];
     }
     return [self _pluginCancelledConnectionError];
 }
@@ -141,7 +141,6 @@ static StreamMap& streams()
     if (core([view webFrame])->loader()->shouldHideReferrer([theRequest URL], core([view webFrame])->loader()->outgoingReferrer()))
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
     
-    _impl = WebNetscapePluginStream::create().releaseRef();
     _client = new WebNetscapePlugInStreamLoaderClient(self);
     _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), _client).releaseRef();
     _loader->setShouldBufferData(false);
@@ -158,6 +157,8 @@ static StreamMap& streams()
 {
     [super init];
  
+    _impl = WebNetscapePluginStream::create().releaseRef();
+
     // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case we are released in this method.
     isTerminated = YES;
 
@@ -198,11 +199,7 @@ static StreamMap& streams()
     delete _client;
     [request release];
     
-    [requestURL release];
-    [responseURL release];
-    [MIMEType release];
     [pluginView release];
-    [deliveryData release];
     
     free((void *)stream.url);
     free(path);
@@ -251,16 +248,12 @@ static StreamMap& streams()
 
 - (void)setRequestURL:(NSURL *)theRequestURL
 {
-    [theRequestURL retain];
-    [requestURL release];
-    requestURL = theRequestURL;
+    _impl->m_requestURL = theRequestURL;
 }
 
 - (void)setResponseURL:(NSURL *)theResponseURL
 {
-    [theResponseURL retain];
-    [responseURL release];
-    responseURL = theResponseURL;
+    _impl->m_responseURL = theResponseURL;
 }
 
 - (void)setPlugin:(NPP)thePlugin
@@ -286,9 +279,7 @@ static StreamMap& streams()
 
 - (void)setMIMEType:(NSString *)theMIMEType
 {
-    [theMIMEType retain];
-    [MIMEType release];
-    MIMEType = theMIMEType;
+    _impl->m_mimeType = theMIMEType;
 }
 
 - (void)startStreamResponseURL:(NSURL *)URL
@@ -303,7 +294,7 @@ static StreamMap& streams()
     [self setMIMEType:theMIMEType];
     
     free((void *)stream.url);
-    stream.url = strdup([responseURL _web_URLCString]);
+    stream.url = strdup([_impl->m_responseURL.get() _web_URLCString]);
 
     stream.ndata = self;
     stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
@@ -328,12 +319,12 @@ static StreamMap& streams()
 
     WebBaseNetscapePluginView *pv = pluginView;
     [pv willCallPlugInFunction];
-    NPError npErr = pluginFuncs->newstream(plugin, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
+    NPError npErr = pluginFuncs->newstream(plugin, (char *)[_impl->m_mimeType.get() UTF8String], &stream, NO, &transferMode);
     [pv didCallPlugInFunction];
-    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", responseURL, MIMEType, npErr);
+    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", _impl->m_responseURL.get(), _impl->m_mimeType.get(), npErr);
 
     if (npErr != NPERR_NO_ERROR) {
-        LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, responseURL);
+        LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, _impl->m_responseURL.get());
         // Calling cancelLoadWithError: cancels the load, but doesn't call NPP_DestroyStream.
         [self cancelLoadWithError:[self _pluginCancelledConnectionError]];
         return;
@@ -463,7 +454,7 @@ static StreamMap& streams()
     [self retain];
 
     ASSERT(reason != WEB_REASON_NONE);
-    ASSERT([deliveryData length] == 0);
+    ASSERT([_impl->m_deliveryData.get() length] == 0);
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverData) object:nil];
 
@@ -477,7 +468,7 @@ static StreamMap& streams()
             [pv willCallPlugInFunction];
             pluginFuncs->asfile(plugin, &stream, [carbonPath fileSystemRepresentation]);
             [pv didCallPlugInFunction];
-            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
+            LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", _impl->m_responseURL.get(), carbonPath);
         }
 
         if (path) {
@@ -505,7 +496,7 @@ static StreamMap& streams()
             [pv willCallPlugInFunction];
             npErr = pluginFuncs->destroystream(plugin, &stream, reason);
             [pv didCallPlugInFunction];
-            LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
+            LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", _impl->m_responseURL.get(), npErr);
         }
 
         free(headers);
@@ -522,9 +513,9 @@ static StreamMap& streams()
         // NPP_URLNotify expects the request URL, not the response URL.
         WebBaseNetscapePluginView *pv = pluginView;
         [pv willCallPlugInFunction];
-        pluginFuncs->urlnotify(plugin, [requestURL _web_URLCString], reason, notifyData);
+        pluginFuncs->urlnotify(plugin, [_impl->m_requestURL.get() _web_URLCString], reason, notifyData);
         [pv didCallPlugInFunction];
-        LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", requestURL, reason);
+        LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", _impl->m_requestURL.get(), reason);
     }
 
     isTerminated = YES;
@@ -540,8 +531,8 @@ exit:
     reason = theReason;
     if (reason != NPRES_DONE) {
         // Stop any pending data from being streamed.
-        [deliveryData setLength:0];
-    } else if ([deliveryData length] > 0) {
+        [_impl->m_deliveryData.get() setLength:0];
+    } else if ([_impl->m_deliveryData.get() length] > 0) {
         // There is more data to be streamed, don't destroy the stream now.
         return;
     }
@@ -582,12 +573,12 @@ exit:
 
 - (void)_deliverData
 {
-    if (!stream.ndata || [deliveryData length] == 0)
+    if (!stream.ndata || [_impl->m_deliveryData.get() length] == 0)
         return;
 
     [self retain];
 
-    int32 totalBytes = [deliveryData length];
+    int32 totalBytes = [_impl->m_deliveryData.get() length];
     int32 totalBytesDelivered = 0;
 
     while (totalBytesDelivered < totalBytes) {
@@ -595,7 +586,7 @@ exit:
         [pv willCallPlugInFunction];
         int32 deliveryBytes = pluginFuncs->writeready(plugin, &stream);
         [pv didCallPlugInFunction];
-        LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", responseURL, deliveryBytes);
+        LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", _impl->m_responseURL.get(), deliveryBytes);
 
         if (isTerminated)
             goto exit;
@@ -606,7 +597,7 @@ exit:
             break;
         } else {
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
-            NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
+            NSData *subdata = [_impl->m_deliveryData.get() subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
             pv = pluginView;
             [pv willCallPlugInFunction];
             deliveryBytes = pluginFuncs->write(plugin, &stream, offset, [subdata length], (void *)[subdata bytes]);
@@ -619,18 +610,19 @@ exit:
             deliveryBytes = MIN((unsigned)deliveryBytes, [subdata length]);
             offset += deliveryBytes;
             totalBytesDelivered += deliveryBytes;
-            LOG(Plugins, "NPP_Write responseURL=%@ bytes=%d total-delivered=%d/%d", responseURL, deliveryBytes, offset, stream.end);
+            LOG(Plugins, "NPP_Write responseURL=%@ bytes=%d total-delivered=%d/%d", _impl->m_responseURL.get(), deliveryBytes, offset, stream.end);
         }
     }
 
     if (totalBytesDelivered > 0) {
         if (totalBytesDelivered < totalBytes) {
             NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
-            [newDeliveryData appendBytes:(char *)[deliveryData bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
-            [deliveryData release];
-            deliveryData = newDeliveryData;
+            [newDeliveryData appendBytes:(char *)[_impl->m_deliveryData.get() bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
+            [_impl->m_deliveryData.get() release];
+            _impl->m_deliveryData = newDeliveryData;
+            [newDeliveryData release];
         } else {
-            [deliveryData setLength:0];
+            [_impl->m_deliveryData.get() setLength:0];
             if (reason != WEB_REASON_NONE) {
                 [self _destroyStream];
             }
@@ -698,10 +690,9 @@ exit:
     ASSERT([data length] > 0);
     
     if (transferMode != NP_ASFILEONLY) {
-        if (!deliveryData) {
-            deliveryData = [[NSMutableData alloc] initWithCapacity:[data length]];
-        }
-        [deliveryData appendData:data];
+        if (!_impl->m_deliveryData)
+            _impl->m_deliveryData.adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
+        [_impl->m_deliveryData.get() appendData:data];
         [self _deliverData];
     }
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)

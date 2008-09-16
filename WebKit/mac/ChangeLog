@@ -2,6 +2,28 @@
 
         Reviewed by Dave Hyatt.
 
+        Move a bunch of instance variables into the C++ class.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream _pluginCancelledConnectionError]):
+        (-[WebBaseNetscapePluginStream errorForReason:]):
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream setRequestURL:]):
+        (-[WebBaseNetscapePluginStream setResponseURL:]):
+        (-[WebBaseNetscapePluginStream setMIMEType:]):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        (-[WebBaseNetscapePluginStream _destroyStreamWithReason:]):
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+
+2008-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Add a new WebNetscapePluginStream C++ class. The idea is that it is supposed to replace the Obj-C 
         WebBaseNetscapePluginStream class. The plan is to gradually move/rewrite code from the Obj-C class to the C++ class
         until the C++ class can replace the Obj-C class.
