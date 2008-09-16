@@ -1,5 +1,17 @@
 2008-09-16  Adam Roben  <aroben@apple.com>
 
+        Windows build fix after r36511
+
+        Update for rename of layoutTestController to gLayoutTestController.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        * DumpRenderTree/win/UIDelegate.cpp:
+
+2008-09-16  Adam Roben  <aroben@apple.com>
+
         Add a script to print out the dependency tree of a Visual Studio
         solution file
 

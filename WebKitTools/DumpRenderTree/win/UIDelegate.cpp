@@ -385,7 +385,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest(
         /* [in] */ IWebURLRequest *request,
         /* [retval][out] */ IWebView **newWebView)
 {
-    if (!::layoutTestController->canOpenWindows())
+    if (!::gLayoutTestController->canOpenWindows())
         return E_FAIL;
     *newWebView = createWebViewAndOffscreenWindow();
     return S_OK;
@@ -437,7 +437,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota(
 
 HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
 { 
-    if (layoutTestController->dumpStatusCallbacks())
+    if (gLayoutTestController->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
     return S_OK;
 }

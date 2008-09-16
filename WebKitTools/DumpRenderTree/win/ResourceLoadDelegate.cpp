@@ -194,7 +194,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::identifierForInitialRequest(
     /* [in] */ IWebDataSource* dataSource,
     /* [in] */ unsigned long identifier)
 { 
-    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         BSTR urlStr;
         if (FAILED(request->URL(&urlStr)))
             return E_FAIL;
@@ -213,7 +213,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
     /* [in] */ IWebDataSource* dataSource,
     /* [retval][out] */ IWebURLRequest **newRequest)
 {
-    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         printf("%S - willSendRequest %S redirectResponse %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(request).c_str(),
@@ -230,7 +230,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFinishLoadingFromDataSource(
     /* [in] */ unsigned long identifier,
     /* [in] */ IWebDataSource* dataSource)
 {
-    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         printf("%S - didFinishLoading\n",
             descriptionSuitableForTestResult(identifier).c_str()),
        urlMap().remove(identifier);
@@ -245,7 +245,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFailLoadingWithError(
     /* [in] */ IWebError* error,
     /* [in] */ IWebDataSource* dataSource)
 {
-    if (!done && layoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         printf("%S - didFailLoadingWithError: %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(error, identifier).c_str());

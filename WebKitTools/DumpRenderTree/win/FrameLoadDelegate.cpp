@@ -128,7 +128,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didStartProvisionalLoadForFrame(
         /* [in] */ IWebView* webView,
         /* [in] */ IWebFrame* frame) 
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didStartProvisionalLoadForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
 
@@ -145,7 +145,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFailProvisionalLoadWithError(
     /* [in] */ IWebError *error,
     /* [in] */ IWebFrame *frame)
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didFailProvisionalLoadWithError\n",
                 descriptionSuitableForTestResult(frame).c_str());
 
@@ -162,7 +162,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didCommitLoadForFrame(
         return hr;
     webViewPrivate->updateFocusedAndActiveState();
 
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didCommitLoadForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
 
@@ -175,7 +175,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle(
         /* [in] */ BSTR title,
         /* [in] */ IWebFrame *frame)
 {
-    if (::layoutTestController->dumpTitleChanges() && !done)
+    if (::gLayoutTestController->dumpTitleChanges() && !done)
         printf("TITLE CHANGED: %S\n", title ? title : L"");
     return S_OK;
 }
@@ -190,7 +190,7 @@ void FrameLoadDelegate::processWork()
     }
 
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!topLoadingFrame && !::layoutTestController->waitToDump())
+    if (!topLoadingFrame && !::gLayoutTestController->waitToDump())
         dump();
 }
 
@@ -210,7 +210,7 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
     topLoadingFrame = 0;
     WorkQueue::shared()->setFrozen(true);
 
-    if (::layoutTestController->waitToDump())
+    if (::gLayoutTestController->waitToDump())
         return;
 
     if (WorkQueue::shared()->count()) {
@@ -227,7 +227,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishLoadForFrame(
         /* [in] */ IWebView* webView,
         /* [in] */ IWebFrame* frame)
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didFinishLoadForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
 
@@ -259,7 +259,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didClearWindowObject(
 {
     JSValueRef exception = 0;
 
-    ::layoutTestController->makeWindowObject(context, windowObject, &exception);
+    ::gLayoutTestController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
     m_gcController->makeWindowObject(context, windowObject, &exception);
@@ -280,7 +280,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishDocumentLoadForFrame(
     /* [in] */ IWebView *sender,
     /* [in] */ IWebFrame *frame)
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didFinishDocumentLoadForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
     if (!done) {
@@ -304,7 +304,7 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didHandleOnloadEventsForFrame(
     /* [in] */ IWebView *sender,
     /* [in] */ IWebFrame *frame)
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks())
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didHandleOnloadEventsForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
 
