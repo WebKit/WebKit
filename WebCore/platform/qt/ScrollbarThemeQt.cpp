@@ -29,6 +29,7 @@
 #include "ScrollbarThemeQt.h"
 
 #include "GraphicsContext.h"
+#include "PlatformMouseEvent.h"
 #include "ScrollBar.h"
 
 #include <QApplication>
