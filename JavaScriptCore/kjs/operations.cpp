@@ -104,7 +104,7 @@ bool strictEqual(JSValue* v1, JSValue* v2)
     if (JSImmediate::areBothImmediate(v1, v2))
         return v1 == v2;
 
-    if (JSImmediate::isEitherImmediate(v1, v2) & v1 != JSImmediate::from(0) & v2 != JSImmediate::from(0))
+    if (JSImmediate::isEitherImmediate(v1, v2) & (v1 != JSImmediate::from(0)) & (v2 != JSImmediate::from(0)))
         return false;
 
     return strictEqualSlowCase(v1, v2);

@@ -1,3 +1,16 @@
+2008-09-16  Dimitri Glazkov  <dlglazkov@chromium.org>
+
+        Fix the Windows build.
+
+        Add some extra parentheses to stop MSVC from complaining so much.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_stricteq):
+        (JSC::Machine::cti_op_nstricteq):
+        * kjs/operations.cpp:
+        (JSC::strictEqual):
+
 2008-09-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
