@@ -1,3 +1,27 @@
+2008-09-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        CTI code generation for op_ret.  The majority of the work
+        (updating variables on the stack & on exec) can be performed
+        directly in generated code.
+
+        We still need to check, & to call out to C-code to handle
+        activation records, profiling, and full scope chains.
+
+        +1.5% Sunspider, +5/6% v8 tests.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitPutCTIParam):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_ret_activation):
+        (JSC::Machine::cti_op_ret_profiler):
+        (JSC::Machine::cti_op_ret_scopeChain):
+        * VM/Machine.h:
+
 2008-09-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix the Windows build.

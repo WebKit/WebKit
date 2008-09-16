@@ -149,6 +149,11 @@ ALWAYS_INLINE JSValue* CTI::getConstantImmediateNumericArg(unsigned src)
     return 0;
 }
 
+ALWAYS_INLINE void CTI::emitPutCTIParam(void* value, unsigned name)
+{
+    m_jit.movl_i32m(reinterpret_cast<intptr_t>(value), name * sizeof(void*), X86::esp);
+}
+
 ALWAYS_INLINE void CTI::emitPutCTIParam(X86Assembler::RegisterID from, unsigned name)
 {
     m_jit.movl_rm(from, name * sizeof(void*), X86::esp);
@@ -464,7 +469,18 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     // This handles JSFunctions
     emitCall(i, ((type == OpConstruct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction));
     m_jit.call_r(X86::eax);
-    emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
+    
+    // In the interpreter the following actions are performed by op_ret:
+    
+    // Store the scope chain - returned by op_ret in %edx (see below) - to ExecState::m_scopeChain and CTI_ARGS_scopeChain on the stack.
+    emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
+    emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
+    m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
+    // Restore ExecState::m_callFrame.
+    m_jit.leal_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) * sizeof(Register), X86::edi, X86::edx);
+    m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
+    // Restore CTI_ARGS_codeBlock.
+    emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
 
     X86Assembler::JmpDst end = m_jit.label();
     m_jit.link(wasNotJSFunction, end);
@@ -798,11 +814,44 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_ret: {
-            emitGetPutArg(instruction[i + 1].u.operand, 0, X86::ecx);
-            emitCall(i, Machine::cti_op_ret);
+            // Check for an activation - if there is one, jump to the hook below.
+            m_jit.cmpl_i32m(0, -((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::OptionalCalleeActivation) * sizeof(Register)), X86::edi);
+            X86Assembler::JmpSrc activation = m_jit.emitUnlinkedJne();
+            X86Assembler::JmpDst activated = m_jit.label();
 
-            m_jit.pushl_m(-((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) - RegisterFile::CTIReturnEIP) * sizeof(Register), X86::edi);
+            // Check for a profiler - if there is one, jump to the hook below.
+            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
+            m_jit.cmpl_i32m(0, X86::eax);
+            X86Assembler::JmpSrc profile = m_jit.emitUnlinkedJne();
+            X86Assembler::JmpDst profiled = m_jit.label();
+
+            // We could JIT generate the deref, only calling out to C when the refcount hits zero.
+            if (m_codeBlock->needsFullScopeChain)
+                emitCall(i, Machine::cti_op_ret_scopeChain);
+
+            // Return the result in %eax, and the caller scope chain in %edx (this is read from the callee call frame,
+            // but is only assigned to ExecState::m_scopeChain if returning to a JSFunction).
+            emitGetArg(instruction[i + 1].u.operand, X86::eax);
+            m_jit.movl_mr(-((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CallerScopeChain) * sizeof(Register)), X86::edi, X86::edx);
+            // Restore the machine return addess from the callframe, roll the callframe back to the caller callframe,
+            // and preserve a copy of r on the stack at CTI_ARGS_r. 
+            m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CTIReturnEIP) * sizeof(Register), X86::edi, X86::ecx);
+            m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CallerRegisters) * sizeof(Register), X86::edi, X86::edi);
+            emitPutCTIParam(X86::edi, CTI_ARGS_r);
+
+            m_jit.pushl_r(X86::ecx);
             m_jit.ret();
+
+            // Activation hook
+            m_jit.link(activation, m_jit.label());
+            emitCall(i, Machine::cti_op_ret_activation);
+            m_jit.link(m_jit.emitUnlinkedJmp(), activated);
+
+            // Profiling hook
+            m_jit.link(profile, m_jit.label());
+            emitCall(i, Machine::cti_op_ret_profiler);
+            m_jit.link(m_jit.emitUnlinkedJmp(), profiled);
+
             i += 2;
             break;
         }

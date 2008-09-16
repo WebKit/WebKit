@@ -4417,40 +4417,32 @@ JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
     return 0;
 }
 
-JSValue* Machine::cti_op_ret(CTI_ARGS)
+void Machine::cti_op_ret_activation(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
-    Register* r = ARG_r;
-    CodeBlock* codeBlock = ARG_codeBlock;
-    ScopeChainNode* scopeChain = ARG_scopeChain;
+    Register* callFrame = ARG_r - ARG_codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
 
-    Machine* machine = exec->machine();
+    JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue(exec));
+    ASSERT(activation);
 
-    Register* callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-    if (JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue(exec))) {
-        ASSERT(!codeBlock->needsFullScopeChain || scopeChain->object == activation);
-        ASSERT(activation->isActivationObject());
-        activation->copyRegisters();
-    }
+    ASSERT(!ARG_codeBlock->needsFullScopeChain || ARG_scopeChain->object == activation);
+    ASSERT(activation->isActivationObject());
+    activation->copyRegisters();
+}
 
-    if (*ARG_profilerReference)
-        (*ARG_profilerReference)->didExecute(exec, static_cast<JSObject*>(callFrame[RegisterFile::Callee].jsValue(exec)));
+void Machine::cti_op_ret_profiler(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
 
-    if (codeBlock->needsFullScopeChain)
-        scopeChain->deref();
+    Register* callFrame = ARG_r - ARG_codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
+    ASSERT(*ARG_profilerReference);
+    (*ARG_profilerReference)->didExecute(exec, static_cast<JSObject*>(callFrame[RegisterFile::Callee].jsValue(exec)));
+}
 
-    codeBlock = callFrame[RegisterFile::CallerCodeBlock].codeBlock();
-    if (codeBlock) {
-        machine->setScopeChain(exec, scopeChain, callFrame[RegisterFile::CallerScopeChain].scopeChain());
-        r = callFrame[RegisterFile::CallerRegisters].r();
-        exec->m_callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-    }
-
-    ARG_setScopeChain(scopeChain);
-    ARG_setCodeBlock(codeBlock);
-    ARG_setR(r);
-
-    return ARG_src1;
+void Machine::cti_op_ret_scopeChain(CTI_ARGS)
+{
+    ASSERT(ARG_codeBlock->needsFullScopeChain);
+    ARG_scopeChain->deref();
 }
 
 JSValue* Machine::cti_op_new_array(CTI_ARGS)
