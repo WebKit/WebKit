@@ -293,12 +293,12 @@ String AXHeadingText()
     return String();
 }
 
-string AXDefinitionListTermText()
+String AXDefinitionListTermText()
 {
     return String();
 }
 
-string AXDefinitionListDefinitionText()
+String AXDefinitionListDefinitionText()
 {
     return String();
 }
