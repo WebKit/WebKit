@@ -1,3 +1,13 @@
+2008-09-16  Adam Treat  <treat@kde.org>
+
+        Reviewed by Anders Carlsson.
+
+        Prevent accesses off of the end of the buffer introduced in r36450
+        and when checking for descriptions of mime. Also, coding style fix.
+
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+
 2008-09-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

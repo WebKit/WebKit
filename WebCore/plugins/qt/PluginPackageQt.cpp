@@ -90,12 +90,12 @@ bool PluginPackage::fetchInfo()
         types[i].split(UChar(':'), true, mime); 
         if (mime.size() > 0) {
             Vector<String> exts;
-            mime[1].split(UChar(','), false, exts);
+            if (mime.size() > 1)
+                mime[1].split(UChar(','), false, exts);
             determineQuirks(mime[0]);
             m_mimeToExtensions.add(mime[0], exts);
-            if (mime.size() > 1) {
+            if (mime.size() > 2)
                 m_mimeToDescriptions.add(mime[0], mime[2]);
-            }
         }
     }
 
