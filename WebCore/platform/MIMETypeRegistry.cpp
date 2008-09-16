@@ -147,6 +147,8 @@ static void initializeSupportedImageMIMETypesForEncoding()
         String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
         supportedImageMIMETypesForEncoding->add(mimeType);
     }
+#elif PLATFORM(CAIRO)
+    supportedImageMIMETypesForEncoding->add("image/png");
 #endif
 }
 

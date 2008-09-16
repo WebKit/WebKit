@@ -27,13 +27,17 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "Base64.h"
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
+#include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "Pattern.h"
+#include "PlatformString.h"
 
 #include <cairo.h>
+#include <wtf/Vector.h>
 
 using namespace std;
 
@@ -49,7 +53,7 @@ auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool)
     return auto_ptr<ImageBuffer>(new ImageBuffer(surface));
 }
 
-ImageBuffer::ImageBuffer(_cairo_surface* surface)
+ImageBuffer::ImageBuffer(cairo_surface_t* surface)
     : m_surface(surface)
 {
     cairo_t* cr = cairo_create(m_surface);
@@ -94,10 +98,31 @@ void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
     notImplemented();
 }
 
-String ImageBuffer::toDataURL(const String&) const
+static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned int length)
 {
-    notImplemented();
-    return String();
+    Vector<char>* in = reinterpret_cast<Vector<char>*>(closure);
+    in->append(data, length);
+    return CAIRO_STATUS_SUCCESS;
+}
+
+String ImageBuffer::toDataURL(const String& mimeType) const
+{
+    cairo_surface_t* image = cairo_get_target(context()->platformContext());
+    if (!image)
+        return "data:,";
+
+    String actualMimeType("image/png");
+    if (MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
+        actualMimeType = mimeType;
+
+    Vector<char> in;
+    // Only PNG output is supported for now.
+    cairo_surface_write_to_png_stream(image, writeFunction, &in);
+
+    Vector<char> out;
+    base64Encode(in, out);
+
+    return "data:" + actualMimeType + ";base64," + String(out.data(), out.size());
 }
 
 } // namespace WebCore
