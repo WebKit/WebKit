@@ -51,7 +51,7 @@ static QString tr(const char* text)
 
 namespace WebCore {
 
-PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size
+PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
     : Scrollbar(client, orientation, size)
 {
 }
