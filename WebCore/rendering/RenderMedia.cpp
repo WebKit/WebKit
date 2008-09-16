@@ -353,19 +353,25 @@ void RenderMedia::forwardEvent(Event* event)
     if (event->isMouseEvent() && m_controlsShadowRoot) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
+
+        RefPtr<MediaControlInputElement> inputElement = 0;
         if (m_muteButton && m_muteButton->renderer() && m_muteButton->renderer()->absoluteBoundingBoxRect().contains(point))
-            m_muteButton->defaultEventHandler(event);
+            inputElement = m_muteButton;
         if (m_playButton && m_playButton->renderer() && m_playButton->renderer()->absoluteBoundingBoxRect().contains(point))
-            m_playButton->defaultEventHandler(event);
+            inputElement = m_playButton;
         if (m_seekBackButton && m_seekBackButton->renderer() && m_seekBackButton->renderer()->absoluteBoundingBoxRect().contains(point))
-            m_seekBackButton->defaultEventHandler(event);
+            inputElement = m_seekBackButton;
         if (m_seekForwardButton && m_seekForwardButton->renderer() && m_seekForwardButton->renderer()->absoluteBoundingBoxRect().contains(point))
-            m_seekForwardButton->defaultEventHandler(event);
+            inputElement = m_seekForwardButton;
         if (m_timeline && m_timeline->renderer() && m_timeline->renderer()->absoluteBoundingBoxRect().contains(point))
-            m_timeline->defaultEventHandler(event);
+            inputElement = m_timeline;
         if (m_fullscreenButton && m_fullscreenButton->renderer() && m_fullscreenButton->renderer()->absoluteBoundingBoxRect().contains(point))
-            m_fullscreenButton->defaultEventHandler(event);
+            inputElement = m_fullscreenButton;
         
+        if (inputElement && inputElement->renderer() && inputElement->renderer()->style()
+                && inputElement->renderer()->style()->display() != NONE)
+            inputElement->defaultEventHandler(event);
+
         if (event->type() == mouseoverEvent) {
             m_mouseOver = true;
             updateControlVisibility();
