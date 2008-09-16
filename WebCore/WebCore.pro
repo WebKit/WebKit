@@ -458,6 +458,7 @@ SOURCES += \
     css/CSSInitialValue.cpp \
     css/CSSMediaRule.cpp \
     css/CSSMutableStyleDeclaration.cpp \
+    css/CSSNthSelector.cpp \
     css/CSSPageRule.cpp \
     css/CSSParser.cpp \
     css/CSSParserValues.cpp \

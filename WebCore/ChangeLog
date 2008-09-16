@@ -1,3 +1,30 @@
+2008-09-15  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Sam Weinig.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20180
+        
+        Cache the result of parsing the an+b expression in :nth-child(an+b). Roughly a 2x speedup for :nth-child on SlickSpeed.
+
+        * GNUmakefile.am: Add CSSNthSelector
+        * WebCore.pro: Add CSSNthSelector
+        * WebCore.vcproj/WebCore.vcproj: Add CSSNthSelector
+        * WebCore.xcodeproj/project.pbxproj: Add CSSNthSelector
+        * css/CSSGrammar.y: Create CSSNthSelectors instead of CSSSelectors for :nth-*
+        * css/CSSNthSelector.cpp: Added.
+        (WebCore::CSSNthSelector::parseNth): Moved from CSSStyleSelector and modified to cache
+        (WebCore::CSSNthSelector::matchNth): Moved from CSSStyleSelector and modified to use the cache
+        * css/CSSNthSelector.h: Added.
+        (WebCore::CSSNthSelector::CSSNthSelector):
+        (WebCore::CSSNthSelector::~CSSNthSelector):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFloatingNthSelector):
+        * css/CSSParser.h:
+        * css/CSSSelector.h: Use the free bit here to store a flag for CSSNthSelector
+        (WebCore::CSSSelector::CSSSelector):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Take advantage of knowing that all :nth-* selectors are CSSNthSelectors
+
 2008-09-15  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.

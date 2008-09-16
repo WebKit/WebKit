@@ -29,6 +29,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
+#include "CSSNthSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "HTMLNames.h"
@@ -1106,7 +1107,7 @@ pseudo:
     // used by :nth-*(ax+b)
     | ':' FUNCTION NTH ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
+        $$ = static_cast<CSSSelector*>(p->createFloatingNthSelector());
         $$->m_match = CSSSelector::PseudoClass;
         $$->m_argument = $3;
         $$->m_value = $2;
@@ -1124,7 +1125,7 @@ pseudo:
     // used by :nth-*
     | ':' FUNCTION INTEGER ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
+        $$ = static_cast<CSSSelector*>(p->createFloatingNthSelector());
         $$->m_match = CSSSelector::PseudoClass;
         $$->m_argument = String::number($3);
         $$->m_value = $2;
@@ -1142,7 +1143,7 @@ pseudo:
     // used by :nth-*(odd/even) and :lang
     | ':' FUNCTION IDENT ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
+        $$ = static_cast<CSSSelector*>(p->createFloatingNthSelector());
         $$->m_match = CSSSelector::PseudoClass;
         $$->m_argument = $3;
         $2.lower();

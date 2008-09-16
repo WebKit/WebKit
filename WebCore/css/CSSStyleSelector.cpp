@@ -39,6 +39,7 @@
 #include "CSSReflectValue.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
+#include "CSSNthSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
@@ -890,62 +891,6 @@ bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element*
 
     return checkSelector(sel, element, 0, dynamicPseudo, true, false) == SelectorMatches;
 }
-
-// a helper function for parsing nth-arguments
-static bool parseNth(const String& nth, int &a, int &b)
-{
-    if (nth.isEmpty())
-        return false;
-    a = 0;
-    b = 0;
-    if (nth == "odd") {
-        a = 2;
-        b = 1;
-    } else if (nth == "even") {
-        a = 2;
-        b = 0;
-    } else {
-        int n = nth.find('n');
-        if (n != -1) {
-            if (nth[0] == '-') {
-                if (n == 1)
-                    a = -1; // -n == -1n
-                else
-                    a = nth.substring(0, n).toInt();
-            } else if (!n)
-                a = 1; // n == 1n
-            else
-                a = nth.substring(0, n).toInt();
-
-            int p = nth.find('+', n);
-            if (p != -1)
-                b = nth.substring(p + 1, nth.length() - p - 1).toInt();
-            else {
-                p = nth.find('-', n);
-                b = -nth.substring(p + 1, nth.length() - p - 1).toInt();
-            }
-        } else
-            b = nth.toInt();
-    }
-    return true;
-}
-
-// a helper function for checking nth-arguments
-static bool matchNth(int count, int a, int b)
-{
-    if (!a)
-        return count == b;
-    else if (a > 0) {
-        if (count < b)
-            return false;
-        return (count - b) % a == 0;
-    } else {
-        if (count > b)
-            return false;
-        return (b - count) % (-a) == 0;
-    }
-}
-
 
 #ifdef STYLE_SHARING_STATS
 static int fraction = 0;
@@ -2022,11 +1967,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 break;
             }
             case CSSSelector::PseudoNthChild: {
-                int a, b;
-                // calculate a and b every time we run through checkOneSelector
-                // this should probably be saved after we calculate it once, but currently
-                // would require increasing the size of CSSSelector
-                if (!parseNth(sel->m_argument, a, b))
+                if (!static_cast<CSSNthSelector*>(sel)->parseNth())
                     break;
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     int count = 1;
@@ -2053,16 +1994,13 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                             parentStyle->setChildrenAffectedByForwardPositionalRules();
                     }
                     
-                    if (matchNth(count, a, b))
+                    if (static_cast<CSSNthSelector*>(sel)->matchNth(count))
                         return true;
                 }
                 break;
             }
             case CSSSelector::PseudoNthOfType: {
-                // FIXME: This selector is very slow.
-                int a, b;
-                // calculate a and b every time we run through checkOneSelector (see above)
-                if (!parseNth(sel->m_argument, a, b))
+                if (!static_cast<CSSNthSelector*>(sel)->parseNth())
                     break;
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     int count = 1;
@@ -2080,17 +2018,13 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                             parentStyle->setChildrenAffectedByForwardPositionalRules();
                     }
 
-                    if (matchNth(count, a, b))
+                    if (static_cast<CSSNthSelector*>(sel)->matchNth(count))
                         return true;
                 }
                 break;
             }
             case CSSSelector::PseudoNthLastChild: {
-                int a, b;
-                // calculate a and b every time we run through checkOneSelector
-                // this should probably be saved after we calculate it once, but currently
-                // would require increasing the size of CSSSelector
-                if (!parseNth(sel->m_argument, a, b))
+                if (!static_cast<CSSNthSelector*>(sel)->parseNth())
                     break;
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     Element* parentNode = static_cast<Element*>(e->parentNode());
@@ -2108,16 +2042,13 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                             count++;
                         n = n->nextSibling();
                     }
-                    if (matchNth(count, a, b))
+                    if (static_cast<CSSNthSelector*>(sel)->matchNth(count))
                         return true;
                 }
                 break;
             }
             case CSSSelector::PseudoNthLastOfType: {
-                // FIXME: This selector is very slow.
-                int a, b;
-                // calculate a and b every time we run through checkOneSelector (see above)
-                if (!parseNth(sel->m_argument, a, b))
+                if (!static_cast<CSSNthSelector*>(sel)->parseNth())
                     break;
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     Element* parentNode = static_cast<Element*>(e->parentNode());
@@ -2136,7 +2067,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                             count++;
                         n = n->nextSibling();
                     }
-                    if (matchNth(count, a, b))
+                    if (static_cast<CSSNthSelector*>(sel)->matchNth(count))
                         return true;
                 }
                 break;
