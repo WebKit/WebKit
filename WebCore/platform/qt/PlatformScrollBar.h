@@ -42,41 +42,13 @@ public:
     {
         return adoptRef(new PlatformScrollbar(client, orientation, size));
     }
-    virtual ~PlatformScrollbar();
 
-    virtual int width() const;
-    virtual int height() const;
-  
-    virtual IntRect frameGeometry() const;
-    virtual void setFrameGeometry(const IntRect& r);
-
-    virtual void setEnabled(bool);
-
-    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&);
-    virtual bool handleMouseOutEvent(const PlatformMouseEvent&);
-    virtual bool handleMousePressEvent(const PlatformMouseEvent&);
-    virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     virtual bool handleContextMenuEvent(const PlatformMouseEvent&);
-
-    bool isEnabled() const;
-    void invalidate();
-
-protected:    
-    virtual void updateThumbPosition();
-    virtual void updateThumbProportion();
+    virtual void invalidate();
 
 private:
     PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
-    int thumbPosition() const;
-    int thumbLength() const;
-    int trackLength() const;
-
-    bool thumbUnderMouse();
-
-    int pixelPosToRangeValue(int pos) const;
-
-    QStyleOptionSlider m_opt;
 };
 
 }
