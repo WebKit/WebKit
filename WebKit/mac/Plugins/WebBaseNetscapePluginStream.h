@@ -31,6 +31,8 @@
 
 #import <WebKit/npfunctions.h>
 #import <WebKit/WebPlugInStreamLoaderDelegate.h>
+#import <wtf/RefCounted.h>
+#import <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class FrameLoader;
@@ -41,6 +43,23 @@ class WebNetscapePlugInStreamLoaderClient;
 
 @class WebBaseNetscapePluginView;
 @class NSURLResponse;
+
+class WebNetscapePluginStream : public RefCounted<WebNetscapePluginStream>
+{
+public:
+    static PassRefPtr<WebNetscapePluginStream> create()
+    {
+        return adoptRef(new WebNetscapePluginStream);
+    }
+    
+    // FIXME: These should all be private once WebBaseNetscapePluginStream is history...
+public:
+    
+private:
+    WebNetscapePluginStream()
+    {
+    }
+};
 
 @interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
 {
@@ -69,6 +88,8 @@ class WebNetscapePlugInStreamLoaderClient;
     NSURLRequest *request;
 
     NPPluginFuncs *pluginFuncs;
+    
+    WebNetscapePluginStream *_impl;
 }
 
 + (NPP)ownerForStream:(NPStream *)stream;

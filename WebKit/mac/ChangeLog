@@ -2,6 +2,23 @@
 
         Reviewed by Dave Hyatt.
 
+        Add a new WebNetscapePluginStream C++ class. The idea is that it is supposed to replace the Obj-C 
+        WebBaseNetscapePluginStream class. The plan is to gradually move/rewrite code from the Obj-C class to the C++ class
+        until the C++ class can replace the Obj-C class.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::create):
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithFrameLoader:]):
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+
+2008-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Instead of storing a pointer to NPP method individually, just store a pointer to the NPNetscapeFuncs vtable.
         
         * Plugins/WebBaseNetscapePluginStream.h:

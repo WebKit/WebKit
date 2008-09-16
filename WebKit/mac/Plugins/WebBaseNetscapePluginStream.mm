@@ -109,6 +109,9 @@ static StreamMap& streams()
 
 - (id)initWithFrameLoader:(FrameLoader *)frameLoader
 {
+    [super init];
+    
+    _impl = WebNetscapePluginStream::create().releaseRef();
     _frameLoader = frameLoader;
     
     return self;
@@ -138,6 +141,7 @@ static StreamMap& streams()
     if (core([view webFrame])->loader()->shouldHideReferrer([theRequest URL], core([view webFrame])->loader()->outgoingReferrer()))
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
     
+    _impl = WebNetscapePluginStream::create().releaseRef();
     _client = new WebNetscapePlugInStreamLoaderClient(self);
     _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), _client).releaseRef();
     _loader->setShouldBufferData(false);
@@ -186,6 +190,9 @@ static StreamMap& streams()
     ASSERT(!path);
     ASSERT(fileDescriptor == -1);
 
+    ASSERT(_impl);
+    _impl->deref();
+    
     if (_loader)
         _loader->deref();
     delete _client;
@@ -215,6 +222,9 @@ static StreamMap& streams()
     // The stream file should have been deleted, and the path freed, in -_destroyStream
     ASSERT(!path);
     ASSERT(fileDescriptor == -1);
+
+    ASSERT(_impl);
+    _impl->deref();
 
     if (_loader)
         _loader->deref();
