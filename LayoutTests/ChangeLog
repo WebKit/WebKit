@@ -1,3 +1,16 @@
+2008-09-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        Test for:
+        https://bugs.webkit.org/show_bug.cgi?id=20634
+        SVG transform attribute is ignored by <use> in <clipPath>
+
+        * svg/custom/use-clipped-transform-expected.checksum: Added.
+        * svg/custom/use-clipped-transform-expected.png: Added.
+        * svg/custom/use-clipped-transform-expected.txt: Added.
+        * svg/custom/use-clipped-transform.svg: Added.
+
 2008-09-15  Sam Weinig  <sam@webkit.org>
 
         Roll out r36478.  It did little to help the issue either.

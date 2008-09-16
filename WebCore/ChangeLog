@@ -1,3 +1,21 @@
+2008-09-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20634
+        SVG transform attribute is ignored by <use> in <clipPath>
+
+        Transform the paths with the local transform when part
+        of a clip path.
+
+        Test: svg/custom/use-clipped-transform.svg
+
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::toClipPath):
+        * svg/SVGStyledTransformableElement.h:
+
 2008-09-15  Dave Hyatt  <hyatt@apple.com>
 
         Convert Qt over to its ScrollbarTheme.  Add cross-platform support for jumping the thumb location directly
