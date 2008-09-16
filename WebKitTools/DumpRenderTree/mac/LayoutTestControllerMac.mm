@@ -50,10 +50,15 @@
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
+#import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
 LayoutTestController::~LayoutTestController()
 {
+    if (m_selfJSObject) {
+        ASSERT(JSObjectGetPrivate(m_selfJSObject) == this);
+        JSObjectSetPrivate(m_selfJSObject, 0);
+    }
 }
 
 void LayoutTestController::addDisallowedURL(JSStringRef url)

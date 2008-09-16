@@ -1,6 +1,29 @@
 2008-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel
+        
+        Protect against tests that call layoutTestController.notifyDone() 
+        more than once, which would lead to memory corruption, by nulling
+        out the LayoutTestController on the JSObjectRef on destruction. Also
+        add a finalize callback on the class so that if the LTC outlives
+        the JSObjectRef, the JSObjectRef backpointer on the LTC can be
+        nulled out.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20875
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (notifyDoneCallback):
+        (layoutTestControllerObjectFinalize):
+        (LayoutTestController::makeWindowObject):
+        (LayoutTestController::getJSClass):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::~LayoutTestController):
+
+2008-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
 
         Step 1 patch: rename global variable for clarity.
         https://bugs.webkit.org/show_bug.cgi?id=20875
