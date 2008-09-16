@@ -56,6 +56,84 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
 {
 }
 
+static QStyle::SubControl scPart(const ScrollbarPart& part)
+{
+    switch (part) {
+        case NoPart:
+            return QStyle::SC_None;
+        case BackButtonPart:
+            return QStyle::SC_ScrollBarSubLine;
+        case BackTrackPart:
+            return QStyle::SC_ScrollBarSubPage;
+        case ThumbPart:
+            return QStyle::SC_ScrollBarSlider;
+        case ForwardTrackPart:
+            return QStyle::SC_ScrollBarAddPage;
+        case ForwardButtonPart:
+            return QStyle::SC_ScrollBarAddLine;
+    }
+
+    return QStyle::SC_None;
+}
+
+// FIXME: duplicate also in ScrollbarThemeQt.cpp
+static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
+{
+    static QStyleOptionSlider opt;
+    opt.rect = scrollbar->frameGeometry();
+    opt.state = 0;
+    if (scrollbar->isEnabled())
+        opt.state |= QStyle::State_Enabled;
+    if (scrollbar->controlSize() != RegularScrollbar)
+        opt.state |= QStyle::State_Mini;
+    opt.orientation = (scrollbar->orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
+    opt.sliderValue = scrollbar->value();
+    opt.sliderPosition = opt.sliderValue;
+    opt.pageStep = scrollbar->visibleSize();
+    opt.singleStep = scrollbar->lineStep();
+    opt.minimum = 0;
+    opt.maximum = qMax(0, scrollbar->maximum());
+    ScrollbarPart pressedPart = scrollbar->pressedPart();
+    ScrollbarPart hoveredPart = scrollbar->hoveredPart();
+    if (pressedPart != NoPart) {
+        opt.activeSubControls = scPart(scrollbar->pressedPart());
+        if (pressedPart == BackButtonPart || pressedPart == ForwardButtonPart ||
+            pressedPart == ThumbPart)
+            opt.state |= QStyle::State_Sunken;
+    } else
+        opt.activeSubControls = scPart(hoveredPart);
+    if (hoveredPart != NoPart)
+        opt.state |= QStyle::State_MouseOver;
+    return &opt;
+}
+
+static int thumbLength(PlatformScrollbar *scrollbar)
+{
+    QStyleOptionSlider *option = styleOptionSlider(scrollbar);
+    IntRect thumb = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, option, QStyle::SC_ScrollBarSlider, 0);
+    return scrollbar->orientation() == HorizontalScrollbar ? thumb.width() : thumb.height();
+}
+
+static int pixelPosToRangeValue(PlatformScrollbar* scrollbar, int pos)
+{
+    QStyleOptionSlider *option = styleOptionSlider(scrollbar);
+    int thumbLen = thumbLength(scrollbar);
+
+    IntRect track = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, option,
+                                                          QStyle::SC_ScrollBarGroove, 0);
+    int thumbMin, thumbMax;
+    if (scrollbar->orientation() == HorizontalScrollbar) {
+        thumbMin = track.x();
+        thumbMax = track.right() - thumbLen + 1;
+    } else {
+        thumbMin = track.y();
+        thumbMax = track.bottom() - thumbLen + 1;
+    }
+
+    return  QStyle::sliderValueFromPosition(0, scrollbar->maximum(), pos - thumbMin,
+                                            thumbMax - thumbMin, option->upsideDown);
+}
+
 bool PlatformScrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
 {
 #ifndef QT_NO_CONTEXTMENU
@@ -83,7 +161,7 @@ bool PlatformScrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
         /* Do nothing */ ;
     else if (actionSelected == actScrollHere) {
         const QPoint pos = convertFromContainingWindow(event.pos());
-        setValue(pixelPosToRangeValue(horizontal ? pos.x() : pos.y()));
+        setValue(pixelPosToRangeValue(this, horizontal ? pos.x() : pos.y()));
     } else if (actionSelected == actScrollTop)
         setValue(0);
     else if (actionSelected == actScrollBottom)

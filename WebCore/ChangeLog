@@ -1,3 +1,16 @@
+2008-09-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation of the Qt scrollbar code.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::scPart):
+        (WebCore::styleOptionSlider):
+        (WebCore::thumbLength):
+        (WebCore::pixelPosToRangeValue):
+        (WebCore::PlatformScrollbar::handleContextMenuEvent):
+
 2008-09-16  Adam Treat  <treat@kde.org>
 
         Reviewed by Anders Carlsson.
