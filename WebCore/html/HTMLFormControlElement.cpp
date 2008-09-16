@@ -161,7 +161,7 @@ void HTMLFormControlElement::setName(const AtomicString &value)
 
 void HTMLFormControlElement::onChange()
 {
-    dispatchHTMLEvent(changeEvent, true, false);
+    dispatchEventForType(changeEvent, true, false);
 }
 
 bool HTMLFormControlElement::disabled() const

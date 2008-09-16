@@ -359,7 +359,7 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     m_insubmit = true;
     m_doingsubmit = false;
 
-    if (dispatchHTMLEvent(submitEvent, true, true) && !m_doingsubmit)
+    if (dispatchEventForType(submitEvent, true, true) && !m_doingsubmit)
         m_doingsubmit = true;
 
     m_insubmit = false;
@@ -514,7 +514,7 @@ void HTMLFormElement::reset()
 
     // ### DOM2 labels this event as not cancelable, however
     // common browsers( sick! ) allow it be cancelled.
-    if ( !dispatchHTMLEvent(resetEvent,true, true) ) {
+    if ( !dispatchEventForType(resetEvent,true, true) ) {
         m_inreset = false;
         return;
     }
@@ -551,9 +551,9 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
         else
             document()->unregisterForCacheCallbacks(this);
     } else if (attr->name() == onsubmitAttr)
-        setHTMLEventListener(submitEvent, attr);
+        setEventListenerForTypeAndAttribute(submitEvent, attr);
     else if (attr->name() == onresetAttr)
-        setHTMLEventListener(resetEvent, attr);
+        setEventListenerForTypeAndAttribute(resetEvent, attr);
     else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {

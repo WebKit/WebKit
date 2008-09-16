@@ -1427,7 +1427,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSStyleSelector.cpp \
         rendering/SVGRenderStyle.cpp \
         rendering/SVGRenderStyleDefs.cpp \
-        bindings/js/JSSVGLazyEventListener.cpp \
         svg/SVGZoomEvent.cpp \
         rendering/PointerEventsHitRules.cpp \
         svg/FilterEffect.cpp \

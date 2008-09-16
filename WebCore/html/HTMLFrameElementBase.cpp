@@ -141,10 +141,10 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         if (contentFrame())
             contentFrame()->setInViewSourceMode(viewSourceMode());
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(loadEvent, attr);
+        setEventListenerForTypeAndAttribute(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?
-        setHTMLEventListener(beforeunloadEvent, attr);
+        setEventListenerForTypeAndAttribute(beforeunloadEvent, attr);
     } else
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }

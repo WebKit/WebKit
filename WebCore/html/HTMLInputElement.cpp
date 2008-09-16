@@ -665,20 +665,20 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (respectHeightAndWidthAttrs())
             addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(focusEvent, attr);
+        setEventListenerForTypeAndAttribute(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(blurEvent, attr);
+        setEventListenerForTypeAndAttribute(blurEvent, attr);
     } else if (attr->name() == onselectAttr) {
-        setHTMLEventListener(selectEvent, attr);
+        setEventListenerForTypeAndAttribute(selectEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(changeEvent, attr);
+        setEventListenerForTypeAndAttribute(changeEvent, attr);
     } else if (attr->name() == oninputAttr) {
-        setHTMLEventListener(inputEvent, attr);
+        setEventListenerForTypeAndAttribute(inputEvent, attr);
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setHTMLEventListener(searchEvent, attr);
+        setEventListenerForTypeAndAttribute(searchEvent, attr);
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
         m_maxResults = !attr->isNull() ? min(attr->value().toInt(), maxSavedResults) : -1;
@@ -1042,7 +1042,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     setValueMatchesRenderer();
 
     // Fire the "input" DOM event.
-    dispatchHTMLEvent(inputEvent, true, false);
+    dispatchEventForType(inputEvent, true, false);
 }
 
 bool HTMLInputElement::storesValueSeparateFromAttribute() const
@@ -1580,7 +1580,7 @@ void HTMLInputElement::onSearch()
     ASSERT(isSearchField());
     if (renderer())
         static_cast<RenderTextControl*>(renderer())->stopSearchEventTimer();
-    dispatchHTMLEvent(searchEvent, true, false);
+    dispatchEventForType(searchEvent, true, false);
 }
 
 Selection HTMLInputElement::selection() const

@@ -186,7 +186,7 @@ void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
     m_asyncEventsToDispatch.swap(asyncEventsToDispatch);
     unsigned count = asyncEventsToDispatch.size();
     for (unsigned n = 0; n < count; ++n)
-        dispatchHTMLEvent(asyncEventsToDispatch[n], false, true);
+        dispatchEventForType(asyncEventsToDispatch[n], false, true);
 }
 
 String serializeTimeOffset(float time)
@@ -302,7 +302,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
             m_player->seek(0);
         }
         m_currentLoop = 0;
-        dispatchHTMLEvent(emptiedEvent, false, true);
+        dispatchEventForType(emptiedEvent, false, true);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             goto end;
     }
@@ -377,7 +377,7 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
         if (isVideo())
             static_cast<HTMLVideoElement*>(this)->updatePosterImage();
 
-        dispatchHTMLEvent(emptiedEvent, false, true);
+        dispatchEventForType(emptiedEvent, false, true);
         return;
     }
     
@@ -388,11 +388,11 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
         m_player->seek(effectiveStart());
         m_networkState = LOADED_METADATA;
         
-        dispatchHTMLEvent(durationchangeEvent, false, true);
+        dispatchEventForType(durationchangeEvent, false, true);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             return;
         
-        dispatchHTMLEvent(loadedmetadataEvent, false, true);
+        dispatchEventForType(loadedmetadataEvent, false, true);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             return;
     }
@@ -414,11 +414,11 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
             static_cast<RenderVideo*>(renderer())->videoSizeChanged();
         }
         
-        dispatchHTMLEvent(loadedfirstframeEvent, false, true);
+        dispatchEventForType(loadedfirstframeEvent, false, true);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             return;
         
-        dispatchHTMLEvent(canshowcurrentframeEvent, false, true);
+        dispatchEventForType(canshowcurrentframeEvent, false, true);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             return;
     }
@@ -455,25 +455,25 @@ void HTMLMediaElement::setReadyState(ReadyState state)
         return;
     
     if (state == DATA_UNAVAILABLE) {
-        dispatchHTMLEvent(dataunavailableEvent, false, true);
+        dispatchEventForType(dataunavailableEvent, false, true);
         if (wasActivelyPlaying) {
-            dispatchHTMLEvent(timeupdateEvent, false, true);
-            dispatchHTMLEvent(waitingEvent, false, true);
+            dispatchEventForType(timeupdateEvent, false, true);
+            dispatchEventForType(waitingEvent, false, true);
         }
     } else if (state == CAN_SHOW_CURRENT_FRAME) {
         if (m_loadedFirstFrame)
-            dispatchHTMLEvent(canshowcurrentframeEvent, false, true);
+            dispatchEventForType(canshowcurrentframeEvent, false, true);
         if (wasActivelyPlaying) {
-            dispatchHTMLEvent(timeupdateEvent, false, true);
-            dispatchHTMLEvent(waitingEvent, false, true);
+            dispatchEventForType(timeupdateEvent, false, true);
+            dispatchEventForType(waitingEvent, false, true);
         }
     } else if (state == CAN_PLAY) {
-        dispatchHTMLEvent(canplayEvent, false, true);
+        dispatchEventForType(canplayEvent, false, true);
     } else if (state == CAN_PLAY_THROUGH) {
-        dispatchHTMLEvent(canplaythroughEvent, false, true);
+        dispatchEventForType(canplaythroughEvent, false, true);
         if (m_autoplaying && m_paused && autoplay()) {
             m_paused = false;
-            dispatchHTMLEvent(playEvent, false, true);
+            dispatchEventForType(playEvent, false, true);
         }
     }
     updatePlayState();
@@ -541,7 +541,7 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     m_seeking = true;
     
     // 9
-    dispatchHTMLEvent(timeupdateEvent, false, true);
+    dispatchEventForType(timeupdateEvent, false, true);
     
     // 10
     // As soon as the user agent has established whether or not the media data for the new playback position is available, 
@@ -882,12 +882,12 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
         ExceptionCode ec;
         seek(effectiveLoopStart(), ec);
         m_currentLoop++;
-        dispatchHTMLEvent(timeupdateEvent, false, true);
+        dispatchEventForType(timeupdateEvent, false, true);
     }
     
     if (m_currentLoop == playCount() - 1 && currentTime() >= effectiveEnd()) {
-        dispatchHTMLEvent(timeupdateEvent, false, true);
-        dispatchHTMLEvent(endedEvent, false, true);
+        dispatchEventForType(timeupdateEvent, false, true);
+        dispatchEventForType(endedEvent, false, true);
     }
 
     updatePlayState();
@@ -1014,7 +1014,7 @@ void HTMLMediaElement::willSaveToCache()
         if (m_networkState >= LOADING) {
             m_networkState = EMPTY;
             m_readyState = DATA_UNAVAILABLE;
-            dispatchHTMLEvent(emptiedEvent, false, true);
+            dispatchEventForType(emptiedEvent, false, true);
         }
     }
     m_inPageCache = true;

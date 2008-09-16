@@ -2799,8 +2799,6 @@
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
 		B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B20111060AB7740500DB0E68 /* JSSVGAElement.h */; };
 		B21127A60B3186770009BE53 /* JSSVGPODTypeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */; };
-		B22277B10D00BEDC0071B782 /* JSSVGLazyEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277AF0D00BEDC0071B782 /* JSSVGLazyEventListener.cpp */; };
-		B22277B20D00BEDC0071B782 /* JSSVGLazyEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277B00D00BEDC0071B782 /* JSSVGLazyEventListener.h */; };
 		B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */; };
 		B22279630D00BF220071B782 /* ColorDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277CC0D00BF1F0071B782 /* ColorDistance.h */; };
 		B22279640D00BF220071B782 /* GradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277CD0D00BF1F0071B782 /* GradientAttributes.h */; };
@@ -7088,8 +7086,6 @@
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
 		B20111060AB7740500DB0E68 /* JSSVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAElement.h; sourceTree = "<group>"; };
 		B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGPODTypeWrapper.h; sourceTree = "<group>"; };
-		B22277AF0D00BEDC0071B782 /* JSSVGLazyEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLazyEventListener.cpp; sourceTree = "<group>"; };
-		B22277B00D00BEDC0071B782 /* JSSVGLazyEventListener.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGLazyEventListener.h; sourceTree = "<group>"; };
 		B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
 		B22277CC0D00BF1F0071B782 /* ColorDistance.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ColorDistance.h; sourceTree = "<group>"; };
 		B22277CD0D00BF1F0071B782 /* GradientAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GradientAttributes.h; sourceTree = "<group>"; };
@@ -12517,8 +12513,6 @@
 				C09158890DB4209200E55AF4 /* JSQuarantinedObjectWrapper.h */,
 				BC3452410D7E00EA0016574A /* JSRGBColor.cpp */,
 				BC3452420D7E00EA0016574A /* JSRGBColor.h */,
-				B22277AF0D00BEDC0071B782 /* JSSVGLazyEventListener.cpp */,
-				B22277B00D00BEDC0071B782 /* JSSVGLazyEventListener.h */,
 				B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */,
 				BC348BE70DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp */,
 				BC348BE80DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h */,
@@ -14758,7 +14752,6 @@
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
 				B2FA3D9F0AB75A6F000E5AC4 /* JSSVGImageElement.h in Headers */,
-				B22277B20D00BEDC0071B782 /* JSSVGLazyEventListener.h in Headers */,
 				B2FA3DA10AB75A6F000E5AC4 /* JSSVGLength.h in Headers */,
 				B2FA3DA30AB75A6F000E5AC4 /* JSSVGLengthList.h in Headers */,
 				B2FA3DA70AB75A6F000E5AC4 /* JSSVGLineElement.h in Headers */,
@@ -16601,7 +16594,6 @@
 				B2FA3D9A0AB75A6F000E5AC4 /* JSSVGGElement.cpp in Sources */,
 				B2FA3D9C0AB75A6F000E5AC4 /* JSSVGGradientElement.cpp in Sources */,
 				B2FA3D9E0AB75A6F000E5AC4 /* JSSVGImageElement.cpp in Sources */,
-				B22277B10D00BEDC0071B782 /* JSSVGLazyEventListener.cpp in Sources */,
 				B2FA3DA00AB75A6F000E5AC4 /* JSSVGLength.cpp in Sources */,
 				B2FA3DA20AB75A6F000E5AC4 /* JSSVGLengthList.cpp in Sources */,
 				B2FA3DA60AB75A6F000E5AC4 /* JSSVGLineElement.cpp in Sources */,

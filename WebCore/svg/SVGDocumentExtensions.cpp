@@ -52,14 +52,6 @@ SVGDocumentExtensions::~SVGDocumentExtensions()
     deleteAllValues(m_elementInstances);
 }
 
-PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& functionName, const String& code, Node *node)
-{
-    if (Frame* frame = m_doc->frame())
-        if (frame->script()->isEnabled())
-            return frame->script()->createSVGEventHandler(functionName, code, node);
-    return 0;
-}
-
 void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
 {
     m_timeContainers.add(element);

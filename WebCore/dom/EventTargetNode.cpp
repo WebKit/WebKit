@@ -378,15 +378,15 @@ bool EventTargetNode::dispatchWebKitTransitionEvent(const AtomicString& eventTyp
 
 void EventTargetNode::dispatchFocusEvent()
 {
-    dispatchHTMLEvent(focusEvent, false, false);
+    dispatchEventForType(focusEvent, false, false);
 }
 
 void EventTargetNode::dispatchBlurEvent()
 {
-    dispatchHTMLEvent(blurEvent, false, false);
+    dispatchEventForType(blurEvent, false, false);
 }
 
-bool EventTargetNode::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
+bool EventTargetNode::dispatchEventForType(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
 {
     ASSERT(!eventDispatchForbidden());
     ExceptionCode ec = 0;
@@ -409,14 +409,14 @@ void EventTargetNode::dispatchStorageEvent(const AtomicString &eventType, const 
 #endif
 }
 
-void EventTargetNode::removeHTMLEventListener(const AtomicString &eventType)
+void EventTargetNode::removeEventListenerForType(const AtomicString& eventType)
 {
     if (!m_regdListeners) // nothing to remove
         return;
     
     RegisteredEventListenerList::Iterator end = m_regdListeners->end();
     for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
-        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener()) {
+        if ((*it)->eventType() == eventType && (*it)->listener()->isAttachedToEventTargetNode()) {
             it = m_regdListeners->remove(it);
             // removed last
             if (m_regdListeners->isEmpty() && !inDocument())
@@ -425,22 +425,27 @@ void EventTargetNode::removeHTMLEventListener(const AtomicString &eventType)
         }
 }
 
-void EventTargetNode::setHTMLEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener)
+void EventTargetNode::setEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
-    // In case we are the only one holding a reference to it, we don't want removeHTMLEventListener to destroy it.
-    removeHTMLEventListener(eventType);
+    // In case we are the only one holding a reference to it, we don't want removeEventListenerForType to destroy it.
+    removeEventListenerForType(eventType);
     if (listener)
         addEventListener(eventType, listener, false);
 }
 
-EventListener *EventTargetNode::getHTMLEventListener(const AtomicString &eventType)
+void EventTargetNode::setEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
+{
+    setEventListenerForType(eventType, document()->createEventListener(attr->localName().string(), attr->value(), this));
+}
+
+EventListener* EventTargetNode::eventListenerForType(const AtomicString& eventType)
 {
     if (!m_regdListeners)
         return 0;
     
     RegisteredEventListenerList::Iterator end = m_regdListeners->end();
     for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it)
-        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener())
+        if ((*it)->eventType() == eventType && (*it)->listener()->isAttachedToEventTargetNode())
             return (*it)->listener();
     return 0;
 }

@@ -96,7 +96,7 @@ static void networkStateChanged()
         if (!eventTarget)
             eventTarget = document;
         
-        eventTarget->dispatchHTMLEvent(eventName, false, false);
+        eventTarget->dispatchEventForType(eventName, false, false);
     }
 }
     

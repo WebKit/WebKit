@@ -49,10 +49,6 @@
 #include "HTMLPlugInElement.h"
 #endif
 
-#if ENABLE(SVG)
-#include "JSSVGLazyEventListener.h"
-#endif
-
 using namespace JSC;
 using namespace WebCore::EventNames;
 
@@ -150,7 +146,7 @@ PassRefPtr<EventListener> ScriptController::createHTMLEventHandler(const String&
 {
     initScriptIfNeeded();
     JSLock lock(false);
-    return JSLazyEventListener::create(functionName, code, m_windowShell->window(), node, m_handlerLineno);
+    return JSLazyEventListener::create(JSLazyEventListener::HTMLLazyEventListener, functionName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 
 #if ENABLE(SVG)
@@ -158,7 +154,7 @@ PassRefPtr<EventListener> ScriptController::createSVGEventHandler(const String& 
 {
     initScriptIfNeeded();
     JSLock lock(false);
-    return JSSVGLazyEventListener::create(functionName, code, m_windowShell->window(), node, m_handlerLineno);
+    return JSLazyEventListener::create(JSLazyEventListener::SVGLazyEventListener, functionName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 #endif
 

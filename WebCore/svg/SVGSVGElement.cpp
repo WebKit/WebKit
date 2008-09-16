@@ -207,33 +207,32 @@ void SVGSVGElement::setCurrentTranslate(const FloatPoint &translation)
         document()->renderer()->repaint();
 }
 
-void SVGSVGElement::addSVGWindowEventListener(const AtomicString& eventType, const Attribute* attr)
-{
-    // FIXME: None of these should be window events long term.
-    // Once we propertly support SVGLoad, etc.
-    RefPtr<EventListener> listener = document()->accessSVGExtensions()->
-        createSVGEventListener(attr->localName().string(), attr->value(), this);
-    document()->setHTMLWindowEventListener(eventType, listener.release());
-}
-
 void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (!nearestViewportElement()) {
+        bool setListener = true;
+
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onunloadAttr)
-            addSVGWindowEventListener(unloadEvent, attr);
-        else if (attr->name() == onabortAttr)
-            addSVGWindowEventListener(abortEvent, attr);
-        else if (attr->name() == onerrorAttr)
-            addSVGWindowEventListener(errorEvent, attr);
+            document()->setWindowEventListenerForTypeAndAttribute(unloadEvent, attr);
         else if (attr->name() == onresizeAttr)
-            addSVGWindowEventListener(resizeEvent, attr);
+            document()->setWindowEventListenerForTypeAndAttribute(resizeEvent, attr);
         else if (attr->name() == onscrollAttr)
-            addSVGWindowEventListener(scrollEvent, attr);
+            document()->setWindowEventListenerForTypeAndAttribute(scrollEvent, attr);
         else if (attr->name() == SVGNames::onzoomAttr)
-            addSVGWindowEventListener(zoomEvent, attr);
+            document()->setWindowEventListenerForTypeAndAttribute(zoomEvent, attr);
+        else
+            setListener = false;
+ 
+        if (setListener)
+            return;
     }
-    if (attr->name() == SVGNames::xAttr)
+
+    if (attr->name() == onabortAttr)
+        document()->setWindowEventListenerForTypeAndAttribute(abortEvent, attr);
+    else if (attr->name() == onerrorAttr)
+        document()->setWindowEventListenerForTypeAndAttribute(errorEvent, attr);
+    else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
         setYBaseValue(SVGLength(LengthModeHeight, attr->value()));

@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class Attribute;
 class Frame;
 
 class EventTargetNode : public Node,
@@ -46,10 +47,11 @@ public:
     virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
     void removeAllEventListeners();
 
-    void setHTMLEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
-    void removeHTMLEventListener(const AtomicString& eventType);
-    bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    EventListener* getHTMLEventListener(const AtomicString& eventType);
+    void setEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
+    void setEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
+    void removeEventListenerForType(const AtomicString& eventType);
+    bool dispatchEventForType(const AtomicString& eventType, bool canBubble, bool cancelable);
+    EventListener* eventListenerForType(const AtomicString& eventType);
 
     bool dispatchSubtreeModifiedEvent();
     void dispatchWindowEvent(PassRefPtr<Event>);

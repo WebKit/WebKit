@@ -71,7 +71,7 @@ void HTMLScriptElement::parseMappedAttribute(MappedAttribute* attr)
     if (attrName == srcAttr)
         handleSourceAttribute(m_data, attr->value());
     else if (attrName == onloadAttr)
-        setHTMLEventListener(loadEvent, attr);
+        setEventListenerForTypeAndAttribute(loadEvent, attr);
     else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -211,15 +211,15 @@ String HTMLScriptElement::languageAttributeValue() const
 {
     return getAttribute(languageAttr).string();
 }
-
+ 
 void HTMLScriptElement::dispatchLoadEvent()
 {
-    dispatchHTMLEvent(loadEvent, false, false);
+    dispatchEventForType(loadEvent, false, false);
 }
 
 void HTMLScriptElement::dispatchErrorEvent()
 {
-    dispatchHTMLEvent(errorEvent, true, false);
+    dispatchEventForType(errorEvent, true, false);
 }
 
 }

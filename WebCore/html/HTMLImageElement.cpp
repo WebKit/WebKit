@@ -122,9 +122,9 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attrName == ismapAttr)
         ismap = true;
     else if (attrName == onabortAttr)
-        setHTMLEventListener(abortEvent, attr);
+        setEventListenerForTypeAndAttribute(abortEvent, attr);
     else if (attrName == onloadAttr)
-        setHTMLEventListener(loadEvent, attr);
+        setEventListenerForTypeAndAttribute(loadEvent, attr);
     else if (attrName == compositeAttr) {
         if (!parseCompositeOperator(attr->value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;

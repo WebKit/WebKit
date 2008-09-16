@@ -2844,8 +2844,6 @@ webcore_cppflags += \
 	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
 webcore_sources += \
-	WebCore/bindings/js/JSSVGLazyEventListener.cpp \
-	WebCore/bindings/js/JSSVGLazyEventListener.h \
 	WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	WebCore/bindings/js/JSSVGMatrixCustom.cpp \
 	WebCore/bindings/js/JSSVGPODTypeWrapper.h \

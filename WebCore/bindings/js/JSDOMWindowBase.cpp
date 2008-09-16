@@ -232,13 +232,13 @@ JSDOMWindowBase::~JSDOMWindowBase()
     clearAllTimeouts();
 
     // Clear any backpointers to the window
-
     ListenersMap::iterator i2 = d()->jsEventListeners.begin();
     ListenersMap::iterator e2 = d()->jsEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindow();
-    i2 = d()->jsHTMLEventListeners.begin();
-    e2 = d()->jsHTMLEventListeners.end();
+
+    i2 = d()->jsEventListenersAttachedToEventTargetNodes.begin();
+    e2 = d()->jsEventListenersAttachedToEventTargetNodes.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindow();
 
@@ -246,8 +246,9 @@ JSDOMWindowBase::~JSDOMWindowBase()
     UnprotectedListenersMap::iterator e1 = d()->jsUnprotectedEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindow();
-    i1 = d()->jsUnprotectedHTMLEventListeners.begin();
-    e1 = d()->jsUnprotectedHTMLEventListeners.end();
+
+    i1 = d()->jsUnprotectedEventListenersAttachedToEventTargetNodes.begin();
+    e1 = d()->jsUnprotectedEventListenersAttachedToEventTargetNodes.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindow();
 }
@@ -839,7 +840,7 @@ void JSDOMWindowBase::setListener(ExecState* exec, const AtomicString& eventType
     if (!doc)
         return;
 
-    doc->setHTMLWindowEventListener(eventType, findOrCreateJSEventListener(exec, func, true));
+    doc->setWindowEventListenerForType(eventType, findOrCreateJSEventListener(exec, func, true));
 }
 
 JSValue* JSDOMWindowBase::getListener(ExecState* exec, const AtomicString& eventType) const
@@ -849,55 +850,52 @@ JSValue* JSDOMWindowBase::getListener(ExecState* exec, const AtomicString& event
     if (!doc)
         return jsUndefined();
 
-    EventListener* listener = doc->getHTMLWindowEventListener(eventType);
+    EventListener* listener = doc->windowEventListenerForType(eventType);
     if (listener && static_cast<JSEventListener*>(listener)->listenerObj())
         return static_cast<JSEventListener*>(listener)->listenerObj();
     return jsNull();
 }
 
-JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool html)
+JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool attachedToEventTargetNode)
 {
     if (!val->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(val);
-    ListenersMap& listeners = html ? d()->jsHTMLEventListeners : d()->jsEventListeners;
+    ListenersMap& listeners = attachedToEventTargetNode ? d()->jsEventListenersAttachedToEventTargetNodes : d()->jsEventListeners;
     return listeners.get(object);
 }
 
-PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool html)
+PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
 {
-    JSEventListener* listener = findJSEventListener(val, html);
-    if (listener)
+    if (JSEventListener* listener = findJSEventListener(val, attachedToEventTargetNode))
         return listener;
 
     if (!val->isObject())
         return 0;
-    JSObject* object = static_cast<JSObject*>(val);
 
-    // Note that the JSEventListener constructor adds it to our jsEventListeners list
-    return JSEventListener::create(object, static_cast<JSDOMWindow*>(this), html).get();
+    // The JSEventListener constructor adds it to our jsEventListeners map.
+    return JSEventListener::create(static_cast<JSObject*>(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
 }
 
-JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool html)
+JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
 {
     if (!val->isObject())
         return 0;
-    JSObject* object = static_cast<JSObject*>(val);
-    UnprotectedListenersMap& listeners = html ? d()->jsUnprotectedHTMLEventListeners : d()->jsUnprotectedEventListeners;
-    return listeners.get(object);
+
+    UnprotectedListenersMap& listeners = attachedToEventTargetNode ? d()->jsUnprotectedEventListenersAttachedToEventTargetNodes : d()->jsUnprotectedEventListeners;
+    return listeners.get(static_cast<JSObject*>(val));
 }
 
-PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool html)
+PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
 {
-    JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, html);
-    if (listener)
+    if (JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, attachedToEventTargetNode))
         return listener;
+
     if (!val->isObject())
         return 0;
-    JSObject* object = static_cast<JSObject*>(val);
 
     // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
-    return JSUnprotectedEventListener::create(object, static_cast<JSDOMWindow*>(this), html).get();
+    return JSUnprotectedEventListener::create(static_cast<JSObject*>(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
 }
 
 void JSDOMWindowBase::clearHelperObjectProperties()
@@ -1322,9 +1320,9 @@ JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListeners()
     return d()->jsEventListeners;
 }
 
-JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsHTMLEventListeners()
+JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListenersAttachedToEventTargetNodes()
 {
-    return d()->jsHTMLEventListeners;
+    return d()->jsEventListenersAttachedToEventTargetNodes;
 }
 
 JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventListeners()
@@ -1332,9 +1330,9 @@ JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventLis
     return d()->jsUnprotectedEventListeners;
 }
 
-JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedHTMLEventListeners()
+JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventListenersAttachedToEventTargetNodes()
 {
-    return d()->jsUnprotectedHTMLEventListeners;
+    return d()->jsUnprotectedEventListenersAttachedToEventTargetNodes;
 }
 
 void DOMWindowTimer::fired()

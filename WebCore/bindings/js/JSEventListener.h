@@ -33,25 +33,25 @@ namespace WebCore {
     class JSAbstractEventListener : public EventListener {
     public:
         virtual void handleEvent(Event*, bool isWindowEvent);
-        virtual bool isHTMLEventListener() const;
+        virtual bool isAttachedToEventTargetNode() const;
         virtual JSC::JSObject* listenerObj() const = 0;
         virtual JSDOMWindow* window() const = 0;
 
     protected:
-        JSAbstractEventListener(bool isHTML)
-            : m_isHTML(isHTML)
+        JSAbstractEventListener(bool isAttachedToEventTargetNode)
+            : m_isAttachedToEventTargetNode(isAttachedToEventTargetNode)
         {
         }
 
     private:
-        bool m_isHTML;
+        bool m_isAttachedToEventTargetNode;
     };
 
     class JSUnprotectedEventListener : public JSAbstractEventListener {
     public:
-        static PassRefPtr<JSUnprotectedEventListener> create(JSC::JSObject* listener, JSDOMWindow* window, bool isHTML)
+        static PassRefPtr<JSUnprotectedEventListener> create(JSC::JSObject* listener, JSDOMWindow* window, bool isAttachedToEventTargetNode)
         {
-            return adoptRef(new JSUnprotectedEventListener(listener, window, isHTML));
+            return adoptRef(new JSUnprotectedEventListener(listener, window, isAttachedToEventTargetNode));
         }
         virtual ~JSUnprotectedEventListener();
 
@@ -61,7 +61,7 @@ namespace WebCore {
         void mark();
 
     private:
-        JSUnprotectedEventListener(JSC::JSObject* listener, JSDOMWindow*, bool isHTML);
+        JSUnprotectedEventListener(JSC::JSObject* listener, JSDOMWindow*, bool isAttachedToEventTargetNode);
 
         JSC::JSObject* m_listener;
         JSDOMWindow* m_window;
@@ -69,9 +69,9 @@ namespace WebCore {
 
     class JSEventListener : public JSAbstractEventListener {
     public:
-        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMWindow* window, bool isHTML)
+        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMWindow* window, bool isAttachedToEventTargetNode)
         {
-            return adoptRef(new JSEventListener(listener, window, isHTML));
+            return adoptRef(new JSEventListener(listener, window, isAttachedToEventTargetNode));
         }
         virtual ~JSEventListener();
 
@@ -80,7 +80,7 @@ namespace WebCore {
         void clearWindow();
 
     protected:
-        JSEventListener(JSC::JSObject* listener, JSDOMWindow*, bool isHTML);
+        JSEventListener(JSC::JSObject* listener, JSDOMWindow*, bool isAttachedToEventTargetNode);
 
         mutable JSC::ProtectedPtr<JSC::JSObject> m_listener;
 
@@ -90,17 +90,23 @@ namespace WebCore {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& code, JSDOMWindow* window, Node* node, int lineNumber)
+        enum LazyEventListenerType {
+            HTMLLazyEventListener
+#if ENABLE(SVG)
+            , SVGLazyEventListener
+#endif
+        };
+
+        static PassRefPtr<JSLazyEventListener> create(LazyEventListenerType type, const String& functionName, const String& code, JSDOMWindow* window, Node* node, int lineNumber)
         {
-            return adoptRef(new JSLazyEventListener(functionName, code, window, node, lineNumber));
+            return adoptRef(new JSLazyEventListener(type, functionName, code, window, node, lineNumber));
         }
         virtual JSC::JSObject* listenerObj() const;
 
     protected:
-        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
+        JSLazyEventListener(LazyEventListenerType type, const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
 
     private:
-        virtual JSC::JSValue* eventParameterName() const;
         void parseCode() const;
 
         mutable String m_functionName;
@@ -108,6 +114,8 @@ namespace WebCore {
         mutable bool m_parsed;
         int m_lineNumber;
         Node* m_originalNode;
+
+        LazyEventListenerType m_type;
     };
 
     JSC::JSValue* getNodeEventListener(Node*, const AtomicString& eventType);

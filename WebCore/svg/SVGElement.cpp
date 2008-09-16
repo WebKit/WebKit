@@ -111,35 +111,29 @@ SVGElement* SVGElement::viewportElement() const
     return 0;
 }
 
-void SVGElement::addSVGEventListener(const AtomicString& eventType, const Attribute* attr)
-{
-    Element::setHTMLEventListener(eventType, document()->accessSVGExtensions()->
-        createSVGEventListener(attr->localName().string(), attr->value(), this));
-}
-
 void SVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     // standard events
     if (attr->name() == onloadAttr)
-        addSVGEventListener(loadEvent, attr);
+        setEventListenerForTypeAndAttribute(loadEvent, attr);
     else if (attr->name() == onclickAttr)
-        addSVGEventListener(clickEvent, attr);
+        setEventListenerForTypeAndAttribute(clickEvent, attr);
     else if (attr->name() == onmousedownAttr)
-        addSVGEventListener(mousedownEvent, attr);
+        setEventListenerForTypeAndAttribute(mousedownEvent, attr);
     else if (attr->name() == onmousemoveAttr)
-        addSVGEventListener(mousemoveEvent, attr);
+        setEventListenerForTypeAndAttribute(mousemoveEvent, attr);
     else if (attr->name() == onmouseoutAttr)
-        addSVGEventListener(mouseoutEvent, attr);
+        setEventListenerForTypeAndAttribute(mouseoutEvent, attr);
     else if (attr->name() == onmouseoverAttr)
-        addSVGEventListener(mouseoverEvent, attr);
+        setEventListenerForTypeAndAttribute(mouseoverEvent, attr);
     else if (attr->name() == onmouseupAttr)
-        addSVGEventListener(mouseupEvent, attr);
+        setEventListenerForTypeAndAttribute(mouseupEvent, attr);
     else if (attr->name() == SVGNames::onfocusinAttr)
-        addSVGEventListener(DOMFocusInEvent, attr);
+        setEventListenerForTypeAndAttribute(DOMFocusInEvent, attr);
     else if (attr->name() == SVGNames::onfocusoutAttr)
-        addSVGEventListener(DOMFocusOutEvent, attr);
+        setEventListenerForTypeAndAttribute(DOMFocusOutEvent, attr);
     else if (attr->name() == SVGNames::onactivateAttr)
-        addSVGEventListener(DOMActivateEvent, attr);
+        setEventListenerForTypeAndAttribute(DOMActivateEvent, attr);
     else
         StyledElement::parseMappedAttribute(attr);
 }
@@ -192,6 +186,8 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
 
 void SVGElement::finishParsingChildren()
 {
+    StyledElement::finishParsingChildren();
+
     // finishParsingChildren() is called when the close tag is reached for an element (e.g. </svg>)
     // we send SVGLoad events here if we can, otherwise they'll be sent when any required loads finish
     sendSVGLoadEventIfPossible();

@@ -98,8 +98,6 @@ public:
     static bool inBlockTagList(const Node*);
     static bool isRecognizedTagName(const QualifiedName&);
 
-    void setHTMLEventListener(const AtomicString& eventType, Attribute*);
-
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

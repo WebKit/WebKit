@@ -1527,10 +1527,10 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     m_scriptElement = 0;
     
     if (errorOccurred) 
-        EventTargetNodeCast(e.get())->dispatchHTMLEvent(errorEvent, true, false);
+        EventTargetNodeCast(e.get())->dispatchEventForType(errorEvent, true, false);
     else {
         m_view->frame()->loader()->executeScript(cachedScriptUrl, 1, scriptSource);
-        EventTargetNodeCast(e.get())->dispatchHTMLEvent(loadEvent, false, false);
+        EventTargetNodeCast(e.get())->dispatchEventForType(loadEvent, false, false);
     }
     
     m_scriptElement = 0;

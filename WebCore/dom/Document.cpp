@@ -2419,9 +2419,9 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
         oldFocusedNode->setFocus(false);
                 
         // Dispatch a change event for text fields or textareas that have been edited
-        RenderObject *r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer());
+        RenderObject* r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer());
         if (r && (r->isTextArea() || r->isTextField()) && r->isEdited()) {
-            EventTargetNodeCast(oldFocusedNode.get())->dispatchHTMLEvent(changeEvent, true, false);
+            EventTargetNodeCast(oldFocusedNode.get())->dispatchEventForType(changeEvent, true, false);
             if ((r = static_cast<RenderObject*>(oldFocusedNode.get()->renderer())))
                 r->setEdited(false);
         }
@@ -2652,7 +2652,7 @@ CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)
     return 0;
 }
 
-void Document::handleWindowEvent(Event *evt, bool useCapture)
+void Document::handleWindowEvent(Event* evt, bool useCapture)
 {
     if (m_windowEventListeners.isEmpty())
         return;
@@ -2666,29 +2666,29 @@ void Document::handleWindowEvent(Event *evt, bool useCapture)
             (*it)->listener()->handleEvent(evt, true);
 }
 
-void Document::setHTMLWindowEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener)
+void Document::setWindowEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
     // If we already have it we don't want removeWindowEventListener to delete it
-    removeHTMLWindowEventListener(eventType);
+    removeWindowEventListenerForType(eventType);
     if (listener)
         addWindowEventListener(eventType, listener, false);
 }
 
-EventListener *Document::getHTMLWindowEventListener(const AtomicString& eventType)
+EventListener* Document::windowEventListenerForType(const AtomicString& eventType)
 {
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
     for (; it != m_windowEventListeners.end(); ++it) {
-        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener())
+        if ((*it)->eventType() == eventType && (*it)->listener()->isAttachedToEventTargetNode())
             return (*it)->listener();
     }
     return 0;
 }
 
-void Document::removeHTMLWindowEventListener(const AtomicString& eventType)
+void Document::removeWindowEventListenerForType(const AtomicString& eventType)
 {
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
     for (; it != m_windowEventListeners.end(); ++it) {
-        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener()) {
+        if ((*it)->eventType() == eventType && (*it)->listener()->isAttachedToEventTargetNode()) {
             if (eventType == unloadEvent)
                 removePendingFrameUnloadEventCount();
             else if (eventType == beforeunloadEvent)
@@ -2699,7 +2699,7 @@ void Document::removeHTMLWindowEventListener(const AtomicString& eventType)
     }
 }
 
-void Document::addWindowEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, bool useCapture)
+void Document::addWindowEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     if (eventType == unloadEvent)
         addPendingFrameUnloadEventCount();
@@ -2727,13 +2727,12 @@ void Document::removeWindowEventListener(const AtomicString& eventType, EventLis
     }
 }
 
-bool Document::hasWindowEventListener(const AtomicString &eventType)
+bool Document::hasWindowEventListener(const AtomicString& eventType)
 {
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
     for (; it != m_windowEventListeners.end(); ++it)
-        if ((*it)->eventType() == eventType) {
+        if ((*it)->eventType() == eventType)
             return true;
-        }
     return false;
 }
 
@@ -2755,24 +2754,30 @@ void Document::addPendingFrameBeforeUnloadEventCount()
          m_frame->eventHandler()->addPendingFrameBeforeUnloadEventCount();
 }
 
-    void Document::removePendingFrameBeforeUnloadEventCount() 
+void Document::removePendingFrameBeforeUnloadEventCount() 
 {
     if (m_frame)
         m_frame->eventHandler()->removePendingFrameBeforeUnloadEventCount();
 }
 
-PassRefPtr<EventListener> Document::createHTMLEventListener(const String& functionName, const String& code, Node *node)
+PassRefPtr<EventListener> Document::createEventListener(const String& functionName, const String& code, Node* node)
 {
-    if (Frame* frm = frame())
-        if (frm->script()->isEnabled())
-            return frm->script()->createHTMLEventHandler(functionName, code, node);
-    return 0;
+    Frame* frm = frame();
+    if (!frm || !frm->script()->isEnabled())
+        return 0;
+
+#if ENABLE(SVG)
+    if (node ? node->isSVGElement() : isSVGDocument())
+        return frm->script()->createSVGEventHandler(functionName, code, node);
+#endif
+
+    // We may want to treat compound document event handlers in a different way, in future.
+    return frm->script()->createHTMLEventHandler(functionName, code, node);
 }
 
-void Document::setHTMLWindowEventListener(const AtomicString& eventType, Attribute* attr)
+void Document::setWindowEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute* attr)
 {
-    setHTMLWindowEventListener(eventType,
-        createHTMLEventListener(attr->localName().string(), attr->value(), 0));
+    setWindowEventListenerForType(eventType, createEventListener(attr->localName().string(), attr->value(), 0));
 }
 
 void Document::dispatchImageLoadEventSoon(HTMLImageLoader *image)

@@ -2002,11 +2002,11 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 #endif
 
         if (errorOccurred)
-            EventTargetNodeCast(n.get())->dispatchHTMLEvent(errorEvent, true, false);
+            EventTargetNodeCast(n.get())->dispatchEventForType(errorEvent, true, false);
         else {
             if (static_cast<HTMLScriptElement*>(n.get())->shouldExecuteAsJavaScript())
                 m_state = scriptExecution(scriptSource, m_state, cachedScriptUrl);
-            EventTargetNodeCast(n.get())->dispatchHTMLEvent(loadEvent, false, false);
+            EventTargetNodeCast(n.get())->dispatchEventForType(loadEvent, false, false);
         }
 
         // The state of pendingScripts.isEmpty() can change inside the scriptExecution()

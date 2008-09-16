@@ -553,11 +553,11 @@ public:
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
     void handleWindowEvent(Event*, bool useCapture);
-    void setHTMLWindowEventListener(const AtomicString &eventType, PassRefPtr<EventListener>);
-    EventListener* getHTMLWindowEventListener(const AtomicString &eventType);
-    void removeHTMLWindowEventListener(const AtomicString &eventType);
+    void setWindowEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
+    EventListener* windowEventListenerForType(const AtomicString& eventType);
+    void removeWindowEventListenerForType(const AtomicString& eventType);
 
-    void setHTMLWindowEventListener(const AtomicString& eventType, Attribute*);
+    void setWindowEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
 
     void addWindowEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     void removeWindowEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
@@ -568,8 +568,8 @@ public:
     void addPendingFrameBeforeUnloadEventCount();
     void removePendingFrameBeforeUnloadEventCount();
 
-    PassRefPtr<EventListener> createHTMLEventListener(const String& functionName, const String& code, Node*);
-    
+    PassRefPtr<EventListener> createEventListener(const String& functionName, const String& code, Node*);
+
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.
      * The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes

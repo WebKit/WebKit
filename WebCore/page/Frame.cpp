@@ -1388,7 +1388,7 @@ void Frame::sendScrollEvent()
     Document* doc = document();
     if (!doc)
         return;
-    doc->dispatchHTMLEvent(scrollEvent, true, false);
+    doc->dispatchEventForType(scrollEvent, true, false);
 }
 
 void Frame::clearTimers(FrameView *view, Document *document)

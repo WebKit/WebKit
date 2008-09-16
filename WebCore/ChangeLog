@@ -1,3 +1,165 @@
+2008-09-15  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=20865
+        Prepare HTMLScriptElement & SVGScriptElement unification, and unification of event handling.
+
+        Several renames:
+        dispatchHTMLEvent -> dispatchEventForType
+        setHTMLEventListener -> setEventListenerForType
+        getHTMLEventListener -> eventListenerForType
+        removeHTMLEventListener -> removeEventListenerForType
+        isHTMLEventListener -> isAttachedToEventTargetNode
+        ...
+
+        Similar renames for the dispatch/get/set/*Window*Event functions.
+        Kill JSSVGLazyEventListener and merge with JSLazyEventListener.
+
+        Most important change: Rename setHTMLEventListener to setEventListenerForTypeAndAttribute,
+        as there exists a generic createEventListener() method now, taking care of JSLazyEventListener creation.
+
+        setHTMLEventListener() used createHTMLEventListener() before and was HTML specific.
+        SVG is able to use the code as well now. This affects most files in html/.
+
+        No functional changes.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::setListener):
+        (WebCore::JSDOMWindowBase::getListener):
+        (WebCore::JSDOMWindowBase::findJSEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener):
+        (WebCore::JSDOMWindowBase::findJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::jsEventListenersAttachedToEventTargetNodes):
+        (WebCore::JSDOMWindowBase::jsUnprotectedEventListenersAttachedToEventTargetNodes):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSAbstractEventListener::isAttachedToEventTargetNode):
+        (WebCore::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        (WebCore::eventParameterName):
+        (WebCore::JSLazyEventListener::parseCode):
+        (WebCore::getNodeEventListener):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSAbstractEventListener::JSAbstractEventListener):
+        (WebCore::JSUnprotectedEventListener::create):
+        (WebCore::JSEventListener::create):
+        (WebCore::JSLazyEventListener::):
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::setListener):
+        (WebCore::JSEventTargetNode::getListener):
+        * bindings/js/JSSVGLazyEventListener.cpp: Removed.
+        * bindings/js/JSSVGLazyEventListener.h: Removed.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createHTMLEventHandler):
+        (WebCore::ScriptController::createSVGEventHandler):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        (WebCore::Document::handleWindowEvent):
+        (WebCore::Document::setWindowEventListenerForType):
+        (WebCore::Document::windowEventListenerForType):
+        (WebCore::Document::removeWindowEventListenerForType):
+        (WebCore::Document::addWindowEventListener):
+        (WebCore::Document::hasWindowEventListener):
+        (WebCore::Document::removePendingFrameBeforeUnloadEventCount):
+        (WebCore::Document::createEventListener):
+        (WebCore::Document::setWindowEventListenerForTypeAndAttribute):
+        * dom/Document.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::isAttachedToEventTargetNode):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchFocusEvent):
+        (WebCore::EventTargetNode::dispatchBlurEvent):
+        (WebCore::EventTargetNode::dispatchEventForType):
+        (WebCore::EventTargetNode::removeEventListenerForType):
+        (WebCore::EventTargetNode::setEventListenerForType):
+        (WebCore::EventTargetNode::setEventListenerForTypeAndAttribute):
+        (WebCore::EventTargetNode::eventListenerForType):
+        * dom/EventTargetNode.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        (WebCore::HTMLElement::checkDTD):
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::onChange):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareSubmit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::onSearch):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::asyncEventTimerFired):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::dispatchLoadEvent):
+        (WebCore::HTMLScriptElement::dispatchErrorEvent):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        (WebCore::EventHandler::canMouseDragExtendSelect):
+        * page/Frame.cpp:
+        (WebCore::Frame::sendScrollEvent):
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::valueChanged):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::selectionChanged):
+        * svg/SVGDocumentExtensions.cpp:
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseMappedAttribute):
+        (WebCore::SVGElement::finishParsingChildren):
+        * svg/SVGElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * svg/SVGSVGElement.h:
+
 2008-09-15  Dave Hyatt  <hyatt@apple.com>
 
         Convert PlatformScrollbarWin to use ScrollbarTheme for hit testing.  PlatformScrollbarQt/Gtk still

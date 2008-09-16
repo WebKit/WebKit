@@ -13117,14 +13117,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSSVGLazyEventListener.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSSVGLazyEventListener.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSSVGLengthCustom.cpp"
 					>
 				</File>
