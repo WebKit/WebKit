@@ -1,3 +1,11 @@
+2008-09-16  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Hide unused media element controls in the QtWebKit port
+
+        * platform/qt/html4-adjustments-qt.css
+
 2008-09-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
