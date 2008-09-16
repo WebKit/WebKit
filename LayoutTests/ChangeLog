@@ -1,3 +1,20 @@
+2008-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Fix test cases that call notifyDone() twice
+        https://bugs.webkit.org/show_bug.cgi?id=20884
+        
+        * animations/change-one-anim.html:
+            Only respond to one of the two running animations, to avoid
+            doing things twice.
+            https://bugs.webkit.org/show_bug.cgi?id=20881
+            
+        * svg/custom/gradient-attr-update.svg:
+            Fix the test to not run code both on an onload handler,
+            and on the synthetic click handler.
+            https://bugs.webkit.org/show_bug.cgi?id=20884
+
 2008-09-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

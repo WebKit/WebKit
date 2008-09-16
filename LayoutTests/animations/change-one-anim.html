@@ -70,8 +70,12 @@
             }
         }
 
-        function start()
+        function start(event)
         {
+            // We only want to continue for one of the two animations running
+            if (event.animationName == "horiz")
+                return;
+
             setTimeout("removeAnim()", 500);
             setTimeout("snapshot()", 750);
             
