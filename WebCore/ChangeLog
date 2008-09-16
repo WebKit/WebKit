@@ -1,5 +1,24 @@
 2008-09-16  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=15129
+          <rdar://problem/4644824> adding a new line with DOM does unnecessary additional repaint
+
+        Covered by fast/repaint/4776765.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Avoid repainting this object if it
+        did not have layout in the beginning.
+        (WebCore::RenderBlock::layoutBlockChildren): If a child did not have
+        layout in the beginning, repaint it in its new position, to compensate
+        for the above (regardless of whether it "moved").
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::checkForRepaintDuringLayout): Added a comment
+        about generalizing this fix in the future.
+
+2008-09-16  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=15384

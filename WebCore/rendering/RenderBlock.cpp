@@ -582,7 +582,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     IntRect oldBounds;
     IntRect oldOutlineBox;
-    bool checkForRepaint = checkForRepaintDuringLayout();
+    bool checkForRepaint = m_everHadLayout && checkForRepaintDuringLayout();
     if (checkForRepaint) {
         oldBounds = absoluteClippedOverflowRect();
         oldOutlineBox = absoluteOutlineBox();
@@ -1279,7 +1279,10 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         // run-ins.  When we encounter these four types of objects, we don't actually lay them out as normal flow blocks.
         bool handled = false;
         RenderObject* next = handleSpecialChild(child, marginInfo, compactInfo, handled);
-        if (handled) { child = next; continue; }
+        if (handled) {
+            child = next;
+            continue;
+        }
 
         // The child is a normal flow object.  Compute its vertical margins now.
         child->calcVerticalMargins();
@@ -1319,6 +1322,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
         if (child->isRenderBlock())
             previousFloatBottom = max(previousFloatBottom, oldRect.y() + static_cast<RenderBlock*>(child)->floatBottom());
 
+        bool childHadLayout = child->m_everHadLayout;
         bool childNeededLayout = child->needsLayout();
         if (childNeededLayout)
             child->layout();
@@ -1364,9 +1368,12 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
             // If the child moved, we have to repaint it as well as any floating/positioned
             // descendants.  An exception is if we need a layout.  In this case, we know we're going to
             // repaint ourselves (and the child) anyway.
-            if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            if (childHadLayout && !selfNeedsLayout() && child->checkForRepaintDuringLayout())
                 child->repaintDuringLayoutIfMoved(oldRect);
         }
+
+        if (!childHadLayout && child->checkForRepaintDuringLayout())
+            child->repaint();
 
         child = child->nextSibling();
     }
