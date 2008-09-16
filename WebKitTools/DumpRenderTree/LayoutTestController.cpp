@@ -342,8 +342,8 @@ static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function,
         controller->notifyDone();
     else {
         const char* msg = "FAIL: Null layoutTestController in notifyDone(). Did a test call notifyDone() twice?\n";
-        fprintf(stderr, msg);
-        fprintf(stdout, msg);
+        fprintf(stderr, "%s", msg);
+        fprintf(stdout, "%s", msg);
     }
     return JSValueMakeUndefined(context);
 }
