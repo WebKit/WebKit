@@ -78,10 +78,6 @@ namespace JSC {
         virtual JSObject* toObject(ExecState*) const = 0;
 
         // WebCore uses this to make document.all and style.filter undetectable
-        //
-        // This in checked in CTI using a vptr check, so currently only StringObjectThatMasqueradesAsUndefined
-        // overloading ths is supported.  If this behaviour is required in other classes, then we will need
-        // update the code generated.
         virtual bool masqueradeAsUndefined() const { return false; }
 
         // Garbage collection.

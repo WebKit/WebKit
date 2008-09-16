@@ -317,12 +317,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     return call;
 }
 
-ALWAYS_INLINE void CTI::emitJumpSlowCaseIfIsJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex)
-{
-    m_jit.testl_i32r(JSImmediate::TagMask, reg);
-    m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), opcodeIndex));
-}
-
 ALWAYS_INLINE void CTI::emitJumpSlowCaseIfNotJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex)
 {
     m_jit.testl_i32r(JSImmediate::TagMask, reg);
@@ -1402,32 +1396,16 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_eq_null: {
-            emitGetArg(instruction[i + 2].u.operand, X86::edx);
-
-            // go to a slow case either if this is not an immediate, or if the immediate is not undefined/null.
-            emitJumpSlowCaseIfIsJSCell(X86::edx, i);
-            m_jit.andl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::edx);
-            m_jit.cmpl_i32r(JSImmediate::FullTagTypeNull, X86::edx);
-            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
-
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
+            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+            emitCall(i, Machine::cti_op_eq_null);
             emitPutResult(instruction[i + 1].u.operand);
-
             i += 3;
             break;
         }
         case op_neq_null: {
-            emitGetArg(instruction[i + 2].u.operand, X86::edx);
-
-            // go to a slow case either if this is not an immediate, or if the immediate is not undefined/null.
-            emitJumpSlowCaseIfIsJSCell(X86::edx, i);
-            m_jit.andl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::edx);
-            m_jit.cmpl_i32r(JSImmediate::FullTagTypeNull, X86::edx);
-            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
-
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
+            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+            emitCall(i, Machine::cti_op_neq_null);
             emitPutResult(instruction[i + 1].u.operand);
-
             i += 3;
             break;
         }
@@ -1876,50 +1854,6 @@ void CTI::privateCompileSlowCases()
             break;
         }
         CTI_COMPILE_BINARY_OP_SLOW_CASE(op_mul);
-        case op_eq_null: {
-            m_jit.link(iter->from, m_jit.label());
-
-            // Value is a JSCell - speculate false, check for StringObjectThatMasqueradesAsUndefined.
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            m_jit.cmpl_i32m(reinterpret_cast<unsigned>(m_machine->m_jsStringObjectThatMasqueradesAsUndefinedVptr), X86::edx);
-            m_jit.link(m_jit.emitUnlinkedJne(), m_labels[i + 3]);
-            
-            // Value is a StringObjectThatMasqueradesAsUndefined
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            m_jit.link(m_jit.emitUnlinkedJmp(), m_labels[i + 3]);
-
-            // Value is an immediate other than undefined/null
-            m_jit.link((++iter)->from, m_jit.label());
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            
-            i += 3;
-            break;
-        }
-        case op_neq_null: {
-            m_jit.link(iter->from, m_jit.label());
-
-            // Value is a JSCell - speculate false, check for StringObjectThatMasqueradesAsUndefined.
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            m_jit.cmpl_i32m(reinterpret_cast<unsigned>(m_machine->m_jsStringObjectThatMasqueradesAsUndefinedVptr), X86::edx);
-            m_jit.link(m_jit.emitUnlinkedJne(), m_labels[i + 3]);
-            
-            // Value is a StringObjectThatMasqueradesAsUndefined
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            m_jit.link(m_jit.emitUnlinkedJmp(), m_labels[i + 3]);
-
-            // Value is an immediate other than undefined/null
-            m_jit.link((++iter)->from, m_jit.label());
-            m_jit.movl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            
-            i += 3;
-            break;
-        }
         default:
             ASSERT_NOT_REACHED();
             break;

@@ -260,7 +260,6 @@ namespace JSC {
 
         bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
         bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
-        bool doesMasqueradesAsUndefined(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringObjectThatMasqueradesAsUndefinedVptr; }
         
         void tryCacheGetByID(ExecState*, CodeBlock*, Instruction* vPC, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
@@ -292,7 +291,6 @@ namespace JSC {
         
         void* m_jsArrayVptr;
         void* m_jsStringVptr;
-        void* m_jsStringObjectThatMasqueradesAsUndefinedVptr;
         void* m_jsFunctionVptr;
 
 #if HAVE(COMPUTED_GOTO)

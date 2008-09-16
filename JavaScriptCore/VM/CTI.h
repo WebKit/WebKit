@@ -244,11 +244,7 @@ namespace JSC {
         static const int repatchOffsetGetByIdStructureID = 19;
         static const int repatchOffsetGetByIdBranchToSlowCase = 25;
         static const int repatchOffsetGetByIdPropertyMapOffset = 34;
-#if ENABLE(SAMPLING_TOOL)
-        static const int repatchOffsetGetByIdSlowCaseCall = 27;
-#else
         static const int repatchOffsetGetByIdSlowCaseCall = 17;
-#endif
 
     public:
         static void compile(Machine* machine, ExecState* exec, CodeBlock* codeBlock)
@@ -357,6 +353,7 @@ namespace JSC {
 
         void emitJumpSlowCaseIfIsJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex);
         void emitJumpSlowCaseIfNotJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex);
+
         void emitJumpSlowCaseIfNotImm(X86Assembler::RegisterID, unsigned opcodeIndex);
         void emitJumpSlowCaseIfNotImms(X86Assembler::RegisterID, X86Assembler::RegisterID, unsigned opcodeIndex);
 

@@ -53,7 +53,6 @@
 #include "debugger.h"
 #include "operations.h"
 #include "SamplingTool.h"
-#include "StringObjectThatMasqueradesAsUndefined.h"
 #include <stdio.h>
 
 #if PLATFORM(DARWIN)
@@ -571,10 +570,6 @@ Machine::Machine()
     JSArray* jsArray = new (storage) JSArray(StructureID::create(jsNull()));
     m_jsArrayVptr = jsArray->vptr();
     static_cast<JSCell*>(jsArray)->~JSCell();
-
-    StringObjectThatMasqueradesAsUndefined* jsStringObjectThatMasqueradesAsUndefined = new (storage) StringObjectThatMasqueradesAsUndefined(StringObjectThatMasqueradesAsUndefined::VPtrStealingHack);
-    m_jsStringObjectThatMasqueradesAsUndefinedVptr = jsStringObjectThatMasqueradesAsUndefined->vptr();
-    static_cast<JSCell*>(jsStringObjectThatMasqueradesAsUndefined)->~JSCell();
 
     JSString* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     m_jsStringVptr = jsString->vptr();
@@ -5427,11 +5422,10 @@ void Machine::cti_op_debug(CTI_ARGS)
 JSValue* Machine::cti_op_eq_null(CTI_ARGS)
 {
     JSValue* src = ARG_src1;
-    
     if (src->isUndefinedOrNull())
         return jsBoolean(true);
 
-    return jsBoolean(ARG_exec->machine()->doesMasqueradesAsUndefined(src));
+    return jsBoolean(!JSImmediate::isImmediate(src) && static_cast<JSCell*>(src)->masqueradeAsUndefined());
 }
 
 JSValue* Machine::cti_op_neq_null(CTI_ARGS)
@@ -5440,7 +5434,7 @@ JSValue* Machine::cti_op_neq_null(CTI_ARGS)
     if (src->isUndefinedOrNull())
         return jsBoolean(false);
 
-    return jsBoolean(!ARG_exec->machine()->doesMasqueradesAsUndefined(src));
+    return jsBoolean(JSImmediate::isImmediate(src) || !static_cast<JSCell*>(src)->masqueradeAsUndefined());
 }
 
 void* Machine::cti_vm_throw(CTI_ARGS)

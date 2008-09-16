@@ -28,10 +28,6 @@ namespace JSC {
 
     class StringObject : public JSWrapperObject {
     public:
-        StringObject(VPtrStealingHackType type)
-            : JSWrapperObject(type)
-        {
-        }
         StringObject(ExecState*, JSObject* prototype);
         StringObject(ExecState*, JSObject* prototype, const UString&);
 
