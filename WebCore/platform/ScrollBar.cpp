@@ -175,6 +175,13 @@ void Scrollbar::autoscrollTimerFired(Timer<Scrollbar>*)
     autoscrollPressedPart(cNormalTimerDelay); // FIXME: Get timer delay from ScrollbarTheme.
 }
 
+static bool thumbUnderMouse(Scrollbar* scrollbar)
+{
+    int thumbPos = scrollbar->theme()->trackPosition(scrollbar) + scrollbar->theme()->thumbPosition(scrollbar);
+    int thumbLength = scrollbar->theme()->thumbLength(scrollbar);
+    return scrollbar->pressedPos() >= thumbPos && scrollbar->pressedPos() < thumbPos + thumbLength;
+}
+
 void Scrollbar::autoscrollPressedPart(double delay)
 {
     // Don't do anything for the thumb or if nothing was pressed.
@@ -182,8 +189,8 @@ void Scrollbar::autoscrollPressedPart(double delay)
         return;
 
     // Handle the track.
-    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && thumbUnderMouse()) {
-        invalidatePart(m_pressedPart); // FIXME: Switch to the theme API once PlatformScrollbarSafari/Qt are converted.
+    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && thumbUnderMouse(this)) {
+        theme()->invalidatePart(this, m_pressedPart);
         m_hoveredPart = ThumbPart;
         return;
     }
@@ -201,8 +208,8 @@ void Scrollbar::startTimerIfNeeded(double delay)
 
     // Handle the track.  We halt track scrolling once the thumb is level
     // with us.
-    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && thumbUnderMouse()) {
-        invalidatePart(m_pressedPart); // FIXME: Switch to the theme API once PlatformScrollbarSafari/Qt are converted.
+    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && thumbUnderMouse(this)) {
+        theme()->invalidatePart(this, m_pressedPart);
         m_hoveredPart = ThumbPart;
         return;
     }
@@ -213,7 +220,7 @@ void Scrollbar::startTimerIfNeeded(double delay)
         if (m_currentPos == 0)
             return;
     } else {
-        if (m_currentPos == m_totalSize - m_visibleSize)
+        if (m_currentPos == maximum())
             return;
     }
 
@@ -246,30 +253,31 @@ ScrollGranularity Scrollbar::pressedPartScrollGranularity()
     return ScrollByPage;
 }
 
+static void moveThumb(Scrollbar* scrollbar, const int pos)
+{
+    // Drag the thumb.
+    ScrollbarTheme* theme = scrollbar->theme();
+    int thumbPos = theme->thumbPosition(scrollbar);
+    int thumbLen = theme->thumbLength(scrollbar);
+    int trackLen = theme->trackLength(scrollbar);
+    int maxPos = trackLen - thumbLen;
+    int delta = pos - scrollbar->pressedPos();
+    if (delta > 0)
+        delta = min(maxPos - thumbPos, delta);
+    else if (delta < 0)
+        delta = max(-thumbPos, delta);
+    if (delta) {
+        scrollbar->setValue(static_cast<float>(thumbPos + delta) * scrollbar->maximum() / (trackLen - thumbLen));
+        scrollbar->setPressedPos(scrollbar->pressedPos() + theme->thumbPosition(scrollbar) - thumbPos);
+    }
+}
+
 bool Scrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
-        // Drag the thumb.
-        int thumbPos = theme()->thumbPosition(this);
-        int thumbLen = theme()->thumbLength(this);
-        int trackLen = theme()->trackLength(this);
-        int maxPos = trackLen - thumbLen;
-        int delta = 0;
-        if (m_orientation == HorizontalScrollbar)
-            delta = convertFromContainingWindow(evt.pos()).x() - m_pressedPos;
-        else
-            delta = convertFromContainingWindow(evt.pos()).y() - m_pressedPos;
-
-        if (delta > 0)
-            delta = min(maxPos - thumbPos, delta);
-        else if (delta < 0)
-            delta = max(-thumbPos, delta);
-
-        if (delta != 0) {
-            setValue((float)(thumbPos + delta) * (m_totalSize - m_visibleSize) / (trackLen - thumbLen));
-            m_pressedPos += theme()->thumbPosition(this) - thumbPos;
-        }
-
+        moveThumb(this, m_orientation == HorizontalScrollbar ? 
+                        convertFromContainingWindow(evt.pos()).x() :
+                        convertFromContainingWindow(evt.pos()).y());
         return true;
     }
 
@@ -332,15 +340,22 @@ bool Scrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
     if (evt.button() == RightButton)
         return true; // FIXME: Handled as context menu by Qt right now.  Should just avoid even calling this method on a right click though.
 
+    m_pressedPart = theme()->hitTest(this, evt);
+    int pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
+    
     if (theme()->shouldCenterOnThumb(this, evt)) {
-        invalidate();
         m_hoveredPart = m_pressedPart = ThumbPart;
-        theme()->centerOnThumb(this, evt);
+        int thumbLen = theme()->thumbLength(this);
+        int desiredPos = pressedPos - thumbLen / 2;
+        // Set the pressed position to the top of the thumb so that when we do the move, the delta
+        // will be from the current pixel position of the thumb to the new desired position for the thumb.
+        m_pressedPos = theme()->trackPosition(this) + theme()->thumbPosition(this);
+        moveThumb(this, desiredPos);
         return true;
     }
     
-    m_pressedPart = theme()->hitTest(this, evt);
-    m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
+    m_pressedPos = pressedPos;
+
     theme()->invalidatePart(this, m_pressedPart);
     autoscrollPressedPart(theme()->initialAutoscrollTimerDelay());
     return true;

@@ -58,6 +58,7 @@ public:
     
     int value() const { return lroundf(m_currentPos); }
     float currentPos() const { return m_currentPos; }
+    int pressedPos() const { return m_pressedPos; }
     int visibleSize() const { return m_visibleSize; }
     int totalSize() const { return m_totalSize; }
     int maximum() const { return m_totalSize - m_visibleSize; }        
@@ -66,13 +67,14 @@ public:
     int lineStep() const { return m_lineStep; }
     int pageStep() const { return m_pageStep; }
     float pixelStep() const { return m_pixelStep; }
-    void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
     
     ScrollbarPart pressedPart() const { return m_pressedPart; }
     ScrollbarPart hoveredPart() const { return m_hoveredPart; }
 
+    void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
     bool setValue(int);
     void setProportion(int visibleSize, int totalSize);
+    void setPressedPos(int p) { m_pressedPos = p; }
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
     
@@ -100,10 +102,6 @@ protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
     
-    // FIXME: This two methods will not need to be virtual eventually.
-    virtual void invalidatePart(ScrollbarPart part) {}
-    virtual bool thumbUnderMouse() { return false; }
-
     void autoscrollTimerFired(Timer<Scrollbar>*);
     void startTimerIfNeeded(double delay);
     void stopTimerIfNeeded();

@@ -49,6 +49,8 @@ protected:
     virtual IntRect trackRect(Scrollbar*, bool painting = false);
 
     virtual int minimumThumbLength(Scrollbar*);
+    
+    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
 
     virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
     virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);

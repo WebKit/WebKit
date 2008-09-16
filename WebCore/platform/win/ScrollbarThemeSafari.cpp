@@ -194,6 +194,11 @@ int ScrollbarThemeSafari::minimumThumbLength(Scrollbar* scrollbar)
     return cThumbMinLength[scrollbar->controlSize()];
 }
 
+bool ScrollbarThemeSafari::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+{
+    return evt.shiftKey() && evt.button() == LeftButton;
+}
+
 void ScrollbarThemeSafari::paintTrack(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& trackRect, ScrollbarControlPartMask)
 {
     if (!SafariThemeLibrary())

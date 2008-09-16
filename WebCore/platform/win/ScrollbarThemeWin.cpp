@@ -27,6 +27,7 @@
 #include "ScrollbarThemeWin.h"
 
 #include "GraphicsContext.h"
+#include "PlatformMouseEvent.h"
 #include "ScrollBar.h"
 #include "SoftLinking.h"
 
@@ -336,6 +337,11 @@ void ScrollbarThemeWin::paintThumb(GraphicsContext* context, Scrollbar* scrollba
     } else
         ::DrawEdge(hdc, &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
     context->releaseWindowsContext(hdc, rect, alphaBlend);
+}
+
+bool ScrollbarThemeWin::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+{
+    return evt.shiftKey() && evt.button() == LeftButton;
 }
 
 }

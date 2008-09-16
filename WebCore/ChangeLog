@@ -1,3 +1,47 @@
+2008-09-15  Dave Hyatt  <hyatt@apple.com>
+
+        Convert Qt over to its ScrollbarTheme.  Add cross-platform support for jumping the thumb location directly
+        to a pressed location on the track (this is done with the middle mouse on Qt and with Shift-Click on Windows).
+      
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.cpp:
+        (WebCore::thumbUnderMouse):
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::startTimerIfNeeded):
+        (WebCore::moveThumb):
+        (WebCore::Scrollbar::handleMouseMoveEvent):
+        (WebCore::Scrollbar::handleMousePressEvent):
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::pressedPos):
+        (WebCore::Scrollbar::pixelStep):
+        (WebCore::Scrollbar::setPressedPos):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::thumbPosition):
+        (WebCore::ScrollbarTheme::thumbLength):
+        (WebCore::ScrollbarTheme::trackPosition):
+        (WebCore::ScrollbarTheme::trackLength):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::trackPosition):
+        * platform/ScrollbarThemeComposite.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::styleOptionSlider):
+        (WebCore::ScrollbarThemeQt::hitTest):
+        (WebCore::ScrollbarThemeQt::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeQt::invalidatePart):
+        (WebCore::ScrollbarThemeQt::thumbPosition):
+        (WebCore::):
+        * platform/qt/ScrollbarThemeQt.h:
+        * platform/win/ScrollbarThemeSafari.cpp:
+        (WebCore::ScrollbarThemeSafari::shouldCenterOnThumb):
+        * platform/win/ScrollbarThemeSafari.h:
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::shouldCenterOnThumb):
+        * platform/win/ScrollbarThemeWin.h:
+
 2008-09-15  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Sam Weinig.

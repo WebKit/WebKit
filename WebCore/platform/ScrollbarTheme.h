@@ -67,10 +67,10 @@ public:
     virtual void invalidatePart(Scrollbar*, ScrollbarPart) {}
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
-    virtual void centerOnThumb(Scrollbar*, const PlatformMouseEvent&) {}
-    virtual int thumbPosition(Scrollbar*) { return 0; }
-    virtual int thumbLength(Scrollbar*) { return 0; }
-    virtual int trackLength(Scrollbar*) { return 0; }
+    virtual int thumbPosition(Scrollbar*) { return 0; } // The position of the thumb relative to the track.
+    virtual int thumbLength(Scrollbar*) { return 0; } // The length of the thumb along the axis of the scrollbar.
+    virtual int trackPosition(Scrollbar*) { return 0; } // The position of the track relative to the scrollbar.
+    virtual int trackLength(Scrollbar*) { return 0; } // The length of the track along the axis of the scrollbar.
     
     virtual double initialAutoscrollTimerDelay() { return 0.25; }
     virtual double autoscrollTimerDelay() { return 0.05; }
