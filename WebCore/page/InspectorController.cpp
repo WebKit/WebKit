@@ -544,56 +544,43 @@ static JSValueRef highlightDOMNode(JSContextRef context, JSObjectRef /*function*
     return undefined;
 }
 
-static JSValueRef hideDOMNodeHighlight(JSContextRef context, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
+static JSValueRef hideDOMNodeHighlight(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
-    JSValueRef undefined = JSValueMakeUndefined(context);
-
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (argumentCount || !controller)
-        return undefined;
-
-    controller->hideHighlight();
-
-    return undefined;
+    if (controller)
+        controller->hideHighlight();
+    return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef loaded(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->scriptObjectReady();
+    if (controller)
+        controller->scriptObjectReady();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef unloading(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->close();
+    if (controller)
+        controller->close();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef attach(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->attachWindow();
+    if (controller)
+        controller->attachWindow();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef detach(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments[]*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->detachWindow();
+    if (controller)
+        controller->detachWindow();
     return JSValueMakeUndefined(ctx);
 }
 
@@ -821,22 +808,16 @@ static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObj
 static JSValueRef startDebuggingAndReloadInspectedPage(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->startDebuggingAndReloadInspectedPage();
-
+    if (controller)
+        controller->startDebuggingAndReloadInspectedPage();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef stopDebugging(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->stopDebugging();
-
+    if (controller)
+        controller->stopDebugging();
     return JSValueMakeUndefined(ctx);
 }
 
@@ -889,55 +870,40 @@ static JSValueRef setPauseOnExceptions(JSContextRef ctx, JSObjectRef /*function*
 static JSValueRef pauseInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->pauseInDebugger();
-
+    if (controller)
+        controller->pauseInDebugger();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef resumeDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->resumeDebugger();
-
+    if (controller)
+        controller->resumeDebugger();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef stepOverStatementInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->stepOverStatementInDebugger();
-
+    if (controller)
+        controller->stepOverStatementInDebugger();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef stepIntoStatementInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->stepIntoStatementInDebugger();
-
+    if (controller)
+        controller->stepIntoStatementInDebugger();
     return JSValueMakeUndefined(ctx);
 }
 
 static JSValueRef stepOutOfFunctionInDebugger(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->stepOutOfFunctionInDebugger();
-
+    if (controller)
+        controller->stepOutOfFunctionInDebugger();
     return JSValueMakeUndefined(ctx);
 }
 
@@ -996,11 +962,8 @@ static JSValueRef isWindowVisible(JSContextRef ctx, JSObjectRef /*function*/, JS
 static JSValueRef closeWindow(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
-    if (!controller)
-        return JSValueMakeUndefined(ctx);
-
-    controller->closeWindow();
-
+    if (controller)
+        controller->closeWindow();
     return JSValueMakeUndefined(ctx);
 }
 
@@ -1339,7 +1302,6 @@ void InspectorController::addProfileMessageToConsole(PassRefPtr<Profile> prpProf
     message += "\" finished.";
     addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
 }
-
 
 void InspectorController::attachWindow()
 {

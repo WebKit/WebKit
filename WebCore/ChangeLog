@@ -1,3 +1,27 @@
+2008-09-15  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Clean up some inspector JS callbacks to remove an extra return.
+
+        * page/InspectorController.cpp:
+        (WebCore::hideDOMNodeHighlight):
+        (WebCore::loaded):
+        (WebCore::unloading):
+        (WebCore::attach):
+        (WebCore::detach):
+        (WebCore::startDebuggingAndReloadInspectedPage):
+        (WebCore::stopDebugging):
+        (WebCore::debuggerAttached):
+        (WebCore::pauseOnExceptions):
+        (WebCore::pauseInDebugger):
+        (WebCore::resumeDebugger):
+        (WebCore::stepOverStatementInDebugger):
+        (WebCore::stepIntoStatementInDebugger):
+        (WebCore::stepOutOfFunctionInDebugger):
+        (WebCore::isWindowVisible):
+        (WebCore::closeWindow):
+
 2008-09-15  Dave Hyatt  <hyatt@apple.com>
 
         Completely switch Windows scrollbars over to ScrollbarTheme.  The Aqua windows scrollbar and native scrollbar
