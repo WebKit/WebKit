@@ -150,13 +150,13 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
 ScrollbarPart ScrollbarThemeQt::hitTest(Scrollbar* scrollbar, const PlatformMouseEvent& evt)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    const QPoint pos = convertFromContainingWindow(evt.pos());
+    const QPoint pos = scrollbar->convertFromContainingWindow(evt.pos());
     opt->rect.moveTo(QPoint(0, 0));
     QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, opt, pos, 0);
     return scrollbarPart(sc);
 }
 
-bool ScrollbarThemeQt::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&)
+bool ScrollbarThemeQt::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
 {
     // Middle click centers slider thumb (if supported)
     return QApplication::style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition) && evt.button() == MiddleButton;
@@ -182,7 +182,7 @@ int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
 {
     if (scrollbar->isEnabled())
-        return (int)((float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum();
+        return (int)((float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum());
     return 0;
 }
 
