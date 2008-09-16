@@ -1,3 +1,11 @@
+2008-09-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler, Beth Dakin
+
+        Support strings for AXLists
+
+        * English.lproj/Localizable.strings:
+
 2008-09-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

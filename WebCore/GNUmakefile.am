@@ -1397,6 +1397,8 @@ webcore_sources += \
 	WebCore/page/AXObjectCache.h \
 	WebCore/page/AccessibilityImageMapLink.cpp \
 	WebCore/page/AccessibilityImageMapLink.h \
+	WebCore/page/AccessibilityList.cpp \
+	WebCore/page/AccessibilityList.h \
 	WebCore/page/AccessibilityListBox.cpp \
 	WebCore/page/AccessibilityListBox.h \
 	WebCore/page/AccessibilityListBoxOption.cpp \

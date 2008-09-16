@@ -731,6 +731,7 @@ SOURCES += \
     loader/TextResourceDecoder.cpp \
     page/AccessibilityImageMapLink.cpp \
     page/AccessibilityObject.cpp \    
+    page/AccessibilityList.cpp \    
     page/AccessibilityListBox.cpp \    
     page/AccessibilityListBoxOption.cpp \    
     page/AccessibilityRenderObject.cpp \    

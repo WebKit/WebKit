@@ -112,6 +112,8 @@
 - (NSString *)AXListMarkerText;
 - (NSString *)AXImageMapText;
 - (NSString *)AXHeadingText;
+- (NSString *)AXDefinitionListTermText;
+- (NSString *)AXDefinitionListDefinitionText;
 
 - (NSString *)AXButtonActionVerb;
 - (NSString *)AXRadioButtonActionVerb;

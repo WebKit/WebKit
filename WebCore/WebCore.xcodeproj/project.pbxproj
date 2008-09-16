@@ -405,6 +405,8 @@
 		29AAC36E0E534E86008F9B3B /* AccessibilityTableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29AAC36C0E534E86008F9B3B /* AccessibilityTableCell.cpp */; };
 		29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AAC51D0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h */; };
 		29AAC5200E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29AAC51E0E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp */; };
+		29FFBB820E7C5A3D00407730 /* AccessibilityList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29FFBB800E7C5A3D00407730 /* AccessibilityList.cpp */; };
+		29FFBB830E7C5A3D00407730 /* AccessibilityList.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FFBB810E7C5A3D00407730 /* AccessibilityList.h */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
@@ -4995,6 +4997,8 @@
 		29AAC36C0E534E86008F9B3B /* AccessibilityTableCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableCell.cpp; sourceTree = "<group>"; };
 		29AAC51D0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableHeaderContainer.h; sourceTree = "<group>"; };
 		29AAC51E0E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableHeaderContainer.cpp; sourceTree = "<group>"; };
+		29FFBB800E7C5A3D00407730 /* AccessibilityList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityList.cpp; sourceTree = "<group>"; };
+		29FFBB810E7C5A3D00407730 /* AccessibilityList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityList.h; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -9289,6 +9293,8 @@
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
 				2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */,
 				2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */,
+				29FFBB800E7C5A3D00407730 /* AccessibilityList.cpp */,
+				29FFBB810E7C5A3D00407730 /* AccessibilityList.h */,
 				2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */,
 				2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */,
 				2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */,
@@ -15580,6 +15586,7 @@
 				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
 				E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
+				29FFBB830E7C5A3D00407730 /* AccessibilityList.h in Headers */,
 				BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,
 				BC8B854B0E7C7F5600AB6984 /* ScrollbarTheme.h in Headers */,
@@ -17385,6 +17392,7 @@
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
 				7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */,
 				E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */,
+				29FFBB820E7C5A3D00407730 /* AccessibilityList.cpp in Sources */,
 				BC8B853D0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

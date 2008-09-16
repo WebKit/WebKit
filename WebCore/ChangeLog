@@ -1,3 +1,34 @@
+2008-09-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler, Beth Dakin
+
+        <rdar://problem/4003789> Expose lists as AXList
+        <rdar://problem/5707399> VO: Definition lists not announced in Safari
+
+        Lists are now exposed through AX. On the mac (in SnowLeopard) they use two new subroles
+        AXContentList for <ul>, <ol> and AXDefinitionList for <dl>
+        Inside the definition list, each <dt> "term" has an accessibility description ("term"), 
+        as does each <dd> tag ("definition")
+
+        Test: accessibility/lists.html
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/AXObjectCache.cpp:
+        * page/AccessibilityList.cpp: Added.
+        * page/AccessibilityList.h: Added.
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        * page/AccessibilityTable.cpp:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        * page/mac/WebCoreViewFactory.h:
+        * platform/LocalizedStrings.h:
+        * platform/mac/LocalizedStringsMac.mm:
+        * platform/qt/Localizations.cpp:
+
 2008-09-15  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

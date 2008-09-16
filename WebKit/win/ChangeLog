@@ -1,3 +1,13 @@
+2008-09-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler, Beth Dakin
+
+        Support strings for AXLists
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::AXDefinitionListTermText):
+        (WebCore::AXDefinitionListDefinitionText):
+
 2008-09-13  Dave Hyatt  <hyatt@apple.com>
 
         Add ScrollbarTheme to the build.
