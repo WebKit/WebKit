@@ -118,6 +118,9 @@ public:
     void removePositionedObject(RenderObject*);
     virtual void removePositionedObjects(RenderBlock*);
 
+    void addPercentHeightDescendant(RenderBox*);
+    static void removePercentHeightDescendant(RenderBox*);
+
     virtual void positionListMarker() { }
 
     virtual void borderFitAdjust(int& x, int& w) const; // Shrink the box in which the border paints if border-fit is set.

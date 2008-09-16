@@ -1,3 +1,22 @@
+2008-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=15384
+          Div does not notice when grandparent changes height
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=20714
+          Resizing Gmail inbox vertically results in whitespace at the bottom of the window
+
+        * fast/block/basic/quirk-percent-height-grandchild.html: Added.
+        * fast/replaced/percent-height-in-anonymous-block.html: Added.
+        * platform/mac/fast/block/basic/quirk-percent-height-grandchild-expected.checksum: Added.
+        * platform/mac/fast/block/basic/quirk-percent-height-grandchild-expected.png: Added.
+        * platform/mac/fast/block/basic/quirk-percent-height-grandchild-expected.txt: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-expected.checksum: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-expected.png: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-expected.txt: Added.
+
 2008-09-15  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

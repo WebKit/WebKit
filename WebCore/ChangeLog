@@ -1,3 +1,53 @@
+2008-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=15384
+          Div does not notice when grandparent changes height
+
+        Test: fast/block/basic/quirk-percent-height-grandchild.html
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20714
+          Resizing Gmail inbox vertically results in whitespace at the bottom of the window
+
+        Test: fast/replaced/percent-height-in-anonymous-block.html
+
+        Added a two-way mapping between boxes with percentage heights and
+        their non-parent ancestors up to the one the height is computed relative
+        to. In quirks mode (the first bug), this can be any number of containing
+        block with auto height. In strict mode (the second bug) this can be
+        the containing block of an anonymous block containing a replaced
+        element.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock): Added code to remove the all the
+        mapping to/from this block to percentage-height descendants.
+        (WebCore::RenderBlock::layoutBlockChildren): Added code to mark
+        percentage-height descendants (and their containing block ancestry chain
+        up to this block) for layout. This ensures that those descendants whose
+        height depends on the height of this block (or an ancestor) are updated.
+        (WebCore::RenderBlock::addPercentHeightDescendant): Added. Establishes
+        a two-way mapping between this block and the given box.
+        (WebCore::RenderBlock::removePercentHeightDescendant): Added. Removes
+        all the mapping to/from this box.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::setStyle): Added calls to
+        removePercentHeightDescendant() when style changes and the box
+        previously had a percentage height. An exception is when the style
+        change does not require layout, in which case the box still has
+        a percentage height and the mappings are valid. In all other cases,
+        any required mappings will be (re-)established during layout.
+        (WebCore::RenderBox::destroy): Added a call to
+        removePercentHeightDescendant.
+        (WebCore::RenderBox::calcPercentageHeight): Added code that, in quirks
+        mode, if a higher-than-parent containing block is affecting the box's
+        height, creates a mapping between the box and that block.
+        (WebCore::RenderBox::calcReplacedHeightUsing): Changed to skip over
+        anonymous containing blocks, if any, and when that happens, use
+        addPercentHeightDescendant() to ensure that the non-anonymous block
+        is aware of the dependent percent-height box.
+
 2008-09-16  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Oliver Hunt and Alp Toker.

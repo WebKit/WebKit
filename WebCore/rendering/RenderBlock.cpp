@@ -65,6 +65,12 @@ struct ColumnInfo {
 typedef WTF::HashMap<const RenderBox*, ColumnInfo*> ColumnInfoMap;
 static ColumnInfoMap* gColumnInfoMap = 0;
 
+typedef WTF::HashMap<const RenderBlock*, HashSet<RenderBox*>*> PercentHeightDescendantsMap;
+static PercentHeightDescendantsMap* gPercentHeightDescendantsMap = 0;
+
+typedef WTF::HashMap<const RenderBox*, HashSet<RenderBlock*>*> PercentHeightContainerMap;
+static PercentHeightContainerMap* gPercentHeightContainerMap = 0;
+
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
 {
@@ -119,6 +125,25 @@ RenderBlock::~RenderBlock()
     
     if (m_hasColumns)
         delete gColumnInfoMap->take(this);
+
+    if (gPercentHeightDescendantsMap) {
+        if (HashSet<RenderBox*>* descendantSet = gPercentHeightDescendantsMap->take(this)) {
+            HashSet<RenderBox*>::iterator end = descendantSet->end();
+            for (HashSet<RenderBox*>::iterator descendant = descendantSet->begin(); descendant != end; ++descendant) {
+                HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->get(*descendant);
+                ASSERT(containerSet);
+                if (!containerSet)
+                    continue;
+                ASSERT(containerSet->contains(this));
+                containerSet->remove(this);
+                if (containerSet->isEmpty()) {
+                    gPercentHeightContainerMap->remove(*descendant);
+                    delete containerSet;
+                }
+            }
+            delete descendantSet;
+        }
+    }
 }
 
 void RenderBlock::setStyle(RenderStyle* _style)
@@ -1196,6 +1221,24 @@ void RenderBlock::handleBottomOfBlock(int top, int bottom, MarginInfo& marginInf
 
 void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom)
 {
+    if (gPercentHeightDescendantsMap) {
+        if (HashSet<RenderBox*>* descendants = gPercentHeightDescendantsMap->get(this)) {
+            HashSet<RenderBox*>::iterator end = descendants->end();
+            for (HashSet<RenderBox*>::iterator it = descendants->begin(); it != end; ++it) {
+                RenderBox* box = *it;
+                while (box != this) {
+                    if (box->normalChildNeedsLayout())
+                        break;
+                    box->setChildNeedsLayout(true, false);
+                    box = box->containingBlock();
+                    ASSERT(box);
+                    if (!box)
+                        break;
+                }
+            }
+        }
+    }
+
     int top = borderTop() + paddingTop();
     int bottom = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
 
@@ -2359,6 +2402,61 @@ void RenderBlock::newLine(EClear clear)
     }
     if (m_height < newY)
         m_height = newY;
+}
+
+void RenderBlock::addPercentHeightDescendant(RenderBox* descendant)
+{
+    if (!gPercentHeightDescendantsMap) {
+        gPercentHeightDescendantsMap = new PercentHeightDescendantsMap;
+        gPercentHeightContainerMap = new PercentHeightContainerMap;
+    }
+
+    HashSet<RenderBox*>* descendantSet = gPercentHeightDescendantsMap->get(this);
+    if (!descendantSet) {
+        descendantSet = new HashSet<RenderBox*>;
+        gPercentHeightDescendantsMap->set(this, descendantSet);
+    }
+    bool added = descendantSet->add(descendant).second;
+    if (!added) {
+        ASSERT(gPercentHeightContainerMap->get(descendant));
+        ASSERT(gPercentHeightContainerMap->get(descendant)->contains(this));
+        return;
+    }
+
+    HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->get(descendant);
+    if (!containerSet) {
+        containerSet = new HashSet<RenderBlock*>;
+        gPercentHeightContainerMap->set(descendant, containerSet);
+    }
+    ASSERT(!containerSet->contains(this));
+    containerSet->add(this);
+}
+
+void RenderBlock::removePercentHeightDescendant(RenderBox* descendant)
+{
+    if (!gPercentHeightContainerMap)
+        return;
+
+    HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->take(descendant);
+    if (!containerSet)
+        return;
+
+    HashSet<RenderBlock*>::iterator end = containerSet->end();
+    for (HashSet<RenderBlock*>::iterator it = containerSet->begin(); it != end; ++it) {
+        RenderBlock* container = *it;
+        HashSet<RenderBox*>* descendantSet = gPercentHeightDescendantsMap->get(container);
+        ASSERT(descendantSet);
+        if (!descendantSet)
+            continue;
+        ASSERT(descendantSet->contains(descendant));
+        descendantSet->remove(descendant);
+        if (descendantSet->isEmpty()) {
+            gPercentHeightDescendantsMap->remove(container);
+            delete descendantSet;
+        }
+    }
+
+    delete containerSet;
 }
 
 int
