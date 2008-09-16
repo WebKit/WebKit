@@ -1,3 +1,18 @@
+2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20863: ASSERTION FAILED: addressOffset < instructions.size() in CodeBlock::getHandlerForVPC
+        <https://bugs.webkit.org/show_bug.cgi?id=20863>
+
+        r36427 changed the number of arguments to op_construct without changing
+        the argument index for the vPC in the call to initializeCallFrame() in
+        the CTI case. This caused a JSC test failure. Correcting the argument
+        index fixes the test failure.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_construct_JSConstruct):
+
 2008-09-15  Mark Rowe  <mrowe@apple.com>
 
         Fix GCC 4.2 build.

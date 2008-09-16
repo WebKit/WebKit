@@ -4480,7 +4480,7 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     r[firstArg] = newObject; // "this" value
 
     Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
-    machine->initializeCallFrame(callFrame, codeBlock, ARG_instr4, scopeChain, r, 0/*dst*/, firstArg, argCount, constructor);
+    machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, constructor);
     exec->m_callFrame = callFrame;
 
     r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
