@@ -1,5 +1,11 @@
 2008-09-15  Sam Weinig  <sam@webkit.org>
 
+        Make this test a little more forgiving.
+
+        * fast/js/resources/garbage-collect-after-string-appends.js:
+
+2008-09-15  Sam Weinig  <sam@webkit.org>
+
         http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
         now passes on Leopard in 10.5.5.
 

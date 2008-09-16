@@ -11,7 +11,7 @@ if (window.GCController)
 
 // str has 150 chars in it (which is greater than the limit of the GC to ignore which I believe is at 128).
 var str = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-var count = 500;
+var count = 1000;
 for (var i = 0; i < count; ++i) {
     str += "b";
 }
