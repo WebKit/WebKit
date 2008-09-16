@@ -1598,10 +1598,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         JSValue* src1 = r[(++vPC)->u.operand].jsValue(exec);
         JSValue* src2 = r[(++vPC)->u.operand].jsValue(exec);
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
+        if (JSImmediate::areBothImmediate(src1, src2))
             r[dst] = jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
+        else if (JSImmediate::isEitherImmediate(src1, src2) & src1 != JSImmediate::zeroImmediate() & src2 != JSImmediate::zeroImmediate())
+            r[dst] = jsBoolean(false);
         else
-            r[dst] = jsBoolean(strictEqual(src1, src2));
+            r[dst] = jsBoolean(strictEqualSlowCase(src1, src2));
 
         ++vPC;
         NEXT_OPCODE;
@@ -1616,10 +1618,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         JSValue* src1 = r[(++vPC)->u.operand].jsValue(exec);
         JSValue* src2 = r[(++vPC)->u.operand].jsValue(exec);
-        if (JSImmediate::areBothImmediateNumbers(src1, src2))
+
+        if (JSImmediate::areBothImmediate(src1, src2))
             r[dst] = jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
+        else if (JSImmediate::isEitherImmediate(src1, src2) & src1 != JSImmediate::zeroImmediate() & src2 != JSImmediate::zeroImmediate())
+            r[dst] = jsBoolean(true);
         else
-            r[dst] = jsBoolean(!strictEqual(src1, src2));
+            r[dst] = jsBoolean(!strictEqualSlowCase(src1, src2));
 
         ++vPC;
         NEXT_OPCODE;
@@ -5290,14 +5295,15 @@ JSValue* Machine::cti_op_stricteq(CTI_ARGS)
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
 
-    if (JSImmediate::areBothImmediateNumbers(src1, src2))
+    if (JSImmediate::areBothImmediate(src1, src2))
         return jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
-    else {
-        ExecState* exec = ARG_exec;
-        JSValue* result = jsBoolean(strictEqual(src1, src2));
-        VM_CHECK_EXCEPTION_AT_END();
-        return result;
-    }
+    if (JSImmediate::isEitherImmediate(src1, src2) & src1 != JSImmediate::from(0) & src2 != JSImmediate::from(0))
+        return jsBoolean(false);
+
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsBoolean(strictEqualSlowCase(src1, src2));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
 }
 
 JSValue* Machine::cti_op_nstricteq(CTI_ARGS)
@@ -5305,14 +5311,15 @@ JSValue* Machine::cti_op_nstricteq(CTI_ARGS)
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
 
-    if (JSImmediate::areBothImmediateNumbers(src1, src2))
+    if (JSImmediate::areBothImmediate(src1, src2))
         return jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
-    else {
-        ExecState* exec = ARG_exec;
-        JSValue* result = jsBoolean(!strictEqual(src1, src2));
-        VM_CHECK_EXCEPTION_AT_END();
-        return result;
-    }
+    if (JSImmediate::isEitherImmediate(src1, src2) & src1 != JSImmediate::from(0) & src2 != JSImmediate::from(0))
+        return jsBoolean(true);
+    
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsBoolean(!strictEqualSlowCase(src1, src2));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
 }
 
 JSValue* Machine::cti_op_to_jsnumber(CTI_ARGS)

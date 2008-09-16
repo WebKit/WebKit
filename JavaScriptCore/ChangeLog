@@ -1,3 +1,22 @@
+2008-09-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - speed up the === and !== operators by choosing the fast cases better
+        
+        No effect on SunSpider but speeds up the V8 EarlyBoyer benchmark about 4%.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_stricteq):
+        (JSC::Machine::cti_op_nstricteq):
+        * kjs/JSImmediate.h:
+        (JSC::JSImmediate::areBothImmediate):
+        * kjs/operations.cpp:
+        (JSC::strictEqual):
+        (JSC::strictEqualSlowCase):
+        * kjs/operations.h:
+
 2008-09-15  Oliver Hunt  <oliver@apple.com>
 
         RS=Sam.
