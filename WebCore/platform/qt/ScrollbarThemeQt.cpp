@@ -70,6 +70,25 @@ static QStyle::SubControl scPart(const ScrollbarPart& part)
     return QStyle::SC_None;
 }
 
+static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc) 
+{ 
+    switch (sc) { 
+        case QStyle::SC_None: 
+            return NoPart; 
+        case QStyle::SC_ScrollBarSubLine: 
+            return BackButtonPart; 
+        case QStyle::SC_ScrollBarSubPage: 
+            return BackTrackPart; 
+        case QStyle::SC_ScrollBarSlider: 
+            return ThumbPart; 
+        case QStyle::SC_ScrollBarAddPage: 
+            return ForwardTrackPart; 
+        case QStyle::SC_ScrollBarAddLine: 
+            return ForwardButtonPart; 
+    }
+    return NoPart; 
+}
+ 
 static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
 {
     static QStyleOptionSlider opt;
@@ -161,7 +180,7 @@ int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 
 int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
 {
-    if (isEnabled())
+    if (scrollbar->isEnabled())
         return (int)((float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum();
     return 0;
 }
@@ -175,12 +194,14 @@ int ScrollbarThemeQt::thumbLength(Scrollbar* scrollbar)
 
 int ScrollbarThemeQt::trackPosition(Scrollbar* scrollbar)
 {
+    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     IntRect track = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? track.x() : track.y();
 }
 
 int ScrollbarThemeQt::trackLength(Scrollbar* scrollbar)
 {
+    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     IntRect track = QApplication::style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? track.width() : track.height();
 }
