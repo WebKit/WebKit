@@ -60,22 +60,30 @@ public:
     RetainPtr<NSURL> m_responseURL;
     RetainPtr<NSString> m_mimeType;
 
+    NPP m_plugin;
+    uint16 m_transferMode;
+    int32 m_offset;
+    NPStream m_stream;
+    RetainPtr<NSString> m_path;
+    int m_fileDescriptor;
+    BOOL m_sendNotification;
+    void *m_notifyData;
+    
 private:
     WebNetscapePluginStream()
+        : m_plugin(0)
+        , m_transferMode(0)
+        , m_offset(0)
+        , m_fileDescriptor(-1)
+        , m_sendNotification(false)
+        , m_notifyData(0)
     {
+        memset(&m_stream, 0, sizeof(NPStream));
     }
 };
 
 @interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
 {    
-    NPP plugin;
-    uint16 transferMode;
-    int32 offset;
-    NPStream stream;
-    NSString *path;
-    int fileDescriptor;
-    BOOL sendNotification;
-    void *notifyData;
     char *headers;
     WebBaseNetscapePluginView *pluginView;
     NPReason reason;

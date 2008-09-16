@@ -1,5 +1,29 @@
 2008-09-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        Move more instance variables down to the C++ class.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        (-[WebBaseNetscapePluginStream transferMode]):
+        (-[WebBaseNetscapePluginStream plugin]):
+        (-[WebBaseNetscapePluginStream setPlugin:]):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        (-[WebBaseNetscapePluginStream _destroyStreamWithReason:]):
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        (-[WebBaseNetscapePluginStream _deliverDataToFile:]):
+        (-[WebBaseNetscapePluginStream finishedLoading]):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+
+2008-09-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Move a bunch of instance variables into the C++ class.
