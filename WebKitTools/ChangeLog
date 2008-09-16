@@ -1,3 +1,11 @@
+2008-09-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add flag to disable running sample on tests that timeout.
+
+        * Scripts/run-webkit-tests:
+
 2008-09-16  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r36511

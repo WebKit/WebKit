@@ -130,6 +130,7 @@ my $useValgrind = 0;
 my $strictTesting = 0;
 my $generateNewResults = 1;
 my $stripEditingCallbacks = isCygwin();
+my $runSample = 1;
 my $root;
 my $reverseTests = 0;
 my $randomizeTests = 0;
@@ -169,6 +170,7 @@ if (!defined($platform)) {
 my $programName = basename($0);
 my $launchSafariDefault = $launchSafari ? "launch" : "do not launch";
 my $httpDefault = $testHTTP ? "run" : "do not run";
+my $sampleDefault = $runSample ? "run" : "do not run";
 
 # FIXME: "--strict" should be renamed to qt-mac-comparison, or something along those lines.
 my $usage = <<EOF;
@@ -194,6 +196,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --random                        Run the tests in a random order
   --reverse                       Run the tests in reverse alphabetical order
   --root                          Path to root tools build
+  --[no-]sample-on-timeout        Run sample on timeout (default: $sampleDefault) (Mac OS X only)
   -1|--singly                     Isolate each test case run (implies --verbose)
   --skipped=[default|ignore|only] Specifies how to treat the Skipped file
                                      default: Tests/directories listed in the Skipped file are not tested
@@ -239,6 +242,7 @@ my $getOptionsResult = GetOptions(
     'threshold=i' => \$threshold,
     'verbose|v' => \$verbose,
     'valgrind' => \$useValgrind,
+    'sample-on-timeout!' => \$runSample,
     'strict' => \$strictTesting,
     'strip-editing-callbacks!' => \$stripEditingCallbacks,
     'random' => \$randomizeTests,
@@ -1422,7 +1426,8 @@ sub countFinishedTest($$$$) {
     $testType{$test} = $isText;
 }
 
-sub testCrashedOrTimedOut($$$$$) {
+sub testCrashedOrTimedOut($$$$$)
+{
     my ($test, $base, $didCrash, $actual, $error) = @_;
 
     printFailureMessageForTest($test, $didCrash ? "crashed" : "timed out");
@@ -1813,6 +1818,7 @@ sub setFileHandleNonBlocking(*$)
 sub sampleDumpTool()
 {
     return unless isOSX();
+    return unless $runSample;
 
     my $outputDirectory = "$ENV{HOME}/Library/Logs/DumpRenderTree";
     -d $outputDirectory or mkdir $outputDirectory;
