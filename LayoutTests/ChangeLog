@@ -1,3 +1,15 @@
+2008-09-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make transform animation behavior match spec
+        https://bugs.webkit.org/show_bug.cgi?id=20770
+
+        * transitions/transform-op-list-match-expected.txt: Added.
+        * transitions/transform-op-list-match.html: Added.
+        * transitions/transform-op-list-no-match-expected.txt: Added.
+        * transitions/transform-op-list-no-match.html: Added.
+
 2008-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler, Beth Dakin
@@ -146,18 +158,6 @@
         * platform/mac-snowleopard/accessibility/table-detection-expected.txt:
         * platform/mac-snowleopard/accessibility/table-sections-expected.txt:
         * platform/mac-snowleopard/accessibility/table-with-rules-expected.txt:
-
-2008-09-12  Chris Marrin  <cmarrin@apple.com>
-
-        Reviewed by Dave Hyatt.
-
-        Make transform animation behavior match spec
-        https://bugs.webkit.org/show_bug.cgi?id=20770
-
-        * transitions/transform-op-list-match-expected.txt: Added.
-        * transitions/transform-op-list-match.html: Added.
-        * transitions/transform-op-list-no-match-expected.txt: Added.
-        * transitions/transform-op-list-no-match.html: Added.
 
 2008-09-12  Kevin McCullough  <kmccullough@apple.com>
 

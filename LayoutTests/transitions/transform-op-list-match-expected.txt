@@ -1,0 +1,3 @@
+Box should spin 540 degrees because that is the specified rotation and the transform operation lists match, so we should animate each operation separately.
+
+PASS
