@@ -1,5 +1,14 @@
 2008-09-15  Oliver Hunt  <oliver@apple.com>
 
+        RS=Sam.
+
+        Coding style cleanup.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+
+2008-09-15  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Bug 20874: op_resolve does not do any form of caching
