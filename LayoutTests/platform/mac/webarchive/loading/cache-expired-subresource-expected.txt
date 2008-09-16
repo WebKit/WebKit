@@ -6,9 +6,9 @@ main frame - didFinishDocumentLoadForFrame
 <unknown> - didFinishLoading
 resources/cache-expired-subresource.webarchive - didReceiveResponse <NSURLResponse resources/cache-expired-subresource.webarchive>
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+http://localhost/pink-bullet.png - willSendRequest <NSURLRequest http://localhost/pink-bullet.png> redirectResponse (null)
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 resources/cache-expired-subresource.webarchive - didFinishLoading
-http://localhost/pink-bullet.png - willSendRequest <NSURLRequest http://localhost/pink-bullet.png> redirectResponse (null)
 http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/test.php>
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame

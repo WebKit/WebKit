@@ -1,5 +1,5 @@
-<unknown> - didFinishLoading
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255/test.jpg> redirectResponse (null)
+<unknown> - didFinishLoading
 http://255.255.255.255:1/test.jpg - willSendRequest <NSURLRequest http://255.255.255.255:1/test.jpg> redirectResponse (null)
 http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1004, failing URL "http://255.255.255.255/test.jpg">
 http://255.255.255.255:1/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:1/test.jpg">
