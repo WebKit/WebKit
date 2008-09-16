@@ -1,3 +1,10 @@
+2008-09-16  Alice Liu  <alice.liu@apple.com>
+
+        build fix.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+
 2008-09-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

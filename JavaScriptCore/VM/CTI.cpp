@@ -815,7 +815,7 @@ void CTI::privateCompileMainPass()
         }
         case op_ret: {
             // Check for an activation - if there is one, jump to the hook below.
-            m_jit.cmpl_i32m(0, -((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::OptionalCalleeActivation) * sizeof(Register)), X86::edi);
+            m_jit.cmpl_i32m(0, -(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::OptionalCalleeActivation) * sizeof(Register), X86::edi);
             X86Assembler::JmpSrc activation = m_jit.emitUnlinkedJne();
             X86Assembler::JmpDst activated = m_jit.label();
 
@@ -832,7 +832,7 @@ void CTI::privateCompileMainPass()
             // Return the result in %eax, and the caller scope chain in %edx (this is read from the callee call frame,
             // but is only assigned to ExecState::m_scopeChain if returning to a JSFunction).
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
-            m_jit.movl_mr(-((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CallerScopeChain) * sizeof(Register)), X86::edi, X86::edx);
+            m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CallerScopeChain) * sizeof(Register), X86::edi, X86::edx);
             // Restore the machine return addess from the callframe, roll the callframe back to the caller callframe,
             // and preserve a copy of r on the stack at CTI_ARGS_r. 
             m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CTIReturnEIP) * sizeof(Register), X86::edi, X86::ecx);
