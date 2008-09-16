@@ -1,5 +1,11 @@
 2008-09-15  Sam Weinig  <sam@webkit.org>
 
+        Roll out r36476.  It did little to help the issue.
+
+        * fast/js/resources/garbage-collect-after-string-appends.js:
+
+2008-09-15  Sam Weinig  <sam@webkit.org>
+
         Make this test a little more forgiving.
 
         * fast/js/resources/garbage-collect-after-string-appends.js:
