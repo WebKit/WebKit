@@ -41,7 +41,6 @@
 @class WebNetscapePluginPackage;
 @class WebNetscapePluginNullEventSender;
 @class WebBaseNetscapePluginStream;
-@class WebNetscapePluginStream;
 @class WebView;
 
 class PluginTimer;
@@ -65,7 +64,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     WebFrame *_webFrame;
     
     BOOL _loadManually;
-    WebNetscapePluginStream *_manualStream;
+    WebBaseNetscapePluginStream *_manualStream;
     unsigned _dataLengthReceived;
     NSError *_error;
     

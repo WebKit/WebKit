@@ -27,12 +27,7 @@
  */
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#import <AppKit/AppKit.h>
-
 #import <WebKit/WebBaseNetscapePluginView.h>
-
-@class WebFrame;
-@class WebNetscapePluginStream;
 
 // Because the Adobe 7.x Acrobat plug-in has a hard coded check for a view named 
 // "WebNetscapePluginDocumentView", this class must retain the old name in order 
