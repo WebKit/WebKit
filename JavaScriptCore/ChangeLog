@@ -1,3 +1,32 @@
+2008-09-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 20874: op_resolve does not do any form of caching
+        <https://bugs.webkit.org/show_bug.cgi?id=20874>
+
+        This patch adds an op_resolve_global opcode to handle (and cache)
+        property lookup we can statically determine must occur on the global
+        object (if at all).
+
+        3% progression on sunspider, 3.2x improvement to bitops-bitwise-and, and
+        10% in math-partial-sums
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::findScopedProperty):
+        (JSC::CodeGenerator::emitResolve):
+        * VM/Machine.cpp:
+        (JSC::resolveGlobal):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_resolve_global):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+
 2008-09-15  Sam Weinig  <sam@webkit.org>
 
 

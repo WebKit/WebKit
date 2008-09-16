@@ -214,6 +214,10 @@ void CodeBlock::printStructureIDs(const Instruction* vPC) const
         printStructureID("put_by_id_replace", vPC, 4);
         return;
     }
+    if (vPC[0].u.opcode == machine->getOpcode(op_resolve_global)) {
+        printStructureID("resolve_global", vPC, 4);
+        return;
+    }
 
     // These instructions doesn't ref StructureIDs.
     ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic));
@@ -538,6 +542,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int id0 = (++it)->u.operand;
             int skipLevels = (++it)->u.operand;
             printf("[%4d] resolve_skip\t %s, %s, %d\n", location, registerName(r0).c_str(), idName(id0, identifiers[id0]).c_str(), skipLevels);
+            break;
+        }
+        case op_resolve_global: {
+            int r0 = (++it)->u.operand;
+            JSValue* scope = static_cast<JSValue*>((++it)->u.jsCell);
+            int id0 = (++it)->u.operand;
+            printf("[%4d] resolve_global\t %s, %s, %s\n", location, registerName(r0).c_str(), valueToSourceString(exec, scope).ascii(), idName(id0, identifiers[id0]).c_str());
+            it += 2;
             break;
         }
         case op_get_scoped_var: {
@@ -919,6 +931,11 @@ void CodeBlock::derefStructureIDs(Instruction* vPC) const
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_replace)) {
         vPC[4].u.structureID->deref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_resolve_global)) {
+        if(vPC[4].u.structureID)
+            vPC[4].u.structureID->deref();
         return;
     }
     

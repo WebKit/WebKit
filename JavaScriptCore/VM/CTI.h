@@ -89,6 +89,9 @@
 #define ARG_registers1 ((Register*)((ARGS)[1]))
 #define ARG_regexp1 ((RegExp*)((ARGS)[1]))
 #define ARG_pni1 ((JSPropertyNameIterator*)((ARGS)[1]))
+#define ARG_instr1 ((Instruction*)((ARGS)[1]))
+#define ARG_instr2 ((Instruction*)((ARGS)[2]))
+#define ARG_instr3 ((Instruction*)((ARGS)[3]))
 #define ARG_instr4 ((Instruction*)((ARGS)[4]))
 #define ARG_instr5 ((Instruction*)((ARGS)[5]))
 

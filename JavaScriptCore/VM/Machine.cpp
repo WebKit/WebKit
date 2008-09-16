@@ -331,6 +331,45 @@ static bool NEVER_INLINE resolve_skip(ExecState* exec, Instruction* vPC, Registe
     return false;
 }
 
+static bool NEVER_INLINE resolveGlobal(ExecState* exec, Instruction* vPC, Register* r, CodeBlock* codeBlock, JSValue*& exceptionValue)
+{
+    int dst = (vPC + 1)->u.operand;
+    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>((vPC + 2)->u.jsCell);
+    ASSERT(globalObject->isGlobalObject());
+    int property = (vPC + 3)->u.operand;
+    StructureID* structureID = (vPC + 4)->u.structureID;
+    int offset = (vPC + 5)->u.operand;
+
+    if (structureID == globalObject->structureID()) {
+        r[dst] = globalObject->getDirectOffset(offset);
+        return true;
+    }
+
+    Identifier& ident = codeBlock->identifiers[property];
+    PropertySlot slot(globalObject);
+    if (globalObject->getPropertySlot(exec, ident, slot)) {
+        JSValue* result = slot.getValue(exec, ident);
+        if (slot.isCacheable()) {
+            if (vPC[4].u.structureID)
+                vPC[4].u.structureID->deref();
+            globalObject->structureID()->ref();
+            vPC[4] = globalObject->structureID();
+            vPC[5] = slot.cachedOffset();
+            r[dst] = result;
+            return true;
+        }
+
+        exceptionValue = exec->exception();
+        if (exceptionValue)
+            return false;
+        r[dst] = result;
+        return true;
+    }
+
+    exceptionValue = createUndefinedVariableError(exec, ident, vPC, codeBlock);
+    return false;
+}
+
 ALWAYS_INLINE static JSValue* inlineResolveBase(ExecState* exec, Identifier& property, ScopeChainNode* scopeChain)
 {
     ScopeChainIterator iter = scopeChain->begin();
@@ -2221,8 +2260,23 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_resolve_global) {
+        /* resolve_skip dst(r) globalObject(c) property(id) structureID(sID) offset(n)
+         
+           Performs a dynamic property lookup for the given property, on the provided
+           global object.  If structureID matches the StructureID of the global then perform
+           a fast lookup using the case offset, otherwise fall back to a full resolve and
+           cache the new structureID and offset
+         */
+        if (UNLIKELY(!resolveGlobal(exec, vPC, r,  codeBlock, exceptionValue)))
+            goto vm_throw;
+        
+        vPC += 6;
+        
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_get_global_var) {
-        /* get_global_var dst(r) index(n)
+        /* get_global_var dst(r) globalObject(c) index(n)
 
            Gets the global var at global slot index and places it in register dst.
          */
@@ -4776,6 +4830,36 @@ JSValue* Machine::cti_op_resolve_skip(CTI_ARGS)
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
 
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+JSValue* Machine::cti_op_resolve_global(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(ARG_src1);
+    Identifier& ident = *ARG_id2;
+    Instruction* vPC = ARG_instr3;
+    ASSERT(globalObject->isGlobalObject());
+
+    PropertySlot slot(globalObject);
+    if (globalObject->getPropertySlot(exec, ident, slot)) {
+        JSValue* result = slot.getValue(exec, ident);
+        if (slot.isCacheable()) {
+            if (vPC[4].u.structureID)
+                vPC[4].u.structureID->deref();
+            globalObject->structureID()->ref();
+            vPC[4] = globalObject->structureID();
+            vPC[5] = slot.cachedOffset();
+            return result;
+        }
+
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+    
+    exec->setException(createUndefinedVariableError(exec, ident, vPC, ARG_codeBlock));
+    
     VM_CHECK_EXCEPTION_AT_END();
     return 0;
 }

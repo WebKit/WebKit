@@ -952,6 +952,39 @@ void CTI::privateCompileMainPass()
             i += 4;
             break;
         }
+        case op_resolve_global: {
+            // Fast case
+            unsigned globalObject = reinterpret_cast<unsigned>(instruction[i + 2].u.jsCell);
+            Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
+            void* structureIDAddr = reinterpret_cast<void*>(instruction + i + 4);
+            void* offsetAddr = reinterpret_cast<void*>(instruction + i + 5);
+
+            // Check StructureID of global object
+            m_jit.movl_i32r(globalObject, X86::eax);
+            m_jit.movl_mr(structureIDAddr, X86::edx);
+            m_jit.cmpl_rm(X86::edx, OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+            X86Assembler::JmpSrc slowCase = m_jit.emitUnlinkedJne(); // StructureIDs don't match
+            m_slowCases.append(SlowCaseEntry(slowCase, i));
+
+            // Load cached property
+            m_jit.movl_mr(OBJECT_OFFSET(JSGlobalObject, m_propertyStorage), X86::eax, X86::eax);
+            m_jit.movl_mr(offsetAddr, X86::edx);
+            m_jit.movl_mr(0, X86::eax, X86::edx, sizeof(JSValue*), X86::eax);
+            emitPutResult(instruction[i + 1].u.operand);
+            X86Assembler::JmpSrc end = m_jit.emitUnlinkedJmp();
+
+            // Slow case
+            m_jit.link(slowCase, m_jit.label());
+            emitPutArgConstant(globalObject, 0);
+            emitPutArgConstant(reinterpret_cast<unsigned>(ident), 4);
+            emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 8);
+            emitCall(i, Machine::cti_op_resolve_global);
+            emitPutResult(instruction[i + 1].u.operand);
+            m_jit.link(end, m_jit.label());
+            i += 6;
+            ++structureIDInstructionIndex;
+            break;
+        }
         CTI_COMPILE_BINARY_OP(op_div)
         case op_pre_dec: {
             int srcDst = instruction[i + 1].u.operand;
@@ -1623,6 +1656,11 @@ void CTI::privateCompileSlowCases()
             ++structureIDInstructionIndex;
 
             i += 8;
+            break;
+        }
+        case op_resolve_global: {
+            ++structureIDInstructionIndex;
+            i += 6;
             break;
         }
         case op_loop_if_lesseq: {

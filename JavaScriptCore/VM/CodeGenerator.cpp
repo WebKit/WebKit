@@ -759,17 +759,23 @@ RegisterID* CodeGenerator::emitUnexpectedLoad(RegisterID* dst, double d)
 
 bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, size_t& stackDepth, bool forWriting, JSValue*& globalObject)
 {
-    // Cases where we cannot optimise the lookup
+    // Cases where we cannot statically optimise the lookup
     if (property == propertyNames().arguments || !canOptimizeNonLocals()) {
         stackDepth = 0;
         index = missingSymbolMarker();
+
+        if (shouldOptimizeLocals() && m_codeType == GlobalCode) {
+            ScopeChainIterator iter = m_scopeChain->begin();
+            globalObject = *iter;
+            ASSERT((++iter) == m_scopeChain->end());
+        }
         return false;
     }
 
+    size_t depth = 0;
+    
     ScopeChainIterator iter = m_scopeChain->begin();
     ScopeChainIterator end = m_scopeChain->end();
-    size_t depth = 0;
-
     for (; iter != end; ++iter, ++depth) {
         JSObject* currentScope = *iter;
         if (!currentScope->isVariableObject())
@@ -820,7 +826,7 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
     size_t depth = 0;
     int index = 0;
     JSValue* globalObject = 0;
-    if (!findScopedProperty(property, index, depth, false, globalObject)) {
+    if (!findScopedProperty(property, index, depth, false, globalObject) && !globalObject) {
         // We can't optimise at all :-(
         emitOpcode(op_resolve);
         instructions().append(dst->index());
@@ -828,18 +834,29 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
         return dst;
     }
 
-    if (index == missingSymbolMarker()) {
-        // In this case we are at least able to drop a few scope chains from the
-        // lookup chain, although we still need to hash from then on.
-        emitOpcode(op_resolve_skip);
+    if (index != missingSymbolMarker()) {
+        // Directly index the property lookup across multiple scopes.  Yay!
+        return emitGetScopedVar(dst, depth, index, globalObject);
+    }
+
+    if (globalObject) {
+        m_codeBlock->structureIDInstructions.append(instructions().size());
+        emitOpcode(op_resolve_global);
         instructions().append(dst->index());
+        instructions().append(static_cast<JSCell*>(globalObject));
         instructions().append(addConstant(property));
-        instructions().append(depth);
+        instructions().append(0);
+        instructions().append(0);
         return dst;
     }
 
-    // Directly index the property lookup across multiple scopes.  Yay!
-    return emitGetScopedVar(dst, depth, index, globalObject);
+    // In this case we are at least able to drop a few scope chains from the
+    // lookup chain, although we still need to hash from then on.
+    emitOpcode(op_resolve_skip);
+    instructions().append(dst->index());
+    instructions().append(addConstant(property));
+    instructions().append(depth);
+    return dst;
 }
 
 RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValue* globalObject)
