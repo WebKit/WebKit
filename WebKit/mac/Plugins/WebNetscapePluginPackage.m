@@ -678,6 +678,11 @@ abort:
     return NPP_Print;
 }
 
+- (NPPluginFuncs *)pluginFuncs
+{
+    return &pluginFuncs;
+}
+
 - (void)wasRemovedFromPluginDatabase:(WebPluginDatabase *)database
 {
     [super wasRemovedFromPluginDatabase:database];

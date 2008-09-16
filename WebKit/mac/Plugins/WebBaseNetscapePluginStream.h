@@ -68,13 +68,7 @@ class WebNetscapePlugInStreamLoaderClient;
     WebNetscapePlugInStreamLoaderClient* _client;
     NSURLRequest *request;
 
-    NPP_NewStreamProcPtr NPP_NewStream;
-    NPP_DestroyStreamProcPtr NPP_DestroyStream;
-    NPP_StreamAsFileProcPtr NPP_StreamAsFile;
-    NPP_WriteReadyProcPtr NPP_WriteReady;
-    NPP_WriteProcPtr NPP_Write;
-    NPP_URLNotifyProcPtr NPP_URLNotify;
-    NPP_GetValueProcPtr NPP_GetValue;
+    NPPluginFuncs *pluginFuncs;
 }
 
 + (NPP)ownerForStream:(NPStream *)stream;

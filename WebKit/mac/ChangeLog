@@ -2,6 +2,23 @@
 
         Reviewed by Dave Hyatt.
 
+        Instead of storing a pointer to NPP method individually, just store a pointer to the NPNetscapeFuncs vtable.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream setPlugin:]):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage pluginFuncs]):
+
+2008-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         Remove references to WebNetscapePluginStream.
         
         * Plugins/WebBaseNetscapePluginView.h:

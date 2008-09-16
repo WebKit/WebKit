@@ -259,25 +259,15 @@ static StreamMap& streams()
         plugin = thePlugin;
         pluginView = [(WebBaseNetscapePluginView *)plugin->ndata retain];
         WebNetscapePluginPackage *pluginPackage = [pluginView pluginPackage];
-        NPP_NewStream = [pluginPackage NPP_NewStream];
-        NPP_WriteReady = [pluginPackage NPP_WriteReady];
-        NPP_Write = [pluginPackage NPP_Write];
-        NPP_StreamAsFile = [pluginPackage NPP_StreamAsFile];
-        NPP_DestroyStream = [pluginPackage NPP_DestroyStream];
-        NPP_URLNotify = [pluginPackage NPP_URLNotify];
-        NPP_GetValue = [pluginPackage NPP_GetValue];
+        
+        pluginFuncs = [pluginPackage pluginFuncs];
     } else {
         WebBaseNetscapePluginView *view = pluginView;
 
         plugin = NULL;
-        NPP_NewStream = NULL;
-        NPP_WriteReady = NULL;
-        NPP_Write = NULL;
-        NPP_StreamAsFile = NULL;
-        NPP_DestroyStream = NULL;
-        NPP_URLNotify = NULL;
-        NPP_GetValue = NULL;
         pluginView = nil;
+
+        pluginFuncs = NULL;
 
         [view disconnectStream:self];
         [view release];
@@ -328,7 +318,7 @@ static StreamMap& streams()
 
     WebBaseNetscapePluginView *pv = pluginView;
     [pv willCallPlugInFunction];
-    NPError npErr = NPP_NewStream(plugin, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
+    NPError npErr = pluginFuncs->newstream(plugin, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
     [pv didCallPlugInFunction];
     LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", responseURL, MIMEType, npErr);
 
@@ -437,7 +427,7 @@ static StreamMap& streams()
 
 - (BOOL)wantsAllStreams
 {
-    if (!NPP_GetValue)
+    if (!pluginFuncs->getvalue)
         return NO;
     
     void *value = 0;
@@ -446,7 +436,7 @@ static StreamMap& streams()
     [pv willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(false);
-        error = NPP_GetValue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
+        error = pluginFuncs->getvalue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
     }
     [pv didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
@@ -475,7 +465,7 @@ static StreamMap& streams()
             ASSERT(carbonPath != NULL);
             WebBaseNetscapePluginView *pv = pluginView;
             [pv willCallPlugInFunction];
-            NPP_StreamAsFile(plugin, &stream, [carbonPath fileSystemRepresentation]);
+            pluginFuncs->asfile(plugin, &stream, [carbonPath fileSystemRepresentation]);
             [pv didCallPlugInFunction];
             LOG(Plugins, "NPP_StreamAsFile responseURL=%@ path=%s", responseURL, carbonPath);
         }
@@ -503,7 +493,7 @@ static StreamMap& streams()
             NPError npErr;
             WebBaseNetscapePluginView *pv = pluginView;
             [pv willCallPlugInFunction];
-            npErr = NPP_DestroyStream(plugin, &stream, reason);
+            npErr = pluginFuncs->destroystream(plugin, &stream, reason);
             [pv didCallPlugInFunction];
             LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
         }
@@ -522,7 +512,7 @@ static StreamMap& streams()
         // NPP_URLNotify expects the request URL, not the response URL.
         WebBaseNetscapePluginView *pv = pluginView;
         [pv willCallPlugInFunction];
-        NPP_URLNotify(plugin, [requestURL _web_URLCString], reason, notifyData);
+        pluginFuncs->urlnotify(plugin, [requestURL _web_URLCString], reason, notifyData);
         [pv didCallPlugInFunction];
         LOG(Plugins, "NPP_URLNotify requestURL=%@ reason=%d", requestURL, reason);
     }
@@ -593,7 +583,7 @@ exit:
     while (totalBytesDelivered < totalBytes) {
         WebBaseNetscapePluginView *pv = pluginView;
         [pv willCallPlugInFunction];
-        int32 deliveryBytes = NPP_WriteReady(plugin, &stream);
+        int32 deliveryBytes = pluginFuncs->writeready(plugin, &stream);
         [pv didCallPlugInFunction];
         LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", responseURL, deliveryBytes);
 
@@ -609,7 +599,7 @@ exit:
             NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
             pv = pluginView;
             [pv willCallPlugInFunction];
-            deliveryBytes = NPP_Write(plugin, &stream, offset, [subdata length], (void *)[subdata bytes]);
+            deliveryBytes = pluginFuncs->write(plugin, &stream, offset, [subdata length], (void *)[subdata bytes]);
             [pv didCallPlugInFunction];
             if (deliveryBytes < 0) {
                 // Netscape documentation says that a negative result from NPP_Write means cancel the load.
