@@ -1,5 +1,11 @@
 2008-09-15  Sam Weinig  <sam@webkit.org>
 
+        Roll out r36478.  It did little to help the issue either.
+
+        * fast/js/resources/garbage-collect-after-string-appends.js:
+
+2008-09-15  Sam Weinig  <sam@webkit.org>
+
         Avoid the single character optimization.
 
         * fast/js/resources/garbage-collect-after-string-appends.js:
