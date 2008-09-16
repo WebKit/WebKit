@@ -1,3 +1,15 @@
+2008-09-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20860
+          REGRESSION: Crash in RenderLayer::hasVisibleContent() loading wavy.com
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _getVisibleRect:]): Changed to check if the RenderPart has
+        layout before accessing it, instead of checking if the frame inside it
+        has layout.
+
 2008-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler, Beth Dakin

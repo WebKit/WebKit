@@ -610,10 +610,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (BOOL)_getVisibleRect:(NSRect*)rect;
 {
     ASSERT_ARG(rect, rect);
-    if ([self _needsLayout])
-        return NO;
-
     if (RenderPart* ownerRenderer = _private->coreFrame->ownerRenderer()) {
+        if (ownerRenderer->needsLayout())
+            return NO;
         *rect = ownerRenderer->absoluteClippedOverflowRect();
         return YES;
     }
