@@ -365,7 +365,7 @@ JSStringRef AccessibilityUIElement::rowIndexRange()
 {
     // will appear in SnowLeopard
     NSValue* indexRange = [m_element accessibilityAttributeValue:@"AXRowIndexRange"];
-    NSRange range = [indexRange rangeValue];
+    NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];
 }
@@ -374,7 +374,7 @@ JSStringRef AccessibilityUIElement::columnIndexRange()
 {
     // will appear in SnowLeopard
     NSNumber* indexRange = [m_element accessibilityAttributeValue:@"AXColumnIndexRange"];
-    NSRange range = [indexRange rangeValue];
+    NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
     return [rangeDescription createJSStringRef];    
 }

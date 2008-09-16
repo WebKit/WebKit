@@ -1,3 +1,15 @@
+2008-09-15  Alice Liu  <alice.liu@apple.com>
+
+        A change needed to make PPC bots pass accessibility/table-cell-spans.html layout test
+
+        Reviewed by Stephanie Lewis.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        Calling -[NSValue rangeValue] on nil object was returning bogus results on PPC, 
+        but not Intel.  Add a check for nil before calling. 
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+
 2008-09-14  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
