@@ -51,7 +51,7 @@ extern CFMutableSetRef disallowedURLs;
 extern WebFrame* mainFrame;
 extern WebFrame* topLoadingFrame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
-extern NavigationController* navigationController;
+extern NavigationController* gNavigationController;
 extern PolicyDelegate* policyDelegate;
 
 extern const unsigned maxViewHeight;

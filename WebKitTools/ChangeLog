@@ -1,3 +1,62 @@
+2008-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Step 1 patch: rename global variable for clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=20875
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+        (processWork):
+        (webViewLoadFinished):
+        (webViewWindowObjectCleared):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allocateGlobalControllers):
+        (dumpFrameScrollPosition):
+        (dumpFramesAsText):
+        (methodNameStringForFailedTest):
+        (dump):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        (-[EditingDelegate webViewDidBeginEditing:]):
+        (-[EditingDelegate webViewDidChange:]):
+        (-[EditingDelegate webViewDidEndEditing:]):
+        (-[EditingDelegate webViewDidChangeTypingStyle:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate processWork:]):
+        (-[FrameLoadDelegate webView:locationChangeDone:forDataSource:]):
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+        (-[FrameLoadDelegate webView:didReceiveTitle:forFrame:]):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:]):
+        (-[UIDelegate webViewFocus:]):
+        (-[UIDelegate webViewUnfocus:]):
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+        (-[UIDelegate webViewClose:]):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpFrameScrollPosition):
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+
 2008-09-15  Alice Liu  <alice.liu@apple.com>
 
         A change needed to make PPC bots pass accessibility/table-cell-spans.html layout test

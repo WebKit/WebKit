@@ -89,8 +89,8 @@ static void runTest(const char *pathOrURL);
 
 volatile bool done;
 
-NavigationController* navigationController = 0;
-LayoutTestController* layoutTestController = 0;
+NavigationController* gNavigationController = 0;
+LayoutTestController* gLayoutTestController = 0;
 
 WebFrame *mainFrame = 0;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
@@ -371,7 +371,7 @@ static void installSignalHandlers()
 static void allocateGlobalControllers()
 {
     // FIXME: We should remove these and move to the ObjC standard [Foo sharedInstance] model
-    navigationController = [[NavigationController alloc] init];
+    gNavigationController = [[NavigationController alloc] init];
     frameLoadDelegate = [[FrameLoadDelegate alloc] init];
     uiDelegate = [[UIDelegate alloc] init];
     editingDelegate = [[EditingDelegate alloc] init];
@@ -388,7 +388,7 @@ static inline void releaseAndZero(NSObject** object)
 
 static void releaseGlobalControllers()
 {
-    releaseAndZero(&navigationController);
+    releaseAndZero(&gNavigationController);
     releaseAndZero(&frameLoadDelegate);
     releaseAndZero(&editingDelegate);
     releaseAndZero(&resourceLoadDelegate);
@@ -579,7 +579,7 @@ static void dumpFrameScrollPosition(WebFrame *f)
         printf("scrolled to %.f,%.f\n", scrollPosition.x, scrollPosition.y);
     }
 
-    if (layoutTestController->dumpChildFrameScrollPositions()) {
+    if (gLayoutTestController->dumpChildFrameScrollPositions()) {
         NSArray *kids = [f childFrames];
         if (kids)
             for (unsigned i = 0; i < [kids count]; i++)
@@ -603,7 +603,7 @@ static NSString *dumpFramesAsText(WebFrame *frame)
 
     [result appendFormat:@"%@\n", [documentElement innerText]];
 
-    if (layoutTestController->dumpChildFramesAsText()) {
+    if (gLayoutTestController->dumpChildFramesAsText()) {
         NSArray *kids = [frame childFrames];
         if (kids) {
             for (unsigned i = 0; i < [kids count]; i++)
@@ -828,11 +828,11 @@ static void sizeWebViewForCurrentTest()
 static const char *methodNameStringForFailedTest()
 {
     const char *errorMessage;
-    if (layoutTestController->dumpAsText())
+    if (gLayoutTestController->dumpAsText())
         errorMessage = "[documentElement innerText]";
-    else if (layoutTestController->dumpDOMAsWebArchive())
+    else if (gLayoutTestController->dumpDOMAsWebArchive())
         errorMessage = "[[mainFrame DOMDocument] webArchive]";
-    else if (layoutTestController->dumpSourceAsWebArchive())
+    else if (gLayoutTestController->dumpSourceAsWebArchive())
         errorMessage = "[[mainFrame dataSource] webArchive]";
     else
         errorMessage = "[mainFrame renderTreeAsExternalRepresentation]";
@@ -869,19 +869,19 @@ void dump()
         NSData *resultData = nil;
         NSString *resultMimeType = @"text/plain";
 
-        bool dumpAsText = layoutTestController->dumpAsText();
+        bool dumpAsText = gLayoutTestController->dumpAsText();
         dumpAsText |= [[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"];
-        layoutTestController->setDumpAsText(dumpAsText);
-        if (layoutTestController->dumpAsText()) {
+        gLayoutTestController->setDumpAsText(dumpAsText);
+        if (gLayoutTestController->dumpAsText()) {
             resultString = dumpFramesAsText(mainFrame);
-        } else if (layoutTestController->dumpAsPDF()) {
+        } else if (gLayoutTestController->dumpAsPDF()) {
             resultData = dumpFrameAsPDF(mainFrame);
             resultMimeType = @"application/pdf";
-        } else if (layoutTestController->dumpDOMAsWebArchive()) {
+        } else if (gLayoutTestController->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
             resultString = serializeWebArchiveToXML(webArchive);
             resultMimeType = @"application/x-webarchive";
-        } else if (layoutTestController->dumpSourceAsWebArchive()) {
+        } else if (gLayoutTestController->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
             resultString = serializeWebArchiveToXML(webArchive);
             resultMimeType = @"application/x-webarchive";
@@ -898,10 +898,10 @@ void dump()
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);
 
-            if (!layoutTestController->dumpAsText() && !layoutTestController->dumpDOMAsWebArchive() && !layoutTestController->dumpSourceAsWebArchive())
+            if (!gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive())
                 dumpFrameScrollPosition(mainFrame);
 
-            if (layoutTestController->dumpBackForwardList())
+            if (gLayoutTestController->dumpBackForwardList())
                 dumpBackForwardListForAllWindows();
         } else
             printf("ERROR: nil result from %s", methodNameStringForFailedTest());
@@ -979,14 +979,14 @@ static void runTest(const char *pathOrURL)
 
     resetWebViewToConsistentStateBeforeTesting();
 
-    layoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
+    gLayoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
     topLoadingFrame = nil;
     done = NO;
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);
     if (shouldLogFrameLoadDelegates(pathOrURL))
-        layoutTestController->setDumpFrameLoadCallbacks(true);
+        gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
@@ -1021,7 +1021,7 @@ static void runTest(const char *pathOrURL)
 
     WorkQueue::shared()->clear();
 
-    if (layoutTestController->closeRemainingWindowsWhenComplete()) {
+    if (gLayoutTestController->closeRemainingWindowsWhenComplete()) {
         NSArray* array = [DumpRenderTreeWindow openWindows];
 
         unsigned count = [array count];
@@ -1048,8 +1048,8 @@ static void runTest(const char *pathOrURL)
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);
     ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
 
-    delete layoutTestController;
-    layoutTestController = 0;
+    delete gLayoutTestController;
+    gLayoutTestController = 0;
 
     if (_shouldIgnoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];

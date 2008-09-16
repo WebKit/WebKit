@@ -120,7 +120,7 @@
     }
 
     // if we didn't start a new load, then we finished all the commands, so we're ready to dump state
-    if (!topLoadingFrame && !layoutTestController->waitToDump())
+    if (!topLoadingFrame && !gLayoutTestController->waitToDump())
         dump();
 }
 
@@ -129,7 +129,7 @@
     if ([dataSource webFrame] == topLoadingFrame) {
         topLoadingFrame = nil;
         WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
-        if (!layoutTestController->waitToDump()) {
+        if (!gLayoutTestController->waitToDump()) {
             if (WorkQueue::shared()->count())
                 [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
             else
@@ -140,7 +140,7 @@
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didStartProvisionalLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -151,7 +151,7 @@
     if (!topLoadingFrame && !done)
         topLoadingFrame = frame;
 
-    if (!done && layoutTestController->stopProvisionalFrameLoads()) {
+    if (!done && gLayoutTestController->stopProvisionalFrameLoads()) {
         NSString *string = [NSString stringWithFormat:@"%@ - stopping load in didStartProvisionalLoadForFrame callback", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
         [frame stopLoading];
@@ -160,7 +160,7 @@
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didCommitLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -168,7 +168,7 @@
     ASSERT(![frame provisionalDataSource]);
     ASSERT([frame dataSource]);
     
-    layoutTestController->setWindowIsKey(true);
+    gLayoutTestController->setWindowIsKey(true);
     NSView *documentView = [[mainFrame frameView] documentView];
     [[[mainFrame webView] window] makeFirstResponder:documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]])
@@ -177,7 +177,7 @@
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailProvisionalLoadWithError", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -198,7 +198,7 @@
     ASSERT([frame dataSource]);
     ASSERT(frame == [[frame dataSource] webFrame]);
     
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -209,12 +209,12 @@
     if ([[sender mainFrame] isEqual:frame])
         [sender displayIfNeeded];
     [self webView:sender locationChangeDone:nil forDataSource:[frame dataSource]];
-    [navigationController webView:sender didFinishLoadForFrame:frame];
+    [gNavigationController webView:sender didFinishLoadForFrame:frame];
 }
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadWithError", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -227,7 +227,7 @@
 
 - (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject;
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"?? - windowScriptObjectAvailable"];
         printf ("%s\n", [string UTF8String]);
     }
@@ -245,8 +245,8 @@
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     JSValueRef exception = 0;
 
-    ASSERT(layoutTestController);
-    layoutTestController->makeWindowObject(context, globalObject, &exception);
+    ASSERT(gLayoutTestController);
+    gLayoutTestController->makeWindowObject(context, globalObject, &exception);
     ASSERT(!exception);
 
     gcController->makeWindowObject(context, globalObject, &exception);
@@ -272,7 +272,7 @@
     [obj setValue:occ forKey:@"objCController"];
     [occ release];
 
-    [obj setValue:navigationController forKey:@"navigationController"];
+    [obj setValue:gNavigationController forKey:@"navigationController"];
     
     ObjCPlugin *plugin = [[ObjCPlugin alloc] init];
     [obj setValue:plugin forKey:@"objCPlugin"];
@@ -285,18 +285,18 @@
 
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveTitle: %@", [frame _drt_descriptionSuitableForTestResult], title];
         printf ("%s\n", [string UTF8String]);
     }
     
-    if (layoutTestController->dumpTitleChanges())
+    if (gLayoutTestController->dumpTitleChanges())
         printf("TITLE CHANGED: %s\n", [title UTF8String]);
 }
 
 - (void)webView:(WebView *)sender didReceiveServerRedirectForProvisionalLoadForFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveServerRedirectForProvisionalLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -304,7 +304,7 @@
 
 - (void)webView:(WebView *)sender didChangeLocationWithinPageForFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didChangeLocationWithinPageForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -312,7 +312,7 @@
 
 - (void)webView:(WebView *)sender willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willPerformClientRedirectToURL: %@ ", [frame _drt_descriptionSuitableForTestResult], [URL _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -320,7 +320,7 @@
 
 - (void)webView:(WebView *)sender didCancelClientRedirectForFrame:(WebFrame *)frame
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didCancelClientRedirectForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
@@ -328,7 +328,7 @@
 
 - (void)webView:(WebView *)sender didFinishDocumentLoadForFrame:(WebFrame *)frame;
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishDocumentLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     } else if (!done) {
@@ -342,7 +342,7 @@
 
 - (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame;
 {
-    if (!done && layoutTestController->dumpFrameLoadCallbacks()) {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didHandleOnloadEventsForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }

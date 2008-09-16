@@ -95,7 +95,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
 {
      assert(!draggingInfo);
-     if (layoutTestController->addFileToPasteboardOnDrag()) {
+     if (gLayoutTestController->addFileToPasteboardOnDrag()) {
          [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
          [pboard setPropertyList:[NSArray arrayWithObject:@"DRTFakeFile"] forType:NSFilenamesPboardType];
      }
@@ -105,21 +105,21 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webViewFocus:(WebView *)webView
 {
-    layoutTestController->setWindowIsKey(true);
+    gLayoutTestController->setWindowIsKey(true);
 }
 
 - (void)webViewUnfocus:(WebView *)webView
 {
-    layoutTestController->setWindowIsKey(false);
+    gLayoutTestController->setWindowIsKey(false);
 }
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
-    if (!layoutTestController->canOpenWindows())
+    if (!gLayoutTestController->canOpenWindows())
         return nil;
     
     // Make sure that waitUntilDone has been called.
-    ASSERT(layoutTestController->waitToDump());
+    ASSERT(gLayoutTestController->waitToDump());
 
     WebView *webView = createWebViewAndOffscreenWindow();
     
@@ -130,7 +130,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     NSWindow* window = [sender window];
  
-    if (layoutTestController->callCloseOnWebViews())
+    if (gLayoutTestController->callCloseOnWebViews())
         [sender close];
     
     [window close];
@@ -138,7 +138,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
 {
-    if (!done && layoutTestController->dumpDatabaseCallbacks())
+    if (!done && gLayoutTestController->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", [[origin protocol] UTF8String], [[origin host] UTF8String], 
             [origin port], [databaseIdentifier UTF8String]);
 
@@ -148,7 +148,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text
 {
-    if (layoutTestController->dumpStatusCallbacks())
+    if (gLayoutTestController->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", [text UTF8String]);
 }
 

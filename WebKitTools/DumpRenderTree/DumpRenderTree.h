@@ -55,7 +55,7 @@ class LayoutTestController;
 extern volatile bool done;
 
 // FIXME: This is a bad abstraction.  We should insted pass this to other controller objects which need access to it.
-extern LayoutTestController* layoutTestController;
+extern LayoutTestController* gLayoutTestController;
 
 void dump();
 void displayWebView();
