@@ -43,6 +43,11 @@ public:
 
     virtual void setFrameGeometry(const IntRect&);
     
+    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }
+    virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; }
+    virtual bool handleMousePressEvent(const PlatformMouseEvent&) { return false; }
+    virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) { return false; }
+
 protected:
     PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
