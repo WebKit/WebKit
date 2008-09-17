@@ -35,6 +35,8 @@ namespace WebCore {
 
 class ScrollbarGtk : public Scrollbar {
 public:
+    friend class Scrollbar;
+
     virtual ~ScrollbarGtk();
 
     virtual void setFrameGeometry(const IntRect&);
