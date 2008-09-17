@@ -1,3 +1,15 @@
+2008-09-16  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20854
+        [GTK] Windows can be not realized in ScrollView::update
+
+        Do not call gdk_window_invalidate_rect on a non-realized GtkWidget.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::update):
+
 2008-09-16  Alp Toker  <alp@nuanti.com>
 
         Suggested by Dave Hyatt.
