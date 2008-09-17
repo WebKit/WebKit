@@ -42,7 +42,7 @@
 #include "PlatformWheelEvent.h"
 #include "Page.h"
 #include "RenderLayer.h"
-#includd "ScrollbarGtk.h"
+#include "ScrollbarGtk.h"
 #include "ScrollbarTheme.h"
 
 #include <gtk/gtk.h>
