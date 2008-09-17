@@ -1,5 +1,18 @@
 2008-09-16  Mark Rowe  <mrowe@apple.com>
 
+        Disable fast/js/garbage-collect-after-string-appends.html.
+
+        It is failing on the build bots, and intermittently on local systems, for no apparent reason.  The test itself is
+        flawed in that its attempts to trigger and detect garbage collection are very dependent on implementation details
+        of JavaScriptCore.  Fixing the test is tracked by <https://bugs.webkit.org/show_bug.cgi?id=20871>.
+
+        * fast/js/garbage-collect-after-string-appends.html: Removed.
+        * fast/js/garbage-collect-after-string-appends.html-disabled: Copied from fast/js/garbage-collect-after-string-appends.html.
+        * fast/js/resources/garbage-collect-after-string-appends.js: Removed.
+        * fast/js/resources/garbage-collect-after-string-appends.js-disabled: Copied from fast/js/resources/garbage-collect-after-string-appends.js.
+
+2008-09-16  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Tweak garbage-collect-after-string-appends.js to not fail when run twice or more in a row.
