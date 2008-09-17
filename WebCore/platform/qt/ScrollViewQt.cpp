@@ -161,7 +161,7 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
-    if (!m_hasStaticBackground && !m_view->topLevel()->hasplatformWidgets()) {
+    if (!m_hasStaticBackground && !m_view->topLevel()->hasNativeWidgets()) {
        m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(),
                                   scrollViewRect, clipRect);
     } else  {
@@ -629,13 +629,13 @@ void ScrollView::addChild(Widget* child)
     m_data->m_children.add(child);
 
     if (child->platformWidget())
-        topLevel()->incrementplatformWidgetCount();
+        topLevel()->incrementNativeWidgetCount();
 }
 
 void ScrollView::removeChild(Widget* child)
 {
     if (child->platformWidget())
-        topLevel()->decrementplatformWidgetCount();
+        topLevel()->decrementNativeWidgetCount();
 
     child->setParent(0);
     child->hide();
@@ -826,17 +826,17 @@ void ScrollView::updateBackingStore()
     page->chrome()->updateBackingStore();
 }
 
-void ScrollView::incrementplatformWidgetCount()
+void ScrollView::incrementNativeWidgetCount()
 {
     ++m_data->m_platformWidgets;
 }
 
-void ScrollView::decrementplatformWidgetCount()
+void ScrollView::decrementNativeWidgetCount()
 {
     --m_data->m_platformWidgets;
 }
 
-bool ScrollView::hasplatformWidgets() const
+bool ScrollView::hasNativeWidgets() const
 {
     return m_data->m_platformWidgets != 0;
 }
