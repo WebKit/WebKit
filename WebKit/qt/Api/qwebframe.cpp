@@ -36,7 +36,7 @@
 #include "ResourceRequest.h"
 #include "RenderView.h"
 #include "SelectionController.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "PrintContext.h"
 #include "SubstituteData.h"
 
