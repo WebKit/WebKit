@@ -1,3 +1,10 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Fix assert.
+
+        * platform/Widget.cpp:
+        (WebCore::Widget::setParent):
+
 2008-09-17  David Hyatt  <hyatt@apple.com>
 
         Beginnings of Widget refactoring (in order to make the mixing of

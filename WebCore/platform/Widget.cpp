@@ -42,7 +42,7 @@ void Widget::init()
 
 void Widget::setParent(ScrollView* view)
 {
-    ASSERT((view && !m_parent) || (!view && m_parent));
+    ASSERT(!view || !m_parent);
     if (!view || !view->isVisible())
         setParentVisible(false);
     m_parent = view;
