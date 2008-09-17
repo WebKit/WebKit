@@ -33,7 +33,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
-#include "PlatformScrollBar.h"
 #include "HitTestResult.h"
 #include "NotImplemented.h"
 #include "WindowFeatures.h"

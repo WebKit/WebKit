@@ -36,7 +36,7 @@
 #include "ResourceRequest.h"
 #include "RenderView.h"
 #include "SelectionController.h"
-#include "PlatformScrollBar.h"
+#include "ScrollBar.h"
 #include "PrintContext.h"
 #include "SubstituteData.h"
 
@@ -47,7 +47,6 @@
 #include "DragData.h"
 #include "RenderView.h"
 #include "GraphicsContext.h"
-#include "PlatformScrollBar.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "GraphicsContext.h"

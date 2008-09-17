@@ -54,7 +54,7 @@
 #include "InspectorController.h"
 #include "FocusController.h"
 #include "Editor.h"
-#include "PlatformScrollBar.h"
+#include "ScrollBar.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
