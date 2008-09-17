@@ -1,3 +1,17 @@
+2008-09-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [QtWebKit] Implement error handling in TextCodecQt::decode
+        Use the QTextCodec parsing state to set the sawError out variable. This
+        is needed to pass Test 70 of acid3. The test case for this bug is
+        fast/encoding/invalid-xml.html that is now partially passed. To pass
+        it completely the Qt text codecs need to be adjusted to have proper
+        error handling.
+
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::TextCodecQt::decode):
+
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dave Hyatt.

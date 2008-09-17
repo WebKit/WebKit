@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +95,7 @@ TextCodecQt::~TextCodecQt()
 String TextCodecQt::decode(const char* bytes, size_t length, bool flush, bool /*stopOnError*/, bool& sawError)
 {
     QString unicode = m_codec->toUnicode(bytes, length, &m_state);
-    sawError = false;
+    sawError = m_state.invalidChars != 0;
 
     if (flush) {
         m_state.flags = QTextCodec::DefaultConversion;
