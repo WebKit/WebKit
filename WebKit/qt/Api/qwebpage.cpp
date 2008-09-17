@@ -75,6 +75,7 @@
 #include <QFileDialog>
 #include <QHttpRequestHeader>
 #include <QInputDialog>
+#include <QLocale>
 #include <QMessageBox>
 #include <QNetworkProxy>
 #include <QUndoStack>
