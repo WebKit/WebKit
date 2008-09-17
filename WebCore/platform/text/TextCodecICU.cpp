@@ -94,7 +94,7 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
         if (strcmp(standardName, "GB2312") == 0 || strcmp(standardName, "GB_2312-80") == 0)
             standardName = "GBK";
         // Similarly, EUC-KR encodings all map to an extended version.
-        else if (strcmp(standardName, "KS_C_5601-1987") == 0 || strcmp(standardName, "EUC-KR") == 0)
+        else if (strcmp(standardName, "KSC_5601") == 0 || strcmp(standardName, "EUC-KR") == 0 || strcmp(standardName, "cp1363") == 0)
             standardName = "windows-949-2000";
         // And so on.
         else if (strcasecmp(standardName, "iso-8859-9") == 0) // This name is returned in different case by ICU 3.2 and 3.6.

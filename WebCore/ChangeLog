@@ -1,10 +1,19 @@
+2008-09-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/6219577> Spew in console at launch about encoding mappings when running with ICU 4.0
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Updated for new encoding names.
+
 2008-09-17  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Fix the QtWebKit/Mac build
 
         * platform/qt/ScrollViewQt.cpp: add include
 
-\2008-09-17  David Hyatt  <hyatt@apple.com>
+2008-09-17  David Hyatt  <hyatt@apple.com>
 
         Add a #define to control whether or not to use an NSScroller on Mac.
         This ifdef will allow the new NSView-less NSScroller on Mac to be
