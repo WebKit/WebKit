@@ -1,3 +1,28 @@
+2008-09-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Improve timer accuracy for JavaScript Date object on Windows.
+        
+        Use a combination of ftime and QueryPerformanceCounter.
+        ftime returns the information we want, but doesn't have sufficient resolution.
+        QueryPerformanceCounter has high resolution, but is only usable to measure time intervals.
+        To combine them, we call ftime and QueryPerformanceCounter initially. Later calls will use
+        QueryPerformanceCounter by itself, adding the delta to the saved ftime.  We re-sync to
+        correct for drift if the low-res and high-res elapsed time between calls differs by more
+        than twice the low-resolution timer resolution.
+        
+        QueryPerformanceCounter may be inaccurate due to a problems with:
+        - some PCI bridge chipsets (http://support.microsoft.com/kb/274323)
+        - BIOS bugs (http://support.microsoft.com/kb/895980/)
+        - BIOS/HAL bugs on multiprocessor/multicore systems (http://msdn.microsoft.com/en-us/library/ms644904.aspx)
+        
+        Reviewed by Darin Adler.
+
+        * kjs/DateMath.cpp:
+        (JSC::highResUpTime):
+        (JSC::lowResUTCTime):
+        (JSC::qpcAvailable):
+        (JSC::getCurrentUTCTimeWithMicroseconds):
+
 2008-09-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
@@ -163,7 +188,6 @@
         * VM/Opcode.h:
 
 2008-09-15  Sam Weinig  <sam@webkit.org>
-
 
         Roll out r36462.  It broke document.all.
 
