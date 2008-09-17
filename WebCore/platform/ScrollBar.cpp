@@ -260,31 +260,30 @@ ScrollGranularity Scrollbar::pressedPartScrollGranularity()
     return ScrollByPage;
 }
 
-static void moveThumb(Scrollbar* scrollbar, const int pos)
+void Scrollbar::moveThumb(int pos)
 {
     // Drag the thumb.
-    ScrollbarTheme* theme = scrollbar->theme();
-    int thumbPos = theme->thumbPosition(scrollbar);
-    int thumbLen = theme->thumbLength(scrollbar);
-    int trackLen = theme->trackLength(scrollbar);
+    int thumbPos = theme()->thumbPosition(this);
+    int thumbLen = theme()->thumbLength(this);
+    int trackLen = theme()->trackLength(this);
     int maxPos = trackLen - thumbLen;
-    int delta = pos - scrollbar->pressedPos();
+    int delta = pos - pressedPos();
     if (delta > 0)
         delta = min(maxPos - thumbPos, delta);
     else if (delta < 0)
         delta = max(-thumbPos, delta);
     if (delta) {
-        scrollbar->setValue(static_cast<float>(thumbPos + delta) * scrollbar->maximum() / (trackLen - thumbLen));
-        scrollbar->setPressedPos(scrollbar->pressedPos() + theme->thumbPosition(scrollbar) - thumbPos);
+        setValue(static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen));
+        setPressedPos(pressedPos() + theme()->thumbPosition(this) - thumbPos);
     }
 }
 
 bool Scrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
-        moveThumb(this, m_orientation == HorizontalScrollbar ? 
-                        convertFromContainingWindow(evt.pos()).x() :
-                        convertFromContainingWindow(evt.pos()).y());
+        moveThumb(m_orientation == HorizontalScrollbar ? 
+                  convertFromContainingWindow(evt.pos()).x() :
+                  convertFromContainingWindow(evt.pos()).y());
         return true;
     }
 
@@ -357,7 +356,7 @@ bool Scrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
         // Set the pressed position to the top of the thumb so that when we do the move, the delta
         // will be from the current pixel position of the thumb to the new desired position for the thumb.
         m_pressedPos = theme()->trackPosition(this) + theme()->thumbPosition(this);
-        moveThumb(this, desiredPos);
+        moveThumb(desiredPos);
         return true;
     }
     

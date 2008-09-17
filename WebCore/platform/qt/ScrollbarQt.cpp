@@ -78,7 +78,7 @@ bool Scrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
         /* Do nothing */ ;
     else if (actionSelected == actScrollHere) {
         const QPoint pos = convertFromContainingWindow(event.pos());
-        setValue(pixelPosToRangeValue(this, horizontal ? pos.x() : pos.y()));
+        moveThumb(horizontal ? pos.x() : pos.y());
     } else if (actionSelected == actScrollTop)
         setValue(0);
     else if (actionSelected == actScrollBottom)

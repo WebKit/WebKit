@@ -42,7 +42,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "GraphicsContext.h"
-#include "Scrollbar.h"
+#include "ScrollBar.h"
 #include "ScrollbarTheme.h"
 
 #include <QDebug>

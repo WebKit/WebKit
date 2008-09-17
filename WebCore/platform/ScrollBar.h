@@ -100,7 +100,7 @@ public:
     // For platforms that wish to handle context menu events.
     // FIXME: This is misplaced.  Normal hit testing should be used to populate a correct
     // context menu.  There's no reason why the scrollbar should have to do it.
-    virtual bool handleContextMenuEvent(const PlatformMouseEvent& event) { return false; }
+    virtual bool handleContextMenuEvent(const PlatformMouseEvent& event);
 #endif
 
     ScrollbarTheme* theme() const { return m_theme; }
@@ -120,6 +120,8 @@ protected:
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
     
+    void moveThumb(int pos);
+
     ScrollbarClient* m_client;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
