@@ -1,3 +1,15 @@
+2008-09-17  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix <rdar://problem/6227089> 
+        Crash in WebCore::Frame::setNeedsReapplyStyles()
+        
+        View is null checked elsewhere too.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setNeedsReapplyStyles):
+
 2008-09-17  David Hyatt  <hyatt@apple.com>
 
         Make the notion of having a native widget backing a Widget cross-platform.

@@ -744,7 +744,8 @@ void Frame::setNeedsReapplyStyles()
 
     // Invalidate the FrameView so that FrameView::layout will get called,
     // which calls reapplyStyles.
-    view()->invalidate();
+    if (view())
+        view()->invalidate();
 }
 
 bool Frame::needsReapplyStyles() const
