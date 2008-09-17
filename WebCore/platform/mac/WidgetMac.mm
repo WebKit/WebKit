@@ -376,4 +376,11 @@ IntPoint Widget::convertFromContainingWindow(const IntPoint& p) const
     return p;
 }
 
+IntRect Widget::convertToContainingWindow(const IntRect& r) const
+{
+    // FIXME: Implement.
+    return r;
 }
+
+}
+

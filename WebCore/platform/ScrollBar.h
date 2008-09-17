@@ -98,6 +98,10 @@ public:
 
     ScrollbarTheme* theme() const { return m_theme; }
 
+    virtual void setParent(ScrollView*);
+    virtual void setFrameGeometry(const IntRect&);
+    virtual IntRect windowClipRect() const;
+
 protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();

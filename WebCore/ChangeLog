@@ -1,3 +1,26 @@
+2008-09-16  David Hyatt  <hyatt@apple.com>
+
+        Make the scrollbar resizer-dodging logic cross-platform in the
+        Scrollbar class.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::setFrameGeometry):
+        (WebCore::Scrollbar::setParent):
+        (WebCore::Scrollbar::windowClipRect):
+        * platform/ScrollBar.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::windowResizerRect):
+        (WebCore::ScrollView::resizerOverlapsContent):
+        (WebCore::ScrollView::adjustOverlappingScrollbarCount):
+        * platform/Widget.h:
+        (WebCore::Widget::setParent):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertToContainingWindow):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarWin.cpp:
+
 2008-09-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
