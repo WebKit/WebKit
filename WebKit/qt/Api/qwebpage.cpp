@@ -82,6 +82,7 @@
 #include <QPainter>
 #include <QClipboard>
 #include <QSslSocket>
+#include <QStyle>
 #include <QSysInfo>
 #if QT_VERSION >= 0x040400
 #include <QNetworkAccessManager>
