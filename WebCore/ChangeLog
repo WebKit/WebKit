@@ -1,3 +1,18 @@
+2008-09-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20512 Invalid CSS 
+        code crashes Safari 
+        and corresponding: <rdar://problem/6173832>
+
+        Reading through the spec, it seems like a function is not valid 
+        input for a counter. So this patch checks for that and bails in the 
+        case of invalid input. 
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCounterContent):
+
 2008-09-17  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Antti Koivisto.
