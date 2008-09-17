@@ -1,3 +1,14 @@
+2008-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add pixel test expected values for transform tests.
+
+        * platform/mac/transforms/2d/compound-transforms-vs-containers-expected.checksum: Added.
+        * platform/mac/transforms/2d/compound-transforms-vs-containers-expected.png: Added.
+        * platform/mac/transforms/2d/transform-borderbox-expected.checksum: Added.
+        * platform/mac/transforms/2d/transform-borderbox-expected.png: Added.
+        * platform/mac/transforms/2d/transform-origin-borderbox-expected.checksum: Added.
+        * platform/mac/transforms/2d/transform-origin-borderbox-expected.png: Added.
+
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
