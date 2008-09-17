@@ -266,9 +266,9 @@ void PluginView::setFocus()
 
 void PluginView::show()
 {
-    m_isVisible = true;
+    setSelfVisible(true);
 
-    if (m_attachedToWindow && m_window)
+    if (isParentVisible() && m_window)
         ShowWindow(m_window, SW_SHOWNA);
 
     Widget::show();
@@ -276,9 +276,9 @@ void PluginView::show()
 
 void PluginView::hide()
 {
-    m_isVisible = false;
+    setSelfVisible(false);
 
-    if (m_attachedToWindow && m_window)
+    if (isParentVisible() && m_window)
         ShowWindow(m_window, SW_HIDE);
 
     Widget::hide();
@@ -510,24 +510,19 @@ void PluginView::setParent(ScrollView* parent)
 
 }
 
-void PluginView::attachToWindow()
+void PluginView::setParentVisible(bool visible)
 {
-    if (m_attachedToWindow)
+    if (isAncestorVisible() == visible)
         return;
 
-    m_attachedToWindow = true;
-    if (m_isVisible && m_window)
-        ShowWindow(m_window, SW_SHOWNA);
-}
+    Widget::setParentVisible(visible);
 
-void PluginView::detachFromWindow()
-{
-    if (!m_attachedToWindow)
-        return;
-
-    if (m_isVisible && m_window)
-        ShowWindow(m_window, SW_HIDE);
-    m_attachedToWindow = false;
+    if (isSelfVisible() && m_window) {
+        if (visible)
+            ShowWindow(m_window, SW_SHOWNA);
+        else
+            ShowWindow(m_window, SW_HIDE);
+    }
 }
 
 void PluginView::setNPWindowRect(const IntRect& rect)

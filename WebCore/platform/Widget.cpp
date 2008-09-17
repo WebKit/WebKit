@@ -27,8 +27,28 @@
 #include "Widget.h"
 
 #include "IntRect.h"
+#include "ScrollView.h"
+
+#include <wtf/Assertions.h>
 
 namespace WebCore {
+
+void Widget::init()
+{
+    m_parent = 0;
+    m_selfVisible = false;
+    m_parentVisible = false;
+}
+
+void Widget::setParent(ScrollView* view)
+{
+    ASSERT((view && !m_parent) || (!view && m_parent));
+    if (!view || !view->isVisible())
+        setParentVisible(false);
+    m_parent = view;
+    if (view && view->isVisible())
+        setParentVisible(true);
+}
 
 void Widget::resize(int w, int h) 
 {

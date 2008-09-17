@@ -79,6 +79,7 @@ static void safeRemoveFromSuperview(NSView *view)
 
 Widget::Widget() : data(new WidgetPrivate)
 {
+    init();
     data->view = nil;
     data->client = 0;
     data->visible = true;
@@ -88,6 +89,7 @@ Widget::Widget() : data(new WidgetPrivate)
 
 Widget::Widget(NSView* view) : data(new WidgetPrivate)
 {
+    init();
     data->view = view;
     data->client = 0;
     data->visible = true;
@@ -97,6 +99,7 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 
 Widget::~Widget() 
 {
+    ASSERT(!parent());
     delete data;
 }
 

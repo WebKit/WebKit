@@ -219,11 +219,13 @@ void ScrollView::addChild(Widget* child)
 #endif
 
     child->addToSuperview(documentView());
+    child->setParent(this);
 }
 
 void ScrollView::removeChild(Widget* child)
 {
     child->removeFromSuperview();
+    child->setParent(0);
 }
 
 void ScrollView::resizeContents(int w, int h)

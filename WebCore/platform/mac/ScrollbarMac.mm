@@ -127,6 +127,7 @@ ScrollbarMac::~ScrollbarMac()
     // well because of the way the NSViews are created in WebKit. So for now,
     // we'll just do it explictly for Scrollbar.
     removeFromSuperview();
+    setParent(0);
 }
 
 void ScrollbarMac::updateThumbPosition()

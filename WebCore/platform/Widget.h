@@ -65,167 +65,164 @@ typedef wxWindow* PlatformWidget;
 
 namespace WebCore {
 
-    class Cursor;
-    class Event;
-    class Font;
-    class GraphicsContext;
-    class IntPoint;
-    class IntRect;
-    class IntSize;
-    class PlatformMouseEvent;
-    class ScrollView;
-    class WidgetClient;
-    class WidgetPrivate;
+class Cursor;
+class Event;
+class Font;
+class GraphicsContext;
+class IntPoint;
+class IntRect;
+class IntSize;
+class PlatformMouseEvent;
+class ScrollView;
+class WidgetClient;
+class WidgetPrivate;
 
-    class Widget {
-    public:
-        Widget();
-        virtual ~Widget();
+class Widget {
+public:
+    Widget();
+    virtual ~Widget();
 
-        virtual void setEnabled(bool);
-        virtual bool isEnabled() const;
+    void init(); // Must be called by all Widget constructors to initialize cross-platform data.
 
-        int x() const;
-        int y() const;
-        int width() const;
-        int height() const;
-        IntSize size() const;
-        void resize(int, int);
-        void resize(const IntSize&);
-        IntPoint pos() const;
-        void move(int, int);
-        void move(const IntPoint&);
+    virtual void setEnabled(bool);
+    virtual bool isEnabled() const;
 
-        virtual void paint(GraphicsContext*, const IntRect&);
-        virtual void invalidate();
-        virtual void invalidateRect(const IntRect&);
+    int x() const;
+    int y() const;
+    int width() const;
+    int height() const;
+    IntSize size() const;
+    void resize(int, int);
+    void resize(const IntSize&);
+    IntPoint pos() const;
+    void move(int, int);
+    void move(const IntPoint&);
 
-        virtual void setFrameGeometry(const IntRect&);
-        virtual IntRect frameGeometry() const;
+    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void invalidate();
+    virtual void invalidateRect(const IntRect&);
 
-        virtual void setFocus();
+    virtual void setFrameGeometry(const IntRect&);
+    virtual IntRect frameGeometry() const;
 
-        void setCursor(const Cursor&);
-        Cursor cursor();
+    virtual void setFocus();
 
-        virtual void show();
-        virtual void hide();
+    void setCursor(const Cursor&);
+    Cursor cursor();
 
-        void setIsSelected(bool);
+    virtual void show();
+    virtual void hide();
+    bool isSelfVisible() const { return m_selfVisible; } // Whether or not we have been explicitly marked as visible or not.
+    bool isParentVisible() const { return m_parentVisible; } // Whether or not our parent is visible.
+    bool isVisible() const { return m_selfVisible && m_parentVisible; } // Whether or not we are actually visible.
+    virtual void setParentVisible(bool visible) { m_parentVisible = visible; }
 
-        void setClient(WidgetClient*);
-        WidgetClient* client() const;
+    void setIsSelected(bool);
 
-        virtual bool isFrameView() const;
-        virtual bool isPluginView() const { return false; }
+    void setClient(WidgetClient*);
+    WidgetClient* client() const;
 
-        virtual void removeFromParent();
+    virtual bool isFrameView() const;
+    virtual bool isPluginView() const { return false; }
 
-        // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
-        // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
-        // This clip includes any clips that the widget itself sets up for its children.
-        virtual IntRect windowClipRect() const;
+    virtual void removeFromParent();
+    virtual void setParent(ScrollView* view);
+    ScrollView* parent() const { return m_parent; }
 
-        virtual void handleEvent(Event*) { }
+    // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
+    // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
+    // This clip includes any clips that the widget itself sets up for its children.
+    virtual IntRect windowClipRect() const;
 
-        void setContainingWindow(PlatformWidget);
-        PlatformWidget containingWindow() const;
+    virtual void handleEvent(Event*) { }
+
+    void setContainingWindow(PlatformWidget);
+    PlatformWidget containingWindow() const;
 
 #if PLATFORM(WIN)
-        virtual void setParent(ScrollView*);
-        ScrollView* parent() const;
+    virtual void geometryChanged() const {}
+    
+    IntRect convertToContainingWindow(const IntRect&) const;
+    IntPoint convertToContainingWindow(const IntPoint&) const;
+    IntPoint convertFromContainingWindow(const IntPoint&) const;
 
-        virtual void attachToWindow() { }
-        virtual void detachFromWindow() { }
+    virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+    virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 
-        virtual void geometryChanged() const {};
-        
-        IntRect convertToContainingWindow(const IntRect&) const;
-        IntPoint convertToContainingWindow(const IntPoint&) const;
-        IntPoint convertFromContainingWindow(const IntPoint&) const;
-
-        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
-        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
-
-        bool suppressInvalidation() const;
-        void setSuppressInvalidation(bool);
-
+    bool suppressInvalidation() const;
+    void setSuppressInvalidation(bool);
 #endif
 
 #if PLATFORM(GTK)
-        virtual void setParent(ScrollView*);
-        ScrollView* parent() const;
+    virtual void geometryChanged() const;
 
-        virtual void geometryChanged() const;
+    IntRect convertToContainingWindow(const IntRect&) const;
+    IntPoint convertToContainingWindow(const IntPoint&) const;
+    IntPoint convertFromContainingWindow(const IntPoint&) const;
 
-        IntRect convertToContainingWindow(const IntRect&) const;
-        IntPoint convertToContainingWindow(const IntPoint&) const;
-        IntPoint convertFromContainingWindow(const IntPoint&) const;
+    virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+    virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 
-        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
-        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+    bool suppressInvalidation() const;
+    void setSuppressInvalidation(bool);
 
-        bool suppressInvalidation() const;
-        void setSuppressInvalidation(bool);
-
-        GtkWidget* gtkWidget() const;
+    GtkWidget* gtkWidget() const;
 protected:
-        void setGtkWidget(GtkWidget*);
+    void setGtkWidget(GtkWidget*);
 #endif
 
 #if PLATFORM(QT)
-        void setNativeWidget(QWidget *widget);
-        QWidget* nativeWidget() const;
+    void setNativeWidget(QWidget *widget);
+    QWidget* nativeWidget() const;
 
-        void setIsNPAPIPlugin(bool);
-        bool isNPAPIPlugin() const;
+    void setIsNPAPIPlugin(bool);
+    bool isNPAPIPlugin() const;
 
-        virtual void setParent(ScrollView*);
-        ScrollView* parent() const;
-        virtual void geometryChanged() const;
-        ScrollView* topLevel() const;
+    virtual void geometryChanged() const;
+    ScrollView* topLevel() const;
 
-        IntRect convertToContainingWindow(const IntRect&) const;
-        IntPoint convertToContainingWindow(const IntPoint&) const;
-        IntPoint convertFromContainingWindow(const IntPoint&) const;
+    IntRect convertToContainingWindow(const IntRect&) const;
+    IntPoint convertToContainingWindow(const IntPoint&) const;
+    IntPoint convertFromContainingWindow(const IntPoint&) const;
 
-        virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
-        virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
+    virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
+    virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 
-        bool suppressInvalidation() const;
-        void setSuppressInvalidation(bool);
+    bool suppressInvalidation() const;
+    void setSuppressInvalidation(bool);
 #endif
 
 #if PLATFORM(MAC)
-        Widget(NSView*);
-        
-        NSView* getView() const;
-        NSView* getOuterView() const;
-        void setView(NSView*);
-        
-        static void beforeMouseDown(NSView*, Widget*);
-        static void afterMouseDown(NSView*, Widget*);
+    Widget(NSView*);
+    
+    NSView* getView() const;
+    NSView* getOuterView() const;
+    void setView(NSView*);
+    
+    static void beforeMouseDown(NSView*, Widget*);
+    static void afterMouseDown(NSView*, Widget*);
 
-        void addToSuperview(NSView* superview);
-        void removeFromSuperview();
-        IntPoint convertToScreenCoordinate(NSView*, const IntPoint&);
-        
-        // FIXME: Will need to implement these methods once we actually start doing viewless widgets.
-        IntPoint convertFromContainingWindow(const IntPoint&) const;
-        IntRect convertToContainingWindow(const IntRect&) const;
-        ScrollView* parent() const { return 0; }
-        virtual void setParent(ScrollView*) {}
+    void addToSuperview(NSView* superview);
+    void removeFromSuperview();
+    IntPoint convertToScreenCoordinate(NSView*, const IntPoint&);
+    
+    // FIXME: Will need to implement these methods once we actually start doing viewless widgets.
+    IntPoint convertFromContainingWindow(const IntPoint&) const;
+    IntRect convertToContainingWindow(const IntRect&) const;
 #endif
 
 #if PLATFORM(WX)
-        Widget(wxWindow*);
-        wxWindow* nativeWindow() const;
-        virtual void setNativeWindow(wxWindow*);
+    Widget(wxWindow*);
+    wxWindow* nativeWindow() const;
+    virtual void setNativeWindow(wxWindow*);
 #endif
 
-    private:
-        WidgetPrivate* data;
-    };
+private:
+    ScrollView* m_parent;
+    bool m_selfVisible;
+    bool m_parentVisible;
+    WidgetPrivate* data;
+};
 
 } // namespace WebCore
 

@@ -62,7 +62,7 @@ struct WidgetPrivate
         , suppressInvalidation(false)
         , m_widget(0)
         , isNPAPIPlugin(0)
-        , m_parentScrollView(0) { }
+        { }
     ~WidgetPrivate() {}
 
     WidgetClient* m_client;
@@ -72,12 +72,12 @@ struct WidgetPrivate
     bool isNPAPIPlugin;
     IntRect m_geometry;
     QWidget *m_widget; //for plugins
-    ScrollView *m_parentScrollView;
 };
 
 Widget::Widget()
     : data(new WidgetPrivate())
 {
+    init();
 }
 
 Widget::~Widget()
@@ -231,23 +231,13 @@ void Widget::removeFromParent()
         parent()->removeChild(this);
 }
 
-void Widget::setParent(ScrollView* sv)
-{
-    data->m_parentScrollView = sv;
-}
-
-ScrollView* Widget::parent() const
-{
-    return data->m_parentScrollView;
-}
-
 ScrollView* Widget::topLevel() const
 {
-    if (!data->m_parentScrollView)
+    if (!parent())
         return isFrameView() ? const_cast<ScrollView*>(static_cast<const ScrollView*>(this)) : 0;
-    ScrollView* topLevel = data->m_parentScrollView;
-    while (topLevel->data->m_parentScrollView)
-        topLevel = topLevel->data->m_parentScrollView;
+    ScrollView* topLevel = parent();
+    while (topLevel-parent())
+        topLevel = topLevel->parent();
     return topLevel;
 }
 

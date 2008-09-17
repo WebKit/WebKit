@@ -43,7 +43,6 @@ class WidgetPrivate
 {
 public:
     WidgetClient* client;
-    ScrollView* parent;
     HWND containingWindow;
     IntRect frameRect;
     bool enabled;
@@ -54,8 +53,8 @@ public:
 Widget::Widget()
     : data(new WidgetPrivate)
 {
+    init();
     data->client = 0;
-    data->parent = 0;
     data->containingWindow = 0;
     data->enabled = true;
     data->capturingChild = 0;
@@ -96,20 +95,6 @@ IntRect Widget::frameGeometry() const
 void Widget::setFrameGeometry(const IntRect &rect)
 {
     data->frameRect = rect;
-}
-
-void Widget::setParent(ScrollView* v)
-{
-    if (!v || !v->isAttachedToWindow())
-        detachFromWindow();
-    data->parent = v;
-    if (v && v->isAttachedToWindow())
-        attachToWindow();
-}
-
-ScrollView* Widget::parent() const
-{
-    return data->parent;
 }
 
 void Widget::removeFromParent()
