@@ -928,8 +928,6 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         return 0;
     }
 
-    scopeChain = scopeChainForCall(exec, functionBodyNode, newCodeBlock, scopeChain, r);
-
     ExecState newExec(exec, &m_registerFile, scopeChain, callFrame);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
@@ -942,6 +940,7 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         CTI::compile(this, exec, newCodeBlock);
     JSValue* result = CTI::execute(newCodeBlock->ctiCode, &newExec, &m_registerFile, r, scopeChain, newCodeBlock, exception);
 #else
+    setScopeChain(scopeChain, scopeChainForCall(exec, functionBodyNode, newCodeBlock, scopeChain, r));
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, newCodeBlock, exception);
 #endif
     m_reentryDepth--;
@@ -4355,16 +4354,34 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
     JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
     
-    codeBlock = newCodeBlock;
-    machine->setScopeChain(exec, scopeChain, scopeChainForCall(exec, functionBodyNode, codeBlock, callDataScopeChain, r));
+    exec->m_scopeChain = callDataScopeChain;
+
+    ARG_setScopeChain(callDataScopeChain);
+    ARG_setCodeBlock(newCodeBlock);
+    ARG_setR(r);
+    return newCodeBlock->ctiCode;
+}
+
+void* Machine::cti_vm_compile(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    CodeBlock* codeBlock = ARG_codeBlock;
 
     if (!codeBlock->ctiCode)
-        CTI::compile(machine, exec, codeBlock);
+        CTI::compile(exec->machine(), exec, codeBlock);
+
+    return codeBlock->ctiCode;
+}
+
+void Machine::cti_vm_updateScopeChain(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    exec->machine()->setScopeChain(exec, scopeChain, scopeChainForCall(exec, static_cast<FunctionBodyNode*>(codeBlock->ownerNode), codeBlock, scopeChain, ARG_r));
 
     ARG_setScopeChain(scopeChain);
-    ARG_setCodeBlock(codeBlock);
-    ARG_setR(r);
-    return codeBlock->ctiCode;
 }
 
 JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
@@ -4532,16 +4549,12 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
     JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
 
-    codeBlock = newCodeBlock;
-    machine->setScopeChain(exec, scopeChain, scopeChainForCall(exec, functionBodyNode, codeBlock, callDataScopeChain, r));
+    exec->m_scopeChain = callDataScopeChain;
 
-    if (!codeBlock->ctiCode)
-        CTI::compile(machine, exec, codeBlock);
-
-    ARG_setScopeChain(scopeChain);
-    ARG_setCodeBlock(codeBlock);
+    ARG_setScopeChain(callDataScopeChain);
+    ARG_setCodeBlock(newCodeBlock);
     ARG_setR(r);
-    return codeBlock->ctiCode;
+    return newCodeBlock->ctiCode;
 }
 
 void Machine::cti_op_construct_verify(CTI_ARGS)

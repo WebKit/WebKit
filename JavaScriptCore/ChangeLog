@@ -1,3 +1,25 @@
+2008-09-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Optimizations for op_call in CTI.  Move check for (ctiCode == 0) into JIT code,
+        move copying of scopeChain for CodeBlocks that needFullScopeChain into head of
+        functions, instead of checking prior to making the call.
+
+        3% on v8-tests (4% on richards, 6% in delta-blue)
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        * VM/Machine.cpp:
+        (JSC::Machine::execute):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_vm_compile):
+        (JSC::Machine::cti_vm_updateScopeChain):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        * VM/Machine.h:
+
 2008-09-17  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Fix the QtWebKit/Mac build
