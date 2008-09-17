@@ -404,7 +404,7 @@ void Scrollbar::setFrameGeometry(const IntRect& rect)
 
 void Scrollbar::setParent(ScrollView* parentView)
 {
-    if (!parentView && m_overlapsResizer && parent())
+    if (!parentView && m_overlapsResizer && parent() && parent()->isFrameView())
         parent()->adjustOverlappingScrollbarCount(-1);
     Widget::setParent(parentView);
 }
