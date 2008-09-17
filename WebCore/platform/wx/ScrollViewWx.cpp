@@ -30,7 +30,7 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "PlatformWheelEvent.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 
 #include <algorithm>
 #include <stdio.h>

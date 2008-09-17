@@ -28,7 +28,7 @@
 
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "SoftLinking.h"
 
 // Generic state constants

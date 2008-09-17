@@ -52,7 +52,7 @@
 #import "PlatformWheelEvent.h"
 #import "RegularExpression.h"
 #import "RenderTableCell.h"
-#import "ScrollBar.h"
+#import "Scrollbar.h"
 #import "SimpleFontData.h"
 #import "UserStyleSheetLoader.h"
 #import "WebCoreViewFactory.h"

@@ -33,7 +33,7 @@
 #include "PlatformScreen.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SimpleFontData.h"
 #include <tchar.h>

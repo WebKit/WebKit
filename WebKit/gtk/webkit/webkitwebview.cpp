@@ -56,7 +56,7 @@
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "SubstituteData.h"
 
 #include <gdk/gdkkeysyms.h>

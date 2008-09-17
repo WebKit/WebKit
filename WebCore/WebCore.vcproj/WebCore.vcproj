@@ -3320,11 +3320,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\ScrollBar.cpp"
+				RelativePath="..\platform\Scrollbar.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\platform\ScrollBar.h"
+				RelativePath="..\platform\Scrollbar.h"
 				>
 			</File>
 			<File

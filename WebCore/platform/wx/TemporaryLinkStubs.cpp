@@ -73,7 +73,7 @@
 #include "Screen.h"
 #include "ScrollbarTheme.h"
 #include "SearchPopupMenu.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "SharedBuffer.h"
 #include "SharedTimer.h"
 #include "TextBoundaries.h"

@@ -28,7 +28,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "RenderImage.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "SelectionController.h"
 
 #if ENABLE(SVG)

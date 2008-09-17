@@ -1,3 +1,11 @@
+2008-09-16  Alp Toker  <alp@nuanti.com>
+
+        Suggested by Dave Hyatt.
+
+        Build fix and cleanup. Rename ScrollBar to Scrollbar.
+
+        * webkit/webkitwebview.cpp:
+
 2008-09-13  Adrien Nader  <camaradetux@gmail.com>
 
         Gtk build fix, not reviewed.

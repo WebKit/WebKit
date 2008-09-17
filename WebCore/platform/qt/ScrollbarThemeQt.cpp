@@ -30,7 +30,7 @@
 
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 
 #include <QApplication>
 #include <QDebug>

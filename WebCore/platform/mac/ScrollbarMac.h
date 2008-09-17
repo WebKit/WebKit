@@ -26,7 +26,7 @@
 #ifndef ScrollbarMac_h
 #define ScrollbarMac_h
 
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include <wtf/PassRefPtr.h>
 
 #ifdef __OBJC__

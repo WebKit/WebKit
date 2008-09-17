@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 
 #include "EventHandler.h"
 #include "Frame.h"

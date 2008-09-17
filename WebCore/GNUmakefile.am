@@ -1536,8 +1536,8 @@ webcore_sources += \
 	WebCore/platform/PopupMenu.h \
 	WebCore/platform/PopupMenuClient.h \
 	WebCore/platform/SSLKeyGenerator.h \
-	WebCore/platform/ScrollBar.cpp \
-	WebCore/platform/ScrollBar.h \
+	WebCore/platform/Scrollbar.cpp \
+	WebCore/platform/Scrollbar.h \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.h \
 	WebCore/platform/SearchPopupMenu.h \

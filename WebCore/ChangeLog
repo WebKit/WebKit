@@ -1,3 +1,43 @@
+2008-09-16  Alp Toker  <alp@nuanti.com>
+
+        Suggested by Dave Hyatt.
+
+        Build fix and cleanup. Rename ScrollBar to Scrollbar.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * editing/EditorCommand.cpp:
+        * page/EventHandler.cpp:
+        * page/gtk/EventHandlerGtk.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * page/mac/FrameMac.mm:
+        * page/qt/EventHandlerQt.cpp:
+        * page/wx/EventHandlerWx.cpp:
+        * platform/PopupMenu.h:
+        * platform/ScrollBar.cpp: Removed.
+        * platform/ScrollBar.h: Removed.
+        * platform/Scrollbar.cpp: Copied from WebCore/platform/ScrollBar.cpp.
+        * platform/Scrollbar.h: Copied from WebCore/platform/ScrollBar.h.
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::ScrollbarGtk):
+        * platform/gtk/ScrollbarGtk.h:
+        * platform/mac/ScrollbarMac.h:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/qt/ScrollbarQt.cpp:
+        * platform/qt/ScrollbarThemeQt.cpp:
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PopupMenuWin.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/win/ScrollbarThemeWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * rendering/HitTestResult.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderTextControl.cpp:
+
 2008-09-16  David Hyatt  <hyatt@apple.com>
 
         Fix Qt build bustage by making moveThumb a member of Scrollbar so that

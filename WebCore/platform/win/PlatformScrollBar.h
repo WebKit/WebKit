@@ -26,7 +26,7 @@
 #ifndef PlatformScrollbar_h
 #define PlatformScrollbar_h
 
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "Timer.h"
 #include <wtf/PassRefPtr.h>
 

@@ -36,7 +36,7 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderTheme.h"

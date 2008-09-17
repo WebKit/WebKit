@@ -58,7 +58,7 @@
 #include "RenderFrameSet.h"
 #include "RenderWidget.h"
 #include "RenderView.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextEvent.h"

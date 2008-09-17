@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollBar_h
-#define ScrollBar_h
+#ifndef Scrollbar_h
+#define Scrollbar_h
 
 #include <wtf/RefCounted.h>
 #include "ScrollTypes.h"

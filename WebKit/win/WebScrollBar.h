@@ -33,7 +33,7 @@
 
 #pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
-#include <WebCore/ScrollBar.h>
+#include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarClient.h>
 #pragma warning(pop)
 

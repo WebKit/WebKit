@@ -26,7 +26,7 @@
 #ifndef ScrollbarGtk_h
 #define ScrollbarGtk_h
 
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include <wtf/PassRefPtr.h>
 
 typedef struct _GtkAdjustment GtkAdjustment;

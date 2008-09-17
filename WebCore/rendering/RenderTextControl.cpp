@@ -39,7 +39,7 @@
 #include "MouseEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderTheme.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SearchPopupMenu.h"
 #include "SelectionController.h"

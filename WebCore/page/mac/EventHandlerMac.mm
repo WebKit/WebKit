@@ -40,7 +40,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "RenderWidget.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include "Settings.h"
 
 namespace WebCore {
