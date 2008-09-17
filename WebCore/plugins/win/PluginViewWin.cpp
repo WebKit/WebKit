@@ -372,7 +372,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     windowpos.cx = frameGeometry().width();
     windowpos.cy = frameGeometry().height();
 
-    npEvent.event = WplatformPluginWidget()POSCHANGED;
+    npEvent.event = WM_WINDOWPOSCHANGED;
     npEvent.lParam = reinterpret_cast<uint32>(&windowpos);
     npEvent.wParam = 0;
 
