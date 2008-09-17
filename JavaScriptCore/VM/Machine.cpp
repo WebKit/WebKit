@@ -4318,10 +4318,7 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     ExecState* exec = ARG_exec;
     RegisterFile* registerFile = ARG_registerFile;
     Register* r = ARG_r;
-    CodeBlock* codeBlock = ARG_codeBlock;
-    ScopeChainNode* scopeChain = ARG_scopeChain;
 
-    Machine* machine = exec->machine();
     JSValue* exceptionValue = 0;
     Register* registerBase = registerFile->base();
     
@@ -4348,7 +4345,6 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     r[firstArg] = thisValue;
 
     Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
-    machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, funcVal);
     exec->m_callFrame = callFrame;
 
     r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
@@ -4400,13 +4396,8 @@ JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
     ASSERT(callType != CallTypeJS);
 
     if (callType == CallTypeHost) {
-        CodeBlock* codeBlock = ARG_codeBlock;
-        ScopeChainNode* scopeChain = ARG_scopeChain;
-        Machine* machine = exec->machine();
-
         Register* oldCallFrame = exec->m_callFrame;
         Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
-        machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, funcVal);
         exec->m_callFrame = callFrame;
 
         if (*ARG_profilerReference)
@@ -4502,10 +4493,8 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     ExecState* exec = ARG_exec;
     RegisterFile* registerFile = ARG_registerFile;
     Register* r = ARG_r;
-    CodeBlock* codeBlock = ARG_codeBlock;
     ScopeChainNode* scopeChain = ARG_scopeChain;
 
-    Machine* machine = exec->machine();
     JSValue* exceptionValue = 0;
     Register* registerBase = registerFile->base();
     
@@ -4543,7 +4532,6 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     r[firstArg] = newObject; // "this" value
 
     Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
-    machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, constructor);
     exec->m_callFrame = callFrame;
 
     r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
@@ -4588,13 +4576,8 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
     ASSERT(constructType != ConstructTypeJS);
 
     if (constructType == ConstructTypeHost) {
-        CodeBlock* codeBlock = ARG_codeBlock;
-        ScopeChainNode* scopeChain = ARG_scopeChain;
-        Machine* machine = exec->machine();
-
         Register* oldCallFrame = exec->m_callFrame;
         Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
-        machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, constrVal);
         exec->m_callFrame = callFrame;
 
         if (*ARG_profilerReference)

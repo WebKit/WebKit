@@ -2,6 +2,20 @@
 
         Reviewed by Geoff Garen.
 
+        Implement JIT generation of CallFrame initialization, for op_call.
+
+        1% sunspider 2.5% v8-tests.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+
+2008-09-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Optimizations for op_call in CTI.  Move check for (ctiCode == 0) into JIT code,
         move copying of scopeChain for CodeBlocks that needFullScopeChain into head of
         functions, instead of checking prior to making the call.

@@ -416,15 +416,19 @@ OpcodeID currentOpcodeID = static_cast<OpcodeID>(-1);
 
 void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type)
 {
+    int dst = instruction[i + 1].u.operand;
+    int firstArg = instruction[i + 4].u.operand;
+    int argCount = instruction[i + 5].u.operand;
+
     if (type == OpConstruct) {
         emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 16);
-        emitPutArgConstant(instruction[i + 5].u.operand, 12);
-        emitPutArgConstant(instruction[i + 4].u.operand, 8);
+        emitPutArgConstant(argCount, 12);
+        emitPutArgConstant(firstArg, 8);
         emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
     } else {
         emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 16);
-        emitPutArgConstant(instruction[i + 5].u.operand, 12);
-        emitPutArgConstant(instruction[i + 4].u.operand, 8);
+        emitPutArgConstant(argCount, 12);
+        emitPutArgConstant(firstArg, 8);
         // FIXME: should this be loaded dynamically off m_exec?
         int thisVal = instruction[i + 3].u.operand;
         if (thisVal == missingThisObjectMarker()) {
@@ -451,6 +455,19 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
         emitGetArg(instruction[i + 2].u.operand, X86::ecx);
         emitPutArg(X86::ecx, 0);
     }
+
+    // initializeCallFrame!
+    m_jit.movl_i32m(reinterpret_cast<unsigned>(m_codeBlock), (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::CallerCodeBlock) * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(reinterpret_cast<unsigned>(instruction + i), (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ReturnVPC) * sizeof(Register), X86::edi);
+    emitGetCTIParam(CTI_ARGS_scopeChain, X86::edx);
+    m_jit.movl_rm(X86::edx, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::CallerScopeChain) * sizeof(Register), X86::edi);
+    m_jit.movl_rm(X86::edi, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::CallerRegisters) * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(dst, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ReturnValueRegister) * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(firstArg, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ArgumentStartRegister) * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(argCount, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ArgumentCount) * sizeof(Register), X86::edi);
+    m_jit.movl_rm(X86::ecx, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::Callee) * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(0, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::OptionalCalleeActivation) * sizeof(Register), X86::edi);
+    // CTIReturnEIP (set in callee)
 
     // Fast check for JS function.
     m_jit.testl_i32r(JSImmediate::TagMask, X86::ecx);
@@ -490,7 +507,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     if (type == OpCallEval)
         m_jit.link(wasEval, end);
 
-    emitPutResult(instruction[i + 1].u.operand);
+    emitPutResult(dst);
 }
 
 void CTI::emitSlowScriptCheck(unsigned opcodeIndex)
