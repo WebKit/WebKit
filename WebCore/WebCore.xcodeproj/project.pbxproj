@@ -3731,11 +3731,11 @@
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
-		BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */; };
-		BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */; };
-		BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */; };
-		BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E00E81BE8700B25965 /* BorderData.h */; };
-		BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */; };
+		BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E00E81BE8700B25965 /* BorderData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5E70E81BFEF00B25965 /* StyleSurroundData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB5E60E81BFEF00B25965 /* StyleSurroundData.cpp */; };
 		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
 		BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */; };

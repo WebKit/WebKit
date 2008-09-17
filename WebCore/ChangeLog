@@ -1,3 +1,9 @@
+2008-09-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Send appropriate headers to WebKit
+
 2008-09-17  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.
