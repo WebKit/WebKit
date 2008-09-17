@@ -210,12 +210,6 @@ public:
     IntRect convertToContainingWindow(const IntRect&) const;
 #endif
 
-#if PLATFORM(WX)
-    Widget(wxWindow*);
-    wxWindow* nativeWindow() const;
-    virtual void setNativeWindow(wxWindow*);
-#endif
-
 private:
     void init(); // Must be called by all Widget constructors to initialize cross-platform data.
 
