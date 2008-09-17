@@ -1,3 +1,16 @@
+2008-09-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        This is a better fix for: Invalid CSS code crashes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=20512
+
+        The spec indicates that the only valid input for a counter is a 
+        number or an identifier. So that is exactly what we allow.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCounterContent):
+
 2008-09-17  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fix. Adapt to use PlatformWidget functions.
