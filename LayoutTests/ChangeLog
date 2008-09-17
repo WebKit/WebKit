@@ -1,3 +1,14 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Test for <rdar://problem/6133884> 
+        Calling window.resizeTo() on a subframe shouldn't change the window size
+
+        * fast/dom/Window/resources/blank.html: Added.
+        * fast/dom/Window/window-resize-and-move-sub-frame-expected.txt: Added.
+        * fast/dom/Window/window-resize-and-move-sub-frame.html: Added.
+
 2008-09-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adam Roben.
