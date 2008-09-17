@@ -40,7 +40,6 @@
 #include "ScrollView.h"
 #include "Widget.h"
 #include "WidgetClient.h"
-#include "PlatformScrollBar.h"
 #include "NotImplemented.h"
 
 #include "qwebframe.h"
