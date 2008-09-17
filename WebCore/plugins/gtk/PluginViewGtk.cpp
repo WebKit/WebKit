@@ -525,20 +525,16 @@ void PluginView::init()
 
 #if defined(GDK_WINDOWING_X11)
     if (m_needsXEmbed) {
-        platformPluginWidget() = gtk_socket_new();
+        setPlatformWidget(gtk_socket_new());
         gtk_container_add(GTK_CONTAINER(containingWindow()), platformPluginWidget());
         g_signal_connect(platformPluginWidget(), "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
-        setPlatformWidget(platformPluginWidget());
-    } else if (m_isWindowed) {
-        platformPluginWidget() = gtk_xtbin_new(m_parentFrame->view()->containingWindow()->window, 0);
-        setPlatformWidget(platformPluginWidget());
-    }
+    } else if (m_isWindowed)
+        setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->containingWindow()->window, 0));
 #else
-    platformPluginWidget() = gtk_socket_new();
+    setPlatformWidget(gtk_socket_new());
     gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->containingWindow()), platformPluginWidget());
-    setPlatformWidget(platformPluginWidget());
 #endif
-    show ();
+    show();
 
     if (m_isWindowed) {
         m_npWindow.type = NPWindowTypeWindow;
