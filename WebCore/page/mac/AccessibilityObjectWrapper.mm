@@ -143,7 +143,7 @@ using namespace HTMLNames;
     Widget* widget = m_object->widgetForAttachmentView();
     if (!widget)
         return nil;
-    return widget->getView();
+    return widget->platformWidget();
 }
 
 static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& visiblePos)
@@ -1084,7 +1084,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (m_object->isAccessibilityRenderObject()) {
             FrameView* fv = static_cast<AccessibilityRenderObject*>(m_object)->frameViewIfRenderView();
             if (fv)
-                return fv->getView();
+                return fv->platformWidget();
         }
         
         return m_object->parentObjectUnignored()->wrapper();
@@ -1231,7 +1231,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         [attributeName isEqualToString: NSAccessibilityTopLevelUIElementAttribute]) {
         FrameView* fv = m_object->documentFrameView();
         if (fv)
-            return [fv->getView() window];
+            return [fv->platformWidget() window];
         return nil;
     }
     

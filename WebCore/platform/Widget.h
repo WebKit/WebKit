@@ -80,9 +80,18 @@ class WidgetPrivate;
 class Widget {
 public:
     Widget();
+    Widget(PlatformWidget);
     virtual ~Widget();
-
-    void init(); // Must be called by all Widget constructors to initialize cross-platform data.
+    
+    PlatformWidget platformWidget() const { return m_widget; }
+    void setPlatformWidget(PlatformWidget widget)
+    { 
+        if (widget != m_widget) {
+            releasePlatformWidget();
+            m_widget = widget;
+            retainPlatformWidget();
+        }
+    }
 
     virtual void setEnabled(bool);
     virtual bool isEnabled() const;
@@ -116,6 +125,7 @@ public:
     bool isParentVisible() const { return m_parentVisible; } // Whether or not our parent is visible.
     bool isVisible() const { return m_selfVisible && m_parentVisible; } // Whether or not we are actually visible.
     virtual void setParentVisible(bool visible) { m_parentVisible = visible; }
+    void setSelfVisible(bool v) { m_selfVisible = v; }
 
     void setIsSelected(bool);
 
@@ -165,16 +175,9 @@ public:
 
     bool suppressInvalidation() const;
     void setSuppressInvalidation(bool);
-
-    GtkWidget* gtkWidget() const;
-protected:
-    void setGtkWidget(GtkWidget*);
 #endif
 
 #if PLATFORM(QT)
-    void setNativeWidget(QWidget *widget);
-    QWidget* nativeWidget() const;
-
     void setIsNPAPIPlugin(bool);
     bool isNPAPIPlugin() const;
 
@@ -192,12 +195,8 @@ protected:
     void setSuppressInvalidation(bool);
 #endif
 
-#if PLATFORM(MAC)
-    Widget(NSView*);
-    
-    NSView* getView() const;
+#if PLATFORM(MAC)    
     NSView* getOuterView() const;
-    void setView(NSView*);
     
     static void beforeMouseDown(NSView*, Widget*);
     static void afterMouseDown(NSView*, Widget*);
@@ -218,7 +217,14 @@ protected:
 #endif
 
 private:
+    void init(); // Must be called by all Widget constructors to initialize cross-platform data.
+
+    void releasePlatformWidget();
+    void retainPlatformWidget();
+    
+private:
     ScrollView* m_parent;
+    PlatformWidget m_widget;
     bool m_selfVisible;
     bool m_parentVisible;
     WidgetPrivate* data;

@@ -46,9 +46,9 @@ ScrollView::~ScrollView()
 
 inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
 {
-    ASSERT(!getView() || [getView() isKindOfClass:[NSScrollView class]]);
-    ASSERT(!getView() || [getView() conformsToProtocol:@protocol(WebCoreFrameScrollView)]);
-    return static_cast<NSScrollView<WebCoreFrameScrollView> *>(getView());
+    ASSERT(!platformWidget() || [platformWidget() isKindOfClass:[NSScrollView class]]);
+    ASSERT(!platformWidget() || [platformWidget() conformsToProtocol:@protocol(WebCoreFrameScrollView)]);
+    return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
 int ScrollView::visibleWidth() const
@@ -266,7 +266,7 @@ void ScrollView::update()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSView *view = getView();
+    NSView *view = platformWidget();
     [[view window] displayIfNeeded];
     [[view window] flushWindowIfNeeded];
 
@@ -361,7 +361,7 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent&)
 
 bool ScrollView::inWindow() const
 {
-    return [getView() window];
+    return [platformWidget() window];
 }
 
 void ScrollView::wheelEvent(PlatformWheelEvent&)

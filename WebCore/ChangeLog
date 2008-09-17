@@ -1,3 +1,145 @@
+2008-09-17  David Hyatt  <hyatt@apple.com>
+
+        Make the notion of having a native widget backing a Widget cross-platform.
+        The PlatformWidget abstraction (which already existed) is used for this.
+             Windows = HWND
+             Qt = QWidget
+             Mac = NSView
+             wx = wxWindow
+             Gtk = GtkWidget
+
+        There are new cross-platform methods that replace all of the unique
+        platform-specific methods.
+             platformWidget()
+             setPlatformWidget()
+
+        For plugins, on every platform except Qt on Windows, the plugin's native
+        widget is now stored in the Widget base class.  Since Qt on Windows uses
+        HWNDs for plugins instead of QWidget, it is the only platform to keep the
+        m_window variable in PluginView.
+
+        Reviewed by Sam Weinig
+
+        * WebCore.base.exp:
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper attachmentView]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::mouseDownViewIfStillGood):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * platform/Widget.cpp:
+        (WebCore::Widget::init):
+        (WebCore::Widget::setParent):
+        (WebCore::Widget::releasePlatformWidget):
+        (WebCore::Widget::retainPlatformWidget):
+        * platform/Widget.h:
+        (WebCore::Widget::platformWidget):
+        (WebCore::Widget::setPlatformWidget):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setFocus):
+        (WebCore::gdkDrawable):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::paint):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::scrollView):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::inWindow):
+        * platform/mac/ScrollbarMac.mm:
+        (WebCore::ScrollbarMac::ScrollbarMac):
+        (WebCore::ScrollbarMac::~ScrollbarMac):
+        (WebCore::ScrollbarMac::updateThumbPosition):
+        (WebCore::ScrollbarMac::updateThumbProportion):
+        (WebCore::ScrollbarMac::scrollbarHit):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::getOuterView):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::releasePlatformWidget):
+        (WebCore::Widget::retainPlatformWidget):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::containingWindow):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::setEnabled):
+        (WebCore::Widget::isEnabled):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::paint):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        (WebCore::PluginView::platformPluginWidget):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::init):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::init):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updateWindow):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::init):
+
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
         Fix assert.

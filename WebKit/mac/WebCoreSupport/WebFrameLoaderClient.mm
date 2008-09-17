@@ -1250,7 +1250,7 @@ public:
         
         NSEvent* event = frame->eventHandler()->currentNSEvent();
         if ([event type] == NSMouseMoved)
-            [(WebNetscapePluginEmbeddedView *)getView() handleMouseMoved:event];
+            [(WebNetscapePluginEmbeddedView *)platformWidget() handleMouseMoved:event];
     }
     
 };
@@ -1365,7 +1365,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 
     WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[m_webFrame.get() _dataSource] representation];
 
-    NSView *pluginView = pluginWidget->getView();
+    NSView *pluginView = pluginWidget->platformWidget();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if ([pluginView isKindOfClass:[WebNetscapePluginEmbeddedView class]])

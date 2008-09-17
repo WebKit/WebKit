@@ -36,6 +36,7 @@ namespace WebCore {
 void Widget::init()
 {
     m_parent = 0;
+    m_widget = 0;
     m_selfVisible = false;
     m_parentVisible = false;
 }
@@ -109,5 +110,15 @@ IntRect Widget::windowClipRect() const
 {
     return IntRect();
 }
+
+#if !PLATFORM(MAC)
+void Widget::releasePlatformWidget()
+{
+}
+
+void Widget::retainPlatformWidget()
+{
+}
+#endif
 
 }

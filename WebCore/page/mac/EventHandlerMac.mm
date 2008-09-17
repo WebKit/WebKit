@@ -247,7 +247,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    NSView *nodeView = widget->getView();
+    NSView *nodeView = widget->platformWidget();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent().get() locationInWindow] fromView:nil]];
@@ -331,7 +331,7 @@ NSView *EventHandler::mouseDownViewIfStillGood()
         return nil;
     }
     FrameView* topFrameView = m_frame->view();
-    NSView *topView = topFrameView ? topFrameView->getView() : nil;
+    NSView *topView = topFrameView ? topFrameView->platformWidget() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         m_mouseDownView = nil;
         return nil;
@@ -454,7 +454,7 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget* widget)
     if ([currentEvent().get() type] != NSScrollWheel || m_sendingEventToSubview || !widget) 
         return false;
 
-    NSView *nodeView = widget->getView();
+    NSView* nodeView = widget->platformWidget();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[currentEvent().get() locationInWindow] fromView:nil]];
@@ -596,7 +596,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
         // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
         // no up-to-date cache of them anywhere.
         fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
-                                       location:[[view->getView() window] convertScreenToBase:[NSEvent mouseLocation]]
+                                       location:[[view->platformWidget() window] convertScreenToBase:[NSEvent mouseLocation]]
                                   modifierFlags:[initiatingEvent modifierFlags]
                                       timestamp:[initiatingEvent timestamp]
                                    windowNumber:[initiatingEvent windowNumber]

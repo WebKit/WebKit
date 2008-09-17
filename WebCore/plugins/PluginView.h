@@ -153,6 +153,7 @@ namespace WebCore {
         virtual IntRect windowClipRect() const;
         virtual void handleEvent(Event*);
         virtual void setParent(ScrollView*);
+        virtual void setParentVisible(bool);
 
         virtual bool isPluginView() const { return true; }
 
@@ -231,8 +232,6 @@ namespace WebCore {
 
         bool m_isWindowed;
         bool m_isTransparent;
-        bool m_isVisible;
-        bool m_attachedToWindow;
         bool m_haveInitialized;
 
 #if PLATFORM(GTK) || defined(Q_WS_X11)
@@ -246,7 +245,18 @@ namespace WebCore {
         bool m_isCallingPluginWndProc;
 #endif
 
+#if PLATFORM(WIN_OS) && PLATFORM(QT)
+        // Only under Qt on Windows, the plugin widget (HWND) does not match the native widget (QWidget).
         PlatformPluginWidget m_window; // for windowed plug-ins
+public:
+        PlatformPluginWidget platformPluginWidget() const { return m_window; }
+#else
+public:
+        PlatformPluginWidget platformPluginWidget() const { return platformWidget(); }
+#endif
+
+private:
+
         mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         mutable IntRect m_windowRect; // Our window rect.
 

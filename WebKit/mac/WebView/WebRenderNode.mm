@@ -84,7 +84,7 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     
     RenderWidget* renderWidget = node->isWidget() ? static_cast<RenderWidget*>(node) : 0;
     Widget* widget = renderWidget ? renderWidget->widget() : 0;
-    NSView *view = widget ? widget->getView() : nil;
+    NSView *view = widget ? widget->platformWidget() : nil;
 
     int nx, ny;
     node->absolutePosition(nx, ny);

@@ -100,12 +100,12 @@ void PluginView::updateWindow() const
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
     GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
-    if (m_window) {
-        gtk_widget_size_allocate(m_window, &allocation);
+    if (platformPluginWidget()) {
+        gtk_widget_size_allocate(platformPluginWidget(), &allocation);
 #if defined(GDK_WINDOWING_X11)
         if (!m_needsXEmbed) {
-            gtk_xtbin_set_position(GTK_XTBIN(m_window), m_windowRect.x(), m_windowRect.y());
-            gtk_xtbin_resize(m_window, m_windowRect.width(), m_windowRect.height());
+            gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
+            gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
         }
 #endif
     }
@@ -113,8 +113,8 @@ void PluginView::updateWindow() const
 
 void PluginView::setFocus()
 {
-    if (m_window)
-        gtk_widget_grab_focus(m_window);
+    if (platformPluginWidget())
+        gtk_widget_grab_focus(platformPluginWidget());
 
     Widget::setFocus();
 }
@@ -123,8 +123,8 @@ void PluginView::show()
 {
     setSelfVisible(true);
 
-    if (isParentVisible() && m_window)
-        gtk_widget_show(m_window);
+    if (isParentVisible() && platformPluginWidget())
+        gtk_widget_show(platformPluginWidget());
 
     Widget::show();
 }
@@ -133,8 +133,8 @@ void PluginView::hide()
 {
     setSelfVisible(false);
 
-    if (isParentVisible() && m_window)
-        gtk_widget_hide(m_window);
+    if (isParentVisible() && platformPluginWidget())
+        gtk_widget_hide(platformPluginWidget());
 
     Widget::hide();
 }
@@ -198,7 +198,7 @@ void PluginView::setParent(ScrollView* parent)
     if (parent)
         init();
     else {
-        if (!m_window)
+        if (!platformPluginWidget())
             return;
     }
 }
@@ -235,7 +235,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
         if (!m_isWindowed)
             return;
 
-        ASSERT(m_window);
+        ASSERT(platformPluginWidget());
     }
 }
 
@@ -246,11 +246,11 @@ void PluginView::setParentVisible(bool visible)
 
     Widget::setParentVisible(visible);
 
-    if (isSelfVisible() && m_window) {
+    if (isSelfVisible() && platformPluginWidget()) {
         if (visible)
-            gtk_widget_show(m_window);
+            gtk_widget_show(platformPluginWidget());
         else
-            gtk_widget_hide(m_window);
+            gtk_widget_hide(platformPluginWidget());
     }
 }
 
@@ -382,7 +382,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         if (m_needsXEmbed)
             *(void **)value = (void *)GDK_DISPLAY();
         else
-            *(void **)value = (void *)GTK_XTBIN(m_window)->xtclient.xtdisplay;
+            *(void **)value = (void *)GTK_XTBIN(platformPluginWidget())->xtclient.xtdisplay;
         return NPERR_NO_ERROR;
 #else
         return NPERR_GENERIC_ERROR;
@@ -391,7 +391,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 #if defined(GDK_WINDOWING_X11)
     case NPNVxtAppContext:
         if (!m_needsXEmbed) {
-            *(void **)value = XtDisplayToApplicationContext (GTK_XTBIN(m_window)->xtclient.xtdisplay);
+            *(void **)value = XtDisplayToApplicationContext (GTK_XTBIN(platformPluginWidget())->xtclient.xtdisplay);
 
             return NPERR_NO_ERROR;
         } else
@@ -466,7 +466,7 @@ void PluginView::invalidateRect(NPRect* rect)
 void PluginView::forceRedraw()
 {
     if (m_isWindowed)
-        gtk_widget_queue_draw(m_window);
+        gtk_widget_queue_draw(platformPluginWidget());
     else
         gtk_widget_queue_draw(containingWindow());
 }
@@ -525,18 +525,18 @@ void PluginView::init()
 
 #if defined(GDK_WINDOWING_X11)
     if (m_needsXEmbed) {
-        m_window = gtk_socket_new();
-        gtk_container_add(GTK_CONTAINER(containingWindow()), m_window);
-        g_signal_connect(m_window, "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
-        setGtkWidget(m_window);
+        platformPluginWidget() = gtk_socket_new();
+        gtk_container_add(GTK_CONTAINER(containingWindow()), platformPluginWidget());
+        g_signal_connect(platformPluginWidget(), "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
+        setPlatformWidget(platformPluginWidget());
     } else if (m_isWindowed) {
-        m_window = gtk_xtbin_new(m_parentFrame->view()->containingWindow()->window, 0);
-        setGtkWidget(m_window);
+        platformPluginWidget() = gtk_xtbin_new(m_parentFrame->view()->containingWindow()->window, 0);
+        setPlatformWidget(platformPluginWidget());
     }
 #else
-    m_window = gtk_socket_new();
-    gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->containingWindow()), m_window);
-    setGtkWidget(m_window);
+    platformPluginWidget() = gtk_socket_new();
+    gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->containingWindow()), platformPluginWidget());
+    setPlatformWidget(platformPluginWidget());
 #endif
     show ();
 
@@ -548,24 +548,24 @@ void PluginView::init()
         ws->type = 0;
 
         if (m_needsXEmbed) {
-            gtk_widget_realize(m_window);
-            m_npWindow.window = (void*)gtk_socket_get_id(GTK_SOCKET(m_window));
-            ws->display = GDK_WINDOW_XDISPLAY(m_window->window);
-            ws->visual = GDK_VISUAL_XVISUAL(gdk_drawable_get_visual(GDK_DRAWABLE(m_window->window)));
-            ws->depth = gdk_drawable_get_visual(GDK_DRAWABLE(m_window->window))->depth;
-            ws->colormap = GDK_COLORMAP_XCOLORMAP(gdk_drawable_get_colormap(GDK_DRAWABLE(m_window->window)));
+            gtk_widget_realize(platformPluginWidget());
+            m_npWindow.window = (void*)gtk_socket_get_id(GTK_SOCKET(platformPluginWidget()));
+            ws->display = GDK_WINDOW_XDISPLAY(platformPluginWidget()->window);
+            ws->visual = GDK_VISUAL_XVISUAL(gdk_drawable_get_visual(GDK_DRAWABLE(platformPluginWidget()->window)));
+            ws->depth = gdk_drawable_get_visual(GDK_DRAWABLE(platformPluginWidget()->window))->depth;
+            ws->colormap = GDK_COLORMAP_XCOLORMAP(gdk_drawable_get_colormap(GDK_DRAWABLE(platformPluginWidget()->window)));
         } else {
-            m_npWindow.window = (void*)GTK_XTBIN(m_window)->xtwindow;
-            ws->display = GTK_XTBIN(m_window)->xtdisplay;
-            ws->visual = GTK_XTBIN(m_window)->xtclient.xtvisual;
-            ws->depth = GTK_XTBIN(m_window)->xtclient.xtdepth;
-            ws->colormap = GTK_XTBIN(m_window)->xtclient.xtcolormap;
+            m_npWindow.window = (void*)GTK_XTBIN(platformPluginWidget())->xtwindow;
+            ws->display = GTK_XTBIN(platformPluginWidget())->xtdisplay;
+            ws->visual = GTK_XTBIN(platformPluginWidget())->xtclient.xtvisual;
+            ws->depth = GTK_XTBIN(platformPluginWidget())->xtclient.xtdepth;
+            ws->colormap = GTK_XTBIN(platformPluginWidget())->xtclient.xtcolormap;
         }
         XFlush (ws->display);
 
         m_npWindow.ws_info = ws;
 #elif defined(GDK_WINDOWING_WIN32)
-        m_npWindow.window = (void*)GDK_WINDOW_HWND(m_window->window);
+        m_npWindow.window = (void*)GDK_WINDOW_HWND(platformPluginWidget()->window);
 #endif
     } else {
         m_npWindow.type = NPWindowTypeDrawable;

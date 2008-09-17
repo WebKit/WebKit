@@ -30,6 +30,7 @@
 #import "Cursor.h"
 #import "Document.h"
 #import "Font.h"
+#import "FoundationExtras.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
 #import "Page.h"
@@ -54,7 +55,6 @@ namespace WebCore {
 
 class WidgetPrivate {
 public:
-    RetainPtr<NSView> view;
     WidgetClient* client;
     bool visible;
     bool mustStayInWindow;
@@ -80,7 +80,6 @@ static void safeRemoveFromSuperview(NSView *view)
 Widget::Widget() : data(new WidgetPrivate)
 {
     init();
-    data->view = nil;
     data->client = 0;
     data->visible = true;
     data->mustStayInWindow = false;
@@ -90,7 +89,7 @@ Widget::Widget() : data(new WidgetPrivate)
 Widget::Widget(NSView* view) : data(new WidgetPrivate)
 {
     init();
-    data->view = view;
+    setPlatformWidget(view);
     data->client = 0;
     data->visible = true;
     data->mustStayInWindow = false;
@@ -99,13 +98,12 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 
 Widget::~Widget() 
 {
-    ASSERT(!parent());
     delete data;
 }
 
 void Widget::setEnabled(bool enabled)
 {
-    id view = data->view.get();
+    id view = platformWidget();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(setEnabled:)]) {
         [view setEnabled:enabled];
@@ -115,7 +113,7 @@ void Widget::setEnabled(bool enabled)
 
 bool Widget::isEnabled() const
 {
-    id view = data->view.get();
+    id view = platformWidget();
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(isEnabled)]) {
@@ -143,7 +141,7 @@ void Widget::setFocus()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
  
-    NSView *view = [getView() _webcore_effectiveFirstResponder];
+    NSView *view = [platformWidget() _webcore_effectiveFirstResponder];
     if (Page* page = frame->page())
         page->chrome()->focusNSView(view);
     
@@ -193,21 +191,9 @@ void Widget::setFrameGeometry(const IntRect &rect)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-NSView* Widget::getView() const
-{
-    return data->view.get();
-}
-
-void Widget::setView(NSView* view)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    data->view = view;
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 NSView* Widget::getOuterView() const
 {
-    NSView* view = data->view.get();
+    NSView* view = platformWidget();
 
     // If this widget's view is a WebCoreFrameScrollView then we
     // resize its containing view, a WebFrameView.
@@ -237,7 +223,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         // Transparent subframes are in fact implemented with scroll views that return YES from -drawsBackground (whenever the WebView
         // itself is in drawsBackground mode). In the normal drawing code path, the scroll views are never asked to draw the background,
         // so this is not an issue, but in this code path they are, so the following code temporarily turns background drwaing off.
-        NSView *innerView = getView();
+        NSView *innerView = platformWidget();
         NSScrollView *scrollView = 0;
         if ([innerView conformsToProtocol:@protocol(WebCoreFrameScrollView)]) {
             ASSERT([innerView isKindOfClass:[NSScrollView class]]);
@@ -275,20 +261,20 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 void Widget::invalidate()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [getView() setNeedsDisplay: YES];
+    [platformWidget() setNeedsDisplay: YES];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::invalidateRect(const IntRect& r)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [getView() setNeedsDisplayInRect: r];
+    [platformWidget() setNeedsDisplayInRect: r];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::setIsSelected(bool isSelected)
 {
-    NSView *view = getView();
+    NSView *view = platformWidget();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])
         [view webPlugInSetIsSelected:isSelected];
@@ -383,6 +369,16 @@ IntRect Widget::convertToContainingWindow(const IntRect& r) const
 {
     // FIXME: Implement.
     return r;
+}
+
+void Widget::releasePlatformWidget()
+{
+    HardRelease(m_widget);
+}
+
+void Widget::retainPlatformWidget()
+{
+    HardRetain(m_widget);
 }
 
 }

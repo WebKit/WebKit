@@ -301,7 +301,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     FrameView* view = frame->view();
 
-    view->setView(_private->frameScrollView);
+    view->setPlatformWidget(_private->frameScrollView);
 
     // FIXME: Frame tries to do this too. Is this code needed?
     if (RenderPart* owner = frame->ownerRenderer()) {

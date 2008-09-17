@@ -111,7 +111,7 @@ ScrollbarMac::ScrollbarMac(ScrollbarClient* client, ScrollbarOrientation orienta
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebCoreScrollBar *bar = [[WebCoreScrollBar alloc] initWithScrollbarMac:this];
-    setView(bar);
+    setPlatformWidget(bar);
     [bar release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -119,7 +119,7 @@ ScrollbarMac::ScrollbarMac(ScrollbarClient* client, ScrollbarOrientation orienta
 
 ScrollbarMac::~ScrollbarMac()
 {
-    WebCoreScrollBar* bar = (WebCoreScrollBar*)getView();
+    WebCoreScrollBar* bar = (WebCoreScrollBar*)platformWidget();
     [bar detachScrollbarMac];
 
     // Widget should probably do this for all widgets.
@@ -133,7 +133,7 @@ ScrollbarMac::~ScrollbarMac()
 void ScrollbarMac::updateThumbPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
+    WebCoreScrollBar *bar = (WebCoreScrollBar *)platformWidget();
 #ifdef BUILDING_ON_TIGER
     [bar setFloatValue:static_cast<float>(m_currentPos) / (m_totalSize - m_visibleSize) knobProportion:[bar knobProportion]];
 #else
@@ -147,7 +147,7 @@ void ScrollbarMac::updateThumbProportion()
     float val = static_cast<float>(m_visibleSize) / m_totalSize;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
+    WebCoreScrollBar *bar = (WebCoreScrollBar *)platformWidget();
     if (val != [bar knobProportion] && val >= 0)
 #ifdef BUILDING_ON_TIGER
         [bar setFloatValue:static_cast<float>(m_currentPos) / (m_totalSize - m_visibleSize) knobProportion:val];
@@ -163,7 +163,7 @@ bool ScrollbarMac::scrollbarHit(NSScrollerPart hitPart)
     if (maxPos <= 0)
         return false; // Impossible to scroll anywhere.
     
-    WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
+    WebCoreScrollBar *bar = (WebCoreScrollBar *)platformWidget();
     int newPos = value();
     switch (hitPart) {
         case NSScrollerDecrementLine:

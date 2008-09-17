@@ -550,7 +550,9 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_lastMessage(0)
     , m_isCallingPluginWndProc(false)
 #endif
+#if PLATFORM(WIN_OS) && PLATFORM(QT)
     , m_window(0)
+#endif
     , m_loadManually(loadManually)
     , m_manualStream(0)
     , m_isJavaScriptPaused(false)

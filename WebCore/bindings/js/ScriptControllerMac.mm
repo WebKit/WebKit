@@ -65,7 +65,7 @@ namespace WebCore {
 
 PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
-    NSView* widgetView = widget->getView();
+    NSView* widgetView = widget->platformWidget();
     if (!widgetView)
         return 0;
 
