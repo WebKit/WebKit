@@ -811,17 +811,17 @@ void ScrollView::setParent(ScrollView* parentView)
     Widget::setParent(parentView);
 }
 
-void ScrollView::setAncestorVisible(bool visible)
+void ScrollView::setParentVisible(bool visible)
 {
-    if (m_ancestorVisible = visible)
+    if (isParentVisible() = visible)
         return;
     
-    Widget::setAncestorVisible(visible);
+    Widget::setParentVisible(visible);
 
     if (isVisible()) {
         HashSet<Widget*>::iterator end = m_data->m_children.end();
         for (HashSet<Widget*>::iterator it = m_data->m_children.begin(); it != end; ++it)
-            (*it)->setAncestorVisible(visible);
+            (*it)->setParentVisible(visible);
     }
 }
 
