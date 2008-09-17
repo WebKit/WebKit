@@ -26,12 +26,9 @@
 #define BorderValue_h
 
 #include "Color.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
-
-// These have been defined in the order of their precedence for border-collapsing. Do
-// not change this order!
-enum EBorderStyle { BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE };
 
 class BorderValue {
 public:

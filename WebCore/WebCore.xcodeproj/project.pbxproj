@@ -3737,6 +3737,7 @@
 		BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E00E81BE8700B25965 /* BorderData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5E70E81BFEF00B25965 /* StyleSurroundData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB5E60E81BFEF00B25965 /* StyleSurroundData.cpp */; };
+		BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
 		BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */; };
 		BC60D6E90D28D83400B9918F /* DOMCoreException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMCoreException.h */; };
@@ -8190,6 +8191,7 @@
 		BC5EB5E00E81BE8700B25965 /* BorderData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BorderData.h; path = style/BorderData.h; sourceTree = "<group>"; };
 		BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleSurroundData.h; path = style/StyleSurroundData.h; sourceTree = "<group>"; };
 		BC5EB5E60E81BFEF00B25965 /* StyleSurroundData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleSurroundData.cpp; path = style/StyleSurroundData.cpp; sourceTree = "<group>"; };
+		BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderStyleConstants.h; path = style/RenderStyleConstants.h; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
 		BC6049CB0DB560C200204739 /* CSSCanvasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCanvasValue.h; sourceTree = "<group>"; };
 		BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCanvasValue.cpp; sourceTree = "<group>"; };
@@ -12680,6 +12682,7 @@
 				BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */,
 				BC8C8FAB0DDCD31B00B592F4 /* RenderStyle.cpp */,
 				BC8C8FAC0DDCD31B00B592F4 /* RenderStyle.h */,
+				BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */,
 				BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */,
 				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
 				BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */,
@@ -15620,6 +15623,7 @@
 				BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */,
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
+				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

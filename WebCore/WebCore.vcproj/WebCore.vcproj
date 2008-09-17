@@ -8758,6 +8758,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\RenderStyleConstants.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGBlock.cpp"
 				>
 				<FileConfiguration

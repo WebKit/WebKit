@@ -1870,6 +1870,7 @@ webcore_sources += \
 	WebCore/rendering/style/OutlineValue.h \
 	WebCore/rendering/style/StyleSurroundData.cpp \
 	WebCore/rendering/style/StyleSurroundData.h \
+	WebCore/rendering/style/RenderStyleConstants.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \

@@ -1,3 +1,21 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by David Hyatt.
+
+        Split all RenderStyle enums into their own file.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/style/BorderValue.h:
+        * rendering/style/CollapsedBorderValue.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+
 2008-09-17  Steve Falkenburg  <sfalken@apple.com>
 
         Add back isFrameView check to fix failed assertion during scroll bar teardown.

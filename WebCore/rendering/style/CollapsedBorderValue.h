@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
-
 struct CollapsedBorderValue {
     CollapsedBorderValue()
         : border(0)

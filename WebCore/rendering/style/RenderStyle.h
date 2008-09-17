@@ -25,15 +25,6 @@
 #ifndef RenderStyle_h
 #define RenderStyle_h
 
-/*
- * WARNING:
- * --------
- *
- * The order of the values in the enums have to agree with the order specified
- * in CSSValueKeywords.in, otherwise some optimizations in the parser will fail,
- * and produce invalid results.
- */
-
 #include "AffineTransform.h"
 #include "BorderData.h"
 #include "BorderValue.h"
@@ -55,6 +46,7 @@
 #include "NinePieceImage.h"
 #include "OutlineValue.h"
 #include "Pair.h"
+#include "RenderStyleConstants.h"
 #include "StyleSurroundData.h"
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
@@ -89,24 +81,6 @@ class StringImpl;
 class StyleImage;
 
 struct CursorData;
-
-enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoVisited};
-
-enum EPosition {
-    StaticPosition, RelativePosition, AbsolutePosition, FixedPosition
-};
-
-enum EFloat {
-    FNONE = 0, FLEFT, FRIGHT
-};
-
-
-enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };
-
-//------------------------------------------------
-// Box attributes. Not inherited.
-
-enum EBoxSizing { CONTENT_BOX, BORDER_BOX };
 
 class StyleBoxData : public RefCounted<StyleBoxData> {
 public:
@@ -165,30 +139,6 @@ struct StyleDashboardRegion {
 };
 #endif
 
-//------------------------------------------------
-// Random visual rendering model attributes. Not inherited.
-
-enum EOverflow {
-    OVISIBLE, OHIDDEN, OSCROLL, OAUTO, OOVERLAY, OMARQUEE
-};
-
-enum EVerticalAlign {
-    BASELINE, MIDDLE, SUB, SUPER, TEXT_TOP,
-    TEXT_BOTTOM, TOP, BOTTOM, BASELINE_MIDDLE, LENGTH
-};
-
-enum EClear{
-    CNONE = 0, CLEFT = 1, CRIGHT = 2, CBOTH = 3
-};
-
-enum ETableLayout {
-    TAUTO, TFIXED
-};
-
-enum EUnicodeBidi {
-    UBNormal, Embed, Override
-};
-
 class StyleVisualData : public RefCounted<StyleVisualData> {
 public:
     static PassRefPtr<StyleVisualData> create() { return adoptRef(new StyleVisualData); }
@@ -217,19 +167,6 @@ public:
 private:
     StyleVisualData();
     StyleVisualData(const StyleVisualData&);    
-};
-
-//------------------------------------------------
-enum EFillBox {
-    BorderFillBox, PaddingFillBox, ContentFillBox, TextFillBox
-};
-
-enum EFillRepeat {
-    RepeatFill, RepeatXFill, RepeatYFill, NoRepeatFill
-};
-
-enum EFillLayerType {
-    BackgroundFillLayer, MaskFillLayer
 };
 
 struct FillLayer {
@@ -370,12 +307,6 @@ private:
     StyleBackgroundData(const StyleBackgroundData& o );    
 };
 
-//------------------------------------------------
-// CSS3 Marquee Properties
-
-enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE };
-enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2, MFORWARD = 3, MBACKWARD = -3 };
-
 class StyleMarqueeData : public RefCounted<StyleMarqueeData> {
 public:
     static PassRefPtr<StyleMarqueeData> create() { return adoptRef(new StyleMarqueeData); }
@@ -460,8 +391,7 @@ public:
     virtual bool isSameType(const TransformOperation& o) const { return false; }
 };
 
-class IdentityTransformOperation : public TransformOperation
-{
+class IdentityTransformOperation : public TransformOperation {
 public:
     static PassRefPtr<IdentityTransformOperation> create()
     {
@@ -733,14 +663,6 @@ private:
     StyleTransformData(const StyleTransformData&);
 };
 
-//------------------------------------------------
-// CSS3 Flexible Box Properties
-
-enum EBoxAlignment { BSTRETCH, BSTART, BCENTER, BEND, BJUSTIFY, BBASELINE };
-enum EBoxOrient { HORIZONTAL, VERTICAL };
-enum EBoxLines { SINGLE, MULTIPLE };
-enum EBoxDirection { BNORMAL, BREVERSE };
-
 class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
 public:
     static PassRefPtr<StyleFlexibleBoxData> create() { return adoptRef(new StyleFlexibleBoxData); }
@@ -809,81 +731,6 @@ struct BindingURI {
 };
 #endif
 
-//------------------------------------------------
-
-enum ETextSecurity {
-    TSNONE, TSDISC, TSCIRCLE, TSSQUARE
-};
-
-// CSS3 User Modify Properties
-
-enum EUserModify {
-    READ_ONLY, READ_WRITE, READ_WRITE_PLAINTEXT_ONLY
-};
-
-// CSS3 User Drag Values
-
-enum EUserDrag {
-    DRAG_AUTO, DRAG_NONE, DRAG_ELEMENT
-};
-
-// CSS3 User Select Values
-
-enum EUserSelect {
-    SELECT_NONE, SELECT_TEXT
-};
-
-// Word Break Values. Matches WinIE, rather than CSS3
-
-enum EWordBreak {
-    NormalWordBreak, BreakAllWordBreak, BreakWordBreak
-};
-
-enum EWordWrap {
-    NormalWordWrap, BreakWordWrap
-};
-
-enum ENBSPMode {
-    NBNORMAL, SPACE
-};
-
-enum EKHTMLLineBreak {
-    LBNORMAL, AFTER_WHITE_SPACE
-};
-
-enum EMatchNearestMailBlockquoteColor {
-    BCNORMAL, MATCH
-};
-
-enum EResize {
-    RESIZE_NONE, RESIZE_BOTH, RESIZE_HORIZONTAL, RESIZE_VERTICAL
-};
-
-enum EAppearance {
-    NoAppearance, CheckboxAppearance, RadioAppearance, PushButtonAppearance, SquareButtonAppearance, ButtonAppearance,
-    ButtonBevelAppearance, DefaultButtonAppearance, ListboxAppearance, ListItemAppearance, 
-    MediaFullscreenButtonAppearance, MediaMuteButtonAppearance, MediaPlayButtonAppearance,
-    MediaSeekBackButtonAppearance, MediaSeekForwardButtonAppearance, MediaSliderAppearance, MediaSliderThumbAppearance,
-    MenulistAppearance, MenulistButtonAppearance, MenulistTextAppearance, MenulistTextFieldAppearance,
-    ScrollbarButtonUpAppearance, ScrollbarButtonDownAppearance, 
-    ScrollbarButtonLeftAppearance, ScrollbarButtonRightAppearance,
-    ScrollbarTrackHorizontalAppearance, ScrollbarTrackVerticalAppearance,
-    ScrollbarThumbHorizontalAppearance, ScrollbarThumbVerticalAppearance,
-    ScrollbarGripperHorizontalAppearance, ScrollbarGripperVerticalAppearance,
-    SliderHorizontalAppearance, SliderVerticalAppearance, SliderThumbHorizontalAppearance,
-    SliderThumbVerticalAppearance, CaretAppearance, SearchFieldAppearance, SearchFieldDecorationAppearance,
-    SearchFieldResultsDecorationAppearance, SearchFieldResultsButtonAppearance,
-    SearchFieldCancelButtonAppearance, TextFieldAppearance, TextAreaAppearance
-};
-
-enum EListStyleType {
-     DISC, CIRCLE, SQUARE, LDECIMAL, DECIMAL_LEADING_ZERO,
-     LOWER_ROMAN, UPPER_ROMAN, LOWER_GREEK,
-     LOWER_ALPHA, LOWER_LATIN, UPPER_ALPHA, UPPER_LATIN,
-     HEBREW, ARMENIAN, GEORGIAN, CJK_IDEOGRAPHIC,
-     HIRAGANA, KATAKANA, HIRAGANA_IROHA, KATAKANA_IROHA, LNONE
-};
-
 struct CounterDirectives {
     CounterDirectives() : m_reset(false), m_increment(false) { }
 
@@ -915,10 +762,6 @@ private:
     AtomicString m_separator;
 };
 
-enum ContentType {
-    CONTENT_NONE, CONTENT_OBJECT, CONTENT_TEXT, CONTENT_COUNTER
-};
-
 struct ContentData : Noncopyable {
     ContentData() : m_type(CONTENT_NONE), m_next(0) { }
     ~ContentData() { clear(); }
@@ -934,12 +777,7 @@ struct ContentData : Noncopyable {
     ContentData* m_next;
 };
 
-enum EBorderFit { BorderFitBorder, BorderFitLines };
-
-enum ETimingFunctionType { LinearTimingFunction, CubicBezierTimingFunction };
-
-struct TimingFunction
-{
+struct TimingFunction {
     TimingFunction()
     : m_type(CubicBezierTimingFunction)
     , m_x1(0.25)
@@ -973,11 +811,6 @@ private:
     double m_y1;
     double m_x2;
     double m_y2;
-};
-
-enum EAnimPlayState {
-    AnimPlayStatePlaying = 0x0,
-    AnimPlayStatePaused = 0x1
 };
 
 class Animation : public RefCounted<Animation> {
@@ -1081,8 +914,7 @@ private:
     bool m_isNone            : 1;
 };
 
-class AnimationList : public Vector<RefPtr<Animation> >
-{
+class AnimationList : public Vector<RefPtr<Animation> > {
 public:
     void fillUnsetProperties();
     bool operator==(const AnimationList& o) const;
@@ -1220,30 +1052,6 @@ private:
     StyleRareInheritedData(const StyleRareInheritedData&);
 };
 
-//------------------------------------------------
-// Inherited attributes.
-//
-
-enum EWhiteSpace {
-    NORMAL, PRE, PRE_WRAP, PRE_LINE, NOWRAP, KHTML_NOWRAP
-};
-
-enum ETextAlign {
-    TAAUTO, LEFT, RIGHT, CENTER, JUSTIFY, WEBKIT_LEFT, WEBKIT_RIGHT, WEBKIT_CENTER
-};
-
-enum ETextTransform {
-    CAPITALIZE, UPPERCASE, LOWERCASE, TTNONE
-};
-
-enum ETextDecoration {
-    TDNONE = 0x0 , UNDERLINE = 0x1, OVERLINE = 0x2, LINE_THROUGH= 0x4, BLINK = 0x8
-};
-
-enum EPageBreak {
-    PBAUTO, PBALWAYS, PBAVOID
-};
-
 class StyleInheritedData : public RefCounted<StyleInheritedData> {
 public:
     static PassRefPtr<StyleInheritedData> create() { return adoptRef(new StyleInheritedData); }
@@ -1281,28 +1089,6 @@ private:
     StyleInheritedData(const StyleInheritedData&);
 };
 
-
-enum EEmptyCell {
-    SHOW, HIDE
-};
-
-enum ECaptionSide {
-    CAPTOP, CAPBOTTOM, CAPLEFT, CAPRIGHT
-};
-
-enum EListStylePosition { OUTSIDE, INSIDE };
-
-enum EVisibility { VISIBLE, HIDDEN, COLLAPSE };
-
-enum ECursor {
-    CURSOR_AUTO, CURSOR_CROSS, CURSOR_DEFAULT, CURSOR_POINTER, CURSOR_MOVE, CURSOR_VERTICAL_TEXT, CURSOR_CELL, CURSOR_CONTEXT_MENU,
-    CURSOR_ALIAS, CURSOR_PROGRESS, CURSOR_NO_DROP, CURSOR_NOT_ALLOWED, CURSOR_WEBKIT_ZOOM_IN, CURSOR_WEBKIT_ZOOM_OUT,
-    CURSOR_E_RESIZE, CURSOR_NE_RESIZE, CURSOR_NW_RESIZE, CURSOR_N_RESIZE, CURSOR_SE_RESIZE, CURSOR_SW_RESIZE,
-    CURSOR_S_RESIZE, CURSOR_W_RESIZE, CURSOR_EW_RESIZE, CURSOR_NS_RESIZE, CURSOR_NESW_RESIZE, CURSOR_NWSE_RESIZE,
-    CURSOR_COL_RESIZE, CURSOR_ROW_RESIZE, CURSOR_TEXT, CURSOR_WAIT, CURSOR_HELP, CURSOR_ALL_SCROLL, 
-    CURSOR_COPY, CURSOR_NONE
-};
-
 struct CursorData {
     CursorData()
         : cursorImage(0)
@@ -1338,16 +1124,6 @@ private:
     CursorList() { }
 
     Vector<CursorData> m_vector;
-};
-
-//------------------------------------------------
-
-enum EDisplay {
-    INLINE, BLOCK, LIST_ITEM, RUN_IN, COMPACT, INLINE_BLOCK,
-    TABLE, INLINE_TABLE, TABLE_ROW_GROUP,
-    TABLE_HEADER_GROUP, TABLE_FOOTER_GROUP, TABLE_ROW,
-    TABLE_COLUMN_GROUP, TABLE_COLUMN, TABLE_CELL,
-    TABLE_CAPTION, BOX, INLINE_BOX, NONE
 };
 
 class RenderStyle {

@@ -31,8 +31,7 @@ namespace WebCore {
 
 class CachedImage;
 
-class StyleCachedImage : public StyleImage
-{
+class StyleCachedImage : public StyleImage {
 public:
     static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
     virtual WrappedImagePtr data() const { return m_image.get(); }
