@@ -1,3 +1,10 @@
+2008-09-17  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Fix the QtWebKit/Mac build
+
+        * wtf/ThreadingQt.cpp:
+        (WTF::initializeThreading): use QCoreApplication to get the main thread
+
 2008-09-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

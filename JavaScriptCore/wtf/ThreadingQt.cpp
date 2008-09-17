@@ -33,6 +33,7 @@
 #include "MainThread.h"
 #include "MathExtras.h"
 
+#include <QCoreApplication>
 #include <QMutex>
 #include <QThread>
 #include <QWaitCondition>
@@ -65,9 +66,7 @@ void ThreadPrivate::run()
 
 Mutex* atomicallyInitializedStaticMutex;
 
-#if !PLATFORM(DARWIN)
 static ThreadIdentifier mainThreadIdentifier;
-#endif
 
 static Mutex& threadMapMutex()
 {
@@ -127,9 +126,8 @@ void initializeThreading()
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         wtf_random_init();
-#if !PLATFORM(DARWIN)
-        mainThreadIdentifier = currentThread();
-#endif
+        QThread* mainThread = QCoreApplication::instance()->thread();
+        mainThreadIdentifier = establishIdentifierForThread(mainThread);
         initializeMainThread();
     }
 }

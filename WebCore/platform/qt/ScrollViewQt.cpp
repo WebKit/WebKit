@@ -50,6 +50,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QPalette>
+#include <QStyleOption>
 
 #ifdef Q_WS_MAC
 #include <Carbon/Carbon.h>
