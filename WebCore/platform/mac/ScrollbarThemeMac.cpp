@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollbarThemeMac.h"
 
+#include "GraphicsContext.h"
+
 namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
@@ -45,6 +47,15 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     return cScrollbarThickness[controlSize];
 }
+
+#if !USE(NSSCROLLER)
+bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
+{
+    // Fill with debug red just to make sure we're painting in the right place.
+    context->fillRect(scrollbar->frameGeometry(), Color(255, 0, 0));
+    return true;
+}
+#endif
 
 }
 

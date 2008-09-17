@@ -27,6 +27,7 @@
 #define ScrollbarThemeMac_h
 
 #include "ScrollbarTheme.h"
+#include "Scrollbar.h"
 
 namespace WebCore {
 
@@ -35,6 +36,10 @@ public:
     virtual ~ScrollbarThemeMac();
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
+    
+#if !USE(NSSCROLLER)
+    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+#endif
 };
 
 }

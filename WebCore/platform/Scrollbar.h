@@ -45,6 +45,10 @@ class PlatformMouseEvent;
 #define LINE_STEP   40
 #define PAGE_KEEP   40
 
+#if PLATFORM(MAC)
+#define WTF_USE_NSSCROLLER 1
+#endif
+
 class Scrollbar : public Widget, public RefCounted<Scrollbar> {
 protected:
     Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);

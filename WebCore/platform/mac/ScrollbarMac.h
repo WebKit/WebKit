@@ -27,6 +27,9 @@
 #define ScrollbarMac_h
 
 #include "Scrollbar.h"
+
+#if USE(NSSCROLLER)
+
 #include <wtf/PassRefPtr.h>
 
 #ifdef __OBJC__
@@ -59,5 +62,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif // ScrollbarMac_h

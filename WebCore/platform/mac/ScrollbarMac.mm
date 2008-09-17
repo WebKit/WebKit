@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ScrollbarMac.h"
 
+#if USE(NSSCROLLER)
+
 #import "BlockExceptions.h"
 
 using namespace WebCore;
@@ -190,3 +192,6 @@ bool ScrollbarMac::scrollbarHit(NSScrollerPart hitPart)
 }
 
 }
+
+#endif
+

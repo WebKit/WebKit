@@ -1,3 +1,22 @@
+\2008-09-17  David Hyatt  <hyatt@apple.com>
+
+        Add a #define to control whether or not to use an NSScroller on Mac.
+        This ifdef will allow the new NSView-less NSScroller on Mac to be
+        developed side by side with the current one.
+
+        The new scroller paints a debug red if turned on (although due to
+        Widget issues you won't see anything paint yet).
+
+        Reviewed by olliej
+
+        * platform/Scrollbar.cpp:
+        * platform/Scrollbar.h:
+        * platform/mac/ScrollbarMac.h:
+        * platform/mac/ScrollbarMac.mm:
+        * platform/mac/ScrollbarThemeMac.cpp:
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/mac/ScrollbarThemeMac.h:
+
 2008-09-16  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.
