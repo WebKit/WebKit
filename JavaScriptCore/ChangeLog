@@ -1,3 +1,23 @@
+2008-09-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20857: REGRESSION (r36427): ASSERTION FAILED: m_refCount >= 0 in RegisterID::deref()
+        <https://bugs.webkit.org/show_bug.cgi?id=20857>
+
+        Fix a problem stemming from the slightly unsafe behaviour of the
+        CodeGenerator::finalDestination() method by putting the "func" argument
+        of the emitConstruct() method in a RefPtr in its caller. Also, add an
+        assertion guaranteeing that this is always the case.
+
+        CodeGenerator::finalDestination() is still incorrect and can cause
+        problems with a different allocator; see bug 20340 for more details.
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitConstruct):
+        * kjs/nodes.cpp:
+        (JSC::NewExprNode::emitCode):
+
 2008-09-16  Alice Liu  <alice.liu@apple.com>
 
         build fix.

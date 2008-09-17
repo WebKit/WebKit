@@ -1111,13 +1111,7 @@ RegisterID* CodeGenerator::emitUnaryNoDstOp(OpcodeID opcode, RegisterID* src)
 
 RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode* argumentsNode)
 {
-    // Ordinarily, we might ref "func", to avoid allocating a new temporary in
-    // the same register. In this case, though, we actually want the call
-    // frame we allocate to overlap "func", if it's not otherwise referenced.
-    // op_construct will read "func" before writing out the call frame, so this
-    // is safe.
-
-    RefPtr<RegisterID> protectFunc = func;
+    ASSERT(func->refCount());
 
     // Reserve space for prototype
     RefPtr<RegisterID> funcProto = newTemporary();

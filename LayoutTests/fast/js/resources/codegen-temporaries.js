@@ -912,4 +912,18 @@ function switch_test3()
 
 shouldBeTrue("switch_test3()");
 
+function construct_test()
+{
+    var c = [function(a) { this.a = a; }];
+
+    function f()
+    {
+        return new c[0](true);
+    }
+
+    return f().a;
+}
+
+shouldBeTrue("construct_test()");
+
 var successfullyParsed = true;

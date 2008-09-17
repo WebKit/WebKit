@@ -1,3 +1,13 @@
+2008-09-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a test for bug 20857: REGRESSION (r36427): ASSERTION FAILED: m_refCount >= 0 in RegisterID::deref()
+        <https://bugs.webkit.org/show_bug.cgi?id=20857>
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
 2008-09-16  Mark Rowe  <mrowe@apple.com>
 
         Disable fast/js/garbage-collect-after-string-appends.html.

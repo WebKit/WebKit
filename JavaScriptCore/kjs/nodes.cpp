@@ -406,9 +406,9 @@ RegisterID* ArgumentListNode::emitCode(CodeGenerator& generator, RegisterID* dst
 
 RegisterID* NewExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RegisterID* r0 = generator.emitNode(m_expr.get());
+    RefPtr<RegisterID> r0 = generator.emitNode(m_expr.get());
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    return generator.emitConstruct(generator.finalDestination(dst), r0, m_args.get());
+    return generator.emitConstruct(generator.finalDestination(dst, r0.get()), r0.get(), m_args.get());
 }
 
 RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID* dst)
