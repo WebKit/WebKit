@@ -35,6 +35,8 @@
  */
 
 #include "AffineTransform.h"
+#include "BorderData.h"
+#include "BorderValue.h"
 #include "CSSHelper.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
@@ -42,6 +44,7 @@
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
+#include "CollapsedBorderValue.h"
 #include "Color.h"
 #include "DataRef.h"
 #include "FloatPoint.h"
@@ -50,7 +53,9 @@
 #include "IntRect.h"
 #include "Length.h"
 #include "NinePieceImage.h"
+#include "OutlineValue.h"
 #include "Pair.h"
+#include "StyleSurroundData.h"
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -87,11 +92,6 @@ struct CursorData;
 
 enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoVisited};
 
-//------------------------------------------------
-
-//------------------------------------------------
-// Box model attributes. Not inherited.
-
 enum EPosition {
     StaticPosition, RelativePosition, AbsolutePosition, FixedPosition
 };
@@ -100,185 +100,8 @@ enum EFloat {
     FNONE = 0, FLEFT, FRIGHT
 };
 
-//------------------------------------------------
-// Border attributes. Not inherited.
-
-// These have been defined in the order of their precedence for border-collapsing. Do
-// not change this order!
-enum EBorderStyle {
-    BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE
-};
-
-class BorderValue {
-public:
-    BorderValue() {
-        width = 3; // medium is default value
-        m_style = BNONE;
-    }
-
-    Color color;
-    unsigned width : 12;
-    unsigned m_style : 4; // EBorderStyle 
-
-    EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
-    
-    bool nonZero(bool checkStyle = true) const {
-        return width != 0 && (!checkStyle || m_style != BNONE);
-    }
-
-    bool isTransparent() const {
-        return color.isValid() && color.alpha() == 0;
-    }
-
-    bool isVisible(bool checkStyle = true) const {
-        return nonZero(checkStyle) && !isTransparent() && (!checkStyle || m_style != BHIDDEN);
-    }
-
-    bool operator==(const BorderValue& o) const
-    {
-        return width == o.width && m_style == o.m_style && color == o.color;
-    }
-
-    bool operator!=(const BorderValue& o) const
-    {
-        return !(*this == o);
-    }
-};
-
-class OutlineValue : public BorderValue {
-public:
-    OutlineValue()
-    {
-        _offset = 0;
-        _auto = false;
-    }
-    
-    bool operator==(const OutlineValue& o) const
-    {
-        return width == o.width && m_style == o.m_style && color == o.color && _offset == o._offset && _auto == o._auto;
-    }
-    
-    bool operator!=(const OutlineValue& o) const
-    {
-        return !(*this == o);
-    }
-    
-    int _offset;
-    bool _auto;
-};
-
-enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
-
-struct CollapsedBorderValue {
-    CollapsedBorderValue() : border(0), precedence(BOFF) {}
-    CollapsedBorderValue(const BorderValue* b, EBorderPrecedence p) :border(b), precedence(p) {}
-    
-    int width() const { return border && border->nonZero() ? border->width : 0; }
-    EBorderStyle style() const { return border ? border->style() : BHIDDEN; }
-    bool exists() const { return border; }
-    Color color() const { return border ? border->color : Color(); }
-    bool isTransparent() const { return border ? border->isTransparent() : true; }
-    
-    bool operator==(const CollapsedBorderValue& o) const
-    {
-        if (!border) return !o.border;
-        if (!o.border) return false;
-        return *border == *o.border && precedence == o.precedence;
-    }
-    
-    const BorderValue* border;
-    EBorderPrecedence precedence;    
-};
-
-class BorderData {
-public:
-    BorderValue left;
-    BorderValue right;
-    BorderValue top;
-    BorderValue bottom;
-    
-    NinePieceImage image;
-
-    IntSize topLeft;
-    IntSize topRight;
-    IntSize bottomLeft;
-    IntSize bottomRight;
-
-    bool hasBorder() const
-    {
-        bool haveImage = image.hasImage();
-        return left.nonZero(!haveImage) || right.nonZero(!haveImage) || top.nonZero(!haveImage) || bottom.nonZero(!haveImage);
-    }
-
-    bool hasBorderRadius() const {
-        if (topLeft.width() > 0)
-            return true;
-        if (topRight.width() > 0)
-            return true;
-        if (bottomLeft.width() > 0)
-            return true;
-        if (bottomRight.width() > 0)
-            return true;
-        return false;
-    }
-    
-    unsigned short borderLeftWidth() const {
-        if (!image.hasImage() && (left.style() == BNONE || left.style() == BHIDDEN))
-            return 0; 
-        return left.width;
-    }
-    
-    unsigned short borderRightWidth() const {
-        if (!image.hasImage() && (right.style() == BNONE || right.style() == BHIDDEN))
-            return 0;
-        return right.width;
-    }
-    
-    unsigned short borderTopWidth() const {
-        if (!image.hasImage() && (top.style() == BNONE || top.style() == BHIDDEN))
-            return 0;
-        return top.width;
-    }
-    
-    unsigned short borderBottomWidth() const {
-        if (!image.hasImage() && (bottom.style() == BNONE || bottom.style() == BHIDDEN))
-            return 0;
-        return bottom.width;
-    }
-    
-    bool operator==(const BorderData& o) const
-    {
-        return left == o.left && right == o.right && top == o.top && bottom == o.bottom && image == o.image &&
-               topLeft == o.topLeft && topRight == o.topRight && bottomLeft == o.bottomLeft && bottomRight == o.bottomRight;
-    }
-    
-    bool operator!=(const BorderData& o) const {
-        return !(*this == o);
-    }
-};
 
 enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };
-
-class StyleSurroundData : public RefCounted<StyleSurroundData> {
-public:
-    static PassRefPtr<StyleSurroundData> create() { return adoptRef(new StyleSurroundData); }
-    PassRefPtr<StyleSurroundData> copy() const { return adoptRef(new StyleSurroundData(*this)); }
-    
-    bool operator==(const StyleSurroundData& o) const;
-    bool operator!=(const StyleSurroundData& o) const {
-        return !(*this == o);
-    }
-
-    LengthBox offset;
-    LengthBox margin;
-    LengthBox padding;
-    BorderData border;
-    
-private:
-    StyleSurroundData();
-    StyleSurroundData(const StyleSurroundData&);    
-};
-
 
 //------------------------------------------------
 // Box attributes. Not inherited.

@@ -1,3 +1,40 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dave Hyatt.
+
+        Split BorderData, BorderValue, CollapsedBorderValue, OutlineValue and StyleSurroundData
+        out of RenderStyle.h/cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/style/BorderData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::BorderData::hasBorderRadius):
+        (WebCore::BorderData::borderLeftWidth):
+        (WebCore::BorderData::borderRightWidth):
+        (WebCore::BorderData::borderTopWidth):
+        (WebCore::BorderData::borderBottomWidth):
+        (WebCore::BorderData::operator!=):
+        * rendering/style/BorderValue.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::):
+        (WebCore::BorderValue::BorderValue):
+        (WebCore::BorderValue::nonZero):
+        (WebCore::BorderValue::isTransparent):
+        (WebCore::BorderValue::isVisible):
+        * rendering/style/CollapsedBorderValue.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::):
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::operator==):
+        * rendering/style/OutlineValue.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::OutlineValue::OutlineValue):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleSurroundData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleSurroundData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleSurroundData::operator!=):
+
 2008-09-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

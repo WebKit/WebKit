@@ -7970,6 +7970,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\BorderData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\BorderValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\CollapsedBorderValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\CounterNode.cpp"
 				>
 				<FileConfiguration
@@ -8163,6 +8175,10 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\NinePieceImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\OutlineValue.h"
 				>
 			</File>
 			<File
@@ -9317,6 +9333,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\StyleImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleSurroundData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleSurroundData.h"
 				>
 			</File>
 			<File

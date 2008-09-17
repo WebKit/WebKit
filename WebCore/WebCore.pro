@@ -913,6 +913,7 @@ SOURCES += \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleGeneratedImage.cpp \
     rendering/style/NinePieceImage.cpp \
+    rendering/style/StyleSurroundData.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \

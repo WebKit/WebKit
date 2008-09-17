@@ -1864,6 +1864,12 @@ webcore_sources += \
 	WebCore/rendering/style/StyleGeneratedImage.cpp \
 	WebCore/rendering/style/StyleGeneratedImage.h \
 	WebCore/rendering/style/StyleImage.h \
+	WebCore/rendering/style/BorderData.h \
+	WebCore/rendering/style/BorderValue.h \
+	WebCore/rendering/style/CollapsedBorderValue.h \
+	WebCore/rendering/style/OutlineValue.h \
+	WebCore/rendering/style/StyleSurroundData.cpp \
+	WebCore/rendering/style/StyleSurroundData.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \

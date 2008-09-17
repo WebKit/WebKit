@@ -857,10 +857,11 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderWordBreak.cpp
         rendering/RootInlineBox.cpp
         rendering/TextControlInnerElements.cpp
+        rendering/style/NinePieceImage.cpp
         rendering/style/RenderStyle.cpp
         rendering/style/StyleCachedImage.cpp
         rendering/style/StyleGeneratedImage.cpp
-        rendering/style/NinePieceImage.cpp
+        rendering/style/StyleSurroundData.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_STORAGE">
