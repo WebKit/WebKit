@@ -813,7 +813,7 @@ void ScrollView::setParent(ScrollView* parentView)
 
 void ScrollView::setParentVisible(bool visible)
 {
-    if (isParentVisible() = visible)
+    if (isParentVisible() == visible)
         return;
     
     Widget::setParentVisible(visible);
