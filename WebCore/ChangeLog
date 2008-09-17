@@ -1,3 +1,16 @@
+2008-09-17  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix. Adapt to use PlatformWidget functions.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollViewScrollbar::geometryChanged):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::ScrollbarGtk):
+        (ScrollbarGtk::~ScrollbarGtk):
+        (ScrollbarGtk::geometryChanged):
+
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.

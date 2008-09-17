@@ -56,7 +56,7 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
     g_signal_connect(G_OBJECT(scrollBar), "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
     g_signal_connect(G_OBJECT(scrollBar), "scroll-event", G_CALLBACK(gtkScrollEventCallback), this);
 
-    setGtkWidget(GTK_WIDGET(scrollBar));
+    setPlatformWidget(GTK_WIDGET(scrollBar));
 
     /*
      * assign a sane default width and height to the Scrollbar, otherwise
@@ -71,9 +71,9 @@ ScrollbarGtk::~ScrollbarGtk()
     /*
      * the Widget does not take over ownership.
      */
-    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), (gpointer)ScrollbarGtk::gtkValueChanged, this);
-    g_signal_handlers_disconnect_by_func(G_OBJECT(gtkWidget()), (gpointer)gtkScrollEventCallback, this);
-    g_object_unref(G_OBJECT(gtkWidget()));
+    g_signal_handlers_disconnect_by_func(G_OBJECT(platformWidget()), (gpointer)ScrollbarGtk::gtkValueChanged, this);
+    g_signal_handlers_disconnect_by_func(G_OBJECT(platformWidget()), (gpointer)gtkScrollEventCallback, this);
+    g_object_unref(G_OBJECT(platformWidget()));
 }
 
 void ScrollbarGtk::updateThumbPosition()
@@ -113,7 +113,7 @@ void ScrollbarGtk::geometryChanged()
     sz.clampNegativeToZero();
 
     GtkAllocation allocation = { windowRect.x(), windowRect.y(), sz.width(), sz.height() };
-    gtk_widget_size_allocate(gtkWidget(), &allocation);
+    gtk_widget_size_allocate(platformWidget(), &allocation);
 }
 
 void ScrollbarGtk::gtkValueChanged(GtkAdjustment*, ScrollbarGtk* that)
