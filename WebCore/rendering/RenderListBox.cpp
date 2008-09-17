@@ -46,9 +46,9 @@
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "Page.h"
-#include "PlatformScrollBar.h" 
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "Scrollbar.h"
 #include "SelectionController.h"
 #include "NodeRenderStyle.h"
 #include <math.h>
@@ -85,7 +85,7 @@ RenderListBox::~RenderListBox()
 {
     if (m_vBar) {
         if (FrameView* view = node()->document()->view())
-            view->removeChild(static_cast<PlatformScrollbar*>(m_vBar.get()));
+            view->removeChild(m_vBar.get());
         m_vBar->setClient(0);
     }
 }
@@ -127,7 +127,7 @@ void RenderListBox::updateFromElement()
         
         if (!m_vBar)
             if (FrameView* view = node()->document()->view()) {
-                RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, VerticalScrollbar, SmallScrollbar);
+                RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, SmallScrollbar);
                 view->addChild(widget.get());
                 m_vBar = widget.release();
             }
@@ -383,7 +383,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, int _x, int 
                    height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom());
 
     if (vertRect.contains(_x, _y)) {
-        result.setScrollbar(static_cast<PlatformScrollbar*>(m_vBar.get()));
+        result.setScrollbar(m_vBar.get());
         return true;
     }
     return false;

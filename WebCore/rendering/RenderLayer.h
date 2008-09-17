@@ -54,7 +54,6 @@ namespace WebCore {
 class AffineTransform;
 class CachedResource;
 class HitTestResult;
-class PlatformScrollbar;
 class RenderFrameSet;
 class RenderMarquee;
 class RenderObject;

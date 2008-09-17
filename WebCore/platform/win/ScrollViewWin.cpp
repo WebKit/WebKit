@@ -38,9 +38,9 @@
 #include "Page.h"
 #include "ScrollBar.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderTheme.h"
+#include "Scrollbar.h"
 #include "ScrollbarClient.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"
@@ -106,8 +106,8 @@ public:
     int m_scrollbarsAvoidingResizer;
     ScrollbarMode m_vScrollbarMode;
     ScrollbarMode m_hScrollbarMode;
-    RefPtr<PlatformScrollbar> m_vBar;
-    RefPtr<PlatformScrollbar> m_hBar;
+    RefPtr<Scrollbar> m_vBar;
+    RefPtr<Scrollbar> m_hBar;
     HRGN m_dirtyRegion;
     HashSet<Widget*> m_children;
     bool m_visible;
@@ -121,7 +121,7 @@ const int panIconSizeLength = 20;
 void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
     if (hasBar && !m_hBar) {
-        m_hBar = PlatformScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
+        m_hBar = Scrollbar::createNativeScrollbar(this, HorizontalScrollbar, RegularScrollbar);
         m_view->addChild(m_hBar.get());
     } else if (!hasBar && m_hBar) {
         m_view->removeChild(m_hBar.get());
@@ -132,7 +132,7 @@ void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
     if (hasBar && !m_vBar) {
-        m_vBar = PlatformScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
+        m_vBar = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, RegularScrollbar);
         m_view->addChild(m_vBar.get());
     } else if (!hasBar && m_vBar) {
         m_view->removeChild(m_vBar.get());

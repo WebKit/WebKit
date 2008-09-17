@@ -1004,10 +1004,10 @@ SOURCES += \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformMouseEventQt.cpp \
     platform/qt/PlatformScreenQt.cpp \
-    platform/qt/PlatformScrollBarQt.cpp \
     platform/qt/PopupMenuQt.cpp \
     platform/qt/QWebPopup.cpp \
     platform/qt/RenderThemeQt.cpp \
+    platform/qt/ScrollbarQt.cpp \
     platform/qt/ScrollbarThemeQt.cpp \
     platform/qt/ScrollViewQt.cpp \
     platform/qt/SearchPopupMenuQt.cpp \

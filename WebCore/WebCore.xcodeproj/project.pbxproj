@@ -1872,7 +1872,6 @@
 		93F19AB908245E59001E9ABC /* Range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30302DE4476018635CA /* Range.cpp */; };
 		93F19ABC08245E59001E9ABC /* XMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30902DE4476018635CA /* XMLTokenizer.cpp */; };
 		93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93955A4203D72932008635CE /* RenderTreeAsText.cpp */; };
-		93F19ADC08245E59001E9ABC /* PlatformScrollBarMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */; };
 		93F19AE108245E59001E9ABC /* BlockExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* BlockExceptions.mm */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */; };
@@ -3688,7 +3687,6 @@
 		BC3A44E30E26D21B00C14DFA /* JSNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3A44E10E26D21B00C14DFA /* JSNSResolver.h */; };
 		BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */; };
 		BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */; };
-		BC3FCAA90AC3DB5800BA54AD /* PlatformScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */; settings = {ATTRIBUTES = (); }; };
 		BC4368E80C226E32005EFB5F /* Rect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4368E70C226E32005EFB5F /* Rect.h */; };
 		BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */; };
 		BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */; };
@@ -3810,6 +3808,8 @@
 		BC82432C0D0CE8A200460C8F /* JSVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243280D0CE8A200460C8F /* JSVoidCallback.h */; };
 		BC8243E80D0CFD7500460C8F /* WindowFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */; };
 		BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243E70D0CFD7500460C8F /* WindowFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC84B1410E80A16D00841D6D /* ScrollbarMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC84B13F0E80A16D00841D6D /* ScrollbarMac.h */; };
+		BC84B1420E80A16D00841D6D /* ScrollbarMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC84B1400E80A16D00841D6D /* ScrollbarMac.mm */; };
 		BC8B853D0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8B853B0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp */; };
 		BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */; };
 		BC8B854B0E7C7F5600AB6984 /* ScrollbarTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8134,7 +8134,6 @@
 		BC3A44E10E26D21B00C14DFA /* JSNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNSResolver.h; sourceTree = "<group>"; };
 		BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaList.cpp; sourceTree = "<group>"; };
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
-		BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformScrollBar.h; sourceTree = "<group>"; };
 		BC4368E70C226E32005EFB5F /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
 		BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleCustom.cpp; sourceTree = "<group>"; };
 		BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSCharsetRule.cpp; sourceTree = "<group>"; };
@@ -8246,7 +8245,6 @@
 		BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryMac.mm; sourceTree = "<group>"; };
 		BC7951540E15DBFF00A898AB /* JSCanvasPixelArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasPixelArrayCustom.cpp; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* ScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformScrollBarMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
 		BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicNodeList.cpp; sourceTree = "<group>"; };
 		BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicNodeList.h; sourceTree = "<group>"; };
@@ -8262,6 +8260,8 @@
 		BC8243280D0CE8A200460C8F /* JSVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVoidCallback.h; sourceTree = "<group>"; };
 		BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowFeatures.cpp; sourceTree = "<group>"; };
 		BC8243E70D0CFD7500460C8F /* WindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowFeatures.h; sourceTree = "<group>"; };
+		BC84B13F0E80A16D00841D6D /* ScrollbarMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarMac.h; sourceTree = "<group>"; };
+		BC84B1400E80A16D00841D6D /* ScrollbarMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollbarMac.mm; sourceTree = "<group>"; };
 		BC8B853B0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMac.cpp; sourceTree = "<group>"; };
 		BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMac.h; sourceTree = "<group>"; };
 		BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarTheme.h; sourceTree = "<group>"; };
@@ -9225,6 +9225,8 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BC84B13F0E80A16D00841D6D /* ScrollbarMac.h */,
+				BC84B1400E80A16D00841D6D /* ScrollbarMac.mm */,
 				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -9252,8 +9254,6 @@
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
-				BC3FCAA80AC3DB5800BA54AD /* PlatformScrollBar.h */,
-				BC7B2AF90450824100A8000F /* PlatformScrollBarMac.mm */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
 				BCAA90C20A7EBA60008B1229 /* ScrollBar.cpp */,
@@ -14905,7 +14905,6 @@
 				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
-				BC3FCAA90AC3DB5800BA54AD /* PlatformScrollBar.h in Headers */,
 				B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */,
 				935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */,
 				1AC694C80A3B1676003F5049 /* PluginDocument.h in Headers */,
@@ -15597,6 +15596,7 @@
 				BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,
 				BC8B854B0E7C7F5600AB6984 /* ScrollbarTheme.h in Headers */,
+				BC84B1410E80A16D00841D6D /* ScrollbarMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16751,7 +16751,6 @@
 				B27535810B053814002CE64F /* Pen.cpp in Sources */,
 				935C477109AC4D7300A6AAB4 /* PlatformMouseEventMac.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
-				93F19ADC08245E59001E9ABC /* PlatformScrollBarMac.mm in Sources */,
 				1AC694C70A3B1676003F5049 /* PluginDocument.cpp in Sources */,
 				B2B1F7160D00CAA8004AEA64 /* PointerEventsHitRules.cpp in Sources */,
 				0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */,
@@ -17402,6 +17401,7 @@
 				63459C660E79CD33008ADFAF /* CSSNthSelector.cpp in Sources */,
 				29FFBB820E7C5A3D00407730 /* AccessibilityList.cpp in Sources */,
 				BC8B853D0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp in Sources */,
+				BC84B1420E80A16D00841D6D /* ScrollbarMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

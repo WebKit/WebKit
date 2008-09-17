@@ -31,9 +31,9 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScreen.h"
-#include "PlatformScrollBar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScrollBar.h"
 #include "ScrollbarTheme.h"
 #include "SimpleFontData.h"
 #include <tchar.h>
@@ -67,7 +67,7 @@ static inline bool isASCIIPrintable(unsigned c)
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
     : m_popupClient(client)
-    , m_scrollBar(0)
+    , m_scrollbar(0)
     , m_popup(0)
     , m_DC(0)
     , m_bmp(0)
@@ -115,11 +115,11 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
         ::SetLayeredWindowAttributes(m_popup, 0, (255 * popupWindowAlphaPercent) / 100, LWA_ALPHA);
     }
 
-    if (!m_scrollBar)
+    if (!m_scrollbar)
         if (visibleItems() < client()->listSize()) {
             // We need a scroll bar
-            m_scrollBar = PlatformScrollbar::create(this, VerticalScrollbar, SmallScrollbar);
-            m_scrollBar->setContainingWindow(m_popup);
+            m_scrollbar = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, SmallScrollbar);
+            m_scrollbar->setContainingWindow(m_popup);
         }
 
     ::SetWindowPos(m_popup, HWND_TOP, m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), 0);
@@ -362,8 +362,8 @@ void PopupMenu::invalidateItem(int index)
     IntRect damageRect(clientRect());
     damageRect.setY(m_itemHeight * (index - m_scrollOffset));
     damageRect.setHeight(m_itemHeight);
-    if (m_scrollBar)
-        damageRect.setWidth(damageRect.width() - m_scrollBar->frameGeometry().width());
+    if (m_scrollbar)
+        damageRect.setWidth(damageRect.width() - m_scrollbar->frameGeometry().width());
 
     RECT r = damageRect;
     ::InvalidateRect(m_popup, &r, TRUE);
@@ -397,18 +397,18 @@ void PopupMenu::reduceWheelDelta(int delta)
 
 bool PopupMenu::scrollToRevealSelection()
 {
-    if (!m_scrollBar)
+    if (!m_scrollbar)
         return false;
 
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        m_scrollBar->setValue(index);
+        m_scrollbar->setValue(index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        m_scrollBar->setValue(index - visibleItems() + 1);
+        m_scrollbar->setValue(index - visibleItems() + 1);
         return true;
     }
 
@@ -539,8 +539,8 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         }
     }
 
-    if (m_scrollBar)
-        m_scrollBar->paint(&context, damageRect);
+    if (m_scrollbar)
+        m_scrollbar->paint(&context, damageRect);
 
     if (!hdc)
         hdc = ::GetDC(m_popup);
@@ -550,7 +550,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
 
 void PopupMenu::valueChanged(Scrollbar* scrollBar)
 {
-    ASSERT(m_scrollBar);
+    ASSERT(m_scrollbar);
 
     if (!m_popup)
         return;
@@ -573,12 +573,12 @@ void PopupMenu::valueChanged(Scrollbar* scrollBar)
 #endif
 
     IntRect listRect = clientRect();
-    if (m_scrollBar)
-        listRect.setWidth(listRect.width() - m_scrollBar->frameGeometry().width());
+    if (m_scrollbar)
+        listRect.setWidth(listRect.width() - m_scrollbar->frameGeometry().width());
     RECT r = listRect;
     ::ScrollWindowEx(m_popup, 0, scrolledLines * m_itemHeight, &r, 0, 0, 0, flags);
-    if (m_scrollBar) {
-        r = m_scrollBar->frameGeometry();
+    if (m_scrollbar) {
+        r = m_scrollbar->frameGeometry();
         ::InvalidateRect(m_popup, &r, TRUE);
     }
     ::UpdateWindow(m_popup);
@@ -626,14 +626,14 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
     switch (message) {
         case WM_SIZE:
-            if (popup && popup->scrollBar()) {
+            if (popup && popup->scrollbar()) {
                 IntSize size(LOWORD(lParam), HIWORD(lParam));
-                popup->scrollBar()->setFrameGeometry(IntRect(size.width() - popup->scrollBar()->width(), 0, popup->scrollBar()->width(), size.height()));
+                popup->scrollbar()->setFrameGeometry(IntRect(size.width() - popup->scrollbar()->width(), 0, popup->scrollbar()->width(), size.height()));
 
                 int visibleItems = popup->visibleItems();
-                popup->scrollBar()->setEnabled(visibleItems < popup->client()->listSize());
-                popup->scrollBar()->setSteps(1, max(1, visibleItems - 1));
-                popup->scrollBar()->setProportion(visibleItems, popup->client()->listSize());
+                popup->scrollbar()->setEnabled(visibleItems < popup->client()->listSize());
+                popup->scrollbar()->setSteps(1, max(1, visibleItems - 1));
+                popup->scrollbar()->setProportion(visibleItems, popup->client()->listSize());
             }
             break;
         case WM_ACTIVATE:
@@ -723,13 +723,13 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case WM_MOUSEMOVE:
             if (popup) {
                 IntPoint mousePoint(MAKEPOINTS(lParam));
-                if (popup->scrollBar()) {
-                    IntRect scrollBarRect = popup->scrollBar()->frameGeometry();
+                if (popup->scrollbar()) {
+                    IntRect scrollBarRect = popup->scrollbar()->frameGeometry();
                     if (popup->scrollbarCapturingMouse() || scrollBarRect.contains(mousePoint)) {
                         // Put the point into coordinates relative to the scroll bar
                         mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                         PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                        popup->scrollBar()->handleMouseMoveEvent(event);
+                        popup->scrollbar()->handleMouseMoveEvent(event);
                         break;
                     }
                 }
@@ -754,13 +754,13 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             if (popup) {
                 ::SetCapture(popup->popupHandle());
                 IntPoint mousePoint(MAKEPOINTS(lParam));
-                if (popup->scrollBar()) {
-                    IntRect scrollBarRect = popup->scrollBar()->frameGeometry();
+                if (popup->scrollbar()) {
+                    IntRect scrollBarRect = popup->scrollbar()->frameGeometry();
                     if (scrollBarRect.contains(mousePoint)) {
                         // Put the point into coordinates relative to the scroll bar
                         mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                         PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                        popup->scrollBar()->handleMousePressEvent(event);
+                        popup->scrollbar()->handleMousePressEvent(event);
                         popup->setScrollbarCapturingMouse(true);
                         break;
                     }
@@ -772,16 +772,16 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case WM_LBUTTONUP:
             if (popup) {
                 IntPoint mousePoint(MAKEPOINTS(lParam));
-                if (popup->scrollBar()) {
+                if (popup->scrollbar()) {
                     ::ReleaseCapture();
-                    IntRect scrollBarRect = popup->scrollBar()->frameGeometry();
+                    IntRect scrollBarRect = popup->scrollbar()->frameGeometry();
                     if (popup->scrollbarCapturingMouse() || scrollBarRect.contains(mousePoint)) {
                         popup->setScrollbarCapturingMouse(false);
                         // Put the point into coordinates relative to the scroll bar
                         mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                         PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                        popup->scrollBar()->handleMouseReleaseEvent(event);
-                        // FIXME: This is a hack to work around PlatformScrollbar not invalidating correctly when it doesn't have a parent widget
+                        popup->scrollbar()->handleMouseReleaseEvent(event);
+                        // FIXME: This is a hack to work around Scrollbar not invalidating correctly when it doesn't have a parent widget
                         RECT r = scrollBarRect;
                         ::InvalidateRect(popup->popupHandle(), &r, TRUE);
                         break;
@@ -800,7 +800,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
             }
             break;
         case WM_MOUSEWHEEL:
-            if (popup && popup->scrollBar()) {
+            if (popup && popup->scrollbar()) {
                 int i = 0;
                 for (popup->incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); abs(popup->wheelDelta()) >= WHEEL_DELTA; popup->reduceWheelDelta(WHEEL_DELTA))
                     if (popup->wheelDelta() > 0)
@@ -808,7 +808,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                     else
                         --i;
 
-                popup->scrollBar()->scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+                popup->scrollbar()->scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
             }
             break;
         case WM_PAINT:

@@ -45,6 +45,13 @@ const double cNormalTimerDelay = 0.05;
 
 namespace WebCore {
 
+#if !PLATFORM(MAC) && !PLATFORM(GTK)
+PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+{
+    return adoptRef(new Scrollbar(client, orientation, size));
+}
+#endif
+
 Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize,
                      ScrollbarTheme* theme)
     : m_client(client)

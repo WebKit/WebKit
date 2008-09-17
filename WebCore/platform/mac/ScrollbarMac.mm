@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PlatformScrollBar.h"
+#import "ScrollbarMac.h"
 
 #import "BlockExceptions.h"
 
@@ -32,11 +32,11 @@ using namespace WebCore;
 
 @interface WebCoreScrollBar : NSScroller
 {
-    PlatformScrollbar* scrollbar;
+    ScrollbarMac* scrollbar;
 }
 
-- (id)initWithPlatformScrollbar:(PlatformScrollbar*)s;
-- (void)detachPlatformScrollbar;
+- (id)initWithScrollbarMac:(ScrollbarMac*)s;
+- (void)detachScrollbarMac;
 
 @end
 
@@ -49,7 +49,7 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
     return NSRegularControlSize;
 }
 
-- (id)initWithPlatformScrollbar:(PlatformScrollbar*)s
+- (id)initWithScrollbarMac:(ScrollbarMac*)s
 {
     // Cocoa scrollbars just set their orientation by examining their own
     // dimensions, so we have to do this unsavory hack.
@@ -75,7 +75,7 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
     return self;
 }
 
-- (void)detachPlatformScrollbar
+- (void)detachScrollbarMac
 {
     [self setTarget:nil];
     scrollbar = 0;
@@ -96,25 +96,29 @@ static NSControlSize NSControlSizeForScrollBarControlSize(ScrollbarControlSize s
 
 @end
 
-namespace WebCore
-{
+namespace WebCore {
 
-PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+{
+    return adoptRef(new ScrollbarMac(client, orientation, size));
+}
+
+ScrollbarMac::ScrollbarMac(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
     : Scrollbar(client, orientation, controlSize)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    WebCoreScrollBar *bar = [[WebCoreScrollBar alloc] initWithPlatformScrollbar:this];
+    WebCoreScrollBar *bar = [[WebCoreScrollBar alloc] initWithScrollbarMac:this];
     setView(bar);
     [bar release];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-PlatformScrollbar::~PlatformScrollbar()
+ScrollbarMac::~ScrollbarMac()
 {
     WebCoreScrollBar* bar = (WebCoreScrollBar*)getView();
-    [bar detachPlatformScrollbar];
+    [bar detachScrollbarMac];
 
     // Widget should probably do this for all widgets.
     // But we don't need it for form elements, and for frames it doesn't work
@@ -123,7 +127,7 @@ PlatformScrollbar::~PlatformScrollbar()
     removeFromSuperview();
 }
 
-void PlatformScrollbar::updateThumbPosition()
+void ScrollbarMac::updateThumbPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
@@ -135,7 +139,7 @@ void PlatformScrollbar::updateThumbPosition()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void PlatformScrollbar::updateThumbProportion()
+void ScrollbarMac::updateThumbProportion()
 {
     float val = static_cast<float>(m_visibleSize) / m_totalSize;
 
@@ -150,7 +154,7 @@ void PlatformScrollbar::updateThumbProportion()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool PlatformScrollbar::scrollbarHit(NSScrollerPart hitPart)
+bool ScrollbarMac::scrollbarHit(NSScrollerPart hitPart)
 {
     int maxPos = m_totalSize - m_visibleSize;
     if (maxPos <= 0)

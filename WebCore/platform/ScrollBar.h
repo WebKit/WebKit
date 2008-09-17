@@ -31,6 +31,7 @@
 #include "Timer.h"
 #include "Widget.h"
 #include <wtf/MathExtras.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -51,6 +52,10 @@ protected:
 public:
     virtual ~Scrollbar();
 
+    // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now those two platforms
+    // are Mac and GTK.
+    static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size);
+    
     void setClient(ScrollbarClient* client) { m_client = client; }
     ScrollbarClient* client() const { return m_client; }
 
@@ -91,10 +96,12 @@ public:
 
     virtual bool handleMousePressEvent(const PlatformMouseEvent&);
 
+#if PLATFORM(QT)
     // For platforms that wish to handle context menu events.
     // FIXME: This is misplaced.  Normal hit testing should be used to populate a correct
     // context menu.  There's no reason why the scrollbar should have to do it.
     virtual bool handleContextMenuEvent(const PlatformMouseEvent& event) { return false; }
+#endif
 
     ScrollbarTheme* theme() const { return m_theme; }
 

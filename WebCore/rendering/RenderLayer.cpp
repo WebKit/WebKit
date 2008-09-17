@@ -61,15 +61,15 @@
 #include "OverflowEvent.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformScrollBar.h" 
 #include "RenderArena.h"
 #include "RenderInline.h"
 #include "RenderMarquee.h"
 #include "RenderReplica.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "SelectionController.h"
+#include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include "SelectionController.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -1102,7 +1102,7 @@ bool RenderLayer::isActive() const
 
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
-    RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, orientation, RegularScrollbar);
+    RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     m_object->document()->view()->addChild(widget.get());        
     return widget.release();
 }
@@ -1111,7 +1111,7 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
     if (scrollbar) {
-        static_cast<PlatformScrollbar*>(scrollbar.get())->removeFromParent();
+        scrollbar->removeFromParent();
         scrollbar->setClient(0);
         scrollbar = 0;
     }

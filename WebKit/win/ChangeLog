@@ -1,3 +1,13 @@
+2008-09-16  David Hyatt  <hyatt@apple.com>
+
+        Eliminate PlatformScrollbar.
+
+        Reviewed by Sam Weinig
+
+        * WebScrollBar.cpp:
+        (WebScrollBar::init):
+        * WebScrollBar.h:
+
 2008-09-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler, Beth Dakin

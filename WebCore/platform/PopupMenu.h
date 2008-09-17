@@ -62,7 +62,7 @@ class wxMenu;
 namespace WebCore {
 
 class FrameView;
-class PlatformScrollbar;
+class Scrollbar;
 
 class PopupMenu : public RefCounted<PopupMenu>
 #if PLATFORM(WIN)
@@ -88,7 +88,7 @@ public:
     static bool itemWritingDirectionIsNatural();
 
 #if PLATFORM(WIN)
-    PlatformScrollbar* scrollBar() const { return m_scrollBar.get(); }
+    Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
     bool up(unsigned lines = 1);
     bool down(unsigned lines = 1);
@@ -150,7 +150,7 @@ private:
     void calculatePositionAndSize(const IntRect&, FrameView*);
     void invalidateItem(int index);
 
-    RefPtr<PlatformScrollbar> m_scrollBar;
+    RefPtr<Scrollbar> m_scrollbar;
     HWND m_popup;
     HDC m_DC;
     HBITMAP m_bmp;

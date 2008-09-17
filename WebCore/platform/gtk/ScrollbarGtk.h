@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
- * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,36 +20,42 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformScrollbar_h
-#define PlatformScrollbar_h
+#ifndef ScrollbarGtk_h
+#define ScrollbarGtk_h
 
 #include "ScrollBar.h"
-#include "Timer.h"
-#include "Widget.h"
-#include <QStyleOptionSlider>
 #include <wtf/PassRefPtr.h>
+
+typedef struct _GtkAdjustment GtkAdjustment;
 
 namespace WebCore {
 
-class PlatformScrollbar : public Scrollbar {
+class ScrollbarGtk : public Scrollbar {
 public:
-    static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
-    {
-        return adoptRef(new PlatformScrollbar(client, orientation, size));
-    }
+    virtual ~ScrollbarGtk();
 
-    virtual bool handleContextMenuEvent(const PlatformMouseEvent&);
-    virtual void invalidate();
+    virtual void setFrameGeometry(const IntRect&);
+    
+    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }
+    virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; }
+    virtual bool handleMousePressEvent(const PlatformMouseEvent&) { return false; }
+    virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) { return false; }
 
+protected:
+    ScrollbarGtk(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+
+    virtual void updateThumbPosition();
+    virtual void updateThumbProportion();
+    virtual void geometryChanged();
+    
 private:
-    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
-
+    static void gtkValueChanged(GtkAdjustment*, ScrollbarGtk*);
+    GtkAdjustment* m_adjustment;
 };
 
 }
 
-#endif // PlatformScrollbar_h
-
+#endif // ScrollbarGtk_h

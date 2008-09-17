@@ -38,7 +38,7 @@
 #pragma warning(pop)
 
 namespace WebCore {
-class PlatformScrollbar;
+class Scrollbar;
 }
 
 using namespace WebCore;
@@ -123,7 +123,7 @@ protected:
     virtual bool isActive() const { return true; }
 
     ULONG m_refCount;
-    RefPtr<WebCore::PlatformScrollbar> m_scrollBar;
+    RefPtr<WebCore::Scrollbar> m_scrollBar;
     COMPtr<IWebScrollBarDelegatePrivate> m_delegate;
 };
 

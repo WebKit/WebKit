@@ -1937,8 +1937,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PasteboardGtk.cpp \
 	WebCore/platform/gtk/PasteboardHelper.h \
 	WebCore/platform/gtk/PlatformScreenGtk.cpp \
-	WebCore/platform/gtk/PlatformScrollBar.h \
-	WebCore/platform/gtk/PlatformScrollBarGtk.cpp \
+	WebCore/platform/gtk/ScrollbarGtk.h \
+	WebCore/platform/gtk/ScrollbarGtk.cpp \
 	WebCore/platform/gtk/PopupMenuGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \

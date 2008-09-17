@@ -1,5 +1,63 @@
 2008-09-16  David Hyatt  <hyatt@apple.com>
 
+        Eliminate PlatformScrollbar.  Mac and Gtk now have subclasses for their
+        native-widget scrollbars (ScrollbarMac and ScrollbarGtk).  Other platforms
+        now just use Scrollbar.
+
+        Reviewed by Sam Weinig
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/FrameMac.mm:
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::scrollbar):
+        * platform/ScrollBar.cpp:
+        (WebCore::createNativeScrollbar):
+        * platform/ScrollBar.h:
+        * platform/gtk/PlatformScrollBar.h: Removed.
+        * platform/gtk/PlatformScrollBarGtk.cpp: Removed.
+        * platform/gtk/ScrollbarGtk.cpp: Copied from platform/gtk/PlatformScrollBarGtk.cpp.
+        (gtkScrollEventCallback):
+        (ScrollbarGtk::ScrollbarGtk):
+        (ScrollbarGtk::~ScrollbarGtk):
+        (ScrollbarGtk::updateThumbPosition):
+        (ScrollbarGtk::updateThumbProportion):
+        (ScrollbarGtk::setFrameGeometry):
+        (ScrollbarGtk::geometryChanged):
+        (ScrollbarGtk::gtkValueChanged):
+        * platform/gtk/ScrollbarGtk.h: Copied from platform/gtk/PlatformScrollBar.h.
+        * platform/mac/PlatformScrollBar.h: Removed.
+        * platform/mac/PlatformScrollBarMac.mm: Removed.
+        * platform/mac/ScrollbarMac.h: Copied from platform/mac/PlatformScrollBar.h.
+        * platform/mac/ScrollbarMac.mm: Copied from platform/mac/PlatformScrollBarMac.mm.
+        (-[WebCoreScrollBar initWithScrollbarMac:]):
+        (-[WebCoreScrollBar detachScrollbarMac]):
+        (WebCore::Scrollbar::createNativeScrollbar):
+        (WebCore::ScrollbarMac::ScrollbarMac):
+        (WebCore::ScrollbarMac::~ScrollbarMac):
+        (WebCore::ScrollbarMac::updateThumbPosition):
+        (WebCore::ScrollbarMac::updateThumbProportion):
+        (WebCore::ScrollbarMac::scrollbarHit):
+        * platform/qt/PlatformScrollBar.h: Removed.
+        * platform/qt/PlatformScrollBarQt.cpp: Removed.
+        * platform/qt/ScrollbarQt.cpp: Copied from platform/qt/PlatformScrollBarQt.cpp.
+        (WebCore::Scrollbar::handleContextMenuEvent):
+        * rendering/HitTestResult.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::destroyScrollbar):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.cpp:
+
+2008-09-16  David Hyatt  <hyatt@apple.com>
+
         Make the scrollbar resizer-dodging logic cross-platform in the
         Scrollbar class.
 

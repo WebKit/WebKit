@@ -31,7 +31,7 @@
 #pragma warning(push, 0)
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PlatformScrollBar.h>
+#include <WebCore/ScrollBar.h>
 #include <WebCore/ScrollbarTheme.h>
 #pragma warning(pop)
 
@@ -101,7 +101,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::init(
     ScrollbarOrientation webCoreOrientation = (ScrollbarOrientation) orientation;
     ScrollbarControlSize webCoreControlSize = (ScrollbarControlSize) controlSize;
     m_delegate = delegate;
-    m_scrollBar = PlatformScrollbar::create(this, webCoreOrientation, webCoreControlSize);
+    m_scrollBar = Scrollbar::createNativeScrollbar(this, webCoreOrientation, webCoreControlSize);
     if (!m_scrollBar)
         return E_FAIL;
     m_scrollBar->setContainingWindow((HWND)(ULONG64)containingWindow);

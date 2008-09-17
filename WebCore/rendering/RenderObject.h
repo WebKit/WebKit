@@ -46,7 +46,6 @@ class HTMLAreaElement;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
-class PlatformScrollbar;
 class Position;
 class RenderArena;
 class RenderBlock;

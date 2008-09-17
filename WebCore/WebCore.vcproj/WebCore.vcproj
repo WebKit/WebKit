@@ -3579,14 +3579,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\PlatformScrollBar.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\win\PlatformScrollBarWin.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\win\PopupMenuWin.cpp"
 					>
 				</File>
