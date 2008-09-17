@@ -512,7 +512,7 @@ void PluginView::setParent(ScrollView* parent)
 
 void PluginView::setParentVisible(bool visible)
 {
-    if (isAncestorVisible() == visible)
+    if (isParentVisible() == visible)
         return;
 
     Widget::setParentVisible(visible);
@@ -815,7 +815,7 @@ void PluginView::init()
         registerPluginView();
 
         DWORD flags = WS_CHILD;
-        if (m_isVisible)
+        if (isSelfVisible())
             flags |= WS_VISIBLE;
 
         HWND parentWindowHandle = windowHandleForPlatformWidget(m_parentFrame->view()->containingWindow());
