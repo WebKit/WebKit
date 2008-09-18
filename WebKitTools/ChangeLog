@@ -1,3 +1,23 @@
+2008-09-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Print warning to stdout rather than stderr when a test attempts to access a remote resource.
+        This should make it more obvious when a test does this, as stderr output tends to be obscured
+        by noise in the test results.
+
+        Also fixes some coding style issues in ResourceLoadDelegate.mm.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[NSError _drt_descriptionSuitableForTestResult]):
+        (-[NSURL _drt_descriptionSuitableForTestResult]):
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didReceiveResponse:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didFinishLoadingFromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:didFailLoadingWithError:fromDataSource:]):
+        (-[ResourceLoadDelegate webView:resource:willCacheResponse:fromDataSource:]):
+
 2008-09-18  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe and Maciej Stachowiak..

@@ -55,12 +55,12 @@
 {
     NSString *str = [NSString stringWithFormat:@"<NSError domain %@, code %d", [self domain], [self code]];
     NSURL *failingURL;
-    
+
     if ((failingURL = [[self userInfo] objectForKey:@"NSErrorFailingURLKey"]))
         str = [str stringByAppendingFormat:@", failing URL \"%@\"", [failingURL _drt_descriptionSuitableForTestResult]];
-        
+
     str = [str stringByAppendingFormat:@">"];
-    
+
     return str;
 }
 
@@ -76,9 +76,9 @@
     WebDataSource *dataSource = [mainFrame dataSource];
     if (!dataSource)
         dataSource = [mainFrame provisionalDataSource];
-    
+
     NSString *basePath = [[[[dataSource request] URL] path] stringByDeletingLastPathComponent];
-    
+
     return [[self path] substringFromIndex:[basePath length] + 1];
 }
 
@@ -107,10 +107,10 @@
 - webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
     ASSERT([[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource]);
-    
+
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
         return [[request URL] _drt_descriptionSuitableForTestResult];
-    
+
     return @"<unknown>";
 }
 
@@ -120,7 +120,7 @@
         NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [newRequest _drt_descriptionSuitableForTestResult],
             [redirectResponse _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
-    }    
+    }
 
     NSURL *url = [newRequest URL];
     NSString *host = [url host];
@@ -129,13 +129,13 @@
         && NSOrderedSame != [host compare:@"127.0.0.1"]
         && NSOrderedSame != [host compare:@"255.255.255.255"] // used in some tests that expect to get back an error
         && NSOrderedSame != [host caseInsensitiveCompare:@"localhost"]) {
-        fprintf(stderr, "Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
+        printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
         return nil;
     }
 
     if (disallowedURLs && CFSetContainsValue(disallowedURLs, url))
         return nil;
-    
+
     return newRequest;
 }
 
@@ -151,8 +151,8 @@
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveResponse %@", identifier, [response _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
-    }    
+        printf("%s\n", [string UTF8String]);
+    }
 }
 
 -(void)webView: (WebView *)wv resource:identifier didReceiveContentLength: (NSInteger)length fromDataSource:(WebDataSource *)dataSource
@@ -163,7 +163,7 @@
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishLoading", identifier];
-        printf ("%s\n", [string UTF8String]);
+        printf("%s\n", [string UTF8String]);
     }
 }
 
@@ -171,7 +171,7 @@
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadingWithError: %@", identifier, [error _drt_descriptionSuitableForTestResult]];
-        printf ("%s\n", [string UTF8String]);
+        printf("%s\n", [string UTF8String]);
     }
 }
 
@@ -186,7 +186,7 @@
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willCacheResponse: called", identifier];
-        printf ("%s\n", [string UTF8String]);
+        printf("%s\n", [string UTF8String]);
     }
     return response;
 }
