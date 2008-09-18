@@ -1,3 +1,28 @@
+2008-09-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Move the remainder of the stream ivars to the C++ object.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream _pluginCancelledConnectionError]):
+        (-[WebBaseNetscapePluginStream initWithFrameLoader:]):
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        (-[WebBaseNetscapePluginStream setPlugin:]):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (-[WebBaseNetscapePluginStream start]):
+        (-[WebBaseNetscapePluginStream stop]):
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        (-[WebBaseNetscapePluginStream _destroyStreamWithReason:]):
+        (-[WebBaseNetscapePluginStream cancelLoadWithError:]):
+        (-[WebBaseNetscapePluginStream _deliverData]):
+
 2008-09-17  David Hyatt  <hyatt@apple.com>
 
         Make the notion of Widget having an underlying native widget cross-platform.

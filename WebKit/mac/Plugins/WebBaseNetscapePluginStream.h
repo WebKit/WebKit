@@ -68,7 +68,18 @@ public:
     int m_fileDescriptor;
     BOOL m_sendNotification;
     void *m_notifyData;
+    char *m_headers;
+    RetainPtr<WebBaseNetscapePluginView> m_pluginView;
+    NPReason m_reason;
+    bool m_isTerminated;
+    bool m_newStreamSuccessful;
     
+    WebCore::FrameLoader* m_frameLoader;
+    WebCore::NetscapePlugInStreamLoader* m_loader;
+    WebNetscapePlugInStreamLoaderClient* m_client;
+    NSURLRequest *m_request;
+    NPPluginFuncs *m_pluginFuncs;
+
 private:
     WebNetscapePluginStream()
         : m_plugin(0)
@@ -77,26 +88,22 @@ private:
         , m_fileDescriptor(-1)
         , m_sendNotification(false)
         , m_notifyData(0)
+        , m_headers(0)
+        , m_reason(NPRES_BASE)
+        , m_isTerminated(false)
+        , m_newStreamSuccessful(false)
+        , m_frameLoader(0)
+        , m_loader(0)
+        , m_client(0)
+        , m_request(0)
+        , m_pluginFuncs(0)
     {
         memset(&m_stream, 0, sizeof(NPStream));
     }
 };
 
 @interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
-{    
-    char *headers;
-    WebBaseNetscapePluginView *pluginView;
-    NPReason reason;
-    BOOL isTerminated;
-    BOOL newStreamSuccessful;
- 
-    WebCore::FrameLoader* _frameLoader;
-    WebCore::NetscapePlugInStreamLoader* _loader;
-    WebNetscapePlugInStreamLoaderClient* _client;
-    NSURLRequest *request;
-
-    NPPluginFuncs *pluginFuncs;
-    
+{     
     WebNetscapePluginStream *_impl;
 }
 
