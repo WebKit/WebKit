@@ -83,10 +83,18 @@ void Widget::hide()
         platformWidget()->Hide();
 }
 
-void Widget::updatePlatformWidgetFrameGeometry() const
+IntRect Widget::frameGeometry() const
 {
     if (platformWidget())
-        platformWidget()->SetSize(frameGeometry());
+        return platformWidget()->GetRect();
+    return m_frame;
+}
+
+void Widget::setFrameGeometry(const IntRect& rect)
+{
+    if (platformWidget())
+        platformWidget()->SetSize(rect);
+    m_frame = rect;
 }
 
 void Widget::invalidate()

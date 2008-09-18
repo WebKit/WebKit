@@ -258,8 +258,14 @@ void Widget::geometryChanged() const
 {
 }
 
-void Widget::updatePlatformWidgetFrameGeometry() const
+IntRect Widget::frameGeometry() const
 {
+    return m_frame;
+}
+
+void Widget::setFrameGeometry(const IntRect& rect)
+{
+    m_frame = rect;
 }
 
 }

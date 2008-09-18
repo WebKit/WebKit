@@ -120,6 +120,8 @@ void PluginView::setFrameGeometry(const IntRect& rect)
     if (rect != frameGeometry())
         Widget::setFrameGeometry(rect);
 
+    updatePluginWidget();
+
 #if PLATFORM(WIN_OS)
     // On Windows, always call plugin to change geometry.
     setNPWindowRect(rect);
@@ -132,7 +134,7 @@ void PluginView::setFrameGeometry(const IntRect& rect)
 
 void PluginView::geometryChanged() const
 {
-    updatePlatformWidgetFrameGeometry();
+    updatePluginWidget();
 }
 
 void PluginView::handleEvent(Event* event)

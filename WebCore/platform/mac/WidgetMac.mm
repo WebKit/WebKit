@@ -142,14 +142,25 @@ void Widget::hide()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void Widget::updatePlatformWidgetFrameGeometry() const
+IntRect Widget::frameGeometry() const
 {
     if (!platformWidget())
-        return;
+        return m_frame;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return enclosingIntRect([getOuterView() frame]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return m_frame;
+}
+
+void Widget::setFrameGeometry(const IntRect& rect)
+{
+    m_frame = rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *v = getOuterView();
-    NSRect f = frameGeometry();
+    NSRect f = rect;
     if (!NSEqualRects(f, [v frame])) {
         [v setFrame:f];
         [v setNeedsDisplay: NO];

@@ -117,7 +117,8 @@ public:
     IntPoint pos() const { return frameGeometry().location(); }
 
     virtual void setFrameGeometry(const IntRect&);
-    IntRect frameGeometry() const { return m_frame; }
+    virtual IntRect frameGeometry() const;
+
     void resize(int w, int h) { setFrameGeometry(IntRect(x(), y(), w, h)); }
     void resize(const IntSize& s) { setFrameGeometry(IntRect(pos(), s)); }
     void move(int x, int y) { setFrameGeometry(IntRect(x, y, width(), height())); }
@@ -219,9 +220,6 @@ public:
     IntPoint convertFromContainingWindow(const IntPoint&) const;
     IntRect convertToContainingWindow(const IntRect&) const;
 #endif
-
-protected:
-    virtual void updatePlatformWidgetFrameGeometry() const;
 
 private:
     void init(); // Must be called by all Widget constructors to initialize cross-platform data.

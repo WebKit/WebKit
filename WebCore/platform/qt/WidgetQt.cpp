@@ -85,11 +85,16 @@ Widget::~Widget()
     data = 0;
 }
 
-void Widget::updatePlatformWidgetFrameGeometry() const
+IntRect Widget::frameGeometry() const
 {
-    if (!platformWidget())
-        return;
-    platformWidget()->setGeometry(convertToContainingWindow(IntRect(0, 0, width(), height())));
+    return m_frame;
+}
+
+void Widget::setFrameGeometry(const IntRect& rect)
+{
+    if (platformWidget())
+        platformWidget()->setGeometry(convertToContainingWindow(IntRect(0, 0, rect.width(), rect.height())));
+    m_frame = rect;
 }
 
 void Widget::setFocus()
