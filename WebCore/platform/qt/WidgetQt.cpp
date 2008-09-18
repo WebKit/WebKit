@@ -152,7 +152,7 @@ void Widget::invalidateRect(const IntRect& r)
     }
 
     // Get the root widget.
-    ScrollView* outermostView = topLevel();
+    ScrollView* outermostView = root();
     if (!outermostView)
         return;
 
@@ -171,31 +171,12 @@ void Widget::removeFromParent()
         parent()->removeChild(this);
 }
 
-ScrollView* Widget::topLevel() const
+QWidget* Widget::containingWindow() const
 {
-    if (!parent())
-        return isFrameView() ? const_cast<ScrollView*>(static_cast<const ScrollView*>(this)) : 0;
-    ScrollView* topLevel = parent();
-    while (topLevel-parent())
-        topLevel = topLevel->parent();
-    return topLevel;
-}
-
-QWidget *Widget::containingWindow() const
-{
-    ScrollView *topLevel = this->topLevel();
-    if (!topLevel)
-        return 0;
-
-    if (!topLevel->isFrameView())
-        return platformWidget();
-
-    QWebFrame* frame = QWebFramePrivate::kit(static_cast<FrameView*>(topLevel)->frame());
+    QWebFrame* frame = QWebFramePrivate::kit(static_cast<FrameView*>(root())->frame());
     QWidget* view = frame->page()->view();
-
     return view ? view : platformWidget();
 }
-
 
 void Widget::geometryChanged() const
 {

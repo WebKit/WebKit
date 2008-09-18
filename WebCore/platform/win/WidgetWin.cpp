@@ -41,38 +41,30 @@ namespace WebCore {
 class WidgetPrivate
 {
 public:
-    HWND containingWindow;
 };
 
 Widget::Widget()
-    : data(new WidgetPrivate)
+    : data(0)
 {
     init();
     data->containingWindow = 0;
 }
 
 Widget::Widget(PlatformWidget widget)
-    : data(new WidgetPrivate)
+    : data(0)
 {
     init();
     m_widget = widget;
-    data->containingWindow = 0;
 }
 
 Widget::~Widget() 
 {
     ASSERT(!parent());
-    delete data;
 }
 
-void Widget::setContainingWindow(HWND containingWindow)
+PlatformWindow Widget::containingWindow() const
 {
-    data->containingWindow = containingWindow;
-}
-
-HWND Widget::containingWindow() const
-{
-    return data->containingWindow;
+    return m_containingWindow;
 }
 
 void Widget::removeFromParent()

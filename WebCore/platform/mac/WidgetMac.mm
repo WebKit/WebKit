@@ -35,6 +35,7 @@
 #import "GraphicsContext.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
+#import "ScrollView.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 
@@ -312,6 +313,18 @@ void Widget::removeFromParent()
 {
 }
 
+NSWindow* Widget::containingWindow() const
+{
+    if (!platformWidget())
+        return m_containingWindow;
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [platformWidget() window];
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return nil; 
+}
+    
 IntPoint Widget::convertToScreenCoordinate(NSView *view, const IntPoint& point)
 {
     NSPoint conversionPoint = { point.x(), point.y() };

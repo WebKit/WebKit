@@ -212,6 +212,11 @@ void ScrollView::addChild(Widget* child)
 {
     ASSERT(child != this);
 
+    if (!child->platformWidget()) {
+        child->setContainingWindow(containingWindow());
+        return;
+    }
+
 #ifndef NDEBUG
     NSView *subview = child->getOuterView();    
     LOG(Frames, "Adding %p %@ with size w %d h %d\n", subview,
@@ -224,7 +229,8 @@ void ScrollView::addChild(Widget* child)
 
 void ScrollView::removeChild(Widget* child)
 {
-    child->removeFromSuperview();
+    if (child->platformWidget())
+        child->removeFromSuperview();
     child->setParent(0);
 }
 

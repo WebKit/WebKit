@@ -42,7 +42,6 @@ namespace WebCore {
 
 class WidgetPrivate {
 public:
-    GtkWidget* containingWindow;
     GdkCursor* cursor;
 };
 
@@ -50,7 +49,6 @@ Widget::Widget()
     : data(new WidgetPrivate)
 {
     init();
-    data->containingWindow = 0;
     data->cursor = 0;
 }
 
@@ -59,7 +57,6 @@ Widget::Widget(PlatformWidget widget)
 {
     init();
     m_widget = widget;
-    data->containingWindow = 0;
     data->cursor = 0;
 }
 
@@ -69,14 +66,9 @@ Widget::~Widget()
     delete data;
 }
 
-void Widget::setContainingWindow(PlatformWidget containingWindow)
-{
-    data->containingWindow = containingWindow;
-}
-
 PlatformWidget Widget::containingWindow() const
 {
-    return data->containingWindow;
+    return m_containingWindow;
 }
 
 void Widget::setFocus()

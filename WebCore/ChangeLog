@@ -1,3 +1,31 @@
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
+        Make containingWindow() and setContainingWindow() cross-platform.
+        Add a root() function cross-platform so Qt doesn't have to
+        define its own.
+
+        Reviewed by Darin Adler
+
+        * platform/Widget.cpp:
+        (WebCore::Widget::root):
+        * platform/Widget.h:
+        (WebCore::Widget::setContainingWindow):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::containingWindow):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::containingWindow):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::invalidateRect):
+        (WebCore::Widget::containingWindow):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::containingWindow):
+
 2008-09-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
