@@ -2,6 +2,12 @@
 
         Reviewed by Sam Weinig.
 
+        * kjs/JSGlobalObject.h: Tiny style guideline tweak.
+
+2008-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
         - fix https://bugs.webkit.org/show_bug.cgi?id=20925
           LEAK messages appear every time I quit
 

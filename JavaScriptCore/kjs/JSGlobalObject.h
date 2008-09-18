@@ -295,7 +295,8 @@ namespace JSC {
         return globalObject;
     }
 
-    inline JSValue* StructureID::prototypeForLookup(ExecState* exec) {
+    inline JSValue* StructureID::prototypeForLookup(ExecState* exec)
+    {
         if (m_type == ObjectType)
             return m_prototype;
 
