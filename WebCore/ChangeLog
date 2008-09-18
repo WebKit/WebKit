@@ -1,3 +1,11 @@
+2008-09-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix RenderStyle leaks.
+
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::createSubtreeIfNeeded):
+
 2008-09-18  Kevin McCullough  <kmccullough@apple.com>
 
         Accidentally checked in code.

@@ -286,12 +286,18 @@ void RenderTextControl::createSubtreeIfNeeded()
     if (isSearchField && !m_innerBlock) {
         // Create the inner block element
         m_innerBlock = new TextControlInnerElement(document(), node());
-        m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
+        RenderStyle* innerBlockStyle = createInnerBlockStyle(style());
+        innerBlockStyle->ref();
+        m_innerBlock->attachInnerElement(node(), innerBlockStyle, renderArena());
+        innerBlockStyle->deref(renderArena());
     }
     if (isSearchField && !m_resultsButton) {
         // Create the search results button element
         m_resultsButton = new SearchFieldResultsButtonElement(document());
-        m_resultsButton->attachInnerElement(m_innerBlock.get(), createResultsButtonStyle(m_innerBlock->renderer()->style()), renderArena());
+        RenderStyle* resultsButtonStyle = createResultsButtonStyle(m_innerBlock->renderer()->style());
+        resultsButtonStyle->ref();
+        m_resultsButton->attachInnerElement(m_innerBlock.get(), resultsButtonStyle, renderArena());
+        resultsButtonStyle->deref(renderArena());
     }
     if (!m_innerText) {
         // Create the text block element
@@ -302,14 +308,18 @@ void RenderTextControl::createSubtreeIfNeeded()
         if (m_innerBlock)
             parentStyle = m_innerBlock->renderer()->style();
         RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
-
+        textBlockStyle->ref();
         m_innerText = new TextControlInnerTextElement(document(), m_innerBlock ? 0 : node());
         m_innerText->attachInnerElement(m_innerBlock ? m_innerBlock.get() : node(), textBlockStyle, renderArena());
+        textBlockStyle->deref(renderArena());
     }
     if (isSearchField && !m_cancelButton) {
         // Create the cancel button element
         m_cancelButton = new SearchFieldCancelButtonElement(document());
-        m_cancelButton->attachInnerElement(m_innerBlock.get(), createCancelButtonStyle(m_innerBlock->renderer()->style()), renderArena());
+        RenderStyle* cancelButtonStyle = createCancelButtonStyle(m_innerBlock->renderer()->style());
+        cancelButtonStyle->ref();
+        m_cancelButton->attachInnerElement(m_innerBlock.get(), cancelButtonStyle, renderArena());
+        cancelButtonStyle->deref(renderArena());
     }
 }
 
