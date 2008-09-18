@@ -1,3 +1,26 @@
+2008-09-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix a crash seen running DumpRenderTree on fast/dom/null-document-window-open-crash.html under guard malloc.
+
+        The JS wrapper for LayoutTestController could outlive the wrapped instance, and would crash when
+        attempting to access the wrapped instance within layoutTestControllerObjectFinalize. We fix this by making
+        LayoutTestController ref-counted to ensure that it is not outlived by the JS wrapper.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/RefCounted.h: Copied from JavaScriptGlue/ForwardingHeaders/wtf/RefCounted.h.
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (notifyDoneCallback): Remove code that is no longer needed now that we must always have a wrapped instance.
+        (layoutTestControllerObjectFinalize): Deref the wrapped object.
+        (LayoutTestController::makeWindowObject): Ref the wrapped object.
+        * DumpRenderTree/LayoutTestController.h: Make LayoutTestController RefCounted.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest): Deref the LayoutTestController object rather than explicitly deleting it.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Remove code that is no longer needed.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Deref the LayoutTestController object rather than explicitly deleting it.
+
 2008-09-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

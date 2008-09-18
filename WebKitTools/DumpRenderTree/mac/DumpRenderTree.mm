@@ -1048,7 +1048,7 @@ static void runTest(const char *pathOrURL)
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);
     ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
 
-    delete gLayoutTestController;
+    gLayoutTestController->deref();
     gLayoutTestController = 0;
 
     if (_shouldIgnoreWebCoreNodeLeaks)

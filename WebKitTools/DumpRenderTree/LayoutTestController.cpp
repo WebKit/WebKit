@@ -59,7 +59,6 @@ LayoutTestController::LayoutTestController(bool testRepaintDefault, bool testRep
     , m_waitToDump(false)
     , m_windowIsKey(true)
     , m_globalFlag(false)
-    , m_selfJSObject(0)
 {
 }
 
@@ -338,13 +337,7 @@ static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function,
     // Has mac & windows implementation
     // May be able to be made platform independant by using shared WorkQueue
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    if (controller)
-        controller->notifyDone();
-    else {
-        const char* msg = "FAIL: Null layoutTestController in notifyDone(). Did a test call notifyDone() twice?\n";
-        fprintf(stderr, "%s", msg);
-        fprintf(stdout, "%s", msg);
-    }
+    controller->notifyDone();
     return JSValueMakeUndefined(context);
 }
 
@@ -649,8 +642,7 @@ static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, 
 static void layoutTestControllerObjectFinalize(JSObjectRef object)
 {
     LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(object));
-    if (controller)
-        controller->setJSObject(0);
+    controller->deref();
 }
 
 // Object Creation
@@ -658,8 +650,9 @@ static void layoutTestControllerObjectFinalize(JSObjectRef object)
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> layoutTestContollerStr(Adopt, JSStringCreateWithUTF8CString("layoutTestController"));
-    setJSObject(JSObjectMake(context, getJSClass(), this));
-    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), jsObject(), kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    ref();
+    JSValueRef layoutTestContollerObject = JSObjectMake(context, getJSClass(), this);
+    JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
 JSClassRef LayoutTestController::getJSClass()

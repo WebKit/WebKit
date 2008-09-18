@@ -761,7 +761,8 @@ static void runTest(const char* pathOrURL)
 
 exit:
     SysFreeString(urlBStr);
-    delete ::gLayoutTestController;
+    ::gLayoutTestController->deref();
+    ::gLayoutTestController = 0;
 
     return;
 }
