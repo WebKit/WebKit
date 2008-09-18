@@ -39,7 +39,6 @@
 #include "RenderObject.h"
 #include "ScrollView.h"
 #include "Widget.h"
-#include "WidgetClient.h"
 #include "NotImplemented.h"
 
 #include "qwebframe.h"
@@ -57,13 +56,10 @@ namespace WebCore {
 struct WidgetPrivate
 {
     WidgetPrivate()
-        : m_client(0)
-        , suppressInvalidation(false)
+        : suppressInvalidation(false)
         , isNPAPIPlugin(0)
         { }
     ~WidgetPrivate() {}
-
-    WidgetClient* m_client;
 
     bool suppressInvalidation;
     bool isNPAPIPlugin;
@@ -88,16 +84,6 @@ Widget::~Widget()
     Q_ASSERT(!parent());
     delete data;
     data = 0;
-}
-
-void Widget::setClient(WidgetClient* c)
-{
-    data->m_client = c;
-}
-
-WidgetClient* Widget::client() const
-{
-    return data->m_client;
 }
 
 IntRect Widget::frameGeometry() const

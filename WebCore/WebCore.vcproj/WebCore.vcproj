@@ -3415,10 +3415,6 @@
 				RelativePath="..\platform\Widget.h"
 				>
 			</File>
-			<File
-				RelativePath="..\platform\WidgetClient.h"
-				>
-			</File>
 			<Filter
 				Name="win"
 				>

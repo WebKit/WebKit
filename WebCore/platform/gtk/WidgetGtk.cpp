@@ -42,7 +42,6 @@ namespace WebCore {
 
 class WidgetPrivate {
 public:
-    WidgetClient* client;
     IntRect frameRect;
 
     GtkWidget* containingWindow;
@@ -83,16 +82,6 @@ void Widget::setContainingWindow(PlatformWidget containingWindow)
 PlatformWidget Widget::containingWindow() const
 {
     return data->containingWindow;
-}
-
-void Widget::setClient(WidgetClient* c)
-{
-    data->client = c;
-}
-
-WidgetClient* Widget::client() const
-{
-    return data->client;
 }
 
 IntRect Widget::frameGeometry() const

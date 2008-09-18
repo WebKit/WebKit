@@ -141,9 +141,6 @@ public:
 
     void setIsSelected(bool);
 
-    void setClient(WidgetClient*);
-    WidgetClient* client() const;
-
     virtual bool isFrameView() const;
     virtual bool isPluginView() const { return false; }
 

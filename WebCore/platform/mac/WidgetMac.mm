@@ -37,7 +37,6 @@
 #import "PlatformMouseEvent.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
-#import "WidgetClient.h"
 
 #import <wtf/RetainPtr.h>
 
@@ -55,8 +54,6 @@ namespace WebCore {
 
 class WidgetPrivate {
 public:
-    WidgetClient* client;
-    bool visible;
     bool mustStayInWindow;
     bool removeFromSuperviewSoon;
 };
@@ -80,8 +77,6 @@ static void safeRemoveFromSuperview(NSView *view)
 Widget::Widget() : data(new WidgetPrivate)
 {
     init();
-    data->client = 0;
-    data->visible = true;
     data->mustStayInWindow = false;
     data->removeFromSuperviewSoon = false;
 }
@@ -90,8 +85,6 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 {
     init();
     setPlatformWidget(view);
-    data->client = 0;
-    data->visible = true;
     data->mustStayInWindow = false;
     data->removeFromSuperviewSoon = false;
 }
@@ -134,10 +127,10 @@ void Widget::setFocus()
 
 void Widget::show()
 {
-    if (!data || data->visible)
+    if (isSelfVisible())
         return;
 
-    data->visible = true;
+    setSelfVisible(true);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getOuterView() setHidden:NO];
@@ -146,10 +139,10 @@ void Widget::show()
 
 void Widget::hide()
 {
-    if (!data || !data->visible)
+    if (!isSelfVisible())
         return;
 
-    data->visible = false;
+    setSelfVisible(false);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getOuterView() setHidden:YES];
@@ -313,16 +306,6 @@ void Widget::afterMouseDown(NSView *view, Widget* widget)
         if (widget->data->removeFromSuperviewSoon)
             widget->removeFromSuperview();
     }
-}
-
-void Widget::setClient(WidgetClient* c)
-{
-    data->client = c;
-}
-
-WidgetClient* Widget::client() const
-{
-    return data->client;
 }
 
 void Widget::removeFromParent()

@@ -1,5 +1,28 @@
 2008-09-17  David Hyatt  <hyatt@apple.com>
 
+        Remove WidgetClient from Widget.
+
+        Reviewed by Sam Weinig
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Widget.h:
+        (WebCore::Widget::setClient):
+        (WebCore::Widget::client):
+        * platform/WidgetClient.h: Removed.
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::Widget):
+
+2008-09-17  David Hyatt  <hyatt@apple.com>
+
         Remove isEnabled/setEnabled from Widget.  The concept of being enabled now
         only applies to Scrollbars so the method has been moved there and made
         cross-platform.  Scrollbar subclasses that have a corresponding native
