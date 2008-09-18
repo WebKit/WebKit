@@ -27,8 +27,8 @@ namespace WTF {
 
 #ifdef NDEBUG
 
-static void RefCountedLeakCounter::suppressMessages(const char*) { }
-static void RefCountedLeakCounter::cancelMessageSuppression(const char*) { }
+void RefCountedLeakCounter::suppressMessages(const char*) { }
+void RefCountedLeakCounter::cancelMessageSuppression(const char*) { }
 
 RefCountedLeakCounter::RefCountedLeakCounter(const char*) { }
 RefCountedLeakCounter::~RefCountedLeakCounter() { }

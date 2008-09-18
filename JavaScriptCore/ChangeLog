@@ -1,5 +1,11 @@
 2008-09-18  Darin Adler  <darin@apple.com>
 
+        - fix release build
+
+        * wtf/RefCountedLeakCounter.cpp: Removed stray "static".
+
+2008-09-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         * kjs/JSGlobalObject.h: Tiny style guideline tweak.
