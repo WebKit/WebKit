@@ -1,5 +1,11 @@
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
+        Fix gtk build.
+
+        * rendering/style/MatrixTransformOperation.cpp:
+
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped with love by David Hyatt.
 
         Split IdentityTransformOperation, MatrixTransformOperation, RotateTransformOperation, 
