@@ -1,3 +1,12 @@
+2008-09-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Change test to not attempt to access a remote host.  This stops
+        DRT from printing a warning to stderr while running this test.
+
+        * fast/loader/cancel-load-during-port-block-timer.html:
+
 2008-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Add pixel test expected values for transform tests.
