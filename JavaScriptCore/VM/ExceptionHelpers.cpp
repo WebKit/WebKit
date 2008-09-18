@@ -31,9 +31,10 @@
 
 #include "CodeBlock.h"
 #include "ExecState.h"
-#include "nodes.h"
 #include "JSObject.h"
 #include "JSNotAnObject.h"
+#include "Machine.h"
+#include "nodes.h"
 
 namespace JSC {
 
@@ -147,7 +148,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
     return errorText;
 }
 
-JSValue* createInvalidParamError(ExecState* exec, const char* op, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
+JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
 {
     UString message = "not a valid argument for '";
     message.append(op);
@@ -165,7 +166,7 @@ JSValue* createInvalidParamError(ExecState* exec, const char* op, JSValue* value
     return exception;
 }
 
-JSValue* createNotAConstructorError(ExecState* exec, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
+JSObject* createNotAConstructorError(ExecState* exec, JSValue* value, const Instruction* vPC, CodeBlock* codeBlock)
 {
     int startOffset = 0;
     int endOffset = 0;
@@ -207,6 +208,11 @@ JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState* exec, bool isNull)
 
 JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error, const Instruction* vPC, CodeBlock* codeBlock)
 {
+    if (vPC[8].u.opcode == Machine::getOpcode(op_instanceof))
+        return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
+    if (vPC[8].u.opcode == Machine::getOpcode(op_construct))
+        return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
+
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;

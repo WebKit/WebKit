@@ -42,8 +42,8 @@ namespace JSC {
     JSValue* createStackOverflowError(ExecState*);
     JSValue* createUndefinedVariableError(ExecState*, const Identifier&, const Instruction*, CodeBlock*);
     JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
-    JSValue* createInvalidParamError(ExecState*, const char* op, JSValue*, const Instruction*, CodeBlock*);
-    JSValue* createNotAConstructorError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
+    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue*, const Instruction*, CodeBlock*);
+    JSObject* createNotAConstructorError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
     JSValue* createNotAFunctionError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
     JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, const Instruction*, CodeBlock*);
 
