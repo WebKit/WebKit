@@ -77,6 +77,21 @@ class ScrollView;
 class WidgetClient;
 class WidgetPrivate;
 
+// The Widget class serves as a base class for three kinds of objects:
+// (1) Scrollable areas (ScrollView)
+// (2) Scrollbars (Scrollbar)
+// (3) Plugins (PluginView)
+//
+// A widget may or may not be backed by a platform-specific object (e.g., HWND on Windows, NSView on Mac, QWidget on Qt).
+//
+// Widgets are connected in a hierarchy, with the restriction that plugins and scrollbars are always leaves of the
+// tree.  Only ScrollViews can have children (and therefore the Widget class has no concept of children).
+//
+// The rules right now for which widgets get platform-specific objects are as follows:
+// ScrollView - Mac
+// Scrollbar - Mac, Gtk
+// Plugin - Mac, Windows (windowed only), Qt (windowed only, widget is an HWND on windows), Gtk (windowed only)
+//
 class Widget {
 public:
     Widget();
