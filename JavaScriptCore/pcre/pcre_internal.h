@@ -380,7 +380,7 @@ static inline bool isWordChar(UChar c)
 
 static inline bool isSpaceChar(UChar c)
 {
-    return c < 128 && (charTypeForChar(c) & ctype_space);
+    return (c < 128 && (charTypeForChar(c) & ctype_space)) || c == 0x00A0;
 }
 
 static inline bool isNewline(UChar nl)

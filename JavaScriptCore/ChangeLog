@@ -1,3 +1,16 @@
+2008-09-18  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make a Unicode non-breaking space count as a whitespace character in
+        PCRE. This change was already made in WREC, and it fixes one of the
+        Mozilla JS tests. Since it is now fixed in PCRE as well, we can check
+        in a new set of expected test results.
+
+        * pcre/pcre_internal.h:
+        (isSpaceChar):
+        * tests/mozilla/expected.html:
+
 2008-09-18  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe and Maciej Stachowiak.
