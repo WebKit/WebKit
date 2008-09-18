@@ -1,5 +1,30 @@
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
+        Move the concept of suppression invalidation on Widgets to Scrollbar
+        instead.  Since this is only used by Scrollbars, there is no need for
+        it to be on Widget.
+
+        Reviewed by Sam Weinig
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::invalidateRect):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::suppressInvalidation):
+        (WebCore::Scrollbar::setSuppressInvalidation):
+        * platform/Widget.h:
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::invalidateRect):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::invalidateRect):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::invalidateRect):
+
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
         Make invalidate() on Widget non-virtual and make it just call
         invalidateRect() on the boundsGeometry() of the Widget.
 

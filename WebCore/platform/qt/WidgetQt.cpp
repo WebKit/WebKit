@@ -56,12 +56,10 @@ namespace WebCore {
 struct WidgetPrivate
 {
     WidgetPrivate()
-        : suppressInvalidation(false)
-        , isNPAPIPlugin(0)
+        : isNPAPIPlugin(0)
         { }
     ~WidgetPrivate() {}
 
-    bool suppressInvalidation;
     bool isNPAPIPlugin;
 };
 
@@ -140,21 +138,8 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
-bool Widget::suppressInvalidation() const
-{
-    return data->suppressInvalidation;
-}
-
-void Widget::setSuppressInvalidation(bool suppress)
-{
-    data->suppressInvalidation = suppress;
-}
-
 void Widget::invalidateRect(const IntRect& r)
 {
-    if (data->suppressInvalidation)
-        return;
-
     if (platformWidget()) { //plugins
         platformWidget()->update(r);
         return;

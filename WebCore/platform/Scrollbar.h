@@ -116,6 +116,11 @@ public:
     virtual void setFrameGeometry(const IntRect&);
     virtual IntRect windowClipRect() const;
 
+    virtual void invalidateRect(const IntRect&);
+    
+    bool suppressInvalidation() const { return m_suppressInvalidation; }
+    void setSuppressInvalidation(bool s) { m_suppressInvalidation = s; }
+
 protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
@@ -149,6 +154,8 @@ protected:
 
     Timer<Scrollbar> m_scrollTimer;
     bool m_overlapsResizer;
+    
+    bool m_suppressInvalidation;
 };
 
 }

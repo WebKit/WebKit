@@ -43,7 +43,6 @@ namespace WebCore {
 class WidgetPrivate {
 public:
     GtkWidget* containingWindow;
-    bool suppressInvalidation;
     GdkCursor* cursor;
 };
 
@@ -52,7 +51,6 @@ Widget::Widget()
 {
     init();
     data->containingWindow = 0;
-    data->suppressInvalidation = false;
     data->cursor = 0;
 }
 
@@ -62,7 +60,6 @@ Widget::Widget(PlatformWidget widget)
     init();
     m_widget = widget;
     data->containingWindow = 0;
-    data->suppressInvalidation = false;
     data->cursor = 0;
 }
 
@@ -178,9 +175,6 @@ void Widget::setIsSelected(bool)
 
 void Widget::invalidateRect(const IntRect& rect)
 {
-    if (data->suppressInvalidation)
-        return;
-
     if (!parent()) {
         gtk_widget_queue_draw_area(GTK_WIDGET(containingWindow()), rect.x(), rect.y(),
                                    rect.width(), rect.height());
@@ -237,16 +231,6 @@ IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) 
 IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
 {
     return IntPoint(point.x() - child->x(), point.y() - child->y());
-}
-
-bool Widget::suppressInvalidation() const
-{
-    return data->suppressInvalidation;
-}
-
-void Widget::setSuppressInvalidation(bool suppress)
-{
-    data->suppressInvalidation = suppress;
 }
 
 void Widget::geometryChanged() const
