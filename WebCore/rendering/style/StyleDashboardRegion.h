@@ -27,7 +27,7 @@
 #if ENABLE(DASHBOARD_SUPPORT)
 
 #include "Length.h"
-#include "String.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
