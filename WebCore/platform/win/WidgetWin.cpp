@@ -42,7 +42,6 @@ class WidgetPrivate
 {
 public:
     HWND containingWindow;
-    IntRect frameRect;
     bool suppressInvalidation;
 };
 
@@ -77,16 +76,6 @@ void Widget::setContainingWindow(HWND containingWindow)
 HWND Widget::containingWindow() const
 {
     return data->containingWindow;
-}
-
-IntRect Widget::frameGeometry() const
-{
-    return data->frameRect;
-}
-
-void Widget::setFrameGeometry(const IntRect &rect)
-{
-    data->frameRect = rect;
 }
 
 void Widget::removeFromParent()
@@ -213,6 +202,10 @@ void Widget::setFocus()
 }
 
 void Widget::setIsSelected(bool)
+{
+}
+
+void Widget::updatePlatformWidgetFrameGeometry()
 {
 }
 

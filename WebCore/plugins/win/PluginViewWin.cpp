@@ -211,7 +211,7 @@ PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
-void PluginView::updateWindow() const
+void PluginView::updatePlatformWidgetFrameGeometry()
 {
     if (!parent())
         return;

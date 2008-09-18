@@ -95,14 +95,6 @@ Widget::~Widget()
     delete data;
 }
 
-IntRect Widget::frameGeometry() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return enclosingIntRect([getOuterView() frame]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntRect();
-}
-
 // FIXME: Should move this to Chrome; bad layering that this knows about Frame.
 void Widget::setFocus()
 {
@@ -150,11 +142,14 @@ void Widget::hide()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void Widget::setFrameGeometry(const IntRect &rect)
+void Widget::updatePlatformWidgetFrameGeometry()
 {
+    if (!platformWidget())
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *v = getOuterView();
-    NSRect f = rect;
+    NSRect f = frameGeometry();
     if (!NSEqualRects(f, [v frame])) {
         [v setFrame:f];
         [v setNeedsDisplay: NO];

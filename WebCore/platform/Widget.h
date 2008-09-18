@@ -63,15 +63,16 @@ class wxWindow;
 typedef wxWindow* PlatformWidget;
 #endif
 
+#include "IntPoint.h"
+#include "IntRect.h"
+#include "IntSize.h"
+
 namespace WebCore {
 
 class Cursor;
 class Event;
 class Font;
 class GraphicsContext;
-class IntPoint;
-class IntRect;
-class IntSize;
 class PlatformMouseEvent;
 class ScrollView;
 class WidgetClient;
@@ -108,23 +109,23 @@ public:
         }
     }
 
-    int x() const;
-    int y() const;
-    int width() const;
-    int height() const;
-    IntSize size() const;
-    void resize(int, int);
-    void resize(const IntSize&);
-    IntPoint pos() const;
-    void move(int, int);
-    void move(const IntPoint&);
+    int x() const { return frameGeometry().x(); }
+    int y() const { return frameGeometry().y(); }
+    int width() const { return frameGeometry().width(); }
+    int height() const { return frameGeometry().height(); }
+    IntSize size() const { return frameGeometry().size(); }
+    IntPoint pos() const { return frameGeometry().location(); }
+
+    virtual void setFrameGeometry(const IntRect&);
+    IntRect frameGeometry() const { return m_frame; }
+    void resize(int w, int h) { setFrameGeometry(IntRect(x(), y(), w, h)); }
+    void resize(const IntSize& s) { setFrameGeometry(IntRect(pos(), s)); }
+    void move(int x, int y) { setFrameGeometry(IntRect(x, y, width(), height())); }
+    void move(const IntPoint& p) { setFrameGeometry(IntRect(p, size())); }
 
     virtual void paint(GraphicsContext*, const IntRect&);
     virtual void invalidate();
     virtual void invalidateRect(const IntRect&);
-
-    virtual void setFrameGeometry(const IntRect&);
-    virtual IntRect frameGeometry() const;
 
     virtual void setFocus();
 
@@ -141,7 +142,7 @@ public:
 
     void setIsSelected(bool);
 
-    virtual bool isFrameView() const;
+    virtual bool isFrameView() const { return false; }
     virtual bool isPluginView() const { return false; }
 
     virtual void removeFromParent();
@@ -151,7 +152,7 @@ public:
     // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
     // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
     // This clip includes any clips that the widget itself sets up for its children.
-    virtual IntRect windowClipRect() const;
+    virtual IntRect windowClipRect() const { return IntRect(); }
 
     virtual void handleEvent(Event*) { }
 
@@ -219,6 +220,9 @@ public:
     IntRect convertToContainingWindow(const IntRect&) const;
 #endif
 
+protected:
+    virtual void updatePlatformWidgetFrameGeometry();
+
 private:
     void init(); // Must be called by all Widget constructors to initialize cross-platform data.
 
@@ -230,6 +234,7 @@ private:
     PlatformWidget m_widget;
     bool m_selfVisible;
     bool m_parentVisible;
+    IntRect m_frame;
     WidgetPrivate* data;
 };
 

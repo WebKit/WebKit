@@ -207,7 +207,7 @@ namespace WebCore {
 #ifndef NP_NO_CARBON
         bool dispatchNPEvent(NPEvent&);
 #endif
-        void updateWindow() const;
+        virtual void updatePlatformWidgetFrameGeometry();
         void paintMissingPluginIcon(GraphicsContext*, const IntRect&);
 
         void handleKeyboardEvent(KeyboardEvent*);

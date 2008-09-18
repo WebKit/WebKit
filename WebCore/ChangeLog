@@ -1,3 +1,47 @@
+2008-09-17  David Hyatt  <hyatt@apple.com>
+
+        (1) Inline a bunch of methods for accessing frame geometry.
+        (2) Make sure frameGeometry() works even when you have no underlying
+        native widget.
+        (3) Cache a frame geometry rect cross-platform (even for widgets that
+        have underlying native widgets.
+        (4) PluginView's updateWindow call is now a virtual function on Widget.
+
+        Reviewed by Sam Weinig
+
+        * ChangeLog:
+        * WebCore.base.exp:
+        * platform/Widget.cpp:
+        (WebCore::Widget::setFrameGeometry):
+        * platform/Widget.h:
+        (WebCore::Widget::x):
+        (WebCore::Widget::y):
+        (WebCore::Widget::width):
+        (WebCore::Widget::height):
+        (WebCore::Widget::size):
+        (WebCore::Widget::pos):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::resize):
+        (WebCore::Widget::move):
+        (WebCore::Widget::isFrameView):
+        (WebCore::Widget::windowClipRect):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::updatePlatformWidgetFrameGeometry):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::updatePlatformWidgetFrameGeometry):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameGeometry):
+        (WebCore::PluginView::geometryChanged):
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePlatformWidgetFrameGeometry):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePlatformWidgetFrameGeometry):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePlatformWidgetFrameGeometry):
+        * plugins/wx/PluginViewWx.cpp:
+
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David "Waterman" Hyatt.

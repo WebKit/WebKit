@@ -33,11 +33,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-void PluginView::updateWindow() const
-{
-    notImplemented();
-}
-
 void PluginView::setFocus()
 {
     notImplemented();
