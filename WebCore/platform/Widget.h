@@ -118,6 +118,7 @@ public:
 
     virtual void setFrameGeometry(const IntRect&);
     virtual IntRect frameGeometry() const;
+    IntRect boundsGeometry() const { return IntRect(0, 0, width(),  height()); }
 
     void resize(int w, int h) { setFrameGeometry(IntRect(x(), y(), w, h)); }
     void resize(const IntSize& s) { setFrameGeometry(IntRect(pos(), s)); }
@@ -125,7 +126,7 @@ public:
     void move(const IntPoint& p) { setFrameGeometry(IntRect(p, size())); }
 
     virtual void paint(GraphicsContext*, const IntRect&);
-    virtual void invalidate();
+    void invalidate() { invalidateRect(boundsGeometry()); }
     virtual void invalidateRect(const IntRect&);
 
     virtual void setFocus();

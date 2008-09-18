@@ -1,3 +1,19 @@
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
+        Make invalidate() on Widget non-virtual and make it just call
+        invalidateRect() on the boundsGeometry() of the Widget.
+
+        Reviewed by Dan Bernstein
+
+        * platform/Widget.h:
+        (WebCore::Widget::boundsGeometry):
+        (WebCore::Widget::invalidate):
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/mac/WidgetMac.mm:
+        * platform/qt/WidgetQt.cpp:
+        * platform/win/WidgetWin.cpp:
+        * platform/wx/WidgetWx.cpp:
+
 2008-09-18  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped in exile by David Hyatt.

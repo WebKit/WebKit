@@ -235,13 +235,6 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     }
 }
 
-void Widget::invalidate()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [platformWidget() setNeedsDisplay: YES];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void Widget::invalidateRect(const IntRect& r)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

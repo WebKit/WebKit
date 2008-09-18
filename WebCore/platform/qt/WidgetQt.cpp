@@ -150,11 +150,6 @@ void Widget::setSuppressInvalidation(bool suppress)
     data->suppressInvalidation = suppress;
 }
 
-void Widget::invalidate()
-{
-    invalidateRect(IntRect(0, 0, width(), height()));
-}
-
 void Widget::invalidateRect(const IntRect& r)
 {
     if (data->suppressInvalidation)
