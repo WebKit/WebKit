@@ -487,7 +487,7 @@ body.console-visible #console {
     position: relative;
     border-bottom: 1px solid rgb(240, 240, 240);
     padding: 1px 22px 1px 24px;
-    min-height: 16px; 
+    min-height: 16px;
 }
 
 .console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title-level::before {
@@ -502,8 +502,34 @@ body.console-visible #console {
     -webkit-user-select: none;
 }
 
+.console-message .bubble {
+    display: inline-block;
+    height: 14px;
+    background-color: rgb(128, 151, 189);
+    vertical-align: middle;
+    white-space: nowrap;
+    padding: 1px 4px;
+    margin-top: -2px;
+    margin-right: 4px;
+    text-align: left;
+    font-size: 11px;
+    font-family: Helvetia, Arial, sans-serif;
+    font-weight: bold;
+    text-shadow: none;
+    color: white;
+    -webkit-border-radius: 7px;
+}
+
 .console-message-text {
     white-space: pre-wrap;
+}
+
+.repeated-message {
+    padding-left: 6px;
+}
+
+.repeated-message.console-error-level::before, .repeated-message.console-warning-level:before {
+    visibility: hidden;
 }
 
 .console-group .console-group > .console-group-messages {
@@ -2585,12 +2611,12 @@ body.inactive .sidebar-tree-item.selected {
     content: url(Images/resourceDocumentIconSmall.png);
 }
 
-.resource-sidebar-tree-item .bubble.warning {
-    background-color: rgb(232, 164, 0);
+.bubble.warning, .console-warning-level .bubble {
+    background-color: rgb(232, 164, 0) !important;
 }
 
-.resource-sidebar-tree-item .bubble.error {
-    background-color: rgb(216, 35, 35);
+.bubble.error, .console-error-level .bubble {
+    background-color: rgb(216, 35, 35) !important;
 }
 
 /* Profiler Style */

@@ -141,6 +141,13 @@ WebInspector.Console.prototype = {
 
     addMessage: function(msg)
     {
+        if (msg.isEqual && msg.isEqual(this.previousMessage)) {
+            this._incrementRepeatedMessage();
+            return;
+        }
+
+        this.previousMessage = msg;
+    
         if (msg.url in WebInspector.resourceURLMap) {
             msg.resource = WebInspector.resourceURLMap[msg.url];
             WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
@@ -165,9 +172,27 @@ WebInspector.Console.prototype = {
             }
 
             this.currentGroup.addMessage(msg);
+            this.previousMessageElement = this.currentGroup.messagesElement.lastChild;
         }
 
         this.promptElement.scrollIntoView(false);
+    },
+
+    _incrementRepeatedMessage: function()
+    {
+        if (!this.previousMessageElement)
+            return;
+
+        if (!this.previousMessageElement.bubbleElement) {
+            this.previousMessageElement.bubbleElement = document.createElement("span");
+            this.previousMessageElement.bubbleElement.className = "bubble";
+            this.previousMessageElement.bubbleElement.textContent = "1";
+
+            this.previousMessageElement.insertBefore(this.previousMessageElement.bubbleElement, this.previousMessageElement.firstChild);
+            this.previousMessageElement.addStyleClass("repeated-message");            
+        }
+
+        ++this.previousMessageElement.bubbleElement.textContent;
     },
 
     clearMessages: function(clearInspectorController)
@@ -181,6 +206,8 @@ WebInspector.Console.prototype = {
         this.groupLevel = 0;
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
+        delete this.previousMessage;
+        delete this.previousMessageElement;
     },
 
     completions: function(wordRange, bestMatchOnly)
@@ -532,13 +559,9 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
         this.elementsTreeOutline.rootDOMNode = node;
     }
 
-    if (url && line > 0 && this.isErrorOrWarning()) {
-        // This _format call passes in true for the plainText argument. The result's textContent is
-        // used for inline message bubbles in SourceFrames, or other plain-text representations.
-        // Right now we only need to generate this string if the URL and line are valid and the level
-        // is error or warning, since SourceFrame only shows these messages.
-        this.message = this._format(Array.prototype.slice.call(arguments, 5), true).textContent;
-    }
+    // This _format call passes in true for the plainText argument. The result's textContent is
+    // used for inline message bubbles in SourceFrames, or other plain-text representations.
+    this.message = this._format(Array.prototype.slice.call(arguments, 5), true).textContent;
 
     // The formatedMessage property is used for the rich and interactive console.
     this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 5));
@@ -721,6 +744,19 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         return sourceString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
+    },
+    
+    isEqual: function(msg)
+    {
+        if (!msg)
+            return false;
+
+        return (this.source == msg.source)
+            && (this.level == msg.level)
+            && (this.line == msg.line)
+            && (this.url == msg.url)
+            && (this.groupLevel == msg.groupLevel)
+            && (this.message == msg.message);
     }
 }
 

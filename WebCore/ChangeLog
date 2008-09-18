@@ -1,3 +1,17 @@
+2008-09-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5722310> gracefully handle too many console messages
+        (20904)
+        - Keep track of the most previous message and then compare it to the 
+        subsequent messages as they come in.  If there are multiple of the same
+        message create a count that indicates the current number.
+
+        * manual-tests/inspector/multiple-console-messages.html: Added.
+        * page/inspector/Console.js:
+        * page/inspector/inspector.css:
+
 2008-09-18  Jonathon Jongsma  <jonathon@quotidian.org>
 
         Reviewed by Alp Toker
