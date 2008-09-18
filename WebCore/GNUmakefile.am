@@ -1419,16 +1419,6 @@ webcore_sources += \
 	WebCore/page/AccessibilityTableHeaderContainer.h \
 	WebCore/page/AccessibilityTableRow.cpp \
 	WebCore/page/AccessibilityTableRow.h \
-	WebCore/page/animation/AnimationBase.cpp \
-	WebCore/page/animation/AnimationBase.h \
-	WebCore/page/animation/AnimationController.cpp \
-	WebCore/page/animation/AnimationController.h \
-	WebCore/page/animation/CompositeAnimation.cpp \
-	WebCore/page/animation/CompositeAnimation.h \
-	WebCore/page/animation/ImplicitAnimation.cpp \
-	WebCore/page/animation/ImplicitAnimation.h \
-	WebCore/page/animation/KeyframeAnimation.cpp \
-	WebCore/page/animation/KeyframeAnimation.h \
 	WebCore/page/BarInfo.cpp \
 	WebCore/page/BarInfo.h \
 	WebCore/page/Chrome.cpp \
@@ -1493,6 +1483,16 @@ webcore_sources += \
 	WebCore/page/Settings.h \
 	WebCore/page/WindowFeatures.cpp \
 	WebCore/page/WindowFeatures.h \
+	WebCore/page/animation/AnimationBase.cpp \
+	WebCore/page/animation/AnimationBase.h \
+	WebCore/page/animation/AnimationController.cpp \
+	WebCore/page/animation/AnimationController.h \
+	WebCore/page/animation/CompositeAnimation.cpp \
+	WebCore/page/animation/CompositeAnimation.h \
+	WebCore/page/animation/ImplicitAnimation.cpp \
+	WebCore/page/animation/ImplicitAnimation.h \
+	WebCore/page/animation/KeyframeAnimation.cpp \
+	WebCore/page/animation/KeyframeAnimation.h \
 	WebCore/platform/Arena.cpp \
 	WebCore/platform/Arena.h \
 	WebCore/platform/AutodrainedPool.h \
@@ -1536,10 +1536,10 @@ webcore_sources += \
 	WebCore/platform/PopupMenu.h \
 	WebCore/platform/PopupMenuClient.h \
 	WebCore/platform/SSLKeyGenerator.h \
-	WebCore/platform/Scrollbar.cpp \
-	WebCore/platform/Scrollbar.h \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.h \
+	WebCore/platform/Scrollbar.cpp \
+	WebCore/platform/Scrollbar.h \
 	WebCore/platform/SearchPopupMenu.h \
 	WebCore/platform/SecurityOrigin.cpp \
 	WebCore/platform/SecurityOrigin.h \
@@ -1881,11 +1881,14 @@ webcore_sources += \
 	WebCore/rendering/style/StyleBoxData.h \
 	WebCore/rendering/style/StyleCachedImage.cpp \
 	WebCore/rendering/style/StyleCachedImage.h \
+	WebCore/rendering/style/StyleDashboardRegion.h \
 	WebCore/rendering/style/StyleGeneratedImage.cpp \
 	WebCore/rendering/style/StyleGeneratedImage.h \
 	WebCore/rendering/style/StyleImage.h \
 	WebCore/rendering/style/StyleMarqueeData.cpp \
 	WebCore/rendering/style/StyleMarqueeData.h \
+	WebCore/rendering/style/StyleMultiColData.cpp \
+	WebCore/rendering/style/StyleMultiColData.h \
 	WebCore/rendering/style/StyleSurroundData.cpp \
 	WebCore/rendering/style/StyleSurroundData.h \
 	WebCore/rendering/style/StyleTransformData.cpp \
@@ -1970,13 +1973,13 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PasteboardGtk.cpp \
 	WebCore/platform/gtk/PasteboardHelper.h \
 	WebCore/platform/gtk/PlatformScreenGtk.cpp \
-	WebCore/platform/gtk/ScrollbarGtk.h \
-	WebCore/platform/gtk/ScrollbarGtk.cpp \
 	WebCore/platform/gtk/PopupMenuGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \
-	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/ScrollViewGtk.cpp \
+	WebCore/platform/gtk/ScrollbarGtk.cpp \
+	WebCore/platform/gtk/ScrollbarGtk.h \
+	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \
 	WebCore/platform/gtk/SoundGtk.cpp \
