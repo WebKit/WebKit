@@ -1,5 +1,11 @@
 2008-09-18  Stephanie Lewis  <slewis@apple.com>
 
+        Really fix tiger jsc tests.
+
+        * Scripts/run-javascriptcore-tests:
+
+2008-09-18  Stephanie Lewis  <slewis@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Fix jsc tests on Tiger.  Make jsc tests smarter about when to use the arch flag.

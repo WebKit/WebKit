@@ -79,11 +79,10 @@ foreach my $arg(@ARGV) {
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 
-my $arch;
 if (isOSX() && !isTiger()) {
     my $preferredArch = preferredArchitecture("JavaScriptCore");
     setRun64Bit($run64Bit);
-    $arch = preferredArchitecture("JavaScriptCore");
+    my $arch = preferredArchitecture("JavaScriptCore");
     if ($arch ne $preferredArch) {
         push(@jsArgs, "-a", $arch);
     }
@@ -98,6 +97,7 @@ if(!defined($root)){
     push(@xcodeArgs, "--gtk")  if isGtk();
     push(@xcodeArgs, "--wx")  if isWx();
 
+    my $arch = preferredArchitecture("JavaScriptCore");
     push(@xcodeArgs, "ARCHS=$arch") if (isOSX());
     
     my $buildResult = system "perl", "WebKitTools/Scripts/build-jsc", @xcodeArgs;
