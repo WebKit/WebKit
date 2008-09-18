@@ -898,9 +898,19 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_construct_verify: {
-            emitPutArgConstant(instruction[i + 1].u.operand, 0);
-            emitPutArgConstant(instruction[i + 2].u.operand, 4);
-            emitCall(i, Machine::cti_op_construct_verify);
+            emitGetArg(instruction[i + 1].u.operand, X86::eax);
+            
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::eax);
+            X86Assembler::JmpSrc isImmediate = m_jit.emitUnlinkedJne();
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
+            m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_type), X86::ecx);
+            X86Assembler::JmpSrc isObject = m_jit.emitUnlinkedJe();
+
+            m_jit.link(isImmediate, m_jit.label());
+            emitGetArg(instruction[i + 2].u.operand, X86::ecx);
+            emitPutResult(instruction[i + 1].u.operand, X86::ecx);
+            m_jit.link(isObject, m_jit.label());
+
             i += 3;
             break;
         }

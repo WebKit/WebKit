@@ -1,3 +1,17 @@
+2008-09-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        JIT generation cti_op_construct_verify.
+        
+        Quarter to half percent progression on v8-tests.
+        Roughly not change on SunSpider (possible minor progression).
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/Machine.cpp:
+        * VM/Machine.h:
+
 2008-09-15  Steve Falkenburg  <sfalken@apple.com>
 
         Improve timer accuracy for JavaScript Date object on Windows.

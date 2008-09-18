@@ -4545,19 +4545,6 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     return newCodeBlock->ctiCode;
 }
 
-void Machine::cti_op_construct_verify(CTI_ARGS)
-{
-    ExecState* exec = ARG_exec;
-    Register* r = ARG_r;
-    int dst = ARG_int1;
-
-    if (LIKELY(r[dst].jsValue(exec)->isObject()))
-        return;
-    
-    int override = ARG_int2;
-    r[dst] = r[override];
-}
-
 JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
