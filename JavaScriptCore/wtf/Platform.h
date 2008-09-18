@@ -357,4 +357,11 @@
 #define ENABLE_MASM 1
 #endif
 
+/* Use the QtXmlStreamReader implementation for XMLTokenizer */
+#if PLATFORM(QT)
+#if !ENABLE(XSLT)
+#define WTF_USE_QXMLSTREAM 1
+#endif
+#endif
+
 #endif /* WTF_Platform_h */

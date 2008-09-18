@@ -32,17 +32,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
-#if PLATFORM(QT)
-#if !ENABLE(XSLT)
-#define USE_QXMLSTREAM
-#endif
-#endif
-
-#ifndef USE_QXMLSTREAM
+#if USE(QXMLSTREAM)
+#include <QtXml/qxmlstream.h>
+#else
 #include <libxml/tree.h>
 #include <libxml/xmlstring.h>
-#else
-#include <QtXml/qxmlstream.h>
 #endif
 
 namespace WebCore {
@@ -55,6 +49,7 @@ namespace WebCore {
     class Element;
     class FrameView;
     class PendingCallbacks;
+    class ScriptElement;
 
     class XMLTokenizer : public Tokenizer, public CachedResourceClient {
     public:
@@ -81,10 +76,29 @@ namespace WebCore {
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource* finishedObj);
 
-#ifndef USE_QXMLSTREAM
 
-        friend bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent);
+        void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
 
+        virtual bool wellFormed() const { return !m_sawError; }
+
+        int lineNumber() const;
+        int columnNumber() const;
+
+#if USE(QXMLSTREAM)
+private:
+        void parse();
+        void startDocument();
+        void parseStartElement();
+        void parseEndElement();
+        void parseCharacters();
+        void parseProcessingInstruction();
+        void parseCdata();
+        void parseComment();
+        void endDocument();
+        void parseDtd();
+        bool hasError() const;
+#else
+public:
         // callbacks from parser SAX
         void error(ErrorType, const char* message, va_list args) WTF_ATTRIBUTE_PRINTF(3, 0); 
         void startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
@@ -97,28 +111,11 @@ namespace WebCore {
         void startDocument(const xmlChar* version, const xmlChar* encoding, int standalone);
         void internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID);
         void endDocument();
-#else
-        void parse();
-        void startDocument();
-        void parseStartElement();
-        void parseEndElement();
-        void parseCharacters();
-        void parseProcessingInstruction();
-        void parseCdata();
-        void parseComment();
-        void endDocument();
-        void parseDtd();
-        bool hasError() const;
 #endif
-
-        void handleError(ErrorType type, const char* m, int lineNumber, int columnNumber);
-
-        virtual bool wellFormed() const { return !m_sawError; }
-
-        int lineNumber() const;
-        int columnNumber() const;
-
     private:
+        friend bool parseXMLDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* parent);
+
+        static void eventuallyMarkAsParserCreated(Element* element);
         void initializeParserContext(const char* chunk = 0);
         void setCurrentNode(Node*);
 
@@ -127,16 +124,21 @@ namespace WebCore {
         bool enterText();
         void exitText();
 
+        void doWrite(const String&);
+        void doEnd();
+
         Document* m_doc;
         FrameView* m_view;
 
         String m_originalSourceForTransform;
 
-#ifdef USE_QXMLSTREAM
+#if USE(QXMLSTREAM)
         QXmlStreamReader m_stream;
         bool m_wroteText;
 #else
         xmlParserCtxtPtr m_context;
+        OwnPtr<PendingCallbacks> m_pendingCallbacks;
+        Vector<xmlChar> m_bufferedText;
 #endif
         Node* m_currentNode;
         bool m_currentNodeIsReferenced;
@@ -164,10 +166,6 @@ namespace WebCore {
 
         typedef HashMap<String, String> PrefixForNamespaceMap;
         PrefixForNamespaceMap m_prefixToNamespaceMap;
-#ifndef USE_QXMLSTREAM
-        OwnPtr<PendingCallbacks> m_pendingCallbacks;
-        Vector<xmlChar> m_bufferedText;
-#endif
         SegmentedString m_pendingSrc;
     };
 
@@ -178,6 +176,9 @@ void setLoaderForLibXMLCallbacks(DocLoader*);
 
 HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
 bool parseXMLDocumentFragment(const String&, DocumentFragment*, Element* parent = 0);
+
+bool isScriptElement(Element*);
+ScriptElement* castToScriptElement(Element*);
 
 } // namespace WebCore
 

@@ -560,6 +560,7 @@ SOURCES += \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
     dom/XMLTokenizer.cpp \
+    dom/XMLTokenizerQt.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyStyleCommand.cpp \
     editing/BreakBlockquoteCommand.cpp \

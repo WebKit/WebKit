@@ -650,6 +650,7 @@
 		51EC92690CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC92610CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp */; };
 		51EC926A0CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */; };
 		51FAFE340CECBF2D00BB3F24 /* DatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
@@ -5328,6 +5329,7 @@
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTrackerClient.h; sourceTree = "<group>"; };
+		54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizerLibxml2.cpp; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
@@ -13539,6 +13541,7 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */,
 				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
@@ -17624,6 +17627,7 @@
 				63459C660E79CD33008ADFAF /* CSSNthSelector.cpp in Sources */,
 				29FFBB820E7C5A3D00407730 /* AccessibilityList.cpp in Sources */,
 				BC8B853D0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp in Sources */,
+				54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */,
 				BC84B1420E80A16D00841D6D /* ScrollbarMac.mm in Sources */,
 				BC5EB5E70E81BFEF00B25965 /* StyleSurroundData.cpp in Sources */,
 				BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */,

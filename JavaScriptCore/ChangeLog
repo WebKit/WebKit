@@ -1,3 +1,15 @@
+2008-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20437
+
+        Add a proper #define to define which XML Parser implementation to use. Client
+        code can use #if USE(QXMLSTREAM) to decide if the Qt XML StreamReader
+        implementation is going to be used.
+
+        * wtf/Platform.h:
+
 2008-09-18  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

@@ -425,6 +425,7 @@ This file contains the list of files needed to build WebCore.
         dom/WebKitTransitionEvent.cpp
         dom/WheelEvent.cpp
         dom/XMLTokenizer.cpp
+        dom/XMLTokenizerLibxml2.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_EDITING">

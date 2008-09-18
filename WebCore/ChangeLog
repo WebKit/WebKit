@@ -1,3 +1,68 @@
+2008-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20437
+
+        XMLTokenizer.cpp used to contain two different implementations. One was using
+        libxml2 and the other was using the Qt XML StreamReader. Clean up the code by
+        separating the two implementations from each other.
+        Common code and some small bits are kept inside the XMLTokenizer.cpp, the Qt code
+        was moved to XMLTokenizerQt.cpp and the Libxml2 based code was moved to
+        XMLTokenizerLibxml2.cpp. There should be no functional changes.
+
+        Attempt to add XMLTokenizerLibxml2.cpp to every buildsystem so the build continues
+        to work.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::isScriptElement):
+        (WebCore::castToScriptElement):
+        (WebCore::XMLTokenizer::setCurrentNode):
+        (WebCore::XMLTokenizer::write):
+        (WebCore::XMLTokenizer::eventuallyMarkAsParserCreated):
+        (WebCore::XMLTokenizer::enterText):
+        (WebCore::toString):
+        (WebCore::XMLTokenizer::exitText):
+        (WebCore::XMLTokenizer::end):
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * dom/XMLTokenizer.h:
+        (WebCore::XMLTokenizer::wellFormed):
+        * dom/XMLTokenizerLibxml2.cpp: Copied from WebCore/dom/XMLTokenizer.cpp.
+        (WebCore::createMemoryParser):
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+        (WebCore::XMLTokenizer::doWrite):
+        (WebCore::ignorableWhitespaceHandler):
+        (WebCore::XMLTokenizer::initializeParserContext):
+        (WebCore::XMLTokenizer::doEnd):
+        (WebCore::XMLTokenizer::lineNumber):
+        (WebCore::XMLTokenizer::columnNumber):
+        (WebCore::XMLTokenizer::stopParsing):
+        (WebCore::XMLTokenizer::resumeParsing):
+        (WebCore::parseXMLDocumentFragment):
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::parseAttributes):
+        * dom/XMLTokenizerQt.cpp: Copied from WebCore/dom/XMLTokenizer.cpp.
+        (WebCore::EntityResolver::resolveUndeclaredEntity):
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::~XMLTokenizer):
+        (WebCore::XMLTokenizer::doWrite):
+        (WebCore::XMLTokenizer::initializeParserContext):
+        (WebCore::XMLTokenizer::doEnd):
+        (WebCore::XMLTokenizer::lineNumber):
+        (WebCore::XMLTokenizer::columnNumber):
+        (WebCore::XMLTokenizer::stopParsing):
+        (WebCore::XMLTokenizer::resumeParsing):
+        (WebCore::parseXMLDocumentFragment):
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::parseAttributes):
+        (WebCore::):
+
 2008-09-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff Garen.

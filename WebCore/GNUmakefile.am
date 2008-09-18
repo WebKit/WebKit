@@ -1012,6 +1012,7 @@ webcore_sources += \
 	WebCore/dom/WheelEvent.cpp \
 	WebCore/dom/WheelEvent.h \
 	WebCore/dom/XMLTokenizer.cpp \
+	WebCore/dom/XMLTokenizerLibxml2.cpp \
 	WebCore/dom/XMLTokenizer.h \
 	WebCore/editing/AppendNodeCommand.cpp \
 	WebCore/editing/AppendNodeCommand.h \
