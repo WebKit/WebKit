@@ -1,3 +1,11 @@
+2008-09-18  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe and Maciej Stachowiak.
+
+        add an option use arch to specify which architecture to run.
+
+        * tests/mozilla/jsDriver.pl:
+
 2008-09-17  Oliver Hunt  <oliver@apple.com>
 
         Correctly restore argument reference prior to SFX runtime calls.

@@ -56,16 +56,20 @@ $configuration = configuration();
 my @jsArgs;
 my @xcodeArgs;
 my $root;
+my $run64Bit;
 
 # pre-evaluate arguments.  jsDriver args have - preceding, xcode args do not.
 # special arguments
 #     --root=<path to webkit root> use pre-built root
 #     --gtk build gtk 
+#     --no-64-bit or --64-bit
 foreach my $arg(@ARGV) {
     print $arg."\n";
     if( $arg =~ /root=(.*)/ ){
         $root = $1;
     } elsif( $arg =~ /^--gtk$/i || $arg =~ /^--qt$/i || $arg =~ /^--wx$/i ){
+    } elsif( $arg =~ /(no-)?64-bit/ ) {
+        $run64Bit = !defined($1);
     } elsif( $arg =~ /^-/ or !($arg =~/=/)){
         push( @jsArgs, $arg );
     } else {
@@ -74,6 +78,7 @@ foreach my $arg(@ARGV) {
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+setRun64Bit($run64Bit);
 
 if(!defined($root)){
     chdirWebKit();
@@ -102,6 +107,12 @@ $productDir .= "/Programs" if isGtk();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
+my $arch = "";
+if (isOSX() && !isTiger()) {
+    $arch = preferredArchitecture();
+    $arch = "-a $arch";
+}
+
 sub jscPath($)
 {
     my ($productDir) = @_;
@@ -110,7 +121,7 @@ sub jscPath($)
     return "$productDir/$jscName";
 }
 
-my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;
+my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", $arch, @jsArgs;
 exit exitStatus($result)  if $result;
 
 my %failures;
