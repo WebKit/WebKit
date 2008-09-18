@@ -769,6 +769,9 @@ String CSSPrimitiveValue::cssText() const
             char c = static_cast<char>(m_value.ident);
             text = String(&c, 1U);
             break;
+        case CSS_PARSER_IDENTIFIER:
+            text = quoteStringIfNeeded(m_value.string);
+            break;
     }
     return text;
 }
@@ -827,6 +830,11 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
             value.fValue = m_value.num;
             value.unit = CSSPrimitiveValue::CSS_NUMBER;
             value.isInt = true;
+            break;
+        case CSS_PARSER_IDENTIFIER:
+            value.string.characters = const_cast<UChar*>(m_value.string->characters());
+            value.string.length = m_value.string->length();
+            value.unit = CSSPrimitiveValue::CSS_IDENT;
             break;
         case CSS_UNKNOWN:
         case CSS_ATTR:

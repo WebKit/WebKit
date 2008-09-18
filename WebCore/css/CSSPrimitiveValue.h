@@ -75,7 +75,10 @@ public:
         CSS_PARSER_VARIABLE_FUNCTION_SYNTAX = 105,
         CSS_PARSER_VARIABLE_EQUALS_SYNTAX = 106,
         CSS_PARSER_VARIABLE_DOLLAR_SYNTAX = 107,
-        CSS_PARSER_HEXCOLOR = 108
+        CSS_PARSER_HEXCOLOR = 108,
+        
+        // This is used internally for unknown identifiers 
+        CSS_PARSER_IDENTIFIER = 109
     };
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident)

@@ -1,3 +1,25 @@
+2008-09-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20515 Crash upon 
+        parsing CSS: unicode-range: searchfield-cancel-buttonpt=-webkit-
+        dashboard-region=
+        and corresponding: <rdar://problem/6174100>
+
+        This patch makes CSSParserValue::createCSSValue handle unknown 
+        identifiers.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue): If we have an identifier 
+        with no id (an unknown identifier) create a CSSPrimitiveValue of 
+        type CSS_PARSER_IDENTIFIER
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+        (WebCore::CSSPrimitiveValue::parserValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+
 2008-09-18  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by David "I'd prefer not" Hyatt.

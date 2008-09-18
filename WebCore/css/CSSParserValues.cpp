@@ -61,6 +61,8 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     RefPtr<CSSValue> parsedValue;
     if (id)
         parsedValue = CSSPrimitiveValue::createIdentifier(id);
+    else if (unit == CSSPrimitiveValue::CSS_IDENT)
+        parsedValue = CSSPrimitiveValue::create(string, CSSPrimitiveValue::CSS_PARSER_IDENTIFIER);
     else if (unit == CSSPrimitiveValue::CSS_NUMBER && isInt)
         parsedValue = CSSPrimitiveValue::create(fValue, CSSPrimitiveValue::CSS_PARSER_INTEGER);
     else if (unit == CSSParserValue::Operator) {
