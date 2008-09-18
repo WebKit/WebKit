@@ -1,3 +1,26 @@
+2008-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20925
+          LEAK messages appear every time I quit
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setFullDocumentTeardownEnabled:]): Removed unneeded call
+        to setLogLeakMessages.
+        * WebView/WebView.mm:
+        (-[WebView _closeWithFastTeardown]): Call RefCountedLeakCounter::suppressMessages,
+        telling it that we can't track leaks because at least one WebView was closed with
+        fast teardown.
+        (-[WebView _close]): Removed unneeded call to setLogLeakMessages. Added a call to
+        cancelMessageSuppression since the WebView is no longer open.
+        Added an explicit garbage collect to help with the case where we're closing during
+        the quit process -- the garbageCollectSoon() calls done inside WebCore won't help
+        us in that case.
+        (-[WebView initWithFrame:frameName:groupName:]): Call
+        RefCountedLeakCounter::suppressMessages telling it that we can't track leaks
+        because at least one WebView is currently open.
+
 2008-09-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

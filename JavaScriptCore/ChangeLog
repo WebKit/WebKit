@@ -1,3 +1,26 @@
+2008-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20925
+          LEAK messages appear every time I quit
+
+        * JavaScriptCore.exp: Updated, and also added an export
+        needed for future WebCore use of JSC::StructureID.
+
+        * wtf/RefCountedLeakCounter.cpp:
+        (WTF::RefCountedLeakCounter::suppressMessages): Added.
+        (WTF::RefCountedLeakCounter::cancelMessageSuppression): Added.
+        (WTF::RefCountedLeakCounter::RefCountedLeakCounter): Tweaked a bit.
+        (WTF::RefCountedLeakCounter::~RefCountedLeakCounter): Added code to
+        log the reason there was no leak checking done.
+        (WTF::RefCountedLeakCounter::increment): Tweaked a bit.
+        (WTF::RefCountedLeakCounter::decrement): Ditto.
+
+        * wtf/RefCountedLeakCounter.h: Replaced setLogLeakMessages with two
+        new functions, suppressMessages and cancelMessageSuppression. Also
+        added m_ prefixes to the data member names.
+
 2008-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

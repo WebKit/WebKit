@@ -87,10 +87,6 @@
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
-#import <kjs/ArrayPrototype.h>
-#import <kjs/DateInstance.h>
-#import <kjs/InitializeThreading.h>
-#import <kjs/JSLock.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
@@ -99,11 +95,12 @@
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
 #import <WebCore/Editor.h>
-#import <WebCore/ExceptionHandlers.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/ExceptionHandlers.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
+#import <WebCore/GCController.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Logging.h>
@@ -113,24 +110,28 @@
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
+#import <WebCore/ScriptController.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
-#import <WebCore/ScriptController.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <kjs/ArrayPrototype.h>
+#import <kjs/DateInstance.h>
+#import <kjs/InitializeThreading.h>
+#import <kjs/JSLock.h>
+#import <mach-o/dyld.h>
+#import <objc/objc-auto.h>
+#import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
-#import <mach-o/dyld.h>
-#import <objc/objc-auto.h>
-#import <objc/objc-runtime.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
@@ -276,6 +277,10 @@ static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 
 static BOOL applicationIsTerminating;
 static int pluginDatabaseClientCount = 0;
+
+#ifndef NDEBUG
+static const char webViewIsOpen[] = "At least one WebView is still open.";
+#endif
 
 @interface NSSpellChecker (AppKitSecretsIKnow)
 - (void)_preflightChosenSpellServer;
@@ -711,6 +716,10 @@ static bool debugWidget = true;
 
 - (void)_closeWithFastTeardown 
 {
+#ifndef NDEBUG
+    WTF::RefCountedLeakCounter::suppressMessages("At least one WebView was closed with fast teardown.");
+#endif
+
     // Dispatch unload events.
     // FIXME: Shouldn't have to use a RefPtr here -- keeping the frame alive while stopping it
     // should be WebCore's responsibility -- but we do as of the time this comment was written.
@@ -729,6 +738,10 @@ static bool debugWidget = true;
 {
     if (!_private || _private->closed)
         return;
+
+#ifndef NDEBUG
+    WTF::RefCountedLeakCounter::cancelMessageSuppression(webViewIsOpen);
+#endif
     
     WebPreferences *preferences = _private->preferences;
     BOOL fullDocumentTeardown = [preferences fullDocumentTeardownEnabled];
@@ -737,9 +750,6 @@ static bool debugWidget = true;
     //    1) plugins need to be destroyed and unloaded
     //    2) unload events need to be called
     if (applicationIsTerminating && !fullDocumentTeardown) {
-#ifndef NDEBUG
-        WTF::setLogLeakMessages(false);
-#endif
         [self _closeWithFastTeardown];
         return;
     }
@@ -787,6 +797,12 @@ static bool debugWidget = true;
     [preferences release];
 
     [self _closePluginDatabases];
+
+#ifndef NDEBUG
+    // Need this to make leak messages accurate.
+    if (applicationIsTerminating)
+        gcController().garbageCollectNow();
+#endif
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path
@@ -1992,6 +2008,10 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     }
 #endif
 
+#ifndef NDEBUG
+    WTF::RefCountedLeakCounter::suppressMessages(webViewIsOpen);
+#endif
+    
     _private = [[WebViewPrivate alloc] init];
     [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];

@@ -18,30 +18,31 @@
  *
  */
  
-#ifndef REF_COUNTED_LEAK_COUNTER_H_
-#define REF_COUNTED_LEAK_COUNTER_H_
+#ifndef RefCountedLeakCounter_h
+#define RefCountedLeakCounter_h
  
 #include "Assertions.h"
 #include "Threading.h"
 
 namespace WTF {
-
-    void setLogLeakMessages(bool _logLeakMessages);
     
     struct RefCountedLeakCounter {
-        RefCountedLeakCounter(const char* desc);
+        static void suppressMessages(const char*);
+        static void cancelMessageSuppression(const char*);
+        
+        explicit RefCountedLeakCounter(const char* description);
         ~RefCountedLeakCounter();
 
         void increment();
         void decrement();
-        
-    private:
+
 #ifndef NDEBUG
-        volatile int count;
-        const char* description;
+    private:
+        volatile int m_count;
+        const char* m_description;
 #endif
     };
-            
+
 }  // namespace WTF
 
 #endif
