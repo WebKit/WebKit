@@ -25,8 +25,8 @@
 #ifndef RenderStyle_h
 #define RenderStyle_h
 
-#include "AnimationList.h"
 #include "AffineTransform.h"
+#include "AnimationList.h"
 #include "BorderData.h"
 #include "BorderValue.h"
 #include "CSSHelper.h"
@@ -35,11 +35,11 @@
 #include "CSSReflectionDirection.h"
 #include "CSSValueList.h"
 #include "CachedImage.h"
-#include "CachedResourceHandle.h"
 #include "CollapsedBorderValue.h"
 #include "Color.h"
 #include "ContentData.h"
 #include "CounterDirectives.h"
+#include "CursorList.h"
 #include "DataRef.h"
 #include "FillLayer.h"
 #include "FloatPoint.h"
@@ -55,14 +55,18 @@
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
 #include "StyleFlexibleBoxData.h"
+#include "StyleInheritedData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"
+#include "StyleRareInheritedData.h"
+#include "StyleRareNonInheritedData.h"
+#include "StyleReflection.h"
 #include "StyleSurroundData.h"
 #include "StyleTransformData.h"
 #include "StyleVisualData.h"
 #include "TextDirection.h"
-#include "TransformOperations.h"
 #include "TimingFunction.h"
+#include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -92,218 +96,10 @@ using std::max;
 class CSSStyleSelector;
 class CSSValueList;
 class CachedImage;
-class CachedResource;
-class CursorList;
 class Pair;
 class RenderArena;
 class StringImpl;
 class StyleImage;
-struct CursorData;
-
-class StyleReflection : public RefCounted<StyleReflection> {
-public:
-    static PassRefPtr<StyleReflection> create()
-    {
-        return adoptRef(new StyleReflection);
-    }
-
-    bool operator==(const StyleReflection& o) const
-    {
-        return m_direction == o.m_direction && m_offset == o.m_offset && m_mask == o.m_mask;
-    }
-    bool operator!=(const StyleReflection& o) const { return !(*this == o); }
-
-    CSSReflectionDirection direction() const { return m_direction; }
-    Length offset() const { return m_offset; }
-    const NinePieceImage& mask() const { return m_mask; }
-
-    void setDirection(CSSReflectionDirection dir) { m_direction = dir; }
-    void setOffset(const Length& l) { m_offset = l; }
-    void setMask(const NinePieceImage& image) { m_mask = image; }
-
-private:
-    StyleReflection()
-        : m_direction(ReflectionBelow)
-        , m_offset(0, Fixed)
-    {
-    }
-    
-    CSSReflectionDirection m_direction;
-    Length m_offset;
-    NinePieceImage m_mask;
-};
-
-// This struct is for rarely used non-inherited CSS3, CSS2, and WebKit-specific properties.
-// By grouping them together, we save space, and only allocate this object when someone
-// actually uses one of these properties.
-class StyleRareNonInheritedData : public RefCounted<StyleRareNonInheritedData> {
-public:
-    static PassRefPtr<StyleRareNonInheritedData> create() { return adoptRef(new StyleRareNonInheritedData); }
-    PassRefPtr<StyleRareNonInheritedData> copy() const { return adoptRef(new StyleRareNonInheritedData(*this)); }
-    ~StyleRareNonInheritedData();
-    
-#if ENABLE(XBL)
-    bool bindingsEquivalent(const StyleRareNonInheritedData&) const;
-#endif
-
-    bool operator==(const StyleRareNonInheritedData&) const;
-    bool operator!=(const StyleRareNonInheritedData& o) const { return !(*this == o); }
- 
-    bool shadowDataEquivalent(const StyleRareNonInheritedData& o) const;
-    bool reflectionDataEquivalent(const StyleRareNonInheritedData& o) const;
-    bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
-    bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
-    void updateKeyframes(const CSSStyleSelector* styleSelector);
-
-    int lineClamp; // An Apple extension.
-#if ENABLE(DASHBOARD_SUPPORT)
-    Vector<StyleDashboardRegion> m_dashboardRegions;
-#endif
-    float opacity; // Whether or not we're transparent.
-
-    DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
-    DataRef<StyleMarqueeData> marquee; // Marquee properties
-    DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
-    DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)
-
-    OwnPtr<ContentData> m_content;
-    OwnPtr<CounterDirectiveMap> m_counterDirectives;
-
-    unsigned userDrag : 2; // EUserDrag
-    bool textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
-    unsigned marginTopCollapse : 2; // EMarginCollapse
-    unsigned marginBottomCollapse : 2; // EMarginCollapse
-    unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
-    unsigned m_appearance : 6; // EAppearance
-    unsigned m_borderFit : 1; // EBorderFit
-    OwnPtr<ShadowData> m_boxShadow;  // For box-shadow decorations.
-    
-    RefPtr<StyleReflection> m_boxReflect;
-
-    OwnPtr<AnimationList> m_animations;
-    OwnPtr<AnimationList> m_transitions;
-
-    FillLayer m_mask;
-    NinePieceImage m_maskBoxImage;
-
-#if ENABLE(XBL)
-    OwnPtr<BindingURI> bindingURI; // The XBL binding URI list.
-#endif
-    
-private:
-    StyleRareNonInheritedData();
-    StyleRareNonInheritedData(const StyleRareNonInheritedData&);
-};
-
-// This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
-// By grouping them together, we save space, and only allocate this object when someone
-// actually uses one of these properties.
-class StyleRareInheritedData : public RefCounted<StyleRareInheritedData> {
-public:
-    static PassRefPtr<StyleRareInheritedData> create() { return adoptRef(new StyleRareInheritedData); }
-    PassRefPtr<StyleRareInheritedData> copy() const { return adoptRef(new StyleRareInheritedData(*this)); }
-    ~StyleRareInheritedData();
-
-    bool operator==(const StyleRareInheritedData& o) const;
-    bool operator!=(const StyleRareInheritedData &o) const {
-        return !(*this == o);
-    }
-    bool shadowDataEquivalent(const StyleRareInheritedData&) const;
-
-    Color textStrokeColor;
-    float textStrokeWidth;
-    Color textFillColor;
-
-    ShadowData* textShadow; // Our text shadow information for shadowed text drawing.
-    AtomicString highlight; // Apple-specific extension for custom highlight rendering.
-    unsigned textSecurity : 2; // ETextSecurity
-    unsigned userModify : 2; // EUserModify (editing)
-    unsigned wordBreak : 2; // EWordBreak
-    unsigned wordWrap : 1; // EWordWrap 
-    unsigned nbspMode : 1; // ENBSPMode
-    unsigned khtmlLineBreak : 1; // EKHTMLLineBreak
-    bool textSizeAdjust : 1; // An Apple extension.
-    unsigned resize : 2; // EResize
-    unsigned userSelect : 1;  // EUserSelect
-    
-private:
-    StyleRareInheritedData();
-    StyleRareInheritedData(const StyleRareInheritedData&);
-};
-
-class StyleInheritedData : public RefCounted<StyleInheritedData> {
-public:
-    static PassRefPtr<StyleInheritedData> create() { return adoptRef(new StyleInheritedData); }
-    PassRefPtr<StyleInheritedData> copy() const { return adoptRef(new StyleInheritedData(*this)); }
-    ~StyleInheritedData();
-    
-    bool operator==(const StyleInheritedData& o) const;
-    bool operator != ( const StyleInheritedData &o ) const {
-        return !(*this == o);
-    }
-
-    Length indent;
-    // could be packed in a short but doesn't
-    // make a difference currently because of padding
-    Length line_height;
-
-    RefPtr<StyleImage> list_style_image;
-    RefPtr<CursorList> cursorData;
-
-    Font font;
-    Color color;
-    
-    float m_effectiveZoom;
-
-    short horizontal_border_spacing;
-    short vertical_border_spacing;
-    
-    // Paged media properties.
-    short widows;
-    short orphans;
-    unsigned page_break_inside : 2; // EPageBreak
-    
-private:
-    StyleInheritedData();
-    StyleInheritedData(const StyleInheritedData&);
-};
-
-struct CursorData {
-    CursorData()
-        : cursorImage(0)
-    {}
-    
-    bool operator==(const CursorData& o) const {
-        return hotSpot == o.hotSpot && cursorImage == o.cursorImage;
-    }
-    bool operator!=(const CursorData& o) const { return !(*this == o); }
-
-    IntPoint hotSpot; // for CSS3 support
-    CachedResourceHandle<CachedImage> cursorImage;
-};
-
-class CursorList : public RefCounted<CursorList> {
-public:
-    static PassRefPtr<CursorList> create()
-    {
-        return adoptRef(new CursorList);
-    }
-    
-    const CursorData& operator[](int i) const {
-        return m_vector[i];
-    }
-
-    bool operator==(const CursorList& o) const { return m_vector == o.m_vector; }
-    bool operator!=(const CursorList& o) const { return m_vector != o.m_vector; }
-
-    size_t size() const { return m_vector.size(); }
-    void append(const CursorData& cursorData) { m_vector.append(cursorData); }
-
-private:
-    CursorList() { }
-
-    Vector<CursorData> m_vector;
-};
 
 class RenderStyle {
     friend class CSSStyleSelector;
@@ -317,12 +113,13 @@ public:
     static const int FIRST_INTERNAL_PSEUDOID = FILE_UPLOAD_BUTTON;
 
     void ref() { m_ref++;  }
-    void deref(RenderArena* arena) { 
+    void deref(RenderArena* arena)
+    { 
         if (m_ref) m_ref--; 
         if (!m_ref)
             arenaDelete(arena);
     }
-    bool hasOneRef() { return m_ref==1; }
+    bool hasOneRef() { return m_ref == 1; }
     int refCount() const { return m_ref; }
     
     // Overloaded new operator.  Derived classes must override operator new
@@ -361,9 +158,7 @@ protected:
                    (_force_backgrounds_to_white == other._force_backgrounds_to_white);
         }
         
-        bool operator!=( const InheritedFlags &other ) const {
-            return !(*this == other);
-        }
+        bool operator!=( const InheritedFlags &other ) const { return !(*this == other); }
 
         unsigned _empty_cells : 1; // EEmptyCell 
         unsigned _caption_side : 2; // ECaptionSide
@@ -407,9 +202,7 @@ protected:
             (_unicodeBidi == other._unicodeBidi);
         }
 
-        bool operator!=( const NonInheritedFlags &other ) const {
-            return !(*this == other);
-        }
+        bool operator!=( const NonInheritedFlags &other ) const { return !(*this == other); }
         
         unsigned _effectiveDisplay : 5; // EDisplay
         unsigned _originalDisplay : 5; // EDisplay
@@ -512,7 +305,6 @@ protected:
     }
 
 public:
-
     RenderStyle();
     // used to create the default style.
     RenderStyle(bool);
@@ -543,9 +335,12 @@ public:
     bool        hasPadding() const { return surround->padding.nonZero(); }
     bool        hasOffset() const { return surround->offset.nonZero(); }
 
-    bool hasBackground() const { if (backgroundColor().isValid() && backgroundColor().alpha() > 0)
-                                    return true;
-                                 return background->m_background.hasImage(); }
+    bool hasBackground() const
+    {
+        if (backgroundColor().isValid() && backgroundColor().alpha() > 0)
+            return true;
+        return background->m_background.hasImage();
+    }
     bool hasFixedBackgroundImage() const { return background->m_background.hasFixedImage(); }
     bool hasAppearance() const { return appearance() != NoAppearance; }
 
@@ -609,7 +404,8 @@ public:
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
     
     unsigned short outlineSize() const { return max(0, outlineWidth() + outlineOffset()); }
-    unsigned short outlineWidth() const {
+    unsigned short outlineWidth() const
+    {
         if (background->m_outline.style() == BNONE)
             return 0;
         return background->m_outline.width;
@@ -658,28 +454,35 @@ public:
     Length lineHeight() const { return inherited->line_height; }
 
     EWhiteSpace whiteSpace() const { return static_cast<EWhiteSpace>(inherited_flags._white_space); }
-    static bool autoWrap(EWhiteSpace ws) {
+    static bool autoWrap(EWhiteSpace ws)
+    {
         // Nowrap and pre don't automatically wrap.
         return ws != NOWRAP && ws != PRE;
     }
-    bool autoWrap() const {
+    bool autoWrap() const
+    {
         return autoWrap(whiteSpace());
     }
-    static bool preserveNewline(EWhiteSpace ws) {
+    static bool preserveNewline(EWhiteSpace ws)
+    {
         // Normal and nowrap do not preserve newlines.
         return ws != NORMAL && ws != NOWRAP;
     }
-    bool preserveNewline() const {
+    bool preserveNewline() const
+    {
         return preserveNewline(whiteSpace());
     }
-    static bool collapseWhiteSpace(EWhiteSpace ws) {
+    static bool collapseWhiteSpace(EWhiteSpace ws)
+    {
         // Pre and prewrap do not collapse whitespace.
         return ws != PRE && ws != PRE_WRAP;
     }
-    bool collapseWhiteSpace() const {
+    bool collapseWhiteSpace() const
+    {
         return collapseWhiteSpace(whiteSpace());
     }
-    bool isCollapsibleWhiteSpace(UChar c) const {
+    bool isCollapsibleWhiteSpace(UChar c) const
+    {
         switch (c) {
             case ' ':
             case '\t':
@@ -689,10 +492,12 @@ public:
         }
         return false;
     }
-    bool breakOnlyAfterWhiteSpace() const {
+    bool breakOnlyAfterWhiteSpace() const
+    {
         return whiteSpace() == PRE_WRAP || khtmlLineBreak() == AFTER_WHITE_SPACE;
     }
-    bool breakWords() const {
+    bool breakWords() const
+    {
         return wordBreak() == BreakWordBreak || wordWrap() == BreakWordWrap;
     }
 
@@ -760,7 +565,8 @@ public:
 #if ENABLE(XBL)
     BindingURI* bindingURIs() const { return rareNonInheritedData->bindingURI; }
 #endif
-    int outlineOffset() const { 
+    int outlineOffset() const
+    { 
         if (background->m_outline.style() == BNONE)
             return 0;
         return background->m_outline._offset;
@@ -846,10 +652,10 @@ public:
     void setPosition(EPosition v) {  noninherited_flags._position = v; }
     void setFloating(EFloat v) {  noninherited_flags._floating = v; }
 
-    void setLeft(Length v)  {  SET_VAR(surround,offset.left,v) }
-    void setRight(Length v) {  SET_VAR(surround,offset.right,v) }
-    void setTop(Length v)   {  SET_VAR(surround,offset.top,v) }
-    void setBottom(Length v){  SET_VAR(surround,offset.bottom,v) }
+    void setLeft(Length v)   {  SET_VAR(surround,offset.left,v) }
+    void setRight(Length v)  {  SET_VAR(surround,offset.right,v) }
+    void setTop(Length v)    {  SET_VAR(surround,offset.top,v) }
+    void setBottom(Length v) {  SET_VAR(surround,offset.bottom,v) }
 
     void setWidth(Length v)  { SET_VAR(box,width,v) }
     void setHeight(Length v) { SET_VAR(box,height,v) }
@@ -862,7 +668,8 @@ public:
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> dashboardRegions() const { return rareNonInheritedData->m_dashboardRegions; }
     void setDashboardRegions(Vector<StyleDashboardRegion> regions) { SET_VAR(rareNonInheritedData,m_dashboardRegions,regions); }
-    void setDashboardRegion(int type, const String& label, Length t, Length r, Length b, Length l, bool append) {
+    void setDashboardRegion(int type, const String& label, Length t, Length r, Length b, Length l, bool append)
+    {
         StyleDashboardRegion region;
         region.label = label;
         region.offset.top  = t;
@@ -890,16 +697,20 @@ public:
     
     void resetOutline() { SET_VAR(background, m_outline, OutlineValue()) }
     
-    void setBackgroundColor(const Color& v)    { SET_VAR(background, m_color, v) }
+    void setBackgroundColor(const Color& v) { SET_VAR(background, m_color, v) }
 
-    void setBorderImage(const NinePieceImage& b)   { SET_VAR(surround, border.image, b) }
+    void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.image, b) }
 
     void setBorderTopLeftRadius(const IntSize& s) { SET_VAR(surround, border.topLeft, s) }
     void setBorderTopRightRadius(const IntSize& s) { SET_VAR(surround, border.topRight, s) }
     void setBorderBottomLeftRadius(const IntSize& s) { SET_VAR(surround, border.bottomLeft, s) }
     void setBorderBottomRightRadius(const IntSize& s) { SET_VAR(surround, border.bottomRight, s) }
-    void setBorderRadius(const IntSize& s) { 
-        setBorderTopLeftRadius(s); setBorderTopRightRadius(s); setBorderBottomLeftRadius(s); setBorderBottomRightRadius(s);
+    void setBorderRadius(const IntSize& s)
+    { 
+        setBorderTopLeftRadius(s);
+        setBorderTopRightRadius(s);
+        setBorderBottomLeftRadius(s);
+        setBorderBottomRightRadius(s);
     }
 
     void setBorderLeftWidth(unsigned short v)   {  SET_VAR(surround, border.left.width, v) }
@@ -940,7 +751,8 @@ public:
     void setClear(EClear v) {  noninherited_flags._clear = v; }
     void setTableLayout(ETableLayout v) {  noninherited_flags._table_layout = v; }
 
-    bool setFontDescription(const FontDescription& v) {
+    bool setFontDescription(const FontDescription& v)
+    {
         if (inherited->font.fontDescription() != v) {
             inherited.access()->font = Font(v, inherited->font.letterSpacing(), inherited->font.wordSpacing());
             return true;
@@ -970,7 +782,8 @@ public:
 
     void clearBackgroundLayers() { background.access()->m_background = FillLayer(BackgroundFillLayer); }
     void inheritBackgroundLayers(const FillLayer& parent) { background.access()->m_background = parent; }
-    void adjustBackgroundLayers() {
+    void adjustBackgroundLayers()
+    {
         if (backgroundLayers()->next()) {
             accessBackgroundLayers()->cullEmptyLayers();
             accessBackgroundLayers()->fillUnsetProperties();
@@ -979,7 +792,8 @@ public:
 
     void clearMaskLayers() { rareNonInheritedData.access()->m_mask = FillLayer(MaskFillLayer); }
     void inheritMaskLayers(const FillLayer& parent) { rareNonInheritedData.access()->m_mask = parent; }
-    void adjustMaskLayers() {
+    void adjustMaskLayers()
+    {
         if (maskLayers()->next()) {
             accessMaskLayers()->cullEmptyLayers();
             accessMaskLayers()->fillUnsetProperties();
@@ -1036,14 +850,11 @@ public:
     
     // CSS3 Setters
 #if ENABLE(XBL)
-    void deleteBindingURIs() { 
-        SET_VAR(rareNonInheritedData, bindingURI, (BindingURI*) 0);
-    }
-    void inheritBindingURIs(BindingURI* other) {
-        SET_VAR(rareNonInheritedData, bindingURI, other->copy());
-    }
+    void deleteBindingURIs() { SET_VAR(rareNonInheritedData, bindingURI, static_cast<BindingURI*>(0)); }
+    void inheritBindingURIs(BindingURI* other) { SET_VAR(rareNonInheritedData, bindingURI, other->copy()); }
     void addBindingURI(StringImpl* uri);
 #endif
+
     void setOutlineOffset(int v) { SET_VAR(background, m_outline._offset, v) }
     void setTextShadow(ShadowData* val, bool add=false);
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c) }
@@ -1104,6 +915,7 @@ public:
     {
         rareNonInheritedData.access()->m_animations.clear();
     }
+
     void clearTransitions()
     {
         rareNonInheritedData.access()->m_transitions.clear();
@@ -1134,7 +946,7 @@ public:
     const CounterDirectiveMap* counterDirectives() const;
     CounterDirectiveMap& accessCounterDirectives();
 
-    bool inheritedNotEqual(RenderStyle* other) const;
+    bool inheritedNotEqual(RenderStyle*) const;
 
     // The difference between two styles.  The following values are used:
     // (1) Equal - The two styles are identical
@@ -1142,15 +954,20 @@ public:
     // (3) RepaintLayer - The layer and its descendant layers needs to be repainted.
     // (4) Layout - A layout is required.
     enum Diff { Equal, Repaint, RepaintLayer, LayoutPositionedMovementOnly, Layout };
-    Diff diff( const RenderStyle *other ) const;
+    Diff diff(const RenderStyle*) const;
 
-    bool isDisplayReplacedType() {
+    bool isDisplayReplacedType()
+    {
         return display() == INLINE_BLOCK || display() == INLINE_BOX || display() == INLINE_TABLE;
     }
-    bool isDisplayInlineType() {
+
+    bool isDisplayInlineType()
+    {
         return display() == INLINE || isDisplayReplacedType();
     }
-    bool isOriginalDisplayInlineType() {
+
+    bool isOriginalDisplayInlineType()
+    {
         return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK ||
                originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
     }
@@ -1290,4 +1107,4 @@ public:
 
 } // namespace WebCore
 
-#endif
+#endif // RenderStyle_h

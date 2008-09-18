@@ -914,6 +914,8 @@ SOURCES += \
     rendering/style/BindingURI.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
+    rendering/style/CursorData.h \
+    rendering/style/CursorList.h \
     rendering/style/FillLayer.cpp \
     rendering/style/KeyframeList.cpp \
     rendering/style/MatrixTransformOperation.cpp \
@@ -928,8 +930,15 @@ SOURCES += \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleFlexibleBoxData.cpp \
     rendering/style/StyleGeneratedImage.cpp \
+    rendering/style/StyleInheritedData.cpp \
+    rendering/style/StyleInheritedData.h \
     rendering/style/StyleMarqueeData.cpp \
     rendering/style/StyleMultiColData.cpp \
+    rendering/style/StyleRareInheritedData.cpp \
+    rendering/style/StyleRareInheritedData.h \
+    rendering/style/StyleRareNonInheritedData.cpp \
+    rendering/style/StyleRareNonInheritedData.h \
+    rendering/style/StyleReflection.h \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \

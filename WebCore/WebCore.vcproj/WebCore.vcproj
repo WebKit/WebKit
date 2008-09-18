@@ -8078,6 +8078,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\CursorData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\CursorList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\DataRef.h"
 				>
 			</File>
@@ -9584,6 +9592,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\StyleInheritedData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleInheritedData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\style\StyleMarqueeData.cpp"
 				>
 				<FileConfiguration
@@ -9613,6 +9637,42 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\StyleMultiColData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleRareInheritedData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleRareInheritedData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleRareNonInheritedData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleRareNonInheritedData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleReflection.h"
 				>
 			</File>
 			<File

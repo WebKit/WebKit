@@ -1,3 +1,62 @@
+2008-09-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by David "I'd prefer not" Hyatt.
+
+        More the remaining class out of RenderStyle.h/cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/style/CursorData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::CursorData::CursorData):
+        (WebCore::CursorData::operator==):
+        (WebCore::CursorData::operator!=):
+        * rendering/style/CursorList.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::CursorList::operator[]):
+        (WebCore::CursorList::CursorList):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::deref):
+        (WebCore::RenderStyle::hasOneRef):
+        (WebCore::RenderStyle::InheritedFlags::operator!=):
+        (WebCore::RenderStyle::NonInheritedFlags::operator!=):
+        (WebCore::RenderStyle::hasBackground):
+        (WebCore::RenderStyle::outlineWidth):
+        (WebCore::RenderStyle::autoWrap):
+        (WebCore::RenderStyle::preserveNewline):
+        (WebCore::RenderStyle::collapseWhiteSpace):
+        (WebCore::RenderStyle::isCollapsibleWhiteSpace):
+        (WebCore::RenderStyle::breakOnlyAfterWhiteSpace):
+        (WebCore::RenderStyle::breakWords):
+        (WebCore::RenderStyle::outlineOffset):
+        (WebCore::RenderStyle::setLeft):
+        (WebCore::RenderStyle::setRight):
+        (WebCore::RenderStyle::setTop):
+        (WebCore::RenderStyle::setBottom):
+        (WebCore::RenderStyle::setDashboardRegion):
+        (WebCore::RenderStyle::setBackgroundColor):
+        (WebCore::RenderStyle::setBorderImage):
+        (WebCore::RenderStyle::setBorderRadius):
+        (WebCore::RenderStyle::setFontDescription):
+        (WebCore::RenderStyle::adjustBackgroundLayers):
+        (WebCore::RenderStyle::adjustMaskLayers):
+        (WebCore::RenderStyle::deleteBindingURIs):
+        (WebCore::RenderStyle::inheritBindingURIs):
+        (WebCore::RenderStyle::isDisplayReplacedType):
+        (WebCore::RenderStyle::isDisplayInlineType):
+        (WebCore::RenderStyle::isOriginalDisplayInlineType):
+        * rendering/style/StyleInheritedData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleInheritedData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleInheritedData::operator!=):
+        * rendering/style/StyleRareInheritedData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleRareInheritedData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleRareInheritedData::operator!=):
+        * rendering/style/StyleRareNonInheritedData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleRareNonInheritedData.h: Copied from rendering/style/RenderStyle.h.
+        * rendering/style/StyleReflection.h: Copied from rendering/style/RenderStyle.h.
+
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
         Move the concept of suppression invalidation on Widgets to Scrollbar

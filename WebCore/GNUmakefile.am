@@ -1918,6 +1918,15 @@ webcore_sources += \
 	WebCore/rendering/style/TransformOperations.h \
 	WebCore/rendering/style/TranslateTransformOperation.cpp \
 	WebCore/rendering/style/TranslateTransformOperation.h \
+	WebCore/rendering/style/CursorData.h \
+	WebCore/rendering/style/CursorList.h \
+	WebCore/rendering/style/StyleInheritedData.cpp \
+	WebCore/rendering/style/StyleInheritedData.h \
+	WebCore/rendering/style/StyleRareInheritedData.cpp \
+	WebCore/rendering/style/StyleRareInheritedData.h \
+	WebCore/rendering/style/StyleRareNonInheritedData.cpp \
+	WebCore/rendering/style/StyleRareNonInheritedData.h \
+	WebCore/rendering/style/StyleReflection.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \

@@ -3664,6 +3664,15 @@
 		BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */; };
 		BC2271D90E82407300E7F975 /* AnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2271D70E82407300E7F975 /* AnimationList.cpp */; };
 		BC2271DA0E82407300E7F975 /* AnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2271D80E82407300E7F975 /* AnimationList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272860E82E70700E7F975 /* StyleReflection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272A10E82E87C00E7F975 /* CursorData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272AC0E82E8F300E7F975 /* CursorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2272BC0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2272BA0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp */; };
+		BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272BB0E82EAAE00E7F975 /* StyleRareNonInheritedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2272E30E82EE9B00E7F975 /* StyleRareInheritedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2272E10E82EE9B00E7F975 /* StyleRareInheritedData.cpp */; };
+		BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272E20E82EE9B00E7F975 /* StyleRareInheritedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2273030E82F1E600E7F975 /* StyleInheritedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2273010E82F1E600E7F975 /* StyleInheritedData.cpp */; };
+		BC2273040E82F1E600E7F975 /* StyleInheritedData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2273020E82F1E600E7F975 /* StyleInheritedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC23E4E10DAACE0F009FDC91 /* CSSGradientValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC23E4E00DAACE0F009FDC91 /* CSSGradientValue.cpp */; };
 		BC23E76C0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */; };
 		BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8162,6 +8171,15 @@
 		BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueCustom.cpp; sourceTree = "<group>"; };
 		BC2271D70E82407300E7F975 /* AnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationList.cpp; path = style/AnimationList.cpp; sourceTree = "<group>"; };
 		BC2271D80E82407300E7F975 /* AnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationList.h; path = style/AnimationList.h; sourceTree = "<group>"; };
+		BC2272860E82E70700E7F975 /* StyleReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleReflection.h; path = style/StyleReflection.h; sourceTree = "<group>"; };
+		BC2272A10E82E87C00E7F975 /* CursorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorData.h; path = style/CursorData.h; sourceTree = "<group>"; };
+		BC2272AC0E82E8F300E7F975 /* CursorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorList.h; path = style/CursorList.h; sourceTree = "<group>"; };
+		BC2272BA0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleRareNonInheritedData.cpp; path = style/StyleRareNonInheritedData.cpp; sourceTree = "<group>"; };
+		BC2272BB0E82EAAE00E7F975 /* StyleRareNonInheritedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleRareNonInheritedData.h; path = style/StyleRareNonInheritedData.h; sourceTree = "<group>"; };
+		BC2272E10E82EE9B00E7F975 /* StyleRareInheritedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleRareInheritedData.cpp; path = style/StyleRareInheritedData.cpp; sourceTree = "<group>"; };
+		BC2272E20E82EE9B00E7F975 /* StyleRareInheritedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleRareInheritedData.h; path = style/StyleRareInheritedData.h; sourceTree = "<group>"; };
+		BC2273010E82F1E600E7F975 /* StyleInheritedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleInheritedData.cpp; path = style/StyleInheritedData.cpp; sourceTree = "<group>"; };
+		BC2273020E82F1E600E7F975 /* StyleInheritedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleInheritedData.h; path = style/StyleInheritedData.h; sourceTree = "<group>"; };
 		BC23E4E00DAACE0F009FDC91 /* CSSGradientValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGradientValue.cpp; sourceTree = "<group>"; };
 		BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSImageGeneratorValue.cpp; sourceTree = "<group>"; };
 		BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSImageGeneratorValue.h; sourceTree = "<group>"; };
@@ -12766,6 +12784,15 @@
 		BC8C8FAA0DDCD2F200B592F4 /* style */ = {
 			isa = PBXGroup;
 			children = (
+				BC2273010E82F1E600E7F975 /* StyleInheritedData.cpp */,
+				BC2273020E82F1E600E7F975 /* StyleInheritedData.h */,
+				BC2272E10E82EE9B00E7F975 /* StyleRareInheritedData.cpp */,
+				BC2272E20E82EE9B00E7F975 /* StyleRareInheritedData.h */,
+				BC2272BA0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp */,
+				BC2272BB0E82EAAE00E7F975 /* StyleRareNonInheritedData.h */,
+				BC2272AC0E82E8F300E7F975 /* CursorList.h */,
+				BC2272A10E82E87C00E7F975 /* CursorData.h */,
+				BC2272860E82E70700E7F975 /* StyleReflection.h */,
 				BC5EBA0A0E823A1C00B25965 /* Animation.cpp */,
 				BC5EBA0B0E823A1C00B25965 /* Animation.h */,
 				BC2271D70E82407300E7F975 /* AnimationList.cpp */,
@@ -15787,6 +15814,12 @@
 				BC5EBA0D0E823A1C00B25965 /* Animation.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				BC2271DA0E82407300E7F975 /* AnimationList.h in Headers */,
+				BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */,
+				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
+				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
+				BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */,
+				BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */,
+				BC2273040E82F1E600E7F975 /* StyleInheritedData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17614,6 +17647,9 @@
 				BC5EBA0C0E823A1C00B25965 /* Animation.cpp in Sources */,
 				BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */,
 				BC2271D90E82407300E7F975 /* AnimationList.cpp in Sources */,
+				BC2272BC0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp in Sources */,
+				BC2272E30E82EE9B00E7F975 /* StyleRareInheritedData.cpp in Sources */,
+				BC2273030E82F1E600E7F975 /* StyleInheritedData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
