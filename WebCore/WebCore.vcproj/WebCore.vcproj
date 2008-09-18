@@ -8070,6 +8070,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\IdentityTransformOperation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\InlineBox.cpp"
 				>
 				<FileConfiguration
@@ -8155,6 +8159,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\ListMarkerBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\MatrixTransformOperation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\MatrixTransformOperation.h"
 				>
 			</File>
 			<File
@@ -9316,6 +9336,54 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\RotateTransformOperation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\RotateTransformOperation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\ScaleTransformOperation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\ScaleTransformOperation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\SkewTransformOperation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\SkewTransformOperation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\style\StyleBackgroundData.cpp"
 				>
 				<FileConfiguration
@@ -9429,6 +9497,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\StyleSurroundData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleTransformData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleTransformData.h"
 				>
 			</File>
 			<File
@@ -9581,6 +9665,42 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGRootInlineBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\TransformOperation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\TransformOperations.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\TransformOperations.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\TranslateTransformOperation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\TranslateTransformOperation.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,48 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped with love by David Hyatt.
+
+        Split IdentityTransformOperation, MatrixTransformOperation, RotateTransformOperation, 
+        ScaleTransformOperation, SkewTransformOperation, StyleTransformData, TransformOperation,
+        TransformOperations and TranslateTransformOperation out of RenderStyle.h/cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSStyleSelector.cpp:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::solveEpsilon):
+        * rendering/RenderLayer.cpp:
+        * rendering/style/IdentityTransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        * rendering/style/MatrixTransformOperation.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/MatrixTransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::MatrixTransformOperation::MatrixTransformOperation):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RotateTransformOperation.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/RotateTransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::RotateTransformOperation::RotateTransformOperation):
+        * rendering/style/ScaleTransformOperation.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/ScaleTransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::ScaleTransformOperation::ScaleTransformOperation):
+        * rendering/style/SkewTransformOperation.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/SkewTransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::SkewTransformOperation::SkewTransformOperation):
+        * rendering/style/StyleTransformData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleTransformData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleTransformData::operator!=):
+        * rendering/style/TransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::TransformOperation::):
+        * rendering/style/TransformOperations.cpp: Copied from rendering/style/RenderStyle.cpp.
+        (WebCore::TransformOperations::TransformOperations):
+        * rendering/style/TransformOperations.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::TransformOperations::operator!=):
+        * rendering/style/TranslateTransformOperation.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/TranslateTransformOperation.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::TranslateTransformOperation::TranslateTransformOperation):
+
 2008-09-17  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

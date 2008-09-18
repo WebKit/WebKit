@@ -1860,12 +1860,21 @@ webcore_sources += \
 	WebCore/rendering/style/CollapsedBorderValue.h \
 	WebCore/rendering/style/FillLayer.cpp \
 	WebCore/rendering/style/FillLayer.h \
+	WebCore/rendering/style/IdentityTransformOperation.h \
+	WebCore/rendering/style/MatrixTransformOperation.cpp \
+	WebCore/rendering/style/MatrixTransformOperation.h \
 	WebCore/rendering/style/NinePieceImage.cpp \
 	WebCore/rendering/style/NinePieceImage.h \
 	WebCore/rendering/style/OutlineValue.h \
 	WebCore/rendering/style/RenderStyle.cpp \
 	WebCore/rendering/style/RenderStyle.h \
 	WebCore/rendering/style/RenderStyleConstants.h \
+	WebCore/rendering/style/RotateTransformOperation.cpp \
+	WebCore/rendering/style/RotateTransformOperation.h \
+	WebCore/rendering/style/ScaleTransformOperation.cpp \
+	WebCore/rendering/style/ScaleTransformOperation.h \
+	WebCore/rendering/style/SkewTransformOperation.cpp \
+	WebCore/rendering/style/SkewTransformOperation.h \
 	WebCore/rendering/style/StyleBackgroundData.cpp \
 	WebCore/rendering/style/StyleBackgroundData.h \
 	WebCore/rendering/style/StyleBoxData.cpp \
@@ -1879,8 +1888,15 @@ webcore_sources += \
 	WebCore/rendering/style/StyleMarqueeData.h \
 	WebCore/rendering/style/StyleSurroundData.cpp \
 	WebCore/rendering/style/StyleSurroundData.h \
+	WebCore/rendering/style/StyleTransformData.cpp \
+	WebCore/rendering/style/StyleTransformData.h \
 	WebCore/rendering/style/StyleVisualData.cpp \
 	WebCore/rendering/style/StyleVisualData.h \
+	WebCore/rendering/style/TransformOperation.h \
+	WebCore/rendering/style/TransformOperations.cpp \
+	WebCore/rendering/style/TransformOperations.h \
+	WebCore/rendering/style/TranslateTransformOperation.cpp \
+	WebCore/rendering/style/TranslateTransformOperation.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \

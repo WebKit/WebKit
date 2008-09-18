@@ -910,8 +910,12 @@ SOURCES += \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/TextControlInnerElements.cpp \
     rendering/style/FillLayer.cpp \
+    rendering/style/MatrixTransformOperation.cpp \
     rendering/style/NinePieceImage.cpp \
     rendering/style/RenderStyle.cpp \
+    rendering/style/RotateTransformOperation.cpp \
+    rendering/style/ScaleTransformOperation.cpp \
+    rendering/style/SkewTransformOperation.cpp \
     rendering/style/StyleBackgroundData.cpp \
     rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
@@ -919,7 +923,10 @@ SOURCES += \
     rendering/style/StyleMarqueeData.cpp \
     rendering/style/StyleMultiColData.cpp \
     rendering/style/StyleSurroundData.cpp \
+    rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
+    rendering/style/TransformOperations.cpp \
+    rendering/style/TranslateTransformOperation.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \

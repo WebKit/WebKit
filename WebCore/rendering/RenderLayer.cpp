@@ -67,9 +67,11 @@
 #include "RenderReplica.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScaleTransformOperation.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SelectionController.h"
+#include "TranslateTransformOperation.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

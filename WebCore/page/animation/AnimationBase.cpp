@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "AnimationBase.h"
+
 #include "AnimationController.h"
 #include "CSSPropertyNames.h"
 #include "CString.h"
@@ -36,8 +37,10 @@
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "Frame.h"
+#include "IdentityTransformOperation.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
+#include "MatrixTransformOperation.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "SystemTime.h"
@@ -49,7 +52,10 @@ static const double cAnimationTimerDelay = 0.025;
 
 // The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
 // animation, the more precision we need in the timing function result to avoid ugly discontinuities.
-static inline double solveEpsilon(double duration) { return 1. / (200. * duration); }
+static inline double solveEpsilon(double duration)
+{
+    return 1.0 / (200.0 * duration);
+}
 
 static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x, double p2y, double t, double duration)
 {
