@@ -1,5 +1,13 @@
 2008-09-18  Kevin McCullough  <kmccullough@apple.com>
 
+        Accidentally checked in code.
+
+        * html/HTMLElementFactory.cpp:
+        (WebCore::frameConstructor):
+        (WebCore::iframeConstructor):
+
+2008-09-18  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5722310> gracefully handle too many console messages
