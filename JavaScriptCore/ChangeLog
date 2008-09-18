@@ -1,3 +1,13 @@
+2008-09-17  Oliver Hunt  <oliver@apple.com>
+
+        Correctly restore argument reference prior to SFX runtime calls.
+        
+        Reviewed by Steve Falkenburg.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+
 2008-09-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

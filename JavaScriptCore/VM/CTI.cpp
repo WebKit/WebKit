@@ -1976,6 +1976,7 @@ void CTI::privateCompileSlowCases()
         case op_call_eval:
         case op_construct: {
             m_jit.link(iter->from, m_jit.label());
+            m_jit.emitRestoreArgumentReference();
 
             // We jump to this slow case if the ctiCode for the codeBlock has not yet been generated; compile it now.
             emitCall(i, Machine::cti_vm_compile);
@@ -2020,8 +2021,10 @@ void CTI::privateCompile()
 
     // Lazy copy of the scopeChain
     X86Assembler::JmpSrc callToUpdateScopeChain;
-    if ((m_codeBlock->codeType == FunctionCode) && m_codeBlock->needsFullScopeChain)
+    if ((m_codeBlock->codeType == FunctionCode) && m_codeBlock->needsFullScopeChain) {
+        m_jit.emitRestoreArgumentReference();
         callToUpdateScopeChain = m_jit.emitCall();
+    }
 
     privateCompileMainPass();
     privateCompileLinkPass();
