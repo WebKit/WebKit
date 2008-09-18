@@ -434,7 +434,7 @@ void Scrollbar::invalidateRect(const IntRect& rect)
 {
     if (suppressInvalidation())
         return;
-    invalidateRect(rect);
+    Widget::invalidateRect(rect);
 }
 
 }
