@@ -108,9 +108,6 @@ public:
         }
     }
 
-    virtual void setEnabled(bool);
-    virtual bool isEnabled() const;
-
     int x() const;
     int y() const;
     int width() const;

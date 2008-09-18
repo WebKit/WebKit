@@ -109,20 +109,6 @@ void Widget::setFrameGeometry(const IntRect &rect)
         platformWidget()->SetSize(rect);
 }
 
-void Widget::setEnabled(bool enabled)
-{
-    if (platformWidget())
-        platformWidget()->Enable(enabled);
-}
-
-bool Widget::isEnabled() const
-{
-    if (platformWidget())
-        return platformWidget()->IsEnabled();
-        
-    return false;
-}
-
 void Widget::invalidate()
 {
     if (platformWidget())

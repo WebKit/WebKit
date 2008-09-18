@@ -45,7 +45,6 @@ public:
     WidgetClient* client;
     HWND containingWindow;
     IntRect frameRect;
-    bool enabled;
     bool suppressInvalidation;
 };
 
@@ -55,7 +54,6 @@ Widget::Widget()
     init();
     data->client = 0;
     data->containingWindow = 0;
-    data->enabled = true;
     data->suppressInvalidation = false;
 }
 
@@ -66,7 +64,6 @@ Widget::Widget(PlatformWidget widget)
     m_widget = widget;
     data->client = 0;
     data->containingWindow = 0;
-    data->enabled = true;
     data->suppressInvalidation = false;
 }
 
@@ -177,19 +174,6 @@ IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) 
 
 void Widget::paint(GraphicsContext*, const IntRect&)
 {
-}
-
-bool Widget::isEnabled() const
-{
-    return data->enabled;
-}
-
-void Widget::setEnabled(bool e)
-{
-    if (e != data->enabled) {
-        data->enabled = e;
-        invalidate();
-    }
 }
 
 bool Widget::suppressInvalidation() const

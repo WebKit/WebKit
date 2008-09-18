@@ -1,3 +1,35 @@
+2008-09-17  David Hyatt  <hyatt@apple.com>
+
+        Remove isEnabled/setEnabled from Widget.  The concept of being enabled now
+        only applies to Scrollbars so the method has been moved there and made
+        cross-platform.  Scrollbar subclasses that have a corresponding native
+        widget can subclass setEnabled to change the enabled state of the native
+        widget.
+
+        Reviewed by Sam Weinig & Darin Adler
+
+        * WebCore.base.exp:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::enabled):
+        (WebCore::Scrollbar::setEnabled):
+        * platform/Widget.h:
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::setEnabled):
+        * platform/gtk/ScrollbarGtk.h:
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/mac/ScrollbarMac.h:
+        * platform/mac/ScrollbarMac.mm:
+        (WebCore::ScrollbarMac::scrollbarHit):
+        (WebCore::ScrollbarMac::setEnabled):
+        * platform/mac/WidgetMac.mm:
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        * platform/wx/WidgetWx.cpp:
+
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by David Hyatt.

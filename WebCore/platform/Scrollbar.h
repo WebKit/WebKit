@@ -89,6 +89,9 @@ public:
     
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
+    bool enabled() const { return m_enabled; }
+    virtual void setEnabled(bool e);
+
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
     // grabbing all events in that case anyway.
@@ -141,6 +144,9 @@ protected:
     ScrollbarPart m_hoveredPart;
     ScrollbarPart m_pressedPart;
     int m_pressedPos;
+    
+    bool m_enabled;
+
     Timer<Scrollbar> m_scrollTimer;
     bool m_overlapsResizer;
 };

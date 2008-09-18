@@ -151,20 +151,6 @@ void Widget::hide()
     gtk_widget_hide(platformWidget());
 }
 
-void Widget::setEnabled(bool shouldEnable)
-{
-    if (!platformWidget())
-        return;
-    gtk_widget_set_sensitive(platformWidget(), shouldEnable);
-}
-
-bool Widget::isEnabled() const
-{
-    if (!platformWidget())
-        return false;
-    return GTK_WIDGET_IS_SENSITIVE(platformWidget());
-}
-
 void Widget::removeFromParent()
 {
     if (parent())

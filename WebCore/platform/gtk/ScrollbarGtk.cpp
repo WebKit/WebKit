@@ -121,3 +121,15 @@ void ScrollbarGtk::gtkValueChanged(GtkAdjustment*, ScrollbarGtk* that)
     that->setValue(static_cast<int>(gtk_adjustment_get_value(that->m_adjustment)));
 }
 
+void ScrollbarGtk::setEnabled(bool shouldEnable)
+{
+    if (enabled() == shouldEnable)
+        return;
+        
+    Scrollbar::setEnabled(shouldEnable);
+    if (platformWidget()) 
+        gtk_widget_set_sensitive(platformWidget(), shouldEnable);
+}
+
+
+

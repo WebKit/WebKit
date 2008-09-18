@@ -67,6 +67,7 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
     , m_hoveredPart(NoPart)
     , m_pressedPart(NoPart)
     , m_pressedPos(0)
+    , m_enabled(true)
     , m_scrollTimer(this, &Scrollbar::autoscrollTimerFired)
     , m_overlapsResizer(false)
 {
@@ -409,6 +410,14 @@ void Scrollbar::setParent(ScrollView* parentView)
     Widget::setParent(parentView);
 }
 
+void Scrollbar::setEnabled(bool e)
+{ 
+    if (m_enabled == e)
+        return;
+    m_enabled = e;
+    invalidate();
+}
+    
 IntRect Scrollbar::windowClipRect() const
 {
     IntRect clipRect(0, 0, width(), height());

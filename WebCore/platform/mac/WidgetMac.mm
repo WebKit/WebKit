@@ -101,29 +101,6 @@ Widget::~Widget()
     delete data;
 }
 
-void Widget::setEnabled(bool enabled)
-{
-    id view = platformWidget();
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([view respondsToSelector:@selector(setEnabled:)]) {
-        [view setEnabled:enabled];
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-bool Widget::isEnabled() const
-{
-    id view = platformWidget();
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if ([view respondsToSelector:@selector(isEnabled)]) {
-        return [view isEnabled];
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return true;
-}
-
 IntRect Widget::frameGeometry() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

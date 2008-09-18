@@ -46,6 +46,8 @@ public:
     virtual bool handleMousePressEvent(const PlatformMouseEvent&) { return false; }
     virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) { return false; }
 
+    virtual void setEnabled(bool);
+
 protected:
     ScrollbarGtk(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 

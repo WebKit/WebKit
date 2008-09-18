@@ -163,7 +163,7 @@ bool ScrollbarMac::scrollbarHit(NSScrollerPart hitPart)
     if (maxPos <= 0)
         return false; // Impossible to scroll anywhere.
     
-    WebCoreScrollBar *bar = (WebCoreScrollBar *)platformWidget();
+    WebCoreScrollBar *bar = static_cast<WebCoreScrollBar*>(platformWidget());
     int newPos = value();
     switch (hitPart) {
         case NSScrollerDecrementLine:
@@ -190,6 +190,18 @@ bool ScrollbarMac::scrollbarHit(NSScrollerPart hitPart)
     }
 
     return setValue(newPos);
+}
+
+void ScrollbarMac::setEnabled(bool shouldEnable)
+{
+    if (enabled() == shouldEnable)
+        return;
+        
+    Scrollbar::setEnabled(shouldEnable);
+    WebCoreScrollBar *scrollbar = static_cast<WebCoreScrollBar*>(platformWidget());
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [scrollbar setEnabled:shouldEnable];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 }
