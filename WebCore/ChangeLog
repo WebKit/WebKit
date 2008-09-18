@@ -1,3 +1,13 @@
+2008-09-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Use higher-resolution timers on all variants of Windows.
+        
+        Reviewed by Darin Adler.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::setSharedTimerFireTime):
+
+
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
         Make containingWindow() and setContainingWindow() cross-platform.
