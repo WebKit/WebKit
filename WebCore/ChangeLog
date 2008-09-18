@@ -1,3 +1,62 @@
+2008-09-18  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped in exile by David Hyatt.
+
+        Split Animation, AnimationList, BindingURI, ContentData, CounterContent,
+        KeyframeList, ShadowData, StyleFlexibleBoxData and TimingFunction out of
+        RenderStyle.h/cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h:
+        * page/animation/CompositeAnimation.cpp:
+        * page/animation/KeyframeAnimation.cpp:
+        * page/animation/KeyframeAnimation.h:
+        * rendering/RenderCounter.h:
+        * rendering/style/Animation.cpp: Copied from rendering/style/RenderStyle.cpp.
+        (WebCore::Animation::~Animation):
+        (WebCore::Animation::animationsMatch):
+        (WebCore::Animation::keyframeList):
+        (WebCore::Animation::setAnimationKeyframe):
+        * rendering/style/Animation.h: Copied from rendering/style/RenderStyle.h.
+        * rendering/style/AnimationList.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/AnimationList.h: Copied from rendering/style/RenderStyle.h.
+        * rendering/style/BindingURI.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/BindingURI.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::BindingURI::operator!=):
+        * rendering/style/ContentData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/ContentData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::ContentData::ContentData):
+        (WebCore::ContentData::~ContentData):
+        * rendering/style/CounterContent.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::CounterContent::CounterContent):
+        * rendering/style/CounterDirectives.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/CounterDirectives.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::CounterDirectives::CounterDirectives):
+        * rendering/style/KeyframeList.cpp: Copied from rendering/style/RenderStyle.cpp.
+        (WebCore::KeyframeList::insert):
+        * rendering/style/KeyframeList.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::KeyframeValue::KeyframeValue):
+        (WebCore::KeyframeList::create):
+        (WebCore::KeyframeList::KeyframeList):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/ShadowData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/ShadowData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::~ShadowData):
+        (WebCore::ShadowData::operator!=):
+        * rendering/style/StyleFlexibleBoxData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleFlexibleBoxData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleFlexibleBoxData::operator!=):
+        * rendering/style/TimingFunction.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::TimingFunction::TimingFunction):
+        (WebCore::TimingFunction::operator==):
+
 2008-09-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -49,6 +49,7 @@
 #include "CSSVariablesRule.h"
 #include "CachedImage.h"
 #include "Counter.h"
+#include "CounterContent.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "Frame.h"

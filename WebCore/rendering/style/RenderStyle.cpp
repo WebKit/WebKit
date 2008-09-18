@@ -22,226 +22,18 @@
 #include "config.h"
 #include "RenderStyle.h"
 
-#include <algorithm>
-
-#include "CachedImage.h"
 #include "CSSStyleSelector.h"
+#include "CachedImage.h"
+#include "CounterContent.h"
 #include "FontSelector.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
 #include "StyleImage.h"
+#include <algorithm>
 
 namespace WebCore {
 
 static RenderStyle* defaultStyle;
-
-StyleFlexibleBoxData::StyleFlexibleBoxData()
-    : flex(RenderStyle::initialBoxFlex())
-    , flex_group(RenderStyle::initialBoxFlexGroup())
-    , ordinal_group(RenderStyle::initialBoxOrdinalGroup())
-    , align(RenderStyle::initialBoxAlign())
-    , pack(RenderStyle::initialBoxPack())
-    , orient(RenderStyle::initialBoxOrient())
-    , lines(RenderStyle::initialBoxLines())
-{
-}
-
-StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
-    : RefCounted<StyleFlexibleBoxData>()
-    , flex(o.flex)
-    , flex_group(o.flex_group)
-    , ordinal_group(o.ordinal_group)
-    , align(o.align)
-    , pack(o.pack)
-    , orient(o.orient)
-    , lines(o.lines)
-{
-}
-
-bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
-{
-    return flex == o.flex && flex_group == o.flex_group &&
-           ordinal_group == o.ordinal_group && align == o.align &&
-           pack == o.pack && orient == o.orient && lines == o.lines;
-}
-
-bool KeyframeList::operator==(const KeyframeList& o) const
-{
-    if (m_keyframes.size() != o.m_keyframes.size())
-        return false;
-
-    Vector<KeyframeValue>::const_iterator it2 = o.m_keyframes.begin();
-    for (Vector<KeyframeValue>::const_iterator it1 = m_keyframes.begin(); it1 != m_keyframes.end(); ++it1) {
-        if (it1->key != it2->key)
-            return false;
-        const RenderStyle& style1 = it1->style;
-        const RenderStyle& style2 = it2->style;
-        if (!(style1 == style2))
-            return false;
-        ++it2;
-    }
-
-    return true;
-}
-
-void
-KeyframeList::insert(float inKey, const RenderStyle& inStyle)
-{
-    if (inKey < 0 || inKey > 1)
-        return;
-
-    for (size_t i = 0; i < m_keyframes.size(); ++i) {
-        if (m_keyframes[i].key == inKey) {
-            m_keyframes[i].style = inStyle;
-            return;
-        }
-        if (m_keyframes[i].key > inKey) {
-            // insert before
-            m_keyframes.insert(i, KeyframeValue());
-            m_keyframes[i].key = inKey;
-            m_keyframes[i].style = inStyle;
-            return;
-        }
-    }
-    
-    // append
-    m_keyframes.append(KeyframeValue());
-    m_keyframes[m_keyframes.size()-1].key = inKey;
-    m_keyframes[m_keyframes.size()-1].style = inStyle;
-}
-
-Animation::Animation()
-    : m_delay(RenderStyle::initialAnimationDelay())
-    , m_direction(RenderStyle::initialAnimationDirection())
-    , m_duration(RenderStyle::initialAnimationDuration())
-    , m_iterationCount(RenderStyle::initialAnimationIterationCount())
-    , m_name(RenderStyle::initialAnimationName())
-    , m_property(RenderStyle::initialAnimationProperty())
-    , m_timingFunction(RenderStyle::initialAnimationTimingFunction())
-    , m_playState(RenderStyle::initialAnimationPlayState())
-    , m_delaySet(false)
-    , m_directionSet(false)
-    , m_durationSet(false)
-    , m_iterationCountSet(false)
-    , m_nameSet(false)
-    , m_playStateSet(false)
-    , m_propertySet(false)
-    , m_timingFunctionSet(false)
-    , m_isNone(false)
-{
-}
-
-Animation::Animation(const Animation& o)
-    : RefCounted<Animation>()
-    , m_delay(o.m_delay)
-    , m_direction(o.m_direction)
-    , m_duration(o.m_duration)
-    , m_iterationCount(o.m_iterationCount)
-    , m_name(o.m_name)
-    , m_property(o.m_property)
-    , m_timingFunction(o.m_timingFunction)
-    , m_playState(o.m_playState)
-    , m_delaySet(o.m_delaySet)
-    , m_directionSet(o.m_directionSet)
-    , m_durationSet(o.m_durationSet)
-    , m_iterationCountSet(o.m_iterationCountSet)
-    , m_nameSet(o.m_nameSet)
-    , m_playStateSet(o.m_playStateSet)
-    , m_propertySet(o.m_propertySet)
-    , m_timingFunctionSet(o.m_timingFunctionSet)
-    , m_isNone(o.m_isNone)
-{
-}
-
-Animation& Animation::operator=(const Animation& o)
-{
-    m_delay = o.m_delay;
-    m_direction = o.m_direction;
-    m_duration = o.m_duration;
-    m_iterationCount = o.m_iterationCount;
-    m_name = o.m_name;
-    m_playState = o.m_playState;
-    m_property = o.m_property;
-    m_timingFunction = o.m_timingFunction;
-
-    m_delaySet = o.m_delaySet;
-    m_directionSet = o.m_directionSet;
-    m_durationSet = o.m_durationSet;
-    m_iterationCountSet = o.m_iterationCountSet;
-    m_nameSet = o.m_nameSet;
-    m_playStateSet = o.m_playStateSet;
-    m_propertySet = o.m_propertySet;
-    m_timingFunctionSet = o.m_timingFunctionSet;
-
-    m_isNone = o.m_isNone;
-
-    return *this;
-}
-
-bool Animation::animationsMatch(const Animation* o, bool matchPlayStates /* = true */) const
-{
-    if (!o)
-        return false;
-    
-    bool result = m_delay == o->m_delay &&
-                  m_direction == o->m_direction &&
-                  m_duration == o->m_duration &&
-                  m_iterationCount == o->m_iterationCount &&
-                  m_name == o->m_name &&
-                  m_property == o->m_property && 
-                  m_timingFunction == o->m_timingFunction &&
-                  m_delaySet == o->m_delaySet &&
-                  m_directionSet == o->m_directionSet &&
-                  m_durationSet == o->m_durationSet &&
-                  m_iterationCountSet == o->m_iterationCountSet &&
-                  m_nameSet == o->m_nameSet &&
-                  m_propertySet == o->m_propertySet &&
-                  m_timingFunctionSet == o->m_timingFunctionSet &&
-                  m_isNone == o->m_isNone;
-
-    if (!result)
-        return false;
-
-    if (matchPlayStates && (m_playState != o->m_playState || m_playStateSet != o->m_playStateSet))
-        return false;
-
-    // now check keyframes
-    if ((m_keyframeList.get() && !o->m_keyframeList.get()) || (!m_keyframeList.get() && o->m_keyframeList.get()))
-        return false;
-    if (!(m_keyframeList.get()))
-        return true;
-    return *m_keyframeList == *o->m_keyframeList;
-}
-
-#define FILL_UNSET_PROPERTY(test, propGet, propSet) \
-for (i = 0; i < size() && (*this)[i]->test(); ++i) { } \
-if (i < size() && i != 0) { \
-    for (size_t j = 0; i < size(); ++i, ++j) \
-        (*this)[i]->propSet((*this)[j]->propGet()); \
-}
-
-void AnimationList::fillUnsetProperties()
-{
-    size_t i;
-    FILL_UNSET_PROPERTY(isDelaySet, delay, setDelay);
-    FILL_UNSET_PROPERTY(isDirectionSet, direction, setDirection);
-    FILL_UNSET_PROPERTY(isDurationSet, duration, setDuration);
-    FILL_UNSET_PROPERTY(isIterationCountSet, iterationCount, setIterationCount);
-    FILL_UNSET_PROPERTY(isPlayStateSet, playState, setPlayState);
-    FILL_UNSET_PROPERTY(isNameSet, name, setName);
-    FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, setTimingFunction);
-    FILL_UNSET_PROPERTY(isPropertySet, property, setProperty);
-}
-
-bool AnimationList::operator==(const AnimationList& o) const
-{
-    if (size() != o.size())
-        return false;
-    for (size_t i = 0; i < size(); ++i)
-        if (*at(i) != *o.at(i))
-            return false;
-    return true;
-}
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
     : lineClamp(RenderStyle::initialLineClamp())
@@ -1151,41 +943,6 @@ void RenderStyle::setContent(CounterContent* c, bool add)
     newContentData->m_type = CONTENT_COUNTER;
 }
 
-void ContentData::clear()
-{
-    switch (m_type) {
-        case CONTENT_NONE:
-            break;
-        case CONTENT_OBJECT:
-            m_content.m_image->deref();
-            break;
-        case CONTENT_TEXT:
-            m_content.m_text->deref();
-            break;
-        case CONTENT_COUNTER:
-            delete m_content.m_counter;
-            break;
-    }
-
-    ContentData* n = m_next;
-    m_type = CONTENT_NONE;
-    m_next = 0;
-
-    // Reverse the list so we can delete without recursing.
-    ContentData* last = 0;
-    ContentData* c;
-    while ((c = n)) {
-        n = c->m_next;
-        c->m_next = last;
-        last = c;
-    }
-    for (c = last; c; c = n) {
-        n = c->m_next;
-        c->m_next = 0;
-        delete c;
-    }
-}
-
 void RenderStyle::applyTransform(AffineTransform& transform, const IntSize& borderBoxSize, bool includeTransformOrigin) const
 {
     // transform-origin brackets the transform with translate operations.
@@ -1217,46 +974,6 @@ void RenderStyle::applyTransform(AffineTransform& transform, const IntSize& bord
 }
 
 #if ENABLE(XBL)
-BindingURI::BindingURI(StringImpl* uri) 
-    : m_next(0)
-{ 
-    m_uri = uri;
-    if (uri)
-        uri->ref();
-}
-
-BindingURI::~BindingURI()
-{
-    if (m_uri)
-        m_uri->deref();
-    delete m_next;
-}
-
-BindingURI* BindingURI::copy()
-{
-    BindingURI* newBinding = new BindingURI(m_uri);
-    if (next()) {
-        BindingURI* nextCopy = next()->copy();
-        newBinding->setNext(nextCopy);
-    }
-    
-    return newBinding;
-}
-
-bool BindingURI::operator==(const BindingURI& o) const
-{
-    if ((m_next && !o.m_next) || (!m_next && o.m_next) ||
-        (m_next && o.m_next && *m_next != *o.m_next))
-        return false;
-    
-    if (m_uri == o.m_uri)
-        return true;
-    if (!m_uri || !o.m_uri)
-        return false;
-    
-    return String(m_uri) == String(o.m_uri);
-}
-
 void RenderStyle::addBindingURI(StringImpl* uri)
 {
     BindingURI* binding = new BindingURI(uri);
@@ -1293,35 +1010,6 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
 
     shadowData->next = rareData->m_boxShadow.release();
     rareData->m_boxShadow.set(shadowData);
-}
-
-ShadowData::ShadowData(const ShadowData& o)
-    : x(o.x)
-    , y(o.y)
-    , blur(o.blur)
-    , color(o.color)
-{
-    next = o.next ? new ShadowData(*o.next) : 0;
-}
-
-bool ShadowData::operator==(const ShadowData& o) const
-{
-    if ((next && !o.next) || (!next && o.next) ||
-        (next && o.next && *next != *o.next))
-        return false;
-    
-    return x == o.x && y == o.y && blur == o.blur && color == o.color;
-}
-
-bool operator==(const CounterDirectives& a, const CounterDirectives& b)
-{
-    if (a.m_reset != b.m_reset || a.m_increment != b.m_increment)
-        return false;
-    if (a.m_reset && a.m_resetValue != b.m_resetValue)
-        return false;
-    if (a.m_increment && a.m_incrementValue != b.m_incrementValue)
-        return false;
-    return true;
 }
 
 const CounterDirectiveMap* RenderStyle::counterDirectives() const

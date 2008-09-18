@@ -1855,12 +1855,25 @@ webcore_sources += \
 	WebCore/rendering/bidi.h \
 	WebCore/rendering/break_lines.cpp \
 	WebCore/rendering/break_lines.h \
+	WebCore/rendering/style/Animation.cpp \
+	WebCore/rendering/style/Animation.h \
+	WebCore/rendering/style/AnimationList.cpp \
+	WebCore/rendering/style/AnimationList.h \
+	WebCore/rendering/style/BindingURI.cpp \
+	WebCore/rendering/style/BindingURI.h \
 	WebCore/rendering/style/BorderData.h \
 	WebCore/rendering/style/BorderValue.h \
 	WebCore/rendering/style/CollapsedBorderValue.h \
+	WebCore/rendering/style/ContentData.cpp \
+	WebCore/rendering/style/ContentData.h \
+	WebCore/rendering/style/CounterContent.h \
+	WebCore/rendering/style/CounterDirectives.cpp \
+	WebCore/rendering/style/CounterDirectives.h \
 	WebCore/rendering/style/FillLayer.cpp \
 	WebCore/rendering/style/FillLayer.h \
 	WebCore/rendering/style/IdentityTransformOperation.h \
+	WebCore/rendering/style/KeyframeList.cpp \
+	WebCore/rendering/style/KeyframeList.h \
 	WebCore/rendering/style/MatrixTransformOperation.cpp \
 	WebCore/rendering/style/MatrixTransformOperation.h \
 	WebCore/rendering/style/NinePieceImage.cpp \
@@ -1873,6 +1886,8 @@ webcore_sources += \
 	WebCore/rendering/style/RotateTransformOperation.h \
 	WebCore/rendering/style/ScaleTransformOperation.cpp \
 	WebCore/rendering/style/ScaleTransformOperation.h \
+	WebCore/rendering/style/ShadowData.cpp \
+	WebCore/rendering/style/ShadowData.h \
 	WebCore/rendering/style/SkewTransformOperation.cpp \
 	WebCore/rendering/style/SkewTransformOperation.h \
 	WebCore/rendering/style/StyleBackgroundData.cpp \
@@ -1882,6 +1897,8 @@ webcore_sources += \
 	WebCore/rendering/style/StyleCachedImage.cpp \
 	WebCore/rendering/style/StyleCachedImage.h \
 	WebCore/rendering/style/StyleDashboardRegion.h \
+	WebCore/rendering/style/StyleFlexibleBoxData.cpp \
+	WebCore/rendering/style/StyleFlexibleBoxData.h \
 	WebCore/rendering/style/StyleGeneratedImage.cpp \
 	WebCore/rendering/style/StyleGeneratedImage.h \
 	WebCore/rendering/style/StyleImage.h \
@@ -1895,6 +1912,7 @@ webcore_sources += \
 	WebCore/rendering/style/StyleTransformData.h \
 	WebCore/rendering/style/StyleVisualData.cpp \
 	WebCore/rendering/style/StyleVisualData.h \
+	WebCore/rendering/style/TimingFunction.h \
 	WebCore/rendering/style/TransformOperation.h \
 	WebCore/rendering/style/TransformOperations.cpp \
 	WebCore/rendering/style/TransformOperations.h \

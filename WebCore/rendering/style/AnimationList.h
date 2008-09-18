@@ -1,6 +1,9 @@
 /*
- * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ *           (C) 2000 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,36 +22,22 @@
  *
  */
 
-#ifndef RenderCounter_h
-#define RenderCounter_h
+#ifndef AnimationList_h
+#define AnimationList_h
 
-#include "CounterContent.h"
-#include "RenderText.h"
+#include "Animation.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CounterNode;
-
-class RenderCounter : public RenderText {
+class AnimationList : public Vector<RefPtr<Animation> > {
 public:
-    RenderCounter(Document*, const CounterContent&);
+    void fillUnsetProperties();
+    bool operator==(const AnimationList& o) const;
+};    
 
-    virtual const char* renderName() const;
-    virtual bool isCounter() const;
-    virtual PassRefPtr<StringImpl> originalText() const;
-    
-    virtual void dirtyLineBoxes(bool, bool);
-    virtual void calcPrefWidths(int leadWidth);
-
-    void invalidate();
-
-    static void destroyCounterNodes(RenderObject*);
-
-private:
-    CounterContent m_counter;
-    mutable CounterNode* m_counterNode;
-};
 
 } // namespace WebCore
 
-#endif // RenderCounter_h
+#endif // AnimationList_h

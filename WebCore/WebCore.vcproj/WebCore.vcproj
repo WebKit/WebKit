@@ -7918,6 +7918,38 @@
 			Name="rendering"
 			>
 			<File
+				RelativePath="..\rendering\style\Animation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\Animation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\AnimationList.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\AnimationList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\AutoTableLayout.cpp"
 				>
 				<FileConfiguration
@@ -7950,6 +7982,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\BindingURI.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\BindingURI.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\break_lines.cpp"
 				>
 				<FileConfiguration
@@ -7975,6 +8023,42 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\CollapsedBorderValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\ContentData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\ContentData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\CounterContent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\CounterDirectives.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\CounterDirectives.h"
 				>
 			</File>
 			<File
@@ -8123,6 +8207,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\InlineTextBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\KeyframeList.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\KeyframeList.h"
 				>
 			</File>
 			<File
@@ -9368,6 +9468,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\ShadowData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\ShadowData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\style\SkewTransformOperation.cpp"
 				>
 				<FileConfiguration
@@ -9429,6 +9545,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\StyleCachedImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleFlexibleBoxData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleFlexibleBoxData.h"
 				>
 			</File>
 			<File
@@ -9665,6 +9797,10 @@
 			</File>
 			<File
 				RelativePath="..\rendering\SVGRootInlineBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\TimingFunction.h"
 				>
 			</File>
 			<File

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,36 +19,20 @@
  *
  */
 
-#ifndef RenderCounter_h
-#define RenderCounter_h
-
-#include "CounterContent.h"
-#include "RenderText.h"
+#include "config.h"
+#include "CounterDirectives.h"
 
 namespace WebCore {
 
-class CounterNode;
-
-class RenderCounter : public RenderText {
-public:
-    RenderCounter(Document*, const CounterContent&);
-
-    virtual const char* renderName() const;
-    virtual bool isCounter() const;
-    virtual PassRefPtr<StringImpl> originalText() const;
-    
-    virtual void dirtyLineBoxes(bool, bool);
-    virtual void calcPrefWidths(int leadWidth);
-
-    void invalidate();
-
-    static void destroyCounterNodes(RenderObject*);
-
-private:
-    CounterContent m_counter;
-    mutable CounterNode* m_counterNode;
-};
+bool operator==(const CounterDirectives& a, const CounterDirectives& b)
+{
+    if (a.m_reset != b.m_reset || a.m_increment != b.m_increment)
+        return false;
+    if (a.m_reset && a.m_resetValue != b.m_resetValue)
+        return false;
+    if (a.m_increment && a.m_incrementValue != b.m_incrementValue)
+        return false;
+    return true;
+}
 
 } // namespace WebCore
-
-#endif // RenderCounter_h

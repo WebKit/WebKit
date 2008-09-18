@@ -27,10 +27,11 @@
  */
 
 #include "config.h"
+#include "KeyframeAnimation.h"
+
 #include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
-#include "KeyframeAnimation.h"
 #include "RenderObject.h"
 #include "SystemTime.h"
 

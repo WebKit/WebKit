@@ -33,6 +33,7 @@
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
+#include "KeyframeList.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 

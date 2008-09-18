@@ -25,6 +25,7 @@
 #ifndef RenderStyle_h
 #define RenderStyle_h
 
+#include "AnimationList.h"
 #include "AffineTransform.h"
 #include "BorderData.h"
 #include "BorderValue.h"
@@ -37,6 +38,8 @@
 #include "CachedResourceHandle.h"
 #include "CollapsedBorderValue.h"
 #include "Color.h"
+#include "ContentData.h"
+#include "CounterDirectives.h"
 #include "DataRef.h"
 #include "FillLayer.h"
 #include "FloatPoint.h"
@@ -48,8 +51,10 @@
 #include "OutlineValue.h"
 #include "Pair.h"
 #include "RenderStyleConstants.h"
+#include "ShadowData.h"
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
+#include "StyleFlexibleBoxData.h"
 #include "StyleMarqueeData.h"
 #include "StyleMultiColData.h"
 #include "StyleSurroundData.h"
@@ -57,7 +62,7 @@
 #include "StyleVisualData.h"
 #include "TextDirection.h"
 #include "TransformOperations.h"
-#include <wtf/HashMap.h>
+#include "TimingFunction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -68,6 +73,10 @@
 
 #if ENABLE(SVG)
 #include "SVGRenderStyle.h"
+#endif
+
+#if ENABLE(XBL)
+#include "BindingURI.h"
 #endif
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<T>(u); }
@@ -85,271 +94,11 @@ class CSSValueList;
 class CachedImage;
 class CachedResource;
 class CursorList;
-class KeyframeList;
 class Pair;
 class RenderArena;
-class ShadowValue;
 class StringImpl;
 class StyleImage;
 struct CursorData;
-
-class StyleFlexibleBoxData : public RefCounted<StyleFlexibleBoxData> {
-public:
-    static PassRefPtr<StyleFlexibleBoxData> create() { return adoptRef(new StyleFlexibleBoxData); }
-    PassRefPtr<StyleFlexibleBoxData> copy() const { return adoptRef(new StyleFlexibleBoxData(*this)); }
-    
-    bool operator==(const StyleFlexibleBoxData& o) const;
-    bool operator!=(const StyleFlexibleBoxData &o) const {
-        return !(*this == o);
-    }
-
-    float flex;
-    unsigned int flex_group;
-    unsigned int ordinal_group;
-
-    unsigned align : 3; // EBoxAlignment
-    unsigned pack: 3; // EBoxAlignment
-    unsigned orient: 1; // EBoxOrient
-    unsigned lines : 1; // EBoxLines
-    
-private:
-    StyleFlexibleBoxData();
-    StyleFlexibleBoxData(const StyleFlexibleBoxData&);
-};
-
-// This struct holds information about shadows for the text-shadow and box-shadow properties.
-struct ShadowData {
-    ShadowData()
-    : x(0), y(0), blur(0), next(0) {}
-    ShadowData(int _x, int _y, int _blur, const Color& _color)
-    : x(_x), y(_y), blur(_blur), color(_color), next(0) {}
-    ShadowData(const ShadowData& o);
-    
-    ~ShadowData() { delete next; }
-
-    bool operator==(const ShadowData& o) const;
-    bool operator!=(const ShadowData &o) const {
-        return !(*this == o);
-    }
-    
-    int x;
-    int y;
-    int blur;
-    Color color;
-    ShadowData* next;
-};
-
-#if ENABLE(XBL)
-struct BindingURI {
-    BindingURI(StringImpl*);
-    ~BindingURI();
-
-    BindingURI* copy();
-
-    bool operator==(const BindingURI& o) const;
-    bool operator!=(const BindingURI& o) const {
-        return !(*this == o);
-    }
-    
-    BindingURI* next() { return m_next; }
-    void setNext(BindingURI* n) { m_next = n; }
-    
-    StringImpl* uri() { return m_uri; }
-    
-    BindingURI* m_next;
-    StringImpl* m_uri;
-};
-#endif
-
-struct CounterDirectives {
-    CounterDirectives() : m_reset(false), m_increment(false) { }
-
-    bool m_reset;
-    int m_resetValue;
-    bool m_increment;
-    int m_incrementValue;
-};
-
-bool operator==(const CounterDirectives&, const CounterDirectives&);
-inline bool operator!=(const CounterDirectives& a, const CounterDirectives& b) { return !(a == b); }
-
-typedef HashMap<RefPtr<AtomicStringImpl>, CounterDirectives> CounterDirectiveMap;
-
-class CounterContent {
-public:
-    CounterContent(const AtomicString& identifier, EListStyleType style, const AtomicString& separator)
-        : m_identifier(identifier), m_listStyle(style), m_separator(separator)
-    {
-    }
-
-    const AtomicString& identifier() const { return m_identifier; }
-    EListStyleType listStyle() const { return m_listStyle; }
-    const AtomicString& separator() const { return m_separator; }
-
-private:
-    AtomicString m_identifier;
-    EListStyleType m_listStyle;
-    AtomicString m_separator;
-};
-
-struct ContentData : Noncopyable {
-    ContentData() : m_type(CONTENT_NONE), m_next(0) { }
-    ~ContentData() { clear(); }
-
-    void clear();
-
-    ContentType m_type;
-    union {
-        StyleImage* m_image;
-        StringImpl* m_text;
-        CounterContent* m_counter;
-    } m_content;
-    ContentData* m_next;
-};
-
-struct TimingFunction {
-    TimingFunction()
-    : m_type(CubicBezierTimingFunction)
-    , m_x1(0.25)
-    , m_y1(0.1)
-    , m_x2(0.25)
-    , m_y2(1.0)
-    {}
-
-    TimingFunction(ETimingFunctionType timingFunction, double x1 = 0.0, double y1 = 0.0, double x2 = 1.0, double y2 = 1.0)
-    : m_type(timingFunction)
-    , m_x1(x1)
-    , m_y1(y1)
-    , m_x2(x2)
-    , m_y2(y2)
-    {
-    }
-
-    bool operator==(const TimingFunction& o) const { return m_type == o.m_type && m_x1 == o.m_x1 && m_y1 == o.m_y1 && m_x2 == o.m_x2 && m_y2 == o.m_y2; }
-
-    double x1() const { return m_x1; }
-    double y1() const { return m_y1; }
-    double x2() const { return m_x2; }
-    double y2() const { return m_y2; }
-
-    ETimingFunctionType type() const { return m_type; }
-
-private:
-    ETimingFunctionType m_type;
-
-    double m_x1;
-    double m_y1;
-    double m_x2;
-    double m_y2;
-};
-
-class Animation : public RefCounted<Animation> {
-public:
-
-    static PassRefPtr<Animation> create() { return adoptRef(new Animation); };
-    
-    bool isDelaySet() const { return m_delaySet; }
-    bool isDirectionSet() const { return m_directionSet; }
-    bool isDurationSet() const { return m_durationSet; }
-    bool isIterationCountSet() const { return m_iterationCountSet; }
-    bool isNameSet() const { return m_nameSet; }
-    bool isPlayStateSet() const { return m_playStateSet; }
-    bool isPropertySet() const { return m_propertySet; }
-    bool isTimingFunctionSet() const { return m_timingFunctionSet; }
-
-    // Flags this to be the special "none" animation (animation-name: none)
-    bool isNoneAnimation() const { return m_isNone; }
-    // We can make placeholder Animation objects to keep the comma-separated lists
-    // of properties in sync. isValidAnimation means this is not a placeholder.
-    bool isValidAnimation() const { return !m_isNone && !m_name.isEmpty(); }
-
-    bool isEmpty() const
-    {
-        return (!m_directionSet && !m_durationSet && !m_nameSet && !m_playStateSet && 
-               !m_iterationCountSet && !m_delaySet && !m_timingFunctionSet && !m_propertySet);
-    }
-
-    bool isEmptyOrZeroDuration() const
-    {
-        return isEmpty() || (m_duration == 0 && m_delay <= 0);
-    }
-
-    void clearDelay() { m_delaySet = false; }
-    void clearDirection() { m_directionSet = false; }
-    void clearDuration() { m_durationSet = false; }
-    void clearIterationCount() { m_iterationCountSet = false; }
-    void clearName() { m_nameSet = false; }
-    void clearPlayState() { m_playStateSet = AnimPlayStatePlaying; }
-    void clearProperty() { m_propertySet = false; }
-    void clearTimingFunction() { m_timingFunctionSet = false; }
-
-    double delay() const { return m_delay; }
-    bool direction() const { return m_direction; }
-    double duration() const { return m_duration; }
-    int iterationCount() const { return m_iterationCount; }
-    const String& name() const { return m_name; }
-    unsigned playState() const { return m_playState; }
-    int property() const { return m_property; }
-    const TimingFunction& timingFunction() const { return m_timingFunction; }
-
-    const RefPtr<KeyframeList>& keyframeList() const { return m_keyframeList; }
-
-    void setDelay(double c) { m_delay = c; m_delaySet = true; }
-    void setDirection(bool d) { m_direction = d; m_directionSet = true; }
-    void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
-    void setIterationCount(int c) { m_iterationCount = c; m_iterationCountSet = true; }
-    void setName(const String& n) { m_name = n; m_nameSet = true; }
-    void setPlayState(unsigned d) { m_playState = d; m_playStateSet = true; }
-    void setProperty(int t) { m_property = t; m_propertySet = true; }
-    void setTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
-
-    void setIsNoneAnimation(bool n) { m_isNone = n; }
-
-    void setAnimationKeyframe(const RefPtr<KeyframeList> keyframe)  { m_keyframeList = keyframe; }
-
-    Animation& operator=(const Animation& o);
-
-    // return true if all members of this class match (excluding m_next)
-    bool animationsMatch(const Animation* t, bool matchPlayStates=true) const;
-
-    // return true every Animation in the chain (defined by m_next) match 
-    bool operator==(const Animation& o) const { return animationsMatch(&o); }
-    bool operator!=(const Animation& o) const { return !(*this == o); }
-
-private:
-    Animation();
-    Animation(const Animation& o);
-    
-    double m_delay;
-    bool m_direction;
-    double m_duration;
-    int m_iterationCount;
-    String m_name;
-    int m_property;
-    TimingFunction m_timingFunction;
-
-    RefPtr<KeyframeList> m_keyframeList;
-
-    unsigned m_playState     : 2;
-
-    bool m_delaySet          : 1;
-    bool m_directionSet      : 1;
-    bool m_durationSet       : 1;
-    bool m_iterationCountSet : 1;
-    bool m_nameSet           : 1;
-    bool m_playStateSet      : 1;
-    bool m_propertySet       : 1;
-    bool m_timingFunctionSet : 1;
-    
-    bool m_isNone            : 1;
-};
-
-class AnimationList : public Vector<RefPtr<Animation> > {
-public:
-    void fillUnsetProperties();
-    bool operator==(const AnimationList& o) const;
-};    
-
 
 class StyleReflection : public RefCounted<StyleReflection> {
 public:
@@ -1537,49 +1286,6 @@ public:
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
-};
-
-class KeyframeValue {
-public:
-    KeyframeValue() : key(-1) { }
-    float key;
-    RenderStyle style;
-};
-
-class KeyframeList : public RefCounted<KeyframeList> {
-public:
-    static PassRefPtr<KeyframeList> create(const AtomicString& inAnimName) { return adoptRef(new KeyframeList(inAnimName)); }
-
-    bool operator==(const KeyframeList& o) const;
-    bool operator!=(const KeyframeList& o) const { return !(*this == o); }
-    
-    const AtomicString& animationName() const { return m_animationName; }
-    
-    void insert(float inKey, const RenderStyle& inStyle);
-    
-    void addProperty(int prop) { m_properties.add(prop); }
-    bool containsProperty(int prop) const { return m_properties.contains(prop); }
-    HashSet<int>::const_iterator beginProperties() { return m_properties.begin(); }
-    HashSet<int>::const_iterator endProperties() { return m_properties.end(); }
-    
-    void clear() { m_keyframes.clear(); m_properties.clear(); }
-    bool isEmpty() const { return m_keyframes.isEmpty(); }
-    size_t size() const { return m_keyframes.size(); }
-    Vector<KeyframeValue>::const_iterator beginKeyframes() const { return m_keyframes.begin(); }
-    Vector<KeyframeValue>::const_iterator endKeyframes() const { return m_keyframes.end(); }
-
-private:
-    KeyframeList(const AtomicString& inAnimName)
-    : m_animationName(inAnimName)
-    {
-        insert(0, RenderStyle());
-        insert(1, RenderStyle());
-    }
-        
-protected:
-    AtomicString m_animationName;
-    Vector<KeyframeValue> m_keyframes;
-    HashSet<int> m_properties;       // the properties being animated
 };
 
 } // namespace WebCore
