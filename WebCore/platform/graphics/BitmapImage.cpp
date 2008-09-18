@@ -130,6 +130,7 @@ void BitmapImage::cacheFrame(size_t index)
     if (numFrames == 1 && m_frames[index].m_frame)
         checkForSolidColor();
 
+    m_frames[index].m_isComplete = m_source.frameIsCompleteAtIndex(index);
     if (shouldAnimate())
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
@@ -214,6 +215,17 @@ NativeImagePtr BitmapImage::frameAtIndex(size_t index)
     return m_frames[index].m_frame;
 }
 
+bool BitmapImage::frameIsCompleteAtIndex(size_t index)
+{
+    if (index >= frameCount())
+        return true;
+
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index);
+
+    return m_frames[index].m_isComplete;
+}
+
 float BitmapImage::frameDurationAtIndex(size_t index)
 {
     if (index >= frameCount())
@@ -247,7 +259,7 @@ void BitmapImage::startAnimation()
         return;
 
     // Don't advance the animation until the current frame has completely loaded.
-    if (!m_source.frameIsCompleteAtIndex(m_currentFrame))
+    if (!frameIsCompleteAtIndex(m_currentFrame))
         return;
 
     // Don't advance past the last frame if we haven't decoded the whole image
@@ -282,7 +294,7 @@ void BitmapImage::startAnimation()
         // See if we've also passed the time for frames after that to start, in
         // case we need to skip some frames entirely.
         size_t nextFrame = (m_currentFrame + 1) % frameCount();
-        while (m_source.frameIsCompleteAtIndex(nextFrame)) {
+        while (frameIsCompleteAtIndex(nextFrame)) {
             // Should we skip the current frame?
             double nextFrameStartTime = m_desiredFrameStartTime + frameDurationAtIndex(nextFrame);
             if (time < nextFrameStartTime)

@@ -73,6 +73,7 @@ void FrameData::clear()
 {
     if (m_frame) {
         m_frame = 0;
+        m_isComplete = false;
         m_duration = 0.0f;
         m_hasAlpha = true;
     }
