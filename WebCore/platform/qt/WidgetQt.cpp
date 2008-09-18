@@ -85,7 +85,7 @@ Widget::~Widget()
     data = 0;
 }
 
-void Widget::updatePlatformWidgetFrameGeometry()
+void Widget::updatePlatformWidgetFrameGeometry() const
 {
     if (!platformWidget())
         return;
