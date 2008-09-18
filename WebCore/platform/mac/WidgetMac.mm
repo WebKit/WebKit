@@ -89,8 +89,9 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
     data->removeFromSuperviewSoon = false;
 }
 
-Widget::~Widget() 
+Widget::~Widget()
 {
+    releasePlatformWidget();
     delete data;
 }
 

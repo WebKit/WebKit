@@ -1,5 +1,14 @@
 2008-09-17  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by David "Waterman" Hyatt.
+
+        Fix a leak of NSViews in WidgetMac.mm.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::~Widget):
+
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by David Waterman Hyatt.
 
         Split FillLayer, StyleBackgroundData, StyleBoxData, StyleDashboardRegion, StyleMarqueeData
