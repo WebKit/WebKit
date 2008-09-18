@@ -38,6 +38,7 @@
 #include "CollapsedBorderValue.h"
 #include "Color.h"
 #include "DataRef.h"
+#include "FillLayer.h"
 #include "FloatPoint.h"
 #include "Font.h"
 #include "GraphicsTypes.h"
@@ -47,12 +48,21 @@
 #include "OutlineValue.h"
 #include "Pair.h"
 #include "RenderStyleConstants.h"
+#include "StyleBackgroundData.h"
+#include "StyleBoxData.h"
+#include "StyleMarqueeData.h"
+#include "StyleMultiColData.h"
 #include "StyleSurroundData.h"
+#include "StyleVisualData.h"
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "StyleDashboardRegion.h"
+#endif
 
 #if ENABLE(SVG)
 #include "SVGRenderStyle.h"
@@ -79,291 +89,7 @@ class RenderArena;
 class ShadowValue;
 class StringImpl;
 class StyleImage;
-
 struct CursorData;
-
-class StyleBoxData : public RefCounted<StyleBoxData> {
-public:
-    static PassRefPtr<StyleBoxData> create() { return adoptRef(new StyleBoxData); }
-    PassRefPtr<StyleBoxData> copy() const { return adoptRef(new StyleBoxData(*this)); }
-
-    bool operator==(const StyleBoxData& o) const;
-    bool operator!=(const StyleBoxData& o) const {
-        return !(*this == o);
-    }
-
-    Length width;
-    Length height;
-
-    Length min_width;
-    Length max_width;
-
-    Length min_height;
-    Length max_height;
-
-    Length vertical_align;
-
-    int z_index;
-    bool z_auto : 1;
-    unsigned boxSizing : 1; // EBoxSizing
-    
-private:
-    StyleBoxData();
-    StyleBoxData(const StyleBoxData&);
-};
-
-#if ENABLE(DASHBOARD_SUPPORT)
-//------------------------------------------------
-// Dashboard region attributes. Not inherited.
-
-struct StyleDashboardRegion {
-    String label;
-    LengthBox offset;
-    int type;
-    
-    enum {
-        None,
-        Circle,
-        Rectangle
-    };
-
-    bool operator==(const StyleDashboardRegion& o) const
-    {
-        return type == o.type && offset == o.offset && label == o.label;
-    }
-
-   bool operator!=(const StyleDashboardRegion& o) const
-   {
-       return !(*this == o);
-   }
-};
-#endif
-
-class StyleVisualData : public RefCounted<StyleVisualData> {
-public:
-    static PassRefPtr<StyleVisualData> create() { return adoptRef(new StyleVisualData); }
-    PassRefPtr<StyleVisualData> copy() const { return adoptRef(new StyleVisualData(*this)); }
-    ~StyleVisualData();
-
-    bool operator==(const StyleVisualData& o) const {
-        return ( clip == o.clip &&
-                 hasClip == o.hasClip &&
-                 counterIncrement == o.counterIncrement &&
-                 counterReset == o.counterReset &&
-                 textDecoration == o.textDecoration &&
-                 m_zoom == o.m_zoom);
-    }
-    bool operator!=(const StyleVisualData& o) const { return !(*this == o); }
-
-    LengthBox clip;
-    bool hasClip : 1;
-    unsigned textDecoration : 4; // Text decorations defined *only* by this element.
-    
-    short counterIncrement; // ok, so these are not visual mode specific
-    short counterReset;     // can't go to inherited, since these are not inherited
-
-    float m_zoom;
-
-private:
-    StyleVisualData();
-    StyleVisualData(const StyleVisualData&);    
-};
-
-struct FillLayer {
-public:
-    FillLayer(EFillLayerType);
-    ~FillLayer();
-
-    StyleImage* image() const { return m_image.get(); }
-    Length xPosition() const { return m_xPosition; }
-    Length yPosition() const { return m_yPosition; }
-    bool attachment() const { return m_attachment; }
-    EFillBox clip() const { return static_cast<EFillBox>(m_clip); }
-    EFillBox origin() const { return static_cast<EFillBox>(m_origin); }
-    EFillRepeat repeat() const { return static_cast<EFillRepeat>(m_repeat); }
-    CompositeOperator composite() const { return static_cast<CompositeOperator>(m_composite); }
-    LengthSize size() const { return m_size; }
-
-    const FillLayer* next() const { return m_next; }
-    FillLayer* next() { return m_next; }
-
-    bool isImageSet() const { return m_imageSet; }
-    bool isXPositionSet() const { return m_xPosSet; }
-    bool isYPositionSet() const { return m_yPosSet; }
-    bool isAttachmentSet() const { return m_attachmentSet; }
-    bool isClipSet() const { return m_clipSet; }
-    bool isOriginSet() const { return m_originSet; }
-    bool isRepeatSet() const { return m_repeatSet; }
-    bool isCompositeSet() const { return m_compositeSet; }
-    bool isSizeSet() const { return m_sizeSet; }
-    
-    void setImage(StyleImage* i) { m_image = i; m_imageSet = true; }
-    void setXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
-    void setYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
-    void setAttachment(bool b) { m_attachment = b; m_attachmentSet = true; }
-    void setClip(EFillBox b) { m_clip = b; m_clipSet = true; }
-    void setOrigin(EFillBox b) { m_origin = b; m_originSet = true; }
-    void setRepeat(EFillRepeat r) { m_repeat = r; m_repeatSet = true; }
-    void setComposite(CompositeOperator c) { m_composite = c; m_compositeSet = true; }
-    void setSize(const LengthSize& b) { m_size = b; m_sizeSet = true; }
-    
-    void clearImage() { m_imageSet = false; }
-    void clearXPosition() { m_xPosSet = false; }
-    void clearYPosition() { m_yPosSet = false; }
-    void clearAttachment() { m_attachmentSet = false; }
-    void clearClip() { m_clipSet = false; }
-    void clearOrigin() { m_originSet = false; }
-    void clearRepeat() { m_repeatSet = false; }
-    void clearComposite() { m_compositeSet = false; }
-    void clearSize() { m_sizeSet = false; }
-
-    void setNext(FillLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
-
-    FillLayer& operator=(const FillLayer& o);    
-    FillLayer(const FillLayer& o);
-
-    bool operator==(const FillLayer& o) const;
-    bool operator!=(const FillLayer& o) const {
-        return !(*this == o);
-    }
-
-    bool containsImage(StyleImage*) const;
-
-    bool hasImage() const {
-        if (m_image)
-            return true;
-        return m_next ? m_next->hasImage() : false;
-    }
-    bool hasFixedImage() const {
-        if (m_image && !m_attachment)
-            return true;
-        return m_next ? m_next->hasFixedImage() : false;
-    }
-
-    EFillLayerType type() const { return static_cast<EFillLayerType>(m_type); }
-
-    void fillUnsetProperties();
-    void cullEmptyLayers();
-
-    static bool initialFillAttachment(EFillLayerType) { return true; }
-    static EFillBox initialFillClip(EFillLayerType) { return BorderFillBox; }
-    static EFillBox initialFillOrigin(EFillLayerType type) { return type == BackgroundFillLayer ? PaddingFillBox : BorderFillBox; }
-    static EFillRepeat initialFillRepeat(EFillLayerType) { return RepeatFill; }
-    static CompositeOperator initialFillComposite(EFillLayerType) { return CompositeSourceOver; }
-    static LengthSize initialFillSize(EFillLayerType) { return LengthSize(); }
-    static Length initialFillXPosition(EFillLayerType type) { return Length(0.0, Percent); }
-    static Length initialFillYPosition(EFillLayerType type) { return Length(0.0, Percent); }
-    static StyleImage* initialFillImage(EFillLayerType) { return 0; }
-
-private:
-    FillLayer() { }
-
-public:
-    RefPtr<StyleImage> m_image;
-
-    Length m_xPosition;
-    Length m_yPosition;
-
-    bool m_attachment : 1;
-    unsigned m_clip : 2; // EFillBox
-    unsigned m_origin : 2; // EFillBox
-    unsigned m_repeat : 2; // EFillRepeat
-    unsigned m_composite : 4; // CompositeOperator
-
-    LengthSize m_size;
-
-    bool m_imageSet : 1;
-    bool m_attachmentSet : 1;
-    bool m_clipSet : 1;
-    bool m_originSet : 1;
-    bool m_repeatSet : 1;
-    bool m_xPosSet : 1;
-    bool m_yPosSet : 1;
-    bool m_compositeSet : 1;
-    bool m_sizeSet : 1;
-    
-    unsigned m_type : 1; // EFillLayerType
-
-    FillLayer* m_next;
-};
-
-class StyleBackgroundData : public RefCounted<StyleBackgroundData> {
-public:
-    static PassRefPtr<StyleBackgroundData> create() { return adoptRef(new StyleBackgroundData); }
-    PassRefPtr<StyleBackgroundData> copy() const { return adoptRef(new StyleBackgroundData(*this)); }
-    ~StyleBackgroundData() {}
-
-    bool operator==(const StyleBackgroundData& o) const;
-    bool operator!=(const StyleBackgroundData &o) const {
-        return !(*this == o);
-    }
-
-    FillLayer m_background;
-    Color m_color;
-    OutlineValue m_outline;
-    
-private:
-    StyleBackgroundData();
-    StyleBackgroundData(const StyleBackgroundData& o );    
-};
-
-class StyleMarqueeData : public RefCounted<StyleMarqueeData> {
-public:
-    static PassRefPtr<StyleMarqueeData> create() { return adoptRef(new StyleMarqueeData); }
-    PassRefPtr<StyleMarqueeData> copy() const { return adoptRef(new StyleMarqueeData(*this)); }
-    
-    bool operator==(const StyleMarqueeData& o) const;
-    bool operator!=(const StyleMarqueeData& o) const {
-        return !(*this == o);
-    }
-    
-    Length increment;
-    int speed;
-    
-    int loops; // -1 means infinite.
-    
-    unsigned behavior : 2; // EMarqueeBehavior 
-    EMarqueeDirection direction : 3; // not unsigned because EMarqueeDirection has negative values
-    
-private:
-    StyleMarqueeData();
-    StyleMarqueeData(const StyleMarqueeData&);
-};
-  
-// CSS3 Multi Column Layout
-
-class StyleMultiColData : public RefCounted<StyleMultiColData> {
-public:
-    static PassRefPtr<StyleMultiColData> create() { return adoptRef(new StyleMultiColData); }
-    PassRefPtr<StyleMultiColData> copy() const { return adoptRef(new StyleMultiColData(*this)); }
-    
-    bool operator==(const StyleMultiColData& o) const;
-    bool operator!=(const StyleMultiColData &o) const {
-        return !(*this == o);
-    }
-
-    unsigned short ruleWidth() const {
-        if (m_rule.style() == BNONE || m_rule.style() == BHIDDEN)
-            return 0; 
-        return m_rule.width;
-    }
-
-    float m_width;
-    unsigned short m_count;
-    float m_gap;
-    BorderValue m_rule;
-    
-    bool m_autoWidth : 1;
-    bool m_autoCount : 1;
-    bool m_normalGap : 1;
-    unsigned m_breakBefore : 2; // EPageBreak
-    unsigned m_breakAfter : 2; // EPageBreak
-    unsigned m_breakInside : 2; // EPageBreak
-    
-private:
-    StyleMultiColData();
-    StyleMultiColData(const StyleMultiColData&);
-};
 
 // CSS Transforms (may become part of CSS3)
 

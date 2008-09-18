@@ -909,11 +909,17 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/TextControlInnerElements.cpp \
+    rendering/style/FillLayer.cpp \
+    rendering/style/NinePieceImage.cpp \
     rendering/style/RenderStyle.cpp \
+    rendering/style/StyleBackgroundData.cpp \
+    rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleGeneratedImage.cpp \
-    rendering/style/NinePieceImage.cpp \
+    rendering/style/StyleMarqueeData.cpp \
+    rendering/style/StyleMultiColData.cpp \
     rendering/style/StyleSurroundData.cpp \
+    rendering/style/StyleVisualData.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \

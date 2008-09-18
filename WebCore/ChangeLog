@@ -1,3 +1,43 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by David Waterman Hyatt.
+
+        Split FillLayer, StyleBackgroundData, StyleBoxData, StyleDashboardRegion, StyleMarqueeData
+        StyleMultiColData and StyleVisualData out of RenderStyle.h/cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * rendering/style/FillLayer.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/FillLayer.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::FillLayer::operator!=):
+        (WebCore::FillLayer::hasImage):
+        (WebCore::FillLayer::hasFixedImage):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleBackgroundData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        * rendering/style/StyleBackgroundData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleBackgroundData::~StyleBackgroundData):
+        (WebCore::StyleBackgroundData::operator!=):
+        * rendering/style/StyleBoxData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleBoxData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleBoxData::operator!=):
+        * rendering/style/StyleDashboardRegion.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleDashboardRegion::operator!=):
+        * rendering/style/StyleMarqueeData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleMarqueeData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleMarqueeData::operator!=):
+        * rendering/style/StyleMultiColData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleMultiColData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleMultiColData::operator!=):
+        (WebCore::StyleMultiColData::ruleWidth):
+        * rendering/style/StyleVisualData.cpp: Copied from rendering/style/RenderStyle.cpp.
+        * rendering/style/StyleVisualData.h: Copied from rendering/style/RenderStyle.h.
+        (WebCore::StyleVisualData::operator==):
+
 2008-09-17  David Hyatt  <hyatt@apple.com>
 
         Remove WidgetClient from Widget.

@@ -3737,6 +3737,19 @@
 		BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5E70E81BFEF00B25965 /* StyleSurroundData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB5E60E81BFEF00B25965 /* StyleSurroundData.cpp */; };
 		BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB67A0E81D3BE00B25965 /* StyleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */; };
+		BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB6990E81DA6300B25965 /* StyleVisualData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */; };
+		BC5EB69A0E81DA6300B25965 /* StyleVisualData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB6980E81DA6300B25965 /* StyleVisualData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB69E0E81DAEB00B25965 /* FillLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */; };
+		BC5EB69F0E81DAEB00B25965 /* FillLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB69D0E81DAEB00B25965 /* FillLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB6A20E81DC4F00B25965 /* StyleBackgroundData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB6A00E81DC4F00B25965 /* StyleBackgroundData.cpp */; };
+		BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB6A10E81DC4F00B25965 /* StyleBackgroundData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB7290E81DE8100B25965 /* StyleMarqueeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB7270E81DE8100B25965 /* StyleMarqueeData.cpp */; };
+		BC5EB72A0E81DE8100B25965 /* StyleMarqueeData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB7280E81DE8100B25965 /* StyleMarqueeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB74D0E81E06700B25965 /* StyleMultiColData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB74B0E81E06700B25965 /* StyleMultiColData.cpp */; };
+		BC5EB74E0E81E06700B25965 /* StyleMultiColData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
 		BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */; };
 		BC60D6E90D28D83400B9918F /* DOMCoreException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMCoreException.h */; };
@@ -8190,6 +8203,19 @@
 		BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleSurroundData.h; path = style/StyleSurroundData.h; sourceTree = "<group>"; };
 		BC5EB5E60E81BFEF00B25965 /* StyleSurroundData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleSurroundData.cpp; path = style/StyleSurroundData.cpp; sourceTree = "<group>"; };
 		BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderStyleConstants.h; path = style/RenderStyleConstants.h; sourceTree = "<group>"; };
+		BC5EB67A0E81D3BE00B25965 /* StyleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleBoxData.h; path = style/StyleBoxData.h; sourceTree = "<group>"; };
+		BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleBoxData.cpp; path = style/StyleBoxData.cpp; sourceTree = "<group>"; };
+		BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleDashboardRegion.h; path = style/StyleDashboardRegion.h; sourceTree = "<group>"; };
+		BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleVisualData.cpp; path = style/StyleVisualData.cpp; sourceTree = "<group>"; };
+		BC5EB6980E81DA6300B25965 /* StyleVisualData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleVisualData.h; path = style/StyleVisualData.h; sourceTree = "<group>"; };
+		BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FillLayer.cpp; path = style/FillLayer.cpp; sourceTree = "<group>"; };
+		BC5EB69D0E81DAEB00B25965 /* FillLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FillLayer.h; path = style/FillLayer.h; sourceTree = "<group>"; };
+		BC5EB6A00E81DC4F00B25965 /* StyleBackgroundData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleBackgroundData.cpp; path = style/StyleBackgroundData.cpp; sourceTree = "<group>"; };
+		BC5EB6A10E81DC4F00B25965 /* StyleBackgroundData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleBackgroundData.h; path = style/StyleBackgroundData.h; sourceTree = "<group>"; };
+		BC5EB7270E81DE8100B25965 /* StyleMarqueeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleMarqueeData.cpp; path = style/StyleMarqueeData.cpp; sourceTree = "<group>"; };
+		BC5EB7280E81DE8100B25965 /* StyleMarqueeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleMarqueeData.h; path = style/StyleMarqueeData.h; sourceTree = "<group>"; };
+		BC5EB74B0E81E06700B25965 /* StyleMultiColData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleMultiColData.cpp; path = style/StyleMultiColData.cpp; sourceTree = "<group>"; };
+		BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleMultiColData.h; path = style/StyleMultiColData.h; sourceTree = "<group>"; };
 		BC5EC1760A507E3E006007F5 /* view-source.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "view-source.css"; sourceTree = "<group>"; };
 		BC6049CB0DB560C200204739 /* CSSCanvasValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCanvasValue.h; sourceTree = "<group>"; };
 		BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCanvasValue.cpp; sourceTree = "<group>"; };
@@ -12672,22 +12698,35 @@
 		BC8C8FAA0DDCD2F200B592F4 /* style */ = {
 			isa = PBXGroup;
 			children = (
+				BC5EB74B0E81E06700B25965 /* StyleMultiColData.cpp */,
+				BC5EB74C0E81E06700B25965 /* StyleMultiColData.h */,
+				BC5EB7270E81DE8100B25965 /* StyleMarqueeData.cpp */,
+				BC5EB7280E81DE8100B25965 /* StyleMarqueeData.h */,
 				BC5EB5E00E81BE8700B25965 /* BorderData.h */,
 				BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */,
 				BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */,
+				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
+				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
 				BCEF43DF0E674110001C1287 /* NinePieceImage.cpp */,
 				BCEF43DC0E674012001C1287 /* NinePieceImage.h */,
 				BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */,
 				BC8C8FAB0DDCD31B00B592F4 /* RenderStyle.cpp */,
 				BC8C8FAC0DDCD31B00B592F4 /* RenderStyle.h */,
 				BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */,
+				BC5EB6A00E81DC4F00B25965 /* StyleBackgroundData.cpp */,
+				BC5EB6A10E81DC4F00B25965 /* StyleBackgroundData.h */,
+				BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */,
+				BC5EB67A0E81D3BE00B25965 /* StyleBoxData.h */,
 				BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */,
 				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
+				BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */,
 				BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */,
 				BCEF44490E6745E0001C1287 /* StyleGeneratedImage.h */,
 				BCEF43CE0E673DA1001C1287 /* StyleImage.h */,
 				BC5EB5E60E81BFEF00B25965 /* StyleSurroundData.cpp */,
 				BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */,
+				BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */,
+				BC5EB6980E81DA6300B25965 /* StyleVisualData.h */,
 			);
 			name = style;
 			sourceTree = "<group>";
@@ -15620,6 +15659,13 @@
 				BC5EB5E10E81BE8700B25965 /* BorderData.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
+				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
+				BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */,
+				BC5EB69A0E81DA6300B25965 /* StyleVisualData.h in Headers */,
+				BC5EB69F0E81DAEB00B25965 /* FillLayer.h in Headers */,
+				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
+				BC5EB72A0E81DE8100B25965 /* StyleMarqueeData.h in Headers */,
+				BC5EB74E0E81E06700B25965 /* StyleMultiColData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17426,6 +17472,12 @@
 				BC8B853D0E7C7F1100AB6984 /* ScrollbarThemeMac.cpp in Sources */,
 				BC84B1420E80A16D00841D6D /* ScrollbarMac.mm in Sources */,
 				BC5EB5E70E81BFEF00B25965 /* StyleSurroundData.cpp in Sources */,
+				BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */,
+				BC5EB6990E81DA6300B25965 /* StyleVisualData.cpp in Sources */,
+				BC5EB69E0E81DAEB00B25965 /* FillLayer.cpp in Sources */,
+				BC5EB6A20E81DC4F00B25965 /* StyleBackgroundData.cpp in Sources */,
+				BC5EB7290E81DE8100B25965 /* StyleMarqueeData.cpp in Sources */,
+				BC5EB74D0E81E06700B25965 /* StyleMultiColData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

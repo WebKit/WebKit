@@ -1855,22 +1855,32 @@ webcore_sources += \
 	WebCore/rendering/bidi.h \
 	WebCore/rendering/break_lines.cpp \
 	WebCore/rendering/break_lines.h \
+	WebCore/rendering/style/BorderData.h \
+	WebCore/rendering/style/BorderValue.h \
+	WebCore/rendering/style/CollapsedBorderValue.h \
+	WebCore/rendering/style/FillLayer.cpp \
+	WebCore/rendering/style/FillLayer.h \
 	WebCore/rendering/style/NinePieceImage.cpp \
 	WebCore/rendering/style/NinePieceImage.h \
+	WebCore/rendering/style/OutlineValue.h \
 	WebCore/rendering/style/RenderStyle.cpp \
 	WebCore/rendering/style/RenderStyle.h \
+	WebCore/rendering/style/RenderStyleConstants.h \
+	WebCore/rendering/style/StyleBackgroundData.cpp \
+	WebCore/rendering/style/StyleBackgroundData.h \
+	WebCore/rendering/style/StyleBoxData.cpp \
+	WebCore/rendering/style/StyleBoxData.h \
 	WebCore/rendering/style/StyleCachedImage.cpp \
 	WebCore/rendering/style/StyleCachedImage.h \
 	WebCore/rendering/style/StyleGeneratedImage.cpp \
 	WebCore/rendering/style/StyleGeneratedImage.h \
 	WebCore/rendering/style/StyleImage.h \
-	WebCore/rendering/style/BorderData.h \
-	WebCore/rendering/style/BorderValue.h \
-	WebCore/rendering/style/CollapsedBorderValue.h \
-	WebCore/rendering/style/OutlineValue.h \
+	WebCore/rendering/style/StyleMarqueeData.cpp \
+	WebCore/rendering/style/StyleMarqueeData.h \
 	WebCore/rendering/style/StyleSurroundData.cpp \
 	WebCore/rendering/style/StyleSurroundData.h \
-	WebCore/rendering/style/RenderStyleConstants.h \
+	WebCore/rendering/style/StyleVisualData.cpp \
+	WebCore/rendering/style/StyleVisualData.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \

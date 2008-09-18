@@ -8014,6 +8014,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\FillLayer.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\FillLayer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\FixedTableLayout.cpp"
 				>
 				<FileConfiguration
@@ -9300,6 +9316,38 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\StyleBackgroundData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleBackgroundData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleBoxData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleBoxData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\style\StyleCachedImage.cpp"
 				>
 				<FileConfiguration
@@ -9336,6 +9384,38 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\style\StyleMarqueeData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleMarqueeData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleMultiColData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleMultiColData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\style\StyleSurroundData.cpp"
 				>
 				<FileConfiguration
@@ -9349,6 +9429,22 @@
 			</File>
 			<File
 				RelativePath="..\rendering\style\StyleSurroundData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleVisualData.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleVisualData.h"
 				>
 			</File>
 			<File
