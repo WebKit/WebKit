@@ -9672,7 +9672,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\TransformOperations.cpp"
+				RelativePath="..\rendering\style\TransformOperations.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -9684,11 +9684,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\rendering\TransformOperations.h"
+				RelativePath="..\rendering\style\TransformOperations.h"
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\TranslateTransformOperation.cpp"
+				RelativePath="..\rendering\style\TranslateTransformOperation.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -9700,7 +9700,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\rendering\TranslateTransformOperation.h"
+				RelativePath="..\rendering\style\TranslateTransformOperation.h"
 				>
 			</File>
 			<File

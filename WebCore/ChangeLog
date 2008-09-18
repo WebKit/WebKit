@@ -1,3 +1,9 @@
+2008-09-17  Sam Weinig  <sam@webkit.org>
+
+        Fix Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-09-17  David Hyatt  <hyatt@apple.com>
 
         Switch back to having frameGeometry be virtual in order to keep Mac
