@@ -78,7 +78,7 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-void PluginView::updatePlatformWidgetFrameGeometry()
+void PluginView::updatePlatformWidgetFrameGeometry() const
 {
     if (!parent() || !m_isWindowed)
         return;

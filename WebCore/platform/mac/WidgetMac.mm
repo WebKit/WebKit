@@ -142,7 +142,7 @@ void Widget::hide()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void Widget::updatePlatformWidgetFrameGeometry()
+void Widget::updatePlatformWidgetFrameGeometry() const
 {
     if (!platformWidget())
         return;
