@@ -76,6 +76,14 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     if (!m_renderer || !m_renderer->isTable())
         return false;
     
+    // if the developer assigned an aria role to this, then we shouldn't 
+    // expose it as a table, unless, of course, the aria role is a table
+    AccessibilityRole ariaRole = ariaRoleAttribute();
+    if (ariaRole == TableRole)
+        return true;
+    if (ariaRole != UnknownRole)
+        return false;
+    
     RenderTable* table = static_cast<RenderTable*>(m_renderer);
     
     // this employs a heuristic to determine if this table should appear. 
@@ -389,16 +397,25 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
 
 AccessibilityRole AccessibilityTable::roleValue() const
 {
-    return isDataTable() ? TableRole : GroupRole;
+    if (!isDataTable())
+        return AccessibilityRenderObject::roleValue();
+
+    return TableRole;
 }
     
 bool AccessibilityTable::accessibilityIsIgnored() const
 {
-    return !isDataTable();
+    if (!isDataTable())
+        return AccessibilityRenderObject::accessibilityIsIgnored();
+    
+    return false;
 }
     
 String AccessibilityTable::title() const
 {
+    if (!isDataTable())
+        return AccessibilityRenderObject::title();
+    
     String title;
     if (!m_renderer)
         return title;

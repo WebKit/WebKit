@@ -1,3 +1,31 @@
+2008-09-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/6224222> AX: should not expose a <table> as an AXTable if ARIA 
+        role specifies otherwise
+
+        If a <table> isn't an AXTable, the rows and cells should default to AccessibilityRenderObject
+
+        Test: accessibility/table-with-aria-role.html
+
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::roleValue):
+        (WebCore::AccessibilityTable::accessibilityIsIgnored):
+        (WebCore::AccessibilityTable::title):
+        * page/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::accessibilityIsIgnored):
+        (WebCore::AccessibilityTableCell::isTableCell):
+        (WebCore::AccessibilityTableCell::roleValue):
+        * page/AccessibilityTableCell.h:
+        * page/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::roleValue):
+        (WebCore::AccessibilityTableRow::isTableRow):
+        (WebCore::AccessibilityTableRow::accessibilityIsIgnored):
+        * page/AccessibilityTableRow.h:
+
 2008-09-18  Steve Falkenburg  <sfalken@apple.com>
 
         Use higher-resolution timers on all variants of Windows.

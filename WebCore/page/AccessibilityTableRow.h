@@ -41,8 +41,8 @@ public:
     static PassRefPtr<AccessibilityTableRow> create(RenderObject*);
     virtual ~AccessibilityTableRow();
     
-    virtual bool isTableRow() const { return true; };
-    virtual AccessibilityRole roleValue() const { return RowRole; }
+    virtual bool isTableRow() const;
+    virtual AccessibilityRole roleValue() const;
 
     // retrieves the "row" header (a th tag in the rightmost column)
     AccessibilityObject* headerObject();

@@ -1,0 +1,72 @@
+test	test	test
+test	test	test
+test	test	test
+test	test	test
+AXRole: AXButton
+AXSubrole: (null)
+AXRoleDescription: button
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXButton: 'test	test	test
+test	test	test
+'>
+AXSize: NSSize: {85, 52}
+AXTitle: test	test	test
+test	test	test
+
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXButton: 'test	test	test
+test	test	test
+'>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXButton: 'test	test	test
+test	test	test
+'>
+AXEndTextMarker: <AXButton: 'test	test	test
+test	test	test
+'>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXButton: 'test	test	test
+test	test	test
+'>
+AXTitleUIElement: (null)
+
+------------
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 6>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {85, 52}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXRows: <array of size 2>
+AXVisibleRows: <array of size 2>
+AXColumns: <array of size 3>
+AXVisibleColumns: <array of size 3>
+AXVisibleCells: <array of size 6>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+
+------------
+

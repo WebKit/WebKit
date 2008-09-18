@@ -153,50 +153,50 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 
 ------------
-AXRole: AXStaticText
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
+AXRoleDescription: group
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXStaticText>
-AXSize: NSSize: {26, 18}
+AXParent: <AXGroup>
+AXSize: NSSize: {28, 20}
 AXTitle: 
 AXDescription: 
-AXValue: asdf
+AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXStaticText>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
+AXTopLevelUIElement: <AXGroup>
 
 ------------
-AXRole: AXStaticText
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
+AXRoleDescription: group
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXStaticText>
-AXSize: NSSize: {26, 18}
+AXParent: <AXGroup>
+AXSize: NSSize: {28, 20}
 AXTitle: 
 AXDescription: 
-AXValue: asdf
+AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXStaticText>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
+AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup
@@ -438,50 +438,50 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 
 ------------
-AXRole: AXStaticText
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
+AXRoleDescription: group
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXStaticText>
+AXParent: <AXGroup>
 AXSize: NSSize: {26, 18}
 AXTitle: 
 AXDescription: 
-AXValue: asdf
+AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXStaticText>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
+AXTopLevelUIElement: <AXGroup>
 
 ------------
-AXRole: AXStaticText
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
+AXRoleDescription: group
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXStaticText>
+AXParent: <AXGroup>
 AXSize: NSSize: {26, 18}
 AXTitle: 
 AXDescription: 
-AXValue: asdf
+AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXStaticText>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
+AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup
@@ -507,50 +507,50 @@ AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 
 ------------
-AXRole: AXStaticText
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
+AXRoleDescription: group
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXStaticText>
+AXParent: <AXGroup>
 AXSize: NSSize: {26, 18}
 AXTitle: 
 AXDescription: 
-AXValue: asdf
+AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXStaticText>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
+AXTopLevelUIElement: <AXGroup>
 
 ------------
-AXRole: AXStaticText
+AXRole: AXGroup
 AXSubrole: (null)
-AXRoleDescription: text
-AXChildren: <array of size 0>
+AXRoleDescription: group
+AXChildren: <array of size 1>
 AXHelp: 
-AXParent: <AXStaticText>
+AXParent: <AXGroup>
 AXSize: NSSize: {26, 18}
 AXTitle: 
 AXDescription: 
-AXValue: asdf
+AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXStaticText>
+AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXStaticText>
-AXEndTextMarker: <AXStaticText>
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXStaticText>
+AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXGroup

@@ -1,3 +1,21 @@
+2008-09-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Tests for <rdar://problem/6224222> AX: should not expose a <table> as an AXTable if 
+        ARIA role specifies otherwise
+        
+        Updated other tests so that rows and cells default to AccessibilityRenderObject
+        when not part of an AXTable
+
+        * accessibility/table-detection-expected.txt:
+        * accessibility/table-with-aria-role-expected.txt: Added.
+        * accessibility/table-with-aria-role.html: Added.
+        * accessibility/table-with-rules-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-detection-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-with-aria-role-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-with-rules-expected.txt:
+
 2008-09-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

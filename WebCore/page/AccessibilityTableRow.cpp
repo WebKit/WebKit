@@ -57,13 +57,32 @@ PassRefPtr<AccessibilityTableRow> AccessibilityTableRow::create(RenderObject* re
     return adoptRef(new AccessibilityTableRow(renderer));
 }
 
-bool AccessibilityTableRow::accessibilityIsIgnored() const
+AccessibilityRole AccessibilityTableRow::roleValue() const
+{
+    if (!isTableRow())
+        return AccessibilityRenderObject::roleValue();
+    
+    return RowRole;
+}
+
+bool AccessibilityTableRow::isTableRow() const
 {
     if (!m_renderer)
         return true;
     
     AccessibilityObject* renderTable = axObjectCache()->get(static_cast<RenderTableRow*>(m_renderer)->table());
-    return renderTable->accessibilityIsIgnored();
+    if (!renderTable->isDataTable())
+        return false;
+    
+    return true;
+}
+    
+bool AccessibilityTableRow::accessibilityIsIgnored() const
+{    
+    if (!isTableRow())
+        return AccessibilityRenderObject::accessibilityIsIgnored();
+
+    return false;
 }
     
 AccessibilityObject* AccessibilityTableRow::headerObject()
