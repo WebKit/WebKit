@@ -78,7 +78,16 @@ foreach my $arg(@ARGV) {
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
-setRun64Bit($run64Bit);
+
+my $arch;
+if (isOSX() && !isTiger()) {
+    my $preferredArch = preferredArchitecture("JavaScriptCore");
+    setRun64Bit($run64Bit);
+    $arch = preferredArchitecture("JavaScriptCore");
+    if ($arch ne $preferredArch) {
+        push(@jsArgs, "-a", $arch);
+    }
+}
 
 if(!defined($root)){
     chdirWebKit();
@@ -89,6 +98,8 @@ if(!defined($root)){
     push(@xcodeArgs, "--gtk")  if isGtk();
     push(@xcodeArgs, "--wx")  if isWx();
 
+    push(@xcodeArgs, "ARCHS=$arch") if (isOSX());
+    
     my $buildResult = system "perl", "WebKitTools/Scripts/build-jsc", @xcodeArgs;
     if ($buildResult) {
         print STDERR "Compiling jsc failed!\n";
@@ -107,12 +118,6 @@ $productDir .= "/Programs" if isGtk();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
-my $arch = "";
-if (isOSX() && !isTiger()) {
-    $arch = preferredArchitecture();
-    $arch = "-a $arch";
-}
-
 sub jscPath($)
 {
     my ($productDir) = @_;
@@ -121,7 +126,7 @@ sub jscPath($)
     return "$productDir/$jscName";
 }
 
-my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", $arch, @jsArgs;
+my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;
 exit exitStatus($result)  if $result;
 
 my %failures;

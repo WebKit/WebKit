@@ -952,18 +952,22 @@ sub setRun64Bit($)
     ($forceRun64Bit) = @_;
 }
 
-sub preferredArchitecture()
+sub preferredArchitecture
 {
     return unless isOSX();
+    
+    my $framework = shift;
+    $framework = "WebKit" if !defined($framework);
 
     my $currentArchitecture = `arch`;
     chomp($currentArchitecture);
 
     my $run64Bit = 0;
     if (!defined($forceRun64Bit)) {
-        my $webKitPath = builtDylibPathForName("WebKit");
+        my $frameworkPath = builtDylibPathForName($framework);
+        die "Couldn't find path for $framework" if !defined($frameworkPath);
         # The binary is 64-bit if one of the architectures it contains has "64" in the name
-        $run64Bit = `lipo -info "$webKitPath"` =~ /(are|architecture):.*64/;
+        $run64Bit = `lipo -info "$frameworkPath"` =~ /(are|architecture):.*64/;
     }
 
     if ($forceRun64Bit or $run64Bit) {

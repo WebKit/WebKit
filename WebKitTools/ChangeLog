@@ -1,3 +1,12 @@
+2008-09-18  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix jsc tests on Tiger.  Make jsc tests smarter about when to use the arch flag.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-09-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.
