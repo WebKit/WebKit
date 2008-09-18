@@ -95,7 +95,7 @@ static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
     static QStyleOptionSlider opt;
     opt.rect = scrollbar->frameGeometry();
     opt.state = 0;
-    if (scrollbar->isEnabled())
+    if (scrollbar->enabled())
         opt.state |= QStyle::State_Enabled;
     if (scrollbar->controlSize() != RegularScrollbar)
         opt.state |= QStyle::State_Mini;
@@ -181,7 +181,7 @@ int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 
 int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
 {
-    if (scrollbar->isEnabled())
+    if (scrollbar->enabled())
         return (int)((float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum());
     return 0;
 }

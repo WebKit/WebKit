@@ -106,14 +106,14 @@ int ScrollbarThemeSafari::scrollbarThickness(ScrollbarControlSize controlSize)
 
 bool ScrollbarThemeSafari::hasButtons(Scrollbar* scrollbar)
 {
-    return scrollbar->isEnabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
+    return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
              scrollbar->width() : 
              scrollbar->height()) >= 2 * (cRealButtonLength[scrollbar->controlSize()] - cButtonHitInset[scrollbar->controlSize()]);
 }
 
 bool ScrollbarThemeSafari::hasThumb(Scrollbar* scrollbar)
 {
-    return scrollbar->isEnabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
+    return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
              scrollbar->width() : 
              scrollbar->height()) >= 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
 }
