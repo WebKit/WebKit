@@ -273,7 +273,11 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
 static PangoLayout* getDefaultPangoLayout(const TextRun& run)
 {
     static PangoFontMap* map = pango_cairo_font_map_get_default();
+#if PANGO_VERSION_CHECK(1,21,5)   // deprecated in 1.21
+    static PangoContext* pangoContext = pango_font_map_create_context(map);
+#else
     static PangoContext* pangoContext = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(map));
+#endif
     PangoLayout* layout = pango_layout_new(pangoContext);
 
     return layout;

@@ -1,3 +1,18 @@
+2008-09-18  Jonathon Jongsma  <jonathon@quotidian.org>
+
+        Reviewed by Alp Toker
+
+        https://bugs.webkit.org/show_bug.cgi?id=20830
+        [GTK] Don't use deprecated pango API
+
+        Replace deprecated pango functions with non-deprecated ones for newer
+        versions of pango
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::getDefaultPangoLayout):
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2008-09-18  Alp Toker  <alp@nuanti.com>
 
         Build fix for r36587. Add new sources (and sort the lists).

@@ -87,7 +87,11 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     if (fontDescription.italic())
         pango_font_description_set_style(description, PANGO_STYLE_ITALIC);
 
+#if PANGO_VERSION_CHECK(1,21,5)   // deprecated in 1.21
+    m_context = pango_font_map_create_context(m_fontMap);
+#else
     m_context = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(m_fontMap));
+#endif
     for (unsigned int i = 0; !m_font && i < G_N_ELEMENTS(families); i++) {
         pango_font_description_set_family(description, families[i]);
         pango_context_set_font_description(m_context, description);
