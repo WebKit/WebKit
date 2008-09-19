@@ -103,8 +103,6 @@ using namespace std;
 typedef unsigned NSUInteger;
 #endif
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-
 @interface NSObject (WebKitAccessibilityArrayCategory)
 
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
@@ -112,8 +110,6 @@ typedef unsigned NSUInteger;
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
 
 @end
-
-#endif
 
 @implementation AccessibilityObjectWrapper
 
