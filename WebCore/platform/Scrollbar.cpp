@@ -275,7 +275,7 @@ void Scrollbar::moveThumb(int pos)
     else if (delta < 0)
         delta = max(-thumbPos, delta);
     if (delta) {
-        setValue(static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen));
+        setValue(static_cast<int>(static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen)));
         setPressedPos(pressedPos() + theme()->thumbPosition(this) - thumbPos);
     }
 }
