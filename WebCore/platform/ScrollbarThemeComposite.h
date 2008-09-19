@@ -27,12 +27,15 @@
 #define ScrollbarThemeComposite_h
 
 #include "ScrollbarTheme.h"
+#include "Scrollbar.h" // FIXME: Temporary.
 
 namespace WebCore {
 
 class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
+#if !USE(NSSCROLLER)
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+#endif
     virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&);
 
     virtual void invalidatePart(Scrollbar*, ScrollbarPart);

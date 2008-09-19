@@ -26,21 +26,36 @@
 #ifndef ScrollbarThemeMac_h
 #define ScrollbarThemeMac_h
 
-#include "ScrollbarTheme.h"
+#include "ScrollbarThemeComposite.h"
 #include "Scrollbar.h"
 
 namespace WebCore {
 
-class ScrollbarThemeMac : public ScrollbarTheme {
+class ScrollbarThemeMac : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeMac();
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     
-#if !USE(NSSCROLLER)
-    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
-#endif
+    virtual bool supportsControlTints() const { return true; }
+
+protected:
+    virtual bool hasButtons(Scrollbar*);
+    virtual bool hasThumb(Scrollbar*);
+
+    virtual IntRect backButtonRect(Scrollbar*, bool painting = false);
+    virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false);
+    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+
+    virtual int minimumThumbLength(Scrollbar*);
+    
+    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+
+    virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
 };
 
 }
+
 #endif

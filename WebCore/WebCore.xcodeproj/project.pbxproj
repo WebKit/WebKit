@@ -3641,6 +3641,8 @@
 		BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EE50C2641CD009E2349 /* BarInfo.h */; };
 		BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */; };
 		BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EFE0C26447A009E2349 /* JSBarInfo.h */; };
+		BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */; };
+		BC14028B0E83680800319717 /* ScrollbarThemeComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1402890E83680800319717 /* ScrollbarThemeComposite.h */; };
 		BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */; };
 		BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A3797097C715F0019F3D8 /* DOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A3798097C715F0019F3D8 /* DOM.mm */; };
@@ -8149,6 +8151,8 @@
 		BC124EE60C2641CD009E2349 /* BarInfo.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = BarInfo.idl; sourceTree = "<group>"; };
 		BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSBarInfo.cpp; sourceTree = "<group>"; };
 		BC124EFE0C26447A009E2349 /* JSBarInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSBarInfo.h; sourceTree = "<group>"; };
+		BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeComposite.cpp; sourceTree = "<group>"; };
+		BC1402890E83680800319717 /* ScrollbarThemeComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeComposite.h; sourceTree = "<group>"; };
 		BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElementCustom.cpp; sourceTree = "<group>"; };
 		BC1881D90E08C4ED00048C13 /* File.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = File.idl; sourceTree = "<group>"; };
 		BC1881DC0E08C54300048C13 /* FileList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileList.idl; sourceTree = "<group>"; };
@@ -13074,6 +13078,8 @@
 				BC7B2AF80450824100A8000F /* Scrollbar.h */,
 				BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */,
 				BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */,
+				BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */,
+				BC1402890E83680800319717 /* ScrollbarThemeComposite.h */,
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
@@ -15818,6 +15824,7 @@
 				BC5EB7F80E81F05700B25965 /* MatrixTransformOperation.h in Headers */,
 				BC5EB80B0E81F11200B25965 /* TransformOperations.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
+				BC14028B0E83680800319717 /* ScrollbarThemeComposite.h in Headers */,
 				BC5EB8B90E8201BD00B25965 /* StyleFlexibleBoxData.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				BC5EB9200E82040800B25965 /* BindingURI.h in Headers */,
@@ -17656,6 +17663,9 @@
 				BC5EB7F70E81F05700B25965 /* MatrixTransformOperation.cpp in Sources */,
 				BC5EB80A0E81F11200B25965 /* TransformOperations.cpp in Sources */,
 				BC5EB80F0E81F2CE00B25965 /* StyleTransformData.cpp in Sources */,
+<<<<<<< .mine
+				BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */,
+=======
 				BC5EB8B80E8201BD00B25965 /* StyleFlexibleBoxData.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				BC5EB91F0E82040800B25965 /* BindingURI.cpp in Sources */,
@@ -17670,6 +17680,7 @@
 				BC2274780E8366E200E7F975 /* SVGRenderStyle.cpp in Sources */,
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
+>>>>>>> .r36658
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

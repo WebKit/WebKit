@@ -1,3 +1,40 @@
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
+        This patch gets a viewless scrollbar working on Mac. It is turned off
+        by default.  Hit testing works.  For now the scrollbar just paints ugly
+        debug rects in the place of the buttons, track and thumb.  It does match
+        Aqua metrics though.
+
+        Reviewed by Sam Weinig
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        (WebCore::ScrollbarThemeComposite::trackPosition):
+        * platform/ScrollbarThemeComposite.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::addChild):
+        * platform/mac/ScrollbarThemeMac.cpp:
+        (WebCore::):
+        (WebCore::ScrollbarThemeMac::hasButtons):
+        (WebCore::ScrollbarThemeMac::hasThumb):
+        (WebCore::buttonRepaintRect):
+        (WebCore::ScrollbarThemeMac::backButtonRect):
+        (WebCore::ScrollbarThemeMac::forwardButtonRect):
+        (WebCore::trackRepaintRect):
+        (WebCore::ScrollbarThemeMac::trackRect):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeMac::paintTrack):
+        (WebCore::ScrollbarThemeMac::paintButton):
+        (WebCore::ScrollbarThemeMac::paintThumb):
+        * platform/mac/ScrollbarThemeMac.h:
+        (WebCore::ScrollbarThemeMac::supportsControlTints):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::trackPosition):
+
 2008-09-18  Collin Jackson  <collinj@webkit.org>
 
         Build fix; added missing header file to GNUmakefile.am
