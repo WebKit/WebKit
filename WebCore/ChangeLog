@@ -1,3 +1,13 @@
+2008-09-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Roll out r36626. It is causing variance in SunSpider numbers on XP.
+        
+        Rubber stamped by Mark Rowe.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::isRunningOnVistaOrLater):
+        (WebCore::setSharedTimerFireTime):
+
 2008-09-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

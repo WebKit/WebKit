@@ -86,6 +86,23 @@ enum {
     lastChanceSharedTimerID = 1002,
 };
 
+static bool isRunningOnVistaOrLater()
+{
+    static bool os = false;
+    static bool initialized = false;
+    if (!initialized) {
+        OSVERSIONINFOEX vi = {sizeof(vi), 0};
+        GetVersionEx((OSVERSIONINFO*)&vi);
+
+        // NOTE: This does not work under a debugger - Vista shims Visual Studio, 
+        // making it believe it is xpsp2, which is inherited by debugged applications
+        os = vi.dwMajorVersion >= 6;
+        initialized = true;
+    }
+
+    return os;
+}
+
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 #if PLATFORM(WIN)
@@ -159,6 +176,7 @@ static void NTAPI queueTimerProc(PVOID, BOOLEAN)
 void setSharedTimerFireTime(double fireTime)
 {
     ASSERT(sharedTimerFiredFunction);
+    bool isRunningVista = isRunningOnVistaOrLater();
 
     double interval = fireTime - currentTime();
     unsigned intervalInMS;
@@ -172,7 +190,7 @@ void setSharedTimerFireTime(double fireTime)
             intervalInMS = (unsigned)interval;
     }
 
-    if (interval < highResolutionThresholdMsec) {
+    if (isRunningVista && interval < highResolutionThresholdMsec) {
         if (!highResTimerActive) {
             highResTimerActive = true;
             timeBeginPeriod(timerResolution);
@@ -188,13 +206,14 @@ void setSharedTimerFireTime(double fireTime)
 
     // If the queue doesn't contains input events, we use a higher priorty timer event posting mechanism.
     if (!(queueStatus & (QS_MOUSEBUTTON | QS_KEY | QS_RAWINPUT))) {
-        if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage && !(queueStatus & QS_PAINT)) {
+        if (((isRunningVista && !intervalInMS) || (!isRunningVista && intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage))
+            && !(queueStatus & QS_PAINT)) {
             // Call PostMessage immediately if the timer is already expired, unless a paint is pending.
             // (we prioritize paints over timers)
             if (InterlockedIncrement(&pendingTimers) == 1)
                 PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
             timerSet = true;
-        } else {
+        } else if (isRunningVista) {
             // Otherwise, delay the PostMessage via a CreateTimerQueueTimer
             if (!timerQueue)
                 timerQueue = CreateTimerQueue();
