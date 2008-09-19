@@ -49,6 +49,14 @@ private:
     AtomicString m_separator;
 };
 
+static inline bool operator!=(const CounterContent& a, const CounterContent& b)
+{
+    return a.identifier() != b.identifier()
+        || a.listStyle() != b.listStyle()
+        || a.separator() != b.separator();
+}
+
+
 } // namespace WebCore
 
 #endif // CounterContent_h
