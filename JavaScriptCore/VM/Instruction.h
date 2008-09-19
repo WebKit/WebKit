@@ -39,7 +39,8 @@ namespace JSC {
 
     struct Instruction {
         Instruction(Opcode opcode) { u.opcode = opcode; }
-        Instruction(int operand) {
+        Instruction(int operand)
+        {
             // We have to initialise one of the pointer members to ensure that
             // the entire struct is initialised in 64-bit.
             u.jsCell = 0;
