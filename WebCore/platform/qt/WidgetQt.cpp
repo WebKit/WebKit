@@ -178,10 +178,6 @@ QWidget* Widget::containingWindow() const
     return view ? view : platformWidget();
 }
 
-void Widget::geometryChanged() const
-{
-}
-
 }
 
 // vim: ts=4 sw=4 et

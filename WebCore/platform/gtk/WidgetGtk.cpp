@@ -188,10 +188,6 @@ void Widget::invalidateRect(const IntRect& rect)
     outermostView->addToDirtyRegion(windowRect);
 }
 
-void Widget::geometryChanged() const
-{
-}
-
 IntRect Widget::frameGeometry() const
 {
     return m_frame;

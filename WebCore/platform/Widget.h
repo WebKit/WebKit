@@ -173,19 +173,11 @@ public:
     IntPoint convertToContainingWindow(const IntPoint&) const;
     IntPoint convertFromContainingWindow(const IntPoint&) const;
 
-#if PLATFORM(WIN)
     virtual void geometryChanged() const {}
-#endif
-
-#if PLATFORM(GTK)
-    virtual void geometryChanged() const;
-#endif
 
 #if PLATFORM(QT)
     void setIsNPAPIPlugin(bool);
     bool isNPAPIPlugin() const;
-
-    virtual void geometryChanged() const;
 #endif
 
 #if PLATFORM(MAC)    

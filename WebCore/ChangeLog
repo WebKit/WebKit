@@ -1,5 +1,17 @@
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
+        Make geometryChanged() cross-platform on Widget.  GTK and WIN platform
+        ifdefs are now gone from Widget!
+
+        Reviewed by Sam Weinig
+
+        * platform/Widget.h:
+        (WebCore::Widget::geometryChanged):
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/qt/WidgetQt.cpp:
+
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
         Consolidate convertTo/FromContainingWindow methods so that all platforms
         but Mac share the same code.
 
