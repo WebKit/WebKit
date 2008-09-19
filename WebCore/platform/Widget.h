@@ -182,7 +182,6 @@ public:
 
     void addToSuperview(NSView* superview);
     void removeFromSuperview();
-    IntPoint convertToScreenCoordinate(NSView*, const IntPoint&);
 #endif
 
 private:

@@ -317,13 +317,6 @@ NSWindow* Widget::containingWindow() const
 
     return nil; 
 }
-    
-IntPoint Widget::convertToScreenCoordinate(NSView *view, const IntPoint& point)
-{
-    NSPoint conversionPoint = { point.x(), point.y() };
-    conversionPoint = [view convertPoint:conversionPoint toView:nil];
-    return globalPoint(conversionPoint, [view window]);
-}
 
 IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {

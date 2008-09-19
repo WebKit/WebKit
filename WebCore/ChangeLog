@@ -1,5 +1,18 @@
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
+        Eliminate the convertToScreenCoordinate method on Widget, since
+        ScrollView has redundant methods that already do the same thing.
+
+        Reviewed by Sam Weinig
+
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::containingWindow):
+
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
         Move to only one constructor for Widgets.  Rename data to m_data and make
         it have an #ifdef only for platforms that have platform-specific data (Mac
         and Gtk).
