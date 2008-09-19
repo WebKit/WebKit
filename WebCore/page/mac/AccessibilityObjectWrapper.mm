@@ -59,8 +59,7 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
-
-// The following is SnowLeopard API
+using namespace std;
 
 // Cell Tables
 #ifndef NSAccessibilitySelectedCellsAttribute
@@ -98,6 +97,18 @@ using namespace HTMLNames;
 
 #ifndef NSAccessibilityDefinitionListSubrole
 #define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
+#endif
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+
+@interface NSObject (WebKitAccessibilityArrayCategory)
+
+- (NSUInteger)accessibilityIndexOfChild:(id)child;
+- (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
+- (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
+
+@end
+
 #endif
 
 @implementation AccessibilityObjectWrapper
@@ -1917,6 +1928,69 @@ static RenderObject* rendererForView(NSView* view)
 - (BOOL)accessibilityShouldUseUniqueId
 {
     return m_object->accessibilityShouldUseUniqueId();
+}
+
+// API that AppKit uses for faster access
+- (NSUInteger)accessibilityIndexOfChild:(id)child
+{
+    const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+       
+    if (children.isEmpty())
+        return [[self renderWidgetChildren] indexOfObject:child];
+    
+    unsigned count = children.size();
+    for (unsigned k = 0; k < count; ++k) {
+        if (children[k]->wrapper() == child)
+            return k;
+    }
+
+    return NSNotFound;
+}
+
+- (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute
+{
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
+        const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+        if (children.isEmpty())
+            return [[self renderWidgetChildren] count];
+        
+        return children.size();
+    }
+    
+    return [super accessibilityArrayAttributeCount:attribute];
+}
+
+- (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount 
+{
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
+        if (m_object->children().isEmpty()) {
+            NSArray *children = [self renderWidgetChildren];
+            if (!children) 
+                return nil;
+            
+            NSUInteger childCount = [children count];
+            if (index >= childCount)
+                return nil;
+            
+            NSUInteger arrayLength = min(childCount - index, maxCount);
+            return [children subarrayWithRange:NSMakeRange(index, arrayLength)];
+        }
+        
+        const AccessibilityObject::AccessibilityChildrenVector& children = m_object->children();
+        unsigned childCount = children.size();
+        if (index >= childCount)
+            return nil;
+        
+        unsigned available = min(childCount - index, maxCount);
+        
+        NSMutableArray *subarray = [NSMutableArray arrayWithCapacity:available];
+        for (unsigned added = 0; added < available; ++index, ++added)
+            [subarray addObject:children[index]->wrapper()];
+        
+        return subarray;
+    }
+    
+    return [super accessibilityArrayAttributeValues:attribute index:index maxCount:maxCount];
 }
 
 @end
