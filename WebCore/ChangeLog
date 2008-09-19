@@ -7,7 +7,7 @@
         - speed up measuring text on the Core Text code path by not specifying a paragraph writing direction
 
         Specifying LTR paragraph directionality when measuring runs of RTL text
-        resulted in typically two CTRuns being generated for every run instad
+        resulted in typically two CTRuns being generated for every run instead
         of one, due to the leading space being reordered to the left.
 
         * platform/graphics/SimpleFontData.h: Removed the ltr parameter to
