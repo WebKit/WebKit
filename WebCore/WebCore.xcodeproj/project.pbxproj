@@ -17663,9 +17663,7 @@
 				BC5EB7F70E81F05700B25965 /* MatrixTransformOperation.cpp in Sources */,
 				BC5EB80A0E81F11200B25965 /* TransformOperations.cpp in Sources */,
 				BC5EB80F0E81F2CE00B25965 /* StyleTransformData.cpp in Sources */,
-<<<<<<< .mine
 				BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */,
-=======
 				BC5EB8B80E8201BD00B25965 /* StyleFlexibleBoxData.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				BC5EB91F0E82040800B25965 /* BindingURI.cpp in Sources */,
@@ -17680,7 +17678,6 @@
 				BC2274780E8366E200E7F975 /* SVGRenderStyle.cpp in Sources */,
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
->>>>>>> .r36658
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
