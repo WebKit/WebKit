@@ -233,7 +233,7 @@ void ScrollView::addChild(Widget* child)
     BOOL resetDragMargins = [window _needsToResetDragMargins];
     [window _setNeedsToResetDragMargins:NO];
     if ([childView superview] != parentView)
-        [parentView addSubview:subview];
+        [parentView addSubview:childView];
     [window _setNeedsToResetDragMargins:resetDragMargins];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
