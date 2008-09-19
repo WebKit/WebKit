@@ -567,7 +567,8 @@ int Lexer::lex(void* p1, void* p2)
             break;
         }
         case String:
-            lvalp->string = makeUString(m_buffer16);
+            // Atomize constant strings in case they're later used in property lookup.
+            lvalp->ident = makeIdentifier(m_buffer16);
             token = STRING;
             break;
         case Number:
@@ -914,13 +915,6 @@ Identifier* Lexer::makeIdentifier(const Vector<UChar>& buffer)
     JSC::Identifier* identifier = new JSC::Identifier(m_globalData, buffer.data(), buffer.size());
     m_identifiers.append(identifier);
     return identifier;
-}
-
-UString* Lexer::makeUString(const Vector<UChar>& buffer)
-{
-    UString* string = new UString(buffer);
-    m_strings.append(string);
-    return string;
 }
 
 } // namespace JSC

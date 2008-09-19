@@ -1430,7 +1430,7 @@ static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t 
 {
     UNUSED_PARAM(max);
     ASSERT(node->isString());
-    UString::Rep* clause = static_cast<StringNode*>(node)->value().rep();
+    UString::Rep* clause = static_cast<StringNode*>(node)->value().ustring().rep();
     ASSERT(clause->size() == 1);
     
     int32_t key = clause->data()[0];
@@ -1460,7 +1460,7 @@ static void prepareJumpTableForStringSwitch(StringJumpTable& jumpTable, int32_t 
         ASSERT(!labels[i]->isForwardLabel());
         
         ASSERT(nodes[i]->isString());
-        UString::Rep* clause = static_cast<StringNode*>(nodes[i])->value().rep();
+        UString::Rep* clause = static_cast<StringNode*>(nodes[i])->value().ustring().rep();
         OffsetLocation location;
         location.branchOffset = labels[i]->offsetFrom(switchAddress);
 #if ENABLE(CTI)

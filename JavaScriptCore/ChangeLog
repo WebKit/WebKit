@@ -1,3 +1,28 @@
+2008-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20927
+          simplify/streamline the code to turn strings into identifiers while parsing
+
+        * kjs/grammar.y: Get rid of string from the union, and use ident for STRING as
+        well as for IDENT.
+
+        * kjs/lexer.cpp:
+        (JSC::Lexer::lex): Use makeIdentifier instead of makeUString for String.
+        * kjs/lexer.h: Remove makeUString.
+
+        * kjs/nodes.h: Changed StringNode to hold an Identifier instead of UString.
+
+        * VM/CodeGenerator.cpp:
+        (JSC::keyForCharacterSwitch): Updated since StringNode now holds an Identifier.
+        (JSC::prepareJumpTableForStringSwitch): Ditto.
+        * kjs/nodes.cpp:
+        (JSC::StringNode::emitCode): Ditto. The comment from here is now in the lexer.
+        (JSC::processClauseList): Ditto.
+        * kjs/nodes2string.cpp:
+        (JSC::StringNode::streamTo): Ditto.
+
 2008-09-18  Sam Weinig  <sam@webkit.org>
 
         Fix style.

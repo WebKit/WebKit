@@ -113,7 +113,6 @@ namespace JSC {
         void record16(UChar);
 
         JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer);
-        UString* makeUString(const Vector<UChar>& buffer);
 
         int yylineno;
         int yycolumn;

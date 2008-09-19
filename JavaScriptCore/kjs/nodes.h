@@ -313,22 +313,22 @@ namespace JSC {
 
     class StringNode : public ExpressionNode {
     public:
-        StringNode(JSGlobalData* globalData, const UString* v) JSC_FAST_CALL
+        StringNode(JSGlobalData* globalData, const Identifier& v) JSC_FAST_CALL
             : ExpressionNode(globalData, StringType)
-            , m_value(*v)
+            , m_value(v)
         {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         
         virtual bool isString() const JSC_FAST_CALL { return true; }
-        UString& value() { return m_value; }
+        const Identifier& value() { return m_value; }
         virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
 
     private:
-        UString m_value;
+        Identifier m_value;
     };
     
     class ThrowableExpressionData {

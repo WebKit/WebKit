@@ -309,7 +309,7 @@ void NumberNode::streamTo(SourceStream& s) const
 
 void StringNode::streamTo(SourceStream& s) const
 {
-    s << '"' << escapeStringForPrettyPrinting(m_value) << '"';
+    s << '"' << escapeStringForPrettyPrinting(m_value.ustring()) << '"';
 }
 
 void RegExpNode::streamTo(SourceStream& s) const

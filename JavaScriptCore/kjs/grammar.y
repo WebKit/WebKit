@@ -4,7 +4,7 @@
 
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -151,7 +151,6 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 %union {
     int                 intValue;
     double              doubleValue;
-    UString*            string;
     Identifier*         ident;
 
     // expression subtrees
@@ -217,8 +216,7 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 
 /* terminal types */
 %token <doubleValue> NUMBER
-%token <string> STRING
-%token <ident> IDENT
+%token <ident> IDENT STRING
 
 /* automatically inserted semicolon */
 %token AUTOPLUSPLUS AUTOMINUSMINUS
@@ -284,7 +282,7 @@ Literal:
   | TRUETOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new BooleanNode(GLOBAL_DATA, true), 0, 1); }
   | FALSETOKEN                          { $$ = createNodeFeatureInfo<ExpressionNode*>(new BooleanNode(GLOBAL_DATA, false), 0, 1); }
   | NUMBER                              { $$ = createNodeFeatureInfo<ExpressionNode*>(makeNumberNode(GLOBAL_DATA, $1), 0, 1); }
-  | STRING                              { $$ = createNodeFeatureInfo<ExpressionNode*>(new StringNode(GLOBAL_DATA, $1), 0, 1); }
+  | STRING                              { $$ = createNodeFeatureInfo<ExpressionNode*>(new StringNode(GLOBAL_DATA, *$1), 0, 1); }
   | '/' /* regexp */                    {
                                             Lexer& l = *LEXER;
                                             if (!l.scanRegExp())
@@ -307,7 +305,7 @@ Literal:
 
 Property:
     IDENT ':' AssignmentExpr            { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
-  | STRING ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, *$1), $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
+  | STRING ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
   | NUMBER ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceRange($5, $7)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
