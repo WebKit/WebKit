@@ -8106,7 +8106,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\DataRef.h"
+				RelativePath="..\rendering\style\DataRef.h"
 				>
 			</File>
 			<File
@@ -9800,7 +9800,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\SVGRenderStyle.cpp"
+				RelativePath="..\rendering\style\SVGRenderStyle.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -9812,11 +9812,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\rendering\SVGRenderStyle.h"
+				RelativePath="..\rendering\style\SVGRenderStyle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\SVGRenderStyleDefs.cpp"
+				RelativePath="..\rendering\style\SVGRenderStyleDefs.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -9828,7 +9828,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\rendering\SVGRenderStyleDefs.h"
+				RelativePath="..\rendering\style\SVGRenderStyleDefs.h"
 				>
 			</File>
 			<File

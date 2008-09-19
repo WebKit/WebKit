@@ -1737,7 +1737,7 @@ webcore_sources += \
 	WebCore/rendering/AutoTableLayout.h \
 	WebCore/rendering/CounterNode.cpp \
 	WebCore/rendering/CounterNode.h \
-	WebCore/rendering/DataRef.h \
+	WebCore/rendering/style/DataRef.h \
 	WebCore/rendering/EllipsisBox.cpp \
 	WebCore/rendering/EllipsisBox.h \
 	WebCore/rendering/FixedTableLayout.cpp \
@@ -2948,14 +2948,14 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGInlineText.h \
 	WebCore/rendering/RenderSVGRoot.cpp \
 	WebCore/rendering/RenderSVGRoot.h \
-	WebCore/rendering/RenderSVGTSpan.cpp \
-	WebCore/rendering/RenderSVGTSpan.h \
 	WebCore/rendering/RenderSVGText.cpp \
 	WebCore/rendering/RenderSVGText.h \
 	WebCore/rendering/RenderSVGTextPath.cpp \
 	WebCore/rendering/RenderSVGTextPath.h \
 	WebCore/rendering/RenderSVGTransformableContainer.cpp \
 	WebCore/rendering/RenderSVGTransformableContainer.h \
+	WebCore/rendering/RenderSVGTSpan.cpp \
+	WebCore/rendering/RenderSVGTSpan.h \
 	WebCore/rendering/RenderSVGViewportContainer.cpp \
 	WebCore/rendering/RenderSVGViewportContainer.h \
 	WebCore/rendering/SVGCharacterLayoutInfo.cpp \
@@ -2964,16 +2964,16 @@ webcore_sources += \
 	WebCore/rendering/SVGInlineFlowBox.h \
 	WebCore/rendering/SVGInlineTextBox.cpp \
 	WebCore/rendering/SVGInlineTextBox.h \
-	WebCore/rendering/SVGRenderStyle.cpp \
-	WebCore/rendering/SVGRenderStyle.h \
-	WebCore/rendering/SVGRenderStyleDefs.cpp \
-	WebCore/rendering/SVGRenderStyleDefs.h \
 	WebCore/rendering/SVGRenderSupport.cpp \
 	WebCore/rendering/SVGRenderSupport.h \
 	WebCore/rendering/SVGRenderTreeAsText.cpp \
 	WebCore/rendering/SVGRenderTreeAsText.h \
 	WebCore/rendering/SVGRootInlineBox.cpp \
 	WebCore/rendering/SVGRootInlineBox.h \
+	WebCore/rendering/style/SVGRenderStyle.cpp \
+	WebCore/rendering/style/SVGRenderStyle.h \
+	WebCore/rendering/style/SVGRenderStyleDefs.cpp \
+	WebCore/rendering/style/SVGRenderStyleDefs.h \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
 	WebCore/svg/ElementTimeControl.h \

@@ -1,3 +1,24 @@
+2008-09-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David "the Hair" Hyatt.
+
+        Move DataRef, SVGRenderStyle and SVGRenderStyleDefs in render/style.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/DataRef.h: Removed.
+        * rendering/SVGRenderStyle.cpp: Removed.
+        * rendering/SVGRenderStyle.h: Removed.
+        * rendering/SVGRenderStyleDefs.cpp: Removed.
+        * rendering/SVGRenderStyleDefs.h: Removed.
+        * rendering/style/DataRef.h: Copied from rendering/DataRef.h.
+        * rendering/style/SVGRenderStyle.cpp: Copied from rendering/SVGRenderStyle.cpp.
+        * rendering/style/SVGRenderStyle.h: Copied from rendering/SVGRenderStyle.h.
+        * rendering/style/SVGRenderStyleDefs.cpp: Copied from rendering/SVGRenderStyleDefs.cpp.
+        * rendering/style/SVGRenderStyleDefs.h: Copied from rendering/SVGRenderStyleDefs.h.
+
 2008-09-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
