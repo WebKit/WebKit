@@ -380,7 +380,7 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& p) const
 
     return p;
 }
- 
+
 void Widget::releasePlatformWidget()
 {
     HardRelease(m_widget);

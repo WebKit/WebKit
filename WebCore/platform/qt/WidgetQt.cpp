@@ -182,47 +182,6 @@ void Widget::geometryChanged() const
 {
 }
 
-IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
-{
-    IntPoint windowPoint = point;
-    for (const Widget *parentWidget = parent(), *childWidget = this;
-         parentWidget;
-         childWidget = parentWidget, parentWidget = parentWidget->parent()) {
-        IntPoint oldPoint = windowPoint;
-        windowPoint = parentWidget->convertChildToSelf(childWidget, oldPoint);
-    }
-    return windowPoint;
-}
-
-IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
-{
-    IntPoint widgetPoint = point;
-    for (const Widget *parentWidget = parent(), *childWidget = this;
-         parentWidget;
-         childWidget = parentWidget, parentWidget = parentWidget->parent()) {
-        IntPoint oldPoint = widgetPoint;
-        widgetPoint = parentWidget->convertSelfToChild(childWidget, oldPoint);
-    }
-    return widgetPoint;
-}
-
-IntRect Widget::convertToContainingWindow(const IntRect& rect) const
-{
-    IntRect convertedRect = rect;
-    convertedRect.setLocation(convertToContainingWindow(convertedRect.location()));
-    return convertedRect;
-}
-
-IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) const
-{
-    return IntPoint(point.x() + child->x(), point.y() + child->y());
-}
-
-IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
-{
-    return IntPoint(point.x() - child->x(), point.y() - child->y());
-}
-
 }
 
 // vim: ts=4 sw=4 et

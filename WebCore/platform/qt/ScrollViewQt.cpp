@@ -330,20 +330,9 @@ IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
     return convertToContainingWindow(viewPoint);
 }
 
-IntPoint ScrollView::convertChildToSelf(const Widget* child, const IntPoint& point) const
+bool ScrollView::isScrollViewScrollbar(const Widget* child) const
 {
-    IntPoint newPoint = point;
-    if (child != m_data->m_hBar && child != m_data->m_vBar)
-        newPoint = point - scrollOffset();
-    return Widget::convertChildToSelf(child, newPoint);
-}
-
-IntPoint ScrollView::convertSelfToChild(const Widget* child, const IntPoint& point) const
-{
-    IntPoint newPoint = point;
-    if (child != m_data->m_hBar && child != m_data->m_vBar)
-        newPoint = point + scrollOffset();
-    return Widget::convertSelfToChild(child, newPoint);
+    return m_data->m_hBar == child || m_data->m_vBar == child;
 }
 
 IntSize ScrollView::scrollOffset() const

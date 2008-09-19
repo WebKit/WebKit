@@ -63,6 +63,34 @@ ScrollView* Widget::root() const
 }
     
 #if !PLATFORM(MAC)
+
+IntRect Widget::convertToContainingWindow(const IntRect& rect) const
+{
+    IntRect convertedRect = rect;
+    convertedRect.setLocation(convertToContainingWindow(convertedRect.location()));
+    return convertedRect;
+}
+
+IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
+{
+    IntPoint windowPoint = point;
+    for (const ScrollView *parentScrollView = parent(), *childWidget = this;
+         parentScrollView;
+         childWidget = parentScrollView, parentScrollView = parentScrollView->parent())
+        windowPoint = parentScrollView->convertChildToSelf(childWidget, windowPoint);
+    return windowPoint;
+}
+
+IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
+{
+    IntPoint widgetPoint = point;
+    for (const ScrollView *parentScrollView = parent(), *childWidget = this;
+         parentScrollView;
+         childWidget = parentScrollView, parentScrollView = parentScrollView->parent())
+        widgetPoint = parentScrollView->convertSelfToChild(childWidget, widgetPoint);
+    return widgetPoint;
+}
+
 void Widget::releasePlatformWidget()
 {
 }

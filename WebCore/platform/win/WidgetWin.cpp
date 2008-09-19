@@ -98,43 +98,6 @@ void Widget::setCursor(const Cursor& cursor)
     }
 }
 
-IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
-{
-    IntPoint windowPoint = point;
-    for (const Widget *parentWidget = parent(), *childWidget = this;
-         parentWidget;
-         childWidget = parentWidget, parentWidget = parentWidget->parent())
-        windowPoint = parentWidget->convertChildToSelf(childWidget, windowPoint);
-    return windowPoint;
-}
-
-IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
-{
-    IntPoint widgetPoint = point;
-    for (const Widget *parentWidget = parent(), *childWidget = this;
-         parentWidget;
-         childWidget = parentWidget, parentWidget = parentWidget->parent())
-        widgetPoint = parentWidget->convertSelfToChild(childWidget, widgetPoint);
-    return widgetPoint;
-}
-
-IntRect Widget::convertToContainingWindow(const IntRect& rect) const
-{
-    IntRect convertedRect = rect;
-    convertedRect.setLocation(convertToContainingWindow(convertedRect.location()));
-    return convertedRect;
-}
-
-IntPoint Widget::convertChildToSelf(const Widget* child, const IntPoint& point) const
-{
-    return IntPoint(point.x() + child->x(), point.y() + child->y());
-}
-
-IntPoint Widget::convertSelfToChild(const Widget* child, const IntPoint& point) const
-{
-    return IntPoint(point.x() - child->x(), point.y() - child->y());
-}
-
 void Widget::paint(GraphicsContext*, const IntRect&)
 {
 }

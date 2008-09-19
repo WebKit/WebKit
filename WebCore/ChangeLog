@@ -1,5 +1,37 @@
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
+        Consolidate convertTo/FromContainingWindow methods so that all platforms
+        but Mac share the same code.
+
+        Move convertSelfToChild and convertChildToSelf to ScrollView, since
+        Widget should know nothing about children.  Make the methods cross-platform
+        on ScrollView.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindow):
+        * platform/Widget.h:
+        (WebCore::Widget::geometryChanged):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::isScrollViewScrollbar):
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::isScrollViewScrollbar):
+        * platform/mac/WidgetMac.mm:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::isScrollViewScrollbar):
+        * platform/qt/WidgetQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::isScrollViewScrollbar):
+        * platform/win/WidgetWin.cpp:
+
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
         Make the conversion methods that go to and from some containingWindow
         cross-platform.  Implement them on Mac.
 

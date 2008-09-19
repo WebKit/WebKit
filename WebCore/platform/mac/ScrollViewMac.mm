@@ -279,6 +279,12 @@ void ScrollView::update()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+bool ScrollView::isScrollViewScrollbar(const Widget* child) const
+{
+    // Mac uses native NSScrollViews, so a child will never be one of those native NSScrollers.
+    return false;
+}
+
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
