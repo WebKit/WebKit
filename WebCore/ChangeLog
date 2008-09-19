@@ -2,6 +2,18 @@
 
         Reviewed by Simon Hausmann.
 
+        [qtwebkit] Set the m_should* flags to their proper value on entry
+        With plugins it was possible that we finished a job twice. This was
+        some kind of reentrancy in QNetworkReplyHandler::sendQueuedItems. By
+        setting the flag to (m_loadMode == LoadDeferred) they will always have
+        the right value and we will not send responses twice.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+
+2008-09-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
         [qtwebkit] Pass test 70 of acid3. Handle text decoding errors
         Handle text decoding errors before instructing the parser to parse. We
         have converted the text to QString and all encoding errors are gone and

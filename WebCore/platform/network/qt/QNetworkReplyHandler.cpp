@@ -194,7 +194,7 @@ QNetworkReply* QNetworkReplyHandler::release()
 
 void QNetworkReplyHandler::finish()
 {
-    m_shouldFinish = true;
+    m_shouldFinish = (m_loadMode == LoadDeferred);
     if (m_loadMode == LoadDeferred)
         return;
 
@@ -230,7 +230,7 @@ void QNetworkReplyHandler::finish()
 
 void QNetworkReplyHandler::sendResponseIfNeeded()
 {
-    m_shouldSendResponse = true;
+    m_shouldSendResponse = (m_loadMode == LoadDeferred);
     if (m_loadMode == LoadDeferred)
         return;
 
@@ -312,7 +312,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
 void QNetworkReplyHandler::forwardData()
 {
-    m_shouldForwardData = true;
+    m_shouldForwardData = (m_loadMode == LoadDeferred);
     if (m_loadMode == LoadDeferred)
         return;
 
