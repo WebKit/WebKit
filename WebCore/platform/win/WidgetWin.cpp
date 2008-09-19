@@ -47,7 +47,6 @@ Widget::Widget()
     : data(0)
 {
     init();
-    data->containingWindow = 0;
 }
 
 Widget::Widget(PlatformWidget widget)

@@ -39,6 +39,7 @@ void Widget::init()
     m_widget = 0;
     m_selfVisible = false;
     m_parentVisible = false;
+    m_containingWindow = 0;
 }
 
 void Widget::setParent(ScrollView* view)
