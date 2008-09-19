@@ -169,7 +169,7 @@ bool RenderTableSection::ensureRows(int numRows)
             m_grid.grow(numRows);
         }
         m_gridRows = numRows;
-        int nCols = table()->numEffCols();
+        int nCols = max(1, table()->numEffCols());
         CellStruct emptyCellStruct;
         emptyCellStruct.cell = 0;
         emptyCellStruct.inColSpan = false;

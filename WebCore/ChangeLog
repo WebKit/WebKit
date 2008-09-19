@@ -1,3 +1,15 @@
+2008-09-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for <rdar://problem/6231308> crash in AutoTableLayout
+
+        The code assumes later on that a TableSection's grid's row vector 
+        will never be empty. So make 1 the minimum number of columns.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows):
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Add a new ScrollbarButtonsPlacement type for specifying where

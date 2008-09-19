@@ -1,3 +1,14 @@
+2008-09-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test for <rdar://problem/6231308> crash in AutoTableLayout
+
+        * fast/table/empty-row-crash.html: Added.
+        * platform/mac/fast/table/empty-row-crash-expected.checksum: Added.
+        * platform/mac/fast/table/empty-row-crash-expected.png: Added.
+        * platform/mac/fast/table/empty-row-crash-expected.txt: Added.
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 20941.
