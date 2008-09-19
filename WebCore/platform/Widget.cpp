@@ -74,7 +74,8 @@ IntRect Widget::convertToContainingWindow(const IntRect& rect) const
 IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
 {
     IntPoint windowPoint = point;
-    for (const ScrollView *parentScrollView = parent(), *childWidget = this;
+    const Widget* childWidget = this;
+    for (const ScrollView* parentScrollView = parent();
          parentScrollView;
          childWidget = parentScrollView, parentScrollView = parentScrollView->parent())
         windowPoint = parentScrollView->convertChildToSelf(childWidget, windowPoint);
@@ -84,7 +85,8 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& point) const
 IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {
     IntPoint widgetPoint = point;
-    for (const ScrollView *parentScrollView = parent(), *childWidget = this;
+    const Widget* childWidget = this;
+    for (const ScrollView* parentScrollView = parent();
          parentScrollView;
          childWidget = parentScrollView, parentScrollView = parentScrollView->parent())
         widgetPoint = parentScrollView->convertSelfToChild(childWidget, widgetPoint);
