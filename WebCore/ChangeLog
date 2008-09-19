@@ -74,6 +74,19 @@
 
 2008-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Build fix.
+
+        [qt] Build fixes after the Widget/ScrollView cleanup
+        topLevel() is now root()
+
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::addChild):
+        (WebCore::ScrollView::removeChild):
+
+2008-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=20437

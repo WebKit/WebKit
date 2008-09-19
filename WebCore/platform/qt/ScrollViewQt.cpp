@@ -161,7 +161,7 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
-    if (!m_hasStaticBackground && !m_view->topLevel()->hasNativeWidgets()) {
+    if (!m_hasStaticBackground && !m_view->root()->hasNativeWidgets()) {
        m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(),
                                   scrollViewRect, clipRect);
     } else  {
@@ -629,13 +629,13 @@ void ScrollView::addChild(Widget* child)
     m_data->m_children.add(child);
 
     if (child->platformWidget())
-        topLevel()->incrementNativeWidgetCount();
+        root()->incrementNativeWidgetCount();
 }
 
 void ScrollView::removeChild(Widget* child)
 {
     if (child->platformWidget())
-        topLevel()->decrementNativeWidgetCount();
+        root()->decrementNativeWidgetCount();
 
     child->setParent(0);
     child->hide();
