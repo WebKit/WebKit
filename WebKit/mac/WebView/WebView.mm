@@ -1922,6 +1922,10 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+#ifndef NDEBUG
+    WTF::RefCountedLeakCounter::suppressMessages(webViewIsOpen);
+#endif
+    
     WebPreferences *standardPreferences = [WebPreferences standardPreferences];
     [standardPreferences willAddToWebView];
 
@@ -2013,10 +2017,6 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     }
 #endif
 
-#ifndef NDEBUG
-    WTF::RefCountedLeakCounter::suppressMessages(webViewIsOpen);
-#endif
-    
     _private = [[WebViewPrivate alloc] init];
     [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];
