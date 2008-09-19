@@ -696,7 +696,7 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 
 bool ScrollView::isScrollViewScrollbar(const Widget* child) const
 {
-    return m_data->m_hBar == child || m_data->m_vBar == child;
+    return m_data->hBar == child || m_data->vBar == child;
 }
 
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
