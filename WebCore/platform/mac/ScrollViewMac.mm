@@ -217,16 +217,11 @@ void ScrollView::addChild(Widget* child)
 {
     ASSERT(child != this);
 
+    child->setParent(this);
     if (!child->platformWidget()) {
         child->setContainingWindow(containingWindow());
         return;
     }
-
-#ifndef NDEBUG
-    NSView *subview = child->getOuterView();    
-    LOG(Frames, "Adding %p %@ with size w %d h %d\n", subview,
-        [(id)[subview class] className], (int)[subview frame].size.width, (int)[subview frame].size.height);
-#endif
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *parentView = documentView();
@@ -241,8 +236,6 @@ void ScrollView::addChild(Widget* child)
         [parentView addSubview:subview];
     [window _setNeedsToResetDragMargins:resetDragMargins];
     END_BLOCK_OBJC_EXCEPTIONS;
-    
-    child->setParent(this);
 }
 
 void ScrollView::removeChild(Widget* child)
