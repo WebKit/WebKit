@@ -102,8 +102,7 @@ class WidgetPrivate;
 //
 class Widget {
 public:
-    Widget();
-    Widget(PlatformWidget);
+    Widget(PlatformWidget = 0);
     virtual ~Widget();
     
     PlatformWidget platformWidget() const { return m_widget; }
@@ -187,7 +186,7 @@ public:
 #endif
 
 private:
-    void init(); // Must be called by all Widget constructors to initialize cross-platform data.
+    void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.
 
     void releasePlatformWidget();
     void retainPlatformWidget();
@@ -202,7 +201,7 @@ private:
     PlatformWindow m_containingWindow; // Not used when a native widget exists.
 
 #if PLATFORM(MAC) || PLATFORM(GTK)
-    WidgetPrivate* data;
+    WidgetPrivate* m_data;
 #endif
 };
 

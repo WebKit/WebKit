@@ -1,5 +1,36 @@
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
+        Move to only one constructor for Widgets.  Rename data to m_data and make
+        it have an #ifdef only for platforms that have platform-specific data (Mac
+        and Gtk).
+
+        Reviewed by Sam Weinig
+
+        * WebCore.base.exp:
+        * platform/Widget.cpp:
+        (WebCore::Widget::init):
+        * platform/Widget.h:
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::cursor):
+        (WebCore::Widget::setCursor):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::addToSuperview):
+        (WebCore::Widget::removeFromSuperview):
+        (WebCore::Widget::beforeMouseDown):
+        (WebCore::Widget::afterMouseDown):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::Widget):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::Widget):
+
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
         Move Qt's isNPAPIPlugin boolean from Widget down to PluginView, since there
         was no reason for it to be on Widget.  This change eliminates Qt ifdefs
         from Widget.

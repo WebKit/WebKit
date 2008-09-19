@@ -75,25 +75,18 @@ static void safeRemoveFromSuperview(NSView *view)
     [window _setNeedsToResetDragMargins:resetDragMargins];
 }
 
-Widget::Widget() : data(new WidgetPrivate)
+Widget::Widget(NSView* view)
+    : m_data(new WidgetPrivate)
 {
-    init();
-    data->mustStayInWindow = false;
-    data->removeFromSuperviewSoon = false;
-}
-
-Widget::Widget(NSView* view) : data(new WidgetPrivate)
-{
-    init();
-    setPlatformWidget(view);
-    data->mustStayInWindow = false;
-    data->removeFromSuperviewSoon = false;
+    init(view);
+    m_data->mustStayInWindow = false;
+    m_data->removeFromSuperviewSoon = false;
 }
 
 Widget::~Widget()
 {
     releasePlatformWidget();
-    delete data;
+    delete m_data;
 }
 
 // FIXME: Should move this to Chrome; bad layering that this knows about Frame.
@@ -268,7 +261,7 @@ void Widget::addToSuperview(NSView *view)
     [window _setNeedsToResetDragMargins:NO];
     if ([subview superview] != view)
         [view addSubview:subview];
-    data->removeFromSuperviewSoon = false;
+    m_data->removeFromSuperviewSoon = false;
     [window _setNeedsToResetDragMargins:resetDragMargins];
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -276,10 +269,10 @@ void Widget::addToSuperview(NSView *view)
 
 void Widget::removeFromSuperview()
 {
-    if (data->mustStayInWindow)
-        data->removeFromSuperviewSoon = true;
+    if (m_data->mustStayInWindow)
+        m_data->removeFromSuperviewSoon = true;
     else {
-        data->removeFromSuperviewSoon = false;
+        m_data->removeFromSuperviewSoon = false;
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         safeRemoveFromSuperview(getOuterView());
         END_BLOCK_OBJC_EXCEPTIONS;
@@ -290,8 +283,8 @@ void Widget::beforeMouseDown(NSView *view, Widget* widget)
 {
     if (widget) {
         ASSERT(view == widget->getOuterView());
-        ASSERT(!widget->data->mustStayInWindow);
-        widget->data->mustStayInWindow = true;
+        ASSERT(!widget->m_data->mustStayInWindow);
+        widget->m_data->mustStayInWindow = true;
     }
 }
 
@@ -302,9 +295,9 @@ void Widget::afterMouseDown(NSView *view, Widget* widget)
         safeRemoveFromSuperview(view);
         END_BLOCK_OBJC_EXCEPTIONS;
     } else {
-        ASSERT(widget->data->mustStayInWindow);
-        widget->data->mustStayInWindow = false;
-        if (widget->data->removeFromSuperviewSoon)
+        ASSERT(widget->m_data->mustStayInWindow);
+        widget->m_data->mustStayInWindow = false;
+        if (widget->m_data->removeFromSuperviewSoon)
             widget->removeFromSuperview();
     }
 }

@@ -45,25 +45,17 @@ public:
     GdkCursor* cursor;
 };
 
-Widget::Widget()
-    : data(new WidgetPrivate)
-{
-    init();
-    data->cursor = 0;
-}
-
 Widget::Widget(PlatformWidget widget)
-    : data(new WidgetPrivate)
+    : m_data(new WidgetPrivate)
 {
-    init();
-    m_widget = widget;
-    data->cursor = 0;
+    init(widget);
+    m_data->cursor = 0;
 }
 
 Widget::~Widget()
 {
     ASSERT(!parent());
-    delete data;
+    delete m_data;
 }
 
 PlatformWidget Widget::containingWindow() const
@@ -78,7 +70,7 @@ void Widget::setFocus()
 
 Cursor Widget::cursor()
 {
-    return Cursor(data->cursor);
+    return Cursor(m_data->cursor);
 }
 
 static GdkDrawable* gdkDrawable(PlatformWidget widget)
@@ -96,11 +88,11 @@ void Widget::setCursor(const Cursor& cursor)
     // gdk_window_set_cursor() in certain GDK backends seems to be an
     // expensive operation, so avoid it if possible.
 
-    if (pcur == data->cursor)
+    if (pcur == m_data->cursor)
         return;
 
     gdk_window_set_cursor(gdkDrawable(platformWidget()) ? GDK_WINDOW(gdkDrawable(platformWidget())) : GTK_WIDGET(containingWindow())->window, pcur);
-    data->cursor = pcur;
+    m_data->cursor = pcur;
 }
 
 void Widget::show()
