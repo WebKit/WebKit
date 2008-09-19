@@ -39,6 +39,7 @@
 #include "ContextMenuItem.h"
 #include "CookieJar.h"
 #include "Cursor.h"
+#include "DNS.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DragController.h"
@@ -183,4 +184,7 @@ const char* currentTextBreakLocaleID() { notImplemented(); return "en_us"; }
 String KURL::fileSystemPath() const { notImplemented(); return String(); }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
+
+void prefetchDNS(const String& hostname) { notImplemented(); }
+
 }

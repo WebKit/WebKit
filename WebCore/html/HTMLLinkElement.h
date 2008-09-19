@@ -93,7 +93,7 @@ public:
 
     virtual bool isURLAttribute(Attribute*) const;
     
-    static void tokenizeRelAttribute(const AtomicString& value, bool& stylesheet, bool& alternate, bool& icon);
+    static void tokenizeRelAttribute(const AtomicString& value, bool& stylesheet, bool& alternate, bool& icon, bool& dnsPrefetch);
 
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
@@ -111,6 +111,7 @@ protected:
     bool m_alternate;
     bool m_isStyleSheet;
     bool m_isIcon;
+    bool m_isDNSPrefetch;
     bool m_createdByParser;
 };
 

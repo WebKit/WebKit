@@ -25,10 +25,12 @@
 
 #include "CSSHelper.h"
 #include "CachedCSSStyleSheet.h"
+#include "DNS.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
@@ -48,6 +50,7 @@ HTMLLinkElement::HTMLLinkElement(Document *doc)
     , m_alternate(false)
     , m_isStyleSheet(false)
     , m_isIcon(false)
+    , m_isDNSPrefetch(false)
     , m_createdByParser(false)
 {
 }
@@ -107,7 +110,7 @@ StyleSheet* HTMLLinkElement::sheet() const
 void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == relAttr) {
-        tokenizeRelAttribute(attr->value(), m_isStyleSheet, m_alternate, m_isIcon);
+        tokenizeRelAttribute(attr->value(), m_isStyleSheet, m_alternate, m_isIcon, m_isDNSPrefetch);
         process();
     } else if (attr->name() == hrefAttr) {
         m_url = document()->completeURL(parseURL(attr->value())).string();
@@ -127,15 +130,18 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, bool& styleSheet, bool& alternate, bool& icon)
+void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, bool& styleSheet, bool& alternate, bool& icon, bool& dnsPrefetch)
 {
     styleSheet = false;
     icon = false; 
     alternate = false;
+    dnsPrefetch = false;
     if (equalIgnoringCase(rel, "stylesheet"))
         styleSheet = true;
     else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
         icon = true;
+    else if (equalIgnoringCase(rel, "dns-prefetch"))
+        dnsPrefetch = true;
     else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
         styleSheet = true;
         alternate = true;
@@ -168,6 +174,9 @@ void HTMLLinkElement::process()
     // We'll record this URL per document, even if we later only use it in top level frames
     if (m_isIcon && !m_url.isEmpty())
         document()->setIconURL(m_url, type);
+
+    if (m_isDNSPrefetch && !m_url.isEmpty())
+        prefetchDNS(KURL(m_url).host());
 
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh

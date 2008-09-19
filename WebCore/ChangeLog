@@ -1,3 +1,47 @@
+2008-09-18  Collin Jackson  <collinj@webkit.org>
+
+        Reviewed by Antti Koivisto and Mark Rowe.
+
+        Test: http/tests/misc/dns-prefetch-control.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=20690
+
+        Invoke WebCore::prefetchDNS() on host names that appear in
+        in the href of hyperlinks and <link rel="dns-prefetch">. This 
+        can be used to implement DNS prefetching.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::setSecurityOrigin):
+        (WebCore::Document::initDNSPrefetch):
+        (WebCore::Document::parseDNSPrefetchControlHeader):
+        * dom/Document.h:
+        (WebCore::Document::isDNSPrefetchEnabled):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLLinkElement.h:
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::processAttribute):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        (WebCore::prefetchDNS):
+        * platform/network/DNS.h: Added.
+        * platform/network/cf/DNSCFNet.cpp: Added.
+        (WebCore::prefetchDNS):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::prefetchDNS):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (WebCore::prefetchDNS):
+
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
         Eliminate the convertToScreenCoordinate method on Widget, since

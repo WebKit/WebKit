@@ -762,6 +762,10 @@ public:
     CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
     
+    bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
+    void initDNSPrefetch();
+    void parseDNSPrefetchControlHeader(const String&);
+
 protected:
     Document(Frame*, bool isXHTML);
 
@@ -865,6 +869,9 @@ private:
     bool m_usesFirstLineRules;
     bool m_usesFirstLetterRules;
     bool m_gotoAnchorNeededAfterStylesheetsLoad;
+
+    bool m_isDNSPrefetchEnabled;
+    bool m_haveExplicitlyDisabledDNSPrefetch;
 
     String m_title;
     bool m_titleSetExplicitly;

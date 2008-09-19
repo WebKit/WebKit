@@ -1,3 +1,15 @@
+2008-09-18  Collin Jackson  <collinj@webkit.org>
+
+        Reviewed by Antti Koivisto and Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20690
+
+        Add test for DNS prefetch control.
+
+        * http/tests/misc/dns-prefetch-control-expected.txt: Added.
+        * http/tests/misc/dns-prefetch-control.html: Added.
+        * http/tests/misc/resources/dns-prefetch-control.php: Added.
+
 2008-09-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

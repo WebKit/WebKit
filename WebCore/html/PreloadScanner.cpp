@@ -700,8 +700,9 @@ void PreloadScanner::processAttribute()
             bool styleSheet = false;
             bool alternate = false;
             bool icon = false;
-            HTMLLinkElement::tokenizeRelAttribute(value, styleSheet, alternate, icon);
-            m_linkIsStyleSheet = styleSheet && !alternate && !icon;
+            bool dnsPrefetch = false;
+            HTMLLinkElement::tokenizeRelAttribute(value, styleSheet, alternate, icon, dnsPrefetch);
+            m_linkIsStyleSheet = styleSheet && !alternate && !icon && !dnsPrefetch;
         } else if (attribute == charsetAttr)
             m_charset = value;
     }
