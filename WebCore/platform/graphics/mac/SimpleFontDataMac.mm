@@ -408,34 +408,26 @@ CTFontRef SimpleFontData::getCTFont() const
     return m_CTFont.get();
 }
 
-CFDictionaryRef SimpleFontData::getCFStringAttributes(bool ltr) const
+CFDictionaryRef SimpleFontData::getCFStringAttributes() const
 {
-    int index = ltr ? 0 : 1;
+    if (m_CFStringAttributes)
+        return m_CFStringAttributes.get();
 
-    if (!m_CFStringAttributes[index]) {
-        static const float kerningAdjustmentValue = 0;
-        static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
+    static const float kerningAdjustmentValue = 0;
+    static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
 
-        static const int ligaturesNotAllowedValue = 0;
-        static CFNumberRef ligaturesNotAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesNotAllowedValue);
+    static const int ligaturesNotAllowedValue = 0;
+    static CFNumberRef ligaturesNotAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesNotAllowedValue);
 
-        static const int ligaturesAllowedValue = 1;
-        static CFNumberRef ligaturesAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesAllowedValue);
+    static const int ligaturesAllowedValue = 1;
+    static CFNumberRef ligaturesAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesAllowedValue);
 
-        static CTWritingDirection writingDirections[] = { kCTWritingDirectionLeftToRight, kCTWritingDirectionRightToLeft };
-        static CTParagraphStyleSetting ltrParagraphStyleSettings[] = { { kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(CTWritingDirection), &writingDirections[0] } };
-        static CTParagraphStyleSetting rtlParagraphStyleSettings[] = { { kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(CTWritingDirection), &writingDirections[1] } };
+    static const void* attributeKeys[] = { kCTFontAttributeName, kCTKernAttributeName, kCTLigatureAttributeName };
+    const void* attributeValues[] = { getCTFont(), kerningAdjustment, platformData().allowsLigatures() ? ligaturesAllowed : ligaturesNotAllowed };
 
-        static CTParagraphStyleRef ltrParagraphStyle = CTParagraphStyleCreate(ltrParagraphStyleSettings, sizeof(ltrParagraphStyleSettings) / sizeof(*ltrParagraphStyleSettings));
-        static CTParagraphStyleRef rtlParagraphStyle = CTParagraphStyleCreate(rtlParagraphStyleSettings, sizeof(rtlParagraphStyleSettings) / sizeof(*rtlParagraphStyleSettings));
+    m_CFStringAttributes.adoptCF(CFDictionaryCreate(NULL, attributeKeys, attributeValues, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-        static const void* attributeKeys[] = { kCTFontAttributeName, kCTKernAttributeName, kCTLigatureAttributeName, kCTParagraphStyleAttributeName };
-        const void* attributeValues[] = { getCTFont(), kerningAdjustment, platformData().allowsLigatures() ? ligaturesAllowed : ligaturesNotAllowed, ltr ? ltrParagraphStyle : rtlParagraphStyle };
-
-        m_CFStringAttributes[index].adoptCF(CFDictionaryCreate(NULL, attributeKeys, attributeValues, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    }
-
-    return m_CFStringAttributes[index].get();
+    return m_CFStringAttributes.get();
 }
 
 #endif

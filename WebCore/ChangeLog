@@ -1,3 +1,34 @@
+2008-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        This optimization was suggested by Daniel Fenwick
+
+        - speed up measuring text on the Core Text code path by not specifying a paragraph writing direction
+
+        Specifying LTR paragraph directionality when measuring runs of RTL text
+        resulted in typically two CTRuns being generated for every run instad
+        of one, due to the leading space being reordered to the left.
+
+        * platform/graphics/SimpleFontData.h: Removed the ltr parameter to
+        getCFStringAttributes() and changed m_CFStringAttributes from an array
+        to a single value.
+        * platform/graphics/mac/CoreTextController.cpp:
+        (WebCore::CoreTextController::CoreTextController): Added a
+        mayUseNaturalWritingDirection parameter.
+        (WebCore::CoreTextController::collectCoreTextRunsForCharacters): Changed
+        to force the bidi embedding level whenever 
+        m_mayUseNaturalWritingDirectrion is false. Since this is now a common
+        case, made the typesetter options dictionaries static.
+        * platform/graphics/mac/CoreTextController.h:
+        * platform/graphics/mac/FontMacCoreText.cpp:
+        (WebCore::Font::selectionRectForComplexText): Renamed a local variable.
+        (WebCore::Font::floatWidthForComplexText): Changed to allow the
+        CoreTextController to not set the writing direction.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCFStringAttributes): Removed the ltr
+        parameter and the paragraph style attribute.
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig

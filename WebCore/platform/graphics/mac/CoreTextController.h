@@ -37,7 +37,7 @@ namespace WebCore {
 
 class CoreTextController {
 public:
-    CoreTextController(const Font*, const TextRun&);
+    CoreTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false);
 
     // Advance and emit glyphs up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0);
@@ -85,6 +85,7 @@ private:
 
     const Font& m_font;
     const TextRun& m_run;
+    bool m_mayUseNaturalWritingDirection;
 
     Vector<UChar, 256> m_smallCapsBuffer;
 

@@ -100,9 +100,10 @@ CoreTextController::CoreTextRun::CoreTextRun(const SimpleFontData* fontData, con
     m_indices = reinterpret_cast<const CFIndex*>(CFDataGetBytePtr(m_indicesData.get()));
 }
 
-CoreTextController::CoreTextController(const Font* font, const TextRun& run)
+CoreTextController::CoreTextController(const Font* font, const TextRun& run, bool mayUseNaturalWritingDirection)
     : m_font(*font)
     , m_run(run)
+    , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)
     , m_currentCharacter(0)
     , m_end(run.length())
     , m_totalWidth(0)
@@ -360,15 +361,17 @@ void CoreTextController::collectCoreTextRunsForCharacters(const UChar* cp, unsig
 
     RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(NULL, cp, length, kCFAllocatorNull));
 
-    RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(NULL, string.get(), fontData->getCFStringAttributes(m_run.ltr())));
+    RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(NULL, string.get(), fontData->getCFStringAttributes()));
 
     RetainPtr<CTTypesetterRef> typesetter;
 
-    if (m_run.directionalOverride()) {
-        const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
-        const void* optionValues[] = { m_run.ltr() ? kCFBooleanFalse : kCFBooleanTrue };
-        RetainPtr<CFDictionaryRef> typesetterOptions(AdoptCF, CFDictionaryCreate(NULL, optionKeys, optionValues, sizeof(optionKeys) / sizeof(*optionValues), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        typesetter.adoptCF(CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), typesetterOptions.get()));
+    if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride()) {
+        static const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
+        static const void* ltrOptionValues[] = { kCFBooleanFalse };
+        static const void* rtlOptionValues[] = { kCFBooleanTrue };
+        static RetainPtr<CFDictionaryRef> ltrTypesetterOptions(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        static RetainPtr<CFDictionaryRef> rtlTypesetterOptions(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, sizeof(optionKeys) / sizeof(*optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        typesetter.adoptCF(CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), m_run.ltr() ? ltrTypesetterOptions.get() : rtlTypesetterOptions.get()));
     } else
         typesetter.adoptCF(CTTypesetterCreateWithAttributedString(attributedString.get()));
 
