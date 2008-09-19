@@ -58,20 +58,31 @@ static int cThumbMinLength[] = { 26, 20 };
 static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
-static bool gHasSeparateArrows = false;
+static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
+
+static void updateArrowPlacement()
+{
+    NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
+    if ([buttonPlacement isEqualToString:@"Single"])
+        gButtonPlacement = ScrollbarButtonsSingle;
+    else if ([buttonPlacement isEqualToString:@"DoubleMin"])
+        gButtonPlacement = ScrollbarButtonsDoubleStart;
+    else if ([buttonPlacement isEqualToString:@"DoubleBoth"])
+        gButtonPlacement = ScrollbarButtonsDoubleBoth;
+    else
+        gButtonPlacement = ScrollbarButtonsDoubleEnd; // The default is ScrollbarButtonsDoubleEnd.
+}
 
 ScrollbarThemeMac::ScrollbarThemeMac()
 {
     static bool initialized;
     if (!initialized) {
         initialized = true;
+        updateArrowPlacement();
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        if ([defaults objectForKey:@"NSScrollerButtonDelay"]) {
-            gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
-            gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
-            gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
-            gHasSeparateArrows = [defaults boolForKey:@"NSScrollerHasSeparateArrows"];
-        }
+        gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
+        gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
+        gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
     }
 }
 
@@ -94,6 +105,11 @@ double ScrollbarThemeMac::autoscrollTimerDelay()
     return gAutoscrollButtonDelay;
 }
     
+ScrollbarButtonsPlacement ScrollbarThemeMac::buttonsPlacement() const
+{
+    return gButtonPlacement;
+}
+
 bool ScrollbarThemeMac::hasButtons(Scrollbar* scrollbar)
 {
     return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ? 

@@ -1,3 +1,24 @@
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
+        Add a new ScrollbarButtonsPlacement type for specifying where
+        the button arrows are in a scrollbar.
+
+        Read in the placement settings for Mac.  Nothing is done with the
+        setting yet.
+
+        Add a new buttonsPlacement() method to ScrollbarTheme composite
+        so that the arrow settings can be obtained.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollTypes.h:
+        (WebCore::):
+        * platform/ScrollbarThemeComposite.h:
+        (WebCore::ScrollbarThemeComposite::buttonsPlacement):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::updateArrowPlacement):
+        (WebCore::ScrollbarThemeMac::ScrollbarThemeMac):
+
 2008-09-19  Steve Falkenburg  <sfalken@apple.com>
 
         Roll out r36626. It is causing variance in SunSpider numbers on XP.
