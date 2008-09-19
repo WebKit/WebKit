@@ -80,6 +80,11 @@ JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
     return JSStringCreateWithCharacters(0, 0);
 }
 
+AccessibilityUIElement AccessibilityUIElement::titleUIElement()
+{
+    return 0;
+}
+
 JSStringRef AccessibilityUIElement::attributesOfChildren()
 {
     return JSStringCreateWithCharacters(0, 0);

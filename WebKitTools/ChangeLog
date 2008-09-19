@@ -1,3 +1,10 @@
+2008-09-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Fixed Windows bustage
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::titleUIElement):
+
 2008-09-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
