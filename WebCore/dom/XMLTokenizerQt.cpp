@@ -188,6 +188,13 @@ XMLTokenizer::~XMLTokenizer()
 void XMLTokenizer::doWrite(const String& parseString)
 {
     m_wroteText = true;
+
+    if (m_doc->decoder() && m_doc->decoder()->sawError()) {
+        // If the decoder saw an error, report it as fatal (stops parsing)
+        handleError(fatal, "Encoding error", lineNumber(), columnNumber());
+        return;
+    }
+
     QString data(parseString);
     if (!data.isEmpty()) {
 #if QT_VERSION < 0x040400
@@ -213,11 +220,6 @@ void XMLTokenizer::doWrite(const String& parseString)
 #endif
         m_stream.addData(data);
         parse();
-    }
-
-    if (m_doc->decoder() && m_doc->decoder()->sawError()) {
-        // If the decoder saw an error, report it as fatal (stops parsing)
-        handleError(fatal, "Encoding error", lineNumber(), columnNumber());
     }
 
     return;

@@ -1,3 +1,15 @@
+2008-09-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [qtwebkit] Pass test 70 of acid3. Handle text decoding errors
+        Handle text decoding errors before instructing the parser to parse. We
+        have converted the text to QString and all encoding errors are gone and
+        the parser will not be able to detect them. So handle them before parsing.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::doWrite):
+
 2008-09-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
