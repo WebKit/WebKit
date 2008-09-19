@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,16 @@ using namespace JSC;
 
 ASSERT_CLASS_FITS_IN_CELL(JSEventTargetNode)
 
-JSEventTargetNode::JSEventTargetNode(StructureID* structure, Node* node)
+const ClassInfo JSEventTargetNode::s_info = { "EventTargetNode", &JSNode::s_info, 0, 0 };
+
+JSEventTargetNode::JSEventTargetNode(PassRefPtr<StructureID> structure, PassRefPtr<EventTargetNode> node)
     : JSNode(structure, node)
 {
+}
+
+JSObject* JSEventTargetNode::createPrototype(ExecState* exec)
+{
+    return new (exec) JSEventTargetNodePrototype(JSC::StructureID::create(JSNodePrototype::self(exec)));
 }
 
 void JSEventTargetNode::setListener(ExecState* exec, const AtomicString& eventType, JSValue* func) const

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "objc_runtime.h"
 
+#include "JSDOMBinding.h"
 #include "WebScriptObject.h"
 #include "objc_instance.h"
 #include "runtime_array.h"
@@ -36,16 +37,18 @@
 #include <kjs/ObjectPrototype.h>
 #include <wtf/RetainPtr.h>
 
-using namespace JSC;
-using namespace JSC::Bindings;
+using namespace WebCore;
 
-extern ClassStructPtr Bindings::webScriptObjectClass()
+namespace JSC {
+namespace Bindings {
+
+ClassStructPtr webScriptObjectClass()
 {
     static ClassStructPtr<WebScriptObject> webScriptObjectClass = NSClassFromString(@"WebScriptObject");
     return webScriptObjectClass;
 }
 
-extern ClassStructPtr Bindings::webUndefinedClass()
+ClassStructPtr webUndefinedClass()
 {
     static ClassStructPtr<WebUndefined> webUndefinedClass = NSClassFromString(@"WebUndefined");
     return webUndefinedClass;
@@ -201,10 +204,10 @@ unsigned int ObjcArray::getLength() const
     return [_array.get() count];
 }
 
-const ClassInfo ObjcFallbackObjectImp::info = { "ObjcFallbackObject", 0, 0, 0 };
+const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", 0, 0, 0 };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(ExecState* exec, ObjcInstance* i, const Identifier& propertyName)
-    : JSObject(exec->lexicalGlobalObject()->objectPrototype())
+    : JSObject(getDOMStructure<ObjcFallbackObjectImp>(exec))
     , _instance(i)
     , _item(propertyName)
 {
@@ -282,4 +285,7 @@ bool ObjcFallbackObjectImp::toBoolean(ExecState *) const
         return true;
     
     return false;
+}
+
+}
 }

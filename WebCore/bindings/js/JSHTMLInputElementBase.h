@@ -28,7 +28,7 @@ namespace WebCore {
 
     class JSHTMLInputElementBase : public JSHTMLElement {
     public:
-        JSHTMLInputElementBase(JSC::StructureID*, PassRefPtr<HTMLInputElement>);
+        JSHTMLInputElementBase(PassRefPtr<JSC::StructureID>, PassRefPtr<HTMLInputElement>);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;

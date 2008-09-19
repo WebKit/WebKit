@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,22 @@
 #include "config.h"
 #include "runtime_object.h"
 
+#include "JSDOMBinding.h"
 #include "runtime_method.h"
 #include "runtime_root.h"
 #include <kjs/Error.h>
-#include <kjs/JSGlobalObject.h>
 #include <kjs/ObjectPrototype.h>
 
-using namespace JSC;
+using namespace WebCore;
+
+namespace JSC {
+
 using namespace Bindings;
 
 const ClassInfo RuntimeObjectImp::s_info = { "RuntimeObject", 0, 0, 0 };
 
-RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Bindings::Instance> i)
-    : JSObject(exec->lexicalGlobalObject()->objectPrototype())
+RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> i)
+    : JSObject(getDOMStructure<RuntimeObjectImp>(exec))
     , instance(i)
 {
     instance->rootObject()->addRuntimeObject(this);
@@ -59,7 +62,7 @@ void RuntimeObjectImp::invalidate()
 JSValue* RuntimeObjectImp::fallbackObjectGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
-    RefPtr<Bindings::Instance> instance = thisObj->instance;
+    RefPtr<Instance> instance = thisObj->instance;
 
     if (!instance)
         return throwInvalidAccessError(exec);
@@ -77,7 +80,7 @@ JSValue* RuntimeObjectImp::fallbackObjectGetter(ExecState* exec, const Identifie
 JSValue* RuntimeObjectImp::fieldGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {    
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
-    RefPtr<Bindings::Instance> instance = thisObj->instance;
+    RefPtr<Instance> instance = thisObj->instance;
 
     if (!instance)
         return throwInvalidAccessError(exec);
@@ -96,7 +99,7 @@ JSValue* RuntimeObjectImp::fieldGetter(ExecState* exec, const Identifier& proper
 JSValue* RuntimeObjectImp::methodGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
-    RefPtr<Bindings::Instance> instance = thisObj->instance;
+    RefPtr<Instance> instance = thisObj->instance;
 
     if (!instance)
         return throwInvalidAccessError(exec);
@@ -163,7 +166,7 @@ void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSVa
         return;
     }
     
-    RefPtr<Bindings::Instance> protector(instance);
+    RefPtr<Instance> protector(instance);
     instance->begin();
 
     // Set the value of the property.
@@ -187,7 +190,7 @@ JSValue* RuntimeObjectImp::defaultValue(ExecState* exec, PreferredPrimitiveType 
     if (!instance)
         return throwInvalidAccessError(exec);
     
-    RefPtr<Bindings::Instance> protector(instance);
+    RefPtr<Instance> protector(instance);
     instance->begin();
     JSValue* result = instance->defaultValue(exec, hint);
     instance->end();
@@ -196,7 +199,7 @@ JSValue* RuntimeObjectImp::defaultValue(ExecState* exec, PreferredPrimitiveType 
 
 static JSValue* callRuntimeObject(ExecState* exec, JSObject* function, JSValue*, const ArgList& args)
 {
-    RefPtr<Bindings::Instance> instance(static_cast<RuntimeObjectImp*>(function)->getInternalInstance());
+    RefPtr<Instance> instance(static_cast<RuntimeObjectImp*>(function)->getInternalInstance());
     instance->begin();
     JSValue* result = instance->invokeDefaultMethod(exec, args);
     instance->end();
@@ -226,4 +229,6 @@ void RuntimeObjectImp::getPropertyNames(ExecState* exec, PropertyNameArray& prop
 JSObject* RuntimeObjectImp::throwInvalidAccessError(ExecState* exec)
 {
     return throwError(exec, ReferenceError, "Trying to access object from destroyed plug-in.");
+}
+
 }

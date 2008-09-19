@@ -72,6 +72,12 @@ void JSDOMWindow::mark()
     for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
         it->second->mark();
 
+    JSDOMConstructorMap::iterator end2 = constructors().end();
+    for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2) {
+        if (!it2->second->marked())
+            it2->second->mark();
+    }
+
     Base::mark();
 }
 

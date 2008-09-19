@@ -141,8 +141,8 @@ namespace JSC {
         }
 
     protected:
-        JSGlobalObject(JSObject* prototype, JSGlobalObjectData* d, JSObject* globalThisValue)
-            : JSVariableObject(prototype, d)
+        JSGlobalObject(PassRefPtr<StructureID> structure, JSGlobalObjectData* data, JSObject* globalThisValue)
+            : JSVariableObject(structure, data)
         {
             init(globalThisValue);
         }

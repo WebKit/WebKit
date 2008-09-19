@@ -33,7 +33,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSXMLHttpRequestConstructor)
 const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstructor", 0, 0, 0 };
 
 JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Document* document)
-    : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+    : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
     , m_document(document)
 {
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);

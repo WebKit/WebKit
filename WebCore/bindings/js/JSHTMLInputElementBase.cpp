@@ -59,8 +59,8 @@ JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObje
 
 const ClassInfo JSHTMLInputElementBase::s_info = { "HTMLInputElementBase", &JSHTMLElement::s_info, &JSHTMLInputElementBaseTable, 0 };
 
-JSHTMLInputElementBase::JSHTMLInputElementBase(JSC::StructureID* structure, PassRefPtr<HTMLInputElement> e)
-    : JSHTMLElement(structure, e.get())
+JSHTMLInputElementBase::JSHTMLInputElementBase(PassRefPtr<JSC::StructureID> structure, PassRefPtr<HTMLInputElement> e)
+    : JSHTMLElement(structure, e)
 {
 }
 

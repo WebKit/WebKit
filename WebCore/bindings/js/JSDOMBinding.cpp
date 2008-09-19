@@ -224,7 +224,7 @@ JSValue* jsStringOrNull(ExecState* exec, const String& s)
     return jsString(exec, s);
 }
 
-JSValue* jsOwnedStringOrNull(ExecState* exec, const JSC::UString& s)
+JSValue* jsOwnedStringOrNull(ExecState* exec, const UString& s)
 {
     if (s.isNull())
         return jsNull();
@@ -373,17 +373,30 @@ ExecState* execStateFromNode(Node* node)
     return frame->script()->globalObject()->globalExec();
 }
 
-JSC::StructureID* getCachedDOMStructure(JSC::ExecState* exec, const JSC::ClassInfo* classInfo)
+StructureID* getCachedDOMStructure(ExecState* exec, const ClassInfo* classInfo)
 {
     JSDOMStructureMap& structures = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->structures();
     return structures.get(classInfo).get();
 }
 
-JSC::StructureID* createDOMStructure(JSC::ExecState* exec, const JSC::ClassInfo* classInfo, JSC::JSObject* prototype)
+StructureID* createDOMStructure(ExecState* exec, const ClassInfo* classInfo, JSObject* prototype)
 {
     JSDOMStructureMap& structures = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->structures();
     ASSERT(!structures.contains(classInfo));
     return structures.set(classInfo, StructureID::create(prototype)).first->second.get();
+}
+
+JSObject* getCachedDOMConstructor(ExecState* exec, const ClassInfo* classInfo)
+{
+    JSDOMConstructorMap& constructors = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->constructors();
+    return constructors.get(classInfo);
+}
+
+void cacheDOMConstructor(ExecState* exec, const ClassInfo* classInfo, JSObject* constructor)
+{
+    JSDOMConstructorMap& constructors = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->constructors();
+    ASSERT(!constructors.contains(classInfo));
+    constructors.set(classInfo, constructor);
 }
 
 } // namespace WebCore

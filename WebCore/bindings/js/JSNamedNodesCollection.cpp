@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,8 @@ const ClassInfo JSNamedNodesCollection::s_info = { "Collection", 0, 0, 0 };
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
-JSNamedNodesCollection::JSNamedNodesCollection(JSC::JSObject* prototype, const Vector<RefPtr<Node> >& nodes)
-    : DOMObject(prototype)
+JSNamedNodesCollection::JSNamedNodesCollection(ExecState* exec, const Vector<RefPtr<Node> >& nodes)
+    : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
     , m_nodes(new Vector<RefPtr<Node> >(nodes))
 {
 }

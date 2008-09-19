@@ -38,7 +38,6 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
     private:
-        JSInspectedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, JSC::JSObject* wrappedPrototype);
         JSInspectedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::StructureID>);
 
         virtual bool allowsGetProperty() const { return true; }

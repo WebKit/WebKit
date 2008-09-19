@@ -1,3 +1,157 @@
+2008-09-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - part 2 of https://bugs.webkit.org/show_bug.cgi?id=20858
+          make each distinct C++ class get a distinct JSC::Structure
+
+          + Fixed all cases where we were using a shared structure for multiple
+            C++ classes in WebCore. This still has to be done in JavaScriptCore.
+
+          + Got rid of cacheGlobalObject.
+
+          + Improved use of PassRefPtr in bindings code.
+
+          + Removed a couple cases where we were potentially allocating prototypes
+            inside a JSObject's construction process -- this can lead to trouble if
+            we do a garbage collection while an object is only partly constructed.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor): Create a structure explicitly
+        so we don't implicitly share the structure with other objects that use the object
+        prototype.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMConstructor): Added. To be used for constructors so we
+        don't need cacheGlobalObject any more.
+        (WebCore::cacheDOMConstructor): Ditto.
+
+        * bindings/js/JSDOMBinding.h: Removed DOMObject constructor that takes a prototype.
+        Added functions and a function template for getting cached DOM constructors.
+        Removed cacheGlobalObject function template.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase): Take a PassRefPtr<DOMWindow> since
+        we're taking ownership.
+        * bindings/js/JSDOMWindowBase.h: Changed constructor to take PassRefPtr, since
+        we're taking ownership. Added constructor map.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::mark): Mark the constructors in the map.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell): Take a PassRefPtr<DOMWindow> since
+        we're taking ownership. Use the new setWindow function to create the JSDOMWindow;
+        this is now done in only that one place.
+        (WebCore::JSDOMWindowShell::setWindow): Added. Creates the JSDOMWindow based on
+        the passed-in DOMWindow. Code was moved here and changed to allocate unique
+        structures for both the window prototype and the window.
+        * bindings/js/JSDOMWindowShell.h: Ditto.
+
+        * bindings/js/JSEventTargetBase.h: Changed class template argument so it doesn't
+        have the same name (JSEventTarget) as an actual class. Removed unhelpful use of
+        private/friend in JSEventTargetBase. Removed comments referring to defunct
+        macros. Changed JSEventTargetBasePrototype to get the prototype with the new
+        rather than its own copy of cacheGlobalObject (I missed this during pass 1).
+        Changed JSEventTargetBasePrototype so it doesn't have so many template arguments.
+
+        * bindings/js/JSEventTargetNode.cpp: Added s_info; needed for the new scheme
+        for caching structures and prototypes.
+        (WebCore::JSEventTargetNode::JSEventTargetNode): Use PassRefPtr.
+        (WebCore::JSEventTargetNode::createPrototype): Added.
+        * bindings/js/JSEventTargetNode.h: Updated for above changes.
+
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::JSHTMLAllCollection): Use PassRefPtr.
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems): Pass ExecState instead of prototype.
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter): Ditto.
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::JSHTMLInputElementBase): Use PassRefPtr.
+        * bindings/js/JSHTMLInputElementBase.h: Ditto.
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        Create a unique structure instead of sharing.
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor): Ditto.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap): Removed overload that takes
+        a prototype rather than a structure. Made the use of inheritorID() here
+        explicit.
+        * bindings/js/JSInspectedObjectWrapper.h: Ditto.
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap): Ditto.
+        * bindings/js/JSInspectorCallbackWrapper.h: Ditto.
+
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::JSNamedNodesCollection): Changed to
+        take an ExecState argument instead of a prototype. Create a unique
+        StructureID instead of sharing.
+        * bindings/js/JSNamedNodesCollection.h: Ditto.
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp: Removed overloaded
+        constructor that takes a prototype instead of a structure.
+        * bindings/js/JSQuarantinedObjectWrapper.h: Ditto.
+
+        * bindings/js/JSRGBColor.cpp:
+        (WebCore::JSRGBColor::JSRGBColor): Take ExecState instead of a
+        prototype; create a unique structure.
+        (WebCore::getJSRGBColor): Ditto.
+        * bindings/js/JSRGBColor.h: Ditto.
+
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item): Use constructEmptyObject instead
+        of explicit coding the idiom for making a new object.
+
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        Create a unique structure instead of the shared one.
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+        Ditto.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell): Let the window shell's
+        setWindow function create the JSDOMWindow instead of doing it here.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Changed to use PassRefPtr for
+        the structure and the wrapped object when creating wrappers.
+        Simplified some of the special cases for DOMWindow so they are
+        different only in ways the need to be. Eliminated the
+        JSDOMWindow::createPrototype and JSDOMWindowPrototype::self
+        functions. Moved responsibility for creating the structure and
+        parent prototype out of the prototype constructor into the
+        createPrototype function. Removed the unused "DoNotCache" flag for
+        objects other than DOMWindow. Use getDOMConstructor instead of
+        cacheGlobalObject for constructors. Make each constructor have
+        a unique structure ID.
+
+        * bridge/objc/objc_runtime.h: Added createPrototype and changed the
+        name of the info member to s_info so we can use the standard DOM
+        binding macros to handl the prototype.
+        * bridge/objc/objc_runtime.mm: Fixed namespacing a bit.
+        (JSC::Bindings::ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        Create a unique structure using getDOMStructure.
+
+        * bridge/runtime_array.cpp: Fixed namespacing a bit.
+        (JSC::RuntimeArray::RuntimeArray): Create a unique structure using
+        getDOMStructure.
+        * bridge/runtime_array.h: Added createPrototype so getDOMStructure
+        will work.
+
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::RuntimeObjectImp): Create a unique structure using
+        getDOMStructure.
+        * bridge/runtime_object.h: Added createPrototype so getDOMStructure
+        will work.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore): Let the window shell's
+        setWindow function create the JSDOMWindow instead of doing it here.
+
+        * page/DOMWindow.idl: Removed DoNotCache, which is no longer used.
+
 2008-09-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

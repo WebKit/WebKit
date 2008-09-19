@@ -33,7 +33,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor)
 const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 
 JSImageConstructor::JSImageConstructor(ExecState* exec, Document* document)
-    : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+    : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
     , m_document(document)
 {
 }

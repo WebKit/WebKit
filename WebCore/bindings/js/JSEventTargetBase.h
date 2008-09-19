@@ -32,11 +32,14 @@
 #include "EventNames.h"
 #include "JSEvent.h"
 
-namespace JSC {
+// FIXME: The purpose of this file is to share this base with multiple classes. But
+// it is not being shared at this time.
 
+// FIXME: The name clash between this and WebCore::JSEventTargetPrototypeTable is only
+// OK because this is in the JSC namespace; and this shouldn't be in that namespace!
+namespace JSC {
     extern const struct HashTable JSEventTargetPropertiesTable;
     extern const struct HashTable JSEventTargetPrototypeTable;
-
 }
 
 namespace WebCore {
@@ -62,12 +65,10 @@ namespace WebCore {
     // Helper function for getValueProperty/putValueProperty
     const AtomicString& eventNameForPropertyToken(int token);
 
-    template<class JSEventTarget>
+    template<class JSSpecificEventTarget>
     class JSEventTargetBase {
     public:
-        JSEventTargetBase() { }
-
-        JSC::JSValue* getValueProperty(const JSEventTarget* owner, JSC::ExecState* exec, int token) const
+        JSC::JSValue* getValueProperty(const JSSpecificEventTarget* owner, JSC::ExecState* exec, int token) const
         {
             const AtomicString& eventName = eventNameForPropertyToken(token);
             if (!eventName.isEmpty())
@@ -76,66 +77,49 @@ namespace WebCore {
             return JSC::jsUndefined();
         }
 
-        void putValueProperty(const JSEventTarget* owner, JSC::ExecState* exec, int token, JSC::JSValue* value)
+        void putValueProperty(const JSSpecificEventTarget* owner, JSC::ExecState* exec, int token, JSC::JSValue* value)
         {
             const AtomicString& eventName = eventNameForPropertyToken(token);
             if (!eventName.isEmpty())
                 owner->setListener(exec, eventName, value);
         }
 
-    private:
-        friend class JSEventTargetNode;
-        friend class JSEventTargetSVGElementInstance;
-
         template<class JSParent>
-        bool getOwnPropertySlot(JSEventTarget* owner, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
+        bool getOwnPropertySlot(JSSpecificEventTarget* owner, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
         {
-            return JSC::getStaticValueSlot<JSEventTarget, JSParent>(exec, &JSC::JSEventTargetPropertiesTable, owner, propertyName, slot);
+            return JSC::getStaticValueSlot<JSSpecificEventTarget, JSParent>(exec, &JSC::JSEventTargetPropertiesTable, owner, propertyName, slot);
         }
 
         template<class JSParent>
-        void put(JSEventTarget* owner, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
+        void put(JSSpecificEventTarget* owner, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
         {
-            JSC::lookupPut<JSEventTarget, JSParent>(exec, propertyName, value, &JSC::JSEventTargetPropertiesTable, owner, slot);
+            JSC::lookupPut<JSSpecificEventTarget, JSParent>(exec, propertyName, value, &JSC::JSEventTargetPropertiesTable, owner, slot);
         }
     };
 
-    // This class is a modified version of the code the JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE
-    // and JSC_IMPLEMENT_PROTOTYPE macros produce - the idea is that classes like JSEventTargetNode
-    // and JSEventTargetSVGElementInstance can share a single prototype just differing in the
-    // naming "EventTargetNodePrototype" vs "EventTargetSVGElementInstancePrototype". Above mentioned
-    // macros force the existance of several prototype tables for each of the classes - avoid that.
-    template<class JSEventTargetPrototypeParent, class JSEventTargetPrototypeInformation>
-    class JSEventTargetPrototype : public JSC::JSObject {
+    // The idea here is that classes like JSEventTargetNode and JSEventTargetSVGElementInstance
+    // can share a prototype with the only difference being the name.
+    template<class JSSpecificEventTarget>
+    class JSEventTargetBasePrototype : public JSC::JSObject {
     public:
-        JSEventTargetPrototype(JSC::ExecState* exec)
-            : JSC::JSObject(JSEventTargetPrototypeParent::self(exec))
+        JSEventTargetBasePrototype(PassRefPtr<JSC::StructureID> structure)
+            : JSC::JSObject(structure)
         {
         }
 
         static JSC::JSObject* self(JSC::ExecState* exec)
         {
-            static JSC::Identifier* prototypeName = new JSC::Identifier(exec, JSEventTargetPrototypeInformation::prototypeClassName());
-
-            JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-            if (JSC::JSValue* objectValue = globalObject->getDirect(*prototypeName)) {
-                ASSERT(objectValue->isObject());
-                return static_cast<JSC::JSObject*>(objectValue);
-            }
-
-            JSC::JSObject* newObject = new (exec) JSEventTargetPrototype<JSEventTargetPrototypeParent, JSEventTargetPrototypeInformation>(exec);
-            globalObject->putDirect(*prototypeName, newObject, JSC::DontEnum);
-            return newObject;
+            return getDOMPrototype<JSSpecificEventTarget>(exec);
         }
 
-        bool getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
+        virtual bool getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
         {
             return JSC::getStaticFunctionSlot<JSC::JSObject>(exec, &JSC::JSEventTargetPrototypeTable, this, propertyName, slot);
         }
 
         virtual const JSC::ClassInfo* classInfo() const
         {
-            static const JSC::ClassInfo s_classInfo = { JSEventTargetPrototypeInformation::prototypeClassName(), 0, &JSC::JSEventTargetPrototypeTable, 0 };
+            static const JSC::ClassInfo s_classInfo = { JSSpecificEventTarget::prototypeClassName(), 0, &JSC::JSEventTargetPrototypeTable, 0 };
             return &s_classInfo;
         }
     };

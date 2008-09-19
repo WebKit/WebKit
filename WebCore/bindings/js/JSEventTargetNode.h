@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,9 @@ namespace WebCore {
 
     class JSEventTargetNode : public JSNode {
     public:
-        JSEventTargetNode(JSC::StructureID*, Node*);
+        JSEventTargetNode(PassRefPtr<JSC::StructureID>, PassRefPtr<EventTargetNode>);
+
+        static JSC::JSObject* createPrototype(JSC::ExecState*);
 
         void setListener(JSC::ExecState*, const AtomicString& eventType, JSC::JSValue* func) const;
         JSC::JSValue* getListener(const AtomicString& eventType) const;
@@ -48,6 +50,11 @@ namespace WebCore {
         JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
         virtual void put(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue*, JSC::PutPropertySlot&);
         void putValueProperty(JSC::ExecState*, int token, JSC::JSValue*);
+
+        virtual const JSC::ClassInfo* classInfo() const = 0;
+        static const JSC::ClassInfo s_info;
+
+        static const char* prototypeClassName() { return "EventTargetNodePrototype"; }
 
     private:
         JSEventTargetBase<JSEventTargetNode> m_base;
@@ -73,20 +80,7 @@ namespace WebCore {
         m_base.putValueProperty(this, exec, token, value);
     }
 
-
-    struct JSEventTargetPrototypeInformation {
-        static const char* prototypeClassName()
-        {
-            return "EventTargetNodePrototype";
-        }
-
-        static const char* prototypeIdentifier()
-        {
-            return "[[EventTargetNode.prototype]]";
-        }
-    };
-
-    typedef JSEventTargetPrototype<JSNodePrototype, JSEventTargetPrototypeInformation> JSEventTargetNodePrototype;
+    typedef JSEventTargetBasePrototype<JSEventTargetNode> JSEventTargetNodePrototype;
     EventTargetNode* toEventTargetNode(JSC::JSValue*);
 
 } // namespace WebCore

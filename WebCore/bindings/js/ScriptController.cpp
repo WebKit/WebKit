@@ -132,7 +132,7 @@ void ScriptController::clearWindowShell()
     JSLock lock(false);
     m_windowShell->window()->clear();
     m_liveFormerWindows.add(m_windowShell->window());
-    m_windowShell->setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(m_frame->domWindow(), m_windowShell));
+    m_windowShell->setWindow(m_frame->domWindow());
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
         m_windowShell->window()->setProfileGroup(page->group().identifier());

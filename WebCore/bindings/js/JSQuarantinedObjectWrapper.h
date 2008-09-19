@@ -45,7 +45,6 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
     protected:
-        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, JSC::JSObject* wrappedPrototype);
         JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::StructureID>);
 
         virtual void mark();

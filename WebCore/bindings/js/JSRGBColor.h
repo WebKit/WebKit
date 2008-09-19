@@ -26,11 +26,10 @@
 
 namespace WebCore {
 
-    // FIXME: JSRGBColor should have a proper Prototype and Constructor
+    // FIXME: JSRGBColor should have a proper prototype and a constructor.
     class JSRGBColor : public DOMObject {
     public:
-        JSRGBColor(JSC::JSObject* prototype, unsigned color);
-        ~JSRGBColor();
+        JSRGBColor(JSC::ExecState*, unsigned color);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
@@ -41,6 +40,11 @@ namespace WebCore {
         enum { Red, Green, Blue };
 
         unsigned impl() const { return m_color; }
+
+        static JSC::ObjectPrototype* createPrototype(JSC::ExecState* exec)
+        {
+            return exec->lexicalGlobalObject()->objectPrototype();
+        }
 
     private:
         unsigned m_color;

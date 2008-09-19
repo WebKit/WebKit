@@ -378,7 +378,7 @@ sub GenerateHeader
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
+    my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
     push(@headerContentHeader, "#include \"$podType.h\"\n") if $podType and $podType ne "float";
 
     push(@headerContentHeader, "#include \"JSSVGPODTypeWrapper.h\"\n") if $podType;
@@ -400,20 +400,18 @@ sub GenerateHeader
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    $className($passType, JSDOMWindowShell*);\n");
+        push(@headerContent, "    $className(PassRefPtr<JSC::StructureID>, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
+    } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
+        push(@headerContent, "    $className(PassRefPtr<JSC::StructureID>, PassRefPtr<$implType>, SVGElement* context);\n");
     } else {
-        if (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@headerContent, "    $className(JSC::StructureID*, $passType, SVGElement* context);\n");
-        } else {
-            push(@headerContent, "    $className(JSC::StructureID*, $passType);\n");
-        }
+        push(@headerContent, "    $className(PassRefPtr<JSC::StructureID>, PassRefPtr<$implType>);\n");
     }
 
     # Destructor
     push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document");
 
     # Prototype
-    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n");
+    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n") if $interfaceName ne "DOMWindow";
 
     $implIncludes{"${className}Custom.h"} = 1 if
        $dataNode->extendedAttributes->{"CustomPutFunction"}
@@ -619,9 +617,9 @@ sub GenerateHeader
         if ($podType) {
             push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, JSSVGPODTypeWrapper<$podType>*, SVGElement* context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, $passType, SVGElement* context);\n");
+            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, $implType*, SVGElement* context);\n");
         } else {
-            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, $passType);\n");
+            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, $implType*);\n");
         }
         if ($interfaceName eq "Node") {
             # Resolve ambiguity with EventTarget that otherwise exists.
@@ -642,11 +640,10 @@ sub GenerateHeader
     }
     push(@headerContent, "\n");
 
-    # Add prototype declaration -- code adopted from the JSC_DEFINE_PROTOTYPE and JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
+    # Add prototype declaration.
     push(@headerContent, "class ${className}Prototype : public JSC::JSObject {\n");
     push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    static JSC::JSObject* self();\n");
         push(@headerContent, "    void* operator new(size_t);\n");
     } else {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*);\n");
@@ -654,21 +651,12 @@ sub GenerateHeader
     push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
-        push(@headerContent, "    bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
+        push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
     }
     if ($numConstants ne 0) {
         push(@headerContent, "    JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;\n");
     }
-    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@headerContent, "    ${className}Prototype() : JSC::JSObject(JSDOMWindowBase::commonJSGlobalData()->nullProtoStructureID) { }\n");
-    } else {
-        push(@headerContent, "    ${className}Prototype(JSC::ExecState* exec)\n");
-        if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@headerContent, "        : JSC::JSObject(${parentClassName}Prototype::self(exec)) { }\n");
-        } else {
-            push(@headerContent, "        : JSC::JSObject(exec->lexicalGlobalObject()->objectPrototype()) { }\n");
-        }
-    }
+    push(@headerContent, "    ${className}Prototype(PassRefPtr<JSC::StructureID> structure) : JSC::JSObject(structure) { }\n");
 
     push(@headerContent, "};\n\n");
 
@@ -680,7 +668,7 @@ sub GenerateHeader
         }
     }
 
-    push(@headerContent, "} // namespace WebCore\n\n");
+    push(@headerContent, "\n} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditional;
     push(@headerContent, "#endif\n");
 }
@@ -860,16 +848,7 @@ sub GenerateImplementation
                                \@hashSpecials, \@hashParameters);
 
     push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", 0, &${className}PrototypeTable, 0 };\n\n");
-    if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@implContent, "JSObject* ${className}Prototype::self(");
-        push(@implContent,     "ExecState* exec") unless $interfaceName eq "DOMWindow";
-        push(@implContent,     ")\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return new ");
-        push(@implContent,      "(exec) ") unless $interfaceName eq "DOMWindow";
-        push(@implContent,      "${className}Prototype();\n");
-        push(@implContent, "}\n\n");
-    } else {
+    if ($interfaceName ne "DOMWindow") {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMPrototype<${className}>(exec);\n");
@@ -918,7 +897,7 @@ sub GenerateImplementation
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $passType = $podType ? "JSSVGPODTypeWrapper<$podType>*" : "$implClassName*";
+    my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
 
     my $needsSVGContext = IsSVGTypeNeedingContextParameter($implClassName);
     my $parentNeedsSVGContext = ($needsSVGContext and $parentClassName =~ /SVG/);
@@ -926,10 +905,10 @@ sub GenerateImplementation
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         AddIncludesForType("JSDOMWindowShell");
-        push(@implContent, "${className}::$className($passType impl, JSDOMWindowShell* shell)\n");
-        push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl, shell)\n");
+        push(@implContent, "${className}::$className(PassRefPtr<StructureID> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
+        push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
     } else {
-        push(@implContent, "${className}::$className(StructureID* structure, $passType impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
+        push(@implContent, "${className}::$className(PassRefPtr<StructureID> structure, PassRefPtr<$implType> impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
         if ($hasParent) {
             push(@implContent, "    : $parentClassName(structure, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
@@ -971,14 +950,16 @@ sub GenerateImplementation
         push(@implContent, "{\n    forgetDOMObject(static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
 
-    push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
-    push(@implContent, "{\n");
-    if ($interfaceName eq "DOMWindow") {
-        push(@implContent, "    return new JSDOMWindowPrototype;\n");
-    } else {
-        push(@implContent, "    return new (exec) ${className}Prototype(exec);\n");
+    if ($interfaceName ne "DOMWindow") {
+        push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
+        push(@implContent, "{\n");
+        if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
+            push(@implContent, "    return new (exec) ${className}Prototype(JSC::StructureID::create(${parentClassName}Prototype::self(exec)));\n");
+        } else {
+            push(@implContent, "    return new (exec) ${className}Prototype(JSC::StructureID::create(exec->lexicalGlobalObject()->objectPrototype()));\n");
+        }
+        push(@implContent, "}\n\n");
     }
-    push(@implContent, "}\n");
 
     my $hasGetter = $numAttributes > 0 
                  || $dataNode->extendedAttributes->{"GenerateConstructor"} 
@@ -1220,8 +1201,7 @@ sub GenerateImplementation
 
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
-        push(@implContent, "    static const Identifier* constructorIdentifier = new Identifier(exec, \"[[${interfaceName}.constructor]]\");\n");
-        push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
+        push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -1361,20 +1341,20 @@ sub GenerateImplementation
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !UsesManualToJSImplementation($implClassName)) {
         if ($podType) {
-            push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, JSSVGPODTypeWrapper<$podType>* obj, SVGElement* context)\n");
+            push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, JSSVGPODTypeWrapper<$podType>* object, SVGElement* context)\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-             push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, $passType obj, SVGElement* context)\n");
+             push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, $implType* object, SVGElement* context)\n");
         } else {
-            push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, $passType obj)\n");
+            push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, $implType* object)\n");
         }
 
         push(@implContent, "{\n");
         if ($podType) {
-            push(@implContent, "    return getDOMObjectWrapper<$className, JSSVGPODTypeWrapper<$podType> >(exec, obj, context);\n");
+            push(@implContent, "    return getDOMObjectWrapper<$className, JSSVGPODTypeWrapper<$podType> >(exec, object, context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, obj, context);\n");
+            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, object, context);\n");
         } else {
-            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, obj);\n");
+            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, object);\n");
         }
         push(@implContent, "}\n");
     }
@@ -1835,7 +1815,7 @@ my $implContent = << "EOF";
 class ${className}Constructor : public DOMObject {
 public:
     ${className}Constructor(ExecState* exec)
-        : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+        : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
     {
         putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
     }

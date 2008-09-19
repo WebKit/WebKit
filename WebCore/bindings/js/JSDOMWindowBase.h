@@ -45,6 +45,7 @@ namespace WebCore {
     class JSDOMWindowBasePrivate;
 
     typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::StructureID> > JSDOMStructureMap;
+    typedef HashMap<const JSC::ClassInfo*, JSC::JSObject*> JSDOMConstructorMap;
 
     // This is the only WebCore JS binding which does not inherit from DOMObject
     class JSDOMWindowBase : public JSC::JSGlobalObject {
@@ -52,7 +53,7 @@ namespace WebCore {
 
         friend class ScheduledAction;
     protected:
-        JSDOMWindowBase(JSC::JSObject* prototype, DOMWindow*, JSDOMWindowShell*);
+        JSDOMWindowBase(PassRefPtr<JSC::StructureID>, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
 
     public:
         virtual ~JSDOMWindowBase();
@@ -128,6 +129,7 @@ namespace WebCore {
         void clearAllTimeouts();
 
         JSDOMStructureMap& structures() { return d()->structures; }
+        JSDOMConstructorMap& constructors() { return d()->constructors; }
 
         enum {
             // Attributes
@@ -166,6 +168,7 @@ namespace WebCore {
             TimeoutsMap timeouts;
 
             JSDOMStructureMap structures;
+            JSDOMConstructorMap constructors;
         };
         
         JSC::JSValue* getListener(JSC::ExecState*, const AtomicString& eventType) const;

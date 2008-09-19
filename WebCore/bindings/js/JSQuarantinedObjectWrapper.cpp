@@ -56,17 +56,6 @@ JSValue* JSQuarantinedObjectWrapper::cachedValueGetter(ExecState*, const Identif
     return v;
 }
 
-JSQuarantinedObjectWrapper::JSQuarantinedObjectWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, JSObject* wrappedPrototype)
-    : JSObject(wrappedPrototype)
-    , m_unwrappedGlobalObject(unwrappedExec->dynamicGlobalObject())
-    , m_unwrappedObject(unwrappedObject)
-{
-    ASSERT_ARG(unwrappedExec, unwrappedExec);
-    ASSERT_ARG(unwrappedObject, unwrappedObject);
-    ASSERT_ARG(wrappedPrototype, wrappedPrototype);
-    ASSERT_ARG(wrappedPrototype, asWrapper(wrappedPrototype));
-}
-
 JSQuarantinedObjectWrapper::JSQuarantinedObjectWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, PassRefPtr<StructureID> structureID)
     : JSObject(structureID)
     , m_unwrappedGlobalObject(unwrappedExec->dynamicGlobalObject())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +26,14 @@
 #ifndef RUNTIME_ARRAY_H_
 #define RUNTIME_ARRAY_H_
 
-#include <wtf/OwnPtr.h>
-
-#include <kjs/JSObject.h>
 #include "runtime.h"
+#include <kjs/JSGlobalObject.h>
 
 namespace JSC {
     
 class RuntimeArray : public JSObject {
 public:
-    RuntimeArray(ExecState *exec, Bindings::Array *i);
+    RuntimeArray(ExecState*, Bindings::Array*);
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
@@ -52,6 +50,11 @@ public:
     Bindings::Array *getConcreteArray() const { return _array.get(); }
 
     static const ClassInfo s_info;
+
+    static ArrayPrototype* createPrototype(ExecState* exec)
+    {
+        return exec->lexicalGlobalObject()->arrayPrototype();
+    }
 
 private:
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);

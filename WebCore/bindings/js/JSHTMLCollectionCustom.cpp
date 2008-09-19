@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,7 +46,7 @@ static JSValue* getNamedItems(ExecState* exec, HTMLCollection* impl, const Ident
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
 
-    return new (exec) JSNamedNodesCollection(exec->lexicalGlobalObject()->objectPrototype(), namedItems);
+    return new (exec) JSNamedNodesCollection(exec, namedItems);
 }
 
 // HTMLCollections are strange objects, they support both get and call,

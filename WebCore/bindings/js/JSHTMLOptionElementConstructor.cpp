@@ -34,7 +34,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSHTMLOptionElementConstructor)
 const ClassInfo JSHTMLOptionElementConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* document)
-    : DOMObject(exec->lexicalGlobalObject()->objectPrototype())
+    : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
     , m_document(document)
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);

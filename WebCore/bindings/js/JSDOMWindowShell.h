@@ -40,7 +40,7 @@ namespace WebCore {
     class JSDOMWindowShell : public DOMObject {
         typedef DOMObject Base;
     public:
-        JSDOMWindowShell(DOMWindow*);
+        JSDOMWindowShell(PassRefPtr<DOMWindow>);
         virtual ~JSDOMWindowShell();
 
         JSDOMWindow* window() const { return m_window; }
@@ -50,6 +50,7 @@ namespace WebCore {
             m_window = window;
             setPrototype(window->prototype());
         }
+        void setWindow(PassRefPtr<DOMWindow>);
 
         static const JSC::ClassInfo s_info;
 

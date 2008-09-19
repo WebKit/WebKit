@@ -1,3 +1,17 @@
+2008-09-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - part 2 of https://bugs.webkit.org/show_bug.cgi?id=20858
+          make each distinct C++ class get a distinct JSC::Structure
+
+        * JavaScriptCore.exp: Exported constructEmptyObject for use in WebCore.
+
+        * kjs/JSGlobalObject.h: Changed the protected constructor to take a
+        structure instead of a prototype.
+
+        * kjs/JSVariableObject.h: Removed constructor that takes a prototype.
+
 2008-09-19  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Alexey Proskuryakov.

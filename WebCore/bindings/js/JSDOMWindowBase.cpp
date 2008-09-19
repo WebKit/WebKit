@@ -194,17 +194,17 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 
 @end
 */
 
-JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window_, JSDOMWindowBase* jsWindow_, JSDOMWindowShell* shell_)
-    : JSGlobalObjectData(jsWindow_, shell_)
-    , impl(window_)
+JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowBase* jsWindow, JSDOMWindowShell* shell)
+    : JSGlobalObjectData(jsWindow, shell)
+    , impl(window)
     , evt(0)
     , returnValueSlot(0)
-    , shell(shell_)
+    , shell(shell)
 {
 }
 
-JSDOMWindowBase::JSDOMWindowBase(JSObject* prototype, DOMWindow* window, JSDOMWindowShell* shell)
-    : JSGlobalObject(prototype, new JSDOMWindowBaseData(window, this, shell), shell)
+JSDOMWindowBase::JSDOMWindowBase(PassRefPtr<StructureID> structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
+    : JSGlobalObject(structure, new JSDOMWindowBaseData(window, this, shell), shell)
 {
     // Time in milliseconds before the script timeout handler kicks in.
     setTimeoutTime(10000);

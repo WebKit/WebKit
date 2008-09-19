@@ -62,14 +62,7 @@ JSValue* JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValue* unw
 
     if (prototype->isNull())
         return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, unwrappedExec->globalData().nullProtoStructureID);
-    return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, static_cast<JSObject*>(wrap(unwrappedExec, prototype)));
-}
-
-JSInspectorCallbackWrapper::JSInspectorCallbackWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, JSObject* wrappedPrototype)
-    : JSQuarantinedObjectWrapper(unwrappedExec, unwrappedObject, wrappedPrototype)
-{
-    ASSERT(!wrappers().contains(unwrappedObject));
-    wrappers().set(unwrappedObject, this);
+    return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, static_cast<JSObject*>(wrap(unwrappedExec, prototype))->inheritorID());
 }
 
 JSInspectorCallbackWrapper::JSInspectorCallbackWrapper(ExecState* unwrappedExec, JSObject* unwrappedObject, PassRefPtr<StructureID> structureID)

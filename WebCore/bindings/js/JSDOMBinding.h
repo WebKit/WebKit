@@ -49,11 +49,6 @@ namespace WebCore {
         {
         }
 
-        explicit DOMObject(JSC::JSObject* prototype)
-            : JSObject(prototype)
-        {
-        }
-
 #ifndef NDEBUG
         virtual ~DOMObject();
 #endif
@@ -73,6 +68,9 @@ namespace WebCore {
     JSC::StructureID* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
     JSC::StructureID* createDOMStructure(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* prototype);
 
+    JSC::JSObject* getCachedDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*);
+    void cacheDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* constructor);
+
     template<class WrapperClass> inline JSC::StructureID* getDOMStructure(JSC::ExecState* exec)
     {
         if (JSC::StructureID* structure = getCachedDOMStructure(exec, &WrapperClass::s_info))
@@ -82,6 +80,14 @@ namespace WebCore {
     template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec)
     {
         return static_cast<JSC::JSObject*>(getDOMStructure<WrapperClass>(exec)->storedPrototype());
+    }
+    template<class ConstructorClass> inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec)
+    {
+        if (JSC::JSObject* constructor = getCachedDOMConstructor(exec, &ConstructorClass::s_info))
+            return constructor;
+        JSC::JSObject* constructor = new (exec) ConstructorClass(exec);
+        cacheDOMConstructor(exec, &ConstructorClass::s_info, constructor);
+        return constructor;
     }
 
     #define CREATE_DOM_OBJECT_WRAPPER(exec, className, object) createDOMObjectWrapper<JS##className>(exec, static_cast<className*>(object))
@@ -138,26 +144,6 @@ namespace WebCore {
         if (JSNode* wrapper = getCachedDOMNodeWrapper(node->document(), node))
             return wrapper;
         return createDOMNodeWrapper<WrapperClass>(exec, node);
-    }
-
-    /**
-     * This template method retrieves or create an object that is unique
-     * (for a given global object) The first time this is called (for a given
-     * property name), the Object will be constructed, and set as a property
-     * of the global object. Later calls will simply retrieve that cached object. 
-     * Note that the object constructor must take 1 argument, exec.
-     */
-    template <class WrapperClass> inline WrapperClass* cacheGlobalObject(JSC::ExecState* exec, const JSC::Identifier& propertyName)
-    {
-        JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-        JSC::JSValue* obj = globalObject->getDirect(propertyName);
-        if (obj) {
-            ASSERT(obj->isObject());
-            return static_cast<WrapperClass*>(obj);
-        }
-        WrapperClass* newObject = new (exec) WrapperClass(exec);
-        globalObject->putDirect(propertyName, newObject, JSC::DontEnum);
-        return newObject;
     }
 
     // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
