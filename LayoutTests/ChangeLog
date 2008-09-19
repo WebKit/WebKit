@@ -1,3 +1,12 @@
+2008-09-18  Collin Jackson  <collinj@webkit.org>
+
+        Reviewed by Antti Koivisto and Mark Rowe.
+
+        This is correct expected output for the DNS prefetch control
+        layout test I just checked in.
+
+        * http/tests/misc/dns-prefetch-control-expected.txt:
+
 2008-09-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

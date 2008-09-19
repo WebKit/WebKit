@@ -1,7 +1,8 @@
 This is a test of DNS prefetch control. It's considered a pass if it doesn't crash. It can also be used as a manual test of DNS prefetch using a networking monitoring tool.
-Browsers MAY do a DNS prefetch on the following links:
+
+The following frames contain links that are expected to trigger a DNS prefetch.
 
               
-Browsers SHOULD NOT do a DNS lookup for the following links until they are clicked:
+The following frames contain links that are not expected to cause a DNS prefetch.
 
           
