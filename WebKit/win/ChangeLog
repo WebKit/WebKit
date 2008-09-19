@@ -1,3 +1,14 @@
+2008-09-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add SPI to WebView to allow DRT to clear the main frame's name between tests.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::clearMainFrameName):
+        * WebView.h:
+
 2008-09-16  Alp Toker  <alp@nuanti.com>
 
         Suggested by Dave Hyatt.

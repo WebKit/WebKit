@@ -1707,6 +1707,11 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return _private->page->setCustomHTMLTokenizerChunkSize(chunkSize);
 }
 
+- (void)_clearMainFrameName
+{
+    _private->page->mainFrame()->tree()->clearName();
+}
+
 @end
 
 @implementation _WebSafeForwarder

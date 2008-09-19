@@ -1,3 +1,16 @@
+2008-09-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update test results now that frame tree names are cleared between tests.
+
+        * fast/events/onunload-clears-onbeforeunload-expected.txt:
+        * fast/events/onunload-expected.txt:
+        * fast/events/onunload-not-on-body-expected.txt:
+        * fast/events/onunload-window-property-expected.txt:
+        * fast/forms/button-state-restore-expected.txt:
+        * fast/forms/form-and-frame-interaction-retains-values-expected.txt:
+
 2008-09-18  Collin Jackson  <collinj@webkit.org>
 
         Reviewed by Antti Koivisto and Mark Rowe.

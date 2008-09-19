@@ -1,3 +1,14 @@
+2008-09-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a means of clearing a FrameTree's name.
+
+        * WebCore.base.exp:
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::clearName):
+        * page/FrameTree.h:
+
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
         Eliminate addToSuperview from Widget, since it was only called

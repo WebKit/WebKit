@@ -945,6 +945,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView setTabKeyCyclesThroughElements:YES];
     [webView setPolicyDelegate:nil];
     [webView _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:NO];
+    [webView _clearMainFrameName];
 
     WebPreferences *preferences = [webView preferences];
     [preferences setPrivateBrowsingEnabled:NO];
