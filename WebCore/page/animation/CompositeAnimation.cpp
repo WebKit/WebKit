@@ -53,7 +53,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, const RenderS
 
     // Check to see if we need to update the active transitions
     for (size_t i = 0; i < targetStyle->transitions()->size(); ++i) {
-        const Animation* anim = (*targetStyle->transitions())[i].get();
+        const Animation* anim = targetStyle->transitions()->animation(i);
         double duration = anim->duration();
         double delay = anim->delay();
 
@@ -128,7 +128,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, const 
     if (targetStyle->animations()) {
         int numAnims = targetStyle->animations()->size();
         for (int i = 0; i < numAnims; ++i) {
-            const Animation* anim = (*targetStyle->animations())[i].get();
+            const Animation* anim = targetStyle->animations()->animation(i);
 
             if (!anim->isValidAnimation())
                 continue;
@@ -198,7 +198,7 @@ RenderStyle* CompositeAnimation::animate(RenderObject* renderer, const RenderSty
     // to fill in a RenderStyle*& only if needed.
     if (targetStyle->hasAnimations()) {
         for (size_t i = 0; i < targetStyle->animations()->size(); ++i) {
-            const Animation* anim = (*targetStyle->animations())[i].get();
+            const Animation* anim = targetStyle->animations()->animation(i);
 
             if (anim->isValidAnimation()) {
                 if (KeyframeAnimation* keyframeAnim = getKeyframeAnimation(anim->name()))

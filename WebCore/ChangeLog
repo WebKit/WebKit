@@ -1,3 +1,53 @@
+2008-09-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=20908
+        Now TransformOperations and AnimationList no longer
+        inherit from Vector<> but rather have API to access.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::validateTransformFunctionList):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::validateTransformFunctionList):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateReflectionStyle):
+        * rendering/style/AnimationList.cpp:
+        (WebCore::AnimationList::operator==):
+        * rendering/style/AnimationList.h:
+        (WebCore::AnimationList::operator!=):
+        (WebCore::AnimationList::size):
+        (WebCore::AnimationList::isEmpty):
+        (WebCore::AnimationList::resize):
+        (WebCore::AnimationList::remove):
+        (WebCore::AnimationList::append):
+        (WebCore::AnimationList::animation):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::updateKeyframes):
+        (WebCore::RenderStyle::applyTransform):
+        (WebCore::RenderStyle::adjustAnimations):
+        (WebCore::RenderStyle::adjustTransitions):
+        (WebCore::RenderStyle::transitionForProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasTransform):
+        * rendering/style/TransformOperations.cpp:
+        (WebCore::TransformOperations::TransformOperations):
+        (WebCore::TransformOperations::operator==):
+        * rendering/style/TransformOperations.h:
+        (WebCore::TransformOperations::apply):
+        (WebCore::TransformOperations::operations):
+
 2008-09-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

@@ -213,7 +213,7 @@ void KeyframeAnimation::validateTransformFunctionList()
     Vector<KeyframeValue>::const_iterator firstIt = end;
     
     for (Vector<KeyframeValue>::const_iterator it = m_keyframes->beginKeyframes(); it != end; ++it, ++firstIndex) {
-        if (it->style.transform().size() > 0) {
+        if (it->style.transform().operations().size() > 0) {
             firstIt = it;
             break;
         }
@@ -229,16 +229,16 @@ void KeyframeAnimation::validateTransformFunctionList()
         const TransformOperations* val = &it->style.transform();
         
         // A null transform matches anything
-        if (val->isEmpty())
+        if (val->operations().isEmpty())
             continue;
         
         // If the sizes of the function lists don't match, the lists don't match
-        if (firstVal->size() != val->size())
+        if (firstVal->operations().size() != val->operations().size())
             return;
         
         // If the types of each function are not the same, the lists don't match
-        for (size_t j = 0; j < firstVal->size(); ++j) {
-            if (!firstVal->at(j)->isSameType(*val->at(j)))
+        for (size_t j = 0; j < firstVal->operations().size(); ++j) {
+            if (!firstVal->operations()[j]->isSameType(*val->operations()[j]))
                 return;
         }
     }

@@ -394,7 +394,7 @@ static IntRect sizingBox(RenderObject* renderer)
 
 static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer)
 {
-    if (!renderer || renderer->style()->transform().isEmpty())
+    if (!renderer || renderer->style()->transform().operations().isEmpty())
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     
     IntRect box = sizingBox(renderer);
@@ -1065,7 +1065,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const AnimationList* t = style->transitions();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i)
-                    list->append(CSSPrimitiveValue::create((*t)[i]->delay(), CSSPrimitiveValue::CSS_S));
+                    list->append(CSSPrimitiveValue::create(t->animation(i)->delay(), CSSPrimitiveValue::CSS_S));
             }
             else
                 list->append(CSSPrimitiveValue::create(RenderStyle::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
@@ -1076,7 +1076,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const AnimationList* t = style->transitions();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i)
-                    list->append(CSSPrimitiveValue::create((*t)[i]->duration(), CSSPrimitiveValue::CSS_S));
+                    list->append(CSSPrimitiveValue::create(t->animation(i)->duration(), CSSPrimitiveValue::CSS_S));
             }
             else
                 list->append(CSSPrimitiveValue::create(RenderStyle::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
@@ -1087,7 +1087,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const AnimationList* t = style->transitions();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
-                    const TimingFunction& tf = (*t)[i]->timingFunction();
+                    const TimingFunction& tf = t->animation(i)->timingFunction();
                     list->append(CSSTimingFunctionValue::create(tf.x1(), tf.y1(), tf.x2(), tf.y2()));
                 }
             }
@@ -1102,7 +1102,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const AnimationList* t = style->transitions();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
-                    int prop = (*t)[i]->property();
+                    int prop = t->animation(i)->property();
                     const char* name;
                     if (prop == cAnimateNone)
                         name = "none";

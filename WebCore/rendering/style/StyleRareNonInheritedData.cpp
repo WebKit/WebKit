@@ -151,9 +151,9 @@ void StyleRareNonInheritedData::updateKeyframes(const CSSStyleSelector* styleSel
 {
     if (m_animations) {
         for (size_t i = 0; i < m_animations->size(); ++i) {
-            if ((*m_animations)[i]->isValidAnimation()) {
-                RefPtr<KeyframeList> keyframe = styleSelector->findKeyframeRule((*m_animations)[i]->name());
-                (*m_animations)[i]->setAnimationKeyframe(keyframe);
+            if (m_animations->animation(i)->isValidAnimation()) {
+                RefPtr<KeyframeList> keyframe = styleSelector->findKeyframeRule(m_animations->animation(i)->name());
+                m_animations->animation(i)->setAnimationKeyframe(keyframe);
             }
         }
     }

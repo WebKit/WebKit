@@ -29,17 +29,17 @@ namespace WebCore {
 TransformOperations::TransformOperations(bool makeIdentity)
 {
     if (makeIdentity)
-        append(IdentityTransformOperation::create());
+        m_operations.append(IdentityTransformOperation::create());
 }
 
 bool TransformOperations::operator==(const TransformOperations& o) const
 {
-    if (size() != o.size())
+    if (m_operations.size() != o.m_operations.size())
         return false;
         
-    unsigned s = size();
+    unsigned s = m_operations.size();
     for (unsigned i = 0; i < s; i++) {
-        if (*at(i) != *o.at(i))
+        if (*m_operations[i] != *o.m_operations[i])
             return false;
     }
     

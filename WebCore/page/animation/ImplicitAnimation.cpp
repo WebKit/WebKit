@@ -170,23 +170,23 @@ void ImplicitAnimation::validateTransformFunctionList()
     const TransformOperations* val = &m_fromStyle->transform();
     const TransformOperations* toVal = &m_toStyle->transform();
 
-    if (val->isEmpty())
+    if (val->operations().isEmpty())
         val = toVal;
 
-    if (val->isEmpty())
+    if (val->operations().isEmpty())
         return;
         
     // See if the keyframes are valid
     if (val != toVal) {
         // A list of length 0 matches anything
-        if (!toVal->isEmpty()) {
+        if (!toVal->operations().isEmpty()) {
             // If the sizes of the function lists don't match, the lists don't match
-            if (val->size() != toVal->size())
+            if (val->operations().size() != toVal->operations().size())
                 return;
         
             // If the types of each function are not the same, the lists don't match
-            for (size_t j = 0; j < val->size(); ++j) {
-                if (!val->at(j)->isSameType(*toVal->at(j)))
+            for (size_t j = 0; j < val->operations().size(); ++j) {
+                if (!val->operations()[j]->isSameType(*toVal->operations()[j]))
                     return;
             }
         }

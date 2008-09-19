@@ -199,22 +199,22 @@ if (isInherit) { \
     AnimationList* list = m_style->accessAnimations(); \
     const AnimationList* parentList = m_parentStyle->animations(); \
     size_t i = 0, parentSize = parentList ? parentList->size() : 0; \
-    for ( ; i < parentSize && (*parentList)[i]->is##Prop##Set(); ++i) { \
+    for ( ; i < parentSize && parentList->animation(i)->is##Prop##Set(); ++i) { \
         if (list->size() <= i) \
             list->append(Animation::create()); \
-        (*list)[i]->set##Prop((*parentList)[i]->prop()); \
+        list->animation(i)->set##Prop(parentList->animation(i)->prop()); \
     } \
     \
     /* Reset any remaining animations to not have the property set. */ \
     for ( ; i < list->size(); ++i) \
-        (*list)[i]->clear##Prop(); \
+        list->animation(i)->clear##Prop(); \
 } else if (isInitial) { \
     AnimationList* list = m_style->accessAnimations(); \
     if (list->isEmpty()) \
         list->append(Animation::create()); \
-    (*list)[0]->set##Prop(RenderStyle::initialAnimation##Prop()); \
+    list->animation(0)->set##Prop(RenderStyle::initialAnimation##Prop()); \
     for (size_t i = 1; i < list->size(); ++i) \
-        (*list)[0]->clear##Prop(); \
+        list->animation(0)->clear##Prop(); \
 }
 
 #define HANDLE_ANIMATION_VALUE(prop, Prop, value) { \
@@ -229,18 +229,18 @@ if (value->isValueList()) { \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (childIndex <= list->size()) \
             list->append(Animation::create()); \
-        mapAnimation##Prop((*list)[childIndex].get(), valueList->itemWithoutBoundsCheck(i)); \
+        mapAnimation##Prop(list->animation(childIndex), valueList->itemWithoutBoundsCheck(i)); \
         ++childIndex; \
     } \
 } else { \
     if (list->isEmpty()) \
         list->append(Animation::create()); \
-    mapAnimation##Prop((*list)[childIndex].get(), value); \
+    mapAnimation##Prop(list->animation(childIndex), value); \
     childIndex = 1; \
 } \
 for ( ; childIndex < list->size(); ++childIndex) { \
     /* Reset all remaining animations to not have the property set. */ \
-    (*list)[childIndex]->clear##Prop(); \
+    list->animation(childIndex)->clear##Prop(); \
 } \
 }
 
@@ -249,22 +249,22 @@ if (isInherit) { \
     AnimationList* list = m_style->accessTransitions(); \
     const AnimationList* parentList = m_parentStyle->transitions(); \
     size_t i = 0, parentSize = parentList ? parentList->size() : 0; \
-    for ( ; i < parentSize && (*parentList)[i]->is##Prop##Set(); ++i) { \
+    for ( ; i < parentSize && parentList->animation(i)->is##Prop##Set(); ++i) { \
         if (list->size() <= i) \
             list->append(Animation::create()); \
-        (*list)[i]->set##Prop((*parentList)[i]->prop()); \
+        list->animation(i)->set##Prop(parentList->animation(i)->prop()); \
     } \
     \
     /* Reset any remaining transitions to not have the property set. */ \
     for ( ; i < list->size(); ++i) \
-        (*list)[i]->clear##Prop(); \
+        list->animation(i)->clear##Prop(); \
 } else if (isInitial) { \
     AnimationList* list = m_style->accessTransitions(); \
     if (list->isEmpty()) \
         list->append(Animation::create()); \
-    (*list)[0]->set##Prop(RenderStyle::initialAnimation##Prop()); \
+    list->animation(0)->set##Prop(RenderStyle::initialAnimation##Prop()); \
     for (size_t i = 1; i < list->size(); ++i) \
-        (*list)[0]->clear##Prop(); \
+        list->animation(0)->clear##Prop(); \
 }
 
 #define HANDLE_TRANSITION_VALUE(prop, Prop, value) { \
@@ -279,18 +279,18 @@ if (value->isValueList()) { \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (childIndex <= list->size()) \
             list->append(Animation::create()); \
-        mapAnimation##Prop((*list)[childIndex].get(), valueList->itemWithoutBoundsCheck(i)); \
+        mapAnimation##Prop(list->animation(childIndex), valueList->itemWithoutBoundsCheck(i)); \
         ++childIndex; \
     } \
 } else { \
     if (list->isEmpty()) \
         list->append(Animation::create()); \
-    mapAnimation##Prop((*list)[childIndex].get(), value); \
+    mapAnimation##Prop(list->animation(childIndex), value); \
     childIndex = 1; \
 } \
 for ( ; childIndex < list->size(); ++childIndex) { \
     /* Reset all remaining transitions to not have the property set. */ \
-    (*list)[childIndex]->clear##Prop(); \
+    list->animation(childIndex)->clear##Prop(); \
 } \
 }
 
@@ -5576,7 +5576,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                                 sy = sx;
                         }
                     }
-                    operations.append(ScaleTransformOperation::create(sx, sy, getTransformOperationType(val->operationType())));
+                    operations.operations().append(ScaleTransformOperation::create(sx, sy, getTransformOperationType(val->operationType())));
                     break;
                 }
                 case WebKitCSSTransformValue::TranslateTransformOperation:
@@ -5600,7 +5600,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                     if (!ok)
                         return false;
 
-                    operations.append(TranslateTransformOperation::create(tx, ty, getTransformOperationType(val->operationType())));
+                    operations.operations().append(TranslateTransformOperation::create(tx, ty, getTransformOperationType(val->operationType())));
                     break;
                 }
                 case WebKitCSSTransformValue::RotateTransformOperation: {
@@ -5610,7 +5610,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                     else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
                         angle = grad2deg(angle);
                     
-                    operations.append(RotateTransformOperation::create(angle, getTransformOperationType(val->operationType())));
+                    operations.operations().append(RotateTransformOperation::create(angle, getTransformOperationType(val->operationType())));
                     break;
                 }
                 case WebKitCSSTransformValue::SkewTransformOperation:
@@ -5638,7 +5638,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                             }
                         }
                     }
-                    operations.append(SkewTransformOperation::create(angleX, angleY, getTransformOperationType(val->operationType())));
+                    operations.operations().append(SkewTransformOperation::create(angleX, angleY, getTransformOperationType(val->operationType())));
                     break;
                 }
                 case WebKitCSSTransformValue::MatrixTransformOperation: {
@@ -5648,7 +5648,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                     float d = static_cast<CSSPrimitiveValue*>(val->itemWithoutBoundsCheck(3))->getFloatValue();
                     float e = static_cast<CSSPrimitiveValue*>(val->itemWithoutBoundsCheck(4))->getFloatValue();
                     float f = static_cast<CSSPrimitiveValue*>(val->itemWithoutBoundsCheck(5))->getFloatValue();
-                    operations.append(MatrixTransformOperation::create(a, b, c, d, e, f));
+                    operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
                     break;
                 }
                 case WebKitCSSTransformValue::UnknownTransformOperation:
