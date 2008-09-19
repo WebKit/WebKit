@@ -55,6 +55,26 @@ static int cButtonHitInset[] = { 3, 2 };
 static int cButtonLength[] = { 14, 10 };
 static int cThumbMinLength[] = { 26, 20 };
 
+static float gInitialButtonDelay = 0.5f;
+static float gAutoscrollButtonDelay = 0.05f;
+static bool gJumpOnTrackClick = false;
+static bool gHasSeparateArrows = false;
+
+ScrollbarThemeMac::ScrollbarThemeMac()
+{
+    static bool initialized;
+    if (!initialized) {
+        initialized = true;
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if ([defaults objectForKey:@"NSScrollerButtonDelay"]) {
+            gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
+            gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
+            gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
+            gHasSeparateArrows = [defaults boolForKey:@"NSScrollerHasSeparateArrows"];
+        }
+    }
+}
+
 ScrollbarThemeMac::~ScrollbarThemeMac()
 {
 }
@@ -64,6 +84,16 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
     return cScrollbarThickness[controlSize];
 }
 
+double ScrollbarThemeMac::initialAutoscrollTimerDelay()
+{
+    return gInitialButtonDelay;
+}
+
+double ScrollbarThemeMac::autoscrollTimerDelay()
+{
+    return gAutoscrollButtonDelay;
+}
+    
 bool ScrollbarThemeMac::hasButtons(Scrollbar* scrollbar)
 {
     return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ? 
@@ -156,7 +186,11 @@ int ScrollbarThemeMac::minimumThumbLength(Scrollbar* scrollbar)
 
 bool ScrollbarThemeMac::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
 {
-    return evt.shiftKey() && evt.button() == LeftButton;
+    if (evt.button() != LeftButton)
+        return false;
+    if (gJumpOnTrackClick)
+        return !evt.altKey();
+    return evt.altKey();
 }
 
 void ScrollbarThemeMac::paintTrack(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& trackRect, ScrollbarControlPartMask)

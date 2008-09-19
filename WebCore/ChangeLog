@@ -22,6 +22,21 @@
 
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
+        Read in prefs for the scroll delay repeat values for buttons.  Also
+        honor the option-click pref for jumping to the thumb when clicking in
+        the track.
+
+        Reviewed by Sam Weinig
+
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::ScrollbarThemeMac):
+        (WebCore::ScrollbarThemeMac::initialAutoscrollTimerDelay):
+        (WebCore::ScrollbarThemeMac::autoscrollTimerDelay):
+        (WebCore::ScrollbarThemeMac::shouldCenterOnThumb):
+
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
         Move ScrollbarThemeMac.cpp to ScrollbarThemeMac.mm so it can use Obj-C.
         Set the initial button repeat delay to 0.5 for Mac.
 

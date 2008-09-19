@@ -33,13 +33,15 @@ namespace WebCore {
 
 class ScrollbarThemeMac : public ScrollbarThemeComposite {
 public:
+    ScrollbarThemeMac();
     virtual ~ScrollbarThemeMac();
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     
     virtual bool supportsControlTints() const { return true; }
 
-    virtual double initialAutoscrollTimerDelay() { return 0.25; }
+    virtual double initialAutoscrollTimerDelay();
+    virtual double autoscrollTimerDelay();
 
 protected:
     virtual bool hasButtons(Scrollbar*);
