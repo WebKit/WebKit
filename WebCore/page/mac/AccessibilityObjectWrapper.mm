@@ -99,6 +99,10 @@ using namespace std;
 #define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
 #endif
 
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
+
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 
 @interface NSObject (WebKitAccessibilityArrayCategory)

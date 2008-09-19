@@ -1,3 +1,9 @@
+2008-09-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Fix Tiger bustage
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+
 2008-09-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
