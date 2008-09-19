@@ -1,3 +1,7 @@
+2008-09-18  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: More renaming plans.
+
 2008-09-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

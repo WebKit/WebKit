@@ -68,13 +68,14 @@ sub wanted
 }
 
 my %renames = (
-    "kjs_events" => "JSEventListener",
-    "kjs_events_h" => "JSEventListener_h",
-    "kjs_html" => "JSPluginElementFunctions",
-    "kjs_html_h" => "JSPluginElementFunctions_h",
 );
 
 my %renamesContemplatedForTheFuture = (
+    "StructureID" => "Structure",
+    "structureID" => "structure",
+
+    "DOMObject" => "JSDOMObject",
+
     "runtimeObjectGetter" => "pluginElementGetter",
     "runtimeObjectPropertyGetter" => "pluginElementPropertyGetter",
     "runtimeObjectCustomGetOwnPropertySlot" => "pluginElementCustomGetOwnPropertySlot",
@@ -89,10 +90,6 @@ my %renamesContemplatedForTheFuture = (
     "DateInstance" => "JSDate",
     "ErrorInstance" => "JSError",
 
-    "date_object" => "JSDate",
-    "error_object" => "JSError",
-    "string_object" => "StringObject",
-
     "ImageConstructorImp" => "JSImageConstructor",
     "Navigator" => "JSNavigator",
 
@@ -101,6 +98,7 @@ my %renamesContemplatedForTheFuture = (
 
     "KURL" => "URL",
     "KURLCFNet" => "URLCF",
+    "KURLHash" => "URLHash",
     "KURLMac" => "URLMac",
     "KURL_H_" => "URL_h",
 
