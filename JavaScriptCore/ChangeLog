@@ -1,3 +1,16 @@
+2008-09-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20911: REGRESSION(r36480?): Reproducible assertion failure below derefStructureIDs 64-bit JavaScriptCore
+        <https://bugs.webkit.org/show_bug.cgi?id=20911>
+
+        The problem was simply caused by the int constructor for Instruction
+        failing to initialise the full struct in 64bit builds.
+
+        * VM/Instruction.h:
+        (JSC::Instruction::Instruction):
+
 2008-09-18  Darin Adler  <darin@apple.com>
 
         - fix release build
