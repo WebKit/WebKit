@@ -1,3 +1,16 @@
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
+        Eliminate addToSuperview from Widget, since it was only called
+        by ScrollViewMac's addChild method.  Just shift the original body
+        of addToSuperView into addChild.
+
+        Reviewed by Sam Weinig
+
+        * platform/Widget.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::addChild):
+        * platform/mac/WidgetMac.mm:
+
 2008-09-18  Collin Jackson  <collinj@webkit.org>
 
         Reviewed by Antti Koivisto and Mark Rowe.

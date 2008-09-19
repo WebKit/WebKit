@@ -247,26 +247,6 @@ void Widget::setIsSelected(bool isSelected)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void Widget::addToSuperview(NSView *view)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    ASSERT(view);
-    NSView *subview = getOuterView();
-    ASSERT(![view isDescendantOf:subview]);
-    
-    // Suppress the resetting of drag margins since we know we can't affect them.
-    NSWindow* window = [view window];
-    BOOL resetDragMargins = [window _needsToResetDragMargins];
-    [window _setNeedsToResetDragMargins:NO];
-    if ([subview superview] != view)
-        [view addSubview:subview];
-    m_data->removeFromSuperviewSoon = false;
-    [window _setNeedsToResetDragMargins:resetDragMargins];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void Widget::removeFromSuperview()
 {
     if (m_data->mustStayInWindow)

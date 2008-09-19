@@ -34,6 +34,11 @@
 
 using namespace std;
 
+@interface NSWindow (WebWindowDetails)
+- (BOOL)_needsToResetDragMargins;
+- (void)_setNeedsToResetDragMargins:(BOOL)needs;
+@end
+
 namespace WebCore {
 
 ScrollView::ScrollView()
@@ -223,7 +228,20 @@ void ScrollView::addChild(Widget* child)
         [(id)[subview class] className], (int)[subview frame].size.width, (int)[subview frame].size.height);
 #endif
 
-    child->addToSuperview(documentView());
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSView *parentView = documentView();
+    NSView *childView = child->getOuterView();
+    ASSERT(![parentView isDescendantOf:childView]);
+    
+    // Suppress the resetting of drag margins since we know we can't affect them.
+    NSWindow *window = [parentView window];
+    BOOL resetDragMargins = [window _needsToResetDragMargins];
+    [window _setNeedsToResetDragMargins:NO];
+    if ([childView superview] != parentView)
+        [parentView addSubview:subview];
+    [window _setNeedsToResetDragMargins:resetDragMargins];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
     child->setParent(this);
 }
 
