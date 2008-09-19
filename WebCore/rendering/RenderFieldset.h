@@ -37,6 +37,7 @@ public:
     RenderFieldset(HTMLFormControlElement*);
 
     virtual const char* renderName() const { return "RenderFieldSet"; }
+    virtual bool isFieldset() const { return true; }
 
     virtual RenderObject* layoutLegend(bool relayoutChildren);
 
@@ -47,11 +48,12 @@ public:
     virtual bool expandsToEncloseOverhangingFloats() const { return style()->height().isAuto(); }
     virtual bool stretchesToMinIntrinsicWidth() const { return true; }
 
+    RenderObject* findLegend() const;
+
 private:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void paintMask(PaintInfo& paintInfo, int tx, int ty);
     void paintBorderMinusLegend(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, int lx, int lw, int lb);
-    RenderObject* findLegend() const;
 };
 
 } // namespace WebCore

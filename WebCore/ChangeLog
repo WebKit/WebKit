@@ -1,3 +1,21 @@
+2008-09-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6211041> Expose legend tag in accessibility
+
+        Exposes the legend tag as the titleUIElement of a fieldset
+
+        Test: accessibility/legend.html
+
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isFieldset):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isFieldset):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        * page/AccessibilityRenderObject.h:
+        * rendering/RenderFieldset.h:
+
 2008-09-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

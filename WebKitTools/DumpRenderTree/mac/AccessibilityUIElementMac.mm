@@ -183,6 +183,15 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
     return nil;
 }
 
+AccessibilityUIElement AccessibilityUIElement::titleUIElement()
+{
+    id accessibilityObject = [m_element accessibilityAttributeValue:NSAccessibilityTitleUIElementAttribute];
+    if (accessibilityObject)
+        return AccessibilityUIElement(accessibilityObject);
+    
+    return nil;
+}
+
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
 {
     Vector<AccessibilityUIElement> linkedElements;

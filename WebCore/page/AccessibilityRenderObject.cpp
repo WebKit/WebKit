@@ -55,6 +55,7 @@
 #include "NodeList.h"
 #include "NotImplemented.h"
 #include "Page.h"
+#include "RenderFieldset.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderListBox.h"
@@ -418,6 +419,14 @@ bool AccessibilityRenderObject::isControl() const
     return node && (node->isControl() || AccessibilityObject::isARIAControl(ariaRoleAttribute()));
 }
 
+bool AccessibilityRenderObject::isFieldset() const
+{
+    if (!m_renderer)
+        return false;
+    
+    return m_renderer->isFieldset();
+}
+    
 const AtomicString& AccessibilityRenderObject::getAttribute(const QualifiedName& attribute) const
 {
     Node* node = m_renderer->element();
@@ -1047,6 +1056,10 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
 {
     if (!m_renderer)
         return 0;
+    
+    // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
+    if (isFieldset())
+        return axObjectCache()->get(static_cast<RenderFieldset*>(m_renderer)->findLegend());
     
     // checkbox and radio hide their labels. Only controls get titleUIElements for now
     if (isCheckboxOrRadio() || !isControl())

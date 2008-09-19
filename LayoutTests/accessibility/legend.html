@@ -1,0 +1,35 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+ 
+    <!-- this test should output the attributes of the fieldset which should be a group
+         and it's title ui element's children, which should be the <legend> tag's static text -->
+
+    <fieldset>
+        <legend>Choose a shipping method:</legend>
+        <input id="overnight" type="radio" name="shipping" value="overnight" />Overnight
+    </fieldset>
+
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var fieldset = accessibilityController.focusedElement.childAtIndex(0);
+            var titleUIElement = fieldset.titleUIElement();
+
+            result.innerText += fieldset.allAttributes() + "\n\n";
+            result.innerText += "-----------------------------\n\n"; 
+            result.innerText += titleUIElement.attributesOfChildren() + "\n\n"; 
+        }
+    </script>
+</body>
+</html>
