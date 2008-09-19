@@ -39,10 +39,6 @@
 using std::max;
 using std::min;
 
-// FIXME: These constants should come from the ScrollbarTheme.
-const double cInitialTimerDelay = 0.25;
-const double cNormalTimerDelay = 0.05;
-
 namespace WebCore {
 
 #if !USE(NSSCROLLER) && !PLATFORM(GTK)
@@ -181,7 +177,7 @@ void Scrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
 
 void Scrollbar::autoscrollTimerFired(Timer<Scrollbar>*)
 {
-    autoscrollPressedPart(cNormalTimerDelay); // FIXME: Get timer delay from ScrollbarTheme.
+    autoscrollPressedPart(theme()->autoscrollTimerDelay());
 }
 
 static bool thumbUnderMouse(Scrollbar* scrollbar)
@@ -245,11 +241,11 @@ void Scrollbar::stopTimerIfNeeded()
 ScrollDirection Scrollbar::pressedPartScrollDirection()
 {
     if (m_orientation == HorizontalScrollbar) {
-        if (m_pressedPart == BackButtonPart || m_pressedPart == BackTrackPart)
+        if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart || m_pressedPart == BackTrackPart)
             return ScrollLeft;
         return ScrollRight;
     } else {
-        if (m_pressedPart == BackButtonPart || m_pressedPart == BackTrackPart)
+        if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart || m_pressedPart == BackTrackPart)
             return ScrollUp;
         return ScrollDown;
     }
@@ -257,7 +253,7 @@ ScrollDirection Scrollbar::pressedPartScrollDirection()
 
 ScrollGranularity Scrollbar::pressedPartScrollGranularity()
 {
-    if (m_pressedPart == BackButtonPart || m_pressedPart == ForwardButtonPart)
+    if (m_pressedPart == BackButtonStartPart || m_pressedPart == BackButtonEndPart ||  m_pressedPart == ForwardButtonStartPart || m_pressedPart == ForwardButtonEndPart)
         return ScrollByLine;
     return ScrollByPage;
 }
@@ -301,7 +297,7 @@ bool Scrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
             if (part == m_pressedPart) {
                 // The mouse is moving back over the pressed part.  We
                 // need to start up the timer action again.
-                startTimerIfNeeded(cNormalTimerDelay);
+                startTimerIfNeeded(theme()->autoscrollTimerDelay());
                 theme()->invalidatePart(this, m_pressedPart);
             } else if (m_hoveredPart == m_pressedPart) {
                 // The mouse is leaving the pressed part.  Kill our timer

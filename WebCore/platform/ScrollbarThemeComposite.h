@@ -49,8 +49,6 @@ protected:
     virtual bool hasButtons(Scrollbar*) = 0;
     virtual bool hasThumb(Scrollbar*) = 0;
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarButtonsSingle; }
-
     virtual IntRect backButtonRect(Scrollbar*, bool painting = false) = 0;
     virtual IntRect forwardButtonRect(Scrollbar*, bool painting = false) = 0;
     virtual IntRect trackRect(Scrollbar*, bool painting = false) = 0;

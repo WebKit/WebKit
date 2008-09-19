@@ -58,11 +58,13 @@ namespace WebCore {
 
     enum ScrollbarPart {
         NoPart = 0,
-        BackButtonPart = 1,
-        BackTrackPart = 1 << 1,
-        ThumbPart = 1 << 2,
-        ForwardTrackPart = 1 << 3,
-        ForwardButtonPart = 1 << 4,
+        BackButtonStartPart = 1,
+        ForwardButtonStartPart = 1 << 1,
+        BackTrackPart = 1 << 2,
+        ThumbPart = 1 << 3,
+        ForwardTrackPart = 1 << 4,
+        BackButtonEndPart = 1 << 5,
+        ForwardButtonEndPart = 1 << 6,
         AllParts = 0xffffffff,
     };
 

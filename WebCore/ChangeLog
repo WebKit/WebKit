@@ -1,3 +1,27 @@
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
+        Add new scrollbar parts to be able to represent back and forward buttons
+        at either end of the scrollbar.  The current scrollbar still just draws
+        a single button at either end, but the parts now exist.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollTypes.h:
+        (WebCore::):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::autoscrollTimerFired):
+        (WebCore::Scrollbar::pressedPartScrollDirection):
+        (WebCore::Scrollbar::pressedPartScrollGranularity):
+        (WebCore::Scrollbar::handleMouseMoveEvent):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::buttonsPlacement):
+        (WebCore::ScrollbarTheme::invalidateParts):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        (WebCore::ScrollbarThemeComposite::hitTest):
+        (WebCore::ScrollbarThemeComposite::invalidatePart):
+        * platform/ScrollbarThemeComposite.h:
+
 2008-09-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
