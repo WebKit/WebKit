@@ -1,3 +1,32 @@
+2008-09-19  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use the template hoisting technique on the RefCounted class. This reduces the code bloat due to
+        non-template methods' code been copied for each instance of the template.
+        The patch splits RefCounted between a base class that holds non-template methods and attributes
+        and the template RefCounted class that keeps the same functionnality.
+
+        On my Linux with gcc 4.3 for the Gtk port, this is:
+        - a ~600KB save on libwebkit.so in release.
+        - a ~1.6MB save on libwebkit.so in debug.
+
+        It is a wash on Sunspider and a small win on Dromaeo (not sure it is relevant).
+        On the whole, it should be a small win as we reduce the compiled code size and the only
+        new function call should be inlined by the compiler.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref): Copied from RefCounted.
+        (WTF::RefCountedBase::hasOneRef): Ditto.
+        (WTF::RefCountedBase::refCount): Ditto.
+        (WTF::RefCountedBase::RefCountedBase): Ditto.
+        (WTF::RefCountedBase::~RefCountedBase): Ditto.
+        (WTF::RefCountedBase::derefBase): Tweaked from the RefCounted version to remove
+        template section.
+        (WTF::RefCounted::RefCounted):
+        (WTF::RefCounted::deref): Small wrapper around RefCountedBase::derefBase().
+        (WTF::RefCounted::~RefCounted): Keep private destructor.
+
 2008-09-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
