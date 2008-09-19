@@ -1,3 +1,19 @@
+2008-09-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20942
+        Bug 20942: Repeated messages in resources don't collapse
+        - Now repeated messages in a resource's view are collapsed and a message
+        says how many were repeated.
+
+        * English.lproj/localizedStrings.js:
+        * manual-tests/inspector/multiple-console-messages.html:
+        * page/inspector/Console.js: Send all the messages to the resource's
+        view before possibly returning early if the message is a repeat.
+        * page/inspector/SourceFrame.js: Add the text about the message being
+        repeated, if it is, and increment it when necessary.
+
 2008-09-19  Chris Fleizach  <cfleizach@apple.com>
 
         Removed unnecessary #if

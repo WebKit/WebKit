@@ -323,6 +323,21 @@ WebInspector.SourceFrame.prototype = {
         sourceRow.removeStyleClass("webkit-breakpoint");
         sourceRow.removeStyleClass("webkit-breakpoint-disabled");
     },
+    
+    _incrementMessageRepeatCount: function(msg)
+    {
+        if (!msg._resourceMessageLineElement)
+            return;
+
+        if (!msg._resourceMessage_resourceMessageRepeatCountElement) {
+            var repeatedElement = document.createElement("span");
+            msg._resourceMessageLineElement.appendChild(repeatedElement);
+            msg._resourceMessage_resourceMessageRepeatCountElement = repeatedElement;
+            msg._resourceMessageRepeatCount = 1;
+        }
+        
+        msg._resourceMessage_resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", ++msg._resourceMessageRepeatCount);
+    },
 
     _addExistingMessagesToSource: function()
     {
@@ -341,28 +356,40 @@ WebInspector.SourceFrame.prototype = {
         if (!cell)
             return;
 
-        var errorDiv = cell.lastChild;
-        if (!errorDiv || errorDiv.nodeType !== Node.ELEMENT_NODE || !errorDiv.hasStyleClass("webkit-html-message-bubble")) {
-            errorDiv = this.element.contentDocument.createElement("div");
-            errorDiv.className = "webkit-html-message-bubble";
-            cell.appendChild(errorDiv);
+        var messageBubbleElement = cell.lastChild;
+        if (!messageBubbleElement || messageBubbleElement.nodeType !== Node.ELEMENT_NODE || !messageBubbleElement.hasStyleClass("webkit-html-message-bubble")) {
+            messageBubbleElement = this.element.contentDocument.createElement("div");
+            messageBubbleElement.className = "webkit-html-message-bubble";
+            cell.appendChild(messageBubbleElement);
         }
+
+        if (!row.messages)
+            row.messages = [];
+
+        for (var i = 0; i < row.messages.length; ++i) {
+            if (row.messages[i].isEqual(msg, true)) {
+                this._incrementMessageRepeatCount(row.messages[i]);
+                return;
+            }
+        }
+
+        row.messages.push(msg);
 
         var imageURL;
         switch (msg.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Error:
-                errorDiv.addStyleClass("webkit-html-error-message");
+                messageBubbleElement.addStyleClass("webkit-html-error-message");
                 imageURL = "Images/errorIcon.png";
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Warning:
-                errorDiv.addStyleClass("webkit-html-warning-message");
+                messageBubbleElement.addStyleClass("webkit-html-warning-message");
                 imageURL = "Images/warningIcon.png";
                 break;
         }
 
-        var lineDiv = this.element.contentDocument.createElement("div");
-        lineDiv.className = "webkit-html-message-line";
-        errorDiv.appendChild(lineDiv);
+        var messageLineElement = this.element.contentDocument.createElement("div");
+        messageLineElement.className = "webkit-html-message-line";
+        messageBubbleElement.appendChild(messageLineElement);
 
         // Create the image element in the Inspector's document so we can use relative image URLs.
         var image = document.createElement("img");
@@ -371,9 +398,10 @@ WebInspector.SourceFrame.prototype = {
 
         // Adopt the image element since it wasn't created in element's contentDocument.
         image = this.element.contentDocument.adoptNode(image);
-        lineDiv.appendChild(image);
+        messageLineElement.appendChild(image);
+        messageLineElement.appendChild(this.element.contentDocument.createTextNode(msg.message));
 
-        lineDiv.appendChild(this.element.contentDocument.createTextNode(msg.message));
+        msg._resourceMessageLineElement = messageLineElement;
     },
 
     _drawProgramCounterInContext: function(ctx, glow)

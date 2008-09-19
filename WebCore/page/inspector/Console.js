@@ -140,18 +140,18 @@ WebInspector.Console.prototype = {
     },
 
     addMessage: function(msg)
-    {
+    {    
+        if (msg.url in WebInspector.resourceURLMap) {
+            msg.resource = WebInspector.resourceURLMap[msg.url];
+            WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
+        }
+
         if (msg.isEqual && msg.isEqual(this.previousMessage)) {
             this._incrementRepeatedMessage();
             return;
         }
 
         this.previousMessage = msg;
-    
-        if (msg.url in WebInspector.resourceURLMap) {
-            msg.resource = WebInspector.resourceURLMap[msg.url];
-            WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
-        }
 
         this.messages.push(msg);
 
@@ -746,17 +746,18 @@ WebInspector.ConsoleMessage.prototype = {
         return sourceString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     },
     
-    isEqual: function(msg)
+    isEqual: function(msg, disreguardGroup)
     {
         if (!msg)
             return false;
 
-        return (this.source == msg.source)
+        var ret = (this.source == msg.source)
             && (this.level == msg.level)
             && (this.line == msg.line)
             && (this.url == msg.url)
-            && (this.groupLevel == msg.groupLevel)
             && (this.message == msg.message);
+
+        return (disreguardGroup ? ret : (ret && (this.groupLevel == msg.groupLevel)));
     }
 }
 
