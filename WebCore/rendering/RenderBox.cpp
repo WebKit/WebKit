@@ -1685,6 +1685,15 @@ int RenderBox::availableHeightUsing(const Length& h) const
     if (h.isPercent())
        return calcContentBoxHeight(h.calcValue(containingBlock()->availableHeight()));
 
+    if (isRenderBlock() && isPositioned() && style()->height().isAuto() && !(style()->top().isAuto() || style()->bottom().isAuto())) {
+        RenderBlock* block = const_cast<RenderBlock*>(static_cast<const RenderBlock*>(this));
+        int oldHeight = block->height();
+        block->calcHeight();
+        int newHeight = block->calcContentBoxHeight(block->contentHeight());
+        block->setHeight(oldHeight);
+        return calcContentBoxHeight(newHeight);
+    }
+
     return containingBlock()->availableHeight();
 }
 

@@ -1,3 +1,19 @@
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=20941
+
+        Incorrect height calculation for replaced element inside nested
+        positioned elements (where the inner has a percentage height and
+        the outer implicitly has a fixed height because of explicit top/bottom
+        values).
+
+        Added fast/block/positioning/replaced-inside-top-bottom.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableHeightUsing):
+
 2008-09-19  Chris Fleizach  <cfleizach@apple.com>
 
         Fix Tiger bustage
