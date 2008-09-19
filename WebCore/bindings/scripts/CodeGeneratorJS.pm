@@ -402,12 +402,18 @@ sub GenerateHeader
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className($passType, JSDOMWindowShell*);\n");
     } else {
-        push(@headerContent, "    $className(JSC::JSObject* prototype, $passType" . (IsSVGTypeNeedingContextParameter($implClassName) ? ", SVGElement* context" : "") .");\n");
+        if (IsSVGTypeNeedingContextParameter($implClassName)) {
+            push(@headerContent, "    $className(JSC::StructureID*, $passType, SVGElement* context);\n");
+        } else {
+            push(@headerContent, "    $className(JSC::StructureID*, $passType);\n");
+        }
     }
 
     # Destructor
     push(@headerContent, "    virtual ~$className();\n") if (!$hasParent or $interfaceName eq "Document");
 
+    # Prototype
+    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n");
 
     $implIncludes{"${className}Custom.h"} = 1 if
        $dataNode->extendedAttributes->{"CustomPutFunction"}
@@ -866,8 +872,7 @@ sub GenerateImplementation
     } else {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    static const Identifier* prototypeIdentifier = new Identifier(exec, \"[[${className}.prototype]]\");\n");
-        push(@implContent, "    return JSC::cacheGlobalObject<${className}Prototype>(exec, *prototypeIdentifier);\n");
+        push(@implContent, "    return getDOMPrototype<${className}>(exec);\n");
         push(@implContent, "}\n\n");
     }
     if ($interfaceName eq "DOMWindow") {
@@ -924,15 +929,14 @@ sub GenerateImplementation
         push(@implContent, "${className}::$className($passType impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(${className}Prototype::self(), impl, shell)\n");
     } else {
-        push(@implContent, "${className}::$className(JSObject* prototype, $passType impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
+        push(@implContent, "${className}::$className(StructureID* structure, $passType impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
         if ($hasParent) {
-            push(@implContent, "    : $parentClassName(prototype, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
+            push(@implContent, "    : $parentClassName(structure, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
-            push(@implContent, "    : $parentClassName(prototype)\n");
+            push(@implContent, "    : $parentClassName(structure)\n");
             push(@implContent, "    , m_context(context)\n") if $needsSVGContext;
             push(@implContent, "    , m_impl(impl)\n");  
         }
-
     }
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
@@ -943,7 +947,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
 
         if ($interfaceName eq "Node") {
-            push(@implContent, "    ScriptInterpreter::forgetDOMNodeForDocument(m_impl->document(), m_impl.get());\n");
+            push(@implContent, "    forgetDOMNode(m_impl->document(), m_impl.get());\n");
         } else {
             if ($podType) {
                 my $animatedType = $implClassName;
@@ -954,7 +958,7 @@ sub GenerateImplementation
                     push(@implContent, "    JSSVGDynamicPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
                 }
             }
-            push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n");
+            push(@implContent, "    forgetDOMObject(m_impl.get());\n");
         }
 
         push(@implContent, "\n}\n\n");
@@ -964,8 +968,17 @@ sub GenerateImplementation
     # its own special handling rather than relying on the caching that Node normally does.
     if ($interfaceName eq "Document") {
         push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n    ScriptInterpreter::forgetDOMObject(static_cast<${implClassName}*>(impl()));\n}\n\n");
+        push(@implContent, "{\n    forgetDOMObject(static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
+
+    push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
+    push(@implContent, "{\n");
+    if ($interfaceName eq "DOMWindow") {
+        push(@implContent, "    return new JSDOMWindowPrototype;\n");
+    } else {
+        push(@implContent, "    return new (exec) ${className}Prototype(exec);\n");
+    }
+    push(@implContent, "}\n");
 
     my $hasGetter = $numAttributes > 0 
                  || $dataNode->extendedAttributes->{"GenerateConstructor"} 
@@ -1208,7 +1221,7 @@ sub GenerateImplementation
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
         push(@implContent, "    static const Identifier* constructorIdentifier = new Identifier(exec, \"[[${interfaceName}.constructor]]\");\n");
-        push(@implContent, "    return JSC::cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
+        push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -1357,11 +1370,11 @@ sub GenerateImplementation
 
         push(@implContent, "{\n");
         if ($podType) {
-            push(@implContent, "    return cacheSVGDOMObject<JSSVGPODTypeWrapper<$podType>, $className, ${className}Prototype>(exec, obj, context);\n");
+            push(@implContent, "    return getDOMObjectWrapper<$className, JSSVGPODTypeWrapper<$podType> >(exec, obj, context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@implContent, "    return cacheSVGDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj, context);\n");
+            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, obj, context);\n");
         } else {
-            push(@implContent, "    return cacheDOMObject<$implClassName, $className, ${className}Prototype>(exec, obj);\n");
+            push(@implContent, "    return getDOMObjectWrapper<$className>(exec, obj);\n");
         }
         push(@implContent, "}\n");
     }

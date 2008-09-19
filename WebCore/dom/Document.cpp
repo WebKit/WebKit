@@ -410,10 +410,7 @@ Document::~Document()
 #endif
 
     XMLHttpRequest::detachRequests(this);
-    {
-        JSC::JSLock lock(false);
-        ScriptInterpreter::forgetAllDOMNodesForDocument(this);
-    }
+    forgetAllDOMNodesForDocument(this);
 
     if (m_docChanged && changedDocuments)
         changedDocuments->remove(this);

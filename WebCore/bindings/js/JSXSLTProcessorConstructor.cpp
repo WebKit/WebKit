@@ -49,7 +49,7 @@ JSXSLTProcessorConstructor::JSXSLTProcessorConstructor(ExecState* exec)
 
 static JSObject* constructXSLTProcessor(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return new (exec) JSXSLTProcessor(JSXSLTProcessorPrototype::self(exec), XSLTProcessor::create().get());
+    return CREATE_DOM_OBJECT_WRAPPER(exec, XSLTProcessor, XSLTProcessor::create().get());
 }
 
 ConstructType JSXSLTProcessorConstructor::getConstructData(ConstructData& constructData)

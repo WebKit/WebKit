@@ -162,13 +162,14 @@ bool JSCSSStyleDeclaration::customPut(ExecState* exec, const Identifier& propert
     if (!isCSSPropertyName(propertyName))
         return false;
 
-    DOMExceptionTranslator exception(exec);
     bool pixelOrPos;
     String prop = cssPropertyName(propertyName, &pixelOrPos);
     String propValue = valueToStringWithNullCheck(exec, value);
     if (pixelOrPos)
         propValue += "px";
-    impl()->setProperty(prop, propValue, exception);
+    ExceptionCode ec = 0;
+    impl()->setProperty(prop, propValue, ec);
+    setDOMException(exec, ec);
     return true;
 }
 

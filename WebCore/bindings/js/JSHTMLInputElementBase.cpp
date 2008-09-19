@@ -48,8 +48,6 @@ namespace WebCore {
 @end
 */
 
-JSC_IMPLEMENT_PROTOTYPE("HTMLInputElementBase", JSHTMLInputElementBasePrototype)
-
 // SetSelectionRange is implemented on the class instead of on the prototype
 // to make it easier to enable/disable lookup of the function based on input type.
 JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
@@ -61,8 +59,8 @@ JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObje
 
 const ClassInfo JSHTMLInputElementBase::s_info = { "HTMLInputElementBase", &JSHTMLElement::s_info, &JSHTMLInputElementBaseTable, 0 };
 
-JSHTMLInputElementBase::JSHTMLInputElementBase(JSC::JSObject* prototype, PassRefPtr<HTMLInputElement> e)
-    : JSHTMLElement(prototype, e.get())
+JSHTMLInputElementBase::JSHTMLInputElementBase(JSC::StructureID* structure, PassRefPtr<HTMLInputElement> e)
+    : JSHTMLElement(structure, e.get())
 {
 }
 

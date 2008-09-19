@@ -1,3 +1,10 @@
+2008-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        * platform/mac/fast/dom/wrapper-classes-expected.txt: Update results to
+        reflect correct prototype for CSSStyleRule.
+
 2008-09-18  Collin Jackson  <collinj@webkit.org>
 
         Reviewed by Antti Koivisto and Mark Rowe.

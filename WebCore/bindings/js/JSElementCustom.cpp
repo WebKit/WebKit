@@ -163,23 +163,19 @@ JSValue* toJSNewlyCreated(ExecState* exec, Element* element)
     if (!element)
         return jsNull();
 
-    ASSERT(!ScriptInterpreter::getDOMNodeForDocument(element->document(), element));
-    
-    Document* doc = element->document();
-    JSNode* ret = 0;
-    
+    ASSERT(!getCachedDOMNodeWrapper(element->document(), element));
+
+    JSNode* wrapper;        
     if (element->isHTMLElement())
-        ret = createJSHTMLWrapper(exec, static_cast<HTMLElement*>(element));
+        wrapper = createJSHTMLWrapper(exec, static_cast<HTMLElement*>(element));
 #if ENABLE(SVG)
     else if (element->isSVGElement())
-        ret = createJSSVGWrapper(exec, static_cast<SVGElement*>(element));
+        wrapper = createJSSVGWrapper(exec, static_cast<SVGElement*>(element));
 #endif
     else
-        ret = new (exec) JSElement(JSElementPrototype::self(exec), element);
+        wrapper = CREATE_DOM_NODE_WRAPPER(exec, Element, element);
 
-    ScriptInterpreter::putDOMNodeForDocument(doc, element, ret);
-
-    return ret;    
+    return wrapper;    
 }
     
 } // namespace WebCore

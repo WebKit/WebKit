@@ -46,7 +46,7 @@ namespace WebCore {
 void JSDocument::mark()
 {
     JSEventTargetNode::mark();
-    ScriptInterpreter::markDOMNodesForDocument(static_cast<Document*>(impl()));
+    markDOMNodesForDocument(static_cast<Document*>(impl()));
 }
 
 JSValue* JSDocument::location(ExecState* exec) const
@@ -106,37 +106,35 @@ JSValue* JSDocument::querySelectorAll(ExecState* exec, const ArgList& args)
     return result;
 }
 
-JSValue* toJS(ExecState* exec, Document* doc)
+JSValue* toJS(ExecState* exec, Document* document)
 {
-    if (!doc)
+    if (!document)
         return jsNull();
 
-    JSDocument* ret = static_cast<JSDocument*>(ScriptInterpreter::getDOMObject(doc));
-    if (ret)
-        return ret;
+    DOMObject* wrapper = getCachedDOMObjectWrapper(document);
+    if (wrapper)
+        return wrapper;
 
-    if (doc->isHTMLDocument())
-        ret = new (exec) JSHTMLDocument(JSHTMLDocumentPrototype::self(exec), static_cast<HTMLDocument*>(doc));
+    if (document->isHTMLDocument())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLDocument, document);
 #if ENABLE(SVG)
-    else if (doc->isSVGDocument())
-        ret = new (exec) JSSVGDocument(JSSVGDocumentPrototype::self(exec), static_cast<SVGDocument*>(doc));
+    else if (document->isSVGDocument())
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, SVGDocument, document);
 #endif
     else
-        ret = new (exec) JSDocument(JSDocumentPrototype::self(exec), doc);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, Document, document);
 
     // Make sure the document is kept around by the window object, and works right with the
     // back/forward cache.
-    if (!doc->frame()) {
+    if (!document->frame()) {
         size_t nodeCount = 0;
-        for (Node* n = doc; n; n = n->traverseNextNode())
+        for (Node* n = document; n; n = n->traverseNextNode())
             nodeCount++;
         
         exec->heap()->reportExtraMemoryCost(nodeCount * sizeof(Node));
     }
 
-    ScriptInterpreter::putDOMObject(doc, ret);
-
-    return ret;
+    return wrapper;
 }
 
 } // namespace WebCore

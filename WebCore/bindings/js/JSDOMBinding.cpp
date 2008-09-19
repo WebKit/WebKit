@@ -128,30 +128,30 @@ static DOMObjectMap& domObjects()
     return staticDOMObjects;
 }
 
-DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle) 
+DOMObject* getCachedDOMObjectWrapper(void* objectHandle) 
 {
     return domObjects().get(objectHandle);
 }
 
-void ScriptInterpreter::putDOMObject(void* objectHandle, DOMObject* wrapper) 
+void cacheDOMObjectWrapper(void* objectHandle, DOMObject* wrapper) 
 {
     addWrapper(wrapper);
     domObjects().set(objectHandle, wrapper);
 }
 
-void ScriptInterpreter::forgetDOMObject(void* objectHandle)
+void forgetDOMObject(void* objectHandle)
 {
     removeWrapper(domObjects().take(objectHandle));
 }
 
-JSNode* ScriptInterpreter::getDOMNodeForDocument(Document* document, WebCore::Node* node)
+JSNode* getCachedDOMNodeWrapper(Document* document, Node* node)
 {
     if (!document)
         return static_cast<JSNode*>(domObjects().get(node));
     return document->wrapperCache().get(node);
 }
 
-void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, WebCore::Node* node)
+void forgetDOMNode(Document* document, Node* node)
 {
     if (!document) {
         removeWrapper(domObjects().take(node));
@@ -160,7 +160,7 @@ void ScriptInterpreter::forgetDOMNodeForDocument(Document* document, WebCore::No
     removeWrapper(document->wrapperCache().take(node));
 }
 
-void ScriptInterpreter::putDOMNodeForDocument(Document* document, WebCore::Node* node, JSNode* wrapper)
+void cacheDOMNodeWrapper(Document* document, Node* node, JSNode* wrapper)
 {
     addWrapper(wrapper);
     if (!document) {
@@ -170,13 +170,13 @@ void ScriptInterpreter::putDOMNodeForDocument(Document* document, WebCore::Node*
     document->wrapperCache().set(node, wrapper);
 }
 
-void ScriptInterpreter::forgetAllDOMNodesForDocument(Document* document)
+void forgetAllDOMNodesForDocument(Document* document)
 {
     ASSERT(document);
     removeWrappers(document->wrapperCache());
 }
 
-void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
+void markDOMNodesForDocument(Document* doc)
 {
     // If a node's JS wrapper holds custom properties, those properties must
     // persist every time the node is fetched from the DOM. So, we keep JS
@@ -186,34 +186,35 @@ void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
     JSWrapperCache::iterator nodeEnd = nodeDict.end();
     for (JSWrapperCache::iterator nodeIt = nodeDict.begin(); nodeIt != nodeEnd; ++nodeIt) {
         JSNode* jsNode = nodeIt->second;
-        WebCore::Node* node = jsNode->impl();
+        Node* node = jsNode->impl();
 
         if (jsNode->marked())
             continue;
 
         // No need to preserve a wrapper that has no custom properties or is no
         // longer fetchable through the DOM.
-        if (!jsNode->hasCustomProperties() || !node->inDocument())
+        if (!jsNode->hasCustomProperties() || !node->inDocument()) {
             //... unless the wrapper wraps a loading image, since the "new Image"
             // syntax allows an orphan image wrapper to be the last reference
             // to a loading image, whose load event might have important side-effects.
             if (!node->hasTagName(imgTag) || static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
                 continue;
+        }
 
         jsNode->mark();
     }
 }
 
-void ScriptInterpreter::updateDOMNodeDocument(WebCore::Node* node, Document* oldDoc, Document* newDoc)
+void updateDOMNodeDocument(Node* node, Document* oldDocument, Document* newDocument)
 {
-    ASSERT(oldDoc != newDoc);
-    JSNode* wrapper = getDOMNodeForDocument(oldDoc, node);
-    if (wrapper) {
-        removeWrapper(wrapper);
-        putDOMNodeForDocument(newDoc, node, wrapper);
-        forgetDOMNodeForDocument(oldDoc, node);
-        addWrapper(wrapper);
-    }
+    ASSERT(oldDocument != newDocument);
+    JSNode* wrapper = getCachedDOMNodeWrapper(oldDocument, node);
+    if (!wrapper)
+        return;
+    removeWrapper(wrapper);
+    cacheDOMNodeWrapper(newDocument, node, wrapper);
+    forgetDOMNode(oldDocument, node);
+    addWrapper(wrapper);
 }
 
 JSValue* jsStringOrNull(ExecState* exec, const String& s)
@@ -370,6 +371,19 @@ ExecState* execStateFromNode(Node* node)
     if (!frame->script()->isEnabled())
         return 0;
     return frame->script()->globalObject()->globalExec();
+}
+
+JSC::StructureID* getCachedDOMStructure(JSC::ExecState* exec, const JSC::ClassInfo* classInfo)
+{
+    JSDOMStructureMap& structures = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->structures();
+    return structures.get(classInfo).get();
+}
+
+JSC::StructureID* createDOMStructure(JSC::ExecState* exec, const JSC::ClassInfo* classInfo, JSC::JSObject* prototype)
+{
+    JSDOMStructureMap& structures = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->structures();
+    ASSERT(!structures.contains(classInfo));
+    return structures.set(classInfo, StructureID::create(prototype)).first->second.get();
 }
 
 } // namespace WebCore

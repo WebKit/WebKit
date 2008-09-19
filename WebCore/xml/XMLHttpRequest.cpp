@@ -765,7 +765,7 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
         // and they are referenced by the JavaScript wrapper.
         ref();
 
-        JSC::gcProtectNullTolerant(ScriptInterpreter::getDOMObject(this));
+        JSC::gcProtectNullTolerant(getCachedDOMObjectWrapper(this));
     }
 }
 
@@ -872,7 +872,7 @@ void XMLHttpRequest::dropProtection()
     // can't be recouped until the load is done, so only
     // report the extra cost at that point.
 
-    JSC::JSValue* wrapper = ScriptInterpreter::getDOMObject(this);
+    JSC::JSValue* wrapper = getCachedDOMObjectWrapper(this);
     if (wrapper) {
         JSC::gcUnprotect(wrapper);
         JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);

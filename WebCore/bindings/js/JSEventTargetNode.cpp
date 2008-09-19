@@ -36,8 +36,8 @@ using namespace JSC;
 
 ASSERT_CLASS_FITS_IN_CELL(JSEventTargetNode)
 
-JSEventTargetNode::JSEventTargetNode(JSObject* prototype, Node* node)
-    : JSNode(prototype, node)
+JSEventTargetNode::JSEventTargetNode(StructureID* structure, Node* node)
+    : JSNode(structure, node)
 {
 }
 

@@ -37,10 +37,7 @@ JSValue* toJSNewlyCreated(ExecState* exec, Text* text)
     if (!text)
         return jsNull();
     
-    JSNode* ret = new (exec) JSText(JSTextPrototype::self(exec), text);
-    ScriptInterpreter::putDOMNodeForDocument(text->document(), text, ret);
-
-    return ret;
+    return CREATE_DOM_NODE_WRAPPER(exec, Text, text);
 }
 
 } // namespace WebCore

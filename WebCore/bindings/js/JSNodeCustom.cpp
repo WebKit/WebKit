@@ -118,7 +118,7 @@ void JSNode::mark()
         // But if the document isn't marked we have to mark it to ensure that
         // nodes reachable from this one are also marked
         if (Document* doc = node->ownerDocument())
-            if (DOMObject* docWrapper = ScriptInterpreter::getDOMObject(doc))
+            if (DOMObject* docWrapper = getCachedDOMObjectWrapper(doc))
                 if (!docWrapper->marked())
                     docWrapper->mark();
         DOMObject::mark();
@@ -141,7 +141,7 @@ void JSNode::mark()
     // Mark the whole tree; use the global set of roots to avoid reentering.
     root->setInSubtreeMark(true);
     for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
-        JSNode* wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
+        JSNode* wrapper = getCachedDOMNodeWrapper(m_impl->document(), nodeToMark);
         if (wrapper) {
             if (!wrapper->marked())
                 wrapper->mark();
@@ -164,62 +164,58 @@ void JSNode::mark()
 static ALWAYS_INLINE JSValue* createWrapper(ExecState* exec, Node* node)
 {
     ASSERT(node);
-    ASSERT(!ScriptInterpreter::getDOMNodeForDocument(node->document(), node));
+    ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
     
-    Document* doc = node->document();
-    JSNode* ret = 0;
-    
+    JSNode* wrapper;    
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
             if (node->isHTMLElement())
-                ret = createJSHTMLWrapper(exec, static_cast<HTMLElement*>(node));
+                wrapper = createJSHTMLWrapper(exec, static_cast<HTMLElement*>(node));
 #if ENABLE(SVG)
             else if (node->isSVGElement())
-                ret = createJSSVGWrapper(exec, static_cast<SVGElement*>(node));
+                wrapper = createJSSVGWrapper(exec, static_cast<SVGElement*>(node));
 #endif
             else
-                ret = new (exec) JSElement(JSElementPrototype::self(exec), static_cast<Element*>(node));
+                wrapper = CREATE_DOM_NODE_WRAPPER(exec, Element, node);
             break;
         case Node::ATTRIBUTE_NODE:
-            ret = new (exec) JSAttr(JSAttrPrototype::self(exec), static_cast<Attr*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, Attr, node);
             break;
         case Node::TEXT_NODE:
-            ret = new (exec) JSText(JSTextPrototype::self(exec), static_cast<Text*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, Text, node);
             break;
         case Node::CDATA_SECTION_NODE:
-            ret = new (exec) JSCDATASection(JSCDATASectionPrototype::self(exec), static_cast<CDATASection*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, CDATASection, node);
             break;
         case Node::ENTITY_NODE:
-            ret = new (exec) JSEntity(JSEntityPrototype::self(exec), static_cast<Entity*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, Entity, node);
             break;
         case Node::PROCESSING_INSTRUCTION_NODE:
-            ret = new (exec) JSProcessingInstruction(JSProcessingInstructionPrototype::self(exec), static_cast<ProcessingInstruction*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, ProcessingInstruction, node);
             break;
         case Node::COMMENT_NODE:
-            ret = new (exec) JSComment(JSCommentPrototype::self(exec), static_cast<Comment*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, Comment, node);
             break;
         case Node::DOCUMENT_NODE:
             // we don't want to cache the document itself in the per-document dictionary
             return toJS(exec, static_cast<Document*>(node));
         case Node::DOCUMENT_TYPE_NODE:
-            ret = new (exec) JSDocumentType(JSDocumentTypePrototype::self(exec), static_cast<DocumentType*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, DocumentType, node);
             break;
         case Node::NOTATION_NODE:
-            ret = new (exec) JSNotation(JSNotationPrototype::self(exec), static_cast<Notation*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, Notation, node);
             break;
         case Node::DOCUMENT_FRAGMENT_NODE:
-            ret = new (exec) JSDocumentFragment(JSDocumentFragmentPrototype::self(exec), static_cast<DocumentFragment*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, DocumentFragment, node);
             break;
         case Node::ENTITY_REFERENCE_NODE:
-            ret = new (exec) JSEntityReference(JSEntityReferencePrototype::self(exec), static_cast<EntityReference*>(node));
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, EntityReference, node);
             break;
         default:
-            ret = new (exec) JSNode(JSNodePrototype::self(exec), node);
+            wrapper = CREATE_DOM_NODE_WRAPPER(exec, Node, node);
     }
 
-    ScriptInterpreter::putDOMNodeForDocument(doc, node, ret);
-
-    return ret;    
+    return wrapper;    
 }
     
 JSValue* toJSNewlyCreated(ExecState* exec, Node* node)
@@ -235,10 +231,9 @@ JSValue* toJS(ExecState* exec, Node* node)
     if (!node)
         return jsNull();
 
-    Document* doc = node->document();
-    JSNode* ret = ScriptInterpreter::getDOMNodeForDocument(doc, node);
-    if (ret)
-        return ret;
+    JSNode* wrapper = getCachedDOMNodeWrapper(node->document(), node);
+    if (wrapper)
+        return wrapper;
 
     return createWrapper(exec, node);
 }

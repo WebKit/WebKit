@@ -127,25 +127,25 @@ JSValue* toJS(ExecState* exec, HTMLCollection* collection)
     if (!collection)
         return jsNull();
 
-    DOMObject* ret = ScriptInterpreter::getDOMObject(collection);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(collection);
 
-    if (ret)
-        return ret;
+    if (wrapper)
+        return wrapper;
 
     switch (collection->type()) {
         case HTMLCollection::SelectOptions:
-            ret = new (exec) JSHTMLOptionsCollection(JSHTMLOptionsCollectionPrototype::self(exec), static_cast<HTMLOptionsCollection*>(collection));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLOptionsCollection, collection);
             break;
         case HTMLCollection::DocAll:
-            ret = new (exec) JSHTMLAllCollection(JSHTMLCollectionPrototype::self(exec), static_cast<HTMLCollection*>(collection));
+            typedef HTMLCollection HTMLAllCollection;
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLAllCollection, collection);
             break;
         default:
-            ret = new (exec) JSHTMLCollection(JSHTMLCollectionPrototype::self(exec), static_cast<HTMLCollection*>(collection));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLCollection, collection);
             break;
     }
 
-    ScriptInterpreter::putDOMObject(collection, ret);
-    return ret;
+    return wrapper;
 }
 
 } // namespace WebCore

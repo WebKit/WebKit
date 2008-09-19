@@ -93,7 +93,7 @@ PASS jsWrapperClass(stylesheet.cssRules) is 'CSSRuleList'
 PASS jsWrapperClass(stylesheet.cssRules.__proto__) is 'CSSRuleListPrototype'
 PASS jsWrapperClass(stylesheet.cssRules.constructor) is 'CSSRuleListConstructor'
 PASS jsWrapperClass(stylesheet.cssRules.item(0)) is 'CSSStyleRule'
-FAIL jsWrapperClass(stylesheet.cssRules.item(0).__proto__) should be CSSStyleRulePrototype. Was CSSRulePrototype.
+PASS jsWrapperClass(stylesheet.cssRules.item(0).__proto__) is 'CSSStyleRulePrototype'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).constructor) is 'CSSStyleRuleConstructor'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style) is 'CSSStyleDeclaration'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.__proto__) is 'CSSStyleDeclarationPrototype'

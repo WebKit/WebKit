@@ -38,7 +38,7 @@ namespace WebCore {
 
     class JSEventTargetNode : public JSNode {
     public:
-        JSEventTargetNode(JSC::JSObject* prototype, Node*);
+        JSEventTargetNode(JSC::StructureID*, Node*);
 
         void setListener(JSC::ExecState*, const AtomicString& eventType, JSC::JSValue* func) const;
         JSC::JSValue* getListener(const AtomicString& eventType) const;

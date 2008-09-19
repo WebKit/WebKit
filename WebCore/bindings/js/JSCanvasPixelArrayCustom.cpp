@@ -58,17 +58,15 @@ JSValue* toJS(ExecState* exec, CanvasPixelArray* pixels)
     if (!pixels)
         return jsNull();
     
-    DOMObject* ret = ScriptInterpreter::getDOMObject(pixels);
-    if (ret)
-        return ret;
+    DOMObject* wrapper = getCachedDOMObjectWrapper(pixels);
+    if (wrapper)
+        return wrapper;
     
-    ret = new (exec) JSCanvasPixelArray(JSCanvasPixelArrayPrototype::self(exec), pixels);
+    wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CanvasPixelArray, pixels);
     
     exec->heap()->reportExtraMemoryCost(pixels->length());
     
-    ScriptInterpreter::putDOMObject(pixels, ret);
-    
-    return ret;
+    return wrapper;
 }
     
 } // namespace WebCore

@@ -49,28 +49,27 @@ JSValue* toJS(ExecState* exec, CSSValue* value)
     if (!value)
         return jsNull();
 
-    DOMObject* ret = ScriptInterpreter::getDOMObject(value);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(value);
 
-    if (ret)
-        return ret;
+    if (wrapper)
+        return wrapper;
 
     if (value->isWebKitCSSTransformValue())
-        ret = new (exec) JSWebKitCSSTransformValue(JSWebKitCSSTransformValuePrototype::self(exec), static_cast<WebKitCSSTransformValue*>(value));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitCSSTransformValue, value);
     else if (value->isValueList())
-        ret = new (exec) JSCSSValueList(JSCSSValueListPrototype::self(exec), static_cast<CSSValueList*>(value));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSValueList, value);
 #if ENABLE(SVG)
     else if (value->isSVGPaint())
-        ret = new (exec) JSSVGPaint(JSSVGPaintPrototype::self(exec), static_cast<SVGPaint*>(value));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, SVGPaint, value);
     else if (value->isSVGColor())
-        ret = new (exec) JSSVGColor(JSSVGColorPrototype::self(exec), static_cast<SVGColor*>(value));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, SVGColor, value);
 #endif
     else if (value->isPrimitiveValue())
-        ret = new (exec) JSCSSPrimitiveValue(JSCSSPrimitiveValuePrototype::self(exec), static_cast<CSSPrimitiveValue*>(value));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSPrimitiveValue, value);
     else
-        ret = new (exec) JSCSSValue(JSCSSValuePrototype::self(exec), value);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSValue, value);
 
-    ScriptInterpreter::putDOMObject(value, ret);
-    return ret;
+    return wrapper;
 }
 
 } // namespace WebCore

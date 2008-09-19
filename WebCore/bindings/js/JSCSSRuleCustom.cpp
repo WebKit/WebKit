@@ -54,46 +54,44 @@ JSValue* toJS(ExecState* exec, CSSRule* rule)
     if (!rule)
         return jsNull();
 
-    DOMObject* ret = ScriptInterpreter::getDOMObject(rule);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(rule);
 
-    if (ret)
-        return ret;
+    if (wrapper)
+        return wrapper;
 
     switch (rule->type()) {
         case CSSRule::STYLE_RULE:
-            ret = new (exec) JSCSSStyleRule(JSCSSRulePrototype::self(exec), static_cast<CSSStyleRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSStyleRule, rule);
             break;
         case CSSRule::MEDIA_RULE:
-            ret = new (exec) JSCSSMediaRule(JSCSSMediaRulePrototype::self(exec), static_cast<CSSMediaRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSMediaRule, rule);
             break;
         case CSSRule::FONT_FACE_RULE:
-            ret = new (exec) JSCSSFontFaceRule(JSCSSFontFaceRulePrototype::self(exec), static_cast<CSSFontFaceRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSFontFaceRule, rule);
             break;
         case CSSRule::PAGE_RULE:
-            ret = new (exec) JSCSSPageRule(JSCSSPageRulePrototype::self(exec), static_cast<CSSPageRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSPageRule, rule);
             break;
         case CSSRule::IMPORT_RULE:
-            ret = new (exec) JSCSSImportRule(JSCSSImportRulePrototype::self(exec), static_cast<CSSImportRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSImportRule, rule);
             break;
         case CSSRule::CHARSET_RULE:
-            ret = new (exec) JSCSSCharsetRule(JSCSSCharsetRulePrototype::self(exec), static_cast<CSSCharsetRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSCharsetRule, rule);
             break;
         case CSSRule::VARIABLES_RULE:
-            ret = new (exec) JSCSSVariablesRule(JSCSSVariablesRulePrototype::self(exec), static_cast<CSSVariablesRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSVariablesRule, rule);
             break;
         case CSSRule::WEBKIT_KEYFRAME_RULE:
-            ret = new (exec) JSWebKitCSSKeyframeRule(JSWebKitCSSKeyframeRulePrototype::self(exec), static_cast<WebKitCSSKeyframeRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitCSSKeyframeRule, rule);
             break;
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
-            ret = new (exec) JSWebKitCSSKeyframesRule(JSWebKitCSSKeyframesRulePrototype::self(exec), static_cast<WebKitCSSKeyframesRule*>(rule));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitCSSKeyframesRule, rule);
             break;
         default:
-            ret = new (exec) JSCSSRule(JSCSSRulePrototype::self(exec), rule);
-            break;
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, CSSRule, rule);
     }
 
-    ScriptInterpreter::putDOMObject(rule, ret);
-    return ret;
+    return wrapper;
 }
 
 } // namespace WebCore

@@ -84,50 +84,49 @@ JSValue* toJS(ExecState* exec, Event* event)
     if (!event)
         return jsNull();
 
-    DOMObject* ret = ScriptInterpreter::getDOMObject(event);
-    if (ret)
-        return ret;
+    DOMObject* wrapper = getCachedDOMObjectWrapper(event);
+    if (wrapper)
+        return wrapper;
 
     if (event->isUIEvent()) {
         if (event->isKeyboardEvent())
-            ret = new (exec) JSKeyboardEvent(JSKeyboardEventPrototype::self(exec), static_cast<KeyboardEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, KeyboardEvent, event);
         else if (event->isTextEvent())
-            ret = new (exec) JSTextEvent(JSTextEventPrototype::self(exec), static_cast<TextEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, TextEvent, event);
         else if (event->isMouseEvent())
-            ret = new (exec) JSMouseEvent(JSMouseEventPrototype::self(exec), static_cast<MouseEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, MouseEvent, event);
         else if (event->isWheelEvent())
-            ret = new (exec) JSWheelEvent(JSWheelEventPrototype::self(exec), static_cast<WheelEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WheelEvent, event);
 #if ENABLE(SVG)
         else if (event->isSVGZoomEvent())
-            ret = new (exec) JSSVGZoomEvent(JSSVGZoomEventPrototype::self(exec), static_cast<SVGZoomEvent*>(event), 0);
+            wrapper = CREATE_SVG_OBJECT_WRAPPER(exec, SVGZoomEvent, event, 0);
 #endif
         else
-            ret = new (exec) JSUIEvent(JSUIEventPrototype::self(exec), static_cast<UIEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, UIEvent, event);
     } else if (event->isMutationEvent())
-        ret = new (exec) JSMutationEvent(JSMutationEventPrototype::self(exec), static_cast<MutationEvent*>(event));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, MutationEvent, event);
     else if (event->isOverflowEvent())
-        ret = new (exec) JSOverflowEvent(JSOverflowEventPrototype::self(exec), static_cast<OverflowEvent*>(event));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, OverflowEvent, event);
     else if (event->isMessageEvent())
-        ret = new (exec) JSMessageEvent(JSMessageEventPrototype::self(exec), static_cast<MessageEvent*>(event));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, MessageEvent, event);
     else if (event->isProgressEvent()) {
         if (event->isXMLHttpRequestProgressEvent())
-            ret = new (exec) JSXMLHttpRequestProgressEvent(JSXMLHttpRequestProgressEventPrototype::self(exec), static_cast<XMLHttpRequestProgressEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, XMLHttpRequestProgressEvent, event);
         else
-            ret = new (exec) JSProgressEvent(JSProgressEventPrototype::self(exec), static_cast<ProgressEvent*>(event));
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, ProgressEvent, event);
     }
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
-        ret = new (exec) JSStorageEvent(JSStorageEventPrototype::self(exec), static_cast<StorageEvent*>(event));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, StorageEvent, event);
 #endif
     else if (event->isWebKitAnimationEvent())
-        ret = new (exec) JSWebKitAnimationEvent(JSWebKitAnimationEventPrototype::self(exec), static_cast<WebKitAnimationEvent*>(event));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitAnimationEvent, event);
     else if (event->isWebKitTransitionEvent())
-        ret = new (exec) JSWebKitTransitionEvent(JSWebKitTransitionEventPrototype::self(exec), static_cast<WebKitTransitionEvent*>(event));
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitTransitionEvent, event);
     else
-        ret = new (exec) JSEvent(JSEventPrototype::self(exec), event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, Event, event);
 
-    ScriptInterpreter::putDOMObject(event, ret);
-    return ret;
+    return wrapper;
 }
 
 } // namespace WebCore

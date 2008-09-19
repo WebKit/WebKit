@@ -26,15 +26,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
-namespace JSC {
-    class ExecState;
-}
-
 namespace WebCore {
 
     class AtomicString;
     class DOMWindow;
     class DOMWindowTimer;
+    class Event;
     class Frame;
     class JSDOMWindow;
     class JSDOMWindowShell;
@@ -46,6 +43,8 @@ namespace WebCore {
     class SecurityOrigin;
 
     class JSDOMWindowBasePrivate;
+
+    typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::StructureID> > JSDOMStructureMap;
 
     // This is the only WebCore JS binding which does not inherit from DOMObject
     class JSDOMWindowBase : public JSC::JSGlobalObject {
@@ -128,6 +127,8 @@ namespace WebCore {
 
         void clearAllTimeouts();
 
+        JSDOMStructureMap& structures() { return d()->structures; }
+
         enum {
             // Attributes
             Crypto, Event_,
@@ -144,13 +145,12 @@ namespace WebCore {
             OnWebKitTransitionEnd,
 
             // Constructors
-            Audio, Image, Option, XMLHttpRequest,
-            XSLTProcessor
+            Audio, Image, Option, XMLHttpRequest, XSLTProcessor
         };
 
     private:
         struct JSDOMWindowBaseData : public JSGlobalObjectData {
-            JSDOMWindowBaseData(PassRefPtr<DOMWindow> window_, JSDOMWindowBase* jsWindow_, JSDOMWindowShell* shell_);
+            JSDOMWindowBaseData(PassRefPtr<DOMWindow>, JSDOMWindowBase*, JSDOMWindowShell*);
 
             RefPtr<DOMWindow> impl;
 
@@ -164,6 +164,8 @@ namespace WebCore {
 
             typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
             TimeoutsMap timeouts;
+
+            JSDOMStructureMap structures;
         };
         
         JSC::JSValue* getListener(JSC::ExecState*, const AtomicString& eventType) const;

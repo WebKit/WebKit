@@ -28,9 +28,7 @@
 
 namespace WebCore {
 
-    class AtomicString;
     class Document;
-    class Event;
     class Frame;
     class KURL;
     class Node;
@@ -61,59 +59,109 @@ namespace WebCore {
 #endif
     };
 
-    class ScriptInterpreter : public JSC::Interpreter {
-    public:
-        static DOMObject* getDOMObject(void* objectHandle);
-        static void putDOMObject(void* objectHandle, DOMObject*);
-        static void forgetDOMObject(void* objectHandle);
+    DOMObject* getCachedDOMObjectWrapper(void* objectHandle);
+    void cacheDOMObjectWrapper(void* objectHandle, DOMObject* wrapper);
+    void forgetDOMObject(void* objectHandle);
 
-        static JSNode* getDOMNodeForDocument(Document*, Node*);
-        static void putDOMNodeForDocument(Document*, Node*, JSNode* nodeWrapper);
-        static void forgetDOMNodeForDocument(Document*, Node*);
-        static void forgetAllDOMNodesForDocument(Document*);
-        static void updateDOMNodeDocument(Node*, Document* oldDoc, Document* newDoc);
-        static void markDOMNodesForDocument(Document*);
-    };
+    JSNode* getCachedDOMNodeWrapper(Document*, Node*);
+    void cacheDOMNodeWrapper(Document*, Node*, JSNode* wrapper);
+    void forgetDOMNode(Document*, Node*);
+    void forgetAllDOMNodesForDocument(Document*);
+    void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
+    void markDOMNodesForDocument(Document*);
 
-    // Retrieve from cache, or create, a JS wrapper for a DOM object.
-    template<class DOMObj, class JSDOMObj, class JSDOMObjPrototype> inline JSC::JSValue* cacheDOMObject(JSC::ExecState* exec, DOMObj* domObj)
+    JSC::StructureID* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
+    JSC::StructureID* createDOMStructure(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* prototype);
+
+    template<class WrapperClass> inline JSC::StructureID* getDOMStructure(JSC::ExecState* exec)
     {
-        if (!domObj)
+        if (JSC::StructureID* structure = getCachedDOMStructure(exec, &WrapperClass::s_info))
+            return structure;
+        return createDOMStructure(exec, &WrapperClass::s_info, WrapperClass::createPrototype(exec));
+    }
+    template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec)
+    {
+        return static_cast<JSC::JSObject*>(getDOMStructure<WrapperClass>(exec)->storedPrototype());
+    }
+
+    #define CREATE_DOM_OBJECT_WRAPPER(exec, className, object) createDOMObjectWrapper<JS##className>(exec, static_cast<className*>(object))
+    template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, DOMClass* object)
+    {
+        ASSERT(object);
+        ASSERT(!getCachedDOMObjectWrapper(object));
+        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec), object);
+        cacheDOMObjectWrapper(object, wrapper);
+        return wrapper;
+    }
+    template<class WrapperClass, class DOMClass> inline JSC::JSValue* getDOMObjectWrapper(JSC::ExecState* exec, DOMClass* object)
+    {
+        if (!object)
             return JSC::jsNull();
-        if (DOMObject* ret = ScriptInterpreter::getDOMObject(domObj))
-            return ret;
-        DOMObject* ret = new (exec) JSDOMObj(JSDOMObjPrototype::self(exec), domObj);
-        ScriptInterpreter::putDOMObject(domObj, ret);
-        return ret;
+        if (DOMObject* wrapper = getCachedDOMObjectWrapper(object))
+            return wrapper;
+        return createDOMObjectWrapper<WrapperClass>(exec, object);
     }
 
 #if ENABLE(SVG)
-    // Retrieve from cache, or create, a JS wrapper for an SVG DOM object.
-    template<class DOMObj, class JSDOMObj, class JSDOMObjPrototype> inline JSC::JSValue* cacheSVGDOMObject(JSC::ExecState* exec, DOMObj* domObj, SVGElement* context)
+    #define CREATE_SVG_OBJECT_WRAPPER(exec, className, object, context) createDOMObjectWrapper<JS##className>(exec, static_cast<className*>(object), context)
+    template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, DOMClass* object, SVGElement* context)
     {
-        if (!domObj)
+        ASSERT(object);
+        ASSERT(!getCachedDOMObjectWrapper(object));
+        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec), object, context);
+        cacheDOMObjectWrapper(object, wrapper);
+        return wrapper;
+    }
+    template<class WrapperClass, class DOMClass> inline JSC::JSValue* getDOMObjectWrapper(JSC::ExecState* exec, DOMClass* object, SVGElement* context)
+    {
+        if (!object)
             return JSC::jsNull();
-        if (DOMObject* ret = ScriptInterpreter::getDOMObject(domObj))
-            return ret;
-        DOMObject* ret = new (exec) JSDOMObj(JSDOMObjPrototype::self(exec), domObj, context);
-        ScriptInterpreter::putDOMObject(domObj, ret);
-        return ret;
+        if (DOMObject* wrapper = getCachedDOMObjectWrapper(object))
+            return wrapper;
+        return createDOMObjectWrapper<WrapperClass>(exec, object, context);
     }
 #endif
 
+    #define CREATE_DOM_NODE_WRAPPER(exec, className, object) createDOMNodeWrapper<JS##className>(exec, static_cast<className*>(object))
+    template<class WrapperClass, class DOMClass> inline JSNode* createDOMNodeWrapper(JSC::ExecState* exec, DOMClass* node)
+    {
+        ASSERT(node);
+        ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
+        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec), node);
+        cacheDOMNodeWrapper(node->document(), node, wrapper);
+        return wrapper;
+    }
+    template<class WrapperClass, class DOMClass> inline JSC::JSValue* getDOMNodeWrapper(JSC::ExecState* exec, DOMClass* node)
+    {
+        if (!node)
+            return JSC::jsNull();
+        if (JSNode* wrapper = getCachedDOMNodeWrapper(node->document(), node))
+            return wrapper;
+        return createDOMNodeWrapper<WrapperClass>(exec, node);
+    }
+
+    /**
+     * This template method retrieves or create an object that is unique
+     * (for a given global object) The first time this is called (for a given
+     * property name), the Object will be constructed, and set as a property
+     * of the global object. Later calls will simply retrieve that cached object. 
+     * Note that the object constructor must take 1 argument, exec.
+     */
+    template <class WrapperClass> inline WrapperClass* cacheGlobalObject(JSC::ExecState* exec, const JSC::Identifier& propertyName)
+    {
+        JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+        JSC::JSValue* obj = globalObject->getDirect(propertyName);
+        if (obj) {
+            ASSERT(obj->isObject());
+            return static_cast<WrapperClass*>(obj);
+        }
+        WrapperClass* newObject = new (exec) WrapperClass(exec);
+        globalObject->putDirect(propertyName, newObject, JSC::DontEnum);
+        return newObject;
+    }
+
     // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
     void setDOMException(JSC::ExecState*, ExceptionCode);
-
-    // Helper class to call setDOMException on exit without adding lots of separate calls to that function.
-    class DOMExceptionTranslator : Noncopyable {
-    public:
-        explicit DOMExceptionTranslator(JSC::ExecState* exec) : m_exec(exec), m_code(0) { }
-        ~DOMExceptionTranslator() { setDOMException(m_exec, m_code); }
-        operator ExceptionCode&() { return m_code; }
-    private:
-        JSC::ExecState* m_exec;
-        ExceptionCode m_code;
-    };
 
     JSC::JSValue* jsStringOrNull(JSC::ExecState*, const String&); // null if the string is null
     JSC::JSValue* jsStringOrNull(JSC::ExecState*, const KURL&); // null if the URL is null

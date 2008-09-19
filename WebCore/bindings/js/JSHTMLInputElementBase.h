@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,25 +21,27 @@
 #define JSHTMLInputElementBase_h
 
 #include "JSHTMLElement.h"
-#include "JSDOMBinding.h"
 
 namespace WebCore {
 
     class HTMLInputElement;
 
-    JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE(JSHTMLInputElementBasePrototype, JSHTMLElementPrototype)
-
     class JSHTMLInputElementBase : public JSHTMLElement {
     public:
-        JSHTMLInputElementBase(JSC::JSObject* prototype, PassRefPtr<HTMLInputElement>);
+        JSHTMLInputElementBase(JSC::StructureID*, PassRefPtr<HTMLInputElement>);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSValue*, JSC::PutPropertySlot& slot);
+        virtual void put(JSC::ExecState*, const JSC::Identifier&, JSValue*, JSC::PutPropertySlot&);
         void putValueProperty(JSC::ExecState*, int token, JSC::JSValue*);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
         enum { SelectionStart, SelectionEnd };
+    };
+
+    class JSHTMLInputElementBasePrototype {
+    public:
+        static JSC::JSObject* self(JSC::ExecState* exec) { return JSHTMLElementPrototype::self(exec); }
     };
 
 } // namespace WebCore

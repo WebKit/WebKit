@@ -193,10 +193,8 @@ void Node::setDocument(Document* doc)
 
     willMoveToNewOwnerDocument();
 
-    {
-        JSC::JSLock lock(false);
-        ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
-    }    
+    updateDOMNodeDocument(this, m_document.get(), doc);
+
     m_document = doc;
 
     didMoveToNewOwnerDocument();

@@ -53,7 +53,7 @@ void JSXMLHttpRequest::mark()
     Base::mark();
 
     if (XMLHttpRequestUpload* upload = m_impl->optionalUpload()) {
-        DOMObject* wrapper = ScriptInterpreter::getDOMObject(upload);
+        DOMObject* wrapper = getCachedDOMObjectWrapper(upload);
         if (wrapper && !wrapper->marked())
             wrapper->mark();
     }
