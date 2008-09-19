@@ -1,5 +1,26 @@
 2008-09-18  David Hyatt  <hyatt@apple.com>
 
+        Move Qt's isNPAPIPlugin boolean from Widget down to PluginView, since there
+        was no reason for it to be on Widget.  This change eliminates Qt ifdefs
+        from Widget.
+
+        Reviewed by Sam Weinig
+
+        * bindings/js/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::WidgetPrivate::~WidgetPrivate):
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        (WebCore::PluginView::isNPAPIPlugin):
+        (WebCore::PluginView::setIsNPAPIPlugin):
+
+2008-09-18  David Hyatt  <hyatt@apple.com>
+
         Make geometryChanged() cross-platform on Widget.  GTK and WIN platform
         ifdefs are now gone from Widget!
 

@@ -175,11 +175,6 @@ public:
 
     virtual void geometryChanged() const {}
 
-#if PLATFORM(QT)
-    void setIsNPAPIPlugin(bool);
-    bool isNPAPIPlugin() const;
-#endif
-
 #if PLATFORM(MAC)    
     NSView* getOuterView() const;
     
@@ -206,7 +201,9 @@ private:
     IntRect m_frame; // Not used when a native widget exists.
     PlatformWindow m_containingWindow; // Not used when a native widget exists.
 
+#if PLATFORM(MAC) || PLATFORM(GTK)
     WidgetPrivate* data;
+#endif
 };
 
 } // namespace WebCore
