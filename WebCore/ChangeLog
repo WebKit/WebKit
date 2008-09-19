@@ -1,3 +1,9 @@
+2008-09-18  Collin Jackson  <collinj@webkit.org>
+
+        Build fix; added missing header file to GNUmakefile.am
+
+        * GNUmakefile.am:
+
 2008-09-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David "the Hair" Hyatt.
