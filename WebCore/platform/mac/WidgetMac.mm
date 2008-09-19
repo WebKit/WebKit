@@ -332,18 +332,55 @@ IntPoint Widget::convertToScreenCoordinate(NSView *view, const IntPoint& point)
     return globalPoint(conversionPoint, [view window]);
 }
 
-IntPoint Widget::convertFromContainingWindow(const IntPoint& p) const
+IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {
-    // FIXME: Implement.
-    return p;
+    if (!platformWidget() && parent()) {
+        IntPoint result = parent()->convertFromContainingWindow(point);
+        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        return result;
+    }
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return IntPoint([platformWidget() convertPoint:point fromView:nil]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return point;
 }
 
 IntRect Widget::convertToContainingWindow(const IntRect& r) const
 {
-    // FIXME: Implement.
+    if (!platformWidget()) {
+        if (!parent())
+            return r;
+        IntRect result = r;
+        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        return parent()->convertToContainingWindow(result);
+    }
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return IntRect([platformWidget() convertRect:r toView:nil]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
     return r;
 }
+ 
+IntPoint Widget::convertToContainingWindow(const IntPoint& p) const
+{
+    if (!platformWidget()) {
+        if (!parent())
+            return p;
+        IntPoint result = p;
+        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        return parent()->convertToContainingWindow(result);
+    }
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return IntPoint([platformWidget() convertPoint:p toView:nil]);
+    END_BLOCK_OBJC_EXCEPTIONS;
 
+    return p;
+}
+ 
 void Widget::releasePlatformWidget()
 {
     HardRelease(m_widget);

@@ -157,7 +157,7 @@ public:
     virtual void removeFromParent();
     virtual void setParent(ScrollView* view);
     ScrollView* parent() const { return m_parent; }
-    const ScrollView* root() const;
+    ScrollView* root() const;
 
     // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
     // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
@@ -169,14 +169,13 @@ public:
     // The containing window is used as the coordinate space for event handling.
     PlatformWindow containingWindow() const;
     void setContainingWindow(PlatformWindow window) { m_containingWindow = window; } // This method is only used by platforms that can't easily get back to their containing window.
-
-#if PLATFORM(WIN)
-    virtual void geometryChanged() const {}
-    
     IntRect convertToContainingWindow(const IntRect&) const;
     IntPoint convertToContainingWindow(const IntPoint&) const;
     IntPoint convertFromContainingWindow(const IntPoint&) const;
 
+#if PLATFORM(WIN)
+    virtual void geometryChanged() const {}
+    
     virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
     virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 #endif
@@ -198,10 +197,6 @@ public:
 
     virtual void geometryChanged() const;
 
-    IntRect convertToContainingWindow(const IntRect&) const;
-    IntPoint convertToContainingWindow(const IntPoint&) const;
-    IntPoint convertFromContainingWindow(const IntPoint&) const;
-
     virtual IntPoint convertChildToSelf(const Widget*, const IntPoint&) const;
     virtual IntPoint convertSelfToChild(const Widget*, const IntPoint&) const;
 #endif
@@ -215,10 +210,6 @@ public:
     void addToSuperview(NSView* superview);
     void removeFromSuperview();
     IntPoint convertToScreenCoordinate(NSView*, const IntPoint&);
-    
-    // FIXME: Will need to implement these methods once we actually start doing viewless widgets.
-    IntPoint convertFromContainingWindow(const IntPoint&) const;
-    IntRect convertToContainingWindow(const IntRect&) const;
 #endif
 
 private:
