@@ -39,6 +39,8 @@ public:
     
     virtual bool supportsControlTints() const { return true; }
 
+    virtual double initialAutoscrollTimerDelay() { return 0.25; }
+
 protected:
     virtual bool hasButtons(Scrollbar*);
     virtual bool hasThumb(Scrollbar*);
