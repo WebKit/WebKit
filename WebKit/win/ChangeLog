@@ -1,3 +1,11 @@
+2008-09-20  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::paintCustomScrollbar): Tweaked constant names to make this
+        compile, but it may not be working correctly. Hyatt should do the real fix.
+
 2008-09-19  Alice Liu  <alice.liu@apple.com>
 
         Fix crash when submitting form at bugreport.apple.com rdar://6234126
