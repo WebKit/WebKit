@@ -180,6 +180,12 @@ ALWAYS_INLINE void CTI::emitPutResult(unsigned dst, X86Assembler::RegisterID fro
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
+ALWAYS_INLINE void CTI::emitInitialiseRegister(unsigned dst)
+{
+    m_jit.movl_i32m(reinterpret_cast<unsigned>(jsUndefined()), dst * sizeof(Register), X86::edi);
+    // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
+}
+
 #if ENABLE(SAMPLING_TOOL)
 unsigned inCalledCode = 0;
 #endif
@@ -525,6 +531,13 @@ void CTI::emitSlowScriptCheck(unsigned opcodeIndex)
 
 void CTI::privateCompileMainPass()
 {
+    if (m_codeBlock->codeType == FunctionCode) {
+        for (int i = -m_codeBlock->numVars; i < 0; i++)
+            emitInitialiseRegister(i);
+    }
+    for (size_t i = 0; i < m_codeBlock->constantRegisters.size(); ++i)
+        emitInitialiseRegister(i);
+
     Instruction* instruction = m_codeBlock->instructions.begin();
     unsigned instructionCount = m_codeBlock->instructions.size();
 
@@ -1519,6 +1532,10 @@ void CTI::privateCompileMainPass()
             emitCall(i, Machine::cti_op_neq_null);
             emitPutResult(instruction[i + 1].u.operand);
             i += 3;
+            break;
+        }
+        case op_initialise_locals: {
+            i++;
             break;
         }
         case op_get_array_length:

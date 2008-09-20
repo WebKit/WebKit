@@ -1,3 +1,30 @@
+2008-09-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Improve peformance of local variable initialisation.
+
+        Pull local and constant initialisation out of slideRegisterWindowForCall
+        and into its own opcode.  This allows the JIT to generate the initialisation
+        code for a function directly into the instruction stream and so avoids a few
+        branches on function entry.
+
+        Results a 1% progression in SunSpider, particularly in a number of the bitop
+        tests where the called functions are very fast. 
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitInitialiseRegister):
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        * VM/Machine.cpp:
+        (JSC::slideRegisterWindowForCall):
+        (JSC::Machine::privateExecute):
+        * VM/Opcode.h:
+
 2008-09-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

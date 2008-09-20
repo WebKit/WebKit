@@ -40,6 +40,7 @@ namespace JSC {
 #define DUMP_OPCODE_STATS 0
 
     #define FOR_EACH_OPCODE_ID(macro) \
+        macro(op_initialise_locals) \
         macro(op_unexpected_load) \
         macro(op_new_object) \
         macro(op_new_array) \
