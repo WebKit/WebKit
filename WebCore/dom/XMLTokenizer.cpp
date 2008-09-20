@@ -33,7 +33,6 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -63,8 +62,6 @@
 using namespace std;
 
 namespace WebCore {
-
-using namespace EventNames;
 
 const int maxErrors = 25;
 
@@ -317,12 +314,15 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     
     RefPtr<Element> e = m_scriptElement;
     m_scriptElement = 0;
-    
+
+    ScriptElement* scriptElement = castToScriptElement(e.get());
+    ASSERT(scriptElement);
+
     if (errorOccurred) 
-        EventTargetNodeCast(e.get())->dispatchEventForType(errorEvent, true, false);
+        scriptElement->dispatchErrorEvent();
     else {
         m_view->frame()->loader()->executeScript(cachedScriptUrl, 1, scriptSource);
-        EventTargetNodeCast(e.get())->dispatchEventForType(loadEvent, false, false);
+        scriptElement->dispatchLoadEvent();
     }
     
     m_scriptElement = 0;

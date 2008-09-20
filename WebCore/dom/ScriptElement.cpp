@@ -118,6 +118,7 @@ ScriptElementData::ScriptElementData(ScriptElement* scriptElement, Element* elem
     , m_cachedScript(0)
     , m_createdByParser(false)
     , m_evaluated(false)
+    , m_firedLoad(false)
 {
     ASSERT(m_scriptElement);
     ASSERT(m_element);
@@ -140,6 +141,11 @@ void ScriptElementData::requestScript(const String& sourceUrl)
 
     ASSERT(!m_cachedScript);
     m_cachedScript = document->docLoader()->requestScript(sourceUrl, scriptCharset());
+
+    // m_createdByParser is never reset - always resied at the initial value set while parsing.
+    // m_evaluated is left untouched as well to avoid script reexecution, if a <script> element
+    // is removed and reappended to the document.
+    m_firedLoad = false;
 
     if (m_cachedScript) {
         m_cachedScript->addClient(this);

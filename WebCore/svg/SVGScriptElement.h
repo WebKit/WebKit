@@ -39,17 +39,26 @@ namespace WebCore {
         SVGScriptElement(const QualifiedName&, Document*);
         virtual ~SVGScriptElement();
 
-        void setCreatedByParser(bool) { }
+        void setCreatedByParser(bool);
         virtual String scriptContent() const;
+
+        virtual void parseMappedAttribute(MappedAttribute*);
+        virtual void insertedIntoDocument();
+        virtual void removedFromDocument();
+        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+
+        virtual void svgAttributeChanged(const QualifiedName&);
+        virtual bool isURLAttribute(Attribute*) const;
+        virtual void finishParsingChildren();
 
         String type() const;
         void setType(const String&);
 
-        virtual void parseMappedAttribute(MappedAttribute *attr);
         virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
+        virtual bool haveLoadedRequiredResources();
 
         virtual String sourceAttributeValue() const;
         virtual String charsetAttributeValue() const;

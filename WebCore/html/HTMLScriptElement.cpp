@@ -214,6 +214,9 @@ String HTMLScriptElement::languageAttributeValue() const
  
 void HTMLScriptElement::dispatchLoadEvent()
 {
+    ASSERT(!m_data.haveFiredLoadEvent());
+    m_data.setHaveFiredLoadEvent(true);
+
     dispatchEventForType(loadEvent, false, false);
 }
 

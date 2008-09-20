@@ -1,3 +1,46 @@
+2008-09-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti & Eric.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=20372
+
+        Finish HTMLScriptElement / SVGScriptElement unification.
+        SVG <script> support is complete now, full SVGLoad event
+        respecting the influence of the externalResourcesRequired attribute
+        as well as SVGError event support. All other features shared with HTML.
+
+        Tests: fast/dom/HTMLScriptElement/script-reexecution.html
+               svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
+               svg/dom/SVGScriptElement/script-load-and-error-events.svg
+               svg/dom/SVGScriptElement/script-reexecution.svg
+               svg/dom/SVGScriptElement/script-set-href.svg
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::ScriptElementData):
+        (WebCore::ScriptElementData::requestScript):
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElementData::haveFiredLoadEvent):
+        (WebCore::ScriptElementData::setHaveFiredLoadEvent):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::dispatchLoadEvent):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::setCreatedByParser):
+        (WebCore::SVGScriptElement::parseMappedAttribute):
+        (WebCore::SVGScriptElement::svgAttributeChanged):
+        (WebCore::SVGScriptElement::insertedIntoDocument):
+        (WebCore::SVGScriptElement::removedFromDocument):
+        (WebCore::SVGScriptElement::childrenChanged):
+        (WebCore::SVGScriptElement::isURLAttribute):
+        (WebCore::SVGScriptElement::finishParsingChildren):
+        (WebCore::SVGScriptElement::type):
+        (WebCore::SVGScriptElement::setType):
+        (WebCore::SVGScriptElement::haveLoadedRequiredResources):
+        (WebCore::SVGScriptElement::dispatchLoadEvent):
+        (WebCore::SVGScriptElement::dispatchErrorEvent):
+        * svg/SVGScriptElement.h:
+
 2008-09-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

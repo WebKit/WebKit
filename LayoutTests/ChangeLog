@@ -1,3 +1,59 @@
+2008-09-19  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti & Eric.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=20372
+
+        Add new test fast/dom/HTMLScriptElement/script-reexecution.html, verifying that
+        appending a <script>, removing and reappending doesn't reexecute the script.
+
+        Fix obvious errors in tests contained in fast/dom/HTMLScriptElement/.
+        Use these tests as skeleton for a series of SVGScriptElement tests.
+        Especially tests SVG's SVGLoad/SVGError event support, as well as the
+        influence of externalResourcesRequired attribute.
+
+        * fast/dom/HTMLScriptElement/resources/script-reexecution-pass.js: Added.
+        * fast/dom/HTMLScriptElement/script-load-events.html:
+        * fast/dom/HTMLScriptElement/script-reexecution-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/script-reexecution.html: Added.
+        * fast/dom/HTMLScriptElement/script-set-src.html:
+        * platform/mac/svg/dom/SVGScriptElement: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading-expected.checksum: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading-expected.png: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-load-and-error-events-expected.checksum: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-load-and-error-events-expected.png: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-reexecution-expected.checksum: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-reexecution-expected.png: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-set-href-expected.checksum: Added.
+        * platform/mac/svg/dom/SVGScriptElement/script-set-href-expected.png: Added.
+        * svg/dom/SVGScriptElement: Added.
+        * svg/dom/SVGScriptElement/resources: Added.
+        * svg/dom/SVGScriptElement/resources/script-load.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-load2.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-load3.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-load4.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-reexecution.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p1fail.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p2fail.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p3pass.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p4pass.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p5fail.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p5pass.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p6pass.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p7pass.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p8pass.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p9failAfter.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p9failBefore.js: Added.
+        * svg/dom/SVGScriptElement/resources/script-set-href-p9pass.js: Added.
+        * svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading-expected.txt: Added.
+        * svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg: Added.
+        * svg/dom/SVGScriptElement/script-load-and-error-events-expected.txt: Added.
+        * svg/dom/SVGScriptElement/script-load-and-error-events.svg: Added.
+        * svg/dom/SVGScriptElement/script-reexecution-expected.txt: Added.
+        * svg/dom/SVGScriptElement/script-reexecution.svg: Added.
+        * svg/dom/SVGScriptElement/script-set-href-expected.txt: Added.
+        * svg/dom/SVGScriptElement/script-set-href.svg: Added.
+
 2008-09-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.
