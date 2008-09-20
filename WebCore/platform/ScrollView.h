@@ -223,7 +223,7 @@ namespace WebCore {
 
 #if PLATFORM(WX)
     public:
-        virtual void setNativeWindow(wxWindow*);
+        virtual void setPlatformWidget(wxWindow*);
 
     private:
         void adjustScrollbars(int x = -1, int y = -1, bool refresh = true);

@@ -1,3 +1,35 @@
+2008-09-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes. Added/removed build sources, and nativeWindow->platformWidget updates.
+
+        * WebCoreSources.bkl:
+        * platform/ScrollView.h:
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintButton):
+        (WebCore::RenderThemeWx::paintTextField):
+        (WebCore::RenderThemeWx::paintMenuList):
+        (WebCore::RenderThemeWx::paintMenuListButton):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::setPlatformWidget):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::isScrollViewScrollbar):
+        (WebCore::ScrollView::adjustScrollbars):
+        (WebCore::ScrollView::inWindow):
+        (WebCore::ScrollView::removeChild):
+        * platform/wx/WidgetWx.cpp:
+        * plugins/wx/PluginViewWx.cpp:
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::updatePluginWidget):
+
 2008-09-20  Timothy Hatcher  <timothy@apple.com>
 
         Fix the new Node Search button image to not be blurry.

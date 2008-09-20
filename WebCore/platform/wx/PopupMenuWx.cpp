@@ -59,7 +59,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     delete m_menu;
     ASSERT(client());
 
-    wxWindow* nativeWin = v->nativeWindow();
+    wxWindow* nativeWin = v->platformWidget();
 
     if (nativeWin) {
         // construct the menu

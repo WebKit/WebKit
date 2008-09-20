@@ -232,7 +232,7 @@ void RenderThemeWx::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
 
 bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->nativeWindow();
+    wxWindow* window = o->view()->frameView()->platformWidget();
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     int flags = 0;
     
@@ -268,7 +268,7 @@ void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, 
 
 bool RenderThemeWx::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->nativeWindow();
+    wxWindow* window = o->view()->frameView()->platformWidget();
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     wxRenderer_DrawTextCtrl(window, *dc, r, 0);
     return false;
@@ -285,7 +285,7 @@ void RenderThemeWx::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
     
 bool RenderThemeWx::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->nativeWindow();
+    wxWindow* window = o->view()->frameView()->platformWidget();
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     
     int flags = 0;      
@@ -310,7 +310,7 @@ void RenderThemeWx::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, E
     
 bool RenderThemeWx::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
-    wxWindow* window = o->view()->frameView()->nativeWindow();
+    wxWindow* window = o->view()->frameView()->platformWidget();
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
     
     int flags = 0;      
