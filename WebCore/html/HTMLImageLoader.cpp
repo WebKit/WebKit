@@ -24,105 +24,22 @@
 
 #include "CSSHelper.h"
 #include "CachedImage.h"
-#include "DocLoader.h"
-#include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "RenderImage.h"
-
-using namespace std;
 
 namespace WebCore {
 
 using namespace EventNames;
-using namespace HTMLNames;
 
-HTMLImageLoader::HTMLImageLoader(Element* elt)
-    : m_element(elt)
-    , m_image(0)
-    , m_firedLoad(true)
-    , m_imageComplete(true)
-    , m_loadManually(false)
+HTMLImageLoader::HTMLImageLoader(Element* node)
+    : ImageLoader(node)
 {
 }
 
 HTMLImageLoader::~HTMLImageLoader()
 {
-    if (m_image)
-        m_image->removeClient(this);
-    m_element->document()->removeImage(this);
-}
-
-void HTMLImageLoader::setImage(CachedImage *newImage)
-{
-    CachedImage *oldImage = m_image.get();
-    if (newImage != oldImage) {
-        setLoadingImage(newImage);
-        m_firedLoad = true;
-        m_imageComplete = true;
-        if (newImage)
-            newImage->addClient(this);
-        if (oldImage)
-            oldImage->removeClient(this);
-    }
-
-    if (RenderObject* renderer = element()->renderer())
-        if (renderer->isImage())
-            static_cast<RenderImage*>(renderer)->resetAnimation();
-}
-
-void HTMLImageLoader::setLoadingImage(CachedImage *loadingImage)
-{
-    m_firedLoad = false;
-    m_imageComplete = false;
-    m_image = loadingImage;
-}
-
-void HTMLImageLoader::updateFromElement()
-{
-    // If we're not making renderers for the page, then don't load images.  We don't want to slow
-    // down the raw HTML parsing case by loading images we don't intend to display.
-    Element* elem = element();
-    Document* doc = elem->document();
-    if (!doc->renderer())
-        return;
-
-    AtomicString attr = elem->getAttribute(elem->imageSourceAttributeName());
-    
-    // Do not load any image if the 'src' attribute is missing or if it is
-    // an empty string referring to a local file. The latter condition is
-    // a quirk that preserves old behavior that Dashboard widgets
-    // need (<rdar://problem/5994621>).
-    CachedImage *newImage = 0;
-    if (!(attr.isNull() || attr.isEmpty() && doc->baseURI().isLocalFile())) {
-        if (m_loadManually) {
-            doc->docLoader()->setAutoLoadImages(false);
-            newImage = new CachedImage(parseURL(attr));
-            newImage->setLoading(true);
-            newImage->setDocLoader(doc->docLoader());
-            doc->docLoader()->m_docResources.set(newImage->url(), newImage);
-        } else
-            newImage = doc->docLoader()->requestImage(parseURL(attr));
-    }
-    
-    CachedImage *oldImage = m_image.get();
-    if (newImage != oldImage) {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!doc->ownerElement() && newImage)
-            printf("Image requested at %d\n", doc->elapsedTime());
-#endif
-        setLoadingImage(newImage);
-        if (newImage)
-            newImage->addClient(this);
-        if (oldImage)
-            oldImage->removeClient(this);
-    }
-
-    if (RenderObject* renderer = elem->renderer())
-        if (renderer->isImage())
-            static_cast<RenderImage*>(renderer)->resetAnimation();
 }
 
 void HTMLImageLoader::dispatchLoadEvent()
@@ -133,21 +50,17 @@ void HTMLImageLoader::dispatchLoadEvent()
     }
 }
 
-void HTMLImageLoader::notifyFinished(CachedResource *image)
+String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 {
-    m_imageComplete = true;
+    return parseURL(attr);
+}
+
+void HTMLImageLoader::notifyFinished(CachedResource* image)
+{
     Element* elem = element();
-    Document* doc = elem->document();
-    doc->dispatchImageLoadEventSoon(this);
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!doc->ownerElement())
-            printf("Image loaded at %d\n", doc->elapsedTime());
-#endif
-    if (RenderObject* renderer = elem->renderer())
-        if (renderer->isImage())
-            static_cast<RenderImage*>(renderer)->setCachedImage(m_image.get());
-            
-    if (image->errorOccurred() && elem->hasTagName(objectTag))
+    ImageLoader::notifyFinished(image);
+
+    if (image->errorOccurred() && elem->hasTagName(HTMLNames::objectTag))
         static_cast<HTMLObjectElement*>(elem)->renderFallbackContent();
 }
 

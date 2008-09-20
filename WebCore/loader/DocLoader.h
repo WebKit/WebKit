@@ -41,14 +41,14 @@ class CachedScript;
 class CachedXSLStyleSheet;
 class Document;
 class Frame;
-class HTMLImageLoader;
+class ImageLoader;
 class KURL;
 
 // The DocLoader manages the loading of scripts/images/stylesheets for a single document.
 class DocLoader
 {
 friend class Cache;
-friend class HTMLImageLoader;
+friend class ImageLoader;
 
 public:
     DocLoader(Document*);

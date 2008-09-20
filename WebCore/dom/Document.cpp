@@ -60,7 +60,6 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLHeadElement.h"
-#include "HTMLImageLoader.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMapElement.h"
@@ -72,6 +71,7 @@
 #include "HistoryItem.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "ImageLoader.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MessageEvent.h"
@@ -2776,14 +2776,14 @@ void Document::setWindowEventListenerForTypeAndAttribute(const AtomicString& eve
     setWindowEventListenerForType(eventType, createEventListener(attr->localName().string(), attr->value(), 0));
 }
 
-void Document::dispatchImageLoadEventSoon(HTMLImageLoader *image)
+void Document::dispatchImageLoadEventSoon(ImageLoader* image)
 {
     m_imageLoadEventDispatchSoonList.append(image);
     if (!m_imageLoadEventTimer.isActive())
         m_imageLoadEventTimer.startOneShot(0);
 }
 
-void Document::removeImage(HTMLImageLoader* image)
+void Document::removeImage(ImageLoader* image)
 {
     // Remove instances of this image from both lists.
     // Use loops because we allow multiple instances to get into the lists.
@@ -2798,19 +2798,18 @@ void Document::dispatchImageLoadEventsNow()
     // need to avoid re-entering this function; if new dispatches are
     // scheduled before the parent finishes processing the list, they
     // will set a timer and eventually be processed
-    if (!m_imageLoadEventDispatchingList.isEmpty()) {
+    if (!m_imageLoadEventDispatchingList.isEmpty())
         return;
-    }
 
     m_imageLoadEventTimer.stop();
     
     m_imageLoadEventDispatchingList = m_imageLoadEventDispatchSoonList;
     m_imageLoadEventDispatchSoonList.clear();
-    for (DeprecatedPtrListIterator<HTMLImageLoader> it(m_imageLoadEventDispatchingList); it.current();) {
-        HTMLImageLoader* image = it.current();
+    for (DeprecatedPtrListIterator<ImageLoader> it(m_imageLoadEventDispatchingList); it.current();) {
+        ImageLoader* image = it.current();
         // Must advance iterator *before* dispatching call.
         // Otherwise, it might be advanced automatically if dispatching the call had a side effect
-        // of destroying the current HTMLImageLoader, and then we would advance past the *next* item,
+        // of destroying the current ImageLoader, and then we would advance past the *next* item,
         // missing one altogether.
         ++it;
         image->dispatchLoadEvent();

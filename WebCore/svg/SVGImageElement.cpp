@@ -131,9 +131,27 @@ bool SVGImageElement::haveLoadedRequiredResources()
 void SVGImageElement::attach()
 {
     SVGStyledTransformableElement::attach();
-    m_imageLoader.updateFromElement();
-    if (RenderSVGImage* imageObj = static_cast<RenderSVGImage*>(renderer()))
+
+    if (RenderSVGImage* imageObj = static_cast<RenderSVGImage*>(renderer())) {
+        if (imageObj->hasImage())
+            return;
+
         imageObj->setCachedImage(m_imageLoader.image());
+    }
+}
+
+void SVGImageElement::insertedIntoDocument()
+{
+    SVGStyledTransformableElement::insertedIntoDocument();
+
+    // Update image loader, as soon as we're living in the tree.
+    // We can only resolve base URIs properly, after that!
+    m_imageLoader.updateFromElement();
+}
+
+const QualifiedName& SVGImageElement::imageSourceAttributeName() const
+{
+    return XLinkNames::hrefAttr;
 }
 
 void SVGImageElement::getSubresourceAttributeStrings(Vector<String>& urls) const

@@ -1,3 +1,49 @@
+2008-09-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Refactor HTMLImageLoader/SVGImageLoader code.
+        Move html/HTMLImageLoader.* to loader/ImageLoader.*
+
+        Let HTMLImageLoader & SVGImageLoader inherit from the new base class.
+        SVGImageLoader used to inherit from HTMLImageLoader which is awkward.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchImageLoadEventSoon):
+        (WebCore::Document::removeImage):
+        (WebCore::Document::dispatchImageLoadEventsNow):
+        * dom/Document.h:
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        (WebCore::HTMLImageLoader::~HTMLImageLoader):
+        (WebCore::HTMLImageLoader::sourceURI):
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLImageLoader.h:
+        * loader/DocLoader.h:
+        * loader/ImageLoader.cpp: Copied from html/HTMLImageLoader.cpp.
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::setImage):
+        (WebCore::ImageLoader::setLoadingImage):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/ImageLoader.h: Copied from html/HTMLImageLoader.h.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::attach):
+        (WebCore::SVGImageElement::insertedIntoDocument):
+        (WebCore::SVGImageElement::imageSourceAttributeName):
+        * svg/SVGImageElement.h:
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::SVGImageLoader):
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        (WebCore::SVGImageLoader::sourceURI):
+        * svg/SVGImageLoader.h:
+
 2008-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix.

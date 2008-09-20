@@ -1359,6 +1359,8 @@ webcore_sources += \
 	WebCore/loader/FrameLoaderTypes.h \
 	WebCore/loader/ImageDocument.cpp \
 	WebCore/loader/ImageDocument.h \
+	WebCore/loader/ImageLoader.cpp \
+	WebCore/loader/ImageLoader.h \
 	WebCore/loader/MainResourceLoader.cpp \
 	WebCore/loader/MainResourceLoader.h \
 	WebCore/loader/MediaDocument.cpp \

@@ -2896,6 +2896,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\ImageLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ImageLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\loader.cpp"
 				>
 			</File>

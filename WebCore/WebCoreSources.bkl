@@ -599,6 +599,7 @@ This file contains the list of files needed to build WebCore.
         loader/FTPDirectoryDocument.cpp
         loader/FTPDirectoryParser.cpp
         loader/ImageDocument.cpp
+        loader/ImageLoader.cpp
         loader/MainResourceLoader.cpp
         loader/MediaDocument.cpp
         loader/NavigationAction.cpp

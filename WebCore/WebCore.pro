@@ -719,6 +719,7 @@ SOURCES += \
     loader/FTPDirectoryParser.cpp \
     loader/icon/IconLoader.cpp \
     loader/ImageDocument.cpp \
+    loader/ImageLoader.cpp \
     loader/loader.cpp \
     loader/MainResourceLoader.cpp \
     loader/MediaDocument.cpp \

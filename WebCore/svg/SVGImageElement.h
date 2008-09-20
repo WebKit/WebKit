@@ -51,9 +51,11 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
 
         virtual void attach();
+        virtual void insertedIntoDocument();
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-        
+ 
+        virtual const QualifiedName& imageSourceAttributeName() const;       
         virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
     protected:

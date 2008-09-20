@@ -80,9 +80,9 @@ namespace WebCore {
     class HTMLFormControlElementWithState;
     class HTMLFormElement;
     class HTMLHeadElement;
-    class HTMLImageLoader;
     class HTMLInputElement;
     class HTMLMapElement;
+    class ImageLoader;
     class IntPoint;
     class JSNode;
     class MouseEventWithHitTestResults;
@@ -610,9 +610,9 @@ public:
      */
     void processHttpEquiv(const String& equiv, const String& content);
     
-    void dispatchImageLoadEventSoon(HTMLImageLoader*);
+    void dispatchImageLoadEventSoon(ImageLoader*);
     void dispatchImageLoadEventsNow();
-    void removeImage(HTMLImageLoader*);
+    void removeImage(ImageLoader*);
     
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
@@ -885,8 +885,8 @@ private:
 
     mutable AXObjectCache* m_axObjectCache;
     
-    DeprecatedPtrList<HTMLImageLoader> m_imageLoadEventDispatchSoonList;
-    DeprecatedPtrList<HTMLImageLoader> m_imageLoadEventDispatchingList;
+    DeprecatedPtrList<ImageLoader> m_imageLoadEventDispatchSoonList;
+    DeprecatedPtrList<ImageLoader> m_imageLoadEventDispatchingList;
     Timer<Document> m_imageLoadEventTimer;
 
     Timer<Document> m_updateFocusAppearanceTimer;
