@@ -1,3 +1,52 @@
+2008-09-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=20928
+        Speed up JS property enumeration by caching entire PropertyNameArray
+
+        1.3% speedup on Sunspider, 30% on string-fasta.
+
+        * JavaScriptCore.exp:
+        * VM/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::~JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::invalidate):
+        * VM/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::create):
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::getEnumerablePropertyNames):
+        * kjs/PropertyMap.h:
+        * kjs/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * kjs/PropertyNameArray.h:
+        (JSC::PropertyNameArrayData::create):
+        (JSC::PropertyNameArrayData::propertyNameVector):
+        (JSC::PropertyNameArrayData::setCachedPrototypeChain):
+        (JSC::PropertyNameArrayData::cachedPrototypeChain):
+        (JSC::PropertyNameArrayData::begin):
+        (JSC::PropertyNameArrayData::end):
+        (JSC::PropertyNameArrayData::PropertyNameArrayData):
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::addKnownUnique):
+        (JSC::PropertyNameArray::size):
+        (JSC::PropertyNameArray::operator[]):
+        (JSC::PropertyNameArray::begin):
+        (JSC::PropertyNameArray::end):
+        (JSC::PropertyNameArray::setData):
+        (JSC::PropertyNameArray::data):
+        (JSC::PropertyNameArray::releaseData):
+        * kjs/ScopeChain.cpp:
+        (JSC::ScopeChainNode::print):
+        * kjs/StructureID.cpp:
+        (JSC::structureIDChainsAreEqual):
+        (JSC::StructureID::getEnumerablePropertyNames):
+        (JSC::StructureID::clearEnumerationCache):
+        (JSC::StructureID::createCachedPrototypeChain):
+        * kjs/StructureID.h:
+
 2008-09-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej Stachowiak.

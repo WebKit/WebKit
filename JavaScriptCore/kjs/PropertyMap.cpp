@@ -22,6 +22,7 @@
 #include "PropertyMap.h"
 
 #include "JSObject.h"
+#include "PropertyNameArray.h"
 #include "protect.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
@@ -472,7 +473,7 @@ static int comparePropertyMapEntryIndices(const void* a, const void* b)
     return 0;
 }
 
-void PropertyMap::getEnumerablePropertyNames(Vector<UString::Rep*>& propertyNames) const
+void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) const
 {
     if (!m_table)
         return;
@@ -491,9 +492,14 @@ void PropertyMap::getEnumerablePropertyNames(Vector<UString::Rep*>& propertyName
                 ++i;
             }
         }
-        propertyNames.reserveCapacity(i);
-        for (int k = 0; k < i; ++k)
-            propertyNames.append(a[k]->key);
+        if (!propertyNames.size()) {
+            for (int k = 0; k < i; ++k)
+                propertyNames.addKnownUnique(a[k]->key);
+        } else {
+            for (int k = 0; k < i; ++k)
+                propertyNames.add(a[k]->key);
+        }
+
         return;
     }
 
@@ -514,9 +520,13 @@ void PropertyMap::getEnumerablePropertyNames(Vector<UString::Rep*>& propertyName
     sortedEnumerables.resize(enumerableCount);
 
     // Put the keys of the sorted entries into the list.
-    propertyNames.reserveCapacity(sortedEnumerables.size());
-    for (size_t i = 0; i < sortedEnumerables.size(); ++i)
-        propertyNames.append(sortedEnumerables[i]->key);
+    if (!propertyNames.size()) {
+        for (size_t i = 0; i < sortedEnumerables.size(); ++i)
+            propertyNames.addKnownUnique(sortedEnumerables[i]->key);
+    } else {
+        for (size_t i = 0; i < sortedEnumerables.size(); ++i)
+            propertyNames.add(sortedEnumerables[i]->key);
+    }
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

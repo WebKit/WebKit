@@ -22,24 +22,51 @@
 #define PropertyNameArray_h
 
 #include "ExecState.h"
+#include "StructureID.h"
 #include "identifier.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
+    class PropertyNameArrayData : public RefCounted<PropertyNameArrayData> {
+    public:
+        typedef Vector<Identifier, 20> PropertyNameVector;
+        typedef PropertyNameVector::const_iterator const_iterator;
+
+        static PassRefPtr<PropertyNameArrayData> create() { return adoptRef(new PropertyNameArrayData); }
+
+        PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
+
+        void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
+        StructureIDChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
+
+        const_iterator begin() const { return m_propertyNameVector.begin(); }
+        const_iterator end() const { return m_propertyNameVector.end(); }
+
+    private:
+        PropertyNameArrayData()
+        {
+        }
+
+        PropertyNameVector m_propertyNameVector;
+        RefPtr<StructureIDChain> m_cachedPrototypeChain;
+    };
+
     class PropertyNameArray {
     public:
         typedef Identifier ValueType;
-        typedef Vector<Identifier>::const_iterator const_iterator;
+        typedef PropertyNameArrayData::const_iterator const_iterator;
 
         PropertyNameArray(JSGlobalData* globalData)
-            : m_globalData(globalData)
+            : m_data(PropertyNameArrayData::create())
+            , m_globalData(globalData)
         {
         }
 
         PropertyNameArray(ExecState* exec)
-            : m_globalData(&exec->globalData())
+            : m_data(PropertyNameArrayData::create())
+            , m_globalData(&exec->globalData())
         {
         }
 
@@ -47,22 +74,25 @@ namespace JSC {
 
         void add(const Identifier& identifier) { add(identifier.ustring().rep()); }
         void add(UString::Rep*);
-        void addKnownUnique(UString::Rep* identifier) { m_vector.append(Identifier(m_globalData, identifier)); }
+        void addKnownUnique(UString::Rep* identifier) { m_data->propertyNameVector().append(Identifier(m_globalData, identifier)); }
 
-        const_iterator begin() const { return m_vector.begin(); }
-        const_iterator end() const { return m_vector.end(); }
+        size_t size() const { return m_data->propertyNameVector().size(); }
 
-        size_t size() const { return m_vector.size(); }
+        Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
+        const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
 
-        Identifier& operator[](unsigned i) { return m_vector[i]; }
-        const Identifier& operator[](unsigned i) const { return m_vector[i]; }
+        const_iterator begin() const { return m_data->begin(); }
+        const_iterator end() const { return m_data->end(); }
 
-        Identifier* releaseIdentifiers() { return size() ? m_vector.releaseBuffer() : 0; }
+        void setData(PassRefPtr<PropertyNameArrayData> data) { m_data = data; }
+        PropertyNameArrayData* data() { return m_data.get(); }
+
+        PassRefPtr<PropertyNameArrayData> releaseData() { return m_data.release(); }
 
     private:
         typedef HashSet<UString::Rep*, PtrHash<UString::Rep*> > IdentifierSet;
 
-        Vector<Identifier, 20> m_vector;
+        RefPtr<PropertyNameArrayData> m_data;
         IdentifierSet m_set;
         JSGlobalData* m_globalData;
     };
