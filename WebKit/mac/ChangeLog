@@ -1,3 +1,13 @@
+2008-09-20  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Revert r35688. We use a textured window on Leopard, which does not have the
+        square corners of the standard Aqua window on Tiger.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window]): Add back the call to WKNSWindowMakeBottomCornersSquare.
+
 2008-09-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
