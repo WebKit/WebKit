@@ -434,6 +434,7 @@ void wxWebView::OnPaint(wxPaintEvent& event)
 
                 frame->paint(gc, paintRect);
             }
+            delete gc;
         }
     }
 }

@@ -1,5 +1,14 @@
 2008-09-20  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Reviewed by Dan Bernstein.
+        
+        Fix memory leak.
+
+        * WebView.cpp:
+        (wxWebView::OnPaint):
+
+2008-09-20  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fixes. Added/removed build sources, and nativeWindow->platformWidget updates.
 
         * WebKitSupport/EditorClientWx.cpp:
