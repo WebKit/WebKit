@@ -261,8 +261,8 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollb
     if (!scrollbar->enabled()) {
         xpState += TS_DISABLED;
         classicState |= DFCS_INACTIVE;
-    } else if ((scrollbar->hoveredPart() == BackButtonPart && start) ||
-               (scrollbar->hoveredPart() == ForwardButtonPart && !start)) {
+    } else if ((scrollbar->hoveredPart() == BackButtonStartPart && start) ||
+               (scrollbar->hoveredPart() == ForwardButtonEndPart && !start)) {
         if (scrollbar->pressedPart() == scrollbar->hoveredPart()) {
             xpState += TS_ACTIVE;
             classicState |= DFCS_PUSHED | DFCS_FLAT;
