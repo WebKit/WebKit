@@ -28,11 +28,11 @@
 			<key>WebResourceData</key>
 			<string>document.getElementById("rect").style.fill = "green";</string>
 			<key>WebResourceMIMEType</key>
-			<string>application/x-javascript</string>
+			<string>text/javascript</string>
 			<key>WebResourceResponse</key>
 			<dict>
 				<key>MIMEType</key>
-				<string>application/x-javascript</string>
+				<string>text/javascript</string>
 				<key>URL</key>
 				<string>file:///LayoutTests/svg/webarchive/resources/svg-script-subresources.js</string>
 				<key>expectedContentLength</key>

@@ -1,3 +1,14 @@
+2008-09-19  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Implement a workaround for an incorrect mime-type on machines with 
+        Dashcode 2.0.1.  Dashcode is overriding the UTI type for .js files.
+        See radar <rdar://problem/6234318>.     
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (convertMIMEType):
+
 2008-09-19  Chris Fleizach  <cfleizach@apple.com>
 
         Fixed Windows bustage

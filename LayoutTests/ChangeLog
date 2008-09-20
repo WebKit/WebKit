@@ -1,3 +1,13 @@
+2008-09-19  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Use correct mime-type for javascript
+
+        * svg/webarchive/svg-script-subresouces-expected.webarchive:
+        * webarchive/test-duplicate-resources-expected.webarchive:
+        * webarchive/test-script-src-expected.webarchive:
+
 2008-09-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti & Eric.
