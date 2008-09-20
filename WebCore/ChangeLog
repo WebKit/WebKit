@@ -1,3 +1,16 @@
+2008-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [svg] Use OwnPtr for the SVGExtensions to avoid custom lifetime
+        management.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::svgExtensions):
+        (WebCore::Document::accessSVGExtensions):
+        * dom/Document.h:
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Fix for crash in updateTransitions.  Make sure to test for a style

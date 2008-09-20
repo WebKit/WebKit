@@ -405,10 +405,6 @@ Document::~Document()
 
     removeAllEventListeners();
 
-#if ENABLE(SVG)
-    delete m_svgExtensions;
-#endif
-
     XMLHttpRequest::detachRequests(this);
     forgetAllDOMNodesForDocument(this);
 
@@ -3693,14 +3689,14 @@ PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const S
 #if ENABLE(SVG)
 const SVGDocumentExtensions* Document::svgExtensions()
 {
-    return m_svgExtensions;
+    return m_svgExtensions.get();
 }
 
 SVGDocumentExtensions* Document::accessSVGExtensions()
 {
     if (!m_svgExtensions)
-        m_svgExtensions = new SVGDocumentExtensions(this);
-    return m_svgExtensions;
+        m_svgExtensions.set(new SVGDocumentExtensions(this));
+    return m_svgExtensions.get();
 }
 #endif
 

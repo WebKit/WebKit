@@ -1017,7 +1017,7 @@ private:
 #endif
     
 #if ENABLE(SVG)
-    SVGDocumentExtensions* m_svgExtensions;
+    OwnPtr<SVGDocumentExtensions> m_svgExtensions;
 #endif
     
 #if ENABLE(DASHBOARD_SUPPORT)
