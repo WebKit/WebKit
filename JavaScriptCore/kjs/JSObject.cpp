@@ -530,7 +530,7 @@ void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
         m_propertyStorage[i] = oldPropertStorage[i];
 
     if (oldPropertStorage != m_inlineStorage)
-        delete oldPropertStorage;
+        delete [] oldPropertStorage;
 }
 
 JSObject* constructEmptyObject(ExecState* exec)
