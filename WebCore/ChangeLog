@@ -24,6 +24,8 @@
         Reviewed by Dan Bernstein.
 
         Fix memory leak.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20505
 
         * platform/wx/wxcode/mac/carbon/fontprops.cpp:
         (GetTextExtent):
