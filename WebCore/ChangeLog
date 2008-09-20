@@ -2,6 +2,17 @@
 
         Reviewed by Tim Hatcher.
 
+        Cut down some of the inspector javascript -> InspectorController glue code
+        with two new macros. Also rearrange the exposed function list to be grouped
+        by implementation and to all explicitly use the WebCore namespace.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+
+2008-09-20  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
         Fix regression from my previous patch where the breadcrumbs bar was not displayed.
 
         * page/inspector/inspector.css:
