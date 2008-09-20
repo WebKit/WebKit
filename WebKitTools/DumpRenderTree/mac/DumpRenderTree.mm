@@ -653,11 +653,10 @@ static void convertMIMEType(NSMutableString *mimeType)
     // Workaround for <rdar://problem/5539824> on Leopard
     if ([mimeType isEqualToString:@"text/xml"])
         [mimeType setString:@"application/xml"];
+#endif
     // Workaround for <rdar://problem/6234318> with Dashcode 2.0
     if ([mimeType isEqualToString:@"application/x-javascript"])
         [mimeType setString:@"text/javascript"];
-    
-#endif
 }
 
 static void convertWebResourceDataToString(NSMutableDictionary *resource)
