@@ -1,3 +1,24 @@
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=20954
+
+        Roll out r36628 since it has caused horrible regressions with
+        animated GIF CPU usage.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::startAnimation):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::FrameData::clear):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::FrameData::clear):
+
 2008-09-20  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Timothy Hatcher.
