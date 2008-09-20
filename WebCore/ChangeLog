@@ -1,3 +1,14 @@
+2008-09-19  Darin Adler  <darin@apple.com>
+
+        - try to fix Qt build
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObjectImp::QtRuntimeObjectImp): Add structure argument.
+        (JSC::Bindings::QtInstance::getRuntimeObject): Ditto.
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::RuntimeObjectImp): Add an overload just for Qt.
+        * bridge/runtime_object.h: Ditto.
+
 2008-09-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.
