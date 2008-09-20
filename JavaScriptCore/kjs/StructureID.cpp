@@ -29,7 +29,6 @@
 #include "identifier.h"
 #include "JSObject.h"
 #include "PropertyNameArray.h"
-#include "lookup.h"
 #include <wtf/RefPtr.h>
 
 using namespace std;
@@ -49,67 +48,18 @@ StructureID::StructureID(JSValue* prototype, JSType type)
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 }
 
-static bool structureIDChainsAreEqual(StructureIDChain* chainA, StructureIDChain* chainB)
+void StructureID::getEnumerablePropertyNames(PropertyNameArray& propertyNames) const
 {
-    if (!chainA || !chainB)
-        return false;
+    if (m_cachedPropertyNameArray.isEmpty())
+        m_propertyMap.getEnumerablePropertyNames(m_cachedPropertyNameArray);
 
-    RefPtr<StructureID>* a = chainA->head();
-    RefPtr<StructureID>* b = chainB->head();
-    while (1) {
-        if (*a != *b)
-            return false;
-        if (!*a)
-            return true;
-        a++;
-        b++;
+    if (!propertyNames.size()) {
+        for (size_t i = 0; i < m_cachedPropertyNameArray.size(); ++i)
+            propertyNames.addKnownUnique(m_cachedPropertyNameArray[i]);
+    } else {
+        for (size_t i = 0; i < m_cachedPropertyNameArray.size(); ++i)
+            propertyNames.add(m_cachedPropertyNameArray[i]);
     }
-}
-
-void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& propertyNames, JSObject* baseObject)
-{
-    bool shouldCache = !(propertyNames.size() || m_isDictionary);
-
-    if (shouldCache && m_cachedPropertyNameArrayData) {
-        if (structureIDChainsAreEqual(m_cachedPropertyNameArrayData->cachedPrototypeChain(), cachedPrototypeChain())) {
-            propertyNames.setData(m_cachedPropertyNameArrayData);
-            return;
-        }
-    }
-
-    m_propertyMap.getEnumerablePropertyNames(propertyNames);
-
-    // Add properties from the static hashtables of properties
-    for (const ClassInfo* info = baseObject->classInfo(); info; info = info->parentClass) {
-        const HashTable* table = info->propHashTable(exec);
-        if (!table)
-            continue;
-        table->initializeIfNeeded(exec);
-        ASSERT(table->table);
-        int hashSizeMask = table->hashSizeMask;
-        const HashEntry* entry = table->table;
-        for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
-            if (entry->key && !(entry->attributes & DontEnum))
-                propertyNames.add(entry->key);
-        }
-    }
-
-    if (m_prototype->isObject())
-        static_cast<JSObject*>(m_prototype)->getPropertyNames(exec, propertyNames);
-
-    if (shouldCache) {
-        m_cachedPropertyNameArrayData = propertyNames.data();
-
-        StructureIDChain* chain = cachedPrototypeChain();
-        if (!chain)
-            chain = createCachedPrototypeChain();
-        m_cachedPropertyNameArrayData->setCachedPrototypeChain(chain);
-    }
-}
-
-void StructureID::clearEnumerationCache()
-{
-    m_cachedPropertyNameArrayData.clear();
 }
 
 void StructureID::transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase)
@@ -198,20 +148,6 @@ StructureID::~StructureID()
         ASSERT(m_previous->m_transitionTable.contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
         m_previous->m_transitionTable.remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
     }
-}
-
-StructureIDChain* StructureID::createCachedPrototypeChain()
-{
-    ASSERT(m_type == ObjectType);
-    ASSERT(!m_cachedPrototypeChain);
-
-    JSValue* prototype = storedPrototype();
-    if (JSImmediate::isImmediate(prototype))
-        return 0;
-
-    RefPtr<StructureIDChain> chain = StructureIDChain::create(static_cast<JSObject*>(prototype)->structureID());
-    setCachedPrototypeChain(chain.release());
-    return cachedPrototypeChain();
 }
 
 StructureIDChain::StructureIDChain(StructureID* structureID)

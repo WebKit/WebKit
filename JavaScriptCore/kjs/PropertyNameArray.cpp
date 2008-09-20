@@ -29,22 +29,22 @@ void PropertyNameArray::add(UString::Rep* identifier)
 {
     ASSERT(identifier == &UString::Rep::null || identifier == &UString::Rep::empty || identifier->identifierTable());
 
-    size_t size = m_data->propertyNameVector().size();
+    size_t size = m_vector.size();
     if (size < setThreshold) {
         for (size_t i = 0; i < size; ++i) {
-            if (identifier == m_data->propertyNameVector()[i].ustring().rep())
+            if (identifier == m_vector[i].ustring().rep())
                 return;
         }
     } else {
         if (m_set.isEmpty()) {
             for (size_t i = 0; i < size; ++i)
-                m_set.add(m_data->propertyNameVector()[i].ustring().rep());
+                m_set.add(m_vector[i].ustring().rep());
         }
         if (!m_set.add(identifier).second)
             return;
     }
 
-    m_data->propertyNameVector().append(Identifier(m_globalData, identifier));
+    m_vector.append(Identifier(m_globalData, identifier));
 }
 
 } // namespace JSC

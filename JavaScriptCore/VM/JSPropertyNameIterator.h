@@ -57,41 +57,33 @@ namespace JSC {
         void invalidate();
 
     private:
-        JSPropertyNameIterator();
-        JSPropertyNameIterator(JSObject*, PassRefPtr<PropertyNameArrayData> propertyNameArrayData);
+        JSPropertyNameIterator(JSObject*, Identifier* propertyNames, size_t numProperties);
 
         JSObject* m_object;
-        RefPtr<PropertyNameArrayData> m_data;
-        PropertyNameArrayData::const_iterator m_position;
-        PropertyNameArrayData::const_iterator m_end;
+        Identifier* m_propertyNames;
+        Identifier* m_position;
+        Identifier* m_end;
     };
 
-inline JSPropertyNameIterator::JSPropertyNameIterator()
-    : JSCell(0)
-    , m_object(0)
-    , m_position(0)
-    , m_end(0)
-{
-}
-
-inline JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, PassRefPtr<PropertyNameArrayData> propertyNameArrayData)
+inline JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, Identifier* propertyNames, size_t numProperties)
     : JSCell(0)
     , m_object(object)
-    , m_data(propertyNameArrayData)
-    , m_position(m_data->begin())
-    , m_end(m_data->end())
+    , m_propertyNames(propertyNames)
+    , m_position(propertyNames)
+    , m_end(propertyNames + numProperties)
 {
 }
 
 inline JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSValue* v)
 {
     if (v->isUndefinedOrNull())
-        return new (exec) JSPropertyNameIterator;
+        return new (exec) JSPropertyNameIterator(0, 0, 0);
 
     JSObject* o = v->toObject(exec);
     PropertyNameArray propertyNames(exec);
     o->getPropertyNames(exec, propertyNames);
-    return new (exec) JSPropertyNameIterator(o, propertyNames.releaseData());
+    size_t numProperties = propertyNames.size();
+    return new (exec) JSPropertyNameIterator(o, propertyNames.releaseIdentifiers(), numProperties);
 }
 
 inline JSValue* JSPropertyNameIterator::next(ExecState* exec)
