@@ -56,7 +56,8 @@ static QStyle::SubControl scPart(const ScrollbarPart& part)
     switch (part) {
         case NoPart:
             return QStyle::SC_None;
-        case BackButtonPart:
+        case BackButtonStartPart:
+        case BackButtonEndPart:
             return QStyle::SC_ScrollBarSubLine;
         case BackTrackPart:
             return QStyle::SC_ScrollBarSubPage;
@@ -64,7 +65,8 @@ static QStyle::SubControl scPart(const ScrollbarPart& part)
             return QStyle::SC_ScrollBarSlider;
         case ForwardTrackPart:
             return QStyle::SC_ScrollBarAddPage;
-        case ForwardButtonPart:
+        case ForwardButtonStartPart:
+        case ForwardButtonEndPart:
             return QStyle::SC_ScrollBarAddLine;
     }
     
@@ -77,7 +79,7 @@ static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
         case QStyle::SC_None: 
             return NoPart; 
         case QStyle::SC_ScrollBarSubLine: 
-            return BackButtonPart; 
+            return BackButtonStartPart; 
         case QStyle::SC_ScrollBarSubPage: 
             return BackTrackPart; 
         case QStyle::SC_ScrollBarSlider: 
@@ -85,7 +87,7 @@ static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
         case QStyle::SC_ScrollBarAddPage: 
             return ForwardTrackPart; 
         case QStyle::SC_ScrollBarAddLine: 
-            return ForwardButtonPart; 
+            return ForwardButtonStartPart; 
     }
     return NoPart; 
 }
@@ -110,7 +112,8 @@ static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
     ScrollbarPart hoveredPart = scrollbar->hoveredPart();
     if (pressedPart != NoPart) {
         opt.activeSubControls = scPart(scrollbar->pressedPart());
-        if (pressedPart == BackButtonPart || pressedPart == ForwardButtonPart ||
+        if (pressedPart == BackButtonStartPart || pressedPart == ForwardButtonStartPart ||
+            pressedPart == BackButtonEndPart || pressedPart == ForwardButtonEndPart ||
             pressedPart == ThumbPart)
             opt.state |= QStyle::State_Sunken;
     } else
