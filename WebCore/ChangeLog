@@ -1,5 +1,17 @@
 2008-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Build fix.
+
+        [qtwebkit] Make qt_instance.cpp compile.
+        Revision of 36675 introduced getDOMStructure to give unique
+        structure id's to C++ classes. Catch up. RuntimeObjectImp assigns
+        the the StructureID inside the c'tor, do the same in QtRuntimeObjectImp
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getRuntimeObject):
+
+2008-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Nikolas Zimmermann.
 
         [svg] Change SVGLocatable to deal with a plain SVGElement

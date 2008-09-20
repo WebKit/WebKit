@@ -21,6 +21,7 @@
 #include "qt_instance.h"
 
 #include "ArgList.h"
+#include "JSDOMBinding.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "qt_class.h"
@@ -49,7 +50,7 @@ static InstanceJSObjectMap cachedObjects;
 // Derived RuntimeObject
 class QtRuntimeObjectImp : public RuntimeObjectImp {
     public:
-        QtRuntimeObjectImp(ExecState*, PassRefPtr<StructureID>, PassRefPtr<Instance>);
+        QtRuntimeObjectImp(ExecState*, PassRefPtr<Instance>);
         ~QtRuntimeObjectImp();
         virtual void invalidate();
 
@@ -67,8 +68,8 @@ class QtRuntimeObjectImp : public RuntimeObjectImp {
         void removeFromCache();
 };
 
-QtRuntimeObjectImp::QtRuntimeObjectImp(ExecState* exec, PassRefPtr<StructureID> structure, PassRefPtr<Instance> instance)
-    : RuntimeObjectImp(exec, structure, instance)
+QtRuntimeObjectImp::QtRuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> instance)
+    : RuntimeObjectImp(exec, WebCore::getDOMStructure<QtRuntimeObjectImp>(exec), instance)
 {
 }
 
@@ -171,7 +172,7 @@ RuntimeObjectImp* QtInstance::getRuntimeObject(ExecState* exec, PassRefPtr<QtIns
     QtInstance* qtInstance = instance.get();
     RuntimeObjectImp* ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(qtInstance));
     if (!ret) {
-        ret = new (exec) QtRuntimeObjectImp(exec, getDOMStructure<QtRuntimeObjectImp>(exec), instance);
+        ret = new (exec) QtRuntimeObjectImp(exec, instance);
         cachedObjects.insert(qtInstance, ret);
         ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(qtInstance));
     }
