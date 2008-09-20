@@ -1,3 +1,9 @@
+2008-09-20  Timothy Hatcher  <timothy@apple.com>
+
+        Fix the new Node Search button image to not be blurry.
+
+        * page/inspector/Images/nodeSearchButtons.png:
+
 2008-09-20  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.
