@@ -698,11 +698,7 @@ sub GenerateImplementation
     }
 
     if ($className =~ /^JSSVG/) {
-        push(@implContentHeader, "#include \"Document.h\"\n");
-        push(@implContentHeader, "#include \"Frame.h\"\n");
-        push(@implContentHeader, "#include \"SVGDocumentExtensions.h\"\n");
         push(@implContentHeader, "#include \"SVGElement.h\"\n");
-        push(@implContentHeader, "#include \"SVGAnimatedTemplate.h\"\n");
 
         if ($className =~ /^JSSVGAnimated/) {
             AddIncludesForSVGAnimatedType($interfaceName);

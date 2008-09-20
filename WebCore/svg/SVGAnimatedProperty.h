@@ -308,7 +308,7 @@ namespace WebCore {
     SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::baseValue() const
     {
         const OwnerElement* ownerElement = this->ownerElement();
-        SVGDocumentExtensions* extensions = (ownerElement->document() ? ownerElement->document()->accessSVGExtensions() : 0);
+        SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
         if (extensions && extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier))
             return extensions->baseValue<DecoratedType>(ownerElement, m_attributeIdentifier);
 
@@ -319,7 +319,7 @@ namespace WebCore {
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::setBaseValue(typename SVGAnimatedProperty::DecoratedType newValue)
     {
         const OwnerElement* ownerElement = this->ownerElement();
-        SVGDocumentExtensions* extensions = (ownerElement->document() ? ownerElement->document()->accessSVGExtensions() : 0);
+        SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
         if (extensions && extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier)) {
             extensions->setBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier, newValue);
             return;
@@ -351,7 +351,7 @@ namespace WebCore {
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::startAnimation() const
     {
         const OwnerElement* ownerElement = this->ownerElement();
-        SVGDocumentExtensions* extensions = (ownerElement->document() ? ownerElement->document()->accessSVGExtensions() : 0);
+        SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
         if (extensions) {
             ASSERT(!extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
             extensions->setBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier, m_value);
@@ -362,7 +362,7 @@ namespace WebCore {
     void SVGAnimatedProperty<OwnerTypeArg, AnimatedTypeArg, TagName, PropertyName>::stopAnimation()
     {
         const OwnerElement* ownerElement = this->ownerElement();
-        SVGDocumentExtensions* extensions = (ownerElement->document() ? ownerElement->document()->accessSVGExtensions() : 0);
+        SVGDocumentExtensions* extensions = ownerElement->accessDocumentSVGExtensions();
         if (extensions) {
             ASSERT(extensions->hasBaseValue<DecoratedType>(ownerElement, m_attributeIdentifier));
             setValue(extensions->baseValue<DecoratedType>(ownerElement, m_attributeIdentifier));

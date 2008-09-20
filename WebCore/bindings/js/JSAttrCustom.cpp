@@ -30,6 +30,7 @@
 #include "JSAttr.h"
 
 #include "CSSHelper.h"
+#include "Document.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 

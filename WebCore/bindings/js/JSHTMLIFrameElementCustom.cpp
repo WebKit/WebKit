@@ -30,6 +30,7 @@
 #include "JSHTMLIFrameElement.h"
 
 #include "CSSHelper.h"
+#include "Document.h"
 #include "HTMLIFrameElement.h"
 #include "JSDOMBinding.h"
 

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "JSEventTargetNode.h"
 
+#include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 

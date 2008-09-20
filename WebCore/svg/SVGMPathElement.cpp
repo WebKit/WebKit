@@ -23,6 +23,8 @@
 
 #if ENABLE(SVG)
 #include "SVGMPathElement.h"
+
+#include "Document.h"
 #include "SVGPathElement.h"
 
 namespace WebCore {

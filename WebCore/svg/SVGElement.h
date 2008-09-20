@@ -24,13 +24,15 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
-#include "Document.h"
 #include "StyledElement.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGNames.h"
 
 namespace WebCore {
 
+    class AffineTransform;
+    class Document;
+    class SVGDocumentExtensions;
     class SVGPreserveAspectRatio;
     class SVGSVGElement;
 
@@ -48,6 +50,7 @@ namespace WebCore {
 
         SVGSVGElement* ownerSVGElement() const;
         SVGElement* viewportElement() const;
+        SVGDocumentExtensions* accessDocumentSVGExtensions() const;
 
         virtual void parseMappedAttribute(MappedAttribute*);
 

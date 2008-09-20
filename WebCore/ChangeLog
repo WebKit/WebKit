@@ -1,3 +1,45 @@
+2008-09-20  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20913
+        Avoid redudant includes
+
+        Document.h is included excessively such that a modification to Document.h (or
+        any of the header it includes itself) triggers a rebuild of many files
+        including the whole of SVG and a lot of the JS bindings.
+
+        Some of these includes can be avoided by only including Document.h where
+        necessary.
+
+        * bindings/js/JSAttrCustom.cpp:
+        * bindings/js/JSElementCustom.cpp:
+        * bindings/js/JSEventTargetBase.cpp:
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSEventTargetNode.cpp:
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSCursorImageValue.cpp:
+        * css/SVGCSSStyleSelector.cpp:
+        * dom/make_names.pl:
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimatedProperty.h:
+        (WebCore::::baseValue):
+        (WebCore::::setBaseValue):
+        (WebCore::::startAnimation):
+        (WebCore::::stopAnimation):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::accessDocumentSVGExtensions):
+        * svg/SVGElement.h:
+        * svg/SVGElementInstance.cpp:
+        * svg/SVGFitToViewBox.cpp:
+        * svg/SVGFontElement.cpp:
+        * svg/SVGFontFaceElement.cpp:
+        * svg/SVGLinearGradientElement.cpp:
+        * svg/SVGMPathElement.cpp:
+        * svg/SVGViewSpec.cpp:
+
 2008-09-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti & Eric.

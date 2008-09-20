@@ -26,6 +26,7 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 
+#include "Color.h"
 #include "SVGAnimationElement.h"
 
 namespace WebCore {

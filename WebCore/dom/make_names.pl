@@ -504,9 +504,13 @@ printLicenseHeader($F);
 print F <<END
 #include "config.h"
 #include "$parameters{'namespace'}ElementFactory.h"
+
 #include "$parameters{'namespace'}Names.h"
-#include "Page.h"
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "Document.h"
 #include "Settings.h"
+#endif
+
 END
 ;
 

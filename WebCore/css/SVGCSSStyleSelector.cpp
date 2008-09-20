@@ -36,6 +36,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
+#include "Document.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGPaint.h"

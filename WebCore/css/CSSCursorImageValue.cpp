@@ -23,6 +23,7 @@
 #include "CSSCursorImageValue.h"
 
 #include "DocLoader.h"
+#include "Document.h"
 #include "PlatformString.h"
 #include "RenderStyle.h"
 #include <wtf/MathExtras.h>

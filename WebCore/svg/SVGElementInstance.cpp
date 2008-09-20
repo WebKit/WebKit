@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
 
+#include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "SVGElementInstanceList.h"
