@@ -1,3 +1,11 @@
+2008-09-20  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix regression from my previous patch where the breadcrumbs bar was not displayed.
+
+        * page/inspector/inspector.css:
+
 2008-09-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
