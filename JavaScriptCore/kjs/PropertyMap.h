@@ -30,6 +30,7 @@ namespace JSC {
 
     class JSObject;
     class JSValue;
+    class PropertyNameArray;
 
     typedef JSValue** PropertyStorage;
 
@@ -93,7 +94,7 @@ namespace JSC {
         size_t getOffset(const Identifier& propertyName);
         size_t getOffset(const Identifier& propertyName, unsigned& attributes);
 
-        void getEnumerablePropertyNames(Vector<UString::Rep*>&) const;
+        void getEnumerablePropertyNames(PropertyNameArray&) const;
 
         bool hasGetterSetterProperties() const { return m_getterSetterFlag; }
         void setHasGetterSetterProperties(bool f) { m_getterSetterFlag = f; }

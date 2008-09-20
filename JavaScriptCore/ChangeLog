@@ -1,5 +1,47 @@
 2008-09-19  Sam Weinig  <sam@webkit.org>
 
+        Roll r36694 back in.  It did not cause the crash.
+
+        * JavaScriptCore.exp:
+        * VM/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::~JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::invalidate):
+        * VM/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::create):
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::getEnumerablePropertyNames):
+        * kjs/PropertyMap.h:
+        * kjs/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * kjs/PropertyNameArray.h:
+        (JSC::PropertyNameArrayData::create):
+        (JSC::PropertyNameArrayData::propertyNameVector):
+        (JSC::PropertyNameArrayData::setCachedPrototypeChain):
+        (JSC::PropertyNameArrayData::cachedPrototypeChain):
+        (JSC::PropertyNameArrayData::begin):
+        (JSC::PropertyNameArrayData::end):
+        (JSC::PropertyNameArrayData::PropertyNameArrayData):
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::addKnownUnique):
+        (JSC::PropertyNameArray::size):
+        (JSC::PropertyNameArray::operator[]):
+        (JSC::PropertyNameArray::begin):
+        (JSC::PropertyNameArray::end):
+        (JSC::PropertyNameArray::setData):
+        (JSC::PropertyNameArray::data):
+        (JSC::PropertyNameArray::releaseData):
+        * kjs/StructureID.cpp:
+        (JSC::structureIDChainsAreEqual):
+        (JSC::StructureID::getEnumerablePropertyNames):
+        (JSC::StructureID::clearEnumerationCache):
+        (JSC::StructureID::createCachedPrototypeChain):
+        * kjs/StructureID.h:
+
+2008-09-19  Sam Weinig  <sam@webkit.org>
+
         Roll out r36694.
 
         * JavaScriptCore.exp:

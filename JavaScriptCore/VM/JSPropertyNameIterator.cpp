@@ -35,7 +35,6 @@ ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
 JSPropertyNameIterator::~JSPropertyNameIterator()
 {
-    invalidate();
 }
 
 JSValue* JSPropertyNameIterator::toPrimitive(ExecState*, PreferredPrimitiveType) const
@@ -83,13 +82,8 @@ void JSPropertyNameIterator::mark()
 
 void JSPropertyNameIterator::invalidate()
 {
-    if (m_propertyNames) {
-        for (Identifier* p = m_propertyNames; p != m_end; ++p)
-            p->~Identifier();
-        fastFree(m_propertyNames);
-    }
     m_object = 0;
-    m_propertyNames = 0;
+    m_data.clear();
 }
 
 } // namespace JSC
