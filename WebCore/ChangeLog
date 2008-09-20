@@ -2,6 +2,18 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        [svg] Change SVGLocatable to deal with a plain SVGElement
+        There is no requirement in the code that we have to have a
+        SVGStyledElement. Remove that artificial limitation and compile
+        with SVGElement.
+
+        * svg/SVGLocatable.cpp:
+        * svg/SVGLocatable.h:
+
+2008-09-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         [svg] Use OwnPtr for the SVGExtensions to avoid custom lifetime
         management.
 
