@@ -234,10 +234,10 @@ void ScrollbarThemeSafari::paintButton(GraphicsContext* graphicsContext, Scrollb
         state |= EnabledState;
     if (scrollbar->pressedPart() & mask)
         state |= PressedState;
-    if (part == BackButtonPart)
+    if (part == BackButtonStartPart)
         paintThemePart(scrollbar->orientation() == VerticalScrollbar ? ScrollUpArrowPart : ScrollLeftArrowPart, graphicsContext->platformContext(),
                        buttonRect, size, state);
-    if (part == ForwardButtonPart)
+    if (part == ForwardButtonEndPart)
         paintThemePart(scrollbar->orientation() == VerticalScrollbar ? ScrollDownArrowPart : ScrollRightArrowPart, graphicsContext->platformContext(),
                        buttonRect, size, state);
 }

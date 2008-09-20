@@ -137,9 +137,9 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
     }
 
     // Paint the back and forward buttons.
-    if (scrollMask & BackButtonPart)
+    if (scrollMask & BackButtonStartPart)
         paintButton(graphicsContext, scrollbar, backButtonPaintRect, BackButtonStartPart);
-    if (scrollMask & ForwardButtonPart)
+    if (scrollMask & ForwardButtonEndPart)
         paintButton(graphicsContext, scrollbar, forwardButtonPaintRect, ForwardButtonEndPart);
     
     // Paint the thumb.

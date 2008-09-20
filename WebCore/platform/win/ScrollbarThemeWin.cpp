@@ -249,7 +249,7 @@ void ScrollbarThemeWin::paintButton(GraphicsContext* context, Scrollbar* scrollb
 {
     checkAndInitScrollbarTheme();
 
-    bool start = (part == BackButtonPart);
+    bool start = (part == BackButtonStartPart);
     int xpState = 0;
     int classicState = 0;
     if (scrollbar->orientation() == HorizontalScrollbar)
