@@ -116,17 +116,17 @@ void ImplicitAnimation::reset(RenderObject* renderer, const RenderStyle* from /*
     ASSERT((!m_toStyle && !to) || m_toStyle != to);
     ASSERT((!m_fromStyle && !from) || m_fromStyle != from);
     if (m_fromStyle)
-        m_fromStyle->deref(renderer->renderArena());
+        const_cast<RenderStyle*>(m_fromStyle)->deref(renderer->renderArena());
     if (m_toStyle)
-        m_toStyle->deref(renderer->renderArena());
+        const_cast<RenderStyle*>(m_toStyle)->deref(renderer->renderArena());
 
     m_fromStyle = const_cast<RenderStyle*>(from);   // it is read-only, other than the ref
     if (m_fromStyle)
-        m_fromStyle->ref();
+        const_cast<RenderStyle*>(m_fromStyle)->ref();
 
     m_toStyle = const_cast<RenderStyle*>(to);       // it is read-only, other than the ref
     if (m_toStyle)
-        m_toStyle->ref();
+        const_cast<RenderStyle*>(m_toStyle)->ref();
 
     // Restart the transition
     if (from && to)

@@ -1,3 +1,35 @@
+2008-09-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Transition starts running when it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=20892
+
+        When there is a transition and an animation on the
+        same element, make sure the animation wins.
+
+        The fix is to save the unanimated style when an animation is started.
+        Then, when starting a transition, check to see if there is a current
+        animation on the same prop. If so, use the unanimated style as the
+        fromStyle rather than the current style.
+
+        Test: animations/transition-and-animation-1.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::reset):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::hasAnimationForProperty):
+        * page/animation/KeyframeAnimation.h:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::unanimatedStyle):
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Add support for painting/hit testing of four possible scrollbar buttons.

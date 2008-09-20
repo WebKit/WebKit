@@ -120,6 +120,17 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     }
 }
 
+bool KeyframeAnimation::hasAnimationForProperty(int property) const
+{
+    HashSet<int>::const_iterator end = m_keyframes->endProperties();
+    for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it) {
+        if (*it == property)
+            return true;
+    }
+    
+    return false;
+}
+
 void KeyframeAnimation::endAnimation(bool)
 {
     // Restore the original (unanimated) style

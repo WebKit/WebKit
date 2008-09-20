@@ -59,8 +59,8 @@ public:
 
     void setAnimating(bool);
     bool animating();
-
-    bool hasAnimationForProperty(int prop) const { return m_transitions.contains(prop); }
+    
+    const KeyframeAnimation* getAnimationForProperty(int property) const;
 
     void resetTransitions(RenderObject*);
     void resetAnimations(RenderObject*);

@@ -79,6 +79,11 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, const RenderS
             // ImplicitAnimations are always hashed by actual properties, never cAnimateAll
             ASSERT(prop > firstCSSProperty && prop < (firstCSSProperty + numCSSProperties));
 
+            // If there is a running animation for this property, the transition is overridden
+            // and we have to use the unanimatedStyle from the animation. We do the test
+            // against the unanimated style here, but we "override" the transition later.
+            const KeyframeAnimation* kfAnim = getAnimationForProperty(prop);
+
             // See if there is a current transition for this prop
             ImplicitAnimation* implAnim = m_transitions.get(prop);
             bool equal = true;
@@ -93,7 +98,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, const RenderS
                 }
             } else {
                 // See if we need to start a new transition
-                equal = AnimationBase::propertiesEqual(prop, currentStyle, targetStyle);
+                equal = AnimationBase::propertiesEqual(prop, kfAnim ? kfAnim->unanimatedStyle() : currentStyle, targetStyle);
             }
 
             if (!equal) {
@@ -147,7 +152,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, const 
                 kfAnim->setIndex(i);
             } else if ((anim->duration() || anim->delay()) && anim->iterationCount()
                         && anim->keyframeList() && !anim->keyframeList()->isEmpty()) {
-                kfAnim = new KeyframeAnimation(const_cast<Animation*>(anim), renderer, i, this);
+                kfAnim = new KeyframeAnimation(const_cast<Animation*>(anim), renderer, i, this, currentStyle ? currentStyle : targetStyle);
                 m_keyframeAnimations.set(kfAnim->name().impl(), kfAnim);
             }
         }
@@ -179,6 +184,9 @@ RenderStyle* CompositeAnimation::animate(RenderObject* renderer, const RenderSty
 {
     RenderStyle* resultStyle = 0;
 
+    // Update animations first so we can see if any transitions are overridden
+    updateKeyframeAnimations(renderer, currentStyle, targetStyle);
+
     // We don't do any transitions if we don't have a currentStyle (on startup)
     updateTransitions(renderer, currentStyle, targetStyle);
 
@@ -191,8 +199,6 @@ RenderStyle* CompositeAnimation::animate(RenderObject* renderer, const RenderSty
                 anim->animate(this, renderer, currentStyle, targetStyle, resultStyle);
         }
     }
-
-    updateKeyframeAnimations(renderer, currentStyle, targetStyle);
 
     // Now that we have animation objects ready, let them know about the new goal state.  We want them
     // to fill in a RenderStyle*& only if needed.
@@ -245,6 +251,22 @@ bool CompositeAnimation::animating()
     }
 
     return false;
+}
+
+const KeyframeAnimation* CompositeAnimation::getAnimationForProperty(int property) const
+{
+    const KeyframeAnimation* retval = 0;
+    
+    // We want to send back the last animation with the property if there are multiples.
+    // So we need to iterate through all animations
+    AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
+        const KeyframeAnimation* anim = it->second;
+        if (anim->hasAnimationForProperty(property))
+            retval = anim;
+    }
+    
+    return retval;
 }
 
 void CompositeAnimation::resetTransitions(RenderObject* renderer)

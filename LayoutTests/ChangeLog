@@ -1,3 +1,16 @@
+2008-09-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Transition starts running when it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=20892
+
+        When there is a transition and an animation on the
+        same element, make sure the animation wins.
+
+        * animations/transition-and-animation-1-expected.txt: Added.
+        * animations/transition-and-animation-1.html: Added.
+
 2008-09-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
