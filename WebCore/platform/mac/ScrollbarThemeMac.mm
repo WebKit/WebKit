@@ -55,6 +55,8 @@ static int cButtonHitInset[] = { 3, 2 };
 static int cButtonLength[] = { 14, 10 };
 static int cThumbMinLength[] = { 26, 20 };
 
+static int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
+
 static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
@@ -144,17 +146,33 @@ IntRect ScrollbarThemeMac::backButtonRect(Scrollbar* scrollbar, ScrollbarPart pa
 {
     IntRect result;
     
-    // FIXME: Support more than just the single arrow style.
-    if (part == BackButtonEndPart)
+    if (part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleEnd))
         return result;
-
+    
+    if (part == BackButtonEndPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsSingle))
+        return result;
+        
     int thickness = scrollbarThickness(scrollbar->controlSize());
-    if (scrollbar->orientation() == HorizontalScrollbar)
-        result = IntRect(scrollbar->x(), scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
-    else
-        result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cButtonLength[scrollbar->controlSize()]);
+    bool outerButton = part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
+    if (outerButton) {
+        if (scrollbar->orientation() == HorizontalScrollbar)
+            result = IntRect(scrollbar->x(), scrollbar->y(), cOuterButtonLength[scrollbar->controlSize()], thickness);
+        else
+            result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cOuterButtonLength[scrollbar->controlSize()]);
+        return result;
+    }
+    
+    // Our repaint rect is slightly larger, since we are a button that is adjacent to the track.
+    if (scrollbar->orientation() == HorizontalScrollbar) {
+        int start = part == BackButtonStartPart ? scrollbar->x() : scrollbar->x() + scrollbar->width() - cOuterButtonLength[scrollbar->controlSize()] - cButtonLength[scrollbar->controlSize()];
+        result = IntRect(start, scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
+    } else {
+        int start = part == BackButtonStartPart ? scrollbar->y() : scrollbar->y() + scrollbar->height() - cOuterButtonLength[scrollbar->controlSize()] - cButtonLength[scrollbar->controlSize()];
+        result = IntRect(scrollbar->x(), start, thickness, cButtonLength[scrollbar->controlSize()]);
+    }
+    
     if (painting)
-        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), true);
+        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), part == BackButtonStartPart);
     return result;
 }
 
@@ -162,17 +180,34 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart
 {
     IntRect result;
     
-    // FIXME: Support more than just the single arrow style.
-    if (part == ForwardButtonStartPart)
+    if (part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleStart))
         return result;
     
+    if (part == ForwardButtonStartPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsSingle))
+        return result;
+        
     int thickness = scrollbarThickness(scrollbar->controlSize());
-    if (scrollbar->orientation() == HorizontalScrollbar)
-        result = IntRect(scrollbar->x() + scrollbar->width() - cButtonLength[scrollbar->controlSize()], scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
-    else
-        result = IntRect(scrollbar->x(), scrollbar->y() + scrollbar->height() - cButtonLength[scrollbar->controlSize()], thickness, cButtonLength[scrollbar->controlSize()]);
+    int outerButtonLength = cOuterButtonLength[scrollbar->controlSize()];
+    int buttonLength = cButtonLength[scrollbar->controlSize()];
+    
+    bool outerButton = part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
+    if (outerButton) {
+        if (scrollbar->orientation() == HorizontalScrollbar)
+            result = IntRect(scrollbar->x() + scrollbar->width() - outerButtonLength, scrollbar->y(), outerButtonLength, thickness);
+        else
+            result = IntRect(scrollbar->x(), scrollbar->y() + scrollbar->height() - outerButtonLength, thickness, outerButtonLength);
+        return result;
+    }
+    
+    if (scrollbar->orientation() == HorizontalScrollbar) {
+        int start = part == ForwardButtonEndPart ? scrollbar->x() + scrollbar->width() - buttonLength : scrollbar->x() + outerButtonLength;
+        result = IntRect(start, scrollbar->y(), buttonLength, thickness);
+    } else {
+        int start = part == ForwardButtonEndPart ? scrollbar->y() + scrollbar->height() - buttonLength : scrollbar->y() + outerButtonLength;
+        result = IntRect(scrollbar->x(), start, thickness, buttonLength);
+    }
     if (painting)
-        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), false);
+        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), part == ForwardButtonStartPart);
     return result;
 }
 
@@ -191,15 +226,40 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 {
     IntRect result;
     int thickness = scrollbarThickness(scrollbar->controlSize());
+    int startWidth = 0;
+    int endWidth = 0;
+    int outerButtonLength = cOuterButtonLength[scrollbar->controlSize()];
+    int buttonLength = cButtonLength[scrollbar->controlSize()];
+    int doubleButtonLength = outerButtonLength + buttonLength;
+    switch (buttonsPlacement()) {
+        case ScrollbarButtonsSingle:
+            startWidth = buttonLength;
+            endWidth = buttonLength;
+            break;
+        case ScrollbarButtonsDoubleStart:
+            startWidth = doubleButtonLength;
+            break;
+        case ScrollbarButtonsDoubleEnd:
+            endWidth = doubleButtonLength;
+            break;
+        case ScrollbarButtonsDoubleBoth:
+            startWidth = doubleButtonLength;
+            endWidth = doubleButtonLength;
+            break;
+        default:
+            break;
+    }
+    int totalWidth = startWidth + endWidth;
+
     if (scrollbar->orientation() == HorizontalScrollbar) {
         if (!hasButtons(scrollbar))
             result = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), thickness);
         else
-            result = IntRect(scrollbar->x() + cButtonLength[scrollbar->controlSize()], scrollbar->y(), scrollbar->width() - 2 * cButtonLength[scrollbar->controlSize()], thickness);
+            result = IntRect(scrollbar->x() + startWidth, scrollbar->y(), scrollbar->width() - totalWidth, thickness);
     } else if (!hasButtons(scrollbar))
         result = IntRect(scrollbar->x(), scrollbar->y(), thickness, scrollbar->height());
     else
-        result = IntRect(scrollbar->x(), scrollbar->y() + cButtonLength[scrollbar->controlSize()], thickness, scrollbar->height() - 2 * cButtonLength[scrollbar->controlSize()]);
+        result = IntRect(scrollbar->x(), scrollbar->y() + startWidth, thickness, scrollbar->height() - totalWidth);
     if (painting)
         return trackRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize());
     return result;
@@ -226,10 +286,15 @@ void ScrollbarThemeMac::paintTrack(GraphicsContext* graphicsContext, Scrollbar* 
 #endif
 }
 
-void ScrollbarThemeMac::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarPart)
+void ScrollbarThemeMac::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarPart part)
 {
 #if !USE(NSSCROLLER)
-    graphicsContext->fillRect(buttonRect, Color(64, 64, 64));
+    bool outerButton = (part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsDoubleBoth)) ||
+                       (part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth));
+    if (outerButton)
+        graphicsContext->fillRect(buttonRect, Color(128, 128, 128));
+    else
+        graphicsContext->fillRect(buttonRect, Color(64, 64, 64));
 #endif
 }
 

@@ -1,3 +1,18 @@
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
+        Add support for hit testing of all five possible scrollbar button placements. 
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::):
+        (WebCore::ScrollbarThemeMac::backButtonRect):
+        (WebCore::ScrollbarThemeMac::forwardButtonRect):
+        (WebCore::ScrollbarThemeMac::trackRect):
+        (WebCore::ScrollbarThemeMac::paintButton):
+
 2008-09-19  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build

@@ -58,14 +58,22 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
     // Create the ScrollbarControlPartMask based on the damageRect
     ScrollbarControlPartMask scrollMask = NoPart;
 
-    IntRect backButtonPaintRect;
-    IntRect forwardButtonPaintRect;
+    IntRect backButtonStartPaintRect;
+    IntRect backButtonEndPaintRect;
+    IntRect forwardButtonStartPaintRect;
+    IntRect forwardButtonEndPaintRect;
     if (hasButtons(scrollbar)) {
-        backButtonPaintRect = backButtonRect(scrollbar, BackButtonStartPart, true);
-        if (damageRect.intersects(backButtonPaintRect))
+        backButtonStartPaintRect = backButtonRect(scrollbar, BackButtonStartPart, true);
+        if (damageRect.intersects(backButtonStartPaintRect))
             scrollMask |= BackButtonStartPart;
-        forwardButtonPaintRect = forwardButtonRect(scrollbar, ForwardButtonEndPart, true);
-        if (damageRect.intersects(forwardButtonPaintRect))
+        backButtonEndPaintRect = backButtonRect(scrollbar, BackButtonEndPart, true);
+        if (damageRect.intersects(backButtonEndPaintRect))
+            scrollMask |= BackButtonEndPart;
+        forwardButtonStartPaintRect = forwardButtonRect(scrollbar, ForwardButtonStartPart, true);
+        if (damageRect.intersects(forwardButtonStartPaintRect))
+            scrollMask |= ForwardButtonStartPart;
+        forwardButtonEndPaintRect = forwardButtonRect(scrollbar, ForwardButtonEndPart, true);
+        if (damageRect.intersects(forwardButtonEndPaintRect))
             scrollMask |= ForwardButtonEndPart;
     }
 
@@ -138,9 +146,13 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
 
     // Paint the back and forward buttons.
     if (scrollMask & BackButtonStartPart)
-        paintButton(graphicsContext, scrollbar, backButtonPaintRect, BackButtonStartPart);
+        paintButton(graphicsContext, scrollbar, backButtonStartPaintRect, BackButtonStartPart);
+    if (scrollMask & BackButtonEndPart)
+        paintButton(graphicsContext, scrollbar, backButtonEndPaintRect, BackButtonEndPart);
+    if (scrollMask & ForwardButtonStartPart)
+        paintButton(graphicsContext, scrollbar, forwardButtonStartPaintRect, ForwardButtonStartPart);
     if (scrollMask & ForwardButtonEndPart)
-        paintButton(graphicsContext, scrollbar, forwardButtonPaintRect, ForwardButtonEndPart);
+        paintButton(graphicsContext, scrollbar, forwardButtonEndPaintRect, ForwardButtonEndPart);
     
     // Paint the thumb.
     if (scrollMask & ThumbPart)
