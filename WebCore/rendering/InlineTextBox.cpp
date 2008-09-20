@@ -865,6 +865,9 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 
 int InlineTextBox::positionForOffset(int offset) const
 {
+    ASSERT(offset >= m_start);
+    ASSERT(offset <= m_start + m_len);
+
     if (isLineBreak())
         return m_x;
 

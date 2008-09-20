@@ -1,3 +1,18 @@
+2008-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20951
+          Typo in Position::getInlineBoxAndOffset()
+          and add an assertion
+
+        Without the fix, the newly-added assertion fails in platform/mac/editing/input/caret-primary-bidi.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::positionForOffset):
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Add support for hit testing of all five possible scrollbar button placements. 
