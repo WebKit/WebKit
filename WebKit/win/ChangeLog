@@ -1,3 +1,13 @@
+2008-09-19  Alice Liu  <alice.liu@apple.com>
+
+        Fix crash when submitting form at bugreport.apple.com rdar://6234126
+
+        Reviewed by Mark Rowe.
+
+        * COMPropertyBag.h:
+        (::GetPropertyInfo):
+        correct mis-use of comma operator
+
 2008-09-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

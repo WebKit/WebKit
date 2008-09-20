@@ -194,7 +194,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::GetPropertyInfo(U
     Iterator end = m_hashMap.end();
     for (ULONG i = 0; i < iProperty; ++i, ++current)
         ;
-    for (ULONG j = 0; j < cProperties, current != end; ++j, ++current) {
+    for (ULONG j = 0; j < cProperties && current != end; ++j, ++current) {
         // FIXME: the following fields aren't filled in
         //pPropBag[j].dwType;   // (DWORD) Type of property. This will be one of the PROPBAG2_TYPE values.
         //pPropBag[j].cfType;   // (CLIPFORMAT) Clipboard format or MIME type of the property.
