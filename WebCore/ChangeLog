@@ -1,5 +1,15 @@
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
+        Fix for crash in updateTransitions.  Make sure to test for a style
+        being null when comparing two RenderStyles.
+
+        Reviewed by Oliver Hunt
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperGetter::equals):
+
+2008-09-19  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=20954
 
         Roll out r36628 since it has caused horrible regressions with
