@@ -1,3 +1,30 @@
+2008-09-19  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 17772: Inspector should support point-and-click to select a node to inspect
+        https://bugs.webkit.org/show_bug.cgi?id=17772
+        <rdar://problem/5792395>
+
+        * English.lproj/localizedStrings.js:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/InspectorController.cpp:
+        (WebCore::toggleNodeSearch):
+        (WebCore::searchingForNode):
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::toggleSearchForNodeInPage):
+        (WebCore::InspectorController::mouseDidMoveOverElement):
+        (WebCore::InspectorController::handleMousePressOnNode):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * page/InspectorController.h:
+        (WebCore::InspectorController::searchingForNodeInPage):
+        * page/inspector/ElementsPanel.js:
+        * page/inspector/Images/nodeSearchButtons.png: Added.
+        * page/inspector/inspector.css:
+
 2008-09-19  David Hyatt  <hyatt@apple.com>
 
         Add new scrollbar parts to be able to represent back and forward buttons

@@ -2720,6 +2720,22 @@ body.inactive .sidebar-tree-item.selected {
     background-position: 32px 24px;
 }
 
+#node-search-status-bar-item {
+    background-image: url(Images/nodeSearchButtons.png);
+}
+
+#node-search-status-bar-item:active {
+    background-position: 32px 0;
+}
+
+#node-search-status-bar-item.toggled-on {
+    background-position: 0 24px;
+}
+
+#node-search-status-bar-item.toggled-on:active {
+    background-position: 32px 24px;
+}
+
 .percent-time-status-bar-item {
     background-image: url(Images/percentButtons.png) !important;
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +52,11 @@ WebInspector.ElementsPanel = function()
         this.panel.updateStyles(true);
         this.panel.updateMetrics();
         this.panel.updateProperties();
+
+        if (InspectorController.searchingForNode()) {
+            InspectorController.toggleNodeSearch();
+            this.panel.nodeSearchButton.removeStyleClass("toggled-on");
+        }
     };
 
     this.contentElement.appendChild(this.treeOutline.element);
@@ -84,6 +90,14 @@ WebInspector.ElementsPanel = function()
     this.sidebarResizeElement.className = "sidebar-resizer-vertical";
     this.sidebarResizeElement.addEventListener("mousedown", this.rightSidebarResizerDragStart.bind(this), false);
 
+    this.nodeSearchButton = document.createElement("button");
+    this.nodeSearchButton.title = WebInspector.UIString("Select an element in the page to inspect it.");
+    this.nodeSearchButton.id = "node-search-status-bar-item";
+    this.nodeSearchButton.className = "status-bar-item";
+    this.nodeSearchButton.addEventListener("click", this._nodeSearchButtonClicked.bind(this), false);
+
+    this.searchingForNode = false;
+
     this.element.appendChild(this.contentElement);
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
@@ -106,7 +120,7 @@ WebInspector.ElementsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.crumbsElement];
+        return [this.nodeSearchButton, this.crumbsElement];
     },
 
     updateStatusBarItems: function()
@@ -129,6 +143,11 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.Panel.prototype.hide.call(this);
         WebInspector.hoveredDOMNode = null;
         WebInspector.forceHoverHighlight = false;
+
+        if (InspectorController.searchingForNode()) {
+            InspectorController.toggleNodeSearch();
+            this.nodeSearchButton.removeStyleClass("toggled-on");
+        }
     },
 
     resize: function()
@@ -144,6 +163,11 @@ WebInspector.ElementsPanel.prototype = {
 
         WebInspector.hoveredDOMNode = null;
         WebInspector.forceHoverHighlight = false;
+
+        if (InspectorController.searchingForNode()) {
+            InspectorController.toggleNodeSearch();
+            this.nodeSearchButton.removeStyleClass("toggled-on");
+        }
 
         this.recentlyModifiedNodes = [];
         this.unregisterAllMutationEventListeners();
@@ -874,8 +898,17 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.updateSelection();
 
         event.preventDefault();
+    },
+
+    _nodeSearchButtonClicked: function(event)
+    {
+        InspectorController.toggleNodeSearch();
+
+        if (InspectorController.searchingForNode())
+            this.nodeSearchButton.addStyleClass("toggled-on");
+        else
+            this.nodeSearchButton.removeStyleClass("toggled-on");
     }
 }
 
 WebInspector.ElementsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-

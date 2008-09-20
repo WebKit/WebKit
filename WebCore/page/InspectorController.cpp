@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +45,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
 #include "JavaScriptCallFrame.h"
@@ -1039,6 +1041,24 @@ static JSValueRef stopProfiling(JSContextRef ctx, JSObjectRef /*function*/, JSOb
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef toggleNodeSearch(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argument_count*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (controller)
+        controller->toggleSearchForNodeInPage();
+
+    return JSValueMakeUndefined(ctx);
+}
+    
+static JSValueRef searchingForNode(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    return JSValueMakeBoolean(ctx, controller->searchingForNodeInPage());
+}
+
 // InspectorController Class
 
 InspectorController::InspectorController(Page* page, InspectorClient* client)
@@ -1055,6 +1075,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_showAfterVisible(ElementsPanel)
     , m_nextIdentifier(-2)
     , m_groupLevel(0)
+    , m_searchingForNode(false)
 {
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
@@ -1335,6 +1356,40 @@ void InspectorController::setAttachedWindowHeight(unsigned height)
     m_client->setAttachedWindowHeight(height);
 }
 
+void InspectorController::toggleSearchForNodeInPage()
+{
+    if (!enabled())
+        return;
+
+    m_searchingForNode = !m_searchingForNode;
+    if (!m_searchingForNode)
+        hideHighlight();
+}
+
+void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+{
+    if (!enabled() || !m_searchingForNode)
+        return;
+
+    Node* node = result.innerNode();
+    if (node)
+        highlight(node);
+}
+
+void InspectorController::handleMousePressOnNode(Node* node)
+{
+    if (!enabled())
+        return;
+
+    ASSERT(m_searchingForNode);
+    ASSERT(node);
+    if (!node)
+        return;
+
+    // inspect() will implicitly call ElementsPanel's focusedNodeChanged() and the hover feedback will be stopped there.
+    inspect(node);
+}
+
 void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
 {
     if (!enabled() || !m_scriptContext || !m_scriptObject)
@@ -1403,6 +1458,8 @@ void InspectorController::windowScriptObjectAvailable()
         { "startProfiling", WebCore::startProfiling, kJSPropertyAttributeNone },
         { "stopProfiling", WebCore::stopProfiling, kJSPropertyAttributeNone },
         { "clearMessages", clearMessages, kJSPropertyAttributeNone },
+        { "toggleNodeSearch", toggleNodeSearch, kJSPropertyAttributeNone },
+        { "searchingForNode", searchingForNode, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 
