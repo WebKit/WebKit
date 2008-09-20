@@ -1,3 +1,11 @@
+2008-09-19  Alp Toker  <alp@nuanti.com>
+
+        Build fix for the 'gold' linker and recent binutils. New behaviour
+        requires that we link to used libraries explicitly.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-09-04  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Eric Seidel.

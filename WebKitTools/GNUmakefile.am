@@ -15,12 +15,12 @@ Programs_GtkLauncher_SOURCES = \
 Programs_GtkLauncher_CFLAGS = \
 	-fno-strict-aliasing \
 	-O2 \
-	$(GLOBALDEPS_CFLAGS) \
-	$(WEBKITDEPS_CFLAGS) \
-	$(global_cflags)
+	$(global_cflags) \
+	$(GTK_CFLAGS)
 
 Programs_GtkLauncher_LDADD = \
-	libwebkit-1.0.la
+	libwebkit-1.0.la \
+	$(GTK_LIBS)
 
 # DumpRenderTree
 Programs_DumpRenderTree_CPPFLAGS = \
@@ -52,15 +52,22 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
 
 Programs_DumpRenderTree_CXXFLAGS = \
+	$(global_cxxflags) \
+	$(Programs_DumpRenderTree_CFLAGS)
+
+Programs_DumpRenderTree_CFLAGS = \
 	-fno-strict-aliasing \
 	-O2 \
+	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
-	$(WEBKITDEPS_CFLAGS) \
-	$(global_cxxflags) \
-	$(global_cflags)
+	$(CAIRO_CFLAGS) \
+	$(GTK_CFLAGS)
 
 Programs_DumpRenderTree_LDADD = \
-	libwebkit-1.0.la
+	libwebkit-1.0.la \
+	$(GLOBALDEPS_LIBS) \
+	$(CAIRO_LIBS) \
+	$(GTK_LIBS)
 
 # clean target
 CLEANFILES += \

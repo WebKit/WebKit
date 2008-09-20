@@ -123,12 +123,8 @@ libJavaScriptCore_la_LIBADD = \
 	-lpthread
 
 libJavaScriptCore_la_CXXFLAGS = \
-	-fstrict-aliasing \
-	-O3 \
 	$(global_cxxflags) \
-	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS) \
-	$(UNICODE_CFLAGS)
+	$(libJavaScriptCore_la_CFLAGS)
 
 libJavaScriptCore_la_CFLAGS = \
 	-fstrict-aliasing \
@@ -160,22 +156,8 @@ libWebCore_la_SOURCES = \
 	$(webcoregtk_sources)
 
 libWebCore_la_CXXFLAGS = \
-	-fno-strict-aliasing \
-	-O2 \
 	$(global_cxxflags) \
-	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(WEBKITDEPS_CFLAGS) \
-	$(XT_CFLAGS) \
-	$(LIBCURL_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(FREETYPE_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(HILDON_CFLAGS)
+	$(libWebCore_la_CFLAGS)
 
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
@@ -183,7 +165,10 @@ libWebCore_la_CFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \
-	$(WEBKITDEPS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(CAIRO_CFLAGS) \
+	$(PANGO_CFLAGS) \
+	$(GTK_CFLAGS) \
 	$(XT_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
@@ -205,7 +190,10 @@ libWebCore_la_LIBADD = \
 	libJavaScriptCore.la \
 	$(webcore_libadd) \
 	$(GLOBALDEPS_LIBS) \
-	$(WEBKITDEPS_LIBS) \
+	$(LIBXML_LIBS) \
+	$(CAIRO_LIBS) \
+	$(PANGO_LIBS) \
+	$(GTK_LIBS) \
 	$(XT_LIBS) \
 	$(LIBCURL_LIBS) \
 	$(LIBSOUP_LIBS) \

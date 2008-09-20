@@ -419,15 +419,9 @@ Programs_minidom_CFLAGS = \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS)
 
-Programs_minidom_CXXFLAGS = \
-	-fno-strict-aliasing \
-	-O2 \
-	$(global_cxxflags) \
-	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS)
-
 Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
+	 -lm \
 	 -lstdc++
 
 # jsc
