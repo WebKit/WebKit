@@ -28,6 +28,7 @@
 
 #if ENABLE(SVG)
 
+#include "DashArray.h"
 #include "SVGResource.h"
 
 #if PLATFORM(CG)
@@ -39,12 +40,6 @@
 QT_BEGIN_NAMESPACE
 class QPen;
 QT_END_NAMESPACE
-#endif
-
-#if PLATFORM(CG)
-    typedef Vector<CGFloat> DashArray;
-#else
-    typedef Vector<float> DashArray;
 #endif
 
 namespace WebCore {
@@ -107,6 +102,7 @@ namespace WebCore {
 
     SVGPaintServer* getPaintServerById(Document*, const AtomicString&);
 
+    void applyStrokeStyleToContext(GraphicsContext*, RenderStyle*, const RenderObject*);
     DashArray dashArrayFromRenderingStyle(const RenderStyle* style);
 } // namespace WebCore
 

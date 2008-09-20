@@ -48,20 +48,6 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
     return transform;
 }
 
-void applyStrokeStyleToContext(GraphicsContext* context, RenderStyle* style, const RenderObject* object)
-{
-    context->setStrokeThickness(SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
-    context->setLineCap(style->svgStyle()->capStyle());
-    context->setLineJoin(style->svgStyle()->joinStyle());
-    context->setMiterLimit(style->svgStyle()->strokeMiterLimit());
-
-    // FIXME: DashArray support could easily be moved into GraphicsContext, and this function then made x-platform
-    const DashArray& dashes = dashArrayFromRenderingStyle(style);
-    float dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
-
-    CGContextSetLineDash(context->platformContext(), dashOffset, dashes.data(), dashes.size());
-}
-
 CGContextRef scratchContext()
 {
     static CGContextRef scratch = 0;

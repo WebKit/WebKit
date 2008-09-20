@@ -39,24 +39,25 @@
 #endif
 
 #include "AffineTransform.h"
-#include "Path.h"
-#include "Pattern.h"
 #include "Color.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextPrivate.h"
 #include "ImageBuffer.h"
-#include "Font.h"
+#include "Path.h"
+#include "Pattern.h"
 #include "Pen.h"
 #include "NotImplemented.h"
 
-#include <QStack>
-#include <QPainter>
-#include <QPolygonF>
-#include <QPainterPath>
-#include <QPaintDevice>
-#include <QPixmap>
-#include <QPaintEngine>
 #include <QDebug>
+#include <QPainter>
+#include <QPaintDevice>
+#include <QPaintEngine>
+#include <QPainterPath>
+#include <QPixmap>
+#include <QPolygonF>
+#include <QStack>
+#include <QVector>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -782,6 +783,26 @@ void GraphicsContext::setLineCap(LineCap lc)
     QPen nPen = p->pen();
     nPen.setCapStyle(toQtLineCap(lc));
     p->setPen(nPen);
+}
+
+void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
+{
+    QPainter* p = m_data->p();
+    QPen pen = p->pen();
+    unsigned dashLength = dashes.size();
+    if (dashLength) {
+        QVector<qreal> pattern;
+        unsigned count = dashLength;
+        if (dashLength % 2)
+            count *= 2;
+
+        for (unsigned i = 0; i < count; i++)
+            pattern.append(dashes[i % dashLength] / narrowPrecisionToFloat(pen.widthF()));
+
+        pen.setDashPattern(pattern);
+        pen.setDashOffset(dashOffset);
+    }
+    p->setPen(pen);
 }
 
 void GraphicsContext::setLineJoin(LineJoin lj)

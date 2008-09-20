@@ -1,3 +1,24 @@
+2008-09-20  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Moved DashArray to the GraphicsContext.
+
+        * GNUmakefile.am:
+        * platform/graphics/DashArray.h: Added.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setLineDash):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setLineDash):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setLineDash):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/cg/CgSupport.cpp:
+        * svg/graphics/cg/CgSupport.h:
+
 2008-09-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Dan Bernstein.
