@@ -134,9 +134,14 @@ static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation
     return paintRect;
 }
 
-IntRect ScrollbarThemeSafari::backButtonRect(Scrollbar* scrollbar, bool painting)
+IntRect ScrollbarThemeSafari::backButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool painting)
 {
     IntRect result;
+
+    // Windows just has single arrows.
+    if (part == BackButtonEndPart)
+        return result;
+
     int thickness = scrollbarThickness(scrollbar->controlSize());
     if (scrollbar->orientation() == HorizontalScrollbar)
         result = IntRect(scrollbar->x(), scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
@@ -147,9 +152,14 @@ IntRect ScrollbarThemeSafari::backButtonRect(Scrollbar* scrollbar, bool painting
     return result;
 }
 
-IntRect ScrollbarThemeSafari::forwardButtonRect(Scrollbar* scrollbar, bool painting)
+IntRect ScrollbarThemeSafari::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool painting)
 {
     IntRect result;
+    
+    // Windows just has single arrows.
+    if (part == ForwardButtonStartPart)
+        return result;
+
     int thickness = scrollbarThickness(scrollbar->controlSize());
     if (scrollbar->orientation() == HorizontalScrollbar)
         result = IntRect(scrollbar->x() + scrollbar->width() - cButtonLength[scrollbar->controlSize()], scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
@@ -212,7 +222,7 @@ void ScrollbarThemeSafari::paintTrack(GraphicsContext* graphicsContext, Scrollba
     paintThemePart(scrollbar->orientation() == VerticalScrollbar ? VScrollTrackPart : HScrollTrackPart, graphicsContext->platformContext(), trackRect, size, state); 
 }
 
-void ScrollbarThemeSafari::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarControlPartMask mask)
+void ScrollbarThemeSafari::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarPart part)
 {
     if (!SafariThemeLibrary())
         return;
@@ -224,10 +234,10 @@ void ScrollbarThemeSafari::paintButton(GraphicsContext* graphicsContext, Scrollb
         state |= EnabledState;
     if (scrollbar->pressedPart() & mask)
         state |= PressedState;
-    if (mask & BackButtonPart)
+    if (part == BackButtonPart)
         paintThemePart(scrollbar->orientation() == VerticalScrollbar ? ScrollUpArrowPart : ScrollLeftArrowPart, graphicsContext->platformContext(),
                        buttonRect, size, state);
-    if (mask & ForwardButtonPart)
+    if (part == ForwardButtonPart)
         paintThemePart(scrollbar->orientation() == VerticalScrollbar ? ScrollDownArrowPart : ScrollRightArrowPart, graphicsContext->platformContext(),
                        buttonRect, size, state);
 }

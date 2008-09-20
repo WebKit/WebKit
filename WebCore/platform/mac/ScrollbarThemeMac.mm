@@ -140,9 +140,14 @@ static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation
     return paintRect;
 }
 
-IntRect ScrollbarThemeMac::backButtonRect(Scrollbar* scrollbar, bool painting)
+IntRect ScrollbarThemeMac::backButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool painting)
 {
     IntRect result;
+    
+    // FIXME: Support more than just the single arrow style.
+    if (part == BackButtonEndPart)
+        return result;
+
     int thickness = scrollbarThickness(scrollbar->controlSize());
     if (scrollbar->orientation() == HorizontalScrollbar)
         result = IntRect(scrollbar->x(), scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
@@ -153,9 +158,14 @@ IntRect ScrollbarThemeMac::backButtonRect(Scrollbar* scrollbar, bool painting)
     return result;
 }
 
-IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar* scrollbar, bool painting)
+IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool painting)
 {
     IntRect result;
+    
+    // FIXME: Support more than just the single arrow style.
+    if (part == ForwardButtonStartPart)
+        return result;
+    
     int thickness = scrollbarThickness(scrollbar->controlSize());
     if (scrollbar->orientation() == HorizontalScrollbar)
         result = IntRect(scrollbar->x() + scrollbar->width() - cButtonLength[scrollbar->controlSize()], scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
@@ -216,7 +226,7 @@ void ScrollbarThemeMac::paintTrack(GraphicsContext* graphicsContext, Scrollbar* 
 #endif
 }
 
-void ScrollbarThemeMac::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarControlPartMask mask)
+void ScrollbarThemeMac::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarPart)
 {
 #if !USE(NSSCROLLER)
     graphicsContext->fillRect(buttonRect, Color(64, 64, 64));

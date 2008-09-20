@@ -158,9 +158,13 @@ ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar* scrollbar, const Platf
 
     IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.pos());
     mousePosition.move(scrollbar->x(), scrollbar->y());
-    if (backButtonRect(scrollbar).contains(mousePosition))
+    if (backButtonRect(scrollbar, BackButtonStartPart).contains(mousePosition))
         result = BackButtonStartPart;
-    else if (forwardButtonRect(scrollbar).contains(mousePosition))
+    else if (backButtonRect(scrollbar, BackButtonEndPart).contains(mousePosition))
+        result = BackButtonEndPart;
+    else if (forwardButtonRect(scrollbar, ForwardButtonStartPart).contains(mousePosition))
+        result = ForwardButtonStartPart;
+    else if (forwardButtonRect(scrollbar, ForwardButtonEndPart).contains(mousePosition))
         result = ForwardButtonEndPart;
     else {
         IntRect track = trackRect(scrollbar);
@@ -188,12 +192,16 @@ void ScrollbarThemeComposite::invalidatePart(Scrollbar* scrollbar, ScrollbarPart
     IntRect result;    
     switch (part) {
         case BackButtonStartPart:
+            result = backButtonRect(scrollbar, BackButtonStartPart, true);
+            break;
         case BackButtonEndPart:
-            result = backButtonRect(scrollbar, true);
+            result = backButtonRect(scrollbar, BackButtonEndPart, true);
             break;
         case ForwardButtonStartPart:
+            result = forwardButtonRect(scrollbar, ForwardButtonStartPart, true);
+            break;
         case ForwardButtonEndPart:
-            result = forwardButtonRect(scrollbar, true);
+            result = forwardButtonRect(scrollbar, ForwardButtonEndPart, true);
             break;
         default: {
             IntRect beforeThumbRect, thumbRect, afterThumbRect;
