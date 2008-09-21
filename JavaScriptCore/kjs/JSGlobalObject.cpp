@@ -379,6 +379,7 @@ void JSGlobalObject::mark()
 
     markIfNeeded(d()->objectPrototype);
     markIfNeeded(d()->functionPrototype);
+    markIfNeeded(d()->arrayPrototype);
     markIfNeeded(d()->booleanPrototype);
     markIfNeeded(d()->stringPrototype);
     markIfNeeded(d()->numberPrototype);

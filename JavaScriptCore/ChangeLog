@@ -1,3 +1,13 @@
+2008-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix crash seen on buildbot
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::mark): Add back mark of arrayPrototype,
+        deleted by accident in my recent check-in.
+
 2008-09-20  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, build fix.
