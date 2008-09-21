@@ -23,16 +23,12 @@
 #define Debugger_h
 
 #include "protect.h"
-#include <wtf/HashSet.h>
 
 namespace JSC {
 
-    class ArgList;
     class DebuggerCallFrame;
     class ExecState;
     class JSGlobalObject;
-    class JSObject;
-    class JSValue;
     class SourceProvider;
     class UString;
 
@@ -45,7 +41,7 @@ namespace JSC {
         void detach(JSGlobalObject*);
 
         virtual void sourceParsed(ExecState*, int sourceId, const UString& sourceURL,
-                                  const SourceProvider& source, int startingLineNumber, int errorLine, const UString& errorMsg) = 0;
+                                  const SourceProvider&, int startingLineNumber, int errorLine, const UString& errorMsg) = 0;
         virtual void exception(const DebuggerCallFrame&, int sourceId, int lineno) = 0;
         virtual void atStatement(const DebuggerCallFrame&, int sourceId, int lineno) = 0;
         virtual void callEvent(const DebuggerCallFrame&, int sourceId, int lineno) = 0;
