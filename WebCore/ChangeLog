@@ -1,5 +1,11 @@
 2008-09-20  Darin Adler  <darin@apple.com>
 
+        - another try at fixing Qt
+
+        * bridge/qt/qt_runtime.cpp: "using namespce WebCore"
+
+2008-09-20  Darin Adler  <darin@apple.com>
+
         - blind attempt to fix Qt build
 
         * bridge/qt/qt_runtime.cpp:

@@ -19,36 +19,39 @@
 
 #include "config.h"
 #include "qt_runtime.h"
-#include "qt_instance.h"
+
+#include "DateInstance.h"
+#include "DateMath.h"
+#include "DatePrototype.h"
+#include "JSArray.h"
+#include "JSDOMBinding.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObject.h"
-#include "JSArray.h"
-#include "DateInstance.h"
-#include "DatePrototype.h"
-#include "DateMath.h"
 #include "ObjectPrototype.h"
+#include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
 #include "RegExpObject.h"
-#include <runtime.h>
-#include <runtime_object.h>
-#include <runtime_array.h>
-#include <JSFunction.h>
-#include "PropertyNameArray.h"
-#include "qmetatype.h"
+#include "qdatetime.h"
+#include "qdebug.h"
 #include "qmetaobject.h"
+#include "qmetatype.h"
 #include "qobject.h"
 #include "qstringlist.h"
-#include "qdebug.h"
+#include "qt_instance.h"
 #include "qvarlengtharray.h"
-#include "qdatetime.h"
+#include <JSFunction.h>
 #include <limits.h>
+#include <runtime.h>
+#include <runtime_array.h>
+#include <runtime_object.h>
 
 // QtScript has these
 Q_DECLARE_METATYPE(QObjectList);
 Q_DECLARE_METATYPE(QList<int>);
 Q_DECLARE_METATYPE(QVariant);
 
+using namespace WebCore;
 
 namespace JSC {
 namespace Bindings {
