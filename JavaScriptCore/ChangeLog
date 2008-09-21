@@ -1,3 +1,39 @@
+2008-09-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20815: 'arguments' object creation is non-optimal
+        <https://bugs.webkit.org/show_bug.cgi?id=20815>
+
+        Fix our inefficient way of creating the arguments object by only
+        creating named properties for each of the arguments after a use of the
+        'delete' statement. This patch also speeds up access to the 'arguments'
+        object slightly, but it still does not use the array fast path for
+        indexed access that exists for many opcodes.
+
+        This is about a 20% improvement on the V8 Raytrace benchmark, and a 1.5%
+        improvement on the Earley-Boyer benchmark, which gives a 4% improvement
+        overall.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::mark):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+        * kjs/Arguments.h:
+        (JSC::Arguments::ArgumentsData::ArgumentsData):
+        * kjs/IndexToNameMap.h:
+        (JSC::IndexToNameMap::size):
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::createArgumentsObject):
+        * kjs/JSActivation.h:
+        (JSC::JSActivation::uncheckedSymbolTableGet):
+        (JSC::JSActivation::uncheckedSymbolTableGetValue):
+        (JSC::JSActivation::uncheckedSymbolTablePut):
+        * kjs/JSFunction.h:
+        (JSC::JSFunction::numParameters):
+
 2008-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

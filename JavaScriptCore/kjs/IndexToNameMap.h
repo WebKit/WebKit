@@ -40,6 +40,8 @@ namespace JSC {
         bool isMapped(const Identifier& index) const;
         void unMap(ExecState* exec, const Identifier& index);
 
+        unsigned size() const { return m_size; }
+
     private:
         unsigned m_size;
         Identifier* m_map; // FIMXE: this should be an OwnArrayPtr

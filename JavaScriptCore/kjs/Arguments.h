@@ -25,15 +25,17 @@
 #define Arguments_h
 
 #include "IndexToNameMap.h"
+#include "JSFunction.h"
 #include "JSObject.h"
 
 namespace JSC {
 
     class JSActivation;
+    class Register;
 
     class Arguments : public JSObject {
     public:
-        Arguments(ExecState*, JSFunction*, const ArgList&, JSActivation*);
+        Arguments(ExecState*, JSFunction*, const ArgList&, JSActivation*, int firstArgumentIndex, Register* argv);
 
         virtual void mark();
 
@@ -48,14 +50,26 @@ namespace JSC {
         static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
 
         struct ArgumentsData {
-            ArgumentsData(JSActivation* activation_, JSFunction* function_, const ArgList& args_)
+            ArgumentsData(JSActivation* activation_, JSFunction* function_, const ArgList& args_, int firstArgumentIndex_)
                 : activation(activation_)
                 , indexToNameMap(function_, args_)
+                , firstArgumentIndex(firstArgumentIndex_)
+                , hadDeletes(false)
             {
+                unsigned numArguments = args_.size();
+                unsigned numParameters = function_->numParameters();
+                if (numArguments <= numParameters)
+                    numExtraArguments = 0;
+                else
+                    numExtraArguments = numArguments - numParameters;
             }
 
             JSActivation* activation;
             mutable IndexToNameMap indexToNameMap;
+            int firstArgumentIndex;
+            JSValue** extraArguments;
+            unsigned numExtraArguments;
+            bool hadDeletes;
         };
         
         OwnPtr<ArgumentsData> d;

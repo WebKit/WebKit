@@ -161,7 +161,7 @@ PropertySlot::GetValueFunc JSActivation::getArgumentsGetter()
     return argumentsGetter;
 }
 
-JSObject* JSActivation::createArgumentsObject(ExecState* exec)
+Arguments* JSActivation::createArgumentsObject(ExecState* exec)
 {
     Register* callFrame = d()->registers - d()->functionBody->generatedByteCode().numLocals - RegisterFile::CallFrameHeaderSize;
 
@@ -171,7 +171,8 @@ JSObject* JSActivation::createArgumentsObject(ExecState* exec)
     exec->machine()->getArgumentsData(callFrame, function, argv, argc);
 
     ArgList args(argv, argc);
-    return new (exec) Arguments(exec, function, args, this);
+    int firstArgumentIndex = -d()->functionBody->generatedByteCode().numLocals + 1;
+    return new (exec) Arguments(exec, function, args, this, firstArgumentIndex, argv);
 }
 
 } // namespace JSC
