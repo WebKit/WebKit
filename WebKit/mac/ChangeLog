@@ -1,3 +1,10 @@
+2008-09-21  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        * Misc/WebTypesInternal.h:
+        * WebKitPrefix.h:
+
 2008-09-20  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.

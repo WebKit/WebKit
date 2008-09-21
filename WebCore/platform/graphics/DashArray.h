@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CgSupport_h
-#define CgSupport_h
+#ifndef DashArray_h
+#define DashArray_h
 
-#if ENABLE(SVG)
+#include <wtf/Vector.h>
 
-#include <ApplicationServices/ApplicationServices.h>
-#include "GraphicsTypes.h"
+#if PLATFORM(CG)
+typedef Vector<CGFloat> DashArray;
+#elif PLATFORM(CAIRO)
+typedef Vector<double> DashArray;
+#else
+typedef Vector<float> DashArray;
+#endif
 
-namespace WebCore {
-
-typedef struct CGPath *CGMutablePathRef;
-
-class Path;
-class FloatRect;
-class RenderStyle;
-class RenderObject;
-class GraphicsContext;
-
-CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
-
-CGContextRef scratchContext();
-FloatRect strokeBoundingBox(const Path& path, RenderStyle*, const RenderObject*);
-
-}
-
-#endif // ENABLE(SVG)
-#endif // !CgSupport_h
+#endif // DashArray_h

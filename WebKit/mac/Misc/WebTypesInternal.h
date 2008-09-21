@@ -31,11 +31,4 @@ typedef int NSInteger;
 typedef unsigned int NSUInteger;
 #endif
 
-#ifndef CGFLOAT_DEFINED
-#ifdef __LP64__
-typedef double CGFloat;
-#else
-typedef float CGFloat;
-#endif
-#define CGFLOAT_DEFINED 1
-#endif
+

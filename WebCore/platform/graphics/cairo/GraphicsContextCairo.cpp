@@ -807,6 +807,11 @@ void GraphicsContext::setLineCap(LineCap lineCap)
     cairo_set_line_cap(m_data->cr, cairoCap);
 }
 
+void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
+{
+    cairo_set_dash(m_data->cr, dashes.data(), dashes.size(), dashOffset);
+}
+
 void GraphicsContext::setLineJoin(LineJoin lineJoin)
 {
     if (paintingDisabled())
