@@ -730,9 +730,20 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, bool b)
     return emitLoad(dst, jsBoolean(b));
 }
 
-RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double d)
+RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double number)
 {
-    return emitLoad(dst, jsNumber(globalExec(), d));
+    pair<NumberMap::iterator, bool> addResult = m_numberMap.add(number, 0);
+    if (addResult.second)
+        addResult.first->second = jsNumber(globalExec(), number);
+    return emitLoad(dst, addResult.first->second);
+}
+
+RegisterID* CodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
+{
+    pair<IdentifierStringMap::iterator, bool> addResult = m_stringMap.add(identifier.ustring().rep(), 0);
+    if (addResult.second)
+        addResult.first->second = jsOwnedString(globalExec(), identifier.ustring());
+    return emitLoad(dst, addResult.first->second);
 }
 
 RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValue* v)

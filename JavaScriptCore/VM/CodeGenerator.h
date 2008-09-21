@@ -228,6 +228,7 @@ namespace JSC {
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
+        RegisterID* emitLoad(RegisterID* dst, const Identifier&);
         RegisterID* emitLoad(RegisterID* dst, JSValue*);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, bool);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, double);
@@ -347,6 +348,8 @@ namespace JSC {
         };
 
         typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
+        typedef HashMap<double, JSValue*> NumberMap;
+        typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
 
         RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
@@ -421,6 +424,8 @@ namespace JSC {
         // Constant pool
         IdentifierMap m_identifierMap;
         JSValueMap m_jsValueMap;
+        NumberMap m_numberMap;
+        IdentifierStringMap m_stringMap;
 
         JSGlobalData* m_globalData;
 

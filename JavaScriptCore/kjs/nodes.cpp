@@ -253,7 +253,7 @@ RegisterID* StringNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (dst == ignoredResult())
         return 0;
-    return generator.emitLoad(dst, jsOwnedString(generator.globalExec(), m_value.ustring()));
+    return generator.emitLoad(dst, m_value);
 }
 
 // ------------------------------ RegExpNode -----------------------------------
