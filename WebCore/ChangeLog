@@ -3,7 +3,7 @@
         Reviewed by Eric Seidel.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=20950
-          Reproducible assertion failure running svg/custom/acid3-test-77.html multiple times under guard malloc
+          <rdar://problem/6234059> Reproducible assertion failure running svg/custom/acid3-test-77.html multiple times under guard malloc
 
         * svg/SVGTextContentElement.cpp:
         (WebCore::SVGInlineTextBoxQueryWalker::chunkPortionCallback): Changed to
