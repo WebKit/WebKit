@@ -33,32 +33,14 @@
 
 namespace WebCore {
 
-// TODO: Share this code with all SVGPaintServers
-static void applyStrokeStyleToContext(GraphicsContext* context, const SVGRenderStyle* style, const RenderObject* object)
-{
-    cairo_t* cr = context->platformContext();
-
-    context->setStrokeThickness(SVGRenderStyle::cssPrimitiveToLength(object, style->strokeWidth(), 1.0));
-    context->setLineCap(style->capStyle());
-    context->setLineJoin(style->joinStyle());
-    if (style->joinStyle() == MiterJoin)
-        context->setMiterLimit(style->strokeMiterLimit());
-
-    const DashArray& dashes = dashArrayFromRenderingStyle(object->style());
-    OwnArrayPtr<double> dsh(new double[dashes.size()]);
-    for (size_t i = 0; i < dashes.size() ; i++)
-        dsh[i] = dashes[i];
-    double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->strokeDashOffset(), 0.0);
-    cairo_set_dash(cr, dsh.get(), dashes.size(), dashOffset);
-}
-
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     FloatRect targetRect = object->relativeBBox(false);
 
-    const SVGRenderStyle* style = object->style()->svgStyle();
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    RenderStyle* style = object->style();
 
-    float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(object, style->strokeWidth(), 1.0);
+    float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(object, svgStyle->strokeWidth(), 1.0f);
 
     if (targetRect.width() == 0)
         targetRect = FloatRect(targetRect.x(), targetRect.y(), strokeWidth, targetRect.height());
@@ -83,10 +65,10 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     cairo_matrix_invert(&matrix);
     cairo_pattern_set_matrix(pattern, &matrix);
 
-    if ((type & ApplyToFillTargetType) && style->hasFill())
-        cairo_set_fill_rule(cr, style->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    if ((type & ApplyToFillTargetType) && svgStyle->hasFill())
+        context->setFillRule(svgStyle->fillRule());
 
-    if ((type & ApplyToStrokeTargetType) && style->hasStroke())
+    if ((type & ApplyToStrokeTargetType) && svgStyle->hasStroke())
         applyStrokeStyleToContext(context, style, object);
 
     cairo_set_source(cr, pattern);

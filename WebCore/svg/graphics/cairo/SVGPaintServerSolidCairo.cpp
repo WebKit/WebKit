@@ -31,35 +31,22 @@ namespace WebCore {
 bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
     // TODO: share this code with other PaintServers
-
     cairo_t* cr = context->platformContext();
-    const SVGRenderStyle* style = object->style()->svgStyle();
+
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    RenderStyle* style = object->style();
 
     float red, green, blue, alpha;
     color().getRGBA(red, green, blue, alpha);
 
-    if ((type & ApplyToFillTargetType) && style->hasFill()) {
-        alpha = style->fillOpacity();
-
-        cairo_set_fill_rule(cr, style->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    if ((type & ApplyToFillTargetType) && svgStyle->hasFill()) {
+        alpha = svgStyle->fillOpacity();
+        context->setFillRule(svgStyle->fillRule());
     }
 
-    if ((type & ApplyToStrokeTargetType) && style->hasStroke()) {
-        alpha = style->strokeOpacity();
-
-        cairo_set_line_width(cr, SVGRenderStyle::cssPrimitiveToLength(object, style->strokeWidth(), 1.0));
-        context->setLineCap(style->capStyle());
-        context->setLineJoin(style->joinStyle());
-        if (style->joinStyle() == MiterJoin)
-            context->setMiterLimit(style->strokeMiterLimit());
-
-        const DashArray& dashes = dashArrayFromRenderingStyle(object->style());
-        double* dsh = new double[dashes.size()];
-        for (unsigned i = 0 ; i < dashes.size() ; i++)
-            dsh[i] = dashes[i];
-        double dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->strokeDashOffset(), 0.0);
-        cairo_set_dash(cr, dsh, dashes.size(), dashOffset);
-        delete[] dsh;
+    if ((type & ApplyToStrokeTargetType) && svgStyle->hasStroke()) {
+        alpha = svgStyle->strokeOpacity();
+        applyStrokeStyleToContext(context, style, object);
     }
 
     cairo_set_source_rgba(cr, red, green, blue, alpha);

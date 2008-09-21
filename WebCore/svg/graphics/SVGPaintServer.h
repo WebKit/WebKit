@@ -35,13 +35,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#if PLATFORM(QT)
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QPen;
-QT_END_NAMESPACE
-#endif
-
 namespace WebCore {
 
     enum SVGPaintServerType {
@@ -91,9 +84,6 @@ namespace WebCore {
         void clipToFillPath(CGContextRef, const RenderObject*) const;
 #endif
 
-#if PLATFORM(QT)
-        void setPenProperties(const RenderObject*, const RenderStyle*, QPen&) const;
-#endif
     protected:
         SVGPaintServer();        
     };

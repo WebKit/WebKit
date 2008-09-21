@@ -37,32 +37,33 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
     QPainter* painter(context ? context->platformContext() : 0);
     Q_ASSERT(painter);
 
-    RenderStyle* renderStyle = object ? object->style() : 0;
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    RenderStyle* style = object ? object->style() : 0;
     // TODO? painter->setOpacity(renderStyle->opacity());
 
     QColor c = color();
 
-    if ((type & ApplyToFillTargetType) && (!renderStyle || renderStyle->svgStyle()->hasFill())) {
-        if (renderStyle)
-            c.setAlphaF(renderStyle->svgStyle()->fillOpacity());
+    if ((type & ApplyToFillTargetType) && (!style || svgStyle->hasFill())) {
+        if (style)
+            c.setAlphaF(svgStyle->fillOpacity());
 
         QBrush brush(c);
         painter->setBrush(brush);
 
-        if (renderStyle)
-            context->setFillRule(renderStyle->svgStyle()->fillRule());
+        if (style)
+            context->setFillRule(svgStyle->fillRule());
 
         /* if(isPaintingText()) ... */
     }
 
-    if ((type & ApplyToStrokeTargetType) && (!renderStyle || renderStyle->svgStyle()->hasStroke())) {
-        if (renderStyle)
-            c.setAlphaF(renderStyle->svgStyle()->strokeOpacity());
+    if ((type & ApplyToStrokeTargetType) && (!style || svgStyle->hasStroke())) {
+        if (style)
+            c.setAlphaF(svgStyle->strokeOpacity());
 
         QPen pen(c);
-        if (renderStyle)
-            setPenProperties(object, renderStyle, pen);
         painter->setPen(pen);
+        if (style)
+            applyStrokeStyleToContext(context, style, object);
 
         /* if(isPaintingText()) ... */
     }

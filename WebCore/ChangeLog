@@ -2,6 +2,25 @@
 
         Reviewed by eseidel.  Landed by eseidel.
 
+        All platforms use the DashArray in the GraphicsContext.
+
+        * svg/graphics/SVGPaintServer.h:
+        * svg/graphics/cairo/SVGPaintServerGradientCairo.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/cairo/SVGPaintServerPatternCairo.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/cairo/SVGPaintServerSolidCairo.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        * svg/graphics/qt/SVGPaintServerGradientQt.cpp:
+        (WebCore::SVGPaintServerGradient::setup):
+        * svg/graphics/qt/SVGPaintServerQt.cpp:
+        * svg/graphics/qt/SVGPaintServerSolidQt.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
+2008-09-21  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
         Moved DashArray to GraphicsContext.
 
         * GNUmakefile.am:
