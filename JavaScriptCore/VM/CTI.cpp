@@ -387,6 +387,12 @@ ALWAYS_INLINE void CTI::emitFastArithIntToImmNoCheck(X86Assembler::RegisterID re
     emitFastArithReTagImmediate(reg);
 }
 
+ALWAYS_INLINE void CTI::emitTagAsBoolImmediate(X86Assembler::RegisterID reg)
+{
+    m_jit.shl_i8r(JSImmediate::ExtendedPayloadShift, reg);
+    m_jit.orl_i32r(JSImmediate::FullTagTypeBool, reg);
+}
+
 CTI::CTI(Machine* machine, ExecState* exec, CodeBlock* codeBlock)
     : m_jit(machine->jitCodeBuffer())
     , m_machine(machine)
@@ -1374,8 +1380,60 @@ void CTI::privateCompileMainPass()
         CTI_COMPILE_UNARY_OP(op_is_string)
         CTI_COMPILE_UNARY_OP(op_is_object)
         CTI_COMPILE_UNARY_OP(op_is_function)
-        CTI_COMPILE_BINARY_OP(op_stricteq)
         CTI_COMPILE_BINARY_OP(op_nstricteq)
+        case op_stricteq: {
+            unsigned dst = instruction[i + 1].u.operand;
+            unsigned src1 = instruction[i + 2].u.operand;
+            unsigned src2 = instruction[i + 3].u.operand;
+
+            emitGetArg(src1, X86::eax);
+            emitGetArg(src2, X86::edx);
+
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::eax);
+            X86Assembler::JmpSrc firstNotImmediate = m_jit.emitUnlinkedJe();
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::edx);
+            X86Assembler::JmpSrc secondNotImmediate = m_jit.emitUnlinkedJe();
+
+            m_jit.cmpl_rr(X86::edx, X86::eax);
+            m_jit.sete_r(X86::eax);
+            m_jit.movzbl_rr(X86::eax, X86::eax);
+            emitTagAsBoolImmediate(X86::eax);
+            
+            X86Assembler::JmpSrc bothWereImmediates = m_jit.emitUnlinkedJmp();
+
+            m_jit.link(firstNotImmediate, m_jit.label());
+
+            // check that edx is immediate but not the zero immediate
+            
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::edx);
+            m_jit.setz_r(X86::ecx);
+            m_jit.movzbl_rr(X86::ecx, X86::ecx); // ecx is now 1 if edx was nonimmediate
+            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::edx);
+            m_jit.sete_r(X86::edx);
+            m_jit.movzbl_rr(X86::edx, X86::edx); // edx is now 1 if edx was the 0 immediate
+            m_jit.orl_rr(X86::ecx, X86::edx);
+
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJnz(), i));
+
+            m_jit.movl_i32r(reinterpret_cast<uint32_t>(jsBoolean(false)), X86::eax);
+
+            X86Assembler::JmpSrc firstWasNotImmediate = m_jit.emitUnlinkedJmp();
+
+            m_jit.link(secondNotImmediate, m_jit.label());
+            // check that eax is not the zero immediate (we know it must be immediate)
+            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::eax);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), i));
+
+            m_jit.movl_i32r(reinterpret_cast<uint32_t>(jsBoolean(false)), X86::eax);
+
+            m_jit.link(bothWereImmediates, m_jit.label());
+            m_jit.link(firstWasNotImmediate, m_jit.label());
+
+            emitPutResult(dst);
+            
+            i += 4;
+            break;
+        }
         case op_to_jsnumber: {
             emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
             emitCall(i, Machine::cti_op_to_jsnumber);
@@ -1972,6 +2030,8 @@ void CTI::privateCompileSlowCases()
             i += 4;
             break;
         }
+        CTI_COMPILE_BINARY_OP_SLOW_CASE(op_stricteq);
+
         case op_mod: {
             X86Assembler::JmpSrc notImm1 = iter->from;
             X86Assembler::JmpSrc notImm2 = (++iter)->from;

@@ -5299,10 +5299,9 @@ JSValue* Machine::cti_op_stricteq(CTI_ARGS)
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
 
-    if (JSImmediate::areBothImmediate(src1, src2))
-        return jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
-    if (JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate()))
-        return jsBoolean(false);
+    // handled inline as fast cases
+    ASSERT(!JSImmediate::areBothImmediate(src1, src2));
+    ASSERT(!(JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate())));
 
     return jsBoolean(strictEqualSlowCaseInline(src1, src2));
 }

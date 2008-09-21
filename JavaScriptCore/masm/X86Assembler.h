@@ -191,6 +191,7 @@ public:
         OP_LEA                          = 0x8D,
         OP_GROUP1A_Ev                   = 0x8F,
         OP_CDQ                          = 0x99,
+        OP_SETE                         = 0x94,
         OP_GROUP2_EvIb                  = 0xC1,
         OP_RET                          = 0xC3,
         OP_GROUP11_EvIz                 = 0xC7,
@@ -214,6 +215,7 @@ public:
         OP2_JGE_rel32   = 0x8D,
         OP2_JLE_rel32   = 0x8E,
         OP2_IMUL_GvEv   = 0xAF,
+        OP2_MOVZX_GvEb  = 0xB6,
         OP2_MOVZX_GvEw  = 0xB7,
 
         GROUP1_OP_ADD = 0,
@@ -386,6 +388,18 @@ public:
         emitModRm_rmsib(src, base, index, scale);
     }
 
+    void sete_r(RegisterID dst)
+    {
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP_SETE);
+        m_buffer->putByte(MODRM(3, 0, dst));
+    }
+
+    void setz_r(RegisterID dst)
+    {
+        sete_r(dst);
+    }
+
     void orl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_OR_EvGv);
@@ -545,6 +559,13 @@ public:
         emitModRm_rmsib(dst, base, index, scale, offset);
     }
 
+    void movzbl_rr(RegisterID src, RegisterID dst)
+    {
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_MOVZX_GvEb);
+        emitModRm_rr(dst, src);
+    }
+
     void movzwl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
@@ -700,6 +721,11 @@ public:
         return JmpSrc(m_buffer->getOffset());
     }
     
+    JmpSrc emitUnlinkedJnz()
+    {
+        return emitUnlinkedJne();
+    }
+
     JmpSrc emitUnlinkedJe()
     {
         m_buffer->ensureSpace(MAX_INSTRUCTION_SIZE);
