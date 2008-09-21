@@ -1,3 +1,15 @@
+2008-09-21  Paul Pedriana  <webkit@pedriana.com>
+
+        Reviewed and tweaked by Darin Adler.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=16925
+          Fixed lack of Vector buffer alignment for both GCC and MSVC.
+          Since there's no portable way to do this, for now we don't support
+          other compilers.
+
+        * wtf/Vector.h: Added WTF_ALIGH_ON, WTF_ALIGNED, AlignedBufferChar, and AlignedBuffer.
+        Use AlignedBuffer insteadof an array of char in VectorBuffer.
+
 2008-09-21  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

@@ -35,7 +35,33 @@ namespace WTF {
 
     using std::min;
     using std::max;
-    
+
+    // WTF_ALIGN_OF / WTF_ALIGNED
+    #if COMPILER(GCC) || COMPILER(MINGW)
+        #define WTF_ALIGN_OF(type) __alignof__(type)
+        #define WTF_ALIGNED(variable_type, variable, n) variable_type variable __attribute__((__aligned__(n)))
+    #elif COMPILER(MSVC)
+        #define WTF_ALIGN_OF(type) __alignof(type)
+        #define WTF_ALIGNED(variable_type, variable, n) __declspec(align(n)) variable_type variable
+    #else
+        #error WTF_ALIGN macros need alignment control.
+    #endif
+
+    #if COMPILER(GCC) && (((__GNUC__ * 100) + __GNUC_MINOR__) >= 303)
+        typedef char __attribute__((__may_alias__)) AlignedBufferChar; 
+    #else
+        typedef char AlignedBufferChar; 
+    #endif
+
+    template <size_t size, size_t alignment> struct AlignedBuffer;
+    template <size_t size> struct AlignedBuffer<size, 1> { AlignedBufferChar buffer[size]; };
+    template <size_t size> struct AlignedBuffer<size, 2> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 2);  };
+    template <size_t size> struct AlignedBuffer<size, 4> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 4);  };
+    template <size_t size> struct AlignedBuffer<size, 8> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 8);  };
+    template <size_t size> struct AlignedBuffer<size, 16> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 16); };
+    template <size_t size> struct AlignedBuffer<size, 32> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 32); };
+    template <size_t size> struct AlignedBuffer<size, 64> { WTF_ALIGNED(AlignedBufferChar, buffer[size], 64); };
+
     template <bool needsDestruction, typename T>
     class VectorDestructor;
 
@@ -384,10 +410,9 @@ namespace WTF {
         using Base::m_capacity;
 
         static const size_t m_inlineBufferSize = inlineCapacity * sizeof(T);
-        T* inlineBuffer() { return reinterpret_cast<T*>(&m_inlineBuffer); }
+        T* inlineBuffer() { return reinterpret_cast<T*>(m_inlineBuffer.buffer); }
 
-        // FIXME: Nothing guarantees this buffer is appropriately aligned to hold objects of type T.
-        char m_inlineBuffer[m_inlineBufferSize];
+        AlignedBuffer<m_inlineBufferSize, WTF_ALIGN_OF(T)> m_inlineBuffer;
     };
 
     template<typename T, size_t inlineCapacity = 0>
