@@ -1,3 +1,9 @@
+2008-09-20  Dan Bernstein  <mitz@apple.com>
+
+        - Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Made DashArray.h a private header.
+
 2008-09-20  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by eseidel.  Landed by eseidel.

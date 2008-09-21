@@ -2344,7 +2344,7 @@
 		A8C4A80D09D563270003AC8D /* Attr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7FB09D563270003AC8D /* Attr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FC09D563270003AC8D /* Attr.cpp */; };
 		A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8CB41030E85B8A50032C4F0 /* DashArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CB41020E85B8A50032C4F0 /* DashArray.h */; };
+		A8CB41030E85B8A50032C4F0 /* DashArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CB41020E85B8A50032C4F0 /* DashArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */; };
 		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
 		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
