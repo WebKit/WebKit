@@ -1,3 +1,14 @@
+2008-09-21  Peter Gal  <galpter@inf.u-szeged.hu>
+
+        Reviewed by Tim Hatcher and Eric Seidel.
+
+        Fix the QT/Linux JavaScriptCore segmentation fault.
+        https://bugs.webkit.org/show_bug.cgi?id=20914
+
+        * wtf/ThreadingQt.cpp:
+        (WTF::initializeThreading): Use currentThread() if
+        platform is not a MAC (like in pre 36541 revisions)
+
 2008-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

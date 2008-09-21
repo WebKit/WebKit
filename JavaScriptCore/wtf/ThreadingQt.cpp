@@ -33,7 +33,9 @@
 #include "MainThread.h"
 #include "MathExtras.h"
 
+#if PLATFORM(DARWIN)
 #include <QCoreApplication>
+#endif
 #include <QMutex>
 #include <QThread>
 #include <QWaitCondition>
@@ -126,8 +128,12 @@ void initializeThreading()
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         wtf_random_init();
+#if PLATFORM(DARWIN)
         QThread* mainThread = QCoreApplication::instance()->thread();
         mainThreadIdentifier = establishIdentifierForThread(mainThread);
+#else
+        mainThreadIdentifier = currentThread();
+#endif
         initializeMainThread();
     }
 }
