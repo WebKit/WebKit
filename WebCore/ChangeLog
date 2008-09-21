@@ -1,3 +1,20 @@
+2008-09-20  Darin Adler  <darin@apple.com>
+
+        - blind attempt to fix Qt build
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue): Use regExpStructure instead
+        of regExpPrototype to make a RegExpObject. There should really be
+        some sort of public helper function for this. Same thing for
+        DateInstance and dateStructure. For JSObject, use constructEmptyObject.
+        (JSC::Bindings::):
+        (JSC::Bindings::QtRuntimeMethod::QtRuntimeMethod): Use getDOMStructure.
+        It is not correct to do this inside the constructor because it could
+        cause a garbage collect while the QtRuntimeMethod object is half-
+        allocated, which could lead to a crash; note that RuntimeMethod,
+        QtRuntimeObjectImp, and RuntimeObjectImp have the same bug.
+        * bridge/qt/qt_runtime.h: Add s_info and createPrototype.
+
 2008-09-20  Collin Jackson  <collinj@webkit.org>
 
         Prefetch DNS for hyperlinks that the user mouses over.

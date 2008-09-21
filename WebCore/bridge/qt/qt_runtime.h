@@ -146,6 +146,13 @@ public:
     virtual CodeType codeType() const;
     virtual Completion execute(ExecState *exec);
 
+    static const ClassInfo s_info;
+
+    static FunctionPrototype* createPrototype(ExecState* exec)
+    {
+        return exec->lexicalGlobalObject()->functionPrototype();
+    }
+
 protected:
     QtRuntimeMethodData *d_func() const {return d_ptr;}
     QtRuntimeMethod(QtRuntimeMethodData *dd, ExecState *exec, const Identifier &n, PassRefPtr<QtInstance> inst);
