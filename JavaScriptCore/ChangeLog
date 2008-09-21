@@ -1,3 +1,9 @@
+2008-09-21  Darin Adler  <darin@apple.com>
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitLoad): One more tweak: Wrote this in a slightly
+        clearer style.
+
 2008-09-21  Judit Jasz  <jasy@inf.u-szeged.hu>
 
         Reviewed and tweaked by Darin Adler.

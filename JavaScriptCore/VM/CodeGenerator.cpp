@@ -732,18 +732,18 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, bool b)
 
 RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double number)
 {
-    pair<NumberMap::iterator, bool> addResult = m_numberMap.add(number, 0);
-    if (addResult.second)
-        addResult.first->second = jsNumber(globalExec(), number);
-    return emitLoad(dst, addResult.first->second);
+    JSValue*& valueInMap = m_numberMap.add(number, 0).first->second;
+    if (!valueInMap)
+        valueInMap = jsNumber(globalExec(), number);
+    return emitLoad(dst, valueInMap);
 }
 
 RegisterID* CodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
-    pair<IdentifierStringMap::iterator, bool> addResult = m_stringMap.add(identifier.ustring().rep(), 0);
-    if (addResult.second)
-        addResult.first->second = jsOwnedString(globalExec(), identifier.ustring());
-    return emitLoad(dst, addResult.first->second);
+    JSString*& valueInMap = m_stringMap.add(identifier.ustring().rep(), 0).first->second;
+    if (!valueInMap)
+        valueInMap = jsOwnedString(globalExec(), identifier.ustring());
+    return emitLoad(dst, valueInMap);
 }
 
 RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValue* v)
