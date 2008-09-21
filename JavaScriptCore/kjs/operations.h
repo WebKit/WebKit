@@ -30,6 +30,35 @@ namespace JSC {
   bool equal(ExecState*, JSValue*, JSValue*);
   bool strictEqual(JSValue*, JSValue*);
   bool strictEqualSlowCase(JSValue*, JSValue*);
+
+  inline bool strictEqualSlowCaseInline(JSValue* v1, JSValue* v2)
+  {
+      ASSERT(!JSImmediate::areBothImmediate(v1, v2));
+      
+      if (JSImmediate::isEitherImmediate(v1, v2)) {
+          ASSERT(v1 == JSImmediate::zeroImmediate() || v2 == JSImmediate::zeroImmediate());
+          ASSERT(v1 != v2);
+
+          // The reason we can't just return false here is that 0 === -0,
+          // and while the former is an immediate number, the latter is not.
+          if (v1 == JSImmediate::zeroImmediate())
+              return static_cast<JSCell*>(v2)->isNumber() && static_cast<JSNumberCell*>(v2)->value() == 0;
+          return static_cast<JSCell*>(v1)->isNumber() && static_cast<JSNumberCell*>(v1)->value() == 0;
+      }
+      
+      if (static_cast<JSCell*>(v1)->isNumber()) {
+          return static_cast<JSCell*>(v2)->isNumber()
+              && static_cast<JSNumberCell*>(v1)->value() == static_cast<JSNumberCell*>(v2)->value();
+      }
+
+      if (static_cast<JSCell*>(v1)->isString()) {
+          return static_cast<JSCell*>(v2)->isString()
+              && static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
+      }
+
+      return v1 == v2;
+  }
+
   JSValue* throwOutOfMemoryError(ExecState*);
 }
 

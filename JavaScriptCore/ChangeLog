@@ -1,3 +1,23 @@
+2008-09-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - assorted optimizations to === and !== operators
+        (work towards <https://bugs.webkit.org/show_bug.cgi?id=20820>)
+        
+        2.5% speedup on earley-boyer test
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_stricteq): Use inline version of
+        strictEqualSlowCase; remove unneeded exception check.
+        (JSC::Machine::cti_op_nstricteq): ditto
+        * kjs/operations.cpp:
+        (JSC::strictEqual): Use strictEqualSlowCaseInline
+        (JSC::strictEqualSlowCase): ditto
+        * kjs/operations.h:
+        (JSC::strictEqualSlowCaseInline): Version of strictEqualSlowCase that can be inlined,
+        since the extra function call indirection is a lose for CTI.
+
 2008-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
