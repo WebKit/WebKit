@@ -195,10 +195,13 @@ struct SVGInlineTextBoxQueryWalker {
 
                     int charsConsumed;
                     String glyphName;
+                    // calculateGlyph{Height,Width} will consume at least one character. This is the number of characters available
+                    // to them beyond that first one.
+                    int extraCharactersAvailable = end - it - 1;
                     if (isVerticalText)
-                        m_queryPointResult.move(it->x, it->y + textBox->calculateGlyphHeight(style, newOffset, end - it));
+                        m_queryPointResult.move(it->x, it->y + textBox->calculateGlyphHeight(style, newOffset, extraCharactersAvailable));
                     else
-                        m_queryPointResult.move(it->x + textBox->calculateGlyphWidth(style, newOffset, end - it, charsConsumed, glyphName), it->y);
+                        m_queryPointResult.move(it->x + textBox->calculateGlyphWidth(style, newOffset, extraCharactersAvailable, charsConsumed, glyphName), it->y);
 
                     m_stopProcessing = true;
                     return;
