@@ -36,6 +36,7 @@ namespace JSC {
     class Arguments : public JSObject {
     public:
         Arguments(ExecState*, JSFunction*, const ArgList&, JSActivation*, int firstArgumentIndex, Register* argv);
+        ~Arguments();
 
         virtual void mark();
 

@@ -54,6 +54,12 @@ Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args,
     }
 }
 
+Arguments::~Arguments()
+{
+    if (d->numExtraArguments > 0)
+        fastFree(d->extraArguments);
+}
+
 void Arguments::mark() 
 {
     JSObject::mark();
