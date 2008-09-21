@@ -3769,10 +3769,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\DashArray.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\FloatPoint.cpp"
 					>
 				</File>

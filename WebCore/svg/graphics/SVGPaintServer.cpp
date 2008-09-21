@@ -29,7 +29,6 @@
 #if ENABLE(SVG)
 #include "SVGPaintServer.h"
 
-#include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "SVGPaintServerSolid.h"
@@ -143,19 +142,6 @@ SVGPaintServer* SVGPaintServer::strokePaintServer(const RenderStyle* style, cons
     }
 
     return strokePaintServer;
-}
-
-void applyStrokeStyleToContext(GraphicsContext* context, RenderStyle* style, const RenderObject* object)
-{
-    context->setStrokeThickness(SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
-    context->setLineCap(style->svgStyle()->capStyle());
-    context->setLineJoin(style->svgStyle()->joinStyle());
-    if (style->svgStyle()->joinStyle() == MiterJoin)
-        context->setMiterLimit(style->svgStyle()->strokeMiterLimit());
-
-    const DashArray& dashes = dashArrayFromRenderingStyle(object->style());
-    float dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
-    context->setLineDash(dashes, dashOffset);
 }
 
 DashArray dashArrayFromRenderingStyle(const RenderStyle* style)

@@ -26,7 +26,6 @@
 #ifndef GraphicsContext_h
 #define GraphicsContext_h
 
-#include "DashArray.h"
 #include "FloatRect.h"
 #include "Image.h"
 #include "IntRect.h"
@@ -232,7 +231,6 @@ namespace WebCore {
         IntRect focusRingBoundingRect();
 
         void setLineCap(LineCap);
-        void setLineDash(const DashArray&, float dashOffset);
         void setLineJoin(LineJoin);
         void setMiterLimit(float);
 
