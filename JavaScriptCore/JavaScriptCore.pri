@@ -93,7 +93,6 @@ SOURCES += \
     kjs/GetterSetter.cpp \
     kjs/GlobalEvalFunction.cpp \
     kjs/identifier.cpp \
-    kjs/IndexToNameMap.cpp \
     kjs/InternalFunction.cpp \
     kjs/interpreter.cpp \
     kjs/JSArray.cpp \

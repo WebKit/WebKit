@@ -1,5 +1,46 @@
 2008-09-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20972
+          speed up Arguments further by eliminating the IndexToNameMap
+
+        No change on SunSpider. 1.29x as fast on V8 Raytrace.
+
+        * kjs/Arguments.cpp: Moved ArgumentsData in here. Eliminated the
+        indexToNameMap and hadDeletes data members. Changed extraArguments into
+        an OwnArrayPtr and added deletedArguments, another OwnArrayPtr.
+        Replaced numExtraArguments with numParameters, since that's what's
+        used more directly in hot code paths.
+        (JSC::Arguments::Arguments): Pass in argument count instead of ArgList.
+        Initialize ArgumentsData the new way.
+        (JSC::Arguments::mark): Updated.
+        (JSC::Arguments::getOwnPropertySlot): Overload for the integer form so
+        we don't have to convert integers to identifiers just to get an argument.
+        Integrated the deleted case with the fast case.
+        (JSC::Arguments::put): Ditto.
+        (JSC::Arguments::deleteProperty): Ditto.
+
+        * kjs/Arguments.h: Minimized includes. Made everything private. Added
+        overloads for the integral property name case. Eliminated mappedIndexSetter.
+        Moved ArgumentsData into the .cpp file.
+
+        * kjs/IndexToNameMap.cpp: Emptied out and prepared for deletion.
+        * kjs/IndexToNameMap.h: Ditto.
+
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::createArgumentsObject): Elminated ArgList.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        Removed IndexToNameMap.
+
+2008-09-21  Darin Adler  <darin@apple.com>
+
         * VM/CodeGenerator.cpp:
         (JSC::CodeGenerator::emitLoad): One more tweak: Wrote this in a slightly
         clearer style.

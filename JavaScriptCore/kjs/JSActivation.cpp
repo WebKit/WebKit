@@ -170,9 +170,8 @@ Arguments* JSActivation::createArgumentsObject(ExecState* exec)
     int argc;
     exec->machine()->getArgumentsData(callFrame, function, argv, argc);
 
-    ArgList args(argv, argc);
     int firstArgumentIndex = -d()->functionBody->generatedByteCode().numLocals + 1;
-    return new (exec) Arguments(exec, function, args, this, firstArgumentIndex, argv);
+    return new (exec) Arguments(exec, function, this, firstArgumentIndex, argv, argc);
 }
 
 } // namespace JSC

@@ -272,7 +272,6 @@
 		BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* lexer.lut.h */; };
 		BC18C5300E16FCEB00B34460 /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52F0E16FCEB00B34460 /* grammar.h */; };
 		BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DE60E1F51C50016B6C9 /* Arguments.h */; };
-		BC257DEC0E1F52BA0016B6C9 /* IndexToNameMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DEA0E1F52BA0016B6C9 /* IndexToNameMap.h */; };
 		BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */; };
 		BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3046070E1F497F003232CF /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3046060E1F497F003232CF /* Error.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -683,8 +682,6 @@
 		BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVariableObject.cpp; sourceTree = "<group>"; };
 		BC257DE50E1F51C50016B6C9 /* Arguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arguments.cpp; sourceTree = "<group>"; };
 		BC257DE60E1F51C50016B6C9 /* Arguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arguments.h; sourceTree = "<group>"; };
-		BC257DE90E1F52BA0016B6C9 /* IndexToNameMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexToNameMap.cpp; sourceTree = "<group>"; };
-		BC257DEA0E1F52BA0016B6C9 /* IndexToNameMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexToNameMap.h; sourceTree = "<group>"; };
 		BC257DED0E1F52ED0016B6C9 /* GlobalEvalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalEvalFunction.cpp; sourceTree = "<group>"; };
 		BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalEvalFunction.h; sourceTree = "<group>"; };
 		BC257DF10E1F53740016B6C9 /* PrototypeFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrototypeFunction.cpp; sourceTree = "<group>"; };
@@ -1186,8 +1183,6 @@
 				933A3499038AE7C6008635CE /* grammar.y */,
 				933A349D038AE80F008635CE /* identifier.cpp */,
 				933A349A038AE7C6008635CE /* identifier.h */,
-				BC257DE90E1F52BA0016B6C9 /* IndexToNameMap.cpp */,
-				BC257DEA0E1F52BA0016B6C9 /* IndexToNameMap.h */,
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
@@ -1576,7 +1571,6 @@
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
-				BC257DEC0E1F52BA0016B6C9 /* IndexToNameMap.h in Headers */,
 				BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */,
 				BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */,
 				BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */,

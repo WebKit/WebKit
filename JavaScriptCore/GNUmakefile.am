@@ -130,7 +130,6 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/FunctionPrototype.h \
 	JavaScriptCore/kjs/GetterSetter.h \
 	JavaScriptCore/kjs/GlobalEvalFunction.h \
-	JavaScriptCore/kjs/IndexToNameMap.h \
 	JavaScriptCore/kjs/InitializeThreading.cpp \
 	JavaScriptCore/kjs/InitializeThreading.h \
 	JavaScriptCore/kjs/InternalFunction.h \
@@ -312,7 +311,6 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/FunctionPrototype.cpp \
 	JavaScriptCore/kjs/GetterSetter.cpp \
 	JavaScriptCore/kjs/GlobalEvalFunction.cpp \
-	JavaScriptCore/kjs/IndexToNameMap.cpp \
 	JavaScriptCore/kjs/InternalFunction.cpp \
 	JavaScriptCore/kjs/JSArray.cpp \
 	JavaScriptCore/kjs/JSCell.cpp \

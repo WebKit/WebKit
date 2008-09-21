@@ -493,14 +493,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\IndexToNameMap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\IndexToNameMap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\InitializeThreading.cpp"
 				>
 			</File>

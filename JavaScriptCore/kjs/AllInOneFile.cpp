@@ -28,7 +28,6 @@
 
 #include "JSStaticScopeObject.cpp"
 #include "JSFunction.cpp"
-#include "IndexToNameMap.cpp"
 #include "Arguments.cpp"
 #include "JSGlobalObjectFunctions.cpp"
 #include "PrototypeFunction.cpp"

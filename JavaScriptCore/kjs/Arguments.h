@@ -24,55 +24,35 @@
 #ifndef Arguments_h
 #define Arguments_h
 
-#include "IndexToNameMap.h"
-#include "JSFunction.h"
 #include "JSObject.h"
 
 namespace JSC {
 
     class JSActivation;
+    class JSFunction;
     class Register;
+
+    struct ArgumentsData;
 
     class Arguments : public JSObject {
     public:
-        Arguments(ExecState*, JSFunction*, const ArgList&, JSActivation*, int firstArgumentIndex, Register* argv);
-        ~Arguments();
+        Arguments(ExecState*, JSFunction*, JSActivation*, int firstArgumentIndex, Register* argv, int argc);
+        virtual ~Arguments();
+
+        static const ClassInfo info;
 
         virtual void mark();
 
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    private:
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+        virtual void put(ExecState*, unsigned propertyName, JSValue*, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
         virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
 
-    private:
-        static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
-
-        struct ArgumentsData {
-            ArgumentsData(JSActivation* activation_, JSFunction* function_, const ArgList& args_, int firstArgumentIndex_)
-                : activation(activation_)
-                , indexToNameMap(function_, args_)
-                , firstArgumentIndex(firstArgumentIndex_)
-                , hadDeletes(false)
-            {
-                unsigned numArguments = args_.size();
-                unsigned numParameters = function_->numParameters();
-                if (numArguments <= numParameters)
-                    numExtraArguments = 0;
-                else
-                    numExtraArguments = numArguments - numParameters;
-            }
-
-            JSActivation* activation;
-            mutable IndexToNameMap indexToNameMap;
-            int firstArgumentIndex;
-            JSValue** extraArguments;
-            unsigned numExtraArguments;
-            bool hadDeletes;
-        };
-        
         OwnPtr<ArgumentsData> d;
     };
 

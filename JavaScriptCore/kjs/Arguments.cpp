@@ -26,9 +26,7 @@
 #include "Arguments.h"
 
 #include "JSActivation.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "ObjectPrototype.h"
 
 namespace JSC {
 
@@ -36,35 +34,51 @@ ASSERT_CLASS_FITS_IN_CELL(Arguments);
 
 const ClassInfo Arguments::info = { "Arguments", 0, 0, 0 };
 
+struct ArgumentsData {
+    ArgumentsData(JSActivation* activation, unsigned numParameters, unsigned firstArgumentIndex, unsigned numArguments)
+        : activation(activation)
+        , numParameters(numParameters)
+        , firstArgumentIndex(firstArgumentIndex)
+        , numArguments(numArguments)
+    {
+    }
+
+    JSActivation* activation;
+    unsigned numParameters;
+    unsigned firstArgumentIndex;
+    unsigned numArguments;
+    OwnArrayPtr<JSValue*> extraArguments;
+    OwnArrayPtr<bool> deletedArguments;
+};
+
 // ECMA 10.1.8
-Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args, JSActivation* activation, int firstArgumentIndex, Register* argv)
+Arguments::Arguments(ExecState* exec, JSFunction* function, JSActivation* activation, int firstArgumentIndex, Register* argv, int argc)
     : JSObject(exec->lexicalGlobalObject()->argumentsStructure())
-    , d(new ArgumentsData(activation, function, args, firstArgumentIndex))
+    , d(new ArgumentsData(activation, function->numParameters(), firstArgumentIndex, argc))
 {
     ASSERT(activation);
 
     putDirect(exec->propertyNames().callee, function, DontEnum);
-    putDirect(exec->propertyNames().length, jsNumber(exec, args.size()), DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, argc), DontEnum);
   
-    if (d->numExtraArguments > 0) {
-        d->extraArguments = static_cast<JSValue**>(fastMalloc(sizeof(JSValue*) * d->numExtraArguments));
-        int firstExtraArgumentIndex = args.size() - d->numExtraArguments;
-        for (unsigned i = 0; i < d->numExtraArguments; ++i)
-            d->extraArguments[i] = argv[firstExtraArgumentIndex + i].getJSValue();
+    if (d->numArguments > d->numParameters) {
+        unsigned numExtraArguments = d->numArguments - d->numParameters;
+        d->extraArguments.set(new JSValue*[numExtraArguments]);
+        for (unsigned i = 0; i < numExtraArguments; ++i)
+            d->extraArguments[i] = argv[d->numParameters + i].getJSValue();
     }
 }
 
 Arguments::~Arguments()
 {
-    if (d->numExtraArguments > 0)
-        fastFree(d->extraArguments);
 }
 
 void Arguments::mark() 
 {
     JSObject::mark();
 
-    for (unsigned i = 0; i < d->numExtraArguments; ++i) {
+    unsigned numExtraArguments = d->numArguments - d->numParameters;
+    for (unsigned i = 0; i < numExtraArguments; ++i) {
         if (!d->extraArguments[i]->marked())
             d->extraArguments[i]->mark();
     }
@@ -73,72 +87,91 @@ void Arguments::mark()
         d->activation->mark();
 }
 
-JSValue* Arguments::mappedIndexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
-      Arguments* thisObj = static_cast<Arguments*>(slot.slotBase());
-      return thisObj->d->activation->get(exec, thisObj->d->indexToNameMap[propertyName]);
+    if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
+        if (i < d->numParameters)
+            d->activation->uncheckedSymbolTableGet(d->firstArgumentIndex + i, slot);
+        else
+            slot.setValueSlot(&d->extraArguments[i - d->numParameters]);
+        return true;
+    }
+
+    return JSObject::getOwnPropertySlot(exec, Identifier(exec, UString::from(i)), slot);
 }
 
 bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
-    if (isArrayIndex && !d->hadDeletes && i < d->indexToNameMap.size()) {
-        if (i < d->indexToNameMap.size() - d->numExtraArguments)
+    if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
+        if (i < d->numParameters)
             d->activation->uncheckedSymbolTableGet(d->firstArgumentIndex + i, slot);
         else
-            slot.setValueSlot(&d->extraArguments[i - (d->indexToNameMap.size() - d->numExtraArguments)]);
-        return true;
-    }
-
-    if (d->indexToNameMap.isMapped(propertyName)) {
-        slot.setCustom(this, mappedIndexGetter);
+            slot.setValueSlot(&d->extraArguments[i - d->numParameters]);
         return true;
     }
 
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
+void Arguments::put(ExecState* exec, unsigned i, JSValue* value, PutPropertySlot& slot)
+{
+    if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
+        if (i < d->numParameters)
+            d->activation->uncheckedSymbolTablePut(d->firstArgumentIndex + i, value);
+        else
+            d->extraArguments[i - d->numParameters] = value;
+        return;
+    }
+
+    JSObject::put(exec, Identifier(exec, UString::from(i)), value, slot);
+}
+
 void Arguments::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
-    if (isArrayIndex && !d->hadDeletes && i < d->indexToNameMap.size()) {
-        if (i < d->indexToNameMap.size() - d->numExtraArguments)
+    if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
+        if (i < d->numParameters)
             d->activation->uncheckedSymbolTablePut(d->firstArgumentIndex + i, value);
         else
-            d->extraArguments[i - (d->indexToNameMap.size() - d->numExtraArguments)] = value;
+            d->extraArguments[i - d->numParameters] = value;
         return;
     }
 
-    if (d->indexToNameMap.isMapped(propertyName))
-        d->activation->put(exec, d->indexToNameMap[propertyName], value, slot);
-    else
-        JSObject::put(exec, propertyName, value, slot);
+    JSObject::put(exec, propertyName, value, slot);
+}
+
+bool Arguments::deleteProperty(ExecState* exec, unsigned i) 
+{
+    if (i < d->numArguments) {
+        if (!d->deletedArguments) {
+            d->deletedArguments.set(new bool[d->numArguments]);
+            memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
+        }
+        if (!d->deletedArguments[i]) {
+            d->deletedArguments[i] = true;
+            return true;
+        }
+    }
+
+    return JSObject::deleteProperty(exec, Identifier(exec, UString::from(i)));
 }
 
 bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName) 
 {
-    if (!d->hadDeletes) {
-        d->hadDeletes = true;
-
-        int numExpectedArguments = d->indexToNameMap.size() - d->numExtraArguments;
-        for (int i = 0; i < numExpectedArguments; ++i) {
-            Identifier name = Identifier::from(exec, i);
-            if (!d->indexToNameMap.isMapped(name))
-                putDirect(name, d->activation->uncheckedSymbolTableGetValue(d->firstArgumentIndex + i), DontEnum);
+    bool isArrayIndex;
+    unsigned i = propertyName.toArrayIndex(&isArrayIndex);
+    if (i < d->numArguments) {
+        if (!d->deletedArguments) {
+            d->deletedArguments.set(new bool[d->numArguments]);
+            memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
         }
-
-        for (unsigned i = 0; i < d->numExtraArguments; ++i) {
-            Identifier name = Identifier::from(exec, numExpectedArguments + i);
-            if (!d->indexToNameMap.isMapped(name))
-                putDirect(name, d->extraArguments[i], DontEnum);
+        if (!d->deletedArguments[i]) {
+            d->deletedArguments[i] = true;
+            return true;
         }
-    }
-
-    if (d->indexToNameMap.isMapped(propertyName)) {
-        d->indexToNameMap.unMap(exec, propertyName);
-        return true;
     }
 
     return JSObject::deleteProperty(exec, propertyName);
