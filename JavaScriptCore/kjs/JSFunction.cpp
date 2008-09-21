@@ -45,7 +45,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 const ClassInfo JSFunction::info = { "Function", 0, 0, 0 };
 
 JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* body, ScopeChainNode* scopeChainNode)
-    : Base(exec, exec->lexicalGlobalObject()->functionPrototype(), name)
+    : Base(exec, exec->lexicalGlobalObject()->functionStructure(), name)
     , m_body(body)
     , m_scopeChain(scopeChainNode)
 {
@@ -158,14 +158,13 @@ ConstructType JSFunction::getConstructData(ConstructData& constructData)
 
 JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
 {
-    JSObject* proto;
-    JSValue* p = get(exec, exec->propertyNames().prototype);
-    if (p->isObject())
-        proto = static_cast<JSObject*>(p);
+    StructureID* structure;
+    JSValue* prototype = get(exec, exec->propertyNames().prototype);
+    if (prototype->isObject())
+        structure = static_cast<JSObject*>(prototype)->inheritorID();
     else
-        proto = exec->lexicalGlobalObject()->objectPrototype();
-
-    JSObject* thisObj = new (exec) JSObject(proto);
+        structure = exec->lexicalGlobalObject()->emptyObjectStructure();
+    JSObject* thisObj = new (exec) JSObject(structure);
 
     JSValue* result = exec->machine()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
     if (exec->hadException() || !result->isObject())

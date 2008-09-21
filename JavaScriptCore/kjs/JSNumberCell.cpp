@@ -101,4 +101,14 @@ JSValue* JSNumberCell::getJSNumber()
     return this;
 }
 
+NEVER_INLINE JSValue* jsNumberCell(ExecState* exec, double d)
+{
+    return new (exec) JSNumberCell(exec, d);
+}
+
+NEVER_INLINE JSValue* jsNaN(ExecState* exec)
+{
+    return new (exec) JSNumberCell(exec, NaN);
+}
+
 } // namespace JSC

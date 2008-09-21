@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ObjectConstructor.h"
 
-#include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include "ObjectPrototype.h"
 
@@ -29,8 +28,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectConstructor);
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
-    : InternalFunction(exec, functionPrototype, Identifier(exec, "Object"))
+ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<StructureID> structure, ObjectPrototype* objectPrototype)
+    : InternalFunction(exec, structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1
     putDirect(exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
@@ -44,7 +43,7 @@ static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, const ArgList& a
 {
     JSValue* arg = args.at(exec, 0);
     if (arg->isUndefinedOrNull())
-        return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
+        return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
     return arg->toObject(exec);
 }
 

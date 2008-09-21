@@ -1,3 +1,27 @@
+2008-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - finish https://bugs.webkit.org/show_bug.cgi?id=20858
+          make each distinct C++ class get a distinct JSC::Structure
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter): Pass in a structure
+        ID. Note that this makes a new structure every time -- we could
+        optimize this slightly be caching and reusing a single one.
+
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod): Create a unique structure using
+        getDOMStructure.
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createPrototype): Added createPrototype so
+        getDOMStructure will work.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell): Initialize m_window to
+        0; needed in case garbage collection happens while creating the
+        JSDOMWindow.
+
 2008-09-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Eric Seidel.
@@ -130,7 +154,6 @@
         [qtwebkit] ScrollBar build fix after r36684.
         BackButtonPart was split into Start and End Part
         ForwardButtonPart was split into Start and End Part
-
 
         * platform/qt/ScrollbarThemeQt.cpp:
         (WebCore::scPart):

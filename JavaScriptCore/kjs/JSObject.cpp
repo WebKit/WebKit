@@ -517,7 +517,7 @@ void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
 
 JSObject* constructEmptyObject(ExecState* exec)
 {
-    return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
+    return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
 }
 
 } // namespace JSC

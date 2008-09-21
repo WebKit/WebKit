@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ErrorPrototype.h"
 
-#include "FunctionPrototype.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
@@ -34,15 +33,15 @@ ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 static JSValue* errorProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 // ECMA 15.9.4
-ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
-    : ErrorInstance(objectPrototype)
+ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure)
+    : ErrorInstance(structure)
 {
     // The constructor will be added later in ErrorConstructor's constructor
 
     putDirect(exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
     putDirect(exec->propertyNames().message, jsNontrivialString(exec, "Unknown error"), DontEnum);
 
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
 JSValue* errorProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)

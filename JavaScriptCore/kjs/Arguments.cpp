@@ -38,7 +38,7 @@ const ClassInfo Arguments::info = { "Arguments", 0, 0, 0 };
 
 // ECMA 10.1.8
 Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args, JSActivation* activation)
-    : JSObject(exec->lexicalGlobalObject()->objectPrototype())
+    : JSObject(exec->lexicalGlobalObject()->argumentsStructure())
     , d(new ArgumentsData(activation, function, args))
 {
     ASSERT(activation);

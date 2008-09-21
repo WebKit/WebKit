@@ -29,8 +29,8 @@ namespace JSC {
     // WebCore uses this to make style.filter undetectable
     class StringObjectThatMasqueradesAsUndefined : public StringObject {
     public:
-        StringObjectThatMasqueradesAsUndefined(ExecState* exec, JSObject* prototype, const UString& string)
-            : StringObject(exec, prototype, string)
+        StringObjectThatMasqueradesAsUndefined(ExecState* exec, PassRefPtr<StructureID> structure, const UString& string)
+            : StringObject(exec, structure, string)
         {
         }
 

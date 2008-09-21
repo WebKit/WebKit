@@ -25,7 +25,6 @@
 #include "config.h"
 #include "GlobalEvalFunction.h"
 
-#include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include <wtf/Assertions.h>
 
@@ -33,8 +32,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(GlobalEvalFunction);
 
-GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, NativeFunction function, JSGlobalObject* cachedGlobalObject)
-    : PrototypeFunction(exec, functionPrototype, len, name, function)
+GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, PassRefPtr<StructureID> structure, int len, const Identifier& name, NativeFunction function, JSGlobalObject* cachedGlobalObject)
+    : PrototypeFunction(exec, structure, len, name, function)
     , m_cachedGlobalObject(cachedGlobalObject)
 {
     ASSERT_ARG(cachedGlobalObject, cachedGlobalObject);

@@ -57,8 +57,7 @@ namespace JSC {
         friend class CTI;
 
     public:
-        JSObject(PassRefPtr<StructureID>);
-        JSObject(JSObject* prototype);
+        explicit JSObject(PassRefPtr<StructureID>);
 
         virtual void mark();
 
@@ -197,21 +196,12 @@ namespace JSC {
 
   JSObject* constructEmptyObject(ExecState*);
 
-inline JSObject::JSObject(JSObject* prototype)
-    : JSCell(prototype->inheritorID())
-    , m_propertyStorage(m_inlineStorage)
-{
-    ASSERT(m_structureID);
-    ASSERT(this->prototype());
-    ASSERT(this->prototype()->isNull() || Heap::heap(this) == Heap::heap(this->prototype()));
-    m_structureID->ref(); // ~JSObject balances this ref()
-}
-
 inline JSObject::JSObject(PassRefPtr<StructureID> structureID)
     : JSCell(structureID.releaseRef()) // ~JSObject balances this ref()
     , m_propertyStorage(m_inlineStorage)
 {
     ASSERT(m_structureID);
+    ASSERT(prototype()->isNull() || Heap::heap(this) == Heap::heap(prototype()));
 }
 
 inline JSObject::~JSObject()

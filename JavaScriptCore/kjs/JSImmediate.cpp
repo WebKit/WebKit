@@ -73,4 +73,9 @@ UString JSImmediate::toString(const JSValue* v)
     return "undefined";
 }
 
+NEVER_INLINE double JSImmediate::nonInlineNaN()
+{
+    return std::numeric_limits<double>::quiet_NaN();
+}
+
 } // namespace JSC

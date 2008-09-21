@@ -69,7 +69,7 @@ JSString* JSString::toThisJSString(ExecState*)
 
 inline StringObject* StringObject::create(ExecState* exec, JSString* string)
 {
-    return new (exec) StringObject(exec->lexicalGlobalObject()->stringPrototype(), string);
+    return new (exec) StringObject(exec->lexicalGlobalObject()->stringObjectStructure(), string);
 }
 
 JSObject* JSString::toObject(ExecState* exec) const

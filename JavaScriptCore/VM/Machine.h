@@ -232,6 +232,9 @@ namespace JSC {
         // Default number of ticks before a timeout check should be done.
         static const int initialTickCountThreshold = 1024;
 
+        bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
+        bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
+        
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
@@ -256,9 +259,6 @@ namespace JSC {
         JSValue* checkTimeout(JSGlobalObject*);
         void resetTimeoutCheck();
 
-        bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
-        bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
-        
         void tryCacheGetByID(ExecState*, CodeBlock*, Instruction* vPC, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
         void tryCachePutByID(ExecState* exec, CodeBlock*, Instruction* vPC, JSValue* baseValue, const PutPropertySlot&);

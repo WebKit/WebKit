@@ -43,6 +43,7 @@ namespace JSC {
 
     class JSNumberCell : public JSCell {
         friend JSValue* jsNumberCell(ExecState*, double);
+        friend JSValue* jsNaN(ExecState*);
     public:
         double value() const { return m_value; }
 
@@ -86,17 +87,8 @@ namespace JSC {
     extern const double NaN;
     extern const double Inf;
 
-    // Beware marking this function ALWAYS_INLINE: It takes a PIC branch, so
-    // inlining it may not always be a win.
-    inline JSValue* jsNumberCell(ExecState* exec, double d)
-    {
-        return new (exec) JSNumberCell(exec, d);
-    }
-
-    inline JSValue* jsNaN(ExecState* exec)
-    {
-        return jsNumberCell(exec, NaN);
-    }
+    JSValue* jsNumberCell(ExecState*, double);
+    JSValue* jsNaN(ExecState*);
 
     ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, double d)
     {

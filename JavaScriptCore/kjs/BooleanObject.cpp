@@ -27,8 +27,8 @@ ASSERT_CLASS_FITS_IN_CELL(BooleanObject);
 
 const ClassInfo BooleanObject::info = { "Boolean", 0, 0, 0 };
 
-BooleanObject::BooleanObject(JSObject* prototype)
-    : JSWrapperObject(prototype)
+BooleanObject::BooleanObject(PassRefPtr<StructureID> structure)
+    : JSWrapperObject(structure)
 {
 }
 

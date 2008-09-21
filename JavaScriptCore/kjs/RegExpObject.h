@@ -26,13 +26,11 @@
 
 namespace JSC {
 
-    class RegExpPrototype;
-
     class RegExpObject : public JSObject {
     public:
         enum { Global, IgnoreCase, Multiline, Source, LastIndex };
 
-        RegExpObject(RegExpPrototype*, PassRefPtr<RegExp>);
+        RegExpObject(PassRefPtr<StructureID>, PassRefPtr<RegExp>);
         virtual ~RegExpObject();
 
         void setRegExp(PassRefPtr<RegExp> r) { d->regExp = r; }

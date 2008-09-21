@@ -25,12 +25,9 @@
 
 namespace JSC {
 
-    class ErrorPrototype;
-    class UString;
-
     class NativeErrorPrototype : public JSObject {
     public:
-        NativeErrorPrototype(ExecState*, ErrorPrototype*, const UString& name, const UString& message);
+        NativeErrorPrototype(ExecState*, PassRefPtr<StructureID>, const UString& name, const UString& message);
     };
 
 } // namespace JSC

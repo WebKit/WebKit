@@ -1,3 +1,197 @@
+2008-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - finish https://bugs.webkit.org/show_bug.cgi?id=20858
+          make each distinct C++ class get a distinct JSC::Structure
+
+        This also includes some optimizations that make the change an overall
+        small speedup. Without those it was a bit of a slowdown.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::JSCallbackConstructor): Take a structure.
+        * API/JSCallbackConstructor.h: Ditto.
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::JSCallbackFunction): Pass a structure.
+        * API/JSCallbackObject.h: Take a structure.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject::JSCallbackObject): Ditto.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype): Pass in a structure. Call setPrototype
+        if there's a custom prototype involved.
+        * API/JSObjectRef.cpp:
+        (JSObjectMake): Ditto.
+        (JSObjectMakeConstructor): Pass in a structure.
+
+        * JavaScriptCore.exp: Updated.
+
+        * VM/Machine.cpp:
+        (JSC::jsLess): Added a special case for when both arguments are strings.
+        This avoids converting both strings to with UString::toDouble.
+        (JSC::jsLessEq): Ditto.
+        (JSC::Machine::privateExecute): Pass in a structure.
+        (JSC::Machine::cti_op_construct_JSConstruct): Ditto.
+        (JSC::Machine::cti_op_new_regexp): Ditto.
+        (JSC::Machine::cti_op_is_string): Ditto.
+        * VM/Machine.h: Made isJSString public so it can be used in the CTI.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::Arguments): Pass in a structure.
+
+        * kjs/JSCell.h: Mark constructor explicit.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::markIfNeeded): Added an overload for marking structures.
+        (JSC::JSGlobalObject::reset): Eliminate code to set data members to
+        zero. We now do that in the constructor, and we no longer use this
+        anywhere except in the constructor. Added code to create structures.
+        Pass structures rather than prototypes when creating objects.
+        (JSC::JSGlobalObject::mark): Mark the structures.
+
+        * kjs/JSGlobalObject.h: Removed unneeded class declarations.
+        Added initializers for raw pointers in JSGlobalObjectData so
+        everything starts with a 0. Added structure data and accessor
+        functions.
+
+        * kjs/JSImmediate.cpp:
+        (JSC::JSImmediate::nonInlineNaN): Added.
+        * kjs/JSImmediate.h:
+        (JSC::JSImmediate::toDouble): Rewrote to avoid PIC branches.
+
+        * kjs/JSNumberCell.cpp:
+        (JSC::jsNumberCell): Made non-inline to avoid PIC branches
+        in functions that call this one.
+        (JSC::jsNaN): Ditto.
+        * kjs/JSNumberCell.h: Ditto.
+
+        * kjs/JSObject.h: Removed constructor that takes a prototype.
+        All callers now pass structures.
+
+        * kjs/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        (JSC::constructArrayWithSizeQuirk):
+        * kjs/ArrayConstructor.h:
+        * kjs/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::ArrayPrototype):
+        * kjs/ArrayPrototype.h:
+        * kjs/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        (JSC::constructBoolean):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * kjs/BooleanConstructor.h:
+        * kjs/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        * kjs/BooleanObject.h:
+        * kjs/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * kjs/BooleanPrototype.h:
+        * kjs/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        (JSC::constructDate):
+        * kjs/DateConstructor.h:
+        * kjs/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * kjs/DateInstance.h:
+        * kjs/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype):
+        * kjs/DatePrototype.h:
+        * kjs/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        (JSC::constructError):
+        * kjs/ErrorConstructor.h:
+        * kjs/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * kjs/ErrorInstance.h:
+        * kjs/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * kjs/ErrorPrototype.h:
+        * kjs/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * kjs/FunctionConstructor.h:
+        * kjs/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * kjs/FunctionPrototype.h:
+        * kjs/GlobalEvalFunction.cpp:
+        (JSC::GlobalEvalFunction::GlobalEvalFunction):
+        * kjs/GlobalEvalFunction.h:
+        * kjs/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * kjs/InternalFunction.h:
+        (JSC::InternalFunction::InternalFunction):
+        * kjs/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        * kjs/JSArray.h:
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::construct):
+        * kjs/JSObject.cpp:
+        (JSC::constructEmptyObject):
+        * kjs/JSString.cpp:
+        (JSC::StringObject::create):
+        * kjs/JSWrapperObject.h:
+        * kjs/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        * kjs/MathObject.h:
+        * kjs/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        (JSC::NativeErrorConstructor::construct):
+        * kjs/NativeErrorConstructor.h:
+        * kjs/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        * kjs/NativeErrorPrototype.h:
+        * kjs/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        (JSC::constructWithNumberConstructor):
+        * kjs/NumberConstructor.h:
+        * kjs/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject):
+        (JSC::constructNumber):
+        (JSC::constructNumberFromImmediateNumber):
+        * kjs/NumberObject.h:
+        * kjs/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * kjs/NumberPrototype.h:
+        * kjs/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        (JSC::constructObject):
+        * kjs/ObjectConstructor.h:
+        * kjs/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * kjs/ObjectPrototype.h:
+        * kjs/PrototypeFunction.cpp:
+        (JSC::PrototypeFunction::PrototypeFunction):
+        * kjs/PrototypeFunction.h:
+        * kjs/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        (JSC::constructRegExp):
+        * kjs/RegExpConstructor.h:
+        * kjs/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject):
+        * kjs/RegExpObject.h:
+        * kjs/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * kjs/RegExpPrototype.h:
+        * kjs/Shell.cpp:
+        (GlobalObject::GlobalObject):
+        * kjs/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        (JSC::constructWithStringConstructor):
+        * kjs/StringConstructor.h:
+        * kjs/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        * kjs/StringObject.h:
+        * kjs/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::StringObjectThatMasqueradesAsUndefined):
+        * kjs/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * kjs/StringPrototype.h:
+        Take and pass structures.
+
 2008-09-19  Alp Toker  <alp@nuanti.com>
 
         Build fix for the 'gold' linker and recent binutils. New behaviour

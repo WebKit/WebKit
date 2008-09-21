@@ -25,12 +25,9 @@
 
 namespace JSC {
 
-    class FunctionPrototype;
-    class ObjectPrototype;
-
     class RegExpPrototype : public JSObject {
     public:
-        RegExpPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+        RegExpPrototype(ExecState*, PassRefPtr<StructureID>, StructureID* prototypeFunctionStructure);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;

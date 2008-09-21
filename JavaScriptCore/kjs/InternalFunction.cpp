@@ -38,8 +38,8 @@ InternalFunction::InternalFunction(ExecState* exec)
     putDirect(exec->propertyNames().name, jsString(exec, exec->propertyNames().nullIdentifier.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
-InternalFunction::InternalFunction(ExecState* exec, FunctionPrototype* prototype, const Identifier& name)
-    : JSObject(prototype)
+InternalFunction::InternalFunction(ExecState* exec, PassRefPtr<StructureID> structure, const Identifier& name)
+    : JSObject(structure)
 {
     putDirect(exec->propertyNames().name, jsString(exec, name.ustring()), DontDelete | ReadOnly | DontEnum);
 }

@@ -1,6 +1,6 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,12 +25,9 @@
 
 namespace JSC {
 
-    class FunctionPrototype;
-    class ObjectPrototype;
-
     class NumberPrototype : public NumberObject {
     public:
-        NumberPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+        NumberPrototype(ExecState*, PassRefPtr<StructureID>, StructureID* prototypeFunctionStructure);
     };
 
 } // namespace JSC

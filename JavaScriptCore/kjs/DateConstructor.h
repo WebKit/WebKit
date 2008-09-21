@@ -26,11 +26,10 @@
 namespace JSC {
 
     class DatePrototype;
-    class FunctionPrototype;
 
     class DateConstructor : public InternalFunction {
     public:
-        DateConstructor(ExecState*, FunctionPrototype*, DatePrototype*);
+        DateConstructor(ExecState*, PassRefPtr<StructureID>, StructureID* prototypeFunctionStructure, DatePrototype*);
 
     private:
         virtual ConstructType getConstructData(ConstructData&);

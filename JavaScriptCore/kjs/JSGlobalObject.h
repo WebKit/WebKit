@@ -36,33 +36,13 @@ namespace JSC {
     class DatePrototype;
     class Debugger;
     class ErrorConstructor;
-    class ErrorPrototype;
-    class EvalError;
-    class EvalErrorPrototype;
     class FunctionPrototype;
     class GlobalEvalFunction;
-    class JSGlobalObject;
     class NativeErrorConstructor;
-    class NativeErrorPrototype;
-    class NumberPrototype;
-    class ObjectPrototype;
     class ProgramCodeBlock;
-    class RangeError;
-    class RangeErrorPrototype;
-    class ReferenceError;
-    class ReferenceError;
-    class ReferenceErrorPrototype;
     class RegExpConstructor;
     class RegExpPrototype;
     class RegisterFile;
-    class RuntimeMethod;
-    class ScopeChain;
-    class StringPrototype;
-    class SyntaxErrorPrototype;
-    class TypeError;
-    class TypeErrorPrototype;
-    class UriError;
-    class UriErrorPrototype;
 
     struct ActivationStackNode;
     struct HashTable;
@@ -77,6 +57,23 @@ namespace JSC {
             JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
                 : JSVariableObjectData(&symbolTable, 0)
                 , globalScopeChain(globalObject, thisValue)
+                , regExpConstructor(0)
+                , errorConstructor(0)
+                , evalErrorConstructor(0)
+                , rangeErrorConstructor(0)
+                , referenceErrorConstructor(0)
+                , syntaxErrorConstructor(0)
+                , typeErrorConstructor(0)
+                , URIErrorConstructor(0)
+                , evalFunction(0)
+                , objectPrototype(0)
+                , functionPrototype(0)
+                , arrayPrototype(0)
+                , booleanPrototype(0)
+                , stringPrototype(0)
+                , numberPrototype(0)
+                , datePrototype(0)
+                , regExpPrototype(0)
             {
             }
             
@@ -113,14 +110,23 @@ namespace JSC {
             NumberPrototype* numberPrototype;
             DatePrototype* datePrototype;
             RegExpPrototype* regExpPrototype;
-            ErrorPrototype* errorPrototype;
-            NativeErrorPrototype* evalErrorPrototype;
-            NativeErrorPrototype* rangeErrorPrototype;
-            NativeErrorPrototype* referenceErrorPrototype;
-            NativeErrorPrototype* syntaxErrorPrototype;
-            NativeErrorPrototype* typeErrorPrototype;
-            NativeErrorPrototype* URIErrorPrototype;
-            
+
+            RefPtr<StructureID> argumentsStructure;
+            RefPtr<StructureID> arrayStructure;
+            RefPtr<StructureID> booleanObjectStructure;
+            RefPtr<StructureID> callbackConstructorStructure;
+            RefPtr<StructureID> callbackFunctionStructure;
+            RefPtr<StructureID> callbackObjectStructure;
+            RefPtr<StructureID> dateStructure;
+            RefPtr<StructureID> emptyObjectStructure;
+            RefPtr<StructureID> errorStructure;
+            RefPtr<StructureID> functionStructure;
+            RefPtr<StructureID> numberObjectStructure;
+            RefPtr<StructureID> prototypeFunctionStructure;
+            RefPtr<StructureID> regExpMatchesArrayStructure;
+            RefPtr<StructureID> regExpStructure;
+            RefPtr<StructureID> stringObjectStructure;
+
             SymbolTable symbolTable;
             unsigned profileGroup;
 
@@ -185,13 +191,22 @@ namespace JSC {
         NumberPrototype* numberPrototype() const { return d()->numberPrototype; }
         DatePrototype* datePrototype() const { return d()->datePrototype; }
         RegExpPrototype* regExpPrototype() const { return d()->regExpPrototype; }
-        ErrorPrototype* errorPrototype() const { return d()->errorPrototype; }
-        NativeErrorPrototype* evalErrorPrototype() const { return d()->evalErrorPrototype; }
-        NativeErrorPrototype* rangeErrorPrototype() const { return d()->rangeErrorPrototype; }
-        NativeErrorPrototype* referenceErrorPrototype() const { return d()->referenceErrorPrototype; }
-        NativeErrorPrototype* syntaxErrorPrototype() const { return d()->syntaxErrorPrototype; }
-        NativeErrorPrototype* typeErrorPrototype() const { return d()->typeErrorPrototype; }
-        NativeErrorPrototype* URIErrorPrototype() const { return d()->URIErrorPrototype; }
+
+        StructureID* argumentsStructure() const { return d()->argumentsStructure.get(); }
+        StructureID* arrayStructure() const { return d()->arrayStructure.get(); }
+        StructureID* booleanObjectStructure() const { return d()->booleanObjectStructure.get(); }
+        StructureID* callbackConstructorStructure() const { return d()->callbackConstructorStructure.get(); }
+        StructureID* callbackFunctionStructure() const { return d()->callbackFunctionStructure.get(); }
+        StructureID* callbackObjectStructure() const { return d()->callbackObjectStructure.get(); }
+        StructureID* dateStructure() const { return d()->dateStructure.get(); }
+        StructureID* emptyObjectStructure() const { return d()->emptyObjectStructure.get(); }
+        StructureID* errorStructure() const { return d()->errorStructure.get(); }
+        StructureID* functionStructure() const { return d()->functionStructure.get(); }
+        StructureID* numberObjectStructure() const { return d()->numberObjectStructure.get(); }
+        StructureID* prototypeFunctionStructure() const { return d()->prototypeFunctionStructure.get(); }
+        StructureID* regExpMatchesArrayStructure() const { return d()->regExpMatchesArrayStructure.get(); }
+        StructureID* regExpStructure() const { return d()->regExpStructure.get(); }
+        StructureID* stringObjectStructure() const { return d()->stringObjectStructure.get(); }
 
         void setProfileGroup(unsigned value) { d()->profileGroup = value; }
         unsigned profileGroup() const { return d()->profileGroup; }

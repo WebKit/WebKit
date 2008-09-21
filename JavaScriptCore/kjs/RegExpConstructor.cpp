@@ -78,8 +78,8 @@ struct RegExpConstructorPrivate {
     bool multiline : 1;
 };
 
-RegExpConstructor::RegExpConstructor(ExecState* exec, FunctionPrototype* functionPrototype, RegExpPrototype* regExpPrototype)
-    : InternalFunction(exec, functionPrototype, Identifier(exec, "RegExp"))
+RegExpConstructor::RegExpConstructor(ExecState* exec, PassRefPtr<StructureID> structure, RegExpPrototype* regExpPrototype)
+    : InternalFunction(exec, structure, Identifier(exec, "RegExp"))
     , d(new RegExpConstructorPrivate)
 {
     // ECMA 15.10.5.1 RegExp.prototype
@@ -132,7 +132,7 @@ private:
 };
 
 RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate* data)
-    : JSArray(exec->lexicalGlobalObject()->arrayPrototype(), data->lastNumSubPatterns + 1)
+    : JSArray(exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), data->lastNumSubPatterns + 1)
 {
     RegExpConstructorPrivate* d = new RegExpConstructorPrivate;
     d->input = data->lastInput;
@@ -295,7 +295,7 @@ static JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     RefPtr<RegExp> regExp = RegExp::create(exec, pattern, flags);
     if (!regExp->isValid())
         return throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
-    return new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpPrototype(), regExp.release());
+    return new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
 }
 
 static JSObject* constructWithRegExpConstructor(ExecState* exec, JSObject*, const ArgList& args)

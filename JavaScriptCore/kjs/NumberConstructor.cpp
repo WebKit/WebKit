@@ -41,8 +41,8 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
   MIN_VALUE             NumberConstructor::MinValue       DontEnum|DontDelete|ReadOnly
 @end
 */
-NumberConstructor::NumberConstructor(ExecState* exec, FunctionPrototype* functionPrototype, NumberPrototype* numberPrototype)
-    : InternalFunction(exec, functionPrototype, Identifier(exec, numberPrototype->info.className))
+NumberConstructor::NumberConstructor(ExecState* exec, PassRefPtr<StructureID> structure, NumberPrototype* numberPrototype)
+    : InternalFunction(exec, structure, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
     putDirect(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
@@ -78,10 +78,10 @@ JSValue* NumberConstructor::getValueProperty(ExecState* exec, int token) const
 // ECMA 15.7.1
 static JSObject* constructWithNumberConstructor(ExecState* exec, JSObject*, const ArgList& args)
 {
-    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
+    NumberObject* object = new (exec) NumberObject(exec->lexicalGlobalObject()->numberObjectStructure());
     double n = args.isEmpty() ? 0 : args.at(exec, 0)->toNumber(exec);
-    obj->setInternalValue(jsNumber(exec, n));
-    return obj;
+    object->setInternalValue(jsNumber(exec, n));
+    return object;
 }
 
 ConstructType NumberConstructor::getConstructData(ConstructData& constructData)

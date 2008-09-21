@@ -26,11 +26,10 @@
 namespace JSC {
 
     class BooleanPrototype;
-    class FunctionPrototype;
 
     class BooleanConstructor : public InternalFunction {
     public:
-        BooleanConstructor(ExecState*, FunctionPrototype*, BooleanPrototype*);
+        BooleanConstructor(ExecState*, PassRefPtr<StructureID>, BooleanPrototype*);
 
     private:
         virtual ConstructType getConstructData(ConstructData&);

@@ -26,7 +26,6 @@
 
 namespace JSC {
 
-    class FunctionPrototype;
     class RegExp;
     class RegExpPrototype;
     struct RegExpConstructorPrivate;
@@ -51,7 +50,7 @@ namespace JSC {
             RightContext
         };
 
-        RegExpConstructor(ExecState*, FunctionPrototype*, RegExpPrototype*);
+        RegExpConstructor(ExecState*, PassRefPtr<StructureID>, RegExpPrototype*);
 
         virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
         void putValueProperty(ExecState*, int token, JSValue*);

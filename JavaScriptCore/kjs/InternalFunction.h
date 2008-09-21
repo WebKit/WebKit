@@ -39,9 +39,9 @@ namespace JSC {
         const UString& name(ExecState*);
 
     protected:
-        InternalFunction(PassRefPtr<JSC::StructureID> st) : JSObject(st){}
+        InternalFunction(PassRefPtr<StructureID> structure) : JSObject(structure) { }
         InternalFunction(ExecState*);
-        InternalFunction(ExecState*, FunctionPrototype*, const Identifier&);
+        InternalFunction(ExecState*, PassRefPtr<StructureID>, const Identifier&);
 
     private:
         virtual CallType getCallData(CallData&) = 0;

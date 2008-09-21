@@ -39,10 +39,13 @@ FunctionPrototype::FunctionPrototype(ExecState* exec)
     : InternalFunction(exec)
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
+}
 
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
+void FunctionPrototype::addFunctionProperties(ExecState* exec, StructureID* prototypeFunctionStructure)
+{
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
 static JSValue* callFunctionPrototype(ExecState*, JSObject*, JSValue*, const ArgList&)

@@ -26,17 +26,13 @@
 
 namespace JSC {
     
-    /** 
-       This class is used as a base for classes such as String,
-       Number, Boolean and Date which which are wrappers for primitive
-       types. These classes stores the internal value, which is the
-       actual value represented by the wrapper objects.
-    */ 
+    // This class is used as a base for classes such as String,
+    // Number, Boolean and Date which are wrappers for primitive types.
     class JSWrapperObject : public JSObject {
     public:
-        JSWrapperObject(JSObject* prototype);
+        explicit JSWrapperObject(PassRefPtr<StructureID>);
         
-        JSValue* internalValue() const;
+        JSValue* internalValue() const { return m_internalValue; }
         void setInternalValue(JSValue*);
         
         virtual void mark();
@@ -45,20 +41,16 @@ namespace JSC {
         JSValue* m_internalValue;
     };
     
-    inline JSWrapperObject::JSWrapperObject(JSObject* prototype)
-        : JSObject(prototype)
+    inline JSWrapperObject::JSWrapperObject(PassRefPtr<StructureID> structure)
+        : JSObject(structure)
         , m_internalValue(0)
     {
-    }
-    
-    inline JSValue* JSWrapperObject::internalValue() const
-    {
-        return m_internalValue;
     }
     
     inline void JSWrapperObject::setInternalValue(JSValue* value)
     {
         ASSERT(value);
+        ASSERT(!value->isObject());
         m_internalValue = value;
     }
 

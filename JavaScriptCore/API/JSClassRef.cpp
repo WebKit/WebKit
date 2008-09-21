@@ -235,12 +235,11 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
 
     if (!jsClassData.cachedPrototype) {
         // Recursive, but should be good enough for our purposes
-        JSObject* parentPrototype = 0;
-        if (parentClass)
-            parentPrototype = parentClass->prototype(exec); // can be null
-        if (!parentPrototype)
-            parentPrototype = exec->dynamicGlobalObject()->objectPrototype();
-        jsClassData.cachedPrototype = new (exec) JSCallbackObject<JSObject>(exec, prototypeClass, parentPrototype, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
+        jsClassData.cachedPrototype = new (exec) JSCallbackObject<JSObject>(exec, exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
+        if (parentClass) {
+            if (JSObject* prototype = parentClass->prototype(exec))
+                jsClassData.cachedPrototype->setPrototype(prototype);
+        }
     }
     return jsClassData.cachedPrototype;
 }

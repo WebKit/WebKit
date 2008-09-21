@@ -44,8 +44,8 @@ const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
 @end
 */
 
-RegExpObject::RegExpObject(RegExpPrototype* regExpPrototype, PassRefPtr<RegExp> regExp)
-    : JSObject(regExpPrototype)
+RegExpObject::RegExpObject(PassRefPtr<StructureID> structure, PassRefPtr<RegExp> regExp)
+    : JSObject(structure)
     , d(new RegExpObjectData(regExp, 0))
 {
 }

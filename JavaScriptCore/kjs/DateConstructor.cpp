@@ -51,14 +51,14 @@ static JSValue* dateParse(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateNow(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateUTC(ExecState*, JSObject*, JSValue*, const ArgList&);
 
-DateConstructor::DateConstructor(ExecState* exec, FunctionPrototype* functionPrototype, DatePrototype* datePrototype)
-    : InternalFunction(exec, functionPrototype, Identifier(exec, datePrototype->classInfo()->className))
+DateConstructor::DateConstructor(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure, DatePrototype* datePrototype)
+    : InternalFunction(exec, structure, Identifier(exec, datePrototype->classInfo()->className))
 {
       putDirect(exec->propertyNames().prototype, datePrototype, DontEnum|DontDelete|ReadOnly);
 
-      putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().parse, dateParse), DontEnum);
-      putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
-      putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().now, dateNow), DontEnum);
+      putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().parse, dateParse), DontEnum);
+      putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
+      putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().now, dateNow), DontEnum);
 
       putDirect(exec->propertyNames().length, jsNumber(exec, 7), ReadOnly | DontEnum | DontDelete);
 }
@@ -106,9 +106,9 @@ static JSObject* constructDate(ExecState* exec, JSObject*, const ArgList& args)
         }
     }
 
-    DateInstance* ret = new (exec) DateInstance(exec->lexicalGlobalObject()->datePrototype());
-    ret->setInternalValue(jsNumber(exec, timeClip(value)));
-    return ret;
+    DateInstance* result = new (exec) DateInstance(exec->lexicalGlobalObject()->dateStructure());
+    result->setInternalValue(jsNumber(exec, timeClip(value)));
+    return result;
 }
 
 ConstructType DateConstructor::getConstructData(ConstructData& constructData)

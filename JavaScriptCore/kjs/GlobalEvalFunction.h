@@ -28,13 +28,11 @@
 
 namespace JSC {
 
-    class ExecState;
-    class FunctionPrototype;
     class JSGlobalObject;
 
     class GlobalEvalFunction : public PrototypeFunction {
     public:
-        GlobalEvalFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, NativeFunction, JSGlobalObject* expectedThisObject);
+        GlobalEvalFunction(ExecState*, PassRefPtr<StructureID>, int len, const Identifier&, NativeFunction, JSGlobalObject* expectedThisObject);
         JSGlobalObject* cachedGlobalObject() const { return m_cachedGlobalObject; }
 
     private:

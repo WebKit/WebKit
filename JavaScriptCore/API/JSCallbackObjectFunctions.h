@@ -40,8 +40,8 @@
 namespace JSC {
 
 template <class Base>
-JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, JSClassRef jsClass, JSObject* prototype, void* data)
-    : Base(prototype)
+JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, PassRefPtr<StructureID> structure, JSClassRef jsClass, void* data)
+    : Base(structure)
     , m_callbackObjectData(new JSCallbackObjectData(data, jsClass))
 {
     init(exec);

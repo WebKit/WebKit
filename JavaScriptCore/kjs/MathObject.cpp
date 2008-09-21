@@ -83,8 +83,8 @@ const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 @end
 */
 
-MathObject::MathObject(ExecState* exec, ObjectPrototype* objectPrototype)
-    : JSObject(objectPrototype)
+MathObject::MathObject(ExecState* exec, PassRefPtr<StructureID> structure)
+    : JSObject(structure)
 {
     putDirect(Identifier(exec, "E"), jsNumber(exec, exp(1.0)), DontDelete | DontEnum | ReadOnly);
     putDirect(Identifier(exec, "LN2"), jsNumber(exec, log(2.0)), DontDelete | DontEnum | ReadOnly);

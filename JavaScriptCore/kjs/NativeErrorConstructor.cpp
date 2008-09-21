@@ -22,7 +22,6 @@
 #include "NativeErrorConstructor.h"
 
 #include "ErrorInstance.h"
-#include "FunctionPrototype.h"
 #include "JSFunction.h"
 #include "NativeErrorPrototype.h"
 
@@ -32,17 +31,17 @@ ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
 
 const ClassInfo NativeErrorConstructor::info = { "Function", &InternalFunction::info, 0, 0 };
 
-NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototype* functionPrototype, NativeErrorPrototype* nativeErrorPrototype)
-    : InternalFunction(exec, functionPrototype, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name)->getString()))
-    , m_proto(nativeErrorPrototype)
+NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, PassRefPtr<StructureID> structure, NativeErrorPrototype* nativeErrorPrototype)
+    : InternalFunction(exec, structure, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name)->getString()))
+    , m_errorStructure(StructureID::create(nativeErrorPrototype))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
-    putDirect(exec->propertyNames().prototype, m_proto, DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().prototype, nativeErrorPrototype, DontDelete | ReadOnly | DontEnum);
 }
 
 ErrorInstance* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
-    ErrorInstance* object = new (exec) ErrorInstance(m_proto);
+    ErrorInstance* object = new (exec) ErrorInstance(m_errorStructure);
     if (!args.at(exec, 0)->isUndefined())
         object->putDirect(exec->propertyNames().message, jsString(exec, args.at(exec, 0)->toString(exec)));
     return object;
@@ -68,13 +67,6 @@ CallType NativeErrorConstructor::getCallData(CallData& callData)
 {
     callData.native.function = callNativeErrorConstructor;
     return CallTypeHost;
-}
-
-void NativeErrorConstructor::mark()
-{
-    JSObject::mark();
-    if (m_proto && !m_proto->marked())
-        m_proto->mark();
 }
 
 } // namespace JSC

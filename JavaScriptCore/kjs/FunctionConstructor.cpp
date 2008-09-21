@@ -34,8 +34,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionConstructor);
 
-FunctionConstructor::FunctionConstructor(ExecState* exec, FunctionPrototype* functionPrototype)
-    : InternalFunction(exec, functionPrototype, Identifier(exec, functionPrototype->classInfo()->className))
+FunctionConstructor::FunctionConstructor(ExecState* exec, PassRefPtr<StructureID> structure, FunctionPrototype* functionPrototype)
+    : InternalFunction(exec, structure, Identifier(exec, functionPrototype->classInfo()->className))
 {
     putDirect(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
