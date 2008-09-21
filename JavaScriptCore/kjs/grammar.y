@@ -72,9 +72,14 @@ static ExpressionNode* makeTypeOfNode(void*, ExpressionNode*);
 static ExpressionNode* makeDeleteNode(void*, ExpressionNode*, int start, int divot, int end);
 static ExpressionNode* makeNegateNode(void*, ExpressionNode*);
 static NumberNode* makeNumberNode(void*, double);
+static ExpressionNode* makeBitwiseNotNode(void*, ExpressionNode*);
+static ExpressionNode* makeMultNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeDivNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeAddNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeLeftShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeRightShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static StatementNode* makeVarStatementNode(void*, ExpressionNode*);
 static ExpressionNode* combineVarInitializers(void*, ExpressionNode* list, AssignResolveNode* init);
-
 
 #if COMPILER(MSVC)
 
@@ -489,7 +494,7 @@ UnaryExprCommon:
   | AUTOMINUSMINUS UnaryExpr            { $$ = createNodeFeatureInfo<ExpressionNode*>(makePrefixNode(GLOBAL_DATA, $2.m_node, OpMinusMinus, @1.first_column, @2.first_column + 1, @2.last_column), $2.m_featureInfo | AssignFeature, $2.m_numConstants); }
   | '+' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnaryPlusNode(GLOBAL_DATA, $2.m_node), $2.m_featureInfo, $2.m_numConstants); }
   | '-' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(makeNegateNode(GLOBAL_DATA, $2.m_node), $2.m_featureInfo, $2.m_numConstants); }
-  | '~' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitwiseNotNode(GLOBAL_DATA, $2.m_node), $2.m_featureInfo, $2.m_numConstants); }
+  | '~' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(makeBitwiseNotNode(GLOBAL_DATA, $2.m_node), $2.m_featureInfo, $2.m_numConstants); }
   | '!' UnaryExpr                       { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalNotNode(GLOBAL_DATA, $2.m_node), $2.m_featureInfo, $2.m_numConstants); }
 
 UnaryExpr:
@@ -504,8 +509,8 @@ UnaryExprNoBF:
 
 MultiplicativeExpr:
     UnaryExpr
-  | MultiplicativeExpr '*' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
-  | MultiplicativeExpr '/' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
+  | MultiplicativeExpr '*' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeMultNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
+  | MultiplicativeExpr '/' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeDivNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
   | MultiplicativeExpr '%' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
 ;
 
@@ -521,7 +526,7 @@ MultiplicativeExprNoBF:
 
 AdditiveExpr:
     MultiplicativeExpr
-  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new AddNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
+  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
   | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
 ;
 
@@ -535,8 +540,8 @@ AdditiveExprNoBF:
 
 ShiftExpr:
     AdditiveExpr
-  | ShiftExpr LSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
-  | ShiftExpr RSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
+  | ShiftExpr LSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLeftShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
+  | ShiftExpr RSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(makeRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
   | ShiftExpr URSHIFT AdditiveExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo, $1.m_numConstants + $3.m_numConstants); }
 ;
 
@@ -1383,6 +1388,48 @@ static NumberNode* makeNumberNode(void* globalPtr, double d)
     if (value)
         return new ImmediateNumberNode(GLOBAL_DATA, value, d);
     return new NumberNode(GLOBAL_DATA, d);
+}
+
+static ExpressionNode* makeBitwiseNotNode(void* globalPtr, ExpressionNode* expr)
+{
+    if (expr->isNumber())
+        return makeNumberNode(globalPtr, ~JSValue::toInt32(static_cast<NumberNode*>(expr)->value()));
+    return new BitwiseNotNode(GLOBAL_DATA, expr);
+}
+
+static ExpressionNode* makeMultNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
+    return new MultNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+}
+
+static ExpressionNode* makeDivNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
+    return new DivNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+}
+
+static ExpressionNode* makeAddNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
+    return new AddNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+}
+
+static ExpressionNode* makeLeftShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return makeNumberNode(globalPtr, JSValue::toInt32(static_cast<NumberNode*>(expr1)->value()) << (JSValue::toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new LeftShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+}
+
+static ExpressionNode* makeRightShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return makeNumberNode(globalPtr, JSValue::toInt32(static_cast<NumberNode*>(expr1)->value()) >> (JSValue::toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new RightShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 /* called by yyparse on error */
