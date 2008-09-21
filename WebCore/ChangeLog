@@ -1,3 +1,14 @@
+2008-09-20  Collin Jackson  <collinj@webkit.org>
+
+        Prefetch DNS for hyperlinks that the user mouses over.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20931
+
+        Reviewed by Sam Weinig.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement):
+
 2008-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
