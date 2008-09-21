@@ -1,5 +1,13 @@
 2008-09-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+        
+        - speculative fix for non-AllInOne builds
+
+        * kjs/operations.h:
+
+2008-09-20  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
         
         - assorted optimizations to === and !== operators

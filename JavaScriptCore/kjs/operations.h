@@ -22,6 +22,10 @@
 #ifndef _KJS_OPERATIONS_H_
 #define _KJS_OPERATIONS_H_
 
+#include "JSImmediate.h"
+#include "JSNumberCell.h"
+#include "JSString.h"
+
 namespace JSC {
 
   class ExecState;
