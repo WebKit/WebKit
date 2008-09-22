@@ -1,3 +1,15 @@
+2008-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig
+
+        transition end event when -webkit-transition-property: all puts wrong
+        propertyName in event
+        https://bugs.webkit.org/show_bug.cgi?id=20903
+        
+
+        * transitions/transition-end-event-all-properties-expected.txt:
+        * transitions/transition-end-event-all-properties.html:
+
 2008-09-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

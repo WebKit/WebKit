@@ -99,10 +99,10 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
         if (shouldSendEventForListener(listenerType)) {
             if (Element* element = elementForEventDispatch()) {
                 String propertyName;
-                if (m_transitionProperty != cAnimateAll)
-                    propertyName = getPropertyName(static_cast<CSSPropertyID>(m_transitionProperty));
+                if (m_animatingProperty != cAnimateAll)
+                    propertyName = getPropertyName(static_cast<CSSPropertyID>(m_animatingProperty));
                 m_waitingForEndEvent = true;
-                m_animationEventDispatcher.startTimer(element, propertyName, m_transitionProperty, true, eventType, elapsedTime);
+                m_animationEventDispatcher.startTimer(element, propertyName, m_animatingProperty, true, eventType, elapsedTime);
                 return true; // Did dispatch an event
             }
         }
