@@ -203,7 +203,10 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
                            // we need to keep in sync, since we may have shifted relative
                            // to our parent layer.
 
-    positionOverflowControls();
+    int x = 0;
+    int y = 0;
+    convertToLayerCoords(root(), x, y);
+    positionOverflowControls(x, y);
 
     updateVisibilityStatus();
 
@@ -1184,15 +1187,12 @@ static IntRect scrollCornerRect(RenderObject* renderer, const IntRect& absBounds
                    resizerThickness, resizerThickness);
 }
 
-void RenderLayer::positionOverflowControls()
+void RenderLayer::positionOverflowControls(int tx, int ty)
 {
     if (!m_hBar && !m_vBar && (!m_object->hasOverflowClip() || m_object->style()->resize() == RESIZE_NONE))
         return;
     
-    int x = 0;
-    int y = 0;
-    convertToLayerCoords(root(), x, y);
-    IntRect absBounds(x, y, m_object->width(), m_object->height());
+    IntRect absBounds(tx, ty, m_object->width(), m_object->height());
     
     IntRect resizeControlRect;
     if (m_object->style()->resize() != RESIZE_NONE)
@@ -1388,7 +1388,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* p, int tx, int ty, cons
     // Move the scrollbar widgets if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
     // contains fixed positioned elements).
-    positionOverflowControls();
+    positionOverflowControls(tx, ty);
 
     // Now that we're sure the scrollbars are in the right place, paint them.
     if (m_hBar)
@@ -1398,8 +1398,8 @@ void RenderLayer::paintOverflowControls(GraphicsContext* p, int tx, int ty, cons
     
     // We fill our scroll corner with white if we have a scrollbar that doesn't run all the way up to the
     // edge of the box.
-    IntRect paddingBox(m_object->xPos() + m_object->borderLeft() + tx, 
-                       m_object->yPos() + m_object->borderTop() + ty, 
+    IntRect paddingBox(m_object->borderLeft() + tx, 
+                       m_object->borderTop() + ty, 
                        m_object->width() - m_object->borderLeft() - m_object->borderRight(),
                        m_object->height() - m_object->borderTop() - m_object->borderBottom());
     IntRect hCorner;
@@ -1421,7 +1421,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* p, int tx, int ty, cons
     }
 
     if (m_object->style()->resize() != RESIZE_NONE)  {
-        IntRect absBounds(m_object->xPos() + tx, m_object->yPos() + ty, m_object->width(), m_object->height());
+        IntRect absBounds(tx, ty, m_object->width(), m_object->height());
         IntRect scrollCorner = scrollCornerRect(m_object, absBounds);
         if (!scrollCorner.intersects(damageRect))
             return;
@@ -1652,7 +1652,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
         // sit above the background/border.
-        paintOverflowControls(p, tx, ty, damageRect);
+        paintOverflowControls(p, x, y, damageRect);
         
         // Restore the clip.
         restoreClip(p, paintDirtyRect, damageRect);

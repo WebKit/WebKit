@@ -1,3 +1,25 @@
+2008-09-20  David Hyatt  <hyatt@apple.com>
+
+        Make sure transformed scrollbars in overflow sections position
+        properly.  This patch mimics the same behavior that works for
+        iframes, namely making sure that the same code that dynamically
+        adjusts iframe widget positions at paint time for fixed positioning
+        and transforms also applies to scrollbars.  (This is as simple as passing
+        in the current translation factor at paint time rather than crawling
+        up the layer tree to compute a "false" absolute position.)
+
+        An existing transform test covers this (although only a pixel result
+        reveals the correct rendering).
+
+        Reviewed by Darin Adler
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayer.h:
+
 2008-09-21  Steve Falkenburg  <sfalken@apple.com>
 
         Removed unnecessary nested timer check.
