@@ -1,3 +1,44 @@
+2008-09-21  David Hyatt  <hyatt@apple.com>
+
+        Rename FrameView's repaintRectangle method to repaintContentRectangle.  Make
+        both it and ScrollView's updateContents method be off-limits to everyone in
+        WebCore except for RenderView.
+
+        Make repaintViewRectangle the only possible method for WebCore code to do
+        an invalidation.  This ensures that all invalidates triggered by WebCore
+        cross-platform code that cross ownerElement() boundaries are transform-aware.
+
+        Make sure that iframes/frames contained inside objects that have transforms
+        or reflections are not allowed to blit (this was already true for transparency).
+
+        It is not possible to make a test for any of this, since iframe scrolling
+        still doesn't work on Mac (since the invalidates are not being done
+        through WebCore's cross-platform invalidation code but are instead going
+        through NSScrollView's setNeedsDisplay still).
+
+        Reviewed by Oliver Hunt
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::recomputeCaretRect):
+        (WebCore::SelectionController::invalidateCaretRect):
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::endDeferredRepaints):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayerExtended):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::requiresSlowRepaints):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasTransform):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        (WebCore::RenderView::repaintViewRectangle):
+        (WebCore::RenderView::setSelection):
+
 2008-09-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -169,6 +169,8 @@ public:
 
     bool isOverflowOnly() const { return m_isOverflowOnly; }
 
+    bool requiresSlowRepaints() const;
+
     bool isTransparent() const;
     RenderLayer* transparentAncestor();
     void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer);
@@ -313,6 +315,7 @@ public:
     void setStaticX(int staticX) { m_staticX = staticX; }
     void setStaticY(int staticY) { m_staticY = staticY; }
 
+    bool hasTransform() const { return m_object->hasTransform(); }
     AffineTransform* transform() const { return m_transform.get(); }
 
     void destroy(RenderArena*);

@@ -714,8 +714,10 @@ void FrameView::setContentsPos(int x, int y)
 
 const unsigned cRepaintRectUnionThreshold = 25;
 
-void FrameView::repaintRectangle(const IntRect& r, bool immediate)
+void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
+    ASSERT(!m_frame->document()->ownerElement());
+
     if (d->m_deferringRepaints && !immediate) {
         IntRect visibleContent = enclosingIntRect(visibleContentRect());
         visibleContent.intersect(r);
@@ -755,11 +757,11 @@ void FrameView::endDeferredRepaints()
     ASSERT(d->m_deferringRepaints > 0);
     if (--d->m_deferringRepaints == 0) {
         if (d->m_repaintCount >= cRepaintRectUnionThreshold)
-            repaintRectangle(d->m_repaintRect, false);
+            repaintContentRectangle(d->m_repaintRect, false);
         else {
             unsigned size = d->m_repaintRects.size();
             for (unsigned i = 0; i < size; i++)
-                repaintRectangle(d->m_repaintRects[i], false);
+                repaintContentRectangle(d->m_repaintRects[i], false);
             d->m_repaintRects.clear();
         }
     }

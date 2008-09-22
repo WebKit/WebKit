@@ -438,7 +438,7 @@ RenderLayer *RenderLayer::stackingContext() const
 RenderLayer* RenderLayer::enclosingPositionedAncestor() const
 {
     RenderLayer* curr = parent();
-    for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isPositioned() && !curr->m_object->isRelPositioned() && !curr->m_object->hasTransform();
+    for ( ; curr && !curr->m_object->isRenderView() && !curr->m_object->isPositioned() && !curr->m_object->isRelPositioned() && !curr->hasTransform();
          curr = curr->parent()) { }
     return curr;
 }
@@ -449,6 +449,15 @@ RenderLayer* RenderLayer::enclosingTransformedAncestor() const
     for ( ; curr && !curr->m_object->isRenderView() && !curr->transform(); curr = curr->parent())
         { }
     return curr;
+}
+
+bool RenderLayer::requiresSlowRepaints() const
+{
+    if (isTransparent() || hasReflection() || hasTransform())
+        return true;
+    if (!parent())
+        return false;
+    return parent()->requiresSlowRepaints();
 }
 
 bool RenderLayer::isTransparent() const

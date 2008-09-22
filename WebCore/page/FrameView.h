@@ -49,6 +49,8 @@ template <typename T> class Timer;
 
 class FrameView : public ScrollView {
 public:
+    friend class RenderView;
+
     FrameView(Frame*);
 
     // On the Mac, FrameViews always get their size from the underlying NSView,
@@ -91,8 +93,7 @@ public:
     void setNeedsLayout();
 
     bool needsFullRepaint() const;
-    void repaintRectangle(const IntRect&, bool immediate);
-
+ 
     void resetScrollbars();
 
     void clear();
@@ -166,6 +167,8 @@ private:
 
     void dispatchScheduledEvents();
     void performPostLayoutTasks();
+
+    void repaintContentRectangle(const IntRect&, bool immediate);
 
     unsigned m_refCount;
     IntSize m_size;

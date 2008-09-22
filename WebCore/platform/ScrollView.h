@@ -90,10 +90,7 @@ namespace WebCore {
         void removeChild(Widget*);
 
         virtual void resizeContents(int w, int h);
-        void updateContents(const IntRect&, bool now = false);
-        void updateWindowRect(const IntRect&, bool now = false);
-        void update();
-
+        
         // Event coordinates are assumed to be in the coordinate space of a window that contains
         // the entire widget hierarchy. It is up to the platform to decide what the precise definition
         // of containing window is. (For example on Mac it is the containing NSWindow.)
@@ -141,6 +138,11 @@ namespace WebCore {
         IntRect contentsToScreen(const IntRect&) const;
         IntPoint screenToContents(const IntPoint&) const;
 #endif
+
+    protected:
+        void updateContents(const IntRect&, bool now = false);
+        void updateWindowRect(const IntRect&, bool now = false);
+        void update();
 
 #if PLATFORM(MAC) && defined __OBJC__
     public:

@@ -809,6 +809,7 @@ void RenderBox::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& 
         } else
             isTransparent = view()->frameView()->isTransparent();
 
+        // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.
         if (isTransparent)
             view()->frameView()->setUseSlowRepaints(); // The parent must show behind the child.
     }
