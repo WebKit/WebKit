@@ -121,7 +121,7 @@ void StructureID::transitionTo(StructureID* oldStructureID, StructureID* newStru
 PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structureID, const Identifier& propertyName, JSValue* value, unsigned attributes, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
 {
     ASSERT(!structureID->m_isDictionary);
-    ASSERT(structureID->m_type == ObjectType);
+    ASSERT(structureID->typeInfo().type() == ObjectType);
 
     if (StructureID* existingTransition = structureID->m_transitionTable.get(make_pair(propertyName.ustring().rep(), attributes))) {
         if (!slotBase->usingInlineStorage() && structureID->m_propertyMap.size() != existingTransition->m_propertyMap.size())
@@ -202,7 +202,7 @@ StructureID::~StructureID()
 
 StructureIDChain* StructureID::createCachedPrototypeChain()
 {
-    ASSERT(m_type == ObjectType);
+    ASSERT(typeInfo().type() == ObjectType);
     ASSERT(!m_cachedPrototypeChain);
 
     JSValue* prototype = storedPrototype();
