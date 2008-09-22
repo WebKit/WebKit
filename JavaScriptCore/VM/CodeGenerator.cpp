@@ -732,6 +732,10 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, bool b)
 
 RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double number)
 {
+    // FIXME: Our hash tables won't hold infinity, so we make a new JSNumberCell each time.
+    // Later we can do the extra work to handle that like the other cases.
+    if (number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
+        return emitLoad(dst, jsNumber(globalExec(), number));
     JSValue*& valueInMap = m_numberMap.add(number, 0).first->second;
     if (!valueInMap)
         valueInMap = jsNumber(globalExec(), number);
