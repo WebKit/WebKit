@@ -1,5 +1,14 @@
 2008-09-21  Steve Falkenburg  <sfalken@apple.com>
 
+        Removed unnecessary nested timer check.
+        
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+
+2008-09-21  Steve Falkenburg  <sfalken@apple.com>
+
         Improve timer resolution on WinXP.
         https://bugs.webkit.org/show_bug.cgi?id=20979
         

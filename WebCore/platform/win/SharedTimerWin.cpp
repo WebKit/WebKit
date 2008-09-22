@@ -102,7 +102,7 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
     } else if (message == WM_TIMER) {
-        if (wParam == sharedTimerID && !isDeferringTimers()) {
+        if (wParam == sharedTimerID) {
             KillTimer(timerWindowHandle, sharedTimerID);
             sharedTimerFiredFunction();
         } else if (wParam == endHighResTimerID) {
