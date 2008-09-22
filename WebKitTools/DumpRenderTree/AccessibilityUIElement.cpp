@@ -157,6 +157,19 @@ static JSValueRef titleUIElementCallback(JSContextRef context, JSObjectRef funct
 {
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->titleUIElement());
 }
+
+static JSValueRef setSelectedTextRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    unsigned location = UINT_MAX, length = 0;
+    if (argumentCount == 2) {
+        location = JSValueToNumber(context, arguments[0], exception);
+        length = JSValueToNumber(context, arguments[1], exception);
+    }
+    
+    toAXElement(thisObject)->setSelectedTextRange(location, length);
+    return 0;
+}
+
 // Static Value Getters
 
 static JSValueRef getRoleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -207,6 +220,12 @@ static JSValueRef getInsertionPointLineNumberCallback(JSContextRef context, JSOb
     return JSValueMakeNumber(context, toAXElement(thisObject)->insertionPointLineNumber());
 }
 
+static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> selectedTextRange(Adopt, toAXElement(thisObject)->selectedTextRange());
+    return JSValueMakeString(context, selectedTextRange.get());
+}
+
 // Destruction
 
 static void finalize(JSObjectRef thisObject)
@@ -233,6 +252,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "minValue", getMinValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "maxValue", getMaxValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 
@@ -255,6 +275,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "columnIndexRange", columnIndexRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "cellForColumnAndRow", cellForColumnAndRowCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "titleUIElement", titleUIElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setSelectedTextRange", setSelectedTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

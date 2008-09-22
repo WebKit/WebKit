@@ -1,3 +1,12 @@
+2008-09-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for setting/getting selected text ranges through AX
+
+        * accessibility/textarea-selected-text-range-expected.txt: Added.
+        * accessibility/textarea-selected-text-range.html: Added.
+
 2008-09-22  David Hyatt  <hyatt@apple.com>
 
         Add new test for .parentStyleSheet.

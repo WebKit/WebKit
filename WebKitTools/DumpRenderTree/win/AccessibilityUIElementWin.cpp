@@ -240,3 +240,12 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned colu
 {
     return 0;
 }
+
+JSStringRef AccessibilityUIElement::selectedTextRange()
+{
+    return JSStringCreateWithCharacters(0, 0);    
+}
+
+void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
+{
+}

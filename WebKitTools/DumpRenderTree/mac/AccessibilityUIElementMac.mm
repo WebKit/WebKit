@@ -319,7 +319,6 @@ JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()
 
 JSStringRef AccessibilityUIElement::attributesOfRowHeaders()
 {
-    // this attribute will appear in SnowLeopard
     NSArray* rowHeadersArray = [m_element accessibilityAttributeValue:@"AXRowHeaderUIElements"];
     Vector<AccessibilityUIElement> rowHeadersVector;
     convertNSArrayToVector(rowHeadersArray, rowHeadersVector);
@@ -344,7 +343,6 @@ JSStringRef AccessibilityUIElement::attributesOfRows()
 
 JSStringRef AccessibilityUIElement::attributesOfVisibleCells()
 {
-    // this attribute will appear in SnowLeopard
     NSArray* cellsArray = [m_element accessibilityAttributeValue:@"AXVisibleCells"];
     Vector<AccessibilityUIElement> cellsVector;
     convertNSArrayToVector(cellsArray, cellsVector);
@@ -372,7 +370,6 @@ int AccessibilityUIElement::indexInTable()
 
 JSStringRef AccessibilityUIElement::rowIndexRange()
 {
-    // will appear in SnowLeopard
     NSValue* indexRange = [m_element accessibilityAttributeValue:@"AXRowIndexRange"];
     NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
@@ -381,7 +378,6 @@ JSStringRef AccessibilityUIElement::rowIndexRange()
 
 JSStringRef AccessibilityUIElement::columnIndexRange()
 {
-    // will appear in SnowLeopard
     NSNumber* indexRange = [m_element accessibilityAttributeValue:@"AXColumnIndexRange"];
     NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
     NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
@@ -390,7 +386,21 @@ JSStringRef AccessibilityUIElement::columnIndexRange()
 
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned col, unsigned row)
 {
-    // will appear in SnowLeopard
     NSArray *colRowArray = [NSArray arrayWithObjects:[NSNumber numberWithUnsignedInt:col], [NSNumber numberWithUnsignedInt:row], nil];
     return [m_element accessibilityAttributeValue:@"AXCellForColumnAndRow" forParameter:colRowArray];
+}
+
+JSStringRef AccessibilityUIElement::selectedTextRange()
+{
+    NSNumber *indexRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextRangeAttribute];
+    NSRange range = indexRange ? [indexRange rangeValue] : NSMakeRange(0,0);
+    NSMutableString *rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
+    return [rangeDescription createJSStringRef];    
+}
+
+void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
+{
+    NSRange textRange = NSMakeRange(location, length);
+    NSValue *textRangeValue = [NSValue valueWithRange:textRange];
+    [m_element accessibilitySetValue:textRangeValue forAttribute:NSAccessibilitySelectedTextRangeAttribute];
 }

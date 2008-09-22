@@ -1,3 +1,26 @@
+2008-09-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Support ability to get/set selected text ranges for text controls through AX.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (setSelectedTextRangeCallback):
+        (getSelectedTextRangeCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::attributesOfRowHeaders):
+        (AccessibilityUIElement::attributesOfVisibleCells):
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+        (AccessibilityUIElement::cellForColumnAndRow):
+        (AccessibilityUIElement::selectedTextRange):
+        (AccessibilityUIElement::setSelectedTextRange):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::selectedTextRange):
+        (AccessibilityUIElement::setSelectedTextRange):
+
 2008-09-20  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/mac/DumpRenderTree.mm:
