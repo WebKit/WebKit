@@ -113,6 +113,10 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     int numCols = firstBody->numColumns();
     int numRows = firstBody->numRows();
     
+    // if there's only one cell, it's not a good AXTable candidate
+    if (numRows == 1 && numCols == 1)
+        return false;
+    
     // store the background color of the table to check against cell's background colors
     RenderStyle* tableStyle = table->style();
     if (!tableStyle)

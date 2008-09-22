@@ -2,6 +2,15 @@
 
         Reviewed by Darin Adler.
 
+        Tests for <rdar://problem/6230234> AXTable should probably not be exposed in there's only one cell
+
+        * accessibility/table-one-cell-expected.txt: Added.
+        * accessibility/table-one-cell.html: Added.
+
+2008-09-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
         Tests for setting/getting selected text ranges through AX
 
         * accessibility/textarea-selected-text-range-expected.txt: Added.

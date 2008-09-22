@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/6230234> AXTable should probably not be exposed in there's only one cell
+
+        Test: accessibility/table-one-cell.html
+
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+
+2008-09-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/6167779> Setting AXSelectedTextRange for TextAreas in a WebView behaves incorrectly
 
         Test: accessibility/textarea-selected-text-range.html
