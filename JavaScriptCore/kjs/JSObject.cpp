@@ -384,11 +384,6 @@ JSValue* JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
     }
 }
 
-bool JSObject::implementsHasInstance() const
-{
-    return false;
-}
-
 bool JSObject::hasInstance(ExecState* exec, JSValue* value, JSValue* proto)
 {
     if (!proto->isObject()) {

@@ -2123,7 +2123,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             goto vm_throw;
 
         JSObject* baseObj = static_cast<JSObject*>(baseVal);
-        r[dst] = jsBoolean(baseObj->implementsHasInstance() ? baseObj->hasInstance(exec, r[value].jsValue(exec), r[baseProto].jsValue(exec)) : false);
+        r[dst] = jsBoolean(baseObj->structureID()->typeInfo().implementsHasInstance() ? baseObj->hasInstance(exec, r[value].jsValue(exec), r[baseProto].jsValue(exec)) : false);
 
         ++vPC;
         NEXT_OPCODE;
@@ -4304,7 +4304,7 @@ JSValue* Machine::cti_op_instanceof(CTI_ARGS)
 
     JSObject* baseObj = static_cast<JSObject*>(baseVal);
     JSValue* basePrototype = ARG_src3;
-    JSValue* result = jsBoolean(baseObj->implementsHasInstance() ? baseObj->hasInstance(exec,  ARG_src1, basePrototype) : false);
+    JSValue* result = jsBoolean(baseObj->structureID()->typeInfo().implementsHasInstance() ? baseObj->hasInstance(exec,  ARG_src1, basePrototype) : false);
     VM_CHECK_EXCEPTION_AT_END();
     return result;
 }

@@ -33,6 +33,7 @@ namespace JSC {
 
     // WebCore uses this to make document.all and style.filter undetectable.
     static const unsigned MasqueradesAsUndefined = 0x1;
+    static const unsigned ImplementsHasInstance = 0x2;
 
     class TypeInfo {
         friend class CTI;
@@ -42,6 +43,7 @@ namespace JSC {
         JSType type() const { return m_type; }
 
         bool masqueradesAsUndefined() const { return m_flags & MasqueradesAsUndefined; }
+        bool implementsHasInstance() const { return m_flags & ImplementsHasInstance; }
 
     private:
         JSType m_type;

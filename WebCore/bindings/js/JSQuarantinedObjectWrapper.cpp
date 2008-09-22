@@ -219,11 +219,6 @@ ConstructType JSQuarantinedObjectWrapper::getConstructData(ConstructData& constr
     return ConstructTypeHost;
 }
 
-bool JSQuarantinedObjectWrapper::implementsHasInstance() const
-{
-    return m_unwrappedObject->implementsHasInstance();
-}
-
 bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValue* value, JSValue* proto)
 {
     if (!allowsHasInstance())

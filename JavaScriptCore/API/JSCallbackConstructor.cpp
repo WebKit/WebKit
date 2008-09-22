@@ -51,11 +51,6 @@ JSCallbackConstructor::~JSCallbackConstructor()
         JSClassRelease(m_class);
 }
 
-bool JSCallbackConstructor::implementsHasInstance() const
-{
-    return true;
-}
-
 static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
     JSContextRef ctx = toRef(exec);

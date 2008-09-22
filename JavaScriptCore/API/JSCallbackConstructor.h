@@ -39,8 +39,12 @@ public:
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo info;
     
+    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    { 
+        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+    }
+
 private:
-    virtual bool implementsHasInstance() const;    
     virtual ConstructType getConstructData(ConstructData&);
     virtual const ClassInfo* classInfo() const { return &info; }
 

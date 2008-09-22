@@ -1,5 +1,39 @@
 2008-09-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Cameron Zwarich.
+        
+        - speed up instanceof operator by replacing implementsHasInstance method with a TypeInfo flag
+
+        Partial work towards <https://bugs.webkit.org/show_bug.cgi?id=20818>
+        
+        2.2% speedup on EarleyBoyer benchmark.
+
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructureID):
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructureID):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructureID):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::hasInstance):
+        * API/JSValueRef.cpp:
+        (JSValueIsInstanceOfConstructor):
+        * JavaScriptCore.exp:
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_instanceof):
+        * kjs/InternalFunction.cpp:
+        * kjs/InternalFunction.h:
+        (JSC::InternalFunction::createStructureID):
+        * kjs/JSObject.cpp:
+        * kjs/JSObject.h:
+        * kjs/TypeInfo.h:
+        (JSC::TypeInfo::implementsHasInstance):
+
+2008-09-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dave Hyatt.
         
         Based on initial work by Darin Adler.

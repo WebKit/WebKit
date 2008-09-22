@@ -37,8 +37,14 @@ public:
 
     static const ClassInfo info;
     
+    // InternalFunction mish-mashes constructor and function behavior -- we should 
+    // refactor the code so this override isn't necessary
+    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    { 
+        return StructureID::create(proto, TypeInfo(ObjectType)); 
+    }
+
 private:
-    virtual bool implementsHasInstance() const;
     virtual CallType getCallData(CallData&);
     virtual const ClassInfo* classInfo() const { return &info; }
 

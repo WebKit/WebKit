@@ -273,16 +273,6 @@ JSObject* JSCallbackObject<Base>::construct(ExecState* exec, JSObject* construct
 }
 
 template <class Base>
-bool JSCallbackObject<Base>::implementsHasInstance() const
-{
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
-        if (jsClass->hasInstance)
-            return true;
-    
-    return false;
-}
-
-template <class Base>
 bool JSCallbackObject<Base>::hasInstance(ExecState* exec, JSValue* value, JSValue*)
 {
     JSContextRef execRef = toRef(exec);
@@ -294,8 +284,7 @@ bool JSCallbackObject<Base>::hasInstance(ExecState* exec, JSValue* value, JSValu
             return hasInstance(execRef, thisRef, toRef(value), toRef(exec->exceptionSlot()));
         }
     }
-    ASSERT_NOT_REACHED(); // implementsHasInstance should prevent us from reaching here
-    return 0;
+    return false;
 }
 
 template <class Base>

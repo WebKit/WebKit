@@ -48,6 +48,11 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
+    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    { 
+        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+    }
+
 private:
     virtual UString className() const;
 
@@ -59,7 +64,6 @@ private:
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);
 
-    virtual bool implementsHasInstance() const;
     virtual bool hasInstance(ExecState* exec, JSValue* value, JSValue* proto);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);

@@ -44,6 +44,11 @@ namespace WebCore {
 
         static const JSC::ClassInfo s_info;
 
+        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* proto) 
+        { 
+            return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance)); 
+        }
+
     protected:
         JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::StructureID>);
 
@@ -62,7 +67,6 @@ namespace WebCore {
         virtual JSC::CallType getCallData(JSC::CallData&);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
-        virtual bool implementsHasInstance() const;
         virtual bool hasInstance(JSC::ExecState*, JSC::JSValue*, JSC::JSValue* proto);
 
         virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);

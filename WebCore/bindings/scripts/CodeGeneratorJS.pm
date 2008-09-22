@@ -1820,7 +1820,10 @@ public:
     virtual const ClassInfo* classInfo() const { return &s_info; }
     static const ClassInfo s_info;
 
-    virtual bool implementsHasInstance() const { return true; }
+    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    { 
+        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+    }
 EOF
 
     if ($canConstruct) {

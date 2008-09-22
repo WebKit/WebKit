@@ -51,9 +51,4 @@ const UString& InternalFunction::name(ExecState* exec)
     return static_cast<JSString*>(v)->value();
 }
 
-bool InternalFunction::implementsHasInstance() const
-{
-    return true;
-}
-
 } // namespace JSC
