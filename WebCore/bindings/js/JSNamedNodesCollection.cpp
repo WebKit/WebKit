@@ -43,7 +43,7 @@ const ClassInfo JSNamedNodesCollection::s_info = { "Collection", 0, 0, 0 };
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
 JSNamedNodesCollection::JSNamedNodesCollection(ExecState* exec, const Vector<RefPtr<Node> >& nodes)
-    : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMObject(getDOMStructure<JSNamedNodesCollection>(exec))
     , m_nodes(new Vector<RefPtr<Node> >(nodes))
 {
 }

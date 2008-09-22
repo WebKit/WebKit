@@ -1,3 +1,17 @@
+2008-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix problem Maciej noticed where every JSNamedNodesCollection
+          gets its own StructureID
+
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::JSNamedNodesCollection): Use
+        getDOMStructure to get the structure.
+        * bindings/js/JSNamedNodesCollection.h:
+        (WebCore::JSNamedNodesCollection::createPrototype): Return the
+        object prototype.
+
 2008-09-20  David Hyatt  <hyatt@apple.com>
 
         Make sure transformed scrollbars in overflow sections position
