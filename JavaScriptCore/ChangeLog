@@ -1,5 +1,11 @@
 2008-09-21  Darin Adler  <darin@apple.com>
 
+        - blind attempt to fix non-all-in-one builds
+
+        * kjs/JSGlobalObject.cpp: Added includes of Arguments.h and RegExpObject.h.
+
+2008-09-21  Darin Adler  <darin@apple.com>
+
         - fix debug build
 
         * kjs/StructureID.cpp:

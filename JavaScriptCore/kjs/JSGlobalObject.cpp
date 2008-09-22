@@ -33,6 +33,8 @@
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
+
+#include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
 #include "BooleanConstructor.h"
@@ -59,6 +61,7 @@
 #include "PrototypeFunction.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
+#include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "ScopeChainMark.h"
 #include "StringConstructor.h"
