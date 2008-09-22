@@ -1119,6 +1119,9 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     if (mouseEvent.button() != RightButton && mev.targetNode() == m_clickNode)
         swallowClickEvent = dispatchMouseEvent(clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
+    if (m_lastScrollbarUnderMouse)
+        swallowMouseUpEvent = m_lastScrollbarUnderMouse->handleMouseReleaseEvent(mouseEvent);
+            
     bool swallowMouseReleaseEvent = false;
     if (!swallowMouseUpEvent)
         swallowMouseReleaseEvent = handleMouseReleaseEvent(mev);

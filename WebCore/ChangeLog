@@ -1,3 +1,14 @@
+2008-09-22  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21007
+
+        Make sure that the scrollbar gets sent a release event on platforms that call handleMouseDoubleClickEvent.
+
+        Reviewed by Sam Weinig
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+
 2008-09-22  Eric Seidel  <eric@webkit.org>
 
         No review, rollback only.
