@@ -34,6 +34,8 @@
 #include "ScrollbarClient.h"
 #include "Settings.h"
 
+#include <Carbon/Carbon.h>
+
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
 using namespace std;
@@ -56,6 +58,7 @@ static int cButtonLength[] = { 14, 10 };
 static int cThumbMinLength[] = { 26, 20 };
 
 static int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
+static int cOuterButtonOverlap = 2;
 
 static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
@@ -156,9 +159,9 @@ IntRect ScrollbarThemeMac::backButtonRect(Scrollbar* scrollbar, ScrollbarPart pa
     bool outerButton = part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
     if (outerButton) {
         if (scrollbar->orientation() == HorizontalScrollbar)
-            result = IntRect(scrollbar->x(), scrollbar->y(), cOuterButtonLength[scrollbar->controlSize()], thickness);
+            result = IntRect(scrollbar->x(), scrollbar->y(), cOuterButtonLength[scrollbar->controlSize()] + painting ? cOuterButtonOverlap : 0, thickness);
         else
-            result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cOuterButtonLength[scrollbar->controlSize()]);
+            result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cOuterButtonLength[scrollbar->controlSize()] + painting ? cOuterButtonOverlap : 0);
         return result;
     }
     
@@ -192,10 +195,15 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart
     
     bool outerButton = part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
     if (outerButton) {
-        if (scrollbar->orientation() == HorizontalScrollbar)
+        if (scrollbar->orientation() == HorizontalScrollbar) {
             result = IntRect(scrollbar->x() + scrollbar->width() - outerButtonLength, scrollbar->y(), outerButtonLength, thickness);
-        else
+            if (painting)
+                result.inflateX(cOuterButtonOverlap);
+        } else {
             result = IntRect(scrollbar->x(), scrollbar->y() + scrollbar->height() - outerButtonLength, thickness, outerButtonLength);
+            if (painting)
+                result.inflateY(cOuterButtonOverlap);
+        }
         return result;
     }
     
@@ -277,29 +285,53 @@ bool ScrollbarThemeMac::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent
     return evt.altKey();
 }
 
-void ScrollbarThemeMac::paintTrack(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& trackRect, ScrollbarControlPartMask)
-{
 #if !USE(NSSCROLLER)
-    graphicsContext->fillRect(trackRect, Color(255, 255, 255));
-#endif
+static int scrollbarPartToHIPressedState(ScrollbarPart part)
+{
+    switch (part) {
+        case BackButtonStartPart:
+            return kThemeTopOutsideArrowPressed;
+        case BackButtonEndPart:
+            return kThemeTopOutsideArrowPressed; // This does not make much sense.  For some reason the outside constant is required.
+        case ForwardButtonStartPart:
+            return kThemeTopInsideArrowPressed;
+        case ForwardButtonEndPart:
+            return kThemeBottomOutsideArrowPressed;
+        case ThumbPart:
+            return kThemeThumbPressed;
+        default:
+            return 0;
+    }
 }
-
-void ScrollbarThemeMac::paintButton(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& buttonRect, ScrollbarPart part)
-{
-#if !USE(NSSCROLLER)
-    bool outerButton = (part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsDoubleBoth)) ||
-                       (part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth));
-    if (outerButton)
-        graphicsContext->fillRect(buttonRect, Color(128, 128, 128));
-    else
-        graphicsContext->fillRect(buttonRect, Color(64, 64, 64));
 #endif
-}
 
-void ScrollbarThemeMac::paintThumb(GraphicsContext* graphicsContext, Scrollbar* scrollbar, const IntRect& thumbRect)
+bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
 #if !USE(NSSCROLLER)
-    graphicsContext->fillRect(thumbRect, Color(192, 192, 192));
+    HIThemeTrackDrawInfo trackInfo;
+    trackInfo.version = 0;
+    trackInfo.kind = scrollbar->controlSize() == RegularScrollbar ? kThemeMediumScrollBar : kThemeSmallScrollBar;
+    trackInfo.bounds = scrollbar->frameGeometry();
+    trackInfo.min = 0;
+    trackInfo.max = scrollbar->maximum();
+    trackInfo.value = scrollbar->currentPos();
+    trackInfo.trackInfo.scrollbar.viewsize = scrollbar->pageStep();
+    trackInfo.attributes = 0;
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        trackInfo.attributes |= kThemeTrackHorizontal;
+    trackInfo.enableState = scrollbar->client()->isActive() ? kThemeTrackActive : kThemeTrackInactive;
+    if (!scrollbar->enabled())
+        trackInfo.enableState = kThemeTrackDisabled;
+    if (hasThumb(scrollbar))
+        trackInfo.attributes |= kThemeTrackShowThumb;
+    else if (!hasButtons(scrollbar))
+        trackInfo.enableState = kThemeTrackNothingToScroll;
+    trackInfo.trackInfo.scrollbar.pressState = scrollbarPartToHIPressedState(scrollbar->pressedPart());
+    
+    HIThemeDrawTrack(&trackInfo, 0, context->platformContext(), kHIThemeOrientationNormal);
+    return true;
+#else
+    return false;
 #endif
 }
 

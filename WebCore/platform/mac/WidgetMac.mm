@@ -231,6 +231,12 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 
 void Widget::invalidateRect(const IntRect& r)
 {
+    if (!platformWidget() && parent()) {
+        IntPoint newPoint = parent()->convertChildToSelf(this, r.location());
+        parent()->invalidateRect(IntRect(newPoint, r.size()));
+        return;
+    }
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [platformWidget() setNeedsDisplayInRect: r];
     END_BLOCK_OBJC_EXCEPTIONS;
