@@ -1,3 +1,24 @@
+2008-09-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Improve timer resolution on WinXP.
+        https://bugs.webkit.org/show_bug.cgi?id=20979
+        
+        Removed last-chance timer. It should not be necessary.
+        Change timeEndPeriod timer to fire in 300ms instead of 20ms. Calling timeBeginPeriod/timeEndPeriod too often throws off accuracy.
+        Remove Vista checks. We now run the same code on both XP and Vista.
+        
+        Call through to JSC::getCurrentUTCTimeWithMicroseconds from WebCore::currentTime.
+        The code previously called GetSystemTimeAsFileTime, which is always low-resolution on XP, even within timeBeginPeriod(1).
+        
+        Reviewed by Maciej Stachowiak.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::):
+        (WebCore::TimerWindowWndProc):
+        (WebCore::setSharedTimerFireTime):
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::currentTime):
+
 2008-09-21  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by eseidel.  Landed by eseidel.

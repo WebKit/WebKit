@@ -62,7 +62,6 @@
 namespace WebCore {
 
 static UINT timerID;
-static UINT lastChanceTimerID;
 static void (*sharedTimerFiredFunction)();
 
 static HWND timerWindowHandle = 0;
@@ -75,33 +74,14 @@ static bool processingCustomTimerMessage = false;
 static LONG pendingTimers;
 
 const LPCWSTR kTimerWindowClassName = L"TimerWindowClass";
-const int timerResolution = 1;
-const int highResolutionThresholdMsec = 16;
-const int stopHighResTimerInMsec = 20;
-const int lastChanceTimerIntervalInMS = 5000;
+const int timerResolution = 1; // To improve timer resolution, we call timeBeginPeriod/timeEndPeriod with this value to increase timer resolution to 1ms.
+const int highResolutionThresholdMsec = 16; // Only activate high-res timer for sub-16ms timers (Windows can fire timers at 16ms intervals without changing the system resolution).
+const int stopHighResTimerInMsec = 300; // Stop high-res timer after 0.3 seconds to lessen power consumption (we don't use a smaller time since oscillating between high and low resolution breaks timer accuracy on XP).
 
 enum {
     sharedTimerID = 1000,
     endHighResTimerID = 1001,
-    lastChanceSharedTimerID = 1002,
 };
-
-static bool isRunningOnVistaOrLater()
-{
-    static bool os = false;
-    static bool initialized = false;
-    if (!initialized) {
-        OSVERSIONINFOEX vi = {sizeof(vi), 0};
-        GetVersionEx((OSVERSIONINFO*)&vi);
-
-        // NOTE: This does not work under a debugger - Vista shims Visual Studio, 
-        // making it believe it is xpsp2, which is inherited by debugged applications
-        os = vi.dwMajorVersion >= 6;
-        initialized = true;
-    }
-
-    return os;
-}
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -122,7 +102,7 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
     } else if (message == WM_TIMER) {
-        if (wParam == sharedTimerID || wParam == lastChanceSharedTimerID && !isDeferringTimers()) {
+        if (wParam == sharedTimerID && !isDeferringTimers()) {
             KillTimer(timerWindowHandle, sharedTimerID);
             sharedTimerFiredFunction();
         } else if (wParam == endHighResTimerID) {
@@ -176,7 +156,6 @@ static void NTAPI queueTimerProc(PVOID, BOOLEAN)
 void setSharedTimerFireTime(double fireTime)
 {
     ASSERT(sharedTimerFiredFunction);
-    bool isRunningVista = isRunningOnVistaOrLater();
 
     double interval = fireTime - currentTime();
     unsigned intervalInMS;
@@ -190,7 +169,7 @@ void setSharedTimerFireTime(double fireTime)
             intervalInMS = (unsigned)interval;
     }
 
-    if (isRunningVista && interval < highResolutionThresholdMsec) {
+    if (interval < highResolutionThresholdMsec) {
         if (!highResTimerActive) {
             highResTimerActive = true;
             timeBeginPeriod(timerResolution);
@@ -206,14 +185,13 @@ void setSharedTimerFireTime(double fireTime)
 
     // If the queue doesn't contains input events, we use a higher priorty timer event posting mechanism.
     if (!(queueStatus & (QS_MOUSEBUTTON | QS_KEY | QS_RAWINPUT))) {
-        if (((isRunningVista && !intervalInMS) || (!isRunningVista && intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage))
-            && !(queueStatus & QS_PAINT)) {
+        if (intervalInMS < USER_TIMER_MINIMUM && !processingCustomTimerMessage && !(queueStatus & QS_PAINT)) {
             // Call PostMessage immediately if the timer is already expired, unless a paint is pending.
             // (we prioritize paints over timers)
             if (InterlockedIncrement(&pendingTimers) == 1)
                 PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
             timerSet = true;
-        } else if (isRunningVista) {
+        } else {
             // Otherwise, delay the PostMessage via a CreateTimerQueueTimer
             if (!timerQueue)
                 timerQueue = CreateTimerQueue();
@@ -230,19 +208,8 @@ void setSharedTimerFireTime(double fireTime)
             KillTimer(timerWindowHandle, timerID);
             timerID = 0;
         }
-    } else {
+    } else
         timerID = SetTimer(timerWindowHandle, sharedTimerID, intervalInMS, 0);
-        if (!lastChanceTimerID) {
-            // The last chance timer fires every 5 seconds to run any lost WM_TIMER based timers.
-            // Failure to fire a timer is fatal to the cross-platform Timer code, since it won't re-schedule
-            // timers if a timer with an earlier expiration is already pending. This results in no timers
-            // firing from that point on.
-            // We lose WM_TIMER messages occasionally (in the neighborhood of 1 per hour) probably due to a
-            // buggy window message hook. This timer will start when the first WM_TIMER is scheduled, and will
-            // fire every 5 seconds thereafter.
-            lastChanceTimerID = SetTimer(timerWindowHandle, lastChanceSharedTimerID, lastChanceTimerIntervalInMS, 0);
-        }
-    }
 }
 
 void stopSharedTimer()

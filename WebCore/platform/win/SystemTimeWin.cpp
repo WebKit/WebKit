@@ -26,32 +26,17 @@
 #include "config.h"
 #include "SystemTime.h"
 
-#include "NotImplemented.h"
+#include <JavaScriptCore/DateMath.h>
 #include <windows.h>
 
 namespace WebCore {
 
 double currentTime()
 {
-    FILETIME ft;
-    GetSystemTimeAsFileTime(&ft);
-
-    // As per Windows documentation for FILETIME, copy the resulting FILETIME structure to a
-    // ULARGE_INTEGER structure using memcpy (using memcpy instead of direct assignment can
-    // prevent alignment faults on 64-bit Windows).
-
-    ULARGE_INTEGER t;
-    memcpy(&t, &ft, sizeof(t));
-
-    // Windows file times are in 100s of nanoseconds.
-    // To convert to seconds, we have to divide by 10,000,000, which is more quickly
-    // done by multiplying by 0.0000001.
-    
-    // Between January 1, 1601 and January 1, 1970, there were 369 complete years,
-    // of which 89 were leap years (1700, 1800, and 1900 were not leap years).
-    // That is a total of 134774 days, which is 11644473600 seconds.
-
-    return t.QuadPart * 0.0000001 - 11644473600.0;
+    // Call through to our high-resolution JSC time code, since calls like GetSystemTimeAsFileTime and ftime are only accurate within 15ms.
+    // This resolution can be improved with timeBeginPeriod/timeEndPeriod on Vista, but these calls don't
+    // improve the resolution of date/time getters (GetSystemTimeAsFileTime, ftime, etc.) on XP.
+    return JSC::getCurrentUTCTimeWithMicroseconds() * 0.001;
 }
 
 float userIdleTime()
