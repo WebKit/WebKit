@@ -21,6 +21,7 @@
 #ifndef StringObjectThatMasqueradesAsUndefined_h
 #define StringObjectThatMasqueradesAsUndefined_h
 
+#include "JSGlobalObject.h"
 #include "StringObject.h"
 #include "ustring.h"
 
@@ -29,12 +30,23 @@ namespace JSC {
     // WebCore uses this to make style.filter undetectable
     class StringObjectThatMasqueradesAsUndefined : public StringObject {
     public:
+        static StringObjectThatMasqueradesAsUndefined* create(ExecState* exec, const UString& string)
+        {
+            return new (exec) StringObjectThatMasqueradesAsUndefined(exec,
+                createStructureID(exec->lexicalGlobalObject()->stringPrototype()), string);
+        }
+
+    private:
         StringObjectThatMasqueradesAsUndefined(ExecState* exec, PassRefPtr<StructureID> structure, const UString& string)
             : StringObject(exec, structure, string)
         {
         }
 
-        virtual bool masqueradeAsUndefined() const { return true; }
+        static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+        { 
+            return StructureID::create(proto, TypeInfo(ObjectType, MasqueradesAsUndefined)); 
+        }
+
         virtual bool toBoolean(ExecState*) const { return false; }
     };
  

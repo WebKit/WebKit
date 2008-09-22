@@ -1,3 +1,42 @@
+2008-09-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Based on initial work by Darin Adler.
+        
+        - replace masqueradesAsUndefined virtual method with a flag in TypeInfo
+        - use this to JIT inline code for eq_null and neq_null
+        https://bugs.webkit.org/show_bug.cgi?id=20823
+
+        0.5% speedup on SunSpider
+        ~4% speedup on Richards benchmark
+        
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/Machine.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_is_undefined):
+        * VM/Machine.h:
+        * kjs/JSCell.h:
+        * kjs/JSValue.h:
+        * kjs/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::create):
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructureID):
+        * kjs/StructureID.h:
+        (JSC::StructureID::mutableTypeInfo):
+        * kjs/TypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::masqueradesAsUndefined):
+        * kjs/operations.cpp:
+        (JSC::equal):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::setne_r):
+        (JSC::X86Assembler::setnz_r):
+        (JSC::X86Assembler::testl_i32m):
+
 2008-09-22  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

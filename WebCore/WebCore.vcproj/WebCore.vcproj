@@ -13393,6 +13393,9 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSHTMLAllCollection.cpp"
+					>
+				<File
 					RelativePath="..\bindings\js\JSHTMLAppletElementCustom.cpp"
 					>
 				</File>

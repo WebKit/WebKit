@@ -56,8 +56,6 @@ namespace JSC {
      */
     class JSValue : Noncopyable {
         friend class JSCell; // so it can derive from this class
-        friend class Heap; // so it can call asCell()
-        friend class Machine; // so it can call asCell()
     private:
         JSValue();
         virtual ~JSValue();
@@ -145,15 +143,14 @@ namespace JSC {
 
         JSValue* getJSNumber(); // 0 if this is not a JSNumber or number object
 
+        JSCell* asCell();
+        const JSCell* asCell() const;
+
     private:
         bool getPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         int32_t toInt32SlowCase(ExecState*, bool& ok) const;
         uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
-
-        // Implementation details.
-        JSCell* asCell();
-        const JSCell* asCell() const;
     };
 
     inline JSValue::JSValue()

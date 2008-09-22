@@ -1,3 +1,23 @@
+2008-09-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Based on initial work by Darin Adler.
+        
+        - replace masqueradesAsUndefined virtual method with a flag in TypeInfo
+        - use this to JIT inline code for eq_null and neq_null
+        https://bugs.webkit.org/show_bug.cgi?id=20823
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        * bindings/js/JSHTMLAllCollection.cpp: Added.
+        (WebCore::):
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::createStructureID):
+        (WebCore::JSHTMLAllCollection::toBoolean):
+
 2008-09-22  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

@@ -53,15 +53,15 @@ startOver:
     if (v1->isUndefinedOrNull()) {
         if (v2->isUndefinedOrNull())
             return true;
-        if (!v2->isObject())
+        if (JSImmediate::isImmediate(v2))
             return false;
-        return static_cast<JSObject*>(v2)->masqueradeAsUndefined();
+        return v2->asCell()->structureID()->typeInfo().masqueradesAsUndefined();
     }
 
     if (v2->isUndefinedOrNull()) {
-        if (!v1->isObject())
+        if (JSImmediate::isImmediate(v1))
             return false;
-        return static_cast<JSObject*>(v1)->masqueradeAsUndefined();
+        return v1->asCell()->structureID()->typeInfo().masqueradesAsUndefined();
     }
 
     if (v1->isObject()) {

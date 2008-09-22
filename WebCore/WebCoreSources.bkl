@@ -60,6 +60,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSEventCustom.cpp
         bindings/js/JSEventTargetBase.cpp
         bindings/js/JSEventTargetNode.cpp
+        bindings/js/JSHTMLAllCollection.cpp
         bindings/js/JSHistoryCustom.cpp
         bindings/js/JSHTMLAppletElementCustom.cpp
         bindings/js/JSHTMLCollectionCustom.cpp

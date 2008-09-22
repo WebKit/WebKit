@@ -379,6 +379,7 @@ SOURCES += \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSEventTargetNode.cpp \
+    bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
     bindings/js/JSJavaScriptCallFrameCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \

@@ -100,6 +100,9 @@ namespace JSC {
 
         const TypeInfo& typeInfo() const { return m_typeInfo; }
 
+        // For use when first creating a new structure.
+        TypeInfo& mutableTypeInfo() { return m_typeInfo; }
+
         JSValue* storedPrototype() const { return m_prototype; }
         JSValue* prototypeForLookup(ExecState*); 
 

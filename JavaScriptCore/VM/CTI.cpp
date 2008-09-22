@@ -1590,16 +1590,62 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_eq_null: {
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCall(i, Machine::cti_op_eq_null);
-            emitPutResult(instruction[i + 1].u.operand);
+            unsigned dst = instruction[i + 1].u.operand;
+            unsigned src1 = instruction[i + 2].u.operand;
+
+            emitGetArg(src1, X86::eax);
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::eax);
+            X86Assembler::JmpSrc isImmediate = m_jit.emitUnlinkedJnz();
+
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
+            m_jit.testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::ecx);
+            m_jit.setnz_r(X86::eax);
+
+            X86Assembler::JmpSrc wasNotImmediate = m_jit.emitUnlinkedJmp();
+
+            m_jit.link(isImmediate, m_jit.label());
+
+            m_jit.movl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::ecx);
+            m_jit.andl_rr(X86::eax, X86::ecx);
+            m_jit.cmpl_i32r(JSImmediate::FullTagTypeNull, X86::ecx);
+            m_jit.sete_r(X86::eax);
+
+            m_jit.link(wasNotImmediate, m_jit.label());
+
+            m_jit.movzbl_rr(X86::eax, X86::eax);
+            emitTagAsBoolImmediate(X86::eax);
+            emitPutResult(dst);
+
             i += 3;
             break;
         }
         case op_neq_null: {
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCall(i, Machine::cti_op_neq_null);
-            emitPutResult(instruction[i + 1].u.operand);
+            unsigned dst = instruction[i + 1].u.operand;
+            unsigned src1 = instruction[i + 2].u.operand;
+
+            emitGetArg(src1, X86::eax);
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::eax);
+            X86Assembler::JmpSrc isImmediate = m_jit.emitUnlinkedJnz();
+
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
+            m_jit.testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::ecx);
+            m_jit.setz_r(X86::eax);
+
+            X86Assembler::JmpSrc wasNotImmediate = m_jit.emitUnlinkedJmp();
+
+            m_jit.link(isImmediate, m_jit.label());
+
+            m_jit.movl_i32r(~JSImmediate::ExtendedTagBitUndefined, X86::ecx);
+            m_jit.andl_rr(X86::eax, X86::ecx);
+            m_jit.cmpl_i32r(JSImmediate::FullTagTypeNull, X86::ecx);
+            m_jit.setne_r(X86::eax);
+
+            m_jit.link(wasNotImmediate, m_jit.label());
+
+            m_jit.movzbl_rr(X86::eax, X86::eax);
+            emitTagAsBoolImmediate(X86::eax);
+            emitPutResult(dst);
+
             i += 3;
             break;
         }

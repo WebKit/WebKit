@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -21,33 +20,16 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TypeInfo_h
-#define TypeInfo_h
+#include "config.h"
+#include "JSHTMLAllCollection.h"
 
-#include "JSType.h"
+using namespace JSC;
 
-namespace JSC {
+namespace WebCore {
 
-    // WebCore uses this to make document.all and style.filter undetectable.
-    static const unsigned MasqueradesAsUndefined = 0x1;
+const ClassInfo JSHTMLAllCollection::s_info = { "HTMLAllCollection", 0, 0, 0 };
 
-    class TypeInfo {
-        friend class CTI;
-    public:
-        TypeInfo(JSType type, unsigned flags = 0) : m_type(type), m_flags(flags) { }
-
-        JSType type() const { return m_type; }
-
-        bool masqueradesAsUndefined() const { return m_flags & MasqueradesAsUndefined; }
-
-    private:
-        JSType m_type;
-        unsigned m_flags;
-    };
-
-}
-
-#endif // TypeInfo_h
+} // namespace WebCore
