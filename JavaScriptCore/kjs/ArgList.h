@@ -66,6 +66,18 @@ namespace JSC {
         {
         }
 
+        void initialize(Register* buffer, size_t size)
+        {
+            ASSERT(!m_markSet);
+            ASSERT(isEmpty());
+
+            m_buffer = buffer;
+            m_size = size;
+#ifndef NDEBUG
+            m_isReadOnly = true;
+#endif
+        }
+
         ~ArgList()
         {
             if (m_markSet)

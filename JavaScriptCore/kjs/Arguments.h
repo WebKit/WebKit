@@ -43,6 +43,8 @@ namespace JSC {
 
         virtual void mark();
 
+        void fillArgList(ExecState*, ArgList&);
+
     private:
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

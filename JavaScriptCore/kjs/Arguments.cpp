@@ -91,6 +91,39 @@ void Arguments::mark()
         d->activation->mark();
 }
 
+void Arguments::fillArgList(ExecState* exec, ArgList& args)
+{
+    if (!d->deletedArguments) {
+        if (d->numParameters == d->numArguments) {
+            args.initialize(&d->activation->registerAt(d->firstArgumentIndex), d->numArguments);
+            return;
+        }
+
+        unsigned parametersLength = min(d->numParameters, d->numArguments);
+        unsigned i = 0;
+        for (; i < parametersLength; ++i)
+            args.append(d->activation->uncheckedSymbolTableGetValue(d->firstArgumentIndex + i));
+        for (; i < d->numArguments; ++i)
+            args.append(d->extraArguments[i - d->numParameters]);
+        return;
+    }
+
+    unsigned parametersLength = min(d->numParameters, d->numArguments);
+    unsigned i = 0;
+    for (; i < parametersLength; ++i) {
+        if (!d->deletedArguments[i])
+            args.append(d->activation->uncheckedSymbolTableGetValue(d->firstArgumentIndex + i));
+        else
+            args.append(get(exec, i));
+    }
+    for (; i < d->numArguments; ++i) {
+        if (!d->deletedArguments[i])
+            args.append(d->extraArguments[i - d->numParameters]);
+        else
+            args.append(get(exec, i));
+    }
+}
+
 bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {

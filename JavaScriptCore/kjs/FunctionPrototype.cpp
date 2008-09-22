@@ -95,14 +95,15 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject*, JSValue* thisValue, 
 
     ArgList applyArgs;
     if (!argArray->isUndefinedOrNull()) {
-        if (argArray->isObject() &&
-            (static_cast<JSObject*>(argArray)->inherits(&JSArray::info) ||
-             static_cast<JSObject*>(argArray)->inherits(&Arguments::info))) {
-
-            JSObject* argArrayObj = static_cast<JSObject*>(argArray);
-            unsigned int length = argArrayObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
-            for (unsigned int i = 0; i < length; i++)
-                applyArgs.append(argArrayObj->get(exec, i));
+        if (argArray->isObject()) {
+            if (static_cast<JSObject*>(argArray)->classInfo() == &Arguments::info)
+                static_cast<Arguments*>(argArray)->fillArgList(exec, applyArgs);
+            else if (exec->machine()->isJSArray(argArray))
+                static_cast<JSArray*>(argArray)->fillArgList(exec, applyArgs);
+            else if (static_cast<JSObject*>(argArray)->inherits(&JSArray::info))
+                static_cast<JSArray*>(argArray)->fillArgList(exec, applyArgs);
+            else
+                return throwError(exec, TypeError);
         } else
             return throwError(exec, TypeError);
     }

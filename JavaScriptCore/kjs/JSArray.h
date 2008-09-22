@@ -74,6 +74,8 @@ namespace JSC {
             return m_storage->m_vector[i] = v;
         }
 
+        void fillArgList(ExecState*, ArgList&);
+
     protected:
         virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);

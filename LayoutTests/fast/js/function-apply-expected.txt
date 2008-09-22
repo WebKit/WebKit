@@ -1,0 +1,25 @@
+Tests to ensure that Function.apply works correctly for Arrays and arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS argumentsApply1(1, 2, 3) is 1
+PASS argumentsApply2(1, 2, 3) is 2
+PASS argumentsApply3(1, 2, 3) is 3
+PASS argumentsApplyLength(1, 2, 3) is 3
+PASS arrayApply1([1, 2, 3]) is 1
+PASS arrayApply2([1, 2, 3]) is 2
+PASS arrayApply3([1, 2, 3]) is 3
+PASS arrayApplyLength([1, 2, 3]) is 3
+PASS argumentsApplyDelete1(1, 2, 3) is 1
+PASS argumentsApplyDelete2(1, 2, 3) is undefined
+PASS argumentsApplyDelete3(1, 2, 3) is 3
+PASS argumentsApplyDeleteLength(1, 2, 3) is 3
+PASS arrayApplyDelete1([1, 2, 3]) is 1
+PASS arrayApplyDelete2([1, 2, 3]) is undefined
+PASS arrayApplyDelete3([1, 2, 3]) is 3
+PASS arrayApplyDeleteLength([1, 2, 3]) is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

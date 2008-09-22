@@ -1,3 +1,23 @@
+2008-09-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=20982
+        Speed up the apply method of functions by special-casing array and 'arguments' objects
+
+        1% speedup on v8-raytrace.
+
+        Test: fast/js/function-apply.html
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::fillArgList):
+        * kjs/Arguments.h:
+        * kjs/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncApply):
+        * kjs/JSArray.cpp:
+        (JSC::JSArray::fillArgList):
+        * kjs/JSArray.h:
+
 2008-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
