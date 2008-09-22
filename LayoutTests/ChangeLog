@@ -1,3 +1,26 @@
+2008-09-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - tests and updated results for <rdar://problem/5158514> Switch the complex text code path to Core Text
+
+        * platform/mac-snowleopard/fast: Added.
+        * platform/mac-snowleopard/fast/text: Added.
+        * platform/mac-snowleopard/fast/text/atsui-multiple-renderers-expected.checksum: Added.
+        * platform/mac-snowleopard/fast/text/atsui-multiple-renderers-expected.png: Added.
+        * platform/mac-snowleopard/fast/text/atsui-multiple-renderers-expected.txt: Added.
+        * platform/mac-snowleopard/fast/text/myanmar-shaping-expected.checksum: Added.
+        * platform/mac-snowleopard/fast/text/myanmar-shaping-expected.png: Added.
+        * platform/mac-snowleopard/fast/text/myanmar-shaping-expected.txt: Added.
+        * platform/mac-snowleopard/fast/text/myanmar-shaping.html: Added.
+        * platform/mac-snowleopard/fast/text/resources: Added.
+        * platform/mac-snowleopard/fast/text/resources/Garuda.ttf: Added from http://www.w3.org/International/tests/test-webfonts/test-thai-tibetan-myanmar.html.
+        * platform/mac-snowleopard/fast/text/resources/mm3.ttf: Added from http://www.w3.org/International/tests/test-webfonts/test-thai-tibetan-myanmar.html.
+        * platform/mac-snowleopard/fast/text/thai-combining-mark-positioning-expected.checksum: Added.
+        * platform/mac-snowleopard/fast/text/thai-combining-mark-positioning-expected.png: Added.
+        * platform/mac-snowleopard/fast/text/thai-combining-mark-positioning-expected.txt: Added.
+        * platform/mac-snowleopard/fast/text/thai-combining-mark-positioning.html: Added.
+
 2008-09-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

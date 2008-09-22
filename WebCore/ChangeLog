@@ -1,3 +1,14 @@
+2008-09-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5158514> Switch the complex text code path to Core Text
+
+        Tests: platform/mac-snowleopard/fast/text/myanmar-shaping.html
+               platform/mac-snowleopard/fast/text/thai-combining-mark-positioning.html
+
+        * config.h: Use Core Text if not building for Leopard or Tiger.
+
 2008-09-22  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21006
