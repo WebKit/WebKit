@@ -224,6 +224,9 @@ static IntRect trackRepaintRect(const IntRect& trackRect, ScrollbarOrientation o
 
 IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 {
+    if (painting || !hasButtons(scrollbar))
+        return scrollbar->frameGeometry();
+    
     IntRect result;
     int thickness = scrollbarThickness(scrollbar->controlSize());
     int startWidth = 0;
@@ -249,15 +252,10 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
         default:
             break;
     }
+    
     int totalWidth = startWidth + endWidth;
-
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        if (!hasButtons(scrollbar))
-            result = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), thickness);
-        else
-            result = IntRect(scrollbar->x() + startWidth, scrollbar->y(), scrollbar->width() - totalWidth, thickness);
-    } else if (!hasButtons(scrollbar))
-        result = IntRect(scrollbar->x(), scrollbar->y(), thickness, scrollbar->height());
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        result = IntRect(scrollbar->x() + startWidth, scrollbar->y(), scrollbar->width() - totalWidth, thickness);
     else
         result = IntRect(scrollbar->x(), scrollbar->y() + startWidth, thickness, scrollbar->height() - totalWidth);
     if (painting)
