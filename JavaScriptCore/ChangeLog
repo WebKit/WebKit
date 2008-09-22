@@ -1,3 +1,40 @@
+2008-09-22  Kelvin Sherlock  <ksherlock@gmail.com>
+
+        Updated and tweaked by Sam Weinig.
+
+        Reviewed by Geoffrey Garen.
+
+        Bug 20020: Proposed enhancement to JavaScriptCore API
+        <https://bugs.webkit.org/show_bug.cgi?id=20020>
+
+        Add JSObjectMakeArray, JSObjectMakeDate, JSObjectMakeError, and JSObjectMakeRegExp
+        functions to create JavaScript Array, Date, Error, and RegExp objects, respectively.
+
+        * API/JSObjectRef.cpp: The functions
+        * API/JSObjectRef.h: Function prototype and documentation
+        * JavaScriptCore.exp: Added functions to exported function list
+        * API/tests/testapi.c: Added basic functionality tests.
+
+        * kjs/DateConstructor.cpp:
+        Replaced static JSObject* constructDate(ExecState* exec, JSObject*, const ArgList& args)
+        with JSObject* constructDate(ExecState* exec, const ArgList& args).
+        Added static JSObject* constructWithDateConstructor(ExecState* exec, JSObject*, const ArgList& args) function
+
+        * kjs/DateConstructor.h:
+        added prototype for JSObject* constructDate(ExecState* exec, const ArgList& args)
+
+        * kjs/ErrorConstructor.cpp:
+        removed static qualifier from ErrorInstance* constructError(ExecState* exec, const ArgList& args)
+
+        * kjs/ErrorConstructor.h:
+        added prototype for ErrorInstance* constructError(ExecState* exec, const ArgList& args)
+
+        * kjs/RegExpConstructor.cpp:
+        removed static qualifier from JSObject* constructRegExp(ExecState* exec, const ArgList& args)
+
+        * kjs/RegExpConstructor.h:
+        added prototype for JSObject* constructRegExp(ExecState* exec, const ArgList& args)
+
 2008-09-22  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, Windows build fix.

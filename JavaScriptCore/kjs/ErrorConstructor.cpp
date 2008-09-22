@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ErrorConstructor.h"
 
-#include "ErrorInstance.h"
 #include "ErrorPrototype.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
@@ -39,7 +38,7 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, PassRefPtr<StructureID> stru
 }
 
 // ECMA 15.9.3
-static ErrorInstance* constructError(ExecState* exec, const ArgList& args)
+ErrorInstance* constructError(ExecState* exec, const ArgList& args)
 {
     ErrorInstance* obj = new (exec) ErrorInstance(exec->lexicalGlobalObject()->errorStructure());
     if (!args.at(exec, 0)->isUndefined())

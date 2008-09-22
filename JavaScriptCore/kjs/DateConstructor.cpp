@@ -64,7 +64,7 @@ DateConstructor::DateConstructor(ExecState* exec, PassRefPtr<StructureID> struct
 }
 
 // ECMA 15.9.3
-static JSObject* constructDate(ExecState* exec, JSObject*, const ArgList& args)
+JSObject* constructDate(ExecState* exec, const ArgList& args)
 {
     int numArgs = args.size();
 
@@ -110,10 +110,15 @@ static JSObject* constructDate(ExecState* exec, JSObject*, const ArgList& args)
     result->setInternalValue(jsNumber(exec, timeClip(value)));
     return result;
 }
+    
+static JSObject* constructWithDateConstructor(ExecState* exec, JSObject*, const ArgList& args)
+{
+    return constructDate(exec, args);
+}
 
 ConstructType DateConstructor::getConstructData(ConstructData& constructData)
 {
-    constructData.native.function = constructDate;
+    constructData.native.function = constructWithDateConstructor;
     return ConstructTypeHost;
 }
 

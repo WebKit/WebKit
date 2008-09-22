@@ -26,9 +26,13 @@ _JSObjectHasProperty
 _JSObjectIsConstructor
 _JSObjectIsFunction
 _JSObjectMake
+_JSObjectMakeArray
 _JSObjectMakeConstructor
+_JSObjectMakeDate
+_JSObjectMakeError
 _JSObjectMakeFunction
 _JSObjectMakeFunctionWithCallback
+_JSObjectMakeRegExp
 _JSObjectSetPrivate
 _JSObjectSetProperty
 _JSObjectSetPropertyAtIndex

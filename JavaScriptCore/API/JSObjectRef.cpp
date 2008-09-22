@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Kelvin W Sherlock (ksherlock@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,10 @@
 #include "JSObjectRef.h"
 
 #include "APICast.h"
+#include "DateConstructor.h"
+#include "ErrorConstructor.h"
 #include "FunctionConstructor.h"
+#include "JSArray.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
@@ -40,6 +44,7 @@
 #include "JSValueRef.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
+#include "RegExpConstructor.h"
 #include "identifier.h"
 #include <wtf/Platform.h>
 
@@ -127,6 +132,95 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
         exec->clearException();
         result = 0;
     }
+    return toRef(result);
+}
+
+JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
+{
+    ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
+    JSLock lock(exec);
+
+    JSObject* result;
+    if (argumentCount) {
+        ArgList argList;
+        for (size_t i = 0; i < argumentCount; ++i)
+            argList.append(toJS(arguments[i]));
+
+        result = constructArray(exec, argList);
+    } else
+        result = constructEmptyArray(exec);
+
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+        result = 0;
+    }
+
+    return toRef(result);
+}
+
+JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
+{
+    ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
+    JSLock lock(exec);
+
+    ArgList argList;
+    for (size_t i = 0; i < argumentCount; ++i)
+        argList.append(toJS(arguments[i]));
+
+    JSObject* result = constructDate(exec, argList);
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+        result = 0;
+    }
+
+    return toRef(result);
+}
+
+JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
+{
+    ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
+    JSLock lock(exec);
+
+    ArgList argList;
+    for (size_t i = 0; i < argumentCount; ++i)
+        argList.append(toJS(arguments[i]));
+
+    JSObject* result = constructError(exec, argList);
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+        result = 0;
+    }
+
+    return toRef(result);
+}
+
+JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
+{
+    ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
+    JSLock lock(exec);
+
+    ArgList argList;
+    for (size_t i = 0; i < argumentCount; ++i)
+        argList.append(toJS(arguments[i]));
+
+    JSObject* result = constructRegExp(exec, argList);
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec->exception());
+        exec->clearException();
+        result = 0;
+    }
+    
     return toRef(result);
 }
 

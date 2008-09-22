@@ -21,6 +21,7 @@
 #ifndef ErrorConstructor_h
 #define ErrorConstructor_h
 
+#include "ErrorInstance.h"
 #include "InternalFunction.h"
 
 namespace JSC {
@@ -35,6 +36,8 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
     };
+
+    ErrorInstance* constructError(ExecState*, const ArgList&);
 
 } // namespace JSC
 
