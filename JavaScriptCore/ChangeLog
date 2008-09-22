@@ -1,3 +1,57 @@
+2008-09-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - introduce a TypeInfo class, for holding per-type (in the C++ class sense) date in StructureID
+        https://bugs.webkit.org/show_bug.cgi?id=20981
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        * VM/Machine.cpp:
+        (JSC::jsIsObjectType):
+        (JSC::Machine::Machine):
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSCell.h:
+        (JSC::JSCell::isObject):
+        (JSC::JSCell::isString):
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * kjs/JSGlobalObject.h:
+        (JSC::StructureID::prototypeForLookup):
+        * kjs/JSNumberCell.h:
+        (JSC::JSNumberCell::createStructureID):
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::createInheritorID):
+        * kjs/JSObject.h:
+        (JSC::JSObject::createStructureID):
+        * kjs/JSString.h:
+        (JSC::JSString::createStructureID):
+        * kjs/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * kjs/RegExpConstructor.cpp:
+        * kjs/RegExpMatchesArray.h: Added.
+        (JSC::RegExpMatchesArray::getOwnPropertySlot):
+        (JSC::RegExpMatchesArray::put):
+        (JSC::RegExpMatchesArray::deleteProperty):
+        (JSC::RegExpMatchesArray::getPropertyNames):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::addPropertyTransition):
+        (JSC::StructureID::toDictionaryTransition):
+        (JSC::StructureID::changePrototypeTransition):
+        (JSC::StructureID::getterSetterTransition):
+        * kjs/StructureID.h:
+        (JSC::StructureID::create):
+        (JSC::StructureID::typeInfo):
+        * kjs/TypeInfo.h: Added.
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::type):
+
 2008-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.

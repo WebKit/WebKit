@@ -1,3 +1,4 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -29,6 +30,7 @@
 #include "JSType.h"
 #include "JSValue.h"
 #include "PropertyMap.h"
+#include "TypeInfo.h"
 #include "ustring.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
@@ -75,9 +77,9 @@ namespace JSC {
     class StructureID : public RefCounted<StructureID> {
     public:
         friend class CTI;
-        static PassRefPtr<StructureID> create(JSValue* prototype, JSType type = ObjectType)
+        static PassRefPtr<StructureID> create(JSValue* prototype, const TypeInfo& typeInfo)
         {
-            return adoptRef(new StructureID(prototype, type));
+            return adoptRef(new StructureID(prototype, typeInfo));
         }
 
         static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
@@ -96,7 +98,7 @@ namespace JSC {
 
         bool isDictionary() const { return m_isDictionary; }
 
-        JSType type() const { return m_type; }
+        const TypeInfo& typeInfo() const { return m_typeInfo; }
 
         JSValue* storedPrototype() const { return m_prototype; }
         JSValue* prototypeForLookup(ExecState*); 
@@ -119,12 +121,13 @@ namespace JSC {
         typedef std::pair<RefPtr<UString::Rep>, unsigned> TransitionTableKey;
         typedef HashMap<TransitionTableKey, StructureID*, TransitionTableHash, TransitionTableHashTraits> TransitionTable;
 
-        StructureID(JSValue* prototype, JSType);
+        StructureID(JSValue* prototype, const TypeInfo&);
         
         static const size_t s_maxTransitionLength = 64;
 
+        TypeInfo m_typeInfo;
+
         bool m_isDictionary;
-        JSType m_type;
 
         JSValue* m_prototype;
         RefPtr<StructureIDChain> m_cachedPrototypeChain;

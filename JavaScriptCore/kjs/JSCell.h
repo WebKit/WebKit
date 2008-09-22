@@ -123,12 +123,12 @@ namespace JSC {
 
     inline bool JSCell::isObject() const
     {
-        return m_structureID->type() == ObjectType;
+        return m_structureID->typeInfo().type() == ObjectType;
     }
 
     inline bool JSCell::isString() const
     {
-        return m_structureID->type() == StringType;
+        return m_structureID->typeInfo().type() == StringType;
     }
 
     inline StructureID* JSCell::structureID() const

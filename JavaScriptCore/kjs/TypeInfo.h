@@ -1,5 +1,6 @@
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +21,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef TypeInfo_h
+#define TypeInfo_h
 
-#if ENABLE(XSLT)
+#include "JSType.h"
 
-#include "JSXSLTProcessorConstructor.h"
+namespace JSC {
 
-#include "JSXSLTProcessor.h"
-#include "XSLTProcessor.h"
-#include <wtf/RefPtr.h>
+    class TypeInfo {
+        friend class CTI;
+    public:
+        TypeInfo(JSType type) : m_type(type) { }
+        
+        JSType type() const { return m_type; }
 
-using namespace JSC;
+    private:
+        JSType m_type;
+    };
 
-namespace WebCore {
-
-ASSERT_CLASS_FITS_IN_CELL(JSXSLTProcessorConstructor)
-
-const ClassInfo JSXSLTProcessorConstructor::s_info = { "XSLTProcessorConsructor", 0, 0, 0 };
-
-JSXSLTProcessorConstructor::JSXSLTProcessorConstructor(ExecState* exec)
-    : DOMObject(JSXSLTProcessorConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-{
-    putDirect(exec->propertyNames().prototype, JSXSLTProcessorPrototype::self(exec), None);
 }
 
-static JSObject* constructXSLTProcessor(ExecState* exec, JSObject*, const ArgList& args)
-{
-    return CREATE_DOM_OBJECT_WRAPPER(exec, XSLTProcessor, XSLTProcessor::create().get());
-}
-
-ConstructType JSXSLTProcessorConstructor::getConstructData(ConstructData& constructData)
-{
-    constructData.native.function = constructXSLTProcessor;
-    return ConstructTypeHost;
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(XSLT)
+#endif // TypeInfo_h

@@ -950,9 +950,9 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(JSC::StructureID::create(${parentClassName}Prototype::self(exec)));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructureID(${parentClassName}Prototype::self(exec)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(JSC::StructureID::create(exec->lexicalGlobalObject()->objectPrototype()));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructureID(exec->lexicalGlobalObject()->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -1811,7 +1811,7 @@ my $implContent = << "EOF";
 class ${className}Constructor : public DOMObject {
 public:
     ${className}Constructor(ExecState* exec)
-        : DOMObject(StructureID::create(exec->lexicalGlobalObject()->objectPrototype()))
+        : DOMObject(${className}Constructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
     {
         putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
     }

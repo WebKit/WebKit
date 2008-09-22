@@ -922,7 +922,7 @@ void CTI::privateCompileMainPass()
             m_jit.testl_i32r(JSImmediate::TagMask, X86::eax);
             X86Assembler::JmpSrc isImmediate = m_jit.emitUnlinkedJne();
             m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_type), X86::ecx);
+            m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
             X86Assembler::JmpSrc isObject = m_jit.emitUnlinkedJe();
 
             m_jit.link(isImmediate, m_jit.label());
@@ -2408,7 +2408,7 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
     //  ecx = baseObject
     m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
     // proto(ecx) = baseObject->structureID()->prototype()
-    m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_type), X86::ecx);
+    m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
     failureCases.append(m_jit.emitUnlinkedJne());
     m_jit.movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
     
@@ -2423,7 +2423,7 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
         failureCases.append(m_jit.emitUnlinkedJne());
         
         m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::ecx, X86::ecx);
-        m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_type), X86::ecx);
+        m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
         failureCases.append(m_jit.emitUnlinkedJne());
         m_jit.movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
     }

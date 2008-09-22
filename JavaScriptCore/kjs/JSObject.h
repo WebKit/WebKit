@@ -181,6 +181,8 @@ namespace JSC {
 
         static const size_t inlineStorageCapacity = 2;
 
+        static PassRefPtr<StructureID> createStructureID(JSValue* proto) { return StructureID::create(proto, TypeInfo(ObjectType)); }
+
     protected:
         bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
 

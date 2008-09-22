@@ -26,6 +26,11 @@
 #define JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE 1
 #include "config.h"
 
+// these headers are included here to avoid confusion between ::JSType and JSC::JSType
+#include "JSCallbackConstructor.h"
+#include "JSCallbackFunction.h"
+#include "JSCallbackObject.h"
+
 #include "JSStaticScopeObject.cpp"
 #include "JSFunction.cpp"
 #include "Arguments.cpp"

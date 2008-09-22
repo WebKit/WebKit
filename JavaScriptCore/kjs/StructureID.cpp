@@ -36,9 +36,9 @@ using namespace std;
 
 namespace JSC {
 
-StructureID::StructureID(JSValue* prototype, JSType type)
-    : m_isDictionary(false)
-    , m_type(type)
+StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
+    : m_typeInfo(typeInfo)
+    , m_isDictionary(false)
     , m_prototype(prototype)
     , m_cachedPrototypeChain(0)
     , m_previous(0)
@@ -141,7 +141,7 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
         return transition.release();
     }
 
-    RefPtr<StructureID> transition = create(structureID->m_prototype);
+    RefPtr<StructureID> transition = create(structureID->m_prototype, structureID->typeInfo());
     transition->m_cachedPrototypeChain = structureID->m_cachedPrototypeChain;
     transition->m_previous = structureID;
     transition->m_nameInPrevious = propertyName.ustring().rep();
@@ -159,7 +159,7 @@ PassRefPtr<StructureID> StructureID::toDictionaryTransition(StructureID* structu
 {
     ASSERT(!structureID->m_isDictionary);
 
-    RefPtr<StructureID> transition = create(structureID->m_prototype);
+    RefPtr<StructureID> transition = create(structureID->m_prototype, structureID->typeInfo());
     transition->m_isDictionary = true;
     transition->m_propertyMap = structureID->m_propertyMap;
     return transition.release();
@@ -178,7 +178,7 @@ PassRefPtr<StructureID> StructureID::fromDictionaryTransition(StructureID* struc
 
 PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* structureID, JSValue* prototype)
 {
-    RefPtr<StructureID> transition = create(prototype);
+    RefPtr<StructureID> transition = create(prototype, structureID->typeInfo());
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
     return transition.release();
@@ -186,7 +186,7 @@ PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* stru
 
 PassRefPtr<StructureID> StructureID::getterSetterTransition(StructureID* structureID)
 {
-    RefPtr<StructureID> transition = create(structureID->storedPrototype());
+    RefPtr<StructureID> transition = create(structureID->storedPrototype(), structureID->typeInfo());
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
     return transition.release();

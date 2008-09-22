@@ -379,11 +379,11 @@ StructureID* getCachedDOMStructure(ExecState* exec, const ClassInfo* classInfo)
     return structures.get(classInfo).get();
 }
 
-StructureID* createDOMStructure(ExecState* exec, const ClassInfo* classInfo, JSObject* prototype)
+StructureID* cacheDOMStructure(ExecState* exec, PassRefPtr<StructureID> structureID, const ClassInfo* classInfo)
 {
     JSDOMStructureMap& structures = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject())->structures();
     ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, StructureID::create(prototype)).first->second.get();
+    return structures.set(classInfo, structureID).first->second.get();
 }
 
 JSObject* getCachedDOMConstructor(ExecState* exec, const ClassInfo* classInfo)

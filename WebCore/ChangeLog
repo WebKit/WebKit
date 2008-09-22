@@ -1,3 +1,33 @@
+2008-09-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - introduce a TypeInfo class, for holding per-type (in the C++ class sense) date in StructureID
+        https://bugs.webkit.org/show_bug.cgi?id=20981
+        
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMStructure):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getDOMStructure):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::createPrototype):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.

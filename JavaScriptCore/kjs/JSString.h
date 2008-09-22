@@ -82,6 +82,8 @@ namespace JSC {
         bool canGetIndex(unsigned i) { return i < static_cast<unsigned>(m_value.size()); }
         JSString* getIndex(ExecState*, unsigned);
 
+        static PassRefPtr<StructureID> createStructureID(JSValue* proto) { return StructureID::create(proto, TypeInfo(StringType)); }
+
     private:
         enum VPtrStealingHackType { VPtrStealingHack };
         JSString(VPtrStealingHackType) 

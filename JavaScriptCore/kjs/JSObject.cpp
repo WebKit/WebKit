@@ -499,7 +499,7 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue**
 
 StructureID* JSObject::createInheritorID()
 {
-    m_inheritorID = StructureID::create(this);
+    m_inheritorID = JSObject::createStructureID(this);
     return m_inheritorID.get();
 }
 
