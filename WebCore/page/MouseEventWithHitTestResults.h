@@ -39,6 +39,7 @@ public:
     const IntPoint localPoint() const;
     Scrollbar* scrollbar() const;
     bool isOverLink() const;
+    bool isOverWidget() const { return m_hitTestResult.isOverWidget(); }
 
 private:
     PlatformMouseEvent m_event;

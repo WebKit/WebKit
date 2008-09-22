@@ -1,3 +1,37 @@
+2008-09-22  David Hyatt  <hyatt@apple.com>
+
+        Fix a hit testing bug where events are mistakenly passed to subframes
+        if the mouse is over the border or padding area of the frame.  Add
+        a boolean flag, isOverWidget(), to hit test results so that EventHandler
+        can check it to tell if the mouse is really over the content box of a
+        RenderWidget and not just in the border/padding area.
+
+        This is not testable, since the old code properly recovered when it detected
+        that the mouse was outside the bounds of the view, but this prevents
+        the extra passdown from even occurring (and is basically a nice cleanup).
+
+        Reviewed by Oliver Hunt
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::subframeForHitTestResult):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/MouseEventWithHitTestResults.h:
+        (WebCore::MouseEventWithHitTestResults::isOverWidget):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::isOverWidget):
+        (WebCore::HitTestResult::setIsOverWidget):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+        * rendering/RenderWidget.h:
+
 2008-09-21  David Hyatt  <hyatt@apple.com>
 
         Rename FrameView's repaintRectangle method to repaintContentRectangle.  Make

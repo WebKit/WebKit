@@ -49,6 +49,7 @@ public:
     IntPoint localPoint() const { return m_localPoint; }
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
+    bool isOverWidget() const { return m_isOverWidget; }
 
     void setToNonShadowAncestor();
 
@@ -58,6 +59,7 @@ public:
     void setLocalPoint(const IntPoint& p) { m_localPoint = p; }
     void setURLElement(Element*);
     void setScrollbar(Scrollbar*);
+    void setIsOverWidget(bool b) { m_isOverWidget = b; }
 
     Frame* targetFrame() const;
     IntRect boundingBox() const;
@@ -82,6 +84,7 @@ private:
                            // determine where inside the renderer we hit on subsequent operations.
     RefPtr<Element> m_innerURLElement;
     RefPtr<Scrollbar> m_scrollbar;
+    bool m_isOverWidget; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
 };
 
 String displayString(const String&, const Node*);

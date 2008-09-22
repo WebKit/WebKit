@@ -93,7 +93,8 @@ using namespace SVGNames;
 // When the autoscroll or the panScroll is triggered when do the scroll every 0.05s to make it smooth
 const double autoscrollInterval = 0.05;
 
-static Frame* subframeForTargetNode(Node* node);
+static Frame* subframeForTargetNode(Node*);
+static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
 static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, bool pageScrollEnabled, PlatformWheelEvent& e, Node* node, float windowHeightOrWidth)
 {
@@ -330,7 +331,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     m_mouseDownWasSingleClickInSelection = false;
 
-    if (passWidgetMouseDownEventToWidget(event))
+    if (event.isOverWidget() && passWidgetMouseDownEventToWidget(event))
         return true;
 
 #if ENABLE(SVG)
@@ -687,7 +688,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
 
     while (true) {
         Node* n = result.innerNode();
-        if (!n || !n->renderer() || !n->renderer()->isWidget())
+        if (!result.isOverWidget() || !n || !n->renderer() || !n->renderer()->isWidget())
             break;
         Widget* widget = static_cast<RenderWidget*>(n->renderer())->widget();
         if (!widget || !widget->isFrameView())
@@ -788,6 +789,13 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
 IntPoint EventHandler::currentMousePosition() const
 {
     return m_currentMousePosition;
+}
+
+Frame* subframeForHitTestResult(const MouseEventWithHitTestResults& hitTestResult)
+{
+    if (!hitTestResult.isOverWidget())
+        return 0;
+    return subframeForTargetNode(hitTestResult.targetNode());
 }
 
 Frame* subframeForTargetNode(Node* node)
@@ -999,7 +1007,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         return true;
     }
 
-    Frame* subframe = subframeForTargetNode(mev.targetNode());
+    Frame* subframe = subframeForHitTestResult(mev);
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         // Start capturing future events for this frame.  We only do this if we didn't clear
         // the m_mousePressed flag, which may happen if an AppKit widget entered a modal event loop.
@@ -1097,7 +1105,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     m_currentMousePosition = mouseEvent.pos();
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(HitTestRequest(false, true), mouseEvent);
-    Frame* subframe = subframeForTargetNode(mev.targetNode());
+    Frame* subframe = subframeForHitTestResult(mev);
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         m_capturingMouseEventsNode = 0;
         return true;
@@ -1194,9 +1202,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     }
 
     bool swallowEvent = false;
-    Node* targetNode = m_capturingMouseEventsNode ? m_capturingMouseEventsNode.get() : mev.targetNode();
-    RefPtr<Frame> newSubframe = subframeForTargetNode(targetNode);
-
+    RefPtr<Frame> newSubframe = m_capturingMouseEventsNode.get() ? subframeForTargetNode(m_capturingMouseEventsNode.get()) : subframeForHitTestResult(mev);
+ 
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
     if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree()->isDescendantOf(m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
         passMouseMoveEventToSubframe(mev, m_lastMouseMoveEventSubframe.get());
@@ -1261,8 +1268,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     }
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(HitTestRequest(false, false, false, true), mouseEvent);
-    Node* targetNode = m_capturingMouseEventsNode.get() ? m_capturingMouseEventsNode.get() : mev.targetNode();
-    Frame* subframe = subframeForTargetNode(targetNode);
+    Frame* subframe = m_capturingMouseEventsNode.get() ? subframeForTargetNode(m_capturingMouseEventsNode.get()) : subframeForHitTestResult(mev);
     if (subframe && passMouseReleaseEventToSubframe(mev, subframe)) {
         m_capturingMouseEventsNode = 0;
         return true;
@@ -1516,7 +1522,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         // Figure out which view to send the event to.
         RenderObject* target = node->renderer();
         
-        if (target && target->isWidget()) {
+        if (result.isOverWidget() && target && target->isWidget()) {
             Widget* widget = static_cast<RenderWidget*>(target)->widget();
 
             if (widget && passWheelEventToWidget(e, widget)) {

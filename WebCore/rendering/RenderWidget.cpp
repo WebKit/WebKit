@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 
@@ -267,6 +268,17 @@ void RenderWidget::deleteWidget()
 RenderWidget* RenderWidget::find(const Widget* widget)
 {
     return widgetRendererMap().get(widget);
+}
+
+bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction action)
+{
+    bool hadResult = result.innerNode();
+    bool inside = RenderReplaced::nodeAtPoint(request, result, x, y, tx, ty, action);
+    
+    // Check to see if we are really over the widget itself (and not just in the border/padding area).
+    if (inside && !hadResult && result.innerNode() == element())
+        result.setIsOverWidget(contentBox().contains(result.localPoint()));
+    return inside;
 }
 
 } // namespace WebCore
