@@ -1,3 +1,15 @@
+2008-09-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21002
+          Make the ATSUI code path respect spacingDisabled()
+
+        Fixes svg/text/text-spacing-01-b.svg in run-webkit-tests --complex-text
+
+        * platform/graphics/mac/FontMacATSUI.mm:
+        (WebCore::overrideLayoutOperation):
+
 2008-09-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

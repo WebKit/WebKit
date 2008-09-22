@@ -181,7 +181,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         bool syntheticBoldPass = params->m_syntheticBoldPass;
         Fixed syntheticBoldOffset = 0;
         ATSGlyphRef spaceGlyph = 0;
-        bool hasExtraSpacing = params->m_font->letterSpacing() || params->m_font->wordSpacing() | params->m_run.padding();
+        bool hasExtraSpacing = (params->m_font->letterSpacing() || params->m_font->wordSpacing() || params->m_run.padding()) && !params->m_run.spacingDisabled();
         float padding = params->m_run.padding();
         // In the CoreGraphics code path, the rounding hack is applied in logical order.
         // Here it is applied in visual left-to-right order, which may be better.
