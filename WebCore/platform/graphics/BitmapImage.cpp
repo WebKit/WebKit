@@ -31,7 +31,6 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "PlatformString.h"
-#include "SystemTime.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
 #include "MIMETypeRegistry.h"
@@ -42,11 +41,6 @@ namespace WebCore {
 // one frame at a time.
 const unsigned cLargeAnimationCutoff = 5242880;
 
-// When an animated image is more than five minutes out of date, don't try to
-// resync on repaint, so we don't waste CPU cycles on an edge case the user
-// doesn't care about.
-const double cAnimationResyncCutoff = 5 * 60;
-
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
@@ -54,7 +48,6 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     , m_frameTimer(0)
     , m_repetitionCount(0)
     , m_repetitionsComplete(0)
-    , m_desiredFrameStartTime(0)
     , m_isSolidColor(false)
     , m_animatingImageType(true)
     , m_animationFinished(false)
@@ -257,50 +250,8 @@ void BitmapImage::startAnimation()
     if (!m_allDataReceived && m_repetitionCount == cAnimationLoopOnce && m_currentFrame >= (frameCount() - 1))
         return;
 
-    // Determine time for next frame to start.  By ignoring paint and timer lag
-    // in this calculation, we make the animation appear to run at its desired
-    // rate regardless of how fast it's being repainted.
-    const double currentDuration = frameDurationAtIndex(m_currentFrame);
-    const double time = currentTime();
-    if (!m_desiredFrameStartTime)
-        m_desiredFrameStartTime = time + currentDuration;
-    else {
-        m_desiredFrameStartTime += currentDuration;
-        // If we're too far behind, the user probably doesn't care about
-        // resyncing and we could burn a lot of time looping through frames
-        // below.  Just reset the timings.
-        if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
-            m_desiredFrameStartTime = time + currentDuration;
-    }
-
-    if (time < m_desiredFrameStartTime) {
-        // Haven't yet reached time for next frame to start; delay until then.
-        m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
-        m_frameTimer->startOneShot(m_desiredFrameStartTime - time);
-    } else {
-        // We've already reached or passed the time for the next frame to start.
-        // See if we've also passed the time for frames after that to start, in
-        // case we need to skip some frames entirely.
-        size_t nextFrame = (m_currentFrame + 1) % frameCount();
-        while (m_source.frameIsCompleteAtIndex(nextFrame)) {
-            // Should we skip the current frame?
-            double nextFrameStartTime = m_desiredFrameStartTime + frameDurationAtIndex(nextFrame);
-            if (time < nextFrameStartTime)
-                break;
-
-            // Yes; skip over it without notifying our observers.
-            if (!internalAdvanceAnimation(true))
-                return;
-            m_desiredFrameStartTime = nextFrameStartTime;
-            nextFrame = (nextFrame + 1) % frameCount();
-        }
-
-        // Draw the next frame immediately.  Note that m_desiredFrameStartTime
-        // may be in the past, meaning the next time through this function we'll
-        // kick off the next advancement sooner than this frame's duration would
-        // suggest.
-        internalAdvanceAnimation(false);
-    }
+    m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
+    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
 }
 
 void BitmapImage::stopAnimation()
@@ -326,18 +277,13 @@ void BitmapImage::resetAnimation()
 
 void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
 {
-    internalAdvanceAnimation(false);
-}
-
-bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
-{
     // Stop the animation.
     stopAnimation();
     
     // See if anyone is still paying attention to this animation.  If not, we don't
     // advance and will remain suspended at the current frame until the animation is resumed.
-    if (!skippingFrames && imageObserver()->shouldPauseAnimation(this))
-        return false;
+    if (imageObserver()->shouldPauseAnimation(this))
+        return;
 
     m_currentFrame++;
     if (m_currentFrame >= frameCount()) {
@@ -348,30 +294,12 @@ bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
         m_repetitionCount = m_source.repetitionCount();
         if (m_repetitionCount && m_repetitionsComplete >= m_repetitionCount) {
             m_animationFinished = true;
-            m_desiredFrameStartTime = 0;
             m_currentFrame--;
-            if (skippingFrames) {
-                // Uh oh.  We tried to skip past the end of the animation.  We'd
-                // better draw this last frame.
-                notifyObserverAndTrimDecodedData();
-            }
-            return false;
+            return;
         }
         m_currentFrame = 0;
     }
 
-    if (!skippingFrames)
-        notifyObserverAndTrimDecodedData();
-
-    // We do not advance the animation explicitly.  We rely on a subsequent draw of the image
-    // to force a request for the next frame via startAnimation().  This allows images that move offscreen while
-    // scrolling to stop animating (thus saving memory from additional decoded frames and
-    // CPU time spent doing the decoding).
-    return true;
-}
-
-void BitmapImage::notifyObserverAndTrimDecodedData()
-{
     // Notify our observer that the animation has advanced.
     imageObserver()->animationAdvanced(this);
 
@@ -385,6 +313,11 @@ void BitmapImage::notifyObserverAndTrimDecodedData()
         // Go ahead and decode the next frame.
         frameAtIndex(m_currentFrame);
     }
+    
+    // We do not advance the animation explicitly.  We rely on a subsequent draw of the image
+    // to force a request for the next frame via startAnimation().  This allows images that move offscreen while
+    // scrolling to stop animating (thus saving memory from additional decoded frames and
+    // CPU time spent doing the decoding).
 }
 
 }

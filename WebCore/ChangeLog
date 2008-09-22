@@ -1,3 +1,28 @@
+2008-09-22  Eric Seidel  <eric@webkit.org>
+
+        No review, rollback only.
+
+        Roll out Peter's change (per his request)
+        http://trac.webkit.org/changeset/36069
+        https://bugs.webkit.org/show_bug.cgi?id=19663
+        This change has been the source of numerous regressions
+        (several of which were latent bugs revealed by this change,
+        others were bugs in this change)
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::startAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+
 2008-09-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
