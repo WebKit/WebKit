@@ -311,8 +311,9 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue* val
     if (!map || map->isEmpty()) {
         if (increaseVectorLength(i + 1)) {
             storage = m_storage;
-            ++storage->m_numValuesInVector;
             storage->m_vector[i] = value;
+            if (++storage->m_numValuesInVector == storage->m_length)
+                m_fastAccessCutoff = storage->m_length;
             checkConsistency();
         } else
             throwOutOfMemoryError(exec);
@@ -506,6 +507,87 @@ void JSArray::setLength(unsigned newLength)
     m_storage->m_length = newLength;
 
     checkConsistency();
+}
+
+JSValue* JSArray::pop()
+{
+    checkConsistency();
+
+    unsigned length = m_storage->m_length;
+    if (!length)
+        return jsUndefined();
+
+    --length;
+
+    JSValue* result;
+
+    if (m_fastAccessCutoff > length) {
+        JSValue*& valueSlot = m_storage->m_vector[length];
+        result = valueSlot;
+        ASSERT(result);
+        valueSlot = 0;
+        --m_storage->m_numValuesInVector;
+        m_fastAccessCutoff = length;
+    } else if (length < m_storage->m_vectorLength) {
+        JSValue*& valueSlot = m_storage->m_vector[length];
+        result = valueSlot;
+        valueSlot = 0;
+        if (result)
+            --m_storage->m_numValuesInVector;
+        else
+            result = jsUndefined();
+    } else {
+        result = jsUndefined();
+        if (SparseArrayValueMap* map = m_storage->m_sparseValueMap) {
+            SparseArrayValueMap::iterator it = map->find(length);
+            if (it != map->end()) {
+                result = it->second;
+                map->remove(it);
+                if (map->isEmpty()) {
+                    delete map;
+                    m_storage->m_sparseValueMap = 0;
+                }
+            }
+        }
+    }
+
+    m_storage->m_length = length;
+
+    checkConsistency();
+
+    return result;
+}
+
+void JSArray::push(ExecState* exec, JSValue* value)
+{
+    checkConsistency();
+
+    if (m_storage->m_length < m_storage->m_vectorLength) {
+        ASSERT(!m_storage->m_vector[m_storage->m_length]);
+        m_storage->m_vector[m_storage->m_length] = value;
+        if (++m_storage->m_numValuesInVector == ++m_storage->m_length)
+            m_fastAccessCutoff = m_storage->m_length;
+        checkConsistency();
+        return;
+    }
+
+    if (m_storage->m_length < MIN_SPARSE_ARRAY_INDEX) {
+        SparseArrayValueMap* map = m_storage->m_sparseValueMap;
+        if (!map || map->isEmpty()) {
+            if (increaseVectorLength(m_storage->m_length + 1)) {
+                m_storage->m_vector[m_storage->m_length] = value;
+                if (++m_storage->m_numValuesInVector == ++m_storage->m_length)
+                    m_fastAccessCutoff = m_storage->m_length;
+                checkConsistency();
+                return;
+            }
+            checkConsistency();
+            throwOutOfMemoryError(exec);
+            return;
+        }
+    }
+
+    putSlowCase(exec, m_storage->m_length++, value);
 }
 
 void JSArray::mark()

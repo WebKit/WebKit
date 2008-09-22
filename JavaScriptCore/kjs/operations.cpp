@@ -115,7 +115,7 @@ bool strictEqualSlowCase(JSValue* v1, JSValue* v2)
     return strictEqualSlowCaseInline(v1, v2);
 }
 
-JSValue* throwOutOfMemoryError(ExecState* exec)
+NEVER_INLINE JSValue* throwOutOfMemoryError(ExecState* exec)
 {
     JSObject* error = Error::create(exec, GeneralError, "Out of memory");
     exec->setException(error);

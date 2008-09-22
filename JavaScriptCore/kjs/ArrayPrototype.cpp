@@ -291,6 +291,9 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue* thisValue, co
 
 JSValue* arrayProtoFuncPop(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
+    if (exec->machine()->isJSArray(thisValue))
+        return static_cast<JSArray*>(thisValue)->pop();
+
     JSObject* thisObj = thisValue->toThisObject(exec);
     JSValue* result = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
@@ -307,6 +310,12 @@ JSValue* arrayProtoFuncPop(ExecState* exec, JSObject*, JSValue* thisValue, const
 
 JSValue* arrayProtoFuncPush(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
+    if (exec->machine()->isJSArray(thisValue) && args.size() == 1) {
+        JSArray* array = static_cast<JSArray*>(thisValue);
+        array->push(exec, args.begin()->jsValue(exec));
+        return jsNumber(exec, array->length());
+    }
+
     JSObject* thisObj = thisValue->toThisObject(exec);
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned n = 0; n < args.size(); n++)
