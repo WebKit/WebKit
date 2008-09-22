@@ -163,7 +163,7 @@ bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
-    if (i < d->numArguments) {
+    if (isArrayIndex && i < d->numArguments) {
         if (!d->deletedArguments) {
             d->deletedArguments.set(new bool[d->numArguments]);
             memset(d->deletedArguments.get(), 0, sizeof(bool) * d->numArguments);
