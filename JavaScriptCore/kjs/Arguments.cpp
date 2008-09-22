@@ -26,6 +26,7 @@
 #include "Arguments.h"
 
 #include "JSActivation.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {

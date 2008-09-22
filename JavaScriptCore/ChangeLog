@@ -1,3 +1,9 @@
+2008-09-21  Mark Rowe  <mrowe@apple.com>
+
+        Fix the non-AllInOneFile build.
+
+        * kjs/Arguments.cpp: Add missing #include.
+
 2008-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich and Mark Rowe.
