@@ -1,3 +1,9 @@
+2008-09-22  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Add a missing </File> tag.
+
 2008-09-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.
