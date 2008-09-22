@@ -69,6 +69,7 @@
 #endif
 
 #if PLATFORM(QT)
+#include <QCoreApplication>
 #include <QDateTime>
 #endif
 
@@ -299,6 +300,10 @@ int main(int argc, char** argv)
     _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+#endif
+
+#if PLATFORM(QT)
+    QCoreApplication app(argc, argv);
 #endif
 
     int res = 0;

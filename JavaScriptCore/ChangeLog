@@ -1,3 +1,17 @@
+2008-09-22  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Initialize QCoreApplication in kjs binary/Shell.cpp
+        
+        This allows us to use QCoreApplication::instance() to
+        get the main thread in ThreadingQt.cpp
+
+        * kjs/Shell.cpp:
+        (main):
+        * wtf/ThreadingQt.cpp:
+        (WTF::initializeThreading):
+
 2008-09-21  Darin Adler  <darin@apple.com>
 
         - blind attempt to fix non-all-in-one builds
