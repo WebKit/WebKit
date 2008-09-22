@@ -64,9 +64,10 @@ Arguments::Arguments(ExecState* exec, JSFunction* function, JSActivation* activa
   
     if (d->numArguments > d->numParameters) {
         unsigned numExtraArguments = d->numArguments - d->numParameters;
-        d->extraArguments.set(new JSValue*[numExtraArguments]);
+        JSValue** extraArguments = new JSValue*[numExtraArguments];
         for (unsigned i = 0; i < numExtraArguments; ++i)
-            d->extraArguments[i] = argv[d->numParameters + i].getJSValue();
+            extraArguments[i] = argv[d->numParameters + i].getJSValue();
+        d->extraArguments.set(extraArguments);
     }
 }
 
@@ -78,10 +79,12 @@ void Arguments::mark()
 {
     JSObject::mark();
 
-    unsigned numExtraArguments = d->numArguments - d->numParameters;
-    for (unsigned i = 0; i < numExtraArguments; ++i) {
-        if (!d->extraArguments[i]->marked())
-            d->extraArguments[i]->mark();
+    if (d->extraArguments) {
+        unsigned numExtraArguments = d->numArguments - d->numParameters;
+        for (unsigned i = 0; i < numExtraArguments; ++i) {
+            if (!d->extraArguments[i]->marked())
+                d->extraArguments[i]->mark();
+        }
     }
 
     if (!d->activation->marked())

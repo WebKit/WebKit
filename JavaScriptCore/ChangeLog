@@ -1,5 +1,18 @@
 2008-09-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        - fix crash logging into Gmail due to recent Arguments change
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::Arguments): Fix window where mark() function could
+        see d->extraArguments with uninitialized contents.
+        (JSC::Arguments::mark): Check d->extraArguments for 0 to handle two
+        cases: 1) Inside the constructor before it's initialized.
+        2) numArguments <= numParameters.
+
+2008-09-21  Darin Adler  <darin@apple.com>
+
         - fix loose end from the "duplicate constant values" patch
 
         * VM/CodeGenerator.cpp:
