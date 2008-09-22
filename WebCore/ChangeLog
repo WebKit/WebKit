@@ -1,3 +1,23 @@
+2008-09-22  David Hyatt  <hyatt@apple.com>
+
+        Clean up some parent relationships in the back end stylesheet code.  Make sure parentStyleSheet
+        properly walks up nested rule blocks to reach the parent sheet instead of giving up at the immediate
+        parent.  Also fix the doc() method so that it is properly set when the parent of the sheet is an import
+        rule.
+
+        Reviewed by Sam Weinig
+
+        Added fast/css/nested-rule-parent-sheet.html
+
+         * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::parentStyleSheet):
+        (WebCore::CSSRule::parentRule):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+
 2008-09-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,11 @@
+2008-09-22  David Hyatt  <hyatt@apple.com>
+
+        Add new test for .parentStyleSheet.
+
+        Reviewed by Sam Weinig
+
+        * fast/css/nested-rule-parent-sheet.html: Added.
+        
 2008-09-21  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed and tweaked by Darin Adler.
