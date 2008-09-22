@@ -119,7 +119,7 @@ JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const ArgList& args)
     JSValue* val = call(exec, this, callType, callData, this, args);
 
     if (!val || val->isUndefinedOrNull())
-        return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
+        return new (exec) JSObject(exec->lexicalGlobalObject()->emptyObjectStructure());
     else
         return val->toObject(exec);
 }

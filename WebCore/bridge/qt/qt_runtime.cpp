@@ -23,6 +23,7 @@
 #include "DateInstance.h"
 #include "DateMath.h"
 #include "DatePrototype.h"
+#include "FunctionPrototype.h"
 #include "JSArray.h"
 #include "JSDOMBinding.h"
 #include "JSGlobalObject.h"
