@@ -1,3 +1,9 @@
+2008-09-22  Alexander Orlov  <alexander.orlov@loxal.net>
+
+        Reviewed by Darin Adler.
+
+        * projects/performance/index.html: Remove dead link to the 24fun test.
+
 2008-09-18  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.
