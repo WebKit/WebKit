@@ -25,6 +25,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSString.h"
+#include "Machine.h"
 #include "PrototypeFunction.h"
 
 namespace JSC {

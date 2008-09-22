@@ -29,6 +29,8 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 
+using namespace std;
+
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(Arguments);
