@@ -1,3 +1,14 @@
+2008-09-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - fix <rdar://problem/6233388> Crash beneath -[WebFrameView keyDown:]
+
+        Test: fast/events/keydown-remove-frame.html
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:]): Added a null check.
+
 2008-09-21  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by eseidel.  Landed by eseidel.

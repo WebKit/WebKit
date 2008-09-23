@@ -1,3 +1,13 @@
+2008-09-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - test for <rdar://problem/6233388> Crash beneath -[WebFrameView keyDown:]
+
+        * fast/events/keydown-remove-frame-expected.txt: Added.
+        * fast/events/keydown-remove-frame.html: Added.
+        * fast/events/resources/keydown-remove-frame-iframe.html: Added.
+
 2008-09-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
