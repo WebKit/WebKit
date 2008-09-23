@@ -31,9 +31,6 @@
 #include "EventNames.h"
 #include "JSEvent.h"
 
-// FIXME: The purpose of this file is to share this base with multiple classes. But
-// it is not being shared at this time.
-
 // FIXME: The name clash between this and WebCore::JSEventTargetPrototypeTable is only
 // OK because this is in the JSC namespace; and this shouldn't be in that namespace!
 namespace JSC {

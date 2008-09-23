@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,8 @@
 #include <kjs/Error.h>
 
 #if ENABLE(SVG)
-#include "JSSVGElementInstance.h"
+#include "EventTargetSVGElementInstance.h"
+#include "JSEventTargetSVGElementInstance.h"
 #endif
 
 using namespace JSC;
@@ -105,20 +106,31 @@ dispatchEvent           WebCore::jsEventTargetDispatchEvent       DontDelete|Fun
 @end
 */
 
-static bool retrieveEventTargetAndCorrespondingNode(ExecState*, JSValue* thisValue, Node*& eventNode, EventTarget*& eventTarget)
+static inline bool retrieveEventTargetAndCorrespondingNode(ExecState*, JSValue* thisValue, Node*& eventNode, EventTarget*& eventTarget)
 {
-    if (!thisValue->isObject(&JSNode::s_info))
-        return false;
+    if (thisValue->isObject(&JSNode::s_info)) {
+        JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisValue);
+        EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
+        ASSERT(node);
 
-    JSEventTargetNode* jsNode = static_cast<JSEventTargetNode*>(thisValue);
-    ASSERT(jsNode);
+        eventNode = node;
+        eventTarget = node;
+        return true;
+    }
 
-    EventTargetNode* node = static_cast<EventTargetNode*>(jsNode->impl());
-    ASSERT(node);
+#if ENABLE(SVG)
+    if (thisValue->isObject(&JSSVGElementInstance::s_info)) {
+        JSEventTargetSVGElementInstance* jsNode = static_cast<JSEventTargetSVGElementInstance*>(thisValue);
+        EventTargetSVGElementInstance* node = static_cast<EventTargetSVGElementInstance*>(jsNode->impl());
+        ASSERT(node);
 
-    eventNode = node;
-    eventTarget = node;
-    return true;
+        eventNode = node->correspondingElement();
+        eventTarget = node;
+        return true;
+    }
+#endif
+
+    return false;
 }
 
 JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
@@ -263,13 +275,11 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
     
 #if ENABLE(SVG)
     // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
-    SVGElementInstance* instance = target->toSVGElementInstance();
-    if (instance)
+    if (SVGElementInstance* instance = target->toSVGElementInstance())
         return toJS(exec, instance);
 #endif
     
-    Node* node = target->toNode();
-    if (node)
+    if (Node* node = target->toNode())
         return toJS(exec, node);
 
     if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
@@ -285,8 +295,6 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
         return getCachedDOMObjectWrapper(cache);
 #endif
     
-    // There are two kinds of EventTargets: EventTargetNode and XMLHttpRequest.
-    // If SVG support is enabled, there is also SVGElementInstance.
     ASSERT_NOT_REACHED();
     return jsNull();
 }

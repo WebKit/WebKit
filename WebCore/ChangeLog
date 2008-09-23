@@ -1,3 +1,77 @@
+2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Working on proper EventTarget support for SVGElementInstance.
+
+        Add new EventTargetSVGElementInstance class, and it's corresponding JS wrapper.
+        Finally JSEventTargetBase, is actually used for another class than JSEventTargetnode.
+
+        Remove EventTarget inheritance from SVGElementInstance, and the manual "TreeShared"
+        implementation. Let it use TreeShared directly.
+
+        It's not activated so far (SVGUseElement still creating SVGElementInstance objects).
+        The transition to EventTargetSVGElementInstance will be done in a few individual patches.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::retrieveEventTargetAndCorrespondingNode):
+        (WebCore::toJS):
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSEventTargetSVGElementInstance.cpp: Added.
+        (WebCore::):
+        (WebCore::JSEventTargetSVGElementInstance::JSEventTargetSVGElementInstance):
+        (WebCore::JSEventTargetSVGElementInstance::createPrototype):
+        (WebCore::JSEventTargetSVGElementInstance::setListener):
+        (WebCore::JSEventTargetSVGElementInstance::getListener):
+        (WebCore::toEventTargetSVGElementInstance):
+        * bindings/js/JSEventTargetSVGElementInstance.h: Added.
+        (WebCore::JSEventTargetSVGElementInstance::prototypeClassName):
+        (WebCore::JSEventTargetSVGElementInstance::getOwnPropertySlot):
+        (WebCore::JSEventTargetSVGElementInstance::getValueProperty):
+        (WebCore::JSEventTargetSVGElementInstance::put):
+        (WebCore::JSEventTargetSVGElementInstance::putValueProperty):
+        * bindings/js/JSSVGElementInstanceCustom.cpp: Added.
+        (WebCore::toJS):
+        * bindings/objc/DOM.mm:
+        (+[DOMNode _wrapEventTarget:WebCore::]):
+        (-[DOMSVGElementInstance _initWithSVGElementInstance:WebCore::]):
+        (+[DOMSVGElementInstance _wrapSVGElementInstance:WebCore::]):
+        (+[DOMSVGElementInstance _wrapEventTarget:WebCore::]):
+        (-[DOMSVGElementInstance WebCore::]):
+        (-[DOMSVGElementInstance addEventListener:listener:useCapture:]):
+        (-[DOMSVGElementInstance addEventListener:::]):
+        (-[DOMSVGElementInstance removeEventListener:listener:useCapture:]):
+        (-[DOMSVGElementInstance removeEventListener:::]):
+        (-[DOMSVGElementInstance dispatchEvent:]):
+        * bindings/objc/DOMEvents.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * svg/EventTargetSVGElementInstance.cpp: Added.
+        (WebCore::EventTargetSVGElementInstance::EventTargetSVGElementInstance):
+        (WebCore::EventTargetSVGElementInstance::~EventTargetSVGElementInstance):
+        (WebCore::EventTargetSVGElementInstance::addEventListener):
+        (WebCore::EventTargetSVGElementInstance::removeEventListener):
+        (WebCore::EventTargetSVGElementInstance::dispatchEvent):
+        * svg/EventTargetSVGElementInstance.h: Added.
+        (WebCore::EventTargetSVGElementInstance::isEventTargetSVGElementInstance):
+        (WebCore::EventTargetSVGElementInstance::toNode):
+        (WebCore::EventTargetSVGElementInstance::toSVGElementInstance):
+        (WebCore::EventTargetSVGElementInstance::refEventTarget):
+        (WebCore::EventTargetSVGElementInstance::derefEventTarget):
+        (WebCore::EventTargetSVGElementInstanceCast):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::dispatchEvent):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        (WebCore::SVGElementInstance::~SVGElementInstance):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::isEventTargetSVGElementInstance):
+        * svg/SVGElementInstance.idl:
+
 2008-09-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

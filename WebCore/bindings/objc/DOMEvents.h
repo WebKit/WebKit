@@ -42,3 +42,10 @@
 
 @interface DOMNode (DOMEventTarget) <DOMEventTarget>
 @end
+
+// Using ENABLE(SVG) results in a compilation error.
+#ifdef ENABLE_SVG
+#import <WebCore/DOMSVGElementInstance.h>
+@interface DOMSVGElementInstance (DOMEventTarget) <DOMEventTarget>
+@end
+#endif

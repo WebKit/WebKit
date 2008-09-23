@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
     This file is part of the KDE project
 
@@ -23,9 +23,9 @@
 #define SVGElementInstance_h
 
 #if ENABLE(SVG)
-
 #include "EventTarget.h"
 
+#include "TreeShared.h"
 #include <wtf/RefPtr.h>
 #include <wtf/PassRefPtr.h>
 
@@ -34,10 +34,13 @@ namespace WebCore {
     class SVGUseElement;
     class SVGElementInstanceList;
 
-    class SVGElementInstance : public EventTarget {
+    // SVGElementInstance mimics Node, but without providing all its functionality
+    class SVGElementInstance : public TreeShared<SVGElementInstance> {
     public:
         SVGElementInstance(SVGUseElement*, PassRefPtr<SVGElement> originalElement);
         virtual ~SVGElementInstance();
+
+        virtual bool isEventTargetSVGElementInstance() const { return false; }
 
         // 'SVGElementInstance' functions
         SVGElement* correspondingElement() const;
@@ -56,27 +59,9 @@ namespace WebCore {
         SVGElement* shadowTreeElement() const; 
         void setShadowTreeElement(SVGElement*);
 
-        // Model the TreeShared concept, integrated within EventTarget inheritance.
-        virtual void refEventTarget() { ++m_refCount;  }
-        virtual void derefEventTarget() { if (--m_refCount <= 0 && !m_parent) delete this; }
-
-        bool hasOneRef() { return m_refCount == 1; }
-        int refCount() const { return m_refCount; }
-
-        void setParent(SVGElementInstance* parent) { m_parent = parent; }
-        SVGElementInstance* parent() const { return m_parent; }
-
         // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
         virtual EventTargetNode* toNode();
         virtual SVGElementInstance* toSVGElementInstance();
-
-        virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-        virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
- 
-    private:
-        SVGElementInstance(const SVGElementInstance&);
-        SVGElementInstance& operator=(const SVGElementInstance&);
 
     private: // Helper methods
         friend class SVGUseElement;
@@ -86,9 +71,6 @@ namespace WebCore {
         void updateInstance(SVGElement*);
 
     private:
-        int m_refCount;
-        SVGElementInstance* m_parent;
-
         SVGUseElement* m_useElement;
         RefPtr<SVGElement> m_element;
         SVGElement* m_shadowTreeElement;

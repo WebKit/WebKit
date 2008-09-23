@@ -13389,6 +13389,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSEventTargetSVGElementInstance.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEventTargetSVGElementInstance.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSHistoryCustom.cpp"
 					>
 				</File>
@@ -13602,6 +13610,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSStyleSheetListCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSVGElementInstanceCustom.cpp"
 					>
 				</File>
 				<File
@@ -13851,6 +13863,22 @@
 			</File>
 			<File
 				RelativePath="..\svg\ElementTimeControl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\EventTargetSVGElementInstance.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\svg\EventTargetSVGElementInstance.h"
 				>
 			</File>
 			<File

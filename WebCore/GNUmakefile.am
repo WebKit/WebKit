@@ -640,6 +640,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTargetNode.cpp \
 	WebCore/bindings/js/JSHTMLAllCollection.cpp \
 	WebCore/bindings/js/JSEventTargetNode.h \
+	WebCore/bindings/js/JSEventTargetSVGElementInstance.cpp \
+	WebCore/bindings/js/JSEventTargetSVGElementInstance.h \
 	WebCore/bindings/js/JSHTMLAllCollection.h \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.h \
@@ -2919,6 +2921,7 @@ webcore_cppflags += \
 	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
 webcore_sources += \
+	WebCore/bindings/js/JSSVGElementInstanceCustom.cpp \
 	WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	WebCore/bindings/js/JSSVGMatrixCustom.cpp \
 	WebCore/bindings/js/JSSVGPODTypeWrapper.h \
@@ -2984,6 +2987,8 @@ webcore_sources += \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
 	WebCore/svg/ElementTimeControl.h \
+	WebCore/svg/EventTargetSVGElementInstance.cpp \
+	WebCore/svg/EventTargetSVGElementInstance.h \
 	WebCore/svg/Filter.cpp \
 	WebCore/svg/Filter.h \
 	WebCore/svg/FilterBuilder.h \

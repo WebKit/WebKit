@@ -68,10 +68,13 @@
 #import <wtf/HashMap.h>
 
 #if ENABLE(SVG)
+#import "EventTargetSVGElementInstance.h"
 #import "SVGDocument.h"
 #import "SVGElement.h"
+#import "SVGElementInstance.h"
 #import "SVGNames.h"
 #import "DOMSVG.h"
+#import "DOMSVGElementInstance.h"
 #endif
 
 using namespace JSC;
@@ -404,7 +407,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 {
     if (!eventTarget)
         return nil;
-    
+
     // We don't have an ObjC binding for XMLHttpRequest
     return [DOMNode _wrapNode:eventTarget->toNode()];
 }
@@ -453,6 +456,49 @@ static NSArray *kit(const Vector<IntRect>& rects)
 }
 
 @end
+
+#if ENABLE(SVG)
+@implementation DOMSVGElementInstance (WebCoreInternal)
+
+- (id)_initWithSVGElementInstance:(WebCore::SVGElementInstance *)impl
+{
+    ASSERT(impl);
+
+    [super _init];
+    _internal = reinterpret_cast<DOMObjectInternal*>(impl);
+    impl->ref();
+    WebCore::addDOMWrapper(self, impl);
+    return self;
+}
+
++ (DOMSVGElementInstance *)_wrapSVGElementInstance:(WebCore::SVGElementInstance *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = WebCore::getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] _initWithSVGElementInstance:impl] autorelease];
+}
+
++ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget
+{
+    if (!eventTarget)
+        return nil;
+
+    return [DOMSVGElementInstance _wrapSVGElementInstance:eventTarget->toSVGElementInstance()];
+}
+
+- (WebCore::SVGElementInstance *)_SVGElementInstance
+{
+    return reinterpret_cast<WebCore::SVGElementInstance*>(_internal);
+}
+
+@end
+#endif
 
 @implementation DOMNode (DOMNodeExtensionsPendingPublic)
 
@@ -530,6 +576,55 @@ static NSArray *kit(const Vector<IntRect>& rects)
 }
 
 @end
+
+#if ENABLE(SVG)
+// FIXME: this should be auto-generated
+@implementation DOMSVGElementInstance (DOMEventTarget)
+
+- (void)addEventListener:(NSString*)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
+{
+    if (![self _SVGElementInstance]->isEventTargetSVGElementInstance())
+        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
+    WebCore::EventListener* wrapper = WebCore::ObjCEventListener::create(listener);
+    WebCore::EventTargetSVGElementInstanceCast([self _SVGElementInstance])->addEventListener(type, wrapper, useCapture);
+    wrapper->deref();
+}
+
+- (void)addEventListener:(NSString*)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    // FIXME: this method can be removed once Mail changes to use the new method <rdar://problem/4746649>
+    [self addEventListener:type listener:listener useCapture:useCapture];
+}
+
+- (void)removeEventListener:(NSString*)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
+{
+    if (![self _SVGElementInstance]->isEventTargetSVGElementInstance())
+        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
+    if (WebCore::EventListener* wrapper = WebCore::ObjCEventListener::find(listener))
+        WebCore::EventTargetSVGElementInstanceCast([self _SVGElementInstance])->removeEventListener(type, wrapper, useCapture);
+}
+
+- (void)removeEventListener:(NSString*)type :(id <DOMEventListener>)listener :(BOOL)useCapture
+{
+    // FIXME: this method can be removed once Mail changes to use the new method <rdar://problem/4746649>
+    [self removeEventListener:type listener:listener useCapture:useCapture];
+}
+
+- (BOOL)dispatchEvent:(DOMEvent *)event
+{
+    if (![self _SVGElementInstance]->isEventTargetSVGElementInstance())
+        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
+    WebCore::ExceptionCode ec = 0;
+    BOOL result = WebCore::EventTargetSVGElementInstanceCast([self _SVGElementInstance])->dispatchEvent([event _event], ec);
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+@end
+#endif
 
 //------------------------------------------------------------------------------------------
 // DOMElement

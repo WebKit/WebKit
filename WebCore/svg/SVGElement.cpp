@@ -230,39 +230,10 @@ void SVGElement::insertedIntoDocument()
     }
 }
 
-static Node* shadowTreeParentElementForShadowTreeElement(Node* node)
-{
-    for (Node* n = node; n; n = n->parentNode()) {
-        if (n->isShadowNode())
-            return n->shadowParentNode();
-    }
-
-    return 0;
-}
-
 bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
 {
     // TODO: This function will be removed in a follow-up patch!
-
-    EventTarget* target = this;
-    Node* useNode = shadowTreeParentElementForShadowTreeElement(this);
-
-    // If we are a hidden shadow tree element, the target must
-    // point to our corresponding SVGElementInstance object
-    if (useNode) {
-        ASSERT(useNode->hasTagName(SVGNames::useTag));
-        SVGUseElement* use = static_cast<SVGUseElement*>(useNode);
-
-        SVGElementInstance* instance = use->instanceForShadowTreeElement(this);
-
-        if (instance)
-            target = instance;
-    }
-
-    e->setTarget(target);
-
-    RefPtr<FrameView> view = document()->view();
-    return EventTargetNode::dispatchGenericEvent(this, e, ec, tempEvent);
+    return StyledElement::dispatchEvent(e, ec, tempEvent);
 }
 
 void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)

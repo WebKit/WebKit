@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
-    interface [Conditional=SVG, ObjCCustomInternalImpl] SVGElementInstance {
-        readonly attribute SVGElement correspondingElement;
-        readonly attribute SVGUseElement correspondingUseElement;
-        readonly attribute SVGElementInstance parentNode;
-        readonly attribute SVGElementInstanceList childNodes;
-        readonly attribute SVGElementInstance firstChild;
-        readonly attribute SVGElementInstance lastChild;
-        readonly attribute SVGElementInstance previousSibling;
-        readonly attribute SVGElementInstance nextSibling;
-    };
+#include "config.h"
+
+#if ENABLE(SVG)
+#include "EventTargetSVGElementInstance.h"
+#include "JSEventTargetSVGElementInstance.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSValue* toJS(ExecState* exec, SVGElementInstance* object)
+{
+    if (!object)
+        return jsNull();
+
+    return getDOMObjectWrapper<JSSVGElementInstance>(exec, object);
+
+    // FIXME: Activate this code, when the EventTargetSVGElementInstance transition is done.
+
+    // We don't create pure SVGElementInstance objects internally
+    ASSERT(object->isEventTargetSVGElementInstance());
+    return getDOMObjectWrapper<JSEventTargetSVGElementInstance>(exec, EventTargetSVGElementInstanceCast(object));
 }
+
+}
+
+#endif

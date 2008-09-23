@@ -376,6 +376,7 @@ SOURCES += \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSEventTargetNode.cpp \
+    bindings/js/JSEventTargetSVGElementInstance.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
     bindings/js/JSJavaScriptCallFrameCustom.cpp \
@@ -1449,6 +1450,7 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
+        bindings/js/JSSVGElementInstanceCustom.cpp \
         bindings/js/JSSVGLengthCustom.cpp \
         bindings/js/JSSVGMatrixCustom.cpp \
         bindings/js/JSSVGPathSegCustom.cpp \
@@ -1462,6 +1464,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/style/SVGRenderStyleDefs.cpp \
         svg/SVGZoomEvent.cpp \
         rendering/PointerEventsHitRules.cpp \
+        svg/EventTargetSVGElementInstance.cpp \
         svg/FilterEffect.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \

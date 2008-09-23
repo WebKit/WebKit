@@ -35,9 +35,7 @@
 namespace WebCore {
 
 SVGElementInstance::SVGElementInstance(SVGUseElement* useElement, PassRefPtr<SVGElement> originalElement)
-    : m_refCount(0)
-    , m_parent(0)
-    , m_useElement(useElement)
+    : m_useElement(useElement)
     , m_element(originalElement)
     , m_shadowTreeElement(0)
     , m_previousSibling(0)
@@ -187,24 +185,6 @@ EventTargetNode* SVGElementInstance::toNode()
     return m_element.get();
 }
 
-void SVGElementInstance::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool useCapture)
-{
-    // FIXME!
-}
-
-void SVGElementInstance::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
-{
-    // FIXME!
-}
-
-bool SVGElementInstance::dispatchEvent(PassRefPtr<Event>, ExceptionCode& ec, bool tempEvent)
-{
-    // FIXME!
-    return false;
-}
- 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

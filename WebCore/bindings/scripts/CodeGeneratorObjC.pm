@@ -958,7 +958,7 @@ sub GenerateHeader
         # Generate interface definitions. 
         @internalHeaderContent = split("\r", $implementationLicenceTemplate);
         push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n");
-        if ($interfaceName eq "Node") {
+        if ($interfaceName eq "Node" or $interfaceName eq "SVGElementInstance") {
             push(@internalHeaderContent, "\n\@protocol DOMEventTarget;\n");
         }
         if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
@@ -970,6 +970,8 @@ sub GenerateHeader
                 push(@internalHeaderContent, "\nnamespace WebCore { class $podType; }\n\n");
             } elsif ($interfaceName eq "Node") {
                 push(@internalHeaderContent, "\nnamespace WebCore { class Node; class EventTarget; }\n\n");
+            } elsif ($interfaceName eq "SVGElementInstance") {
+                push(@internalHeaderContent, "\nnamespace WebCore { class SVGElementInstance; class EventTarget; }\n\n");
             } else {
                 my $implClassName = GetImplClassName($interfaceName);
                 push(@internalHeaderContent, "\nnamespace WebCore { class $implClassName; }\n\n");
@@ -980,6 +982,8 @@ sub GenerateHeader
         push(@internalHeaderContent, $typeGetterSig . ";\n");
         push(@internalHeaderContent, $typeMakerSig . ";\n");
         if ($interfaceName eq "Node") {
+            push(@internalHeaderContent, "+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget;\n");
+        } elsif ($interfaceName eq "SVGElementInstance") {
             push(@internalHeaderContent, "+ (id <DOMEventTarget>)_wrapEventTarget:(WebCore::EventTarget *)eventTarget;\n");
         }
         push(@internalHeaderContent, "\@end\n");
