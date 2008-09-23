@@ -1567,6 +1567,8 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     IntPoint viewportPos = v->windowToContents(event.pos());
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(HitTestRequest(false, true), viewportPos, event);
 
+    // Context menu events shouldn't select text in GTK+ applications.
+#if !PLATFORM(GTK)
     if (!m_frame->selection()->contains(viewportPos) && 
         // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
         // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items
@@ -1575,6 +1577,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordOrLinkFromMouseEvent(mev);
     }
+#endif
 
     swallowEvent = dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, event, true);
     

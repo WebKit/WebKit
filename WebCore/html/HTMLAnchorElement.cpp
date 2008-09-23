@@ -90,7 +90,11 @@ bool HTMLAnchorElement::isFocusable() const
 
 bool HTMLAnchorElement::isMouseFocusable() const
 {
+#if PLATFORM(GTK)
+    return HTMLElement::isMouseFocusable();
+#else
     return false;
+#endif
 }
 
 bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const

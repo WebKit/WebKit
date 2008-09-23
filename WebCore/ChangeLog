@@ -1,3 +1,25 @@
+2008-09-22  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16331
+        [Gtk] no focus when button/checkbox/radiobutton clicked, only when tabbed
+
+        Obey GTK+ focusing conventions for controls and anchor elements.
+
+        It could be interesting to push these decisions up to Settings or
+        ChromeClient some day but this gets things working.
+
+        Right and middle click events still need some work to match GTK+
+        conventions.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isMouseFocusable):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isMouseFocusable):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+
 2008-09-22  Darin Adler  <darin@apple.com>
 
         * page/mac/FrameMac.mm:

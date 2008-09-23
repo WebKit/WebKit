@@ -216,7 +216,11 @@ bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
 
 bool HTMLFormControlElement::isMouseFocusable() const
 {
+#if PLATFORM(GTK)
+    return HTMLElement::isMouseFocusable();
+#else
     return false;
+#endif
 }
 
 short HTMLFormControlElement::tabIndex() const
