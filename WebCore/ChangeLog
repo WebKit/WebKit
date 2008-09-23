@@ -1,3 +1,13 @@
+2008-09-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21040
+          Pass NULL instead of the identity matrix to CTFontCreateWithGraphicsFont()
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCTFont):
+
 2008-09-23  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21039

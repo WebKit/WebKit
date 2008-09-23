@@ -404,7 +404,7 @@ CTFontRef SimpleFontData::getCTFont() const
     if (getNSFont())
         return toCTFontRef(getNSFont());
     if (!m_CTFont)
-        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_font.cgFont(), m_font.size(), &CGAffineTransformIdentity, NULL));
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_font.cgFont(), m_font.size(), NULL, NULL));
     return m_CTFont.get();
 }
 
