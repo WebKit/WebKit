@@ -2,6 +2,12 @@
 
         No review, build fix only.
 
+        * platform/graphics/AffineTransform.cpp: remove extra ;
+
+2008-09-22  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
         Speculative fix for the build while I wait for my compile to finish.
 
         * platform/graphics/AffineTransform.cpp:
