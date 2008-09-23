@@ -1,3 +1,25 @@
+2008-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20983
+          ArgumentsData should have some room to allocate some extra arguments inline
+
+        Speeds up v8-raytrace by 5%.
+
+        * kjs/Arguments.cpp:
+        (JSC::ArgumentsData::ArgumentsData): Use a fixed buffer if there are 4 or fewer
+        extra arguments.
+        (JSC::Arguments::Arguments): Use a fixed buffer if there are 4 or fewer
+        extra arguments.
+        (JSC::Arguments::~Arguments): Delete the buffer if necessary.
+        (JSC::Arguments::mark): Update since extraArguments are now Register.
+        (JSC::Arguments::fillArgList): Added special case for the only case that's
+        actually used in the practice, when there are no parameters. There are some
+        other special cases in there too, but that's the only one that matters.
+        (JSC::Arguments::getOwnPropertySlot): Updated to use setValueSlot since there's
+        no operation to get you at the JSValue* inside a Register as a "slot".
+
 2008-09-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
