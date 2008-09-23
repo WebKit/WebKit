@@ -1782,6 +1782,7 @@ EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, V
 
 FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
     : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
+    , m_refCount(0)
 {
 }
 

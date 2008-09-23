@@ -1,5 +1,21 @@
 2008-09-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21019
+          make FunctionBodyNode::ref/deref fast
+
+        Speeds up v8-raytrace by 7.2%.
+
+        * kjs/nodes.cpp:
+        (JSC::FunctionBodyNode::FunctionBodyNode): Initialize m_refCount to 0.
+        * kjs/nodes.h:
+        (JSC::FunctionBodyNode::ref): Call base class ref once, and thereafter use
+        m_refCount.
+        (JSC::FunctionBodyNode::deref): Ditto, but the deref side.
+
+2008-09-22  Darin Adler  <darin@apple.com>
+
         Pointed out by Sam Weinig.
 
         * kjs/Arguments.cpp:
