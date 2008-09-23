@@ -117,21 +117,21 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     }
 
     // Additional aliases.
-    // Perhaps we can get these added to ICU.
+    // These are present in modern versions of ICU, but not in ICU 3.2 (shipped with Mac OS X 10.4).
     registrar("macroman", "macintosh");
-    registrar("xmacroman", "macintosh");
+    registrar("maccyrillic", "x-mac-cyrillic");
 
     // Additional aliases that historically were present in the encoding
     // table in WebKit on Macintosh that don't seem to be present in ICU.
     // Perhaps we can prove these are not used on the web and remove them.
     // Or perhaps we can get them added to ICU.
+    registrar("xmacroman", "macintosh");
+    registrar("xmacukrainian", "x-mac-cyrillic");
     registrar("cnbig5", "Big5");
     registrar("cngb", "EUC-CN");
     registrar("csISO88598I", "ISO_8859-8-I");
     registrar("csgb231280", "EUC-CN");
-    registrar("dos720", "cp864");
     registrar("dos874", "cp874");
-    registrar("jis7", "ISO-2022-JP");
     registrar("koi", "KOI8-R");
     registrar("logical", "ISO-8859-8-I");
     registrar("unicode11utf8", "UTF-8");
@@ -140,7 +140,6 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("winarabic", "windows-1256");
     registrar("winbaltic", "windows-1257");
     registrar("wincyrillic", "windows-1251");
-    registrar("windows874", "windows874-2000");
     registrar("iso885911", "windows874-2000");
     registrar("wingreek", "windows-1253");
     registrar("winhebrew", "windows-1255");
@@ -155,6 +154,15 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("xunicode20utf8", "UTF-8");
     registrar("xwindows949", "windows-949-2000");
     registrar("xxbig5", "Big5");
+
+    // This alias is present in modern versions of ICU, but it has no standard name,
+    // so we give one to it manually. It is not present in ICU 3.2.
+    registrar("windows874", "windows874-2000");
+
+    // These aliases are present in modern versions of ICU, but use different codecs, and have no standard names.
+    // They are not present in ICU 3.2.
+    registrar("dos720", "cp864");
+    registrar("jis7", "ISO-2022-JP");
 }
 
 void TextCodecICU::registerExtendedCodecs(TextCodecRegistrar registrar)

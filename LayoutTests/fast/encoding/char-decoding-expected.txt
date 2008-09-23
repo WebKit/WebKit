@@ -4,8 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS decode('UTF-8', '%E2%88%9A') is 'U+221A'
-PASS decode('macintosh', '%C3') is 'U+221A'
-PASS decode('MacRoman', '%C3') is 'U+221A'
 PASS decode('gb2312', '%A3%A0') is 'U+3000'
 PASS decode('gb_2312-80', '%A3%A0') is 'U+3000'
 PASS decode('chinese', '%A3%A0') is 'U+3000'
@@ -70,6 +68,16 @@ PASS decode('windows-874', '%A1') is 'U+0E01'
 PASS decode('windows-874', '%DB') is 'U+F8C1'
 PASS decode('TIS-620', '%DB') is 'U+F8C1'
 PASS decode('ISO-8859-11', '%DB') is 'U+F8C1'
+PASS decode('mac', '%C3') is 'U+221A'
+PASS decode('macintosh', '%C3') is 'U+221A'
+PASS decode('MacRoman', '%C3') is 'U+221A'
+PASS decode('x-mac-greek', '%B0') is 'U+0391'
+PASS decode('x-mac-ukrainian', '%80') is 'U+0410'
+PASS decode('x-mac-cyrillic', '%80') is 'U+0410'
+PASS decode('mac-cyrillic', '%80') is 'U+0410'
+PASS decode('x-mac-centraleurroman', '%81') is 'U+0100'
+PASS decode('x-mac-ce', '%81') is 'U+0100'
+PASS decode('x-mac-turkish', '%81') is 'U+00C5'
 PASS successfullyParsed is true
 
 TEST COMPLETE

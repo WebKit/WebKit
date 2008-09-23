@@ -37,8 +37,6 @@ function testDecode(charsetName, characterSequence, unicode)
 }
 
 testDecode('UTF-8', '%E2%88%9A', 'U+221A');
-testDecode('macintosh', '%C3', 'U+221A');
-testDecode('MacRoman', '%C3', 'U+221A');
 
 // <http://bugs.webkit.org/show_bug.cgi?id=17014> EUC-CN code A3A0 is mapped to U+E5E5 instead of U+3000
 testDecode('gb2312', '%A3%A0', 'U+3000');
@@ -118,6 +116,17 @@ testDecode('windows-874', '%DB', 'U+F8C1'); // A weird PUA mapping that doesn't 
 testDecode('TIS-620', '%DB', 'U+F8C1');
 testDecode('ISO-8859-11', '%DB', 'U+F8C1');
 
+// Legacy Mac encodings.
+testDecode('mac', '%C3', 'U+221A');
+testDecode('macintosh', '%C3', 'U+221A');
+testDecode('MacRoman', '%C3', 'U+221A');
+testDecode('x-mac-greek', '%B0', 'U+0391');
+testDecode('x-mac-ukrainian', '%80', 'U+0410');
+testDecode('x-mac-cyrillic', '%80', 'U+0410');
+testDecode('mac-cyrillic', '%80', 'U+0410');
+testDecode('x-mac-centraleurroman', '%81', 'U+0100');
+testDecode('x-mac-ce', '%81', 'U+0100');
+testDecode('x-mac-turkish', '%81', 'U+00C5');
 
 successfullyParsed = true;
 

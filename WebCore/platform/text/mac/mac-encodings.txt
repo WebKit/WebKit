@@ -22,15 +22,12 @@ JIS_X0208_90: JIS_X0208-1990
 JIS_X0212_90: JIS_X0212-1990
 KOI8_U: KOI8-U
 MacArabic: x-mac-arabic
-MacCentralEurRoman: x-mac-centraleurroman, xmacce
 MacChineseSimp: x-mac-chinesesimp, xmacsimpchinese
 MacChineseTrad: x-mac-chinesetrad, xmactradchinese
 MacCroatian: x-mac-croatian
-MacCyrillic: x-mac-cyrillic, maccyrillic, xmacukrainian
 MacDevanagari: x-mac-devanagari
 MacDingbats: x-mac-dingbats
 MacFarsi: x-mac-farsi
-MacGreek: x-mac-greek
 MacGujarati: x-mac-gujarati
 MacGurmukhi: x-mac-gurmukhi
 MacHebrew: x-mac-hebrew
@@ -42,7 +39,6 @@ MacRomanian: x-mac-romanian
 MacSymbol: x-mac-symbol
 MacThai: x-mac-thai
 MacTibetan: x-mac-tibetan
-MacTurkish: x-mac-turkish
 MacVT100: x-mac-vt100
 NextStepLatin: x-nextstep
 ShiftJIS_X0213_00: Shift_JIS_X0213-2000
