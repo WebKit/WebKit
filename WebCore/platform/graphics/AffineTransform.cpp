@@ -135,7 +135,7 @@ AffineTransform& AffineTransform::skewY(double angle)
     return shear(0.0f, tan(deg2rad(angle)));
 }
 
-AffineTransform& AffineTransform::makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
+AffineTransform& makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
 {
     AffineTransform transform;
     transform.translate(dest.x() - source.x(), dest.y() - source.y());
