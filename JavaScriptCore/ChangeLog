@@ -1,3 +1,25 @@
+2008-09-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20989: Aguments constructor should put 'callee' and 'length' properties in a more efficient way
+        <https://bugs.webkit.org/show_bug.cgi?id=20989>
+
+        Make special cases for the 'callee' and 'length' properties in the
+        Arguments object.
+
+        This is somewhere between a 7.8% speedup and a 10% speedup on the V8
+        Raytrace benchmark, depending on whether it is run alone or with the
+        other V8 benchmarks.
+
+        * kjs/Arguments.cpp:
+        (JSC::ArgumentsData::ArgumentsData):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::mark):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+
 2008-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
