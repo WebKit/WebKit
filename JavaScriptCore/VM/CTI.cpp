@@ -799,11 +799,63 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_instanceof: {
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
-            emitGetPutArg(instruction[i + 4].u.operand, 8, X86::ecx);
-            emitCall(i, Machine::cti_op_instanceof);
+            emitGetArg(instruction[i + 2].u.operand, X86::eax); // value
+            emitGetArg(instruction[i + 3].u.operand, X86::ecx); // baseVal
+            emitGetArg(instruction[i + 4].u.operand, X86::edx); // proto
+
+            // check if any are immediates
+            m_jit.orl_rr(X86::eax, X86::ecx);
+            m_jit.orl_rr(X86::edx, X86::ecx);
+            m_jit.testl_i32r(JSImmediate::TagMask, X86::ecx);
+
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJnz(), i));
+
+            // check that all are object type - this is a bit of a bithack to avoid excess branching;
+            // we check that the sum of the three type codes from StructureIDs is exactly 3 * ObjectType,
+            // this works because NumberType and StringType are smaller
+            m_jit.movl_i32r(3 * ObjectType, X86::ecx);
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::eax);
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::edx, X86::edx);
+            m_jit.subl_mr(OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::eax, X86::ecx);
+            m_jit.subl_mr(OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::edx, X86::ecx);
+            emitGetArg(instruction[i + 3].u.operand, X86::edx); // reload baseVal
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::edx, X86::edx);
+            m_jit.cmpl_rm(X86::ecx, OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::edx);
+
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+
+            // check that baseVal's flags include ImplementsHasInstance but not OverridesHasInstance
+            m_jit.movl_mr(OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::edx, X86::ecx);
+            m_jit.andl_i32r(ImplementsHasInstance | OverridesHasInstance, X86::ecx);
+            m_jit.cmpl_i32r(ImplementsHasInstance, X86::ecx);
+
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+
+            emitGetArg(instruction[i + 2].u.operand, X86::ecx); // reload value
+            emitGetArg(instruction[i + 4].u.operand, X86::edx); // reload proto
+
+            // optimistically load true result
+            m_jit.movl_i32r(reinterpret_cast<int32_t>(jsBoolean(true)), X86::eax);
+
+            X86Assembler::JmpDst loop = m_jit.label();
+
+            // load value's prototype
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::ecx, X86::ecx);
+            m_jit.movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
+            
+            m_jit.cmpl_rr(X86::ecx, X86::edx);
+            X86Assembler::JmpSrc exit = m_jit.emitUnlinkedJe();
+
+            m_jit.cmpl_i32r(reinterpret_cast<int32_t>(jsNull()), X86::ecx);
+            X86Assembler::JmpSrc goToLoop = m_jit.emitUnlinkedJne();
+            m_jit.link(goToLoop, loop);
+
+            m_jit.movl_i32r(reinterpret_cast<int32_t>(jsBoolean(false)), X86::eax);
+
+            m_jit.link(exit, m_jit.label());
+
             emitPutResult(instruction[i + 1].u.operand);
+
             i += 5;
             break;
         }
@@ -2099,7 +2151,7 @@ void CTI::privateCompileSlowCases()
             i += 4;
             break;
         }
-        case op_eq:
+        case op_eq: {
             m_jit.link(iter->from, m_jit.label());
             emitPutArg(X86::eax, 0);
             emitPutArg(X86::edx, 4);
@@ -2107,9 +2159,19 @@ void CTI::privateCompileSlowCases()
             emitPutResult(instruction[i + 1].u.operand);
             i += 4;
             break;
+        }
         CTI_COMPILE_BINARY_OP_SLOW_CASE(op_stricteq);
         CTI_COMPILE_BINARY_OP_SLOW_CASE(op_nstricteq);
-
+        case op_instanceof: {
+            m_jit.link(iter->from, m_jit.label());
+            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+            emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
+            emitGetPutArg(instruction[i + 4].u.operand, 8, X86::ecx);
+            emitCall(i, Machine::cti_op_instanceof);
+            emitPutResult(instruction[i + 1].u.operand);
+            i += 5;
+            break;
+        }
         case op_mod: {
             X86Assembler::JmpSrc notImm1 = iter->from;
             X86Assembler::JmpSrc notImm2 = (++iter)->from;
@@ -2126,7 +2188,6 @@ void CTI::privateCompileSlowCases()
             break;
         }
         CTI_COMPILE_BINARY_OP_SLOW_CASE(op_mul);
-
         case op_call:
         case op_call_eval:
         case op_construct: {

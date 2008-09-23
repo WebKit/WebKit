@@ -1,5 +1,20 @@
 2008-09-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Camron Zwarich.
+
+        - inline the fast case of instanceof
+        https://bugs.webkit.org/show_bug.cgi?id=20818
+
+        ~2% speedup on EarleyBoyer test.
+        
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_instanceof):
+
+2008-09-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Cameron Zwarich.
         
         - add forgotten slow case logic for !==
