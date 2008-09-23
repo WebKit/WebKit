@@ -1,6 +1,14 @@
 2008-09-23  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
+
+        Another blind stab in the dark.
+
+        * svg/graphics/cg/SVGResourceClipperCg.cpp: Add missing header.
+
+2008-09-23  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
         
         Third time's the charm, eh?  My local build is sadly still not done...
 

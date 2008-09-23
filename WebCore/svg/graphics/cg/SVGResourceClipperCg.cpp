@@ -33,6 +33,8 @@
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 
+#include <ApplicationServices/ApplicationServices.h>
+
 namespace WebCore {
 
 void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& boundingBox) const
