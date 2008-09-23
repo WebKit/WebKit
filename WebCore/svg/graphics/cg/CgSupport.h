@@ -41,8 +41,6 @@ class RenderStyle;
 class RenderObject;
 class GraphicsContext;
 
-CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
-
 CGContextRef scratchContext();
 FloatRect strokeBoundingBox(const Path& path, RenderStyle*, const RenderObject*);
 

@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGPaintServerGradient.h"
 
-#include "CgSupport.h"
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -254,20 +253,16 @@ void SVGPaintServerGradient::renderPath(GraphicsContext*& context, const RenderO
 
 void SVGPaintServerGradient::handleBoundingBoxModeAndGradientTransformation(GraphicsContext* context, const FloatRect& targetRect) const
 {
-    CGContextRef contextRef = context->platformContext();
-
     if (boundingBoxMode()) {
         // Choose default gradient bounding box
-        CGRect gradientBBox = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
+        FloatRect gradientBBox(0.0f, 0.0f, 1.0f, 1.0f);
 
         // Generate a transform to map between both bounding boxes
-        CGAffineTransform gradientIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(gradientBBox, CGRect(targetRect));
-        CGContextConcatCTM(contextRef, gradientIntoObjectBBox);
+        context->concatCTM(makeMapBetweenRects(gradientBBox, targetRect));
     }
 
     // Apply the gradient's own transform
-    CGAffineTransform transform = gradientTransform();
-    CGContextConcatCTM(contextRef, transform);
+    context->concatCTM(gradientTransform());
 }
 
 bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const

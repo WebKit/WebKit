@@ -1,3 +1,19 @@
+2008-09-22  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by eseidel.  Landed by eseidel.
+
+        Moved makeMapBetweenRects from SVG/CG to AffineTransform
+        Make SVGResourceClipper::applyClip more cross-platform
+
+        * platform/graphics/AffineTransform.cpp:
+        * platform/graphics/AffineTransform.h:
+        * svg/graphics/cg/CgSupport.cpp:
+        * svg/graphics/cg/CgSupport.h:
+        * svg/graphics/cg/SVGPaintServerGradientCg.cpp:
+        (WebCore::SVGPaintServerGradient::handleBoundingBoxModeAndGradientTransformation):
+        * svg/graphics/cg/SVGResourceClipperCg.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+
 2008-09-22  Alp Toker  <alp@nuanti.com>
 
         Reviewed by David Hyatt.

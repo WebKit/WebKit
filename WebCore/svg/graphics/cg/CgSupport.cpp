@@ -41,13 +41,6 @@
 
 namespace WebCore {
 
-CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest)
-{
-    CGAffineTransform transform = CGAffineTransformMakeTranslation(dest.origin.x - source.origin.x, dest.origin.y - source.origin.y);
-    transform = CGAffineTransformScale(transform, dest.size.width/source.size.width, dest.size.height/source.size.height);
-    return transform;
-}
-
 CGContextRef scratchContext()
 {
     static CGContextRef scratch = 0;

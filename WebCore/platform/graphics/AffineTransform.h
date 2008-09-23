@@ -123,6 +123,8 @@ private:
 #endif
 };
 
+AffineTransform& makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
+
 } // namespace WebCore
 
 #endif // AffineTransform_h

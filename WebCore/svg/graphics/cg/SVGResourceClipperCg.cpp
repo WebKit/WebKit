@@ -30,14 +30,13 @@
 #if ENABLE(SVG)
 #include "SVGResourceClipper.h"
 
+#include "AffineTransform.h"
 #include "GraphicsContext.h"
-#include "CgSupport.h"
 
 namespace WebCore {
 
 void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& boundingBox) const
 {
-    CGContextRef cgContext = context->platformContext();
     if (m_clipData.clipData().size() < 1)
         return;
 
@@ -46,24 +45,22 @@ void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& bo
 
     context->beginPath();
 
-    CGAffineTransform bboxTransform = CGAffineTransformMakeMapBetweenRects(CGRectMake(0,0,1,1), CGRect(boundingBox));
+    AffineTransform bboxTransform = makeMapBetweenRects(FloatRect(0.0f, 0.0f, 1.0f, 1.0f), boundingBox);
 
     for (unsigned x = 0; x < m_clipData.clipData().size(); x++) {
         ClipData data = m_clipData.clipData()[x];
         if (data.windRule != clipRule)
             heterogenousClipRules = true;
         
-        CGPathRef clipPath = data.path.platformPath();
+        Path clipPath = data.path;
 
-        if (data.bboxUnits) {
-            CGMutablePathRef transformedPath = CGPathCreateMutable();
-            CGPathAddPath(transformedPath, &bboxTransform, clipPath);
-            CGContextAddPath(cgContext, transformedPath);
-            CGPathRelease(transformedPath);
-        } else
-            CGContextAddPath(cgContext, clipPath);
+        if (data.bboxUnits)
+            clipPath.transform(bboxTransform);
+
+        context->addPath(clipPath);
     }
 
+    CGContextRef cgContext = context->platformContext();
     if (m_clipData.clipData().size()) {
         // FIXME!
         // We don't currently allow for heterogenous clip rules.
