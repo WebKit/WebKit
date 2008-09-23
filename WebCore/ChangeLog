@@ -1,3 +1,31 @@
+2008-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21008
+          getting pixels by index from CanvasPixelArray is unnecessarily slow
+
+        * GNUmakefile.am: Added JSCanvasPixelArrayCustom.h.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/js/JSCanvasPixelArrayCustom.cpp: Removed indexGetter and
+          indexSetter. These are now both inlined, so in the header.
+        * bindings/js/JSCanvasPixelArrayCustom.h: Added. The getByIndex
+          function is what's used for HasCustomIndexGetter. Also moved the
+          indexSetter function here.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Changed HasCustomIndexGetter
+          to use a getByIndex member function rather than an indexGetter static
+          member function in a property slot. This lets us avoid the property
+          slot mechanism's rule where it turns numeric property names into
+          strings in the identifier table, which is good because that's slow.
+          Also added a new property CustomHeader that allows IDL files to
+          introduce headers to be included -- useful when we have functions
+          that we want to inline into the binding.
+
+        * html/CanvasPixelArray.idl: Added CustomHeader attribute.
+
 2008-09-23  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.

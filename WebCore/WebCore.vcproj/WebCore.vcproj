@@ -13233,6 +13233,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCanvasPixelArrayCustom.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCanvasRenderingContext2DCustom.cpp"
 					>
 				</File>

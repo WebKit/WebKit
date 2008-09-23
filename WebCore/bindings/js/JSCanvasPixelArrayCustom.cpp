@@ -27,31 +27,11 @@
  */
 
 #include "config.h"
-#include "JSCanvasPixelArray.h"
-
-#include "CanvasPixelArray.h"
+#include "JSCanvasPixelArrayCustom.h"
 
 using namespace JSC;
 
 namespace WebCore {
-
-JSValue* JSCanvasPixelArray::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
-{
-    CanvasPixelArray* array = static_cast<JSCanvasPixelArray*>(slot.slotBase())->impl();
-    unsigned index = slot.index();
-    unsigned char result;
-    if (!array->get(index, result))
-        return jsUndefined();
-    return jsNumber(exec, result);
-}
-
-void JSCanvasPixelArray::indexSetter(ExecState* exec, unsigned index, JSValue* value)
-{
-    double pixelValue = value->toNumber(exec);
-    if (exec->hadException())
-        return;
-    m_impl->set(index, pixelValue); 
-}
 
 JSValue* toJS(ExecState* exec, CanvasPixelArray* pixels)
 {

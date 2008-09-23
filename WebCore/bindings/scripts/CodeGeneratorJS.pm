@@ -278,7 +278,7 @@ sub GenerateGetOwnPropertySlotBody
         &$hasNameGetterGeneration();
     }
 
-    my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
+    my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"};
     if ($requiresManualLookup) {
         push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
         push(@getOwnPropertySlotImpl, "    if (entry) {\n");
@@ -291,7 +291,11 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "    bool ok;\n");
         push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
         push(@getOwnPropertySlotImpl, "    if (ok && index < static_cast<$implClassName*>(impl())->length()) {\n");
-        push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(this, index, indexGetter);\n");
+        if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+            push(@getOwnPropertySlotImpl, "        slot.setValue(getByIndex(exec, index));\n");
+        } else {
+            push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(this, index, indexGetter);\n");
+        }
         push(@getOwnPropertySlotImpl, "        return true;\n");
         push(@getOwnPropertySlotImpl, "    }\n");
     }
@@ -413,9 +417,7 @@ sub GenerateHeader
     # Prototype
     push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*);\n") if $interfaceName ne "DOMWindow";
 
-    $implIncludes{"${className}Custom.h"} = 1 if
-       $dataNode->extendedAttributes->{"CustomPutFunction"}
-    || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+    $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"};
 
     my $hasGetter = $numAttributes > 0 
                  || $dataNode->extendedAttributes->{"GenerateConstructor"} 
@@ -589,10 +591,13 @@ sub GenerateHeader
     }
 
     # Index getter
-    if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+    if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
         push(@headerContent, "    static JSC::JSValue* indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
     }
-
+    if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+        push(@headerContent, "    JSC::JSValue* getByIndex(JSC::ExecState*, unsigned index);\n");
+    }
+    
     # Index setter
     if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
         push(@headerContent, "    void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue*);\n");
@@ -979,7 +984,11 @@ sub GenerateImplementation
             push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    if (propertyName < static_cast<$implClassName*>(impl())->length()) {\n");
-            push(@implContent, "        slot.setCustomIndex(this, propertyName, indexGetter);\n");
+            if ($dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+                push(@implContent, "        slot.setValue(getByIndex(exec, propertyName));\n");
+            } else {
+                push(@implContent, "        slot.setCustomIndex(this, propertyName, indexGetter);\n");
+            }
             push(@implContent, "        return true;\n");
             push(@implContent, "    }\n");
             push(@implContent, "    return getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);\n");
