@@ -1,3 +1,20 @@
+2008-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - inline the fast cases of !==, same as for ===
+        
+        2.9% speedup on EarleyBoyer benchmark
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpStrictEq): Factored stricteq codegen into this function,
+        and parameterized so it can do the reverse version as well.
+        (JSC::CTI::privateCompileMainPass): Use the above for stricteq and nstricteq.
+        * VM/CTI.h:
+        (JSC::CTI::): Declare above stuff.
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_nstricteq): Removed fast cases, now handled inline.
+
 2008-09-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

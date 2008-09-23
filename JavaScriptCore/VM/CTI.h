@@ -338,6 +338,8 @@ namespace JSC {
 
         enum CompileOpCallType { OpCallNormal, OpCallEval, OpConstruct };
         void compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type = OpCallNormal);
+        enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
+        void compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStrictEqType type);
 
         void emitGetArg(unsigned src, X86Assembler::RegisterID dst);
         void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
