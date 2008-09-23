@@ -36,13 +36,16 @@ namespace JSC {
 
         static PassRefPtr<PropertyNameArrayData> create() { return adoptRef(new PropertyNameArrayData); }
 
+        const_iterator begin() const { return m_propertyNameVector.begin(); }
+        const_iterator end() const { return m_propertyNameVector.end(); }
+
         PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
+
+        void setCachedStructureID(PassRefPtr<StructureID> structureID) { m_cachedStructureID = structureID; }
+        StructureID* cachedStructureID() const { return m_cachedStructureID.get(); }
 
         void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureIDChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
-
-        const_iterator begin() const { return m_propertyNameVector.begin(); }
-        const_iterator end() const { return m_propertyNameVector.end(); }
 
     private:
         PropertyNameArrayData()
@@ -50,12 +53,12 @@ namespace JSC {
         }
 
         PropertyNameVector m_propertyNameVector;
+        RefPtr<StructureID> m_cachedStructureID;
         RefPtr<StructureIDChain> m_cachedPrototypeChain;
     };
 
     class PropertyNameArray {
     public:
-        typedef Identifier ValueType;
         typedef PropertyNameArrayData::const_iterator const_iterator;
 
         PropertyNameArray(JSGlobalData* globalData)

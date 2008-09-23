@@ -49,23 +49,6 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 }
 
-static bool structureIDChainsAreEqual(StructureIDChain* chainA, StructureIDChain* chainB)
-{
-    if (!chainA || !chainB)
-        return false;
-
-    RefPtr<StructureID>* a = chainA->head();
-    RefPtr<StructureID>* b = chainB->head();
-    while (1) {
-        if (*a != *b)
-            return false;
-        if (!*a)
-            return true;
-        a++;
-        b++;
-    }
-}
-
 void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& propertyNames, JSObject* baseObject)
 {
     bool shouldCache = !(propertyNames.size() || m_isDictionary);
@@ -104,6 +87,7 @@ void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray&
         if (!chain)
             chain = createCachedPrototypeChain();
         m_cachedPropertyNameArrayData->setCachedPrototypeChain(chain);
+        m_cachedPropertyNameArrayData->setCachedStructureID(this);
     }
 }
 
@@ -233,6 +217,23 @@ StructureIDChain::StructureIDChain(StructureID* structureID)
     }
     m_vector[i] = structureID;
     m_vector[i + 1] = 0;
+}
+
+bool structureIDChainsAreEqual(StructureIDChain* chainA, StructureIDChain* chainB)
+{
+    if (!chainA || !chainB)
+        return false;
+
+    RefPtr<StructureID>* a = chainA->head();
+    RefPtr<StructureID>* b = chainB->head();
+    while (1) {
+        if (*a != *b)
+            return false;
+        if (!*a)
+            return true;
+        a++;
+        b++;
+    }
 }
 
 } // namespace JSC

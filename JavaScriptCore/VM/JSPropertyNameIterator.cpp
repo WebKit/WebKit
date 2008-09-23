@@ -82,6 +82,7 @@ void JSPropertyNameIterator::mark()
 
 void JSPropertyNameIterator::invalidate()
 {
+    ASSERT(m_position == m_end);
     m_object = 0;
     m_data.clear();
 }

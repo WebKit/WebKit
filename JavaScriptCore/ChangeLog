@@ -1,3 +1,26 @@
+2008-09-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=21014
+        Speed up for..in by using StructureID to avoid call hasProperty
+
+        Speeds up fasta by 8%.
+
+        * VM/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::invalidate):
+        * VM/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::next):
+        * kjs/PropertyNameArray.h:
+        (JSC::PropertyNameArrayData::begin):
+        (JSC::PropertyNameArrayData::end):
+        (JSC::PropertyNameArrayData::setCachedStructureID):
+        (JSC::PropertyNameArrayData::cachedStructureID):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::getEnumerablePropertyNames):
+        (JSC::structureIDChainsAreEqual):
+        * kjs/StructureID.h:
+
 2008-09-22  Kelvin Sherlock  <ksherlock@gmail.com>
 
         Updated and tweaked by Sam Weinig.

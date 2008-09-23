@@ -96,12 +96,18 @@ inline JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, J
 
 inline JSValue* JSPropertyNameIterator::next(ExecState* exec)
 {
-    while (m_position != m_end) {
+    if (m_position == m_end)
+        return 0;
+
+    if (m_data->cachedStructureID() == m_object->structureID() && structureIDChainsAreEqual(m_data->cachedPrototypeChain(), m_object->structureID()->cachedPrototypeChain()))
+        return jsOwnedString(exec, (*m_position++).ustring());
+
+    do {
         if (m_object->hasProperty(exec, *m_position))
             return jsOwnedString(exec, (*m_position++).ustring());
         m_position++;
-    }
-    invalidate();
+    } while (m_position != m_end);
+
     return 0;
 }
 
