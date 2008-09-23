@@ -436,9 +436,20 @@ NSWritingDirection Frame::baseWritingDirectionForSelectionStart() const
 
     Position pos = selection()->selection().visibleStart().deepEquivalent();
     Node* node = pos.node();
-    if (!node || !node->renderer() || !node->renderer()->containingBlock())
-        return result;
-    RenderStyle* style = node->renderer()->containingBlock()->style();
+   if (!node)
+       return result;
+
+   RenderObject* renderer = node->renderer();
+   if (!renderer)
+       return result;
+
+   if (!renderer->isBlockFlow()) {
+       renderer = renderer->containingBlock();
+       if (!renderer)
+           return result;
+   }
+
+    RenderStyle* style = renderer->style();
     if (!style)
         return result;
         

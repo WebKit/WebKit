@@ -1,3 +1,15 @@
+2008-09-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5699571> Mail: Unable to change writing direction to LTR in an empty message
+
+        Not testable in DumpRenderTree or in Safari
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::baseWritingDirectionForSelectionStart): Account for the
+        case that the selection start node is a block.
+
 2008-09-22  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21007
