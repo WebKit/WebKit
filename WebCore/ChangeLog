@@ -1,3 +1,8 @@
+2008-09-22  Darin Adler  <darin@apple.com>
+
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::baseWritingDirectionForSelectionStart): Fix indentation.
+
 2008-09-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
