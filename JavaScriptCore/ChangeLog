@@ -3,7 +3,7 @@
         Reviewed by Maciej Stachowiak.
 
         Patch for https://bugs.webkit.org/show_bug.cgi?id=21014
-        Speed up for..in by using StructureID to avoid call hasProperty
+        Speed up for..in by using StructureID to avoid calls to hasProperty
 
         Speeds up fasta by 8%.
 
