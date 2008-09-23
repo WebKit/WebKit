@@ -1,3 +1,12 @@
+2008-09-23  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+        
+        Third time's the charm, eh?  My local build is sadly still not done...
+
+        * platform/graphics/AffineTransform.cpp: remove extra &
+        * platform/graphics/AffineTransform.h: remove extra &
+
 2008-09-22  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.
