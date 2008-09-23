@@ -159,9 +159,10 @@ namespace WebCore {
 
     private:
         IntSize maximumScroll() const;
+#endif
+
         class ScrollViewPrivate;
         ScrollViewPrivate* m_data;
-#endif
 
 #if !PLATFORM(MAC) && !PLATFORM(WX)
     public:
@@ -178,7 +179,7 @@ namespace WebCore {
         void updateScrollbars(const IntSize& desiredOffset);
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(QT)
+#if PLATFORM(WIN) || PLATFORM(QT) || PLATFORM(MAC)
     public:
         IntRect windowResizerRect();
         bool resizerOverlapsContent() const;

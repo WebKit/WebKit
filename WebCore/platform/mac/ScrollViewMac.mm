@@ -28,8 +28,11 @@
 
 #import "BlockExceptions.h"
 #import "FloatRect.h"
+#import "Frame.h"
+#import "FrameView.h"
 #import "IntRect.h"
 #import "Logging.h"
+#import "Page.h"
 #import "WebCoreFrameView.h"
 
 using namespace std;
@@ -41,12 +44,24 @@ using namespace std;
 
 namespace WebCore {
 
+class ScrollView::ScrollViewPrivate {
+public:
+    ScrollViewPrivate()
+        : m_scrollbarsAvoidingResizer(0)
+    {
+    }
+
+    int m_scrollbarsAvoidingResizer;
+};
+
 ScrollView::ScrollView()
+    : m_data(new ScrollViewPrivate)
 {
 }
 
 ScrollView::~ScrollView()
 {
+    delete m_data;
 }
 
 inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
@@ -390,6 +405,35 @@ bool ScrollView::inWindow() const
 void ScrollView::wheelEvent(PlatformWheelEvent&)
 {
     // Do nothing. NSScrollView handles doing the scroll for us.
+}
+
+IntRect ScrollView::windowResizerRect()
+{
+    ASSERT(isFrameView());
+    const FrameView* frameView = static_cast<const FrameView*>(this);
+    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
+    if (!page)
+        return IntRect();
+    return page->chrome()->windowResizerRect();
+}
+
+bool ScrollView::resizerOverlapsContent() const
+{
+    return !m_data->m_scrollbarsAvoidingResizer;
+}
+
+void ScrollView::adjustOverlappingScrollbarCount(int overlapDelta)
+{
+    m_data->m_scrollbarsAvoidingResizer += overlapDelta;
+    if (parent() && parent()->isFrameView())
+        static_cast<FrameView*>(parent())->adjustOverlappingScrollbarCount(overlapDelta);
+}
+
+void ScrollView::setParent(ScrollView* parentView)
+{
+    if (!parentView && m_data->m_scrollbarsAvoidingResizer && parent() && parent()->isFrameView())
+        static_cast<FrameView*>(parent())->adjustOverlappingScrollbarCount(false);
+    Widget::setParent(parentView);
 }
 
 }

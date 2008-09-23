@@ -168,9 +168,15 @@ public:
     // The containing window is used as the coordinate space for event handling.
     PlatformWindow containingWindow() const;
     void setContainingWindow(PlatformWindow window) { m_containingWindow = window; } // This method is only used by platforms that can't easily get back to their containing window.
+
+    // It is important for cross-platform code to realize that Mac has flipped coordinates.  Therefore any code
+    // that tries to convert the location of a rect using the point-based convertFromContainingWindow will end
+    // up with an inaccurate rect.  Always make sure to use the rect-based convertFromContainingWindow method
+    // when converting window rects.
     IntRect convertToContainingWindow(const IntRect&) const;
     IntPoint convertToContainingWindow(const IntPoint&) const;
-    IntPoint convertFromContainingWindow(const IntPoint&) const;
+    IntPoint convertFromContainingWindow(const IntPoint&) const; // See comment above about when not to use this method.
+    IntRect convertFromContainingWindow(const IntRect&) const;
 
     virtual void geometryChanged() const {}
 

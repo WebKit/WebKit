@@ -1,3 +1,29 @@
+2008-09-23  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21039
+
+        Teach the viewless Mac scrollbar how to avoid NSWindow's resizer.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::setFrameGeometry):
+        * platform/Scrollbar.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertFromContainingWindow):
+        * platform/Widget.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::windowResizerRect):
+        (WebCore::ScrollView::resizerOverlapsContent):
+        (WebCore::ScrollView::adjustOverlappingScrollbarCount):
+        (WebCore::ScrollView::setParent):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertFromContainingWindow):
+
 2008-09-23  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Darin Adler. Landed by Jan Alonzo.

@@ -319,6 +319,21 @@ IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
     return point;
 }
 
+IntRect Widget::convertFromContainingWindow(const IntRect& rect) const
+{
+    if (!platformWidget() && parent()) {
+        IntRect result = parent()->convertFromContainingWindow(rect);
+        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        return result;
+    }
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return enclosingIntRect([platformWidget() convertRect:rect fromView:nil]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
+    return rect;
+}
+
 IntRect Widget::convertToContainingWindow(const IntRect& r) const
 {
     if (!platformWidget()) {

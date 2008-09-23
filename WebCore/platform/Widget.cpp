@@ -95,6 +95,13 @@ IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
     return widgetPoint;
 }
 
+IntRect Widget::convertFromContainingWindow(const IntRect& rect) const
+{
+    IntRect result = rect;
+    result.setLocation(convertFromContainingWindow(rect.location()));
+    return result;
+}
+
 void Widget::releasePlatformWidget()
 {
 }

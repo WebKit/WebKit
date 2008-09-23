@@ -373,8 +373,7 @@ void Scrollbar::setFrameGeometry(const IntRect& rect)
     if (parent() && parent()->isFrameView()) {
         bool overlapsResizer = false;
         ScrollView* view = parent();
-        IntRect resizerRect = view->windowResizerRect();
-        resizerRect.setLocation(view->convertFromContainingWindow(resizerRect.location()));
+        IntRect resizerRect = view->convertFromContainingWindow(view->windowResizerRect());
         if (rect.intersects(resizerRect)) {
             if (orientation() == HorizontalScrollbar) {
                 int overlap = rect.right() - resizerRect.x();

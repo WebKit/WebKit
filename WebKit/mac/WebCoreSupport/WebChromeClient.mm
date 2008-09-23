@@ -68,6 +68,10 @@
 - (void)setIsSelected:(BOOL)isSelected;
 @end
 
+@interface NSWindow (AppKitSecretsIKnowAbout)
+- (NSRect)_growBoxRect;
+@end
+
 using namespace WebCore;
 
 @interface WebOpenPanelResultListener : NSObject <WebOpenPanelResultListener> {
@@ -396,7 +400,7 @@ bool WebChromeClient::tabsToLinks() const
 
 IntRect WebChromeClient::windowResizerRect() const
 {
-    return IntRect();
+    return enclosingIntRect([[m_webView window] _growBoxRect]);
 }
 
 void WebChromeClient::addToDirtyRegion(const IntRect&)
