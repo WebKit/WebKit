@@ -1,6 +1,15 @@
 2008-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
+        
+        - add forgotten slow case logic for !==
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileSlowCases):
+
+2008-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
 
         - inline the fast cases of !==, same as for ===
         

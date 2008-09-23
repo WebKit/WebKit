@@ -2108,6 +2108,7 @@ void CTI::privateCompileSlowCases()
             i += 4;
             break;
         CTI_COMPILE_BINARY_OP_SLOW_CASE(op_stricteq);
+        CTI_COMPILE_BINARY_OP_SLOW_CASE(op_nstricteq);
 
         case op_mod: {
             X86Assembler::JmpSrc notImm1 = iter->from;
