@@ -1,3 +1,21 @@
+2008-09-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        Bug 21030: The JS debugger breaks on the do of a do-while not the while
+        (where the conditional statement is)
+        https://bugs.webkit.org/show_bug.cgi?id=21030
+        Now the statementListEmitCode detects if a do-while node is being
+        emited and emits the debug hook on the last line instead of the first.
+
+        This change had no effect on sunspider.
+
+        * kjs/nodes.cpp:
+        (JSC::statementListEmitCode):
+        * kjs/nodes.h:
+        (JSC::StatementNode::isDoWhile):
+        (JSC::DoWhileNode::isDoWhile):
+
 2008-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Camron Zwarich.

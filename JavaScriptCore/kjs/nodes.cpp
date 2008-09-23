@@ -1084,7 +1084,7 @@ static inline RegisterID* statementListEmitCode(StatementVector& statements, Cod
     StatementVector::iterator end = statements.end();
     for (StatementVector::iterator it = statements.begin(); it != end; ++it) {
         StatementNode* n = it->get();
-        generator.emitDebugHook(WillExecuteStatement, n->firstLine(), n->lastLine());
+        generator.emitDebugHook(WillExecuteStatement, n->isDoWhile() ? n->lastLine() : n->firstLine(), n->lastLine());
         generator.emitNode(dst, n);
     }
     return 0;
