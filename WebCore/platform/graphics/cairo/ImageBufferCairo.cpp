@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Holger Hans Peter Freyther <zecke@selfish.org>
+ * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +57,9 @@ auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool)
 ImageBuffer::ImageBuffer(cairo_surface_t* surface)
     : m_surface(surface)
 {
+    int width = cairo_image_surface_get_width(m_surface);
+    int height = cairo_image_surface_get_height(m_surface);
+    m_size = IntSize(width, height);
     cairo_t* cr = cairo_create(m_surface);
     m_context.set(new GraphicsContext(cr));
 
@@ -87,15 +91,116 @@ Image* ImageBuffer::image() const
     return m_image.get();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const
+PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 {
-    notImplemented();
-    return 0;
+    if (!m_surface)
+        return 0;
+
+    ASSERT(cairo_surface_get_type(m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+
+    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+    unsigned char* dataSrc = cairo_image_surface_get_data(m_surface);
+    unsigned char* dataDst = result->data()->data().data();
+
+    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
+        memset(dataSrc, 0, result->data()->length());
+
+    int originx = rect.x();
+    int destx = 0;
+    if (originx < 0) {
+        destx = -originx;
+        originx = 0;
+    }
+    int endx = rect.x() + rect.width();
+    if (endx > m_size.width())
+        endx = m_size.width();
+    int numColumns = endx - originx;
+
+    int originy = rect.y();
+    int desty = 0;
+    if (originy < 0) {
+        desty = -originy;
+        originy = 0;
+    }
+    int endy = rect.y() + rect.height();
+    if (endy > m_size.height())
+        endy = m_size.height();
+    int numRows = endy - originy;
+
+    int stride = cairo_image_surface_get_stride(m_surface);
+    unsigned destBytesPerRow = 4 * rect.width();
+
+    unsigned char* destRows = dataDst + desty * destBytesPerRow + destx * 4;
+    for (int y = 0; y < numRows; ++y) {
+        unsigned char *row = dataSrc + stride * (y + originy);
+        for (int x = 0; x < numColumns; x++) {
+            uint32_t *pixel = (uint32_t *) row + x + originx;
+            int basex = x * 4;
+            if (unsigned int alpha = (*pixel & 0xff000000) >> 24) {
+                destRows[basex] = (*pixel & 0x00ff0000) >> 16;
+                destRows[basex + 1] = (*pixel & 0x0000ff00) >> 8;
+                destRows[basex + 2] = (*pixel & 0x000000ff);
+                destRows[basex + 3] = alpha;
+            } else
+                reinterpret_cast<uint32_t*>(destRows + basex)[0] = pixel[0];
+        }
+        destRows += destBytesPerRow;
+    }
+
+    return result;
 }
 
-void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
+void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    notImplemented();
+    if (!m_surface)
+        return;
+
+    ASSERT(cairo_surface_get_type(m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+
+    unsigned char* dataDst = cairo_image_surface_get_data(m_surface);
+
+    ASSERT(sourceRect.width() > 0);
+    ASSERT(sourceRect.height() > 0);
+
+    int originx = sourceRect.x();
+    int destx = destPoint.x() + sourceRect.x();
+    ASSERT(destx >= 0);
+    ASSERT(destx < m_size.width());
+    ASSERT(originx >= 0);
+    ASSERT(originx <= sourceRect.right());
+
+    int endx = destPoint.x() + sourceRect.right();
+    ASSERT(endx <= m_size.width());
+
+    int numColumns = endx - destx;
+
+    int originy = sourceRect.y();
+    int desty = destPoint.y() + sourceRect.y();
+    ASSERT(desty >= 0);
+    ASSERT(desty < m_size.height());
+    ASSERT(originy >= 0);
+    ASSERT(originy <= sourceRect.bottom());
+
+    int endy = destPoint.y() + sourceRect.bottom();
+    ASSERT(endy <= m_size.height());
+    int numRows = endy - desty;
+
+    unsigned srcBytesPerRow = 4 * source->width();
+    int stride = cairo_image_surface_get_stride(m_surface);
+
+    unsigned char* srcRows = source->data()->data().data() + originy * srcBytesPerRow + originx * 4;
+    for (int y = 0; y < numRows; ++y) {
+        unsigned char *row = dataDst + stride * (y + desty);
+        for (int x = 0; x < numColumns; x++) {
+            uint32_t *pixel = (uint32_t *) row + x + destx;
+            int basex = x * 4;
+            if (unsigned int alpha = srcRows[basex + 3]) {
+                *pixel = alpha << 24 | srcRows[basex] << 16 | srcRows[basex + 1] << 8 | srcRows[basex + 2];
+            } else
+                pixel[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+        }
+        srcRows += srcBytesPerRow;
+    }
 }
 
 static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned int length)

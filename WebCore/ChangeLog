@@ -1,3 +1,18 @@
+2008-09-23  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Darin Adler. Landed by Jan Alonzo.
+
+        Added support for getImageData() and putImageData()
+        to Cairo.
+
+        [CAIRO] needs getImageData and putImageData support
+        https://bugs.webkit.org/show_bug.cgi?id=20838
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+
 2008-09-23  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger Freyther.
