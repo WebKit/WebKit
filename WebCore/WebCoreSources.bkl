@@ -71,7 +71,6 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSHTMLFrameElementCustom.cpp
         bindings/js/JSHTMLFrameSetElementCustom.cpp
         bindings/js/JSHTMLIFrameElementCustom.cpp
-        bindings/js/JSHTMLInputElementBase.cpp
         bindings/js/JSHTMLObjectElementCustom.cpp
         bindings/js/JSHTMLOptionElementConstructor.cpp
         bindings/js/JSHTMLOptionsCollectionCustom.cpp

@@ -203,9 +203,6 @@ LUT_FILES += \
     bindings/js/JSEventTargetBase.cpp \
     bindings/js/JSRGBColor.cpp
 
-LUT_TABLE_FILES += \
-    bindings/js/JSHTMLInputElementBase.cpp
-
 IDL_BINDINGS += \
     css/Counter.idl \
     css/CSSCharsetRule.idl \
@@ -391,7 +388,7 @@ SOURCES += \
     bindings/js/JSHTMLFrameElementCustom.cpp \
     bindings/js/JSHTMLFrameSetElementCustom.cpp \
     bindings/js/JSHTMLIFrameElementCustom.cpp \
-    bindings/js/JSHTMLInputElementBase.cpp \
+    bindings/js/JSHTMLInputElementCustom.cpp \
     bindings/js/JSHTMLObjectElementCustom.cpp \
     bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \

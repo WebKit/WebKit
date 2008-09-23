@@ -55,8 +55,7 @@ webcore_built_nosources += \
 	DerivedSources/ColorData.c \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
-	WebCore/bindings/js/JSRGBColor.lut.h \
-	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp
+	WebCore/bindings/js/JSRGBColor.lut.h
 
 webcore_built_sources += \
 	DerivedSources/CSSGrammar.cpp \
@@ -652,8 +651,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLFrameElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLFrameSetElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLIFrameElementCustom.cpp \
-	WebCore/bindings/js/JSHTMLInputElementBase.cpp \
-	WebCore/bindings/js/JSHTMLInputElementBase.h \
+	WebCore/bindings/js/JSHTMLInputElementCustom.cpp \
+	WebCore/bindings/js/JSHTMLInputElementCustom.h \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.h \
 	WebCore/bindings/js/JSHTMLOptionElementConstructor.cpp \
@@ -3462,9 +3461,6 @@ DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(
 %.lut.h: %.cpp $(CREATE_HASH_TABLE)
 	$(CREATE_HASH_TABLE) $< > $@
 
-WebCore/bindings/js/%Table.cpp: $(srcdir)/WebCore/bindings/js/JSHTMLInputElementBase.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< > $@
-
 # HTML tag and attribute names
 DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp;
 
@@ -3543,7 +3539,6 @@ webcore_dist += \
 
 CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
-	WebCore/bindings/js/JSHTMLInputElementBaseTable.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h
 

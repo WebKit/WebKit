@@ -1,3 +1,12 @@
+2008-09-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=21013
+
+        * fast/forms/selection-functions.html: Update test to match new
+        behavior that we now share with Firefox.
+
 2008-09-22  David Hyatt  <hyatt@apple.com>
 
         Layout test for double click scrollbar bug.

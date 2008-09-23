@@ -1,3 +1,30 @@
+2008-09-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=21013
+        Match Firefox in how we hide HTMLInputElement.selectionStart, selectionEnd
+        and setSelectionRange.  This also allows us to remove the legacy JSHTMLInputElementBase
+        class!
+
+        - selectionStart, selectionEnd and setSelectionRange now are visible in iteration of
+          non-selectable input types, but return undefined when accessed.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSHTMLInputElementBase.cpp: Removed.
+        * bindings/js/JSHTMLInputElementBase.h: Removed.
+        * bindings/js/JSHTMLInputElementCustom.cpp: Added.
+        (WebCore::JSHTMLInputElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLInputElement::selectionStart):
+        (WebCore::JSHTMLInputElement::selectionEnd):
+        * bindings/js/JSHTMLInputElementCustom.h: Added.
+        * html/HTMLInputElement.idl:
+
 2008-09-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

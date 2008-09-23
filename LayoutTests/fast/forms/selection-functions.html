@@ -24,23 +24,19 @@
                 print("");
                 print("===input===");
                 testElt(elt);
-                
+
                 print("");
-                // test to make sure the selection stuff doesn't show up
-                // when iterating over a button's properties
+
+                // Make sure selectionStart, selectionEnd and setSelectionRange are undefined on the button
                 elt = document.getElementById("button");
-                for (key in elt) {
-                    if (key == "selectionStart" || key == "selectionEnd" || key == "setSelectionRange") {
-                        print("Failed button iteration");
-                    }
-                }
-                
-                // Make sure selectionStart and selectionEnd are undefined on the button
                 if (elt.selectionStart != undefined) {
                     print("Button.selectionStart defined");
                 }
                 if (elt.selectionEnd != undefined) {
                     print("Button.selectionStart defined");
+                }
+                if (elt.setSelectionRange != undefined) {
+                    print("Button.setSelectionRange defined");
                 }
             }
             function testElt(elt)

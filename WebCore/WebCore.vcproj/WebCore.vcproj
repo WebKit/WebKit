@@ -13433,11 +13433,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLInputElementBase.cpp"
+					RelativePath="..\bindings\js\JSHTMLInputElementCustom.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLInputElementBase.h"
+					RelativePath="..\bindings\js\JSHTMLInputElementCustom.h"
 					>
 				</File>
 				<File

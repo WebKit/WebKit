@@ -21,7 +21,7 @@
 module html {
 
     interface [
-        LegacyParent=JSHTMLInputElementBase,
+        CustomGetOwnPropertySlot,
         GenerateConstructor,
         InterfaceUUID=8f388ea3-1c31-4cca-8edd-449d14e222e1,
         ImplementationUUID=aeb56b87-a90e-4d9d-a4d5-7eec3687c338
@@ -55,15 +55,12 @@ module html {
         
         // WinIE extension:
                  attribute boolean         indeterminate;
-        
+
         // WinIE & FireFox extension:
-        
-        // Handled by JSHTMLInputElementBase to allow hiding based on input type
-#if !defined(LANGUAGE_JAVASCRIPT)
-                 attribute long            selectionStart;
-                 attribute long            selectionEnd;
+
+                 attribute [CustomGetter] long selectionStart;
+                 attribute [CustomGetter] long selectionEnd;
         void               setSelectionRange(in long start, in long end);
-#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:

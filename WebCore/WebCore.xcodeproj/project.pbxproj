@@ -2004,8 +2004,6 @@
 		A80E7B130A19D606007FB8C5 /* JSHTMLTitleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B090A19D606007FB8C5 /* JSHTMLTitleElement.cpp */; };
 		A80E7B140A19D606007FB8C5 /* JSHTMLHeadElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7B0A0A19D606007FB8C5 /* JSHTMLHeadElement.cpp */; };
 		A80E7B150A19D606007FB8C5 /* JSHTMLHeadElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7B0B0A19D606007FB8C5 /* JSHTMLHeadElement.h */; };
-		A80E7E650A1A82EC007FB8C5 /* JSHTMLInputElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */; };
-		A80E7E660A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7E640A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp */; };
 		A80E7E970A1A83E3007FB8C5 /* JSHTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */; };
 		A80E7E980A1A83E3007FB8C5 /* JSHTMLInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */; };
 		A80E7E990A1A83E3007FB8C5 /* JSHTMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */; };
@@ -3943,6 +3941,7 @@
 		BCBD21AB0E417AD400A070F2 /* KURLHash.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD21AA0E417AD400A070F2 /* KURLHash.h */; };
 		BCBFB53C0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */; };
 		BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowShell.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCC438780E886CC700533DD5 /* JSHTMLInputElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC438770E886CC700533DD5 /* JSHTMLInputElementCustom.cpp */; };
 		BCC573350D695BBE006EF517 /* DOMProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC573330D695BBE006EF517 /* DOMProgressEvent.h */; };
 		BCC573360D695BBE006EF517 /* DOMProgressEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC573340D695BBE006EF517 /* DOMProgressEvent.mm */; };
 		BCC573380D695BD7006EF517 /* DOMProgressEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC573370D695BD7006EF517 /* DOMProgressEventInternal.h */; };
@@ -5146,7 +5145,6 @@
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
 		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
-		441244D80CB853ED008F0C79 /* JSHTMLInputElementBaseTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; path = JSHTMLInputElementBaseTable.cpp; sourceTree = "<group>"; };
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
 		4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInImageElement.cpp; sourceTree = "<group>"; };
 		4429AAEA0CB84DC7007647C5 /* DOMCSSStyleSheetPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCSSStyleSheetPrivate.h; sourceTree = "<group>"; };
@@ -6637,8 +6635,6 @@
 		A80E7E180A1A7CCB007FB8C5 /* HTMLOptionElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLOptionElement.idl; sourceTree = "<group>"; };
 		A80E7E190A1A7CCB007FB8C5 /* HTMLOptGroupElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLOptGroupElement.idl; sourceTree = "<group>"; };
 		A80E7E550A1A7FB3007FB8C5 /* HTMLButtonElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLButtonElement.idl; sourceTree = "<group>"; };
-		A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElementBase.h; sourceTree = "<group>"; };
-		A80E7E640A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElementBase.cpp; sourceTree = "<group>"; };
 		A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElement.h; sourceTree = "<group>"; };
 		A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElement.cpp; sourceTree = "<group>"; };
 		A80E7E8F0A1A83E3007FB8C5 /* JSHTMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionElement.h; sourceTree = "<group>"; };
@@ -8470,6 +8466,7 @@
 		BCBD21AA0E417AD400A070F2 /* KURLHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KURLHash.h; sourceTree = "<group>"; };
 		BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowShell.cpp; sourceTree = "<group>"; };
 		BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowShell.h; sourceTree = "<group>"; };
+		BCC438770E886CC700533DD5 /* JSHTMLInputElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElementCustom.cpp; sourceTree = "<group>"; };
 		BCC573330D695BBE006EF517 /* DOMProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEvent.h; sourceTree = "<group>"; };
 		BCC573340D695BBE006EF517 /* DOMProgressEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMProgressEvent.mm; sourceTree = "<group>"; };
 		BCC573370D695BD7006EF517 /* DOMProgressEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEventInternal.h; sourceTree = "<group>"; };
@@ -11233,7 +11230,6 @@
 				1AE2AA940A1CDD2D00B42B25 /* JSHTMLImageElement.h */,
 				A80E7E8E0A1A83E3007FB8C5 /* JSHTMLInputElement.cpp */,
 				A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */,
-				441244D80CB853ED008F0C79 /* JSHTMLInputElementBaseTable.cpp */,
 				1AE2AA950A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp */,
 				1AE2AA960A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h */,
 				1AE2AB170A1CE63B00B42B25 /* JSHTMLLabelElement.cpp */,
@@ -12655,8 +12651,6 @@
 				BCD9C26B0C17AA81005C90A2 /* JSEventTargetNode.h */,
 				BC6DC7A00C1A4BFA004E2017 /* JSHTMLAllCollection.h */,
 				9350E70C0E87500B00189FFF /* JSHTMLAllCollection.cpp */,
-				A80E7E640A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp */,
-				A80E7E630A1A82EC007FB8C5 /* JSHTMLInputElementBase.h */,
 				A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */,
 				A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */,
 				BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */,
@@ -12807,6 +12801,7 @@
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
 				BCDFD4910E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp */,
 				BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */,
+				BCC438770E886CC700533DD5 /* JSHTMLInputElementCustom.cpp */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -14859,7 +14854,6 @@
 				BC4918C90BFEA050009D6316 /* JSHTMLIFrameElement.h in Headers */,
 				1AE2AA980A1CDD2D00B42B25 /* JSHTMLImageElement.h in Headers */,
 				A80E7E970A1A83E3007FB8C5 /* JSHTMLInputElement.h in Headers */,
-				A80E7E650A1A82EC007FB8C5 /* JSHTMLInputElementBase.h in Headers */,
 				1AE2AA9A0A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h in Headers */,
 				1AE2AB260A1CE63B00B42B25 /* JSHTMLLIElement.h in Headers */,
 				1AE2AB220A1CE63B00B42B25 /* JSHTMLLabelElement.h in Headers */,
@@ -16735,7 +16729,6 @@
 				BC2ED6500C6BC48C00920BFF /* JSHTMLIFrameElementCustom.cpp in Sources */,
 				1AE2AA970A1CDD2D00B42B25 /* JSHTMLImageElement.cpp in Sources */,
 				A80E7E980A1A83E3007FB8C5 /* JSHTMLInputElement.cpp in Sources */,
-				A80E7E660A1A82EC007FB8C5 /* JSHTMLInputElementBase.cpp in Sources */,
 				1AE2AA990A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp in Sources */,
 				1AE2AB250A1CE63B00B42B25 /* JSHTMLLIElement.cpp in Sources */,
 				1AE2AB210A1CE63B00B42B25 /* JSHTMLLabelElement.cpp in Sources */,
@@ -17694,6 +17687,7 @@
 				BCEF869F0E844E9D00A85CD5 /* ScrollbarThemeMac.mm in Sources */,
 				089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */,
 				9350E70D0E87500B00189FFF /* JSHTMLAllCollection.cpp in Sources */,
+				BCC438780E886CC700533DD5 /* JSHTMLInputElementCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -372,8 +372,6 @@ all : \
     \
     JSJavaScriptCallFrame.h \
     \
-    JSHTMLInputElementBaseTable.cpp \
-    \
     CSSGrammar.cpp \
     CSSPropertyNames.h \
     CSSValueKeywords.h \
