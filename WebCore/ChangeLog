@@ -1,5 +1,14 @@
 2008-09-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Oliver Hunt, okayed by Darin Adler.
+
+        <rdar://problem/5575547> REGRESSION: ATOK has no phrase boundary on Safari/Mail.app
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCompositionUnderline): Add 2 pixel spacing between clauses.
+
+2008-09-23  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=21023
