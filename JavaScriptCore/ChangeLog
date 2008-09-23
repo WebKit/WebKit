@@ -1,5 +1,12 @@
 2008-09-22  Darin Adler  <darin@apple.com>
 
+        Pointed out by Sam Weinig.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::fillArgList): Fix bad copy and paste. Oops!
+
+2008-09-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         - https://bugs.webkit.org/show_bug.cgi?id=20983
