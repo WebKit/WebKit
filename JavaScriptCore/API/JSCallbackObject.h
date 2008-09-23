@@ -50,7 +50,7 @@ public:
 
     static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
     { 
-        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | OverridesHasInstance)); 
     }
 
 private:

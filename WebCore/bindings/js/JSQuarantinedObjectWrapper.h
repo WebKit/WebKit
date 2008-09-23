@@ -46,7 +46,7 @@ namespace WebCore {
 
         static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* proto) 
         { 
-            return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance)); 
+            return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::OverridesHasInstance)); 
         }
 
     protected:

@@ -1,3 +1,17 @@
+2008-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - speed up instanceof some more
+        https://bugs.webkit.org/show_bug.cgi?id=20818
+
+        ~2% speedup on EarleyBoyer
+
+        (WebCore updates.)
+        
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::createStructureID):
+
 2008-09-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

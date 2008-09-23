@@ -4292,8 +4292,37 @@ JSValue* Machine::cti_op_get_by_id_fail(CTI_ARGS)
 JSValue* Machine::cti_op_instanceof(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
+    JSValue* value = ARG_src1;
     JSValue* baseVal = ARG_src2;
+    JSValue* proto = ARG_src3;
 
+    if (UNLIKELY(JSImmediate::isAnyImmediate(value, baseVal, proto)))
+        goto slow_cases;
+
+    JSCell* valueCell = static_cast<JSCell*>(value);
+    JSCell* baseCell = static_cast<JSCell*>(baseVal);
+    JSCell* protoCell = static_cast<JSCell*>(proto);
+
+    if (UNLIKELY(!valueCell->isObject() | !baseCell->isObject() | !protoCell->isObject()))
+        goto slow_cases;
+
+    if (UNLIKELY((baseCell->structureID()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance))
+        goto slow_cases;
+
+    JSObject* testPrototype = static_cast<JSObject*>(static_cast<JSObject*>(valueCell)->prototype());
+
+    if (testPrototype == proto)
+        return jsBoolean(true);
+
+    while (testPrototype != jsNull()) {
+        testPrototype = static_cast<JSObject*>(testPrototype->prototype());
+        if (testPrototype == proto)
+            return jsBoolean(true);
+    }
+
+    return jsBoolean(false);
+
+ slow_cases:     
     if (!baseVal->isObject()) {
         CodeBlock* codeBlock = ARG_codeBlock;
         ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
@@ -4302,10 +4331,23 @@ JSValue* Machine::cti_op_instanceof(CTI_ARGS)
         VM_CHECK_EXCEPTION(JSValue*);
     }
 
-    JSObject* baseObj = static_cast<JSObject*>(baseVal);
-    JSValue* basePrototype = ARG_src3;
-    JSValue* result = jsBoolean(baseObj->structureID()->typeInfo().implementsHasInstance() ? baseObj->hasInstance(exec,  ARG_src1, basePrototype) : false);
+    baseCell = static_cast<JSCell*>(baseVal);
+    if (!baseCell->structureID()->typeInfo().implementsHasInstance())
+        return jsBoolean(false);
+
+    if (!proto->isObject()) {
+        throwError(exec, TypeError, "instanceof called on an object with an invalid prototype property.");
+        VM_CHECK_EXCEPTION(JSValue*);
+    }
+        
+    if (!value->isObject())
+        return jsBoolean(false);
+
+    ASSERT(baseCell->structureID()->typeInfo().implementsHasInstance());
+
+    JSValue* result = jsBoolean(static_cast<JSObject*>(baseCell)->hasInstance(exec, value, proto));
     VM_CHECK_EXCEPTION_AT_END();
+
     return result;
 }
 

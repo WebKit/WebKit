@@ -154,6 +154,11 @@ namespace JSC {
             return (reinterpret_cast<uintptr_t>(v1) | reinterpret_cast<uintptr_t>(v2)) & TagMask;
         }
 
+        static ALWAYS_INLINE bool isAnyImmediate(const JSValue* v1, const JSValue* v2, JSValue* v3)
+        {
+            return (reinterpret_cast<uintptr_t>(v1) | reinterpret_cast<uintptr_t>(v2) | reinterpret_cast<uintptr_t>(v3)) & TagMask;
+        }
+
         static ALWAYS_INLINE bool areBothImmediate(const JSValue* v1, const JSValue* v2)
         {
             return isImmediate(v1) & isImmediate(v2);
