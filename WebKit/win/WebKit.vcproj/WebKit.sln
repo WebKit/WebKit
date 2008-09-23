@@ -83,6 +83,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\..\..\JavaScr
 		{DA31DA52-6675-48D4-89E0-333A7144397C} = {DA31DA52-6675-48D4-89E0-333A7144397C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "record-memory-win", "..\..\..\WebKitTools\record-memory-win\record-memory-win.vcproj", "{44B9C152-1870-4035-B94D-7B3285AA0C12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Cairo|Win32 = Debug_Cairo|Win32
@@ -262,6 +264,16 @@ Global
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release_Cairo|Win32.Build.0 = Release|Win32
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release|Win32.ActiveCfg = Release|Win32
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}.Release|Win32.Build.0 = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug_Cairo|Win32.ActiveCfg = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug_Cairo|Win32.Build.0 = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug_Internal|Win32.ActiveCfg = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug_Internal|Win32.Build.0 = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug|Win32.ActiveCfg = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Debug|Win32.Build.0 = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Release_Cairo|Win32.ActiveCfg = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Release_Cairo|Win32.Build.0 = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Release|Win32.ActiveCfg = Release|Win32
+		{44B9C152-1870-4035-B94D-7B3285AA0C12}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

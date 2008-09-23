@@ -1,3 +1,13 @@
+2008-09-22  Alice Liu  <alice.liu@apple.com>
+
+        Adding a stand-alone Windows console application to record a process's memory usage
+
+        Reviewed by Steve Falkenburg.
+
+        * record-memory-win: Added.
+        * record-memory-win/main.cpp: Added.
+        * record-memory-win/record-memory-win.vcproj: Added.
+
 2008-09-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

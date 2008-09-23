@@ -1,3 +1,11 @@
+2008-09-22  Alice Liu  <alice.liu@apple.com>
+
+        Added record-memory-win.vcproj tool to the solution
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2008-09-20  Darin Adler  <darin@apple.com>
 
         - fix build
