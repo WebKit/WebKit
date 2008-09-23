@@ -1998,6 +1998,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/KeyboardCodes.h \
+	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
@@ -2014,6 +2015,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/ScrollbarGtk.h \
 	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
+	WebCore/platform/gtk/SharedBufferGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \
 	WebCore/platform/gtk/SoundGtk.cpp \
 	WebCore/platform/gtk/SystemTimeGtk.cpp \

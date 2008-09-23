@@ -1,3 +1,18 @@
+2008-09-23  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18987
+        [GTK] Implement SharedBuffer::createWithContentsOfFile and
+        KURL::fileSystemPath
+
+        * GNUmakefile.am: Add KURLGtk.cpp and SharedBufferGtk.cpp.
+        * platform/gtk/KURLGtk.cpp: Added.
+        (WebCore::KURL::fileSystemPath): Implemented.
+        * platform/gtk/SharedBufferGtk.cpp: Added.
+        (WebCore::SharedBuffer::createWithContentsOfFile): Implemented.
+        * platform/gtk/TemporaryLinkStubs.cpp: Remove the old stubs.
+
 2008-09-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt, okayed by Darin Adler.
