@@ -26,6 +26,12 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/NotFound.h>
 
+#ifndef NDEBUG
+#define DUMP_PROPERTYMAP_STATS 0
+#else
+#define DUMP_PROPERTYMAP_STATS 0
+#endif
+
 namespace JSC {
 
     class JSObject;
@@ -102,6 +108,8 @@ namespace JSC {
         unsigned size() const { return m_table ? m_table->size : 0; }
         unsigned storageSize() const { return m_table ? m_table->keyCount + m_table->deletedSentinelCount : 0; }
 
+        static const unsigned emptyEntryIndex = 0;
+
     private:
         typedef PropertyMapEntry Entry;
         typedef PropertyMapHashTable Table;
@@ -123,6 +131,50 @@ namespace JSC {
         : m_table(0)
         , m_getterSetterFlag(false)
     {
+    }
+
+    inline size_t PropertyMap::getOffset(const Identifier& propertyName)
+    {
+        ASSERT(!propertyName.isNull());
+
+        if (!m_table)
+            return WTF::notFound;
+
+        UString::Rep* rep = propertyName._ustring.rep();
+
+        unsigned i = rep->computedHash();
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numProbes;
+#endif
+
+        unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
+        if (entryIndex == emptyEntryIndex)
+            return WTF::notFound;
+
+        if (rep == m_table->entries()[entryIndex - 1].key)
+            return entryIndex - 2;
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numCollisions;
+#endif
+
+        unsigned k = 1 | WTF::doubleHash(rep->computedHash());
+
+        while (1) {
+            i += k;
+
+#if DUMP_PROPERTYMAP_STATS
+            ++numRehashes;
+#endif
+
+            entryIndex = m_table->entryIndices[i & m_table->sizeMask];
+            if (entryIndex == emptyEntryIndex)
+                return WTF::notFound;
+
+            if (rep == m_table->entries()[entryIndex - 1].key)
+                return entryIndex - 2;
+        }
     }
 
 } // namespace JSC

@@ -1,3 +1,17 @@
+2008-09-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        - inline PropertyMap::getOffset to speed up polymorphic lookups
+        
+        ~1.5% speedup on v8 benchmark
+        no effect on SunSpider
+
+        * JavaScriptCore.exp:
+        * kjs/PropertyMap.cpp:
+        * kjs/PropertyMap.h:
+        (JSC::PropertyMap::getOffset):
+
 2008-09-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alp Toker.
