@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
                   2007 Apple Inc.  All rights reserved.
 
     This library is free software; you can redistribute it and/or
@@ -396,11 +396,10 @@ AffineTransform SVGSVGElement::getScreenCTM() const
     float rootY = 0.0f;
     
     if (RenderObject* renderer = this->renderer()) {
-        renderer = renderer->parent();
         if (isOutermostSVG()) {
             int tx = 0;
             int ty = 0;
-            if (renderer)
+            if (renderer->parent())
                 renderer->absolutePosition(tx, ty, true);
             rootX += tx;
             rootY += ty;

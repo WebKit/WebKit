@@ -1,3 +1,18 @@
+2008-09-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20557
+        getScreenCTM() returns wrong values
+
+        Use the absolute position of the svg root when
+        determining the screen ctm.
+
+        Test: svg/custom/getscreenctm-in-mixed-content2.xhtml
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getScreenCTM):
+
 2008-09-24  David Hyatt  <hyatt@apple.com>
 
         Turn off support for CSS variables.

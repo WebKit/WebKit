@@ -1,3 +1,14 @@
+2008-09-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Test for:
+        https://bugs.webkit.org/show_bug.cgi?id=20557
+        getScreenCTM() returns wrong values
+
+        * svg/custom/getscreenctm-in-mixed-content2-expected.txt: Added.
+        * svg/custom/getscreenctm-in-mixed-content2.xhtml: Added.
+
 2008-09-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
