@@ -1,3 +1,11 @@
+2008-09-23  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Inspector search field style tweaks.
+
+        * page/inspector/inspector.css:
+
 2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

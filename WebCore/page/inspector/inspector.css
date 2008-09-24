@@ -154,11 +154,19 @@ body.attached #search-toolbar-label {
 
 #search {
     width: 205px;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+body.attached #search {
+    font-size: 11px;
+    margin-bottom: 8px;
 }
 
 #search-results-matches {
     font-size: 11px;
-    margin-bottom: 24px;
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+    margin-bottom: 22px;
 }
 
 body.attached #search-results-matches {
