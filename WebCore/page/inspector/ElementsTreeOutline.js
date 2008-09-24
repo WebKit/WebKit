@@ -195,10 +195,31 @@ WebInspector.ElementsTreeElement = function(node)
     if (titleInfo.hasChildren) 
         this.whitespaceIgnored = Preferences.ignoreWhitespace;
 
-    TreeElement.call(this, titleInfo.title, node, titleInfo.hasChildren);
+    // The title will be updated in onattach.
+    TreeElement.call(this, "", node, titleInfo.hasChildren);
 }
 
 WebInspector.ElementsTreeElement.prototype = {
+    get highlighted()
+    {
+        return this._highlighted;
+    },
+
+    set highlighted(x)
+    {
+        if (this._highlighted === x)
+            return;
+
+        this._highlighted = x;
+
+        if (this.listItemElement) {
+            if (x)
+                this.listItemElement.addStyleClass("highlighted");
+            else
+                this.listItemElement.removeStyleClass("highlighted");
+        }
+    },
+
     updateSelection: function()
     {
         var listItemElement = this.listItemElement;
@@ -223,6 +244,11 @@ WebInspector.ElementsTreeElement.prototype = {
     onattach: function()
     {
         this.listItemElement.addEventListener("mousedown", this.onmousedown.bind(this), false);
+
+        if (this._highlighted)
+            this.listItemElement.addStyleClass("highlighted");
+
+        this._updateTitle();
 
         this._preventFollowingLinksOnDoubleClick();
     },
@@ -505,7 +531,8 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _updateTitle: function()
     {
-        this.title = nodeTitleInfo.call(this.representedObject, this.hasChildren, WebInspector.linkifyURL).title;
+        var title = nodeTitleInfo.call(this.representedObject, this.hasChildren, WebInspector.linkifyURL).title;
+        this.title = "<span class=\"highlight\">" + title + "</span>";
         delete this.selectionElement;
         this.updateSelection();
         this._preventFollowingLinksOnDoubleClick();

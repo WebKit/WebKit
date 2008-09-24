@@ -212,6 +212,15 @@ WebInspector.ElementsPanel.prototype = {
 
     searchCanceled: function()
     {
+        if (this._searchResults) {
+            for (var i = 0; i < this._searchResults.length; ++i) {
+                var node = this._searchResults[i];
+                var treeElement = this.treeOutline.findTreeElement(node);
+                if (treeElement)
+                    treeElement.highlighted = false;
+            }
+        }
+
         WebInspector.updateSearchMatchesCount(0, this);
 
         this._currentSearchResultIndex = 0;
@@ -285,6 +294,13 @@ WebInspector.ElementsPanel.prototype = {
 
         if (!this._searchResults.length)
             return;
+
+        for (var i = 0; i < this._searchResults.length; ++i) {
+            var node = this._searchResults[i];
+            var treeElement = this.treeOutline.findTreeElement(node);
+            if (treeElement)
+                treeElement.highlighted = true;
+        }
 
         WebInspector.updateSearchMatchesCount(this._searchResults.length, this);
 

@@ -1,5 +1,28 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Highlight all matched search results in the Elements panel DOM tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.searchCanceled): Clear the highlight
+        on all previous search results.
+        (WebInspector.ElementsPanel.prototype.performSearch): Set the hihglight
+        on all new search results.
+        * page/inspector/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement): Delay setting the title until onattach.
+        (WebInspector.ElementsTreeElement.prototype.get/set highlighted): Sets or removes
+        the highlighted class on the listItemElement.
+        (WebInspector.ElementsTreeElement.prototype.onattach): Set the highlighted class
+        if needed. Calls _updateTitle.
+        (WebInspector.ElementsTreeElement.prototype._updateTitle): Adds a span with the highlight
+        class so it can be styled when the highlighted class is present.
+        * page/inspector/inspector.css: New style rules for the hihglight.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Add search support to the Elements panel.
 
         https://bugs.webkit.org/show_bug.cgi?id=21005

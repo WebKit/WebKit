@@ -868,6 +868,19 @@ body.console-visible #console {
     -webkit-border-image: url(Images/segmentHoverEnd.png) 0 2 0 2;
 }
 
+.outline-disclosure li.highlighted .highlight {
+    background-color: rgb(255, 230, 179);
+    -webkit-border-radius: 4px;
+    padding-bottom: 2px;
+    margin-bottom: -2px;
+}
+
+.outline-disclosure li.selected.highlighted .highlight {
+    background-color: transparent;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
 .outline-disclosure li .selection {
     display: none;
     position: absolute;
