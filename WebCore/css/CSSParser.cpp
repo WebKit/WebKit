@@ -4583,16 +4583,21 @@ CSSRule* CSSParser::createFontFaceRule()
 
 CSSRule* CSSParser::createVariablesRule(MediaList* mediaList, bool variablesKeyword)
 {
+#if ENABLE(CSS_VARIABLES)
     RefPtr<CSSVariablesRule> rule = CSSVariablesRule::create(m_styleSheet, mediaList, variablesKeyword);
     rule->setDeclaration(CSSVariablesDeclaration::create(rule.get(), m_variableNames, m_variableValues));
     clearVariables();    
     CSSRule* result = rule.get();
     m_parsedStyleObjects.append(rule.release());
     return result;
+#else
+    return 0;
+#endif
 }
 
 bool CSSParser::addVariable(const CSSParserString& name, CSSParserValueList* valueList)
 {
+#if ENABLE(CSS_VARIABLES)
     if (checkForVariables(valueList)) {
         delete valueList;
         return false;
@@ -4600,14 +4605,21 @@ bool CSSParser::addVariable(const CSSParserString& name, CSSParserValueList* val
     m_variableNames.append(String(name));
     m_variableValues.append(CSSValueList::createFromParserValueList(valueList));
     return true;
+#else
+    return false;
+#endif
 }
 
 bool CSSParser::addVariableDeclarationBlock(const CSSParserString& name)
 {
+#if ENABLE(CSS_VARIABLES)
     m_variableNames.append(String(name));
     m_variableValues.append(CSSMutableStyleDeclaration::create(0, m_parsedProperties, m_numParsedProperties));
     clearProperties();
     return true;
+#else
+    return false;
+#endif
 }
 
 void CSSParser::clearVariables()

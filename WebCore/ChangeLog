@@ -1,5 +1,15 @@
 2008-09-24  David Hyatt  <hyatt@apple.com>
 
+        Turn off support for CSS variables.
+
+        * ChangeLog:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createVariablesRule):
+        (WebCore::CSSParser::addVariable):
+        (WebCore::CSSParser::addVariableDeclarationBlock):
+
+2008-09-24  David Hyatt  <hyatt@apple.com>
+
         Back out the alternate forms of CSS variable call syntax (leaving only the -webkit-var version).
 
         * css/CSSGrammar.y:
