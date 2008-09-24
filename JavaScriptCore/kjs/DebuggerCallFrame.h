@@ -67,8 +67,6 @@ namespace JSC {
         JSValue* exception() const { return m_exception; }
 
     private:
-        Register* callFrame() const;
-
         ExecState* m_exec;
         JSGlobalObject* m_dynamicGlobalObject;
         const CodeBlock* m_codeBlock;

@@ -44,6 +44,8 @@ namespace JSC {
         JSActivation(ExecState* exec, PassRefPtr<FunctionBodyNode>, Register*);
         virtual ~JSActivation();
         
+        virtual void mark();
+
         virtual bool isActivationObject() const;
         virtual bool isDynamicScope() const;
 
@@ -71,8 +73,6 @@ namespace JSC {
 
         virtual JSObject* toThisObject(ExecState*) const;
 
-        virtual void mark();
-        
         void copyRegisters();
         
         virtual const ClassInfo* classInfo() const { return &info; }

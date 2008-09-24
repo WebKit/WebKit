@@ -38,10 +38,10 @@ ASSERT_CLASS_FITS_IN_CELL(Arguments);
 const ClassInfo Arguments::info = { "Arguments", 0, 0, 0 };
 
 struct ArgumentsData : Noncopyable {
-    ArgumentsData(JSActivation* activation, unsigned numParameters, unsigned firstArgumentIndex, unsigned numArguments, JSFunction* callee)
+    ArgumentsData(JSActivation* activation, unsigned numParameters, int firstParameterIndex, unsigned numArguments, JSFunction* callee)
         : activation(activation)
         , numParameters(numParameters)
-        , firstArgumentIndex(firstArgumentIndex)
+        , firstParameterIndex(firstParameterIndex)
         , numArguments(numArguments)
         , extraArguments(0)
         , callee(callee)
@@ -53,7 +53,7 @@ struct ArgumentsData : Noncopyable {
     JSActivation* activation;
 
     unsigned numParameters;
-    unsigned firstArgumentIndex;
+    int firstParameterIndex;
     unsigned numArguments;
     Register* extraArguments;
     OwnArrayPtr<bool> deletedArguments;
@@ -65,9 +65,9 @@ struct ArgumentsData : Noncopyable {
 };
 
 // ECMA 10.1.8
-Arguments::Arguments(ExecState* exec, JSFunction* function, JSActivation* activation, int firstArgumentIndex, Register* argv, int argc)
+Arguments::Arguments(ExecState* exec, JSFunction* function, JSActivation* activation, int firstParameterIndex, Register* argv, int argc)
     : JSObject(exec->lexicalGlobalObject()->argumentsStructure())
-    , d(new ArgumentsData(activation, function->numParameters(), firstArgumentIndex, argc, function))
+    , d(new ArgumentsData(activation, function->numParameters(), firstParameterIndex, argc, function))
 {
     ASSERT(activation);
   
@@ -118,14 +118,14 @@ void Arguments::fillArgList(ExecState* exec, ArgList& args)
         }
 
         if (d->numParameters == d->numArguments) {
-            args.initialize(&d->activation->registerAt(d->firstArgumentIndex), d->numArguments);
+            args.initialize(&d->activation->registerAt(d->firstParameterIndex), d->numArguments);
             return;
         }
 
         unsigned parametersLength = min(d->numParameters, d->numArguments);
         unsigned i = 0;
         for (; i < parametersLength; ++i)
-            args.append(d->activation->uncheckedSymbolTableGetValue(d->firstArgumentIndex + i));
+            args.append(d->activation->uncheckedSymbolTableGetValue(d->firstParameterIndex + i));
         for (; i < d->numArguments; ++i)
             args.append(d->extraArguments[i - d->numParameters].getJSValue());
         return;
@@ -135,7 +135,7 @@ void Arguments::fillArgList(ExecState* exec, ArgList& args)
     unsigned i = 0;
     for (; i < parametersLength; ++i) {
         if (!d->deletedArguments[i])
-            args.append(d->activation->uncheckedSymbolTableGetValue(d->firstArgumentIndex + i));
+            args.append(d->activation->uncheckedSymbolTableGetValue(d->firstParameterIndex + i));
         else
             args.append(get(exec, i));
     }
@@ -151,7 +151,7 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& sl
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
-            d->activation->uncheckedSymbolTableGet(d->firstArgumentIndex + i, slot);
+            d->activation->uncheckedSymbolTableGet(d->firstParameterIndex + i, slot);
         else
             slot.setValue(d->extraArguments[i - d->numParameters].getJSValue());
         return true;
@@ -166,7 +166,7 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
-            d->activation->uncheckedSymbolTableGet(d->firstArgumentIndex + i, slot);
+            d->activation->uncheckedSymbolTableGet(d->firstParameterIndex + i, slot);
         else
             slot.setValue(d->extraArguments[i - d->numParameters].getJSValue());
         return true;
@@ -189,7 +189,7 @@ void Arguments::put(ExecState* exec, unsigned i, JSValue* value, PutPropertySlot
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
-            d->activation->uncheckedSymbolTablePut(d->firstArgumentIndex + i, value);
+            d->activation->uncheckedSymbolTablePut(d->firstParameterIndex + i, value);
         else
             d->extraArguments[i - d->numParameters] = value;
         return;
@@ -204,7 +204,7 @@ void Arguments::put(ExecState* exec, const Identifier& propertyName, JSValue* va
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
         if (i < d->numParameters)
-            d->activation->uncheckedSymbolTablePut(d->firstArgumentIndex + i, value);
+            d->activation->uncheckedSymbolTablePut(d->firstParameterIndex + i, value);
         else
             d->extraArguments[i - d->numParameters] = value;
         return;

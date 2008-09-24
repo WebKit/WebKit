@@ -202,7 +202,7 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     ASSERT(!hasCustomProperties());
     symbolTable().clear();
-    setRegisterArray(0, 0);
+    setRegisters(0, 0, 0);
 
     ExecState* exec = d()->globalExec.get();
 
@@ -396,6 +396,17 @@ void JSGlobalObject::mark()
 
     // No need to mark the other structures, because their prototypes are all
     // guaranteed to be referenced elsewhere.
+
+    Register* registerArray = d()->registerArray.get();
+    if (!registerArray)
+        return;
+
+    size_t size = d()->registerArraySize;
+    for (size_t i = 0; i < size; ++i) {
+        Register& r = registerArray[i];
+        if (!r.marked())
+            r.mark();
+    }
 }
 
 JSGlobalObject* JSGlobalObject::toGlobalObject(ExecState*) const
@@ -423,7 +434,9 @@ void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
         d()->registers = 0;
         return;
     }
-    copyRegisterArray(registerFile.lastGlobal(), numGlobals);
+    
+    Register* registerArray = copyRegisterArray(registerFile.lastGlobal(), numGlobals);
+    setRegisters(registerArray + numGlobals, registerArray, numGlobals);
 }
 
 void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
@@ -437,10 +450,8 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
 
     if (d()->registerArray) {
         memcpy(registerFile.base() - d()->registerArraySize, d()->registerArray.get(), d()->registerArraySize * sizeof(Register));
-        setRegisterArray(0, 0);
+        setRegisters(registerFile.base(), 0, 0);
     }
-
-    d()->registers = registerFile.base();
 }
 
 void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)

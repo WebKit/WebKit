@@ -106,12 +106,22 @@ extern "C"
 #endif
 
 
+ALWAYS_INLINE bool CTI::isConstant(int src)
+{
+    return src >= m_codeBlock->numVars && src < m_codeBlock->numVars + m_codeBlock->numConstants;
+}
+
+ALWAYS_INLINE JSValue* CTI::getConstant(ExecState* exec, int src)
+{
+    return m_codeBlock->constantRegisters[src - m_codeBlock->numVars].jsValue(exec);
+}
+
 // get arg puts an arg from the SF register array into a h/w register
 ALWAYS_INLINE void CTI::emitGetArg(unsigned src, X86Assembler::RegisterID dst)
 {
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
-    if (src < m_codeBlock->constantRegisters.size()) {
-        JSValue* js = m_codeBlock->constantRegisters[src].jsValue(m_exec);
+    if (isConstant(src)) {
+        JSValue* js = getConstant(m_exec, src);
         m_jit.movl_i32r(reinterpret_cast<unsigned>(js), dst);
     } else
         m_jit.movl_mr(src * sizeof(Register), X86::edi, dst);
@@ -120,8 +130,8 @@ ALWAYS_INLINE void CTI::emitGetArg(unsigned src, X86Assembler::RegisterID dst)
 // get arg puts an arg from the SF register array onto the stack, as an arg to a context threaded function.
 ALWAYS_INLINE void CTI::emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch)
 {
-    if (src < m_codeBlock->constantRegisters.size()) {
-        JSValue* js = m_codeBlock->constantRegisters[src].jsValue(m_exec);
+    if (isConstant(src)) {
+        JSValue* js = getConstant(m_exec, src);
         m_jit.movl_i32m(reinterpret_cast<unsigned>(js), offset + sizeof(void*), X86::esp);
     } else {
         m_jit.movl_mr(src * sizeof(Register), X86::edi, scratch);
@@ -142,8 +152,8 @@ ALWAYS_INLINE void CTI::emitPutArgConstant(unsigned value, unsigned offset)
 
 ALWAYS_INLINE JSValue* CTI::getConstantImmediateNumericArg(unsigned src)
 {
-    if (src < m_codeBlock->constantRegisters.size()) {
-        JSValue* js = m_codeBlock->constantRegisters[src].jsValue(m_exec);
+    if (isConstant(src)) {
+        JSValue* js = getConstant(m_exec, src);
         return JSImmediate::isNumber(js) ? js : 0;
     }
     return 0;
@@ -166,12 +176,12 @@ ALWAYS_INLINE void CTI::emitGetCTIParam(unsigned name, X86Assembler::RegisterID 
 
 ALWAYS_INLINE void CTI::emitPutToCallFrameHeader(X86Assembler::RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
 {
-    m_jit.movl_rm(from, -((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) - entry) * sizeof(Register), X86::edi);
+    m_jit.movl_rm(from, entry * sizeof(Register), X86::edi);
 }
 
 ALWAYS_INLINE void CTI::emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, X86Assembler::RegisterID to)
 {
-    m_jit.movl_mr(-((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) - entry) * sizeof(Register), X86::edi, to);
+    m_jit.movl_mr(entry * sizeof(Register), X86::edi, to);
 }
 
 ALWAYS_INLINE void CTI::emitPutResult(unsigned dst, X86Assembler::RegisterID from)
@@ -180,7 +190,7 @@ ALWAYS_INLINE void CTI::emitPutResult(unsigned dst, X86Assembler::RegisterID fro
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
-ALWAYS_INLINE void CTI::emitInitialiseRegister(unsigned dst)
+ALWAYS_INLINE void CTI::emitInitRegister(unsigned dst)
 {
     m_jit.movl_i32m(reinterpret_cast<unsigned>(jsUndefined()), dst * sizeof(Register), X86::edi);
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
@@ -220,8 +230,8 @@ ALWAYS_INLINE void CTI::emitDebugExceptionCheck()
 void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 {
     char which1 = '*';
-    if (src1 < m_codeBlock->constantRegisters.size()) {
-        JSValue* js = m_codeBlock->constantRegisters[src1].jsValue(m_exec);
+    if (isConstant(src1)) {
+        JSValue* js = getConstant(m_exec, src1);
         which1 = 
             JSImmediate::isImmediate(js) ?
                 (JSImmediate::isNumber(js) ? 'i' :
@@ -234,8 +244,8 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
             'k');
     }
     char which2 = '*';
-    if (src2 < m_codeBlock->constantRegisters.size()) {
-        JSValue* js = m_codeBlock->constantRegisters[src2].jsValue(m_exec);
+    if (isConstant(src2)) {
+        JSValue* js = getConstant(m_exec, src2);
         which2 = 
             JSImmediate::isImmediate(js) ?
                 (JSImmediate::isNumber(js) ? 'i' :
@@ -252,6 +262,15 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 }
 
 #endif
+
+ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, X86::RegisterID r)
+{
+    X86Assembler::JmpSrc call = m_jit.emitCall(r);
+    m_calls.append(CallRecord(call, opcodeIndex));
+    emitDebugExceptionCheck();
+
+    return call;
+}
 
 ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper_j helper)
 {
@@ -431,22 +450,30 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     int dst = instruction[i + 1].u.operand;
     int firstArg = instruction[i + 4].u.operand;
     int argCount = instruction[i + 5].u.operand;
+    int registerOffset = instruction[i + 6].u.operand;
+
+    if (type == OpCallEval)
+        emitGetPutArg(instruction[i + 3].u.operand, 16, X86::ecx);
 
     if (type == OpConstruct) {
-        emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 16);
-        emitPutArgConstant(argCount, 12);
+        emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 20);
+        emitPutArgConstant(argCount, 16);
+        emitPutArgConstant(registerOffset, 12);
         emitPutArgConstant(firstArg, 8);
         emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
     } else {
-        emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 16);
-        emitPutArgConstant(argCount, 12);
-        emitPutArgConstant(firstArg, 8);
-        // FIXME: should this be loaded dynamically off m_exec?
+        emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 12);
+        emitPutArgConstant(argCount, 8);
+        emitPutArgConstant(registerOffset, 4);
+
         int thisVal = instruction[i + 3].u.operand;
         if (thisVal == missingThisObjectMarker()) {
-            emitPutArgConstant(reinterpret_cast<unsigned>(m_exec->globalThisValue()), 4);
-        } else
-            emitGetPutArg(thisVal, 4, X86::ecx);
+            // FIXME: should this be loaded dynamically off m_exec?
+            m_jit.movl_i32m(reinterpret_cast<unsigned>(m_exec->globalThisValue()), firstArg * sizeof(Register), X86::edi);
+        } else {
+            emitGetArg(thisVal, X86::ecx);
+            emitPutResult(firstArg, X86::ecx);
+        }
     }
 
     X86Assembler::JmpSrc wasEval;
@@ -459,27 +486,13 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
 
         m_jit.cmpl_i32r(reinterpret_cast<unsigned>(JSImmediate::impossibleValue()), X86::eax);
         wasEval = m_jit.emitUnlinkedJne();
-    
-        // this reloads the first arg into ecx (checked just below).
+
+        // this sets up the first arg to op_cti_call (func), and explicitly leaves the value in ecx (checked just below).
         emitGetArg(instruction[i + 2].u.operand, X86::ecx);
     } else {
-        // this sets up the first arg, and explicitly leaves the value in ecx (checked just below).
-        emitGetArg(instruction[i + 2].u.operand, X86::ecx);
-        emitPutArg(X86::ecx, 0);
+        // this sets up the first arg to op_cti_call (func), and explicitly leaves the value in ecx (checked just below).
+        emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
     }
-
-    // initializeCallFrame!
-    m_jit.movl_i32m(reinterpret_cast<unsigned>(m_codeBlock), (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::CallerCodeBlock) * sizeof(Register), X86::edi);
-    m_jit.movl_i32m(reinterpret_cast<unsigned>(instruction + i), (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ReturnVPC) * sizeof(Register), X86::edi);
-    emitGetCTIParam(CTI_ARGS_scopeChain, X86::edx);
-    m_jit.movl_rm(X86::edx, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::CallerScopeChain) * sizeof(Register), X86::edi);
-    m_jit.movl_rm(X86::edi, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::CallerRegisters) * sizeof(Register), X86::edi);
-    m_jit.movl_i32m(dst, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ReturnValueRegister) * sizeof(Register), X86::edi);
-    m_jit.movl_i32m(firstArg, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ArgumentStartRegister) * sizeof(Register), X86::edi);
-    m_jit.movl_i32m(argCount, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::ArgumentCount) * sizeof(Register), X86::edi);
-    m_jit.movl_rm(X86::ecx, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::Callee) * sizeof(Register), X86::edi);
-    m_jit.movl_i32m(0, (firstArg - RegisterFile::CallFrameHeaderSize + RegisterFile::OptionalCalleeActivation) * sizeof(Register), X86::edi);
-    // CTIReturnEIP (set in callee)
 
     // Fast check for JS function.
     m_jit.testl_i32r(JSImmediate::TagMask, X86::ecx);
@@ -490,27 +503,32 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
 
     // This handles host functions
     emitCall(i, ((type == OpConstruct) ? Machine::cti_op_construct_NotJSConstruct : Machine::cti_op_call_NotJSFunction));
-    emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
-    
+
     X86Assembler::JmpSrc wasNotJSFunction = m_jit.emitUnlinkedJmp();
     m_jit.link(isJSFunction, m_jit.label());
 
     // This handles JSFunctions
     emitCall(i, ((type == OpConstruct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction));
+
+    // Initialize the parts of the call frame that have not already been initialized.
+    emitGetCTIParam(CTI_ARGS_r, X86::edi);
+    m_jit.movl_i32m(reinterpret_cast<unsigned>(m_codeBlock), RegisterFile::CallerCodeBlock * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(dst, RegisterFile::ReturnValueRegister * sizeof(Register), X86::edi);
+
     // Check the ctiCode has been generated - if not, this is handled in a slow case.
     m_jit.testl_rr(X86::eax, X86::eax);
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), i));
-    m_jit.call_r(X86::eax);
+    emitCall(i, X86::eax);
     
     // In the interpreter the following actions are performed by op_ret:
-    
-    // Store the scope chain - returned by op_ret in %edx (see below) - to ExecState::m_scopeChain and CTI_ARGS_scopeChain on the stack.
+
+    // Restore ExecState::m_scopeChain and CTI_ARGS_scopeChain. NOTE: After
+    // op_ret, %edx holds the caller's scope chain.
     emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
     emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
     m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
     // Restore ExecState::m_callFrame.
-    m_jit.leal_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) * sizeof(Register), X86::edi, X86::edx);
-    m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
+    m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
     // Restore CTI_ARGS_codeBlock.
     emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
 
@@ -593,13 +611,6 @@ void CTI::emitSlowScriptCheck(unsigned opcodeIndex)
 
 void CTI::privateCompileMainPass()
 {
-    if (m_codeBlock->codeType == FunctionCode) {
-        for (int i = -m_codeBlock->numVars; i < 0; i++)
-            emitInitialiseRegister(i);
-    }
-    for (size_t i = 0; i < m_codeBlock->constantRegisters.size(); ++i)
-        emitInitialiseRegister(i);
-
     Instruction* instruction = m_codeBlock->instructions.begin();
     unsigned instructionCount = m_codeBlock->instructions.size();
 
@@ -617,8 +628,8 @@ void CTI::privateCompileMainPass()
         switch (m_machine->getOpcodeID(instruction[i].u.opcode)) {
         case op_mov: {
             unsigned src = instruction[i + 2].u.operand;
-            if (src < m_codeBlock->constantRegisters.size())
-                m_jit.movl_i32r(reinterpret_cast<unsigned>(m_codeBlock->constantRegisters[src].jsValue(m_exec)), X86::edx);
+            if (isConstant(src))
+                m_jit.movl_i32r(reinterpret_cast<unsigned>(getConstant(m_exec, src)), X86::edx);
             else
                 emitGetArg(src, X86::edx);
             emitPutResult(instruction[i + 1].u.operand, X86::edx);
@@ -629,8 +640,8 @@ void CTI::privateCompileMainPass()
             unsigned dst = instruction[i + 1].u.operand;
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
-            if (src2 < m_codeBlock->constantRegisters.size()) {
-                JSValue* value = m_codeBlock->constantRegisters[src2].jsValue(m_exec);
+            if (isConstant(src2)) {
+                JSValue* value = getConstant(m_exec, src2);
                 if (JSImmediate::isNumber(value)) {
                     emitGetArg(src1, X86::eax);
                     emitJumpSlowCaseIfNotImmNum(X86::eax, i);
@@ -640,7 +651,7 @@ void CTI::privateCompileMainPass()
                     i += 4;
                     break;
                 }
-            } else if (!(src1 < m_codeBlock->constantRegisters.size())) {
+            } else if (!isConstant(src1)) {
                 emitGetArg(src1, X86::eax);
                 emitGetArg(src2, X86::edx);
                 emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
@@ -665,7 +676,7 @@ void CTI::privateCompileMainPass()
 #if ENABLE(SAMPLING_TOOL)
             m_jit.movl_i32m(-1, &currentOpcodeID);
 #endif
-            m_jit.pushl_m(-((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) - RegisterFile::CTIReturnEIP) * sizeof(Register), X86::edi);
+            m_jit.pushl_m(RegisterFile::ReturnPC * sizeof(Register), X86::edi);
             m_jit.ret();
             i += 2;
             break;
@@ -872,14 +883,14 @@ void CTI::privateCompileMainPass()
             unsigned dst = instruction[i + 1].u.operand;
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
-            if (src1 < m_codeBlock->constantRegisters.size() || src2 < m_codeBlock->constantRegisters.size()) {
+            if (isConstant(src1) || isConstant(src2)) {
                 unsigned constant = src1;
                 unsigned nonconstant = src2;
-                if (!(src1 < m_codeBlock->constantRegisters.size())) {
+                if (!isConstant(src1)) {
                     constant = src2;
                     nonconstant = src1;
                 }
-                JSValue* value = m_codeBlock->constantRegisters[constant].jsValue(m_exec);
+                JSValue* value = getConstant(m_exec, constant);
                 if (JSImmediate::isNumber(value)) {
                     emitGetArg(nonconstant, X86::eax);
                     emitJumpSlowCaseIfNotImmNum(X86::eax, i);
@@ -915,7 +926,7 @@ void CTI::privateCompileMainPass()
         }
         case op_call: {
             compileOpCall(instruction, i);
-            i += 6;
+            i += 7;
             break;
         }
         case op_get_global_var: {
@@ -962,7 +973,7 @@ void CTI::privateCompileMainPass()
         }
         case op_ret: {
             // Check for an activation - if there is one, jump to the hook below.
-            m_jit.cmpl_i32m(0, -(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::OptionalCalleeActivation) * sizeof(Register), X86::edi);
+            m_jit.cmpl_i32m(0, RegisterFile::OptionalCalleeActivation * sizeof(Register), X86::edi);
             X86Assembler::JmpSrc activation = m_jit.emitUnlinkedJne();
             X86Assembler::JmpDst activated = m_jit.label();
 
@@ -979,11 +990,11 @@ void CTI::privateCompileMainPass()
             // Return the result in %eax, and the caller scope chain in %edx (this is read from the callee call frame,
             // but is only assigned to ExecState::m_scopeChain if returning to a JSFunction).
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
-            m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CallerScopeChain) * sizeof(Register), X86::edi, X86::edx);
+            m_jit.movl_mr(RegisterFile::CallerScopeChain * sizeof(Register), X86::edi, X86::edx);
             // Restore the machine return addess from the callframe, roll the callframe back to the caller callframe,
             // and preserve a copy of r on the stack at CTI_ARGS_r. 
-            m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CTIReturnEIP) * sizeof(Register), X86::edi, X86::ecx);
-            m_jit.movl_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize - RegisterFile::CallerRegisters) * sizeof(Register), X86::edi, X86::edi);
+            m_jit.movl_mr(RegisterFile::ReturnPC * sizeof(Register), X86::edi, X86::ecx);
+            m_jit.movl_mr(RegisterFile::CallerRegisters * sizeof(Register), X86::edi, X86::edi);
             emitPutCTIParam(X86::edi, CTI_ARGS_r);
 
             m_jit.pushl_r(X86::ecx);
@@ -1021,7 +1032,7 @@ void CTI::privateCompileMainPass()
         }
         case op_construct: {
             compileOpCall(instruction, i, OpConstruct);
-            i += 6;
+            i += 7;
             break;
         }
         case op_construct_verify: {
@@ -1449,7 +1460,7 @@ void CTI::privateCompileMainPass()
         }
         case op_call_eval: {
             compileOpCall(instruction, i, OpCallEval);
-            i += 6;
+            i += 7;
             break;
         }
         case op_throw: {
@@ -1713,8 +1724,15 @@ void CTI::privateCompileMainPass()
             i += 3;
             break;
         }
-        case op_initialise_locals: {
-            i++;
+        case op_init: {
+            // Even though CTI doesn't use them, we initialize our constant
+            // registers to zap stale pointers, to avoid unnecessarily prolonging
+            // object lifetime and increasing GC pressure.
+            size_t count = m_codeBlock->numVars + m_codeBlock->constantRegisters.size();
+            for (size_t j = 0; j < count; ++j)
+                emitInitRegister(j);
+
+            i+= 1;
             break;
         }
         case op_get_array_length:
@@ -1765,8 +1783,8 @@ void CTI::privateCompileSlowCases()
         case op_add: {
             unsigned dst = instruction[i + 1].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
-            if (src2 < m_codeBlock->constantRegisters.size()) {
-                JSValue* value = m_codeBlock->constantRegisters[src2].jsValue(m_exec);
+            if (isConstant(src2)) {
+                JSValue* value = getConstant(m_exec, src2);
                 if (JSImmediate::isNumber(value)) {
                     X86Assembler::JmpSrc notImm = iter->from;
                     m_jit.link((++iter)->from, m_jit.label());
@@ -1781,7 +1799,7 @@ void CTI::privateCompileSlowCases()
                 }
             }
 
-            ASSERT(!(static_cast<unsigned>(instruction[i + 2].u.operand) < m_codeBlock->constantRegisters.size()));
+            ASSERT(!isConstant(instruction[i + 2].u.operand));
 
             X86Assembler::JmpSrc notImm = iter->from;
             m_jit.link((++iter)->from, m_jit.label());
@@ -2196,24 +2214,24 @@ void CTI::privateCompileSlowCases()
 
             // We jump to this slow case if the ctiCode for the codeBlock has not yet been generated; compile it now.
             emitCall(i, Machine::cti_vm_compile);
-            m_jit.call_r(X86::eax);
-            
+            emitCall(i, X86::eax);
+
             // Instead of checking for 0 we could initialize the CodeBlock::ctiCode to point to a trampoline that would trigger the translation.
 
             // In the interpreter the following actions are performed by op_ret:
-            
-            // Store the scope chain - returned by op_ret in %edx (see below) - to ExecState::m_scopeChain and CTI_ARGS_scopeChain on the stack.
+
+            // Restore ExecState::m_scopeChain and CTI_ARGS_scopeChain. NOTE: After
+            // op_ret, %edx holds the caller's scope chain.
             emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
             emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
             m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
             // Restore ExecState::m_callFrame.
-            m_jit.leal_mr(-(m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) * sizeof(Register), X86::edi, X86::edx);
-            m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
+            m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
             // Restore CTI_ARGS_codeBlock.
             emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
 
             emitPutResult(instruction[i + 1].u.operand);
-            i += 6;
+            i += 7;
             break;
         }
 
@@ -2233,7 +2251,7 @@ void CTI::privateCompile()
     // Could use a popl_m, but would need to offset the following instruction if so.
     m_jit.popl_r(X86::ecx);
     emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
-    emitPutToCallFrameHeader(X86::ecx, RegisterFile::CTIReturnEIP);
+    emitPutToCallFrameHeader(X86::ecx, RegisterFile::ReturnPC);
 
     // Lazy copy of the scopeChain
     X86Assembler::JmpSrc callToUpdateScopeChain;
@@ -2282,11 +2300,9 @@ void CTI::privateCompile()
     for (Vector<HandlerInfo>::iterator iter = m_codeBlock->exceptionHandlers.begin(); iter != m_codeBlock->exceptionHandlers.end(); ++iter)
          iter->nativeCode = m_jit.getRelocatedAddress(code, m_labels[iter->target]);
 
-    // FIXME: There doesn't seem to be a way to hint to a hashmap that it should make a certain capacity available;
-    // could be faster if we could do something like this:
-    // m_codeBlock->ctiReturnAddressVPCMap.grow(m_calls.size());
     for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
-        X86Assembler::link(code, iter->from, iter->to);
+        if (iter->to)
+            X86Assembler::link(code, iter->from, iter->to);
         m_codeBlock->ctiReturnAddressVPCMap.add(m_jit.getRelocatedAddress(code, iter->from), iter->opcodeIndex);
     }
 

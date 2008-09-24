@@ -1,3 +1,253 @@
+2008-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Changed the layout of the call frame from
+        
+        { header, parameters, locals | constants, temporaries }
+        
+        to
+        
+        { parameters, header | locals, constants, temporaries }
+        
+        This simplifies function entry+exit, and enables a number of future
+        optimizations.
+        
+        13.5% speedup on empty call benchmark for bytecode; 23.6% speedup on
+        empty call benchmark for CTI.
+        
+        SunSpider says no change. SunSpider --v8 says 1% faster.
+
+        * VM/CTI.cpp:
+        
+        Added a bit of abstraction for calculating whether a register is a
+        constant, since this patch changes that calculation:
+        (JSC::CTI::isConstant):
+        (JSC::CTI::getConstant):
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::getConstantImmediateNumericArg):
+
+        Updated for changes to callframe header location:
+        (JSC::CTI::emitPutToCallFrameHeader):
+        (JSC::CTI::emitGetFromCallFrameHeader):
+        (JSC::CTI::printOpcodeOperandTypes):
+        
+        Renamed to spite Oliver:
+        (JSC::CTI::emitInitRegister):
+        
+        Added an abstraction for emitting a call through a register, so that
+        calls through registers generate exception info, too:
+        (JSC::CTI::emitCall):
+
+        Updated to match the new callframe header layout, and to support calls
+        through registers, which have no destination address:
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+
+        * VM/CTI.h:
+
+        More of the above:
+        (JSC::CallRecord::CallRecord):
+
+        * VM/CodeBlock.cpp:
+
+        Updated for new register layout:
+        (JSC::registerName):
+        (JSC::CodeBlock::dump):
+
+        * VM/CodeBlock.h:
+        
+        Updated CodeBlock to track slightly different information about the
+        register frame, and tweaked the style of an ASSERT_NOT_REACHED.
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::getStubInfo):
+
+        * VM/CodeGenerator.cpp:
+        
+        Added some abstraction around constant register allocation, since this
+        patch changes it, changed codegen to account for the new callframe
+        layout, and added abstraction around register fetching code
+        that used to assume that all local registers lived at negative indices,
+        since vars now live at positive indices:
+        (JSC::CodeGenerator::generate):
+        (JSC::CodeGenerator::addVar):
+        (JSC::CodeGenerator::addGlobalVar):
+        (JSC::CodeGenerator::allocateConstants):
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::addParameter):
+        (JSC::CodeGenerator::registerFor):
+        (JSC::CodeGenerator::constRegisterFor):
+        (JSC::CodeGenerator::newRegister):
+        (JSC::CodeGenerator::newTemporary):
+        (JSC::CodeGenerator::highestUsedRegister):
+        (JSC::CodeGenerator::addConstant):
+        
+        ASSERT that our caller referenced the registers it passed to us.
+        Otherwise, we might overwrite them with parameters:
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitConstruct):
+
+        * VM/CodeGenerator.h:
+        
+        Added some abstraction for getting a RegisterID for a given index,
+        since the rules are a little weird:
+        (JSC::CodeGenerator::registerFor):
+
+        * VM/Machine.cpp:
+
+        Utility function to transform a machine return PC to a virtual machine
+        return VPC, for the sake of stack unwinding, since both PCs are stored
+        in the same location now:
+        (JSC::vPCForPC):
+
+        Tweaked to account for new call frame:
+        (JSC::Machine::initializeCallFrame):
+        
+        Tweaked to account for registerOffset supplied by caller:
+        (JSC::slideRegisterWindowForCall):
+
+        Tweaked to account for new register layout:
+        (JSC::scopeChainForCall):
+        (JSC::Machine::callEval):
+        (JSC::Machine::dumpRegisters):
+        (JSC::Machine::unwindCallFrame):
+        (JSC::Machine::execute):
+
+        Changed op_call and op_construct to implement the new calling convention:
+        (JSC::Machine::privateExecute):
+
+        Tweaked to account for the new register layout:
+        (JSC::Machine::retrieveArguments):
+        (JSC::Machine::retrieveCaller):
+        (JSC::Machine::retrieveLastCaller):
+        (JSC::Machine::callFrame):
+        (JSC::Machine::getArgumentsData):
+
+        Changed CTI call helpers to implement the new calling convention:
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_ret_activation):
+        (JSC::Machine::cti_op_ret_profiler):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_call_eval):
+
+        * VM/Machine.h:
+
+        * VM/Opcode.h:
+        
+        Renamed op_initialise_locals to op_init, because this opcode
+        doesn't initialize all locals, and it doesn't initialize only locals.
+        Also, to spite Oliver.
+        
+        * VM/RegisterFile.h:
+        
+        New call frame enumeration values:
+        (JSC::RegisterFile::):
+
+        Simplified the calculation of whether a RegisterID is a temporary,
+        since we can no longer assume that all positive non-constant registers
+        are temporaries:
+        * VM/RegisterID.h:
+        (JSC::RegisterID::RegisterID):
+        (JSC::RegisterID::setTemporary):
+        (JSC::RegisterID::isTemporary):
+
+        Renamed firstArgumentIndex to firstParameterIndex because the assumption
+        that this variable pertained to the actual arguments supplied by the
+        caller caused me to write some buggy code:
+        * kjs/Arguments.cpp:
+        (JSC::ArgumentsData::ArgumentsData):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::fillArgList):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::put):
+
+        Updated for new call frame layout:
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        (JSC::DebuggerCallFrame::type):
+        * kjs/DebuggerCallFrame.h:
+
+        Changed the activation object to account for the fact that a call frame
+        header now sits between parameters and local variables. This change
+        requires all variable objects to do their own marking, since they
+        now use their register storage differently:
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::mark):
+        (JSC::JSActivation::copyRegisters):
+        (JSC::JSActivation::createArgumentsObject):
+        * kjs/JSActivation.h:
+
+        Updated global object to use the new interfaces required by the change
+        to JSActivation above:
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::mark):
+        (JSC::JSGlobalObject::copyGlobalsFrom):
+        (JSC::JSGlobalObject::copyGlobalsTo):
+        * kjs/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addStaticGlobals):
+
+        Updated static scope object to use the new interfaces required by the 
+        change to JSActivation above:
+        * kjs/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::mark):
+        (JSC::JSStaticScopeObject::~JSStaticScopeObject):
+        * kjs/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        (JSC::JSStaticScopeObject::d):
+
+        Updated variable object to use the new interfaces required by the 
+        change to JSActivation above:
+        * kjs/JSVariableObject.cpp:
+        (JSC::JSVariableObject::copyRegisterArray):
+        (JSC::JSVariableObject::setRegisters):
+        * kjs/JSVariableObject.h:
+
+        Changed the bit twiddling in symbol table not to assume that all indices
+        are negative, since they can be positive now:
+        * kjs/SymbolTable.h:
+        (JSC::SymbolTableEntry::SymbolTableEntry):
+        (JSC::SymbolTableEntry::isNull):
+        (JSC::SymbolTableEntry::getIndex):
+        (JSC::SymbolTableEntry::getAttributes):
+        (JSC::SymbolTableEntry::setAttributes):
+        (JSC::SymbolTableEntry::isReadOnly):
+        (JSC::SymbolTableEntry::pack):
+        (JSC::SymbolTableEntry::isValidIndex):
+
+        Changed call and construct nodes to ref their functions and/or bases,
+        so that emitCall/emitConstruct doesn't overwrite them with parameters.
+        Also, updated for rename to registerFor:
+        * kjs/nodes.cpp:
+        (JSC::ResolveNode::emitCode):
+        (JSC::NewExprNode::emitCode):
+        (JSC::EvalFunctionCallNode::emitCode):
+        (JSC::FunctionCallValueNode::emitCode):
+        (JSC::FunctionCallResolveNode::emitCode):
+        (JSC::FunctionCallBracketNode::emitCode):
+        (JSC::FunctionCallDotNode::emitCode):
+        (JSC::PostfixResolveNode::emitCode):
+        (JSC::DeleteResolveNode::emitCode):
+        (JSC::TypeOfResolveNode::emitCode):
+        (JSC::PrefixResolveNode::emitCode):
+        (JSC::ReadModifyResolveNode::emitCode):
+        (JSC::AssignResolveNode::emitCode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ForInNode::emitCode):
+
+        Added abstraction for getting exception info out of a call through a
+        register:
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::emitCall):
+        
+        Removed duplicate #if:
+        * wtf/Platform.h:
+
 2008-09-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

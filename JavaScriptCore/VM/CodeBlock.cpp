@@ -64,13 +64,10 @@ static UString valueToSourceString(ExecState* exec, JSValue* val)
 
 static CString registerName(int r)
 {
-    if (r < 0)
-        return (UString("lr") + UString::from(-r)).UTF8String(); 
-        
     if (r == missingThisObjectMarker())
         return "<null>";
 
-    return (UString("tr") + UString::from(r)).UTF8String();
+    return (UString("r") + UString::from(r)).UTF8String();
 }
 
 static CString constantName(ExecState* exec, int k, JSValue* value)
@@ -233,10 +230,10 @@ void CodeBlock::dump(ExecState* exec) const
         if (exec->machine()->isOpcode(it->u.opcode))
             ++instructionCount;
 
-    printf("%lu instructions; %lu bytes at %p; %d locals (%d parameters); %d temporaries\n\n",
+    printf("%lu instructions; %lu bytes at %p; %d parameter(s); %d callee register(s)\n\n",
         static_cast<unsigned long>(instructionCount),
         static_cast<unsigned long>(instructions.size() * sizeof(Instruction)),
-        this, numLocals, numParameters, numTemporaries);
+        this, numParameters, numCalleeRegisters);
     
     for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
         dump(exec, begin, it);
@@ -254,7 +251,7 @@ void CodeBlock::dump(ExecState* exec) const
         printf("\nConstants:\n");
         size_t i = 0;
         do {
-            printf("  tr%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, constantRegisters[i].jsValue(exec)).ascii());
+            printf("   r%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, constantRegisters[i].jsValue(exec)).ascii());
             ++i;
         } while (i < constantRegisters.size());
     }
@@ -351,8 +348,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 {
     int location = it - begin;
     switch (exec->machine()->getOpcodeID(it->u.opcode)) {
-        case op_initialise_locals: {
-            printf("[%4d] initialise_locals\n", location);
+        case op_init: {
+            printf("[%4d] init\n", location);
             break;
         }
         case op_unexpected_load: {
@@ -779,7 +776,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r2 = (++it)->u.operand;
             int tempCount = (++it)->u.operand;
             int argCount = (++it)->u.operand;
-            printf("[%4d] call\t\t %s, %s, %s, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount);
+            int registerOffset = (++it)->u.operand;
+            printf("[%4d] call\t\t %s, %s, %s, %d, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount, registerOffset);
             break;
         }
         case op_call_eval: {
@@ -788,7 +786,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r2 = (++it)->u.operand;
             int tempCount = (++it)->u.operand;
             int argCount = (++it)->u.operand;
-            printf("[%4d] call_eval\t\t %s, %s, %s, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount);
+            int registerOffset = (++it)->u.operand;
+            printf("[%4d] call_eval\t\t %s, %s, %s, %d, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount, registerOffset);
             break;
         }
         case op_ret: {
@@ -802,7 +801,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r2 = (++it)->u.operand;
             int tempCount = (++it)->u.operand;
             int argCount = (++it)->u.operand;
-            printf("[%4d] construct\t %s, %s, %s, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount);
+            int registerOffset = (++it)->u.operand;
+            printf("[%4d] construct\t %s, %s, %s, %d, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount, registerOffset);
             break;
         }
         case op_construct_verify: {

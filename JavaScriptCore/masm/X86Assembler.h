@@ -678,12 +678,6 @@ public:
         emitModRm_opm(GROUP5_OP_JMPN, base, offset);
     }
     
-    void call_r(RegisterID dst)
-    {
-        m_buffer->putByte(OP_GROUP5_Ev);
-        emitModRm_opr(GROUP5_OP_CALLN, dst);
-    }
-
     // Opaque label types
     
     class JmpSrc {
@@ -728,6 +722,13 @@ public:
         return JmpSrc(m_buffer->getOffset());
     }
     
+    JmpSrc emitCall(RegisterID dst)
+    {
+        m_buffer->putByte(OP_GROUP5_Ev);
+        emitModRm_opr(GROUP5_OP_CALLN, dst);
+        return JmpSrc(m_buffer->getOffset());
+    }
+
     JmpDst label()
     {
         return JmpDst(m_buffer->getOffset());

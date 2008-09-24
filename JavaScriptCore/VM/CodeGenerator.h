@@ -79,20 +79,19 @@ namespace JSC {
         CodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
         CodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
 
-        ~CodeGenerator();
-
         JSGlobalData* globalData() const { return m_globalData; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
 
         void generate();
 
         // Returns the register corresponding to a local variable, or 0 if no
-        // such register exists. Registers returned by registerForLocal do not
+        // such register exists. Registers returned by registerFor do not
         // require explicit reference counting.
-        RegisterID* registerForLocal(const Identifier&);
-        // Behaves as registerForLocal does, but ignores dynamic scope as
+        RegisterID* registerFor(const Identifier&);
+
+        // Behaves as registerFor does, but ignores dynamic scope as
         // dynamic scope should not interfere with const initialisation
-        RegisterID* registerForLocalConstInit(const Identifier&);
+        RegisterID* constRegisterFor(const Identifier&);
 
         // Searches the scope chain in an attempt to  statically locate the requested
         // property.  Returns false if for any reason the property cannot be safely
@@ -352,9 +351,8 @@ namespace JSC {
         typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
 
         RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-        // Maps a register index in the symbol table to a RegisterID index in m_locals.
-        int localsIndex(int registerIndex) { return -registerIndex - 1; }
+        
+        RegisterID* newRegister();
 
         // Returns the RegisterID corresponding to ident.
         RegisterID* addVar(const Identifier& ident, bool isConstant)
@@ -377,6 +375,21 @@ namespace JSC {
         bool addGlobalVar(const Identifier&, bool isConstant, RegisterID*&);
 
         RegisterID* addParameter(const Identifier&);
+        
+        void allocateConstants(size_t);
+
+        RegisterID& registerFor(int index)
+        {
+            if (index >= 0)
+                return m_calleeRegisters[index];
+
+            if (m_parameters.size()) {
+                ASSERT(!m_globals.size());
+                return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
+            }
+
+            return m_globals[-index - 1];
+        }
 
         unsigned addConstant(FuncDeclNode*);
         unsigned addConstant(FuncExprNode*);
@@ -403,9 +416,10 @@ namespace JSC {
 
         HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
-        SegmentedVector<RegisterID, 512> m_locals;
-        SegmentedVector<RegisterID, 512> m_constants;
-        SegmentedVector<RegisterID, 512> m_temporaries;
+        RefPtr<RegisterID> m_lastConstant;
+        SegmentedVector<RegisterID, 512> m_calleeRegisters;
+        SegmentedVector<RegisterID, 512> m_parameters;
+        SegmentedVector<RegisterID, 512> m_globals;
         SegmentedVector<LabelID, 512> m_labels;
         int m_finallyDepth;
         int m_dynamicScopeDepth;
@@ -416,8 +430,9 @@ namespace JSC {
         Vector<ControlFlowContext> m_scopeContextStack;
         Vector<SwitchInfo> m_switchContextStack;
 
-        int m_nextVar;
+        int m_nextGlobal;
         int m_nextParameter;
+        int m_nextConstant;
 
         int m_globalVarStorageOffset;
 

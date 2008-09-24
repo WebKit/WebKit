@@ -48,7 +48,6 @@ namespace JSC {
 
         virtual bool deleteProperty(ExecState*, const Identifier&);
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
-        virtual void mark();
         
         virtual bool isVariableObject() const;
         virtual bool isDynamicScope() const = 0;
@@ -71,7 +70,7 @@ namespace JSC {
             }
 
             SymbolTable* symbolTable; // Maps name -> offset from "r" in register file.
-            Register* registers; // Pointers to the register past the end of local storage. (Local storage indexes are negative.)
+            Register* registers; // "r" in the register file.
             OwnArrayPtr<Register> registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
             size_t registerArraySize;
 
@@ -91,8 +90,8 @@ namespace JSC {
         {
         }
 
-        void copyRegisterArray(Register* src, size_t count);
-        void setRegisterArray(Register* registerArray, size_t count);
+        Register* copyRegisterArray(Register* src, size_t count);
+        void setRegisters(Register* r, Register* registerArray, size_t count);
 
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);

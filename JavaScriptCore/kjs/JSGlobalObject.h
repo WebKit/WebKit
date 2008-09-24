@@ -156,6 +156,8 @@ namespace JSC {
     public:
         virtual ~JSGlobalObject();
 
+        virtual void mark();
+
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
         virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
@@ -224,8 +226,6 @@ namespace JSC {
         
         ScopeChain& globalScopeChain() { return d()->globalScopeChain; }
 
-        virtual void mark();
-
         virtual bool isGlobalObject() const { return true; }
         virtual JSGlobalObject* toGlobalObject(ExecState*) const;
 
@@ -274,13 +274,14 @@ namespace JSC {
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     {
-        size_t registerArraySize = d()->registerArraySize;
-        Register* registerArray = new Register[registerArraySize + count];
+        size_t oldSize = d()->registerArraySize;
+        size_t newSize = oldSize + count;
+        Register* registerArray = new Register[newSize];
         if (d()->registerArray)
-            memcpy(registerArray + count, d()->registerArray.get(), registerArraySize * sizeof(Register));
-        setRegisterArray(registerArray, registerArraySize + count);
+            memcpy(registerArray + count, d()->registerArray.get(), oldSize * sizeof(Register));
+        setRegisters(registerArray + newSize, registerArray, newSize);
 
-        for (int i = 0, index = -static_cast<int>(registerArraySize) - 1; i < count; ++i, --index) {
+        for (int i = 0, index = -static_cast<int>(oldSize) - 1; i < count; ++i, --index) {
             GlobalPropertyInfo& global = globals[i];
             ASSERT(global.attributes & DontDelete);
             SymbolTableEntry newEntry(index, global.attributes);
