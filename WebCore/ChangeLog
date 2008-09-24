@@ -1,3 +1,9 @@
+2008-09-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Fixed "Time" to "Tim"
+
+        * ChangeLog:
+
 2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
@@ -117,7 +123,7 @@
 
 2008-09-23  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Time and Oliver.
+        Reviewed by Tim and Oliver.
 
         Bug 20949: Catch repeated messages in Inspector Controller to limit
         memory usage
