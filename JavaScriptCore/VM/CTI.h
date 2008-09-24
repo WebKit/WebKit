@@ -334,7 +334,7 @@ namespace JSC {
         CTI(Machine*, ExecState*, CodeBlock*);
         
         bool isConstant(int src);
-        JSValue* CTI::getConstant(ExecState*, int src);
+        JSValue* getConstant(ExecState*, int src);
 
         void privateCompileMainPass();
         void privateCompileLinkPass();
