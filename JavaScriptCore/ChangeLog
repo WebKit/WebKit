@@ -1,6 +1,22 @@
 2008-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
+        
+        Fixed <rdar://problem/5605532> Need a SPI for telling JS the size of
+        the objects it retains
+
+        * API/JSBase.h: Filled in some missing function names.
+
+        * API/tests/testapi.c: Test the new SPI a little.
+
+        * API/JSSPI.cpp: Add the new SPI.
+        * API/JSSPI.h: Add the new SPI.
+        * JavaScriptCore.exp: Add the new SPI.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add the new SPI.
+
+2008-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
 
         * API/JSBase.h: Filled in some missing function names.
 

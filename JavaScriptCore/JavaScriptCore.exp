@@ -42,6 +42,7 @@ _JSPropertyNameArrayGetCount
 _JSPropertyNameArrayGetNameAtIndex
 _JSPropertyNameArrayRelease
 _JSPropertyNameArrayRetain
+_JSReportExtraMemoryCost
 _JSStartProfiling
 _JSStringCopyCFString
 _JSStringCreateWithCFString

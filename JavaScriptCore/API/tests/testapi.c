@@ -24,6 +24,7 @@
  */
 
 #include "JavaScriptCore.h"
+#include "JSBasePrivate.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
@@ -583,6 +584,10 @@ int main(int argc, char* argv[])
 
     JSGlobalContextRetain(context);
     JSGlobalContextRelease(context);
+    
+    JSReportExtraMemoryCost(context, 0);
+    JSReportExtraMemoryCost(context, 1);
+    JSReportExtraMemoryCost(context, 1024);
 
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     ASSERT(JSValueIsObject(context, globalObject));
