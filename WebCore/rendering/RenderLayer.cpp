@@ -278,10 +278,8 @@ void RenderLayer::setHasVisibleContent(bool b)
     if (m_hasVisibleContent) {
         m_repaintRect = renderer()->absoluteClippedOverflowRect();
         m_outlineBox = renderer()->absoluteOutlineBox();
-        if (!isOverflowOnly()) {
-            if (RenderLayer* sc = stackingContext())
-                sc->dirtyZOrderLists();
-        }
+        if (!isOverflowOnly())
+            dirtyStackingContextZOrderLists();
     }
     if (parent())
         parent()->childVisibilityChanged(m_hasVisibleContent);
@@ -582,9 +580,7 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
         // Dirty the z-order list in which we are contained.  The stackingContext() can be null in the
         // case where we're building up generated content layers.  This is ok, since the lists will start
         // off dirty in that case anyway.
-        RenderLayer* stackingContext = child->stackingContext();
-        if (stackingContext)
-            stackingContext->dirtyZOrderLists();
+        child->dirtyStackingContextZOrderLists();
     }
 
     child->updateVisibilityStatus();
@@ -611,9 +607,7 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
         // Dirty the z-order list in which we are contained.  When called via the
         // reattachment process in removeOnlyThisLayer, the layer may already be disconnected
         // from the main layer tree, so we need to null-check the |stackingContext| value.
-        RenderLayer* stackingContext = oldChild->stackingContext();
-        if (stackingContext)
-            stackingContext->dirtyZOrderLists();
+        oldChild->dirtyStackingContextZOrderLists();
     }
 
     oldChild->setPreviousSibling(0);
@@ -2264,6 +2258,13 @@ void RenderLayer::dirtyZOrderLists()
     m_zOrderListsDirty = true;
 }
 
+void RenderLayer::dirtyStackingContextZOrderLists()
+{
+    RenderLayer* sc = stackingContext();
+    if (sc)
+        sc->dirtyZOrderLists();
+}
+
 void RenderLayer::dirtyOverflowList()
 {
     if (m_overflowList)
@@ -2356,11 +2357,9 @@ void RenderLayer::styleChanged(RenderStyle* oldStyle)
     if (isOverflowOnly != m_isOverflowOnly) {
         m_isOverflowOnly = isOverflowOnly;
         RenderLayer* p = parent();
-        RenderLayer* sc = stackingContext();
         if (p)
             p->dirtyOverflowList();
-        if (sc)
-            sc->dirtyZOrderLists();
+        dirtyStackingContextZOrderLists();
     }
 
     if (m_object->style()->overflowX() == OMARQUEE && m_object->style()->marqueeBehavior() != MNONE) {

@@ -1,3 +1,21 @@
+2008-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Wrap up dirtying the z-order list of the stacking context
+        RenderLayer into a method.
+        https://bugs.webkit.org/show_bug.cgi?id=21072
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasVisibleContent):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::dirtyStackingContextZOrderLists):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+
 2008-09-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

@@ -262,6 +262,7 @@ public:
     bool isStackingContext() const { return !hasAutoZIndex() || renderer()->isRenderView(); }
 
     void dirtyZOrderLists();
+    void dirtyStackingContextZOrderLists();
     void updateZOrderLists();
     Vector<RenderLayer*>* posZOrderList() const { return m_posZOrderList; }
     Vector<RenderLayer*>* negZOrderList() const { return m_negZOrderList; }
