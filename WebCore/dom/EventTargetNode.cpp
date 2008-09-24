@@ -74,7 +74,7 @@ EventTargetNode::~EventTargetNode()
 
 void EventTargetNode::insertedIntoDocument()
 {
-    if (m_regdListeners && m_regdListeners->isEmpty())
+    if (m_regdListeners && !m_regdListeners->isEmpty())
         document()->unregisterDisconnectedNodeWithEventListeners(this);
 
     Node::insertedIntoDocument();
@@ -210,10 +210,6 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode& e
 
     if (inDocument()) {
         for (Node* n = this; n; n = n->eventParentNode()) {
-            // <use> shadow trees are owned by an invisible root element, skip it
-            if (n->isShadowNode())
-                continue;
-
             n->ref();
             nodeChain.prepend(n);
         }

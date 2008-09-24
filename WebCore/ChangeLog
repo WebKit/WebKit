@@ -1,3 +1,18 @@
+2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=21046 (Several LayoutTests crash)
+
+        Fix missing negation in EventTargetNode::insertedIntoDocument.
+        Made handleLocalEvents() virtual again, HTMLFormElement overrides it.
+        Remove code, that wasn't supposed to go in in dispatchGenericEvent().
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::insertedIntoDocument):
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        * dom/EventTargetNode.h:
+
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
         Adds search support to the Profiles panel.

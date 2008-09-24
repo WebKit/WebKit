@@ -73,7 +73,7 @@ public:
     bool dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime);
     bool dispatchGenericEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent);
 
-    void handleLocalEvents(Event*, bool useCapture);
+    virtual void handleLocalEvents(Event*, bool useCapture);
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
