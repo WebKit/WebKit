@@ -99,6 +99,174 @@ WebInspector.Panel.prototype = {
     {
         if (!this.element.parentNode)
             document.getElementById("main-panels").appendChild(this.element);
+    },
+
+    searchCanceled: function(startingNewSearch)
+    {
+        if (this._searchResults) {
+            for (var i = 0; i < this._searchResults.length; ++i) {
+                var view = this._searchResults[i];
+                if (view.searchCanceled)
+                    view.searchCanceled();
+                delete view.currentQuery;
+            }
+        }
+
+        WebInspector.updateSearchMatchesCount(0, this);
+
+        if (this._currentSearchChrunkIntervalIdentifier) {
+            clearInterval(this._currentSearchChrunkIntervalIdentifier);
+            delete this._currentSearchChrunkIntervalIdentifier;
+        }
+
+        this._totalSearchMatches = 0;
+        this._currentSearchResultIndex = 0;
+        this._searchResults = [];
+    },
+
+    performSearch: function(query)
+    {
+        // Call searchCanceled since it will reset everything we need before doing a new search.
+        this.searchCanceled(true);
+
+        var searchableViews = this.searchableViews;
+        if (!searchableViews || !searchableViews.length)
+            return;
+
+        var parentElement = this.viewsContainerElement;
+        var visibleView = this.visibleView;
+        var sortFuction = this.searchResultsSortFunction;
+
+        var matchesCountUpdateTimeout = null;
+
+        function updateMatchesCount()
+        {
+            WebInspector.updateSearchMatchesCount(this._totalSearchMatches, this);
+            matchesCountUpdateTimeout = null;
+        }
+
+        function updateMatchesCountSoon()
+        {
+            if (matchesCountUpdateTimeout)
+                return;
+            // Update the matches count every half-second so it doesn't feel twitchy.
+            matchesCountUpdateTimeout = setTimeout(updateMatchesCount.bind(this), 500);
+        }
+
+        function finishedCallback(view, searchMatches)
+        {
+            if (!searchMatches)
+                return;
+
+            this._totalSearchMatches += searchMatches;
+            this._searchResults.push(view);
+
+            if (sortFuction)
+                this._searchResults.sort(sortFuction);
+
+            if (this.searchMatchFound)
+                this.searchMatchFound(view, searchMatches);
+
+            updateMatchesCountSoon.call(this);
+
+            if (view === visibleView)
+                view.jumpToFirstSearchResult();
+        }
+
+        var i = 0;
+        var panel = this;
+        var boundFinishedCallback = finishedCallback.bind(this);
+        var chunkIntervalIdentifier = null;
+
+        // Split up the work into chunks so we don't block the
+        // UI thread while processing.
+
+        function processChunk()
+        {
+            var view = searchableViews[i];
+
+            if (++i >= searchableViews.length) {
+                if (panel._currentSearchChrunkIntervalIdentifier === chunkIntervalIdentifier)
+                    delete panel._currentSearchChrunkIntervalIdentifier;
+                clearInterval(chunkIntervalIdentifier);
+            }
+
+            if (!view)
+                return;
+
+            if (view.element.parentNode !== parentElement && view.element.parentNode && parentElement)
+                view.detach();
+
+            view.currentQuery = query;
+            view.performSearch(query, boundFinishedCallback);
+        }
+
+        processChunk();
+
+        chunkIntervalIdentifier = setInterval(processChunk, 25);
+        this._currentSearchChrunkIntervalIdentifier = chunkIntervalIdentifier;
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this.showView || !this._searchResults || !this._searchResults.length)
+            return;
+
+        var showFirstResult = false;
+
+        this._currentSearchResultIndex = this._searchResults.indexOf(this.visibleView);
+        if (this._currentSearchResultIndex === -1) {
+            this._currentSearchResultIndex = 0;
+            showFirstResult = true;
+        }
+
+        var currentView = this._searchResults[this._currentSearchResultIndex];
+
+        if (currentView.showingLastSearchResult()) {
+            if (++this._currentSearchResultIndex >= this._searchResults.length)
+                this._currentSearchResultIndex = 0;
+            currentView = this._searchResults[this._currentSearchResultIndex];
+            showFirstResult = true;
+        }
+
+        if (currentView !== this.visibleView)
+            this.showView(currentView);
+
+        if (showFirstResult)
+            currentView.jumpToFirstSearchResult();
+        else
+            currentView.jumpToNextSearchResult();
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this.showView || !this._searchResults || !this._searchResults.length)
+            return;
+
+        var showLastResult = false;
+
+        this._currentSearchResultIndex = this._searchResults.indexOf(this.visibleView);
+        if (this._currentSearchResultIndex === -1) {
+            this._currentSearchResultIndex = 0;
+            showLastResult = true;
+        }
+
+        var currentView = this._searchResults[this._currentSearchResultIndex];
+
+        if (currentView.showingFirstSearchResult()) {
+            if (--this._currentSearchResultIndex < 0)
+                this._currentSearchResultIndex = (this._searchResults.length - 1);
+            currentView = this._searchResults[this._currentSearchResultIndex];
+            showLastResult = true;
+        }
+
+        if (currentView !== this.visibleView)
+            this.showView(currentView);
+
+        if (showLastResult)
+            currentView.jumpToLastSearchResult();
+        else
+            currentView.jumpToPreviousSearchResult();
     }
 }
 

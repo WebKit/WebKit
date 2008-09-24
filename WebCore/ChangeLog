@@ -1,5 +1,31 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Add support to Panel that allows easy searching of sub-views.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/Panel.js:
+        (WebInspector.Panel.prototype.searchCanceled): Call searchCanceled on all the
+        views in the search results and delete the currentQuery property. Call
+        WebInspector.updateSearchMatchesCount wit ha 0 match count to rest. Reset the
+        other search properties.
+        (WebInspector.Panel.prototype.performSearch): Call searchCanceled since it will
+        reset everything we need before doing a new search. Get an array of searchableViews
+        from the panel, implemented by sub-classes. Iterate over the views one-by-one
+        with an interval to prevent blocking the UI for large lists of searchableViews.
+        This keeps the interface really responsive. Pass a finishedCallback function to
+        the performSearch on each view so it can notify the panel of results.
+        (WebInspector.Panel.prototype.jumpToNextSearchResult): Finds the index in the
+        searchResults of the visibleView, so we know where in the results we are.
+        This is done every time incase the user manually navigates to a new view.
+        If the view is showing the last result, jump to the next view and show it's
+        first result. Otherwise jump to the next result in the current view.
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult): Ditto, but in reverse.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Add support for asking the current panel to perform a search, find next/previous and clear.
         A search is performed on the new new current panel when switching between panels. The search
         label/placeholder in the toolbar now includes the panel name to make it clear that panel will
