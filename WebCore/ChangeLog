@@ -1,3 +1,9 @@
+2008-09-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix.
+
+        * WebCoreSources.bkl:
+
 2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Sam.
