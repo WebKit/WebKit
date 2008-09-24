@@ -1,5 +1,23 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Remove the previous Inspector search code to make room for the new stuff.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.html:
+        * page/inspector/inspector.js:
+        (WebInspector.get/set showingSearchResults): Removed.
+        (WebInspector.searchResultsKeyDown): Removed.
+        (WebInspector.searchResultsResizerDragStart): Removed.
+        (WebInspector.searchResultsResizerDragEnd): Removed.
+        (WebInspector.searchResultsResizerDrag): Removed.
+        (WebInspector.performSearch): Removed searching parts.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Use the Array.remove helper function in more places.
 
         https://bugs.webkit.org/show_bug.cgi?id=21037

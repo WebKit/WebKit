@@ -194,60 +194,6 @@ body.detached .toolbar-item.close {
     display: none;
 }
 
-#searchResults {
-    position: absolute;
-    top: -100px;
-    left: 0;
-    right: 0;
-    height: 100px;
-    z-index: -1;
-    background-color: white;
-    border-bottom: 1px solid rgb(180, 180, 180);
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-box-sizing: border-box;
-}
-
-.search-results-section {
-    color: gray;
-    width: 28px;
-    float: left;
-    margin-left: -45px;
-    text-align: right;
-    font-size: 10px;
-    margin-top: 1px;
-    white-space: nowrap;
-}
-
-:focus .selected .search-results-section {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.selected .search-results-section {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-#searchResults > ol > ol > li {
-    padding-left: 45px;
-    white-space: nowrap;
-}
-
-.search-matched-string {
-    background-color: #ff8;
-}
-
-.selected .search-matched-string {
-    background-color: transparent;
-}
-
-#searchResultsResizer {
-    position: absolute;
-    height: 5px;
-    left: 0;
-    right: 0;
-    cursor: row-resize;
-}
-
 #main {
     position: absolute;
     z-index: 1;

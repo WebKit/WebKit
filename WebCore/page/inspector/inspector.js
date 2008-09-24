@@ -31,7 +31,6 @@ var Preferences = {
     ignoreWhitespace: true,
     showUserAgentStyles: true,
     maxInlineTextChildLength: 80,
-    maxTextSearchResultLength: 80,
     minConsoleHeight: 75,
     minSidebarWidth: 100,
     minElementsSidebarWidth: 200,
@@ -43,7 +42,6 @@ var Preferences = {
 var WebInspector = {
     resources: [],
     resourceURLMap: {},
-    searchResultsHeight: 100,
     missingLocalizedStrings: {},
     _altKeyDown: false,
     _forceHoverHighlight: false,
@@ -129,52 +127,6 @@ var WebInspector = {
             body.removeStyleClass("attached");
             body.addStyleClass("detached");
             dockToggleButton.title = WebInspector.UIString("Dock to main window.");
-        }
-    },
-
-    get showingSearchResults()
-    {
-        return this._showingSearchResults;
-    },
-
-    set showingSearchResults(x)
-    {
-        if (this._showingSearchResults === x)
-            return;
-
-        this._showingSearchResults = x;
-
-        var resultsContainer = document.getElementById("searchResults");
-        var searchResultsResizer = document.getElementById("searchResultsResizer");
-
-        if (x) {
-            resultsContainer.removeStyleClass("hidden");
-            searchResultsResizer.removeStyleClass("hidden");
-
-            var animations = [
-                {element: resultsContainer, end: {top: 0}},
-                {element: searchResultsResizer, end: {top: WebInspector.searchResultsHeight - 3}},
-                {element: document.getElementById("main-panels"), end: {top: WebInspector.searchResultsHeight}}
-            ];
-
-            WebInspector.animateStyle(animations, 250);
-        } else {
-            searchResultsResizer.addStyleClass("hidden");
-
-            var animations = [
-                {element: resultsContainer, end: {top: -WebInspector.searchResultsHeight}},
-                {element: searchResultsResizer, end: {top: 0}},
-                {element: document.getElementById("main-panels"), end: {top: 0}}
-            ];
-
-            var animationFinished = function()
-            {
-                resultsContainer.addStyleClass("hidden");
-                resultsContainer.removeChildren();
-                delete this.searchResultsTree;
-            };
-
-            WebInspector.animateStyle(animations, 250, animationFinished);
         }
     },
 
@@ -394,8 +346,6 @@ WebInspector.loaded = function()
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     document.addEventListener("copy", this.documentCopy.bind(this), true);
 
-    document.getElementById("searchResultsResizer").addEventListener("mousedown", this.searchResultsResizerDragStart, true);
-
     var mainPanelsElement = document.getElementById("main-panels");
     mainPanelsElement.handleKeyEvent = this.mainKeyDown.bind(this);
     mainPanelsElement.handleKeyUpEvent = this.mainKeyUp.bind(this);
@@ -611,12 +561,6 @@ WebInspector.mainCopy = function(event)
         this.currentPanel.handleCopyEvent(event);
 }
 
-WebInspector.searchResultsKeyDown = function(event)
-{
-    if (this.searchResultsTree)
-        this.searchResultsTree.handleKeyEvent(event);
-}
-
 WebInspector.animateStyle = function(animations, duration, callback, complete)
 {
     if (complete === undefined)
@@ -744,30 +688,6 @@ WebInspector.toolbarDrag = function(event)
 
     toolbar.lastScreenX = event.screenX;
     toolbar.lastScreenY = event.screenY;
-
-    event.preventDefault();
-}
-
-WebInspector.searchResultsResizerDragStart = function(event)
-{
-    WebInspector.elementDragStart(document.getElementById("searchResults"), WebInspector.searchResultsResizerDrag, WebInspector.searchResultsResizerDragEnd, event, "row-resize");
-}
-
-WebInspector.searchResultsResizerDragEnd = function(event)
-{
-    WebInspector.elementDragEnd(event);
-}
-
-WebInspector.searchResultsResizerDrag = function(event)
-{
-    var y = event.pageY - document.getElementById("main").offsetTop;
-    var newHeight = Number.constrain(y, 100, window.innerHeight - 100);
-
-    WebInspector.searchResultsHeight = newHeight;
-
-    document.getElementById("searchResults").style.height = WebInspector.searchResultsHeight + "px";
-    document.getElementById("main-panels").style.top = newHeight + "px";
-    document.getElementById("searchResultsResizer").style.top = (newHeight - 3) + "px";
 
     event.preventDefault();
 }
@@ -1099,7 +1019,6 @@ WebInspector.performSearch = function(event)
 
     if (!query || !query.length) {
         delete this.lastQuery;
-        this.showingSearchResults = false;
         return;
     }
 
@@ -1110,186 +1029,6 @@ WebInspector.performSearch = function(event)
     if (!forceSearch && this.lastQuery && this.lastQuery === query)
         return;
     this.lastQuery = query;
-
-    var resultsContainer = document.getElementById("searchResults");
-    resultsContainer.removeChildren();
-
-    var isXPath = query.indexOf("/") !== -1;
-
-    var xpathQuery;
-    if (isXPath)
-        xpathQuery = query;
-    else {
-        var escapedQuery = query.escapeCharacters("'");
-        xpathQuery = "//*[contains(name(),'" + escapedQuery + "') or contains(@*,'" + escapedQuery + "')] | //text()[contains(.,'" + escapedQuery + "')] | //comment()[contains(.,'" + escapedQuery + "')]";
-    }
-
-    var resourcesToSearch = [].concat(this.resourceCategories.documents.resources, this.resourceCategories.stylesheets.resources, this.resourceCategories.scripts.resources, this.resourceCategories.other.resources);
-
-    var files = [];
-    for (var i = 0; i < resourcesToSearch.length; ++i) {
-        var resource = resourcesToSearch[i];
-
-        var sourceResults = [];
-        if (!isXPath) {
-            var sourceFrame = this.panels.resources.sourceFrameForResource(resource);
-            if (sourceFrame)
-                sourceResults = InspectorController.search(sourceFrame.element.contentDocument, query);
-        }
-
-        var domResults = [];
-        const searchResultsProperty = "__includedInInspectorSearchResults";
-        function addNodesToDOMResults(nodes, length, getItem)
-        {
-            for (var i = 0; i < length; ++i) {
-                var node = getItem(nodes, i);
-                if (searchResultsProperty in node)
-                    continue;
-                node[searchResultsProperty] = true;
-                domResults.push(node);
-            }
-        }
-
-        function cleanUpDOMResultsNodes()
-        {
-            for (var i = 0; i < domResults.length; ++i)
-                delete domResults[i][searchResultsProperty];
-        }
-
-        if (resource.category === this.resourceCategories.documents) {
-            var doc = resource.documentNode;
-            try {
-                var result = InspectorController.inspectedWindow().Document.prototype.evaluate.call(doc, xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-                addNodesToDOMResults(result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
-            } catch(err) {
-                // ignore any exceptions. the query might be malformed, but we allow that.
-            }
-
-            try {
-                var result = InspectorController.inspectedWindow().Document.prototype.querySelectorAll.call(doc, query);
-                addNodesToDOMResults(result, result.length, function(l, i) { return l.item(i); });
-            } catch(err) {
-                // ignore any exceptions. the query isn't necessarily a valid selector.
-            }
-
-            cleanUpDOMResultsNodes();
-        }
-
-        if ((!sourceResults || !sourceResults.length) && !domResults.length)
-            continue;
-
-        files.push({resource: resource, sourceResults: sourceResults, domResults: domResults});
-    }
-
-    if (!files.length)
-        return;
-
-    this.showingSearchResults = true;
-
-    var fileList = document.createElement("ol");
-    fileList.className = "outline-disclosure";
-    resultsContainer.appendChild(fileList);
-
-    this.searchResultsTree = new TreeOutline(fileList);
-    this.searchResultsTree.expandTreeElementsWhenArrowing = true;
-
-    var sourceResultSelected = function(element)
-    {
-        var selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(element.representedObject.range);
-
-        var oldFocusElement = this.currentFocusElement;
-        this.currentPanel = this.panels.resources;
-        this.currentFocusElement = oldFocusElement;
-
-        this.panels.resources.showResource(element.representedObject.resource);
-
-        element.representedObject.line.scrollIntoViewIfNeeded(true);
-        element.listItemElement.scrollIntoViewIfNeeded(false);
-    }
-
-    var domResultSelected = function(element)
-    {
-        var oldFocusElement = this.currentFocusElement;
-        this.currentPanel = this.panels.elements;
-        this.currentFocusElement = oldFocusElement;
-
-        this.panels.elements.focusedDOMNode = element.representedObject.node;
-        element.listItemElement.scrollIntoViewIfNeeded(false);
-    }
-
-    for (var i = 0; i < files.length; ++i) {
-        var file = files[i];
-
-        var fileItem = new TreeElement(file.resource.displayName, {}, true);
-        fileItem.expanded = true;
-        fileItem.selectable = false;
-        this.searchResultsTree.appendChild(fileItem);
-
-        if (file.sourceResults && file.sourceResults.length) {
-            for (var j = 0; j < file.sourceResults.length; ++j) {
-                var range = file.sourceResults[j];
-                var sourceDocument = range.startContainer.ownerDocument;
-
-                var line = range.startContainer;
-                while (line.parentNode && line.nodeName.toLowerCase() != "tr")
-                    line = line.parentNode;
-                var lineRange = sourceDocument.createRange();
-                lineRange.selectNodeContents(line);
-
-                // Don't include any error bubbles in the search result
-                var end = line.lastChild.lastChild;
-                if (end.nodeName.toLowerCase() == "div" && end.hasStyleClass("webkit-html-message-bubble")) {
-                    while (end && end.nodeName.toLowerCase() == "div" && end.hasStyleClass("webkit-html-message-bubble"))
-                        end = end.previousSibling;
-                    lineRange.setEndAfter(end);
-                }
-
-                var beforeRange = sourceDocument.createRange();
-                beforeRange.setStart(lineRange.startContainer, lineRange.startOffset);
-                beforeRange.setEnd(range.startContainer, range.startOffset);
-
-                var afterRange = sourceDocument.createRange();
-                afterRange.setStart(range.endContainer, range.endOffset);
-                afterRange.setEnd(lineRange.endContainer, lineRange.endOffset);
-
-                var beforeText = beforeRange.toString().trimLeadingWhitespace();
-                var text = range.toString();
-                var afterText = afterRange.toString().trimTrailingWhitespace();
-
-                var length = beforeText.length + text.length + afterText.length;
-                if (length > Preferences.maxTextSearchResultLength) {
-                    var beforeAfterLength = (Preferences.maxTextSearchResultLength - text.length) / 2;
-                    if (beforeText.length > beforeAfterLength)
-                        beforeText = "\u2026" + beforeText.substr(-beforeAfterLength);
-                    if (afterText.length > beforeAfterLength)
-                        afterText = afterText.substr(0, beforeAfterLength) + "\u2026";
-                }
-
-                var title = "<div class=\"selection selected\"></div>";
-                if (j == 0)
-                    title += "<div class=\"search-results-section\">" + WebInspector.UIString("Source") + "</div>";
-                title += beforeText.escapeHTML() + "<span class=\"search-matched-string\">" + text.escapeHTML() + "</span>" + afterText.escapeHTML();
-                var item = new TreeElement(title, {resource: file.resource, line: line, range: range}, false);
-                item.onselect = sourceResultSelected.bind(this);
-                fileItem.appendChild(item);
-            }
-        }
-
-        if (file.domResults.length) {
-            for (var j = 0; j < file.domResults.length; ++j) {
-                var node = file.domResults[j];
-                var title = "<div class=\"selection selected\"></div>";
-                if (j == 0)
-                    title += "<div class=\"search-results-section\">" + WebInspector.UIString("DOM") + "</div>";
-                title += nodeTitleInfo.call(node).title;
-                var item = new TreeElement(title, {resource: file.resource, node: node}, false);
-                item.onselect = domResultSelected.bind(this);
-                fileItem.appendChild(item);
-            }
-        }
-    }
 }
 
 WebInspector.UIString = function(string)
