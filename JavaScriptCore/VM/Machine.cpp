@@ -877,9 +877,11 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue*& exc
 
 JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainNode* scopeChain, JSObject* thisObj, JSValue** exception)
 {
+    ASSERT(!exec->hadException());
+
     if (m_reentryDepth >= MaxReentryDepth) {
         *exception = createStackOverflowError(exec);
-        return 0;
+        return jsNull();
     }
 
     CodeBlock* codeBlock = &programNode->byteCode(scopeChain);
@@ -888,7 +890,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     size_t newSize = oldSize + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize + codeBlock->numCalleeRegisters;
     if (!m_registerFile.grow(newSize)) {
         *exception = createStackOverflowError(exec);
-        return 0;
+        return jsNull();
     }
 
     JSGlobalObject* lastGlobalObject = m_registerFile.globalObject();
@@ -932,9 +934,11 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
 
 JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, JSFunction* function, JSObject* thisObj, const ArgList& args, ScopeChainNode* scopeChain, JSValue** exception)
 {
+    ASSERT(!exec->hadException());
+
     if (m_reentryDepth >= MaxReentryDepth) {
         *exception = createStackOverflowError(exec);
-        return 0;
+        return jsNull();
     }
 
     size_t oldSize = m_registerFile.size();
@@ -942,7 +946,7 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
 
     if (!m_registerFile.grow(oldSize + argc)) {
         *exception = createStackOverflowError(exec);
-        return 0;
+        return jsNull();
     }
 
     Register* argv = m_registerFile.base() + oldSize;
@@ -957,7 +961,7 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
     Register* r = slideRegisterWindowForCall(exec, newCodeBlock, &m_registerFile, m_registerFile.base(), argv, argc + RegisterFile::CallFrameHeaderSize, argc, *exception);
     if (UNLIKELY(*exception != 0)) {
         m_registerFile.shrink(oldSize);
-        return 0;
+        return jsNull();
     }
     // a 0 codeBlock indicates a built-in caller
     initializeCallFrame(r, 0, 0, 0, argv, 0, argc, function);
@@ -992,9 +996,11 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 
 JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj, int registerOffset, ScopeChainNode* scopeChain, JSValue** exception)
 {
+    ASSERT(!exec->hadException());
+
     if (m_reentryDepth >= MaxReentryDepth) {
         *exception = createStackOverflowError(exec);
-        return 0;
+        return jsNull();
     }
 
     EvalCodeBlock* codeBlock = &evalNode->byteCode(scopeChain);
@@ -1035,7 +1041,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     size_t newSize = registerOffset + codeBlock->numCalleeRegisters;
     if (!m_registerFile.grow(newSize)) {
         *exception = createStackOverflowError(exec);
-        return 0;
+        return jsNull();
     }
 
     Register* r = m_registerFile.base() + registerOffset;

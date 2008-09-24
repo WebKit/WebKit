@@ -1,5 +1,35 @@
 2008-09-23  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21038 | <rdar://problem/6240812>
+        Uncaught exceptions in regex replace callbacks crash webkit
+        
+        This was a combination of two problems:
+        
+        (1) the replace function would continue execution after an exception
+        had been thrown.
+        
+        (2) In some cases, the Machine would return 0 in the case of an exception,
+        despite the fact that a few clients dereference the Machine's return
+        value without first checking for an exception.
+        
+        * VM/Machine.cpp:
+        (JSC::Machine::execute):
+        
+        ^ Return jsNull() instead of 0 in the case of an exception, since some
+        clients depend on using our return value.
+        
+        ^ ASSERT that execution does not continue after an exception has been
+        thrown, to help catch problems like this in the future.
+
+        * kjs/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        
+        ^ Stop execution if an exception has been thrown.
+
+2008-09-23  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the windows build.
 
         * VM/CTI.cpp:

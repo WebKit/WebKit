@@ -257,6 +257,8 @@ JSValue* stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue* thisValue, 
                 args.append(sourceVal);
 
                 replacements.append(call(exec, replacement, callType, callData, exec->globalThisValue(), args)->toString(exec));
+                if (exec->hadException())
+                    break;
             } else
                 replacements.append(substituteBackreferences(replacementString, source, ovector, reg));
 

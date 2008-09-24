@@ -1,3 +1,13 @@
+2008-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Test for https://bugs.webkit.org/show_bug.cgi?id=21038
+        Uncaught exceptions in regex replace callbacks crash webkit
+
+        * fast/js/string-replace-exception-crash-expected.txt: Added.
+        * fast/js/string-replace-exception-crash.html: Added.
+
 2008-09-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
