@@ -1,3 +1,16 @@
+2008-09-23  Dave Hyatt  <hyatt@apple.com>
+
+        Fix for bug 21012.  The Aqua scrollbar was returning the wrong track rect on Windows Aqua theme.  Make
+        sure to not accidentally fall into the vertical scrollbar case for horizontal scrollbars. :)
+        
+        Reviewed by Sam Weinig
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::trackRect):
+        * platform/win/ScrollbarThemeSafari.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeSafari::trackRect):
+
 2008-09-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

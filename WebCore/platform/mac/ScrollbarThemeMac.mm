@@ -219,17 +219,6 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart
     return result;
 }
 
-static IntRect trackRepaintRect(const IntRect& trackRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
-{
-    IntRect paintRect(trackRect);
-    if (orientation == HorizontalScrollbar)
-        paintRect.inflateX(cButtonLength[controlSize]);
-    else
-        paintRect.inflateY(cButtonLength[controlSize]);
-
-    return paintRect;
-}
-
 IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 {
     if (painting || !hasButtons(scrollbar))
@@ -263,12 +252,8 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
     
     int totalWidth = startWidth + endWidth;
     if (scrollbar->orientation() == HorizontalScrollbar)
-        result = IntRect(scrollbar->x() + startWidth, scrollbar->y(), scrollbar->width() - totalWidth, thickness);
-    else
-        result = IntRect(scrollbar->x(), scrollbar->y() + startWidth, thickness, scrollbar->height() - totalWidth);
-    if (painting)
-        return trackRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize());
-    return result;
+        return IntRect(scrollbar->x() + startWidth, scrollbar->y(), scrollbar->width() - totalWidth, thickness);
+    return IntRect(scrollbar->x(), scrollbar->y() + startWidth, thickness, scrollbar->height() - totalWidth);
 }
 
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar* scrollbar)
