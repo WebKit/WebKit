@@ -1,5 +1,15 @@
 2008-09-24  Timothy Hatcher  <timothy@apple.com>
 
+        Add new screenshots of the Web Inspector's Scope Variables pane.
+
+        Not reviewed.
+
+        * blog-files/inspector-closure-scope.png: Added.
+        * blog-files/inspector-event-scope.png: Added.
+        * blog-files/inspector-with-scope.png: Added.
+
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
         Add another screenshot of the Web Inspector.
 
         Not reviewed.
