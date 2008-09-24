@@ -39,6 +39,44 @@
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
 using namespace std;
+using namespace WebCore;
+
+#if !USE(NSSCROLLER)
+static HashSet<Scrollbar*>* gScrollbars;
+
+@interface ScrollbarPrefsObserver
+{
+
+}
+
++ (void)appearancePrefsChanged:(NSNotification*)theNotification;
++ (void)behaviorPrefsChanged:(NSNotification*)theNotification;
+
+@end
+
+@implementation ScrollbarPrefsObserver
+
++ (void)appearancePrefsChanged:(NSNotification*)theNotification
+{
+    static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
+    HashSet<Scrollbar*>::iterator end = gScrollbars->end();
+    for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it)
+        (*it)->invalidate();
+}
+
++ (void)behaviorPrefsChanged:(NSNotification*)theNotification
+{
+    static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
+}
+
++ (void)registerAsObserver
+{
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(appearancePrefsChanged:) name:@"AppleAquaScrollBarVariantChanged" object:nil suspensionBehavior:NSNotificationSuspensionBehaviorDeliverImmediately];
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(behaviorPrefsChanged:) name:@"AppleNoRedisplayAppearancePreferenceChanged" object:nil suspensionBehavior:NSNotificationSuspensionBehaviorCoalesce];
+}
+
+@end
+#endif
 
 namespace WebCore {
 
@@ -65,6 +103,7 @@ static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
+#if !USE(NSSCROLLER)
 static void updateArrowPlacement()
 {
     NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
@@ -78,21 +117,50 @@ static void updateArrowPlacement()
         gButtonPlacement = ScrollbarButtonsDoubleEnd; // The default is ScrollbarButtonsDoubleEnd.
 }
 
+void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
+{
+    if (!gScrollbars)
+        gScrollbars = new HashSet<Scrollbar*>;
+    gScrollbars->add(scrollbar);
+}
+
+void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
+{
+    gScrollbars->remove(scrollbar);
+    if (gScrollbars->isEmpty()) {
+        delete gScrollbars;
+        gScrollbars = 0;
+    }
+}
+
+#endif
+
 ScrollbarThemeMac::ScrollbarThemeMac()
 {
+#if !USE(NSSCROLLER)
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        updateArrowPlacement();
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
-        gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
-        gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
+        [ScrollbarPrefsObserver registerAsObserver];
+        preferencesChanged();
     }
+#endif
 }
 
 ScrollbarThemeMac::~ScrollbarThemeMac()
 {
+}
+
+void ScrollbarThemeMac::preferencesChanged()
+{
+#if !USE(NSSCROLLER)
+    updateArrowPlacement();
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults synchronize];
+    gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
+    gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
+    gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
+#endif
 }
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)

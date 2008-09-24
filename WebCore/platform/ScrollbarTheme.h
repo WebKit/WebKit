@@ -81,6 +81,9 @@ public:
     virtual double initialAutoscrollTimerDelay() { return 0.25; }
     virtual double autoscrollTimerDelay() { return 0.05; }
 
+    virtual void registerScrollbar(Scrollbar*) {}
+    virtual void unregisterScrollbar(Scrollbar*) {}
+
     static ScrollbarTheme* nativeTheme(); // Must be implemented to return the correct theme subclass.
 };
 

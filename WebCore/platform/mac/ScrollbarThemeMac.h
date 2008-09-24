@@ -47,6 +47,11 @@ public:
 
     virtual ScrollbarButtonsPlacement buttonsPlacement() const;
 
+#if !USE(NSSCROLLER)
+    virtual void registerScrollbar(Scrollbar*);
+    virtual void unregisterScrollbar(Scrollbar*);
+#endif
+
 protected:
     virtual bool hasButtons(Scrollbar*);
     virtual bool hasThumb(Scrollbar*);
@@ -58,6 +63,9 @@ protected:
     virtual int minimumThumbLength(Scrollbar*);
     
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    
+public:
+    void preferencesChanged();
 };
 
 }
