@@ -1,5 +1,47 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Add support for asking the current panel to perform a search, find next/previous and clear.
+        A search is performed on the new new current panel when switching between panels. The search
+        label/placeholder in the toolbar now includes the panel name to make it clear that panel will
+        be searched. The search field contents are selected when Command/Control-F or Enter/Return
+        is pressed, so the user can easily type an entirely new query. The search match count shows
+        up in the toolbar next to the search field.
+
+        Also changed:
+         * Rename lastQuery to currentQuery since it better matches the truth.
+         * Set the search field "results" attribute to zero since results arn't saved for
+           how we use the search field.
+         * Make repeated presses of the Return key jump to the next search result instead
+           of doing nothing.
+         * Increased the search field width.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * English.lproj/localizedStrings.js: New strings.
+        * page/inspector/inspector.css: New styles.
+        * page/inspector/inspector.html: Add the search-results-matches element. Add the
+        incremental attribute to the search field and set the results attribute to zero.
+        * page/inspector/inspector.js:
+        (WebInspector.set currentPanel): perform the search on the new panel.
+        (WebInspector.loaded): Change the event listeners and remove code that changes
+        the search label text.
+        (WebInspector.documentKeyDown): Add support for Command/Control-G and
+        Command/Control-Shift-G. To jump to the next and previous search results.
+        (WebInspector.updateSearchLabel): Added. Update the search placeholder/label.
+        This does different things depending on the attached state.
+        (WebInspector.searchKeyDown): Call preventDefault since this was the Enter key.
+        This prevents a "search" event from firing for key down. We handle the Enter key
+        on key up in searchKeyUp. This stops performSearch from being called twice in a row.
+        (WebInspector.searchKeyUp): Calls performSearch when it is the Enter key.
+        (WebInspector.performSearch): Delete the currentQuery property and call searchCanceled
+        on all the panels. Call jumpToNextSearchResult when this is the same query or a forced search.
+        Call updateSearchMatchesCount to reset the matches count in the toolbar.
+        (WebInspector.updateSearchMatchesCount): Added. Updates the matches count in the toolbar.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Remove the previous Inspector search code to make room for the new stuff.
 
         https://bugs.webkit.org/show_bug.cgi?id=21005

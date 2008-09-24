@@ -98,8 +98,29 @@ var WebInspector = {
 
         this._currentPanel = x;
 
-        if (x)
+        this.updateSearchLabel();
+
+        if (x) {
             x.show();
+
+            if (this.currentQuery) {
+                if (x.performSearch) {
+                    function performPanelSearch()
+                    {
+                        this.updateSearchMatchesCount();
+
+                        x.currentQuery = this.currentQuery;
+                        x.performSearch(this.currentQuery);
+                    }
+
+                    // Perform the search on a timeout so the panel switches fast.
+                    setTimeout(performPanelSearch.bind(this), 0);
+                } else {
+                    // Update to show Not found for panels that can't be searched.
+                    this.updateSearchMatchesCount();
+                }
+            }
+        }
     },
 
     get attached()
@@ -113,6 +134,8 @@ var WebInspector = {
             return;
 
         this._attached = x;
+
+        this.updateSearchLabel();
 
         var dockToggleButton = document.getElementById("dock-status-bar-item");
         var body = document.body;
@@ -368,9 +391,9 @@ WebInspector.loaded = function()
     errorWarningCount.addEventListener("click", this.console.show.bind(this.console), false);
     this._updateErrorAndWarningCounts();
 
-    document.getElementById("search-toolbar-label").textContent = WebInspector.UIString("Search");
     var searchField = document.getElementById("search");
-    searchField.addEventListener("keyup", this.performSearch.bind(this), false);
+    searchField.addEventListener("keydown", this.searchKeyDown.bind(this), false);
+    searchField.addEventListener("keyup", this.searchKeyUp.bind(this), false);
     searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
 
     document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
@@ -486,25 +509,46 @@ WebInspector.documentKeyDown = function(event)
         WebInspector[this.currentFocusElement.id + "KeyDown"](event);
 
     if (!event.handled) {
+        var isMac = InspectorController.platform().indexOf("mac-") === 0;
+
         switch (event.keyIdentifier) {
             case "U+001B": // Escape key
                 this.console.visible = !this.console.visible;
                 event.preventDefault();
                 break;
+
             case "U+0046": // F key
-                var isMac = InspectorController.platform().indexOf("mac-") === 0;
-                var isFindKey;
-                // We want cmd-F for Mac, or ctrl-F for non-Mac
                 if (isMac)
-                    isFindKey = event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
+                    var isFindKey = event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
                 else
-                    isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
+                    var isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
 
                 if (isFindKey) {
-                    document.getElementById("search").focus();
+                    var searchField = document.getElementById("search");
+                    searchField.focus();
+                    searchField.select();
                     event.preventDefault();
                 }
+
                 break;
+
+            case "U+0047": // G key
+                if (isMac)
+                    var isFindAgainKey = event.metaKey && !event.ctrlKey && !event.altKey;
+                else
+                    var isFindAgainKey = event.ctrlKey && !event.metaKey && !event.altKey;
+
+                if (isFindAgainKey) {
+                    if (event.shiftKey) {
+                        if (this.currentPanel.jumpToPreviousSearchResult)
+                            this.currentPanel.jumpToPreviousSearchResult();
+                    } else if (this.currentPanel.jumpToNextSearchResult)
+                        this.currentPanel.jumpToNextSearchResult();
+                    event.preventDefault();
+                }
+
+                break;
+
             case "Alt":
                 this.altKeyDown = true;
                 break
@@ -633,6 +677,20 @@ WebInspector.animateStyle = function(animations, duration, callback, complete)
         setTimeout(WebInspector.animateStyle, slice, animations, duration, callback, complete + slice);
     else if (callback)
         callback();
+}
+
+WebInspector.updateSearchLabel = function()
+{
+    if (!this.currentPanel)
+        return;
+
+    var newLabel = WebInspector.UIString("Search %s", this.currentPanel.toolbarItemLabel);
+    if (this.attached)
+        document.getElementById("search").setAttribute("placeholder", newLabel);
+    else {
+        document.getElementById("search").removeAttribute("placeholder");
+        document.getElementById("search-toolbar-label").textContent = newLabel;
+    }
 }
 
 WebInspector.toggleAttach = function()
@@ -1013,22 +1071,99 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
+WebInspector.searchKeyDown = function(event)
+{
+    if (event.keyIdentifier !== "Enter")
+        return;
+
+    // Call preventDefault since this was the Enter key. This prevents a "search" event
+    // from firing for key down. We handle the Enter key on key up in searchKeyUp. This
+    // stops performSearch from being called twice in a row.
+    event.preventDefault();
+}
+
+WebInspector.searchKeyUp = function(event)
+{
+    if (event.keyIdentifier !== "Enter")
+        return;
+
+    // Select all of the text so the user can easily type an entirely new query.
+    event.target.select();
+
+    // Only call performSearch if the Enter key was pressed. Otherwise the search
+    // performance is poor because of searching on every key. The search field has
+    // the incremental attribute set, so we still get incremental searches.
+    this.performSearch(event);
+}
+
 WebInspector.performSearch = function(event)
 {
     var query = event.target.value;
 
     if (!query || !query.length) {
-        delete this.lastQuery;
+        delete this.currentQuery;
+
+        for (var panelName in this.panels) {
+            var panel = this.panels[panelName];
+            if (panel.currentQuery && panel.searchCanceled)
+                panel.searchCanceled();
+            delete panel.currentQuery;
+        }
+
+        this.updateSearchMatchesCount();
+
         return;
     }
 
     var forceSearch = event.keyIdentifier === "Enter";
-    if(!forceSearch && query.length < 3)
+    if (!forceSearch && query.length < 3)
         return;
 
-    if (!forceSearch && this.lastQuery && this.lastQuery === query)
+    if (query === this.currentPanel.currentQuery && this.currentPanel.currentQuery === this.currentQuery) {
+        // When this is the same query and a forced search, jump to the next
+        // search result for a good user experience.
+        if (forceSearch && this.currentPanel.jumpToNextSearchResult)
+            this.currentPanel.jumpToNextSearchResult();
         return;
-    this.lastQuery = query;
+    }
+
+    this.currentQuery = query;
+
+    this.updateSearchMatchesCount();
+
+    if (!this.currentPanel.performSearch)
+        return;
+
+    this.currentPanel.currentQuery = query;
+    this.currentPanel.performSearch(query);
+}
+
+WebInspector.updateSearchMatchesCount = function(matches, panel)
+{
+    if (!panel)
+        panel = this.currentPanel;
+
+    panel.currentSearchMatches = matches;
+
+    if (panel !== this.currentPanel)
+        return;
+
+    if (!this.currentPanel.currentQuery) {
+        document.getElementById("search-results-matches").addStyleClass("hidden");
+        return;
+    }
+
+    if (matches) {
+        if (matches === 1)
+            var matchesString = WebInspector.UIString("1 match");
+        else
+            var matchesString = WebInspector.UIString("%d matches", matches);
+    } else
+        var matchesString = WebInspector.UIString("Not Found");
+
+    var matchesToolbarElement = document.getElementById("search-results-matches");
+    matchesToolbarElement.removeStyleClass("hidden");
+    matchesToolbarElement.textContent = matchesString;
 }
 
 WebInspector.UIString = function(string)

@@ -152,6 +152,19 @@ body.attached #search-toolbar-label {
     display: none;
 }
 
+#search {
+    width: 205px;
+}
+
+#search-results-matches {
+    font-size: 11px;
+    margin-bottom: 24px;
+}
+
+body.attached #search-results-matches {
+    margin-bottom: 6px;
+}
+
 .toolbar-item.elements .toolbar-icon {
     content: url(Images/elementsIcon.png);
 }
