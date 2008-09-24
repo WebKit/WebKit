@@ -1,3 +1,14 @@
+2008-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21057
+        Crash in RegisterID::deref() running fast/canvas/canvas-putImageData.html
+
+        * VM/CodeGenerator.h: Changed declaration order to ensure the
+        m_lastConstant, which is a RefPtr that points into m_calleeRegisters,
+        has its destructor called before the destructor for m_calleeRegisters.
+
 2008-09-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

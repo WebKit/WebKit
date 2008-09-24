@@ -416,11 +416,11 @@ namespace JSC {
 
         HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
-        RefPtr<RegisterID> m_lastConstant;
         SegmentedVector<RegisterID, 512> m_calleeRegisters;
         SegmentedVector<RegisterID, 512> m_parameters;
         SegmentedVector<RegisterID, 512> m_globals;
         SegmentedVector<LabelID, 512> m_labels;
+        RefPtr<RegisterID> m_lastConstant;
         int m_finallyDepth;
         int m_dynamicScopeDepth;
         CodeType m_codeType;
