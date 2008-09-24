@@ -84,7 +84,7 @@ extern "C" {
 /* Script Evaluation */
 
 /*!
-@function
+@function JSEvaluateScript
 @abstract Evaluates a string of JavaScript.
 @param ctx The execution context to use.
 @param script A JSString containing the script to evaluate.
@@ -109,7 +109,7 @@ JS_EXPORT JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSOb
 JS_EXPORT bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception);
 
 /*!
-@function
+@function JSGarbageCollect
 @abstract Performs a JavaScript garbage collection. 
 @param ctx The execution context to use.
 @discussion JavaScript values that are on the machine stack, in a register, 
