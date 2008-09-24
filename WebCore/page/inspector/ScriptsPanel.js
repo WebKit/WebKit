@@ -109,8 +109,8 @@ WebInspector.ScriptsPanel = function()
     this.debuggerStatusElement.id = "scripts-debugger-status";
     this.sidebarButtonsElement.appendChild(this.debuggerStatusElement);
 
-    this.scriptResourceViews = document.createElement("div");
-    this.scriptResourceViews.id = "script-resource-views";
+    this.viewsContainerElement = document.createElement("div");
+    this.viewsContainerElement.id = "script-resource-views";
 
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "scripts-sidebar";
@@ -155,7 +155,7 @@ WebInspector.ScriptsPanel = function()
     this.attachOverlayElement.appendChild(attachButton);
 
     this.element.appendChild(this.attachOverlayElement);
-    this.element.appendChild(this.scriptResourceViews);
+    this.element.appendChild(this.viewsContainerElement);
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
@@ -200,7 +200,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (this.visibleView) {
             if (this.visibleView instanceof WebInspector.ResourceView)
                 this.visibleView.headersVisible = false;
-            this.visibleView.show(this.scriptResourceViews);
+            this.visibleView.show(this.viewsContainerElement);
         }
     },
 
@@ -359,7 +359,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._scriptsForURLsInFilesSelect = {};
         this.filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
-        this.scriptResourceViews.removeChildren();
+        this.viewsContainerElement.removeChildren();
 
         if (this._sourceIDMap) {
             for (var sourceID in this._sourceIDMap) {
@@ -388,7 +388,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._visibleView = x;
 
         if (x)
-            x.show(this.scriptResourceViews);
+            x.show(this.viewsContainerElement);
     },
 
     canShowResource: function(resource)
@@ -584,7 +584,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.sidebarElement.style.width = newWidth + "px";
         this.sidebarButtonsElement.style.width = newWidth + "px";
-        this.scriptResourceViews.style.right = newWidth + "px";
+        this.viewsContainerElement.style.right = newWidth + "px";
         this.sidebarResizeWidgetElement.style.right = newWidth + "px";
         this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 

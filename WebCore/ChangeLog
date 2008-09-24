@@ -1,5 +1,18 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Rename some properties of ResourcesPanel and ScriptsPanel to be the same,
+        so future code can be shared.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/ResourcesPanel.js: Renamed resourceViews to viewsContainerElement.
+        And visibleResourceView to visibleView.
+        * page/inspector/ScriptsPanel.js: Renamed scriptResourceViews to viewsContainerElement.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Highlight all matched search results in the Elements panel DOM tree.
 
         https://bugs.webkit.org/show_bug.cgi?id=21005
