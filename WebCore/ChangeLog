@@ -1,3 +1,15 @@
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression where the "incorrect MIME-type" warning would not
+        show up correctly in the Console or the resources sidebar.
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/Resource.js:
+        (WebInspector.Resource.prototype._addTip): Add the repeat count argument
+        to the WebInspector.ConsoleMessage constructor call.
+        (WebInspector.Resource.prototype._checkWarning): Ditto.
+
 2008-09-23  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
