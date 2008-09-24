@@ -2592,6 +2592,25 @@ body.inactive .sidebar-tree-item.selected {
     background-color: rgb(216, 35, 35) !important;
 }
 
+.bubble.search-matches {
+    background-image: url(Images/searchSmallWhite.png);
+    background-repeat: no-repeat;
+    background-position: 3px 2px;
+    padding-left: 13px !important;
+}
+
+.sidebar-tree-item.selected .bubble.search-matches {
+    background-image: url(Images/searchSmallBlue.png);
+}
+
+:focus .sidebar-tree-item.selected .bubble.search-matches {
+    background-image: url(Images/searchSmallBrightBlue.png);
+}
+
+body.inactive .sidebar-tree-item.selected .bubble.search-matches {
+    background-image: url(Images/searchSmallGray.png);
+}
+
 /* Profiler Style */
 
 #profile-views {

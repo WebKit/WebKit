@@ -166,6 +166,18 @@ WebInspector.ResourcesPanel.prototype = {
             visibleView.headersVisible = true;
             visibleView.show(this.viewsContainerElement);
         }
+
+        // Hide any views that are visible that are not this panel's current visible view.
+        // This can happen when a ResourceView is visible in the Scripts panel then switched
+        // to the this panel.
+        var resourcesLength = this._resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            var resource = this._resources[i];
+            var view = resource._resourcesView;
+            if (!view || view === visibleView)
+                continue;
+            view.visible = false;
+        }
     },
 
     resize: function()
@@ -175,6 +187,66 @@ WebInspector.ResourcesPanel.prototype = {
         var visibleView = this.visibleView;
         if (visibleView && "resize" in visibleView)
             visibleView.resize();
+    },
+
+    get searchableViews()
+    {
+        var views = [];
+
+        const visibleView = this.visibleView;
+        if (visibleView && visibleView.performSearch)
+            views.push(visibleView);
+
+        var resourcesLength = this._resources.length;
+        for (var i = 0; i < resourcesLength; ++i) {
+            var resource = this._resources[i];
+            var resourceView = this.resourceViewForResource(resource);
+            if (!resourceView.performSearch || resourceView === visibleView)
+                continue;
+            views.push(resourceView);
+        }
+
+        return views;
+    },
+
+    get searchResultsSortFunction()
+    {
+        const resourceTreeElementSortFunction = this.sortingFunction;
+
+        function sortFuction(a, b)
+        {
+            return resourceTreeElementSortFunction(a.resource._resourcesTreeElement, b.resource._resourcesTreeElement);
+        }
+
+        return sortFuction;
+    },
+
+    searchMatchFound: function(view, matches)
+    {
+        view.resource._resourcesTreeElement.searchMatches = matches;
+    },
+
+    searchCanceled: function(startingNewSearch)
+    {
+        WebInspector.Panel.prototype.searchCanceled.call(this, startingNewSearch);
+
+        if (startingNewSearch || !this._resources)
+            return;
+
+        for (var i = 0; i < this._resources.length; ++i) {
+            var resource = this._resources[i];
+            resource._resourcesTreeElement.updateErrorsAndWarnings();
+        }
+    },
+
+    performSearch: function(query)
+    {
+        for (var i = 0; i < this._resources.length; ++i) {
+            var resource = this._resources[i];
+            resource._resourcesTreeElement.resetBubble();
+        }
+
+        WebInspector.Panel.prototype.performSearch.call(this, query);
     },
 
     get visibleView()
@@ -214,12 +286,12 @@ WebInspector.ResourcesPanel.prototype = {
     },
 
     get needsRefresh() 
-    { 
+    {
         return this._needsRefresh; 
     },
 
     set needsRefresh(x) 
-    { 
+    {
         if (this._needsRefresh === x) 
             return; 
         this._needsRefresh = x; 
@@ -228,7 +300,7 @@ WebInspector.ResourcesPanel.prototype = {
     },
 
     refreshIfNeeded: function() 
-    { 
+    {
         if (this.needsRefresh) 
             this.refresh(); 
     },
@@ -251,6 +323,9 @@ WebInspector.ResourcesPanel.prototype = {
     reset: function()
     {
         this.closeVisibleResource();
+
+        delete this.currentQuery;
+        this.searchCanceled();
 
         if (this._calculator)
             this._calculator.reset();
@@ -328,7 +403,8 @@ WebInspector.ResourcesPanel.prototype = {
             break;
         }
 
-        resource._resourcesTreeElement.updateErrorsAndWarnings();
+        if (!this.currentQuery)
+            resource._resourcesTreeElement.updateErrorsAndWarnings();
 
         var view = this.resourceViewForResource(resource);
         if (view.addMessage)
@@ -343,7 +419,8 @@ WebInspector.ResourcesPanel.prototype = {
             resource.warnings = 0;
             resource.errors = 0;
 
-            resource._resourcesTreeElement.updateErrorsAndWarnings();
+            if (!this.currentQuery)
+                resource._resourcesTreeElement.updateErrorsAndWarnings();
 
             var view = resource._resourcesView;
             if (!view || !view.clearMessages)
@@ -396,7 +473,8 @@ WebInspector.ResourcesPanel.prototype = {
         resource.warnings = 0;
         resource.errors = 0;
 
-        resource._resourcesTreeElement.updateErrorsAndWarnings();
+        if (!this.currentQuery)
+            resource._resourcesTreeElement.updateErrorsAndWarnings();
 
         var oldView = resource._resourcesView;
 
@@ -440,6 +518,13 @@ WebInspector.ResourcesPanel.prototype = {
         this.visibleResource = resource;
 
         this._updateSidebarWidth();
+    },
+
+    showView: function(view)
+    {
+        if (!view)
+            return;
+        this.showResource(view.resource);
     },
 
     closeVisibleResource: function()
@@ -1407,22 +1492,37 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         }
     },
 
+    resetBubble: function()
+    {
+        this.bubbleText = "";
+        this.bubbleElement.removeStyleClass("search-matches");
+        this.bubbleElement.removeStyleClass("warning");
+        this.bubbleElement.removeStyleClass("error");
+    },
+
+    set searchMatches(matches)
+    {
+        this.resetBubble();
+
+        if (!matches)
+            return;
+
+        this.bubbleText = matches;
+        this.bubbleElement.addStyleClass("search-matches");
+    },
+
     updateErrorsAndWarnings: function()
     {
+        this.resetBubble();
+
         if (this.resource.warnings || this.resource.errors)
             this.bubbleText = (this.resource.warnings + this.resource.errors);
-        else
-            this.bubbleText = "";
 
         if (this.resource.warnings)
             this.bubbleElement.addStyleClass("warning");
-        else
-            this.bubbleElement.removeStyleClass("warning");
 
         if (this.resource.errors)
             this.bubbleElement.addStyleClass("error");
-        else
-            this.bubbleElement.removeStyleClass("error");
     }
 }
 

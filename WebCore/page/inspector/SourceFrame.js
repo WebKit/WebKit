@@ -663,6 +663,7 @@ WebInspector.SourceFrame.prototype = {
         var rowsLength = rows.length;
         var previousCell = null;
         var previousMatchLength = 0;
+        var sourceFrame = this;
 
         // Split up the work into chunks so we don't block the
         // UI thread while processing.
@@ -685,6 +686,8 @@ WebInspector.SourceFrame.prototype = {
             if (i >= rowsLength && processChunkInterval) {
                 deleteContinueFlags(previousCell);
                 clearInterval(processChunkInterval);
+
+                sourceFrame.dispatchEventToListeners("syntax highlighting complete");
             }
         }
 
@@ -693,3 +696,5 @@ WebInspector.SourceFrame.prototype = {
         var processChunkInterval = setInterval(processChunk, 25);
     }
 }
+
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;

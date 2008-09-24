@@ -202,6 +202,43 @@ WebInspector.ScriptsPanel.prototype = {
                 this.visibleView.headersVisible = false;
             this.visibleView.show(this.viewsContainerElement);
         }
+
+        // Hide any views that are visible that are not this panel's current visible view.
+        // This can happen when a ResourceView is visible in the Resources panel then switched
+        // to the this panel.
+        for (var sourceIdentifier in this._sourceIDMap) {
+            var scriptOrResource = this._sourceIDMap[sourceIdentifier];
+            var view = this._sourceViewForScriptOrResource(scriptOrResource);
+            if (!view || view === this.visibleView)
+                continue;
+            view.visible = false;
+        }
+    },
+
+    get searchableViews()
+    {
+        var views = [];
+
+        const visibleView = this.visibleView;
+        if (visibleView && visibleView.performSearch) {
+            visibleView.alreadySearching = true;
+            views.push(visibleView);
+        }
+
+        for (var sourceIdentifier in this._sourceIDMap) {
+            var scriptOrResource = this._sourceIDMap[sourceIdentifier];
+            var view = this._sourceViewForScriptOrResource(scriptOrResource);
+            if (!view.performSearch || view.alreadySearching)
+                continue;
+
+            view.alreadySearching = true;
+            views.push(view);
+        }
+
+        for (var i = 0; i < views.length; ++i)
+            delete views[i].alreadySearching;
+
+        return views;
     },
 
     addScript: function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage)
@@ -344,6 +381,9 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this.visibleView = null;
 
+        delete this.currentQuery;
+        this.searchCanceled();
+
         if (!InspectorController.debuggerAttached()) {
             this._paused = false;
             this._waitingToPause = false;
@@ -406,6 +446,13 @@ WebInspector.ScriptsPanel.prototype = {
         this._showScriptOrResource(resource, line, true);
     },
 
+    showView: function(view)
+    {
+        if (!view)
+            return;
+        this._showScriptOrResource((view.resource || view.script));
+    },
+
     scriptViewForScript: function(script)
     {
         if (!script)
@@ -427,6 +474,14 @@ WebInspector.ScriptsPanel.prototype = {
 
         view.setupSourceFrameIfNeeded();
         return view.sourceFrame;
+    },
+
+    _sourceViewForScriptOrResource: function(scriptOrResource)
+    {
+        if (scriptOrResource instanceof WebInspector.Resource)
+            return WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
+        if (scriptOrResource instanceof WebInspector.Script)
+            return this.scriptViewForScript(scriptOrResource);
     },
 
     _sourceFrameForScriptOrResource: function(scriptOrResource)

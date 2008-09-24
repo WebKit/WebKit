@@ -32,6 +32,7 @@ WebInspector.ScriptView = function(script)
     this.script = script;
 
     this._frameNeedsSetup = true;
+    this._sourceFrameSetup = false;
 
     this.sourceFrame = new WebInspector.SourceFrame(null, this._addBreakpoint.bind(this));
 
@@ -45,6 +46,12 @@ WebInspector.ScriptView.prototype = {
         this.setupSourceFrameIfNeeded();
     },
 
+    hide: function()
+    {
+        WebInspector.View.prototype.hide.call(this);
+        this._currentSearchResultIndex = -1;
+    },
+
     setupSourceFrameIfNeeded: function()
     {
         if (!("_frameNeedsSetup" in this))
@@ -55,29 +62,9 @@ WebInspector.ScriptView.prototype = {
         this.attach();
 
         InspectorController.addSourceToFrame("text/javascript", this.script.source, this.sourceFrame.element);
-        this.script.source.syntaxHighlightJavascript();
-    },
 
-    revealLine: function(lineNumber)
-    {
-        this.setupSourceFrameIfNeeded();
-        this.sourceFrame.revealLine(lineNumber);
-    },
-
-    highlightLine: function(lineNumber)
-    {
-        this.setupSourceFrameIfNeeded();
-        this.sourceFrame.highlightLine(lineNumber);
-    },
-
-    addMessage: function(msg)
-    {
-        this.sourceFrame.addMessage(msg);
-    },
-
-    clearMessages: function()
-    {
-        this.sourceFrame.clearMessages();
+        this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
+        this.sourceFrame.syntaxHighlightJavascript();
     },
 
     attach: function()
@@ -90,7 +77,26 @@ WebInspector.ScriptView.prototype = {
     {
         var breakpoint = new WebInspector.Breakpoint(this.script.sourceURL, line, this.script.sourceID);
         WebInspector.panels.scripts.addBreakpoint(breakpoint);
-    }
+    },
+
+    // The follow methods are pulled from SourceView, since they are
+    // generic and work with ScriptView just fine.
+
+    revealLine: WebInspector.SourceView.prototype.revealLine,
+    highlightLine: WebInspector.SourceView.prototype.highlightLine,
+    addMessage: WebInspector.SourceView.prototype.addMessage,
+    clearMessages: WebInspector.SourceView.prototype.clearMessages,
+    searchCanceled: WebInspector.SourceView.prototype.searchCanceled,
+    performSearch: WebInspector.SourceView.prototype.performSearch,
+    jumpToFirstSearchResult: WebInspector.SourceView.prototype.jumpToFirstSearchResult,
+    jumpToLastSearchResult: WebInspector.SourceView.prototype.jumpToLastSearchResult,
+    jumpToNextSearchResult: WebInspector.SourceView.prototype.jumpToNextSearchResult,
+    jumpToPreviousSearchResult: WebInspector.SourceView.prototype.jumpToPreviousSearchResult,
+    showingFirstSearchResult: WebInspector.SourceView.prototype.showingFirstSearchResult,
+    showingLastSearchResult: WebInspector.SourceView.prototype.showingLastSearchResult,
+    _jumpToSearchResult: WebInspector.SourceView.prototype._jumpToSearchResult,
+    _sourceFrameSetupFinished: WebInspector.SourceView.prototype._sourceFrameSetupFinished,
+    _syntaxHighlightingComplete: WebInspector.SourceView.prototype._syntaxHighlightingComplete
 }
 
 WebInspector.ScriptView.prototype.__proto__ = WebInspector.View.prototype;

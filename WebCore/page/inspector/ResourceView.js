@@ -95,8 +95,11 @@ WebInspector.ResourceView.prototype = {
 
     attach: function()
     {
-        if (!this.element.parentNode)
-            document.getElementById("resource-views").appendChild(this.element);
+        if (!this.element.parentNode) {
+            var parentElement = (document.getElementById("resource-views") || document.getElementById("script-resource-views"));
+            if (parentElement)
+                parentElement.appendChild(this.element);
+        }
     },
 
     _refreshURL: function()

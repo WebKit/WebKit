@@ -66,10 +66,25 @@ WebInspector.SourceView.prototype = {
         this.setupSourceFrameIfNeeded();
     },
 
+    hide: function()
+    {
+        WebInspector.View.prototype.hide.call(this);
+        this._currentSearchResultIndex = -1;
+    },
+
     resize: function()
     {
         if (this.sourceFrame.autoSizesToFitContentHeight)
             this.sourceFrame.sizeToFitContentHeight();
+    },
+
+    detach: function()
+    {
+        // FIXME: We need to mark the frame for setup on detach because the frame DOM is cleared
+        // when it is removed from the document. Is this a bug?
+        WebInspector.ResourceView.prototype.detach.call(this);
+        this._frameNeedsSetup = true;
+        this._sourceFrameSetup = false;
     },
 
     setupSourceFrameIfNeeded: function()
@@ -80,39 +95,13 @@ WebInspector.SourceView.prototype = {
             this.attach();
 
             InspectorController.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element);
-            if (this.resource.type === WebInspector.Resource.Type.Script)
+
+            if (this.resource.type === WebInspector.Resource.Type.Script) {
+                this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
                 this.sourceFrame.syntaxHighlightJavascript();
+            } else
+                this._sourceFrameSetupFinished();
         }
-    },
-
-    revealLine: function(lineNumber)
-    {
-        this.setupSourceFrameIfNeeded();
-        this.sourceFrame.revealLine(lineNumber);
-    },
-
-    highlightLine: function(lineNumber)
-    {
-        this.setupSourceFrameIfNeeded();
-        this.sourceFrame.highlightLine(lineNumber);
-    },
-
-    addMessage: function(msg)
-    {
-        this.sourceFrame.addMessage(msg);
-    },
-
-    clearMessages: function()
-    {
-        this.sourceFrame.clearMessages();
-    },
-
-    detach: function()
-    {
-        // FIXME: We need to mark the frame for setup on detach because the frame DOM is cleared
-        // when it is removed from the document. Is this a bug?
-        WebInspector.ResourceView.prototype.detach.call(this);
-        this._frameNeedsSetup = true;
     },
 
     _resourceLoadingFinished: function(event)
@@ -137,6 +126,137 @@ WebInspector.SourceView.prototype = {
 
         var breakpoint = new WebInspector.Breakpoint(this.resource.url, line, sourceID);
         WebInspector.panels.scripts.addBreakpoint(breakpoint);
+    },
+
+    // The rest of the methods in this prototype need to be generic enough to work with a ScriptView.
+    // The ScriptView prototype pulls these methods into it's prototype to avoid duplicate code.
+
+    searchCanceled: function()
+    {
+        this._currentSearchResultIndex = -1;
+        this._searchResults = [];
+        delete this._delayedFindSearchMatches;
+    },
+
+    performSearch: function(query, finishedCallback)
+    {
+        // Call searchCanceled since it will reset everything we need before doing a new search.
+        this.searchCanceled();
+
+        this._searchFinishedCallback = finishedCallback;
+
+        function findSearchMatches(query, finishedCallback)
+        {
+            this._searchResults = InspectorController.search(this.sourceFrame.element.contentDocument, query);
+            if (this._searchResults)
+                finishedCallback(this, this._searchResults.length);
+        }
+
+        if (!this._sourceFrameSetup) {
+            // The search is performed in _sourceFrameSetupFinished by calling _delayedFindSearchMatches.
+            this._delayedFindSearchMatches = findSearchMatches.bind(this, query, finishedCallback);
+            this.setupSourceFrameIfNeeded();
+            return;
+        }
+
+        findSearchMatches.call(this, query, finishedCallback);
+    },
+
+    jumpToFirstSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        this._currentSearchResultIndex = 0;
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    jumpToLastSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        this._currentSearchResultIndex = (this._searchResults.length - 1);
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        if (++this._currentSearchResultIndex >= this._searchResults.length)
+            this._currentSearchResultIndex = 0;
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        if (--this._currentSearchResultIndex < 0)
+            this._currentSearchResultIndex = (this._searchResults.length - 1);
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    showingFirstSearchResult: function()
+    {
+        return (this._currentSearchResultIndex === 0);
+    },
+
+    showingLastSearchResult: function()
+    {
+        return (this._searchResults && this._currentSearchResultIndex === (this._searchResults.length - 1));
+    },
+
+    revealLine: function(lineNumber)
+    {
+        this.setupSourceFrameIfNeeded();
+        this.sourceFrame.revealLine(lineNumber);
+    },
+
+    highlightLine: function(lineNumber)
+    {
+        this.setupSourceFrameIfNeeded();
+        this.sourceFrame.highlightLine(lineNumber);
+    },
+
+    addMessage: function(msg)
+    {
+        this.sourceFrame.addMessage(msg);
+    },
+
+    clearMessages: function()
+    {
+        this.sourceFrame.clearMessages();
+    },
+
+    _jumpToSearchResult: function(index)
+    {
+        var foundRange = this._searchResults[index];
+        if (!foundRange)
+            return;
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(foundRange);
+
+        if (foundRange.startContainer.scrollIntoViewIfNeeded)
+            foundRange.startContainer.scrollIntoViewIfNeeded(true);
+        else if (foundRange.startContainer.parentNode)
+            foundRange.startContainer.parentNode.scrollIntoViewIfNeeded(true);
+    },
+
+    _sourceFrameSetupFinished: function()
+    {
+        this._sourceFrameSetup = true;
+        if (this._delayedFindSearchMatches) {
+            this._delayedFindSearchMatches();
+            delete this._delayedFindSearchMatches;
+        }
+    },
+
+    _syntaxHighlightingComplete: function(event)
+    {
+        this._sourceFrameSetupFinished();
+        this.sourceFrame.removeEventListener("syntax highlighting complete", null, this);
     }
 }
 

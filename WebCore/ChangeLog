@@ -1,5 +1,79 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Adds search support to the Resources and Scripts panels.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/Images/searchSmallBlue.png: Added.
+        * page/inspector/Images/searchSmallBrightBlue.png: Added.
+        * page/inspector/Images/searchSmallGray.png: Added.
+        * page/inspector/Images/searchSmallWhite.png: Added.
+        * page/inspector/ResourceView.js:
+        (WebInspector.ResourceView.prototype.attach): Attempt to attach to "resource-views"
+        or "script-resource-views" since one might not be created yet.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.show): Hide any views that are visible that
+        are not this panel's current visible view. This can happen when a ResourceView is
+        visible in the Scripts panel then switched to the this panel.
+        (WebInspector.ResourcesPanel.prototype.get searchableViews): Return all views, with the
+        visibleView first.
+        (WebInspector.ResourcesPanel.prototype.searchResultsSortFunction): Return a sort function
+        that uses the current graph search function. So cycling through results will be in the order
+        things appear in the sidebar.
+        (WebInspector.ResourcesPanel.prototype.searchMatchFound): Update the search matches on the
+        resource's sidebar tree element.
+        (WebInspector.ResourcesPanel.prototype.searchCanceled): Restore the error and warning bubbles
+        in the sidebar. Calls the Panel prototype's searchCanceled.
+        (WebInspector.ResourcesPanel.prototype.performSearch): Hide all the error and warning bubbles
+        in the sidebar. Calls the Panel prototype's performSearch.
+        (WebInspector.ResourcesPanel.prototype.reset): Call searchCanceled and delete the currentQuery.
+        (WebInspector.ResourcesPanel.prototype.addMessageToResource): Don't call updateErrorsAndWarnings
+        if there is a current search query.
+        (WebInspector.ResourcesPanel.prototype.clearMessages): Ditto.
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded): Ditto.
+        (WebInspector.ResourcesPanel.prototype.showView): Call showResource. Used by Panel to show a view.
+        (WebInspector.ResourceSidebarTreeElement.prototype.resetBubble): Clear all the classes and content.
+        (WebInspector.ResourceSidebarTreeElement.prototype.set searchMatches): Set the bubbleText and class.
+        (WebInspector.ResourceSidebarTreeElement.prototype.updateErrorsAndWarnings): Call resetBubble.
+        * page/inspector/ScriptView.js:
+        (WebInspector.ScriptView): Set _sourceFrameSetup to flase.
+        (WebInspector.ScriptView.prototype.hide): Reset _currentSearchResultIndex to -1. So the next time
+        it will start at the first result.
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded): Add an event listener for "syntax
+        highlighting complete".
+        (WebInspector.ScriptView.prototype): Share many methods with SourceView.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show): Hide any views that are visible that are not this
+        This can happen when a ResourceView is visible in the Resources panel then switched to the this panel.
+        (WebInspector.ScriptsPanel.prototype.get searchableViews): Return all views, with the visibleView first.
+        (WebInspector.ScriptsPanel.prototype.reset): Call searchCanceled and delete the currentQuery.
+        (WebInspector.ScriptsPanel.prototype.showView): Call _showScriptOrResource. Used by Panel to show a view.
+        (WebInspector.ScriptsPanel.prototype._sourceViewForScriptOrResource): Added helper.
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.syntaxHighlightJavascript): Dispatch a "syntax highlighting complete" event.
+        * page/inspector/SourceView.js:
+        (WebInspector.SourceView.prototype.hide):
+        (WebInspector.SourceView.prototype.detach):
+        (WebInspector.SourceView.prototype._resourceLoadingFinished): Moved from the bottom of the file.
+        (WebInspector.SourceView.prototype._addBreakpoint): Ditto.
+        (WebInspector.SourceView.prototype.searchCanceled): Delete search properties.
+        (WebInspector.SourceView.prototype.performSearch): Search the frame if it is loaded, otherwise
+        store the worker function as _delayedFindSearchMatches and call it later in _sourceFrameSetupFinished.
+        (WebInspector.SourceView.prototype.jumpToFirstSearchResult):
+        (WebInspector.SourceView.prototype.jumpToLastSearchResult):
+        (WebInspector.SourceView.prototype.jumpToNextSearchResult):
+        (WebInspector.SourceView.prototype.jumpToPreviousSearchResult):
+        (WebInspector.SourceView.prototype.showingFirstSearchResult):
+        (WebInspector.SourceView.prototype.showingLastSearchResult):
+        (WebInspector.SourceView.prototype._jumpToSearchResult): Selects the found Range.
+        (WebInspector.SourceView.prototype._sourceFrameSetupFinished): Calls _delayedFindSearchMatches.
+        (WebInspector.SourceView.prototype._syntaxHighlightingComplete): Call _sourceFrameSetupFinished.
+        * page/inspector/inspector.css:
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Rename some properties of ResourcesPanel and ScriptsPanel to be the same,
         so future code can be shared.
 
