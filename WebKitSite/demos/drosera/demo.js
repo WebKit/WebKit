@@ -10,6 +10,8 @@ function rot(t, u, v) {
 }
 
 function rot13(s) {
+    console.profile("ROT 13");
+
     var b = [], c, i = s.length,
     a = 'a'.charCodeAt(), z = a + 26,
     A = 'A'.charCodeAt(), Z = A + 26;
@@ -23,7 +25,10 @@ function rot13(s) {
         else
             b[i] = s.charAt(i);
     }
-    return b.join('');
+
+    var result = b.join('');
+    console.profileEnd("ROT 13");
+    return result;
 }
 
 function append(a, b) {
@@ -51,9 +56,11 @@ function functionFactoryTest() {
 }
 
 function loopsTest() {
+    console.profile("Loop Test");
     var x = 0;
     for(var i = 0; i < 5; i++)
         x += i;
+    console.profileEnd("Loop Test");
 }
 
 function throwFoo() {

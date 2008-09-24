@@ -1,3 +1,9 @@
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Not reviewed.
+
+        * demos/drosera/demo.js: Add some console.profile() calls.
+
 2008-09-22  Alexander Orlov  <alexander.orlov@loxal.net>
 
         Reviewed by Darin Adler.
