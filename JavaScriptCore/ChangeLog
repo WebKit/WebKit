@@ -1,3 +1,39 @@
+2008-09-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 19968: Slow Script at www.huffingtonpost.com
+        <https://bugs.webkit.org/show_bug.cgi?id=19968>
+
+        Finally found the cause of this accursed issue.  It is triggered
+        by synchronous creation of a new global object from JS.  The new
+        global object resets the timer state in this execution group's
+        Machine, taking timerCheckCount to 0.  Then when JS returns the
+        timerCheckCount is decremented making it non-zero.  The next time
+        we execute JS we will start the timeout counter, however the non-zero
+        timeoutCheckCount means we don't reset the timer information. This
+        means that the timeout check is now checking the cumulative time
+        since the creation of the global object rather than the time since
+        JS was last entered.  At this point the slow script dialog is guaranteed
+        to eventually be displayed incorrectly unless a page is loaded
+        asynchronously (which will reset everything into a sane state).
+
+        The fix for this is rather trivial -- the JSGlobalObject constructor
+        should not be resetting the machine timer state.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::Machine):
+          Now that we can't rely on the GlobalObject initialising the timeout
+          state, we do it in the Machine constructor.
+
+        * VM/Machine.h:
+        (JSC::Machine::stopTimeoutCheck):
+          Add assertions to guard against this happening.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+          Don't reset the timeout state.
+
 2008-09-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

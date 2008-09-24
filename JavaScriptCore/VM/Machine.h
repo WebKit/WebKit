@@ -109,11 +109,13 @@ namespace JSC {
         
         void stopTimeoutCheck()
         {
+            ASSERT(m_timeoutCheckCount);
             --m_timeoutCheckCount;
         }
 
         inline void initTimeout()
         {
+            ASSERT(!m_timeoutCheckCount);
             resetTimeoutCheck();
             m_timeoutTime = 0;
             m_timeoutCheckCount = 0;

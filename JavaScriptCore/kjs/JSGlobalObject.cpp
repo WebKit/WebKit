@@ -138,7 +138,6 @@ void JSGlobalObject::init(JSObject* thisValue)
 
     d()->recursion = 0;
     d()->debugger = 0;
-    globalData()->machine->initTimeout();
 
     d()->globalExec.set(new ExecState(this, thisValue, d()->globalScopeChain.node()));
 
