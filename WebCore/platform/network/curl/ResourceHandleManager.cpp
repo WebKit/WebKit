@@ -97,6 +97,12 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     ResourceHandleInternal* d = job->getInternal();
     if (d->m_cancelled)
         return 0;
+
+#if LIBCURL_VERSION_NUM > 0x071200
+    // We should never be called when deferred loading is activated.
+    ASSERT(!d->m_defersLoading);
+#endif
+
     size_t totalSize = size * nmemb;
 
     // this shouldn't be necessary but apparently is. CURL writes the data
@@ -142,6 +148,12 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     ResourceHandleInternal* d = job->getInternal();
     if (d->m_cancelled)
         return 0;
+
+#if LIBCURL_VERSION_NUM > 0x071200
+    // We should never be called when deferred loading is activated.
+    ASSERT(!d->m_defersLoading);
+#endif
+
     size_t totalSize = size * nmemb;
     ResourceHandleClient* client = d->client();
 
@@ -214,6 +226,11 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
     ResourceHandleInternal* d = job->getInternal();
     if (d->m_cancelled)
         return 0;
+
+#if LIBCURL_VERSION_NUM > 0x071200
+    // We should never be called when deferred loading is activated.
+    ASSERT(!d->m_defersLoading);
+#endif
 
     if (!size || !nmemb)
         return 0;
@@ -509,9 +526,16 @@ void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
         return;
     }
 
-    initializeHandle(job);
-
     ResourceHandleInternal* handle = job->getInternal();
+
+#if LIBCURL_VERSION_NUM > 0x071200
+    // If defersLoading is true and we call curl_easy_perform
+    // on a paused handle, libcURL would do the transfert anyway
+    // and we would assert so force defersLoading to be false.
+    handle->m_defersLoading = false;
+#endif
+
+    initializeHandle(job);
 
     // curl_easy_perform blocks until the transfert is finished.
     CURLcode ret =  curl_easy_perform(handle->m_handle);
@@ -568,6 +592,15 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     }
 
     d->m_handle = curl_easy_init();
+
+#if LIBCURL_VERSION_NUM > 0x071200
+    if (d->m_defersLoading) {
+        CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_ALL);
+        // If we did not pause the handle, we would ASSERT in the
+        // header callback. So just assert here.
+        ASSERT(error == CURLE_OK);
+    }
+#endif
 #ifndef NDEBUG
     if (getenv("DEBUG_CURL"))
         curl_easy_setopt(d->m_handle, CURLOPT_VERBOSE, 1);

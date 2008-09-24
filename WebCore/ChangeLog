@@ -1,3 +1,26 @@
+2008-09-23  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Reviewed by Alp Toker. Landed by Jan Alonzo.
+
+        Bug 20883: [CURL] Add deferred loading
+        https://bugs.webkit.org/show_bug.cgi?id=20883
+
+        Implement deferred loading for the libcURL backend using curl_easy_pause.
+        As the method was introduced in version 7.18.0, all the code checks for libcURL
+        version.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setDefersLoading):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback): Add an assertion that deferred loading is not
+        activated.
+        (WebCore::headerCallback): Ditto.
+        (WebCore::readCallback): Ditto.
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob): Force
+        defersLoading to be false in order to avoid triggering an assertion.
+        (WebCore::ResourceHandleManager::initializeHandle): If deferred loading is
+        activated, pause the easy handle.
+
 2008-09-23  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.
