@@ -172,6 +172,9 @@ WebInspector.ElementsPanel.prototype = {
         this.recentlyModifiedNodes = [];
         this.unregisterAllMutationEventListeners();
 
+        delete this.currentQuery;
+        this.searchCanceled();
+
         var inspectedWindow = InspectorController.inspectedWindow();
         if (!inspectedWindow || !inspectedWindow.document)
             return;
@@ -205,6 +208,106 @@ WebInspector.ElementsPanel.prototype = {
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
         }
+    },
+
+    searchCanceled: function()
+    {
+        WebInspector.updateSearchMatchesCount(0, this);
+
+        this._currentSearchResultIndex = 0;
+        this._searchResults = [];
+    },
+
+    performSearch: function(query)
+    {
+        // Call searchCanceled since it will reset everything we need before doing a new search.
+        this.searchCanceled();
+
+        var xpathQuery;
+        if (query.indexOf("/") !== -1) {
+            // Assume this is an XPath if it contains a forward slash.
+            xpathQuery = query;
+        } else {
+            var escapedQuery = query.escapeCharacters("'");
+            xpathQuery = "//*[contains(name(),'" + escapedQuery + "') or contains(@*,'" + escapedQuery + "')] | //text()[contains(.,'" + escapedQuery + "')] | //comment()[contains(.,'" + escapedQuery + "')]";
+        }
+
+        var evaluateFunction = InspectorController.inspectedWindow().Document.prototype.evaluate;
+        var querySelectorAllFunction = InspectorController.inspectedWindow().Document.prototype.querySelectorAll;
+
+        const searchResultsProperty = "__includedInInspectorSearchResults";
+        function addNodesToResults(nodes, length, getItem)
+        {
+            for (var i = 0; i < length; ++i) {
+                var node = getItem(nodes, i);
+                // Skip this node if it already has the property.
+                if (searchResultsProperty in node)
+                    continue;
+                node[searchResultsProperty] = true;
+                this._searchResults.push(node);
+            }
+        }
+
+        function searchDocument(doc)
+        {
+            try {
+                var result = evaluateFunction.call(doc, xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+                addNodesToResults.call(this, result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
+            } catch(err) {
+                // ignore any exceptions. the query might be malformed, but we allow that.
+            }
+
+            try {
+                var result = querySelectorAllFunction.call(doc, query);
+                addNodesToResults.call(this, result, result.length, function(l, i) { return l.item(i); });
+            } catch(err) {
+                // ignore any exceptions. the query isn't necessarily a valid selector.
+            }
+
+            // Remove the searchResultsProperty now that the search is finished.
+            for (var i = 0; i < this._searchResults.length; ++i)
+                delete this._searchResults[i][searchResultsProperty];
+        }
+
+        var mainFrameDocument = InspectorController.inspectedWindow().document;
+
+        searchDocument.call(this, mainFrameDocument);
+
+        // Find all frames, iframes and object elements to search their documents.
+        var subdocumentQuery = "//iframe | //frame | //object";
+        var subdocumentResult = evaluateFunction.call(mainFrameDocument, subdocumentQuery, mainFrameDocument, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+
+        for (var i = 0; i < subdocumentResult.snapshotLength; ++i) {
+            var element = subdocumentResult.snapshotItem(i);
+            if (element.contentDocument)
+                searchDocument.call(this, element.contentDocument);
+        }
+
+        if (!this._searchResults.length)
+            return;
+
+        WebInspector.updateSearchMatchesCount(this._searchResults.length, this);
+
+        this._currentSearchResultIndex = 0;
+        this.focusedDOMNode = this._searchResults[0];
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        if (++this._currentSearchResultIndex >= this._searchResults.length)
+            this._currentSearchResultIndex = 0;
+        this.focusedDOMNode = this._searchResults[this._currentSearchResultIndex];
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        if (--this._currentSearchResultIndex < 0)
+            this._currentSearchResultIndex = (this._searchResults.length - 1);
+        this.focusedDOMNode = this._searchResults[this._currentSearchResultIndex];
     },
 
     inspectedWindowCleared: function(window)

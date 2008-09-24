@@ -1,5 +1,22 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Add search support to the Elements panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21005
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.searchCanceled): Call updateSearchMatchesCount
+        with a 0 match count to rest. Reset the other search properties.
+        (WebInspector.ElementsPanel.prototype.performSearch): Evaluates the search as an XPath
+        query and a CSS selector on all the Documents in the page. Remembers the found nodes
+        and avoids duplicates. Focuses the first result.
+        (WebInspector.ElementsPanel.prototype.jumpToNextSearchResult): Focuses the next result.
+        (WebInspector.ElementsPanel.prototype.jumpToPreviousSearchResult): Focuses the previous result.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Add support to Panel that allows easy searching of sub-views.
 
         https://bugs.webkit.org/show_bug.cgi?id=21005
