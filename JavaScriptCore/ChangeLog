@@ -198,7 +198,7 @@
         13.5% speedup on empty call benchmark for bytecode; 23.6% speedup on
         empty call benchmark for CTI.
         
-        SunSpider says no change. SunSpider --v8 says 1% faster.v8
+        SunSpider says no change. SunSpider --v8 says 1% faster.
 
         * VM/CTI.cpp:
         
