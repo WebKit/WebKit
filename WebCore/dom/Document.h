@@ -549,6 +549,7 @@ public:
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
     void addListenerType(ListenerType listenerType) { m_listenerTypes = m_listenerTypes | listenerType; }
+    void addListenerTypeIfNeeded(const AtomicString& eventType);
 
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 

@@ -187,7 +187,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
             RefPtr<Event> event = Event::create(loadEvent, false, false);
             event->setTarget(currentTarget);
             ExceptionCode ignored = 0;
-            dispatchGenericEvent(currentTarget.get(), event.release(), ignored, false);
+            currentTarget->dispatchGenericEvent(event.release(), ignored, false);
         }
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
     }
@@ -228,12 +228,6 @@ void SVGElement::insertedIntoDocument()
 
         SVGResource::invalidateClients(*clients);
     }
-}
-
-bool SVGElement::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
-{
-    // TODO: This function will be removed in a follow-up patch!
-    return StyledElement::dispatchEvent(e, ec, tempEvent);
 }
 
 void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)

@@ -2643,6 +2643,34 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     return 0;
 }
 
+void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
+{
+    if (eventType == DOMSubtreeModifiedEvent)
+        addListenerType(DOMSUBTREEMODIFIED_LISTENER);
+    else if (eventType == DOMNodeInsertedEvent)
+        addListenerType(DOMNODEINSERTED_LISTENER);
+    else if (eventType == DOMNodeRemovedEvent)
+        addListenerType(DOMNODEREMOVED_LISTENER);
+    else if (eventType == DOMNodeRemovedFromDocumentEvent)
+        addListenerType(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
+    else if (eventType == DOMNodeInsertedIntoDocumentEvent)
+        addListenerType(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
+    else if (eventType == DOMAttrModifiedEvent)
+        addListenerType(DOMATTRMODIFIED_LISTENER);
+    else if (eventType == DOMCharacterDataModifiedEvent)
+        addListenerType(DOMCHARACTERDATAMODIFIED_LISTENER);
+    else if (eventType == overflowchangedEvent)
+        addListenerType(OVERFLOWCHANGED_LISTENER);
+    else if (eventType == webkitAnimationStartEvent)
+        addListenerType(ANIMATIONSTART_LISTENER);
+    else if (eventType == webkitAnimationEndEvent)
+        addListenerType(ANIMATIONEND_LISTENER);
+    else if (eventType == webkitAnimationIterationEvent)
+        addListenerType(ANIMATIONITERATION_LISTENER);
+    else if (eventType == webkitTransitionEndEvent)
+        addListenerType(TRANSITIONEND_LISTENER);
+}
+
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)
 {
     return 0;

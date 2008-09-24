@@ -1,3 +1,41 @@
+2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Rubber stamped by Sam.
+
+        Move code from EventTarget to EventTargetNode.
+
+        I refactored most parts to live in EventTarget, a year ago,
+        though the implementation of EventTargetSVGElementInstance is
+        done in another way, that obsoletes this.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        (WebCore::allowEventDispatch):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::insertedIntoDocument):
+        (WebCore::EventTargetNode::removedFromDocument):
+        (WebCore::EventTargetNode::willMoveToNewOwnerDocument):
+        (WebCore::EventTargetNode::didMoveToNewOwnerDocument):
+        (WebCore::EventTargetNode::addEventListener):
+        (WebCore::EventTargetNode::removeEventListener):
+        (WebCore::EventTargetNode::removeAllEventListeners):
+        (WebCore::EventTargetNode::handleLocalEvents):
+        (WebCore::setCurrentEventTargetRespectingSVGTargetRules):
+        (WebCore::EventTargetNode::dispatchEvent):
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        (WebCore::EventTargetNode::removeEventListenerForType):
+        * dom/EventTargetNode.h:
+        * svg/EventTargetSVGElementInstance.cpp:
+        (WebCore::EventTargetSVGElementInstance::dispatchEvent):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::supplementalTransform):
+
 2008-09-23  Dave Hyatt  <hyatt@apple.com>
 
         Fix for bug 21012.  The Aqua scrollbar was returning the wrong track rect on Windows Aqua theme.  Make

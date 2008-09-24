@@ -71,8 +71,9 @@ public:
     void dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source);
     bool dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime);
     bool dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime);
+    bool dispatchGenericEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent);
 
-    virtual void handleLocalEvents(Event*, bool useCapture);
+    void handleLocalEvents(Event*, bool useCapture);
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
