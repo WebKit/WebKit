@@ -41,7 +41,7 @@ using std::min;
 
 namespace WebCore {
 
-#if !USE(NSSCROLLER) && !PLATFORM(GTK)
+#if !PLATFORM(GTK)
 PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
     return adoptRef(new Scrollbar(client, orientation, size));

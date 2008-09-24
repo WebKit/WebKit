@@ -1,5 +1,7 @@
 2008-09-24  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=21074
+
         Make sure the viewless scrollbar knows how to paint properly when transformed.
 
         Reviewed by Sam Weinig

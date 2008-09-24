@@ -27,7 +27,6 @@
 #define ScrollbarThemeComposite_h
 
 #include "ScrollbarTheme.h"
-#include "Scrollbar.h" // FIXME: Temporary.
 
 namespace WebCore {
 

@@ -42,7 +42,6 @@
 using namespace std;
 using namespace WebCore;
 
-#if !USE(NSSCROLLER)
 static HashSet<Scrollbar*>* gScrollbars;
 
 @interface ScrollbarPrefsObserver : NSObject
@@ -78,7 +77,6 @@ static HashSet<Scrollbar*>* gScrollbars;
 }
 
 @end
-#endif
 
 namespace WebCore {
 
@@ -105,7 +103,6 @@ static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
-#if !USE(NSSCROLLER)
 static void updateArrowPlacement()
 {
     NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
@@ -135,18 +132,14 @@ void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
     }
 }
 
-#endif
-
 ScrollbarThemeMac::ScrollbarThemeMac()
 {
-#if !USE(NSSCROLLER)
     static bool initialized;
     if (!initialized) {
         initialized = true;
         [ScrollbarPrefsObserver registerAsObserver];
         preferencesChanged();
     }
-#endif
 }
 
 ScrollbarThemeMac::~ScrollbarThemeMac()
@@ -155,14 +148,12 @@ ScrollbarThemeMac::~ScrollbarThemeMac()
 
 void ScrollbarThemeMac::preferencesChanged()
 {
-#if !USE(NSSCROLLER)
     updateArrowPlacement();
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults synchronize];
     gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
     gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
     gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
-#endif
 }
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
@@ -340,7 +331,6 @@ bool ScrollbarThemeMac::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent
     return evt.altKey();
 }
 
-#if !USE(NSSCROLLER)
 static int scrollbarPartToHIPressedState(ScrollbarPart part)
 {
     switch (part) {
@@ -358,11 +348,9 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
             return 0;
     }
 }
-#endif
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
-#if !USE(NSSCROLLER)
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;
     trackInfo.kind = scrollbar->controlSize() == RegularScrollbar ? kThemeMediumScrollBar : kThemeSmallScrollBar;
@@ -405,9 +393,6 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     }
 
     return true;
-#else
-    return false;
-#endif
 }
 
 }
