@@ -28,9 +28,7 @@ namespace WebCore {
 
 bool CSSParserValue::isVariable() const
 {
-    return unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX || 
-           unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_EQUALS_SYNTAX ||
-           unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_EQUALS_SYNTAX;
+    return unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
 }
 
 CSSParserValueList::~CSSParserValueList()

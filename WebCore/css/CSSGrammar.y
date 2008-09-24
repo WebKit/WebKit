@@ -1392,16 +1392,6 @@ variable_reference:
       $$.string = $1;
       $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
   }
-  | '=' IDENT '=' {
-      $$.id = 0;
-      $$.string = $2;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_EQUALS_SYNTAX;
-  }
-  | '$' IDENT {
-      $$.id = 0;
-      $$.string = $2;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_DOLLAR_SYNTAX;
-  }
   ;
 
 function:
