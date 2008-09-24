@@ -1,3 +1,22 @@
+2008-09-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        Bug 21070: REGRESSION Repeated messages with arguments are not repeated
+        or displayed multiple times
+        - The Insepctor Controller was comparing JSValue pointers so thought the
+        message was not a repeat, but the JS of the inspector compared the
+        strings and so knew it was the same message and so overwrote the old
+        message.
+
+        * page/InspectorController.cpp:
+        (WebCore::ConsoleMessage::isEqual):
+        (WebCore::InspectorController::addMessageToConsole):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::startGroup):
+        (WebCore::InspectorController::endGroup):
+        * page/InspectorController.h:
+
 2008-09-24  David Hyatt  <hyatt@apple.com>
 
         Make sure the viewless Mac scrollbar responds properly to system preference changes (including the
