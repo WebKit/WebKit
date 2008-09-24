@@ -324,19 +324,19 @@ WebInspector.SourceFrame.prototype = {
         sourceRow.removeStyleClass("webkit-breakpoint-disabled");
     },
     
-    _incrementMessageRepeatCount: function(msg)
+    _incrementMessageRepeatCount: function(msg, repeatDelta)
     {
         if (!msg._resourceMessageLineElement)
             return;
 
-        if (!msg._resourceMessage_resourceMessageRepeatCountElement) {
+        if (!msg._resourceMessageRepeatCountElement) {
             var repeatedElement = document.createElement("span");
             msg._resourceMessageLineElement.appendChild(repeatedElement);
-            msg._resourceMessage_resourceMessageRepeatCountElement = repeatedElement;
-            msg._resourceMessageRepeatCount = 1;
+            msg._resourceMessageRepeatCountElement = repeatedElement;
         }
-        
-        msg._resourceMessage_resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", ++msg._resourceMessageRepeatCount);
+
+        msg.repeatCount += repeatDelta;
+        msg._resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", msg.repeatCount);
     },
 
     _addExistingMessagesToSource: function()
@@ -368,7 +368,7 @@ WebInspector.SourceFrame.prototype = {
 
         for (var i = 0; i < row.messages.length; ++i) {
             if (row.messages[i].isEqual(msg, true)) {
-                this._incrementMessageRepeatCount(row.messages[i]);
+                this._incrementMessageRepeatCount(row.messages[i], msg.repeatDelta);
                 return;
             }
         }

@@ -140,18 +140,43 @@ WebInspector.Console.prototype = {
     },
 
     addMessage: function(msg)
-    {    
+    {
+        msg.repeatDelta = msg.repeatCount;
+        var messageRepeated = false;
+
+        // Reset message count if it's a repeated message
+        if (msg.isEqual && msg.isEqual(this.previousMessage)) {
+            var messagesElement = this.currentGroup.messagesElement;
+            messagesElement.removeChild(messagesElement.lastChild);
+            messagesElement.appendChild(msg.toMessageElement());
+
+            // Because sometimes we get a large number of repeated messages and sometimes
+            // we get them one at a time, we need to know the difference between how many
+            // repeats we used to have and how many we have now.
+            msg.repeatDelta -= this.previousMessage.repeatCount;
+            messageRepeated = true;
+        }
+
+        // Increment the error or warning count
+        switch (msg.level) {
+        case WebInspector.ConsoleMessage.MessageLevel.Warning:
+            WebInspector.warnings += msg.repeatDelta;
+            break;
+        case WebInspector.ConsoleMessage.MessageLevel.Error:
+            WebInspector.errors += msg.repeatDelta;
+            break;
+        }
+
+        // Add message to the resource panel
         if (msg.url in WebInspector.resourceURLMap) {
             msg.resource = WebInspector.resourceURLMap[msg.url];
             WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
         }
 
-        if (msg.isEqual && msg.isEqual(this.previousMessage)) {
-            this._incrementRepeatedMessage();
-            return;
-        }
-
         this.previousMessage = msg;
+
+        if (messageRepeated)
+            return;
 
         this.messages.push(msg);
 
@@ -172,27 +197,9 @@ WebInspector.Console.prototype = {
             }
 
             this.currentGroup.addMessage(msg);
-            this.previousMessageElement = this.currentGroup.messagesElement.lastChild;
         }
 
         this.promptElement.scrollIntoView(false);
-    },
-
-    _incrementRepeatedMessage: function()
-    {
-        if (!this.previousMessageElement)
-            return;
-
-        if (!this.previousMessageElement.bubbleElement) {
-            this.previousMessageElement.bubbleElement = document.createElement("span");
-            this.previousMessageElement.bubbleElement.className = "bubble";
-            this.previousMessageElement.bubbleElement.textContent = "1";
-
-            this.previousMessageElement.insertBefore(this.previousMessageElement.bubbleElement, this.previousMessageElement.firstChild);
-            this.previousMessageElement.addStyleClass("repeated-message");            
-        }
-
-        ++this.previousMessageElement.bubbleElement.textContent;
     },
 
     clearMessages: function(clearInspectorController)
@@ -206,8 +213,10 @@ WebInspector.Console.prototype = {
         this.groupLevel = 0;
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
+        
+        WebInspector.errors = 0;
+        WebInspector.warnings = 0;
         delete this.previousMessage;
-        delete this.previousMessageElement;
     },
 
     completions: function(wordRange, bestMatchOnly)
@@ -539,20 +548,21 @@ WebInspector.Console.prototype = {
 
 WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
+WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, repeatCount)
 {
     this.source = source;
     this.level = level;
     this.line = line;
     this.url = url;
     this.groupLevel = groupLevel;
+    this.repeatCount = repeatCount;
 
     if (this.level === WebInspector.ConsoleMessage.MessageLevel.Object) {
-        var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[5], null, null, null, true);
+        var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[6], null, null, null, true);
         propertiesSection.element.addStyleClass("console-message");
         this.propertiesSection = propertiesSection;
     } else if (this.level === WebInspector.ConsoleMessage.MessageLevel.Node) {
-        var node = arguments[5];
+        var node = arguments[6];
         if (!(node instanceof InspectorController.inspectedWindow().Node))
             return;
         this.elementsTreeOutline = new WebInspector.ElementsTreeOutline();
@@ -561,10 +571,10 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
 
     // This _format call passes in true for the plainText argument. The result's textContent is
     // used for inline message bubbles in SourceFrames, or other plain-text representations.
-    this.message = this._format(Array.prototype.slice.call(arguments, 5), true).textContent;
+    this.message = this._format(Array.prototype.slice.call(arguments, 6), true).textContent;
 
     // The formatedMessage property is used for the rich and interactive console.
-    this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 5));
+    this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 6));
 }
 
 WebInspector.ConsoleMessage.prototype = {
@@ -695,6 +705,15 @@ WebInspector.ConsoleMessage.prototype = {
                 urlElement.textContent = WebInspector.displayNameForURL(this.url);
 
             element.appendChild(urlElement);
+        }
+
+        if (this.repeatCount > 1) {
+            var messageRepeatCountElement = document.createElement("span");
+            messageRepeatCountElement.className = "bubble";
+            messageRepeatCountElement.textContent = this.repeatCount;
+
+            element.insertBefore(messageRepeatCountElement, element.firstChild);
+            element.addStyleClass("repeated-message");
         }
 
         return element;

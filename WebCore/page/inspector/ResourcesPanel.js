@@ -327,10 +327,10 @@ WebInspector.ResourcesPanel.prototype = {
 
         switch (msg.level) {
         case WebInspector.ConsoleMessage.MessageLevel.Warning:
-            ++resource.warnings;
+            resource.warnings += msg.repeatDelta;
             break;
         case WebInspector.ConsoleMessage.MessageLevel.Error:
-            ++resource.errors;
+            resource.errors += msg.repeatDelta;
             break;
         }
 

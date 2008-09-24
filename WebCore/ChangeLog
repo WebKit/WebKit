@@ -1,3 +1,24 @@
+2008-09-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Time and Oliver.
+
+        Bug 20949: Catch repeated messages in Inspector Controller to limit
+        memory usage
+        - Store the repeat count in the Console Message object, in the 
+        Inspector Controller and JS ConsoleMessage object.
+
+        * page/InspectorController.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::operator==):
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::addScriptConsoleMessage):
+        * page/InspectorController.h:
+        * page/inspector/Console.js:
+        * page/inspector/Resource.js:
+        * page/inspector/ResourcesPanel.js:
+        * page/inspector/SourceFrame.js:
+
 2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

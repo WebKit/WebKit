@@ -255,6 +255,7 @@ private:
     RefPtr<Node> m_highlightedNode;
     unsigned m_groupLevel;
     bool m_searchingForNode;
+    ConsoleMessage* m_previousMessage;
 };
 
 } // namespace WebCore
