@@ -1,3 +1,11 @@
+2008-09-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the windows build.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+
 2008-09-23  Alp Toker  <alp@nuanti.com>
 
         Build fix.
