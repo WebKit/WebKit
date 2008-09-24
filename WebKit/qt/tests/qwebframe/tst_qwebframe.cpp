@@ -1021,7 +1021,7 @@ void tst_QWebFrame::callQtInvokable()
         QVariant ret = evalJSV("myObject.myInvokableReturningQObjectStar()", type);
         QCOMPARE(m_myObject->qtFunctionInvoked(), 13);
         QCOMPARE(m_myObject->qtFunctionActuals().size(), 0);
-        QCOMPARE(type, sFunction);
+        QCOMPARE(type, sObject);
         QCOMPARE(ret.userType(), int(QMetaType::QObjectStar));
     }
 
@@ -1137,7 +1137,7 @@ void tst_QWebFrame::callQtInvokable()
         QCOMPARE(ret.userType(), int(QMetaType::QObjectStar));
         QCOMPARE(qvariant_cast<QObject*>(ret), (QObject*)m_myObject);
 
-        QCOMPARE(type, sFunction); // implements call, so Function, not object
+        QCOMPARE(type, sObject);
     }
 
     m_myObject->resetQtFunctionInvoked();
@@ -1201,26 +1201,6 @@ void tst_QWebFrame::callQtInvokable()
         QCOMPARE(type, sError);
         QCOMPARE(ret, QLatin1String("TypeError: incompatible type of argument(s) in call to myInvokableWithQBrushArg(); candidates were\n    myInvokableWithQBrushArg(QBrush)"));
         QCOMPARE(m_myObject->qtFunctionInvoked(), -1);
-    }
-
-    // qscript_call()
-    {
-        m_myObject->resetQtFunctionInvoked();
-        QString type;
-        evalJS("new myObject(123)", type);
-        QCOMPARE(type, sObject);
-        QCOMPARE(m_myObject->qtFunctionInvoked(), 40);
-        QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
-        QCOMPARE(m_myObject->qtFunctionActuals().at(0).toInt(), 123);
-    }
-    {
-        m_myObject->resetQtFunctionInvoked();
-        QString type;
-        evalJS("myObject(123)", type);
-        QCOMPARE(type, sUndefined);
-        QCOMPARE(m_myObject->qtFunctionInvoked(), 40);
-        QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
-        QCOMPARE(m_myObject->qtFunctionActuals().at(0).toInt(), 123);
     }
 }
 
@@ -1396,26 +1376,26 @@ void tst_QWebFrame::connectAndDisconnect()
         QString type;
         QString ret = evalJS("(function() { }).connect()", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: Value undefined (result of expression (function ()\n{\n}).connect) is not object."));
+        QCOMPARE(ret, QLatin1String("TypeError: Result of expression '(function() { }).connect' [undefined] is not a function."));
     }
     {
         QString type;
         QString ret = evalJS("var o = { }; o.connect = Function.prototype.connect;  o.connect()", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: Value undefined (result of expression o.connect) is not object."));
+        QCOMPARE(ret, QLatin1String("TypeError: Result of expression 'o.connect' [undefined] is not a function."));
     }
 
     {
         QString type;
         QString ret = evalJS("(function() { }).connect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: Value undefined (result of expression (function ()\n{\n}).connect) is not object."));
+        QCOMPARE(ret, QLatin1String("TypeError: Result of expression '(function() { }).connect' [undefined] is not a function."));
     }
     {
         QString type;
         QString ret = evalJS("var o = { }; o.connect = Function.prototype.connect;  o.connect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: Value undefined (result of expression o.connect) is not object."));
+        QCOMPARE(ret, QLatin1String("TypeError: Result of expression 'o.connect' [undefined] is not a function."));
     }
 
     {
@@ -1879,7 +1859,7 @@ void tst_QWebFrame::objectDeleted()
     // now delete the object
     delete qobj;
 
-    QCOMPARE(evalJS("typeof bar"), sFunction);
+    QCOMPARE(evalJS("typeof bar"), sObject);
 
     // any attempt to access properties of the object should result in an exception
     {
@@ -1893,13 +1873,6 @@ void tst_QWebFrame::objectDeleted()
         QString ret = evalJS("bar.objectName = 'foo'", type);
         QCOMPARE(type, sError);
         QCOMPARE(ret, QLatin1String("Error: cannot access member `objectName' of deleted QObject"));
-    }
-
-    {
-        QString type;
-        QString ret = evalJS("bar()", type);
-        QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("Error: cannot call function of deleted QObject"));
     }
 
     // myInvokable is stored in member table (since we've accessed it before deletion)
@@ -1926,12 +1899,6 @@ void tst_QWebFrame::objectDeleted()
 
     // access from script
     evalJS("window.o = bar;");
-    {
-        QString type;
-        QString ret = evalJS("o()", type);
-        QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("Error: cannot call function of deleted QObject"));
-    }
     {
         QString type;
         QString ret = evalJS("o.objectName", type);

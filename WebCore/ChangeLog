@@ -1,3 +1,13 @@
+2008-09-23  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Remove deprecated JS Qt bindings object call/construct code and fix autotests
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::QtInstance):
+        * bridge/qt/qt_instance.h:
+
 2008-09-23  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Reviewed by Alp Toker. Landed by Jan Alonzo.
