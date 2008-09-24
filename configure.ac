@@ -51,6 +51,15 @@ case "$host" in
        ;;
 esac
 
+case "$host_os" in
+     gnu* | linux* | k*bsd*-gnu)
+       os_gnu=yes
+       ;;
+     *)
+       os_gnu=no
+       ;;
+esac
+
 # If CXXFLAGS and CFLAGS are unset, default to empty.
 # This is to tell automake not to include '-g' if CXXFLAGS is not set
 # For more info - http://www.gnu.org/software/automake/manual/autoconf.html#C_002b_002b-Compiler
@@ -576,6 +585,7 @@ fi
 AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])
 AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
 AM_CONDITIONAL([OS_LINUX],[test "$os_linux" = "yes"])
+AM_CONDITIONAL([OS_GNU],[test "$os_gnu" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 
 # target conditionals

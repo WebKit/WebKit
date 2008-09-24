@@ -78,6 +78,10 @@ if OS_WIN32
 no_undefined = -no-undefined
 endif
 
+if OS_GNU
+version_script = Wl,--version-script,$(srcdir)/symbols.filter
+endif
+
 # Shared libraries
 lib_LTLIBRARIES = \
 	libwebkit-1.0.la
@@ -238,7 +242,7 @@ libwebkit_1_0_la_CPPFLAGS = \
 libwebkit_1_0_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \
 	-version-info @LIBWEBKITGTK_VERSION@ \
-	-Wl,--version-script,$(srcdir)/symbols.filter \
+	$(version_script) \
 	$(no_undefined)
 
 libwebkit_1_0_la_LIBADD = \
