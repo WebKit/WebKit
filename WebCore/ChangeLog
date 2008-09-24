@@ -1,3 +1,30 @@
+2008-09-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21041 "Add Contact" 
+        link at gmail does not support AXPress action
+        and corresponding: <rdar://problem/6216178>
+
+        I fixed this bug by making AccessibilityObject::anchorElement 
+        support ARIA links.
+
+        * page/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::anchorElement):
+        * page/AccessibilityImageMapLink.h:
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::anchorElement):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isNativeAnchor):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isNativeAnchor):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        (WebCore::AccessibilityRenderObject::url):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (AXLinkElementForNode):
+
 2008-09-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Time and Oliver.

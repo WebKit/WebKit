@@ -315,7 +315,7 @@ Widget* AccessibilityObject::widgetForAttachmentView() const
     return 0;
 }
 
-HTMLAnchorElement* AccessibilityObject::anchorElement() const
+Element* AccessibilityObject::anchorElement() const
 {
     return 0;   
 }

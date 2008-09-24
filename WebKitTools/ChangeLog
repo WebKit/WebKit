@@ -1,3 +1,17 @@
+2008-09-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        This patch extends DumpRenderTree's AccessibilityController to ask 
+        if the focused element supports the press action.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getSupportsPressActionCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::supportsPressAction):
+
 2008-09-22  Alice Liu  <alice.liu@apple.com>
 
         Adding a stand-alone Windows console application to record a process's memory usage

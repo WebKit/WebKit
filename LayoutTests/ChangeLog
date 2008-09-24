@@ -1,3 +1,14 @@
+2008-09-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=21041 "Add 
+        Contact" link at gmail does not support AXPress action
+        and corresponding: <rdar://problem/6216178>
+
+        * accessibility/aria-link-supports-press-expected.txt: Added.
+        * accessibility/aria-link-supports-press.html: Added.
+
 2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.

@@ -272,7 +272,7 @@ public:
     virtual AccessibilityRole roleValue() const;
     virtual AXObjectCache* axObjectCache() const;
     
-    virtual HTMLAnchorElement* anchorElement() const;
+    virtual Element* anchorElement() const;
     virtual Element* actionElement() const;
     virtual IntRect boundingBoxRect() const;
     virtual IntRect elementRect() const;

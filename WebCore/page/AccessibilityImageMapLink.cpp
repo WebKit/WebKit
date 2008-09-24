@@ -63,7 +63,7 @@ AccessibilityObject* AccessibilityImageMapLink::parentObject() const
     return m_mapElement->document()->axObjectCache()->get(m_mapElement->renderer());
 }
     
-HTMLAnchorElement* AccessibilityImageMapLink::anchorElement() const
+Element* AccessibilityImageMapLink::anchorElement() const
 {
     return m_areaElement;
 }

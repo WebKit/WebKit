@@ -286,6 +286,12 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return -1;
 }
 
+bool AccessibilityUIElement::supportsPressAction()
+{
+    NSArray* actions = [m_element accessibilityActionNames];
+    return [actions containsObject:@"AXPress"];
+}
+
 // parameterized attributes
 int AccessibilityUIElement::lineForIndex(int index)
 {

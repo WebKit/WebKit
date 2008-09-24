@@ -226,6 +226,11 @@ static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef
     return JSValueMakeString(context, selectedTextRange.get());
 }
 
+static JSValueRef getSupportsPressActionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->supportsPressAction());
+}
+
 // Destruction
 
 static void finalize(JSObjectRef thisObject)
@@ -253,6 +258,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "maxValue", getMaxValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "supportsPressAction", getSupportsPressActionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 

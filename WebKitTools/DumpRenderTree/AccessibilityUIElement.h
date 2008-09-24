@@ -80,6 +80,7 @@ public:
     double maxValue();
     int insertionPointLineNumber();
     JSStringRef selectedTextRange();
+    bool supportsPressAction();
 
     // Table-specific attributes
     JSStringRef attributesOfColumnHeaders();

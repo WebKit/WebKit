@@ -421,7 +421,7 @@ static AccessibilityObject* AXLinkElementForNode(Node* node)
         return 0;
 
     RefPtr<AccessibilityObject> axObj = obj->document()->axObjectCache()->get(obj);
-    HTMLAnchorElement* anchor = axObj->anchorElement();
+    Element* anchor = axObj->anchorElement();
     if (!anchor)
         return 0;
 

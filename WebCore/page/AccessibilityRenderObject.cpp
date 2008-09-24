@@ -440,16 +440,18 @@ const AtomicString& AccessibilityRenderObject::getAttribute(const QualifiedName&
     return element->getAttribute(attribute);
 }
 
-HTMLAnchorElement* AccessibilityRenderObject::anchorElement() const
+Element* AccessibilityRenderObject::anchorElement() const
 {
-    // FIXME: In XHTML 2.0, any HTML element can have an href attribute. We will need to implement this to fully
-    // support ARIA links.
-
-    // Search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
+    if (!m_renderer)
+        return 0;
+    
+    AXObjectCache* cache = axObjectCache();
     RenderObject* currRenderer;
+    
+    // Search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
     for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent()) {
         if (currRenderer->continuation())
-            return currRenderer->document()->axObjectCache()->get(currRenderer->continuation())->anchorElement();
+            return cache->get(currRenderer->continuation())->anchorElement();
     }
     
     // bail if none found
@@ -460,8 +462,8 @@ HTMLAnchorElement* AccessibilityRenderObject::anchorElement() const
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
     Node* node = currRenderer->node();
     for ( ; node; node = node->parentNode()) {
-        if (node->hasTagName(aTag))
-            return static_cast<HTMLAnchorElement*>(node);
+        if (node->hasTagName(aTag) || (node->renderer() && cache->get(node->renderer())->isAnchor()))
+            return static_cast<Element*>(node);
     }
     
     return 0;
@@ -965,9 +967,14 @@ IntSize AccessibilityRenderObject::size() const
 
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
 {
-    HTMLAnchorElement* anchor = anchorElement();
-    if (!anchor)
+    Element* element = anchorElement();
+    if (!element)
         return 0;
+    
+    // Right now, we do not support ARIA links as internal link elements
+    if (!element->hasTagName(aTag))
+        return 0;
+    HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(element);
     
     KURL linkURL = anchor->href();
     String ref = linkURL.ref();
@@ -1320,8 +1327,8 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 
 KURL AccessibilityRenderObject::url() const
 {
-    if (isAnchor()) {
-        if (HTMLAnchorElement* anchor = anchorElement())
+    if (isAnchor() && m_renderer->element()->hasTagName(aTag)) {
+        if (HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(anchorElement()))
             return anchor->href();
     }
     
