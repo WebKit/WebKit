@@ -38,8 +38,6 @@
         Fixed <rdar://problem/5605532> Need a SPI for telling JS the size of
         the objects it retains
 
-        * API/JSBase.h: Filled in some missing function names.
-
         * API/tests/testapi.c: Test the new SPI a little.
 
         * API/JSSPI.cpp: Add the new SPI.
