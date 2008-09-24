@@ -302,13 +302,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleResourceView === resource._resourcesView)
             this.closeVisibleResource();
 
-        var resourcesLength = this._resources.length;
-        for (var i = 0; i < resourcesLength; ++i) {
-            if (this._resources[i] === resource) {
-                this._resources.splice(i, 1);
-                break;
-            }
-        }
+        this._resources.remove(resource, true);
 
         this.resourcesTreeElement.removeChild(resource._resourcesTreeElement);
         this.resourcesGraphsElement.removeChild(resource._resourcesTreeElement._resourceGraph.graphElement);

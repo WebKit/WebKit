@@ -849,13 +849,7 @@ WebInspector.removeResource = function(resource)
     resource.category.removeResource(resource);
     delete this.resourceURLMap[resource.url];
 
-    var resourcesLength = this.resources.length;
-    for (var i = 0; i < resourcesLength; ++i) {
-        if (this.resources[i] === resource) {
-            this.resources.splice(i, 1);
-            break;
-        }
-    }
+    this.resources.remove(resource, true);
 
     this.panels.resources.removeResource(resource);
 }

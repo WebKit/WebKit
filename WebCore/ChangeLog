@@ -1,5 +1,20 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Use the Array.remove helper function in more places.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21037
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ResourceCategory.js:
+        (WebInspector.ResourceCategory.prototype.removeResource): Use Array.remove.
+        * page/inspector/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.removeResource): Ditto.
+        * page/inspector/inspector.js:
+        (WebInspector.removeResource): Ditto.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where inspecting a node after reloading the page
         would not reveal the node in the DOM tree. The TreeOutline
         was not being told to forget decendants of a removed child.

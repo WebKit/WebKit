@@ -58,13 +58,7 @@ WebInspector.ResourceCategory.prototype = {
 
     removeResource: function(resource)
     {
-        var resourcesLength = this.resources.length;
-        for (var i = 0; i < resourcesLength; ++i) {
-            if (this.resources[i] === resource) {
-                this.resources.splice(i, 1);
-                break;
-            }
-        }
+        this.resources.remove(resource, true);
     },
 
     removeAllResources: function(resource)
