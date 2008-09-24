@@ -1,3 +1,20 @@
+2008-09-24  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Test: editing/spelling/inline_spelling_markers.html
+        
+        - https://bugs.webkit.org/show_bug.cgi?id=20092
+        Spelling markers positioned incorrectly in RTL text
+
+        Measure spelling markers with selectionRectForText() to fix RTL.
+
+        This patch also fixes hit-testing for spelling marker tool tips,
+        which used to work only on the first line.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+
 2008-09-24  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21074

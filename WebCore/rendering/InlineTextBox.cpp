@@ -646,41 +646,38 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
     if (m_truncation == cFullTruncation)
         return;
 
-    tx += m_x;
-    ty += m_y;
-        
     int start = 0;                  // start of line to draw, relative to tx
     int width = m_width;            // how much line to draw
-    bool useWholeWidth = true;
-    unsigned paintStart = m_start;
-    unsigned paintEnd = end()+1;      // end points at the last char, not past it
-    if (paintStart <= marker.startOffset) {
-        paintStart = marker.startOffset;
-        useWholeWidth = false;
-        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, textPos(), m_firstLine);
-    }
-    if (paintEnd != marker.endOffset) {      // end points at the last char, not past it
-        paintEnd = min(paintEnd, marker.endOffset);
-        useWholeWidth = false;
-    }
-    if (m_truncation != cNoTruncation) {
-        paintEnd = min(paintEnd, (unsigned)m_start + m_truncation);
-        useWholeWidth = false;
-    }
-    if (!useWholeWidth) {
-        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
-    }
-    
-    // Store rendered rects for bad grammar markers, so we can hit-test against it elsewhere in order to
-    // display a toolTip. We don't do this for misspelling markers.
-    if (grammar) {
-        int y = selectionTop();
-        IntPoint startPoint = IntPoint(m_x + tx, y + ty);
-        int startPosition = max(marker.startOffset - m_start, (unsigned)0);
-        int endPosition = min(marker.endOffset - m_start, (unsigned)m_len);    
+
+    // Determine whether we need to measure text
+    bool markerSpansWholeBox = true;
+    if (m_start <= (int)marker.startOffset)
+        markerSpansWholeBox = false;
+    if ((end() + 1) != marker.endOffset)      // end points at the last char, not past it
+        markerSpansWholeBox = false;
+    if (m_truncation != cNoTruncation)
+        markerSpansWholeBox = false;
+
+    if (!markerSpansWholeBox || grammar) {
+        int startPosition = max<int>(marker.startOffset - m_start, 0);
+        int endPosition = min<int>(marker.endOffset - m_start, m_len);
+        
+        if (m_truncation != cNoTruncation)
+            endPosition = min<int>(endPosition, m_truncation);
+
+        // Calculate start & width
+        IntPoint startPoint(tx + m_x, ty + selectionTop());
         TextRun run(textObject()->text()->characters() + m_start, m_len, textObject()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
-        IntRect markerRect = enclosingIntRect(f->selectionRectForText(run, startPoint, selectionHeight(), startPosition, endPosition));
-        object()->document()->setRenderedRectForMarker(object()->node(), marker, markerRect);
+        int h = selectionHeight();
+        
+        IntRect markerRect = enclosingIntRect(f->selectionRectForText(run, startPoint, h, startPosition, endPosition));
+        start = markerRect.x() - startPoint.x();
+        width = markerRect.width();
+        
+        // Store rendered rects for bad grammar markers, so we can hit-test against it elsewhere in order to
+        // display a toolTip. We don't do this for misspelling markers.
+        if (grammar)
+            object()->document()->setRenderedRectForMarker(object()->node(), marker, markerRect);
     }
     
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
@@ -699,7 +696,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
         // in larger fonts, tho, place the underline up near the baseline to prevent big gap
         underlineOffset = m_baseline + 2;
     }
-    pt->drawLineForMisspellingOrBadGrammar(IntPoint(tx + start, ty + underlineOffset), width, grammar);
+    pt->drawLineForMisspellingOrBadGrammar(IntPoint(tx + m_x + start, ty + m_y + underlineOffset), width, grammar);
 }
 
 void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font* f)
