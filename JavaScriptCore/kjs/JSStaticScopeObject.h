@@ -37,7 +37,6 @@ namespace JSC{
             JSStaticScopeObjectData()
                 : JSVariableObjectData(&symbolTable, &registerStore + 1)
             {
-                registerArraySize = 1;
             }
             SymbolTable symbolTable;
             Register registerStore;

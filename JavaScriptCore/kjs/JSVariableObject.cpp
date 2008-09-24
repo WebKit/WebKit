@@ -68,20 +68,4 @@ bool JSVariableObject::isVariableObject() const
     return true;
 }
 
-Register* JSVariableObject::copyRegisterArray(Register* src, size_t count)
-{
-    Register* registerArray = new Register[count];
-    memcpy(registerArray, src, count * sizeof(Register));
-
-    return registerArray;
-}
-
-void JSVariableObject::setRegisters(Register* r, Register* registerArray, size_t count)
-{
-    if (registerArray != d->registerArray.get())
-        d->registerArray.set(registerArray);
-    d->registerArraySize = count;
-    d->registers = r;
-}
-
 } // namespace JSC

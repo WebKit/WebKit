@@ -64,7 +64,6 @@ namespace JSC {
             JSVariableObjectData(SymbolTable* symbolTable_, Register* registers_)
                 : symbolTable(symbolTable_)
                 , registers(registers_)
-                , registerArraySize(0)
             {
                 ASSERT(symbolTable_);
             }
@@ -72,7 +71,6 @@ namespace JSC {
             SymbolTable* symbolTable; // Maps name -> offset from "r" in register file.
             Register* registers; // "r" in the register file.
             OwnArrayPtr<Register> registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
-            size_t registerArraySize;
 
             static inline ptrdiff_t offsetOf_registers()
             {
@@ -91,7 +89,7 @@ namespace JSC {
         }
 
         Register* copyRegisterArray(Register* src, size_t count);
-        void setRegisters(Register* r, Register* registerArray, size_t count);
+        void setRegisters(Register* r, Register* registerArray);
 
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
@@ -158,6 +156,21 @@ namespace JSC {
         entry.setAttributes(attributes);
         registerAt(entry.getIndex()) = value;
         return true;
+    }
+
+    inline Register* JSVariableObject::copyRegisterArray(Register* src, size_t count)
+    {
+        Register* registerArray = new Register[count];
+        memcpy(registerArray, src, count * sizeof(Register));
+
+        return registerArray;
+    }
+
+    inline void JSVariableObject::setRegisters(Register* registers, Register* registerArray)
+    {
+        ASSERT(registerArray != d->registerArray.get());
+        d->registerArray.set(registerArray);
+        d->registers = registers;
     }
 
 } // namespace JSC

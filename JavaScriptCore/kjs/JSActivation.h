@@ -29,7 +29,9 @@
 #ifndef JSActivation_h
 #define JSActivation_h
 
+#include "CodeBlock.h"
 #include "JSVariableObject.h"
+#include "RegisterFile.h"
 #include "SymbolTable.h"
 #include "nodes.h"
 
@@ -98,6 +100,24 @@ namespace JSC {
         JSActivationData* d() const { return static_cast<JSActivationData*>(JSVariableObject::d); }
     };
     
+    inline void JSActivation::copyRegisters()
+    {
+        ASSERT(!d()->registerArray);
+
+        size_t numParametersMinusThis = d()->functionBody->generatedByteCode().numParameters - 1;
+        size_t numVars = d()->functionBody->generatedByteCode().numVars;
+        size_t numLocals = numVars + numParametersMinusThis;
+
+        if (!numLocals)
+            return;
+
+        int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
+        size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
+
+        Register* registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
+        setRegisters(registerArray + registerOffset, registerArray);
+    }
+
 } // namespace JSC
 
 #endif // JSActivation_h

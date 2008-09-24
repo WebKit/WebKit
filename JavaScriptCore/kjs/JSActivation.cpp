@@ -30,9 +30,7 @@
 #include "JSActivation.h"
 
 #include "Arguments.h"
-#include "CodeBlock.h"
 #include "Machine.h"
-#include "Register.h"
 #include "JSFunction.h"
 
 namespace JSC {
@@ -83,25 +81,6 @@ void JSActivation::mark()
         if (!r.marked())
             r.mark();
     }
-}
-
-void JSActivation::copyRegisters()
-{
-    ASSERT(!d()->registerArray);
-    ASSERT(!d()->registerArraySize);
-
-    size_t numParametersMinusThis = d()->functionBody->generatedByteCode().numParameters - 1;
-    size_t numVars = d()->functionBody->generatedByteCode().numVars;
-    size_t numLocals = numVars + numParametersMinusThis;
-
-    if (!numLocals)
-        return;
-
-    int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
-    size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
-
-    Register* registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
-    setRegisters(registerArray + registerOffset, registerArray, registerArraySize);
 }
 
 bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

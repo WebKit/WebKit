@@ -195,14 +195,6 @@ static inline JSObject* lastInPrototypeChain(JSObject* object)
 
 void JSGlobalObject::reset(JSValue* prototype)
 {
-    // Clear before inititalizing, to avoid calling mark() on stale pointers --
-    // which would be wasteful -- or uninitialized pointers -- which would be
-    // dangerous. (The allocations below may cause a GC.)
-
-    ASSERT(!hasCustomProperties());
-    symbolTable().clear();
-    setRegisters(0, 0, 0);
-
     ExecState* exec = d()->globalExec.get();
 
     // Prototypes

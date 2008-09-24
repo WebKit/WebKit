@@ -1,3 +1,41 @@
+2008-09-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21047
+          speed up ret_activation with inlining
+
+        About 1% on v8-raytrace.
+
+        * JavaScriptCore.exp: Removed JSVariableObject::setRegisters.
+
+        * kjs/JSActivation.cpp: Moved copyRegisters to the header to make it inline.
+        * kjs/JSActivation.h:
+        (JSC::JSActivation::copyRegisters): Moved here. Also removed the registerArraySize
+        argument to setRegisters, since the object doesn't need to store the number of
+        registers.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset): Removed unnecessary clearing left over from when we
+        used this on objects that weren't brand new. These days, this function is really
+        just part of the constructor.
+
+        * kjs/JSGlobalObject.h: Added registerArraySize to JSGlobalObjectData, since
+        JSVariableObjectData no longer needs it. Added a setRegisters override here
+        that handles storing the size.
+
+        * kjs/JSStaticScopeObject.h: Removed code to set registerArraySize, since it
+        no longer exists.
+
+        * kjs/JSVariableObject.cpp: Moved copyRegisterArray and setRegisters to the
+        header to make them inline.
+        * kjs/JSVariableObject.h: Removed registerArraySize from JSVariableObjectData,
+        since it was only used for the global object.
+        (JSC::JSVariableObject::copyRegisterArray): Moved here ot make it inline.
+        (JSC::JSVariableObject::setRegisters): Moved here to make it inline. Also
+        removed the code to set registerArraySize and changed an if statement into
+        an assert to save an unnnecessary branch.
+
 2008-09-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
@@ -127,7 +165,7 @@
         13.5% speedup on empty call benchmark for bytecode; 23.6% speedup on
         empty call benchmark for CTI.
         
-        SunSpider says no change. SunSpider --v8 says 1% faster.
+        SunSpider says no change. SunSpider --v8 says 1% faster.v8
 
         * VM/CTI.cpp:
         

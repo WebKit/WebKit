@@ -56,6 +56,7 @@ namespace JSC {
         struct JSGlobalObjectData : public JSVariableObjectData {
             JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
                 : JSVariableObjectData(&symbolTable, 0)
+                , registerArraySize(0)
                 , globalScopeChain(globalObject, thisValue)
                 , regExpConstructor(0)
                 , errorConstructor(0)
@@ -80,6 +81,8 @@ namespace JSC {
             virtual ~JSGlobalObjectData()
             {
             }
+
+            size_t registerArraySize;
 
             JSGlobalObject* next;
             JSGlobalObject* prev;
@@ -269,8 +272,16 @@ namespace JSC {
         void init(JSObject* thisValue);
         void reset(JSValue* prototype);
 
+        void setRegisters(Register* registers, Register* registerArray, size_t count);
+
         void* operator new(size_t); // can only be allocated with JSGlobalData
     };
+
+    inline void JSGlobalObject::setRegisters(Register* registers, Register* registerArray, size_t count)
+    {
+        JSVariableObject::setRegisters(registers, registerArray);
+        d()->registerArraySize = count;
+    }
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     {
@@ -322,6 +333,7 @@ namespace JSC {
         ASSERT(typeInfo().type() == NumberType);
         return exec->lexicalGlobalObject()->numberPrototype();
     }
+
 
 } // namespace JSC
 
