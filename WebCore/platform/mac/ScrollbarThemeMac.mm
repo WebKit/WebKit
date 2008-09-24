@@ -27,6 +27,7 @@
 #include "ScrollbarThemeMac.h"
 
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -44,11 +45,12 @@ using namespace WebCore;
 #if !USE(NSSCROLLER)
 static HashSet<Scrollbar*>* gScrollbars;
 
-@interface ScrollbarPrefsObserver
+@interface ScrollbarPrefsObserver : NSObject
 {
 
 }
 
++ (void)registerAsObserver;
 + (void)appearancePrefsChanged:(NSNotification*)theNotification;
 + (void)behaviorPrefsChanged:(NSNotification*)theNotification;
 
@@ -381,7 +383,27 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         trackInfo.enableState = kThemeTrackNothingToScroll;
     trackInfo.trackInfo.scrollbar.pressState = scrollbarPartToHIPressedState(scrollbar->pressedPart());
     
-    HIThemeDrawTrack(&trackInfo, 0, context->platformContext(), kHIThemeOrientationNormal);
+    CGAffineTransform currentCTM = CGContextGetCTM(context->platformContext());
+    
+    // The Aqua scrollbar is buggy when rotated and scaled.  We will just draw into a bitmap if we detect a scale or rotation.
+    bool canDrawDirectly = currentCTM.a == 1.0f && currentCTM.b == 0.0f && currentCTM.c == 0.0f && (currentCTM.d == 1.0f || currentCTM.d == -1.0f);
+    if (canDrawDirectly)
+        HIThemeDrawTrack(&trackInfo, 0, context->platformContext(), kHIThemeOrientationNormal);
+    else {
+        trackInfo.bounds = IntRect(IntPoint(), scrollbar->frameGeometry().size());
+        
+        IntRect bufferRect(scrollbar->frameGeometry());
+        bufferRect.intersect(damageRect);
+        bufferRect.move(-scrollbar->frameGeometry().x(), -scrollbar->frameGeometry().y());
+        
+        auto_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferRect.size(), false);
+        if (!imageBuffer.get())
+            return true;
+        
+        HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);
+        context->drawImage(imageBuffer->image(), scrollbar->frameGeometry().location());
+    }
+
     return true;
 #else
     return false;

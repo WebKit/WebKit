@@ -1,3 +1,13 @@
+2008-09-24  David Hyatt  <hyatt@apple.com>
+
+        Make sure the viewless scrollbar knows how to paint properly when transformed.
+
+        Reviewed by Sam Weinig
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::ScrollbarThemeMac):
+        (WebCore::ScrollbarThemeMac::paint):
+
 2008-09-24  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Try to fix win build.
