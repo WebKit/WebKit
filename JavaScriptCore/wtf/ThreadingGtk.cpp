@@ -40,9 +40,7 @@ namespace WTF {
 
 Mutex* atomicallyInitializedStaticMutex;
 
-#if !PLATFORM(DARWIN)
 static ThreadIdentifier mainThreadIdentifier;
-#endif
 
 static Mutex& threadMapMutex()
 {
@@ -60,9 +58,7 @@ void initializeThreading()
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         wtf_random_init();
-#if !PLATFORM(DARWIN)
         mainThreadIdentifier = currentThread();
-#endif
         initializeMainThread();
     }
 }

@@ -1,3 +1,14 @@
+2008-09-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20992
+        Build fails on GTK+ Mac OS
+
+        * wtf/ThreadingGtk.cpp: Remove platform ifdef as suggested by
+          Richard Hult.
+        (WTF::initializeThreading):
+
 2008-09-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
