@@ -234,7 +234,7 @@ namespace JSC {
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return false; }
 
         virtual bool isBlock() const JSC_FAST_CALL { return false; }
-        virtual bool isDoWhile() const JSC_FAST_CALL { return false; }
+        virtual bool isLoop() const JSC_FAST_CALL { return false; }
     protected:
         LabelStack m_labelStack;
 
@@ -1937,7 +1937,7 @@ namespace JSC {
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
-        virtual bool isDoWhile() const JSC_FAST_CALL { return true; }
+        virtual bool isLoop() const JSC_FAST_CALL { return true; }
     private:
         RefPtr<StatementNode> m_statement;
         RefPtr<ExpressionNode> m_expr;
@@ -1955,6 +1955,7 @@ namespace JSC {
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
+        virtual bool isLoop() const JSC_FAST_CALL { return true; }
     private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<StatementNode> m_statement;
@@ -1976,6 +1977,7 @@ namespace JSC {
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
+        virtual bool isLoop() const JSC_FAST_CALL { return true; }
     private:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
@@ -1992,6 +1994,7 @@ namespace JSC {
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
+        virtual bool isLoop() const JSC_FAST_CALL { return true; }
     private:
         Identifier m_ident;
         RefPtr<ExpressionNode> m_init;

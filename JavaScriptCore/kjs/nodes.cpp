@@ -1084,7 +1084,8 @@ static inline RegisterID* statementListEmitCode(StatementVector& statements, Cod
     StatementVector::iterator end = statements.end();
     for (StatementVector::iterator it = statements.begin(); it != end; ++it) {
         StatementNode* n = it->get();
-        generator.emitDebugHook(WillExecuteStatement, n->isDoWhile() ? n->lastLine() : n->firstLine(), n->lastLine());
+        if(!n->isLoop())
+            generator.emitDebugHook(WillExecuteStatement, n->firstLine(), n->lastLine());
         generator.emitNode(dst, n);
     }
     return 0;
@@ -1211,17 +1212,20 @@ RegisterID* DoWhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     RefPtr<LabelID> topOfLoop = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
 
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
+
     if (!m_statement->isBlock())
         generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());
 
     RefPtr<LabelID> continueTarget = generator.newLabel();
     RefPtr<LabelID> breakTarget = generator.newLabel();
-    
+
     generator.pushJumpContext(&m_labelStack, continueTarget.get(), breakTarget.get(), true);
     RefPtr<RegisterID> result = generator.emitNode(dst, m_statement.get());
     generator.popJumpContext();
-    
+
     generator.emitLabel(continueTarget.get());
+    generator.emitDebugHook(WillExecuteStatement, m_expr->lineNo(), m_expr->lineNo());
     RegisterID* cond = generator.emitNode(m_expr.get());
     generator.emitJumpIfTrue(cond, topOfLoop.get());
 
@@ -1242,12 +1246,13 @@ RegisterID* WhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
     if (!m_statement->isBlock())
         generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());
-    
+ 
     generator.pushJumpContext(&m_labelStack, continueTarget.get(), breakTarget.get(), true);
     generator.emitNode(dst, m_statement.get());
     generator.popJumpContext();
 
     generator.emitLabel(continueTarget.get());
+    generator.emitDebugHook(WillExecuteStatement, m_expr->lineNo(), m_expr->lineNo());
     RegisterID* cond = generator.emitNode(m_expr.get());
     generator.emitJumpIfTrue(cond, topOfLoop.get());
 
@@ -1261,9 +1266,11 @@ RegisterID* WhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
+
     if (m_expr1)
         generator.emitNode(ignoredResult(), m_expr1.get());
-    
+
     RefPtr<LabelID> topOfLoop = generator.newLabel();
     RefPtr<LabelID> beforeCondition = generator.newLabel();
     RefPtr<LabelID> continueTarget = generator.newLabel(); 
@@ -1290,6 +1297,7 @@ RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());
 
     generator.emitLabel(breakTarget.get());
+    
     return result.get();
 }
 
@@ -1371,6 +1379,8 @@ RegisterID* ForInNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     generator.pushJumpContext(&m_labelStack, continueTarget.get(), breakTarget.get(), true);
     generator.emitNode(dst, m_statement.get());
     generator.popJumpContext();
+
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
 
     if (!m_statement->isBlock())
         generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());

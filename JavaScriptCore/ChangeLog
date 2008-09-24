@@ -1,3 +1,29 @@
+2008-09-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        Bug 21031: Breakpoints in the condition of loops only breaks the first
+        time
+        - Now when setting breakpoints in the condition of a loop (for, while,
+        for in, and do while) will successfully break each time throught the
+        loop.
+        - For 'for' loops we need a little more complicated behavior that cannot
+        be accomplished without some more significant changes:
+        https://bugs.webkit.org/show_bug.cgi?id=21073
+
+        * kjs/nodes.cpp:
+        (JSC::statementListEmitCode): We don't want to blindly emit a debug hook
+        at the first line of loops, instead let the loop emit the debug hooks.
+        (JSC::DoWhileNode::emitCode):
+        (JSC::WhileNode::emitCode):
+        (JSC::ForNode::emitCode):
+        (JSC::ForInNode::emitCode):
+        * kjs/nodes.h:
+        (JSC::StatementNode::):
+        (JSC::DoWhileNode::):
+        (JSC::WhileNode::):
+        (JSC::ForInNode::):
+
 2008-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
