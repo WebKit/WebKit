@@ -923,13 +923,17 @@ HTMLTextAreaElement.prototype.moveCursorToEnd = function()
 
 Array.prototype.remove = function(value, onlyFirst)
 {
+    if (onlyFirst) {
+        var index = this.indexOf(value);
+        if (index !== -1)
+            this.splice(index, 1);
+        return;
+    }
+
     var length = this.length;
     for (var i = 0; i < length; ++i) {
-        if (this[i] === value) {
+        if (this[i] === value)
             this.splice(i, 1);
-            if (onlyFirst)
-                break;
-        }
     }
 }
 

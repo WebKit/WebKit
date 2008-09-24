@@ -1,5 +1,30 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug where inspecting a node after reloading the page
+        would not reveal the node in the DOM tree. The TreeOutline
+        was not being told to forget decendants of a removed child.
+        So old TreeElements would be found that are not in the tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21036
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/treeoutline.js:
+        (TreeOutline._removeChildAtIndex): Call _forgetChildrenRecursive
+        in addition to _forgetTreeElement.
+        (TreeOutline._removeChildren): Call _forgetChildrenRecursive
+        in addition to _forgetTreeElement.
+        (TreeOutline._rememberTreeElement): Use Array.indexOf to quickly
+        search for known elements.
+        (TreeOutline._forgetTreeElement): Use Array.remove to remove elements.
+        (TreeOutline._forgetChildrenRecursive): Recursively traverse the
+        descendants and call _forgetTreeElement.
+        * page/inspector/utilities.js:
+        (Array.prototype.remove): Speed up this function by using Array.indexOf
+        when onlyFirst is true.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where inspecting some short text nodes does
         not reveal them in the Elements panel DOM tree.
 

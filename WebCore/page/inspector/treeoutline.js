@@ -148,8 +148,11 @@ TreeOutline._removeChildAtIndex = function(childIndex)
     if (child.nextSibling)
         child.nextSibling.previousSibling = child.previousSibling;
 
-    if (child.treeOutline)
+    if (child.treeOutline) {
         child.treeOutline._forgetTreeElement(child);
+        child.treeOutline._forgetChildrenRecursive(child);
+    }
+
     child._detach();
     child.treeOutline = null;
     child.parent = null;
@@ -174,8 +177,12 @@ TreeOutline._removeChildren = function()
     for (var i = 0; i < this.children.length; ++i) {
         var child = this.children[i];
         child.deselect();
-        if (child.treeOutline)
+
+        if (child.treeOutline) {
             child.treeOutline._forgetTreeElement(child);
+            child.treeOutline._forgetChildrenRecursive(child);
+        }
+
         child._detach();
         child.treeOutline = null;
         child.parent = null;
@@ -220,9 +227,8 @@ TreeOutline.prototype._rememberTreeElement = function(element)
 
     // check if the element is already known
     var elements = this._knownTreeElements[element.identifier];
-    for (var i = 0; i < elements.length; ++i)
-        if (elements[i] === element)
-            return;
+    if (elements.indexOf(element) !== -1)
+        return;
 
     // add the element
     elements.push(element);
@@ -230,15 +236,16 @@ TreeOutline.prototype._rememberTreeElement = function(element)
 
 TreeOutline.prototype._forgetTreeElement = function(element)
 {
-    if (!this._knownTreeElements[element.identifier])
-        return;
+    if (this._knownTreeElements[element.identifier])
+        this._knownTreeElements[element.identifier].remove(element, true);
+}
 
-    var elements = this._knownTreeElements[element.identifier];
-    for (var i = 0; i < elements.length; ++i) {
-        if (elements[i] === element) {
-            elements.splice(i, 1);
-            break;
-        }
+TreeOutline.prototype._forgetChildrenRecursive = function(parentElement)
+{
+    var child = parentElement.children[0];
+    while (child) {
+        this._forgetTreeElement(child);
+        child = child.traverseNextTreeElement(false, this, true);
     }
 }
 
