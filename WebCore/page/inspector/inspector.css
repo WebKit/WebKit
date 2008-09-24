@@ -1545,6 +1545,14 @@ body.inactive .sidebar {
     border: 1px solid #aaa;
 }
 
+.data-grid .highlight {
+    background-color: rgb(255, 230, 179);
+}
+
+.data-grid tr.selected .highlight {
+    background-color: transparent;
+}
+
 .data-grid table {
     table-layout: fixed;
     border-spacing: 0;

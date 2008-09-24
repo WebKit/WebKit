@@ -104,6 +104,12 @@ WebInspector.ProfileView.prototype = {
         this.refresh();
     },
 
+    hide: function()
+    {
+        WebInspector.View.prototype.hide.call(this);
+        this._currentSearchResultIndex = -1;
+    },
+
     refresh: function()
     {
         var selectedProfileNode = this.dataGrid.selectedNode ? this.dataGrid.selectedNode.profileNode : null;
@@ -120,22 +126,6 @@ WebInspector.ProfileView.prototype = {
             selectedProfileNode._dataGridNode.selected = true;
     },
 
-    _changeView: function(event)
-    {
-        if (!event || !this.profile)
-            return;
-
-        if (event.target.selectedIndex == 1 && this.view == "Heavy") {
-            this._sortProfile(this.profile.treeProfile);
-            this.profile = this.profile.treeProfile;
-            this.view = "Tree"
-        } else if (event.target.selectedIndex == 0 && this.view == "Tree") {
-            this._sortProfile(this.profile.heavyProfile);
-            this.profile = this.profile.heavyProfile;
-            this.view = "Heavy"
-        }
-    },
-
     refreshShowAsPercents: function()
     {
         this._updatePercentButton();
@@ -145,6 +135,270 @@ WebInspector.ProfileView.prototype = {
             child.refresh();
             child = child.traverseNextNode(false, null, true);
         }
+    },
+
+    searchCanceled: function()
+    {
+        if (this._searchResults) {
+            for (var i = 0; i < this._searchResults.length; ++i) {
+                var profileNode = this._searchResults[i].profileNode;
+
+                delete profileNode._searchMatchedSelfColumn;
+                delete profileNode._searchMatchedTotalColumn;
+                delete profileNode._searchMatchedCallsColumn;
+                delete profileNode._searchMatchedFunctionColumn;
+
+                if (profileNode._dataGridNode)
+                    profileNode._dataGridNode.refresh();
+            }
+        }
+
+        delete this._searchFinishedCallback;
+        this._currentSearchResultIndex = -1;
+        this._searchResults = [];
+    },
+
+    performSearch: function(query, finishedCallback)
+    {
+        // Call searchCanceled since it will reset everything we need before doing a new search.
+        this.searchCanceled();
+
+        query = query.trimWhitespace();
+
+        if (!query.length)
+            return;
+
+        this._searchFinishedCallback = finishedCallback;
+
+        var greaterThan = (query.indexOf(">") === 0);
+        var lessThan = (query.indexOf("<") === 0);
+        var equalTo = (query.indexOf("=") === 0 || ((greaterThan || lessThan) && query.indexOf("=") === 1));
+        var percentUnits = (query.lastIndexOf("%") === (query.length - 1));
+        var millisecondsUnits = (query.length > 2 && query.lastIndexOf("ms") === (query.length - 2));
+        var secondsUnits = (!millisecondsUnits && query.lastIndexOf("s") === (query.length - 1));
+
+        var queryNumber = parseFloat(query);
+        if (greaterThan || lessThan || equalTo) {
+            if (equalTo && (greaterThan || lessThan))
+                queryNumber = parseFloat(query.substring(2));
+            else
+                queryNumber = parseFloat(query.substring(1));
+        }
+
+        var queryNumberMilliseconds = (secondsUnits ? (queryNumber * 1000) : queryNumber);
+
+        // Make equalTo implicitly true if it wasn't specified there is no other operator.
+        if (!isNaN(queryNumber) && !(greaterThan || lessThan))
+            equalTo = true;
+
+        function matchesQuery(profileNode)
+        {
+            delete profileNode._searchMatchedSelfColumn;
+            delete profileNode._searchMatchedTotalColumn;
+            delete profileNode._searchMatchedCallsColumn;
+            delete profileNode._searchMatchedFunctionColumn;
+
+            if (percentUnits) {
+                if (lessThan) {
+                    if (profileNode.selfPercent < queryNumber)
+                        profileNode._searchMatchedSelfColumn = true;
+                    if (profileNode.totalPercent < queryNumber)
+                        profileNode._searchMatchedTotalColumn = true;
+                } else if (greaterThan) {
+                    if (profileNode.selfPercent > queryNumber)
+                        profileNode._searchMatchedSelfColumn = true;
+                    if (profileNode.totalPercent > queryNumber)
+                        profileNode._searchMatchedTotalColumn = true;
+                }
+
+                if (equalTo) {
+                    if (profileNode.selfPercent == queryNumber)
+                        profileNode._searchMatchedSelfColumn = true;
+                    if (profileNode.totalPercent == queryNumber)
+                        profileNode._searchMatchedTotalColumn = true;
+                }
+            } else {
+                if (lessThan) {
+                    if (profileNode.selfTime < queryNumberMilliseconds)
+                        profileNode._searchMatchedSelfColumn = true;
+                    if (profileNode.totalTime < queryNumberMilliseconds)
+                        profileNode._searchMatchedTotalColumn = true;
+                } else if (greaterThan) {
+                    if (profileNode.selfTime > queryNumberMilliseconds)
+                        profileNode._searchMatchedSelfColumn = true;
+                    if (profileNode.totalTime > queryNumberMilliseconds)
+                        profileNode._searchMatchedTotalColumn = true;
+                }
+
+                if (equalTo) {
+                    if (profileNode.selfTime == queryNumberMilliseconds)
+                        profileNode._searchMatchedSelfColumn = true;
+                    if (profileNode.totalTime == queryNumberMilliseconds)
+                        profileNode._searchMatchedTotalColumn = true;
+                }
+
+                if (!millisecondsUnits && !secondsUnits) {
+                    if (equalTo && profileNode.numberOfCalls == queryNumber)
+                        profileNode._searchMatchedCallsColumn = true;
+                    if (greaterThan && profileNode.numberOfCalls > queryNumber)
+                        profileNode._searchMatchedCallsColumn = true;
+                    if (lessThan && profileNode.numberOfCalls < queryNumber)
+                        profileNode._searchMatchedCallsColumn = true;
+                }
+
+                if (profileNode.functionName.hasSubstring(query, true) || profileNode.url.hasSubstring(query, true))
+                    profileNode._searchMatchedFunctionColumn = true;
+            }
+
+            var matched = (profileNode._searchMatchedSelfColumn || profileNode._searchMatchedTotalColumn || profileNode._searchMatchedCallsColumn || profileNode._searchMatchedFunctionColumn);
+            if (matched && profileNode._dataGridNode)
+                profileNode._dataGridNode.refresh();
+
+            return matched;
+        }
+
+        var current = this.profile.head;
+        var ancestors = [];
+        var nextIndexes = [];
+        var startIndex = 0;
+
+        while (current) {
+            var children = current.children;
+            var childrenLength = children.length;
+
+            if (startIndex >= childrenLength) {
+                current = ancestors.pop();
+                startIndex = nextIndexes.pop();
+                continue;
+            }
+
+            for (var i = startIndex; i < childrenLength; ++i) {
+                var child = children[i];
+
+                if (matchesQuery(child)) {
+                    if (child._dataGridNode) {
+                        // The child has a data grid node already, no need to remember the ancestors.
+                        this._searchResults.push({ profileNode: child });
+                    } else {
+                        var ancestorsCopy = [].concat(ancestors);
+                        ancestorsCopy.push(current);
+                        this._searchResults.push({ profileNode: child, ancestors: ancestorsCopy });
+                    }
+                }
+
+                if (child.children.length) {
+                    ancestors.push(current);
+                    nextIndexes.push(i + 1);
+                    current = child;
+                    startIndex = 0;
+                    break;
+                }
+
+                if (i === (childrenLength - 1)) {
+                    current = ancestors.pop();
+                    startIndex = nextIndexes.pop();
+                }
+            }
+        }
+
+        finishedCallback(this, this._searchResults.length);
+    },
+
+    jumpToFirstSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        this._currentSearchResultIndex = 0;
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    jumpToLastSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        this._currentSearchResultIndex = (this._searchResults.length - 1);
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        if (++this._currentSearchResultIndex >= this._searchResults.length)
+            this._currentSearchResultIndex = 0;
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        if (!this._searchResults || !this._searchResults.length)
+            return;
+        if (--this._currentSearchResultIndex < 0)
+            this._currentSearchResultIndex = (this._searchResults.length - 1);
+        this._jumpToSearchResult(this._currentSearchResultIndex);
+    },
+
+    showingFirstSearchResult: function()
+    {
+        return (this._currentSearchResultIndex === 0);
+    },
+
+    showingLastSearchResult: function()
+    {
+        return (this._searchResults && this._currentSearchResultIndex === (this._searchResults.length - 1));
+    },
+
+    _jumpToSearchResult: function(index)
+    {
+        var searchResult = this._searchResults[index];
+        if (!searchResult)
+            return;
+
+        var profileNode = this._searchResults[index].profileNode;
+        if (!profileNode._dataGridNode && searchResult.ancestors) {
+            var ancestors = searchResult.ancestors;
+            for (var i = 0; i < ancestors.length; ++i) {
+                var ancestorProfileNode = ancestors[i];
+                var gridNode = ancestorProfileNode._dataGridNode;
+                if (gridNode)
+                    gridNode.expand();
+            }
+
+            // No need to keep the ancestors around.
+            delete searchResult.ancestors;
+        }
+
+        gridNode = profileNode._dataGridNode;
+        if (!gridNode)
+            return;
+
+        gridNode.reveal();
+        gridNode.select();
+    },
+
+    _changeView: function(event)
+    {
+        if (!event || !this.profile)
+            return;
+
+        if (event.target.selectedIndex == 1 && this.view == "Heavy") {
+            this._sortProfile(this.profile.treeProfile);
+            this.profile = this.profile.treeProfile;
+            this.view = "Tree";
+        } else if (event.target.selectedIndex == 0 && this.view == "Tree") {
+            this._sortProfile(this.profile.heavyProfile);
+            this.profile = this.profile.heavyProfile;
+            this.view = "Heavy";
+        }
+
+        if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
+            return;
+
+        // The current search needs to be performed again. First negate out previous match
+        // count by calling the search finished callback with a negative number of matches.
+        // Then perform the search again the with same query and callback.
+        this._searchFinishedCallback(this, -this._searchResults.length);
+        this.performSearch(this.currentQuery, this._searchFinishedCallback);
     },
 
     _percentClicked: function(event)
@@ -319,8 +573,19 @@ WebInspector.ProfileDataGridNode.prototype = {
     createCell: function(columnIdentifier)
     {
         var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
+
+        if (columnIdentifier === "self" && this.profileNode._searchMatchedSelfColumn)
+            cell.addStyleClass("highlight");
+        else if (columnIdentifier === "total" && this.profileNode._searchMatchedTotalColumn)
+            cell.addStyleClass("highlight");
+        else if (columnIdentifier === "calls" && this.profileNode._searchMatchedCallsColumn)
+            cell.addStyleClass("highlight");
+
         if (columnIdentifier !== "function")
             return cell;
+
+        if (this.profileNode._searchMatchedFunctionColumn)
+            cell.addStyleClass("highlight");
 
         if (this.profileNode.url) {
             var fileName = WebInspector.displayNameForURL(this.profileNode.url);

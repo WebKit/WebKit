@@ -107,6 +107,9 @@ WebInspector.ProfilesPanel.prototype = {
             }
         }
 
+        delete this.currentQuery;
+        this.searchCanceled();
+
         this._profiles = [];
         this._profilesIdMap = {};
         this._profileGroups = {};
@@ -187,26 +190,38 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile)
             return;
 
-        if (this.visibleProfileView)
-            this.visibleProfileView.hide();
+        if (this.visibleView)
+            this.visibleView.hide();
 
-        var view = profile._profileView;
-        if (!view) {
-            view = new WebInspector.ProfileView(profile);
-            profile._profileView = view;
-        }
+        var view = this.profileViewForProfile(profile);
 
         view.show(this.profileViews);
+
         profile._profilesTreeElement.select(true);
         profile._profilesTreeElement.reveal()
 
-        this.visibleProfileView = view;
+        this.visibleView = view;
 
         this.profileViewStatusBarItemsContainer.removeChildren();
 
         var statusBarItems = view.statusBarItems;
         for (var i = 0; i < statusBarItems.length; ++i)
             this.profileViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
+    },
+
+    showView: function(view)
+    {
+        // Always use the treeProfile, since the heavy profile might be showing.
+        this.showProfile(view.profile.treeProfile);
+    },
+
+    profileViewForProfile: function(profile)
+    {
+        if (!profile)
+            return null;
+        if (!profile._profileView)
+            profile._profileView = new WebInspector.ProfileView(profile);
+        return profile._profileView;
     },
 
     showProfileById: function(uid)
@@ -216,9 +231,9 @@ WebInspector.ProfilesPanel.prototype = {
 
     closeVisibleView: function()
     {
-        if (this.visibleProfileView)
-            this.visibleProfileView.hide();
-        delete this.visibleProfileView;
+        if (this.visibleView)
+            this.visibleView.hide();
+        delete this.visibleView;
     },
 
     displayTitleForProfileLink: function(title)
@@ -239,6 +254,44 @@ WebInspector.ProfilesPanel.prototype = {
         return title;
     },
 
+    get searchableViews()
+    {
+        var views = [];
+
+        const visibleView = this.visibleView;
+        if (visibleView && visibleView.performSearch)
+            views.push(visibleView);
+
+        var profilesLength = this._profiles.length;
+        for (var i = 0; i < profilesLength; ++i) {
+            var view = this.profileViewForProfile(this._profiles[i]);
+            if (!view.performSearch || view === visibleView)
+                continue;
+            views.push(view);
+        }
+
+        return views;
+    },
+
+    searchMatchFound: function(view, matches)
+    {
+        // Always use the treeProfile, since the heavy profile might be showing.
+        view.profile.treeProfile._profilesTreeElement.searchMatches = matches;
+    },
+
+    searchCanceled: function(startingNewSearch)
+    {
+        WebInspector.Panel.prototype.searchCanceled.call(this, startingNewSearch);
+
+        if (!this._profiles)
+            return;
+
+        for (var i = 0; i < this._profiles.length; ++i) {
+            var profile = this._profiles[i];
+            profile._profilesTreeElement.searchMatches = 0;
+        }
+    },
+
     _recordClicked: function()
     {
         this.recording = !this.recording;
@@ -248,7 +301,7 @@ WebInspector.ProfilesPanel.prototype = {
         else
             InspectorController.stopProfiling();
     },
-    
+
     setRecordingProfile: function(isProfiling)
     {
         this.recording = isProfiling;
@@ -365,6 +418,20 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     set subtitle(x)
     {
         // Can't change subtitle.
+    },
+
+    set searchMatches(matches)
+    {
+        if (!matches) {
+            if (!this.bubbleElement)
+                return;
+            this.bubbleElement.removeStyleClass("search-matches");
+            this.bubbleText = "";
+            return;
+        }
+
+        this.bubbleText = matches;
+        this.bubbleElement.addStyleClass("search-matches");
     }
 }
 

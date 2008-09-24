@@ -1,5 +1,51 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Adds search support to the Profiles panel.
+
+        The Profiles panel supports a few types of queries:
+         * Standard string matching for function names and file URLs.
+         * Greater than and less than search for numeric columns.
+           So a query of ">24" will match all rows that have calls
+           greater than 24. Or "<=42" will match all 42 or less.
+         * Percent and time units. Adding a unit of "s", "ms" or "%"
+           is supported and will match only the Self and Total columns.
+           So a query of ">1.25s" will match all rows that took longer
+           than 1.25 seconds.
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileView.prototype.hide): Reset _currentSearchResultIndex to -1. So the next time
+        it will start at the first result.
+        (WebInspector.ProfileView.prototype.refreshShowAsPercents): Moved from the bottom of the file.
+        (WebInspector.ProfileView.prototype.searchCanceled): Clear the search properties and refresh highlighted
+        data grid nodes.
+        (WebInspector.ProfileView.prototype.performSearch): Search the profile nodes.
+        (WebInspector.ProfileView.prototype.jumpToFirstSearchResult): Does what the function says. Calls _jumpToSearchResult.
+        (WebInspector.ProfileView.prototype.jumpToLastSearchResult): Ditto.
+        (WebInspector.ProfileView.prototype.jumpToNextSearchResult): Ditto.
+        (WebInspector.ProfileView.prototype.jumpToPreviousSearchResult): Ditto.
+        (WebInspector.ProfileView.prototype.showingFirstSearchResult): Does what the function says.
+        (WebInspector.ProfileView.prototype.showingLastSearchResult): Ditto.
+        (WebInspector.ProfileView.prototype._jumpToSearchResult): Select and reveal the profile node.
+        Expand all the ancestors first so the profile node will have a DataGridNode.
+        (WebInspector.ProfileView.prototype._changeView): Perform the search again on the new tree.
+        (WebInspector.ProfileDataGridNode.prototype.createCell): Add the highlight class to cells that
+        have search matches.
+        * page/inspector/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.reset): Call searchCanceled and delete the currentQuery.
+        (WebInspector.ProfilesPanel.prototype.showProfile): Use profileViewForProfile.
+        (WebInspector.ProfilesPanel.prototype.showView): Call showProfile. Used by Panel to show a view.
+        (WebInspector.ProfilesPanel.prototype.profileViewForProfile): Create the ProfileView if needed.
+        (WebInspector.ProfilesPanel.prototype.closeVisibleView): Renamed visibleProfileView  to visibleView.
+        (WebInspector.ProfilesPanel.prototype.get searchableViews): Return all the views.
+        (WebInspector.ProfilesPanel.prototype.searchMatchFound): Update the sidebar search matches.
+        (WebInspector.ProfilesPanel.prototype.searchCanceled): Clear all the sidebar search matches.
+        (WebInspector.ProfileSidebarTreeElement.prototype.set searchMatches): Set the class and bubbleText.
+        * page/inspector/inspector.css: New style rules for the cell highlight color.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Adds search support to the Resources and Scripts panels.
 
         https://bugs.webkit.org/show_bug.cgi?id=21005
