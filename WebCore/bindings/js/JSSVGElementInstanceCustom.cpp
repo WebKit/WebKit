@@ -39,12 +39,6 @@ JSValue* toJS(ExecState* exec, SVGElementInstance* object)
         return jsNull();
 
     return getDOMObjectWrapper<JSSVGElementInstance>(exec, object);
-
-    // FIXME: Activate this code, when the EventTargetSVGElementInstance transition is done.
-
-    // We don't create pure SVGElementInstance objects internally
-    ASSERT(object->isEventTargetSVGElementInstance());
-    return getDOMObjectWrapper<JSEventTargetSVGElementInstance>(exec, EventTargetSVGElementInstanceCast(object));
 }
 
 }

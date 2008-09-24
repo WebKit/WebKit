@@ -1,3 +1,33 @@
+2008-09-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Not reviewed. Try to fix win build.
+
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::toJS):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::removeAllChildrenInContainer):
+        (WebCore::appendChildToContainer):
+        (WebCore::Private::addChildNodesToDeletionQueue):
+
+2008-09-24  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add ContainerNodeAlgorithms.h, as central place to share algorithms
+        operating on TreeShared-derived classes with a Node-style interface.
+
+        This allows SVGElementInstance & ContainerNode to share code.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeAllChildren):
+        (WebCore::ContainerNode::addChild):
+        * dom/ContainerNode.h:
+        * dom/ContainerNodeAlgorithms.h: Added.
+        (WebCore::removeAllChildrenInContainer):
+        (WebCore::appendChildToContainer):
+        (WebCore::Private::NodeRemovalDispatcher::dispatch):
+        (WebCore::Private::addChildNodesToDeletionQueue):
+
 2008-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
