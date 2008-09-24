@@ -47,7 +47,7 @@ SVGElementInstance::SVGElementInstance(SVGUseElement* useElement, PassRefPtr<SVG
     ASSERT(m_element);
 
     // Register as instance for passed element.
-    m_element->document()->accessSVGExtensions()->mapInstanceToElement(this, m_element.get());
+    m_element->mapInstanceToElement(this);
 }
 
 SVGElementInstance::~SVGElementInstance()
@@ -56,7 +56,7 @@ SVGElementInstance::~SVGElementInstance()
         child->setParent(0);
 
     // Deregister as instance for passed element.
-    m_element->document()->accessSVGExtensions()->removeInstanceMapping(this, m_element.get());
+    m_element->removeInstanceMapping(this);
 }
 
 SVGElement* SVGElementInstance::correspondingElement() const
@@ -123,58 +123,6 @@ void SVGElementInstance::appendChild(PassRefPtr<SVGElementInstance> child)
     m_lastChild = child.get();
 }
 
-// Helper function for updateInstance
-static bool containsUseChildNode(Node* start)
-{
-    if (start->hasTagName(SVGNames::useTag))
-        return true;
-
-    for (Node* current = start->firstChild(); current; current = current->nextSibling()) {
-        if (containsUseChildNode(current))
-            return true;
-    }
-
-    return false;
-}
-
-void SVGElementInstance::updateInstance(SVGElement* element)
-{
-    ASSERT(element == m_element);
-    ASSERT(m_shadowTreeElement);
-
-    // TODO: Eventually come up with a more optimized updating logic for the cases below:
-    //
-    // <symbol>: We can't just clone the original element, we need to apply
-    // the same "replace by generated content" logic that SVGUseElement does.
-    //
-    // <svg>: <use> on <svg> is too rare to actually implement it faster.
-    // If someone still wants to do it: recloning, adjusting width/height attributes is enough.
-    //
-    // <use>: Too hard to get it right in a fast way. Recloning seems the only option.
-
-    if (m_element->hasTagName(SVGNames::symbolTag) ||
-        m_element->hasTagName(SVGNames::svgTag) ||
-        containsUseChildNode(m_element.get())) {
-        m_useElement->buildPendingResource();
-        return;
-    }
-
-    // For all other nodes this logic is sufficient.
-    RefPtr<Node> clone = m_element->cloneNode(true);
-    SVGUseElement::removeDisallowedElementsFromSubtree(clone.get());
-    SVGElement* svgClone = 0;
-    if (clone && clone->isSVGElement())
-        svgClone = static_cast<SVGElement*>(clone.get());
-    ASSERT(svgClone);
-
-    // Replace node in the <use> shadow tree
-    ExceptionCode ec = 0;
-    m_shadowTreeElement->parentNode()->replaceChild(clone.release(), m_shadowTreeElement, ec);
-    ASSERT(ec == 0);
-
-    m_shadowTreeElement = svgClone;
-}
-
 SVGElementInstance* SVGElementInstance::toSVGElementInstance()
 {
     return this;
@@ -183,6 +131,30 @@ SVGElementInstance* SVGElementInstance::toSVGElementInstance()
 EventTargetNode* SVGElementInstance::toNode()
 {
     return m_element.get();
+}
+
+ 
+void SVGElementInstance::updateAllInstancesOfElement(SVGElement* element)
+{
+    if (!element)
+        return;
+
+    HashSet<SVGElementInstance*> set = element->instancesForElement();
+    if (set.isEmpty())
+        return;
+
+    // Find all use elements referencing the instances - ask them _once_ to rebuild.
+    HashSet<SVGElementInstance*>::const_iterator it = set.begin();
+    const HashSet<SVGElementInstance*>::const_iterator end = set.end();
+
+    HashSet<SVGUseElement*> useHash;
+    for (; it != end; ++it)
+        useHash.add((*it)->correspondingUseElement());
+
+    HashSet<SVGUseElement*>::const_iterator itUse = useHash.begin();
+    const HashSet<SVGUseElement*>::const_iterator endUse = useHash.end();
+    for (; itUse != endUse; ++itUse)
+        (*itUse)->buildPendingResource();
 }
 
 }

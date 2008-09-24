@@ -311,11 +311,9 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
         static_cast<SVGStyledElement*>(target)->setInstanceUpdatesBlocked(false);
     
     // If the target element is used in an <use> instance tree, update that as well.
-    HashSet<SVGElementInstance*>* instances = document()->accessSVGExtensions()->instancesForElement(target);
-    if (!instances)
-        return;
-    HashSet<SVGElementInstance*>::iterator end = instances->end();
-    for (HashSet<SVGElementInstance*>::iterator it = instances->begin(); it != end; ++it) {
+    HashSet<SVGElementInstance*> instances = target->instancesForElement();
+    HashSet<SVGElementInstance*>::iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::iterator it = instances.begin(); it != end; ++it) {
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
         ASSERT(shadowTreeElement);
         if (isCSS)

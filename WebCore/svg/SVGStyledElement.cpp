@@ -189,16 +189,12 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
     // If we're the child of a resource element, be sure to invalidate it.
     invalidateResourcesInAncestorChain();
 
-    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
-    if (!extensions)
-        return;
-
     // TODO: Fix bug http://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
 
     // In case we're referenced by a <use> element, we have element instances registered
-    // to us in the SVGDocumentExtensions. If notifyAttributeChange() is called, we need
+    // to us in the SVGDocument. If svgAttributeChanged() is called, we need
     // to recursively update all children including ourselves.
-    updateElementInstance(extensions);
+    SVGElementInstance::updateAllInstancesOfElement(this);
 }
 
 void SVGStyledElement::invalidateResourcesInAncestorChain() const
@@ -224,45 +220,12 @@ void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange,
     if (document()->parsing())
         return;
 
-    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
-    if (!extensions)
-        return;
-
     // TODO: Fix bug http://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
 
     // In case we're referenced by a <use> element, we have element instances registered
-    // to us in the SVGDocumentExtensions. If childrenChanged() is called, we need
+    // to us in the SVGDocument. If childrenChanged() is called, we need
     // to recursively update all children including ourselves.
-    updateElementInstance(extensions);
-}
-
-void SVGStyledElement::updateElementInstance(SVGDocumentExtensions* extensions) const
-{
-    if (gElementsWithInstanceUpdatesBlocked && gElementsWithInstanceUpdatesBlocked->contains(this))
-        return;
-
-    SVGStyledElement* nonConstThis = const_cast<SVGStyledElement*>(this);
-    HashSet<SVGElementInstance*>* set = extensions->instancesForElement(nonConstThis);
-    if (!set || set->isEmpty())
-        return;
-
-    // We need to be careful here, as the instancesForElement
-    // hash set may be modified after we call updateInstance! 
-    HashSet<SVGElementInstance*> localCopy;
-
-    // First create a local copy of the hashset
-    HashSet<SVGElementInstance*>::const_iterator it1 = set->begin();
-    const HashSet<SVGElementInstance*>::const_iterator end1 = set->end();
-
-    for (; it1 != end1; ++it1)
-        localCopy.add(*it1);
-
-    // Actually nofify instances to update
-    HashSet<SVGElementInstance*>::const_iterator it2 = localCopy.begin();
-    const HashSet<SVGElementInstance*>::const_iterator end2 = localCopy.end();
-
-    for (; it2 != end2; ++it2)
-        (*it2)->updateInstance(nonConstThis);
+    SVGElementInstance::updateAllInstancesOfElement(this);
 }
 
 RenderStyle* SVGStyledElement::resolveStyle(RenderStyle* parentStyle)

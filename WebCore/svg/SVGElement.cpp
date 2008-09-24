@@ -119,6 +119,25 @@ SVGDocumentExtensions* SVGElement::accessDocumentSVGExtensions() const
     // global inclusion of Document.h in SVG code.
     return document() ? document()->accessSVGExtensions() : 0;
 }
+ 
+void SVGElement::mapInstanceToElement(SVGElementInstance* instance)
+{
+    ASSERT(instance);
+    ASSERT(!m_elementInstances.contains(instance));
+    m_elementInstances.add(instance);
+}
+ 
+void SVGElement::removeInstanceMapping(SVGElementInstance* instance)
+{
+    ASSERT(instance);
+    ASSERT(m_elementInstances.contains(instance));
+    m_elementInstances.remove(instance);
+}
+
+HashSet<SVGElementInstance*> SVGElement::instancesForElement() const
+{
+    return m_elementInstances;
+}
 
 void SVGElement::parseMappedAttribute(MappedAttribute* attr)
 {

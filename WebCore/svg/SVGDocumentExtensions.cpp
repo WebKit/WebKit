@@ -49,7 +49,6 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* doc)
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
     deleteAllValues(m_pendingResources);
-    deleteAllValues(m_elementInstances);
 }
 
 void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
@@ -131,37 +130,6 @@ std::auto_ptr<HashSet<SVGStyledElement*> > SVGDocumentExtensions::removePendingR
     std::auto_ptr<HashSet<SVGStyledElement*> > set(m_pendingResources.get(id));
     m_pendingResources.remove(id);
     return set;
-}
-
-void SVGDocumentExtensions::mapInstanceToElement(SVGElementInstance* instance, SVGElement* element)
-{
-    ASSERT(instance);
-    ASSERT(element);
-
-    if (m_elementInstances.contains(element))
-        m_elementInstances.get(element)->add(instance);
-    else {
-        HashSet<SVGElementInstance*>* set = new HashSet<SVGElementInstance*>();
-        set->add(instance);
-
-        m_elementInstances.add(element, set);
-    }
-}
-
-void SVGDocumentExtensions::removeInstanceMapping(SVGElementInstance* instance, SVGElement* element)
-{
-    ASSERT(instance);
-
-    if (!m_elementInstances.contains(element))
-        return;
-
-    m_elementInstances.get(element)->remove(instance);
-}
-
-HashSet<SVGElementInstance*>* SVGDocumentExtensions::instancesForElement(SVGElement* element) const
-{
-    ASSERT(element);
-    return m_elementInstances.get(element);
 }
 
 }

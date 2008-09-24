@@ -32,6 +32,7 @@ namespace WebCore {
 
     class AffineTransform;
     class Document;
+    class SVGElementInstance;
     class SVGDocumentExtensions;
     class SVGSVGElement;
 
@@ -86,6 +87,8 @@ namespace WebCore {
         virtual void updateAnimatedSVGAttribute(const String&) const;
         virtual void setSynchronizedSVGAttributes(bool) const;
 
+        HashSet<SVGElementInstance*> instancesForElement() const;
+ 
         // Inlined methods handling SVG property synchronization
         void invokeSVGPropertySynchronizer(const String& name) const
         {
@@ -115,10 +118,17 @@ namespace WebCore {
         }
 
     private:
+        friend class SVGElementInstance;
+
+        void mapInstanceToElement(SVGElementInstance*);
+        void removeInstanceMapping(SVGElementInstance*);
+
         virtual bool haveLoadedRequiredResources();
 
         Node* m_shadowParent;
         mutable HashMap<String, const SVGAnimatedPropertyBase*> m_svgPropertyMap;
+
+        HashSet<SVGElementInstance*> m_elementInstances;
     };
 
 } // namespace WebCore 

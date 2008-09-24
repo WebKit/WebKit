@@ -1,3 +1,36 @@
+2008-09-23  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Move mapInstanceToElement/removeInstanceMapping/instancesForElement
+        from SVGDocumentExtensions to SVGElement. It's more useful to store
+        the list of SVGElementInstances per SVGElement, instead of using
+        a document-wide hash for this purpose.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::mapInstanceToElement):
+        (WebCore::SVGElement::removeInstanceMapping):
+        (WebCore::SVGElement::instancesForElement):
+        * svg/SVGElement.h:
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        (WebCore::SVGElementInstance::~SVGElementInstance):
+        (WebCore::SVGElementInstance::updateAllInstancesOfElement):
+        * svg/SVGElementInstance.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::svgAttributeChanged):
+        (WebCore::SVGStyledElement::childrenChanged):
+        * svg/SVGStyledElement.h:
+
 2008-09-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.

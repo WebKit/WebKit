@@ -63,12 +63,11 @@ namespace WebCore {
         virtual EventTargetNode* toNode();
         virtual SVGElementInstance* toSVGElementInstance();
 
+        static void updateAllInstancesOfElement(SVGElement*);
+ 
     private: // Helper methods
         friend class SVGUseElement;
         void appendChild(PassRefPtr<SVGElementInstance> child);
-
-        friend class SVGStyledElement;
-        void updateInstance(SVGElement*);
 
     private:
         SVGUseElement* m_useElement;
