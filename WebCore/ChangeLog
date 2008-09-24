@@ -7740,6 +7740,9 @@
 
         Reviewed by Anders
 
+        https://bugs.webkit.org/show_bug.cgi?id=20556
+        <rdar://problem/6181817> REGRESSION (r35946): media/video-click-dlbclick-standalone.html [sic] fails because load never fires
+
         Fix regression I introducted in 35946
         Already covered by media/video-click-dlbclick-standalone.html
 
