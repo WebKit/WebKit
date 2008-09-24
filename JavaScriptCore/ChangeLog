@@ -1,5 +1,12 @@
 2008-09-24  Kevin McCullough  <kmccullough@apple.com>
 
+        Style change.
+
+        * kjs/nodes.cpp:
+        (JSC::statementListEmitCode):
+
+2008-09-24  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Geoff.
 
         Bug 21031: Breakpoints in the condition of loops only breaks the first
