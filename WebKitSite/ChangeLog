@@ -1,5 +1,22 @@
 2008-09-24  Timothy Hatcher  <timothy@apple.com>
 
+        Add new screenshots of the Web Inspector.
+
+        Not reviewed.
+
+        * blog-files/inspector-console-autocomplete.png: Added.
+        * blog-files/inspector-databases-panel-query-view.png: Added.
+        * blog-files/inspector-databases-panel.png: Added.
+        * blog-files/inspector-elements-panel.png: Added.
+        * blog-files/inspector-numeric-style-stepping.gif: Added.
+        * blog-files/inspector-profiles-panel.png: Added.
+        * blog-files/inspector-resources-panel.png: Added.
+        * blog-files/inspector-scripts-panel.png: Added.
+        * blog-files/inspector-status-bar-with-errors.png: Added.
+        * blog-files/inspector-toolbar.png: Added.
+
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
         Not reviewed.
 
         * demos/drosera/demo.js: Add some console.profile() calls.
