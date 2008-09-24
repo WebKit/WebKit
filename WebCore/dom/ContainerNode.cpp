@@ -23,6 +23,7 @@
 #include "config.h"
 #include "ContainerNode.h"
 
+#include "ContainerNodeAlgorithms.h"
 #include "DeleteButtonController.h"
 #include "Document.h"
 #include "Editor.h"
@@ -56,69 +57,15 @@ ContainerNode::ContainerNode(Document* doc, bool isElement)
 {
 }
 
-void ContainerNode::addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode* container)
-{
-    // We have to tell all children that their parent has died.
-    Node* n;
-    Node* next;
-    for (n = container->firstChild(); n != 0; n = next) {
-        ASSERT(!n->m_deletionHasBegun);
-        
-        next = n->nextSibling();
-        n->setPreviousSibling(0);
-        n->setNextSibling(0);
-        n->setParent(0);
-        
-        if (!n->refCount()) {
-#ifndef NDEBUG
-            n->m_deletionHasBegun = true;
-#endif
-            // Add the node to the list of nodes to be deleted.
-            // Reuse the nextSibling pointer for this purpose.
-            if (tail)
-                tail->setNextSibling(n);
-            else
-                head = n;
-            tail = n;
-        } else if (n->inDocument())
-            n->removedFromDocument();
-    }
-    container->setFirstChild(0);
-    container->setLastChild(0);
-}
-
 void ContainerNode::removeAllChildren()
 {
-    // List of nodes to be deleted.
-    Node* head = 0;
-    Node* tail = 0;
-
-    addChildNodesToDeletionQueue(head, tail, this);
-
-    Node* n;
-    Node* next;
-    while ((n = head) != 0) {
-        ASSERT(n->m_deletionHasBegun);
-
-        next = n->nextSibling();
-        n->setNextSibling(0);
-
-        head = next;
-        if (next == 0)
-            tail = 0;
-        
-        if (n->hasChildNodes())
-            addChildNodesToDeletionQueue(head, tail, static_cast<ContainerNode*>(n));
-        
-        delete n;
-    }
+    removeAllChildrenInContainer<Node, ContainerNode>(this);
 }
 
 ContainerNode::~ContainerNode()
 {
     removeAllChildren();
 }
-
 
 Node* ContainerNode::virtualFirstChild() const
 {
@@ -590,14 +537,8 @@ ContainerNode* ContainerNode::addChild(PassRefPtr<Node> newChild)
         return 0;
 
     forbidEventDispatch();
-    newChild->setParent(this);
     Node* last = m_lastChild;
-    if (m_lastChild) {
-        newChild->setPreviousSibling(m_lastChild);
-        m_lastChild->setNextSibling(newChild.get());
-    } else
-        m_firstChild = newChild.get();
-    m_lastChild = newChild.get();
+    appendChildToContainer<Node, ContainerNode>(newChild.get(), this);
     allowEventDispatch();
 
     document()->incDOMTreeVersion();
