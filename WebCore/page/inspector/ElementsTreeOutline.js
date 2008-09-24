@@ -38,21 +38,22 @@ WebInspector.ElementsTreeOutline.prototype = {
     set focusedDOMNode(x)
     {
         if (objectsAreSame(this._focusedDOMNode, x)) {
-            var nodeItem = this.revealNode(x);
-            if (nodeItem)
-                nodeItem.select();
+            this.revealAndSelectNode(x);
             return;
         }
 
         this._focusedDOMNode = x;
 
-        this.focusedNodeChanged();
+        this.revealAndSelectNode(x);
 
-        var nodeItem = this.revealNode(x);
-        if (nodeItem)
-            nodeItem.select();
+        // The revealAndSelectNode() method might find a different element if there is inlined text,
+        // and the select() call would change the focusedDOMNode and reenter this setter. So to
+        // avoid calling focusedNodeChanged() twice, first check if _focusedDOMNode is the same
+        // node as the one passed in.
+        if (objectsAreSame(this._focusedDOMNode, x))
+            this.focusedNodeChanged();
     },
-    
+
     update: function()
     {
         this.removeChildren();
@@ -64,14 +65,14 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (this.includeRootDOMNode) {
             treeElement = new WebInspector.ElementsTreeElement(this.rootDOMNode);
             treeElement.selectable = this.selectEnabled;
-            this.treeOutline.appendChild(treeElement);
+            this.appendChild(treeElement);
         } else {
             // FIXME: this could use findTreeElement to reuse a tree element if it already exists
             var node = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(this.rootDOMNode) : this.rootDOMNode.firstChild);
             while (node) {
                 treeElement = new WebInspector.ElementsTreeElement(node);
                 treeElement.selectable = this.selectEnabled;
-                this.treeOutline.appendChild(treeElement);
+                this.appendChild(treeElement);
                 node = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
             }
         }
@@ -83,26 +84,45 @@ WebInspector.ElementsTreeOutline.prototype = {
     {
         if (!this.selectedTreeElement)
             return;
-        var element = this.selectedTreeElement;
+        var element = this.treeOutline.selectedTreeElement;
         element.updateSelection();
     },
 
     focusedNodeChanged: function(forceUpdate) {},
 
-    revealNode: function(node)
+    findTreeElement: function(node, isAncestor, getParent, equal)
     {
-        var nodeItem = this.treeOutline.findTreeElement(node, isAncestorIncludingParentFrames.bind(this), parentNodeOrFrameElement.bind(this), objectsAreSame);
-        if (!nodeItem)
+        if (typeof isAncestor === "undefined")
+            isAncestor = isAncestorIncludingParentFrames;
+        if (typeof getParent === "undefined")
+            getParent = parentNodeOrFrameElement;
+        if (typeof equal === "undefined")
+            equal = objectsAreSame;
+
+        var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestor, getParent, equal);
+        if (!treeElement && node.nodeType === Node.TEXT_NODE) {
+            // The text node might have been inlined if it was short, so try to find the parent element.
+            treeElement = TreeOutline.prototype.findTreeElement.call(this, node.parentNode, isAncestor, getParent, equal);
+        }
+
+        return treeElement;
+    },
+
+    revealAndSelectNode: function(node)
+    {
+        if (!node)
             return;
 
-        nodeItem.reveal();
-        return nodeItem;
+        var treeElement = this.findTreeElement(node);
+        if (!treeElement)
+            return;
+
+        treeElement.reveal();
+        treeElement.select();
     },
 
     _treeElementFromEvent: function(event)
     {
-        var outline = this.treeOutline;
-
         var root = this.element;
 
         // We choose this X coordinate based on the knowledge that our list
@@ -114,13 +134,13 @@ WebInspector.ElementsTreeOutline.prototype = {
         // Our list items have 1-pixel cracks between them vertically. We avoid
         // the cracks by checking slightly above and slightly below the mouse
         // and seeing if we hit the same element each time.
-        var elementUnderMouse = outline.treeElementFromPoint(x, y);
-        var elementAboveMouse = outline.treeElementFromPoint(x, y - 2);
+        var elementUnderMouse = this.treeElementFromPoint(x, y);
+        var elementAboveMouse = this.treeElementFromPoint(x, y - 2);
         var element;
         if (elementUnderMouse === elementAboveMouse)
             element = elementUnderMouse;
         else
-            element = outline.treeElementFromPoint(x, y + 2);
+            element = this.treeElementFromPoint(x, y + 2);
 
         return element;
     },
@@ -166,8 +186,6 @@ WebInspector.ElementsTreeOutline.prototype = {
 }
 
 WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
-
-
 
 WebInspector.ElementsTreeElement = function(node)
 {

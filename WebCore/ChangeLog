@@ -1,5 +1,34 @@
 2008-09-23  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug where inspecting some short text nodes does
+        not reveal them in the Elements panel DOM tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21035
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode):
+        The revealAndSelectNode() method might find a different element
+        if there is inlined text, and the select() call would change the
+        focusedDOMNode and reenter this setter. So to avoid calling
+        focusedNodeChanged() twice, first check if _focusedDOMNode is
+        the same node as the one passed in.
+        (WebInspector.ElementsTreeOutline.prototype.update): Remove use of
+        this.treeOutline, since this is the TreeOutline.
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement): Added.
+        Provides default functions for isAncestor, getParet and equal.
+        Calls the base protoype's findTreeElement. If that returns null
+        and the node is a text node, try finding it's parent.
+        (WebInspector.ElementsTreeOutline.prototype.revealNode): Removed.
+        Renamed to revealAndSelectNode.
+        (WebInspector.ElementsTreeOutline.prototype.revealAndSelectNode):
+        Selects and reveals the node passed in. Use the simple findTreeElement.
+        (WebInspector.ElementsTreeOutline.prototype._treeElementFromEvent):
+        Remove use of this.treeOutline, since this is the TreeOutline.
+
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
         Fixes an exception that happened when removing a Resource
         from the ResourcesPanel.
 
