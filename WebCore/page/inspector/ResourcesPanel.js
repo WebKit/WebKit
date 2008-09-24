@@ -311,7 +311,7 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         this.resourcesTreeElement.removeChild(resource._resourcesTreeElement);
-        this.resourcesGraphsElement.removeChild(resource._resourcesTreeElement._resourceGraph);
+        this.resourcesGraphsElement.removeChild(resource._resourcesTreeElement._resourceGraph.graphElement);
 
         resource.warnings = 0;
         resource.errors = 0;

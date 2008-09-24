@@ -1,3 +1,16 @@
+2008-09-23  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes an exception that happened when removing a Resource
+        from the ResourcesPanel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21034
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInspctor.ResourcesPanel.prototype.removeResource):
+        Remove the graphElement.
+
 2008-09-23  Kevin McCullough  <kmccullough@apple.com>
 
         Fixed "Time" to "Tim"
