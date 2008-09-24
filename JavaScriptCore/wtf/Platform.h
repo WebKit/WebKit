@@ -335,10 +335,6 @@
 #define ENABLE_NETSCAPE_PLUGIN_API 1
 #endif
 
-#if !defined(ENABLE_DASHBOARD_SUPPORT)
-#define ENABLE_DASHBOARD_SUPPORT 0
-#endif
-
 #if !defined(ENABLE_SAMPLING_TOOL)
 #define ENABLE_SAMPLING_TOOL 0
 #endif
