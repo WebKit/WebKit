@@ -1,3 +1,14 @@
+2008-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove staticFunctionGetter.  There is only one remaining user of
+        staticFunctionGetter and it can be converted to use setUpStaticFunctionSlot.
+
+        * JavaScriptCore.exp:
+        * kjs/lookup.cpp:
+        * kjs/lookup.h:
+
 2008-09-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

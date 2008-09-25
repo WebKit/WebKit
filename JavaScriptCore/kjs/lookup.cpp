@@ -54,21 +54,6 @@ void HashTable::deleteTable() const
     }
 }
 
-JSValue* staticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
-{
-    // Look for cached value in dynamic map of properties (in JSObject)
-    ASSERT(slot.slotBase()->isObject());
-    JSObject* thisObj = static_cast<JSObject*>(slot.slotBase());
-    JSValue* cachedVal = thisObj->getDirect(propertyName);
-    if (cachedVal)
-        return cachedVal;
-
-    const HashEntry* entry = slot.staticEntry();
-    JSValue* val = new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
-    thisObj->putDirect(propertyName, val, entry->attributes);
-    return val;
-}
-
 void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
     ASSERT(entry->attributes & Function);

@@ -96,12 +96,6 @@ namespace JSC {
         void createTable(JSGlobalData*) const;
     };
 
-    /**
-     * @internal
-     * Helper for getStaticPropertySlot
-     */
-    JSValue* staticFunctionGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
-
     void setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
 
     /**

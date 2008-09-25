@@ -1,3 +1,13 @@
+2008-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove staticFunctionGetter.  There is only one remaining user of
+        staticFunctionGetter and it can be converted to use setUpStaticFunctionSlot.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot):
+
 2008-09-24  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dan Bernstein.
