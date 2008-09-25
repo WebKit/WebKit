@@ -1,3 +1,14 @@
+2008-09-24  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 20999: Inspector hover to select does not work properly on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=20999
+        <rdar://problem/6236524>
+
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::show):
+
 2008-09-24  Darin Adler  <darin@apple.com>
 
         * English.lproj/Localizable.strings: Updated for recent changes.
