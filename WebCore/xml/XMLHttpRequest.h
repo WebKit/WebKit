@@ -70,6 +70,7 @@ public:
     const JSC::UString& responseText() const;
     Document* responseXML() const;
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
+    void setLastSendURL(JSC::UString url) { m_lastSendURL = url; }
 
     XMLHttpRequestUpload* upload();
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
@@ -221,6 +222,7 @@ private:
     long long m_receivedLength;
     
     unsigned m_lastSendLineNumber;
+    JSC::UString m_lastSendURL;
 };
 
 } // namespace WebCore

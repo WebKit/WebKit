@@ -1,5 +1,20 @@
 2008-09-25  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 21105: XHRs logged in the console may show the wrong URL for the
+        source
+        - Get the url at the time of the send() and pass it on to the XHR.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::setLastSendURL):
+
+2008-09-25  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Geoff and Tim.
 
         Bug 20322: XHRs logged in the console do not have line numbers

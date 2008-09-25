@@ -258,6 +258,7 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     JSValue* function;
     exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
     impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
+    impl()->setLastSendURL(sourceURL);
 
     setDOMException(exec, ec);
     return jsUndefined();
