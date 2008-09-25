@@ -1,3 +1,27 @@
+2008-09-25  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Timothy Hatcher
+
+        https://bugs.webkit.org/show_bug.cgi?id=21052
+        Generalize id selector special case for querySelectorAll
+        
+        By checking the element we get with getElementById against the selector, we can use the special case in many more circumstances.
+        Changes results on http://native.khan.mozilla.org 
+        from
+            #title: 2ms
+            h1#title: 55ms
+            div #title: 55ms
+
+        to:
+            #title: 1ms
+            h1#title: 2ms
+            div #title: 5ms
+        
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+
 2008-09-25  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21118

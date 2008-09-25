@@ -46,15 +46,14 @@ PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, CSSSelector* q
     AtomicString selectorValue = querySelector->m_value;
     bool strictParsing = !document->inCompatMode();
 
-    if (strictParsing && rootNode->inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id
-            && !querySelector->hasTag() && !querySelector->m_tagHistory && !querySelector->m_simpleSelector
-            && !document->containsMultipleElementsWithId(selectorValue)) {
+    CSSStyleSelector::SelectorChecker selectorChecker(document, strictParsing);
+
+    if (strictParsing && querySelector->m_match == CSSSelector::Id && rootNode->inDocument() && !querySelector->next() && !document->containsMultipleElementsWithId(selectorValue)) {
         ASSERT(querySelector->m_attr == idAttr);
         Element* element = document->getElementById(selectorValue);
-        if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode)))
+        if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode)) && selectorChecker.checkSelector(querySelector, element))
             nodes.append(element);
     } else {
-        CSSStyleSelector::SelectorChecker selectorChecker(document, strictParsing);
         for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode)) {
             if (n->isElementNode()) {
                 Element* element = static_cast<Element*>(n);

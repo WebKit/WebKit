@@ -1363,17 +1363,16 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
         }
     }
 
+    CSSStyleSelector::SelectorChecker selectorChecker(document(), strictParsing);
+
     // FIXME: we could also optimize for the the [id="foo"] case
-    if (strictParsing && inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id
-            && !querySelector->hasTag() && !querySelector->m_tagHistory && !querySelector->m_simpleSelector) {
+    if (strictParsing && querySelector->m_match == CSSSelector::Id && inDocument() && !querySelector->next()) {
         ASSERT(querySelector->m_attr == idAttr);
         Element* element = document()->getElementById(querySelector->m_value);
-        if (element && (isDocumentNode() || element->isDescendantOf(this)))
+        if (element && (isDocumentNode() || element->isDescendantOf(this)) && selectorChecker.checkSelector(querySelector.get(), element))
             return element;
         return 0;
     }
-
-    CSSStyleSelector::SelectorChecker selectorChecker(document(), strictParsing);
 
     // FIXME: We can speed this up by implementing caching similar to the one use by getElementById
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
