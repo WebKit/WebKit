@@ -58,7 +58,6 @@ win32-g++ {
 }
 
 # Optional components (look for defs in config.h and included files!)
-!contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=.): DEFINES += ENABLE_CROSS_DOCUMENT_MESSAGING=1
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
@@ -246,6 +245,9 @@ IDL_BINDINGS += \
 #    dom/EventTarget.idl \
     dom/KeyboardEvent.idl \
     dom/MouseEvent.idl \
+    dom/MessageChannel.idl \
+    dom/MessageEvent.idl \
+    dom/MessagePort.idl \
     dom/MutationEvent.idl \
     dom/NamedNodeMap.idl \
     dom/Node.idl \
@@ -419,6 +421,9 @@ SOURCES += \
     bindings/js/JSXSLTProcessorCustom.cpp \
     bindings/js/JSPluginCustom.cpp \
     bindings/js/JSPluginArrayCustom.cpp \
+    bindings/js/JSMessageChannelConstructor.cpp \
+    bindings/js/JSMessageChannelCustom.cpp \
+    bindings/js/JSMessagePortCustom.cpp \
     bindings/js/JSMimeTypeArrayCustom.cpp \
     bindings/js/JSDOMBinding.cpp \
     bindings/js/JSEventListener.cpp \
@@ -524,6 +529,9 @@ SOURCES += \
     dom/ExceptionCode.cpp \
     dom/KeyboardEvent.cpp \
     dom/MappedAttribute.cpp \
+    dom/MessageChannel.cpp \
+    dom/MessageEvent.cpp \
+    dom/MessagePort.cpp \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
@@ -1120,16 +1128,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
                 -lversion
         }
 
-}
-
-contains(DEFINES, ENABLE_CROSS_DOCUMENT_MESSAGING=1) {
-    FEATURE_DEFINES_JAVASCRIPT += ENABLE_CROSS_DOCUMENT_MESSAGING=1
-
-    SOURCES += \
-        dom/MessageEvent.cpp
-
-    IDL_BINDINGS += \
-        dom/MessageEvent.idl
 }
 
 contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {

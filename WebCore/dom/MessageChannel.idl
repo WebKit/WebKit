@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 Henry Mason (hmason@mac.com)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +24,13 @@
  *
  */
 
-#include "config.h"
-#include "MessageEvent.h"
+module events {
 
-#include "DOMWindow.h"
-#include "EventNames.h"
+    interface [CustomMarkFunction] MessageChannel {
 
-namespace WebCore {
+        readonly attribute MessagePort port1;
+        readonly attribute MessagePort port2;
 
-using namespace EventNames;
+    };
 
-MessageEvent::MessageEvent()
-{
 }
-
-MessageEvent::MessageEvent(const String& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassRefPtr<MessagePort> messagePort)
-    : Event(messageEvent, false, true)
-    , m_data(data)
-    , m_origin(origin)
-    , m_lastEventId(lastEventId)
-    , m_source(source)
-    , m_messagePort(messagePort)
-{
-}
-
-MessageEvent::~MessageEvent()
-{
-}
-
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort* messagePort)
-{
-    if (dispatched())
-        return;
-        
-    initEvent(type, canBubble, cancelable);
-    
-    m_data = data;
-    m_origin = origin;
-    m_lastEventId = lastEventId;
-    m_source = source;
-    m_messagePort = messagePort;
-}
-
-bool MessageEvent::isMessageEvent() const 
-{
-    return true;
-}
-
-} // namespace WebCore

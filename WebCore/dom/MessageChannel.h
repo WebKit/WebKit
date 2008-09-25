@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 Henry Mason (hmason@mac.com)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +24,33 @@
  *
  */
 
-#include "config.h"
-#include "MessageEvent.h"
+#ifndef MessageChannel_h
+#define MessageChannel_h
 
-#include "DOMWindow.h"
-#include "EventNames.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-using namespace EventNames;
+    class Document;
+    class MessagePort;
 
-MessageEvent::MessageEvent()
-{
-}
+    class MessageChannel : public RefCounted<MessageChannel> {
+    public:
+        static PassRefPtr<MessageChannel> create(Document* document) { return adoptRef(new MessageChannel(document)); }
+        ~MessageChannel();
 
-MessageEvent::MessageEvent(const String& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassRefPtr<MessagePort> messagePort)
-    : Event(messageEvent, false, true)
-    , m_data(data)
-    , m_origin(origin)
-    , m_lastEventId(lastEventId)
-    , m_source(source)
-    , m_messagePort(messagePort)
-{
-}
+        MessagePort* port1() const { return m_port1.get(); }
+        MessagePort* port2() const { return m_port2.get(); }
 
-MessageEvent::~MessageEvent()
-{
-}
+    private:
+        MessageChannel(Document*);
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort* messagePort)
-{
-    if (dispatched())
-        return;
-        
-    initEvent(type, canBubble, cancelable);
-    
-    m_data = data;
-    m_origin = origin;
-    m_lastEventId = lastEventId;
-    m_source = source;
-    m_messagePort = messagePort;
-}
-
-bool MessageEvent::isMessageEvent() const 
-{
-    return true;
-}
+        RefPtr<MessagePort> m_port1;
+        RefPtr<MessagePort> m_port2;
+    };
 
 } // namespace WebCore
+
+#endif // MessageChannel_h

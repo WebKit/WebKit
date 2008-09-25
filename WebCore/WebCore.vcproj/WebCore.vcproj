@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="WebCore"
 	ProjectGUID="{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
 	RootNamespace="WebCore"
@@ -984,7 +984,15 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageChannel.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessageEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMessagePort.h"
 				>
 			</File>
 			<File
@@ -3355,10 +3363,6 @@
 				RelativePath="..\platform\ScrollTypes.h"
 				>
 			</File>
-                        <File
-				RelativePath="..\platform\ScrollView.cpp"
-				>
-			</File>
 			<File
 				RelativePath="..\platform\ScrollView.h"
 				>
@@ -5460,6 +5464,26 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\network\cf\DNSCFNet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\platform\network\cf\FormDataStreamCFNet.cpp"
 						>
 						<FileConfiguration
@@ -5581,26 +5605,6 @@
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\ResourceRequestCFNet.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\network\cf\DNSCFNet.cpp"
 						>
 						<FileConfiguration
 							Name="Debug_Cairo|Win32"
@@ -10754,6 +10758,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\MessageChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\MessageChannel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\MessageEvent.cpp"
 				>
 				<FileConfiguration
@@ -10767,6 +10779,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\MessageEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\MessagePort.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\MessagePort.h"
 				>
 			</File>
 			<File
@@ -11346,6 +11366,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\dom\XMLTokenizer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\XMLTokenizerLibxml2.cpp"
 				>
 				<FileConfiguration
@@ -11356,10 +11380,6 @@
 						WholeProgramOptimization="true"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\XMLTokenizer.h"
-				>
 			</File>
 		</Filter>
 		<Filter
@@ -13409,11 +13429,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLAllCollection.h"
+					RelativePath="..\bindings\js\JSHTMLAllCollection.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLAllCollection.cpp"
+					RelativePath="..\bindings\js\JSHTMLAllCollection.h"
 					>
 				</File>
 				<File
@@ -13514,6 +13534,22 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSLocationCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSMessageChannelConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSMessageChannelConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSMessageChannelCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSMessagePortCustom.cpp"
 					>
 				</File>
 				<File

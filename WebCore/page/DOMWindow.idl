@@ -151,7 +151,7 @@ module window {
                  attribute [Replaceable] Console console;
 
         // cross-document messaging
-        [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in DOMString targetOrigin)
+        [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in [Optional] MessagePort messagePort, in DOMString targetOrigin)
             raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT)

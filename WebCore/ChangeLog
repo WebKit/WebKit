@@ -1,3 +1,115 @@
+2008-09-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig, Anders Carlsson, and (unofficially) Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20879
+        Implement HTML5 channel messaging
+
+        Tests: fast/events/message-channel-gc.html
+               fast/events/message-port-deleted-document.html
+               fast/events/message-port-deleted-frame.html
+               fast/events/message-port-inactive-document.html
+               fast/events/message-port.html
+               http/tests/security/MessagePort/event-listener-context.html
+
+        * Configurations/WebCore.xcconfig:
+        Removed unused  ENABLE_CROSS_DOCUMENT_MESSAGING macro.
+
+        * DerivedSources.make:
+        Added MessageChannel and MessagePort.
+
+        * WebCore.pro: Made MessageEvent compilation unconditional, as it could not possibly be
+        turmed off anyway. Added new files.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added new files.
+
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowBase.cpp: (WebCore::JSDOMWindowBase::getValueProperty):
+        Added suport for window.MessageChannel constructor.
+
+        * bindings/js/JSDOMWindowCustom.cpp: (WebCore::JSDOMWindow::postMessage):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        Added support for three-argument postMessage (that posts a MessagePort).
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toMessagePort):
+        * dom/EventTarget.h:
+        * bindings/js/JSEventTargetBase.cpp: (WebCore::toJS): Added MessagePort as yet another
+        EventTarget variant.
+
+        * bindings/js/JSMessageChannelConstructor.h:
+        * bindings/js/JSMessageChannelConstructor.cpp: Added a custom constructor, so that it could
+        take a browsing context (document) parameter.
+
+        * bindings/js/JSMessageChannelCustom.cpp: Added.
+        (WebCore::JSMessageChannel::mark): JSMessageChannel uses a custom mark function to mark
+        port1 and port2 that it owns.
+
+        * bindings/js/JSMessagePortCustom.cpp: Added.
+        (WebCore::JSMessagePort::startConversation):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        (WebCore::JSMessagePort::dispatchEvent):
+        (WebCore::JSMessagePort::setOnmessage):
+        (WebCore::JSMessagePort::onmessage):
+        (WebCore::JSMessagePort::setOnclose):
+        (WebCore::JSMessagePort::onclose):
+        (WebCore::JSMessagePort::mark):
+        * dom/MessagePort.cpp: Added.
+        * dom/MessagePort.h: Added.
+        * dom/MessagePort.idl: Added.
+        Added a MessagePort implementation. Currently, it is not thread-safe at all, and only works
+        with Documents as contexts, but in the future, it will be used for communication with worker
+        threads.
+
+        * bindings/objc/DOMInternal.h: Include "DOMMessagePortInternal.h". The new APIs do not
+        really have Obj-C bindings, as they are far from being final, but a MessagePort stub is
+        needed for MessageEvent.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Include PlatformString.h for MessagePort happiness.
+
+        * dom/Document.cpp:
+        (WebCore::MessagePortTimer::MessagePortTimer):
+        (WebCore::MessagePortTimer::fired):
+        (WebCore::Document::processMessagePortMessagesSoon):
+        (WebCore::Document::~Document):
+        (WebCore::Document::dispatchMessagePortEvents):
+        (WebCore::Document::createdMessagePort):
+        (WebCore::Document::destroyedMessagePort):
+        * dom/Document.h:
+        Document keeps track of all MessagePort objects that were created when it was fully active
+        in its context.
+
+        * dom/EventNames.h: Added closeEvent.
+
+        * dom/MessageChannel.cpp: Added.
+        (WebCore::MessageChannel::MessageChannel):
+        (WebCore::MessageChannel::~MessageChannel):
+        * dom/MessageChannel.h: Added.
+        (WebCore::MessageChannel::create):
+        (WebCore::MessageChannel::port1):
+        (WebCore::MessageChannel::port2):
+        * dom/MessageChannel.idl: Added.
+        Addded JSMessageChannel implementation.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::messagePort):
+        * dom/MessageEvent.idl:
+        MessageEvent has a MessagePort member now, making it possible to pass ports across
+        documents.
+
 2008-09-25  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Eric Seidel

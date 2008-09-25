@@ -28,6 +28,8 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "JSDOMWindowShell.h"
+#include "JSMessagePort.h"
+#include "MessagePort.h"
 #include "Settings.h"
 #include "ScriptController.h"
 #include <kjs/JSObject.h>
@@ -175,12 +177,14 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     if (exec->hadException())
         return jsUndefined();
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 1));
+    MessagePort* messagePort = (args.size() == 2) ? 0 : toMessagePort(args.at(exec, 1));
+
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, (args.size() == 2) ? 1 : 2));
     if (exec->hadException())
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    window->postMessage(message, targetOrigin, source, ec);
+    window->postMessage(message, messagePort, targetOrigin, source, ec);
     setDOMException(exec, ec);
 
     return jsUndefined();

@@ -31,6 +31,7 @@
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 #include "JSEventTargetNode.h"
+#include "JSMessagePort.h"
 #include "JSXMLHttpRequestUpload.h"
 #include <kjs/Error.h>
 
@@ -294,6 +295,9 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
         // DOMApplicationCache is always created via JS, so we don't need to use cacheDOMObject() here.
         return getCachedDOMObjectWrapper(cache);
 #endif
+
+    if (MessagePort* messagePort = target->toMessagePort())
+        return toJS(exec, messagePort);
     
     ASSERT_NOT_REACHED();
     return jsNull();

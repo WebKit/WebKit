@@ -85,6 +85,7 @@ namespace WebCore {
     class ImageLoader;
     class IntPoint;
     class JSNode;
+    class MessagePort;
     class MouseEventWithHitTestResults;
     class NodeFilter;
     class NodeIterator;
@@ -762,7 +763,12 @@ public:
     // Extension for manipulating canvas drawing contexts for use in CSS
     CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
-    
+
+    void processMessagePortMessagesSoon();
+    void dispatchMessagePortEvents();
+    void createdMessagePort(MessagePort*);
+    void destroyedMessagePort(MessagePort*);
+
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void initDNSPrefetch();
     void parseDNSPrefetchControlHeader(const String&);
@@ -919,6 +925,9 @@ private:
     bool m_xmlStandalone;
 
     String m_contentLanguage;
+
+    bool m_firedMessagePortTimer;
+    HashSet<MessagePort*> m_messagePorts;
 
 public:
     bool inPageCache();

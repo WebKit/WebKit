@@ -160,7 +160,9 @@ DOM_CLASSES = \
     Location \
     MediaError \
     MediaList \
+    MessageChannel \
     MessageEvent \
+    MessagePort \
     MimeType \
     MimeTypeArray \
     MouseEvent \

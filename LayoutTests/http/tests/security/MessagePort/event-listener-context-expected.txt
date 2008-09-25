@@ -1,0 +1,4 @@
+Test that JS code cannot be planted into an unsuspecting subframe via MessagePort and navigation.
+
+PASS
+

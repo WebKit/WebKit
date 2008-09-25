@@ -41,9 +41,10 @@ namespace WebCore {
     class Event;
     class EventListener;
     class EventTargetNode;
+    class MessagePort;
+    class RegisteredEventListener;
     class SVGElementInstance;
     class XMLHttpRequest;
-    class RegisteredEventListener;
     class XMLHttpRequestUpload;
 
     typedef int ExceptionCode;
@@ -53,6 +54,7 @@ namespace WebCore {
 
     class EventTarget {
     public:
+        virtual MessagePort* toMessagePort();
         virtual EventTargetNode* toNode();
         virtual XMLHttpRequest* toXMLHttpRequest();
         virtual XMLHttpRequestUpload* toXMLHttpRequestUpload();

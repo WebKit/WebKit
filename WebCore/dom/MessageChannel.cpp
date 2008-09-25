@@ -1,12 +1,5 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,68 +25,21 @@
  */
 
 #include "config.h"
-#include "EventTarget.h"
+#include "MessageChannel.h"
+
+#include "MessagePort.h"
 
 namespace WebCore {
 
-#ifndef NDEBUG
-static int gEventDispatchForbidden = 0;
-#endif
+MessageChannel::MessageChannel(Document* document)
+    : m_port1(MessagePort::create(document))
+    , m_port2(MessagePort::create(document))
+{
+    MessagePort::entangle(m_port1.get(), m_port2.get());
+}
 
-EventTarget::~EventTarget()
+MessageChannel::~MessageChannel()
 {
 }
 
-EventTargetNode* EventTarget::toNode()
-{
-    return 0;
-}
-
-XMLHttpRequest* EventTarget::toXMLHttpRequest()
-{
-    return 0;
-}
-
-XMLHttpRequestUpload* EventTarget::toXMLHttpRequestUpload()
-{
-    return 0;
-}
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-DOMApplicationCache* EventTarget::toDOMApplicationCache()
-{
-    return 0;
-}
-#endif
-
-#if ENABLE(SVG)
-SVGElementInstance* EventTarget::toSVGElementInstance()
-{
-    return 0;
-}
-#endif
-
-MessagePort* EventTarget::toMessagePort()
-{
-    return 0;
-}
-
-#ifndef NDEBUG
-void forbidEventDispatch()
-{
-    ++gEventDispatchForbidden;
-}
-
-void allowEventDispatch()
-{
-    if (gEventDispatchForbidden > 0)
-        --gEventDispatchForbidden;
-}
-
-bool eventDispatchForbidden()
-{
-    return gEventDispatchForbidden > 0;
-}
-#endif // NDEBUG
-
-} // end namespace
+} // namespace WebCore

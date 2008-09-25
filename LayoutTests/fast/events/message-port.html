@@ -1,0 +1,74 @@
+<body>
+<p>Test cross-frame MessagePort communication.</p>
+<pre id=log></pre>
+<script>
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var mainPort;
+
+function test()
+{
+    var channel = new MessageChannel;
+    window.frames[0].postMessage("msg", channel.port2, "*");
+    mainPort = channel.port1;
+    mainPort.postMessage("ping");
+    mainPort.onmessage = function(evt) {
+        if (evt.data == "pong" && evt.origin == "")
+            log("Simple exchange: SUCCESS");
+        else
+            log("Simple exchange: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+    };
+    mainPort.start();
+    setTimeout(test2, 50);
+}
+
+function test2()
+{
+    var channel = new MessageChannel;
+    mainPort.postMessage("newPort", channel.port2);
+    channel.port1.onmessage = function(evt) {
+        if (evt.data == "yo" && evt.origin == "")
+            log("Posted port: SUCCESS");
+        else
+            log("Posted port: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+    };
+    channel.port1.start();
+    setTimeout(test3, 50);
+}
+
+function test3()
+{
+    var port = mainPort.startConversation("newConversation");
+    port.onmessage = function(evt) {
+        if (evt.data == "hey" && evt.origin == "")
+            log("Conversation: SUCCESS");
+        else
+            log("Conversation: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+    };
+    port.start();
+    setTimeout(test4, 50);
+}
+
+function test4()
+{
+    log("A port is active: " + (mainPort.active ? "SUCCESS" : "FAIL"));
+
+    mainPort.close();
+
+    log("A closed port is inactive: " + (mainPort.active ? "FAIL" : "SUCCESS"));
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<iframe src="resources/message-port-iframe.html" onload="test()"></iframe>
+</body>

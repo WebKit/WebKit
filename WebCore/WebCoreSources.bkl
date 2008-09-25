@@ -81,6 +81,9 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSInspectorCallbackWrapper.cpp
         bindings/js/JSJavaScriptCallFrameCustom.cpp
         bindings/js/JSLocationCustom.cpp
+        bindings/js/JSMessageChannelConstructor.cpp
+        bindings/js/JSMessageChannelCustom.cpp
+        bindings/js/JSMessagePortCustom.cpp
         bindings/js/JSMimeTypeArrayCustom.cpp
         bindings/js/JSNamedNodeMapCustom.cpp
         bindings/js/JSNamedNodesCollection.cpp
@@ -302,7 +305,9 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSKeyboardEvent.cpp
         DerivedSources/WebCore/JSLocation.cpp
         DerivedSources/WebCore/JSMediaList.cpp
+        DerivedSources/WebCore/JSMessageChannel.cpp
         DerivedSources/WebCore/JSMessageEvent.cpp
+        DerivedSources/WebCore/JSMessagePort.cpp
         DerivedSources/WebCore/JSMimeType.cpp
         DerivedSources/WebCore/JSMimeTypeArray.cpp
         DerivedSources/WebCore/JSMouseEvent.cpp
@@ -391,7 +396,9 @@ This file contains the list of files needed to build WebCore.
         dom/ExceptionCode.cpp
         dom/KeyboardEvent.cpp
         dom/MappedAttribute.cpp
+        dom/MessageChannel.cpp
         dom/MessageEvent.cpp
+        dom/MessagePort.cpp
         dom/MouseEvent.cpp
         dom/MouseRelatedEvent.cpp
         dom/MutationEvent.cpp

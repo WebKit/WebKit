@@ -1,0 +1,24 @@
+<script>
+var port;
+function onMessage(evt) {
+    if (evt.data == "ping")
+        port.postMessage("pong");
+    else if (evt.data == "newPort")
+        evt.messagePort.postMessage("yo");
+    else if (evt.data == "newConversation")
+        if (evt.origin == "")
+            evt.messagePort.postMessage("hey");
+        else
+            alert("Incorrect security origin in conversation: '" + evt.origin + "'.");
+    else if (/alert.+/.test(evt.data))
+        alert(evt.data.substr(6));
+    else if (evt.data == "freeze")
+        while (1) {}
+}
+
+window.addEventListener("message", function(evt) {
+    port = evt.messagePort;
+    port.onmessage = onMessage;
+    port.start();
+}, false);
+</script>

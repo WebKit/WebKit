@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple, Inc.  All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -129,6 +129,7 @@
 #import "DOMHTMLUListElementInternal.h"
 #import "DOMKeyboardEventInternal.h"
 #import "DOMMediaListInternal.h"
+#import "DOMMessagePortInternal.h"
 #import "DOMMouseEventInternal.h"
 #import "DOMMutationEventInternal.h"
 #import "DOMNamedNodeMapInternal.h"

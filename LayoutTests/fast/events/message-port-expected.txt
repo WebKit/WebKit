@@ -1,0 +1,8 @@
+Test cross-frame MessagePort communication.
+
+Simple exchange: SUCCESS
+Posted port: SUCCESS
+Conversation: SUCCESS
+A port is active: SUCCESS
+A closed port is inactive: SUCCESS
+

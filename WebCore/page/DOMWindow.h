@@ -47,6 +47,7 @@ namespace WebCore {
     class Frame;
     class History;
     class Location;
+    class MessagePort;
     class Navigator;
     class PostMessageTimer;
     class Screen;
@@ -175,7 +176,7 @@ namespace WebCore {
         DOMApplicationCache* applicationCache() const;
 #endif
 
-        void postMessage(const String& message, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
+        void postMessage(const String& message, MessagePort*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer*);
 
         void scrollBy(int x, int y) const;

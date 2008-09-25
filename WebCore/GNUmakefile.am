@@ -282,8 +282,12 @@ webcore_built_sources += \
 	DerivedSources/JSLocation.h \
 	DerivedSources/JSMediaList.cpp \
 	DerivedSources/JSMediaList.h \
+	DerivedSources/JSMessageChannel.cpp \
+	DerivedSources/JSMessageChannel.h \
 	DerivedSources/JSMessageEvent.cpp \
 	DerivedSources/JSMessageEvent.h \
+	DerivedSources/JSMessagePort.cpp \
+	DerivedSources/JSMessagePort.h \
 	DerivedSources/JSMimeType.cpp \
 	DerivedSources/JSMimeType.h \
 	DerivedSources/JSMimeTypeArray.cpp \
@@ -406,7 +410,9 @@ IDL_BINDINGS +=  \
 	WebCore/dom/Event.idl \
 	WebCore/dom/EventException.idl \
 	WebCore/dom/KeyboardEvent.idl \
+	WebCore/dom/MessageChannel.idl \
 	WebCore/dom/MessageEvent.idl \
+	WebCore/dom/MessagePort.idl \
 	WebCore/dom/MouseEvent.idl \
 	WebCore/dom/MutationEvent.idl \
 	WebCore/dom/NamedNodeMap.idl \
@@ -674,6 +680,10 @@ webcore_sources += \
 	WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	WebCore/bindings/js/JSLocationCustom.cpp \
 	WebCore/bindings/js/JSLocationCustom.h \
+	WebCore/bindings/js/JSMessageChannelConstructor.cpp \
+	WebCore/bindings/js/JSMessageChannelConstructor.h \
+	WebCore/bindings/js/JSMessageChannelCustom.cpp \
+	WebCore/bindings/js/JSMessagePortCustom.cpp \
 	WebCore/bindings/js/JSMimeTypeArrayCustom.cpp \
 	WebCore/bindings/js/JSNSResolver.cpp \
 	WebCore/bindings/js/JSNSResolver.h \
@@ -937,8 +947,12 @@ webcore_sources += \
 	WebCore/dom/MappedAttribute.cpp \
 	WebCore/dom/MappedAttribute.h \
 	WebCore/dom/MappedAttributeEntry.h \
+	WebCore/dom/MessageChannel.cpp \
+	WebCore/dom/MessageChannel.h \
 	WebCore/dom/MessageEvent.cpp \
 	WebCore/dom/MessageEvent.h \
+	WebCore/dom/MessagePort.cpp \
+	WebCore/dom/MessagePort.h \
 	WebCore/dom/MouseEvent.cpp \
 	WebCore/dom/MouseEvent.h \
 	WebCore/dom/MouseRelatedEvent.cpp \

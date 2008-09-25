@@ -147,7 +147,7 @@ namespace WebCore {
             OnWebKitTransitionEnd,
 
             // Constructors
-            Audio, Image, Option, XMLHttpRequest, XSLTProcessor
+            Audio, Image, MessageChannel, Option, XMLHttpRequest, XSLTProcessor
         };
 
     private:

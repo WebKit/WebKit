@@ -195,7 +195,7 @@ sub AddIncludesForType
         $implIncludes{"CanvasStyle.h"} = 1;
     }
 
-    if ($type eq "CanvasGradient" or $type eq "XPathNSResolver") {
+    if ($type eq "CanvasGradient" or $type eq "XPathNSResolver" or $type eq "MessagePort") {
         $implIncludes{"PlatformString.h"} = 1;
     }
 

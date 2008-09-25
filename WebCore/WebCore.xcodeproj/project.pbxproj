@@ -4113,6 +4113,10 @@
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
 		DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */; };
+		E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */; };
+		E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E107400C0E77BDC00033AF24 /* JSMessageChannel.h */; };
+		E10743240E7835830033AF24 /* JSMessageChannelConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10743230E7835830033AF24 /* JSMessageChannelConstructor.cpp */; };
+		E10743270E7835A50033AF24 /* JSMessageChannelConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E10743260E7835A50033AF24 /* JSMessageChannelConstructor.h */; };
 		E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */; };
 		E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */; };
 		E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */; };
@@ -4125,6 +4129,19 @@
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
 		E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A302BB0DE8370300C52F2C /* StringBuilder.h */; };
 		E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A302C00DE8376900C52F2C /* StringBuilder.cpp */; };
+		E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */; };
+		E1ACAF4C0E791AAF0087D12B /* DOMMessagePort.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */; };
+		E1ACAF4D0E791AAF0087D12B /* DOMMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */; };
+		E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */; };
+		E1ADECC00E76ACF1004A1A5E /* MessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADECBE0E76ACF1004A1A5E /* MessagePort.cpp */; };
+		E1ADECC70E76AD1F004A1A5E /* MessagePort.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1ADECC60E76AD1F004A1A5E /* MessagePort.idl */; };
+		E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */; };
+		E1ADECCF0E76AD8B004A1A5E /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */; };
+		E1ADECD10E76ADAB004A1A5E /* MessageChannel.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1ADECD00E76ADAB004A1A5E /* MessageChannel.idl */; };
+		E1ADED470E76B8DD004A1A5E /* JSMessagePortCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */; };
+		E1ADEDD50E76BD60004A1A5E /* DOMMessagePortInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */; };
+		E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */; };
+		E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
@@ -8653,6 +8670,10 @@
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
 		DD05FE0C0B8BA3C6009ACDFE /* WebCoreObjCExtras.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebCoreObjCExtras.c; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
+		E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannel.cpp; sourceTree = "<group>"; };
+		E107400C0E77BDC00033AF24 /* JSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageChannel.h; sourceTree = "<group>"; };
+		E10743230E7835830033AF24 /* JSMessageChannelConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelConstructor.cpp; sourceTree = "<group>"; };
+		E10743260E7835A50033AF24 /* JSMessageChannelConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageChannelConstructor.h; sourceTree = "<group>"; };
 		E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomXPathNSResolver.h; sourceTree = "<group>"; };
 		E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomXPathNSResolver.cpp; sourceTree = "<group>"; };
 		E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeXPathNSResolver.h; sourceTree = "<group>"; };
@@ -8663,6 +8684,19 @@
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		E1A302C00DE8376900C52F2C /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
+		E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelCustom.cpp; sourceTree = "<group>"; };
+		E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessagePort.mm; sourceTree = "<group>"; };
+		E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMessagePort.h; sourceTree = "<group>"; };
+		E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = MessagePort.h; sourceTree = "<group>"; };
+		E1ADECBE0E76ACF1004A1A5E /* MessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessagePort.cpp; sourceTree = "<group>"; };
+		E1ADECC60E76AD1F004A1A5E /* MessagePort.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MessagePort.idl; sourceTree = "<group>"; };
+		E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
+		E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
+		E1ADECD00E76ADAB004A1A5E /* MessageChannel.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MessageChannel.idl; sourceTree = "<group>"; };
+		E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessagePortCustom.cpp; sourceTree = "<group>"; };
+		E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMessagePortInternal.h; sourceTree = "<group>"; };
+		E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePort.h; sourceTree = "<group>"; };
+		E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessagePort.cpp; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
@@ -10288,6 +10322,8 @@
 				85DF343F0AAFC0ED00E59AE3 /* DOMKeyboardEventPrivate.h */,
 				75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */,
 				75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */,
+				E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */,
+				E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */,
 				857E0B230AB043460036E447 /* DOMMouseEvent.h */,
 				857E0B240AB043460036E447 /* DOMMouseEvent.mm */,
 				857E0B2B0AB043FC0036E447 /* DOMMouseEventPrivate.h */,
@@ -10579,6 +10615,7 @@
 				85989DC50ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h */,
 				85E711820AC5D5350053270F /* DOMMediaListInternal.h */,
 				75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */,
+				E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */,
 				85989DC60ACC8BBD00A0BC51 /* DOMMouseEventInternal.h */,
 				85989DC70ACC8BBD00A0BC51 /* DOMMutationEventInternal.h */,
 				85E711830AC5D5350053270F /* DOMNamedNodeMapInternal.h */,
@@ -11717,8 +11754,12 @@
 				B28BC3190D135E5400CDBA27 /* JSEventTargetBase.lut.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
 				A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */,
+				E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */,
+				E107400C0E77BDC00033AF24 /* JSMessageChannel.h */,
 				75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */,
 				75793EC70D0CE72D007FC0AC /* JSMessageEvent.h */,
+				E1ADEDD80E76BD93004A1A5E /* JSMessagePort.h */,
+				E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */,
 				A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */,
 				A86629CB09DA2B47009633A5 /* JSMouseEvent.h */,
 				65DF31E709D1CC60000BE325 /* JSMutationEvent.cpp */,
@@ -12671,6 +12712,8 @@
 				C09158850DB4209200E55AF4 /* JSInspectedObjectWrapper.h */,
 				C09158860DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp */,
 				C09158870DB4209200E55AF4 /* JSInspectorCallbackWrapper.h */,
+				E10743230E7835830033AF24 /* JSMessageChannelConstructor.cpp */,
+				E10743260E7835A50033AF24 /* JSMessageChannelConstructor.h */,
 				BCD9C26C0C17AA81005C90A2 /* JSNamedNodesCollection.cpp */,
 				BCD9C26D0C17AA81005C90A2 /* JSNamedNodesCollection.h */,
 				BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */,
@@ -12790,6 +12833,8 @@
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
 				1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
+				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
+				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				A9C6E6460D7465CA006442E9 /* JSMimeTypeArrayCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
 				A9C6E6480D7465D8006442E9 /* JSNavigatorCustom.cpp */,
@@ -13672,9 +13717,15 @@
 				A8C4A7F409D563270003AC8D /* MappedAttribute.cpp */,
 				A8C4A7F309D563270003AC8D /* MappedAttribute.h */,
 				A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */,
+				E1ADECCD0E76AD8B004A1A5E /* MessageChannel.cpp */,
+				E1ADECCC0E76AD8B004A1A5E /* MessageChannel.h */,
+				E1ADECD00E76ADAB004A1A5E /* MessageChannel.idl */,
 				75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */,
 				75793E810D0CE0B3007FC0AC /* MessageEvent.h */,
 				75793E820D0CE0B3007FC0AC /* MessageEvent.idl */,
+				E1ADECBE0E76ACF1004A1A5E /* MessagePort.cpp */,
+				E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */,
+				E1ADECC60E76AD1F004A1A5E /* MessagePort.idl */,
 				85031B2F0A44EFC700F992E0 /* MouseEvent.cpp */,
 				85031B300A44EFC700F992E0 /* MouseEvent.h */,
 				141B94E509EC4223000E9413 /* MouseEvent.idl */,
@@ -15816,6 +15867,13 @@
 				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
 				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
 				E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */,
+				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
+				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
+				E1ADEDD50E76BD60004A1A5E /* DOMMessagePortInternal.h in Headers */,
+				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
+				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
+				E10743270E7835A50033AF24 /* JSMessageChannelConstructor.h in Headers */,
+				E1ACAF4D0E791AAF0087D12B /* DOMMessagePort.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
 				63459C650E79CD33008ADFAF /* CSSNthSelector.h in Headers */,
 				29FFBB830E7C5A3D00407730 /* AccessibilityList.h in Headers */,
@@ -15984,6 +16042,8 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				BCEF45400E676AC1001C1287 /* TextMetrics.idl in Resources */,
+				E1ADECC70E76AD1F004A1A5E /* MessagePort.idl in Resources */,
+				E1ADECD10E76ADAB004A1A5E /* MessageChannel.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17668,6 +17728,14 @@
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
 				7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */,
 				E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */,
+				E1ADECC00E76ACF1004A1A5E /* MessagePort.cpp in Sources */,
+				E1ADECCF0E76AD8B004A1A5E /* MessageChannel.cpp in Sources */,
+				E1ADED470E76B8DD004A1A5E /* JSMessagePortCustom.cpp in Sources */,
+				E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */,
+				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
+				E10743240E7835830033AF24 /* JSMessageChannelConstructor.cpp in Sources */,
+				E1ACAF4C0E791AAF0087D12B /* DOMMessagePort.mm in Sources */,
+				E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */,
 				63459C660E79CD33008ADFAF /* CSSNthSelector.cpp in Sources */,
 				29FFBB820E7C5A3D00407730 /* AccessibilityList.cpp in Sources */,
 				54C50F7B0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp in Sources */,

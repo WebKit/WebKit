@@ -1,0 +1,46 @@
+<body>
+<p>Test that JS code cannot be planted into an unsuspecting subframe via MessagePort and navigation.</p>
+<pre id=log></pre>
+<script>
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var closure;
+var mainPort;
+var failed;
+
+function test()
+{
+    failed = false;
+    closure = window.frames[0].createClosure();
+    document.getElementsByTagName("iframe")[0].onload = test2;
+    window.frames[0].location = "resources/banking-site.html";
+}
+
+function test2()
+{
+    mainPort = closure();
+    mainPort.postMessage("ping");
+    mainPort.onmessage = function(evt) { if (/sensitive/.test(evt.data)) failed = true; }
+    mainPort.start();
+    setTimeout(test3, 100);
+}
+
+function test3()
+{
+    log(failed ? "FAIL" : "PASS");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<iframe src="resources/attacker-frame.html" onload="test()"></iframe>
+</body>
