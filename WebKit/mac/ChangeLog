@@ -1,3 +1,26 @@
+2008-09-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21079
+          <rdar://problem/6203938> Disallow embedding Safari-generated pages
+          (e.g bookmarks collection) in subframes
+
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        Use the new +[WebView _canHandleRequest:forMainFrame:] so we can give
+        a different answer for the main frame and subframes.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::canHandleRequest): Ditto.
+
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:forMainFrame:]): Added forMainFrame. Only look
+        for scheme-specific representations for the main frame, not subframes. 
+        (+[WebView _canHandleRequest:]): Give answer for main frame -- calls the
+        method above with YES for main frame.
+
+        * WebView/WebViewInternal.h: Added _canHandleRequest:forMainFrame:.
+
 2008-09-23  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21039
@@ -22,10 +45,13 @@
 
 2008-09-21  Dirk Schulze  <vbs85@gmx.de>
 
-        Reviewed by eseidel.  Landed by eseidel.
+        Reviewed and landed by Eric Seidel.
 
-        * Misc/WebTypesInternal.h:
-        * WebKitPrefix.h:
+        Moved CGFloat definition to WebKitPrefix so CGFloat can be used more
+        freely throughout WebCore without worrying about breaking Tiger.
+
+        * Misc/WebTypesInternal.h: Removed it from here.
+        * WebKitPrefix.h: Added it here.
 
 2008-09-20  Matt Lilek  <webkit@mattlilek.com>
 

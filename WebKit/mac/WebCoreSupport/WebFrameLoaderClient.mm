@@ -779,7 +779,10 @@ bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 
 bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) const
 {
-    return [WebView _canHandleRequest:request.nsURLRequest()];
+    Frame* frame = core(m_webFrame.get());
+    Page* page = frame->page();
+    BOOL forMainFrame = page && page->mainFrame() == frame;
+    return [WebView _canHandleRequest:request.nsURLRequest() forMainFrame:forMainFrame];
 }
 
 bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const

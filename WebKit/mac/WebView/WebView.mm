@@ -1199,9 +1199,9 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return [schemesWithRepresentationsSet containsObject:[URLScheme lowercaseString]];
 }
 
-+ (BOOL)_canHandleRequest:(NSURLRequest *)request
++ (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame
 {
-    // FIXME: If <rdar://problem/5217309> gets fixed, this check can be removed
+    // FIXME: If <rdar://problem/5217309> gets fixed, this check can be removed.
     if (!request)
         return NO;
 
@@ -1210,10 +1210,16 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
     NSString *scheme = [[request URL] scheme];
 
-    if ([self _representationExistsForURLScheme:scheme])
+    // Representations for URL schemes work at the top level.
+    if (forMainFrame && [self _representationExistsForURLScheme:scheme])
         return YES;
         
-    return ([scheme _webkit_isCaseInsensitiveEqualToString:@"applewebdata"]);
+    return [scheme _webkit_isCaseInsensitiveEqualToString:@"applewebdata"];
+}
+
++ (BOOL)_canHandleRequest:(NSURLRequest *)request
+{
+    return [self _canHandleRequest:request forMainFrame:YES];
 }
 
 + (NSString *)_decodeData:(NSData *)data
