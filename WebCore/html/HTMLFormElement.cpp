@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "FileList.h"
 #include "FileSystem.h"
 #include "FormData.h"
 #include "FormDataList.h"
@@ -274,17 +275,23 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     // include the filename
                     if (control->hasLocalName(inputTag)
                             && static_cast<HTMLInputElement*>(control)->inputType() == HTMLInputElement::FILE) {
-                        String path = static_cast<HTMLInputElement*>(control)->value();
-                        String filename = pathGetFileName(path);
+                        String path;
+                        String filename;
+                        const FileList* files = static_cast<HTMLInputElement*>(control)->files();
+                        if (!files->isEmpty()) {
+                            // NOTE: We currently only handle one file; some day we'll add multiple file support.
+                            const File* file = files->item(0);
+                            path = file->path();
+                            filename = file->fileName();
+                        }
 
-                        // Let the application specify a filename if its going to generate a replacement file for the upload
+                        // Let the application specify a filename if it's going to generate a replacement file for the upload.
                         if (Page* page = document()->page()) {
                             String generatedFilename;
                             shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFilename);
                             if (shouldGenerateFile)
                                 filename = generatedFilename;
                         }
-                        
 
                         // FIXME: This won't work if the filename includes a " mark,
                         // or control characters like CR or LF. This also does strange
@@ -295,6 +302,9 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                         header.append('"');
 
                         if (!filename.isEmpty()) {
+                            // FIXME: This function's name makes it sound like it takes a path, not just a basename.
+                            // But filename is not the path. But note, that it's not safe to just use path, instead
+                            // since in the generated-file case it will not reflect the MIME type of the generated file.
                             String mimeType = MIMETypeRegistry::getMIMETypeForPath(filename);
                             if (!mimeType.isEmpty()) {
                                 appendString(header, "\r\nContent-Type: ");

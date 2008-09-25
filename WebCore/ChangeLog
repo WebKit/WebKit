@@ -1,3 +1,15 @@
+2008-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21115
+          <rdar://problem/6245773> REGRESSION (r34702): Safari no longer zips
+          bundled documents
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData): Use files() instead of value()
+        to get the path, since value() now returns just the basename.
+
 2008-09-25  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe
