@@ -2,7 +2,7 @@
 <script src=video-test.js></script>
 <script>
 test("video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
-waitForEventAndTest("begin", "video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
+waitForEventAndTest("loadstart", "video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
 waitForEventAndTest("loadedmetadata", "video.readyState == HTMLMediaElement.DATA_UNAVAILABLE");
 waitForEventAndTest("loadedfirstframe", "video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME");
 waitForEventAndTest("canshowcurrentframe", "video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME");

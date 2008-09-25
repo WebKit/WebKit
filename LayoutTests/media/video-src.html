@@ -3,6 +3,6 @@
 <video controls></video>
 <script>
 video = media = document.getElementsByTagName('video')[0];
-waitForEventTestAndEnd('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+waitForEventTestAndEnd('loadstart', "relativeURL(video.currentSrc) == 'content/test.mp4'");
 video.src = "content/test.mp4";
 </script>

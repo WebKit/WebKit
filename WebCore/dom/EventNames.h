@@ -116,7 +116,6 @@ namespace WebCore { namespace EventNames {
     macro(volumechange) \
     macro(waiting) \
     \
-    macro(begin) \
     macro(progress) \
     macro(stalled) \
     \

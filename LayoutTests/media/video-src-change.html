@@ -8,11 +8,11 @@ Test that it does not trigger load when network state is non-empty.
 waitForEvent('emptied', function () {
     test('video.networkState == HTMLMediaElement.EMPTY');
     video.setAttribute('src', 'content/test.mp4')
-    waitForEventAndTest('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+    waitForEventAndTest('loadstart', "relativeURL(video.currentSrc) == 'content/test.mp4'");
     waitForEvent('load', function () {
         test('video.networkState != HTMLMediaElement.EMPTY');
         video.setAttribute('src', 'content/test.wav');
-        waitForEventAndFail('begin');
+        waitForEventAndFail('loadstart');
         setTimeout(endTest, 500);
     });
 });

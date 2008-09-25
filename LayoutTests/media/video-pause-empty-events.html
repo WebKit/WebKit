@@ -4,7 +4,7 @@
 <script>
 video.src = "content/test.mp4";
 test("video.networkState == HTMLMediaElement.EMPTY");
-waitForEventAndEnd('begin');
+waitForEventAndEnd('loadstart');
 run("video.pause()");
 consoleWrite("SCRIPT DONE");
 </script>

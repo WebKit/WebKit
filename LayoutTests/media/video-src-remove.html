@@ -10,6 +10,6 @@ Test that removing src attribute triggers load
 video = media = document.getElementsByTagName('video')[0];
 waitForEvent('emptied', function () {
     video.removeAttribute('src')
-    waitForEventTestAndEnd('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+    waitForEventTestAndEnd('loadstart', "relativeURL(video.currentSrc) == 'content/test.mp4'");
 });
 </script>

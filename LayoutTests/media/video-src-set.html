@@ -5,5 +5,5 @@ Test that setting src attribute triggers load
 <script src=video-test.js></script>
 <script>
 video.setAttribute('src', 'content/test.mp4')
-waitForEventTestAndEnd('begin', "relativeURL(video.currentSrc) == 'content/test.mp4'");
+waitForEventTestAndEnd('loadstart', "relativeURL(video.currentSrc) == 'content/test.mp4'");
 </script>

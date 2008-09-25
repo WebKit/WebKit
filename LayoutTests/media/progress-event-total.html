@@ -1,7 +1,7 @@
 <video controls></video>
 <script src=video-test.js></script>
 <script>
-waitForEventAndTest("begin", "!event.lengthComputable && event.loaded==0 && event.total==0");
+waitForEventAndTest("loadstart", "!event.lengthComputable && event.loaded==0 && event.total==0");
 waitForEventTestAndEnd("load", "event.lengthComputable && event.loaded>0 && event.total==239528");
 video.src = "content/test.mp4";
 </script>

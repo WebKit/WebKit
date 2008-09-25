@@ -2,6 +2,6 @@ Test that pause() from EMPTY network state triggers load()
 
 TEST(video.networkState == HTMLMediaElement.EMPTY) OK
 RUN(video.pause())
-EVENT(begin)
+EVENT(loadstart)
 END OF TEST
 

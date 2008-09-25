@@ -1,5 +1,5 @@
 TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
-EVENT(begin) TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
+EVENT(loadstart) TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
 EVENT(loadedmetadata) TEST(video.readyState == HTMLMediaElement.DATA_UNAVAILABLE) OK
 EVENT(loadedfirstframe) TEST(video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME) OK
 EVENT(canshowcurrentframe) TEST(video.readyState == HTMLMediaElement.CAN_SHOW_CURRENT_FRAME) OK

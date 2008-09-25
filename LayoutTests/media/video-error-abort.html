@@ -3,7 +3,7 @@
 <script>
 test("!video.error");
 var didLoad = false;
-waitForEvent("begin", function () { if (didLoad) return; didLoad = true; video.load(); });
+waitForEvent("loadstart", function () { if (didLoad) return; didLoad = true; video.load(); });
 waitForEventAndTest("abort", "video.error.code == MediaError.MEDIA_ERR_ABORTED");
 waitForEventTestAndEnd("load", "!video.error");
 video.src = "content/test.mp4";

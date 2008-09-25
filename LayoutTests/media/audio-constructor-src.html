@@ -5,6 +5,6 @@
 var audio = new Audio("content/test.wav");
 media = audio;
 test("audio instanceof HTMLAudioElement");
-waitForEventAndTest("begin", "relativeURL(audio.currentSrc)=='content/test.wav'");
+waitForEventAndTest("loadstart", "relativeURL(audio.currentSrc)=='content/test.wav'");
 waitForEventAndEnd("load");
 </script>

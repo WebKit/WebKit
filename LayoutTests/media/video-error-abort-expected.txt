@@ -1,7 +1,7 @@
 TEST(!video.error) OK
-EVENT(begin)
+EVENT(loadstart)
 EVENT(abort) TEST(video.error.code == MediaError.MEDIA_ERR_ABORTED) OK
-EVENT(begin)
+EVENT(loadstart)
 EVENT(load) TEST(!video.error) OK
 END OF TEST
 

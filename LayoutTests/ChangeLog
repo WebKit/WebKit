@@ -1,3 +1,49 @@
+2008-09-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Eric Seidel.
+        
+        <rdar://problem/6171047> HTMLMediaElement "begin" event is now "loadstart"
+        https://bugs.webkit.org/show_bug.cgi?id=21003
+
+        Update media layout test results for progress event name change from "begin" to "loadstart"
+
+        * media/audio-constructor-expected.txt:
+        * media/audio-constructor-src-expected.txt:
+        * media/audio-constructor-src.html:
+        * media/audio-constructor.html:
+        * media/progress-event-expected.txt:
+        * media/progress-event-total-expected.txt:
+        * media/progress-event-total.html:
+        * media/progress-event.html:
+        * media/video-error-abort-expected.txt:
+        * media/video-error-abort.html:
+        * media/video-load-networkState-expected.txt:
+        * media/video-load-networkState.html:
+        * media/video-load-readyState-expected.txt:
+        * media/video-load-readyState.html:
+        * media/video-pause-empty-events-expected.txt:
+        * media/video-pause-empty-events.html:
+        * media/video-play-empty-events-expected.txt:
+        * media/video-play-empty-events.html:
+        * media/video-source-expected.txt:
+        * media/video-source-media-expected.txt:
+        * media/video-source-media.html:
+        * media/video-source-type-expected.txt:
+        * media/video-source-type-params-expected.txt:
+        * media/video-source-type-params.html:
+        * media/video-source-type.html:
+        * media/video-source.html:
+        * media/video-src-change-expected.txt:
+        * media/video-src-change.html:
+        * media/video-src-expected.txt:
+        * media/video-src-remove-expected.txt:
+        * media/video-src-remove.html:
+        * media/video-src-set-expected.txt:
+        * media/video-src-set.html:
+        * media/video-src-source-expected.txt:
+        * media/video-src-source.html:
+        * media/video-src.html:
+
 2008-09-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Eric Seidel.

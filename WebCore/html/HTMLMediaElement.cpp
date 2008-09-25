@@ -322,7 +322,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     
     // 9
     m_begun = true;        
-    dispatchProgressEvent(beginEvent, false, 0, 0); // progress event draft calls this loadstart
+    dispatchProgressEvent(loadstartEvent, false, 0, 0);
     if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
         goto end;
     

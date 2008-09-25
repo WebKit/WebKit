@@ -1,5 +1,5 @@
 TEST(video.networkState == HTMLMediaElement.EMPTY) OK
-EVENT(begin) TEST(video.networkState == HTMLMediaElement.LOADING) OK
+EVENT(loadstart) TEST(video.networkState == HTMLMediaElement.LOADING) OK
 EVENT(loadedmetadata) TEST(video.networkState == HTMLMediaElement.LOADED_METADATA) OK
 EVENT(loadedfirstframe) TEST(video.networkState == HTMLMediaElement.LOADED_FIRST_FRAME) OK
 EVENT(load) TEST(video.networkState == HTMLMediaElement.LOADED) OK
