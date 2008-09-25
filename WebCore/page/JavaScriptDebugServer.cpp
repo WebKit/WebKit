@@ -377,7 +377,7 @@ void JavaScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
     if (!view)
         return;
 
-    HashSet<Widget*>* children = static_cast<ScrollView*>(view)->children();
+    const HashSet<Widget*>* children = view->children();
     ASSERT(children);
 
     HashSet<Widget*>::iterator end = children->end();
