@@ -69,6 +69,7 @@ public:
     String getResponseHeader(const String& name, ExceptionCode&) const;
     const JSC::UString& responseText() const;
     Document* responseXML() const;
+    void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
 
     XMLHttpRequestUpload* upload();
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
@@ -218,6 +219,8 @@ private:
 
     // Used for onprogress tracking
     long long m_receivedLength;
+    
+    unsigned m_lastSendLineNumber;
 };
 
 } // namespace WebCore

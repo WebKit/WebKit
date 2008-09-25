@@ -216,6 +216,7 @@ XMLHttpRequest::XMLHttpRequest(Document* doc)
     , m_sameOriginRequest(true)
     , m_inPreflight(false)
     , m_receivedLength(0)
+    , m_lastSendLineNumber(0)
 {
     ASSERT(m_doc);
     addToRequestsByDocument(m_doc, this);
@@ -1073,7 +1074,7 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
     if (Frame* frame = m_doc->frame()) {
         if (Page* page = frame->page()) {
             page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
-            page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, "XHR finished loading \"" + m_url + "\".", 0, m_doc->url());
+            page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, "XHR finished loading: \"" + m_url + "\".", m_lastSendLineNumber, m_doc->url());
         }
     }
 

@@ -43,6 +43,7 @@
 #include "JSFile.h"
 #include "XMLHttpRequest.h"
 #include <kjs/Error.h>
+#include <VM/Machine.h>
 
 using namespace JSC;
 
@@ -250,6 +251,13 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
         else
             impl()->send(val->toString(exec), ec);
     }
+
+    int signedLineNumber;
+    int sourceID;
+    UString sourceURL;
+    JSValue* function;
+    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
+    impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
 
     setDOMException(exec, ec);
     return jsUndefined();

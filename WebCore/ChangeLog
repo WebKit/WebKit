@@ -1,3 +1,18 @@
+2008-09-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Tim.
+
+        Bug 20322: XHRs logged in the console do not have line numbers
+        - Get the line number at the time of the send and pass it on to the XHR.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::setLastSendLineNumber):
+
 2008-09-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.
