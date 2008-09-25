@@ -224,7 +224,7 @@ void FrameView::init()
 
 void FrameView::clear()
 {
-    setStaticBackground(false);
+    setCanBlitOnScroll(true);
     
     d->reset();
 
@@ -515,7 +515,7 @@ void FrameView::layout(bool allowSubtree)
 
     ASSERT(!root->needsLayout());
 
-    setStaticBackground(useSlowRepaints());
+    setCanBlitOnScroll(!useSlowRepaints());
 
     if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(visibleWidth() < contentsWidth(),
@@ -649,13 +649,13 @@ bool FrameView::useSlowRepaints() const
 void FrameView::setUseSlowRepaints()
 {
     d->m_useSlowRepaints = true;
-    setStaticBackground(true);
+    setCanBlitOnScroll(false);
 }
 
 void FrameView::addSlowRepaintObject()
 {
     if (!d->m_slowRepaintObjectCount)
-        setStaticBackground(true);
+        setCanBlitOnScroll(false);
     d->m_slowRepaintObjectCount++;
 }
 
@@ -664,7 +664,7 @@ void FrameView::removeSlowRepaintObject()
     ASSERT(d->m_slowRepaintObjectCount > 0);
     d->m_slowRepaintObjectCount--;
     if (!d->m_slowRepaintObjectCount)
-        setStaticBackground(d->m_useSlowRepaints);
+        setCanBlitOnScroll(!d->m_useSlowRepaints);
 }
 
 void FrameView::setScrollbarsMode(ScrollbarMode mode)

@@ -67,7 +67,6 @@ class ScrollView::ScrollViewPrivate : public ScrollbarClient {
 public:
     ScrollViewPrivate(ScrollView* view)
       : m_view(view)
-      , m_hasStaticBackground(false)
       , m_platformWidgets(0)
       , m_scrollbarsSuppressed(false)
       , m_inUpdateScrollbars(false)
@@ -95,7 +94,6 @@ public:
     ScrollView* m_view;
     IntSize m_scrollOffset;
     IntSize m_contentsSize;
-    bool m_hasStaticBackground;
     int  m_platformWidgets;
     bool m_scrollbarsSuppressed;
     bool m_inUpdateScrollbars;
@@ -160,7 +158,7 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);
 
-    if (!m_hasStaticBackground && !m_view->root()->hasNativeWidgets()) {
+    if (canBlitOnScroll() && !m_view->root()->hasNativeWidgets()) {
        m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(),
                                   scrollViewRect, clipRect);
     } else  {
@@ -186,6 +184,7 @@ bool ScrollView::ScrollViewPrivate::isActive() const
 ScrollView::ScrollView()
     : m_data(new ScrollViewPrivate(this))
 {
+    init();
 }
 
 ScrollView::~ScrollView()
@@ -439,11 +438,6 @@ void ScrollView::setScrollbarsMode(ScrollbarMode newMode)
     }
 }
 
-void ScrollView::setStaticBackground(bool flag)
-{
-    m_data->m_hasStaticBackground = flag;
-}
-
 bool ScrollView::inWindow() const
 {
     return true;
@@ -606,12 +600,12 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
     return 0;
 }
 
-void ScrollView::addChildPlatformWidget(Widget* child)
+void ScrollView::platformAddChild(Widget* child)
 {
     root()->incrementNativeWidgetCount();
 }
 
-void ScrollView::removeChildPlatformWidget(Widget* child)
+void ScrollView::platformRemoveChild(Widget* child)
 {
     root()->decrementNativeWidgetCount();
 }

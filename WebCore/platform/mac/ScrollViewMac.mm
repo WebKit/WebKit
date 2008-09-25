@@ -57,6 +57,7 @@ public:
 ScrollView::ScrollView()
     : m_data(new ScrollViewPrivate)
 {
+    init();
 }
 
 ScrollView::~ScrollView()
@@ -71,7 +72,7 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
     return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
-void ScrollView::addChildPlatformWidget(Widget* child)
+void ScrollView::platformAddChild(Widget* child)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *parentView = documentView();
@@ -88,9 +89,16 @@ void ScrollView::addChildPlatformWidget(Widget* child)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void ScrollView::removeChildPlatformWidget(Widget* child)
+void ScrollView::platformRemoveChild(Widget* child)
 {
     child->removeFromSuperview();
+}
+
+void ScrollView::platformSetCanBlitOnScroll()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [[scrollView() contentView] setCopiesOnScroll:canBlitOnScroll()];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 int ScrollView::visibleWidth() const
@@ -365,13 +373,6 @@ IntPoint ScrollView::screenToContents(const IntPoint& point) const
     }
     END_BLOCK_OBJC_EXCEPTIONS;
     return IntPoint();
-}
-
-void ScrollView::setStaticBackground(bool staticBackground)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [[scrollView() contentView] setCopiesOnScroll:!staticBackground];
-    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 NSView *ScrollView::documentView() const
