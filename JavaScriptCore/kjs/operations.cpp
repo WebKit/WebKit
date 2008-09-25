@@ -38,65 +38,15 @@ namespace JSC {
 // ECMA 11.9.3
 bool equal(ExecState* exec, JSValue* v1, JSValue* v2)
 {
-startOver:
     if (JSImmediate::areBothImmediateNumbers(v1, v2))
         return v1 == v2;
 
-    if (v1->isNumber() && v2->isNumber())
-        return v1->uncheckedGetNumber() == v2->uncheckedGetNumber();
+    return equalSlowCaseInline(exec, v1, v2);
+}
 
-    bool s1 = v1->isString();
-    bool s2 = v2->isString();
-    if (s1 && s2)
-        return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
-
-    if (v1->isUndefinedOrNull()) {
-        if (v2->isUndefinedOrNull())
-            return true;
-        if (JSImmediate::isImmediate(v2))
-            return false;
-        return v2->asCell()->structureID()->typeInfo().masqueradesAsUndefined();
-    }
-
-    if (v2->isUndefinedOrNull()) {
-        if (JSImmediate::isImmediate(v1))
-            return false;
-        return v1->asCell()->structureID()->typeInfo().masqueradesAsUndefined();
-    }
-
-    if (v1->isObject()) {
-        if (v2->isObject())
-            return v1 == v2;
-        JSValue* p1 = v1->toPrimitive(exec);
-        if (exec->hadException())
-            return false;
-        v1 = p1;
-        goto startOver;
-    }
-
-    if (v2->isObject()) {
-        JSValue* p2 = v2->toPrimitive(exec);
-        if (exec->hadException())
-            return false;
-        v2 = p2;
-        goto startOver;
-    }
-
-    if (s1 || s2) {
-        double d1 = v1->toNumber(exec);
-        double d2 = v2->toNumber(exec);
-        return d1 == d2;
-    }
-
-    if (v1->isBoolean()) {
-        if (v2->isNumber())
-            return static_cast<double>(v1->getBoolean()) == v2->uncheckedGetNumber();
-    } else if (v2->isBoolean()) {
-        if (v1->isNumber())
-            return v1->uncheckedGetNumber() == static_cast<double>(v2->getBoolean());
-    }
-
-    return v1 == v2;
+bool equalSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
+{
+    return equalSlowCaseInline(exec, v1, v2);
 }
 
 bool strictEqual(JSValue* v1, JSValue* v2)

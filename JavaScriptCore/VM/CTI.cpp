@@ -1417,7 +1417,21 @@ void CTI::privateCompileMainPass()
             break;
         }
         CTI_COMPILE_BINARY_OP(op_less)
-        CTI_COMPILE_BINARY_OP(op_neq)
+        case op_neq: {
+            emitGetArg(instruction[i + 2].u.operand, X86::eax);
+            emitGetArg(instruction[i + 3].u.operand, X86::edx);
+            emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
+            m_jit.cmpl_rr(X86::eax, X86::edx);
+
+            m_jit.setne_r(X86::eax);
+            m_jit.movzbl_rr(X86::eax, X86::eax);
+            emitTagAsBoolImmediate(X86::eax);
+
+            emitPutResult(instruction[i + 1].u.operand);
+
+            i += 4;
+            break;
+        }
         case op_post_dec: {
             int srcDst = instruction[i + 2].u.operand;
             emitGetArg(srcDst, X86::eax);
@@ -2174,6 +2188,15 @@ void CTI::privateCompileSlowCases()
             emitPutArg(X86::eax, 0);
             emitPutArg(X86::edx, 4);
             emitCall(i, Machine::cti_op_eq);
+            emitPutResult(instruction[i + 1].u.operand);
+            i += 4;
+            break;
+        }
+        case op_neq: {
+            m_jit.link(iter->from, m_jit.label());
+            emitPutArg(X86::eax, 0);
+            emitPutArg(X86::edx, 4);
+            emitCall(i, Machine::cti_op_neq);
             emitPutResult(instruction[i + 1].u.operand);
             i += 4;
             break;

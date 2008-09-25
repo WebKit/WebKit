@@ -1,3 +1,25 @@
+2008-09-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        - inline JIT fast case of op_neq
+        - remove extra level of function call indirection from slow cases of eq and neq
+        
+        1% speedup on Richards
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_eq):
+        (JSC::Machine::cti_op_neq):
+        * kjs/operations.cpp:
+        (JSC::equal):
+        (JSC::equalSlowCase):
+        * kjs/operations.h:
+        (JSC::equalSlowCaseInline):
+
 2008-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
