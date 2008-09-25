@@ -1,0 +1,6 @@
+PASS document.querySelector('div SPAN').textContent is 'lower'
+PASS document.querySelector('div p').textContent is 'UPPER'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

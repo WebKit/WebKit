@@ -1,0 +1,5 @@
+PASS document.querySelector('div SPAN') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

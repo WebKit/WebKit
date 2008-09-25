@@ -1,3 +1,16 @@
+2008-09-25  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Eric Seidel
+        
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=21091
+        Regression: querySelector matches tag names case sensitively
+
+        * ChangeLog:
+        * fast/dom/SelectorAPI/caseTag-expected.txt: Added.
+        * fast/dom/SelectorAPI/caseTag.html: Added.
+        * fast/dom/SelectorAPI/caseTagX-expected.txt: Added.
+        * fast/dom/SelectorAPI/caseTagX.xhtml: Added.
+
 2008-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

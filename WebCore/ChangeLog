@@ -1,3 +1,20 @@
+2008-09-25  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Eric Seidel
+        
+        fix https://bugs.webkit.org/show_bug.cgi?id=21091
+        Regression: querySelector matches tag names case sensitively
+        
+        Tests: fast/dom/SelectorAPI/caseTag.html
+               fast/dom/SelectorAPI/caseTagX.xhtml
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSelector): Add a Document argument, since tag case sensitivity is different for HTML documents
+        * css/CSSParser.h:
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+
 2008-09-24  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21084
