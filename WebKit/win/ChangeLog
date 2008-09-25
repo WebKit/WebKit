@@ -1,3 +1,7 @@
+2008-09-24  Darin Adler  <darin@apple.com>
+
+        * English.lproj/Localizable.strings: Updated for recent changes.
+
 2008-09-22  Alice Liu  <alice.liu@apple.com>
 
         Added record-memory-win.vcproj tool to the solution
