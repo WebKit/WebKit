@@ -164,6 +164,16 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
     }
 }
 
+Scrollbar* ScrollView::horizontalScrollbar() const
+{
+    return m_data->m_hBar.get();
+}
+
+Scrollbar* ScrollView::verticalScrollbar() const
+{
+    return m_data->m_vBar.get();
+}
+
 void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelta)
 {
     // Since scrolling is double buffered, we will be blitting the scroll view's intersection
@@ -326,28 +336,6 @@ void ScrollView::update()
 
     GdkRectangle rect = frameGeometry();
     gdk_window_invalidate_rect(GTK_WIDGET(containingWindow())->window, &rect, true);
-}
-
-int ScrollView::visibleWidth() const
-{
-    return width() - (m_data->vBar ? m_data->vBar->width() : 0);
-}
-
-int ScrollView::visibleHeight() const
-{
-    return height() - (m_data->hBar ? m_data->hBar->height() : 0);
-}
-
-// Region of the content currently visible in the viewport in the content view's coordinate system.
-FloatRect ScrollView::visibleContentRect() const
-{
-    return FloatRect(contentsX(), contentsY(), visibleWidth(), visibleHeight());
-}
-
-FloatRect ScrollView::visibleContentRectConsideringExternalScrollers() const
-{
-    // external scrollers not supported for now
-    return visibleContentRect();
 }
 
 void ScrollView::setContentsPos(int newX, int newY)

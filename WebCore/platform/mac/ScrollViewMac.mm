@@ -72,6 +72,16 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
     return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
+Scrollbar* ScrollView::horizontalScrollbar() const
+{
+    return 0;
+}
+
+Scrollbar* ScrollView::verticalScrollbar() const
+{
+    return 0;
+}
+
 void ScrollView::platformAddChild(Widget* child)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -101,37 +111,16 @@ void ScrollView::platformSetCanBlitOnScroll()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-int ScrollView::visibleWidth() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [scrollView() documentVisibleRect].size.width;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-int ScrollView::visibleHeight() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [scrollView() documentVisibleRect].size.height;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-FloatRect ScrollView::visibleContentRect() const
+IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS; 
-    return [scrollView() documentVisibleRect]; 
+    if (includeScrollbars) {
+        if (NSView* documentView = this->documentView())
+            return enclosingIntRect([documentView visibleRect]);
+    }
+    return enclosingIntRect([scrollView() documentVisibleRect]); 
     END_BLOCK_OBJC_EXCEPTIONS; 
-    return FloatRect();
-}
-
-FloatRect ScrollView::visibleContentRectConsideringExternalScrollers() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView())
-        return [documentView visibleRect];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return FloatRect();
+    return IntRect();
 }
 
 int ScrollView::contentsWidth() const

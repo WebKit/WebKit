@@ -159,31 +159,15 @@ void ScrollView::update()
         win->Update();
 }
 
-int ScrollView::visibleWidth() const
+IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
-    int width = 0;
-    wxWindow* win = platformWidget();
-    if (win)
-        win->GetClientSize(&width, NULL);
-    
-    ASSERT(width >= 0);
-    return width;
-}
-
-int ScrollView::visibleHeight() const
-{
-    int height = 0;
-    wxWindow* win = platformWidget();
-    if (win)
-        win->GetClientSize(NULL, &height);
-    
-    ASSERT(height >= 0);
-    return height;
-}
-
-FloatRect ScrollView::visibleContentRect() const
-{
-    return FloatRect(contentsX(),contentsY(),visibleWidth(),visibleHeight());
+    // FIXME: Need to support includeScrollbars option.
+    int width;
+    GetClientSize(NULL, &width);
+    int height;
+    GetClientSize(NULL, &height);
+    ASSERT(width >= 0 && height >= 0);
+    return IntRect(contentsX(), contentsY(), width, height);
 }
 
 void ScrollView::setContentsPos(int newX, int newY)
@@ -273,11 +257,14 @@ int ScrollView::contentsHeight() const
     return height;
 }
 
-FloatRect ScrollView::visibleContentRectConsideringExternalScrollers() const
+Scrollbar* ScrollView::horizontalScrollbar() const
 {
-    // FIXME: clip this rect if parent scroll views cut off the visible
-    // area.
-    return visibleContentRect();
+    return 0;
+}
+
+Scrollbar* ScrollView::verticalScrollbar() const
+{
+    return 0;
 }
 
 bool ScrollView::isScrollViewScrollbar(const Widget* child) const

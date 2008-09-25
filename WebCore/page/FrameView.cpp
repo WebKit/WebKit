@@ -719,7 +719,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
     ASSERT(!m_frame->document()->ownerElement());
 
     if (d->m_deferringRepaints && !immediate) {
-        IntRect visibleContent = enclosingIntRect(visibleContentRect());
+        IntRect visibleContent = visibleContentRect();
         visibleContent.intersect(r);
         if (!visibleContent.isEmpty()) {
             d->m_repaintCount++;
@@ -1056,7 +1056,7 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
     // Set our clip rect to be our contents.
     IntRect clipRect;
     if (clipToContents)
-        clipRect = enclosingIntRect(visibleContentRect());
+        clipRect = visibleContentRect();
     else
         clipRect = IntRect(contentsX(), contentsY(), width(), height());
     clipRect = contentsToWindow(clipRect);
@@ -1129,7 +1129,7 @@ void FrameView::updateControlTints()
 #if !PLATFORM(MAC)
         ScrollView::paint(&context, frameGeometry());
 #else
-        m_frame->paint(&context, enclosingIntRect(visibleContentRect()));
+        m_frame->paint(&context, visibleContentRect());
 #endif
     }
 }

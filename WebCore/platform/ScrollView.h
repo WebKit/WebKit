@@ -50,7 +50,6 @@ class wxScrollWinEvent;
 
 namespace WebCore {
 
-    class FloatRect;
     class PlatformWheelEvent;
     class Scrollbar;
 
@@ -63,13 +62,15 @@ namespace WebCore {
         void addChild(Widget*);
         void removeChild(Widget*);
 
+        Scrollbar* horizontalScrollbar() const;
+        Scrollbar* verticalScrollbar() const;
+
         void setCanBlitOnScroll(bool);
         bool canBlitOnScroll() const { return m_canBlitOnScroll; }
 
-        int visibleWidth() const;
-        int visibleHeight() const;
-        FloatRect visibleContentRect() const;
-        FloatRect visibleContentRectConsideringExternalScrollers() const;
+        int visibleWidth() const { return visibleContentRect().width(); }
+        int visibleHeight() const { return visibleContentRect().height(); }
+        IntRect visibleContentRect(bool includeScrollbars = false) const;
 
         int contentsWidth() const;
         int contentsHeight() const;
@@ -158,7 +159,8 @@ namespace WebCore {
         void platformAddChild(Widget*);
         void platformRemoveChild(Widget*);
         void platformSetCanBlitOnScroll();
-
+        IntRect platformVisibleContentRect(bool includeScrollbars) const;
+        
 #if PLATFORM(MAC) && defined __OBJC__
     public:
         NSView* documentView() const;
@@ -221,9 +223,6 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(QT)
-    public:
-        Scrollbar* horizontalScrollBar() const;
-        Scrollbar* verticalScrollBar() const;
     private:
         void incrementNativeWidgetCount();
         void decrementNativeWidgetCount();

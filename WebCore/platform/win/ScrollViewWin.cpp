@@ -244,6 +244,16 @@ void ScrollView::platformRemoveChild(Widget*)
 {
 }
 
+Scrollbar* ScrollView::horizontalScrollbar() const
+{
+    return m_data->m_hBar.get();
+}
+
+Scrollbar* ScrollView::verticalScrollbar() const
+{
+    return m_data->m_vBar.get();
+}
+
 void ScrollView::updateContents(const IntRect& rect, bool now)
 {
     if (rect.isEmpty())
@@ -275,26 +285,6 @@ void ScrollView::update()
     ::UpdateWindow(containingWindow());
 }
 
-int ScrollView::visibleWidth() const
-{
-    return max(0, width() - (m_data->m_vBar ? m_data->m_vBar->width() : 0));
-}
-
-int ScrollView::visibleHeight() const
-{
-    return max(0, height() - (m_data->m_hBar ? m_data->m_hBar->height() : 0));
-}
-
-FloatRect ScrollView::visibleContentRect() const
-{
-    return FloatRect(contentsX(), contentsY(), visibleWidth(), visibleHeight());
-}
-
-FloatRect ScrollView::visibleContentRectConsideringExternalScrollers() const
-{
-    // external scrollers not supported for now
-    return visibleContentRect();
-}
 
 void ScrollView::setContentsPos(int newX, int newY)
 {

@@ -478,7 +478,7 @@ IntRect RenderView::viewRect() const
     if (printing())
         return IntRect(0, 0, m_width, m_height);
     if (m_frameView)
-        return enclosingIntRect(m_frameView->visibleContentRect());
+        return m_frameView->visibleContentRect();
     return IntRect();
 }
 

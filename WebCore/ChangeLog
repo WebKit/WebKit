@@ -1,3 +1,48 @@
+2008-09-25  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21120
+
+        Make visibleContentRect cross-platform.  Note this does add new horizontal/verticalScrollbar accessors
+        to a bunch of platforms.  This is a temporary evil until the scrollbars get made cross-platform (and I
+        didn't want to mix that change in with this patch).
+
+        Reviewed by Sam Weinig
+
+        * page/Frame.cpp:
+        (WebCore::Frame::markAllMatchesForText):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::updateControlTints):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::platformVisibleContentRect):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::horizontalScrollbar):
+        (WebCore::ScrollView::verticalScrollbar):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::horizontalScrollbar):
+        (WebCore::ScrollView::verticalScrollbar):
+        (WebCore::ScrollView::platformVisibleContentRect):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::horizontalScrollbar):
+        (WebCore::ScrollView::verticalScrollbar):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::horizontalScrollbar):
+        (WebCore::ScrollView::verticalScrollbar):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformVisibleContentRect):
+        (WebCore::ScrollView::horizontalScrollbar):
+        (WebCore::ScrollView::verticalScrollbar):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::frameVisibleRect):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewRect):
+
 2008-09-25  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Timothy Hatcher

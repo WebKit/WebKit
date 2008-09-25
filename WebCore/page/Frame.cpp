@@ -1618,7 +1618,7 @@ unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag, unsig
     Document* doc = document();
     if (doc && d->m_view && contentRenderer()) {
         doc->updateLayout(); // Ensure layout is up to date.
-        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
+        IntRect visibleRect = d->m_view->visibleContentRect();
         if (!visibleRect.isEmpty()) {
             GraphicsContext context((PlatformGraphicsContext*)0);
             context.setPaintingDisabled(true);
