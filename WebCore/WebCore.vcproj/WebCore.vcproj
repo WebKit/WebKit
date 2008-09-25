@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="WebCore"
 	ProjectGUID="{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
 	RootNamespace="WebCore"
@@ -3361,6 +3361,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\ScrollTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollView.cpp"
 				>
 			</File>
 			<File
