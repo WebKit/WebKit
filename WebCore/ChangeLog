@@ -1,3 +1,11 @@
+2008-09-24  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        - create a "style" subfolder under "rendering" and move style files to that folder
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
