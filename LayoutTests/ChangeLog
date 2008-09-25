@@ -1,3 +1,13 @@
+2008-09-25  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe
+
+        Roll out 36771 as it caused <rdar://problem/6246554>
+        "nytimes.com doesn't display after returning to it with back/forward"
+
+        * fast/css/nested-rule-parent-sheet-expected.txt: Removed.
+        * fast/css/nested-rule-parent-sheet.html: Removed.
+
 2008-09-25  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Eric Seidel.

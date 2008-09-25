@@ -1,3 +1,21 @@
+2008-09-25  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Mark Rowe
+
+        Roll out 36771 as it caused <rdar://problem/6246554>
+        "nytimes.com doesn't display after returning to it with back/forward"
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::parentStyleSheet):
+        (WebCore::CSSRule::parentRule):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        (WebCore::CSSStyleSheet::docLoader):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::doc):
+
 2008-09-25  Adam Roben  <aroben@apple.com>
 
         Windows build fix

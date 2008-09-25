@@ -74,23 +74,26 @@ bool CSSImportRule::isLoading() const
 
 void CSSImportRule::insertedIntoParent()
 {
-    CSSStyleSheet* parentSheet = parentStyleSheet();
-    if (!parentSheet)
+    StyleBase* root = this;
+    StyleBase* parent;
+    while ((parent = root->parent()))
+        root = parent;
+    if (!root->isCSSStyleSheet())
         return;
-
-    DocLoader* docLoader = parentSheet->doc()->docLoader();
+    DocLoader* docLoader = static_cast<CSSStyleSheet*>(root)->docLoader();
     if (!docLoader)
         return;
 
     String absHref = m_strHref;
+    CSSStyleSheet* parentSheet = parentStyleSheet();
     if (!parentSheet->href().isNull())
         // use parent styleheet's URL as the base URL
         absHref = KURL(KURL(parentSheet->href()), m_strHref).string();
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    for (StyleBase* curr = parent(); curr; curr = curr->parent()) {
-        if (curr->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(curr)->href())
+    for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent()) {
+        if (parent->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(parent)->href())
             return;
     }
 

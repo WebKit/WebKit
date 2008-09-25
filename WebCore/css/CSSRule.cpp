@@ -29,14 +29,13 @@ namespace WebCore {
 
 CSSStyleSheet* CSSRule::parentStyleSheet() const
 {
-    StyleBase* curr = parent();
-    while (curr && !curr->isCSSStyleSheet())
-        curr = curr->parent();
-    return curr ? static_cast<CSSStyleSheet*>(curr) : 0;
+    return (parent() && parent()->isCSSStyleSheet()) ? static_cast<CSSStyleSheet*>(parent()) : 0;
 }
 
 CSSRule* CSSRule::parentRule() const
 {
+    // FIXME: I believe this always returns 0.
+    // A correct implementation would have to look farther up than just the parent.
     return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
 }
 
