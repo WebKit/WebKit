@@ -1,3 +1,13 @@
+2008-09-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 21109: Console should right-align urls
+
+        * page/inspector/Console.js: Re-order the message elements so that when
+        it overflows it doesn't get mixed in with the next message.
+        * page/inspector/inspector.css:
+
 2008-09-25  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21113

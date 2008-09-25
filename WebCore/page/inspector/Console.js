@@ -683,12 +683,14 @@ WebInspector.ConsoleMessage.prototype = {
             return element;
         }
 
-        var messageTextElement = document.createElement("span");
-        messageTextElement.className = "console-message-text";
-        messageTextElement.appendChild(this.formattedMessage);
-        element.appendChild(messageTextElement);
+        if (this.repeatCount > 1) {
+            var messageRepeatCountElement = document.createElement("span");
+            messageRepeatCountElement.className = "bubble";
+            messageRepeatCountElement.textContent = this.repeatCount;
 
-        element.appendChild(document.createTextNode(" "));
+            element.appendChild(messageRepeatCountElement);
+            element.addStyleClass("repeated-message");
+        }
 
         if (this.url && this.url !== "undefined") {
             var urlElement = document.createElement("a");
@@ -707,14 +709,10 @@ WebInspector.ConsoleMessage.prototype = {
             element.appendChild(urlElement);
         }
 
-        if (this.repeatCount > 1) {
-            var messageRepeatCountElement = document.createElement("span");
-            messageRepeatCountElement.className = "bubble";
-            messageRepeatCountElement.textContent = this.repeatCount;
-
-            element.insertBefore(messageRepeatCountElement, element.firstChild);
-            element.addStyleClass("repeated-message");
-        }
+        var messageTextElement = document.createElement("span");
+        messageTextElement.className = "console-message-text";
+        messageTextElement.appendChild(this.formattedMessage);
+        element.appendChild(messageTextElement);
 
         return element;
     },
