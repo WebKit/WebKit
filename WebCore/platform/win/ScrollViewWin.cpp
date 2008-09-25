@@ -237,11 +237,11 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-void ScrollView::addChildPlatformWidget(PlatformWidget)
+void ScrollView::addChildPlatformWidget(Widget*)
 {
 }
 
-void ScrollView::removeChildPlatformWidget(PlatformWidget)
+void ScrollView::removeChildPlatformWidget(Widget*)
 {
 }
 
