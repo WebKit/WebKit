@@ -380,8 +380,8 @@ void JavaScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
     const HashSet<Widget*>* children = view->children();
     ASSERT(children);
 
-    HashSet<Widget*>::iterator end = children->end();
-    for (HashSet<Widget*>::iterator it = children->begin(); it != end; ++it) {
+    HashSet<Widget*>::const_iterator end = children->end();
+    for (HashSet<Widget*>::const_iterator it = children->begin(); it != end; ++it) {
         Widget* widget = *it;
         if (!widget->isPluginView())
             continue;
