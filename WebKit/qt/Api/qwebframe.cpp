@@ -106,14 +106,14 @@ WebCore::Scrollbar* QWebFramePrivate::horizontalScrollBar() const
 {
     if (!frame->view())
         return 0;
-    return frame->view()->horizontalScrollBar();
+    return frame->view()->horizontalScrollbar();
 }
 
 WebCore::Scrollbar* QWebFramePrivate::verticalScrollBar() const
 {
     if (!frame->view())
         return 0;
-    return frame->view()->verticalScrollBar();
+    return frame->view()->verticalScrollbar();
 }
 
 void QWebFramePrivate::updateBackground()
