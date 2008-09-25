@@ -74,27 +74,26 @@ bool CSSImportRule::isLoading() const
 
 void CSSImportRule::insertedIntoParent()
 {
-    StyleBase* root = this;
-    StyleBase* parent;
-    while ((parent = root->parent()))
-        root = parent;
-    if (!root->isCSSStyleSheet())
+    CSSStyleSheet* parentSheet = parentStyleSheet();
+    if (!parentSheet)
         return;
-    DocLoader* docLoader = static_cast<CSSStyleSheet*>(root)->docLoader();
+
+    DocLoader* docLoader = parentSheet->doc()->docLoader();
     if (!docLoader)
         return;
 
     String absHref = m_strHref;
-    CSSStyleSheet* parentSheet = parentStyleSheet();
     if (!parentSheet->href().isNull())
         // use parent styleheet's URL as the base URL
         absHref = KURL(KURL(parentSheet->href()), m_strHref).string();
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    for (parent = static_cast<StyleBase*>(this)->parent(); parent; parent = parent->parent()) {
-        if (parent->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(parent)->href())
+    StyleBase* root = this;
+    for (StyleBase* curr = parent(); curr; curr = curr->parent()) {
+        if (curr->isCSSStyleSheet() && absHref == static_cast<CSSStyleSheet*>(curr)->href())
             return;
+        root = curr;
     }
 
     m_cachedSheet = docLoader->requestCSSStyleSheet(absHref, parentSheet->charset());
@@ -102,7 +101,7 @@ void CSSImportRule::insertedIntoParent()
         // if the import rule is issued dynamically, the sheet may be
         // removed from the pending sheet count, so let the doc know
         // the sheet being imported is pending.
-        if (parentSheet && parentSheet->loadCompleted() && parentSheet->doc())
+        if (parentSheet && parentSheet->loadCompleted() && root == parentSheet)
             parentSheet->doc()->addPendingSheet();
         m_loading = true;
         m_cachedSheet->addClient(this);
