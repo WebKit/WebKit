@@ -1,3 +1,19 @@
+2008-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21024
+          <rdar://problem/6240821> Scrollbar not painted until hovered
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry): Replaced resizeWidget with
+        this method, which sets both the location and the size.
+        (WebCore::RenderWidget::setWidget): Replaced the call to resizeWidget
+        with a call to the new method setWidgetGeometry. Positioning the
+        widget correctly ensures that the scroll bars invalidate correctly when
+        they are created and resized.
+        * rendering/RenderWidget.h:
+
 2008-09-24  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

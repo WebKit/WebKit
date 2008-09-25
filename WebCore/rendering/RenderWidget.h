@@ -59,7 +59,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
 private:
-    void resizeWidget(Widget*, int w, int h);
+    void setWidgetGeometry(const IntRect&);
 
     virtual void deleteWidget();
 
