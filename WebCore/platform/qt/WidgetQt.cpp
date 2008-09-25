@@ -135,12 +135,6 @@ void Widget::invalidateRect(const IntRect& r)
     outermostView->addToDirtyRegion(windowRect);
 }
 
-void Widget::removeFromParent()
-{
-    if (parent())
-        parent()->removeChild(this);
-}
-
 QWidget* Widget::containingWindow() const
 {
     QWebFrame* frame = QWebFramePrivate::kit(static_cast<FrameView*>(root())->frame());

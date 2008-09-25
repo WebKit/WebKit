@@ -695,6 +695,7 @@ This file contains the list of files needed to build WebCore.
         platform/MIMETypeRegistry.cpp
         platform/text/RegularExpression.cpp
         platform/Scrollbar.cpp
+        platform/ScrollView.cpp
         platform/SecurityOrigin.cpp
         platform/text/SegmentedString.cpp
         platform/SharedBuffer.cpp

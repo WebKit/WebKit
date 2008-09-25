@@ -1,3 +1,40 @@
+2008-09-24  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21084
+
+        Make the m_children member of ScrollView cross-platform.  Consolidate children add/remove
+        functionality.  Add platform stubs for connecting/disconnecting the platform widgets.
+
+        Reviewed by Sam Weinig
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::children):
+        * platform/Widget.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::addChildPlatformWidget):
+        (WebCore::ScrollView::removeChildPlatformWidget):
+        (WebCore::ScrollView::geometryChanged):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::addChildPlatformWidget):
+        (WebCore::ScrollView::removeChildPlatformWidget):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::geometryChanged):
+        (WebCore::ScrollView::addChildPlatformWidget):
+        (WebCore::ScrollView::removeChildPlatformWidget):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::geometryChanged):
+        (WebCore::ScrollView::setParentVisible):
+        (WebCore::ScrollView::show):
+        (WebCore::ScrollView::hide):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::addChildPlatformWidget):
+        (WebCore::ScrollView::removeChildPlatformWidget):
+
 2008-09-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

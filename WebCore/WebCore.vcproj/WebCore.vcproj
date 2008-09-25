@@ -3355,6 +3355,10 @@
 				RelativePath="..\platform\ScrollTypes.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\platform\ScrollView.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\platform\ScrollView.h"
 				>

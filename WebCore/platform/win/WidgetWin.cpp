@@ -53,12 +53,6 @@ PlatformWindow Widget::containingWindow() const
     return m_containingWindow;
 }
 
-void Widget::removeFromParent()
-{
-    if (parent())
-        parent()->removeChild(this);
-}
-
 void Widget::show()
 {
 }

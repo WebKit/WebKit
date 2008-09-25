@@ -828,6 +828,7 @@ SOURCES += \
     platform/network/ResourceResponseBase.cpp \
     platform/text/RegularExpression.cpp \
     platform/Scrollbar.cpp \
+    platform/ScrollView.cpp \
 #    platform/SearchPopupMenu.cpp \
     platform/SecurityOrigin.cpp \
     platform/text/SegmentedString.cpp \

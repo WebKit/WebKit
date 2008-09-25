@@ -1545,6 +1545,7 @@ webcore_sources += \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.h \
 	WebCore/platform/Scrollbar.cpp \
+	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/Scrollbar.h \
 	WebCore/platform/SearchPopupMenu.h \
 	WebCore/platform/SecurityOrigin.cpp \

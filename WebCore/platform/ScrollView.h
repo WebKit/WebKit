@@ -29,6 +29,7 @@
 #include "IntRect.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
+
 #include <wtf/HashSet.h>
 
 #if PLATFORM(MAC) && defined __OBJC__
@@ -58,6 +59,10 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
+        const HashSet<Widget*>* children() const { return &m_children; }
+        void addChild(Widget*);
+        void removeChild(Widget*);
+
         int visibleWidth() const;
         int visibleHeight() const;
         FloatRect visibleContentRect() const;
@@ -86,9 +91,7 @@ namespace WebCore {
         ScrollbarMode hScrollbarMode() const;
 
         bool isScrollable();
-        void addChild(Widget*);
-        void removeChild(Widget*);
-
+        
         virtual void resizeContents(int w, int h);
         
         // Event coordinates are assumed to be in the coordinate space of a window that contains
@@ -145,6 +148,12 @@ namespace WebCore {
     public:
         void update();
 
+    private:
+        HashSet<Widget*> m_children;
+
+        void addChildPlatformWidget(Widget*);
+        void removeChildPlatformWidget(Widget*);
+
 #if PLATFORM(MAC) && defined __OBJC__
     public:
         NSView* documentView() const;
@@ -154,9 +163,6 @@ namespace WebCore {
 #endif
 
 #if !PLATFORM(MAC)
-    public:
-        HashSet<Widget*>* children();
-
     private:
         IntSize maximumScroll() const;
 #endif

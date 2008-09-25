@@ -476,22 +476,15 @@ void ScrollView::setFrameGeometry(const IntRect& newGeometry)
     geometryChanged();
 }
 
-void ScrollView::addChild(Widget* child)
+void ScrollView::addChildPlatformWidget(Widget* child)
 {
-    child->setContainingWindow(containingWindow());
-    child->setParent(this);
-    m_data->children.add(child);
-
-    if (child->platformWidget() && !GTK_IS_SOCKET(child->platformWidget()))
+    if (!GTK_IS_SOCKET(child->platformWidget()))
         gtk_container_add(GTK_CONTAINER(containingWindow()), child->platformWidget());
 }
 
-void ScrollView::removeChild(Widget* child)
+void ScrollView::removeChildPlatformWidget(Widget* child)
 {
-    child->setParent(0);
-    m_data->children.remove(child);
-
-    if (child->platformWidget() && GTK_WIDGET(containingWindow()) == GTK_WIDGET(child->platformWidget())->parent)
+    if (GTK_WIDGET(containingWindow()) == GTK_WIDGET(child->platformWidget())->parent)
         gtk_container_remove(GTK_CONTAINER(containingWindow()), child->platformWidget());
 }
 
@@ -768,8 +761,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
  */
 void ScrollView::geometryChanged() const
 {
-    HashSet<Widget*>::const_iterator end = m_data->children.end();
-    for (HashSet<Widget*>::const_iterator current = m_data->children.begin(); current != end; ++current)
+    HashSet<Widget*>::const_iterator end = m_children.end();
+    for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
         (*current)->geometryChanged();
 }
 
@@ -813,11 +806,6 @@ void ScrollView::updateBackingStore()
     if (!page)
         return;
     page->chrome()->updateBackingStore();
-}
-
-HashSet<Widget*>* ScrollView::children()
-{
-    return &m_data->children;
 }
 
 }

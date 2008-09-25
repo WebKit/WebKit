@@ -109,12 +109,6 @@ void Widget::hide()
     gtk_widget_hide(platformWidget());
 }
 
-void Widget::removeFromParent()
-{
-    if (parent())
-        parent()->removeChild(this);
-}
-
 /*
  * Strategy to painting a Widget:
  *  1.) do not paint if there is no GtkWidget set

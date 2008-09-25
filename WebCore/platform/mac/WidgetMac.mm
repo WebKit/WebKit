@@ -288,10 +288,6 @@ void Widget::afterMouseDown(NSView *view, Widget* widget)
     }
 }
 
-void Widget::removeFromParent()
-{
-}
-
 NSWindow* Widget::containingWindow() const
 {
     if (!platformWidget())

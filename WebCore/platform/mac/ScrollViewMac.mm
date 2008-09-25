@@ -71,6 +71,28 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
     return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
+void ScrollView::addChildPlatformWidget(Widget* child)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSView *parentView = documentView();
+    NSView *childView = child->getOuterView();
+    ASSERT(![parentView isDescendantOf:childView]);
+    
+    // Suppress the resetting of drag margins since we know we can't affect them.
+    NSWindow *window = [parentView window];
+    BOOL resetDragMargins = [window _needsToResetDragMargins];
+    [window _setNeedsToResetDragMargins:NO];
+    if ([childView superview] != parentView)
+        [parentView addSubview:childView];
+    [window _setNeedsToResetDragMargins:resetDragMargins];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void ScrollView::removeChildPlatformWidget(Widget* child)
+{
+    child->removeFromSuperview();
+}
+
 int ScrollView::visibleWidth() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -226,38 +248,6 @@ void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnUnsuppress)
     [scrollView() setScrollBarsSuppressed:suppressed
                       repaintOnUnsuppress:repaintOnUnsuppress];
     END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void ScrollView::addChild(Widget* child)
-{
-    ASSERT(child != this);
-
-    child->setParent(this);
-    if (!child->platformWidget()) {
-        child->setContainingWindow(containingWindow());
-        return;
-    }
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSView *parentView = documentView();
-    NSView *childView = child->getOuterView();
-    ASSERT(![parentView isDescendantOf:childView]);
-    
-    // Suppress the resetting of drag margins since we know we can't affect them.
-    NSWindow *window = [parentView window];
-    BOOL resetDragMargins = [window _needsToResetDragMargins];
-    [window _setNeedsToResetDragMargins:NO];
-    if ([childView superview] != parentView)
-        [parentView addSubview:childView];
-    [window _setNeedsToResetDragMargins:resetDragMargins];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void ScrollView::removeChild(Widget* child)
-{
-    if (child->platformWidget())
-        child->removeFromSuperview();
-    child->setParent(0);
 }
 
 void ScrollView::resizeContents(int w, int h)
