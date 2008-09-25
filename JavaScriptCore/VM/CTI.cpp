@@ -520,16 +520,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), i));
     emitCall(i, X86::eax);
     
-    // In the interpreter the following actions are performed by op_ret:
-
-    // Restore ExecState::m_scopeChain and CTI_ARGS_scopeChain. NOTE: After
-    // op_ret, %edx holds the caller's scope chain.
-    emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
-    emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
-    m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
-    // Restore ExecState::m_callFrame.
-    m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
-    // Restore CTI_ARGS_codeBlock.
+    // Restore CTI_ARGS_codeBlock. In the interpreter, op_ret does this.
     emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
 
     X86Assembler::JmpDst end = m_jit.label();
@@ -537,6 +528,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     if (type == OpCallEval)
         m_jit.link(wasEval, end);
 
+    // Put the return value in dst. In the interpreter, op_ret does this.
     emitPutResult(dst);
 }
 
@@ -987,13 +979,23 @@ void CTI::privateCompileMainPass()
             if (m_codeBlock->needsFullScopeChain)
                 emitCall(i, Machine::cti_op_ret_scopeChain);
 
-            // Return the result in %eax, and the caller scope chain in %edx (this is read from the callee call frame,
-            // but is only assigned to ExecState::m_scopeChain if returning to a JSFunction).
+            // Return the result in %eax.
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
+
+            // Restore the scope chain.
             m_jit.movl_mr(RegisterFile::CallerScopeChain * static_cast<int>(sizeof(Register)), X86::edi, X86::edx);
+            emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
+            emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
+            m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
+
+            // Restore ExecState::m_callFrame.
+            m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
+
+            // Grab the return address.
+            m_jit.movl_mr(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), X86::edi, X86::ecx);
+
             // Restore the machine return addess from the callframe, roll the callframe back to the caller callframe,
             // and preserve a copy of r on the stack at CTI_ARGS_r. 
-            m_jit.movl_mr(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), X86::edi, X86::ecx);
             m_jit.movl_mr(RegisterFile::CallerRegisters * static_cast<int>(sizeof(Register)), X86::edi, X86::edi);
             emitPutCTIParam(X86::edi, CTI_ARGS_r);
 
@@ -2241,18 +2243,10 @@ void CTI::privateCompileSlowCases()
 
             // Instead of checking for 0 we could initialize the CodeBlock::ctiCode to point to a trampoline that would trigger the translation.
 
-            // In the interpreter the following actions are performed by op_ret:
-
-            // Restore ExecState::m_scopeChain and CTI_ARGS_scopeChain. NOTE: After
-            // op_ret, %edx holds the caller's scope chain.
-            emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
-            emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
-            m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
-            // Restore ExecState::m_callFrame.
-            m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
-            // Restore CTI_ARGS_codeBlock.
+            // Restore CTI_ARGS_codeBlock. In the interpreter, op_ret does this.
             emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
 
+            // Put the return value in dst. In the interpreter, op_ret does this.
             emitPutResult(instruction[i + 1].u.operand);
             i += 7;
             break;

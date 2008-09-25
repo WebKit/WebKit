@@ -1,3 +1,19 @@
+2008-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Move most of the return code back into the callee, now that the callee
+        doesn't have to calculate anything dynamically.
+        
+        11.5% speedup on empty function call benchmark.
+        
+        SunSpider says 0.3% faster. SunSpider --v8 says no change.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+
 2008-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
