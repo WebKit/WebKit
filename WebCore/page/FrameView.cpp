@@ -1161,9 +1161,9 @@ void FrameView::layoutIfNeededRecursive()
     if (needsLayout())
         layout();
 
-    HashSet<Widget*>* viewChildren = children();
-    HashSet<Widget*>::iterator end = viewChildren->end();
-    for (HashSet<Widget*>::iterator current = viewChildren->begin(); current != end; ++current)
+    const HashSet<Widget*>* viewChildren = children();
+    HashSet<Widget*>::const_iterator end = viewChildren->end();
+    for (HashSet<Widget*>::const_iterator current = viewChildren->begin(); current != end; ++current)
         if ((*current)->isFrameView())
             static_cast<FrameView*>(*current)->layoutIfNeededRecursive();
 }
