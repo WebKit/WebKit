@@ -35,6 +35,7 @@ namespace WebCore {
     class JSMessageChannelConstructor : public DOMObject {
     public:
         JSMessageChannelConstructor(JSC::ExecState*, Document*);
+        virtual ~JSMessageChannelConstructor();
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 
@@ -43,7 +44,7 @@ namespace WebCore {
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
     private:
-        Document* m_document;
+        RefPtr<Document> m_document;
     };
 
 } // namespace WebCore
