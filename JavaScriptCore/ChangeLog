@@ -1,3 +1,17 @@
+2008-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21080
+        <rdar://problem/6243534>
+        Crash below Function.apply when using a runtime array as the argument list
+
+        Test: plugins/bindings-array-apply-crash.html
+
+        * kjs/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncApply): Revert to the slow case if the object inherits from 
+        JSArray (via ClassInfo) but is not a JSArray.
+
 2008-09-24  Kevin McCullough  <kmccullough@apple.com>
 
         Style change.

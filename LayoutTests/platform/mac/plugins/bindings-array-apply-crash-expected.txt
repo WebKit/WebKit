@@ -1,0 +1,4 @@
+This tests that runtime arrays are not treated as JSArrays when used in Function.apply. The test passes if it does not crash.
+
+PASS: Function called.  No crash!
+

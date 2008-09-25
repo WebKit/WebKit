@@ -101,9 +101,11 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject*, JSValue* thisValue, 
                 static_cast<Arguments*>(argArray)->fillArgList(exec, applyArgs);
             else if (exec->machine()->isJSArray(argArray))
                 static_cast<JSArray*>(argArray)->fillArgList(exec, applyArgs);
-            else if (static_cast<JSObject*>(argArray)->inherits(&JSArray::info))
-                static_cast<JSArray*>(argArray)->fillArgList(exec, applyArgs);
-            else
+            else if (static_cast<JSObject*>(argArray)->inherits(&JSArray::info)) {
+                unsigned length = static_cast<JSObject*>(argArray)->get(exec, exec->propertyNames().length)->toUInt32(exec);
+                for (unsigned i = 0; i < length; ++i)
+                    applyArgs.append(static_cast<JSObject*>(argArray)->get(exec, i));
+            } else
                 return throwError(exec, TypeError);
         } else
             return throwError(exec, TypeError);

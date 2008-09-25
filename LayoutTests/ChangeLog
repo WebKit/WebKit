@@ -1,3 +1,14 @@
+2008-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=21080
+        <rdar://problem/6243534>
+        Crash below Function.apply when using a runtime array as the argument list
+
+        * platform/mac/plugins/bindings-array-apply-crash-expected.txt: Added.
+        * platform/mac/plugins/bindings-array-apply-crash.html: Added.
+
 2008-09-24  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Dan Bernstein.

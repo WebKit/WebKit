@@ -1,3 +1,18 @@
+2008-09-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21080
+        <rdar://problem/6243534>
+        Crash below Function.apply when using a runtime array as the argument list
+
+        Add method to ObjCController to return a runtime array.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController testArray]):
+
 2008-09-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -64,6 +64,7 @@ static void* runJavaScriptThread(void* arg)
             || aSelector == @selector(accessStoredWebScriptObject)
             || aSelector == @selector(storeWebScriptObject:)
             || aSelector == @selector(testValueForKey)
+            || aSelector == @selector(testArray)
         )
         return NO;
     return YES;
@@ -87,6 +88,8 @@ static void* runJavaScriptThread(void* arg)
         return @"storeWebScriptObject";
     if (aSelector == @selector(testValueForKey))
         return @"testValueForKey";
+    if (aSelector == @selector(testArray))
+        return @"testArray";
 
     return nil;
 }
@@ -214,6 +217,11 @@ static void* runJavaScriptThread(void* arg)
 
     [storedWebScriptObject release];
     storedWebScriptObject = [webScriptObject retain];
+}
+
+- (NSArray *)testArray
+{
+    return [NSArray array];
 }
 
 - (void)dealloc
