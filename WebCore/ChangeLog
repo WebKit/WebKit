@@ -2,6 +2,18 @@
 
         Reviewed by Simon Hausmann.
 
+        [qt] ImageBuffer::toDataURL implementation
+
+        There needs to be a Qt specific test result for the above mentioned
+        implementation.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+
+2008-09-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
         [qt] Implement SharedBuffer for Qt.
 
         * WebCore.pro:

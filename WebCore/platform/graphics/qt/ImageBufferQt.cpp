@@ -27,11 +27,15 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "CString.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
+#include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "StillImageQt.h"
 
+#include <QBuffer>
+#include <QImageWriter>
 #include <QPainter>
 #include <QPixmap>
 
@@ -87,10 +91,26 @@ void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
     notImplemented();
 }
 
-String ImageBuffer::toDataURL(const String&) const
+// We get a mimeType here but QImageWriter does not support mimetypes but
+// only formats (png, gif, jpeg..., xpm). So assume we get image/ as image
+// mimetypes and then remove the image/ to get the Qt format.
+String ImageBuffer::toDataURL(const String& mimeType) const
 {
-    notImplemented();
-    return String();
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
+    if (!mimeType.startsWith("image/"))
+        return "data:,";
+
+    // prepare our target
+    QByteArray data;
+    QBuffer buffer(&data);
+    buffer.open(QBuffer::WriteOnly);
+
+    if (!m_pixmap.save(&buffer, mimeType.substring(sizeof "image").utf8().data()))
+        return "data:,";
+
+    buffer.close();
+    return String::format("data:%s;base64,%s", mimeType.utf8().data(), data.toBase64().data());
 }
 
 }
