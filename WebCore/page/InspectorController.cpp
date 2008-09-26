@@ -185,9 +185,11 @@ struct ConsoleMessage {
            (!exec && msg->wrappedArguments.size()))
             return false;
         
-        for (size_t i = 0; i < msg->wrappedArguments.size(); ++i)
+        for (size_t i = 0; i < msg->wrappedArguments.size(); ++i) {
+            ASSERT_ARG(exec, exec);
             if (!JSValueIsEqual(toRef(exec), toRef(msg->wrappedArguments[i].get()), toRef(this->wrappedArguments[i].get()), 0))
                 return false;
+        }
     
         return msg->source == this->source
             && msg->level == this->level
