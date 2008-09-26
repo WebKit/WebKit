@@ -74,7 +74,14 @@ namespace JSC {
         
         RegisterFile& registerFile() { return m_registerFile; }
         
-        static Opcode getOpcode(OpcodeID id);
+        Opcode getOpcode(OpcodeID id)
+        {
+            #if HAVE(COMPUTED_GOTO)
+                return m_opcodeTable[id];
+            #else
+                return id;
+            #endif
+        }
 
         OpcodeID getOpcodeID(Opcode opcode)
         {
@@ -289,7 +296,7 @@ namespace JSC {
         void* m_jsFunctionVptr;
 
 #if HAVE(COMPUTED_GOTO)
-        static Opcode s_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
+        Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
     };

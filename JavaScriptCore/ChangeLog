@@ -1,5 +1,12 @@
 2008-09-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+        
+        Reverted the part of r36614 that used static data because static data
+        is not thread-safe.
+
+2008-09-26  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
         
         Removed dynamic check for whether the callee needs an activation object.
