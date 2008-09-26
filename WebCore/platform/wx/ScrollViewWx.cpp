@@ -404,11 +404,6 @@ void ScrollView::platformRemoveChild(Widget* widget)
     }
 }
 
-void ScrollView::scrollRectIntoViewRecursively(const IntRect& rect)
-{
-    setContentsPos(rect.x(), rect.y());
-}
-
 Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     // AFAICT this is only used for platforms that provide

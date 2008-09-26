@@ -143,22 +143,6 @@ void ScrollView::platformSetContentsSize()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
-{ 
-    NSRect rect = r;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSView *originalView = documentView();
-    for (NSView *view = originalView; view; view = [view superview]) {
-        if ([view isKindOfClass:[NSClipView class]]) {
-            NSClipView *clipView = (NSClipView *)view;
-            NSView *documentView = [clipView documentView];
-            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:originalView]];
-        }
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 bool ScrollView::isScrollable() 
 { 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

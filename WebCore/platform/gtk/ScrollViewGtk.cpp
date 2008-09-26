@@ -419,17 +419,6 @@ void ScrollView::platformRemoveChild(Widget* child)
         gtk_container_remove(GTK_CONTAINER(containingWindow()), child->platformWidget());
 }
 
-void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
-{
-    IntPoint p(max(0, r.x()), max(0, r.y()));
-    ScrollView* view = this;
-    while (view) {
-        view->setContentsPos(p.x(), p.y());
-        p.move(view->x() - view->scrollOffset().width(), view->y() - view->scrollOffset().height());
-        view = static_cast<ScrollView*>(view->parent());
-    }
-}
-
 bool ScrollView::inWindow() const
 {
     notImplemented();

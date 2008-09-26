@@ -279,17 +279,6 @@ bool ScrollView::isScrollViewScrollbar(const Widget* child) const
     return m_data->m_hBar == child || m_data->m_vBar == child;
 }
 
-void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
-{
-    IntPoint p(max(0, r.x()), max(0, r.y()));
-    ScrollView* view = this;
-    while (view) {
-        view->setScrollPosition(p);
-        p.move(view->x() - view->scrollOffset().width(), view->y() - view->scrollOffset().height());
-        view = static_cast<ScrollView*>(parent());
-    }
-}
-
 WebCore::ScrollbarMode ScrollView::hScrollbarMode() const
 {
     return m_data->m_hScrollbarMode;

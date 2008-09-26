@@ -103,6 +103,17 @@ IntPoint ScrollView::maximumScrollPosition() const
     return IntPoint(maximumOffset.width(), maximumOffset.height());
 }
 
+void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
+{
+    IntPoint p(max(0, r.x()), max(0, r.y()));
+    ScrollView* view = this;
+    while (view) {
+        view->setScrollPosition(p);
+        p.move(view->x() - view->scrollOffset().width(), view->y() - view->scrollOffset().height());
+        view = view->parent();
+    }
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {
