@@ -1,3 +1,22 @@
+2008-09-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21054: Construction of certain DOM objects is heavily regressed by r36675
+        <https://bugs.webkit.org/show_bug.cgi?id=21054>
+
+        Tests to ensure that we correctly only have single instances of the
+        special cased Image, MessageChannel, Option, XMLHttpRequest, and Audio
+        constructors.  We also test that we don't expose the cached objects
+        to subsequent documents as navigation occurs.
+
+        * fast/dom/constructors-cached-expected.txt: Added.
+        * fast/dom/constructors-cached-navigate-expected.txt: Added.
+        * fast/dom/constructors-cached-navigate.html: Added.
+        * fast/dom/constructors-cached.html: Added.
+        * fast/dom/resources/constructors-cached-navigate.js: Added.
+        * fast/dom/resources/constructors-cached.js: Added.
+
 2008-09-25  Feng Qian <feng@chromium.org>
 
         Test for: https://bugs.webkit.org/show_bug.cgi?id=21032

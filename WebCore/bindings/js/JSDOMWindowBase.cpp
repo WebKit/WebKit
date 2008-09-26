@@ -433,6 +433,16 @@ static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url
     return returnValue ? returnValue : jsUndefined();
 }
 
+template<class ConstructorClass> static JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMWindowBase* window)
+{
+    if (JSC::JSObject* constructor = window->constructors().get(&ConstructorClass::s_info))
+        return constructor;
+    JSC::JSObject* constructor = new (exec) ConstructorClass(exec, window->impl()->document());
+    ASSERT(!window->constructors().contains(&ConstructorClass::s_info));
+    window->constructors().set(&ConstructorClass::s_info, constructor);
+    return constructor;
+}
+
 JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
 {
     ASSERT(impl()->frame());
@@ -449,28 +459,26 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
     case Image:
         if (!allowsAccessFrom(exec))
             return jsUndefined();
-        // FIXME: this property (and the few below) probably shouldn't create a new object every
-        // time
-        return new (exec) JSImageConstructor(exec, impl()->frame()->document());
+        return getDOMConstructor<JSImageConstructor>(exec, this);
     case MessageChannel:
         if (!allowsAccessFrom(exec))
             return jsUndefined();
-        return new (exec) JSMessageChannelConstructor(exec, impl()->frame()->document());
+        return getDOMConstructor<JSMessageChannelConstructor>(exec, this);
     case Option:
         if (!allowsAccessFrom(exec))
             return jsUndefined();
-        return new (exec) JSHTMLOptionElementConstructor(exec, impl()->frame()->document());
+        return getDOMConstructor<JSHTMLOptionElementConstructor>(exec, this);
     case XMLHttpRequest:
         if (!allowsAccessFrom(exec))
             return jsUndefined();
-        return new (exec) JSXMLHttpRequestConstructor(exec, impl()->frame()->document());
+        return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);
     case Audio:
 #if ENABLE(VIDEO)
         if (!allowsAccessFrom(exec))
             return jsUndefined();
         if (!MediaPlayer::isAvailable())
             return jsUndefined();
-        return new (exec) JSAudioConstructor(exec, impl()->frame()->document());
+        return getDOMConstructor<JSAudioConstructor>(exec, this);
 #else
         return jsUndefined();
 #endif
@@ -478,7 +486,7 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
 #if ENABLE(XSLT)
         if (!allowsAccessFrom(exec))
             return jsUndefined();
-        return new (exec) JSXSLTProcessorConstructor(exec);
+        return getDOMConstructor<JSXSLTProcessorConstructor>(exec);
 #else
         return jsUndefined();
 #endif

@@ -34,7 +34,7 @@ const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstruct
 
 JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Document* document)
     : DOMObject(JSXMLHttpRequestConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(document)
+    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
 {
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
 }
@@ -49,6 +49,13 @@ ConstructType JSXMLHttpRequestConstructor::getConstructData(ConstructData& const
 {
     constructData.native.function = constructXMLHttpRequest;
     return ConstructTypeHost;
+}
+
+void JSXMLHttpRequestConstructor::mark()
+{
+    DOMObject::mark();
+    if (!m_document->marked())
+        m_document->mark();
 }
 
 } // namespace WebCore

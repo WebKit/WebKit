@@ -38,7 +38,7 @@ const ClassInfo JSMessageChannelConstructor::s_info = { "MessageChannelConstruct
 
 JSMessageChannelConstructor::JSMessageChannelConstructor(ExecState* exec, Document* document)
     : DOMObject(JSMessageChannelConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(document)
+    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
 {
     putDirect(exec->propertyNames().prototype, JSMessageChannelPrototype::self(exec), None);
 }
@@ -55,7 +55,14 @@ ConstructType JSMessageChannelConstructor::getConstructData(ConstructData& const
 
 JSObject* JSMessageChannelConstructor::construct(ExecState* exec, JSObject* constructor, const ArgList&)
 {
-    return static_cast<JSObject*>(toJS(exec, MessageChannel::create(static_cast<JSMessageChannelConstructor*>(constructor)->m_document.get())));
+    return static_cast<JSObject*>(toJS(exec, MessageChannel::create(static_cast<JSMessageChannelConstructor*>(constructor)->document())));
+}
+
+void JSMessageChannelConstructor::mark()
+{
+    DOMObject::mark();
+    if (!m_document->marked())
+        m_document->mark();
 }
 
 } // namespace WebCore

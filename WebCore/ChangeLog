@@ -1,3 +1,47 @@
+2008-09-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21054: Construction of certain DOM objects is heavily regressed by r36675
+        <https://bugs.webkit.org/show_bug.cgi?id=21054>
+
+        This performance regression is actually just a symptom of a correctness
+        bug.  The constructor objects for a number of properties that have security
+        checks on access were returning new objects each time.  The most obvious
+        symptom of this bug is that window.Image != window.Image, etc.
+
+        The solution to this is to make sure we cache these constructors
+        in the same way as all the other DOM constructors.  To achieve this
+        without causing any refcount cycles it is necessary to replace the
+        refcounted document pointer in the Image, MessageChannel, Option, 
+        XMLHttpRequest, and Audio constructor objects with a reference to 
+        the document's JS wrapper.
+
+        Tests: fast/dom/constructors-cached-navigate.html
+               fast/dom/constructors-cached.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::mark):
+        * bindings/js/JSAudioConstructor.h:
+        (WebCore::JSAudioConstructor::document):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::getDOMConstructor):
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::mark):
+        * bindings/js/JSHTMLOptionElementConstructor.h:
+        (WebCore::JSHTMLOptionElementConstructor::document):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::mark):
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::document):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::mark):
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        (WebCore::JSXMLHttpRequestConstructor::document):
+
 2008-09-26  Simon Hausmann  <hausmann@webkit.org>
 
         Unreviewed one-liner build fix for the Qt/Windows build.

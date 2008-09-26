@@ -27,6 +27,7 @@
 #define JSMessageChannelConstructor_h
 
 #include "JSDOMBinding.h"
+#include "JSDocument.h"
 
 namespace WebCore {
 
@@ -39,12 +40,15 @@ namespace WebCore {
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 
+        Document* document() const { return m_document->impl(); }
+
         virtual bool implementsHasInstance() const { return true; }
         static JSC::JSObject* construct(JSC::ExecState*, JSC::JSObject*, const JSC::ArgList&);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
+        virtual void mark();
     private:
-        RefPtr<Document> m_document;
+        JSDocument* m_document;
     };
 
 } // namespace WebCore

@@ -42,7 +42,7 @@ const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* document)
     : DOMObject(JSAudioConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(document)
+    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
@@ -63,6 +63,13 @@ ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructAudio;
     return ConstructTypeHost;
+}
+
+void JSAudioConstructor::mark()
+{
+    DOMObject::mark();
+    if (!m_document->marked())
+        m_document->mark();
 }
 
 } // namespace WebCore

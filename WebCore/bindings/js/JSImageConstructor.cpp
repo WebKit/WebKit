@@ -34,7 +34,7 @@ const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 
 JSImageConstructor::JSImageConstructor(ExecState* exec, Document* document)
     : DOMObject(JSImageConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(document)
+    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
 {
 }
 
@@ -72,6 +72,13 @@ ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructImage;
     return ConstructTypeHost;
+}
+
+void JSImageConstructor::mark()
+{
+    DOMObject::mark();
+    if (!m_document->marked())
+        m_document->mark();
 }
 
 } // namespace WebCore
