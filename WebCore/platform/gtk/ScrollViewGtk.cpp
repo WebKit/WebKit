@@ -184,7 +184,7 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
 
     //FIXME update here?
 
-    if (canBlitOnScroll()) // The main frame can just blit the WebView window
+    if (view->canBlitOnScroll()) // The main frame can just blit the WebView window
        // FIXME: Find a way to blit subframes without blitting overlapping content
        view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(), scrollViewRect, clipRect);
     else  {
