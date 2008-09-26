@@ -1,3 +1,9 @@
+2008-09-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Update the version of libpng.
+
+        * wx/install-unix-extras:
+
 2008-09-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

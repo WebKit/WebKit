@@ -70,7 +70,7 @@ LIBJPEG_VERSION="6b"
 LIBJPEG_TARBALL="jpegsrc.v$LIBJPEG_VERSION.tar.gz"
 LIBJPEG_URL="http://www.ijg.org/files/$LIBJPEG_TARBALL"
 
-LIBPNG_VERSION="1.2.29"
+LIBPNG_VERSION="1.2.32"
 LIBPNG_TARBALL="libpng-$LIBPNG_VERSION.tar.gz"
 LIBPNG_URL="ftp://ftp.simplesystems.org/pub/libpng/png/src/$LIBPNG_TARBALL"
 
