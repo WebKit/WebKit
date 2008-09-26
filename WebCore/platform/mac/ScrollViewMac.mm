@@ -132,6 +132,17 @@ IntSize ScrollView::platformContentsSize() const
     return IntSize();
 }
 
+void ScrollView::platformSetContentsSize()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    int w = m_contentsSize.width();
+    int h = m_contentsSize.height();
+    LOG(Frames, "%p %@ at w %d h %d\n", documentView(), [(id)[documentView() class] className], w, h);            
+    NSSize tempSize = { max(0, w), max(0, h) }; // workaround for 4213314
+    [documentView() setFrameSize:tempSize];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 { 
     NSRect rect = r;
@@ -206,15 +217,6 @@ void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnUnsuppress)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [scrollView() setScrollBarsSuppressed:suppressed
                       repaintOnUnsuppress:repaintOnUnsuppress];
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void ScrollView::resizeContents(int w, int h)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    LOG(Frames, "%p %@ at w %d h %d\n", documentView(), [(id)[documentView() class] className], w, h);            
-    NSSize tempSize = { max(0, w), max(0, h) }; // workaround for 4213314
-    [documentView() setFrameSize:tempSize];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

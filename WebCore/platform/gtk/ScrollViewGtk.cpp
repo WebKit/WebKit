@@ -347,16 +347,6 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
 }
 
-void ScrollView::resizeContents(int w, int h)
-{
-    IntSize newSize(w, h);
-    if (m_contentsSize == newSize)
-        return;
-
-    m_contentsSize = newSize;
-    updateScrollbars(m_scrollOffset);
-}
-
 ScrollbarMode ScrollView::hScrollbarMode() const
 {
     return m_data->hScrollbarMode;

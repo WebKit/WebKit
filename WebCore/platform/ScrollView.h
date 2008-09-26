@@ -83,12 +83,13 @@ namespace WebCore {
         int visibleWidth() const { return visibleContentRect().width(); }
         int visibleHeight() const { return visibleContentRect().height(); }
         
-        // Methods for obtaining the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
+        // Methods for getting/setting the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
         // values).
         IntSize contentsSize() const;
         int contentsWidth() const { return contentsSize().width(); }
         int contentsHeight() const { return contentsSize().height(); }
-
+        void setContentsSize(const IntSize&);
+       
         // Methods for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
         IntPoint scrollPosition() const { return visibleContentRect().location(); }
         IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
@@ -114,9 +115,7 @@ namespace WebCore {
         ScrollbarMode hScrollbarMode() const;
 
         bool isScrollable();
-        
-        virtual void resizeContents(int w, int h);
-        
+         
         // Event coordinates are assumed to be in the coordinate space of a window that contains
         // the entire widget hierarchy. It is up to the platform to decide what the precise definition
         // of containing window is. (For example on Mac it is the containing NSWindow.)
@@ -182,6 +181,7 @@ namespace WebCore {
         void platformSetCanBlitOnScroll();
         IntRect platformVisibleContentRect(bool includeScrollbars) const;
         IntSize platformContentsSize() const;
+        void platformSetContentsSize();
 
 #if PLATFORM(MAC) && defined __OBJC__
     public:
@@ -214,6 +214,8 @@ namespace WebCore {
 
     private:
         void updateScrollbars(const IntSize& desiredOffset);
+#else
+        void updateScrollbars(const IntSize& desiredOffset) {} // FIXME: Temporary.
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(QT) || PLATFORM(MAC)

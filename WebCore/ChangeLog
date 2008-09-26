@@ -1,5 +1,30 @@
 2008-09-25  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=21133
+        
+        Rename resizeContents method on ScrollView to setContentsSize (to match contentsSize()).  Make it
+        cross-platform.
+
+        Reviewed by Oliver Hunt
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setContentsSize):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformSetContentsSize):
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformSetContentsSize):
+
+2008-09-25  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21132
 
         Clean up the methods that actually do the scrolling in ScrollView.

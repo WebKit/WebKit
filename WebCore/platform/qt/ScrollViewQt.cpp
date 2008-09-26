@@ -237,15 +237,6 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
 }
 
-void ScrollView::resizeContents(int w, int h)
-{
-    IntSize newContentsSize(w, h);
-    if (m_contentsSize != newContentsSize) {
-        m_contentsSize = newContentsSize;
-        updateScrollbars(m_scrollOffset);
-    }
-}
-
 void ScrollView::setFrameGeometry(const IntRect& newGeometry)
 {
     IntRect oldGeometry = frameGeometry();
