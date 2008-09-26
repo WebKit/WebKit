@@ -1821,10 +1821,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    // FIXME: this can move to WebView since active state is Page level, not Frame level.
-    NSResponder *firstResponder = [window firstResponder];
-    if (firstResponder == self || firstResponder == [self _frameView])
-        page->focusController()->setActive(!_private->resigningFirstResponder && windowIsKey);
+    page->focusController()->setActive(windowIsKey);
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
     frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);

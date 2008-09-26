@@ -1,3 +1,14 @@
+2008-09-25  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21101
+
+        Fix the updating of the active state to not be dumb, so that viewless scrollbars repaint properly.
+
+        Reviewed by Tim Hatcher
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateFocusedAndActiveState]):
+
 2008-09-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
