@@ -1,3 +1,16 @@
+2008-09-26  Alice Liu  <alice.liu@apple.com>
+
+        Remove usage of atlstr.h and CString for VCExpress compatibility
+
+        Reviewed by Stephanie Lewis.
+
+        * record-memory-win/main.cpp:
+        (ProcessArgs):
+        (UseImage):
+        (QueryContinuously):
+        (OneQuery):
+        (OneQueryMP):
+
 2008-09-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Update the version of libpng.

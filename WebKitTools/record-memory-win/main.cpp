@@ -1,17 +1,18 @@
+#include <windows.h>
 #include <assert.h>
-#include <atlstr.h>
 #include <psapi.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <time.h>
-#include <windows.h>
+#include "Shlwapi.h"
 
 #pragma comment(lib, "psapi.lib")
+#pragma comment(lib, "shlwapi.lib")
 
 bool gSingleProcess = true;
 int gQueryInterval = 5; // seconds
 time_t gDuration = 0;   // seconds
-CString gCommandLine;
+LPTSTR gCommandLine;
 
 HRESULT ProcessArgs(int argc, TCHAR *argv[]);
 HRESULT PrintUsage();
@@ -33,26 +34,25 @@ int __cdecl _tmain (int argc, TCHAR *argv[])
 
 HRESULT ProcessArgs(int argc, TCHAR *argv[])
 {
-    CString argument;
+    LPTSTR argument;
     for( int count = 1; count < argc; count++ ) {
-        argument = argv[count];
-
-        if ((argument.Find(_T("-h")) != -1) ||
-            (argument.Find(_T("--help")) != -1))
+        argument = argv[count] ;
+        if (wcsstr(argument, _T("-h")) ||
+            wcsstr(argument, _T("--help")))
             return PrintUsage();
-        else if (argument.Find(_T("--exe")) != -1) {
+        else if (wcsstr(argument, _T("--exe"))) {
             gCommandLine = argv[++count];
-            if (gCommandLine.Find(_T("chrome.exe")) != -1)
+            if (wcsstr(gCommandLine, _T("chrome.exe")))
                 gSingleProcess = false;
-        } else if ((argument.Find(_T("-i")) != -1) ||
-            (argument.Find(_T("--interval")) != -1)) {
+        } else if (wcsstr(argument, _T("-i")) ||
+            wcsstr(argument, _T("--interval"))) {
             gQueryInterval = _wtoi(argv[++count]);
             if (gQueryInterval < 1) {
                 printf("ERROR: invalid interval\n");
                 return E_INVALIDARG;
             }
-        } else if ((argument.Find(_T("-d")) != -1) ||
-            (argument.Find(_T("--duration")) != -1)) {
+        } else if (wcsstr(argument, _T("-d")) ||
+            wcsstr(argument, _T("--duration"))) {
             gDuration = _wtoi(argv[++count]);
             if (gDuration < 1) {
                 printf("ERROR: invalid duration\n");
@@ -63,11 +63,10 @@ HRESULT ProcessArgs(int argc, TCHAR *argv[])
             return PrintUsage();
         }
     }
-    if (argc < 2 || gCommandLine.IsEmpty()) {
+    if (argc < 2 || !wcslen(gCommandLine) ) {
         printf("ERROR: executable path is required\n");
         return PrintUsage();
     }
-        
     return S_OK;
 }
 
@@ -93,11 +92,9 @@ void UseImage(void (functionForQueryType(HANDLE)))
     si.cb = sizeof(STARTUPINFO);
     PROCESS_INFORMATION pi = {0};
 
-    LPWSTR commandLine = gCommandLine.GetBuffer(MAX_PATH);  // WHAT'sTHIS? 
-
     // Start the child process. 
     if(!CreateProcess( NULL,   // No module name (use command line)
-        commandLine,        // Command line
+        gCommandLine,        // Command line
         NULL,           // Process handle not inheritable
         NULL,           // Thread handle not inheritable
         FALSE,          // Set handle inheritance to FALSE
@@ -118,13 +115,13 @@ void UseImage(void (functionForQueryType(HANDLE)))
 
 void QueryContinuously(HANDLE hProcess)
 {
-    ::Sleep(2000); // give the process some time to launch
+    Sleep(2000); // give the process some time to launch
     bool pastDuration = false;
     time_t startTime = time(NULL);
     unsigned int memUsage = gSingleProcess ? OneQuery(hProcess) : OneQueryMP(hProcess);
     while(memUsage && !pastDuration) {
         printf( "%u\n", memUsage );
-        ::Sleep(gQueryInterval*1000);
+        Sleep(gQueryInterval*1000);
         memUsage = gSingleProcess ? OneQuery(hProcess) : OneQueryMP(hProcess);
         pastDuration = gDuration > 0 ? ElapsedTime(startTime) > gDuration : false;
     } 
@@ -143,7 +140,7 @@ unsigned int OneQuery(HANDLE hProcess)
     PROCESS_MEMORY_COUNTERS_EX pmc;
     if (NULL == hProcess)
         return 0;
-    if (::GetProcessMemoryInfo(hProcess, (PPROCESS_MEMORY_COUNTERS)&pmc, sizeof(pmc)))
+    if (GetProcessMemoryInfo(hProcess, (PPROCESS_MEMORY_COUNTERS)&pmc, sizeof(pmc)))
         return (unsigned)pmc.PrivateUsage;
     return 0;
 }
@@ -152,13 +149,11 @@ unsigned int OneQuery(HANDLE hProcess)
 unsigned int OneQueryMP(HANDLE hProcess)
 {
     unsigned int memUsage = 0;
-    CString processName;
-    LPTSTR szProcessName = processName.GetBuffer(MAX_PATH);
-    ::GetProcessImageFileName(hProcess, szProcessName, processName.GetAllocLength());
-    processName.ReleaseBuffer();
-    CString shortProcessName = ::PathFindFileName(processName);
+    TCHAR monitoredProcessName[MAX_PATH];
+    GetProcessImageFileName(hProcess, monitoredProcessName, sizeof(monitoredProcessName)/sizeof(TCHAR));
+    LPTSTR shortProcessName = PathFindFileName(monitoredProcessName);
     DWORD aProcesses[1024], cbNeeded, cProcesses;
-    HANDLE hSpawnedProcess;
+    HANDLE hFoundProcess;
     if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
         return 0;
 
@@ -168,26 +163,25 @@ unsigned int OneQueryMP(HANDLE hProcess)
     for (unsigned int i = 0; i < cProcesses; i++)
         if (aProcesses[i] != 0) {
             DWORD retVal = 0;
-            TCHAR szProcessName[MAX_PATH];
+            TCHAR foundProcessName[MAX_PATH];
 
             // Get a handle to the process.
-            hSpawnedProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
+            hFoundProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
                                    PROCESS_VM_READ,
                                    FALSE, aProcesses[i]);
 
             // Get the process name.
-            if (NULL != hSpawnedProcess) {
+            if (NULL != hFoundProcess) {
                 HMODULE hMod;
                 DWORD cbNeeded;
 
-                if (EnumProcessModules(hSpawnedProcess, &hMod, sizeof(hMod), &cbNeeded)) {
-                    GetModuleBaseName(hSpawnedProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR));
-                    CString processName(szProcessName);
-                    if (processName.Find(shortProcessName) != -1)
-                        memUsage += OneQuery(hSpawnedProcess);
+                if (EnumProcessModules(hFoundProcess, &hMod, sizeof(hMod), &cbNeeded)) {
+                    GetModuleBaseName(hFoundProcess, hMod, foundProcessName, sizeof(foundProcessName)/sizeof(TCHAR));
+                    if (wcsstr(foundProcessName, shortProcessName))
+                        memUsage += OneQuery(hFoundProcess);
                 }
             }
-            CloseHandle(hSpawnedProcess);
+            CloseHandle(hFoundProcess);
         }
     return memUsage;
 }
