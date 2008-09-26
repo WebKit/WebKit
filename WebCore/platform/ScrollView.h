@@ -53,223 +53,224 @@ class wxScrollWinEvent;
 // Port authors should wait until this refactoring is complete before attempting to implement this interface.
 namespace WebCore {
 
-    class PlatformWheelEvent;
-    class Scrollbar;
+class PlatformWheelEvent;
+class Scrollbar;
 
-    class ScrollView : public Widget {
-    public:
-        ScrollView();
-        ~ScrollView();
+class ScrollView : public Widget {
+public:
+    ScrollView();
+    ~ScrollView();
 
-        // Methods for child manipulation and inspection.
-        const HashSet<Widget*>* children() const { return &m_children; }
-        void addChild(Widget*);
-        void removeChild(Widget*);
+    // Methods for child manipulation and inspection.
+    const HashSet<Widget*>* children() const { return &m_children; }
+    void addChild(Widget*);
+    void removeChild(Widget*);
 
-        // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars.  These methods
-        // can be used to obtain those scrollbars.
-        Scrollbar* horizontalScrollbar() const;
-        Scrollbar* verticalScrollbar() const;
+    // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars.  These methods
+    // can be used to obtain those scrollbars.
+    Scrollbar* horizontalScrollbar() const;
+    Scrollbar* verticalScrollbar() const;
 
-        // Whether or not a scroll view will blit visible contents when it is scrolled.  Blitting is disabled in situations
-        // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
-        void setCanBlitOnScroll(bool);
-        bool canBlitOnScroll() const { return m_canBlitOnScroll; }
+    // Whether or not a scroll view will blit visible contents when it is scrolled.  Blitting is disabled in situations
+    // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
+    void setCanBlitOnScroll(bool);
+    bool canBlitOnScroll() const { return m_canBlitOnScroll; }
 
-        // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
-        // and height.  By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
-        // included.
-        IntRect visibleContentRect(bool includeScrollbars = false) const;
-        int visibleWidth() const { return visibleContentRect().width(); }
-        int visibleHeight() const { return visibleContentRect().height(); }
-        
-        // Methods for getting/setting the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
-        // values).
-        IntSize contentsSize() const;
-        int contentsWidth() const { return contentsSize().width(); }
-        int contentsHeight() const { return contentsSize().height(); }
-        void setContentsSize(const IntSize&);
-       
-        // Methods for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
-        IntPoint scrollPosition() const { return visibleContentRect().location(); }
-        IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
-        IntPoint maximumScrollPosition() const; // The maximum position we can be scrolled to.
-        int scrollX() const { return scrollPosition().x(); }
-        int scrollY() const { return scrollPosition().y(); }
-        
-        // Methods for scrolling the view.
-        void setScrollPosition(const IntPoint&);
-        void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
-        void scrollRectIntoViewRecursively(const IntRect&);
-
-        virtual void setVScrollbarMode(ScrollbarMode);
-        virtual void setHScrollbarMode(ScrollbarMode);
-
-        // Set the mode for both scrollbars at once.
-        virtual void setScrollbarsMode(ScrollbarMode);
-
-        // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
-        void suppressScrollbars(bool suppressed, bool repaintOnUnsuppress = false);
-
-        ScrollbarMode vScrollbarMode() const;
-        ScrollbarMode hScrollbarMode() const;
-
-        bool isScrollable();
-         
-        // Event coordinates are assumed to be in the coordinate space of a window that contains
-        // the entire widget hierarchy. It is up to the platform to decide what the precise definition
-        // of containing window is. (For example on Mac it is the containing NSWindow.)
-        IntPoint windowToContents(const IntPoint&) const;
-        IntPoint contentsToWindow(const IntPoint&) const;
-        IntRect windowToContents(const IntRect&) const;
-        IntRect contentsToWindow(const IntRect&) const;
-
-        bool inWindow() const;
-        virtual bool shouldUpdateWhileOffscreen() const = 0;
-
-        // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
-        Scrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
-
-        // This method exists for scrollviews that need to handle wheel events manually.
-        // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
-        // (like Windows), we need this method in order to do the scroll ourselves.
-        void wheelEvent(PlatformWheelEvent&);
-
-        bool scroll(ScrollDirection, ScrollGranularity);
-        
-        IntPoint convertChildToSelf(const Widget* child, const IntPoint& point) const
-        {
-            IntPoint newPoint = point;
-            if (!isScrollViewScrollbar(child))
-                newPoint = point - scrollOffset();
-            newPoint.move(child->x(), child->y());
-            return newPoint;
-        }
-
-        IntPoint convertSelfToChild(const Widget* child, const IntPoint& point) const
-        {
-            IntPoint newPoint = point;
-            if (!isScrollViewScrollbar(child))
-                newPoint = point + scrollOffset();
-            newPoint.move(-child->x(), -child->y());
-            return newPoint;
-        }
-        
-        bool isScrollViewScrollbar(const Widget*) const;
+    // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
+    // and height.  By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
+    // included.
+    IntRect visibleContentRect(bool includeScrollbars = false) const;
+    int visibleWidth() const { return visibleContentRect().width(); }
+    int visibleHeight() const { return visibleContentRect().height(); }
     
+    // Methods for getting/setting the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
+    // values).
+    IntSize contentsSize() const;
+    int contentsWidth() const { return contentsSize().width(); }
+    int contentsHeight() const { return contentsSize().height(); }
+    void setContentsSize(const IntSize&);
+   
+    // Methods for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
+    IntPoint scrollPosition() const { return visibleContentRect().location(); }
+    IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
+    IntPoint maximumScrollPosition() const; // The maximum position we can be scrolled to.
+    int scrollX() const { return scrollPosition().x(); }
+    int scrollY() const { return scrollPosition().y(); }
+    
+    // Methods for scrolling the view.  setScrollPosition is the only method that really scrolls the view.  The other two methods are helper functions
+    // that ultimately end up calling setScrollPosition.
+    void setScrollPosition(const IntPoint&);
+    void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
+    void scrollRectIntoViewRecursively(const IntRect&);
+
+    virtual void setVScrollbarMode(ScrollbarMode);
+    virtual void setHScrollbarMode(ScrollbarMode);
+
+    // Set the mode for both scrollbars at once.
+    virtual void setScrollbarsMode(ScrollbarMode);
+
+    // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
+    void suppressScrollbars(bool suppressed, bool repaintOnUnsuppress = false);
+
+    ScrollbarMode vScrollbarMode() const;
+    ScrollbarMode hScrollbarMode() const;
+
+    bool isScrollable();
+     
+    // Event coordinates are assumed to be in the coordinate space of a window that contains
+    // the entire widget hierarchy. It is up to the platform to decide what the precise definition
+    // of containing window is. (For example on Mac it is the containing NSWindow.)
+    IntPoint windowToContents(const IntPoint&) const;
+    IntPoint contentsToWindow(const IntPoint&) const;
+    IntRect windowToContents(const IntRect&) const;
+    IntRect contentsToWindow(const IntRect&) const;
+
+    bool inWindow() const;
+    virtual bool shouldUpdateWhileOffscreen() const = 0;
+
+    // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
+    Scrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
+
+    // This method exists for scrollviews that need to handle wheel events manually.
+    // On Mac the underlying NSScrollView just does the scrolling, but on other platforms
+    // (like Windows), we need this method in order to do the scroll ourselves.
+    void wheelEvent(PlatformWheelEvent&);
+
+    bool scroll(ScrollDirection, ScrollGranularity);
+    
+    IntPoint convertChildToSelf(const Widget* child, const IntPoint& point) const
+    {
+        IntPoint newPoint = point;
+        if (!isScrollViewScrollbar(child))
+            newPoint = point - scrollOffset();
+        newPoint.move(child->x(), child->y());
+        return newPoint;
+    }
+
+    IntPoint convertSelfToChild(const Widget* child, const IntPoint& point) const
+    {
+        IntPoint newPoint = point;
+        if (!isScrollViewScrollbar(child))
+            newPoint = point + scrollOffset();
+        newPoint.move(-child->x(), -child->y());
+        return newPoint;
+    }
+    
+    bool isScrollViewScrollbar(const Widget*) const;
+
 #if HAVE(ACCESSIBILITY)
-        IntRect contentsToScreen(const IntRect&) const;
-        IntPoint screenToContents(const IntPoint&) const;
+    IntRect contentsToScreen(const IntRect&) const;
+    IntPoint screenToContents(const IntPoint&) const;
 #endif
 
-    protected:
-        void updateContents(const IntRect&, bool now = false);
-        void updateWindowRect(const IntRect&, bool now = false);
-    public:
-        void update();
+protected:
+    void updateContents(const IntRect&, bool now = false);
+    void updateWindowRect(const IntRect&, bool now = false);
+public:
+    void update();
 
-    private:
-        HashSet<Widget*> m_children;
-        bool m_canBlitOnScroll;
-        IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
-        IntSize m_contentsSize;
+private:
+    HashSet<Widget*> m_children;
+    bool m_canBlitOnScroll;
+    IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
+    IntSize m_contentsSize;
 
-        void init();
-        
-        void platformAddChild(Widget*);
-        void platformRemoveChild(Widget*);
-        void platformSetCanBlitOnScroll();
-        IntRect platformVisibleContentRect(bool includeScrollbars) const;
-        IntSize platformContentsSize() const;
-        void platformSetContentsSize();
+    void init();
+    
+    void platformAddChild(Widget*);
+    void platformRemoveChild(Widget*);
+    void platformSetCanBlitOnScroll();
+    IntRect platformVisibleContentRect(bool includeScrollbars) const;
+    IntSize platformContentsSize() const;
+    void platformSetContentsSize();
 
 #if PLATFORM(MAC) && defined __OBJC__
-    public:
-        NSView* documentView() const;
+public:
+    NSView* documentView() const;
 
-    private:
-        NSScrollView<WebCoreFrameScrollView>* scrollView() const;
+private:
+    NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
 #if !PLATFORM(MAC)
-    private:
-        IntSize maximumScroll() const;
+private:
+    IntSize maximumScroll() const;
 #endif
 
-        class ScrollViewPrivate;
-        ScrollViewPrivate* m_data;
+    class ScrollViewPrivate;
+    ScrollViewPrivate* m_data;
 
-        friend class ScrollViewPrivate; // FIXME: Temporary.
-        
+    friend class ScrollViewPrivate; // FIXME: Temporary.
+    
 #if !PLATFORM(MAC) && !PLATFORM(WX)
-    public:
-        virtual void paint(GraphicsContext*, const IntRect&);
+public:
+    virtual void paint(GraphicsContext*, const IntRect&);
 
-        virtual void geometryChanged() const;
-        virtual void setFrameGeometry(const IntRect&);
+    virtual void geometryChanged() const;
+    virtual void setFrameGeometry(const IntRect&);
 
-        void addToDirtyRegion(const IntRect&);
-        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
-        void updateBackingStore();
+    void addToDirtyRegion(const IntRect&);
+    void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
+    void updateBackingStore();
 
-    private:
-        void updateScrollbars(const IntSize& desiredOffset);
+private:
+    void updateScrollbars(const IntSize& desiredOffset);
 #else
-        void updateScrollbars(const IntSize& desiredOffset) {} // FIXME: Temporary.
+    void updateScrollbars(const IntSize& desiredOffset) {} // FIXME: Temporary.
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(QT) || PLATFORM(MAC)
-    public:
-        IntRect windowResizerRect();
-        bool resizerOverlapsContent() const;
-        void adjustOverlappingScrollbarCount(int overlapDelta);
+public:
+    IntRect windowResizerRect();
+    bool resizerOverlapsContent() const;
+    void adjustOverlappingScrollbarCount(int overlapDelta);
 
-    private:
-        virtual void setParent(ScrollView*);
+private:
+    virtual void setParent(ScrollView*);
 #else
-    public:
-        IntRect windowResizerRect() { return IntRect(); }
-        bool resizerOverlapsContent() const { return false; }
-        void adjustOverlappingScrollbarCount(int overlapDelta) {}
+public:
+    IntRect windowResizerRect() { return IntRect(); }
+    bool resizerOverlapsContent() const { return false; }
+    void adjustOverlappingScrollbarCount(int overlapDelta) {}
 #endif
 
 #if PLATFORM(WIN)
-    public:
-        virtual void themeChanged();
+public:
+    virtual void themeChanged();
 
-        void printPanScrollIcon(const IntPoint&);
-        void removePanScrollIcon();
+    void printPanScrollIcon(const IntPoint&);
+    void removePanScrollIcon();
 
-        virtual void show();
-        virtual void hide();
-        virtual void setParentVisible(bool);
+    virtual void show();
+    virtual void hide();
+    virtual void setParentVisible(bool);
 
-        void setAllowsScrolling(bool);
-        bool allowsScrolling() const;
+    void setAllowsScrolling(bool);
+    bool allowsScrolling() const;
 #endif
 
 #if PLATFORM(QT)
-    private:
-        void incrementNativeWidgetCount();
-        void decrementNativeWidgetCount();
-        bool hasNativeWidgets() const;
-        void invalidateScrollbars();
+private:
+    void incrementNativeWidgetCount();
+    void decrementNativeWidgetCount();
+    bool hasNativeWidgets() const;
+    void invalidateScrollbars();
 #endif
 
 #if PLATFORM(GTK)
-    public:
-        void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
+public:
+    void setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj);
 #endif
 
 #if PLATFORM(WX)
-    public:
-        virtual void setPlatformWidget(wxWindow*);
+public:
+    virtual void setPlatformWidget(wxWindow*);
 
-    private:
-        void adjustScrollbars(int x = -1, int y = -1, bool refresh = true);
+private:
+    void adjustScrollbars(int x = -1, int y = -1, bool refresh = true);
 #endif
 
-    }; // class ScrollView
+}; // class ScrollView
 
 #if !PLATFORM(MAC)
 
