@@ -440,7 +440,7 @@ body.console-visible #console {
 
 #console-prompt {
     position: relative;
-    padding: 1px 10px 1px 24px;
+    padding: 1px 22px 1px 24px;
     min-height: 16px; 
     white-space: pre-wrap;
     -webkit-user-modify: read-write-plaintext-only;
@@ -453,7 +453,7 @@ body.console-visible #console {
 .console-message, .console-user-command {
     position: relative;
     border-bottom: 1px solid rgb(240, 240, 240);
-    padding: 1px 10px 1px 24px;
+    padding: 1px 22px 1px 24px;
     min-height: 16px;
 }
 
