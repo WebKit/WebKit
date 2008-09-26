@@ -111,8 +111,6 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &ch
 float userIdleTime() { notImplemented(); return FLT_MAX; } // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
 #endif
 
-PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String&) { notImplemented(); return 0; }
-
 void prefetchDNS(const String& hostname) { notImplemented(); }
 
 }

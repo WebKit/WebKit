@@ -1033,6 +1033,7 @@ SOURCES += \
     platform/qt/EventLoopQt.cpp \
     platform/qt/FileChooserQt.cpp \
     platform/qt/FileSystemQt.cpp \
+    platform/qt/SharedBufferQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \
     platform/graphics/qt/FontCustomPlatformData.cpp \
     platform/graphics/qt/FontQt.cpp \

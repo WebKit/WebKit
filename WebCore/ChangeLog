@@ -1,3 +1,14 @@
+2008-09-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [qt] Implement SharedBuffer for Qt.
+
+        * WebCore.pro:
+        * platform/qt/SharedBufferQt.cpp: Added.
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2008-09-25  Feng Qian <feng@chromium.org>
 
         Fix bug: https://bugs.webkit.org/show_bug.cgi?id=21032
