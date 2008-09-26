@@ -1,3 +1,11 @@
+2008-09-26  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon
+
+        Fix the build inside Qt, don't create faulty prl files for now.
+
+        * WebCore.pro:
+
 2008-09-26  Simon Hausmann  <hausmann@webkit.org>
 
         Fix compilation on Qt/Windows
