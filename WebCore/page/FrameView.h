@@ -73,10 +73,6 @@ public:
     void setMarginWidth(int);
     void setMarginHeight(int);
 
-    virtual void setVScrollbarMode(ScrollbarMode);
-    virtual void setHScrollbarMode(ScrollbarMode);
-    virtual void setScrollbarsMode(ScrollbarMode);
-
     void layout(bool allowSubtree = true);
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);

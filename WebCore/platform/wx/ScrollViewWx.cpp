@@ -297,33 +297,17 @@ void ScrollView::adjustScrollbars(int x, int y, bool refresh)
     }
 }
 
-WebCore::ScrollbarMode ScrollView::hScrollbarMode() const
-{
-    return m_data->hScrollbarMode;
-}
-
-WebCore::ScrollbarMode ScrollView::vScrollbarMode() const
-{
-    return m_data->vScrollbarMode;
-}
-
-bool ScrollView::isScrollable() 
-{ 
-    return true; // FIXME : return wether or not the view is scrollable
-}
-
-void ScrollView::setScrollbarsMode(ScrollbarMode newMode)
+void ScrollView::platformSetScrollbarModes(ScrollbarMode newHMode, ScrollbarMode newVMode)
 {
     bool needsAdjust = false;
 
-    if (m_data->hScrollbarMode != newMode) {
-        m_data->hScrollbarMode = newMode;
+    if (m_data->hScrollbarMode != newHMode) {
+        m_data->hScrollbarMode = newHMode;
         needsAdjust = true;
     }
 
-    if (m_data->vScrollbarMode != newMode) {
-        m_data->vScrollbarMode = newMode;
-        adjustScrollbars();
+    if (m_data->vScrollbarMode != newVMode) {
+        m_data->vScrollbarMode = newVMode;
         needsAdjust = true;
     }
 
@@ -331,20 +315,10 @@ void ScrollView::setScrollbarsMode(ScrollbarMode newMode)
         adjustScrollbars();
 }
 
-void ScrollView::setHScrollbarMode(ScrollbarMode newMode)
+void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const
 {
-    if (m_data->hScrollbarMode != newMode) {
-        m_data->hScrollbarMode = newMode;
-        adjustScrollbars();
-    }
-}
-
-void ScrollView::setVScrollbarMode(ScrollbarMode newMode)
-{
-    if (m_data->vScrollbarMode != newMode) {
-        m_data->vScrollbarMode = newMode;
-        adjustScrollbars();
-    }
+    horizontal = m_data->hScrollbarMode;
+    vertical = m_data->vScrollbarMode;
 }
 
 void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)

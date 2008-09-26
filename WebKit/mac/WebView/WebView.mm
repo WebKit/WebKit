@@ -1538,7 +1538,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
         [scrollview setVerticalScrollingMode:ScrollbarAlwaysOn andLock:YES];
     } else {
         [scrollview setVerticalScrollingModeLocked:NO];
-        [scrollview setVerticalScrollingMode:ScrollbarAuto];
+        [scrollview setVerticalScrollingMode:ScrollbarAuto andLock:NO];
     }
 }
 
@@ -1555,7 +1555,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
         [scrollview setHorizontalScrollingMode:ScrollbarAlwaysOn andLock:YES];
     } else {
         [scrollview setHorizontalScrollingModeLocked:NO];
-        [scrollview setHorizontalScrollingMode:ScrollbarAuto];
+        [scrollview setHorizontalScrollingMode:ScrollbarAuto andLock:NO];
     }
 }
 
