@@ -1,3 +1,12 @@
+2008-09-25  Dan Bernstein  <mitz@apple.com>
+
+        - attempted Windows build fix
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::setContentsPos):
+        (WebCore::ScrollView::paint):
+
 2008-09-25  Timothy Hatcher  <timothy@apple.com>
 
         Revert the padding changes done in r36905 to prevent the

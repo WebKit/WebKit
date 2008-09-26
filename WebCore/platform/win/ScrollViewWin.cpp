@@ -134,7 +134,7 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 void ScrollView::ScrollViewPrivate::valueChanged(Scrollbar* bar)
 {
     // Figure out if we really moved.
-    IntPoint newOffset = m_scrollOffset;
+    IntSize newOffset = m_view->m_scrollOffset;
     if (bar) {
         if (bar == m_hBar)
             newOffset.setWidth(bar->value());
@@ -286,8 +286,8 @@ void ScrollView::update()
 
 void ScrollView::setContentsPos(int newX, int newY)
 {
-    int dx = newX - contentsX();
-    int dy = newY - contentsY();
+    int dx = newX - scrollX();
+    int dy = newY - scrollY();
     scrollBy(dx, dy);
 }
 
@@ -331,11 +331,6 @@ IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
 bool ScrollView::isScrollViewScrollbar(const Widget* child) const
 {
     return m_data->m_hBar == child || m_data->m_vBar == child;
-}
-
-IntSize ScrollView::scrollOffset() const
-{
-    return m_scrollOffset;
 }
 
 IntSize ScrollView::maximumScroll() const
@@ -603,8 +598,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->translate(x(), y());
     documentDirtyRect.move(-x(), -y());
 
-    context->translate(-contentsX(), -contentsY());
-    documentDirtyRect.move(contentsX(), contentsY());
+    context->translate(-scrollX(), -scrollY());
+    documentDirtyRect.move(scrollX(), scrollY());
 
     context->clip(visibleContentRect());
 
