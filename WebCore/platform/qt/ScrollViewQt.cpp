@@ -523,6 +523,7 @@ void ScrollView::platformAddChild(Widget* child)
 
 void ScrollView::platformRemoveChild(Widget* child)
 {
+    child->hide();
     root()->decrementNativeWidgetCount();
 }
 
