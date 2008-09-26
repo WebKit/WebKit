@@ -336,11 +336,15 @@ void ScrollView::update()
     gdk_window_invalidate_rect(GTK_WIDGET(containingWindow())->window, &rect, true);
 }
 
-void ScrollView::setContentsPos(int newX, int newY)
+void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 {
-    int dx = newX - contentsX();
-    int dy = newY - contentsY();
-    scrollBy(dx, dy);
+    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
+    newScrollPosition.clampNegativeToZero();
+
+    if (newScrollPosition == scrollPosition())
+        return;
+
+    updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
 }
 
 void ScrollView::resizeContents(int w, int h)
@@ -351,50 +355,6 @@ void ScrollView::resizeContents(int w, int h)
 
     m_contentsSize = newSize;
     updateScrollbars(m_scrollOffset);
-}
-
-int ScrollView::contentsX() const
-{
-    return scrollOffset().width();
-}
-
-int ScrollView::contentsY() const
-{
-    return scrollOffset().height();
-}
-
-int ScrollView::contentsWidth() const
-{
-    return m_contentsSize.width();
-}
-
-int ScrollView::contentsHeight() const
-{
-    return m_contentsSize.height();
-}
-
-IntSize ScrollView::scrollOffset() const
-{
-    return m_scrollOffset;
-}
-
-IntSize ScrollView::maximumScroll() const
-{
-    IntSize delta = (m_contentsSize - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
-    delta.clampNegativeToZero();
-    return delta;
-}
-
-void ScrollView::scrollBy(int dx, int dy)
-{
-    IntSize scrollOffset = m_scrollOffset;
-    IntSize newScrollOffset = scrollOffset + IntSize(dx, dy).shrunkTo(maximumScroll());
-    newScrollOffset.clampNegativeToZero();
-
-    if (newScrollOffset == scrollOffset)
-        return;
-
-    updateScrollbars(newScrollOffset);
 }
 
 ScrollbarMode ScrollView::hScrollbarMode() const

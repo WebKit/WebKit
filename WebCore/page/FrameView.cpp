@@ -616,7 +616,7 @@ bool FrameView::scrollTo(const IntRect& bounds)
     else if (contentsHeight() - visibleHeight() - scrollY() < newScrollY)
         newScrollY = contentsHeight() - visibleHeight() - scrollY();
 
-    scrollBy(newScrollX, newScrollY);
+    scrollBy(IntSize(newScrollX, newScrollY));
 
     // generate abs(scroll.)
     if (newScrollX < 0)
@@ -702,13 +702,13 @@ void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
     d->m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 
-void FrameView::setContentsPos(int x, int y)
+void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
     if (frame()->prohibitsScrolling())
         return;
     bool wasInProgrammaticScroll = d->m_inProgrammaticScroll;
     d->m_inProgrammaticScroll = true;
-    ScrollView::setContentsPos(x, y);
+    ScrollView::setScrollPosition(scrollPoint);
     d->m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
 

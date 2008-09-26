@@ -181,14 +181,7 @@ IntSize ScrollView::platformContentsSize() const
     return IntSize(width, height);
 }
 
-void ScrollView::setContentsPos(int newX, int newY)
-{
-    int dx = newX - contentsX();
-    int dy = newY - contentsY();
-    scrollBy(dx, dy);
-}
-
-void ScrollView::scrollBy(int dx, int dy)
+void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 {
     wxWindow* win = platformWidget();
     if (!win)
@@ -196,7 +189,7 @@ void ScrollView::scrollBy(int dx, int dy)
 
     wxPoint scrollOffset = m_data->viewStart;
     wxPoint orig(scrollOffset);
-    wxPoint newScrollOffset = scrollOffset + wxPoint(dx, dy);
+    wxPoint newScrollOffset(scrollPoint);
 
     wxRect vRect(win->GetVirtualSize());
     wxRect cRect(win->GetClientSize());
@@ -252,11 +245,6 @@ bool ScrollView::isScrollViewScrollbar(const Widget* child) const
     if (!win)
         return false;
     return win->IsKindOf(CLASSINFO(wxScrollBar));
-}
-
-IntSize ScrollView::scrollOffset() const
-{
-    return IntSize(contentsX(), contentsY());
 }
 
 void ScrollView::adjustScrollbars(int x, int y, bool refresh)

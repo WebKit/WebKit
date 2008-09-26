@@ -132,11 +132,6 @@ IntSize ScrollView::platformContentsSize() const
     return IntSize();
 }
 
-void ScrollView::scrollBy(int dx, int dy)
-{
-    setContentsPos(scrollX() + dx, scrollY() + dy);
-}
-
 void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 { 
     NSRect rect = r;
@@ -161,10 +156,10 @@ bool ScrollView::isScrollable()
     return true;
 }
 
-void ScrollView::setContentsPos(int x, int y)
+void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSPoint tempPoint = { max(0, x), max(0, y) }; // Don't use NSMakePoint to work around 4213314.
+    NSPoint tempPoint = { max(0, scrollPoint.x()), max(0, scrollPoint.y()) }; // Don't use NSMakePoint to work around 4213314.
     [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS;
 }

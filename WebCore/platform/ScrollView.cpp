@@ -85,6 +85,13 @@ IntSize ScrollView::contentsSize() const
     return m_contentsSize;
 }
 
+IntPoint ScrollView::maximumScrollPosition() const
+{
+    IntSize maximumOffset = contentsSize() - visibleContentRect().size();
+    maximumOffset.clampNegativeToZero();
+    return IntPoint(maximumOffset.width(), maximumOffset.height());
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {

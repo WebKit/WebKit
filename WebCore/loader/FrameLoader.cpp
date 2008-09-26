@@ -4169,10 +4169,8 @@ void FrameLoader::restoreScrollPositionAndViewState()
     m_client->restoreViewState();
     
     if (FrameView* view = m_frame->view())
-        if (!view->wasScrolledByUser()) {
-            const IntPoint& scrollPoint = m_currentHistoryItem->scrollPoint();
-            view->setContentsPos(scrollPoint.x(), scrollPoint.y());
-        }
+        if (!view->wasScrolledByUser())
+            view->setScrollPosition(m_currentHistoryItem->scrollPoint());
 }
 
 void FrameLoader::invalidateCurrentItemCachedPage()

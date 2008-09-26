@@ -1,3 +1,47 @@
+2008-09-25  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21132
+
+        Clean up the methods that actually do the scrolling in ScrollView.
+
+        Reviewed by Oliver Hunt
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::restoreScrollPositionAndViewState):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::imageClicked):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollBy):
+        (WebCore::DOMWindow::scrollTo):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::setScrollPosition):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::maximumScrollPosition):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::scrollBy):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::setScrollPosition):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollByRecursively):
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2008-09-25  Dan Bernstein  <mitz@apple.com>
 
         - attempted Windows build fix

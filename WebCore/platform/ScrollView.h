@@ -61,33 +61,45 @@ namespace WebCore {
         ScrollView();
         ~ScrollView();
 
+        // Methods for child manipulation and inspection.
         const HashSet<Widget*>* children() const { return &m_children; }
         void addChild(Widget*);
         void removeChild(Widget*);
 
+        // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars.  These methods
+        // can be used to obtain those scrollbars.
         Scrollbar* horizontalScrollbar() const;
         Scrollbar* verticalScrollbar() const;
 
+        // Whether or not a scroll view will blit visible contents when it is scrolled.  Blitting is disabled in situations
+        // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
         void setCanBlitOnScroll(bool);
         bool canBlitOnScroll() const { return m_canBlitOnScroll; }
 
+        // The visible content rect has a location that is the scrolled offset of the document. The width and height are the viewport width
+        // and height.  By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them to be
+        // included.
         IntRect visibleContentRect(bool includeScrollbars = false) const;
         int visibleWidth() const { return visibleContentRect().width(); }
         int visibleHeight() const { return visibleContentRect().height(); }
         
-        IntPoint scrollPosition() const { return visibleContentRect().location(); }
-        IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
-        int scrollX() const { return scrollPosition().x(); }
-        int scrollY() const { return scrollPosition().y(); }
-        
+        // Methods for obtaining the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
+        // values).
         IntSize contentsSize() const;
         int contentsWidth() const { return contentsSize().width(); }
         int contentsHeight() const { return contentsSize().height(); }
 
-        void scrollBy(int dx, int dy);
-        virtual void scrollRectIntoViewRecursively(const IntRect&);
-
-        virtual void setContentsPos(int x, int y);
+        // Methods for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
+        IntPoint scrollPosition() const { return visibleContentRect().location(); }
+        IntSize scrollOffset() const { return visibleContentRect().location() - IntPoint(); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
+        IntPoint maximumScrollPosition() const; // The maximum position we can be scrolled to.
+        int scrollX() const { return scrollPosition().x(); }
+        int scrollY() const { return scrollPosition().y(); }
+        
+        // Methods for scrolling the view.
+        void setScrollPosition(const IntPoint&);
+        void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
+        void scrollRectIntoViewRecursively(const IntRect&);
 
         virtual void setVScrollbarMode(ScrollbarMode);
         virtual void setHScrollbarMode(ScrollbarMode);

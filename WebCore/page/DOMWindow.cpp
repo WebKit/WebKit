@@ -817,7 +817,7 @@ void DOMWindow::scrollBy(int x, int y) const
     if (!view)
         return;
 
-    view->scrollBy(x, y);
+    view->scrollBy(IntSize(x, y));
 }
 
 void DOMWindow::scrollTo(int x, int y) const
@@ -836,7 +836,7 @@ void DOMWindow::scrollTo(int x, int y) const
 
     int zoomedX = static_cast<int>(x * m_frame->pageZoomFactor());
     int zoomedY = static_cast<int>(y * m_frame->pageZoomFactor());
-    view->setContentsPos(zoomedX, zoomedY);
+    view->setScrollPosition(IntPoint(zoomedX, zoomedY));
 }
 
 void DOMWindow::moveBy(float x, float y) const

@@ -255,7 +255,7 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
     if (sview) {
         // Update the document's layout
         document()->updateLayoutIgnorePendingStylesheets();
-        sview->setContentsPos(scrollLeft, sview->scrollY());
+        sview->setScrollPosition(IntPoint(scrollLeft, sview->scrollY()));
     }    
 }
 
@@ -274,7 +274,7 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
     if (sview) {
         // Update the document's layout
         document()->updateLayoutIgnorePendingStylesheets();
-        sview->setContentsPos(sview->scrollX(), scrollTop);
+        sview->setScrollPosition(IntPoint(sview->scrollX(), scrollTop));
     }        
 }
 

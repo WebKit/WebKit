@@ -283,12 +283,15 @@ void ScrollView::update()
     ::UpdateWindow(containingWindow());
 }
 
-
-void ScrollView::setContentsPos(int newX, int newY)
+void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 {
-    int dx = newX - scrollX();
-    int dy = newY - scrollY();
-    scrollBy(dx, dy);
+    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
+    newScrollPosition.clampNegativeToZero();
+
+    if (newScrollPosition == scrollPosition())
+        return;
+
+    updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
 }
 
 void ScrollView::resizeContents(int w, int h)
@@ -333,31 +336,12 @@ bool ScrollView::isScrollViewScrollbar(const Widget* child) const
     return m_data->m_hBar == child || m_data->m_vBar == child;
 }
 
-IntSize ScrollView::maximumScroll() const
-{
-    IntSize delta = (m_contentsSize - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
-    delta.clampNegativeToZero();
-    return delta;
-}
-
-void ScrollView::scrollBy(int dx, int dy)
-{
-    IntSize scrollOffset = m_scrollOffset;
-    IntSize newScrollOffset = scrollOffset + IntSize(dx, dy).shrunkTo(maximumScroll());
-    newScrollOffset.clampNegativeToZero();
-
-    if (newScrollOffset == scrollOffset)
-        return;
-
-    updateScrollbars(newScrollOffset);
-}
-
 void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 {
     IntPoint p(max(0, r.x()), max(0, r.y()));
     ScrollView* view = this;
     while (view) {
-        view->setContentsPos(p.x(), p.y());
+        view->setScrollPosition(p);
         p.move(view->x() - view->scrollOffset().width(), view->y() - view->scrollOffset().height());
         view = static_cast<ScrollView*>(view->parent());
     }
