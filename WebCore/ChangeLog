@@ -1,3 +1,12 @@
+2008-09-26  Trenton Schulz <twschulz@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with the Qt/Cocoa port.
+
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2008-09-26  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

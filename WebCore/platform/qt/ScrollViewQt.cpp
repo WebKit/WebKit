@@ -422,7 +422,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     scroll.clampNegativeToZero();
 
     QPoint scrollbarOffset;
-#ifdef Q_WS_MAC
+#if defined(Q_WS_MAC) && !defined(QT_MAC_USE_COCOA)
     // On Mac, offset the scrollbars so they don't cover the grow box. Check if the window 
     // has a grow box, and then check if the bottom-right corner of the scroll view 
     // intersercts it. The calculations are done in global coordinates.
