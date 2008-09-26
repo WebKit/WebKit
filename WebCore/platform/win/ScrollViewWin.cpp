@@ -106,7 +106,7 @@ const int panIconSizeLength = 20;
 void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
     if (hasBar && !m_view->m_horizontalScrollbar) {
-        m_horizontalScrollbar = Scrollbar::createNativeScrollbar(this, HorizontalScrollbar, RegularScrollbar);
+        m_view->m_horizontalScrollbar = Scrollbar::createNativeScrollbar(this, HorizontalScrollbar, RegularScrollbar);
         m_view->addChild(m_view->m_horizontalScrollbar.get());
     } else if (!hasBar && m_view->m_horizontalScrollbar) {
         m_view->removeChild(m_view->m_horizontalScrollbar.get());
@@ -118,7 +118,7 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
     if (hasBar && !m_view->m_verticalScrollbar) {
         m_view->m_verticalScrollbar = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, RegularScrollbar);
-        m_view->addChild(m_verticalScrollbar.get());
+        m_view->addChild(m_view->m_verticalScrollbar.get());
     } else if (!hasBar && m_view->m_verticalScrollbar) {
         m_view->removeChild(m_view->m_verticalScrollbar.get());
         m_view->m_verticalScrollbar = 0;
@@ -192,7 +192,7 @@ void ScrollView::ScrollViewPrivate::setAllowsScrolling(bool flag)
     else if (!flag)
         m_view->m_verticalScrollbarMode = ScrollbarAlwaysOff;
 
-    if (flag && m_horizontalScrollbarMode == ScrollbarAlwaysOff)
+    if (flag && m_view->m_horizontalScrollbarMode == ScrollbarAlwaysOff)
         m_view->m_horizontalScrollbarMode = ScrollbarAuto;
     else if (!flag)
         m_view->m_horizontalScrollbarMode = ScrollbarAlwaysOff;
@@ -203,7 +203,7 @@ void ScrollView::ScrollViewPrivate::setAllowsScrolling(bool flag)
 bool ScrollView::ScrollViewPrivate::allowsScrolling() const
 {
     // Return YES if either horizontal or vertical scrolling is allowed.
-    return m_horizontalScrollbarMode != ScrollbarAlwaysOff || m_verticalScrollbarMode != ScrollbarAlwaysOff;
+    return m_view->m_horizontalScrollbarMode != ScrollbarAlwaysOff || m_view->m_verticalScrollbarMode != ScrollbarAlwaysOff;
 }
 
 IntRect ScrollView::ScrollViewPrivate::windowClipRect() const
