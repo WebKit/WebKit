@@ -71,8 +71,6 @@ public:
       , m_scrollbarsSuppressed(false)
       , m_inUpdateScrollbars(false)
       , m_scrollbarsAvoidingResizer(0)
-      , m_vScrollbarMode(ScrollbarAuto)
-      , m_hScrollbarMode(ScrollbarAuto)
     {
     }
 
@@ -111,7 +109,7 @@ void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 
 void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
-    if (hasBar && !m_verticalScrollbar) {
+    if (hasBar && !m_view->m_verticalScrollbar) {
         m_view->m_verticalScrollbar = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, RegularScrollbar);
         m_view->addChild(m_view->m_verticalScrollbar.get());
     } else if (!hasBar && m_view->m_verticalScrollbar) {
@@ -184,16 +182,6 @@ ScrollView::ScrollView()
 ScrollView::~ScrollView()
 {
     delete m_data;
-}
-
-Scrollbar* ScrollView::horizontalScrollbar() const
-{
-    return m_horizontalScrollbar.get();
-}
-
-Scrollbar* ScrollView::verticalScrollbar() const
-{
-    return m_verticalScrollbar.get();
 }
 
 void ScrollView::updateContents(const IntRect& rect, bool now)
@@ -327,8 +315,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     bool hasHorizontalScrollbar = m_horizontalScrollbar;
     bool oldHasVertical = hasVerticalScrollbar;
     bool oldHasHorizontal = hasHorizontalScrollbar;
-    ScrollbarMode hScroll = m_data->m_hScrollbarMode;
-    ScrollbarMode vScroll = m_data->m_vScrollbarMode;
+    ScrollbarMode hScroll = m_horizontalScrollbarMode;
+    ScrollbarMode vScroll = m_verticalScrollbarMode;
 
     const int cVerticalWidth = ScrollbarTheme::nativeTheme()->scrollbarThickness();
     const int cHorizontalHeight = ScrollbarTheme::nativeTheme()->scrollbarThickness();
