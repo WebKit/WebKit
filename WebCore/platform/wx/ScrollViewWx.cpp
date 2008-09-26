@@ -110,7 +110,7 @@ public:
         else
             return e.Skip();
 
-        m_scrollView->setContentsPos(pos.x, pos.y);
+        m_scrollView->setScrollPosition(IntPoint(pos.x, pos.y));
         m_scrollView->update();
     }
 
@@ -143,7 +143,7 @@ void ScrollView::updateContents(const IntRect& updateRect, bool now)
 {
     // we need to convert coordinates to scrolled position
     wxRect contentsRect = updateRect;
-    contentsRect.Offset(-contentsX(), -contentsY());
+    contentsRect.Offset(-scrollX(), -scrollY());
     wxWindow* win = platformWidget();
     if (win) {
         win->RefreshRect(contentsRect, true);
