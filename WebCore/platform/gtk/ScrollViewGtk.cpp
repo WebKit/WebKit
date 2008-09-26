@@ -136,23 +136,23 @@ void ScrollViewScrollbar::geometryChanged() const
 
 void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
-    if (hasBar && !view->hBar && !horizontalAdjustment) {
-        view->hBar = ScrollViewScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
-        view->addChild(view->hBar.get());
-    } else if (!hasBar && view->hBar) {
-        view->removeChild(view->hBar.get());
-        view->hBar = 0;
+    if (hasBar && !view->m_horizontalScrollbar && !horizontalAdjustment) {
+        view->m_horizontalScrollbar = ScrollViewScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
+        view->addChild(view->m_horizontalScrollbar.get());
+    } else if (!hasBar && view->m_horizontalScrollbar) {
+        view->removeChild(view->m_horizontalScrollbar.get());
+        view->m_horizontalScrollbar = 0;
     }
 }
 
 void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
-    if (hasBar && !view->vBar && !verticalAdjustment) {
-        view->vBar = ScrollViewScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
-        view->addChild(view->vBar.get());
-    } else if (!hasBar && view->vBar) {
-        view->removeChild(view->vBar.get());
-        view->vBar = 0;
+    if (hasBar && !view->m_verticalScrollbar && !verticalAdjustment) {
+        view->m_verticalScrollbar = ScrollViewScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
+        view->addChild(view->m_verticalScrollbar.get());
+    } else if (!hasBar && view->m_verticalScrollbar) {
+        view->removeChild(view->m_verticalScrollbar.get());
+        view->m_verticalScrollbar = 0;
     }
 }
 
@@ -213,9 +213,9 @@ void ScrollView::ScrollViewPrivate::valueChanged(Scrollbar* bar)
     // Figure out if we really moved.
     IntSize newOffset = view->m_scrollOffset;
     if (bar) {
-        if (bar == view->hBar)
+        if (bar == view->m_horizontalScrollbar)
             newOffset.setWidth(bar->value());
-        else if (bar == view->vBar)
+        else if (bar == view->m_verticalScrollbar)
             newOffset.setHeight(bar->value());
     }
     IntSize scrollDelta = newOffset - view->m_scrollOffset;
@@ -402,8 +402,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     bool hasHorizontalScrollbar = m_horizontalScrollbar;
     bool oldHasVertical = hasVerticalScrollbar;
     bool oldHasHorizontal = hasHorizontalScrollbar;
-    ScrollbarMode hScroll = m_data->hScrollbarMode;
-    ScrollbarMode vScroll = m_data->vScrollbarMode;
+    ScrollbarMode hScroll = m_horizontalScrollbarMode;
+    ScrollbarMode vScroll = m_verticalScrollbarMode;
 
     const int scrollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
 
@@ -552,11 +552,6 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
     if (m_verticalScrollbar && m_verticalScrollbar->frameGeometry().contains(viewPoint))
         return m_verticalScrollbar.get();
     return 0;
-}
-
-bool ScrollView::isScrollViewScrollbar(const Widget* child) const
-{
-    return m_horizontalScrollbar == child || m_verticalScrollbar == child;
 }
 
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
