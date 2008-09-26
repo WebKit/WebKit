@@ -619,7 +619,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     }
 
     // Determine how much we want to scroll.  If we can move at all, we will accept the event.
-    IntSize maxScrollDelta = maximumScroll();
+    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
     if ((deltaX < 0 && maxScrollDelta.width() > 0) ||
         (deltaX > 0 && scrollOffset().width() > 0) ||
         (deltaY < 0 && maxScrollDelta.height() > 0) ||
