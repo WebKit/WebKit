@@ -76,7 +76,7 @@ CachedPage::CachedPage(Page* page)
     cachedPageCounter.increment();
 #endif
     
-    m_document->willSaveToCache(); 
+    m_document->documentWillBecomeInactive(); 
     
     Frame* mainFrame = page->mainFrame();
     mainFrame->clearTimers();

@@ -198,7 +198,7 @@ public:
 
     String constrainValue(const String& proposedValue) const;
 
-    virtual void didRestoreFromCache();
+    virtual void documentDidBecomeActive();
 
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
     
@@ -216,9 +216,9 @@ private:
     String constrainValue(const String& proposedValue, int maxLen) const;
     void recheckValue();
     
-    bool needsCacheCallback();
-    void registerForCacheCallbackIfNeeded();
-    void unregisterForCacheCallbackIfNeeded();
+    bool needsActivationCallback();
+    void registerForActivationCallbackIfNeeded();
+    void unregisterForActivationCallbackIfNeeded();
 
     String m_value;
     String m_originalValue;

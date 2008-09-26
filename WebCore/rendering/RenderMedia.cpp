@@ -224,7 +224,7 @@ void RenderMedia::updateFromElement()
 void RenderMedia::updateControls()
 {
     HTMLMediaElement* media = mediaElement();
-    if (!media->controls() || media->inPageCache()) {
+    if (!media->controls() || !media->inActiveDocument()) {
         if (m_controlsShadowRoot) {
             m_controlsShadowRoot->detach();
             m_panel = 0;

@@ -181,9 +181,9 @@ public:
     IntSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const IntSize&);
 
-    // Use Document::registerForPageCacheCallbacks() to subscribe these
-    virtual void willSaveToCache() { }
-    virtual void didRestoreFromCache() { }
+    // Use Document::registerForDocumentActivationCallbacks() to subscribe these
+    virtual void documentWillBecomeInactive() { }
+    virtual void documentDidBecomeActive() { }
     
     bool isFinishedParsingChildren() const { return m_parsingChildrenFinished; }
     virtual void finishParsingChildren();

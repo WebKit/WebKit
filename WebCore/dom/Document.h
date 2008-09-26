@@ -933,12 +933,12 @@ public:
     bool inPageCache();
     void setInPageCache(bool flag);
     
-    // Elements can register themselves for the "willSaveToCache()" and  
-    // "didRestoreFromCache()" callbacks
-    void registerForCacheCallbacks(Element*);
-    void unregisterForCacheCallbacks(Element*);
-    void willSaveToCache();
-    void didRestoreFromCache();
+    // Elements can register themselves for the "documentWillBecomeInactive()" and  
+    // "documentDidBecomeActive()" callbacks
+    void registerForDocumentActivationCallbacks(Element*);
+    void unregisterForDocumentActivationCallbacks(Element*);
+    void documentWillBecomeInactive();
+    void documentDidBecomeActive();
 
     void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
@@ -1043,7 +1043,7 @@ private:
     bool m_inPageCache;
     String m_iconURL;
     
-    HashSet<Element*> m_pageCacheCallbackElements;
+    HashSet<Element*> m_documentActivationCallbackElements;
 
     bool m_useSecureKeyboardEntryWhenActive;
 

@@ -150,8 +150,8 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::widthAttrString, SVGLength, Width, width)
         ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::heightAttrString, SVGLength, Height, height)
 
-        virtual void willSaveToCache();
-        virtual void willRestoreFromCache();
+        virtual void documentWillBecomeInactive();
+        virtual void documentDidBecomeActive();
 
         bool m_useCurrentView;
         RefPtr<SMILTimeContainer> m_timeContainer;

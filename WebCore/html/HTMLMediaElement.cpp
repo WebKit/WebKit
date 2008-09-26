@@ -80,15 +80,15 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_loadNestingLevel(0)
     , m_terminateLoadBelowNestingLevel(0)
     , m_pausedInternal(false)
-    , m_inPageCache(false)
+    , m_inActiveDocument(true)
     , m_player(0)
 {
-    document()->registerForCacheCallbacks(this);
+    document()->registerForDocumentActivationCallbacks(this);
 }
 
 HTMLMediaElement::~HTMLMediaElement()
 {
-    document()->unregisterForCacheCallbacks(this);
+    document()->unregisterForDocumentActivationCallbacks(this);
 }
 
 bool HTMLMediaElement::checkDTD(const Node* newChild)
@@ -998,8 +998,8 @@ void HTMLMediaElement::setPausedInternal(bool b)
     m_pausedInternal = b;
     updatePlayState();
 }
-    
-void HTMLMediaElement::willSaveToCache()
+
+void HTMLMediaElement::documentWillBecomeInactive()
 {
     // 3.14.9.4. Loading the media resource
     // 14
@@ -1017,7 +1017,7 @@ void HTMLMediaElement::willSaveToCache()
             dispatchEventForType(emptiedEvent, false, true);
         }
     }
-    m_inPageCache = true;
+    m_inActiveDocument = false;
     // Stop the playback without generating events
     setPausedInternal(true);
 
@@ -1025,9 +1025,9 @@ void HTMLMediaElement::willSaveToCache()
         renderer()->updateFromElement();
 }
 
-void HTMLMediaElement::didRestoreFromCache()
+void HTMLMediaElement::documentDidBecomeActive()
 {
-    m_inPageCache = false;
+    m_inActiveDocument = true;
     setPausedInternal(false);
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED) {
