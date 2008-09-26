@@ -141,42 +141,57 @@ WebInspector.Console.prototype = {
 
     addMessage: function(msg)
     {
-        msg.repeatDelta = msg.repeatCount;
-        var messageRepeated = false;
+        if (msg instanceof WebInspector.ConsoleMessage) {
+            msg.totalRepeatCount = msg.repeatCount;
+            msg.repeatDelta = msg.repeatCount;
 
-        // Reset message count if it's a repeated message
-        if (msg.isEqual && msg.isEqual(this.previousMessage)) {
-            var messagesElement = this.currentGroup.messagesElement;
-            messagesElement.removeChild(messagesElement.lastChild);
-            messagesElement.appendChild(msg.toMessageElement());
+            var messageRepeated = false;
 
-            // Because sometimes we get a large number of repeated messages and sometimes
-            // we get them one at a time, we need to know the difference between how many
-            // repeats we used to have and how many we have now.
-            msg.repeatDelta -= this.previousMessage.repeatCount;
-            messageRepeated = true;
+            if (msg.isEqual && msg.isEqual(this.previousMessage)) {
+                // Because sometimes we get a large number of repeated messages and sometimes
+                // we get them one at a time, we need to know the difference between how many
+                // repeats we used to have and how many we have now.
+                msg.repeatDelta -= this.previousMessage.totalRepeatCount;
+
+                if (!isNaN(this.repeatCountBeforeCommand))
+                    msg.repeatCount -= this.repeatCountBeforeCommand;
+
+                if (!this.commandSincePreviousMessage) {
+                    // Recreate the previous message element to reset the repeat count.
+                    var messagesElement = this.currentGroup.messagesElement;
+                    messagesElement.removeChild(messagesElement.lastChild);
+                    messagesElement.appendChild(msg.toMessageElement());
+
+                    messageRepeated = true;
+                }
+            } else
+                delete this.repeatCountBeforeCommand;
+
+            // Increment the error or warning count
+            switch (msg.level) {
+            case WebInspector.ConsoleMessage.MessageLevel.Warning:
+                WebInspector.warnings += msg.repeatDelta;
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.Error:
+                WebInspector.errors += msg.repeatDelta;
+                break;
+            }
+
+            // Add message to the resource panel
+            if (msg.url in WebInspector.resourceURLMap) {
+                msg.resource = WebInspector.resourceURLMap[msg.url];
+                WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
+            }
+
+            this.commandSincePreviousMessage = false;
+            this.previousMessage = msg;
+
+            if (messageRepeated)
+                return;
+        } else if (msg instanceof WebInspector.ConsoleCommand) {
+            this.commandSincePreviousMessage = true;
+            this.repeatCountBeforeCommand = this.previousMessage.totalRepeatCount;
         }
-
-        // Increment the error or warning count
-        switch (msg.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Warning:
-            WebInspector.warnings += msg.repeatDelta;
-            break;
-        case WebInspector.ConsoleMessage.MessageLevel.Error:
-            WebInspector.errors += msg.repeatDelta;
-            break;
-        }
-
-        // Add message to the resource panel
-        if (msg.url in WebInspector.resourceURLMap) {
-            msg.resource = WebInspector.resourceURLMap[msg.url];
-            WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
-        }
-
-        this.previousMessage = msg;
-
-        if (messageRepeated)
-            return;
 
         this.messages.push(msg);
 
@@ -213,9 +228,12 @@ WebInspector.Console.prototype = {
         this.groupLevel = 0;
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
-        
+
         WebInspector.errors = 0;
         WebInspector.warnings = 0;
+
+        delete this.commandSincePreviousMessage;
+        delete this.repeatCountBeforeCommand;
         delete this.previousMessage;
     },
 
