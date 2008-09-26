@@ -74,7 +74,7 @@ win32-g++ {
 contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
 else:DEFINES += ENABLE_VIDEO=0
 
-unix:!mac:!embedded:!wince* {
+unix|win32-*:!mac:!embedded:!wince* {
     DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
     unix: DEFINES += XP_UNIX
 } else {
