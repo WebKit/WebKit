@@ -104,6 +104,9 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     static CFStringRef stylesheetsKey = CFSTR("style sheets");
     static CFStringRef xslKey = CFSTR("xsl");
     static CFStringRef scriptsKey = CFSTR("scripts");
+#if !ENABLE(XSLT)
+    const int zero = 0;
+#endif
 
     RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF,
         CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -114,7 +117,11 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.count));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
+#if ENABLE(XSLT)
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.count));
+#else
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.count));
@@ -132,7 +139,11 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.size));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
+#if ENABLE(XSLT)
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.size));
+#else
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.size));
@@ -150,7 +161,11 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.liveSize));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
+#if ENABLE(XSLT)
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.liveSize));
+#else
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.liveSize));
@@ -168,7 +183,11 @@ HRESULT STDMETHODCALLTYPE WebCache::statistics(
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.cssStyleSheets.decodedSize));
     CFDictionaryAddValue(dictionary.get(), stylesheetsKey, value.get());
     
+#if ENABLE(XSLT)
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.xslStyleSheets.decodedSize));
+#else
+    value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &zero));
+#endif
     CFDictionaryAddValue(dictionary.get(), xslKey, value.get());
 
     value.adoptCF(CFNumberCreate(0, kCFNumberIntType, &stat.scripts.decodedSize));

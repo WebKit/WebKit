@@ -445,10 +445,12 @@ static int closeFunc(void* context)
     return 0;
 }
 
+#if ENABLE(XSLT)
 static void errorFunc(void*, const char*, ...)
 {
     // FIXME: It would be nice to display error messages somewhere.
 }
+#endif
 
 void setLoaderForLibXMLCallbacks(DocLoader* docLoader)
 {

@@ -41,25 +41,41 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:s.images.count], @"Images",
             [NSNumber numberWithInt:s.cssStyleSheets.count], @"CSS",
+#if ENABLE(XSLT)
             [NSNumber numberWithInt:s.xslStyleSheets.count], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
             [NSNumber numberWithInt:s.scripts.count], @"JavaScript",
             nil],
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:s.images.size], @"Images",
             [NSNumber numberWithInt:s.cssStyleSheets.size] ,@"CSS",
+#if ENABLE(XSLT)
             [NSNumber numberWithInt:s.xslStyleSheets.size], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
             [NSNumber numberWithInt:s.scripts.size], @"JavaScript",
             nil],
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:s.images.liveSize], @"Images",
             [NSNumber numberWithInt:s.cssStyleSheets.liveSize] ,@"CSS",
+#if ENABLE(XSLT)
             [NSNumber numberWithInt:s.xslStyleSheets.liveSize], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
             [NSNumber numberWithInt:s.scripts.liveSize], @"JavaScript",
             nil],
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:s.images.decodedSize], @"Images",
             [NSNumber numberWithInt:s.cssStyleSheets.decodedSize] ,@"CSS",
+#if ENABLE(XSLT)
             [NSNumber numberWithInt:s.xslStyleSheets.decodedSize], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
             [NSNumber numberWithInt:s.scripts.decodedSize], @"JavaScript",
             nil],
         nil];

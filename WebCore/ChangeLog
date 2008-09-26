@@ -1,3 +1,15 @@
+2008-09-26  David Kilzer  <ddkilzer@apple.com>
+
+        Fix Mac build with XPATH and XSLT disabled
+
+        Reviewed by Alexey.
+
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper): Conditionalize code with ENABLE(XPATH).
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::errorFunc): Conditionalize method with ENABLE(XSLT) to
+        prevent an unused code warning.
+
 2008-09-26  Kevin McCullough  <kmccullough@apple.com>
 
         Rubber stamped by Tim Hatcher.

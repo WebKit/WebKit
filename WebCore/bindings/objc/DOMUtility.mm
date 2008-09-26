@@ -91,8 +91,10 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     WRAP(Rect)
     WRAP(StyleSheet)
     WRAP(StyleSheetList)
+#if ENABLE(XPATH)
     WRAP(XPathExpression)
     WRAP(XPathResult)
+#endif
 
     // This must be after the HTMLOptionsCollection check, because it's a subclass in the JavaScript
     // binding, but not a subclass in the ObjC binding.
