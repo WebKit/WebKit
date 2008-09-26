@@ -3147,8 +3147,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // Hit test floats.
         if (hitTestAction == HitTestFloat && m_floatingObjects) {
             if (isRenderView()) {
-                scrolledX += static_cast<RenderView*>(this)->frameView()->contentsX();
-                scrolledY += static_cast<RenderView*>(this)->frameView()->contentsY();
+                scrolledX += static_cast<RenderView*>(this)->frameView()->scrollX();
+                scrolledY += static_cast<RenderView*>(this)->frameView()->scrollY();
             }
             
             FloatingObject* o;

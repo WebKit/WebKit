@@ -246,7 +246,7 @@ int HTMLBodyElement::scrollLeft() const
     Document* doc = document();
     doc->updateLayoutIgnorePendingStylesheets();
     FrameView* view = doc->view();
-    return view ? view->contentsX() : 0;
+    return view ? view->scrollX() : 0;
 }
 
 void HTMLBodyElement::setScrollLeft(int scrollLeft)
@@ -255,7 +255,7 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
     if (sview) {
         // Update the document's layout
         document()->updateLayoutIgnorePendingStylesheets();
-        sview->setContentsPos(scrollLeft, sview->contentsY());
+        sview->setContentsPos(scrollLeft, sview->scrollY());
     }    
 }
 
@@ -265,7 +265,7 @@ int HTMLBodyElement::scrollTop() const
     Document* doc = document();
     doc->updateLayoutIgnorePendingStylesheets();
     FrameView* view = doc->view();
-    return view ? view->contentsY() : 0;
+    return view ? view->scrollY() : 0;
 }
 
 void HTMLBodyElement::setScrollTop(int scrollTop)
@@ -274,7 +274,7 @@ void HTMLBodyElement::setScrollTop(int scrollTop)
     if (sview) {
         // Update the document's layout
         document()->updateLayoutIgnorePendingStylesheets();
-        sview->setContentsPos(sview->contentsX(), scrollTop);
+        sview->setContentsPos(sview->scrollX(), scrollTop);
     }        
 }
 

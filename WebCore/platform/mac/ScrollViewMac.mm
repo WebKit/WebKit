@@ -123,51 +123,18 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
     return IntRect();
 }
 
-int ScrollView::contentsWidth() const
+IntSize ScrollView::platformContentsSize() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (NSView* documentView = this->documentView())
-        return [documentView bounds].size.width;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-int ScrollView::contentsHeight() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView())
-        return [documentView bounds].size.height;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-int ScrollView::contentsX() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [scrollView() documentVisibleRect].origin.x;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-int ScrollView::contentsY() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [scrollView() documentVisibleRect].origin.y;
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return 0;
-}
-
-IntSize ScrollView::scrollOffset() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return IntPoint([[scrollView() contentView] visibleRect].origin) - IntPoint();
+        return enclosingIntRect([documentView bounds]).size();
     END_BLOCK_OBJC_EXCEPTIONS;
     return IntSize();
 }
 
 void ScrollView::scrollBy(int dx, int dy)
 {
-    setContentsPos(contentsX() + dx, contentsY() + dy);
+    setContentsPos(scrollX() + dx, scrollY() + dy);
 }
 
 void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)

@@ -304,7 +304,7 @@ IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {
     if (!platformWidget() && parent()) {
         IntPoint result = parent()->convertFromContainingWindow(point);
-        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        result.move(parent()->scrollX() - x(), parent()->scrollY() - y());
         return result;
     }
     
@@ -319,7 +319,7 @@ IntRect Widget::convertFromContainingWindow(const IntRect& rect) const
 {
     if (!platformWidget() && parent()) {
         IntRect result = parent()->convertFromContainingWindow(rect);
-        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        result.move(parent()->scrollX() - x(), parent()->scrollY() - y());
         return result;
     }
     
@@ -336,7 +336,7 @@ IntRect Widget::convertToContainingWindow(const IntRect& r) const
         if (!parent())
             return r;
         IntRect result = r;
-        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        result.move(parent()->scrollX() - x(), parent()->scrollY() - y());
         return parent()->convertToContainingWindow(result);
     }
     
@@ -353,7 +353,7 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& p) const
         if (!parent())
             return p;
         IntPoint result = p;
-        result.move(parent()->contentsX() - x(), parent()->contentsY() - y());
+        result.move(parent()->scrollX() - x(), parent()->scrollY() - y());
         return parent()->convertToContainingWindow(result);
     }
     

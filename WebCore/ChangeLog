@@ -1,3 +1,98 @@
+2008-09-25  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21129
+
+        Refactor contents size and scroll offset to be cross-platform.  Reduce further the number
+        of platform-specific methods required of ScrollView implementations.
+
+        Reviewed by Tim Hatcher
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsX):
+        (WebCore::contentsY):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::saveScrollPositionAndViewStateToItem):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::windowClipRect):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::contentsSize):
+        (WebCore::ScrollView::platformContentsSize):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::scrollPosition):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::scrollX):
+        (WebCore::ScrollView::scrollY):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::adjustmentChanged):
+        (WebCore::ScrollView::setGtkAdjustments):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::maximumScroll):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::suppressScrollbars):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformContentsSize):
+        (WebCore::ScrollView::scrollBy):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertFromContainingWindow):
+        (WebCore::Widget::convertToContainingWindow):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::maximumScroll):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::setAllowsScrolling):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::setFrameGeometry):
+        (WebCore::ScrollView::scrollOffset):
+        (WebCore::ScrollView::maximumScroll):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::setHScrollbarMode):
+        (WebCore::ScrollView::setVScrollbarMode):
+        (WebCore::ScrollView::setScrollbarsMode):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformVisibleContentRect):
+        (WebCore::ScrollView::platformContentsSize):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absolutePosition):
+        (WebCore::RenderView::computeAbsoluteRepaintRect):
+
 2008-09-25  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Dave Hyatt.

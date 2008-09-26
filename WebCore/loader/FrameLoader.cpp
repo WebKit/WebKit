@@ -4133,7 +4133,7 @@ void FrameLoader::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     if (!item || !m_frame->view())
         return;
         
-    item->setScrollPoint(IntPoint(m_frame->view()->contentsX(), m_frame->view()->contentsY()));
+    item->setScrollPoint(m_frame->view()->scrollPosition());
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
     m_client->saveViewStateToItem(item);
 }

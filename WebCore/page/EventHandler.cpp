@@ -697,8 +697,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         if (!frame || !frame->contentRenderer())
             break;
         FrameView* view = static_cast<FrameView*>(widget);
-        IntPoint widgetPoint(result.localPoint().x() + view->contentsX() - n->renderer()->borderLeft() - n->renderer()->paddingLeft(), 
-            result.localPoint().y() + view->contentsY() - n->renderer()->borderTop() - n->renderer()->paddingTop());
+        IntPoint widgetPoint(result.localPoint().x() + view->scrollX() - n->renderer()->borderLeft() - n->renderer()->paddingLeft(), 
+            result.localPoint().y() + view->scrollY() - n->renderer()->borderTop() - n->renderer()->paddingTop());
         HitTestResult widgetHitTestResult(widgetPoint);
         frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
         result = widgetHitTestResult;

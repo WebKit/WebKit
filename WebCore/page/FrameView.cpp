@@ -583,48 +583,48 @@ bool FrameView::scrollTo(const IntRect& bounds)
         xe = x + curWidth - d->m_borderX;
 
     // is xpos of target left of the view's border?
-    if (x < contentsX() + d->m_borderX)
-        deltax = x - contentsX() - d->m_borderX;
+    if (x < scrollX() + d->m_borderX)
+        deltax = x - scrollX() - d->m_borderX;
     // is xpos of target right of the view's right border?
-    else if (xe + d->m_borderX > contentsX() + curWidth)
-        deltax = xe + d->m_borderX - (contentsX() + curWidth);
+    else if (xe + d->m_borderX > scrollX() + curWidth)
+        deltax = xe + d->m_borderX - (scrollX() + curWidth);
     else
         deltax = 0;
 
     // is ypos of target above upper border?
-    if (y < contentsY() + d->m_borderY)
-        deltay = y - contentsY() - d->m_borderY;
+    if (y < scrollY() + d->m_borderY)
+        deltay = y - scrollY() - d->m_borderY;
     // is ypos of target below lower border?
-    else if (ye + d->m_borderY > contentsY() + curHeight)
-        deltay = ye + d->m_borderY - (contentsY() + curHeight);
+    else if (ye + d->m_borderY > scrollY() + curHeight)
+        deltay = ye + d->m_borderY - (scrollY() + curHeight);
     else
         deltay = 0;
 
     int maxx = curWidth - d->m_borderX;
     int maxy = curHeight - d->m_borderY;
 
-    int scrollX = deltax > 0 ? (deltax > maxx ? maxx : deltax) : deltax == 0 ? 0 : (deltax > -maxx ? deltax : -maxx);
-    int scrollY = deltay > 0 ? (deltay > maxy ? maxy : deltay) : deltay == 0 ? 0 : (deltay > -maxy ? deltay : -maxy);
+    int newScrollX = deltax > 0 ? (deltax > maxx ? maxx : deltax) : deltax == 0 ? 0 : (deltax > -maxx ? deltax : -maxx);
+    int newScrollY = deltay > 0 ? (deltay > maxy ? maxy : deltay) : deltay == 0 ? 0 : (deltay > -maxy ? deltay : -maxy);
 
-    if (contentsX() + scrollX < 0)
-        scrollX = -contentsX();
-    else if (contentsWidth() - visibleWidth() - contentsX() < scrollX)
-        scrollX = contentsWidth() - visibleWidth() - contentsX();
+    if (scrollX() + newScrollX < 0)
+        newScrollX = -scrollX();
+    else if (contentsWidth() - visibleWidth() - scrollX() < newScrollX)
+        newScrollX = contentsWidth() - visibleWidth() - scrollX();
 
-    if (contentsY() + scrollY < 0)
-        scrollY = -contentsY();
-    else if (contentsHeight() - visibleHeight() - contentsY() < scrollY)
-        scrollY = contentsHeight() - visibleHeight() - contentsY();
+    if (scrollY() + newScrollY < 0)
+        newScrollY = -scrollY();
+    else if (contentsHeight() - visibleHeight() - scrollY() < newScrollY)
+        newScrollY = contentsHeight() - visibleHeight() - scrollY();
 
-    scrollBy(scrollX, scrollY);
+    scrollBy(newScrollX, newScrollY);
 
     // generate abs(scroll.)
-    if (scrollX < 0)
-        scrollX = -scrollX;
-    if (scrollY < 0)
-        scrollY = -scrollY;
+    if (newScrollX < 0)
+        newScrollX = -newScrollX;
+    if (newScrollY < 0)
+        newScrollY = -newScrollY;
 
-    return scrollX != maxx && scrollY != maxy;
+    return newScrollX != maxx && newScrollY != maxy;
 }
 
 void FrameView::setMediaType(const String& mediaType)
@@ -1054,13 +1054,7 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
     ASSERT(m_frame->view() == this);
 
     // Set our clip rect to be our contents.
-    IntRect clipRect;
-    if (clipToContents)
-        clipRect = visibleContentRect();
-    else
-        clipRect = IntRect(contentsX(), contentsY(), width(), height());
-    clipRect = contentsToWindow(clipRect);
-
+    IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
     if (!m_frame || !m_frame->document() || !m_frame->document()->ownerElement())
         return clipRect;
 

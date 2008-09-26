@@ -159,15 +159,26 @@ void ScrollView::update()
         win->Update();
 }
 
+
 IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
     // FIXME: Need to support includeScrollbars option.
     int width;
-    GetClientSize(NULL, &width);
+    platformWidget()->GetClientSize(NULL, &width);
     int height;
-    GetClientSize(NULL, &height);
+    platformWidget()->GetClientSize(NULL, &height);
     ASSERT(width >= 0 && height >= 0);
-    return IntRect(contentsX(), contentsY(), width, height);
+    return IntRect(m_data->viewStart.x, m_data->viewStart.y, width, height);
+}
+
+IntSize ScrollView::platformContentsSize() const
+{
+    int width = 0;
+    int height = 0;
+    platformWidget()->GetVirtualSize(&width, NULL);
+    platformWidget()->GetVirtualSize(&height, NULL);
+    ASSERT(width >= 0 && height >= 0);
+    return IntSize(width, height);
 }
 
 void ScrollView::setContentsPos(int newX, int newY)
@@ -223,38 +234,6 @@ void ScrollView::resizeContents(int w,int h)
         win->SetVirtualSize(w, h);
         adjustScrollbars();
     }
-}
-
-int ScrollView::contentsX() const
-{
-    ASSERT(m_data->viewStart.x >= 0);
-    return m_data->viewStart.x;
-}
-
-int ScrollView::contentsY() const
-{
-    ASSERT(m_data->viewStart.y >= 0);
-    return m_data->viewStart.y;
-}
-
-int ScrollView::contentsWidth() const
-{
-    int width = 0;
-    wxWindow* win = platformWidget();
-    if (win)
-        win->GetVirtualSize(&width, NULL);
-    ASSERT(width >= 0);
-    return width;
-}
-
-int ScrollView::contentsHeight() const
-{
-    int height = 0;
-    wxWindow* win = platformWidget();
-    if (win)
-        win->GetVirtualSize(NULL, &height);
-    ASSERT(height >= 0);
-    return height;
 }
 
 Scrollbar* ScrollView::horizontalScrollbar() const

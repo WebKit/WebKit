@@ -95,8 +95,6 @@ public:
     bool allowsScrolling() const;
 
     ScrollView* m_view;
-    IntSize m_scrollOffset;
-    IntSize m_contentsSize;
     bool m_scrollbarsSuppressed;
     bool m_inUpdateScrollbars;
     int m_scrollbarsAvoidingResizer;
@@ -136,17 +134,17 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 void ScrollView::ScrollViewPrivate::valueChanged(Scrollbar* bar)
 {
     // Figure out if we really moved.
-    IntSize newOffset = m_scrollOffset;
+    IntPoint newOffset = m_scrollOffset;
     if (bar) {
         if (bar == m_hBar)
             newOffset.setWidth(bar->value());
         else if (bar == m_vBar)
             newOffset.setHeight(bar->value());
     }
-    IntSize scrollDelta = newOffset - m_scrollOffset;
+    IntSize scrollDelta = newOffset - m_view->m_scrollOffset;
     if (scrollDelta == IntSize())
         return;
-    m_scrollOffset = newOffset;
+    m_view->m_scrollOffset = newOffset;
 
     if (m_scrollbarsSuppressed)
         return;
@@ -205,7 +203,7 @@ void ScrollView::ScrollViewPrivate::setAllowsScrolling(bool flag)
     else if (!flag)
         m_hScrollbarMode = ScrollbarAlwaysOff;
 
-    m_view->updateScrollbars(m_scrollOffset);
+    m_view->updateScrollbars(m_view->m_scrollOffset);
 }
 
 bool ScrollView::ScrollViewPrivate::allowsScrolling() const
@@ -296,9 +294,9 @@ void ScrollView::setContentsPos(int newX, int newY)
 void ScrollView::resizeContents(int w, int h)
 {
     IntSize newContentsSize(w, h);
-    if (m_data->m_contentsSize != newContentsSize) {
-        m_data->m_contentsSize = newContentsSize;
-        updateScrollbars(m_data->m_scrollOffset);
+    if (m_contentsSize != newContentsSize) {
+        m_contentsSize = newContentsSize;
+        updateScrollbars(m_scrollOffset);
     }
 }
 
@@ -311,31 +309,11 @@ void ScrollView::setFrameGeometry(const IntRect& newGeometry)
         return;
 
     if (newGeometry.width() != oldGeometry.width() || newGeometry.height() != oldGeometry.height()) {
-        updateScrollbars(m_data->m_scrollOffset);
+        updateScrollbars(m_scrollOffset);
         static_cast<FrameView*>(this)->setNeedsLayout();
     }
 
     geometryChanged();
-}
-
-int ScrollView::contentsX() const
-{
-    return scrollOffset().width();
-}
-
-int ScrollView::contentsY() const
-{
-    return scrollOffset().height();
-}
-
-int ScrollView::contentsWidth() const
-{
-    return m_data->m_contentsSize.width();
-}
-
-int ScrollView::contentsHeight() const
-{
-    return m_data->m_contentsSize.height();
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
@@ -357,19 +335,19 @@ bool ScrollView::isScrollViewScrollbar(const Widget* child) const
 
 IntSize ScrollView::scrollOffset() const
 {
-    return m_data->m_scrollOffset;
+    return m_scrollOffset;
 }
 
 IntSize ScrollView::maximumScroll() const
 {
-    IntSize delta = (m_data->m_contentsSize - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
+    IntSize delta = (m_contentsSize - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
     delta.clampNegativeToZero();
     return delta;
 }
 
 void ScrollView::scrollBy(int dx, int dy)
 {
-    IntSize scrollOffset = m_data->m_scrollOffset;
+    IntSize scrollOffset = m_scrollOffset;
     IntSize newScrollOffset = scrollOffset + IntSize(dx, dy).shrunkTo(maximumScroll());
     newScrollOffset.clampNegativeToZero();
 
@@ -439,7 +417,7 @@ void ScrollView::setHScrollbarMode(ScrollbarMode newMode)
 {
     if (m_data->m_hScrollbarMode != newMode) {
         m_data->m_hScrollbarMode = newMode;
-        updateScrollbars(m_data->m_scrollOffset);
+        updateScrollbars(m_scrollOffset);
     }
 }
 
@@ -447,7 +425,7 @@ void ScrollView::setVScrollbarMode(ScrollbarMode newMode)
 {
     if (m_data->m_vScrollbarMode != newMode) {
         m_data->m_vScrollbarMode = newMode;
-        updateScrollbars(m_data->m_scrollOffset);
+        updateScrollbars(m_scrollOffset);
     }
 }
 
@@ -456,7 +434,7 @@ void ScrollView::setScrollbarsMode(ScrollbarMode newMode)
     if (m_data->m_hScrollbarMode != newMode ||
         m_data->m_vScrollbarMode != newMode) {
         m_data->m_hScrollbarMode = m_data->m_vScrollbarMode = newMode;
-        updateScrollbars(m_data->m_scrollOffset);
+        updateScrollbars(m_scrollOffset);
     }
 }
 
@@ -574,9 +552,9 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     // This can happen when editing a body with overflow:hidden and scrolling to reveal selection.
     // It can also happen when maximizing a window that has scrollbars (but the new maximized result
     // does not).
-    IntSize scrollDelta = scroll - m_data->m_scrollOffset;
+    IntSize scrollDelta = scroll - m_scrollOffset;
     if (scrollDelta != IntSize()) {
-       m_data->m_scrollOffset = scroll;
+       m_scrollOffset = scroll;
        m_data->scrollBackingStore(scrollDelta);
     }
 
