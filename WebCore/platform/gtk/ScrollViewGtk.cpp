@@ -166,12 +166,12 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 
 Scrollbar* ScrollView::horizontalScrollbar() const
 {
-    return m_data->m_hBar.get();
+    return m_data->hBar.get();
 }
 
 Scrollbar* ScrollView::verticalScrollbar() const
 {
-    return m_data->m_vBar.get();
+    return m_data->vBar.get();
 }
 
 void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelta)
