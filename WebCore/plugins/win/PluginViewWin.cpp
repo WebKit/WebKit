@@ -819,8 +819,13 @@ void PluginView::init()
             flags |= WS_VISIBLE;
 
         HWND parentWindowHandle = windowHandleForPlatformWidget(m_parentFrame->view()->containingWindow());
-        setPlatformWidget(::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
-                                    0, 0, 0, 0, parentWindowHandle, 0, Page::instanceHandle(), 0));
+        HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
+                                       0, 0, 0, 0, parentWindowHandle, 0, Page::instanceHandle(), 0);
+#if PLATFORM(WIN_OS) && PLATFORM(QT)
+        m_window = window;
+#else
+        setPlatformWidget(window);
+#endif
 
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.

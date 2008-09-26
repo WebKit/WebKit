@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SystemTime.h"
 
-#include <JavaScriptCore/DateMath.h>
+#include <DateMath.h>
 #include <windows.h>
 
 namespace WebCore {

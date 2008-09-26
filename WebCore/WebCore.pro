@@ -83,7 +83,7 @@ unix|win32-*:!mac:!embedded:!wince* {
 
 DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
-INCLUDEPATH += $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders \
+INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders \
                $$PWD/../JavaScriptCore/VM \
                $$PWD/../JavaScriptCore/kjs \
                $$PWD/../JavaScriptCore/bindings \
@@ -1086,6 +1086,7 @@ SOURCES += \
     win32-* {
         LIBS += -lgdi32
         LIBS += -luser32
+        LIBS += -lwinmm
     }
 
     # Files belonging to the Qt 4.3 build

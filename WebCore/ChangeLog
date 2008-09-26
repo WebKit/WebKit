@@ -1,3 +1,19 @@
+2008-09-26  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix compilation on Qt/Windows
+
+        * Add WebCore/ to the include path so that config.h is found that enables JSC
+        * Link against winmm for the multimedia timer functions
+        * Include DateMath.h instead of JavaScriptCore/DateMath.h as file is in the kjs/
+        subdirectory
+        * In PluginViewWin.cpp don't use setPlatformWidget with the HWND for the Qt/Windows port
+        but set m_window directly as setPlatformWidget takes a QWidget*.
+
+        * WebCore.pro:
+        * platform/win/SystemTimeWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::init):
+
 2008-09-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
