@@ -1,3 +1,15 @@
+2008-09-26  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Fix an lupdate() warning.
+
+        Don't use tr() in a class that is not a QObject, use
+        QCoreApplication::translate() directly.
+
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::handleContextMenuEvent):
+
 2008-09-25  David Hyatt  <hyatt@apple.com>
 
         Remove the scrollTo() method from FrameView, since it is not used by anyone.

@@ -44,11 +44,6 @@
 
 using namespace std;
 
-static QString tr(const char* text)
-{
-    return QCoreApplication::translate("QWebPage", text);
-}
-
 namespace WebCore {
 
 bool Scrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
@@ -57,19 +52,19 @@ bool Scrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
     bool horizontal = (m_orientation == HorizontalScrollbar);
 
     QMenu menu;
-    QAction* actScrollHere = menu.addAction(tr("Scroll here"));
+    QAction* actScrollHere = menu.addAction(QCoreApplication::translate("QWebPage", "Scroll here"));
     menu.addSeparator();
 
-    QAction* actScrollTop = menu.addAction(horizontal ? tr("Left edge") : tr("Top"));
-    QAction* actScrollBottom = menu.addAction(horizontal ? tr("Right edge") : tr("Bottom"));
+    QAction* actScrollTop = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Left edge") : QCoreApplication::translate("QWebPage", "Top"));
+    QAction* actScrollBottom = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Right edge") : QCoreApplication::translate("QWebPage", "Bottom"));
     menu.addSeparator();
 
-    QAction* actPageUp = menu.addAction(horizontal ? tr("Page left") : tr("Page up"));
-    QAction* actPageDown = menu.addAction(horizontal ? tr("Page right") : tr("Page down"));
+    QAction* actPageUp = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Page left") : QCoreApplication::translate("QWebPage", "Page up"));
+    QAction* actPageDown = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Page right") : QCoreApplication::translate("QWebPage", "Page down"));
     menu.addSeparator();
 
-    QAction* actScrollUp = menu.addAction(horizontal ? tr("Scroll left") : tr("Scroll up"));
-    QAction* actScrollDown = menu.addAction(horizontal ? tr("Scroll right") : tr("Scroll down"));
+    QAction* actScrollUp = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Scroll left") : QCoreApplication::translate("QWebPage", "Scroll up"));
+    QAction* actScrollDown = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Scroll right") : QCoreApplication::translate("QWebPage", "Scroll down"));
 
     const QPoint globalPos = QPoint(event.globalX(), event.globalY());
     QAction* actionSelected = menu.exec(globalPos);
