@@ -649,7 +649,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         adjustDeltaForPageScrollMode(deltaX, e.isPageXScrollModeEnabled(), visibleWidth());
         adjustDeltaForPageScrollMode(deltaY, e.isPageYScrollModeEnabled(), visibleHeight());
 
-        scrollBy(-deltaX * LINE_STEP_WIN, -deltaY * LINE_STEP_WIN);
+        scrollBy(IntSize(-deltaX * LINE_STEP_WIN, -deltaY * LINE_STEP_WIN));
     }
 }
 
