@@ -2,6 +2,15 @@
 
         Reviewed by Holger.
 
+        Fix compilation with VC9SP1, work around bug in TR1 library by
+        disabling it.
+
+        * WebCore.pro:
+
+2008-09-26  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix an lupdate() warning.
 
         Don't use tr() in a class that is not a QObject, use

@@ -48,6 +48,7 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
 DEFINES += BUILD_WEBKIT
 
 !CONFIG(QTDIR_build):win32-*: DEFINES += ENABLE_ICONDATABASE=0 ENABLE_DATABASE=0
+win32-*: DEFINES += _HAS_TR1=0
 
 # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
 win32-g++ {
