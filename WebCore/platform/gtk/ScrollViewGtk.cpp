@@ -206,16 +206,16 @@ void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment,
     ScrollViewPrivate* that = reinterpret_cast<ScrollViewPrivate*>(_that);
 
     // Figure out if we really moved.
-    IntSize newOffset = m_scrollOffset;
+    IntSize newOffset = m_view->m_scrollOffset;
     if (adjustment == that->horizontalAdjustment)
         newOffset.setWidth(static_cast<int>(gtk_adjustment_get_value(adjustment)));
     else if (adjustment == that->verticalAdjustment)
         newOffset.setHeight(static_cast<int>(gtk_adjustment_get_value(adjustment)));
 
-    IntSize scrollDelta = newOffset - m_scrollOffset;
+    IntSize scrollDelta = newOffset - m_view->m_scrollOffset;
     if (scrollDelta == IntSize())
         return;
-    m_scrollOffset = newOffset;
+    m_view->m_scrollOffset = newOffset;
 
     if (that->scrollbarsSuppressed)
         return;
@@ -227,17 +227,17 @@ void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment,
 void ScrollView::ScrollViewPrivate::valueChanged(Scrollbar* bar)
 {
     // Figure out if we really moved.
-    IntSize newOffset = scrollOffset;
+    IntSize newOffset = m_scrollOffset;
     if (bar) {
         if (bar == hBar)
             newOffset.setWidth(bar->value());
         else if (bar == vBar)
             newOffset.setHeight(bar->value());
     }
-    IntSize scrollDelta = newOffset - scrollOffset;
+    IntSize scrollDelta = newOffset - m_scrollOffset;
     if (scrollDelta == IntSize())
         return;
-    scrollOffset = newOffset;
+    m_scrollOffset = newOffset;
 
     if (scrollbarsSuppressed)
         return;
