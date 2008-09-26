@@ -1926,8 +1926,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::hasScrollBars(
     if (!view)
         return E_FAIL;
 
-    if (view->vScrollbarMode() == ScrollbarAlwaysOn || view->visibleHeight() < view->contentsHeight() ||
-            view->hScrollbarMode() == ScrollbarAlwaysOn || view->visibleWidth() < view->contentsWidth())
+    if (view->horizontalScrollbar() || view->verticalScrollbar())
         *result = TRUE;
 
     return S_OK;

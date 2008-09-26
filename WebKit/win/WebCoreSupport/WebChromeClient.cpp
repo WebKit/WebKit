@@ -237,13 +237,8 @@ bool WebChromeClient::statusbarVisible()
 void WebChromeClient::setScrollbarsVisible(bool b)
 {
     WebFrame* webFrame = m_webView->topLevelFrame();
-    if (webFrame) {
+    if (webFrame)
         webFrame->setAllowsScrolling(b);
-        FrameView* frameView = core(webFrame)->view();
-        frameView->setHScrollbarMode(frameView->hScrollbarMode());  // I know this looks weird but the call to v/hScrollbarMode goes to ScrollView
-        frameView->setVScrollbarMode(frameView->vScrollbarMode());  // and the call to setV/hScrollbarMode goes to FrameView.
-                                                                    // This oddity is a result of matching a design in the mac code.
-    }
 }
 
 bool WebChromeClient::scrollbarsVisible()
