@@ -1,3 +1,12 @@
+2008-09-26  Ariya Hidayat  <ahidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixed using modifiers to type special symbols (e.g '@','$') does not work on Mac OS X.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2008-09-26  Håvard Wall  <hwall@trolltech.com>
 
         Reviewed by Simon.
