@@ -134,6 +134,12 @@ namespace WTF {
 #endif
     inline int toASCIIHexValue(int c) { ASSERT(isASCIIHexDigit(c)); return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF; }
 
+    inline bool isASCIIPrintable(char c) { return c >= ' ' && c <= '~'; }
+    inline bool isASCIIPrintable(unsigned short c) { return c >= ' ' && c <= '~'; }
+#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
+    inline bool isASCIIPrintable(wchar_t c) { return c >= ' ' && c <= '~'; }
+#endif
+    inline bool isASCIIPrintable(int c) { return c >= ' ' && c <= '~'; }
 }
 
 #endif
