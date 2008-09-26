@@ -628,7 +628,7 @@ void QWebFrame::scroll(int dx, int dy) const
     if (!d->frame->view())
         return;
     
-    d->frame->view()->scrollBy(dx, dy);
+    d->frame->view()->scrollBy(IntSize(dx, dy));
 }
 
 /*!
