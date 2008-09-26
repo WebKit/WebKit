@@ -1,5 +1,14 @@
 2008-09-25  David Hyatt  <hyatt@apple.com>
 
+        Remove the scrollTo() method from FrameView, since it is not used by anyone.
+
+        Reviewed by Oliver Hunt
+
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+
+2008-09-25  David Hyatt  <hyatt@apple.com>
+
         Make scrollRectIntoViewRecursively cross-platform.
 
         Reviewed by Oliver Hunt
