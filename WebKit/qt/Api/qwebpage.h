@@ -299,6 +299,7 @@ private:
 
     friend class QWebFrame;
     friend class QWebPagePrivate;
+    friend class QWebView;
     friend class WebCore::ChromeClientQt;
     friend class WebCore::EditorClientQt;
     friend class WebCore::FrameLoaderClientQt;

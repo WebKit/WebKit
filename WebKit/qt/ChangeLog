@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        Fixed potential crash when deleting QWebView instance.
+
+        When deleting the view, sets the page's view to NULL.
+        The reason is that the page is smart and its destructor might lead to a call
+        that operates on a view (which is in the process of being deleted).
+
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        (QWebView::~QWebView):
+
+2008-09-26  Ariya Hidayat  <ahidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixed using modifiers to type special symbols (e.g '@','$') does not work on Mac OS X.
 
         * WebCoreSupport/EditorClientQt.cpp:
