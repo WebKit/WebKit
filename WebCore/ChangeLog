@@ -1,3 +1,11 @@
+2008-09-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        [gtk+] Build fix for the latest ScrollView changes
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::adjustmentChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+
 2008-09-26  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where the console message repeat count would be wrong
