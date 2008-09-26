@@ -1245,7 +1245,9 @@ void QWebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, 
 */
 void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 {
+#ifndef QT_NO_MESSAGEBOX
     QMessageBox::information(d->view, mainFrame()->title(), msg, QMessageBox::Ok);
+#endif
 }
 
 /*!
@@ -1256,7 +1258,11 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 */
 bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 {
+#ifdef QT_NO_MESSAGEBOX
+    return true;
+#else
     return QMessageBox::Yes == QMessageBox::information(d->view, mainFrame()->title(), msg, QMessageBox::Yes, QMessageBox::No);
+#endif
 }
 
 /*!

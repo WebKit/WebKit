@@ -1,3 +1,13 @@
+2008-09-26  Håvard Wall  <hwall@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with QT_NO_MESSAGEBOX
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+
 2008-09-23  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
