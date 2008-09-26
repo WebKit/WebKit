@@ -435,7 +435,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (e.deltaY() > 0 && scrollOffset().height() > 0))
         e.accept();
 
-    scrollBy(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP);
+    scrollBy(IntSize(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP));
 }
 
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
@@ -629,8 +629,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->translate(x(), y());
     documentDirtyRect.move(-x(), -y());
 
-    context->translate(-contentsX(), -contentsY());
-    documentDirtyRect.move(contentsX(), contentsY());
+    context->translate(-scrollX(), -scrollY());
+    documentDirtyRect.move(scrollX(), scrollY());
 
     context->clip(enclosingIntRect(visibleContentRect()));
     static_cast<const FrameView*>(this)->frame()->paint(context, documentDirtyRect);
