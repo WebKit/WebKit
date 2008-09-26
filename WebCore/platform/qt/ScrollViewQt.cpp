@@ -555,8 +555,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->translate(x(), y());
     documentDirtyRect.move(-x(), -y());
 
-    context->translate(-contentsX(), -contentsY());
-    documentDirtyRect.move(contentsX(), contentsY());
+    context->translate(-scrollX(), -scrollY());
+    documentDirtyRect.move(scrollX(), scrollY());
 
     documentDirtyRect.intersect(enclosingIntRect(visibleContentRect()));
     context->clip(documentDirtyRect);
@@ -626,7 +626,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (deltaY > 0 && scrollOffset().height() > 0)) {
 
         e.accept();
-        scrollBy(int(-deltaX * LINE_STEP), int(-deltaY * LINE_STEP));
+        scrollBy(IntSize(int(-deltaX * LINE_STEP), int(-deltaY * LINE_STEP)));
     }
 }
 
