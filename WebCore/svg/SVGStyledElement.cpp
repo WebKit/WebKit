@@ -241,9 +241,11 @@ RenderStyle* SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
 
 PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& name)
 {
-    MappedAttribute* cssSVGAttr = mappedAttributes()->getAttributeItem(name);
-    if (!cssSVGAttr || !cssSVGAttr->style())
+    Attribute* attr = mappedAttributes()->getAttributeItem(name, false);
+    if (!attr || !attr->isMappedAttribute() || !attr->style())
         return 0;
+
+    MappedAttribute* cssSVGAttr = static_cast<MappedAttribute*>(attr);
 
     // FIXME: Is it possible that the style will not be shared at the time this
     // is called, but a later addition to the DOM will make it shared?

@@ -92,9 +92,11 @@ static inline void addCSSPropertyAndNotifyAttributeMap(StyledElement* element, c
     if (!attrs)
         return;
 
-    MappedAttribute* mappedAttr = attrs->getAttributeItem(name);
-    if (!mappedAttr)
+    Attribute* attr = attrs->getAttributeItem(name);
+    if (!attr || !attr->isMappedAttribute())
         return;
+
+    MappedAttribute* mappedAttr = static_cast<MappedAttribute*>(attr);
 
     // This logic is only meant to be used for entries that have to be parsed and are mapped to eNone. Assert that.
     MappedAttributeEntry entry;

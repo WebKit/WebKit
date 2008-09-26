@@ -148,6 +148,11 @@ void StyledElement::destroyInlineStyleDecl()
 
 void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
+    if (!attr->isMappedAttribute()) {
+        Element::attributeChanged(attr, preserveDecls);
+        return;
+    }
+ 
     MappedAttribute* mappedAttr = static_cast<MappedAttribute*>(attr);
     if (mappedAttr->decl() && !preserveDecls) {
         mappedAttr->setDecl(0);

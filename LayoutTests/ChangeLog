@@ -1,3 +1,15 @@
+2008-09-25  Feng Qian <feng@chromium.org>
+
+        Test for: https://bugs.webkit.org/show_bug.cgi?id=21032
+        <rdar://problem/6243032>
+
+        Reviewed by Dave Hyatt.
+
+        The test crashes webkit if using Windows heap allocator.
+
+        * fast/dom/attribute-downcast-right-expected.txt: Added.
+        * fast/dom/attribute-downcast-right.html: Added.
+
 2008-09-25  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Mark Rowe

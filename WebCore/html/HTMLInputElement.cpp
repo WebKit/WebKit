@@ -343,11 +343,11 @@ void HTMLInputElement::setInputType(const String& t)
 
             if (didRespectHeightAndWidth != willRespectHeightAndWidth) {
                 NamedMappedAttrMap* map = mappedAttributes();
-                if (MappedAttribute* height = map->getAttributeItem(heightAttr))
+                if (Attribute* height = map->getAttributeItem(heightAttr))
                     attributeChanged(height, false);
-                if (MappedAttribute* width = map->getAttributeItem(widthAttr))
+                if (Attribute* width = map->getAttributeItem(widthAttr))
                     attributeChanged(width, false);
-                if (MappedAttribute* align = map->getAttributeItem(alignAttr))
+                if (Attribute* align = map->getAttributeItem(alignAttr))
                     attributeChanged(align, false);
             }
 

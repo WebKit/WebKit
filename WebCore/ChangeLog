@@ -1,3 +1,37 @@
+2008-09-25  Feng Qian <feng@chromium.org>
+
+        Fix bug: https://bugs.webkit.org/show_bug.cgi?id=21032
+        <rdar://problem/6243032>
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/dom/attribute-downcast-right.html
+
+        Add isMappedAttribute function to Attribute for checking if an object
+        is an instance of MappedAttribute. Removed attributeItem,
+        getAttributeItem functions from NamedMappedAttrMap, and callers
+        expecting MappedAttribute have to check isMappedAttribute before
+        downcasting the return value to MappedAttribute.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Attribute.h:
+        (WebCore::Attribute::isMappedAttribute):
+        * dom/MappedAttribute.h:
+        (WebCore::MappedAttribute::isMappedAttribute):
+        * dom/NamedMappedAttrMap.cpp:
+        (WebCore::NamedMappedAttrMap::declCount):
+        (WebCore::NamedMappedAttrMap::mapsEquivalent):
+        * dom/NamedMappedAttrMap.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::addCSSPropertyAndNotifyAttributeMap):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+
 2008-09-25  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21120

@@ -1122,12 +1122,15 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
                 // Walk our attribute list and add in each decl.
                 const NamedMappedAttrMap* map = m_styledElement->mappedAttributes();
                 for (unsigned i = 0; i < map->length(); i++) {
-                    MappedAttribute* attr = map->attributeItem(i);
-                    if (attr->decl()) {
-                        lastAuthorRule = m_matchedDecls.size();
-                        if (firstAuthorRule == -1)
-                            firstAuthorRule = lastAuthorRule;
-                        addMatchedDeclaration(attr->decl());
+                    Attribute* attr = map->attributeItem(i);
+                    if (attr->isMappedAttribute()) {
+                        MappedAttribute* mappedAttr = static_cast<MappedAttribute*>(attr);
+                        if (mappedAttr->decl()) {
+                            lastAuthorRule = m_matchedDecls.size();
+                            if (firstAuthorRule == -1)
+                                firstAuthorRule = lastAuthorRule;
+                            addMatchedDeclaration(mappedAttr->decl());
+                        }
                     }
                 }
             }
