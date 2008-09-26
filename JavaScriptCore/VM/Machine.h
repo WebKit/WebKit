@@ -222,7 +222,7 @@ namespace JSC {
 
         static void* SFX_CALL cti_vm_throw(CTI_ARGS);
         static void* SFX_CALL cti_vm_compile(CTI_ARGS);
-        static void SFX_CALL cti_vm_updateScopeChain(CTI_ARGS);
+        static void SFX_CALL cti_op_push_activation(CTI_ARGS);
         
 #endif // ENABLE(CTI)
 
@@ -240,7 +240,7 @@ namespace JSC {
 
         ALWAYS_INLINE static void initializeCallFrame(Register* callFrame, CodeBlock*, Instruction*, ScopeChainNode*, Register* r, int returnValueRegister, int argc, JSValue* function);
 
-        ALWAYS_INLINE void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);
+        ALWAYS_INLINE static void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);
         NEVER_INLINE void debug(ExecState*, const CodeBlock*, ScopeChainNode*, Register*, DebugHookID, int firstLine, int lastLine);
 
         NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, const Instruction*&, CodeBlock*&, ScopeChainNode*&, Register*&);

@@ -352,6 +352,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] init\n", location);
             break;
         }
+        case op_init_activation: {
+            printf("[%4d] init_activation\n", location);
+            break;
+        }
         case op_unexpected_load: {
             int r0 = (++it)->u.operand;
             int k0 = (++it)->u.operand;

@@ -136,6 +136,11 @@ void CodeGenerator::generate()
 
     m_scopeNode->emitCode(*this);
 
+    if (m_codeType == FunctionCode && m_codeBlock->needsFullScopeChain) {
+        ASSERT(globalData()->machine->getOpcodeID(m_codeBlock->instructions[0].u.opcode) == op_init);
+        m_codeBlock->instructions[0] = globalData()->machine->getOpcode(op_init_activation);
+    }
+
 #ifndef NDEBUG
     if (s_dumpsGeneratedCode) {
         JSGlobalObject* globalObject = m_scopeChain->globalObject();

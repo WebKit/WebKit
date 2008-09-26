@@ -1,3 +1,51 @@
+2008-09-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Removed dynamic check for whether the callee needs an activation object.
+        Replaced with callee code to create the activation object.
+
+        0.5% speedup on SunSpider.
+        No change on v8 benchmark. (Might be a speedup, but it's in range of the
+        variance.)
+
+        0.7% speedup on v8 benchmark in bytecode.
+        1.3% speedup on empty call benchmark in bytecode.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass): Added support for op_init_activation,
+        the new opcode that specifies that the callee's initialization should
+        create an activation object.
+        (JSC::CTI::privateCompile): Removed previous code that did a similar
+        thing in an ad-hoc way.
+
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Added a case for dumping op_init_activation.
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::generate): Added fixup code to change op_init to
+        op_init_activation if necessary. (With a better parser, we would know
+        which to use from the beginning.)
+
+        * VM/Instruction.h:
+        (JSC::Instruction::Instruction):
+        (WTF::): Faster traits for the instruction vector. An earlier version
+        of this patch relied on inserting at the beginning of the vector, and
+        depended on this change for speed.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::execute): Removed clients of setScopeChain, the old
+        abstraction for dynamically checking for whether an activation object
+        needed to be created.
+        (JSC::Machine::privateExecute): ditto
+
+        (JSC::Machine::cti_op_push_activation): Renamed this function from
+        cti_vm_updateScopeChain, and made it faster by removing the call to 
+        setScopeChain.
+        * VM/Machine.h:
+
+        * VM/Opcode.h: Declared op_init_activation.
+
 2008-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

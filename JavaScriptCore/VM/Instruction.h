@@ -30,6 +30,7 @@
 #define Instruction_h
 
 #include "Opcode.h"
+#include <wtf/VectorTraits.h>
 
 namespace JSC {
 
@@ -41,7 +42,7 @@ namespace JSC {
         Instruction(Opcode opcode) { u.opcode = opcode; }
         Instruction(int operand)
         {
-            // We have to initialise one of the pointer members to ensure that
+            // We have to initialize one of the pointer members to ensure that
             // the entire struct is initialised in 64-bit.
             u.jsCell = 0;
             u.operand = operand;
@@ -61,5 +62,11 @@ namespace JSC {
     };
 
 } // namespace JSC
+
+namespace WTF {
+
+    template<> struct VectorTraits<JSC::Instruction> : VectorTraitsBase<true, JSC::Instruction> { };
+
+} // namespace WTF
 
 #endif // Instruction_h
