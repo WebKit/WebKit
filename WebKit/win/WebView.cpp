@@ -4237,7 +4237,7 @@ HRESULT STDMETHODCALLTYPE WebView::scrollBy(
 {
     if (!offset)
         return E_POINTER;
-    m_page->mainFrame()->view()->scrollBy(offset->x, offset->y);
+    m_page->mainFrame()->view()->scrollBy(IntSize(offset->x, offset->y));
     return S_OK;
 }
 
