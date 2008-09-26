@@ -46,6 +46,7 @@
 #include "NSResolver.h"
 #include "NameNodeList.h"
 #include "NamedAttrMap.h"
+#include "NodeRareData.h"
 #include "ProcessingInstruction.h"
 #include "RenderObject.h"
 #include "ScriptController.h"
@@ -62,27 +63,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-struct NodeListsNodeData {
-    typedef HashSet<DynamicNodeList*> NodeListSet;
-    NodeListSet m_listsWithCaches;
-
-    DynamicNodeList::Caches m_childNodeListCaches;
-
-    typedef HashMap<String, DynamicNodeList::Caches*> CacheMap;
-    CacheMap m_classNodeListCaches;
-    CacheMap m_nameNodeListCaches;
-
-    ~NodeListsNodeData()
-    {
-        deleteAllValues(m_classNodeListCaches);
-        deleteAllValues(m_nameNodeListCaches);
-    }
-
-    void invalidateCaches();
-    void invalidateCachesThatDependOnAttributes();
-    bool isEmpty() const;
-};
 
 // --------
 
@@ -156,12 +136,11 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
     return ch;
 }
 
-Node::Node(Document* doc, bool isElement)
+Node::Node(Document* doc, bool isElement, bool isContainer)
     : m_document(doc)
     , m_previous(0)
     , m_next(0)
     , m_renderer(0)
-    , m_tabIndex(0)
     , m_styleChange(NoStyleChange)
     , m_hasId(false)
     , m_hasClass(false)
@@ -169,14 +148,14 @@ Node::Node(Document* doc, bool isElement)
     , m_hasChangedChild(false)
     , m_inDocument(false)
     , m_isLink(false)
-    , m_focused(false)
     , m_active(false)
     , m_hovered(false)
     , m_inActiveChain(false)
     , m_inDetach(false)
     , m_inSubtreeMark(false)
-    , m_tabIndexSetExplicitly(false)
+    , m_hasRareData(false)
     , m_isElement(isElement)
+    , m_isContainer(isContainer)
 {
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)
@@ -209,9 +188,19 @@ Node::~Node()
     else
         nodeCounter.decrement();
 #endif
-
-    if (m_nodeLists && m_document)
-        document()->removeNodeListCache();
+    
+    if (!hasRareData())
+        ASSERT(!NodeRareData::rareDataMap().contains(this));
+    else {
+        if (m_document && rareData()->nodeLists())
+            m_document->removeNodeListCache();
+        
+        NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
+        NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
+        ASSERT(it != dataMap.end());
+        delete it->second;
+        dataMap.remove(it);
+    }
 
     if (renderer())
         detach();
@@ -220,6 +209,44 @@ Node::~Node()
         m_previous->setNextSibling(0);
     if (m_next)
         m_next->setPreviousSibling(0);
+}
+
+inline NodeRareData* Node::rareData()
+{
+    ASSERT(hasRareData());
+    return NodeRareData::rareDataFromMap(this);
+}
+    
+inline const NodeRareData* Node::rareData() const
+{
+    return const_cast<const NodeRareData*>(rareData());
+}
+
+NodeRareData* Node::ensureRareData()
+{
+    if (hasRareData())
+        return rareData();
+    
+    ASSERT(!NodeRareData::rareDataMap().contains(this));
+    NodeRareData* data = createRareData();
+    NodeRareData::rareDataMap().set(this, data);
+    m_hasRareData = true;
+    return data;
+}
+    
+NodeRareData* Node::createRareData()
+{
+    return new NodeRareData;
+}
+    
+short Node::tabIndex() const
+{
+    return hasRareData() ? rareData()->tabIndex() : 0;
+}
+    
+void Node::setTabIndexExplicitly(short i)
+{
+    ensureRareData()->setTabIndexExplicitly(i);
 }
 
 String Node::nodeValue() const
@@ -240,22 +267,13 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    if (!m_nodeLists) {
-        m_nodeLists.set(new NodeListsNodeData);
+    NodeRareData* data = ensureRareData();
+    if (!data->nodeLists()) {
+        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     }
 
-    return ChildNodeList::create(this, &m_nodeLists->m_childNodeListCaches);
-}
-
-Node* Node::virtualFirstChild() const
-{
-    return 0;
-}
-
-Node* Node::virtualLastChild() const
-{
-    return 0;
+    return ChildNodeList::create(this, &data->nodeLists()->m_childNodeListCaches);
 }
 
 bool Node::virtualHasTagName(const QualifiedName&) const
@@ -463,15 +481,27 @@ bool Node::canLazyAttach()
 {
     return shadowAncestorNode() == this;
 }
+    
+void Node::setFocus(bool b)
+{ 
+    if (b || hasRareData())
+        ensureRareData()->m_focused = b;
+}
 
+bool Node::rareDataFocused() const
+{
+    ASSERT(hasRareData());
+    return rareData()->m_focused;
+}
+    
 bool Node::isFocusable() const
 {
-    return m_tabIndexSetExplicitly;
+    return hasRareData() && rareData()->tabIndexSetExplicitly();
 }
 
 bool Node::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return isFocusable() && m_tabIndex >= 0;
+    return isFocusable() && tabIndex() >= 0;
 }
 
 bool Node::isMouseFocusable() const
@@ -490,25 +520,28 @@ unsigned Node::nodeIndex() const
 
 void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
-    if (!m_nodeLists) {
-        m_nodeLists.set(new NodeListsNodeData);
+    NodeRareData* data = ensureRareData();
+    if (!data->nodeLists()) {
+        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     } else if (!m_document->hasNodeListCaches()) {
         // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
-        m_nodeLists->invalidateCaches();
+        data->nodeLists()->invalidateCaches();
     }
 
     if (list->hasOwnCaches())
-        m_nodeLists->m_listsWithCaches.add(list);
+        data->nodeLists()->m_listsWithCaches.add(list);
 }
 
 void Node::unregisterDynamicNodeList(DynamicNodeList* list)
 {
-    ASSERT(m_nodeLists);
+    ASSERT(rareData());
+    ASSERT(rareData()->nodeLists());
     if (list->hasOwnCaches()) {
-        m_nodeLists->m_listsWithCaches.remove(list);
-        if (m_nodeLists->isEmpty()) {
-            m_nodeLists.clear();
+        NodeRareData* data = rareData();
+        data->nodeLists()->m_listsWithCaches.remove(list);
+        if (data->nodeLists()->isEmpty()) {
+            data->clearNodeLists();
             document()->removeNodeListCache();
         }
     }
@@ -516,13 +549,16 @@ void Node::unregisterDynamicNodeList(DynamicNodeList* list)
 
 void Node::notifyLocalNodeListsAttributeChanged()
 {
-    if (!m_nodeLists)
+    if (!hasRareData())
+        return;
+    NodeRareData* data = rareData();
+    if (!data->nodeLists())
         return;
 
-    m_nodeLists->invalidateCachesThatDependOnAttributes();
+    data->nodeLists()->invalidateCachesThatDependOnAttributes();
 
-    if (m_nodeLists->isEmpty()) {
-        m_nodeLists.clear();
+    if (data->nodeLists()->isEmpty()) {
+        data->clearNodeLists();
         document()->removeNodeListCache();
     }
 }
@@ -535,17 +571,20 @@ void Node::notifyNodeListsAttributeChanged()
 
 void Node::notifyLocalNodeListsChildrenChanged()
 {
-    if (!m_nodeLists)
+    if (!hasRareData())
+        return;
+    NodeRareData* data = rareData();
+    if (!data->nodeLists())
         return;
 
-    m_nodeLists->invalidateCaches();
+    data->nodeLists()->invalidateCaches();
 
-    NodeListsNodeData::NodeListSet::iterator end = m_nodeLists->m_listsWithCaches.end();
-    for (NodeListsNodeData::NodeListSet::iterator i = m_nodeLists->m_listsWithCaches.begin(); i != end; ++i)
+    NodeListsNodeData::NodeListSet::iterator end = data->nodeLists()->m_listsWithCaches.end();
+    for (NodeListsNodeData::NodeListSet::iterator i = data->nodeLists()->m_listsWithCaches.begin(); i != end; ++i)
         (*i)->invalidateCache();
 
-    if (m_nodeLists->isEmpty()) {
-        m_nodeLists.clear();
+    if (data->nodeLists()->isEmpty()) {
+        data->clearNodeLists();
         document()->removeNodeListCache();
     }
 }
@@ -554,16 +593,6 @@ void Node::notifyNodeListsChildrenChanged()
 {
     for (Node* n = this; n; n = n->parentNode())
         n->notifyLocalNodeListsChildrenChanged();
-}
-
-unsigned Node::childNodeCount() const
-{
-    return 0;
-}
-
-Node *Node::childNode(unsigned /*index*/) const
-{
-    return 0;
 }
 
 Node *Node::traverseNextNode(const Node *stayWithin) const
@@ -1198,12 +1227,13 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String& namespaceURI, co
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
-    if (!m_nodeLists) {
-        m_nodeLists.set(new NodeListsNodeData);
+    NodeRareData* data = ensureRareData();
+    if (!data->nodeLists()) {
+        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     }
 
-    pair<NodeListsNodeData::CacheMap::iterator, bool> result = m_nodeLists->m_nameNodeListCaches.add(elementName, 0);
+    pair<NodeListsNodeData::CacheMap::iterator, bool> result = data->nodeLists()->m_nameNodeListCaches.add(elementName, 0);
     if (result.second)
         result.first->second = new DynamicNodeList::Caches;
     
@@ -1212,12 +1242,13 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
-    if (!m_nodeLists) {
-        m_nodeLists.set(new NodeListsNodeData);
+    NodeRareData* data = ensureRareData();
+    if (!data->nodeLists()) {
+        data->setNodeLists(std::auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
         document()->addNodeListCache();
     }
 
-    pair<NodeListsNodeData::CacheMap::iterator, bool> result = m_nodeLists->m_classNodeListCaches.add(classNames, 0);
+    pair<NodeListsNodeData::CacheMap::iterator, bool> result = data->nodeLists()->m_classNodeListCaches.add(classNames, 0);
     if (result.second)
         result.first->second = new DynamicNodeList::Caches;
     

@@ -27,7 +27,7 @@
 
 #include <kjs/ExecState.h>
 #include "ExceptionCode.h"
-#include "Node.h"
+#include "ContainerNode.h"
 #include "NodeFilter.h"
 #include <wtf/PassRefPtr.h>
 

@@ -31,6 +31,7 @@
 #include "CString.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ElementRareData.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -39,62 +40,19 @@
 #include "HTMLNames.h"
 #include "NamedAttrMap.h"
 #include "NodeList.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "RenderBlock.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
-#include "NodeRenderStyle.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 using namespace XMLNames;
-
-class ElementRareData {
-public:
-    ElementRareData(Element*);
-    void resetComputedStyle(Element*);
-
-    IntSize m_minimumSizeForResizing;
-    RenderStyle* m_computedStyle;
-    bool m_needsFocusAppearanceUpdateSoonAfterAttach;
-};
-
-typedef HashMap<const Element*, ElementRareData*> ElementRareDataMap;
-
-static ElementRareDataMap& rareDataMap()
-{
-    static ElementRareDataMap* dataMap = new ElementRareDataMap;
-    return *dataMap;
-}
-
-static ElementRareData* rareDataFromMap(const Element* element)
-{
-    return rareDataMap().get(element);
-}
-
-static inline IntSize defaultMinimumSizeForResizing()
-{
-    return IntSize(INT_MAX, INT_MAX);
-}
-
-inline ElementRareData::ElementRareData(Element* element)
-    : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
-    , m_computedStyle(0)
-    , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
-{
-}
-
-void ElementRareData::resetComputedStyle(Element* element)
-{
-    if (!m_computedStyle)
-        return;
-    m_computedStyle->deref(element->document()->renderArena());
-    m_computedStyle = 0;
-}
-
+    
 Element::Element(const QualifiedName& tagName, Document* doc)
     : ContainerNode(doc, true)
     , m_tagName(tagName)
@@ -105,7 +63,6 @@ Element::Element(const QualifiedName& tagName, Document* doc)
     , m_synchronizingSVGAttributes(false)
 #endif
     , m_parsingChildrenFinished(true)
-    , m_hasRareData(false)
 {
 }
 
@@ -113,39 +70,29 @@ Element::~Element()
 {
     if (namedAttrMap)
         namedAttrMap->detachFromElement();
-
-    if (!hasRareData())
-        ASSERT(!rareDataMap().contains(this));
-    else {
-        ElementRareDataMap& dataMap = rareDataMap();
-        ElementRareDataMap::iterator it = dataMap.find(this);
-        ASSERT(it != dataMap.end());
-        delete it->second;
-        dataMap.remove(it);
-    }
 }
 
 inline ElementRareData* Element::rareData()
 {
-    return hasRareData() ? rareDataFromMap(this) : 0;
+    ASSERT(hasRareData());
+    return static_cast<ElementRareData*>(NodeRareData::rareDataFromMap(this));
 }
-
+    
 inline const ElementRareData* Element::rareData() const
 {
-    return hasRareData() ? rareDataFromMap(this) : 0;
+    return const_cast<const ElementRareData*>(rareData());
 }
-
-ElementRareData* Element::createRareData()
+    
+inline ElementRareData* Element::ensureRareData()
 {
-    if (hasRareData())
-        return rareDataMap().get(this);
-    ASSERT(!rareDataMap().contains(this));
-    ElementRareData* data = new ElementRareData(this);
-    rareDataMap().set(this, data);
-    setHasRareData(true);
-    return data;
+    return static_cast<ElementRareData*>(Node::ensureRareData());
 }
-
+    
+NodeRareData* Element::createRareData()
+{
+    return new ElementRareData(this);
+}
+    
 PassRefPtr<Node> Element::cloneNode(bool deep)
 {
     ExceptionCode ec = 0;
@@ -717,11 +664,12 @@ void Element::attach()
 {
     createRendererIfNeeded();
     ContainerNode::attach();
-    if (ElementRareData* rd = rareData()) {
-        if (rd->m_needsFocusAppearanceUpdateSoonAfterAttach) {
+    if (hasRareData()) {   
+        ElementRareData* data = rareData();
+        if (data->m_needsFocusAppearanceUpdateSoonAfterAttach) {
             if (isFocusable() && document()->focusedNode() == this)
                 document()->updateFocusAppearanceSoon();
-            rd->m_needsFocusAppearanceUpdateSoonAfterAttach = false;
+            data->m_needsFocusAppearanceUpdateSoonAfterAttach = false;
         }
     }
 }
@@ -729,8 +677,8 @@ void Element::attach()
 void Element::detach()
 {
     cancelFocusAppearanceUpdate();
-    if (ElementRareData* rd = rareData())
-        rd->resetComputedStyle(this);
+    if (hasRareData())
+        rareData()->resetComputedStyle(this);
     ContainerNode::detach();
 }
 
@@ -747,8 +695,8 @@ void Element::recalcStyle(StyleChange change)
 #endif
 
     if ((change > NoChange || changed())) {
-        if (ElementRareData* rd = rareData())
-            rd->resetComputedStyle(this);
+        if (hasRareData())
+            rareData()->resetComputedStyle(this);
     }
     if (hasParentStyle && (change >= Inherit || changed())) {
         RenderStyle *newStyle = document()->styleSelector()->styleForElement(this);
@@ -1156,7 +1104,7 @@ void Element::focus(bool restorePreviousSelection)
         page->focusController()->setFocusedNode(this, doc->frame());
 
     if (!isFocusable()) {
-        createRareData()->m_needsFocusAppearanceUpdateSoonAfterAttach = true;
+        ensureRareData()->m_needsFocusAppearanceUpdateSoonAfterAttach = true;
         return;
     }
         
@@ -1222,15 +1170,14 @@ String Element::title() const
 
 IntSize Element::minimumSizeForResizing() const
 {
-    const ElementRareData* rd = rareData();
-    return rd ? rd->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
+    return hasRareData() ? rareData()->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
 }
 
 void Element::setMinimumSizeForResizing(const IntSize& size)
 {
-    if (size == defaultMinimumSizeForResizing() && !rareData())
+    if (size == defaultMinimumSizeForResizing() && !hasRareData())
         return;
-    createRareData()->m_minimumSizeForResizing = size;
+    ensureRareData()->m_minimumSizeForResizing = size;
 }
 
 RenderStyle* Element::computedStyle()
@@ -1243,16 +1190,16 @@ RenderStyle* Element::computedStyle()
         // document tree and figure out when to destroy the computed style for such elements.
         return 0;
 
-    ElementRareData* rd = createRareData();
-    if (!rd->m_computedStyle)
-        rd->m_computedStyle = document()->styleSelector()->styleForElement(this, parent() ? parent()->computedStyle() : 0);
-    return rd->m_computedStyle;
+    ElementRareData* data = ensureRareData();
+    if (!data->m_computedStyle)
+        data->m_computedStyle = document()->styleSelector()->styleForElement(this, parent() ? parent()->computedStyle() : 0);
+    return data->m_computedStyle;
 }
 
 void Element::cancelFocusAppearanceUpdate()
 {
-    if (ElementRareData* rd = rareData())
-        rd->m_needsFocusAppearanceUpdateSoonAfterAttach = false;
+    if (hasRareData())
+        rareData()->m_needsFocusAppearanceUpdateSoonAfterAttach = false;
     if (document()->focusedNode() == this)
         document()->cancelFocusAppearanceUpdate();
 }

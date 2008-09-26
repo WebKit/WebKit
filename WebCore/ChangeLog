@@ -1,3 +1,88 @@
+2008-09-25  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Darin Adler.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20980
+        Split off uncommonly used data from Node similar to ElementRareData
+        
+        Saves an OwnPtr and a short on Node, as well as providing room for an isContainer bit,
+        which in turn allows inlining firstChild(), lastChild(), childNodeCount(), and childNode()
+        for a 5-10+% performance win on SlickSpeed and assorted speedups on other tests.
+
+        * WebCore.base.exp: 
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ChildNodeList.cpp: Include ContainerNode to pick up its definitions for childNodeCount(), etc...
+        * dom/ContainerNode.cpp: Set isContainer to true
+        (WebCore::ContainerNode::ContainerNode):
+        * dom/ContainerNode.h: These Node inlines are here to avoid including ContainerNode.h in Node.h
+        (WebCore::Node::containerChildNodeCount): Use ContainerNode's definition, having proved that the Node is a container
+        (WebCore::Node::containerChildNode): ditto
+        (WebCore::Node::containerFirstChild): ditto
+        (WebCore::Node::containerLastChild): ditto
+        * dom/Element.cpp: Most of the changes here are moving ElementRareData to ElementRareData.h and NodeRareData.h
+        (WebCore::Element::Element): 
+        (WebCore::Element::~Element):
+        (WebCore::Element::rareData):
+        (WebCore::Element::ensureRareData): Renamed from createRareData
+        (WebCore::Element::createRareData): Used by ensureRareData to get the correct rareData type
+        (WebCore::Element::attach): Check hasRareData rather than null-checking rareData()
+        (WebCore::Element::detach): ditto
+        (WebCore::Element::recalcStyle): ditto
+        (WebCore::Element::focus):
+        (WebCore::Element::minimumSizeForResizing): ditto
+        (WebCore::Element::setMinimumSizeForResizing): ditto
+        (WebCore::Element::computedStyle):
+        (WebCore::Element::cancelFocusAppearanceUpdate): ditto
+        * dom/Element.h:
+        * dom/ElementRareData.h: Added; everything copied from Element.cpp
+        (WebCore::defaultMinimumSizeForResizing):
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::resetComputedStyle):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::EventTargetNode): Pass the isContainer flag up the chain
+        * dom/EventTargetNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::~Node): rareData cleanup code moved from Element and changed to use hasRareData
+        (WebCore::Node::rareData):
+        (WebCore::Node::ensureRareData):
+        (WebCore::Node::createRareData):
+        (WebCore::Node::tabIndex): nonzero tab indexes are now in rareData
+        (WebCore::Node::setTabIndexExplicitly):
+        (WebCore::Node::childNodes): NodeLists are now in rareData
+        (WebCore::Node::setFocus):
+        (WebCore::Node::rareDataFocused):
+        (WebCore::Node::isFocusable):
+        (WebCore::Node::isKeyboardFocusable):
+        (WebCore::Node::registerDynamicNodeList): NodeLists are now in rareData
+        (WebCore::Node::unregisterDynamicNodeList): ditto
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged): ditto
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged): ditto
+        (WebCore::Node::getElementsByName): ditto
+        (WebCore::Node::getElementsByClassName): ditto
+        * dom/Node.h:
+        (WebCore::Node::firstChild): Use isContainerNode() to devirtualize
+        (WebCore::Node::lastChild): ditto
+        (WebCore::Node::isContainerNode): Take advantage of a newly freed bit to store whether we're a container
+        (WebCore::Node::focused): focus is in rareData if set
+        (WebCore::Node::childTypeAllowed):
+        (WebCore::Node::childNodeCount): Use isContainerNode() to devirtualize
+        (WebCore::Node::childNode): ditto
+        (WebCore::Node::hasRareData): Use another newly freed bit to store whether we have rare data; avoids doing hash lookups in the common case
+        * dom/NodeRareData.h: Added. Most of this is just properties moved from Node
+        (WebCore::NodeListsNodeData::~NodeListsNodeData): Moved from Node.cpp since we NodeRareData needs to put them in a HashTable :(
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::rareDataMap):
+        (WebCore::NodeRareData::rareDataFromMap):
+        (WebCore::NodeRareData::clearNodeLists):
+        (WebCore::NodeRareData::setNodeLists):
+        (WebCore::NodeRareData::nodeLists):
+        (WebCore::NodeRareData::tabIndex):
+        (WebCore::NodeRareData::setTabIndex):
+        (WebCore::NodeRareData::tabIndexSetExplicitly):
+        * dom/TreeWalker.cpp: Include ContainerNode to pick up its definitions for childNodeCount(), etc...
+        * xml/XPathUtil.cpp: Include ContainerNode to pick up its definitions for childNodeCount(), etc...
+
 2008-09-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

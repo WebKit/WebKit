@@ -29,7 +29,7 @@
 
 #if ENABLE(XPATH)
 
-#include "Node.h"
+#include "ContainerNode.h"
 
 namespace WebCore {
 namespace XPath {
