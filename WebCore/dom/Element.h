@@ -215,8 +215,7 @@ private:
     virtual NodeRareData* createRareData();
 
 protected:
-    ElementRareData* rareData();
-    const ElementRareData* rareData() const;
+    ElementRareData* rareData() const;
     ElementRareData* ensureRareData();
     
     mutable RefPtr<NamedAttrMap> namedAttrMap;

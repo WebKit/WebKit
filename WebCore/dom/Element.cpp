@@ -72,15 +72,10 @@ Element::~Element()
         namedAttrMap->detachFromElement();
 }
 
-inline ElementRareData* Element::rareData()
+inline ElementRareData* Element::rareData() const
 {
     ASSERT(hasRareData());
     return static_cast<ElementRareData*>(NodeRareData::rareDataFromMap(this));
-}
-    
-inline const ElementRareData* Element::rareData() const
-{
-    return const_cast<const ElementRareData*>(rareData());
 }
     
 inline ElementRareData* Element::ensureRareData()

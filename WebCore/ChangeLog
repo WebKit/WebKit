@@ -1,5 +1,18 @@
 2008-09-25  David Smith  <catfish.man@gmail.com>
 
+        Reviewed by Dave Hyatt.
+
+        Fix a nasty regression I introduced in the previous commit, which caused infinite recursion on facebook.
+
+        * dom/Element.cpp:
+        (WebCore::Element::rareData):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::rareData):
+        * dom/Node.h:
+
+2008-09-25  David Smith  <catfish.man@gmail.com>
+
         Reviewed by Darin Adler.
         
         https://bugs.webkit.org/show_bug.cgi?id=20980

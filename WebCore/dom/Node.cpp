@@ -211,15 +211,10 @@ Node::~Node()
         m_next->setPreviousSibling(0);
 }
 
-inline NodeRareData* Node::rareData()
+inline NodeRareData* Node::rareData() const
 {
     ASSERT(hasRareData());
     return NodeRareData::rareDataFromMap(this);
-}
-    
-inline const NodeRareData* Node::rareData() const
-{
-    return const_cast<const NodeRareData*>(rareData());
 }
 
 NodeRareData* Node::ensureRareData()

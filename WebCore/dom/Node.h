@@ -501,8 +501,7 @@ protected:
     
     bool hasRareData() const { return m_hasRareData; }
     
-    NodeRareData* rareData();
-    const NodeRareData* rareData() const;
+    NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
     
     virtual bool virtualHasTagName(const QualifiedName&) const;
