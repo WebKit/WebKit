@@ -94,4 +94,9 @@ void Widget::paint(GraphicsContext*,const IntRect& r)
         platformWidget()->Update();
 }
 
+PlatformWidget Widget::containingWindow() const
+{
+    return m_containingWindow;
+}
+
 }

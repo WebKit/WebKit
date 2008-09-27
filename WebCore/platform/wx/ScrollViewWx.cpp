@@ -220,28 +220,14 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     adjustScrollbars();
 }
 
-void ScrollView::platformSetContentsSize(const IntSize& newSize)
+void ScrollView::platformSetContentsSize()
 {
-    win->SetVirtualSize(newSize.width(), newSize.height());
-    adjustScrollbars();
-}
-
-Scrollbar* ScrollView::horizontalScrollbar() const
-{
-    return 0;
-}
-
-Scrollbar* ScrollView::verticalScrollbar() const
-{
-    return 0;
-}
-
-bool ScrollView::isScrollViewScrollbar(const Widget* child) const
-{
-    wxWindow* win = child->platformWidget();
+    wxWindow* win = platformWidget();
     if (!win)
-        return false;
-    return win->IsKindOf(CLASSINFO(wxScrollBar));
+        return;
+
+    win->SetVirtualSize(contentsWidth(), contentsHeight());
+    adjustScrollbars();
 }
 
 void ScrollView::adjustScrollbars(int x, int y, bool refresh)
@@ -297,17 +283,17 @@ void ScrollView::adjustScrollbars(int x, int y, bool refresh)
     }
 }
 
-void ScrollView::platformSetScrollbarModes(ScrollbarMode newHMode, ScrollbarMode newVMode)
+void ScrollView::platformSetScrollbarModes()
 {
     bool needsAdjust = false;
 
-    if (m_data->hScrollbarMode != newHMode) {
-        m_data->hScrollbarMode = newHMode;
+    if (m_data->hScrollbarMode != horizontalScrollbarMode() ) {
+        m_data->hScrollbarMode = horizontalScrollbarMode();
         needsAdjust = true;
     }
 
-    if (m_data->vScrollbarMode != newVMode) {
-        m_data->vScrollbarMode = newVMode;
+    if (m_data->vScrollbarMode != horizontalScrollbarMode() ) {
+        m_data->vScrollbarMode = horizontalScrollbarMode();
         needsAdjust = true;
     }
 
@@ -354,7 +340,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
         (e.deltaY() > 0 && scrollOffset().height() > 0)) {
         e.accept();
-        scrollBy(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP);
+        scrollBy(IntSize(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP));
     }
 }
 

@@ -88,9 +88,6 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
     return resource;
 }
 
-void Widget::removeFromParent() { notImplemented(); }
-
-
 int findNextSentenceFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 void findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
 

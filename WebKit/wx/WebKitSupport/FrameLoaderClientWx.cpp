@@ -892,7 +892,7 @@ void FrameLoaderClientWx::transitionToCommittedForNewPage()
         m_frame->ownerRenderer()->setWidget(frameView);
 
     if (HTMLFrameOwnerElement* owner = m_frame->ownerElement())
-        m_frame->view()->setScrollbarsMode(owner->scrollingMode());
+        m_frame->view()->setScrollbarModes(owner->scrollingMode(), owner->scrollingMode());
 }
 
 }
