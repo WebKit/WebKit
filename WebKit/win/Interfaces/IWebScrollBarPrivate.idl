@@ -56,7 +56,7 @@ interface IWebScrollBarPrivate : IUnknown
 
     HRESULT paint([in] HDC dc, [in] RECT damageRect);
 
-    HRESULT frameGeometry([out, retval] RECT* bounds);
+    HRESULT frameRect([out, retval] RECT* bounds);
 
     HRESULT width([out, retval] int* w);
 

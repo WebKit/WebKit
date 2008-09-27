@@ -88,7 +88,7 @@ public:
         /* [in] */ HDC dc,
         /* [in] */ RECT damageRect);
     
-    virtual HRESULT STDMETHODCALLTYPE frameGeometry( 
+    virtual HRESULT STDMETHODCALLTYPE frameRect( 
         /* [retval][out] */ RECT* bounds);
     
     virtual HRESULT STDMETHODCALLTYPE width( 

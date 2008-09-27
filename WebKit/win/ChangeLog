@@ -1,3 +1,17 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        Land the frameGeometry->frameRect changes that I forgot to land in WebKit.
+
+        * Interfaces/IWebScrollBarPrivate.idl:
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::setFrameRect):
+        (EmbeddedWidget::frameRectsChanged):
+        * WebCoreSupport/EmbeddedWidget.h:
+        * WebScrollBar.cpp:
+        (WebScrollBar::setRect):
+        (WebScrollBar::frameRect):
+        * WebScrollBar.h:
+
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

@@ -1,3 +1,15 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        Forgot to land renaming changes in WebKit.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::render):
+        (QWebFrame::pos):
+        (QWebFrame::geometry):
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportSize):
+        (QWebPage::setViewportSize):
+
 2008-09-27  Simon Hausmann  <hausmann@webkit.org>
 
         Qt build fix - use frameRect instead of frameGeometry, adapt
