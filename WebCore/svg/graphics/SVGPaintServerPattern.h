@@ -63,7 +63,7 @@ namespace WebCore {
         virtual TextStream& externalRepresentation(TextStream&) const;
 
         virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#if PLATFORM(CG)
+#if PLATFORM(CG) || PLATFORM(QT)
         virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
 #endif
 

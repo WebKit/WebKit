@@ -1,3 +1,21 @@
+2008-09-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [qt] Clean the pattern code
+        - Use save/restore on the painter after manipulating the
+        pen/brush
+        - Make the context and object null checking consistent. CG is using
+        the object unconditionally so the Qt webkit platform can do the
+        same.
+        - Move code below the early exit. Only use the m_ownerElement before
+        the early exit as the CG code is doing it.
+
+        * svg/graphics/SVGPaintServerPattern.h:
+        * svg/graphics/qt/SVGPaintServerPatternQt.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        (WebCore::SVGPaintServerPattern::teardown):
+
 2008-09-27  Keishi Hattori  <casey.hattori@gmail.com>
 
         Added support for console.trace.

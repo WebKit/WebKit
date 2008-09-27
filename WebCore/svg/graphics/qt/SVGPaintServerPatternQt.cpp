@@ -37,14 +37,8 @@ namespace WebCore {
 
 bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
-    QPainter* painter(context ? context->platformContext() : 0);
-    Q_ASSERT(painter);
-
-    QPainterPath* path(context ? context->currentPath() : 0);
-    Q_ASSERT(path);
-
-    RenderStyle* style = object ? object->style() : 0;
-    const SVGRenderStyle* svgStyle = object ? object->style()->svgStyle() : 0;
+    Q_ASSERT(context);
+    Q_ASSERT(object);
 
     FloatRect targetRect = object->relativeBBox(false);
     m_ownerElement->buildPattern(targetRect);
@@ -52,8 +46,15 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     if (!tile())
         return false;
 
+    QPainter* painter = context->platformContext();
+    QPainterPath* path = context->currentPath();
+
+    RenderStyle* style = object->style();
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+
     RefPtr<Pattern> pattern = Pattern::create(tile()->image(), true, true);
 
+    context->save();
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::NoBrush);
 
@@ -75,6 +76,11 @@ bool SVGPaintServerPattern::setup(GraphicsContext*& context, const RenderObject*
     }
 
     return true;
+}
+
+void SVGPaintServerPattern::teardown(GraphicsContext*& context, const RenderObject*, SVGPaintTargetType, bool) const
+{
+    context->restore();
 }
 
 } // namespace WebCore
