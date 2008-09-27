@@ -1,3 +1,15 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/6252041> REGRESSION (4dp-TOT): Crash in Widget::platformWidget() when closing a PDF
+
+        This crash was lurking for a while and basically got exposed by my changes to visibleContentRect() to
+        access an actual member variable.
+
+        Reviewed by Dan Bernstein
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedFrame):
+
 2008-09-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Attempt to fix QT Build. Not reviewed.

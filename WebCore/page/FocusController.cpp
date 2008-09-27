@@ -65,12 +65,12 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
     if (m_focusedFrame == frame)
         return;
 
-    if (m_focusedFrame)
+    if (m_focusedFrame && m_focusedFrame->view())
         m_focusedFrame->selection()->setFocused(false);
 
     m_focusedFrame = frame;
 
-    if (m_focusedFrame)
+    if (m_focusedFrame m_focusedFrame->view())
         m_focusedFrame->selection()->setFocused(true);
 }
 
