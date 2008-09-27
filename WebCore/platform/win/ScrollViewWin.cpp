@@ -176,7 +176,7 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     }
 
     // This call will move child HWNDs (plugins) and invalidate them as well.
-    m_view->geometryChanged();
+    m_view->frameRectsChanged();
 
     // Now update the window (which should do nothing but a blit of the backing store's updateRect and so should
     // be very fast).
@@ -268,7 +268,7 @@ void ScrollView::setFrameRect(const IntRect& newGeometry)
         static_cast<FrameView*>(this)->setNeedsLayout();
     }
 
-    geometryChanged();
+    frameRectsChanged();
 }
 
 void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
@@ -409,7 +409,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     }
 
     if (oldHasVertical != (m_verticalScrollbar != 0) || oldHasHorizontal != (m_horizontalScrollbar != 0))
-        geometryChanged();
+        frameRectsChanged();
 
     // See if our offset has changed in a situation where we might not have scrollbars.
     // This can happen when editing a body with overflow:hidden and scrolling to reveal selection.
@@ -557,11 +557,11 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     }
 }
 
-void ScrollView::geometryChanged() const
+void ScrollView::frameRectsChanged() const
 {
     HashSet<Widget*>::const_iterator end = m_children.end();
     for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
-        (*current)->geometryChanged();
+        (*current)->frameRectsChanged();
 }
 
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)

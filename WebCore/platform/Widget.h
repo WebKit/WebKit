@@ -124,7 +124,7 @@ public:
 
     virtual void setFrameRect(const IntRect&);
     virtual IntRect frameRect() const;
-    IntRect boundsGeometry() const { return IntRect(0, 0, width(),  height()); }
+    IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
 
     void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); }
     void resize(const IntSize& s) { setFrameRect(IntRect(pos(), s)); }
@@ -132,7 +132,7 @@ public:
     void move(const IntPoint& p) { setFrameRect(IntRect(p, size())); }
 
     virtual void paint(GraphicsContext*, const IntRect&);
-    void invalidate() { invalidateRect(boundsGeometry()); }
+    void invalidate() { invalidateRect(boundsRect()); }
     virtual void invalidateRect(const IntRect&);
 
     virtual void setFocus();
@@ -178,7 +178,7 @@ public:
     IntPoint convertFromContainingWindow(const IntPoint&) const; // See comment above about when not to use this method.
     IntRect convertFromContainingWindow(const IntRect&) const;
 
-    virtual void geometryChanged() const {}
+    virtual void frameRectsChanged() const {}
 
 #if PLATFORM(MAC)    
     NSView* getOuterView() const;

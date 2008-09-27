@@ -53,7 +53,7 @@ protected:
 
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
-    virtual void geometryChanged();
+    virtual void frameRectsChanged();
     
 private:
     static void gtkValueChanged(GtkAdjustment*, ScrollbarGtk*);

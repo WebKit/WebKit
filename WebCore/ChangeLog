@@ -1,3 +1,39 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        Rename boundsGeometry -> boundsRect.  Rename geometryChanged -> frameRectsChanged.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        (WebCore::Widget::boundsRect):
+        (WebCore::Widget::invalidate):
+        (WebCore::Widget::frameRectsChanged):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollViewScrollbar::frameRectsChanged):
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::frameRectsChanged):
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::setFrameRect):
+        (ScrollbarGtk::frameRectsChanged):
+        * platform/gtk/ScrollbarGtk.h:
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::frameRectsChanged):
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore):
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::frameRectsChanged):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::frameRectsChanged):
+        * plugins/PluginView.h:
+
 2008-09-27  Simon Hausmann  <hausmann@webkit.org>
 
         Refix the previous build fix to compile on non-Qt platforms, too.
