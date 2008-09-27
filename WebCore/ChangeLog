@@ -1,5 +1,15 @@
 2008-09-27  Simon Hausmann  <hausmann@webkit.org>
 
+        Refix the previous build fix to compile on non-Qt platforms, too.
+
+        * WebCore.pro: Don't pass -i to create_hashtable, added missing -n
+        WebCore to generate the PrototypeTable in the WebCore namespace
+        * bindings/js/JSEventTargetBase.h: Revert previous fix, the Prototype
+        table remains in the Webcore namespace
+        (WebCore::JSEventTargetBasePrototype::getOwnPropertySlot):
+
+2008-09-27  Simon Hausmann  <hausmann@webkit.org>
+
         Fix compilation with gcc 4.3 (probably > 4.0)
 
         * bindings/js/JSDOMWindowBase.cpp: Don't define static property
