@@ -3484,7 +3484,7 @@ DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(
 
 # lookup tables for old-style JavaScript bindings
 %.lut.h: %.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< > $@
+	$(CREATE_HASH_TABLE) $< -n WebCore > $@
 
 # HTML tag and attribute names
 DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp;
