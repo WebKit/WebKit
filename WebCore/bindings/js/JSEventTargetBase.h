@@ -89,12 +89,14 @@ void setJS##specificEventTarget##name(JSC::ExecState* exec, JSC::JSObject* baseO
     JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, EVENT_LISTENER_GETTER) \
     JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, EVENT_LISTENER_SETTER) \
 
+namespace JSC {
+    extern const struct JSC::HashTable JSEventTargetPrototypeTable;
+}
+
 namespace WebCore {
 
     class AtomicString;
     class EventTarget;
-
-    extern const struct JSC::HashTable JSEventTargetPrototypeTable;
 
     // The idea here is that classes like JSEventTargetNode and JSEventTargetSVGElementInstance
     // can share a prototype with the only difference being the name.
@@ -113,12 +115,12 @@ namespace WebCore {
 
         virtual bool getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
         {
-            return JSC::getStaticFunctionSlot<JSC::JSObject>(exec, &JSEventTargetPrototypeTable, this, propertyName, slot);
+            return JSC::getStaticFunctionSlot<JSC::JSObject>(exec, &JSC::JSEventTargetPrototypeTable, this, propertyName, slot);
         }
 
         virtual const JSC::ClassInfo* classInfo() const
         {
-            static const JSC::ClassInfo s_classInfo = { JSSpecificEventTarget::prototypeClassName(), 0, &JSEventTargetPrototypeTable, 0 };
+            static const JSC::ClassInfo s_classInfo = { JSSpecificEventTarget::prototypeClassName(), 0, &JSC::JSEventTargetPrototypeTable, 0 };
             return &s_classInfo;
         }
     };

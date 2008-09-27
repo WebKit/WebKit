@@ -42,13 +42,9 @@
 
 using namespace JSC;
 
-namespace WebCore {
-
 static JSValue* jsEventTargetAddEventListener(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* jsEventTargetRemoveEventListener(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* jsEventTargetDispatchEvent(ExecState*, JSObject*, JSValue*, const ArgList&);
-
-}
 
 #include "JSEventTargetBase.lut.h"
 
@@ -89,9 +85,13 @@ static inline bool retrieveEventTargetAndCorrespondingNode(ExecState*, JSValue* 
     return false;
 }
 
+} // namespace WebCore
+
+using namespace WebCore;
+
 JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    Node* eventNode = 0;
+    WebCore::Node* eventNode = 0;
     EventTarget* eventTarget = 0;
     if (!retrieveEventTargetAndCorrespondingNode(exec, thisValue, eventNode, eventTarget))
         return throwError(exec, TypeError);
@@ -108,7 +108,7 @@ JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject*, JSValue* this
 
 JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    Node* eventNode = 0;
+    WebCore::Node* eventNode = 0;
     EventTarget* eventTarget = 0;
     if (!retrieveEventTargetAndCorrespondingNode(exec, thisValue, eventNode, eventTarget))
         return throwError(exec, TypeError);
@@ -125,7 +125,7 @@ JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject*, JSValue* t
 
 JSValue* jsEventTargetDispatchEvent(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    Node* eventNode = 0;
+    WebCore::Node* eventNode = 0;
     EventTarget* eventTarget = 0;
     if (!retrieveEventTargetAndCorrespondingNode(exec, thisValue, eventNode, eventTarget))
         return throwError(exec, TypeError);
@@ -135,6 +135,8 @@ JSValue* jsEventTargetDispatchEvent(ExecState* exec, JSObject*, JSValue* thisVal
     setDOMException(exec, ec);
     return result;
 }
+
+namespace WebCore {
 
 JSValue* toJS(ExecState* exec, EventTarget* target)
 {

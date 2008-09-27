@@ -1,3 +1,18 @@
+2008-09-27  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix compilation with gcc 4.3 (probably > 4.0)
+
+        * bindings/js/JSDOMWindowBase.cpp: Don't define static property
+        get/put functions inside the WebCore namespace.
+        * bindings/js/JSEventTargetBase.cpp: Ditto.
+        * bindings/js/JSEventTargetNode.cpp: Ditto.
+        * bindings/js/JSEventTargetSVGElementInstance.cpp: Ditto.
+        * bindings/js/JSEventTargetBase.h: Forward declare
+        JSEventTargetPrototypeTable in the JSC namespace as the lut.h file
+        defines it in the JSC namespace.
+        (WebCore::JSEventTargetBasePrototype::getOwnPropertySlot): Add JSC::
+        prefix for PrototypeTable symbol.
+
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
         Rename frameGeometry to frameRect.  Rename setFrameGeometry to setFrameRect.

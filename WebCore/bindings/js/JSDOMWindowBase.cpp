@@ -72,8 +72,6 @@
 
 using namespace JSC;
 
-namespace WebCore {
-
 static JSValue* windowProtoFuncAToB(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* windowProtoFuncBToA(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* windowProtoFuncOpen(ExecState*, JSObject*, JSValue*, const ArgList&);
@@ -158,8 +156,6 @@ static JSValue* jsDOMWindowBaseXMLHttpRequest(ExecState*, const Identifier&, con
 static void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValue*);
 static JSValue* jsDOMWindowBaseXSLTProcessor(ExecState*, const Identifier&, const PropertySlot&);
 static void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*);
-
-}
 
 #include "JSDOMWindowBase.lut.h"
 
@@ -518,6 +514,10 @@ static JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMWindowBase* 
     return constructor;
 }
 
+} // namespace WebCore
+
+using namespace WebCore;
+
 JSValue* jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&)
 {
     return jsUndefined(); // FIXME: implement this
@@ -787,6 +787,8 @@ JSValue* jsDOMWindowBaseOnWebKitTransitionEnd(ExecState* exec, const Identifier&
     return static_cast<JSDOMWindowBase*>(slot.slotBase())->getListener(exec, webkitTransitionEndEvent);
 }
 
+namespace WebCore {
+
 JSValue* JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
@@ -907,6 +909,10 @@ void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSVal
     if (allowsAccessFrom(exec))
         Base::put(exec, propertyName, value, slot);
 }
+
+} // namespace WebCore
+
+using namespace WebCore;
 
 void setJSDOMWindowBaseOnabort(ExecState* exec, JSObject* baseObject, JSValue* value)
 {
@@ -1117,6 +1123,8 @@ void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*)
     ASSERT_NOT_REACHED();
 }
 
+namespace WebCore {
+
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {
     KURL originURL = asJSDOMWindow(other)->impl()->url();
@@ -1281,6 +1289,10 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
     static JSGlobalData* globalData = JSGlobalData::create().releaseRef();
     return globalData;
 }
+
+} // namespace WebCore
+
+using namespace WebCore;
 
 JSValue* windowProtoFuncAToB(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
@@ -1519,6 +1531,8 @@ JSValue* windowProtoFuncNotImplemented(ExecState* exec, JSObject*, JSValue* this
         return throwError(exec, TypeError);
     return jsUndefined();
 }
+
+namespace WebCore {
 
 void JSDOMWindowBase::setReturnValueSlot(JSValue** slot)
 {

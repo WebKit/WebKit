@@ -34,11 +34,9 @@
 
 using namespace JSC;
 
-namespace WebCore {
+using namespace WebCore::EventNames;
 
-using namespace EventNames;
-
-ASSERT_CLASS_FITS_IN_CELL(JSEventTargetNode)
+ASSERT_CLASS_FITS_IN_CELL(WebCore::JSEventTargetNode)
 
 static JSValue* jsEventTargetNodeOnAbort(ExecState*, const Identifier&, const PropertySlot&);
 static void setJSEventTargetNodeOnAbort(ExecState*, JSObject*, JSValue*);
@@ -166,9 +164,8 @@ onunload      jsEventTargetNodeOnUnload       DontDelete|DontEnum
 @end
 */
 
+using namespace WebCore;
 DECLARE_JS_EVENT_LISTENERS(EventTargetNode)
-
-} // namespace WebCore
 
 #include "JSEventTargetNode.lut.h"
 
