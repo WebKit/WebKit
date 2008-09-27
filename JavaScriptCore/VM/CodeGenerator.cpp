@@ -676,12 +676,18 @@ RegisterID* CodeGenerator::emitPostDec(RegisterID* dst, RegisterID* srcDst)
     return dst;
 }
 
-RegisterID* CodeGenerator::emitBinaryOp(OpcodeID opcode, RegisterID* dst, RegisterID* src1, RegisterID* src2)
+RegisterID* CodeGenerator::emitBinaryOp(OpcodeID opcode, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)
 {
     emitOpcode(opcode);
     instructions().append(dst->index());
     instructions().append(src1->index());
     instructions().append(src2->index());
+
+    if (opcode == op_bitor || opcode == op_bitand || opcode == op_bitxor ||
+        opcode == op_add || opcode == op_mul || opcode == op_sub) {
+        instructions().append(types.toInt());
+    }
+
     return dst;
 }
 

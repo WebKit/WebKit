@@ -141,14 +141,6 @@ void ParserRefCounted::deleteNewObjects(JSGlobalData* globalData)
 
 Node::Node(JSGlobalData* globalData)
     : ParserRefCounted(globalData)
-    , m_expectedReturnType(ObjectType)
-{
-    m_line = globalData->lexer->lineNo();
-}
-
-Node::Node(JSGlobalData* globalData, JSType expectedReturn)
-    : ParserRefCounted(globalData)
-    , m_expectedReturnType(expectedReturn)
 {
     m_line = globalData->lexer->lineNo();
 }
@@ -663,7 +655,7 @@ RegisterID* PrefixResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
             if (dst == ignoredResult())
                 return 0;
             RefPtr<RegisterID> r0 = generator.emitUnexpectedLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
-            return generator.emitBinaryOp(op_add, r0.get(), local, r0.get());
+            return generator.emitBinaryOp(op_add, r0.get(), local, r0.get(), OperandTypes());
         }
 
         emitPreIncOrDec(generator, local, m_operator);
@@ -754,7 +746,7 @@ RegisterID* BinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBinaryOp(opcode, generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    return generator.emitBinaryOp(opcode, generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(m_expr1->resultDescriptor(), m_expr2->resultDescriptor()));
 }
 
 RegisterID* EqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -780,7 +772,7 @@ RegisterID* ReverseBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* 
 {
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src2, src1.get());
+    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src2, src1.get(), OperandTypes(m_expr2->resultDescriptor(), m_expr1->resultDescriptor()));
 }
 
 RegisterID* ThrowableBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -788,7 +780,7 @@ RegisterID* ThrowableBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(m_expr1->resultDescriptor(), m_expr2->resultDescriptor()));
 }
 
 RegisterID* InstanceOfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -846,7 +838,7 @@ RegisterID* ConditionalNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 // ------------------------------ ReadModifyResolveNode -----------------------------------
 
 // FIXME: should this be moved to be a method on CodeGenerator?
-static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(CodeGenerator& generator, RegisterID* dst, RegisterID* src1, RegisterID* src2, Operator oper)
+static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(CodeGenerator& generator, RegisterID* dst, RegisterID* src1, RegisterID* src2, Operator oper, OperandTypes types)
 {
     OpcodeID opcode;
     switch (oper) {
@@ -888,7 +880,7 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(CodeGenerator& generat
             return dst;
     }
     
-    return generator.emitBinaryOp(opcode, dst, src1, src2);
+    return generator.emitBinaryOp(opcode, dst, src1, src2, types);
 }
 
 RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -896,20 +888,20 @@ RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID
     if (RegisterID* local = generator.registerFor(m_ident)) {
         if (generator.isLocalConstant(m_ident)) {
             RegisterID* src2 = generator.emitNode(m_right.get());
-            return emitReadModifyAssignment(generator, generator.finalDestination(dst), local, src2, m_operator);
+            return emitReadModifyAssignment(generator, generator.finalDestination(dst), local, src2, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
         }
         
         if (generator.leftHandSideNeedsCopy(m_rightHasAssignments, m_right->isPure(generator))) {
             RefPtr<RegisterID> result = generator.newTemporary();
             generator.emitMove(result.get(), local);
             RegisterID* src2 = generator.emitNode(m_right.get());
-            emitReadModifyAssignment(generator, result.get(), result.get(), src2, m_operator);
+            emitReadModifyAssignment(generator, result.get(), result.get(), src2, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
             generator.emitMove(local, result.get());
             return generator.moveToDestinationIfNeeded(dst, result.get());
         }
         
         RegisterID* src2 = generator.emitNode(m_right.get());
-        RegisterID* result = emitReadModifyAssignment(generator, local, local, src2, m_operator);
+        RegisterID* result = emitReadModifyAssignment(generator, local, local, src2, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
         return generator.moveToDestinationIfNeeded(dst, result);
     }
 
@@ -919,7 +911,7 @@ RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID
     if (generator.findScopedProperty(m_ident, index, depth, true, globalObject) && index != missingSymbolMarker()) {
         RefPtr<RegisterID> src1 = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index, globalObject);
         RegisterID* src2 = generator.emitNode(m_right.get());
-        RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), src2, m_operator);
+        RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), src2, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
         generator.emitPutScopedVar(depth, index, result, globalObject);
         return result;
     }
@@ -929,7 +921,7 @@ RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID
     RefPtr<RegisterID> base = generator.emitResolveWithBase(generator.newTemporary(), src1.get(), m_ident);
     RegisterID* src2 = generator.emitNode(m_right.get());
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), src2, m_operator);
+    RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), src2, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
     return generator.emitPutById(base.get(), m_ident, result);
 }
 
@@ -985,7 +977,7 @@ RegisterID* ReadModifyDotNode::emitCode(CodeGenerator& generator, RegisterID* ds
     generator.emitExpressionInfo(m_divot - m_subexpressionDivotOffset, m_startOffset - m_subexpressionDivotOffset, m_subexpressionEndOffset);
     RefPtr<RegisterID> value = generator.emitGetById(generator.tempDestination(dst), base.get(), m_ident);
     RegisterID* change = generator.emitNode(m_right.get());
-    RegisterID* updatedValue = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), change, m_operator);
+    RegisterID* updatedValue = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), change, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
 
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
     return generator.emitPutById(base.get(), m_ident, updatedValue);
@@ -1020,7 +1012,7 @@ RegisterID* ReadModifyBracketNode::emitCode(CodeGenerator& generator, RegisterID
     generator.emitExpressionInfo(m_divot - m_subexpressionDivotOffset, m_startOffset - m_subexpressionDivotOffset, m_subexpressionEndOffset);
     RefPtr<RegisterID> value = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
     RegisterID* change = generator.emitNode(m_right.get());
-    RegisterID* updatedValue = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), change, m_operator);
+    RegisterID* updatedValue = emitReadModifyAssignment(generator, generator.finalDestination(dst, value.get()), value.get(), change, m_operator, OperandTypes(ResultType::unknown(), m_right->resultDescriptor()));
 
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
     generator.emitPutByVal(base.get(), property.get(), updatedValue);
@@ -1567,7 +1559,7 @@ RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID
         for (ClauseListNode* list = m_list1.get(); list; list = list->getNext()) {
             RefPtr<RegisterID> clauseVal = generator.newTemporary();
             generator.emitNode(clauseVal.get(), list->getClause()->expr());
-            generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression);
+            generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression, OperandTypes());
             labelVector.append(generator.newLabel());
             generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
         }
@@ -1575,7 +1567,7 @@ RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID
         for (ClauseListNode* list = m_list2.get(); list; list = list->getNext()) {
             RefPtr<RegisterID> clauseVal = generator.newTemporary();
             generator.emitNode(clauseVal.get(), list->getClause()->expr());
-            generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression);
+            generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression, OperandTypes());
             labelVector.append(generator.newLabel());
             generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
         }

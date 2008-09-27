@@ -162,12 +162,23 @@ namespace X86 {
         hasSib = esp,
         noScale = esp,
     } RegisterID;
+
+    typedef enum {
+        xmm0,
+        xmm1,
+        xmm2,
+        xmm3,
+        xmm4,
+        xmm5,
+        xmm6,
+        xmm7,
+    } XMMRegisterID;
 }
 
 class X86Assembler {
 public:
     typedef X86::RegisterID RegisterID;
-
+    typedef X86::XMMRegisterID XMMRegisterID;
     typedef enum {
         OP_ADD_EvGv                     = 0x01,
         OP_ADD_GvEv                     = 0x03,
@@ -182,6 +193,7 @@ public:
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
         PRE_OPERAND_SIZE                = 0x66,
+        PRE_SSE_66                      = 0x66,
         OP_IMUL_GvEvIz                  = 0x69,
         OP_GROUP1_EvIz                  = 0x81,
         OP_GROUP1_EvIb                  = 0x83,
@@ -201,23 +213,35 @@ public:
         OP_GROUP2_EvCL                  = 0xD3,
         OP_CALL_rel32                   = 0xE8,
         OP_JMP_rel32                    = 0xE9,
+        PRE_SSE_F2                      = 0xF2,
         OP_GROUP3_Ev                    = 0xF7,
         OP_GROUP3_EvIz                  = 0xF7, // OP_GROUP3_Ev has an immediate, when instruction is a test. 
         OP_GROUP5_Ev                    = 0xFF,
 
-        OP2_JO_rel32    = 0x80,
-        OP2_JB_rel32    = 0x82,
-        OP2_JAE_rel32   = 0x83,
-        OP2_JE_rel32    = 0x84,
-        OP2_JNE_rel32   = 0x85,
-        OP2_JBE_rel32   = 0x86,
-        OP2_JA_rel32    = 0x87,
-        OP2_JL_rel32    = 0x8C,
-        OP2_JGE_rel32   = 0x8D,
-        OP2_JLE_rel32   = 0x8E,
-        OP2_IMUL_GvEv   = 0xAF,
-        OP2_MOVZX_GvEb  = 0xB6,
-        OP2_MOVZX_GvEw  = 0xB7,
+        OP2_MOVSD_VsdWsd    = 0x10,
+        OP2_MOVSD_WsdVsd    = 0x11,
+        OP2_CVTSI2SD_VsdEd  = 0x2A,
+        OP2_CVTTSD2SI_GdWsd = 0x2C,
+        OP2_UCOMISD_VsdWsd  = 0x2E,
+        OP2_ADDSD_VsdWsd    = 0x58,
+        OP2_MULSD_VsdWsd    = 0x59,
+        OP2_SUBSD_VsdWsd    = 0x5C,
+        OP2_MOVD_EdVd       = 0x7E,
+        OP2_JO_rel32        = 0x80,
+        OP2_JB_rel32        = 0x82,
+        OP2_JAE_rel32       = 0x83,
+        OP2_JE_rel32        = 0x84,
+        OP2_JNE_rel32       = 0x85,
+        OP2_JBE_rel32       = 0x86,
+        OP2_JA_rel32        = 0x87,
+        OP2_JP_rel32        = 0x8A,
+        OP2_JL_rel32        = 0x8C,
+        OP2_JGE_rel32       = 0x8D,
+        OP2_JLE_rel32       = 0x8E,
+        OP2_IMUL_GvEv       = 0xAF,
+        OP2_MOVZX_GvEb      = 0xB6,
+        OP2_MOVZX_GvEw      = 0xB7,
+        OP2_PEXTRW_GdUdIb   = 0xC5,
 
         GROUP1_OP_ADD = 0,
         GROUP1_OP_OR  = 1,
@@ -661,6 +685,12 @@ public:
         emitModRm_rm(dst, base, offset);
     }
 
+    void leal_mr(int offset, RegisterID index, int scale, RegisterID dst)
+    {
+        m_buffer->putByte(OP_LEA);
+        emitModRm_rmsib(dst, X86::noBase, index, scale, offset);
+    }
+
     void ret()
     {
         m_buffer->putByte(OP_RET);
@@ -678,6 +708,111 @@ public:
         emitModRm_opm(GROUP5_OP_JMPN, base, offset);
     }
     
+    void movsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_MOVSD_VsdWsd);
+        emitModRm_rm((RegisterID)dst, base, offset);
+    }
+
+    void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_MOVSD_WsdVsd);
+        emitModRm_rm((RegisterID)src, base, offset);
+    }
+
+    void movd_rr(XMMRegisterID src, RegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_66);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_MOVD_EdVd);
+        emitModRm_rr((RegisterID)src, dst);
+    }
+
+    void cvtsi2sd_rr(RegisterID src, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_CVTSI2SD_VsdEd);
+        emitModRm_rr((RegisterID)dst, src);
+    }
+
+    void cvttsd2si_rr(XMMRegisterID src, RegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_CVTTSD2SI_GdWsd);
+        emitModRm_rr(dst, (RegisterID)src);
+    }
+
+    void addsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_ADDSD_VsdWsd);
+        emitModRm_rm((RegisterID)dst, base, offset);
+    }
+
+    void subsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_SUBSD_VsdWsd);
+        emitModRm_rm((RegisterID)dst, base, offset);
+    }
+
+    void mulsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_MULSD_VsdWsd);
+        emitModRm_rm((RegisterID)dst, base, offset);
+    }
+
+    void addsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_ADDSD_VsdWsd);
+        emitModRm_rr((RegisterID)dst, (RegisterID)src);
+    }
+
+    void subsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_SUBSD_VsdWsd);
+        emitModRm_rr((RegisterID)dst, (RegisterID)src);
+    }
+
+    void mulsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_F2);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_MULSD_VsdWsd);
+        emitModRm_rr((RegisterID)dst, (RegisterID)src);
+    }
+
+    void ucomis_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_66);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_UCOMISD_VsdWsd);
+        emitModRm_rr((RegisterID)dst, (RegisterID)src);
+    }
+
+    void pextrw_irr(int whichWord, XMMRegisterID src, RegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_66);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_PEXTRW_GdUdIb);
+        emitModRm_rr(dst, (RegisterID)src);
+        m_buffer->putByte(whichWord);
+    }
+
     // Opaque label types
     
     class JmpSrc {
@@ -823,6 +958,14 @@ public:
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_JO_rel32);
+        m_buffer->putInt(0);
+        return JmpSrc(m_buffer->getOffset());
+    }
+
+    JmpSrc emitUnlinkedJp()
+    {
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_JP_rel32);
         m_buffer->putInt(0);
         return JmpSrc(m_buffer->getOffset());
     }

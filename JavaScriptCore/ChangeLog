@@ -1,3 +1,45 @@
+2008-09-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak & Oliver Hunt.
+
+        Add support for reusing temporary JSNumberCells.  This change is based on the observation
+        that if the result of certain operations is a JSNumberCell and is consumed by a subsequent
+        operation that would produce a JSNumberCell, we can reuse the object rather than allocating
+        a fresh one.  E.g. given the expression ((a * b) * c), we can statically determine that
+        (a * b) will have a numeric result (or else it will have thrown an exception), so the result
+        will either be a JSNumberCell or a JSImmediate.
+
+        This patch changes three areas of JSC:
+            * The AST now tracks type information about the result of each node.
+            * This information is consumed in bytecode compilation, and certain bytecode operations
+              now carry the statically determined type information about their operands.
+            * CTI uses the information in a number of fashions:
+                * Where an operand to certain arithmetic operations is reusable, it will plant code
+                  to try to perform the operation in JIT code & reuse the cell, where appropriate.
+                * Where it can be statically determined that an operand can only be numeric (typically
+                  the result of another arithmetic operation) the code will not redundantly check that
+                  the JSCell is a JSNumberCell.
+                * Where either of the operands to an add are non-numeric do not plant an optimized
+                  arithmetic code path, just call straight out to the C function.
+
+        +6% Sunspider (10% progression on 3D, 16% progression on math, 60% progression on access-nbody),
+        +1% v8-tests (improvements in raytrace & crypto)
+
+        * VM/CTI.cpp: Add optimized code generation with reuse of temporary JSNumberCells.
+        * VM/CTI.h:
+        * kjs/JSNumberCell.h:
+        * masm/X86Assembler.h:
+
+        * VM/CodeBlock.cpp: Add type information to specific bytecodes.
+        * VM/CodeGenerator.cpp:
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+
+        * kjs/nodes.cpp: Track static type information for nodes.
+        * kjs/nodes.h:
+        * kjs/ResultDescriptor.h: (Added)
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-09-26  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by George Staikos, Maciej Stachowiak.

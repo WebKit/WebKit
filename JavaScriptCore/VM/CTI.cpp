@@ -32,10 +32,37 @@
 #include "JSArray.h"
 #include "Machine.h"
 #include "wrec/WREC.h"
+#include "ResultType.h"
+#if PLATFORM(MAC)
+#include <sys/sysctl.h>
+#endif
 
 using namespace std;
 
 namespace JSC {
+
+#if PLATFORM(MAC)
+bool isSSE3Present()
+{
+    struct SSE3Check {
+        SSE3Check()
+        {
+            int hasSSE3 = 0;
+            size_t length = sizeof(hasSSE3);
+            int error = sysctlbyname("hw.optional.sse3", &hasSSE3, &length, NULL, 0);
+            present = hasSSE3 && !error;
+        }
+        bool present;
+    };
+    static SSE3Check check;
+    return check.present;
+}
+#else
+bool isSSE3Present()
+{
+    return false;
+}
+#endif
 
 #if COMPILER(GCC) && PLATFORM(X86)
 asm(
@@ -601,6 +628,220 @@ void CTI::emitSlowScriptCheck(unsigned opcodeIndex)
     m_jit.link(skipTimeout, m_jit.label());
 }
 
+/*
+  This is required since number representation is canonical - values representable as a JSImmediate should not be stored in a JSNumberCell.
+  
+  In the common case, the double value from 'xmmSource' is written to the reusable JSNumberCell pointed to by 'jsNumberCell', then 'jsNumberCell'
+  is written to the output SF Register 'dst', and then a jump is planted (stored into *wroteJSNumberCell).
+  
+  However if the value from xmmSource is representable as a JSImmediate, then the JSImmediate value will be written to the output, and flow
+  control will fall through from the code planted.
+*/
+void CTI::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSource, X86::RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell,  X86::XMMRegisterID tempXmm, X86::RegisterID tempReg1, X86::RegisterID tempReg2)
+{
+    // convert (double -> JSImmediate -> double), and check if the value is unchanged - in which case the value is representable as a JSImmediate.
+    m_jit.cvttsd2si_rr(xmmSource, tempReg1);
+    m_jit.addl_rr(tempReg1, tempReg1);
+    m_jit.sarl_i8r(1, tempReg1);
+    m_jit.cvtsi2sd_rr(tempReg1, tempXmm);
+    // Compare & branch if immediate. 
+    m_jit.ucomis_rr(tempXmm, xmmSource);
+    X86Assembler::JmpSrc resultIsImm = m_jit.emitUnlinkedJe();
+    X86Assembler::JmpDst resultLookedLikeImmButActuallyIsnt = m_jit.label();
+    
+    // Store the result to the JSNumberCell and jump.
+    m_jit.movsd_rm(xmmSource, OBJECT_OFFSET(JSNumberCell, m_value), jsNumberCell);
+    emitPutResult(dst, jsNumberCell);
+    *wroteJSNumberCell = m_jit.emitUnlinkedJmp();
+
+    m_jit.link(resultIsImm, m_jit.label());
+    // value == (double)(JSImmediate)value... or at least, it looks that way...
+    // ucomi will report that (0 == -0), and will report true if either input in NaN (result is unordered).
+    m_jit.link(m_jit.emitUnlinkedJp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
+    m_jit.pextrw_irr(3, xmmSource, tempReg2);
+    m_jit.cmpl_i32r(0x8000, tempReg2);
+    m_jit.link(m_jit.emitUnlinkedJe(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
+    // Yes it really really really is representable as a JSImmediate.
+    emitFastArithIntToImmNoCheck(tempReg1);
+    emitPutResult(dst, X86::ecx);
+}
+
+void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes types, unsigned i)
+{
+    StructureID* numberStructureID = m_exec->globalData().numberStructureID.get();
+    X86Assembler::JmpSrc wasJSNumberCell1, wasJSNumberCell1b, wasJSNumberCell2, wasJSNumberCell2b;
+
+    emitGetArg(src1, X86::eax);
+    emitGetArg(src2, X86::edx);
+
+    if (types.second().isReusable() && isSSE3Present()) {
+        ASSERT(types.second().mightBeNumber());
+
+        // Check op2 is a number
+        m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::edx);
+        X86Assembler::JmpSrc op2imm = m_jit.emitUnlinkedJne();
+        if (!types.second().definitelyIsNumber()) {
+            emitJumpSlowCaseIfNotJSCell(X86::edx, i);
+            m_jit.cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::edx);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+        }
+
+        // (1) In this case src2 is a reusable number cell.
+        //     Slow case if src1 is not a number type.
+        m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
+        X86Assembler::JmpSrc op1imm = m_jit.emitUnlinkedJne();
+        if (!types.first().definitelyIsNumber()) {
+            emitJumpSlowCaseIfNotJSCell(X86::eax, i);
+            m_jit.cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+        }
+
+        // (1a) if we get here, src1 is also a number cell
+        m_jit.movsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
+        X86Assembler::JmpSrc loadedDouble = m_jit.emitUnlinkedJmp();
+        // (1b) if we get here, src1 is an immediate
+        m_jit.link(op1imm, m_jit.label());
+        emitFastArithImmToInt(X86::eax);
+        m_jit.cvtsi2sd_rr(X86::eax, X86::xmm0);
+        // (1c) 
+        m_jit.link(loadedDouble, m_jit.label());
+        if (opcodeID == op_add)
+            m_jit.addsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm0);
+        else if (opcodeID == op_sub)
+            m_jit.subsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm0);
+        else {
+            ASSERT(opcodeID == op_mul);
+            m_jit.mulsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm0);
+        }
+
+        putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::edx, dst, &wasJSNumberCell2, X86::xmm1, X86::ecx, X86::eax);
+        wasJSNumberCell2b = m_jit.emitUnlinkedJmp();
+
+        // (2) This handles cases where src2 is an immediate number.
+        //     Two slow cases - either src1 isn't an immediate, or the subtract overflows.
+        m_jit.link(op2imm, m_jit.label());
+        emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+    } else if (types.first().isReusable() && isSSE3Present()) {
+        ASSERT(types.first().mightBeNumber());
+
+        // Check op1 is a number
+        m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
+        X86Assembler::JmpSrc op1imm = m_jit.emitUnlinkedJne();
+        if (!types.first().definitelyIsNumber()) {
+            emitJumpSlowCaseIfNotJSCell(X86::eax, i);
+            m_jit.cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+        }
+
+        // (1) In this case src1 is a reusable number cell.
+        //     Slow case if src2 is not a number type.
+        m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::edx);
+        X86Assembler::JmpSrc op2imm = m_jit.emitUnlinkedJne();
+        if (!types.second().definitelyIsNumber()) {
+            emitJumpSlowCaseIfNotJSCell(X86::edx, i);
+            m_jit.cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::edx);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+        }
+
+        // (1a) if we get here, src2 is also a number cell
+        m_jit.movsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm1);
+        X86Assembler::JmpSrc loadedDouble = m_jit.emitUnlinkedJmp();
+        // (1b) if we get here, src2 is an immediate
+        m_jit.link(op2imm, m_jit.label());
+        emitFastArithImmToInt(X86::edx);
+        m_jit.cvtsi2sd_rr(X86::edx, X86::xmm1);
+        // (1c) 
+        m_jit.link(loadedDouble, m_jit.label());
+        m_jit.movsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
+        if (opcodeID == op_add)
+            m_jit.addsd_rr(X86::xmm1, X86::xmm0);
+        else if (opcodeID == op_sub)
+            m_jit.subsd_rr(X86::xmm1, X86::xmm0);
+        else {
+            ASSERT(opcodeID == op_mul);
+            m_jit.mulsd_rr(X86::xmm1, X86::xmm0);
+        }
+        m_jit.movsd_rm(X86::xmm0, OBJECT_OFFSET(JSNumberCell, m_value), X86::eax);
+        emitPutResult(dst);
+
+        putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::eax, dst, &wasJSNumberCell1, X86::xmm1, X86::ecx, X86::edx);
+        wasJSNumberCell1b = m_jit.emitUnlinkedJmp();
+
+        // (2) This handles cases where src1 is an immediate number.
+        //     Two slow cases - either src2 isn't an immediate, or the subtract overflows.
+        m_jit.link(op1imm, m_jit.label());
+        emitJumpSlowCaseIfNotImmNum(X86::edx, i);
+    } else
+        emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
+
+    if (opcodeID == op_add) {
+        emitFastArithDeTagImmediate(X86::eax);
+        m_jit.addl_rr(X86::edx, X86::eax);
+        m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+    } else  if (opcodeID == op_sub) {
+        m_jit.subl_rr(X86::edx, X86::eax);
+        m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+        emitFastArithReTagImmediate(X86::eax);
+    } else {
+        ASSERT(opcodeID == op_mul);
+        emitFastArithDeTagImmediate(X86::eax);
+        emitFastArithImmToInt(X86::edx);
+        m_jit.imull_rr(X86::edx, X86::eax);
+        m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+        emitFastArithReTagImmediate(X86::eax);
+    }
+    emitPutResult(dst);
+
+    if (types.second().isReusable() && isSSE3Present()) {
+        m_jit.link(wasJSNumberCell2, m_jit.label());
+        m_jit.link(wasJSNumberCell2b, m_jit.label());
+    }
+    else if (types.first().isReusable() && isSSE3Present()) {
+        m_jit.link(wasJSNumberCell1, m_jit.label());
+        m_jit.link(wasJSNumberCell1b, m_jit.label());
+    }
+}
+
+void CTI::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes types, unsigned i)
+{
+    X86Assembler::JmpDst here = m_jit.label();
+    m_jit.link(iter->from, here);
+    if (types.second().isReusable() && isSSE3Present()) {
+        if (!types.first().definitelyIsNumber()) {
+            m_jit.link((++iter)->from, here);
+            m_jit.link((++iter)->from, here);
+        }
+        if (!types.second().definitelyIsNumber()) {
+            m_jit.link((++iter)->from, here);
+            m_jit.link((++iter)->from, here);
+        }
+        m_jit.link((++iter)->from, here);
+    } else if (types.first().isReusable() && isSSE3Present()) {
+        if (!types.first().definitelyIsNumber()) {
+            m_jit.link((++iter)->from, here);
+            m_jit.link((++iter)->from, here);
+        }
+        if (!types.second().definitelyIsNumber()) {
+            m_jit.link((++iter)->from, here);
+            m_jit.link((++iter)->from, here);
+        }
+        m_jit.link((++iter)->from, here);
+    } else
+        m_jit.link((++iter)->from, here);
+
+    emitGetPutArg(src1, 0, X86::ecx);
+    emitGetPutArg(src2, 4, X86::ecx);
+    if (opcodeID == op_add)
+        emitCall(i, Machine::cti_op_add);
+    else if (opcodeID == op_sub)
+        emitCall(i, Machine::cti_op_sub);
+    else {
+        ASSERT(opcodeID == op_mul);
+        emitCall(i, Machine::cti_op_mul);
+    }
+    emitPutResult(dst);
+}
+
 void CTI::privateCompileMainPass()
 {
     Instruction* instruction = m_codeBlock->instructions.begin();
@@ -632,33 +873,32 @@ void CTI::privateCompileMainPass()
             unsigned dst = instruction[i + 1].u.operand;
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
-            if (isConstant(src2)) {
-                JSValue* value = getConstant(m_exec, src2);
-                if (JSImmediate::isNumber(value)) {
-                    emitGetArg(src1, X86::eax);
-                    emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-                    m_jit.addl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
-                    m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-                    emitPutResult(dst);
-                    i += 4;
-                    break;
-                }
-            } else if (!isConstant(src1)) {
-                emitGetArg(src1, X86::eax);
+
+            if (JSValue* value = getConstantImmediateNumericArg(src1)) {
                 emitGetArg(src2, X86::edx);
-                emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
-                emitFastArithDeTagImmediate(X86::eax);
-                m_jit.addl_rr(X86::edx, X86::eax);
+                emitJumpSlowCaseIfNotImmNum(X86::edx, i);
+                m_jit.addl_i32r(getDeTaggedConstantImmediate(value), X86::edx);
+                m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+                emitPutResult(dst, X86::edx);
+            } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
+                emitGetArg(src1, X86::eax);
+                emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+                m_jit.addl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
                 m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
                 emitPutResult(dst);
-                i += 4;
-                break;
+            } else {
+                OperandTypes types = OperandTypes::fromInt(instruction[i + 4].u.operand);
+                if (types.first().mightBeNumber() && types.second().mightBeNumber())
+                    compileBinaryArithOp(op_add, instruction[i + 1].u.operand, instruction[i + 2].u.operand, instruction[i + 3].u.operand, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
+                else {
+                    emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+                    emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
+                    emitCall(i, Machine::cti_op_add);
+                    emitPutResult(instruction[i + 1].u.operand);
+                }
             }
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
-            emitCall(i, Machine::cti_op_add);
-            emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+
+            i += 5;
             break;
         }
         case op_end: {
@@ -875,37 +1115,27 @@ void CTI::privateCompileMainPass()
             unsigned dst = instruction[i + 1].u.operand;
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
-            if (isConstant(src1) || isConstant(src2)) {
-                unsigned constant = src1;
-                unsigned nonconstant = src2;
-                if (!isConstant(src1)) {
-                    constant = src2;
-                    nonconstant = src1;
-                }
-                JSValue* value = getConstant(m_exec, constant);
-                if (JSImmediate::isNumber(value)) {
-                    emitGetArg(nonconstant, X86::eax);
-                    emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-                    emitFastArithImmToInt(X86::eax);
-                    m_jit.imull_i32r( X86::eax, getDeTaggedConstantImmediate(value), X86::eax);
-                    m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-                    emitFastArithPotentiallyReTagImmediate(X86::eax);
-                    emitPutResult(dst);
-                    i += 4;
-                    break;
-                }
-            }
 
-            emitGetArg(src1, X86::eax);
-            emitGetArg(src2, X86::edx);
-            emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
-            emitFastArithDeTagImmediate(X86::eax);
-            emitFastArithImmToInt(X86::edx);
-            m_jit.imull_rr(X86::edx, X86::eax);
-            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-            emitFastArithPotentiallyReTagImmediate(X86::eax);
-            emitPutResult(dst);
-            i += 4;
+            if (JSValue* src1Value = getConstantImmediateNumericArg(src1)) {
+                emitGetArg(src2, X86::eax);
+                emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+                emitFastArithImmToInt(X86::eax);
+                m_jit.imull_i32r(X86::eax, getDeTaggedConstantImmediate(src1Value), X86::eax);
+                m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+                emitFastArithReTagImmediate(X86::eax);
+                emitPutResult(dst);
+            } else if (JSValue* src2Value = getConstantImmediateNumericArg(src2)) {
+                emitGetArg(src1, X86::eax);
+                emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+                emitFastArithImmToInt(X86::eax);
+                m_jit.imull_i32r(X86::eax, getDeTaggedConstantImmediate(src2Value), X86::eax);
+                m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+                emitFastArithReTagImmediate(X86::eax);
+                emitPutResult(dst);
+            } else
+                compileBinaryArithOp(op_mul, instruction[i + 1].u.operand, instruction[i + 2].u.operand, instruction[i + 3].u.operand, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
+
+            i += 5;
             break;
         }
         case op_new_func: {
@@ -1086,14 +1316,8 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_sub: {
-            emitGetArg(instruction[i + 2].u.operand, X86::eax);
-            emitGetArg(instruction[i + 3].u.operand, X86::edx);
-            emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
-            m_jit.subl_rr(X86::edx, X86::eax);
-            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-            emitFastArithReTagImmediate(X86::eax);
-            emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            compileBinaryArithOp(op_sub, instruction[i + 1].u.operand, instruction[i + 2].u.operand, instruction[i + 3].u.operand, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
+            i += 5;
             break;
         }
         case op_put_by_val: {
@@ -1343,7 +1567,7 @@ void CTI::privateCompileMainPass()
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 emitPutResult(dst);
             }
-            i += 4;
+            i += 5;
             break;
         }
         case op_rshift: {
@@ -1454,7 +1678,7 @@ void CTI::privateCompileMainPass()
             m_jit.xorl_rr(X86::edx, X86::eax);
             emitFastArithReTagImmediate(X86::eax);
             emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            i += 5;
             break;
         }
         case op_new_regexp: {
@@ -1471,7 +1695,7 @@ void CTI::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNums(X86::eax, X86::edx, i);
             m_jit.orl_rr(X86::edx, X86::eax);
             emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            i += 5;
             break;
         }
         case op_call_eval: {
@@ -1811,35 +2035,35 @@ void CTI::privateCompileSlowCases()
         switch (m_machine->getOpcodeID(instruction[i].u.opcode)) {
         case op_add: {
             unsigned dst = instruction[i + 1].u.operand;
+            unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
-            if (isConstant(src2)) {
-                JSValue* value = getConstant(m_exec, src2);
-                if (JSImmediate::isNumber(value)) {
-                    X86Assembler::JmpSrc notImm = iter->from;
-                    m_jit.link((++iter)->from, m_jit.label());
-                    m_jit.subl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
-                    m_jit.link(notImm, m_jit.label());
-                    emitPutArg(X86::eax, 0);
-                    emitGetPutArg(src2, 4, X86::ecx);
-                    emitCall(i, Machine::cti_op_add);
-                    emitPutResult(dst);
-                    i += 4;
-                    break;
-                }
+            if (JSValue* value = getConstantImmediateNumericArg(src1)) {
+                X86Assembler::JmpSrc notImm = iter->from;
+                m_jit.link((++iter)->from, m_jit.label());
+                m_jit.subl_i32r(getDeTaggedConstantImmediate(value), X86::edx);
+                m_jit.link(notImm, m_jit.label());
+                emitGetPutArg(src1, 0, X86::ecx);
+                emitPutArg(X86::edx, 4);
+                emitCall(i, Machine::cti_op_add);
+                emitPutResult(dst);
+            } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
+                X86Assembler::JmpSrc notImm = iter->from;
+                m_jit.link((++iter)->from, m_jit.label());
+                m_jit.subl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
+                m_jit.link(notImm, m_jit.label());
+                emitPutArg(X86::eax, 0);
+                emitGetPutArg(src2, 4, X86::ecx);
+                emitCall(i, Machine::cti_op_add);
+                emitPutResult(dst);
+            } else {
+                OperandTypes types = OperandTypes::fromInt(instruction[i + 4].u.operand);
+                if (types.first().mightBeNumber() && types.second().mightBeNumber())
+                    compileBinaryArithOpSlowCase(op_add, iter, dst, src1, src2, types, i);
+                else
+                    ASSERT_NOT_REACHED();
             }
 
-            ASSERT(!isConstant(instruction[i + 2].u.operand));
-
-            X86Assembler::JmpSrc notImm = iter->from;
-            m_jit.link((++iter)->from, m_jit.label());
-            m_jit.subl_rr(X86::edx, X86::eax);
-            emitFastArithReTagImmediate(X86::eax);
-            m_jit.link(notImm, m_jit.label());
-            emitPutArg(X86::eax, 0);
-            emitPutArg(X86::edx, 4);
-            emitCall(i, Machine::cti_op_add);
-            emitPutResult(dst);
-            i += 4;
+            i += 5;
             break;
         }
         case op_get_by_val: {
@@ -1874,15 +2098,8 @@ void CTI::privateCompileSlowCases()
             break;
         }
         case op_sub: {
-            X86Assembler::JmpSrc notImm = iter->from;
-            m_jit.link((++iter)->from, m_jit.label());
-            m_jit.addl_rr(X86::edx, X86::eax);
-            m_jit.link(notImm, m_jit.label());
-            emitPutArg(X86::eax, 0);
-            emitPutArg(X86::edx, 4);
-            emitCall(i, Machine::cti_op_sub);
-            emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            compileBinaryArithOpSlowCase(op_sub, iter, instruction[i + 1].u.operand, instruction[i + 2].u.operand, instruction[i + 3].u.operand, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
+            i += 5;
             break;
         }
         case op_rshift: {
@@ -1956,7 +2173,7 @@ void CTI::privateCompileSlowCases()
             // As for the hot path of get_by_id, above, we ensure that we can use an architecture specific offset
             // so that we only need track one pointer into the slow case code - we track a pointer to the location
             // of the call (which we can use to look up the repatch information), but should a array-length or
-            // prototype access tramopile fail we want to bail out back to here.  To do so we can subtract back
+            // prototype access trampoline fail we want to bail out back to here.  To do so we can subtract back
             // the distance from the call to the head of the slow case.
 
             m_jit.link(iter->from, m_jit.label());
@@ -2155,7 +2372,7 @@ void CTI::privateCompileSlowCases()
                 emitCall(i, Machine::cti_op_bitand);
                 emitPutResult(dst);
             }
-            i += 4;
+            i += 5;
             break;
         }
         case op_jtrue: {
@@ -2186,7 +2403,7 @@ void CTI::privateCompileSlowCases()
             emitPutArg(X86::edx, 4);
             emitCall(i, Machine::cti_op_bitxor);
             emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            i += 5;
             break;
         }
         case op_bitor: {
@@ -2195,7 +2412,7 @@ void CTI::privateCompileSlowCases()
             emitPutArg(X86::edx, 4);
             emitCall(i, Machine::cti_op_bitor);
             emitPutResult(instruction[i + 1].u.operand);
-            i += 4;
+            i += 5;
             break;
         }
         case op_eq: {
@@ -2243,7 +2460,22 @@ void CTI::privateCompileSlowCases()
             i += 4;
             break;
         }
-        CTI_COMPILE_BINARY_OP_SLOW_CASE(op_mul);
+        case op_mul: {
+            int dst = instruction[i + 1].u.operand;
+            int src1 = instruction[i + 2].u.operand;
+            int src2 = instruction[i + 3].u.operand;
+            if (getConstantImmediateNumericArg(src1) || getConstantImmediateNumericArg(src2)) {
+                m_jit.link(iter->from, m_jit.label());
+                emitGetPutArg(src1, 0, X86::ecx);
+                emitGetPutArg(src2, 4, X86::ecx);
+                emitCall(i, Machine::cti_op_mul);
+                emitPutResult(dst);
+            } else
+                compileBinaryArithOpSlowCase(op_mul, iter, dst, src1, src2, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
+            i += 5;
+            break;
+        }
+
         case op_call:
         case op_call_eval:
         case op_construct: {

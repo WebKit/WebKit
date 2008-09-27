@@ -1827,7 +1827,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
             r[dst] = result;
         }
-        ++vPC;
+        vPC += 2;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_mul) {
@@ -1849,7 +1849,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst] = result;
         }
 
-        ++vPC;
+        vPC += 2;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_div) {
@@ -1922,7 +1922,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
             r[dst] = result;
         }
-        ++vPC;
+        vPC += 2;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_lshift) {
@@ -2018,7 +2018,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst] = result;
         }
 
-        ++vPC;
+        vPC += 2;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_bitxor) {
@@ -2043,7 +2043,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst] = result;
         }
 
-        ++vPC;
+        vPC += 2;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_bitor) {
@@ -2068,7 +2068,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst] = result;
         }
 
-        ++vPC;
+        vPC += 2;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_bitnot) {

@@ -86,6 +86,7 @@
 		869081410E640C89000D36ED /* X86Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 869081400E640C89000D36ED /* X86Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869083150E6518D7000D36ED /* WREC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 869083130E6518D7000D36ED /* WREC.cpp */; };
 		869083160E6518D7000D36ED /* WREC.h in Headers */ = {isa = PBXBuildFile; fileRef = 869083140E6518D7000D36ED /* WREC.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */; };
 		90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D3469B0E285280009492EE /* RefCountedLeakCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C108B0F68000AB3056 /* pcre_compile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.cpp */; };
@@ -588,6 +589,7 @@
 		869081400E640C89000D36ED /* X86Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Assembler.h; sourceTree = "<group>"; };
 		869083130E6518D7000D36ED /* WREC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WREC.cpp; sourceTree = "<group>"; };
 		869083140E6518D7000D36ED /* WREC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WREC.h; sourceTree = "<group>"; };
+		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedLeakCounter.cpp; sourceTree = "<group>"; };
 		90D3469B0E285280009492EE /* RefCountedLeakCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCountedLeakCounter.h; sourceTree = "<group>"; };
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
@@ -1270,6 +1272,7 @@
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
+				869EBCB60E8C6D4A008722CC /* ResultType.h */,
 				9374D3A8038D9D74008635CE /* ScopeChain.cpp */,
 				9374D3A7038D9D74008635CE /* ScopeChain.h */,
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
@@ -1596,6 +1599,7 @@
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				7E2ADD8E0E79AAD500D50C51 /* CharacterClassConstructor.h in Headers */,
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
+				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2075,6 +2079,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				GCC_VERSION = 4.0;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;

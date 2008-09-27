@@ -450,10 +450,12 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_add: {
             printBinaryOp(location, it, "add");
+            ++it;
             break;
         }
         case op_mul: {
             printBinaryOp(location, it, "mul");
+            ++it;
             break;
         }
         case op_div: {
@@ -466,6 +468,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_sub: {
             printBinaryOp(location, it, "sub");
+            ++it;
             break;
         }
         case op_lshift: {
@@ -482,14 +485,17 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_bitand: {
             printBinaryOp(location, it, "bitand");
+            ++it;
             break;
         }
         case op_bitxor: {
             printBinaryOp(location, it, "bitxor");
+            ++it;
             break;
         }
         case op_bitor: {
             printBinaryOp(location, it, "bitor");
+            ++it;
             break;
         }
         case op_bitnot: {
