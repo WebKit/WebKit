@@ -1,3 +1,53 @@
+2008-09-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Store the callee CodeBlock, not the caller CodeBlock, in the call frame
+        header. Nix the "codeBlock" local variable, and access the callee
+        CodeBlock through the call frame header instead.
+        
+        Profit: call + return are simpler, because they don't have to update the
+        "codeBlock" local variable.
+        
+        Because CTI keeps "r" in a register, reading the callee CodeBlock relative
+        to "r" can be very fast, in any cases we care to optimize. Presently,
+        no such cases seem important.
+        
+        Also, stop writing "dst" to the call frame header. CTI doesn't use it.
+        
+        21.6% speedup on empty function call benchmark.
+        3.8% speedup on SunSpider --v8.
+        2.1% speedup on v8 benchmark.
+        0.7% speedup on SunSpider (6% speedup on controlflow-recursive).
+        
+        Small regression in bytecode, because currently every op_ret reads the
+        callee CodeBlock to check needsFullScopeChain, and bytecode does not
+        keep "r" in a register. On-balance, this is probably OK, since CTI is
+        our high-performance execution model. Also, this should go away once
+        we make needsFullScopeChain statically determinable at parse time.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall): The speedup!
+        (JSC::CTI::privateCompileSlowCases): ditto
+
+        * VM/CTI.h:
+        (JSC::): Fixed up magic trampoline constants to account for the nixed
+        "codeBlock" argument.
+        (JSC::CTI::execute): Changed trampoline function not to take a "codeBlock"
+        argument, since codeBlock is now stored in the call frame header.
+        
+        * VM/Machine.cpp: Read the callee CodeBlock from the register file. Use
+        a NULL CallerRegisters in the call frame header to signal a built-in
+        caller, since CodeBlock is now never NULL.
+
+        * VM/Machine.h: Made some stand-alone functions Machine member functions
+        so they could call the private codeBlock() accessor in the Register
+        class, of which Machine is a friend. Renamed "CallerCodeBlock" to
+        "CodeBlock", since it's no longer the caller's CodeBlock.
+
+        * VM/RegisterFile.h: Marked some methods const to accommodate a 
+        const RegisterFile* being passed around in Machine.cpp.
+
 2008-09-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Not reviewed.

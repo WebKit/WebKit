@@ -537,19 +537,11 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     // This handles JSFunctions
     emitCall(i, ((type == OpConstruct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction));
 
-    // Initialize the parts of the call frame that have not already been initialized.
-    emitGetCTIParam(CTI_ARGS_r, X86::edi);
-    m_jit.movl_i32m(reinterpret_cast<unsigned>(m_codeBlock), RegisterFile::CallerCodeBlock * static_cast<int>(sizeof(Register)), X86::edi);
-    m_jit.movl_i32m(dst, RegisterFile::ReturnValueRegister * static_cast<int>(sizeof(Register)), X86::edi);
-
     // Check the ctiCode has been generated - if not, this is handled in a slow case.
     m_jit.testl_rr(X86::eax, X86::eax);
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), i));
     emitCall(i, X86::eax);
     
-    // Restore CTI_ARGS_codeBlock. In the interpreter, op_ret does this.
-    emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
-
     X86Assembler::JmpDst end = m_jit.label();
     m_jit.link(wasNotJSFunction, end);
     if (type == OpCallEval)
@@ -2487,9 +2479,6 @@ void CTI::privateCompileSlowCases()
             emitCall(i, X86::eax);
 
             // Instead of checking for 0 we could initialize the CodeBlock::ctiCode to point to a trampoline that would trigger the translation.
-
-            // Restore CTI_ARGS_codeBlock. In the interpreter, op_ret does this.
-            emitPutCTIParam(m_codeBlock, CTI_ARGS_codeBlock);
 
             // Put the return value in dst. In the interpreter, op_ret does this.
             emitPutResult(instruction[i + 1].u.operand);

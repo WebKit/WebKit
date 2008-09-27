@@ -56,19 +56,16 @@
 #define CTI_ARGS_registerFile 0x0E
 #define CTI_ARGS_r 0x0F
 #define CTI_ARGS_scopeChain 0x10
-#define CTI_ARGS_codeBlock 0x11
-#define CTI_ARGS_exception 0x12
-#define CTI_ARGS_profilerReference 0x13
+#define CTI_ARGS_exception 0x11
+#define CTI_ARGS_profilerReference 0x12
 #define ARG_exec ((ExecState*)(ARGS)[CTI_ARGS_exec])
 #define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
 #define ARG_r ((Register*)(ARGS)[CTI_ARGS_r])
 #define ARG_scopeChain ((ScopeChainNode*)(ARGS)[CTI_ARGS_scopeChain])
-#define ARG_codeBlock ((CodeBlock*)(ARGS)[CTI_ARGS_codeBlock])
 #define ARG_exception ((JSValue**)(ARGS)[CTI_ARGS_exception])
 #define ARG_profilerReference ((Profiler**)(ARGS)[CTI_ARGS_profilerReference])
 
 #define ARG_setScopeChain(newScopeChain) (*(volatile ScopeChainNode**)&(ARGS)[CTI_ARGS_scopeChain] = newScopeChain)
-#define ARG_setCodeBlock(newCodeBlock) (*(volatile CodeBlock**)&(ARGS)[CTI_ARGS_codeBlock] = newCodeBlock)
 #define ARG_setR(newR) (*(volatile Register**)&(ARGS)[CTI_ARGS_r] = newR)
 #define ARG_set2ndResult(new2ndResult) (*(volatile JSValue**)&(ARGS)[CTI_ARGS_2ndResult] = new2ndResult)
 
@@ -238,7 +235,7 @@ namespace JSC {
     };
 
     extern "C" {
-        JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue** exception, Profiler**);
+        JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, JSValue** exception, Profiler**);
         void ctiVMThrowTrampoline();
     };
 
@@ -322,9 +319,9 @@ namespace JSC {
             return cti.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        inline static JSValue* execute(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue** exception)
+        inline static JSValue* execute(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, JSValue** exception)
         {
-            JSValue* value = ctiTrampoline(code, exec, registerFile, r, scopeChain, codeBlock, exception, Profiler::enabledProfilerReference());
+            JSValue* value = ctiTrampoline(code, exec, registerFile, r, scopeChain, exception, Profiler::enabledProfilerReference());
 #if ENABLE(SAMPLING_TOOL)
             currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif

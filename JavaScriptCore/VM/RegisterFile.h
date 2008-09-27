@@ -92,7 +92,7 @@ namespace JSC {
         enum CallFrameHeaderEntry {
             CallFrameHeaderSize = 8,
 
-            CallerCodeBlock = -8,
+            CodeBlock = -8,
             CallerScopeChain = -7,
             CallerRegisters = -6,
             ReturnPC = -5,
@@ -155,13 +155,13 @@ namespace JSC {
             return true;
         }
 
-        size_t size() { return m_size; }
+        size_t size() const { return m_size; }
         
         void setNumGlobals(size_t numGlobals) { m_numGlobals = numGlobals; }
-        int numGlobals() { return m_numGlobals; }
-        size_t maxGlobals() { return m_maxGlobals; }
+        int numGlobals() const { return m_numGlobals; }
+        size_t maxGlobals() const { return m_maxGlobals; }
 
-        Register* lastGlobal() { return m_base - m_numGlobals; }
+        Register* lastGlobal() const { return m_base - m_numGlobals; }
         
         void markGlobals(Heap* heap) { heap->markConservatively(lastGlobal(), m_base); }
         void markCallFrames(Heap* heap) { heap->markConservatively(m_base, m_base + m_size); }
