@@ -246,18 +246,6 @@ void ScrollView::geometryChanged() const
     const_cast<ScrollView *>(this)->invalidateScrollbars();
 }
 
-IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
-{
-    IntPoint viewPoint = convertFromContainingWindow(windowPoint);
-    return viewPoint + scrollOffset();
-}
-
-IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
-{
-    IntPoint viewPoint = contentsPoint - scrollOffset();
-    return convertToContainingWindow(viewPoint);
-}
-
 void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
 {
     m_data->m_scrollbarsSuppressed = suppressed;

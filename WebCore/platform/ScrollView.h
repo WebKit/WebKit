@@ -203,11 +203,6 @@ private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
-#if !PLATFORM(MAC)
-private:
-    IntSize maximumScroll() const;
-#endif
-
     class ScrollViewPrivate;
     ScrollViewPrivate* m_data;
 
@@ -279,23 +274,6 @@ private:
 #endif
 
 }; // class ScrollView
-
-#if !PLATFORM(MAC)
-
-// On Mac only, because of flipped NSWindow y-coordinates, we have to have a special implementation.
-// Other platforms can just implement these helper methods using the corresponding point conversion methods.
-
-inline IntRect ScrollView::contentsToWindow(const IntRect& rect) const
-{
-    return IntRect(contentsToWindow(rect.location()), rect.size());
-}
-
-inline IntRect ScrollView::windowToContents(const IntRect& rect) const
-{
-    return IntRect(windowToContents(rect.location()), rect.size());
-}
-
-#endif
 
 } // namespace WebCore
 

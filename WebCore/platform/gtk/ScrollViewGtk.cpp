@@ -531,18 +531,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     m_data->inUpdateScrollbars = false;
 }
 
-IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
-{
-    IntPoint viewPoint = convertFromContainingWindow(windowPoint);
-    return viewPoint + scrollOffset();
-}
-
-IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
-{
-    IntPoint viewPoint = contentsPoint - scrollOffset();
-    return convertToContainingWindow(viewPoint);
-}
-
 Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint viewPoint = convertFromContainingWindow(mouseEvent.pos());

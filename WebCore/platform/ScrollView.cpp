@@ -155,6 +155,32 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
     }
 }
 
+IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
+{
+    IntPoint viewPoint = convertFromContainingWindow(windowPoint);
+    return viewPoint + scrollOffset();
+}
+
+IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
+{
+    IntPoint viewPoint = contentsPoint - scrollOffset();
+    return convertToContainingWindow(viewPoint);  
+}
+
+IntRect ScrollView::windowToContents(const IntRect& windowRect) const
+{
+    IntRect viewRect = convertFromContainingWindow(windowRect);
+    viewRect.move(scrollOffset());
+    return viewRect;
+}
+
+IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
+{
+    IntRect viewRect = contentsRect;
+    viewRect.move(-scrollOffset());
+    return convertToContainingWindow(viewRect);
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {

@@ -313,16 +313,6 @@ void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
         m_data->suppressScrollbars = suppressed;
 }
 
-IntPoint ScrollView::contentsToWindow(const IntPoint& point) const
-{
-    return point - scrollOffset();
-}
-
-IntPoint ScrollView::windowToContents(const IntPoint& point) const
-{
-    return point + scrollOffset();
-}
-
 bool ScrollView::isOffscreen() const
 {
     // NB: This is called from RenderObject::willRenderImage

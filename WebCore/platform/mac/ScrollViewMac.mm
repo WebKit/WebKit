@@ -198,46 +198,6 @@ void ScrollView::update()
 
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
-IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView()) {
-        NSPoint tempPoint = { contentsPoint.x(), contentsPoint.y() }; // Don't use NSMakePoint to work around 4213314.
-        return IntPoint([documentView convertPoint:tempPoint toView:nil]);
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntPoint();
-}
-
-IntPoint ScrollView::windowToContents(const IntPoint& point) const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView()) {
-        NSPoint tempPoint = { point.x(), point.y() }; // Don't use NSMakePoint to work around 4213314.
-        return IntPoint([documentView convertPoint:tempPoint fromView:nil]);
-    }
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntPoint();
-}
-
-IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView())
-        return IntRect([documentView convertRect:contentsRect toView:nil]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntRect();
-}
-
-IntRect ScrollView::windowToContents(const IntRect& rect) const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView())
-        return IntRect([documentView convertRect:rect fromView:nil]);
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntRect();
-}
-
 IntRect ScrollView::contentsToScreen(const IntRect& rect) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
