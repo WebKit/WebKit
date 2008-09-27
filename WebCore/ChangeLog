@@ -1,3 +1,14 @@
+2008-09-27  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Fixed a bug in the JS syntax highlighter with multiple line tokens.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21171
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/SourceFrame.js:
+        (syntaxHighlightJavascriptLine): Initialize previousMatchLength.
+
 2008-09-27  Timothy Hatcher  <timothy@apple.com>
 
         Change searching in the Profiles panel to not match the

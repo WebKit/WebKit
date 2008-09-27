@@ -589,6 +589,7 @@ WebInspector.SourceFrame.prototype = {
             var token;
             var tmp = 0;
             var i = 0;
+            previousMatchLength = 0;
 
             if (prevLine) {
                 if (prevLine._commentContinues) {
