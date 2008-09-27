@@ -370,6 +370,8 @@ all : \
     \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \
+    JSEventTargetNode.lut.h \
+    JSEventTargetSVGElementInstance.lut.h \
     JSRGBColor.lut.h \
     \
     JSJavaScriptCallFrame.h \
@@ -505,9 +507,9 @@ UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 # lookup tables for old-style JavaScript bindings
 
 %.lut.h: %.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< > $@
+	$(CREATE_HASH_TABLE) $< -n WebCore > $@
 %Table.cpp: %.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< > $@
+	$(CREATE_HASH_TABLE) $< -n WebCore > $@
 
 # --------
 

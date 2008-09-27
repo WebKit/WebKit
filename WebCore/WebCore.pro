@@ -202,6 +202,8 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 LUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSEventTargetBase.cpp \
+    bindings/js/JSEventTargetNode.cpp \
+    bindings/js/JSEventTargetSVGElementInstance.cpp \
     bindings/js/JSRGBColor.cpp
 
 IDL_BINDINGS += \

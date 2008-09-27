@@ -26,15 +26,31 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "JSDOMBinding.h"
 #include "JSDOMWindowCustom.h"
 #include "KURL.h"
 #include "Location.h"
-#include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include <kjs/PrototypeFunction.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+JSValue* nonCachingStaticReplaceFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 1, propertyName, jsLocationPrototypeFunctionReplace);
+}
+
+JSValue* nonCachingStaticReloadFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 0, propertyName, jsLocationPrototypeFunctionReload);
+}
+
+JSValue* nonCachingStaticAssignFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 1, propertyName, jsLocationPrototypeFunctionAssign);
+}
 
 bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
@@ -55,12 +71,17 @@ bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& pro
 
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-    if (entry && (entry->attributes & Function)
-            && (entry->functionValue == jsLocationPrototypeFunctionReplace
-                || entry->functionValue == jsLocationPrototypeFunctionReload
-                || entry->functionValue == jsLocationPrototypeFunctionAssign)) {
-        slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
-        return true;
+    if (entry && (entry->attributes() & Function)) {
+        if (entry->function() == jsLocationPrototypeFunctionReplace) {
+            slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
+            return true;
+        } else if (entry->function() == jsLocationPrototypeFunctionReload) {
+            slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
+            return true;
+        } else if (entry->function() == jsLocationPrototypeFunctionAssign) {
+            slot.setCustom(this, nonCachingStaticAssignFunctionGetter);
+            return true;
+        }
     }
 
     // FIXME: Other implementers of the Window cross-domain scheme (Window, History) allow toString,
@@ -90,7 +111,7 @@ bool JSLocation::customPut(ExecState* exec, const Identifier& propertyName, JSVa
     // Cross-domain access to the location is allowed when assigning the whole location,
     // but not when assigning the individual pieces, since that might inadvertently
     // disclose other parts of the original location.
-    if (entry->integerValue != HrefAttrNum && !sameDomainAccess)
+    if (entry->propertyPutter() != setJSLocationHref && !sameDomainAccess)
         return true;
 
     return false;

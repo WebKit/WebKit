@@ -72,8 +72,8 @@ void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray&
         int hashSizeMask = table->hashSizeMask;
         const HashEntry* entry = table->table;
         for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
-            if (entry->key && !(entry->attributes & DontEnum))
-                propertyNames.add(entry->key);
+            if (entry->key() && !(entry->attributes() & DontEnum))
+                propertyNames.add(entry->key());
         }
     }
 

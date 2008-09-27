@@ -29,15 +29,12 @@ void HashTable::createTable(JSGlobalData* globalData) const
     ASSERT(!table);
     HashEntry* entries = new HashEntry[hashSizeMask + 1];
     for (int i = 0; i <= hashSizeMask; ++i)
-        entries[i].key = 0;
+        entries[i].setKey(0);
     for (int i = 0; values[i].key; ++i) {
         UString::Rep* identifier = Identifier::add(globalData, values[i].key).releaseRef();
         int hashIndex = identifier->computedHash() & hashSizeMask;
-        ASSERT(!entries[hashIndex].key);
-        entries[hashIndex].key = identifier;
-        entries[hashIndex].integerValue = values[i].value;
-        entries[hashIndex].attributes = values[i].attributes;
-        entries[hashIndex].length = values[i].length;
+        ASSERT(!entries[hashIndex].key());
+        entries[hashIndex].initialize(identifier, values[i].attributes, values[i].value1, values[i].value2);
     }
     table = entries;
 }
@@ -46,25 +43,25 @@ void HashTable::deleteTable() const
 {
     if (table) {
         for (int i = 0; i != hashSizeMask + 1; ++i) {
-            if (UString::Rep* key = table[i].key)
+            if (UString::Rep* key = table[i].key())
                 key->deref();
         }
-        delete[] table;
+        delete [] table;
         table = 0;
     }
 }
 
 void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
-    ASSERT(entry->attributes & Function);
+    ASSERT(entry->attributes() & Function);
     JSValue** location = thisObj->getDirectLocation(propertyName);
- 
+
     if (!location) {
-        PrototypeFunction* function = new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
-        thisObj->putDirect(propertyName, function, entry->attributes);
+        PrototypeFunction* function = new (exec) PrototypeFunction(exec, entry->functionLength(), propertyName, entry->function());
+        thisObj->putDirect(propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(propertyName);
     }
-    
+
     slot.setValueSlot(thisObj, location, thisObj->offsetForLocation(location));
 }
 

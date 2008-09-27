@@ -46,36 +46,13 @@ namespace WebCore {
         JSC::JSValue* getListener(const AtomicString& eventType) const;
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-        JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
         virtual void put(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue*, JSC::PutPropertySlot&);
-        void putValueProperty(JSC::ExecState*, int token, JSC::JSValue*);
 
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
+
         static const char* prototypeClassName() { return "EventTargetSVGElementInstancePrototype"; }
-
-    private:
-        JSEventTargetBase<JSEventTargetSVGElementInstance> m_base;
     };
-
-    ALWAYS_INLINE bool JSEventTargetSVGElementInstance::getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
-    {
-        return m_base.getOwnPropertySlot<JSSVGElementInstance>(this, exec, propertyName, slot);
-    }
-
-    ALWAYS_INLINE JSC::JSValue* JSEventTargetSVGElementInstance::getValueProperty(JSC::ExecState* exec, int token) const
-    {
-        return m_base.getValueProperty(this, exec, token);
-    }
-
-    ALWAYS_INLINE void JSEventTargetSVGElementInstance::put(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
-    {
-        m_base.put<JSSVGElementInstance>(this, exec, propertyName, value, slot);
-    }
-
-    ALWAYS_INLINE void JSEventTargetSVGElementInstance::putValueProperty(JSC::ExecState* exec, int token, JSC::JSValue* value)
-    {
-        m_base.putValueProperty(this, exec, token, value);
-    }
 
     typedef JSEventTargetBasePrototype<JSEventTargetSVGElementInstance> JSEventTargetSVGElementInstancePrototype;
     EventTargetSVGElementInstance* toEventTargetSVGElementInstance(JSC::JSValue*);

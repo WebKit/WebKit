@@ -28,11 +28,12 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "JSDOMWindowShell.h"
+#include "ScriptController.h"
 #include "JSMessagePort.h"
 #include "MessagePort.h"
 #include "Settings.h"
-#include "ScriptController.h"
 #include <kjs/JSObject.h>
+#include <kjs/PrototypeFunction.h>
 
 using namespace JSC;
 
@@ -197,6 +198,26 @@ DOMWindow* toDOMWindow(JSValue* val)
     if (val->isObject(&JSDOMWindowShell::s_info))
         return static_cast<JSDOMWindowShell*>(val)->impl();
     return 0;
+}
+
+JSValue* nonCachingStaticCloseFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionClose);
+}
+
+JSValue* nonCachingStaticBlurFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionBlur);
+}
+
+JSValue* nonCachingStaticFocusFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionFocus);
+}
+
+JSValue* nonCachingStaticPostMessageFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 2, propertyName, jsDOMWindowPrototypeFunctionPostMessage);
 }
 
 } // namespace WebCore

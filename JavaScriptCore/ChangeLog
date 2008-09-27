@@ -1,3 +1,84 @@
+2008-09-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=21152
+        Speedup static property get/put
+
+        Convert getting/setting static property values to use static functions
+        instead of storing an integer and switching in getValueProperty/putValueProperty.
+
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::getPropertyAttributes):
+        * kjs/MathObject.cpp:
+        (JSC::MathObject::getOwnPropertySlot):
+        * kjs/NumberConstructor.cpp:
+        (JSC::numberConstructorNaNValue):
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        (JSC::numberConstructorMaxValue):
+        (JSC::numberConstructorMinValue):
+        * kjs/PropertySlot.h:
+        (JSC::PropertySlot::):
+        * kjs/RegExpConstructor.cpp:
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+        (JSC::RegExpConstructor::setInput):
+        (JSC::RegExpConstructor::setMultiline):
+        (JSC::RegExpConstructor::multiline):
+        * kjs/RegExpConstructor.h:
+        * kjs/RegExpObject.cpp:
+        (JSC::regExpObjectGlobal):
+        (JSC::regExpObjectIgnoreCase):
+        (JSC::regExpObjectMultiline):
+        (JSC::regExpObjectSource):
+        (JSC::regExpObjectLastIndex):
+        (JSC::setRegExpObjectLastIndex):
+        * kjs/RegExpObject.h:
+        (JSC::RegExpObject::setLastIndex):
+        (JSC::RegExpObject::lastIndex):
+        (JSC::RegExpObject::RegExpObjectData::RegExpObjectData):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::getEnumerablePropertyNames):
+        * kjs/create_hash_table:
+        * kjs/lexer.cpp:
+        (JSC::Lexer::lex):
+        * kjs/lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::HashTable::deleteTable):
+        (JSC::setUpStaticFunctionSlot):
+        * kjs/lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::setKey):
+        (JSC::HashEntry::key):
+        (JSC::HashEntry::attributes):
+        (JSC::HashEntry::function):
+        (JSC::HashEntry::functionLength):
+        (JSC::HashEntry::propertyGetter):
+        (JSC::HashEntry::propertyPutter):
+        (JSC::HashEntry::lexerValue):
+        (JSC::HashEntry::):
+        (JSC::HashTable::entry):
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticValueSlot):
+        (JSC::lookupPut):
+
 2008-09-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak & Oliver Hunt.

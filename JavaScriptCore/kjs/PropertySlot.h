@@ -31,7 +31,6 @@ namespace JSC {
 
     class ExecState;
     class JSObject;
-    struct HashEntry;
 
 #define JSC_VALUE_SLOT_MARKER 0
 #define JSC_REGISTER_SLOT_MARKER reinterpret_cast<GetValueFunc>(1)
@@ -131,16 +130,6 @@ namespace JSC {
             m_data.registerSlot = registerSlot;
         }
 
-        void setStaticEntry(JSValue* slotBase, const HashEntry* staticEntry, GetValueFunc getValue)
-        {
-            ASSERT(slotBase);
-            ASSERT(staticEntry);
-            ASSERT(getValue);
-            m_getValue = getValue;
-            m_slotBase = slotBase;
-            m_data.staticEntry = staticEntry;
-        }
-
         void setCustom(JSValue* slotBase, GetValueFunc getValue)
         {
             ASSERT(slotBase);
@@ -198,7 +187,6 @@ namespace JSC {
 #endif
         }
 
-        const HashEntry* staticEntry() const { return m_data.staticEntry; }
         unsigned index() const { return m_data.index; }
 
     private:
@@ -211,7 +199,6 @@ namespace JSC {
             JSObject* getterFunc;
             JSValue** valueSlot;
             Register* registerSlot;
-            const HashEntry* staticEntry;
             unsigned index;
         } m_data;
 

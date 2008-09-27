@@ -31,10 +31,26 @@
 
 #include "Frame.h"
 #include "History.h"
+#include <kjs/PrototypeFunction.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+JSValue* nonCachingStaticBackFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 0, propertyName, jsHistoryPrototypeFunctionBack);
+}
+
+JSValue* nonCachingStaticForwardFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 0, propertyName, jsHistoryPrototypeFunctionForward);
+}
+
+JSValue* nonCachingStaticGoFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    return new (exec) PrototypeFunction(exec, 1, propertyName, jsHistoryPrototypeFunctionGo);
+}
 
 bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
@@ -51,12 +67,17 @@ bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& prop
     const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         // Allow access to back(), forward() and go() from any frame.
-        if ((entry->attributes & Function)
-                && (entry->functionValue == jsHistoryPrototypeFunctionBack
-                    || entry->functionValue == jsHistoryPrototypeFunctionForward
-                    || entry->functionValue == jsHistoryPrototypeFunctionGo)) {
-            slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
-            return true;
+        if (entry->attributes() & Function) {
+            if (entry->function() == jsHistoryPrototypeFunctionBack) {
+                slot.setCustom(this, nonCachingStaticBackFunctionGetter);
+                return true;
+            } else if (entry->function() == jsHistoryPrototypeFunctionForward) {
+                slot.setCustom(this, nonCachingStaticForwardFunctionGetter);
+                return true;
+            } else if (entry->function() == jsHistoryPrototypeFunctionGo) {
+                slot.setCustom(this, nonCachingStaticGoFunctionGetter);
+                return true;
+            }
         }
     } else {
         // Allow access to toString() cross-domain, but always Object.toString.

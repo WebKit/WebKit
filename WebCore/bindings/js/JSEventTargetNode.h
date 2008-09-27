@@ -47,38 +47,13 @@ namespace WebCore {
         virtual void pushEventHandlerScope(JSC::ExecState*, JSC::ScopeChain&) const;
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-        JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
         virtual void put(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue*, JSC::PutPropertySlot&);
-        void putValueProperty(JSC::ExecState*, int token, JSC::JSValue*);
 
-        virtual const JSC::ClassInfo* classInfo() const = 0;
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 
         static const char* prototypeClassName() { return "EventTargetNodePrototype"; }
-
-    private:
-        JSEventTargetBase<JSEventTargetNode> m_base;
     };
-
-    ALWAYS_INLINE bool JSEventTargetNode::getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
-    {
-        return m_base.getOwnPropertySlot<JSNode>(this, exec, propertyName, slot);
-    }
-
-    ALWAYS_INLINE JSC::JSValue* JSEventTargetNode::getValueProperty(JSC::ExecState* exec, int token) const
-    {
-        return m_base.getValueProperty(this, exec, token);
-    }
-
-    ALWAYS_INLINE void JSEventTargetNode::put(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
-    {
-        m_base.put<JSNode>(this, exec, propertyName, value, slot);
-    }
-
-    ALWAYS_INLINE void JSEventTargetNode::putValueProperty(JSC::ExecState* exec, int token, JSC::JSValue* value)
-    {
-        m_base.putValueProperty(this, exec, token, value);
-    }
 
     typedef JSEventTargetBasePrototype<JSEventTargetNode> JSEventTargetNodePrototype;
     EventTargetNode* toEventTargetNode(JSC::JSValue*);

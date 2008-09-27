@@ -31,67 +31,70 @@
 #include "EventNames.h"
 #include "JSEvent.h"
 
-// FIXME: The name clash between this and WebCore::JSEventTargetPrototypeTable is only
-// OK because this is in the JSC namespace; and this shouldn't be in that namespace!
-namespace JSC {
-    extern const struct HashTable JSEventTargetPropertiesTable;
-    extern const struct HashTable JSEventTargetPrototypeTable;
-}
+#define JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, macro) \
+    macro(specificEventTarget, OnAbort, abortEvent) \
+    macro(specificEventTarget, OnBlur, blurEvent) \
+    macro(specificEventTarget, OnChange, changeEvent) \
+    macro(specificEventTarget, OnClick, clickEvent) \
+    macro(specificEventTarget, OnContextMenu, contextmenuEvent) \
+    macro(specificEventTarget, OnDblClick, dblclickEvent) \
+    macro(specificEventTarget, OnError, errorEvent) \
+    macro(specificEventTarget, OnFocus, focusEvent) \
+    macro(specificEventTarget, OnInput, inputEvent) \
+    macro(specificEventTarget, OnKeyDown, keydownEvent) \
+    macro(specificEventTarget, OnKeyPress, keypressEvent) \
+    macro(specificEventTarget, OnKeyUp, keyupEvent) \
+    macro(specificEventTarget, OnLoad, loadEvent) \
+    macro(specificEventTarget, OnMouseDown, mousedownEvent) \
+    macro(specificEventTarget, OnMouseMove, mousemoveEvent) \
+    macro(specificEventTarget, OnMouseOut, mouseoutEvent) \
+    macro(specificEventTarget, OnMouseOver, mouseoverEvent) \
+    macro(specificEventTarget, OnMouseUp, mouseupEvent) \
+    macro(specificEventTarget, OnMouseWheel, mousewheelEvent) \
+    macro(specificEventTarget, OnBeforeCut, beforecutEvent) \
+    macro(specificEventTarget, OnCut, cutEvent) \
+    macro(specificEventTarget, OnBeforeCopy, beforecopyEvent) \
+    macro(specificEventTarget, OnCopy, copyEvent) \
+    macro(specificEventTarget, OnBeforePaste, beforepasteEvent) \
+    macro(specificEventTarget, OnPaste, pasteEvent) \
+    macro(specificEventTarget, OnDragEnter, dragenterEvent) \
+    macro(specificEventTarget, OnDragOver, dragoverEvent) \
+    macro(specificEventTarget, OnDragLeave, dragleaveEvent) \
+    macro(specificEventTarget, OnDrop, dropEvent) \
+    macro(specificEventTarget, OnDragStart, dragstartEvent) \
+    macro(specificEventTarget, OnDrag, dragEvent) \
+    macro(specificEventTarget, OnDragEnd, dragendEvent) \
+    macro(specificEventTarget, OnReset, resetEvent) \
+    macro(specificEventTarget, OnResize, resizeEvent) \
+    macro(specificEventTarget, OnScroll, scrollEvent) \
+    macro(specificEventTarget, OnSearch, searchEvent) \
+    macro(specificEventTarget, OnSelect, selectEvent) \
+    macro(specificEventTarget, OnSelectStart, selectstartEvent) \
+    macro(specificEventTarget, OnSubmit, submitEvent) \
+    macro(specificEventTarget, OnUnload, unloadEvent) \
+
+#define EVENT_LISTENER_GETTER(specificEventTarget, name, event) \
+JSC::JSValue* js##specificEventTarget##name(JSC::ExecState* exec, const JSC::Identifier&, const JSC::PropertySlot& slot) \
+{ \
+    return static_cast<JS##specificEventTarget*>(slot.slotBase())->getListener(event); \
+} \
+
+#define EVENT_LISTENER_SETTER(specificEventTarget, name, event) \
+void setJS##specificEventTarget##name(JSC::ExecState* exec, JSC::JSObject* baseObject, JSC::JSValue* value) \
+{ \
+    static_cast<JS##specificEventTarget*>(baseObject)->setListener(exec, event, value); \
+} \
+
+#define DECLARE_JS_EVENT_LISTENERS(specificEventTarget) \
+    JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, EVENT_LISTENER_GETTER) \
+    JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, EVENT_LISTENER_SETTER) \
 
 namespace WebCore {
-
-    using namespace EventNames;
 
     class AtomicString;
     class EventTarget;
 
-    // Event target properties (shared across all JSEventTarget* classes)
-    struct JSEventTargetProperties {
-        enum {
-            AddEventListener, RemoveEventListener, DispatchEvent,
-            OnAbort, OnBlur, OnChange, OnClick, OnContextMenu, OnDblClick, OnError,
-            OnDragEnter, OnDragOver, OnDragLeave, OnDrop, OnDragStart, OnDrag, OnDragEnd,
-            OnBeforeCut, OnCut, OnBeforeCopy, OnCopy, OnBeforePaste, OnPaste, OnSelectStart,
-            OnFocus, OnInput, OnKeyDown, OnKeyPress, OnKeyUp, OnLoad, OnMouseDown,
-            OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMouseWheel, OnReset,
-            OnResize, OnScroll, OnSearch, OnSelect, OnSubmit, OnUnload
-        };
-    };
-
-    // Helper function for getValueProperty/putValueProperty
-    const AtomicString& eventNameForPropertyToken(int token);
-
-    template<class JSSpecificEventTarget>
-    class JSEventTargetBase {
-    public:
-        JSC::JSValue* getValueProperty(const JSSpecificEventTarget* owner, JSC::ExecState* exec, int token) const
-        {
-            const AtomicString& eventName = eventNameForPropertyToken(token);
-            if (!eventName.isEmpty())
-                return owner->getListener(eventName);
-
-            return JSC::jsUndefined();
-        }
-
-        void putValueProperty(const JSSpecificEventTarget* owner, JSC::ExecState* exec, int token, JSC::JSValue* value)
-        {
-            const AtomicString& eventName = eventNameForPropertyToken(token);
-            if (!eventName.isEmpty())
-                owner->setListener(exec, eventName, value);
-        }
-
-        template<class JSParent>
-        bool getOwnPropertySlot(JSSpecificEventTarget* owner, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
-        {
-            return JSC::getStaticValueSlot<JSSpecificEventTarget, JSParent>(exec, &JSC::JSEventTargetPropertiesTable, owner, propertyName, slot);
-        }
-
-        template<class JSParent>
-        void put(JSSpecificEventTarget* owner, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
-        {
-            JSC::lookupPut<JSSpecificEventTarget, JSParent>(exec, propertyName, value, &JSC::JSEventTargetPropertiesTable, owner, slot);
-        }
-    };
+    extern const struct JSC::HashTable JSEventTargetPrototypeTable;
 
     // The idea here is that classes like JSEventTargetNode and JSEventTargetSVGElementInstance
     // can share a prototype with the only difference being the name.
@@ -110,12 +113,12 @@ namespace WebCore {
 
         virtual bool getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
         {
-            return JSC::getStaticFunctionSlot<JSC::JSObject>(exec, &JSC::JSEventTargetPrototypeTable, this, propertyName, slot);
+            return JSC::getStaticFunctionSlot<JSC::JSObject>(exec, &JSEventTargetPrototypeTable, this, propertyName, slot);
         }
 
         virtual const JSC::ClassInfo* classInfo() const
         {
-            static const JSC::ClassInfo s_classInfo = { JSSpecificEventTarget::prototypeClassName(), 0, &JSC::JSEventTargetPrototypeTable, 0 };
+            static const JSC::ClassInfo s_classInfo = { JSSpecificEventTarget::prototypeClassName(), 0, &JSEventTargetPrototypeTable, 0 };
             return &s_classInfo;
         }
     };

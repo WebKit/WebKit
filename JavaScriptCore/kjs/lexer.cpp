@@ -559,7 +559,7 @@ int Lexer::lex(void* p1, void* p2)
                 token = IDENT;
                 break;
             }
-            token = entry->integerValue;
+            token = entry->lexerValue();
             // Hack for "f = function somename() { ... }"; too hard to get into the grammar.
             m_eatNextIdentifier = token == FUNCTION && m_lastToken == '=';
             if (token == CONTINUE || token == BREAK || token == RETURN || token == THROW)

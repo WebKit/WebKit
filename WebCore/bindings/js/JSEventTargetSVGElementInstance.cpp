@@ -29,20 +29,167 @@
 #include "JSEventTargetSVGElementInstance.h"
 
 #include "Document.h"
+#include "EventNames.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 
+using namespace JSC;
+
 namespace WebCore {
 
-using namespace JSC;
+using namespace EventNames;
 
 ASSERT_CLASS_FITS_IN_CELL(JSEventTargetSVGElementInstance)
 
-const ClassInfo JSEventTargetSVGElementInstance::s_info = { "EventTargetSVGElementInstance", &JSSVGElementInstance::s_info, 0, 0 };
+static JSValue* jsEventTargetSVGElementInstanceOnAbort(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnAbort(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnBlur(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnBlur(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnChange(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnChange(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnClick(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnClick(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnContextMenu(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnContextMenu(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDblClick(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDblClick(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnBeforeCut(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnBeforeCut(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnCut(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnCut(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnBeforeCopy(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnBeforeCopy(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnCopy(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnCopy(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnBeforePaste(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnBeforePaste(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnPaste(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnPaste(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDrag(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDrag(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDragEnd(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDragEnd(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDragEnter(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDragEnter(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDragLeave(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDragLeave(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDragOver(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDragOver(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDragStart(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDragStart(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnDrop(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnDrop(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnError(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnError(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnFocus(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnFocus(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnInput(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnInput(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnKeyDown(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnKeyDown(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnKeyPress(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnKeyPress(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnKeyUp(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnKeyUp(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnLoad(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnLoad(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnMouseDown(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnMouseDown(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnMouseMove(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnMouseMove(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnMouseOut(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnMouseOut(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnMouseOver(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnMouseOver(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnMouseUp(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnMouseUp(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnMouseWheel(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnMouseWheel(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnReset(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnReset(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnResize(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnResize(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnScroll(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnScroll(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnSearch(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnSearch(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnSelect(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnSelect(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnSelectStart(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnSelectStart(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnSubmit(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnSubmit(ExecState*, JSObject*, JSValue*);
+static JSValue* jsEventTargetSVGElementInstanceOnUnload(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSEventTargetSVGElementInstanceOnUnload(ExecState*, JSObject*, JSValue*);
+
+/* Source for JSEventTargetSVGElementInstanceTable
+@begin JSEventTargetSVGElementInstanceTable
+onabort       jsEventTargetSVGElementInstanceOnAbort        DontDelete|DontEnum
+onblur        jsEventTargetSVGElementInstanceOnBlur         DontDelete|DontEnum
+onchange      jsEventTargetSVGElementInstanceOnChange       DontDelete|DontEnum
+onclick       jsEventTargetSVGElementInstanceOnClick        DontDelete|DontEnum
+oncontextmenu jsEventTargetSVGElementInstanceOnContextMenu  DontDelete|DontEnum
+ondblclick    jsEventTargetSVGElementInstanceOnDblClick     DontDelete|DontEnum
+onbeforecut   jsEventTargetSVGElementInstanceOnBeforeCut    DontDelete|DontEnum
+oncut         jsEventTargetSVGElementInstanceOnCut          DontDelete|DontEnum
+onbeforecopy  jsEventTargetSVGElementInstanceOnBeforeCopy   DontDelete|DontEnum
+oncopy        jsEventTargetSVGElementInstanceOnCopy         DontDelete|DontEnum
+onbeforepaste jsEventTargetSVGElementInstanceOnBeforePaste  DontDelete|DontEnum
+onpaste       jsEventTargetSVGElementInstanceOnPaste        DontDelete|DontEnum
+ondrag        jsEventTargetSVGElementInstanceOnDrag         DontDelete|DontEnum
+ondragend     jsEventTargetSVGElementInstanceOnDragEnd      DontDelete|DontEnum
+ondragenter   jsEventTargetSVGElementInstanceOnDragEnter    DontDelete|DontEnum
+ondragleave   jsEventTargetSVGElementInstanceOnDragLeave    DontDelete|DontEnum
+ondragover    jsEventTargetSVGElementInstanceOnDragOver     DontDelete|DontEnum
+ondragstart   jsEventTargetSVGElementInstanceOnDragStart    DontDelete|DontEnum
+ondrop        jsEventTargetSVGElementInstanceOnDrop         DontDelete|DontEnum
+onerror       jsEventTargetSVGElementInstanceOnError        DontDelete|DontEnum
+onfocus       jsEventTargetSVGElementInstanceOnFocus        DontDelete|DontEnum
+oninput       jsEventTargetSVGElementInstanceOnInput        DontDelete|DontEnum
+onkeydown     jsEventTargetSVGElementInstanceOnKeyDown      DontDelete|DontEnum
+onkeypress    jsEventTargetSVGElementInstanceOnKeyPress     DontDelete|DontEnum
+onkeyup       jsEventTargetSVGElementInstanceOnKeyUp        DontDelete|DontEnum
+onload        jsEventTargetSVGElementInstanceOnLoad         DontDelete|DontEnum
+onmousedown   jsEventTargetSVGElementInstanceOnMouseDown    DontDelete|DontEnum
+onmousemove   jsEventTargetSVGElementInstanceOnMouseMove    DontDelete|DontEnum
+onmouseout    jsEventTargetSVGElementInstanceOnMouseOut     DontDelete|DontEnum
+onmouseover   jsEventTargetSVGElementInstanceOnMouseOver    DontDelete|DontEnum
+onmouseup     jsEventTargetSVGElementInstanceOnMouseUp      DontDelete|DontEnum
+onmousewheel  jsEventTargetSVGElementInstanceOnMouseWheel   DontDelete|DontEnum
+onreset       jsEventTargetSVGElementInstanceOnReset        DontDelete|DontEnum
+onresize      jsEventTargetSVGElementInstanceOnResize       DontDelete|DontEnum
+onscroll      jsEventTargetSVGElementInstanceOnScroll       DontDelete|DontEnum
+onsearch      jsEventTargetSVGElementInstanceOnSearch       DontDelete|DontEnum
+onselect      jsEventTargetSVGElementInstanceOnSelect       DontDelete|DontEnum
+onselectstart jsEventTargetSVGElementInstanceOnSelectStart  DontDelete|DontEnum
+onsubmit      jsEventTargetSVGElementInstanceOnSubmit       DontDelete|DontEnum
+onunload      jsEventTargetSVGElementInstanceOnUnload       DontDelete|DontEnum
+@end
+*/
+
+DECLARE_JS_EVENT_LISTENERS(EventTargetSVGElementInstance)
+
+} // namespace WebCore
+
+#include "JSEventTargetSVGElementInstance.lut.h"
+
+namespace WebCore {
+
+const ClassInfo JSEventTargetSVGElementInstance::s_info = { "EventTargetSVGElementInstance", &JSSVGElementInstance::s_info, &JSEventTargetSVGElementInstanceTable, 0 };
 
 JSEventTargetSVGElementInstance::JSEventTargetSVGElementInstance(PassRefPtr<StructureID> structure, PassRefPtr<EventTargetSVGElementInstance> node)
     : JSSVGElementInstance(structure, node)
 {
+}
+
+bool JSEventTargetSVGElementInstance::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticValueSlot<JSEventTargetSVGElementInstance, JSSVGElementInstance>(exec, &JSEventTargetSVGElementInstanceTable, this, propertyName, slot);
+}
+
+void JSEventTargetSVGElementInstance::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+{
+    lookupPut<JSEventTargetSVGElementInstance, JSSVGElementInstance>(exec, propertyName, value, &JSEventTargetSVGElementInstanceTable, this, slot);
 }
 
 JSObject* JSEventTargetSVGElementInstance::createPrototype(ExecState* exec)

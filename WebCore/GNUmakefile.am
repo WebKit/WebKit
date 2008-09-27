@@ -55,6 +55,8 @@ webcore_built_nosources += \
 	DerivedSources/ColorData.c \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
+	WebCore/bindings/js/JSEventTargetNode.lut.h \
+	WebCore/bindings/js/JSEventTargetSVGElementInstance.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h
 
 webcore_built_sources += \
@@ -3562,6 +3564,8 @@ webcore_dist += \
 
 CLEANFILES += \
 	WebCore/bindings/js/JSEventTargetBase.lut.h \
+	WebCore/bindings/js/JSEventTargetNode.lut.h \
+	WebCore/bindings/js/JSEventTargetSVGElementInstance.lut.h \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h
 

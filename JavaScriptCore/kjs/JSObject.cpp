@@ -209,7 +209,7 @@ bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 
     // Look in the static hashtable of properties
     const HashEntry* entry = findPropertyHashEntry(exec, propertyName);
-    if (entry && entry->attributes & DontDelete)
+    if (entry && entry->attributes() & DontDelete)
         return false; // this builtin property can't be deleted
 
     // FIXME: Should the code here actually do some deletion?
@@ -418,7 +418,7 @@ bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& property
     // Look in the static hashtable of properties
     const HashEntry* entry = findPropertyHashEntry(exec, propertyName);
     if (entry) {
-        attributes = entry->attributes;
+        attributes = entry->attributes();
         return true;
     }
     

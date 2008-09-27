@@ -35,6 +35,11 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
     return static_cast<const JSDOMWindow*>(globalObject);
 }
 
+JSC::JSValue* nonCachingStaticCloseFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticBlurFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticFocusFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticPostMessageFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+
 ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
 {
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they
@@ -48,13 +53,13 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
         // The following code is safe for cross-domain and same domain use.
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
         entry = s_info.propHashTable(exec)->entry(exec, propertyName);
-        if (entry && !(entry->attributes & JSC::Function) && entry->integerValue == ClosedAttrNum) {
-            slot.setStaticEntry(this, entry, JSC::staticValueGetter<JSDOMWindow>);
+        if (entry && !(entry->attributes() & JSC::Function) && entry->propertyGetter() == jsDOMWindowClosed) {
+            slot.setCustom(this, entry->propertyGetter());
             return true;
         }
         entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-        if (entry && (entry->attributes & JSC::Function) && entry->functionValue == jsDOMWindowPrototypeFunctionClose) {
-            slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
+        if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
+            slot.setCustom(this, nonCachingStaticCloseFunctionGetter);
             return true;
         }
 
@@ -82,14 +87,27 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
     // what prototype is actually set on this object.
     entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
-        if ((entry->attributes & JSC::Function)
-                && (entry->functionValue == jsDOMWindowPrototypeFunctionBlur
-                    || entry->functionValue == jsDOMWindowPrototypeFunctionClose
-                    || entry->functionValue == jsDOMWindowPrototypeFunctionFocus
-                    || entry->functionValue == jsDOMWindowPrototypeFunctionPostMessage)) {
-            if (!allowsAccess) {
-                slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
-                return true;
+        if (entry->attributes() & JSC::Function) {
+            if (entry->function() == jsDOMWindowPrototypeFunctionBlur) {
+                if (!allowsAccess) {
+                    slot.setCustom(this, nonCachingStaticBlurFunctionGetter);
+                    return true;
+                }
+            } else if (entry->function() == jsDOMWindowPrototypeFunctionClose) {
+                if (!allowsAccess) {
+                    slot.setCustom(this, nonCachingStaticCloseFunctionGetter);
+                    return true;
+                }
+            } else if (entry->function() == jsDOMWindowPrototypeFunctionFocus) {
+                if (!allowsAccess) {
+                    slot.setCustom(this, nonCachingStaticFocusFunctionGetter);
+                    return true;
+                }
+            } else if (entry->function() == jsDOMWindowPrototypeFunctionPostMessage) {
+                if (!allowsAccess) {
+                    slot.setCustom(this, nonCachingStaticPostMessageFunctionGetter);
+                    return true;
+                }
             }
         }
     } else {
