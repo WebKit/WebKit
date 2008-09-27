@@ -400,16 +400,17 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    WebDynamicScrollBarsView *scrollView = [self _scrollView];
-    [scrollView setAllowsScrolling:flag];
     WebCore::Frame *frame = core([self webFrame]);
     if (WebCore::FrameView *view = frame? frame->view() : 0)
-        view->setScrollbarModes((WebCore::ScrollbarMode)[scrollView horizontalScrollingMode], (WebCore::ScrollbarMode)[scrollView verticalScrollingMode]);
+        view->setAllowsScrolling(flag);
 }
 
 - (BOOL)allowsScrolling
 {
-    return [[self _scrollView] allowsScrolling];
+    WebCore::Frame *frame = core([self webFrame]);
+    if (WebCore::FrameView *view = frame? frame->view() : 0)
+        return view->allowsScrolling();
+    return YES;
 }
 
 - (NSView <WebDocumentView> *)documentView

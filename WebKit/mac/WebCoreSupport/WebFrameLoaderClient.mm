@@ -1083,11 +1083,11 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     ASSERT(m_webFrame);
     
     WebFrameView *childView = [[WebFrameView alloc] init];
-    [childView setAllowsScrolling:allowsScrolling];
     [childView _setMarginWidth:marginWidth];
     [childView _setMarginHeight:marginHeight];
 
     RefPtr<Frame> newCoreFrame = [WebFrame _createSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
+    newCoreFrame->view()->setAllowsScrolling(allowsScrolling);
 
     [childView release];
 

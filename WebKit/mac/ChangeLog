@@ -1,5 +1,22 @@
 2008-09-26  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=21164
+
+        Rework concept of allowsScrolling/setAllowsScrolling to be cross-platform.
+
+        Reviewed by Sam Weinig
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createFrame):
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.m:
+        * WebView/WebDynamicScrollBarsViewInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView setAllowsScrolling:]):
+        (-[WebFrameView allowsScrolling]):
+
+2008-09-26  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21149
 
         More refactoring to make scrollbar modes cross-platform.  Reduce the protocol that

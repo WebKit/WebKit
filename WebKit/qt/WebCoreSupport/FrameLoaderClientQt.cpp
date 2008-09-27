@@ -231,7 +231,7 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
         frameView = new FrameView(m_frame);
 
     if (!m_webFrame->d->allowsScrolling)
-        frameView->setScrollbarsMode(ScrollbarAlwaysOff);
+        frameView->setAllowsScrolling(false);
     if (m_webFrame->d->marginWidth != -1)
         frameView->setMarginWidth(m_webFrame->d->marginWidth);
     if (m_webFrame->d->marginHeight != -1)

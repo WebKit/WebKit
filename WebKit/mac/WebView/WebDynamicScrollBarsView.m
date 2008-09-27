@@ -187,41 +187,6 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
 #endif
 }
 
-- (void)setAllowsScrolling:(BOOL)flag
-{
-    if (hScrollModeLocked && vScrollModeLocked)
-        return;
-
-    if (flag && vScroll == ScrollbarAlwaysOff)
-        vScroll = ScrollbarAuto;
-    else if (!flag && vScroll != ScrollbarAlwaysOff)
-        vScroll = ScrollbarAlwaysOff;
-
-    if (flag && hScroll == ScrollbarAlwaysOff)
-        hScroll = ScrollbarAuto;
-    else if (!flag && hScroll != ScrollbarAlwaysOff)
-        hScroll = ScrollbarAlwaysOff;
-
-    [self updateScrollers];
-}
-
-- (BOOL)allowsScrolling
-{
-    // Returns YES if either horizontal or vertical scrolling is allowed.
-    return hScroll != ScrollbarAlwaysOff || vScroll != ScrollbarAlwaysOff;
-}
-
-- (void)setAllowsVerticalScrolling:(BOOL)flag
-{
-    if (vScrollModeLocked)
-        return;
-    if (flag && vScroll == ScrollbarAlwaysOff)
-        vScroll = ScrollbarAuto;
-    else if (!flag && vScroll != ScrollbarAlwaysOff)
-        vScroll = ScrollbarAlwaysOff;
-    [self updateScrollers];
-}
-
 - (BOOL)allowsHorizontalScrolling
 {
     return hScroll != ScrollbarAlwaysOff;
