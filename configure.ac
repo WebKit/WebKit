@@ -77,6 +77,7 @@ AC_PROG_INSTALL
 AC_DISABLE_STATIC
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
+AC_SYS_LARGEFILE
 DOLT
 
 # check for -fvisibility=hidden compiler support (GCC >= 4)

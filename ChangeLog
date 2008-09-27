@@ -1,3 +1,12 @@
+2008-09-27  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=21174
+        [GTK][AUTOTOOLS] Enable large file support at configure time
+
+        * configure.ac: Enable large file support with AC_SYS_LARGEFILE.
+
 2008-09-23  Richard Hult  <richard@imendio.com>
 
         Reviewed by Alp Toker. Landed by Jan Alonzo.
