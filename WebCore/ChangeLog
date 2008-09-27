@@ -1,3 +1,15 @@
+2008-09-22  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        Added SVG pattern support to Qt.
+
+        [Qt] SVG patterns are missing
+        https://bugs.webkit.org/show_bug.cgi?id=20973
+
+        * svg/graphics/qt/SVGPaintServerPatternQt.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+
 2008-09-27  Keishi Hattori  <casey.hattori@gmail.com>
 
         Fixed a bug in the JS syntax highlighter with multiple line tokens.
