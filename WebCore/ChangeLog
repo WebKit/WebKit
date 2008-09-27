@@ -1,3 +1,16 @@
+2008-09-26  Timothy Hatcher  <timothy@apple.com>
+
+        Allow searching for paths by always performing the
+        three search methods in the Elements panel and not
+        assume a search with a "/" is a XPath query.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21159
+
+        Reviewed by Geoff Garen.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.performSearch):
+
 2008-09-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

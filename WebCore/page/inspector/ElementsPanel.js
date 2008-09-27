@@ -232,14 +232,8 @@ WebInspector.ElementsPanel.prototype = {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
 
-        var xpathQuery;
-        if (query.indexOf("/") !== -1) {
-            // Assume this is an XPath if it contains a forward slash.
-            xpathQuery = query;
-        } else {
-            var escapedQuery = query.escapeCharacters("'");
-            xpathQuery = "//*[contains(name(),'" + escapedQuery + "') or contains(@*,'" + escapedQuery + "')] | //text()[contains(.,'" + escapedQuery + "')] | //comment()[contains(.,'" + escapedQuery + "')]";
-        }
+        var escapedQuery = query.escapeCharacters("'");
+        var plainTextXPathQuery = "//*[contains(name(),'" + escapedQuery + "') or contains(@*,'" + escapedQuery + "')] | //text()[contains(.,'" + escapedQuery + "')] | //comment()[contains(.,'" + escapedQuery + "')]";
 
         var evaluateFunction = InspectorController.inspectedWindow().Document.prototype.evaluate;
         var querySelectorAllFunction = InspectorController.inspectedWindow().Document.prototype.querySelectorAll;
@@ -260,7 +254,14 @@ WebInspector.ElementsPanel.prototype = {
         function searchDocument(doc)
         {
             try {
-                var result = evaluateFunction.call(doc, xpathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+                var result = evaluateFunction.call(doc, plainTextXPathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+                addNodesToResults.call(this, result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
+            } catch(err) {
+                // ignore any exceptions. the query might be malformed, but we allow that.
+            }
+
+            try {
+                var result = evaluateFunction.call(doc, query, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
                 addNodesToResults.call(this, result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
             } catch(err) {
                 // ignore any exceptions. the query might be malformed, but we allow that.
