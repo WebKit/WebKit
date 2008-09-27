@@ -1,3 +1,11 @@
+2008-09-27  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Added Machine::retrieveCaller to the export list.
+
+        Reviewed by Kevin McCullough and Tim Hatcher.
+
+        * JavaScriptCore.exp: Added Machine::retrieveCaller.
+
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

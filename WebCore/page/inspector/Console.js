@@ -575,24 +575,38 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, rep
     this.groupLevel = groupLevel;
     this.repeatCount = repeatCount;
 
-    if (this.level === WebInspector.ConsoleMessage.MessageLevel.Object) {
-        var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[6], null, null, null, true);
-        propertiesSection.element.addStyleClass("console-message");
-        this.propertiesSection = propertiesSection;
-    } else if (this.level === WebInspector.ConsoleMessage.MessageLevel.Node) {
-        var node = arguments[6];
-        if (!(node instanceof InspectorController.inspectedWindow().Node))
-            return;
-        this.elementsTreeOutline = new WebInspector.ElementsTreeOutline();
-        this.elementsTreeOutline.rootDOMNode = node;
+    switch (this.level) {
+        case WebInspector.ConsoleMessage.MessageLevel.Object:
+            var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[6], null, null, null, true);
+            propertiesSection.element.addStyleClass("console-message");
+            this.propertiesSection = propertiesSection;
+            break;
+        case WebInspector.ConsoleMessage.MessageLevel.Node:
+            var node = arguments[6];
+            if (!(node instanceof InspectorController.inspectedWindow().Node))
+                return;
+            this.elementsTreeOutline = new WebInspector.ElementsTreeOutline();
+            this.elementsTreeOutline.rootDOMNode = node;
+            break;
+        case WebInspector.ConsoleMessage.MessageLevel.Trace:
+            var span = document.createElement("span");
+            span.addStyleClass("console-formatted-trace");
+            var stack = Array.prototype.slice.call(arguments, 6);
+            var funcNames = stack.map(function(f) {
+                return f.name || WebInspector.UIString("(anonymous function)");
+            });
+            span.appendChild(document.createTextNode(funcNames.join("\n")));
+            this.formattedMessage = span;
+            break;
+        default:
+            // This _format call passes in true for the plainText argument. The result's textContent is
+            // used for inline message bubbles in SourceFrames, or other plain-text representations.
+            this.message = this._format(Array.prototype.slice.call(arguments, 6), true).textContent;
+
+            // The formatedMessage property is used for the rich and interactive console.
+            this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 6));
+            break;
     }
-
-    // This _format call passes in true for the plainText argument. The result's textContent is
-    // used for inline message bubbles in SourceFrames, or other plain-text representations.
-    this.message = this._format(Array.prototype.slice.call(arguments, 6), true).textContent;
-
-    // The formatedMessage property is used for the rich and interactive console.
-    this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 6));
 }
 
 WebInspector.ConsoleMessage.prototype = {
@@ -812,8 +826,9 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Error: 3,
     Object: 4,
     Node: 5,
-    StartGroup: 6,
-    EndGroup: 7
+    Trace: 6,
+    StartGroup: 7,
+    EndGroup: 8
 }
 
 WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)

@@ -61,6 +61,7 @@ namespace WebCore {
         ErrorMessageLevel,
         ObjectMessageLevel,
         NodeMessageLevel,
+        TraceMessageLevel,
         StartGroupMessageLevel,
         EndGroupMessageLevel
     };
@@ -81,6 +82,7 @@ namespace WebCore {
         void warn(JSC::ExecState*, const JSC::ArgList&);
         void dir(JSC::ExecState*, const JSC::ArgList&);
         void dirxml(JSC::ExecState*, const JSC::ArgList& arguments);
+        void trace(JSC::ExecState*);
         void assertCondition(bool condition, JSC::ExecState*, const JSC::ArgList&);
         void count(JSC::ExecState*, const JSC::ArgList&);
         void profile(JSC::ExecState*, const JSC::ArgList&);

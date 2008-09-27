@@ -1,3 +1,22 @@
+2008-09-27  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Added support for console.trace.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19157
+
+        Reviewed by Kevin McCullough and Tim Hatcher.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::trace):
+        * page/Console.cpp:
+        (WebCore::Console::trace): Calls Machine::retrieveCaller to
+        get a stack trace.
+        * page/Console.h:
+        (WebCore::): Added TraceMessageLevel.
+        * page/Console.idl: Added console.trace.
+        * page/inspector/Console.js:
+        (ConsoleMessage): Added case for TraceMessageLevel.
+
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
