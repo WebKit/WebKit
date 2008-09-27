@@ -324,7 +324,7 @@ bool ScrollView::isOffscreen() const
 void ScrollView::wheelEvent(PlatformWheelEvent& e)
 {
     // Determine how much we want to scroll.  If we can move at all, we will accept the event.
-    IntSize maxScrollDelta = maximumScroll();
+    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
     if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
         (e.deltaX() > 0 && scrollOffset().width() > 0) ||
         (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
@@ -359,13 +359,6 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
     // AFAICT this is only used for platforms that provide
     // feedback when mouse is hovered over.
     return 0;
-}
-
-IntSize ScrollView::maximumScroll() const
-{
-    IntSize delta = (IntSize(contentsWidth(), contentsHeight()) - IntSize(visibleWidth(), visibleHeight())) - scrollOffset();
-    delta.clampNegativeToZero();
-    return delta;
 }
 
 }
