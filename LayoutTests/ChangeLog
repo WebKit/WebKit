@@ -1,3 +1,14 @@
+2008-09-27  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        - fix typo in test name
+
+        * media/video-click-dblckick-standalone-expected.txt: Copied from media/video-click-dlbclick-standalone-expected.txt.
+        * media/video-click-dblckick-standalone.html: Copied from media/video-click-dlbclick-standalone.html.
+        * media/video-click-dlbclick-standalone-expected.txt: Removed.
+        * media/video-click-dlbclick-standalone.html: Removed.
+
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
