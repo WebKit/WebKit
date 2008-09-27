@@ -642,6 +642,9 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
         return;
     }
     
+    if (!immediate && isOffscreen() && !shouldUpdateWhileOffscreen())
+        return;
+
     updateContents(r, immediate);
 }
 

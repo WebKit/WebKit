@@ -102,7 +102,7 @@ public:
     Color baseBackgroundColor() const;
     void setBaseBackgroundColor(Color);
 
-    virtual bool shouldUpdateWhileOffscreen() const;
+    bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);
 
     void adjustViewSize();

@@ -323,12 +323,12 @@ IntPoint ScrollView::windowToContents(const IntPoint& point) const
     return point + scrollOffset();
 }
 
-bool ScrollView::inWindow() const
+bool ScrollView::isOffscreen() const
 {
     // NB: This is called from RenderObject::willRenderImage
     // and really seems to be more of a "is the window in a valid state" test,
     // despite the API name.
-    return platformWidget() != NULL;
+    return platformWidget() == NULL;
 }
 
 void ScrollView::wheelEvent(PlatformWheelEvent& e)

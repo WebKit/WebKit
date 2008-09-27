@@ -168,9 +168,6 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = documentView();
-    if (!now && ![[view window] isVisible] && !shouldUpdateWhileOffscreen())
-        return;
-
     NSRect visibleRect = visibleContentRect();
 
     // Checking for rect visibility is an important optimization for the case of
@@ -278,9 +275,9 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent&)
     return 0;
 }
 
-bool ScrollView::inWindow() const
+bool ScrollView::isOffscreen() const
 {
-    return [platformWidget() window];
+    return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }
 
 void ScrollView::wheelEvent(PlatformWheelEvent&)

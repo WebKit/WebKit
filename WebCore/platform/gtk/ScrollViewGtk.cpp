@@ -366,10 +366,9 @@ void ScrollView::platformRemoveChild(Widget* child)
         gtk_container_remove(GTK_CONTAINER(containingWindow()), child->platformWidget());
 }
 
-bool ScrollView::inWindow() const
+bool ScrollView::isOffscreen() const
 {
-    notImplemented();
-    return true;
+    return false;
 }
 
 void ScrollView::wheelEvent(PlatformWheelEvent& e)

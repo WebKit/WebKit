@@ -130,8 +130,9 @@ public:
     IntRect windowToContents(const IntRect&) const;
     IntRect contentsToWindow(const IntRect&) const;
 
-    bool inWindow() const;
-    virtual bool shouldUpdateWhileOffscreen() const = 0;
+    // The purpose of this method is to answer whether or not the scroll view is currently visible.  Animations and painting updates can be suspended if
+    // we know that we are either not in a window right now or if that window is not visible.
+    bool isOffscreen() const;
 
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
     Scrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);

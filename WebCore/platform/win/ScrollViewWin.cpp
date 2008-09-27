@@ -698,11 +698,9 @@ void ScrollView::updateBackingStore()
     page->chrome()->updateBackingStore();
 }
 
-bool ScrollView::inWindow() const
+bool ScrollView::isOffscreen() const
 {
-    // Needed for back/forward cache. 
-    notImplemented();
-    return true;
+    return false;
 }
 
 IntRect ScrollView::contentsToScreen(const IntRect& rect) const
