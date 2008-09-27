@@ -82,11 +82,9 @@ CachedResource::~CachedResource()
     m_deleted = true;
 #endif
 
-    ASSERT(cache()->resourceForURL(url()) != this);
-    
     if (m_resourceToRevalidate)
-        m_resourceToRevalidate->m_isBeingRevalidated = false;    
-   
+        m_resourceToRevalidate->m_isBeingRevalidated = false;
+
     if (m_docLoader)
         m_docLoader->removeCachedResource(this);
 }
