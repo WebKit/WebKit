@@ -217,7 +217,7 @@ WebInspector.ProfileView.prototype = {
                     if (profileNode.totalPercent == queryNumber)
                         profileNode._searchMatchedTotalColumn = true;
                 }
-            } else {
+            } else if (millisecondsUnits || secondsUnits) {
                 if (lessThan) {
                     if (profileNode.selfTime < queryNumberMilliseconds)
                         profileNode._searchMatchedSelfColumn = true;
@@ -236,19 +236,17 @@ WebInspector.ProfileView.prototype = {
                     if (profileNode.totalTime == queryNumberMilliseconds)
                         profileNode._searchMatchedTotalColumn = true;
                 }
-
-                if (!millisecondsUnits && !secondsUnits) {
-                    if (equalTo && profileNode.numberOfCalls == queryNumber)
-                        profileNode._searchMatchedCallsColumn = true;
-                    if (greaterThan && profileNode.numberOfCalls > queryNumber)
-                        profileNode._searchMatchedCallsColumn = true;
-                    if (lessThan && profileNode.numberOfCalls < queryNumber)
-                        profileNode._searchMatchedCallsColumn = true;
-                }
-
-                if (profileNode.functionName.hasSubstring(query, true) || profileNode.url.hasSubstring(query, true))
-                    profileNode._searchMatchedFunctionColumn = true;
+            } else {
+                if (equalTo && profileNode.numberOfCalls == queryNumber)
+                    profileNode._searchMatchedCallsColumn = true;
+                if (greaterThan && profileNode.numberOfCalls > queryNumber)
+                    profileNode._searchMatchedCallsColumn = true;
+                if (lessThan && profileNode.numberOfCalls < queryNumber)
+                    profileNode._searchMatchedCallsColumn = true;
             }
+
+            if (profileNode.functionName.hasSubstring(query, true) || profileNode.url.hasSubstring(query, true))
+                profileNode._searchMatchedFunctionColumn = true;
 
             var matched = (profileNode._searchMatchedSelfColumn || profileNode._searchMatchedTotalColumn || profileNode._searchMatchedCallsColumn || profileNode._searchMatchedFunctionColumn);
             if (matched && profileNode._dataGridNode)

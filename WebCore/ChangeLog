@@ -1,3 +1,17 @@
+2008-09-27  Timothy Hatcher  <timothy@apple.com>
+
+        Change searching in the Profiles panel to not match the
+        Self and Total columns when there are no units. The only
+        column that is matched for unitless number searches is
+        now the Calls column.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21169
+
+        Reviewed by Sam Weinig.
+
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileView.prototype.performSearch):
+
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
         Rename boundsGeometry -> boundsRect.  Rename geometryChanged -> frameRectsChanged.
