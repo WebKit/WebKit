@@ -1,3 +1,15 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21182
+
+        Make sure Mac null checks the view like the other platforms do now that Mac goes through WebCore
+        to call setAllowsScrolling.
+
+        Reviewed by Mark Rowe
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createFrame):
+
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
