@@ -63,12 +63,12 @@ Widget::~Widget()
     Q_ASSERT(!parent());
 }
 
-IntRect Widget::frameGeometry() const
+IntRect Widget::frameRect() const
 {
     return m_frame;
 }
 
-void Widget::setFrameGeometry(const IntRect& rect)
+void Widget::setFrameRect(const IntRect& rect)
 {
     if (platformWidget())
         platformWidget()->setGeometry(convertToContainingWindow(IntRect(0, 0, rect.width(), rect.height())));

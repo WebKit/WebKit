@@ -1,5 +1,104 @@
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
+        Rename frameGeometry to frameRect.  Rename setFrameGeometry to setFrameRect.
+
+        Reviewed by Dan Bernstein
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::updateControlTints):
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::paint):
+        (WebCore::Scrollbar::setFrameRect):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        * platform/Widget.h:
+        (WebCore::Widget::x):
+        (WebCore::Widget::y):
+        (WebCore::Widget::width):
+        (WebCore::Widget::height):
+        (WebCore::Widget::size):
+        (WebCore::Widget::pos):
+        (WebCore::Widget::resize):
+        (WebCore::Widget::move):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollViewScrollbar::geometryChanged):
+        (WebCore::ScrollView::update):
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::paint):
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::setFrameRect):
+        (ScrollbarGtk::geometryChanged):
+        * platform/gtk/ScrollbarGtk.h:
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::trackRect):
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::paint):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::styleOptionSlider):
+        * platform/qt/WidgetQt.cpp:
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::invalidateItem):
+        (WebCore::PopupMenu::valueChanged):
+        (WebCore::PopupWndProc):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::paint):
+        * platform/win/ScrollbarThemeSafari.cpp:
+        (WebCore::ScrollbarThemeSafari::trackRect):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::frameRect):
+        (WebCore::Widget::setFrameRect):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect):
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::init):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::init):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paintMissingPluginIcon):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::init):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::positionOverflowControls):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintScrollbar):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::updateWidgetPosition):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::updateWidgetPosition):
+
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
         <rdar://problem/6252041> REGRESSION (4dp-TOT): Crash in Widget::platformWidget() when closing a PDF
 
         This crash was lurking for a while and basically got exposed by my changes to visibleContentRect() to

@@ -95,7 +95,7 @@ void PluginView::updatePluginWidget() const
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-    m_windowRect = IntRect(frameView->contentsToWindow(frameGeometry().location()), frameGeometry().size());
+    m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -162,7 +162,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         m_plugin->pluginFuncs()->event(m_instance, &npEvent);
     }
 
-    setNPWindowRect(frameGeometry());
+    setNPWindowRect(frameRect());
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
@@ -569,7 +569,7 @@ void PluginView::init()
     }
 
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall)))
-        setNPWindowRect(frameGeometry());
+        setNPWindowRect(frameRect());
 
     m_status = PluginStatusLoadedSuccessfully;
 }

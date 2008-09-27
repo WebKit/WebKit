@@ -222,7 +222,7 @@ void PluginView::updatePluginWidget() const
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-    m_windowRect = IntRect(frameView->contentsToWindow(frameGeometry().location()), frameGeometry().size());
+    m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -290,10 +290,10 @@ void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect&
     if (!nullPluginImage)
         nullPluginImage = Image::loadPlatformResource("nullPlugin");
 
-    IntRect imageRect(frameGeometry().x(), frameGeometry().y(), nullPluginImage->width(), nullPluginImage->height());
+    IntRect imageRect(frameRect().x(), frameRect().y(), nullPluginImage->width(), nullPluginImage->height());
 
-    int xOffset = (frameGeometry().width() - imageRect.width()) / 2;
-    int yOffset = (frameGeometry().height() - imageRect.height()) / 2;
+    int xOffset = (frameRect().width() - imageRect.width()) / 2;
+    int yOffset = (frameRect().height() - imageRect.height()) / 2;
 
     imageRect.move(xOffset, yOffset);
 
@@ -341,7 +341,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     ASSERT(parent()->isFrameView());
-    IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameGeometry());
+    IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
     HDC hdc = context->getWindowsContext(rectInWindow, m_isTransparent);
     NPEvent npEvent;
 
@@ -362,15 +362,15 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     m_npWindow.type = NPWindowTypeDrawable;
     m_npWindow.window = hdc;
 
-    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(frameGeometry().location());
+    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
     
     WINDOWPOS windowpos;
     memset(&windowpos, 0, sizeof(windowpos));
 
     windowpos.x = p.x();
     windowpos.y = p.y();
-    windowpos.cx = frameGeometry().width();
-    windowpos.cy = frameGeometry().height();
+    windowpos.cx = frameRect().width();
+    windowpos.cy = frameRect().height();
 
     npEvent.event = WM_WINDOWPOSCHANGED;
     npEvent.lParam = reinterpret_cast<uint32>(&windowpos);
@@ -378,7 +378,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     dispatchNPEvent(npEvent);
 
-    setNPWindowRect(frameGeometry());
+    setNPWindowRect(frameRect());
 
     npEvent.event = WM_PAINT;
     npEvent.wParam = reinterpret_cast<uint32>(hdc);
@@ -389,7 +389,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     dispatchNPEvent(npEvent);
 
-    context->releaseWindowsContext(hdc, frameGeometry(), m_isTransparent);
+    context->releaseWindowsContext(hdc, frameRect(), m_isTransparent);
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
@@ -841,7 +841,7 @@ void PluginView::init()
     }
 
     if (!m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))
-        setNPWindowRect(frameGeometry());
+        setNPWindowRect(frameRect());
 
     m_status = PluginStatusLoadedSuccessfully;
 }

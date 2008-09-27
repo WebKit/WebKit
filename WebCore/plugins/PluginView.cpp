@@ -112,13 +112,13 @@ IntRect PluginView::windowClipRect() const
     return clipRect;
 }
 
-void PluginView::setFrameGeometry(const IntRect& rect)
+void PluginView::setFrameRect(const IntRect& rect)
 {
     if (m_element->document()->printing())
         return;
 
-    if (rect != frameGeometry())
-        Widget::setFrameGeometry(rect);
+    if (rect != frameRect())
+        Widget::setFrameRect(rect);
 
     updatePluginWidget();
 

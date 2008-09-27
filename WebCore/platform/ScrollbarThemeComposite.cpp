@@ -118,7 +118,7 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
             if (scrollbar->pressedPart() != NoPart)
                 s |= PressedScrollbarState;
             if (page->chrome()->client()->paintCustomScrollbar(graphicsContext,
-                                                               scrollbar->frameGeometry(), 
+                                                               scrollbar->frameRect(), 
                                                                scrollbar->controlSize(),
                                                                s, 
                                                                scrollbar->pressedPart(), 

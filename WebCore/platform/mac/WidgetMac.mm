@@ -136,7 +136,7 @@ void Widget::hide()
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-IntRect Widget::frameGeometry() const
+IntRect Widget::frameRect() const
 {
     if (!platformWidget())
         return m_frame;
@@ -148,7 +148,7 @@ IntRect Widget::frameGeometry() const
     return m_frame;
 }
 
-void Widget::setFrameGeometry(const IntRect& rect)
+void Widget::setFrameRect(const IntRect& rect)
 {
     m_frame = rect;
 

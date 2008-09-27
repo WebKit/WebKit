@@ -93,9 +93,9 @@ void ScrollbarGtk::updateThumbProportion()
     gtk_adjustment_changed(m_adjustment);
 }
 
-void ScrollbarGtk::setFrameGeometry(const IntRect& rect)
+void ScrollbarGtk::setFrameRect(const IntRect& rect)
 {
-    Widget::setFrameGeometry(rect);
+    Widget::setFrameRect(rect);
     geometryChanged();
 }
 
@@ -107,9 +107,9 @@ void ScrollbarGtk::geometryChanged()
     ASSERT(parent()->isFrameView());
 
     FrameView* frameView = static_cast<FrameView*>(parent());
-    IntRect windowRect = IntRect(frameView->contentsToWindow(frameGeometry().location()), frameGeometry().size());
+    IntRect windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
 
-    IntSize sz = frameGeometry().size();
+    IntSize sz = frameRect().size();
     sz.clampNegativeToZero();
 
     GtkAllocation allocation = { windowRect.x(), windowRect.y(), sz.width(), sz.height() };

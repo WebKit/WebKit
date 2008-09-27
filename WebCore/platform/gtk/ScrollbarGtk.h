@@ -39,7 +39,7 @@ public:
 
     virtual ~ScrollbarGtk();
 
-    virtual void setFrameGeometry(const IntRect&);
+    virtual void setFrameRect(const IntRect&);
     
     virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }
     virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; }

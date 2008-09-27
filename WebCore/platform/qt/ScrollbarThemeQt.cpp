@@ -95,7 +95,7 @@ static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
 static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
 {
     static QStyleOptionSlider opt;
-    opt.rect = scrollbar->frameGeometry();
+    opt.rect = scrollbar->frameRect();
     opt.state = 0;
     if (scrollbar->enabled())
         opt.state |= QStyle::State_Enabled;

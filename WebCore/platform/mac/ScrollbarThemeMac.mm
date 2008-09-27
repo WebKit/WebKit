@@ -283,7 +283,7 @@ IntRect ScrollbarThemeMac::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart
 IntRect ScrollbarThemeMac::trackRect(Scrollbar* scrollbar, bool painting)
 {
     if (painting || !hasButtons(scrollbar))
-        return scrollbar->frameGeometry();
+        return scrollbar->frameRect();
     
     IntRect result;
     int thickness = scrollbarThickness(scrollbar->controlSize());
@@ -354,7 +354,7 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;
     trackInfo.kind = scrollbar->controlSize() == RegularScrollbar ? kThemeMediumScrollBar : kThemeSmallScrollBar;
-    trackInfo.bounds = scrollbar->frameGeometry();
+    trackInfo.bounds = scrollbar->frameRect();
     trackInfo.min = 0;
     trackInfo.max = scrollbar->maximum();
     trackInfo.value = scrollbar->currentPos();
@@ -378,18 +378,18 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     if (canDrawDirectly)
         HIThemeDrawTrack(&trackInfo, 0, context->platformContext(), kHIThemeOrientationNormal);
     else {
-        trackInfo.bounds = IntRect(IntPoint(), scrollbar->frameGeometry().size());
+        trackInfo.bounds = IntRect(IntPoint(), scrollbar->frameRect().size());
         
-        IntRect bufferRect(scrollbar->frameGeometry());
+        IntRect bufferRect(scrollbar->frameRect());
         bufferRect.intersect(damageRect);
-        bufferRect.move(-scrollbar->frameGeometry().x(), -scrollbar->frameGeometry().y());
+        bufferRect.move(-scrollbar->frameRect().x(), -scrollbar->frameRect().y());
         
         auto_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferRect.size(), false);
         if (!imageBuffer.get())
             return true;
         
         HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);
-        context->drawImage(imageBuffer->image(), scrollbar->frameGeometry().location());
+        context->drawImage(imageBuffer->image(), scrollbar->frameRect().location());
     }
 
     return true;

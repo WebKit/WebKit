@@ -213,7 +213,7 @@ public:
     virtual void paint(GraphicsContext*, const IntRect&);
 
     virtual void geometryChanged() const;
-    virtual void setFrameGeometry(const IntRect&);
+    virtual void setFrameRect(const IntRect&);
 
     void addToDirtyRegion(const IntRect&);
     void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);

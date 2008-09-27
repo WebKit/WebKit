@@ -115,21 +115,21 @@ public:
         }
     }
 
-    int x() const { return frameGeometry().x(); }
-    int y() const { return frameGeometry().y(); }
-    int width() const { return frameGeometry().width(); }
-    int height() const { return frameGeometry().height(); }
-    IntSize size() const { return frameGeometry().size(); }
-    IntPoint pos() const { return frameGeometry().location(); }
+    int x() const { return frameRect().x(); }
+    int y() const { return frameRect().y(); }
+    int width() const { return frameRect().width(); }
+    int height() const { return frameRect().height(); }
+    IntSize size() const { return frameRect().size(); }
+    IntPoint pos() const { return frameRect().location(); }
 
-    virtual void setFrameGeometry(const IntRect&);
-    virtual IntRect frameGeometry() const;
+    virtual void setFrameRect(const IntRect&);
+    virtual IntRect frameRect() const;
     IntRect boundsGeometry() const { return IntRect(0, 0, width(),  height()); }
 
-    void resize(int w, int h) { setFrameGeometry(IntRect(x(), y(), w, h)); }
-    void resize(const IntSize& s) { setFrameGeometry(IntRect(pos(), s)); }
-    void move(int x, int y) { setFrameGeometry(IntRect(x, y, width(), height())); }
-    void move(const IntPoint& p) { setFrameGeometry(IntRect(p, size())); }
+    void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); }
+    void resize(const IntSize& s) { setFrameRect(IntRect(pos(), s)); }
+    void move(int x, int y) { setFrameRect(IntRect(x, y, width(), height())); }
+    void move(const IntPoint& p) { setFrameRect(IntRect(p, size())); }
 
     virtual void paint(GraphicsContext*, const IntRect&);
     void invalidate() { invalidateRect(boundsGeometry()); }

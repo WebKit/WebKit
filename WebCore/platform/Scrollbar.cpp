@@ -77,7 +77,7 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
     // scrollbar thickness and use it when sizing scrollbars (rather than leaving one dimension of the scrollbar
     // alone when sizing).
     int thickness = m_theme->scrollbarThickness(controlSize);
-    Widget::setFrameGeometry(IntRect(0, 0, thickness, thickness));
+    Widget::setFrameRect(IntRect(0, 0, thickness, thickness));
 }
 
 Scrollbar::~Scrollbar()
@@ -172,7 +172,7 @@ void Scrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
         return;
     }
         
-    if (context->paintingDisabled() || !frameGeometry().intersects(damageRect))
+    if (context->paintingDisabled() || !frameRect().intersects(damageRect))
         return;
 
     if (!theme()->paint(this, context, damageRect))
@@ -369,7 +369,7 @@ bool Scrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
     return true;
 }
 
-void Scrollbar::setFrameGeometry(const IntRect& rect)
+void Scrollbar::setFrameRect(const IntRect& rect)
 {
     // Get our window resizer rect and see if we overlap.  Adjust to avoid the overlap
     // if necessary.
@@ -400,7 +400,7 @@ void Scrollbar::setFrameGeometry(const IntRect& rect)
         }
     }
 
-    Widget::setFrameGeometry(adjustedRect);
+    Widget::setFrameRect(adjustedRect);
 }
 
 void Scrollbar::setParent(ScrollView* parentView)

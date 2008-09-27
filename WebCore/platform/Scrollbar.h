@@ -108,7 +108,7 @@ public:
     ScrollbarTheme* theme() const { return m_theme; }
 
     virtual void setParent(ScrollView*);
-    virtual void setFrameGeometry(const IntRect&);
+    virtual void setFrameRect(const IntRect&);
     virtual IntRect windowClipRect() const;
 
     virtual void invalidateRect(const IntRect&);
