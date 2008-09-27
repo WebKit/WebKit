@@ -31,63 +31,29 @@
 #include "ImageDecoderQt.h"
 #include "SharedBuffer.h"
 
+#include <QBuffer>
 #include <QImage>
-#include <qdebug.h>
-
+#include <QImageReader>
 
 namespace WebCore {
-    enum ImageFormat { ImageFormat_None, ImageFormat_GIF, ImageFormat_PNG, ImageFormat_JPEG,
-                       ImageFormat_BMP,  ImageFormat_ICO,  ImageFormat_XBM };
-
-ImageFormat detectImageFormat(const SharedBuffer& data)
+static bool canHandleImage(const SharedBuffer& _data)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
-    int length = data.size();
-    if (length < 4)
-        return ImageFormat_None;
+    if (_data.size() < 4)
+        return false;
 
-    const unsigned char* uContents = (const unsigned char*) data.data();
-    const char* contents = data.data();
+    QByteArray data = QByteArray::fromRawData(_data.data(), _data.size());
+    QBuffer buffer(&data);
+    if (!buffer.open(QBuffer::ReadOnly))
+        return false;
 
-    // GIFs begin with GIF8(7 or 9).
-    if (strncmp(contents, "GIF8", 4) == 0)
-        return ImageFormat_GIF;
-
-    // Test for PNG.
-    if (uContents[0] == 0x89 &&
-        uContents[1] == 0x50 &&
-        uContents[2] == 0x4E &&
-        uContents[3] == 0x47)
-        return ImageFormat_PNG;
-
-    // JPEG
-    if (uContents[0] == 0xFF &&
-        uContents[1] == 0xD8 &&
-        uContents[2] == 0xFF)
-        return ImageFormat_JPEG;
-
-    // BMP
-    if (strncmp(contents, "BM", 2) == 0)
-        return ImageFormat_BMP;
-
-    // ICOs always begin with a 2-byte 0 followed by a 2-byte 1.
-    // CURs begin with 2-byte 0 followed by 2-byte 2.
-    if (!memcmp(contents, "\000\000\001\000", 4) ||
-        !memcmp(contents, "\000\000\002\000", 4))
-        return ImageFormat_ICO;
-
-    // XBMs require 8 bytes of info.
-    if (length >= 8 && strncmp(contents, "#define ", 8) == 0)
-        return ImageFormat_XBM;
-
-    // Give up. We don't know what the heck this is.
-    return ImageFormat_None;
+    return !QImageReader::imageFormat(&buffer).isEmpty();
 }
-    
+
 ImageDecoderQt* createDecoder(const SharedBuffer& data) {
-    if (detectImageFormat(data) != ImageFormat_None) 
-        return new ImageDecoderQt();
-    return 0;
+    if (!canHandleImage(data))
+        return 0;
+    return new ImageDecoderQt();
 }
 
 ImageSource::ImageSource()

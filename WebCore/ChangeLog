@@ -2,6 +2,18 @@
 
         Reviewed by Simon Hausmann.
 
+        [qt] Use QImageReader to figure out which image formats are supported
+        - Qt can have many different plugins for different image formats. Instead
+        of checking only for a few in WebCore use Qt to determine if this data
+        can be treated as an image.
+
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::canHandleImage):
+        (WebCore::createDecoder):
+
+2008-09-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+
         [qt] Clean the pattern code
         - Use save/restore on the painter after manipulating the
         pen/brush
