@@ -237,9 +237,9 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     if (m_webFrame->d->marginHeight != -1)
         frameView->setMarginHeight(m_webFrame->d->marginHeight);
     if (m_webFrame->d->horizontalScrollBarPolicy != Qt::ScrollBarAsNeeded)
-        frameView->setHScrollbarMode((ScrollbarMode)m_webFrame->d->horizontalScrollBarPolicy);
+        frameView->setHorizontalScrollbarMode((ScrollbarMode)m_webFrame->d->horizontalScrollBarPolicy);
     if (m_webFrame->d->verticalScrollBarPolicy != Qt::ScrollBarAsNeeded)
-        frameView->setVScrollbarMode((ScrollbarMode)m_webFrame->d->verticalScrollBarPolicy);
+        frameView->setVerticalScrollbarMode((ScrollbarMode)m_webFrame->d->verticalScrollBarPolicy);
 
     m_frame->setView(frameView);
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.

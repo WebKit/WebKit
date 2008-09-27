@@ -1,3 +1,14 @@
+2008-09-27  Simon Hausmann  <hausmann@webkit.org>
+
+        Qt build fix - use frameRect instead of frameGeometry, adapt
+        to renamed scrollbar frameview methods.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportSize):
+        (QWebPage::setViewportSize):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
 2008-09-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Qt build fix - rename frameGeometry to frameRect per r36995.

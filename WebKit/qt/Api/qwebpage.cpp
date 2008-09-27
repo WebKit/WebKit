@@ -1430,7 +1430,7 @@ void QWebPage::triggerAction(WebAction action, bool checked)
 QSize QWebPage::viewportSize() const
 {
     if (d->mainFrame && d->mainFrame->d->frame->view())
-        return d->mainFrame->d->frame->view()->frameGeometry().size();
+        return d->mainFrame->d->frame->view()->frameRect().size();
 
     return d->viewportSize;
 }
@@ -1452,7 +1452,7 @@ void QWebPage::setViewportSize(const QSize &size) const
     QWebFrame *frame = mainFrame();
     if (frame->d->frame && frame->d->frame->view()) {
         WebCore::FrameView* view = frame->d->frame->view();
-        view->setFrameGeometry(QRect(QPoint(0, 0), size));
+        view->setFrameRect(QRect(QPoint(0, 0), size));
         frame->d->frame->forceLayout();
         view->adjustViewSize();
     }
