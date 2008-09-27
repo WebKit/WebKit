@@ -1,3 +1,11 @@
+2008-09-26  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Update FEATURE_DEFINES after ENABLE_CROSS_DOCUMENT_MESSAGING was removed.
+
+        * Scripts/build-webkit:
+
 2008-09-26  Alice Liu  <alice.liu@apple.com>
 
         Remove usage of atlstr.h and CString for VCExpress compatibility
