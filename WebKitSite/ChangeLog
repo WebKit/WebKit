@@ -1,3 +1,12 @@
+2008-09-26  Timothy Hatcher  <timothy@apple.com>
+
+        Add screenshots of searching in the Web Inspector.
+
+        Not reviewed.
+
+        * blog-files/inspector-searching-elements.png: Added.
+        * blog-files/inspector-searching-profiles.png: Added.
+
 2008-09-25  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.
