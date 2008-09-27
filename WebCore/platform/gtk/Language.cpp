@@ -26,6 +26,30 @@
 #include <gtk/gtk.h>
 #include <pango/pango.h>
 
+#if !defined(PANGO_VERSION_CHECK)
+// PANGO_VERSION_CHECK() and pango_language_get_default() appeared in 1.5.2
+#include <locale.h>
+
+static gchar *
+_pango_get_lc_ctype (void)
+{
+  return g_strdup (setlocale (LC_CTYPE, NULL));
+}
+
+static PangoLanguage *
+pango_language_get_default (void)
+{
+  static PangoLanguage *result = NULL;
+  if (G_UNLIKELY (!result))
+    {
+      gchar *lang = _pango_get_lc_ctype ();
+      result = pango_language_from_string (lang);
+      g_free (lang);
+    }
+  return result;
+}
+#endif
+
 namespace WebCore {
 
 String defaultLanguage()
