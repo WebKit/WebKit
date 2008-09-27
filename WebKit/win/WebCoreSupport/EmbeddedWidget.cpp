@@ -64,18 +64,18 @@ bool EmbeddedWidget::createWindow(HWND parentWindow, const IntSize& size)
     return true;
 }
 
-void EmbeddedWidget::setFrameGeometry(const IntRect& rect)
+void EmbeddedWidget::setFrameRect(const IntRect& rect)
 {
     if (m_element->document()->printing())
         return;
 
-    if (rect != frameGeometry())
-        Widget::setFrameGeometry(rect);
+    if (rect != frameRect())
+        Widget::setFrameRect(rect);
 
-    geometryChanged();
+    frameRectsChanged();
 }
 
-void EmbeddedWidget::geometryChanged() const
+void EmbeddedWidget::frameRectsChanged() const
 {
     if (!parent())
         return;
@@ -86,7 +86,7 @@ void EmbeddedWidget::geometryChanged() const
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-    m_windowRect = IntRect(frameView->contentsToWindow(frameGeometry().location()), frameGeometry().size());
+    m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 

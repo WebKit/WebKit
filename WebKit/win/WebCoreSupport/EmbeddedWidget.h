@@ -54,8 +54,8 @@ private:
 
     bool createWindow(HWND parentWindow, const WebCore::IntSize& size);
 
-    virtual void setFrameGeometry(const WebCore::IntRect&);
-    virtual void geometryChanged() const;
+    virtual void setFrameRect(const WebCore::IntRect&);
+    virtual void frameRectsChanged() const;
     virtual void setFocus();
     virtual void show();
     virtual void hide();
