@@ -2287,6 +2287,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             // because this can cause the user to be redirected to a blank page (3424039).
             return NPERR_INVALID_PARAM;
         }
+    } else {
+        if (!FrameLoader::canLoad(URL, String(), core([self webFrame])->document()))
+            return NPERR_GENERIC_ERROR;
     }
         
     if (cTarget || JSString) {
