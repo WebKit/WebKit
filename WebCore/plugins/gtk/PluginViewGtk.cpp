@@ -60,7 +60,7 @@
 #include <gdkconfig.h>
 #include <gtk/gtk.h>
 
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
 #include "gtk2xtbin.h"
 #include <gdk/gdkx.h>
 #endif
@@ -102,7 +102,7 @@ void PluginView::updatePluginWidget() const
     GtkAllocation allocation = { m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height() };
     if (platformPluginWidget()) {
         gtk_widget_size_allocate(platformPluginWidget(), &allocation);
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
         if (!m_needsXEmbed) {
             gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
             gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
@@ -358,7 +358,7 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
         return NPERR_NO_ERROR;
 
     case NPNVSupportsXEmbedBool:
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
         *((uint32 *)value) = true;
 #else
         *((uint32 *)value) = false;
@@ -378,7 +378,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 {
     switch (variable) {
     case NPNVxDisplay:
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
         if (m_needsXEmbed)
             *(void **)value = (void *)GDK_DISPLAY();
         else
@@ -388,7 +388,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         return NPERR_GENERIC_ERROR;
 #endif
 
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
     case NPNVxtAppContext:
         if (!m_needsXEmbed) {
             *(void **)value = XtDisplayToApplicationContext (GTK_XTBIN(platformPluginWidget())->xtclient.xtdisplay);
@@ -438,7 +438,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         case NPNVnetscapeWindow: {
             void* w = reinterpret_cast<void*>(value);
 
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11)
             *((XID *)w) = GDK_WINDOW_XWINDOW(containingWindow()->window);
 #endif
 #ifdef GDK_WINDOWING_WIN32
@@ -523,7 +523,7 @@ void PluginView::init()
         PluginView::setCurrentPluginView(0);
     }
 
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
     if (m_needsXEmbed) {
         setPlatformWidget(gtk_socket_new());
         gtk_container_add(GTK_CONTAINER(containingWindow()), platformPluginWidget());
@@ -538,7 +538,7 @@ void PluginView::init()
 
     if (m_isWindowed) {
         m_npWindow.type = NPWindowTypeWindow;
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
         NPSetWindowCallbackStruct *ws = new NPSetWindowCallbackStruct();
 
         ws->type = 0;

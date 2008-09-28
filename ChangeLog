@@ -1,3 +1,15 @@
+2008-09-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20287
+        [Gtk] disable plugins for gtk/directfb target
+
+        Introduce WTF_PLATFORM_X11 for X11 builds.
+        Also use target-specific packages when building the port
+
+        * configure.ac: Do not check for cairo-ft for directfb builds.
+
 2008-09-27  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger Freyther.

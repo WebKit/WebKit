@@ -35,7 +35,7 @@
 
 #include <gtk/gtk.h>
 
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
 #include <gdk/gdkx.h>
 #include <X11/Xatom.h>
 #endif
@@ -90,7 +90,7 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-#if defined(GDK_WINDOWING_X11)
+#if PLATFORM(X11)
     GtkWidget* container = GTK_WIDGET(widget->containingWindow());
     if (!container)
         return FloatRect();

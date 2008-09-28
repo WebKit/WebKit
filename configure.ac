@@ -294,37 +294,44 @@ PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= $LIBXML_REQUIRED_VERSION)
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
-PKG_CHECK_MODULES(CAIRO, cairo >= $CAIRO_REQUIRED_VERSION)
-AC_SUBST(CAIRO_CFLAGS)
-AC_SUBST(CAIRO_LIBS)
-
 PKG_CHECK_MODULES(PANGO, pango >= $PANGO_REQUIRED_VERSION)
 AC_SUBST(PANGO_CFLAGS)
 AC_SUBST(PANGO_LIBS)
 
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION)
+# check for target-specific dependencies
+if test "$with_target" = "directfb"; then
+   PKG_CHECK_MODULES(CAIRO, cairo-directfb >= $CAIRO_REQUIRED_VERSION)
+   PKG_CHECK_MODULES(GTK, gtk+-directfb-2.0 >= $GTK_REQUIRED_VERSION)
+   AC_DEFINE([WTF_PLATFORM_DIRECTFB],[1],[Define if target is DirectFB])
+else
+   PKG_CHECK_MODULES(CAIRO, cairo >= $CAIRO_REQUIRED_VERSION)
+   PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION)
+
+   if test "$with_target" = "x11" && test "$os_win32" = "no"; then
+      # check for XT
+      PKG_CHECK_MODULES([XT],
+                        [xt],
+                        [xt_has_pkg_config=yes],
+                        [xt_has_pkg_config=no])
+      # some old versions of Xt do not provide xt.pc, so try to link against Xt
+      # and if it's installed fall back to just adding -lXt
+      if test "$xt_has_pkg_config" = "no"; then
+         # using AC_CHECK_LIB instead of AC_SEARCH_LIB is fine in this case as
+         # we don't care about the XtOpenDisplay symbol but only about the
+         # existence of libXt
+         AC_CHECK_LIB([Xt], [XtOpenDisplay],
+                      [XT_CFLAGS=""; XT_LIBS="-lXt"],
+                      [AC_MSG_ERROR([X Toolkit Intrinsics library (libXt) not found])])
+      fi
+      AC_SUBST([XT_CFLAGS])
+      AC_SUBST([XT_LIBS])
+      AC_DEFINE([WTF_PLATFORM_X11],[1],[Define if target is X11])
+   fi
+fi
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
-
-# check for Xt if the target is X11
-if test "$with_target" = "x11"; then
-   PKG_CHECK_MODULES([XT],
-                     [xt],
-                     [xt_has_pkg_config=yes],
-                     [xt_has_pkg_config=no])
-   # some old versions of Xt do not provide xt.pc, so try to link against Xt
-   # and if it's installed fall back to just adding -lXt
-   if test "$xt_has_pkg_config" = "no"; then
-      # using AC_CHECK_LIB instead of AC_SEARCH_LIB is fine in this case as
-      # we don't care about the XtOpenDisplay symbol but only about the
-      # existence of libXt
-      AC_CHECK_LIB([Xt], [XtOpenDisplay],
-                   [XT_CFLAGS=""; XT_LIBS="-lXt"],
-                   [AC_MSG_ERROR([X Toolkit Intrinsics library (libXt) not found])])
-   fi
-   AC_SUBST([XT_CFLAGS])
-   AC_SUBST([XT_LIBS])
-fi
+AC_SUBST(CAIRO_CFLAGS)
+AC_SUBST(CAIRO_LIBS)
 
 # check whether to build with debugging enabled
 AC_MSG_CHECKING([whether to do a debug build])
@@ -533,10 +540,16 @@ fi
 
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then
+   if test "$with_target" = "directfb"; then
+   PKG_CHECK_MODULES([FREETYPE],
+                     [fontconfig >= $FONTCONFIG_REQUIRED_VERSION
+                     freetype2 >= $FREETYPE2_REQUIRED_VERSION])
+   else
    PKG_CHECK_MODULES([FREETYPE],
                      [cairo-ft
                      fontconfig >= $FONTCONFIG_REQUIRED_VERSION
                      freetype2 >= $FREETYPE2_REQUIRED_VERSION])
+   fi
    AC_SUBST([FREETYPE_CFLAGS])
    AC_SUBST([FREETYPE_LIBS])
 fi
