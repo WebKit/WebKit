@@ -1,3 +1,13 @@
+2008-09-28  David Hyatt  <hyatt@apple.com>
+
+        Fix crash when WebKit has no instantiated Scrollbars and the appearance prefs for scrollbars are
+        changed.
+
+        Reviewed by Dan Bernstein
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+
 2008-09-28  Timothy Hatcher  <timothy@apple.com>
 
         Clear the current search results in the Inspector when

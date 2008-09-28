@@ -60,6 +60,8 @@ static HashSet<Scrollbar*>* gScrollbars;
 + (void)appearancePrefsChanged:(NSNotification*)theNotification
 {
     static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
+    if (!gScrollbars)
+        return;
     HashSet<Scrollbar*>::iterator end = gScrollbars->end();
     for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it)
         (*it)->invalidate();
