@@ -120,8 +120,6 @@ WebInspector.ProfilesPanel.prototype = {
         this.sidebarTree.removeChildren();
         this.profileViews.removeChildren();
 
-        this.populateInterface();
-
         this.profileViewStatusBarItemsContainer.removeChildren();
     },
 
@@ -318,7 +316,8 @@ WebInspector.ProfilesPanel.prototype = {
 
     _populateProfiles: function()
     {
-        this.sidebarTree.removeChildren();
+        if (this.sidebarTree.children.length)
+            return;
 
         var profiles = InspectorController.profiles();
         var profilesLength = profiles.length;

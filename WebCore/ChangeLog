@@ -1,3 +1,18 @@
+2008-09-27  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where the Profiles panel sidebar would be empty
+        after closing and reopening the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21179
+
+        Reviewed by Sam Weinig.
+
+        * page/inspector/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.reset): Don't call
+        populateInterface, it is called automatically.
+        (WebInspector.ProfilesPanel.prototype._populateProfiles):
+        Return early if the sidebar is already populated.
+
 2008-09-27  Dave Hyatt  <hyatt@apple.com>
 
         Bug 21190.  The line scroll amount on Windows is way too small.  A patch for bug 17589 for wheel sensitivity
