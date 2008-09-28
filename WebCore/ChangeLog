@@ -1,3 +1,70 @@
+2008-09-28  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21191
+
+        Rework mouse wheeling significantly to make the platform event less messy and to enable wheelEvent
+        on ScrollView to be cross-platform.
+
+        Give the wheel event a concept of granularity (pixel, line or page).  What used to be called continuous
+        events are now pixel wheel events.
+
+        Page scrolling as implemented in bug 17589 was completely broken.  It had the following problems:
+        (1) Page scrolling has been corrected to be properly detected (on Windows
+        page wheeling is only done in the vertical direction and it is keyed off a special return value of -1).  The
+        old code had some bizarre incorrect heuristic for "guessing" that you should page scroll and also thought
+        you could page scroll horizontally.
+        (2) Page scrolling a layer used the enclosing ScrollView's width/height instead of the layer's width/height.
+        This caused the scroll amount for page scrolling to be way too large on layers.
+
+        Bug 17589 got the default horizontal scrolling value wrong.  It assumed 1, when the Vista default is 3.
+
+        Incorporate WebCore's line multiplier right into the deltas of the event.  This eliminates the need
+        for separate multiplier fields (or for the need to ask if you're looking for line sensitivity).
+
+        Reviewed by Oliver Hunt
+
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::):
+        (WebCore::PlatformWheelEvent::pos):
+        (WebCore::PlatformWheelEvent::globalPos):
+        (WebCore::PlatformWheelEvent::deltaX):
+        (WebCore::PlatformWheelEvent::deltaY):
+        (WebCore::PlatformWheelEvent::granularity):
+        (WebCore::PlatformWheelEvent::x):
+        (WebCore::PlatformWheelEvent::globalX):
+        (WebCore::PlatformWheelEvent::ignore):
+        (WebCore::PlatformWheelEvent::horizontalLineMultiplier):
+        (WebCore::PlatformWheelEvent::verticalLineMultiplier):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/Scrollbar.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/gtk/WheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/qt/WheelEventQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::horizontalLineMultiplier):
+        (WebCore::PlatformWheelEvent::verticalLineMultiplier):
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::OnScrollWinEvents):
+        (WebCore::ScrollView::wheelEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+
 2008-09-27  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig.

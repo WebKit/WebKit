@@ -54,14 +54,6 @@ using namespace std;
 
 namespace WebCore {
 
-#define WHEEL_STEP 15 // To keep the behavior we had before adding the scroll wheel sensitivity : <rdar://problem/5770893>
-
-static inline void adjustDeltaForPageScrollMode(float& delta, bool pageScrollEnabled, int visibleWidthOrHeight)
-{
-    if (pageScrollEnabled)
-        delta = (delta > 0 ? visibleWidthOrHeight : -visibleWidthOrHeight) / WHEEL_STEP;
-}
-
 class ScrollView::ScrollViewPrivate : public ScrollbarClient {
 public:
     ScrollViewPrivate(ScrollView* view)
@@ -331,7 +323,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         m_horizontalScrollbar->setEnabled(contentsWidth() > clientWidth);
-        int pageStep = (clientWidth - PAGE_KEEP);
+        int pageStep = (clientWidth - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientWidth;
         IntRect oldRect(m_horizontalScrollbar->frameRect());
         IntRect hBarRect = IntRect(0,
@@ -344,7 +336,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
-        m_horizontalScrollbar->setSteps(LINE_STEP, pageStep);
+        m_horizontalScrollbar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
         m_horizontalScrollbar->setValue(scroll.width());
         if (m_scrollbarsSuppressed)
@@ -354,7 +346,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
         m_verticalScrollbar->setEnabled(contentsHeight() > clientHeight);
-        int pageStep = (clientHeight - PAGE_KEEP);
+        int pageStep = (clientHeight - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientHeight;
         IntRect oldRect(m_verticalScrollbar->frameRect());
         IntRect vBarRect = IntRect(width() - m_verticalScrollbar->width(), 
@@ -367,7 +359,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
-        m_verticalScrollbar->setSteps(LINE_STEP, pageStep);
+        m_verticalScrollbar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
         m_verticalScrollbar->setValue(scroll.height());
         if (m_scrollbarsSuppressed)
@@ -491,26 +483,6 @@ void ScrollView::themeChanged()
     ScrollbarTheme::nativeTheme()->themeChanged();
     theme()->themeChanged();
     invalidate();
-}
-
-void ScrollView::wheelEvent(PlatformWheelEvent& e)
-{
-    if (!allowsScrolling())
-        return;
-
-    // Determine how much we want to scroll.  If we can move at all, we will accept the event.
-    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
-    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
-        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
-        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
-        (e.deltaY() > 0 && scrollOffset().height() > 0)) {
-        e.accept();
-        float deltaX = e.deltaX(), deltaY = e.deltaY();
-        adjustDeltaForPageScrollMode(deltaX, e.isPageXScrollModeEnabled(), visibleWidth());
-        adjustDeltaForPageScrollMode(deltaY, e.isPageYScrollModeEnabled(), visibleHeight());
-
-        scrollBy(IntSize(-deltaX * WHEEL_STEP, -deltaY * WHEEL_STEP));
-    }
 }
 
 void ScrollView::frameRectsChanged() const

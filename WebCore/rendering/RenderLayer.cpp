@@ -1364,17 +1364,17 @@ RenderLayer::updateScrollInfoAfterLayout()
     // Set up the range (and page step/line step).
     if (m_hBar) {
         int clientWidth = m_object->clientWidth();
-        int pageStep = (clientWidth-PAGE_KEEP);
+        int pageStep = (clientWidth - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientWidth;
-        m_hBar->setSteps(LINE_STEP, pageStep);
+        m_hBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_hBar->setProportion(clientWidth, m_scrollWidth);
         m_hBar->setValue(scrollXOffset());
     }
     if (m_vBar) {
         int clientHeight = m_object->clientHeight();
-        int pageStep = (clientHeight-PAGE_KEEP);
+        int pageStep = (clientHeight - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientHeight;
-        m_vBar->setSteps(LINE_STEP, pageStep);
+        m_vBar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_vBar->setProportion(clientHeight, m_scrollHeight);
     }
  

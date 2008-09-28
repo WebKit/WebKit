@@ -42,8 +42,9 @@ class ScrollbarTheme;
 class PlatformMouseEvent;
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
-#define LINE_STEP   40
-#define PAGE_KEEP   40
+const int cScrollbarPixelsPerLineStep =  40;
+const float cMouseWheelPixelsPerLineStep = 40.0f / 3.0f;
+const int cAmountToKeepWhenPaging = 40;
 
 class Scrollbar : public Widget, public RefCounted<Scrollbar> {
 protected:

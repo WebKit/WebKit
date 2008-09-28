@@ -362,19 +362,6 @@ bool ScrollView::isOffscreen() const
     return false;
 }
 
-void ScrollView::wheelEvent(PlatformWheelEvent& e)
-{
-    // Determine how much we want to scroll.  If we can move at all, we will accept the event.
-    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
-    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
-        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
-        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
-        (e.deltaY() > 0 && scrollOffset().height() > 0))
-        e.accept();
-
-    scrollBy(IntSize(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP));
-}
-
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
     // Don't allow re-entrancy into this function.
@@ -451,7 +438,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     } else if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         m_horizontalScrollbar->setEnabled(contentsWidth() > clientWidth);
-        int pageStep = (clientWidth - PAGE_KEEP);
+        int pageStep = (clientWidth - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientWidth;
         IntRect oldRect(m_horizontalScrollbar->frameRect());
         IntRect hBarRect = IntRect(0,
@@ -464,7 +451,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
-        m_horizontalScrollbar->setSteps(LINE_STEP, pageStep);
+        m_horizontalScrollbar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
         m_horizontalScrollbar->setValue(scroll.width());
         if (m_scrollbarsSuppressed)
@@ -486,7 +473,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     } else if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
         m_verticalScrollbar->setEnabled(contentsHeight() > clientHeight);
-        int pageStep = (clientHeight - PAGE_KEEP);
+        int pageStep = (clientHeight - cAmountToKeepWhenPaging);
         if (pageStep < 0) pageStep = clientHeight;
         IntRect oldRect(m_verticalScrollbar->frameRect());
         IntRect vBarRect = IntRect(width() - m_verticalScrollbar->width(),
@@ -499,7 +486,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
-        m_verticalScrollbar->setSteps(LINE_STEP, pageStep);
+        m_verticalScrollbar->setSteps(cScrollbarPixelsPerLineStep, pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
         m_verticalScrollbar->setValue(scroll.height());
         if (m_scrollbarsSuppressed)

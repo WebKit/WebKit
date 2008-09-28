@@ -220,9 +220,4 @@ bool ScrollView::isOffscreen() const
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }
 
-void ScrollView::wheelEvent(PlatformWheelEvent&)
-{
-    // Do nothing. NSScrollView handles doing the scroll for us.
-}
-
 }

@@ -59,6 +59,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 
     m_position = IntPoint((int)event->x, (int)event->y);
     m_globalPosition = IntPoint((int)event->x_root, (int)event->y_root);
+    m_granularity = ScrollByLineWheelEvent;
     m_isAccepted = false;
     m_shiftKey = event->state & GDK_SHIFT_MASK;
     m_ctrlKey = event->state & GDK_CONTROL_MASK;
@@ -69,13 +70,10 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     // GDK_MOD2_MASK doesn't always mean meta so we can't use it
     m_metaKey = false;
 #endif
-    m_isContinuous = false;
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
-    m_charsToScrollPerDelta = 1;
-    m_linesToScrollPerDelta = 1;
-    m_pageXScrollMode = false;
-    m_pageYScrollMode = false;
+    m_deltaX *= horizontalLineMultiplier();
+    m_deltaY *= verticalLineMultiplier();
 }
 
 }

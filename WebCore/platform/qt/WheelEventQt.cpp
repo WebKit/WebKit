@@ -35,12 +35,12 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
 #else
     : m_position(e->pos())
     , m_globalPosition(e->globalPos())
+    , m_granularity(ScrollByLineWheelEvent)
     , m_isAccepted(false)
     , m_shiftKey(e->modifiers() & Qt::ShiftModifier)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
     , m_altKey(e->modifiers() & Qt::AltModifier)
     , m_metaKey(e->modifiers() & Qt::MetaModifier)
-    , m_isContinuous(false)
 {
     if (e->orientation() == Qt::Horizontal) {
         m_deltaX = (e->delta() / 120);
@@ -51,10 +51,8 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
     }
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
-    m_charsToScrollPerDelta = 1;
-    m_linesToScrollPerDelta = 1;
-    m_pageXScrollMode = false;
-    m_pageYScrollMode = false;
+    m_deltaX *= horizontalLineMultiplier();
+    m_deltaY *= verticalLineMultiplier();
 }
 #endif // QT_NO_WHEELEVENT
 

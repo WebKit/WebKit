@@ -96,21 +96,20 @@ const double autoscrollInterval = 0.05;
 static Frame* subframeForTargetNode(Node*);
 static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
-static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, bool pageScrollEnabled, PlatformWheelEvent& e, Node* node, float windowHeightOrWidth)
+static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, PlatformWheelEvent& e, Node* node)
 {
     if (!delta)
         return;
-
+    if (e.granularity() == ScrollByPageWheelEvent) {
+        if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPage, 1))
+            e.accept();
+        return;
+    } 
     float pixelsToScroll = delta > 0 ? delta : -delta;
-    if (!e.isContinuous() && !pageScrollEnabled) {
-        if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByLine, pixelsToScroll))
-            e.accept();
-    } else {
-        if (pageScrollEnabled)
-            pixelsToScroll = windowHeightOrWidth; 
-        if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
-            e.accept();
-    }
+    if (e.granularity() == ScrollByLineWheelEvent)
+        pixelsToScroll *= cMouseWheelPixelsPerLineStep;
+    if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
+        e.accept();
 }
 
 EventHandler::EventHandler(Frame* frame)
@@ -1542,11 +1541,8 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         if (node->renderer()) {
             // Just break up into two scrolls if we need to.  Diagonal movement on 
             // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-            float deltaX = e.isContinuous() ? e.continuousDeltaX() : e.deltaX();
-            float deltaY = e.isContinuous() ? e.continuousDeltaY() : e.deltaY();
-            
-            scrollAndAcceptEvent(deltaX, ScrollLeft, ScrollRight, e.isPageXScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().width());
-            scrollAndAcceptEvent(deltaY, ScrollUp, ScrollDown, e.isPageYScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().height());
+            scrollAndAcceptEvent(e.deltaX(), ScrollLeft, ScrollRight, e, node);
+            scrollAndAcceptEvent(e.deltaY(), ScrollUp, ScrollDown, e, node);
         }
     }
 

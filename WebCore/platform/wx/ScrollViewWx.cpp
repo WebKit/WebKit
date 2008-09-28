@@ -84,27 +84,27 @@ public:
         }
         else if (scrollType == wxEVT_SCROLLWIN_LINEDOWN) {
             if (horiz) 
-                pos.x += LINE_STEP;
+                pos.x += cScrollbarPixelsPerLineStep;
             else       
-                pos.y += LINE_STEP;
+                pos.y += cScrollbarPixelsPerLineStep;
         }
         else if (scrollType == wxEVT_SCROLLWIN_LINEUP) {
             if (horiz) 
-                pos.x -= LINE_STEP;
+                pos.x -= cScrollbarPixelsPerLineStep;
             else       
-                pos.y -= LINE_STEP;
+                pos.y -= cScrollbarPixelsPerLineStep;
         }
         else if (scrollType == wxEVT_SCROLLWIN_PAGEUP) {
             if (horiz) 
-                pos.x -= m_scrollView->visibleWidth() - PAGE_KEEP;
+                pos.x -= m_scrollView->visibleWidth() - cAmountToKeepWhenPaging;
             else       
-                pos.y -= m_scrollView->visibleHeight() - PAGE_KEEP;
+                pos.y -= m_scrollView->visibleHeight() - cAmountToKeepWhenPaging;
         }
         else if (scrollType == wxEVT_SCROLLWIN_PAGEDOWN) {
             if (horiz) 
-                pos.x += m_scrollView->visibleWidth() - PAGE_KEEP;
+                pos.x += m_scrollView->visibleWidth() - cAmountToKeepWhenPaging;
             else       
-                pos.y += m_scrollView->visibleHeight() - PAGE_KEEP;
+                pos.y += m_scrollView->visibleHeight() - cAmountToKeepWhenPaging;
         }
         else
             return e.Skip();
@@ -322,7 +322,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
         (e.deltaY() > 0 && scrollOffset().height() > 0)) {
         e.accept();
-        scrollBy(IntSize(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP));
+        scrollBy(IntSize(-e.deltaX() * cScrollbarPixelsPerLineStep, -e.deltaY() * cScrollbarPixelsPerLineStep));
     }
 }
 

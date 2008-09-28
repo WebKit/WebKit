@@ -27,6 +27,7 @@
 #include "ScrollView.h"
 
 #include "PlatformMouseEvent.h"
+#include "PlatformWheelEvent.h"
 #include "Scrollbar.h"
 
 using std::max;
@@ -266,6 +267,34 @@ Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
     if (m_verticalScrollbar && m_verticalScrollbar->frameRect().contains(viewPoint))
         return m_verticalScrollbar.get();
     return 0;
+}
+
+void ScrollView::wheelEvent(PlatformWheelEvent& e)
+{
+    if (!allowsScrolling() || platformWidget())
+        return;
+
+    // Determine how much we want to scroll.  If we can move at all, we will accept the event.
+    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
+    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
+        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
+        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
+        (e.deltaY() > 0 && scrollOffset().height() > 0)) {
+        e.accept();
+        float deltaX = e.deltaX();
+        float deltaY = e.deltaY();
+        if (e.granularity() == ScrollByLineWheelEvent) {
+            deltaX *= cMouseWheelPixelsPerLineStep;
+            deltaY *= cMouseWheelPixelsPerLineStep;
+        } else if (e.granularity() == ScrollByPageWheelEvent) {
+            ASSERT(deltaX == 0);
+            bool negative = deltaY < 0;
+            deltaY = max(0, visibleHeight() - cAmountToKeepWhenPaging);
+            if (negative)
+                deltaY = -deltaY;
+        }
+        scrollBy(IntSize(-deltaX, -deltaY));
+    }
 }
 
 #if !PLATFORM(MAC)
