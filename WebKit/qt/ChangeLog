@@ -1,3 +1,13 @@
+2008-09-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Ensure the mainThreadIdentifier is set as well as other bits and pieces of
+        the threading machinery, by calling JSC::initializeThreading().
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
         Forgot to land renaming changes in WebKit.
