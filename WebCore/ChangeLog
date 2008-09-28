@@ -1,3 +1,10 @@
+2008-09-27  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Gtk+ build fix.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+
 2008-09-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

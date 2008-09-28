@@ -221,7 +221,7 @@ void ScrollView::ScrollViewPrivate::valueChanged(Scrollbar* bar)
         return;
     view->m_scrollOffset = newOffset;
 
-    if (scrollbarsSuppressed)
+    if (view->scrollbarsSuppressed())
         return;
 
     scrollBackingStore(scrollDelta);
