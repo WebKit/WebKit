@@ -102,40 +102,40 @@ void HTMLVideoElement::parseMappedAttribute(MappedAttribute* attr)
         HTMLMediaElement::parseMappedAttribute(attr);
 }
 
-int HTMLVideoElement::videoWidth() const
+unsigned HTMLVideoElement::videoWidth() const
 {
     if (!m_player)
         return 0;
     return m_player->naturalSize().width();
 }
 
-int HTMLVideoElement::videoHeight() const
+unsigned HTMLVideoElement::videoHeight() const
 {
     if (!m_player)
         return 0;
     return m_player->naturalSize().height();
 }
 
-int HTMLVideoElement::width() const
+unsigned HTMLVideoElement::width() const
 {
     bool ok;
-    int w = getAttribute(widthAttr).toInt(&ok);
+    unsigned w = getAttribute(widthAttr).string().toUInt(&ok);
     return ok ? w : 0;
 }
 
-void HTMLVideoElement::setWidth(int value)
+void HTMLVideoElement::setWidth(unsigned value)
 {
     setAttribute(widthAttr, String::number(value));
 }
     
-int HTMLVideoElement::height() const
+unsigned HTMLVideoElement::height() const
 {
     bool ok;
-    int h = getAttribute(heightAttr).toInt(&ok);
+    unsigned h = getAttribute(heightAttr).string().toUInt(&ok);
     return ok ? h : 0;
 }
     
-void HTMLVideoElement::setHeight(int value)
+void HTMLVideoElement::setHeight(unsigned value)
 {
     setAttribute(heightAttr, String::number(value));
 }

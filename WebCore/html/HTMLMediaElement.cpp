@@ -685,9 +685,9 @@ void HTMLMediaElement::pause(ExceptionCode& ec)
 
 unsigned HTMLMediaElement::playCount() const
 {
-    String val = getAttribute(playcountAttr);
-    int count = val.toInt();
-    return max(count, 1); 
+    bool ok;
+    unsigned count = getAttribute(playcountAttr).string().toUInt(&ok);
+    return (count > 0 && ok) ? count : 1; 
 }
 
 void HTMLMediaElement::setPlayCount(unsigned count, ExceptionCode& ec)

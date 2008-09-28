@@ -1,3 +1,29 @@
+2008-09-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        fix https://bugs.webkit.org/show_bug.cgi?id=20994
+        <rdar://problem/6171023> HTMLVideoElement width and height attributes are now unsigned
+        
+        HTML5 spec says HTMLVideoElement width and height attributes should be unsigned. Convert
+        all unsigned media attributes from string with toUInt() instead of toInt().
+        
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playCount): convert from attribute with toUInt().
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::videoWidth):
+        (WebCore::HTMLVideoElement::videoHeight): return unsigned to match idl.
+        (WebCore::HTMLVideoElement::width): convert from attribute with toUInt() and return
+          unsigned value.
+        (WebCore::HTMLVideoElement::height): Ditto.
+        (WebCore::HTMLVideoElement::setWidth): take unsigned value.
+        (WebCore::HTMLVideoElement::setHeight): Ditto.
+
+        * html/HTMLVideoElement.h: width, height, videoWidth, and videoHeight are unsigned.
+
+        * html/HTMLVideoElement.idl: make width and height unsigned to match HTML5 spec.
+
 2008-09-27  Timothy Hatcher  <timothy@apple.com>
 
         Fixes an exception when typing a command in the Console.
