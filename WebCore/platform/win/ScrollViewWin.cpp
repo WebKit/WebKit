@@ -485,13 +485,6 @@ void ScrollView::themeChanged()
     invalidate();
 }
 
-void ScrollView::frameRectsChanged() const
-{
-    HashSet<Widget*>::const_iterator end = m_children.end();
-    for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
-        (*current)->frameRectsChanged();
-}
-
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
     if (direction == ScrollUp || direction == ScrollDown) {

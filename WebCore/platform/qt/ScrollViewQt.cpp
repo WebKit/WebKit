@@ -233,13 +233,6 @@ void ScrollView::setFrameRect(const IntRect& newGeometry)
     frameRectsChanged();
 }
 
-void ScrollView::frameRectsChanged() const
-{
-    HashSet<Widget*>::const_iterator end = m_children.end();
-    for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
-        (*current)->frameRectsChanged();
-}
-
 bool ScrollView::isOffscreen() const
 {
     return false;

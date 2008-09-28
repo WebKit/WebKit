@@ -1,3 +1,17 @@
+2008-09-28  David Hyatt  <hyatt@apple.com>
+
+        Make frameRectsChanged() cross-platform on ScrollView.
+
+        Reviewed by Oliver Hunt
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::frameRectsChanged):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+
 2008-09-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

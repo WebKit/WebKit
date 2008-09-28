@@ -142,6 +142,9 @@ public:
     void adjustScrollbarsAvoidingResizerCount(int overlapDelta);
     virtual void setParent(ScrollView*); // Overridden to update the overlapping scrollbar count.
 
+    // Called when our frame rect changes (or the rect/scroll position of an ancestor changes).
+    virtual void frameRectsChanged() const;
+    
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
     Scrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
 
@@ -196,7 +199,7 @@ private:
     bool m_scrollbarsSuppressed;
 
     void init();
-    
+
     void platformAddChild(Widget*);
     void platformRemoveChild(Widget*);
     void platformSetScrollbarModes();
@@ -227,7 +230,6 @@ private:
 public:
     virtual void paint(GraphicsContext*, const IntRect&);
 
-    virtual void frameRectsChanged() const;
     virtual void setFrameRect(const IntRect&);
 
     void addToDirtyRegion(const IntRect&);

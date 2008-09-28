@@ -297,6 +297,16 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     }
 }
 
+void ScrollView::frameRectsChanged() const
+{
+    if (platformWidget())
+        return;
+
+    HashSet<Widget*>::const_iterator end = m_children.end();
+    for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
+        (*current)->frameRectsChanged();
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {

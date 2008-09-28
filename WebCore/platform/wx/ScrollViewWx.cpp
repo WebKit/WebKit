@@ -313,19 +313,6 @@ bool ScrollView::isOffscreen() const
     return platformWidget() == NULL;
 }
 
-void ScrollView::wheelEvent(PlatformWheelEvent& e)
-{
-    // Determine how much we want to scroll.  If we can move at all, we will accept the event.
-    IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
-    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
-        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
-        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
-        (e.deltaY() > 0 && scrollOffset().height() > 0)) {
-        e.accept();
-        scrollBy(IntSize(-e.deltaX() * cScrollbarPixelsPerLineStep, -e.deltaY() * cScrollbarPixelsPerLineStep));
-    }
-}
-
 // used for subframes support
 void ScrollView::platformAddChild(Widget* widget)
 {
