@@ -76,8 +76,7 @@ public:
     String shape() const;
     void setShape(const String&);
 
-    short tabIndex() const;
-    void setTabIndex(int);
+    virtual short tabIndex() const;
 
     virtual String target() const;
     void setTarget(const String&);

@@ -57,9 +57,9 @@ public:
     // DOM methods overridden from parent classes
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual const AtomicString& localName() const;
-    virtual const AtomicString& namespaceURI() const;
-    virtual const AtomicString& prefix() const;
+    const AtomicString& localName() const;
+    const AtomicString& namespaceURI() const;
+    const AtomicString& prefix() const;
     virtual void setPrefix(const AtomicString&, ExceptionCode&);
 
     virtual String nodeValue() const;
@@ -81,6 +81,10 @@ public:
     void setSpecified(bool specified) { m_specified = specified; }
 
 private:
+    virtual const AtomicString& virtualPrefix() const { return prefix(); }
+    virtual const AtomicString& virtualLocalName() const { return localName(); }
+    virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
+
     Element* m_element;
     RefPtr<Attribute> m_attribute;
     unsigned m_ignoreChildrenChanged : 31;

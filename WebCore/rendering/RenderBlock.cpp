@@ -629,10 +629,12 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_topMarginQuirk = style()->marginTop().quirk();
         m_bottomMarginQuirk = style()->marginBottom().quirk();
 
-        if (element() && element()->hasTagName(formTag) && element()->isMalformed())
+        Node* node = element();
+        if (node && node->hasTagName(formTag) && static_cast<HTMLFormElement*>(node)->isMalformed()) {
             // See if this form is malformed (i.e., unclosed). If so, don't give the form
             // a bottom margin.
             setMaxBottomMargins(0, 0);
+        }
     }
 
     // For overflow:scroll blocks, ensure we have both scrollbars in place always.

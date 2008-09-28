@@ -478,7 +478,7 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
     // 2. Next we examine our currently active element to do some further error handling.
     if (current->isHTMLElement()) {
         HTMLElement* h = static_cast<HTMLElement*>(current);
-        const AtomicString& currentTagName = current->localName();
+        const AtomicString& currentTagName = h->localName();
         if (h->hasLocalName(htmlTag)) {
             HTMLElement* elt = n->isHTMLElement() ? static_cast<HTMLElement*>(n) : 0;
             if (elt && (elt->hasLocalName(scriptTag) || elt->hasLocalName(styleTag) ||

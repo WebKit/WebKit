@@ -1,3 +1,92 @@
+2008-09-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig (except for a few comment and header tweaks).
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21158
+          reduce use of virtual functions in Node for speed
+
+        Speeds up Dromaeo a bit less than 1%.
+
+        * bindings/js/JSNamedNodesCollection.cpp: Include Element.h instead of
+        Node.h now that some inlines are in there.
+
+        * dom/Attr.h: Override both the virtual and non-virtual name functions.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::nodeMatches): Updated to take an Element.
+        * dom/ChildNodeList.h: Ditto.
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::nodeMatches): Ditto.
+        * dom/ClassNodeList.h: Ditto.
+
+        * dom/Document.h: Put the Node::isDocumentNode() function's inline
+        definition here where it can see the Document class definition.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::length): Changed to pass an Element.
+        (WebCore::DynamicNodeList::itemForwardsFromCurrent): Ditto.
+        (WebCore::DynamicNodeList::itemBackwardsFromCurrent): Ditto.
+        (WebCore::DynamicNodeList::itemWithName): Ditto.
+        * dom/DynamicNodeList.h: Ditto.
+
+        * dom/Element.cpp: Removed virtualHasTagName.
+        * dom/Element.h: Made localName, prefix, namespaceURI, and
+        styleForRenderer non-virtual. Added virtualPrefix, virtualLocalName,
+        virtualNamespaceURI, and removed virtualHasTagName. Put the
+        Node::hasTagName, Node::hasAttributes, and Node::attributes
+        functions' inline definitions here where they can see the Element
+        class definition.
+
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::nodeMatches): Updated to take an Element.
+        * dom/NameNodeList.h: Ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::virtualPrefix): Renamed from prefix.
+        (WebCore::Node::virtualLocalName): Renamed from localName.
+        (WebCore::Node::virtualNamespaceURI): Renamed from namespaceURI.
+        (WebCore::Node::styleForRenderer): Handle the Element case here.
+
+        * dom/Node.h: Removed definition of hasTagName that calls virtual,
+        since we now have a non-virtual version. Made hasAttributes,
+        attributes, remove, localName, namespaceURI, prefix, isDocumentNode,
+        and styleForRenderer non-virtual. Added virtualPrefix,
+        virtualLocalName, and virtualNamespaceURI. Removed isMalformed
+        and setMalformed, which are used only on HTMLFormElement objects.
+
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::nodeMatches): Updated to take an Element.
+        * dom/TagNodeList.h: Ditto.
+
+        * html/HTMLAnchorElement.cpp: Added a comment.
+        * html/HTMLFormControlElement.cpp: Ditto.
+
+        * html/HTMLAnchorElement.h: Removed unused, unimplemented setTabIndex
+        function. Marked tabIndex function virtual explicitly for clarity.
+
+        * html/HTMLAreaElement.h: Removed unused, unimplemented setTabIndex
+        function. Marked isFocusable function virtual explicitly for clarity.
+
+        * html/HTMLElement.h: Marked tabIndex function virtual explicitly for
+        clarity.
+        * html/HTMLFormControlElement.h: Ditto.
+
+        * html/HTMLFormElement.h: Made isMalformed non-virtual.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError): Use the already-cast-to-HTMLElement
+        pointer to call localName since that one does not need to call a virtual
+        function.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Cast to HTMLFormElement before
+        calling isMalformed. We already did a tag name check so we know it's
+        an HTMLFormELement.
+
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::isValidContextNode): Rewrote to not make so many calls
+        to nodeType(), since it's a virtual function.
+
 2008-09-28  David Hyatt  <hyatt@apple.com>
 
         Make frameRectsChanged() cross-platform on ScrollView.

@@ -1,8 +1,8 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -59,35 +59,29 @@ unsigned DynamicNodeList::length() const
     if (m_caches->isLengthCacheValid)
         return m_caches->cachedLength;
 
-    unsigned len = 0;
+    unsigned length = 0;
 
-    for (Node* n = m_rootNode->firstChild(); n; n = n->traverseNextNode(m_rootNode.get())) {
-        if (n->isElementNode()) {
-            if (nodeMatches(n))
-                len++;
-        }
-    }
+    for (Node* n = m_rootNode->firstChild(); n; n = n->traverseNextNode(m_rootNode.get()))
+        length += n->isElementNode() && nodeMatches(static_cast<Element*>(n));
 
-    m_caches->cachedLength = len;
+    m_caches->cachedLength = length;
     m_caches->isLengthCacheValid = true;
 
-    return len;
+    return length;
 }
 
 Node* DynamicNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset >= 0);
     for (Node* n = start; n; n = n->traverseNextNode(m_rootNode.get())) {
-        if (n->isElementNode()) {
-            if (nodeMatches(n)) {
-                if (!remainingOffset) {
-                    m_caches->lastItem = n;
-                    m_caches->lastItemOffset = offset;
-                    m_caches->isItemCacheValid = true;
-                    return n;
-                }
-                remainingOffset--;
+        if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
+            if (!remainingOffset) {
+                m_caches->lastItem = n;
+                m_caches->lastItemOffset = offset;
+                m_caches->isItemCacheValid = true;
+                return n;
             }
+            --remainingOffset;
         }
     }
 
@@ -98,16 +92,14 @@ Node* DynamicNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, in
 {
     ASSERT(remainingOffset < 0);
     for (Node* n = start; n; n = n->traversePreviousNode(m_rootNode.get())) {
-        if (n->isElementNode()) {
-            if (nodeMatches(n)) {
-                if (!remainingOffset) {
-                    m_caches->lastItem = n;
-                    m_caches->lastItemOffset = offset;
-                    m_caches->isItemCacheValid = true;
-                    return n;
-                }
-                remainingOffset++;
+        if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
+            if (!remainingOffset) {
+                m_caches->lastItem = n;
+                m_caches->lastItemOffset = offset;
+                m_caches->isItemCacheValid = true;
+                return n;
             }
+            ++remainingOffset;
         }
     }
 
@@ -135,21 +127,18 @@ Node* DynamicNodeList::item(unsigned offset) const
 Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
 {
     if (m_rootNode->isDocumentNode() || m_rootNode->inDocument()) {
-        Node* node = m_rootNode->document()->getElementById(elementId);
-
-        if (!node || !nodeMatches(node))
-            return 0;
-
-        for (Node* p = node->parentNode(); p; p = p->parentNode()) {
-            if (p == m_rootNode)
-                return node;
+        Element* node = m_rootNode->document()->getElementById(elementId);
+        if (node && nodeMatches(node)) {
+            for (Node* p = node->parentNode(); p; p = p->parentNode()) {
+                if (p == m_rootNode)
+                    return node;
+            }
         }
-
         return 0;
     }
 
-    unsigned l = length();
-    for (unsigned i = 0; i < l; i++) {
+    unsigned length = this->length();
+    for (unsigned i = 0; i < length; i++) {
         Node* node = item(i);
         if (node->isElementNode() && static_cast<Element*>(node)->getIDAttribute() == elementId)
             return node;

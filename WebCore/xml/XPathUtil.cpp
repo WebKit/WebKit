@@ -66,16 +66,28 @@ String stringValue(Node* node)
 
 bool isValidContextNode(Node* node)
 {
-    return node && (
-           node->nodeType() == Node::ELEMENT_NODE ||
-           node->nodeType() == Node::ATTRIBUTE_NODE ||
-           node->nodeType() == Node::TEXT_NODE ||
-           node->nodeType() == Node::CDATA_SECTION_NODE ||
-           node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE ||
-           node->nodeType() == Node::COMMENT_NODE ||
-           node->nodeType() == Node::DOCUMENT_NODE ||
-           node->nodeType() == Node::XPATH_NAMESPACE_NODE) &&
-           !(node->nodeType() == Node::TEXT_NODE && node->parentNode() && node->parentNode()->isAttributeNode());
+    if (!node)
+        return false;
+    switch (node->nodeType()) {
+        case Node::ATTRIBUTE_NODE:
+        case Node::CDATA_SECTION_NODE:
+        case Node::COMMENT_NODE:
+        case Node::DOCUMENT_NODE:
+        case Node::ELEMENT_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
+        case Node::XPATH_NAMESPACE_NODE:
+            return true;
+        case Node::DOCUMENT_FRAGMENT_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
+        case Node::ENTITY_NODE:
+        case Node::ENTITY_REFERENCE_NODE:
+        case Node::NOTATION_NODE:
+            return false;
+        case Node::TEXT_NODE:
+            return !(node->parentNode() && node->parentNode()->isAttributeNode());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 }

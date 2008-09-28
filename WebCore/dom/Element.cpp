@@ -1199,11 +1199,6 @@ void Element::cancelFocusAppearanceUpdate()
         document()->cancelFocusAppearanceUpdate();
 }
 
-bool Element::virtualHasTagName(const QualifiedName& name) const
-{
-    return hasTagName(name);
-}
-
 void Element::normalizeAttributes()
 {
     // Normalize attributes.

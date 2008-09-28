@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +23,7 @@
 #include "config.h"
 #include "ChildNodeList.h"
 
-#include "ContainerNode.h"
+#include "Element.h"
 
 namespace WebCore {
 
@@ -98,8 +98,11 @@ Node* ChildNodeList::item(unsigned index) const
     return 0;
 }
 
-bool ChildNodeList::nodeMatches(Node* testNode) const
+bool ChildNodeList::nodeMatches(Element* testNode) const
 {
+    // Note: Due to the overrides of the length and item functions above,
+    // this function will be called only by DynamicNodeList::itemWithName,
+    // for an element that was located with getElementById.
     return testNode->parentNode() == m_rootNode;
 }
 

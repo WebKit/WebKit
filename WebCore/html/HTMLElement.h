@@ -59,7 +59,7 @@ public:
     void setDir(const String&);
     String className() const;
     void setClassName(const String&);
-    short tabIndex() const;
+    virtual short tabIndex() const;
     void setTabIndex(int);
 
     String innerHTML() const;

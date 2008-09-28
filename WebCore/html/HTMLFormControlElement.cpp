@@ -225,6 +225,7 @@ bool HTMLFormControlElement::isMouseFocusable() const
 
 short HTMLFormControlElement::tabIndex() const
 {
+    // Skip the supportsFocus check in HTMLElement.
     return Element::tabIndex();
 }
 

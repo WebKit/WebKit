@@ -271,11 +271,6 @@ PassRefPtr<NodeList> Node::childNodes()
     return ChildNodeList::create(this, &data->nodeLists()->m_childNodeListCaches);
 }
 
-bool Node::virtualHasTagName(const QualifiedName&) const
-{
-    return false;
-}
-
 Node *Node::lastDescendant() const
 {
     Node *n = const_cast<Node *>(this);
@@ -369,7 +364,7 @@ void Node::normalize()
     }
 }
 
-const AtomicString& Node::prefix() const
+const AtomicString& Node::virtualPrefix() const
 {
     // For nodes other than elements and attributes, the prefix is always null
     return nullAtom;
@@ -383,12 +378,12 @@ void Node::setPrefix(const AtomicString& /*prefix*/, ExceptionCode& ec)
     ec = NAMESPACE_ERR;
 }
 
-const AtomicString& Node::localName() const
+const AtomicString& Node::virtualLocalName() const
 {
     return nullAtom;
 }
 
-const AtomicString& Node::namespaceURI() const
+const AtomicString& Node::virtualNamespaceURI() const
 {
     return nullAtom;
 }
@@ -1049,9 +1044,11 @@ void Node::createRendererIfNeeded()
     }
 }
 
-RenderStyle *Node::styleForRenderer(RenderObject *parent)
+RenderStyle* Node::styleForRenderer(RenderObject* parent)
 {
-    RenderStyle *style = parent->style();
+    if (isElementNode())
+        return document()->styleSelector()->styleForElement(static_cast<Element*>(this));
+    RenderStyle* style = parent->style();
     style->ref();
     return style;
 }
@@ -1456,16 +1453,6 @@ Document *Node::ownerDocument() const
 {
     Document *doc = document();
     return doc == this ? 0 : doc;
-}
-
-bool Node::hasAttributes() const
-{
-    return false;
-}
-
-NamedAttrMap* Node::attributes() const
-{
-    return 0;
 }
 
 KURL Node::baseURI() const
