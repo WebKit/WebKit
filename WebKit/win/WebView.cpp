@@ -881,7 +881,7 @@ void WebView::paint(HDC dc, LPARAM options)
             RECT r;
             if (SUCCEEDED(uiPrivate->webViewResizerRect(this, &r))) {
                 LOCAL_GDI_COUNTER(2, __FUNCTION__" webViewDrawResizer delegate call");
-                uiPrivate->webViewDrawResizer(this, hdc, (frameView->resizerOverlapsContent() ? true : false), &r);
+                uiPrivate->webViewDrawResizer(this, hdc, (frameView->containsScrollbarsAvoidingResizer() ? true : false), &r);
             }
         }
     }
