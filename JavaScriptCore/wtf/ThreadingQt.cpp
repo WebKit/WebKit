@@ -127,7 +127,9 @@ void initializeThreading()
         threadMapMutex();
         wtf_random_init();
         QThread* mainThread = QCoreApplication::instance()->thread();
-        mainThreadIdentifier = establishIdentifierForThread(mainThread);
+        mainThreadIdentifier = identifierByQthreadHandle(mainThread);
+        if (!mainThreadIdentifier)
+            mainThreadIdentifier = establishIdentifierForThread(mainThread);
         initializeMainThread();
     }
 }

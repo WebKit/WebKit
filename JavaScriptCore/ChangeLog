@@ -1,3 +1,16 @@
+2008-09-28  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        In Qt's initializeThreading re-use an existing thread identifier for the main
+        thread if it exists.
+
+        currentThread() implicitly creates new identifiers and it could be that
+        it is called before initializeThreading().
+
+        * wtf/ThreadingQt.cpp:
+        (WTF::initializeThreading):
+
 2008-09-27  Keishi Hattori  <casey.hattori@gmail.com>
 
         Added Machine::retrieveCaller to the export list.
