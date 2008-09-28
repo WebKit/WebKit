@@ -7,7 +7,7 @@
         * platform/graphics/win/FontCustomPlatformData.cpp:
         (WebCore::EOTStream::EOTStream): Added overlayDst, overlaySrc and
         overlayLength parameters.
-        (WebCore::EOTStream::read): Added code to overlay the the
+        (WebCore::EOTStream::read): Added code to overlay the
         m_overlayLength bytes starting at m_overlayDst with the same number of
         bytes from m_overlaySrc.
         (WebCore::createFontCustomPlatformData): Changed to get overlay
