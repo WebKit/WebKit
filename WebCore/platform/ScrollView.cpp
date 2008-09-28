@@ -183,7 +183,7 @@ IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
     return convertToContainingWindow(viewRect);
 }
 
-bool ScrollView::resizerOverlapsContent() const
+bool ScrollView::containsScrollbarsAvoidingResizer() const
 {
     return !m_scrollbarsAvoidingResizer;
 }
