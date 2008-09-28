@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -148,11 +148,14 @@ using namespace WebCore;
 {
     ASSERT(_targetView);
 
-    [_highlightView setNeedsDisplayInRect:[_targetView _web_convertRect:rect toView:_highlightView]];
+    [[_targetView window] disableScreenUpdatesUntilFlush];
 
-    // Redraw highlight view immediately so it updates in sync with the target view
-    // if we called disableScreenUpdatesUntilFlush on the target view earlier. This
-    // is especially visible when resizing the window.
+    // Mark the whole highlight view as needing display since we don't know what areas
+    // need updated, since the highlight can be larger than the element to show margins.
+    [_highlightView setNeedsDisplay:YES];
+
+    // Redraw highlight view immediately so it updates in sync with the target view.
+    // This is especially visible when resizing the window, scrolling or with DHTML.
     [_highlightView displayIfNeeded];
 }
 

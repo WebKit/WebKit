@@ -1,3 +1,38 @@
+2008-09-28  Timothy Hatcher  <timothy@apple.com>
+
+        Improves the Web Inspector node highlight so it does not scroll
+        to reveal the node in the page. This makes the highlight less
+        invasive and causes less things to change on screen. Also makes
+        the highlight redraw when the WebView draws, so it stays current
+        if the node changes on the page for any reason.
+
+        <rdar://problem/6115804> Don't scroll when highlighting (21000)
+        https://bugs.webkit.org/show_bug.cgi?id=21000
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController highlightNode:]): Call setNeedsDisplay:YES
+        if there is an existing highlight.
+        (-[WebInspectorWindowController didAttachWebNodeHighlight:]): Set the current
+        highlight node on the inspected WebView.
+        (-[WebInspectorWindowController willDetachWebNodeHighlight:]): Set the current
+        highlight node on the inspected WebView to nil.
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight setNeedsUpdateInTargetViewRect:]): Disable screen updates
+        until flush for the inspected window. Invalidate the whole highlight view since
+        we don't know the rect that needs updated since the highlight can be larger than
+        the highlighted element due to the margins and other factors.
+        * WebInspector/WebNodeHighlightView.m:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawSingleRect:]): Call setNeedsUpdateInTargetViewRect: on the
+        current highlight node.
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]): Release the current highlight node.
+        (-[WebView setCurrentNodeHighlight:]): Set the current highlight node.
+        (-[WebView currentNodeHighlight]): Return the current highlight node.
+        * WebView/WebViewInternal.h:
+
 2008-09-28  David Kilzer  <ddkilzer@apple.com>
 
         Fix build warning in WebDefaultUIDelegate.m

@@ -1,3 +1,16 @@
+2008-09-28  Timothy Hatcher  <timothy@apple.com>
+
+        Remove the scrollIntoViewIfNeeded() call when drawing the
+        Inspector node highlight.
+
+        <rdar://problem/6115804> Don't scroll when highlighting (21000)
+        https://bugs.webkit.org/show_bug.cgi?id=21000
+
+        Reviewed by Dan Bernstein.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight):
+
 2008-09-28  David Hyatt  <hyatt@apple.com>
 
         Fix crash when WebKit has no instantiated Scrollbars and the appearance prefs for scrollbars are

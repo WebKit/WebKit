@@ -65,6 +65,7 @@
 #import "WebKitSystemBits.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
+#import "WebNodeHighlight.h"
 #import "WebNSDataExtras.h"
 #import "WebNSDataExtrasPrivate.h"
 #import "WebNSDictionaryExtras.h"
@@ -328,6 +329,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     id scriptDebugDelegateForwarder;
 
     WebInspector *inspector;
+    WebNodeHighlight *currentNodeHighlight;
 
     BOOL allowsUndo;
         
@@ -511,6 +513,8 @@ static BOOL grammarCheckingEnabled;
     [backgroundColor release];
     
     [inspector release];
+    [currentNodeHighlight release];
+
     [hostWindow release];
 
     [policyDelegateForwarder release];
@@ -2939,6 +2943,18 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)shouldUpdateWhileOffscreen
 {
     return _private->shouldUpdateWhileOffscreen;
+}
+
+- (void)setCurrentNodeHighlight:(WebNodeHighlight *)nodeHighlight
+{
+    id old = _private->currentNodeHighlight;
+    _private->currentNodeHighlight = [nodeHighlight retain];
+    [old release];
+}
+
+- (WebNodeHighlight *)currentNodeHighlight
+{
+    return _private->currentNodeHighlight;
 }
 
 @end

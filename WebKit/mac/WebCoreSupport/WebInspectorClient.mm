@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,6 @@ using namespace WebCore;
 - (void)attach;
 - (void)detach;
 - (void)setAttachedWindowHeight:(unsigned)height;
-- (void)highlightAndScrollToNode:(DOMNode *)node;
 - (void)highlightNode:(DOMNode *)node;
 - (void)hideHighlight;
 @end
@@ -123,7 +122,7 @@ void WebInspectorClient::setAttachedWindowHeight(unsigned height)
 
 void WebInspectorClient::highlight(Node* node)
 {
-    [m_windowController.get() highlightAndScrollToNode:kit(node)];
+    [m_windowController.get() highlightNode:kit(node)];
 }
 
 void WebInspectorClient::hideHighlight()
@@ -392,31 +391,6 @@ void WebInspectorClient::updateWindowTitle() const
 
 #pragma mark -
 
-- (void)highlightAndScrollToNode:(DOMNode *)node
-{
-    NSRect bounds = [node boundingBox];
-    if (!NSIsEmptyRect(bounds)) {
-        // FIXME: this needs to use the frame the node coordinates are in
-        NSRect visible = [[[[_inspectedWebView mainFrame] frameView] documentView] visibleRect];
-        BOOL needsScroll = !NSContainsRect(visible, bounds) && !NSContainsRect(bounds, visible);
-
-        // only scroll if the bounds isn't in the visible rect and dosen't contain the visible rect
-        if (needsScroll) {
-            // scroll to the parent element if we aren't focused on an element
-            DOMElement *element;
-            if ([node isKindOfClass:[DOMElement class]])
-                element = (DOMElement *)node;
-            else
-                element = (DOMElement *)[node parentNode];
-            [element scrollIntoViewIfNeeded:YES];
-
-            // give time for the scroll to happen
-            [self performSelector:@selector(highlightNode:) withObject:node afterDelay:0.25];
-        } else
-            [self highlightNode:node];
-    }
-}
-
 - (void)highlightNode:(DOMNode *)node
 {
     // The scrollview's content view stays around between page navigations, so target it
@@ -428,10 +402,8 @@ void WebInspectorClient::updateWindowTitle() const
         _currentHighlight = [[WebNodeHighlight alloc] initWithTargetView:view inspectorController:[_inspectedWebView page]->inspectorController()];
         [_currentHighlight setDelegate:self];
         [_currentHighlight attach];
-    }
-
-    // FIXME: this is a hack until we hook up a didDraw and didScroll call in WebHTMLView
-    [[_currentHighlight highlightView] setNeedsDisplay:YES];
+    } else
+        [[_currentHighlight highlightView] setNeedsDisplay:YES];
 }
 
 - (void)hideHighlight
@@ -440,6 +412,19 @@ void WebInspectorClient::updateWindowTitle() const
     [_currentHighlight setDelegate:nil];
     [_currentHighlight release];
     _currentHighlight = nil;
+}
+
+#pragma mark -
+#pragma mark WebNodeHighlight delegate
+
+- (void)didAttachWebNodeHighlight:(WebNodeHighlight *)highlight
+{
+    [_inspectedWebView setCurrentNodeHighlight:highlight];
+}
+
+- (void)willDetachWebNodeHighlight:(WebNodeHighlight *)highlight
+{
+    [_inspectedWebView setCurrentNodeHighlight:nil];
 }
 
 #pragma mark -

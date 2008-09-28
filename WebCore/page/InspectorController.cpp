@@ -2499,7 +2499,6 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
             element = static_cast<Element*>(m_highlightedNode.get());
         else
             element = static_cast<Element*>(m_highlightedNode->parent());
-        element->scrollIntoViewIfNeeded();
         overlayRect = view->visibleContentRect();
     }
 

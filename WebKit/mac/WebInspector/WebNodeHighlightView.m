@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,11 +34,6 @@
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
-
-#define OVERLAY_MAX_ALPHA 0.7
-#define OVERLAY_WHITE_VALUE 0.1
-
-#define BORDER_THICKNESS 1.0
 
 @implementation WebNodeHighlightView
 
@@ -85,13 +80,6 @@ using namespace WebCore;
 - (WebNodeHighlight *)webNodeHighlight
 {
     return _webNodeHighlight;
-}
-
-- (void)setNeedsDisplayInRect:(NSRect)rect
-{
-    // Redisplay a slightly larger rect to account for the border
-    rect = NSInsetRect(rect, -1 * BORDER_THICKNESS, -1 * BORDER_THICKNESS);
-    [super setNeedsDisplayInRect:rect];
 }
 
 @end
