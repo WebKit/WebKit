@@ -88,7 +88,7 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     }
 }
 
-- (NSResponder *)webViewFirstResponder: (WebView *)wv;
+- (NSResponder *)webViewFirstResponder: (WebView *)wv
 {
     return [[wv window] firstResponder];
 }

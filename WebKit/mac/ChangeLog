@@ -1,3 +1,20 @@
+2008-09-28  David Kilzer  <ddkilzer@apple.com>
+
+        Fix build warning in WebDefaultUIDelegate.m
+
+        Reviewed by Dan Bernstein.
+
+        This fixes a warning noticed by the clang static analyzer:
+        .../WebDefaultUIDelegate.m: In function ‘-[WebDefaultUIDelegate webViewFirstResponder:]’:
+        .../WebDefaultUIDelegate.m:92: warning: initialization from distinct Objective-C type
+
+        Note that this doesn't actually cause any change in behavior since
+        the gcc compiler ignores the semi-colon anyway.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webViewFirstResponder:]): Removed semi-colon
+        from method signature.
+
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=21182
