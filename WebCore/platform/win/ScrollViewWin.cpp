@@ -54,12 +54,12 @@ using namespace std;
 
 namespace WebCore {
 
-#define LINE_STEP_WIN 15 // To keep the behavior we had before adding the scroll wheel sensitivity : <rdar://problem/5770893>
+#define WHEEL_STEP 15 // To keep the behavior we had before adding the scroll wheel sensitivity : <rdar://problem/5770893>
 
 static inline void adjustDeltaForPageScrollMode(float& delta, bool pageScrollEnabled, int visibleWidthOrHeight)
 {
     if (pageScrollEnabled)
-        delta = (delta > 0 ? visibleWidthOrHeight : -visibleWidthOrHeight) / LINE_STEP_WIN;
+        delta = (delta > 0 ? visibleWidthOrHeight : -visibleWidthOrHeight) / WHEEL_STEP;
 }
 
 class ScrollView::ScrollViewPrivate : public ScrollbarClient {
@@ -344,7 +344,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
-        m_horizontalScrollbar->setSteps(LINE_STEP_WIN, pageStep);
+        m_horizontalScrollbar->setSteps(LINE_STEP, pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
         m_horizontalScrollbar->setValue(scroll.width());
         if (m_scrollbarsSuppressed)
@@ -367,7 +367,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
-        m_verticalScrollbar->setSteps(LINE_STEP_WIN, pageStep);
+        m_verticalScrollbar->setSteps(LINE_STEP, pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
         m_verticalScrollbar->setValue(scroll.height());
         if (m_scrollbarsSuppressed)
@@ -509,7 +509,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         adjustDeltaForPageScrollMode(deltaX, e.isPageXScrollModeEnabled(), visibleWidth());
         adjustDeltaForPageScrollMode(deltaY, e.isPageYScrollModeEnabled(), visibleHeight());
 
-        scrollBy(IntSize(-deltaX * LINE_STEP_WIN, -deltaY * LINE_STEP_WIN));
+        scrollBy(IntSize(-deltaX * WHEEL_STEP, -deltaY * WHEEL_STEP));
     }
 }
 

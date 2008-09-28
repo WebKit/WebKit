@@ -1,3 +1,20 @@
+2008-09-27  Dave Hyatt  <hyatt@apple.com>
+
+        Bug 21190.  The line scroll amount on Windows is way too small.  A patch for bug 17589 for wheel sensitivity
+        incorrectly applied the tinier wheel step delta (unmultiplied) to line scrolling.  Line scrolling with the
+        scrollbar has nothing to do with mouse wheeling.  This patch reverts the scrollbars to use the same line
+        step as other platforms while leaving the wheel delta alone for use with wheel scrolling.
+
+        There was a lot wrong with 17589, so more patches will be coming to deal with the fallout of this patch
+        (which should never have landed in the first place).
+       
+        Reviewed by Tim Hatcher, Sam Weinig
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::adjustDeltaForPageScrollMode):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
         Make the scrollbarUnderMouse method cross-platform.
