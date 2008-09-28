@@ -16749,8 +16749,8 @@
 
         Reviewed by mjs
         
-        <http://tinymce.moxiecode.com/example_full.php?example=true>
-        TinyMCE: Undo still enabled after a location change, crashes if performed
+        https://bugs.webkit.org/show_bug.cgi?id=7150
+        <rdar://4433765> TinyMCE: Undo still enabled after a location change, crashes if performed
         
         Can't clear undo/redo operations registered by subframes in didOpenURL,
         because subframes have already been detached.

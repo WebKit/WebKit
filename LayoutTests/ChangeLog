@@ -1,3 +1,19 @@
+2008-09-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20366
+        Reproducible test failure for editing/undo/undo-iframe-location-change.html
+
+        This does not fix the problem, but makes the test more predictable by using iframe onload.
+        Also, makes the test runnable in browser. Turns out that the test reliably fails there too,
+        even without any special steps needed in DRT.
+
+        * editing/undo/undo-iframe-location-change-expected.txt:
+        * editing/undo/undo-iframe-location-change.html:
+
+        * ChangeLog-2007-10-14: Added bug URLs for a patch that included this test.
+
 2008-09-27  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

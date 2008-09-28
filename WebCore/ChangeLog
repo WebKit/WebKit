@@ -1,3 +1,12 @@
+2008-09-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20366
+        Reproducible test failure for editing/undo/undo-iframe-location-change.html
+
+        * ChangeLog-2006-05-10: Added bug URLs for a fix that included this test.
+
 2008-09-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig (except for a few comment and header tweaks).
