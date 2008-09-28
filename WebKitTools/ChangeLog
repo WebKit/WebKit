@@ -1,3 +1,19 @@
+2008-09-28  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 21185: resolve-ChangeLogs should be able to fix poorly merged ChangeLog entries after a git svn rebase
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21185>
+
+        Reviewed by Adam.
+
+        * Scripts/resolve-ChangeLogs: Added new -f|--fix-merge switch that
+        will attempt to reapply the last commit to a ChangeLog file such
+        that the ChangeLog entry appears at the top of the file.
+        (findChangeLog): Added prototype and moved method below the exit
+        statement.
+        (fixMergedChangeLog): Added.  Method to fix incorrectly merged
+        ChangeLog entries.
+
 2008-09-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

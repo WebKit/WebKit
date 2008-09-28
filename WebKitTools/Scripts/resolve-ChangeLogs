@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,7 +39,9 @@ use Getopt::Long;
 use VCSUtils;
 
 sub conflictFiles($);
+sub findChangeLog($);
 sub fixChangeLogPatch($);
+sub fixMergedChangeLog($);
 sub mergeChanges($$$);
 sub resolveConflict($);
 sub showStatus($;$);
@@ -47,22 +49,15 @@ sub showStatus($;$);
 my $SVN = "svn";
 my $GIT = "git";
 
+my $fixMerged = 0;
 my $printWarnings = 1;
 my $showHelp;
 
 my $getOptionsResult = GetOptions(
+    'f|fix-merged'   => \$fixMerged,
     'h|help'         => \$showHelp,
     'w|warnings!'    => \$printWarnings,
 );
-
-sub findChangeLog {
-    return $_ if basename($_) eq "ChangeLog";
-
-    my $file = File::Spec->catfile($_, "ChangeLog");
-    return $file if -d $_ and -e $file;
-
-    return undef;
-}
 
 my @changeLogFiles = grep { defined $_ } map { findChangeLog($_) } @ARGV;
 
@@ -72,11 +67,15 @@ if (scalar(@changeLogFiles) != scalar(@ARGV)) {
 } elsif (scalar(@changeLogFiles) == 0) {
     print STDERR "ERROR: No ChangeLog files listed on command-line.\n";
     undef $getOptionsResult;
+} elsif ($fixMerged && !isGit()) {
+    print STDERR "ERROR: --fix-merge may only be used with a git repository\n";
+    undef $getOptionsResult;
 }
 
 if (!$getOptionsResult || $showHelp) {
     print STDERR <<__END__;
 Usage: @{[ basename($0) ]} [options] path/to/ChangeLog [path/to/another/ChangeLog ...]
+  -f|--fix-merge      fix a git-merged ChangeLog entry to appear at the top
   -h|--help           show this help message
   -w|--[no-]warnings  show or suppress warnings (default: show warnings)
 __END__
@@ -84,22 +83,26 @@ __END__
 }
 
 for my $file (@changeLogFiles) {
-    my ($fileMine, $fileOlder, $fileNewer) = conflictFiles($file);
-    if (!$fileMine || !$fileOlder || !$fileNewer) {
-        next;
-    }
-    if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
-        if ($file ne $fileNewer) {
-            unlink($file);
-            rename($fileNewer, $file) || die;
-        }
-        unlink($fileMine, $fileOlder);
-        resolveConflict($file);
-        showStatus($file, 1);
+    if ($fixMerged) {
+        fixMergedChangeLog($file);
     } else {
-        showStatus($file);
-        print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
-        unlink($fileMine, $fileOlder, $fileNewer) if isGit();
+        my ($fileMine, $fileOlder, $fileNewer) = conflictFiles($file);
+        if (!$fileMine || !$fileOlder || !$fileNewer) {
+            next;
+        }
+        if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
+            if ($file ne $fileNewer) {
+                unlink($file);
+                rename($fileNewer, $file) || die;
+            }
+            unlink($fileMine, $fileOlder);
+            resolveConflict($file);
+            showStatus($file, 1);
+        } else {
+            showStatus($file);
+            print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
+            unlink($fileMine, $fileOlder, $fileNewer) if isGit();
+        }
     }
 }
 
@@ -176,6 +179,15 @@ sub conflictFiles($)
     return ($fileMine, $fileOlder, $fileNewer);
 }
 
+sub findChangeLog($) {
+    return $_ if basename($_) eq "ChangeLog";
+
+    my $file = File::Spec->catfile($_, "ChangeLog");
+    return $file if -d $_ and -e $file;
+
+    return undef;
+}
+
 sub fixChangeLogPatch($)
 {
     my $patch = shift;
@@ -225,6 +237,71 @@ sub fixChangeLogPatch($)
     }
 
     return $newPatch;
+}
+
+sub fixMergedChangeLog($)
+{
+    my $file = shift;
+    my $patch;
+
+    # Read in patch for incorrectly merged ChangeLog entry
+    {
+        local $/ = undef;
+        open GIT, "-|", $GIT, "diff", "HEAD^", $file || die;
+        $patch = <GIT>;
+        close GIT || die;
+    }
+
+    # The patch must have 1 or more lines of context, then 1 or more lines
+    # of additions, and then 1 or more lines of context.  If not, we skip it.
+    if ($patch =~ /\n@@ -(\d+),(\d+) \+(\d+),(\d+) @@\n( .*\n)+((\+.*\n)+)( .*\n)+$/m) {
+        # Copy the header from the original patch.
+        my $newPatch = substr($patch, 0, index($patch, "@@ -${1},${2} +${3},${4} @@"));
+
+        # Generate a new set of line numbers and patch lengths.  Our new
+        # patch will start with the lines for the fixed ChangeLog entry,
+        # then have 3 lines of context from the top of the current file to
+        # make the patch apply cleanly.
+        $newPatch .= "@@ -1,3 +1," . ($4 - $2 + 3) . " @@\n";
+
+        # We assume that top few lines of the ChangeLog entry are actually
+        # at the bottom of the list of added lines (due to the way the patch
+        # algorithm works), so we simply search through the lines until we
+        # find the date line, then move the rest of the lines to the top.
+        my @patchLines = map { $_ . "\n" } split(/\n/, $6);
+        foreach my $i (0 .. $#patchLines) {
+            if ($patchLines[$i] =~ /^\+\d{4}-\d{2}-\d{2}  /) {
+                unshift(@patchLines, splice(@patchLines, $i, scalar(@patchLines) - $i));
+                last;
+            }
+        }
+
+        $newPatch .= join("", @patchLines);
+
+        # Add 3 lines of context to the end
+        open FILE, "<", $file || die;
+        for (my $i = 0; $i < 3; $i++) {
+            $newPatch .= " " . <FILE>;
+        }
+        close FILE;
+
+        # Unapply the old patch
+        open(PATCH, "| patch -p1 --reverse $file > /dev/null") || die;
+        print PATCH $patch;
+        close(PATCH) || die;
+
+        # Apply the new patch
+        open(PATCH, "| patch -p1 $file > /dev/null") || die;
+        print PATCH $newPatch;
+        close(PATCH) || die;
+
+        # Run "git add" on the fixed ChangeLog file
+        system($GIT, "add", $file);
+
+        showStatus($file, 1);
+    } else {
+        print STDERR "WARNING: Last change to ${file} could not be fixed and re-merged.\n" if $printWarnings;
+    }
 }
 
 sub mergeChanges($$$)
