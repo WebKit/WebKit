@@ -189,8 +189,10 @@ WebInspector.Console.prototype = {
             if (messageRepeated)
                 return;
         } else if (msg instanceof WebInspector.ConsoleCommand) {
-            this.commandSincePreviousMessage = true;
-            this.repeatCountBeforeCommand = this.previousMessage.totalRepeatCount;
+            if (this.previousMessage) {
+                this.commandSincePreviousMessage = true;
+                this.repeatCountBeforeCommand = this.previousMessage.totalRepeatCount;
+            }
         }
 
         this.messages.push(msg);

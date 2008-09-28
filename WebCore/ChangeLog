@@ -1,5 +1,15 @@
 2008-09-27  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes an exception when typing a command in the Console.
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype.addMessage): Null check
+        this.previosMessage.
+
+2008-09-27  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where the Profiles panel sidebar would be empty
         after closing and reopening the Web Inspector.
 
