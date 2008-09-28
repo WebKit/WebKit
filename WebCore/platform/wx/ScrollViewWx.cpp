@@ -50,7 +50,6 @@ public:
     ScrollViewPrivate(ScrollView* scrollView)
         : wxEvtHandler()
         , m_scrollView(scrollView)
-        , suppressScrollbars(false)
         , vScrollbarMode(ScrollbarAuto)
         , hScrollbarMode(ScrollbarAuto)
         , viewStart(0, 0)
@@ -116,7 +115,6 @@ public:
 
     ScrollView* m_scrollView;
 
-    bool suppressScrollbars;
     ScrollbarMode vScrollbarMode;
     ScrollbarMode hScrollbarMode;
     wxPoint viewStart;
@@ -305,12 +303,6 @@ void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode
 {
     horizontal = m_data->hScrollbarMode;
     vertical = m_data->vScrollbarMode;
-}
-
-void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
-{
-    if ( m_data->suppressScrollbars != suppressed )
-        m_data->suppressScrollbars = suppressed;
 }
 
 bool ScrollView::isOffscreen() const

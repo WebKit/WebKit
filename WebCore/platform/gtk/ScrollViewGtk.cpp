@@ -69,7 +69,6 @@ class ScrollView::ScrollViewPrivate : public ScrollbarClient
 public:
     ScrollViewPrivate(ScrollView* _view)
         : view(_view)
-        , scrollbarsSuppressed(false)
         , inUpdateScrollbars(false)
         , horizontalAdjustment(0)
         , verticalAdjustment(0)
@@ -103,7 +102,6 @@ public:
     static void adjustmentChanged(GtkAdjustment*, gpointer);
 
     ScrollView* view;
-    bool scrollbarsSuppressed;
     IntSize viewPortSize;
     bool inUpdateScrollbars;
     HashSet<Widget*> children;
@@ -201,7 +199,7 @@ void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment,
         return;
     that->view->m_scrollOffset = newOffset;
 
-    if (that->scrollbarsSuppressed)
+    if (that->view->scrollbarsSuppressed())
         return;
 
     that->scrollBackingStore(scrollDelta);
@@ -331,13 +329,6 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
 }
 
-void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
-{
-    m_data->scrollbarsSuppressed = suppressed;
-    if (repaintOnSuppress)
-        updateScrollbars(m_scrollOffset);
-}
-
 void ScrollView::setFrameRect(const IntRect& newGeometry)
 {
     ASSERT(isFrameView());
@@ -410,7 +401,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         bool scrollsVertically;
         bool scrollsHorizontally;
 
-        if (!m_data->scrollbarsSuppressed && (hScroll == ScrollbarAuto || vScroll == ScrollbarAuto)) {
+        if (!m_scrollbarsSuppressed && (hScroll == ScrollbarAuto || vScroll == ScrollbarAuto)) {
             // Do a layout if pending before checking if scrollbars are needed.
             if (hasVerticalScrollbar != oldHasVertical || hasHorizontalScrollbar != oldHasHorizontal)
                 static_cast<FrameView*>(this)->layout();
@@ -468,15 +459,15 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
                                    width() - (m_verticalScrollbar ? m_verticalScrollbar->width() : 0),
                                    m_horizontalScrollbar->height());
         m_horizontalScrollbar->setFrameRect(hBarRect);
-        if (!m_data->scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
+        if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
             m_horizontalScrollbar->invalidate();
 
-        if (m_data->scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
         m_horizontalScrollbar->setSteps(LINE_STEP, pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
         m_horizontalScrollbar->setValue(scroll.width());
-        if (m_data->scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(false);
     }
 
@@ -503,15 +494,15 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
                                    m_verticalScrollbar->width(),
                                    height() - (m_horizontalScrollbar ? m_horizontalScrollbar->height() : 0));
         m_verticalScrollbar->setFrameRect(vBarRect);
-        if (!m_data->scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
+        if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
             m_verticalScrollbar->invalidate();
 
-        if (m_data->scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
         m_verticalScrollbar->setSteps(LINE_STEP, pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
         m_verticalScrollbar->setValue(scroll.height());
-        if (m_data->scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(false);
     }
 
@@ -566,7 +557,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->restore();
 
     // Now paint the scrollbars.
-    if (!m_data->scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
+    if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
         context->save();
         IntRect scrollViewDirtyRect = rect;
         scrollViewDirtyRect.intersect(frameRect());

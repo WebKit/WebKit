@@ -38,6 +38,8 @@ void ScrollView::init()
     m_horizontalScrollbarMode = m_verticalScrollbarMode = ScrollbarAuto;
     if (platformWidget())
         platformSetCanBlitOnScroll();
+    m_scrollbarsAvoidingResizer = 0;
+    m_scrollbarsSuppressed = false;
 }
 
 void ScrollView::addChild(Widget* child) 
@@ -181,8 +183,83 @@ IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
     return convertToContainingWindow(viewRect);
 }
 
+bool ScrollView::resizerOverlapsContent() const
+{
+    return !m_scrollbarsAvoidingResizer;
+}
+
+void ScrollView::adjustScrollbarsAvoidingResizerCount(int overlapDelta)
+{
+    int oldCount = m_scrollbarsAvoidingResizer;
+    m_scrollbarsAvoidingResizer += overlapDelta;
+    if (parent())
+        parent()->adjustScrollbarsAvoidingResizerCount(overlapDelta);
+    else if (!scrollbarsSuppressed()) {
+        // If we went from n to 0 or from 0 to n and we're the outermost view,
+        // we need to invalidate the windowResizerRect(), since it will now need to paint
+        // differently.
+        if (oldCount > 0 && m_scrollbarsAvoidingResizer == 0 ||
+            oldCount == 0 && m_scrollbarsAvoidingResizer > 0)
+            invalidateRect(windowResizerRect());
+    }
+}
+
+void ScrollView::setParent(ScrollView* parentView)
+{
+    if (parentView == parent())
+        return;
+
+    if (m_scrollbarsAvoidingResizer && parent())
+        parent()->adjustScrollbarsAvoidingResizerCount(-m_scrollbarsAvoidingResizer);
+
+    Widget::setParent(parentView);
+    
+    if (m_scrollbarsAvoidingResizer && parent())
+        parent()->adjustScrollbarsAvoidingResizerCount(m_scrollbarsAvoidingResizer);
+}
+
+void ScrollView::setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppress)
+{
+    if (suppressed == m_scrollbarsSuppressed)
+        return;
+
+    m_scrollbarsSuppressed = suppressed;
+
+    if (platformWidget())
+        platformSetScrollbarsSuppressed(repaintOnUnsuppress);
+    else if (repaintOnUnsuppress && !suppressed) {
+        if (m_horizontalScrollbar)
+            m_horizontalScrollbar->invalidate();
+        if (m_verticalScrollbar)
+            m_verticalScrollbar->invalidate();
+
+        // Invalidate the scroll corner too on unsuppress.
+        IntRect hCorner;
+        if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
+            hCorner = IntRect(m_horizontalScrollbar->width(),
+                              height() - m_horizontalScrollbar->height(),
+                              width() - m_horizontalScrollbar->width(),
+                              m_horizontalScrollbar->height());
+            invalidateRect(hCorner);
+        }
+
+        if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
+            IntRect vCorner(width() - m_verticalScrollbar->width(),
+                            m_verticalScrollbar->height(),
+                            m_verticalScrollbar->width(),
+                            height() - m_verticalScrollbar->height());
+            if (vCorner != hCorner)
+                invalidateRect(vCorner);
+        }
+    }
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
+{
+}
+
+void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
 {
 }
 #endif

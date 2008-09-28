@@ -66,7 +66,7 @@ public:
     const HashSet<Widget*>* children() const { return &m_children; }
     void addChild(Widget*);
     void removeChild(Widget*);
-
+    
     // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars.  These methods
     // can be used to obtain those scrollbars.
     Scrollbar* horizontalScrollbar() const { return m_horizontalScrollbar.get(); }
@@ -120,8 +120,9 @@ public:
     void scrollRectIntoViewRecursively(const IntRect&);
 
     // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
-    void suppressScrollbars(bool suppressed, bool repaintOnUnsuppress = false);
-     
+    void setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppress = false);
+    bool scrollbarsSuppressed() const { return m_scrollbarsSuppressed; }
+
     // Event coordinates are assumed to be in the coordinate space of a window that contains
     // the entire widget hierarchy. It is up to the platform to decide what the precise definition
     // of containing window is. (For example on Mac it is the containing NSWindow.)
@@ -133,6 +134,13 @@ public:
     // The purpose of this method is to answer whether or not the scroll view is currently visible.  Animations and painting updates can be suspended if
     // we know that we are either not in a window right now or if that window is not visible.
     bool isOffscreen() const;
+    
+    // These methods are used to enable scrollbars to avoid window resizer controls that overlap the scroll view.  This happens on Mac
+    // for example.
+    virtual IntRect windowResizerRect() const { return IntRect(); }
+    bool containsScrollbarsAvoidingResizer() const;
+    void adjustScrollbarsAvoidingResizerCount(int overlapDelta);
+    virtual void setParent(ScrollView*); // Overridden to update the overlapping scrollbar count.
 
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
     Scrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
@@ -184,6 +192,9 @@ private:
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
     IntSize m_contentsSize;
 
+    int m_scrollbarsAvoidingResizer;
+    bool m_scrollbarsSuppressed;
+
     void init();
     
     void platformAddChild(Widget*);
@@ -194,7 +205,8 @@ private:
     IntRect platformVisibleContentRect(bool includeScrollbars) const;
     IntSize platformContentsSize() const;
     void platformSetContentsSize();
-
+    void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
+    
 #if PLATFORM(MAC) && defined __OBJC__
 public:
     NSView* documentView() const;
@@ -203,10 +215,13 @@ private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
+// FIXME: ScrollViewPrivate will eventually be completely gone.  It's already gone on Mac.
+#if !PLATFORM(MAC)
     class ScrollViewPrivate;
     ScrollViewPrivate* m_data;
 
     friend class ScrollViewPrivate; // FIXME: Temporary.
+#endif
     
 #if !PLATFORM(MAC) && !PLATFORM(WX)
 public:
@@ -223,21 +238,6 @@ private:
     void updateScrollbars(const IntSize& desiredOffset);
 #else
     void updateScrollbars(const IntSize& desiredOffset) {} // FIXME: Temporary.
-#endif
-
-#if PLATFORM(WIN) || PLATFORM(QT) || PLATFORM(MAC)
-public:
-    IntRect windowResizerRect();
-    bool resizerOverlapsContent() const;
-    void adjustOverlappingScrollbarCount(int overlapDelta);
-
-private:
-    virtual void setParent(ScrollView*);
-#else
-public:
-    IntRect windowResizerRect() { return IntRect(); }
-    bool resizerOverlapsContent() const { return false; }
-    void adjustOverlappingScrollbarCount(int overlapDelta) {}
 #endif
 
 #if PLATFORM(WIN)
@@ -257,7 +257,6 @@ private:
     void incrementNativeWidgetCount();
     void decrementNativeWidgetCount();
     bool hasNativeWidgets() const;
-    void invalidateScrollbars();
 #endif
 
 #if PLATFORM(GTK)

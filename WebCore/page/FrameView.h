@@ -112,6 +112,8 @@ public:
     IntRect windowClipRect(bool clipToContents) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
+    virtual IntRect windowResizerRect() const;
+
     virtual void scrollRectIntoViewRecursively(const IntRect&);
     virtual void setScrollPosition(const IntPoint&);
 

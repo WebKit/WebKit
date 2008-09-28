@@ -68,9 +68,7 @@ public:
     ScrollViewPrivate(ScrollView* view)
       : m_view(view)
       , m_platformWidgets(0)
-      , m_scrollbarsSuppressed(false)
       , m_inUpdateScrollbars(false)
-      , m_scrollbarsAvoidingResizer(0)
     {
     }
 
@@ -91,9 +89,7 @@ public:
 
     ScrollView* m_view;
     int  m_platformWidgets;
-    bool m_scrollbarsSuppressed;
     bool m_inUpdateScrollbars;
-    int m_scrollbarsAvoidingResizer;
 };
 
 void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
@@ -133,7 +129,7 @@ void ScrollView::ScrollViewPrivate::valueChanged(Scrollbar* bar)
         return;
     m_view->m_scrollOffset = newOffset;
 
-    if (m_scrollbarsSuppressed)
+    if (m_view->scrollbarsSuppressed())
         return;
 
     scrollBackingStore(scrollDelta);
@@ -242,43 +238,6 @@ void ScrollView::frameRectsChanged() const
     HashSet<Widget*>::const_iterator end = m_children.end();
     for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
         (*current)->frameRectsChanged();
-
-    const_cast<ScrollView *>(this)->invalidateScrollbars();
-}
-
-void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
-{
-    m_data->m_scrollbarsSuppressed = suppressed;
-    if (repaintOnSuppress && !suppressed)
-        invalidateScrollbars();
-}
-
-void ScrollView::invalidateScrollbars()
-{
-    if (m_horizontalScrollbar)
-        m_horizontalScrollbar->invalidate();
-    if (m_verticalScrollbar)
-        m_verticalScrollbar->invalidate();
-
-
-    // Invalidate the scroll corner too
-    IntRect hCorner;
-    if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-        hCorner = IntRect(m_horizontalScrollbar->width(),
-                         height() - m_horizontalScrollbar->height(),
-                         width() - m_horizontalScrollbar->width(),
-                         m_horizontalScrollbar->height());
-       addToDirtyRegion(convertToContainingWindow(hCorner));
-    }
-
-    if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-        IntRect vCorner(width() - m_verticalScrollbar->width(),
-                       m_verticalScrollbar->height(),
-                       m_verticalScrollbar->width(),
-                       height() - m_verticalScrollbar->height());
-        if (vCorner != hCorner)
-            addToDirtyRegion(convertToContainingWindow(vCorner));
-    }
 }
 
 bool ScrollView::isOffscreen() const
@@ -313,7 +272,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         bool scrollsVertically;
         bool scrollsHorizontally;
 
-        if (!m_data->m_scrollbarsSuppressed && (hScroll == ScrollbarAuto || vScroll == ScrollbarAuto)) {
+        if (!m_scrollbarsSuppressed && (hScroll == ScrollbarAuto || vScroll == ScrollbarAuto)) {
             // Do a layout if pending before checking if scrollbars are needed.
             if (hasVerticalScrollbar != oldHasVertical || hasHorizontalScrollbar != oldHasHorizontal)
                 static_cast<FrameView*>(this)->layout();
@@ -382,15 +341,15 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
                                    width() - (m_verticalScrollbar ? m_verticalScrollbar->width() : scrollbarOffset.x()),
                                    m_horizontalScrollbar->height());
         m_horizontalScrollbar->setFrameRect(hBarRect);
-        if (!m_data->m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
+        if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
             m_horizontalScrollbar->invalidate();
 
-        if (m_data->m_scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
         m_horizontalScrollbar->setSteps(LINE_STEP, pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
         m_horizontalScrollbar->setValue(scroll.width());
-        if (m_data->m_scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(false); 
     } 
 
@@ -405,15 +364,15 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
                                    m_verticalScrollbar->width(),
                                    height() - (m_horizontalScrollbar ? m_horizontalScrollbar->height() : scrollbarOffset.y()));
         m_verticalScrollbar->setFrameRect(vBarRect);
-        if (!m_data->m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
+        if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
             m_verticalScrollbar->invalidate();
 
-        if (m_data->m_scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
         m_verticalScrollbar->setSteps(LINE_STEP, pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
         m_verticalScrollbar->setValue(scroll.height());
-        if (m_data->m_scrollbarsSuppressed)
+        if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(false);
     }
 
@@ -494,7 +453,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     context->restore();
 
     // Now paint the scrollbars.
-    if (!m_data->m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
+    if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
         context->save();
         IntRect scrollViewDirtyRect = rect;
         scrollViewDirtyRect.intersect(frameRect());
@@ -568,44 +527,6 @@ bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity
             return m_horizontalScrollbar->scroll(direction, granularity);
     }
     return false;
-}
-
-IntRect ScrollView::windowResizerRect()
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return IntRect();
-    return page->chrome()->windowResizerRect();
-}
-
-bool ScrollView::resizerOverlapsContent() const
-{
-    return !m_data->m_scrollbarsAvoidingResizer;
-}
-
-void ScrollView::adjustOverlappingScrollbarCount(int overlapDelta)
-{
-    int oldCount = m_data->m_scrollbarsAvoidingResizer;
-    m_data->m_scrollbarsAvoidingResizer += overlapDelta;
-    if (parent() && parent()->isFrameView())
-        static_cast<FrameView*>(parent())->adjustOverlappingScrollbarCount(overlapDelta);
-    else if (!m_data->m_scrollbarsSuppressed) {
-        // If we went from n to 0 or from 0 to n and we're the outermost view,
-        // we need to invalidate the windowResizerRect(), since it will now need to paint
-        // differently.
-        if (oldCount > 0 && m_data->m_scrollbarsAvoidingResizer == 0 ||
-            oldCount == 0 && m_data->m_scrollbarsAvoidingResizer > 0)
-            invalidateRect(windowResizerRect());
-    }
-}
-
-void ScrollView::setParent(ScrollView* parentView)
-{
-    if (!parentView && m_data->m_scrollbarsAvoidingResizer && parent() && parent()->isFrameView())
-        static_cast<FrameView*>(parent())->adjustOverlappingScrollbarCount(false);
-    Widget::setParent(parentView);
 }
 
 void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)

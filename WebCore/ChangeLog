@@ -1,3 +1,57 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21188
+
+        Make scrollbar suppression and resizer avoidance cross-platform.
+
+        Reviewed by Anders
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::resetScrollbars):
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::restoreScrollbar):
+        (WebCore::FrameView::windowResizerRect):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::init):
+        (WebCore::ScrollView::resizerOverlapsContent):
+        (WebCore::ScrollView::adjustScrollbarsAvoidingResizerCount):
+        (WebCore::ScrollView::setParent):
+        (WebCore::ScrollView::setScrollbarsSuppressed):
+        (WebCore::ScrollView::platformSetScrollbarsSuppressed):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::scrollbarsSuppressed):
+        (WebCore::ScrollView::windowResizerRect):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::setFrameRect):
+        (WebCore::Scrollbar::setParent):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::adjustmentChanged):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::paint):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::platformSetScrollbarsSuppressed):
+        (WebCore::ScrollView::setScrollPosition):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::frameRectsChanged):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::paint):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollViewPrivate::valueChanged):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::paint):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+
 2008-09-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Anders Carlsson.
