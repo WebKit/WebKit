@@ -215,11 +215,6 @@ NSView *ScrollView::documentView() const
     return nil;
 }
 
-Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent&)
-{
-    return 0;
-}
-
 bool ScrollView::isOffscreen() const
 {
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];

@@ -1,3 +1,17 @@
+2008-09-27  David Hyatt  <hyatt@apple.com>
+
+        Make the scrollbarUnderMouse method cross-platform.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+
 2008-09-27  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Gtk+ build fix.

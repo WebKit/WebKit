@@ -390,16 +390,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     m_data->m_inUpdateScrollbars = false;
 }
 
-Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
-{
-    IntPoint viewPoint = convertFromContainingWindow(mouseEvent.pos());
-    if (m_horizontalScrollbar && m_horizontalScrollbar->frameRect().contains(viewPoint))
-        return m_horizontalScrollbar.get();
-    if (m_verticalScrollbar && m_verticalScrollbar->frameRect().contains(viewPoint))
-        return m_verticalScrollbar.get();
-    return 0;
-}
-
 void ScrollView::printPanScrollIcon(const IntPoint& iconPosition)
 {
     m_data->m_drawPanScrollIcon = true;    
