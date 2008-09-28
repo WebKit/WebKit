@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SharedBuffer;
 
-bool getEOTHeader(SharedBuffer* fontData, Vector<UInt8, 512>& eotHeader);
+bool getEOTHeader(SharedBuffer* fontData, Vector<UInt8, 512>& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength);
 
 } // namespace WebCore
 

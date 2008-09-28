@@ -108,9 +108,12 @@ size_t getBytesWithOffset(void *info, void* buffer, size_t offset, size_t count)
 // Streams the concatenation of a header and font data.
 class EOTStream {
 public:
-    EOTStream(const Vector<UInt8, 512>& eotHeader, const SharedBuffer* fontData)
+    EOTStream(const Vector<UInt8, 512>& eotHeader, const SharedBuffer* fontData, size_t overlayDst, size_t overlaySrc, size_t overlayLength)
         : m_eotHeader(eotHeader)
         , m_fontData(fontData)
+        , m_overlayDst(overlayDst)
+        , m_overlaySrc(overlaySrc)
+        , m_overlayLength(overlayLength)
         , m_offset(0)
         , m_inHeader(true)
     {
@@ -121,6 +124,9 @@ public:
 private:
     const Vector<UInt8, 512>& m_eotHeader;
     const SharedBuffer* m_fontData;
+    size_t m_overlayDst;
+    size_t m_overlaySrc;
+    size_t m_overlayLength;
     size_t m_offset;
     bool m_inHeader;
 };
@@ -141,6 +147,12 @@ size_t EOTStream::read(void* buffer, size_t count)
     if (bytesToRead && !m_inHeader) {
         size_t bytesFromData = min(m_fontData->size() - m_offset, bytesToRead);
         memcpy(buffer, m_fontData->data() + m_offset, bytesFromData);
+        if (m_offset < m_overlayDst + m_overlayLength && m_offset + bytesFromData >= m_overlayDst) {
+            size_t dstOffset = max<int>(m_overlayDst - m_offset, 0);
+            size_t srcOffset = max<int>(0, m_offset - m_overlayDst);
+            size_t bytesToCopy = min(bytesFromData - dstOffset, m_overlayLength - srcOffset);
+            memcpy(reinterpret_cast<char*>(buffer) + dstOffset, m_fontData->data() + m_overlaySrc + srcOffset, bytesToCopy);
+        }
         m_offset += bytesFromData;
         bytesToRead -= bytesFromData;
     }
@@ -187,7 +199,10 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     // TTLoadEmbeddedFont works only with Embedded OpenType (.eot) data, so we need to create an EOT header
     // and prepend it to the font data.
     Vector<UInt8, 512> eotHeader;
-    if (!getEOTHeader(buffer, eotHeader)) {
+    size_t overlayDst;
+    size_t overlaySrc;
+    size_t overlayLength;
+    if (!getEOTHeader(buffer, eotHeader, overlayDst, overlaySrc, overlayLength)) {
         CGFontRelease(cgFont);
         return 0;
     }
@@ -195,7 +210,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     HANDLE fontReference;
     ULONG privStatus;
     ULONG status;
-    EOTStream eotStream(eotHeader, buffer);
+    EOTStream eotStream(eotHeader, buffer, overlayDst, overlaySrc, overlayLength);
 
     LONG loadEmbeddedFontResult = TTLoadEmbeddedFont(&fontReference, TTLOAD_PRIVATE, &privStatus, LICENSE_PREVIEWPRINT, &status, readEmbedProc, &eotStream, const_cast<LPWSTR>(fontName.charactersWithNullTermination()), 0, 0);
     if (loadEmbeddedFontResult != E_NONE) {
