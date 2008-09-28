@@ -1,3 +1,19 @@
+2008-09-28  Timothy Hatcher  <timothy@apple.com>
+
+        Clear the current search results in the Inspector when
+        the search query is less than 3 characters long. Incremental
+        searches only occur for 3 characters or longer, but deleting
+        under this limit would not clear the results unless the whole
+        query was deleted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21196
+
+        Reviewed by Dan Bernstein.
+
+        * page/inspector/inspector.js:
+        (WebInspector.performSearch): Check for short queries in the
+        if statement that triggers the clear.
+
 2008-09-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

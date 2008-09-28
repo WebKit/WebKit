@@ -1099,8 +1099,9 @@ WebInspector.searchKeyUp = function(event)
 WebInspector.performSearch = function(event)
 {
     var query = event.target.value;
+    var forceSearch = event.keyIdentifier === "Enter";
 
-    if (!query || !query.length) {
+    if (!query || !query.length || (!forceSearch && query.length < 3)) {
         delete this.currentQuery;
 
         for (var panelName in this.panels) {
@@ -1114,10 +1115,6 @@ WebInspector.performSearch = function(event)
 
         return;
     }
-
-    var forceSearch = event.keyIdentifier === "Enter";
-    if (!forceSearch && query.length < 3)
-        return;
 
     if (query === this.currentPanel.currentQuery && this.currentPanel.currentQuery === this.currentQuery) {
         // When this is the same query and a forced search, jump to the next
