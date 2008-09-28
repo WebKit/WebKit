@@ -1,3 +1,18 @@
+2008-09-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21141: REGRESSION: Exception messages for user entered commands are poor
+        <https://bugs.webkit.org/show_bug.cgi?id=21141>
+
+        The bug repsonsible for this was the the JSInspectedObjectWrapper instances
+        were not initialising their StructureID's to indicate that the wrapper
+        overrides hasInstance, etc.  The solution is simply to use the createStructureID
+        helper on JSQuarantinedObjectWrapper to create a correct StructureID.
+
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap):
+
 2008-09-28  David Hyatt  <hyatt@apple.com>
 
         Make sure pixel wheel scrolls (formerly "continuous" wheel events) send deltas to DOM wheel events in
