@@ -329,7 +329,6 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             familyName += "-webkit-svg-small-caps";
 #endif
 
-        familyName = familyName.lower();
         Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(familyName);
         if (!familyFontFaces) {
             familyFontFaces = new Vector<RefPtr<CSSFontFace> >;
@@ -468,7 +467,7 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
         return 0;
     }
 
-    String family = familyName.string().lower();
+    String family = familyName.string();
 
 #if ENABLE(SVG_FONTS)
     if (fontDescription.smallCaps())

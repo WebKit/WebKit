@@ -1,3 +1,14 @@
+2008-09-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Use a CaseFoldingHash instead of calling lower on family strings.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::getFontData):
+        * css/CSSFontSelector.h:
+
 2008-09-28  Timothy Hatcher  <timothy@apple.com>
 
         Remove the scrollIntoViewIfNeeded() call when drawing the

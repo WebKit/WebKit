@@ -67,9 +67,9 @@ private:
     CSSFontSelector(Document*);
 
     Document* m_document;
-    HashMap<String, Vector<RefPtr<CSSFontFace> >*> m_fontFaces;
-    HashMap<String, Vector<RefPtr<CSSFontFace> >*> m_locallyInstalledFontFaces;
-    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >*> m_fonts;
+    HashMap<String, Vector<RefPtr<CSSFontFace> >*, CaseFoldingHash> m_fontFaces;
+    HashMap<String, Vector<RefPtr<CSSFontFace> >*, CaseFoldingHash> m_locallyInstalledFontFaces;
+    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >*, CaseFoldingHash> m_fonts;
 };
 
 } // namespace WebCore
