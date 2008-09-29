@@ -1,5 +1,12 @@
 2008-09-29  Dan Bernstein  <mitz@apple.com>
 
+        - Windows build fix
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::platformScroll):
+
+2008-09-29  Dan Bernstein  <mitz@apple.com>
+
         - another attempt at a Windows build fix
 
         * platform/ScrollView.cpp:
