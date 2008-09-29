@@ -67,6 +67,8 @@ void ScrollView::removeChild(Widget* child)
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode)
 {
+    if (horizontalMode == horizontalScrollbarMode() && verticalMode == verticalScrollbarMode())
+        return;
     m_horizontalScrollbarMode = horizontalMode;
     m_verticalScrollbarMode = verticalMode;
     if (platformWidget())

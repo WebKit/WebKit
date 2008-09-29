@@ -1,5 +1,17 @@
 2008-09-29  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=21218
+
+        Accidentally removed a check to see if the scrollbar modes were equal.  This caused a crash on Windows.
+        It's silly that the code was this fragile, but for now just put the check back in.
+
+        Reviewed by Dan Bernstein
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollbarModes):
+
+2008-09-29  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21216
 
         Make setScrollPosition and scroll() cross-platform.
