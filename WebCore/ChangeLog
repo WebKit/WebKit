@@ -1,3 +1,11 @@
+2008-09-29  Morten Sørvig  <msorvig@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with Qt/Mac without plugins.
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+
 2008-09-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
