@@ -203,8 +203,11 @@ public:
 
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
     {
-        // If one style is null and the other is non-null return false.
-        if ((!a || !b) && b != a)
+       // If the style pointers are the same, don't bother doing the test.
+       // If either is null, return false. If both are null, return true.
+       if (!a && !b || a == b)
+           return true;
+       if (!a || !b)
             return false;
         return (a->*m_getter)() == (b->*m_getter)();
     }
