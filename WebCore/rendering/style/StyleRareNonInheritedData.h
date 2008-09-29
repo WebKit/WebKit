@@ -74,7 +74,6 @@ public:
     bool reflectionDataEquivalent(const StyleRareNonInheritedData& o) const;
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
-    void updateKeyframes(const CSSStyleSelector* styleSelector);
 
     int lineClamp; // An Apple extension.
 #if ENABLE(DASHBOARD_SUPPORT)

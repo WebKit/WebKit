@@ -84,6 +84,7 @@ public:
         void initElementAndPseudoState(Element*);
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, RenderStyle::PseudoId = RenderStyle::NOPSEUDO);
         RenderStyle* styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
+        void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
 
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle = 0);
 
@@ -139,18 +140,7 @@ public:
         CSSValue* resolveVariableDependentValue(CSSVariableDependentValue*);
         void resolveVariablesForDeclaration(CSSMutableStyleDeclaration* decl, CSSMutableStyleDeclaration* newDecl, HashSet<String>& usedBlockVariables);
 
-        KeyframeList* findKeyframeRule(const String& name) const
-        {
-            if (name.isEmpty())
-                return 0;
-            
-            AtomicString s(name);
-            if (!m_keyframeRuleMap.contains(s.impl()))
-                return 0;
-            return m_keyframeRuleMap.find(s.impl()).get()->second.get();
-        }
-
-        void addKeyframeStyle(Document* doc, const WebKitCSSKeyframesRule* rule);
+        void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule);
 
         static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, TransformOperations& outOperations);
 
@@ -182,8 +172,8 @@ public:
         FillLayer m_backgroundData;
         Color m_backgroundColor;
 
-        typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeList> > KeyframeRuleMap;
-        KeyframeRuleMap m_keyframeRuleMap;
+        typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
+        KeyframesRuleMap m_keyframesRuleMap;
 
     public:
         static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }

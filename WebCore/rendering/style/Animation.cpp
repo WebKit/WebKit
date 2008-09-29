@@ -22,7 +22,6 @@
 #include "config.h"
 #include "Animation.h"
 
-#include "KeyframeList.h"
 #include "RenderStyle.h"
 
 namespace WebCore {
@@ -123,25 +122,7 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
     if (!result)
         return false;
 
-    if (matchPlayStates && (m_playState != o->m_playState || m_playStateSet != o->m_playStateSet))
-        return false;
-
-    // now check keyframes
-    if ((m_keyframeList.get() && !o->m_keyframeList.get()) || (!m_keyframeList.get() && o->m_keyframeList.get()))
-        return false;
-    if (!(m_keyframeList.get()))
-        return true;
-    return *m_keyframeList == *o->m_keyframeList;
-}
-
-const RefPtr<KeyframeList>& Animation::keyframeList() const
-{
-    return m_keyframeList;
-}
-
-void Animation::setAnimationKeyframe(const RefPtr<KeyframeList> keyframeList)
-{
-    m_keyframeList = keyframeList;
+    return !matchPlayStates || (m_playState == o->m_playState && m_playStateSet == o->m_playStateSet);
 }
 
 } // namespace WebCore

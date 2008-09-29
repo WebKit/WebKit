@@ -21,8 +21,24 @@
 
 #include "config.h"
 #include "KeyframeList.h"
+#include "RenderObject.h"
 
 namespace WebCore {
+
+KeyframeList::~KeyframeList()
+{
+    clear();
+}
+
+void KeyframeList::clear()
+{
+    for (Vector<KeyframeValue>::const_iterator it = m_keyframes.begin(); it != m_keyframes.end(); ++it)
+        if (it->style)
+            it->style->deref(m_renderer->renderArena());
+
+    m_keyframes.clear();
+    m_properties.clear();
+}
 
 bool KeyframeList::operator==(const KeyframeList& o) const
 {
@@ -43,29 +59,38 @@ bool KeyframeList::operator==(const KeyframeList& o) const
     return true;
 }
 
-void KeyframeList::insert(float inKey, const RenderStyle& inStyle)
+void KeyframeList::insert(float key, RenderStyle* style)
 {
-    if (inKey < 0 || inKey > 1)
+    if (key < 0 || key > 1)
         return;
 
+    int index = -1;
+    
     for (size_t i = 0; i < m_keyframes.size(); ++i) {
-        if (m_keyframes[i].key == inKey) {
-            m_keyframes[i].style = inStyle;
-            return;
+        if (m_keyframes[i].key == key) {
+            index = (int) i;
+            break;
         }
-        if (m_keyframes[i].key > inKey) {
+        if (m_keyframes[i].key > key) {
             // insert before
             m_keyframes.insert(i, KeyframeValue());
-            m_keyframes[i].key = inKey;
-            m_keyframes[i].style = inStyle;
-            return;
+            index = (int) i;
+            break;
         }
     }
-
-    // append
-    m_keyframes.append(KeyframeValue());
-    m_keyframes[m_keyframes.size()-1].key = inKey;
-    m_keyframes[m_keyframes.size()-1].style = inStyle;
+    
+    if (index < 0) {
+        // append
+        index = (int) m_keyframes.size();
+        m_keyframes.append(KeyframeValue());
+    }
+    
+    if (style)
+        style->ref();
+    if (m_keyframes[index].style)
+        m_keyframes[index].style->deref(m_renderer->renderArena());
+    m_keyframes[index].key = key;
+    m_keyframes[index].style = style;
 }
 
 } // namespace WebCore

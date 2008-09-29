@@ -26,58 +26,60 @@
 #define KeyframeList_h
 
 #include "AtomicString.h"
-#include "RenderStyle.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class RenderObject;
+class RenderStyle;
 
 class KeyframeValue {
 public:
     KeyframeValue()
         : key(-1)
+        , style(0)
     {
     }
 
     float key;
-    RenderStyle style;
+    RenderStyle* style;
 };
 
-class KeyframeList : public RefCounted<KeyframeList> {
+class KeyframeList {
 public:
-    static PassRefPtr<KeyframeList> create(const AtomicString& animationName) { return adoptRef(new KeyframeList(animationName)); }
-
+    KeyframeList(RenderObject* renderer, const AtomicString& animationName)
+        : m_animationName(animationName)
+        , m_renderer(renderer)
+    {
+        insert(0, 0);
+        insert(1, 0);
+    }
+    ~KeyframeList();
+        
     bool operator==(const KeyframeList& o) const;
     bool operator!=(const KeyframeList& o) const { return !(*this == o); }
     
     const AtomicString& animationName() const { return m_animationName; }
     
-    void insert(float inKey, const RenderStyle& inStyle);
+    void insert(float key, RenderStyle* style);
     
     void addProperty(int prop) { m_properties.add(prop); }
     bool containsProperty(int prop) const { return m_properties.contains(prop); }
-    HashSet<int>::const_iterator beginProperties() { return m_properties.begin(); }
-    HashSet<int>::const_iterator endProperties() { return m_properties.end(); }
+    HashSet<int>::const_iterator beginProperties() const { return m_properties.begin(); }
+    HashSet<int>::const_iterator endProperties() const { return m_properties.end(); }
     
-    void clear() { m_keyframes.clear(); m_properties.clear(); }
+    void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
     size_t size() const { return m_keyframes.size(); }
     Vector<KeyframeValue>::const_iterator beginKeyframes() const { return m_keyframes.begin(); }
     Vector<KeyframeValue>::const_iterator endKeyframes() const { return m_keyframes.end(); }
 
 private:
-    KeyframeList(const AtomicString& animationName)
-        : m_animationName(animationName)
-    {
-        insert(0, RenderStyle());
-        insert(1, RenderStyle());
-    }
-        
     AtomicString m_animationName;
     Vector<KeyframeValue> m_keyframes;
     HashSet<int> m_properties;       // the properties being animated
+    RenderObject* m_renderer;
 };
 
 } // namespace WebCore

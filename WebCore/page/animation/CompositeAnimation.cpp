@@ -33,7 +33,6 @@
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
-#include "KeyframeList.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 
@@ -154,8 +153,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, const 
                 // Set the saved animation to this new one, just in case the play state has changed
                 keyframeAnim->setAnimation(anim);
                 keyframeAnim->setIndex(i);
-            } else if ((anim->duration() || anim->delay()) && anim->iterationCount()
-                        && anim->keyframeList() && !anim->keyframeList()->isEmpty()) {
+            } else if ((anim->duration() || anim->delay()) && anim->iterationCount()) {
                 keyframeAnim = new KeyframeAnimation(const_cast<Animation*>(anim), renderer, i, this, currentStyle ? currentStyle : targetStyle);
                 m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
             }

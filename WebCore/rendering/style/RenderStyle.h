@@ -945,7 +945,6 @@ public:
     void inheritTransitions(const AnimationList* parent) { rareNonInheritedData.access()->m_transitions.set(parent ? new AnimationList(*parent) : 0); }
     void adjustAnimations();
     void adjustTransitions();
-    void updateKeyframes(const CSSStyleSelector* styleSelector) { if (rareNonInheritedData.get()) rareNonInheritedData.access()->updateKeyframes(styleSelector); }
 
     void setLineClamp(int c) { SET_VAR(rareNonInheritedData, lineClamp, c); }
     void setTextSizeAdjust(bool b) { SET_VAR(rareInheritedData, textSizeAdjust, b); }

@@ -1,5 +1,57 @@
 2008-09-29  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Dave Hyatt
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=20995
+        Rewrite keyframe resolution to be like styleForElement()
+        
+        Test: animations/lineheight-animation.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addKeyframeStyle):
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::mapAnimationName):
+        * css/CSSStyleSelector.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::hasAnimationForProperty):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::overrideAnimations):
+        (WebCore::KeyframeAnimation::resumeOverriddenAnimations):
+        (WebCore::KeyframeAnimation::affectsProperty):
+        (WebCore::KeyframeAnimation::validateTransformFunctionList):
+        * page/animation/KeyframeAnimation.h:
+        * rendering/style/Animation.cpp:
+        (WebCore::Animation::animationsMatch):
+        * rendering/style/Animation.h:
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::~KeyframeList):
+        (WebCore::KeyframeList::clear):
+        (WebCore::KeyframeList::insert):
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeValue::KeyframeValue):
+        (WebCore::KeyframeList::KeyframeList):
+        (WebCore::KeyframeList::operator!=):
+        (WebCore::KeyframeList::animationName):
+        (WebCore::KeyframeList::addProperty):
+        (WebCore::KeyframeList::containsProperty):
+        (WebCore::KeyframeList::beginProperties):
+        (WebCore::KeyframeList::endProperties):
+        (WebCore::KeyframeList::isEmpty):
+        (WebCore::KeyframeList::size):
+        (WebCore::KeyframeList::beginKeyframes):
+        (WebCore::KeyframeList::endKeyframes):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        * rendering/style/StyleRareNonInheritedData.h:
+
+2008-09-29  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Eric Seidel
 
         Clean up fix in PropertyWrapperGetter::equals

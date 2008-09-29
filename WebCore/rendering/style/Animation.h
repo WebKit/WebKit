@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class KeyframeList;
-
 class Animation : public RefCounted<Animation> {
 public:
     ~Animation();
@@ -84,8 +82,6 @@ public:
     int property() const { return m_property; }
     const TimingFunction& timingFunction() const { return m_timingFunction; }
 
-    const RefPtr<KeyframeList>& keyframeList() const;
-
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(bool d) { m_direction = d; m_directionSet = true; }
     void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
@@ -96,8 +92,6 @@ public:
     void setTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
-
-    void setAnimationKeyframe(const RefPtr<KeyframeList> keyframe);
 
     Animation& operator=(const Animation& o);
 
@@ -119,8 +113,6 @@ private:
     String m_name;
     int m_property;
     TimingFunction m_timingFunction;
-
-    RefPtr<KeyframeList> m_keyframeList;
 
     unsigned m_playState     : 2;
 

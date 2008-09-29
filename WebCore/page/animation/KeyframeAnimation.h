@@ -40,28 +40,12 @@ namespace WebCore {
 // for a single RenderObject.
 class KeyframeAnimation : public AnimationBase {
 public:
-    KeyframeAnimation(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compAnim, const RenderStyle* unanimatedStyle)
-        : AnimationBase(animation, renderer, compAnim)
-        , m_keyframes(animation->keyframeList())
-        , m_name(animation->name())
-        , m_index(index)
-        , m_unanimatedStyle(0)
-    {
-        // Set the transform animation list
-        validateTransformFunctionList();
-        
-        if (unanimatedStyle) {
-            const_cast<RenderStyle*>(unanimatedStyle)->ref();
-            m_unanimatedStyle = unanimatedStyle;
-        }
-    }
-
+    KeyframeAnimation(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compAnim, const RenderStyle* unanimatedStyle);
     virtual ~KeyframeAnimation();
 
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
 
-    void setName(const String& s) { m_name = s; }
-    const AtomicString& name() const { return m_name; }
+    const AtomicString& name() const { return m_keyframes.animationName(); }
     int index() const { return m_index; }
     void setIndex(int i) { m_index = i; }
 
@@ -89,8 +73,8 @@ protected:
 
 private:
     // The keyframes that we are blending.
-    RefPtr<KeyframeList> m_keyframes;
-    AtomicString m_name;
+    KeyframeList m_keyframes;
+
     // The order in which this animation appears in the animation-name style.
     int m_index;
 
