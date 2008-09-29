@@ -1,3 +1,14 @@
+2008-09-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver.
+
+        Bug 21139: Profiler log message is wrong
+        - Because _format was called twice the number in the log was incremented
+        too many times, but we were passing it around in the link the whole time
+
+        * page/inspector/ProfilesPanel.js:
+        * page/inspector/inspector.js:
+
 2008-09-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

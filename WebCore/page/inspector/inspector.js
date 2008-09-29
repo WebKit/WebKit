@@ -1021,8 +1021,10 @@ WebInspector.linkifyStringAsFragment = function(string)
         var profileTitle;
         if (profileStringMatches)
             profileTitle = profileStringMatches[1];
-        if (profileTitle)
-            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileTitle);
+        if (profileTitle) {
+            var profileNumber = profileStringMatches[0].substring(18 + profileStringMatches[1].length, profileStringMatches[0].length);    // 18 is the number of chars in "webkit-profile://" + "/"
+            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileTitle, profileNumber);
+        }
 
         var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
         container.appendChild(WebInspector.linkifyURLAsNode(realURL, title, null, (realURL in WebInspector.resourceURLMap)));
