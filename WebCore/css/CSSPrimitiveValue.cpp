@@ -696,18 +696,36 @@ String CSSPrimitiveValue::cssText() const
         }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
+            static const String commaSpace(", ");
+            static const String rgbParen("rgb(");
+            static const String rgbaParen("rgba(");
+
             RGBA32 rgbColor = m_value.rgbcolor;
             if (m_type == CSS_PARSER_HEXCOLOR)
                 Color::parseHexColor(m_value.string, rgbColor);
             Color color(rgbColor);
-            text = (color.alpha() < 0xFF) ? "rgba(" : "rgb(";
-            text += String::number(color.red()) + ", ";
-            text += String::number(color.green()) + ", ";
-            text += String::number(color.blue());
-            if (color.alpha() < 0xFF)
-                text += ", " + String::number(static_cast<float>(color.alpha()) / 0xFF);
-            text += ")";
-            break;
+
+            Vector<UChar> result;
+            result.reserveCapacity(32);
+            if (color.hasAlpha())
+                append(result, rgbaParen);
+            else
+                append(result, rgbParen);
+
+            appendNumber(result, static_cast<unsigned char>(color.red()));
+            append(result, commaSpace);
+
+            appendNumber(result, static_cast<unsigned char>(color.green()));
+            append(result, commaSpace);
+
+            appendNumber(result, static_cast<unsigned char>(color.blue()));
+            if (color.hasAlpha()) {
+                append(result, commaSpace);
+                append(result, String::number(static_cast<float>(color.alpha()) / 256.0f));
+            }
+
+            result.append(')');
+            return String::adopt(result);
         }
         case CSS_PAIR:
             text = m_value.pair->first()->cssText();

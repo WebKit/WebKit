@@ -267,8 +267,6 @@ float charactersToFloat(const UChar*, size_t, bool* ok = 0);
 int find(const UChar*, size_t, UChar, int startPosition = 0);
 int reverseFind(const UChar*, size_t, UChar, int startPosition = -1);
 
-void append(Vector<UChar>&, const String&);
-
 #ifdef __OBJC__
 // This is for situations in WebKit where the long standing behavior has been
 // "nil if empty", so we try to maintain longstanding behavior for the sake of
@@ -316,6 +314,28 @@ inline void append(Vector<UChar>& vector, const String& string)
 {
     vector.append(string.characters(), string.length());
 }
+
+inline void appendNumber(Vector<UChar>& vector, unsigned char number)
+{
+    int numberLength = number > 99 ? 3 : (number > 9 ? 2 : 1);
+    size_t vectorSize = vector.size();
+    vector.grow(vectorSize + numberLength);
+
+    switch (numberLength) {
+    case 3:
+        vector[vectorSize + 2] = number % 10 + '0';
+        number /= 10;
+
+    case 2:
+        vector[vectorSize + 1] = number % 10 + '0';
+        number /= 10;
+
+    case 1:
+        vector[vectorSize] = number % 10 + '0';
+    }
+}
+
+
 
 PassRefPtr<SharedBuffer> utf8Buffer(const String&);
 

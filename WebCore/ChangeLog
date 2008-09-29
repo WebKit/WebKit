@@ -1,3 +1,23 @@
+2008-09-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Speed up computedStyle.getPropertyValue('color') by 4.5x.
+
+        Using a Vector<UChar> while building up the property's cssText is substantially cheaper than using String::operator+=
+        as it avoids many memory reallocations.
+
+        This also speeds up the jQuery .offset() benchmark at <http://dev.jquery.com/~john/speed/1.2.6/offset-1.2.6.html>
+        by 20% due to jQuery's strange need to call getPropertyValue('color') when retrieving the computed styles for
+        unrelated properties on an element.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText): Build the result for the color types into a Vector<UChar>
+        and use appendNumber rather than the String::number in order to cut down on memory allocations.
+        * platform/text/PlatformString.h:
+        (WebCore::appendNumber): A helper function for formatting an unsigned character as a number
+        into a Vector<UChar>.
+
 2008-09-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
