@@ -372,6 +372,10 @@ IntSize ScrollView::platformContentsSize() const
 void ScrollView::platformSetContentsSize()
 {
 }
+
+void ScrollView::platformSetScrollPosition(const IntPoint&)
+{
+}
 #endif
 
 }

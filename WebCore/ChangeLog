@@ -1,3 +1,10 @@
+2008-09-29  Dan Bernstein  <set EMAIL_ADDRESS environment variable>
+
+        - Windows build fix
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::platformSetScrollPosition):
+
 2008-09-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21218
