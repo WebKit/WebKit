@@ -1,0 +1,2 @@
+This test performs an animation of the left property. It should stop for 100ms at 100px and 200px We test for those values 50ms after it has stopped at each position. The keyframes are imported so this tests whether they come in correctly.
+PASS
