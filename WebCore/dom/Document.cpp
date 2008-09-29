@@ -1633,7 +1633,7 @@ void Document::implicitClose()
     }
 
 #if PLATFORM(MAC)
-    if (renderer() && AXObjectCache::accessibilityEnabled())
+    if (f && renderer() && this == topDocument() && AXObjectCache::accessibilityEnabled())
         axObjectCache()->postNotificationToElement(renderer(), "AXLoadComplete");
 #endif
 

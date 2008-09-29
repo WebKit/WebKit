@@ -1,3 +1,14 @@
+2008-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by John Sullivan
+
+        <rdar://problem/6240743> AXLoadComplete is sent for non-top level web areas and bogus web areas
+
+        Sends AXLoadComplete only when the top level web area is finished loading
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2008-09-29  Timothy Hatcher  <timothy@apple.com>
 
         Makes the node highlight always show up when hovering a node in
