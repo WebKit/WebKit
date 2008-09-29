@@ -1980,6 +1980,11 @@ void CTI::privateCompileMainPass()
             i+= 1;
             break;
         }
+        case op_init_arguments: {
+            emitCall(i, Machine::cti_op_init_arguments);
+            i += 1;
+            break;
+        }
         case op_get_array_length:
         case op_get_by_id_chain:
         case op_get_by_id_generic:

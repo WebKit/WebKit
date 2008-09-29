@@ -52,9 +52,6 @@ JSActivation::~JSActivation()
 void JSActivation::mark()
 {
     Base::mark();
-    
-    if (d()->argumentsObject)
-        d()->argumentsObject->mark();
 
     Register* registerArray = d()->registerArray.get();
     if (!registerArray)
@@ -162,10 +159,14 @@ bool JSActivation::isDynamicScope() const
 JSValue* JSActivation::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSActivation* thisObj = static_cast<JSActivation*>(slot.slotBase());
-    if (!thisObj->d()->argumentsObject)
-        thisObj->d()->argumentsObject = thisObj->createArgumentsObject(exec);
 
-    return thisObj->d()->argumentsObject;
+    Arguments* arguments = static_cast<Arguments*>(thisObj->d()->registers[RegisterFile::OptionalCalleeArguments].jsValue(exec));
+    if (!arguments) {
+        arguments = thisObj->createArgumentsObject(exec);
+        thisObj->d()->registers[RegisterFile::OptionalCalleeArguments] = arguments;
+    }
+
+    return arguments;
 }
 
 // These two functions serve the purpose of isolating the common case from a

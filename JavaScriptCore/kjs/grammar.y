@@ -103,14 +103,14 @@ template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, P
                                                                        FeatureInfo info,
                                                                        int numConstants) 
 {
-    ASSERT((info & ~(EvalFeature | ClosureFeature | AssignFeature)) == 0);
+    ASSERT((info & ~(EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature)) == 0);
     NodeDeclarationInfo<T> result = {node, varDecls, funcDecls, info, numConstants};
     return result;
 }
 
 template <typename T> NodeFeatureInfo<T> createNodeFeatureInfo(T node, FeatureInfo info, int numConstants)
 {
-    ASSERT((info & ~(EvalFeature | ClosureFeature | AssignFeature)) == 0);
+    ASSERT((info & ~(EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature)) == 0);
     NodeFeatureInfo<T> result = {node, info, numConstants};
     return result;
 }
@@ -340,7 +340,7 @@ PrimaryExprNoBrace:
     THISTOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new ThisNode(GLOBAL_DATA), 0, 0); }
   | Literal
   | ArrayLiteral
-  | IDENT                               { $$ = createNodeFeatureInfo<ExpressionNode*>(new ResolveNode(GLOBAL_DATA, *$1, @1.first_column), 0, 0); }
+  | IDENT                               { $$ = createNodeFeatureInfo<ExpressionNode*>(new ResolveNode(GLOBAL_DATA, *$1, @1.first_column), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
   | '(' Expr ')'                        { $$ = $2; }
 ;
 
@@ -1177,11 +1177,11 @@ FormalParameterList:
 ;
 
 FunctionBody:
-    /* not in spec */           { $$ = FunctionBodyNode::create(GLOBAL_DATA, 0, 0, 0, false, false, 0); }
+    /* not in spec */           { $$ = FunctionBodyNode::create(GLOBAL_DATA, 0, 0, 0, false, false, false, 0); }
   | SourceElements              { $$ = FunctionBodyNode::create(GLOBAL_DATA, $1.m_node, $1.m_varDeclarations ? &$1.m_varDeclarations->data : 0, 
                                                                 $1.m_funcDeclarations ? &$1.m_funcDeclarations->data : 0,
                                                                 ($1.m_featureInfo & EvalFeature) != 0, ($1.m_featureInfo & ClosureFeature) != 0,
-                                                                $1.m_numConstants);
+                                                                ($1.m_featureInfo & ArgumentsFeature) != 0, $1.m_numConstants);
                                   // As in mergeDeclarationLists() we have to ref/deref to safely get rid of
                                   // the declaration lists.
                                   if ($1.m_varDeclarations) {
@@ -1196,10 +1196,10 @@ FunctionBody:
 ;
 
 Program:
-    /* not in spec */                   { GLOBAL_DATA->parser->didFinishParsing(new SourceElements(GLOBAL_DATA), 0, 0, false, false, @0.last_line, 0); }
+    /* not in spec */                   { GLOBAL_DATA->parser->didFinishParsing(new SourceElements(GLOBAL_DATA), 0, 0, false, false, false, @0.last_line, 0); }
     | SourceElements                    { GLOBAL_DATA->parser->didFinishParsing($1.m_node, $1.m_varDeclarations, $1.m_funcDeclarations, 
                                                                     ($1.m_featureInfo & EvalFeature) != 0, ($1.m_featureInfo & ClosureFeature) != 0,
-                                                                    @1.last_line, $1.m_numConstants); }
+                                                                    ($1.m_featureInfo & ArgumentsFeature) != 0, @1.last_line, $1.m_numConstants); }
 ;
 
 SourceElements:

@@ -383,6 +383,9 @@ namespace JSC {
             if (index >= 0)
                 return m_calleeRegisters[index];
 
+            if (index == RegisterFile::OptionalCalleeArguments)
+                return m_argumentsRegister;
+
             if (m_parameters.size()) {
                 ASSERT(!m_globals.size());
                 return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
@@ -416,6 +419,7 @@ namespace JSC {
 
         HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
+        RegisterID m_argumentsRegister;
         SegmentedVector<RegisterID, 512> m_calleeRegisters;
         SegmentedVector<RegisterID, 512> m_parameters;
         SegmentedVector<RegisterID, 512> m_globals;

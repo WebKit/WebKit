@@ -2167,7 +2167,7 @@ namespace JSC {
 
     class ScopeNode : public BlockNode {
     public:
-        ScopeNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        ScopeNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
         int sourceId() const JSC_FAST_CALL { return m_sourceId; }
         const UString& sourceURL() const JSC_FAST_CALL { return m_sourceURL; }
@@ -2175,7 +2175,8 @@ namespace JSC {
         
         bool usesEval() const { return m_usesEval; }
         bool needsClosure() const { return m_needsClosure; }
-        
+        bool usesArguments() const { return m_usesArguments; }
+
         VarStack& varStack() { return m_varStack; }
         FunctionStack& functionStack() { return m_functionStack; }
 
@@ -2195,12 +2196,13 @@ namespace JSC {
         int m_sourceId;
         bool m_usesEval;
         bool m_needsClosure;
+        bool m_usesArguments;
         int m_numConstants;
     };
 
     class ProgramNode : public ScopeNode {
     public:
-        static ProgramNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        static ProgramNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
         ProgramCodeBlock& byteCode(ScopeChainNode* scopeChain) JSC_FAST_CALL
         {
@@ -2210,7 +2212,7 @@ namespace JSC {
         }
 
     private:
-        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
         void generateCode(ScopeChainNode*) JSC_FAST_CALL;
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
@@ -2225,7 +2227,7 @@ namespace JSC {
 
     class EvalNode : public ScopeNode {
     public:
-        static EvalNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        static EvalNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
         EvalCodeBlock& byteCode(ScopeChainNode* scopeChain) JSC_FAST_CALL
         {
@@ -2235,7 +2237,7 @@ namespace JSC {
         }
 
     private:
-        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
         void generateCode(ScopeChainNode*) JSC_FAST_CALL;
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
@@ -2247,8 +2249,8 @@ namespace JSC {
 
     class FunctionBodyNode : public ScopeNode {
     public:
-        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
-        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
+        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
         Vector<Identifier>& parameters() JSC_FAST_CALL { return m_parameters; }
         UString paramString() const JSC_FAST_CALL;
@@ -2291,7 +2293,7 @@ namespace JSC {
         }
 
     protected:
-        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, int numConstants) JSC_FAST_CALL;
+        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants) JSC_FAST_CALL;
 
     private:
         void generateCode(ScopeChainNode*) JSC_FAST_CALL;

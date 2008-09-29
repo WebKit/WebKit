@@ -1712,12 +1712,13 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ScopeNode -----------------------------
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
+ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
     : BlockNode(globalData, children)
     , m_sourceURL(globalData->parser->sourceURL())
     , m_sourceId(globalData->parser->sourceId())
     , m_usesEval(usesEval)
     , m_needsClosure(needsClosure)
+    , m_usesArguments(usesArguments)
     , m_numConstants(numConstants)
 {
     if (varStack)
@@ -1730,21 +1731,21 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStac
 
 // ------------------------------ ProgramNode -----------------------------
 
-ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
-    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
+ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, usesArguments, numConstants)
     , m_sourceProvider(sourceProvider)
 {
 }
 
-ProgramNode* ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
+ProgramNode* ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
 {
-    return new ProgramNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure, numConstants);
+    return new ProgramNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure, usesArguments, numConstants);
 }
 
 // ------------------------------ EvalNode -----------------------------
 
-EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
-    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
+EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, usesArguments, numConstants)
     , m_sourceProvider(sourceProvider)
 {
 }
@@ -1775,15 +1776,15 @@ void EvalNode::generateCode(ScopeChainNode* scopeChainNode)
     generator.generate();
 }
 
-EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
+EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
 {
-    return new EvalNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure, numConstants);
+    return new EvalNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure, usesArguments, numConstants);
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
-    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
+FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, usesArguments, numConstants)
     , m_refCount(0)
 {
 }
@@ -1794,14 +1795,14 @@ void FunctionBodyNode::mark()
         m_code->mark();
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure, usesArguments, numConstants);
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider*, bool usesEval, bool needsClosure, int numConstants)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider*, bool usesEval, bool needsClosure, bool usesArguments, int numConstants)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure, usesArguments, numConstants);
 }
 
 void FunctionBodyNode::generateCode(ScopeChainNode* scopeChainNode)

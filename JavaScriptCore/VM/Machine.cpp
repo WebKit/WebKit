@@ -30,6 +30,7 @@
 #include "config.h"
 #include "Machine.h"
 
+#include "Arguments.h"
 #include "BatchedTransitionOptimizer.h"
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
@@ -523,6 +524,7 @@ ALWAYS_INLINE void Machine::initializeCallFrame(Register* callFrame, CodeBlock* 
     callFrame[RegisterFile::ArgumentCount] = argc; // original argument count (for the sake of the "arguments" object)
     callFrame[RegisterFile::Callee] = function;
     callFrame[RegisterFile::OptionalCalleeActivation] = nullJSValue;
+    callFrame[RegisterFile::OptionalCalleeArguments] = nullJSValue;
 }
 
 ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* registerBase, Register* r, size_t registerOffset, int argc, JSValue*& exceptionValue)
@@ -714,6 +716,7 @@ void Machine::dumpRegisters(const RegisterFile* registerFile, const Register* r)
     printf("[ArgumentCount]            | %10p | %10p \n", it, (*it).v()); ++it;
     printf("[Callee]                   | %10p | %10p \n", it, (*it).v()); ++it;
     printf("[OptionalCalleeActivation] | %10p | %10p \n", it, (*it).v()); ++it;
+    printf("[OptionalCalleeArguments]  | %10p | %10p \n", it, (*it).v()); ++it;
     printf("----------------------------------------------------\n");
 
     int registerCount = 0;
@@ -3408,6 +3411,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ++vPC;
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_init_arguments) {
+        JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
+        r[RegisterFile::OptionalCalleeArguments] = activation->createArgumentsObject(exec);
+        ++vPC;
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_construct) {
         /* construct dst(r) constr(r) constrProto(r) firstArg(r) argCount(n) registerOffset(n)
 
@@ -3828,17 +3837,23 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
 JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
 {
-    Register* callFrame = this->callFrame(exec, function);
-    if (!callFrame)
+    Register* r = this->callFrame(exec, function);
+    if (!r)
         return jsNull();
 
-    JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue(exec));
-    if (!activation) {
-        activation = new (exec) JSActivation(exec, function->m_body, callFrame);
-        callFrame[RegisterFile::OptionalCalleeActivation] = activation;
+    Arguments* arguments = static_cast<Arguments*>(r[RegisterFile::OptionalCalleeArguments].jsValue(exec));
+    if (!arguments) {
+        JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
+        if (!activation) {
+            activation = new (exec) JSActivation(exec, function->m_body, r);
+            r[RegisterFile::OptionalCalleeActivation] = activation;
+        }
+
+        arguments = activation->createArgumentsObject(exec);
+        r[RegisterFile::OptionalCalleeArguments] = arguments;
     }
 
-    return activation->get(exec, exec->propertyNames().arguments);
+    return arguments;
 }
 
 JSValue* Machine::retrieveCaller(ExecState* exec, InternalFunction* function) const
@@ -4465,6 +4480,7 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     r[RegisterFile::ArgumentCount] = argCount; // original argument count (for the sake of the "arguments" object)
     r[RegisterFile::Callee] = funcVal;
     r[RegisterFile::OptionalCalleeActivation] = nullJSValue;
+    r[RegisterFile::OptionalCalleeArguments] = nullJSValue;
 
     exec->m_callFrame = r;
     exec->m_scopeChain = callDataScopeChain;
@@ -4541,6 +4557,14 @@ JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
     exec->setException(createNotAFunctionError(exec, funcVal, ARG_instr4, ARG_r[RegisterFile::CodeBlock].codeBlock()));
     VM_CHECK_EXCEPTION_AT_END();
     return 0;
+}
+
+void Machine::cti_op_init_arguments(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Register* r = ARG_r;
+    JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
+    r[RegisterFile::OptionalCalleeArguments] = activation->createArgumentsObject(exec);
 }
 
 void Machine::cti_op_ret_activation(CTI_ARGS)
@@ -4657,6 +4681,7 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     r[RegisterFile::ArgumentCount] = argCount; // original argument count (for the sake of the "arguments" object)
     r[RegisterFile::Callee] = constructor;
     r[RegisterFile::OptionalCalleeActivation] = nullJSValue;
+    r[RegisterFile::OptionalCalleeArguments] = nullJSValue;
 
     exec->m_callFrame = r;
     exec->m_scopeChain = callDataScopeChain;

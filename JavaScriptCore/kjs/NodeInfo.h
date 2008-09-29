@@ -31,6 +31,7 @@ namespace JSC {
     const FeatureInfo EvalFeature = 1 << 0;
     const FeatureInfo ClosureFeature = 1 << 1;
     const FeatureInfo AssignFeature = 1 << 2;
+    const FeatureInfo ArgumentsFeature = 1 << 3;
 
     template <typename T> struct NodeFeatureInfo {
         T m_node;

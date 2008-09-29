@@ -90,16 +90,17 @@ namespace JSC {
     class RegisterFile : Noncopyable {
     public:
         enum CallFrameHeaderEntry {
-            CallFrameHeaderSize = 8,
+            CallFrameHeaderSize = 9,
 
-            CodeBlock = -8,
-            CallerScopeChain = -7,
-            CallerRegisters = -6,
-            ReturnPC = -5,
-            ReturnValueRegister = -4,
-            ArgumentCount = -3,
-            Callee = -2,
-            OptionalCalleeActivation = -1,
+            CodeBlock = -9,
+            CallerScopeChain = -8,
+            CallerRegisters = -7,
+            ReturnPC = -6,
+            ReturnValueRegister = -5,
+            ArgumentCount = -4,
+            Callee = -3,
+            OptionalCalleeActivation = -2,
+            OptionalCalleeArguments = -1,
         };
 
         enum { ProgramCodeThisRegister = -CallFrameHeaderSize - 1 };

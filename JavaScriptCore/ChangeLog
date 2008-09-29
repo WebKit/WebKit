@@ -1,3 +1,57 @@
+2008-09-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21200: Allow direct access to 'arguments' without using op_resolve
+        <https://bugs.webkit.org/show_bug.cgi?id=21200>
+
+        Allow fast access to the 'arguments' object by adding an extra slot to
+        the callframe to store it.
+
+        * JavaScriptCore.exp:
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::registerFor):
+        * VM/CodeGenerator.h:
+        (JSC::CodeGenerator::registerFor):
+        * VM/Machine.cpp:
+        (JSC::Machine::initializeCallFrame):
+        (JSC::Machine::dumpRegisters):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::retrieveArguments):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_create_arguments):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * VM/RegisterFile.h:
+        (JSC::RegisterFile::):
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::mark):
+        (JSC::JSActivation::argumentsGetter):
+        * kjs/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        * kjs/NodeInfo.h:
+        * kjs/Parser.cpp:
+        (JSC::Parser::didFinishParsing):
+        * kjs/Parser.h:
+        (JSC::Parser::parse):
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        * kjs/nodes.h:
+        (JSC::ScopeNode::usesArguments):
+
 2008-09-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

@@ -80,22 +80,21 @@ namespace JSC {
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
+        NEVER_INLINE Arguments* createArgumentsObject(ExecState*);
+
     private:
         struct JSActivationData : public JSVariableObjectData {
             JSActivationData(PassRefPtr<FunctionBodyNode> functionBody_, Register* registers)
                 : JSVariableObjectData(&functionBody_->symbolTable(), registers)
                 , functionBody(functionBody_)
-                , argumentsObject(0)
             {
             }
 
             RefPtr<FunctionBodyNode> functionBody; // Owns the symbol table and code block
-            Arguments* argumentsObject;
         };
         
         static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
-        NEVER_INLINE Arguments* createArgumentsObject(ExecState*);
 
         JSActivationData* d() const { return static_cast<JSActivationData*>(JSVariableObject::d); }
     };

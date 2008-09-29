@@ -56,7 +56,7 @@ namespace JSC {
         int sourceId() const { return m_sourceId; }
 
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
-                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, int lastLine, int numConstants);
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, bool usesArguments, int lastLine, int numConstants);
 
     private:
         friend class JSGlobalData;
@@ -72,6 +72,7 @@ namespace JSC {
         RefPtr<ParserRefCountedData<DeclarationStacks::FunctionStack> > m_funcDeclarations;
         bool m_usesEval;
         bool m_needsClosure;
+        bool m_usesArguments;
         int m_lastLine;
         int m_numConstants;
     };
@@ -94,6 +95,7 @@ namespace JSC {
                                                      sourceProvider.get(),
                                                      m_usesEval,
                                                      m_needsClosure,
+                                                     m_usesArguments,
                                                      m_numConstants);
         m_varDeclarations = 0;
         m_funcDeclarations = 0;
