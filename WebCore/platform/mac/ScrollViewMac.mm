@@ -30,6 +30,7 @@
 #import "FloatRect.h"
 #import "IntRect.h"
 #import "Logging.h"
+#import "NotImplemented.h"
 #import "WebCoreFrameView.h"
 
 using namespace std;
@@ -140,12 +141,19 @@ void ScrollView::platformSetScrollbarsSuppressed(bool repaintOnUnsuppress)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
+void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSPoint tempPoint = { max(0, scrollPoint.x()), max(0, scrollPoint.y()) }; // Don't use NSMakePoint to work around 4213314.
     [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
+{
+    // FIXME: It would be nice to implement this so that all of the code in WebFrameView could go away.
+    notImplemented();
+    return true;
 }
 
 void ScrollView::updateContents(const IntRect& rect, bool now)

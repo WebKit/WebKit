@@ -1,3 +1,25 @@
+2008-09-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21216
+
+        Make setScrollPosition and scroll() cross-platform.
+
+        Reviewed by Anders
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        (WebCore::ScrollView::scroll):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformSetScrollPosition):
+        (WebCore::ScrollView::platformScroll):
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformSetScrollPosition):
+        (WebCore::ScrollView::platformScroll):
+
 2008-09-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver.

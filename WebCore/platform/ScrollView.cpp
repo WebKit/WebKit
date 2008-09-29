@@ -159,6 +159,37 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
     }
 }
 
+void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
+{
+    if (platformWidget()) {
+        platformSetScrollPosition(scrollPoint);
+        return;
+    }
+
+    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
+    newScrollPosition.clampNegativeToZero();
+
+    if (newScrollPosition == scrollPosition())
+        return;
+
+    updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
+}
+
+bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
+{
+    if (platformWidget())
+        return platformScroll(direction, granularity);
+
+    if (direction == ScrollUp || direction == ScrollDown) {
+        if (m_verticalScrollbar)
+            return m_verticalScrollbar->scroll(direction, granularity);
+    } else {
+        if (m_horizontalScrollbar)
+            return m_horizontalScrollbar->scroll(direction, granularity);
+    }
+    return false;
+}
+
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
 {
     IntPoint viewPoint = convertFromContainingWindow(windowPoint);
