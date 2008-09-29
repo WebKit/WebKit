@@ -1,5 +1,16 @@
 2008-09-29  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=21001
+        Starting transition after animation, when animation
+        is finished, transition is wrong.
+
+        * animations/transition-and-animation-2-expected.txt: Added.
+        * animations/transition-and-animation-2.html: Added.
+
+2008-09-29  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Sam Weinig
 
         Test for

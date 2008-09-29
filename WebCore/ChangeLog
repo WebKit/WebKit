@@ -1,5 +1,28 @@
 2008-09-29  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Eric Seidel
+
+        https://bugs.webkit.org/show_bug.cgi?id=21001
+        Starting transition after animation, when animation
+        is finished, transition is wrong.
+
+        Test: animations/transition-and-animation-2.html
+
+        * page/animation/AnimationBase.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::resetTransitions):
+        (WebCore::CompositeAnimation::cleanupFinishedAnimations):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::~ImplicitAnimation):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::reset):
+        * page/animation/ImplicitAnimation.h:
+
+2008-09-29  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Sam Weinig
 
         https://bugs.webkit.org/show_bug.cgi?id=20921

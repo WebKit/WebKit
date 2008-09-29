@@ -38,7 +38,7 @@ namespace WebCore {
 // for a single RenderObject.
 class ImplicitAnimation : public AnimationBase {
 public:
-    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*);
+    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*, const RenderStyle* fromStyle);
     virtual ~ImplicitAnimation();
     
     int transitionProperty() const { return m_transitionProperty; }
@@ -47,7 +47,7 @@ public:
     virtual void onAnimationEnd(double elapsedTime);
 
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
-    virtual void reset(RenderObject*, const RenderStyle* from = 0, const RenderStyle* to = 0);
+    virtual void reset(const RenderStyle* to);
 
     void setOverridden(bool);
     virtual bool overridden() const { return m_overridden; }

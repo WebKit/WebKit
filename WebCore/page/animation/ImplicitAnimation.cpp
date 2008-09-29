@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ImplicitAnimation::ImplicitAnimation(const Animation* transition, int animatingProperty, RenderObject* renderer, CompositeAnimation* compAnim)
+ImplicitAnimation::ImplicitAnimation(const Animation* transition, int animatingProperty, RenderObject* renderer, CompositeAnimation* compAnim, const RenderStyle* fromStyle)
     : AnimationBase(transition, renderer, compAnim)
     , m_transitionProperty(transition->property())
     , m_animatingProperty(animatingProperty)
@@ -43,11 +43,19 @@ ImplicitAnimation::ImplicitAnimation(const Animation* transition, int animatingP
     , m_toStyle(0)
 {
     ASSERT(animatingProperty != cAnimateAll);
+    if (fromStyle) {
+        m_fromStyle = fromStyle;
+        const_cast<RenderStyle*>(m_fromStyle)->ref();
+    }
 }
 
 ImplicitAnimation::~ImplicitAnimation()
 {
-    ASSERT(!m_fromStyle && !m_toStyle);
+    // Get rid of style refs
+    if (m_fromStyle)
+        const_cast<RenderStyle*>(m_fromStyle)->deref(renderer()->renderArena());
+    if (m_toStyle)
+        const_cast<RenderStyle*>(m_toStyle)->deref(renderer()->renderArena());
 
     // Do the cleanup here instead of in the base class so the specialized methods get called
     if (!postActive())
@@ -72,7 +80,7 @@ void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* ren
 
     // Reset to start the transition if we are new
     if (isNew())
-        reset(renderer, currentStyle, targetStyle);
+        reset(targetStyle);
 
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed
@@ -111,25 +119,20 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
     return false; // Didn't dispatch an event
 }
 
-void ImplicitAnimation::reset(RenderObject* renderer, const RenderStyle* from /* = 0 */, const RenderStyle* to /* = 0 */)
+void ImplicitAnimation::reset(const RenderStyle* to)
 {
-    ASSERT((!m_toStyle && !to) || m_toStyle != to);
-    ASSERT((!m_fromStyle && !from) || m_fromStyle != from);
-    if (m_fromStyle)
-        const_cast<RenderStyle*>(m_fromStyle)->deref(renderer->renderArena());
+    ASSERT(to);
+    ASSERT(m_fromStyle);
+    
     if (m_toStyle)
-        const_cast<RenderStyle*>(m_toStyle)->deref(renderer->renderArena());
+        const_cast<RenderStyle*>(m_toStyle)->deref(renderer()->renderArena());
 
-    m_fromStyle = const_cast<RenderStyle*>(from);   // it is read-only, other than the ref
-    if (m_fromStyle)
-        const_cast<RenderStyle*>(m_fromStyle)->ref();
-
-    m_toStyle = const_cast<RenderStyle*>(to);       // it is read-only, other than the ref
+    m_toStyle = to;       // It is read-only, other than the ref
     if (m_toStyle)
         const_cast<RenderStyle*>(m_toStyle)->ref();
 
     // Restart the transition
-    if (from && to)
+    if (m_fromStyle && m_toStyle)
         updateStateMachine(AnimationStateInputRestartAnimation, -1);
         
     // set the transform animation list
