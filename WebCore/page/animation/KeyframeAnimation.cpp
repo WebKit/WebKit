@@ -111,7 +111,11 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     if (!animatedStyle)
         animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
 
-    double prog = progress(scale, offset);
+    const TimingFunction* timingFunction = 0;
+    if (fromStyle->animations() && fromStyle->animations()->size() > 0)
+        timingFunction = &(fromStyle->animations()->animation(0)->timingFunction());
+
+    double prog = progress(scale, offset, timingFunction);
 
     HashSet<int>::const_iterator end = m_keyframes->endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it) {

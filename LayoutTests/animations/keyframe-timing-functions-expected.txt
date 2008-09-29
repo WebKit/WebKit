@@ -1,0 +1,2 @@
+This test should do a linear animation. The timing-function comes from the keyframe, so this is testing whether or not the timing function in keyframes is used. 
+PASS

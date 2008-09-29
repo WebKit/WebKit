@@ -79,7 +79,7 @@ void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     if (!animatedStyle)
         animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
 
-    if (blendProperties(this, m_animatingProperty, animatedStyle, m_fromStyle, m_toStyle, progress(1, 0)))
+    if (blendProperties(this, m_animatingProperty, animatedStyle, m_fromStyle, m_toStyle, progress(1, 0, 0)))
         setAnimating();
 }
 
@@ -157,7 +157,7 @@ bool ImplicitAnimation::isTargetPropertyEqual(int prop, const RenderStyle* targe
 
 void ImplicitAnimation::blendPropertyValueInStyle(int prop, RenderStyle* currentStyle)
 {
-    blendProperties(this, prop, currentStyle, m_fromStyle, m_toStyle, progress(1, 0));
+    blendProperties(this, prop, currentStyle, m_fromStyle, m_toStyle, progress(1, 0, 0));
 }
 
 void ImplicitAnimation::validateTransformFunctionList()

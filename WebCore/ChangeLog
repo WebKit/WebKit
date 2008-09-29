@@ -1,3 +1,20 @@
+2008-09-29  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=20921
+        -webkit-animation-timing-function: inside of keyframes is ignored
+
+        Test: animations/keyframe-timing-functions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress):
+        * page/animation/AnimationBase.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+
 2008-09-29  Dan Bernstein  <mitz@apple.com>
 
         - Windows build fix
