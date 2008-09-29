@@ -1,3 +1,14 @@
+2008-09-29  Gunnar Sletta  <gunnar@trolltech.com>
+
+        Reviewed by Simon
+
+        Compile on windows using MSVC 2005
+
+        For the PCH We need to define _WIN32_WINNT and include windows.h early on,
+        otherwise we'll miss several functions.
+
+        * WebKit_pch.h:
+
 2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon.
