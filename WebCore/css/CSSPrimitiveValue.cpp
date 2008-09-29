@@ -686,13 +686,26 @@ String CSSPrimitiveValue::cssText() const
             // FIXME: Add list-style and separator
             break;
         case CSS_RECT: {
+            static const String rectParen("rect(");
+
             Rect* rectVal = getRectValue();
-            text = "rect(";
-            text += rectVal->top()->cssText() + " ";
-            text += rectVal->right()->cssText() + " ";
-            text += rectVal->bottom()->cssText() + " ";
-            text += rectVal->left()->cssText() + ")";
-            break;
+            Vector<UChar> result;
+            result.reserveCapacity(32);
+            append(result, rectParen);
+
+            append(result, rectVal->top()->cssText());
+            result.append(' ');
+
+            append(result, rectVal->right()->cssText());
+            result.append(' ');
+
+            append(result, rectVal->bottom()->cssText());
+            result.append(' ');
+
+            append(result, rectVal->left()->cssText());
+            result.append(')');
+
+            return String::adopt(result);
         }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {

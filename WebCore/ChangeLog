@@ -1,5 +1,15 @@
 2008-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Speed up getPropertyValue('clip') by 25% by using a Vector<UChar> for building a string,
+        rather than String::operator+=.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+
+2008-09-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Speed up computedStyle.getPropertyValue('color') by 4.5x.
