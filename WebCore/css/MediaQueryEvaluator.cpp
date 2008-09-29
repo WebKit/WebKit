@@ -91,7 +91,7 @@ MediaQueryEvaluator:: MediaQueryEvaluator(const char* acceptedMediaType, bool me
 }
 
 MediaQueryEvaluator:: MediaQueryEvaluator(const String& acceptedMediaType, Frame* frame, RenderStyle* style)
-    : m_mediaType(acceptedMediaType.lower())
+    : m_mediaType(acceptedMediaType)
     , m_frame(frame)
     , m_style(style)
     , m_expResult(false) // doesn't matter when we have m_frame and m_style
