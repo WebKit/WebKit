@@ -38,6 +38,7 @@ module window {
         CustomMarkFunction,
         CustomNativeConverter,
         CustomPutFunction,
+        CustomListeners,
         GenerateNativeConverter,
         LegacyParent=JSDOMWindowBase
     ] DOMWindow {
@@ -153,6 +154,45 @@ module window {
         // cross-document messaging
         [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in [Optional] MessagePort messagePort, in DOMString targetOrigin)
             raises(DOMException);
+
+        attribute EventListener onabort;
+        attribute EventListener onblur;
+        attribute EventListener onchange;
+        attribute EventListener onclick;
+        attribute EventListener ondblclick;
+        attribute EventListener onerror;
+        attribute EventListener onfocus;
+        attribute EventListener onkeydown;
+        attribute EventListener onkeypress;
+        attribute EventListener onkeyup;
+        attribute EventListener onload;
+        attribute EventListener onmousedown;
+        attribute EventListener onmousemove;
+        attribute EventListener onmouseout;
+        attribute EventListener onmouseover;
+        attribute EventListener onmouseup;
+        attribute EventListener onmousewheel;
+        attribute EventListener onreset;
+        attribute EventListener onresize;
+        attribute EventListener onscroll;
+        attribute EventListener onsearch;
+        attribute EventListener onselect;
+        attribute EventListener onsubmit;
+        attribute EventListener onunload;
+        attribute EventListener onbeforeunload;
+        attribute [Custom] EventListener onwebkitanimationstart;
+        attribute [Custom] EventListener onwebkitanimationiteration;
+        attribute [Custom] EventListener onwebkitanimationend;
+        attribute [Custom] EventListener onwebkittransitionend;
+
+        // EventTarget interface
+        [Custom] void addEventListener(in DOMString type, 
+                                      in EventListener listener, 
+                                      in boolean useCapture);
+        [Custom] void removeEventListener(in DOMString type, 
+                                          in EventListener listener, 
+                                          in boolean useCapture);
+        // FIXME: Implement dispatchEvent
 
 #if defined(LANGUAGE_JAVASCRIPT)
         // Global constructors

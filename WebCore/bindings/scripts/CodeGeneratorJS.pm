@@ -493,6 +493,11 @@ sub GenerateHeader
     # Constructor object getter
     push(@headerContent, "    static JSC::JSValue* getConstructor(JSC::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
 
+    if ($dataNode->extendedAttributes->{"CustomListeners"}) {
+        push(@headerContent, "    JSC::JSValue* getListener(JSC::ExecState*, const AtomicString& eventType) const;\n");
+        push(@headerContent, "    void setListener(JSC::ExecState*, const AtomicString& eventType, JSC::JSValue* function);\n");
+    }
+
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
 
@@ -985,8 +990,10 @@ sub GenerateImplementation
         
         if ($numAttributes > 0) {
             foreach my $attribute (@{$dataNode->attributes}) {
+                my $name = $attribute->signature->name;
+                my $type = $codeGenerator->StripModule($attribute->signature->type);
                 my $getFunctionName = "js" . $interfaceName .  $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
-                my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->name);
+                my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
 
                 push(@implContent, "JSValue* ${getFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
                 push(@implContent, "{\n");
@@ -1014,6 +1021,11 @@ sub GenerateImplementation
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
                     push(@implContent, "    return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())") . " : jsUndefined();\n");
+                } elsif ($type eq "EventListener" && $dataNode->extendedAttributes->{"CustomListeners"}) {
+                    $implIncludes{"EventNames.h"} = 1;
+                    my $eventName = $name . "Event";
+                    $eventName =~ s/^on//;
+                    push(@implContent, "    return static_cast<$className*>(slot.slotBase())->getListener(exec, EventNames::${eventName});\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
                     my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                     $constructorType =~ s/Constructor$//;
@@ -1028,7 +1040,6 @@ sub GenerateImplementation
                         }
                     } else {
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
-                        my $type = $codeGenerator->StripModule($attribute->signature->type);
                         my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
@@ -1110,6 +1121,7 @@ sub GenerateImplementation
                 foreach my $attribute (@{$dataNode->attributes}) {
                     if ($attribute->type !~ /^readonly/) {
                         my $name = $attribute->signature->name;
+                        my $type = $codeGenerator->StripModule($attribute->signature->type);
                         my $putFunctionName = "setJS" . $interfaceName .  $codeGenerator->WK_ucfirst($name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                         my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
 
@@ -1128,6 +1140,11 @@ sub GenerateImplementation
                         if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomSetter"}) {
                             # FIXME: Custom function can 
                             push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
+                        } elsif ($type eq "EventListener" && $dataNode->extendedAttributes->{"CustomListeners"}) {
+                            $implIncludes{"EventNames.h"} = 1;
+                            my $eventName = $name . "Event";
+                            $eventName =~ s/^on//;
+                            push(@implContent, "    static_cast<$className*>(thisObject)->setListener(exec, EventNames::${eventName}, value);\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

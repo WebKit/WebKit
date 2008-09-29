@@ -130,9 +130,6 @@ namespace WebCore {
         JSDOMStructureMap& structures() { return d()->structures; }
         JSDOMConstructorMap& constructors() const { return d()->constructors; }
 
-        JSC::JSValue* getListener(JSC::ExecState*, const AtomicString& eventType) const;
-        void setListener(JSC::ExecState*, const AtomicString& eventType, JSC::JSValue* function);
-
     private:
         struct JSDOMWindowBaseData : public JSGlobalObjectData {
             JSDOMWindowBaseData(PassRefPtr<DOMWindow>, JSDOMWindowBase*, JSDOMWindowShell*);

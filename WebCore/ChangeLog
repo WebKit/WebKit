@@ -1,3 +1,28 @@
+2008-09-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Autogenerate EventListeners, addEventListener and removeEventListener
+        for JSDOMWindow.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::onwebkitanimationstart):
+        (WebCore::JSDOMWindow::setOnwebkitanimationstart):
+        (WebCore::JSDOMWindow::onwebkitanimationiteration):
+        (WebCore::JSDOMWindow::setOnwebkitanimationiteration):
+        (WebCore::JSDOMWindow::onwebkitanimationend):
+        (WebCore::JSDOMWindow::setOnwebkitanimationend):
+        (WebCore::JSDOMWindow::onwebkittransitionend):
+        (WebCore::JSDOMWindow::setOnwebkittransitionend):
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        (WebCore::JSDOMWindow::setListener):
+        (WebCore::JSDOMWindow::getListener):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.idl:
+
 2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon.
