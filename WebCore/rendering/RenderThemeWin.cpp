@@ -88,6 +88,13 @@ static bool haveTheme;
 
 namespace WebCore {
 
+static bool gWebKitIsBeingUnloaded;
+
+void RenderThemeWin::setWebKitIsBeingUnloaded()
+{
+    gWebKitIsBeingUnloaded = true;
+}
+
 #if !USE(SAFARI_THEME)
 RenderTheme* theme()
 {
@@ -107,7 +114,8 @@ RenderThemeWin::RenderThemeWin()
 
 RenderThemeWin::~RenderThemeWin()
 {
-    if (!uxthemeLibrary())
+    // If WebKit is being unloaded, then uxtheme.dll is no longer available.
+    if (gWebKitIsBeingUnloaded || !uxthemeLibrary())
         return;
     close();
 }

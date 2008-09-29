@@ -1,3 +1,13 @@
+2008-09-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - WebKit/win part of fixing <rdar://problem/6247906> REGRESSION (r19500): Crash on quit beneath CloseThemeData
+
+        * WebKitDLL.cpp:
+        (DllMain): Call RenderThemeWin::setWebKitIsBeingUnloaded() when WebKit
+        is being unloaded.
+
 2008-09-27  David Hyatt  <hyatt@apple.com>
 
         Land the frameGeometry->frameRect changes that I forgot to land in WebKit.

@@ -109,6 +109,8 @@ public:
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
     virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
 
+    static void setWebKitIsBeingUnloaded();
+
 private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();

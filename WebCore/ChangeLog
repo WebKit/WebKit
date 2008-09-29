@@ -1,3 +1,16 @@
+2008-09-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - WebCore part of fixing <rdar://problem/6247906> REGRESSION (r19500): Crash on quit beneath CloseThemeData
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::setWebKitIsBeingUnloaded): Added.
+        (WebCore::RenderThemeWin::~RenderThemeWin): Check if WebKit is being
+        unloaded, to avoid calling uxtheme.dll functions after that library has
+        been unloaded.
+        * rendering/RenderThemeWin.h:
+
 2008-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by John Sullivan
