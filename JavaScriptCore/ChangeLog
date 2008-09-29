@@ -1,3 +1,16 @@
+2008-09-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Speed up parseInt and parseFloat.
+
+        Repeatedly indexing into a UString is slow, so retrieve a pointer into the underlying buffer once up front
+        and use that instead.  This is a 7% win on a parseInt/parseFloat micro-benchmark.
+
+        * kjs/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt):
+        (JSC::parseFloat):
+
 2008-09-28  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by David Hyatt.
