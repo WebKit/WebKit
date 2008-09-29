@@ -146,11 +146,6 @@ JSObject* JSActivation::toThisObject(ExecState* exec) const
     return exec->globalThisValue();
 }
 
-bool JSActivation::isActivationObject() const
-{
-    return true;
-}
-
 bool JSActivation::isDynamicScope() const
 {
     return d()->functionBody->usesEval();

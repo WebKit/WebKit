@@ -113,7 +113,7 @@ static int depth(CodeBlock* codeBlock, ScopeChain& sc)
     int scopeDepth = 0;
     ScopeChainIterator iter = sc.begin();
     ScopeChainIterator end = sc.end();
-    while (!(*iter)->isActivationObject()) {
+    while (!(*iter)->isObject(&JSActivation::info)) {
         ++iter;
         if (iter == end)
             break;
@@ -793,7 +793,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
 
     // If this call frame created an activation, tear it off.
     if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].jsValue(exec))) {
-        ASSERT(activation->isActivationObject());
+        ASSERT(activation->isObject(&JSActivation::info));
         activation->copyRegisters();
     }
     
@@ -3356,7 +3356,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].jsValue(exec))) {
             ASSERT(!r[RegisterFile::CodeBlock].codeBlock()->needsFullScopeChain || scopeChain->object == activation);
-            ASSERT(activation->isActivationObject());
+            ASSERT(activation->isObject(&JSActivation::info));
             activation->copyRegisters();
         }
 
@@ -4576,7 +4576,7 @@ void Machine::cti_op_ret_activation(CTI_ARGS)
     ASSERT(activation);
 
     ASSERT(!ARG_r[RegisterFile::CodeBlock].codeBlock()->needsFullScopeChain || ARG_scopeChain->object == activation);
-    ASSERT(activation->isActivationObject());
+    ASSERT(activation->isObject(&JSActivation::info));
     activation->copyRegisters();
 }
 

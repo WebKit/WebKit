@@ -169,7 +169,6 @@ namespace JSC {
         virtual JSValue* lookupGetter(ExecState*, const Identifier& propertyName);
         virtual JSValue* lookupSetter(ExecState*, const Identifier& propertyName);
 
-        virtual bool isActivationObject() const { return false; }
         virtual bool isGlobalObject() const { return false; }
         virtual bool isVariableObject() const { return false; }
         virtual bool isWatchdogException() const { return false; }

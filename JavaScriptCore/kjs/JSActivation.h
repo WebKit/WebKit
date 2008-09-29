@@ -48,7 +48,6 @@ namespace JSC {
         
         virtual void mark();
 
-        virtual bool isActivationObject() const;
         virtual bool isDynamicScope() const;
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
