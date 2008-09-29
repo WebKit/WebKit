@@ -1,3 +1,14 @@
+2008-09-29  Thiago Macieira  <thiago.macieira@trolltech.com>
+
+        Reviewed by Simon
+
+        Fix compilation with gcc 4.3
+
+         gcc 4.3 is stricter and ctype.h isn't getting included
+        automatically here by dependencies. So do it directly.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+
 2008-09-29  Morten Sørvig  <msorvig@trolltech.com>
 
         Reviewed by Simon.

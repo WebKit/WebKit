@@ -31,6 +31,8 @@
 #include "KeyboardCodes.h"
 #include "NotImplemented.h"
 
+#include <ctype.h>
+
 #include <QKeyEvent>
 
 namespace WebCore {
