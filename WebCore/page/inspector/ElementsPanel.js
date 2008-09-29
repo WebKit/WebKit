@@ -63,6 +63,8 @@ WebInspector.ElementsPanel = function()
 
     this.crumbsElement = document.createElement("div");
     this.crumbsElement.className = "crumbs";
+    this.crumbsElement.addEventListener("mousemove", this._mouseMovedInCrumbs.bind(this), false);
+    this.crumbsElement.addEventListener("mouseout", this._mouseMovedOutOfCrumbs.bind(this), false);
 
     this.sidebarPanes = {};
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane();
@@ -141,8 +143,8 @@ WebInspector.ElementsPanel.prototype = {
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
+
         WebInspector.hoveredDOMNode = null;
-        WebInspector.forceHoverHighlight = false;
 
         if (InspectorController.searchingForNode()) {
             InspectorController.toggleNodeSearch();
@@ -162,7 +164,6 @@ WebInspector.ElementsPanel.prototype = {
         this.focusedDOMNode = null;
 
         WebInspector.hoveredDOMNode = null;
-        WebInspector.forceHoverHighlight = false;
 
         if (InspectorController.searchingForNode()) {
             InspectorController.toggleNodeSearch();
@@ -204,7 +205,10 @@ WebInspector.ElementsPanel.prototype = {
 
         var canidateFocusNode = inspectedRootDocument.body || inspectedRootDocument.documentElement;
         if (canidateFocusNode) {
+            this.treeOutline.suppressSelectHighlight = true;
             this.focusedDOMNode = canidateFocusNode;
+            this.treeOutline.suppressSelectHighlight = false;
+
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
         }
@@ -476,6 +480,30 @@ WebInspector.ElementsPanel.prototype = {
         this.updateStyles(true);
     },
 
+    _mouseMovedInCrumbs: function(event)
+    {
+        var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
+        var crumbElement = nodeUnderMouse.enclosingNodeOrSelfWithClass("crumb");
+
+        WebInspector.hoveredDOMNode = (crumbElement ? crumbElement.representedObject : null);
+
+        if ("_mouseOutOfCrumbsTimeout" in this) {
+            clearTimeout(this._mouseOutOfCrumbsTimeout);
+            delete this._mouseOutOfCrumbsTimeout;
+        }
+    },
+
+    _mouseMovedOutOfCrumbs: function(event)
+    {
+        var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
+        if (nodeUnderMouse.isDescendant(this.crumbsElement))
+            return;
+
+        WebInspector.hoveredDOMNode = null;
+
+        this._mouseOutOfCrumbsTimeout = setTimeout(this.updateBreadcrumbSizes.bind(this), 1000);
+    },
+
     updateBreadcrumb: function(forceUpdate)
     {
         if (!this.visible)
@@ -515,7 +543,9 @@ WebInspector.ElementsPanel.prototype = {
         crumbs.removeChildren();
 
         var panel = this;
-        var selectCrumbFunction = function(event) {
+
+        function selectCrumbFunction(event)
+        {
             var crumb = event.currentTarget;
             if (crumb.hasStyleClass("collapsed")) {
                 // Clicking a collapsed crumb will expose the hidden crumbs.
@@ -545,40 +575,7 @@ WebInspector.ElementsPanel.prototype = {
             WebInspector.currentFocusElement = document.getElementById("main-panels");
 
             event.preventDefault();
-        };
-
-        var mouseOverCrumbFunction = function(event) {
-            panel.mouseOverCrumb = true;
-
-            WebInspector.hoveredDOMNode = this.representedObject;
-            WebInspector.forceHoverHighlight = this.hasStyleClass("selected");
-
-            if ("mouseOutTimeout" in panel) {
-                clearTimeout(panel.mouseOutTimeout);
-                delete panel.mouseOutTimeout;
-            }
-        };
-
-        var mouseOutCrumbFunction = function(event) {
-            delete panel.mouseOverCrumb;
-
-            if (event.target === this) {
-                WebInspector.hoveredDOMNode = null;
-                WebInspector.forceHoverHighlight = false;
-            }
-
-            if ("mouseOutTimeout" in panel) {
-                clearTimeout(panel.mouseOutTimeout);
-                delete panel.mouseOutTimeout;
-            }
-
-            var timeoutFunction = function() {
-                if (!panel.mouseOverCrumb)
-                    panel.updateBreadcrumbSizes();
-            };
-
-            panel.mouseOutTimeout = setTimeout(timeoutFunction, 500);
-        };
+        }
 
         foundRoot = false;
         for (var current = this.focusedDOMNode; current; current = parentNodeOrFrameElement(current)) {
@@ -592,8 +589,6 @@ WebInspector.ElementsPanel.prototype = {
             crumb.className = "crumb";
             crumb.representedObject = current;
             crumb.addEventListener("mousedown", selectCrumbFunction, false);
-            crumb.addEventListener("mouseover", mouseOverCrumbFunction.bind(crumb), false);
-            crumb.addEventListener("mouseout", mouseOutCrumbFunction.bind(crumb), false);
 
             var crumbTitle;
             switch (current.nodeType) {

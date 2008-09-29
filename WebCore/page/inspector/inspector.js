@@ -43,9 +43,6 @@ var WebInspector = {
     resources: [],
     resourceURLMap: {},
     missingLocalizedStrings: {},
-    _altKeyDown: false,
-    _forceHoverHighlight: false,
-    _hoveredDOMNode: null,
 
     get previousFocusElement()
     {
@@ -235,42 +232,6 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
-    get altKeyDown()
-    {
-        return this._altKeyDown;
-    },
-
-    set altKeyDown(x)
-    {
-        if (this._altKeyDown === x)
-            return;
-
-        this._altKeyDown = x;
-
-        if (this._altKeyDown)
-            this._updateHoverHighlightSoon();
-        else
-            this._updateHoverHighlight();
-    },
-
-    get forceHoverHighlight()
-    {
-        return this._forceHoverHighlight;
-    },
-
-    set forceHoverHighlight(x)
-    {
-        if (this._forceHoverHighlight === x)
-            return;
-
-        this._forceHoverHighlight = x;
-
-        if (this._forceHoverHighlight)
-            this._updateHoverHighlightSoon();
-        else
-            this._updateHoverHighlight();
-    },
-
     get hoveredDOMNode()
     {
         return this._hoveredDOMNode;
@@ -284,16 +245,16 @@ var WebInspector = {
         this._hoveredDOMNode = x;
 
         if (this._hoveredDOMNode)
-            this._updateHoverHighlightSoon();
+            this._updateHoverHighlightSoon(this.showingDOMNodeHighlight ? 50 : 500);
         else
             this._updateHoverHighlight();
     },
 
-    _updateHoverHighlightSoon: function()
+    _updateHoverHighlightSoon: function(delay)
     {
         if ("_updateHoverHighlightTimeout" in this)
-            return;
-        this._updateHoverHighlightTimeout = setTimeout(this._updateHoverHighlight.bind(this), 0);
+            clearTimeout(this._updateHoverHighlightTimeout);
+        this._updateHoverHighlightTimeout = setTimeout(this._updateHoverHighlight.bind(this), delay);
     },
 
     _updateHoverHighlight: function()
@@ -303,10 +264,13 @@ var WebInspector = {
             delete this._updateHoverHighlightTimeout;
         }
 
-        if (this._hoveredDOMNode && (this._altKeyDown || this.forceHoverHighlight))
+        if (this._hoveredDOMNode) {
             InspectorController.highlightDOMNode(this._hoveredDOMNode);
-        else
+            this.showingDOMNodeHighlight = true;
+        } else {
             InspectorController.hideDOMNodeHighlight();
+            this.showingDOMNodeHighlight = false;
+        }
     }
 }
 
@@ -548,19 +512,12 @@ WebInspector.documentKeyDown = function(event)
                 }
 
                 break;
-
-            case "Alt":
-                this.altKeyDown = true;
-                break
         }
     }
 }
 
 WebInspector.documentKeyUp = function(event)
 {
-    if (!event.handled && event.keyIdentifier === "Alt")
-        this.altKeyDown = false;
-
     if (!this.currentFocusElement || !this.currentFocusElement.handleKeyUpEvent)
         return;
     this.currentFocusElement.handleKeyUpEvent(event);
@@ -884,6 +841,7 @@ WebInspector.reset = function()
 
     this.resources = [];
     this.resourceURLMap = {};
+    this.hoveredDOMNode = null;
 
     delete this.mainResource;
 

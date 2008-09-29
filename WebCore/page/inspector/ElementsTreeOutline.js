@@ -7,7 +7,7 @@ WebInspector.ElementsTreeOutline = function() {
     this.element.addEventListener("mouseout", this._onmouseout.bind(this), false);
 
     TreeOutline.call(this, this.element);
-    
+
     this.includeRootDOMNode = true;
     this.selectEnabled = false;
     this.rootDOMNode = null;
@@ -50,8 +50,27 @@ WebInspector.ElementsTreeOutline.prototype = {
         // and the select() call would change the focusedDOMNode and reenter this setter. So to
         // avoid calling focusedNodeChanged() twice, first check if _focusedDOMNode is the same
         // node as the one passed in.
-        if (objectsAreSame(this._focusedDOMNode, x))
+        if (objectsAreSame(this._focusedDOMNode, x)) {
             this.focusedNodeChanged();
+
+            if (x && !this.suppressSelectHighlight) {
+                InspectorController.highlightDOMNode(x);
+
+                if ("_restorePreviousHighlightNodeTimeout" in this)
+                    clearTimeout(this._restorePreviousHighlightNodeTimeout);
+
+                function restoreHighlightToHoveredNode()
+                {
+                    var hoveredNode = WebInspector.hoveredDOMNode;
+                    if (hoveredNode)
+                        InspectorController.highlightDOMNode(hoveredNode);
+                    else
+                        InspectorController.hideDOMNodeHighlight();
+                }
+
+                this._restorePreviousHighlightNodeTimeout = setTimeout(restoreHighlightToHoveredNode, 2000);
+            }
+        }
     },
 
     update: function()
@@ -167,21 +186,32 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _onmousemove: function(event)
     {
-        var element = this._treeElementFromEvent(event);
-        if (!element)
-            return;
+        if (this._previousHoveredElement) {
+            this._previousHoveredElement.hovered = false;
+            delete this._previousHoveredElement;
+        }
 
-        WebInspector.hoveredDOMNode = element.representedObject;
-        WebInspector.forceHoverHighlight = element.selected;
+        var element = this._treeElementFromEvent(event);
+        if (element && !element.elementCloseTag) {
+            element.hovered = true;
+            this._previousHoveredElement = element;
+        }
+
+        WebInspector.hoveredDOMNode = (element && !element.elementCloseTag ? element.representedObject : null);
     },
 
     _onmouseout: function(event)
     {
-        if (event.target !== this.element)
+        var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
+        if (nodeUnderMouse.isDescendant(this.element))
             return;
 
+        if (this._previousHoveredElement) {
+            this._previousHoveredElement.hovered = false;
+            delete this._previousHoveredElement;
+        }
+
         WebInspector.hoveredDOMNode = null;
-        WebInspector.forceHoverHighlight = false;
     }
 }
 
@@ -220,6 +250,27 @@ WebInspector.ElementsTreeElement.prototype = {
         }
     },
 
+    get hovered()
+    {
+        return this._hovered;
+    },
+
+    set hovered(x)
+    {
+        if (this._hovered === x)
+            return;
+
+        this._hovered = x;
+
+        if (this.listItemElement) {
+            if (x) {
+                this.updateSelection();
+                this.listItemElement.addStyleClass("hovered");
+            } else
+                this.listItemElement.removeStyleClass("hovered");
+        }
+    },
+
     updateSelection: function()
     {
         var listItemElement = this.listItemElement;
@@ -247,6 +298,11 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (this._highlighted)
             this.listItemElement.addStyleClass("highlighted");
+
+        if (this._hovered) {
+            this.updateSelection();
+            this.listItemElement.addStyleClass("hovered");
+        }
 
         this._updateTitle();
 

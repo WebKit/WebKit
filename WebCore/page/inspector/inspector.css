@@ -590,10 +590,32 @@ body.console-visible #console {
     color: black;
 }
 
+.console-group-messages .outline-disclosure, .console-group-messages .outline-disclosure ol {
+    font-size: inherit;
+    line-height: 1em;
+}
+
+.console-group-messages .outline-disclosure li {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.console-group-messages .outline-disclosure li .selection {
+    z-index: 0;
+    margin-top: -1px;
+}
+
 .auto-complete-text {
     color: rgb(128, 128, 128);
     -webkit-user-select: none;
     -webkit-user-modify: read-only;
+}
+
+.inspectible-node:hover {
+    background-color: rgba(56, 121, 217, 0.1);
+    -webkit-border-radius: 5px;
+    padding: 0 5px 1px;
+    margin: 0 -5px -1px;
 }
 
 .panel {
@@ -864,6 +886,14 @@ body.console-visible #console {
 
 .crumbs .crumb.end:hover {
     -webkit-border-image: url(Images/segmentHoverEnd.png) 0 2 0 2;
+}
+
+.outline-disclosure li.hovered:not(.selected) .selection {
+    display: block;
+    left: 3px;
+    right: 3px;
+    background-color: rgba(56, 121, 217, 0.1);
+    -webkit-border-radius: 5px;
 }
 
 .outline-disclosure li.highlighted .highlight {

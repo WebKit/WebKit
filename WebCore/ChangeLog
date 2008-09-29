@@ -1,3 +1,66 @@
+2008-09-29  Timothy Hatcher  <timothy@apple.com>
+
+        Makes the node highlight always show up when hovering a node in
+        the Web Inspector now that the highlight does not scroll to reveal
+        the node. Also adds a hover effect in the inspector when hovering
+        causes a highlight in the page. This ties the user hovering action
+        to the highlight so it is clear what causes the highlight to appear.
+
+        Also the highlight now temporarily shows up for 2 seconds after
+        selecting a node in the DOM tree. So arrowing around in the tree
+        will show the node on the page, providing feedback to the user.
+
+        Plus fixes an issue where quickly moving away from hovering
+        a node would keep showing the page highlight. This was happening
+        in breadcrumbs and the DOM tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21220
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype._mouseOverNode): Added. Used for
+        hovering DOM nodes in the console.
+        (WebInspector.Console.prototype._mouseOutOfNode): Ditto.
+        (WebInspector.Console.prototype._formatnode): Use the new event
+        listeners and add a class name to the anchor element.
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel): Add new event listeners to the
+        crumbs element to do the node hovering highlight.
+        (WebInspector.ElementsPanel.prototype.hide):
+        (WebInspector.ElementsPanel.prototype.reset):
+        (WebInspector.ElementsPanel.prototype._mouseMovedInCrumbs):
+        (WebInspector.ElementsPanel.prototype._mouseMovedOutOfCrumbs):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        * page/inspector/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set focusedDOMNode):
+        Show the node hishlight for 2 seconds then restore the highlight
+        to the current hovered node.
+        (WebInspector.ElementsTreeOutline.prototype._onmousemove): Set the
+        hovered node and set the hovered state on the tree element.
+        (WebInspector.ElementsTreeOutline.prototype._onmouseout): Set the
+        hovered node to null and removed the hovered state from the previous
+        hovered tree element.
+        (WebInspector.ElementsTreeElement.prototype.set/get hovered): Adds
+        the hovered class to the list item.
+        (WebInspector.ElementsTreeElement.prototype.onattach): Ditto.
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.js:
+        (WebInspector.set hoveredDOMNode): Pass a delay to _updateHoverHighlightSoon
+        based on the showingDOMNodeHighlight property of 50ms or 500ms. This
+        causes the highlight to change sooner if there is one already showing
+        and appear later if there isn't one showing. This is like tooltips,
+        hovering a node for 500ms will cause highlight then mousing between nodes
+        will keep the highlight and change to the new node.
+        (WebInspector._updateHoverHighlightSoon): Take a delay being passed in and
+        always reset the timeout so continuous mousing does not keep flasshing
+        the highlight on the screen.
+        (WebInspector._updateHoverHighlight): Removed the alt key check and added
+        the showingDOMNodeHighlight property.
+        (WebInspector.documentKeyDown): Removed the alt key check.
+        (WebInspector.documentKeyUp): Ditto.
+        (WebInspector.reset): Clear the hoveredDOMNode.
+
 2008-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson

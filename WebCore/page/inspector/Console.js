@@ -452,6 +452,20 @@ WebInspector.Console.prototype = {
         this.addMessage(new WebInspector.ConsoleCommand(str, result, this._format(result), level));
     },
 
+    _mouseOverNode: function(event)
+    {
+        var anchorElement = event.target.enclosingNodeOrSelfWithNodeName("a");
+        WebInspector.hoveredDOMNode = (anchorElement ? anchorElement.representedNode : null);
+    },
+
+    _mouseOutOfNode: function(event)
+    {
+        var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
+        var anchorElement = nodeUnderMouse.enclosingNodeOrSelfWithNodeName("a");
+        if (!anchorElement || !anchorElement.representedNode)
+            WebInspector.hoveredDOMNode = null;
+    },
+
     _format: function(output, plainText)
     {
         var type = Object.type(output, InspectorController.inspectedWindow());
@@ -530,10 +544,11 @@ WebInspector.Console.prototype = {
         // Honor the plainText argument, if the textContent output doesn't make sense.
         // Especially if expanding to show children is added.
         var anchor = document.createElement("a");
+        anchor.className = "inspectible-node";
         anchor.innerHTML = nodeTitleInfo.call(node).title;
         anchor.representedNode = node;
-        anchor.addEventListener("mouseover", function() { InspectorController.highlightDOMNode(node) }, false);
-        anchor.addEventListener("mouseout", function() { InspectorController.hideDOMNodeHighlight() }, false);
+        anchor.addEventListener("mouseover", this._mouseOverNode.bind(this), false);
+        anchor.addEventListener("mouseout", this._mouseOutOfNode.bind(this), false);
         elem.appendChild(anchor);
     },
 
