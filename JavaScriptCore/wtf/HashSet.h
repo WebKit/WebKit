@@ -180,7 +180,7 @@ namespace WTF {
     inline HashSet<Value, HashFunctions, Traits>::find(const T& value)
     {
         typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, Translator> Adapter;
-        return m_impl.find<T, Adapter>(value);
+        return m_impl.template find<T, Adapter>(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
@@ -189,7 +189,7 @@ namespace WTF {
     inline HashSet<Value, HashFunctions, Traits>::find(const T& value) const
     {
         typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, Translator> Adapter;
-        return m_impl.find<T, Adapter>(value);
+        return m_impl.template find<T, Adapter>(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
@@ -197,7 +197,7 @@ namespace WTF {
     inline bool HashSet<Value, HashFunctions, Traits>::contains(const T& value) const
     {
         typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, Translator> Adapter;
-        return m_impl.contains<T, Adapter>(value);
+        return m_impl.template contains<T, Adapter>(value);
     }
 
     template<typename T, typename U, typename V>

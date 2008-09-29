@@ -1,3 +1,13 @@
+2008-09-29  Bradley T. Hughes  <bradley.hughes@nokia.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with icpc
+
+        * wtf/HashSet.h:
+        (WTF::::find):
+        (WTF::::contains):
+
 2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon.
