@@ -1,5 +1,22 @@
 2008-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add an ASCII fast-path to toLowerCase and toUpperCase.
+
+        The fast path speeds up the common case of an ASCII-only string by up to 60% while adding a less than 5% penalty
+        to the less common non-ASCII case.
+
+        This also removes stringProtoFuncToLocaleLowerCase and stringProtoFuncToLocaleUpperCase, which were identical
+        to the non-locale variants of the functions.  toLocaleLowerCase and toLocaleUpperCase now use the non-locale
+        variants of the functions directly.
+
+        * kjs/StringPrototype.cpp:
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+
+2008-09-28  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Speed up parseInt and parseFloat.
