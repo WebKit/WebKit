@@ -27,6 +27,7 @@
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
 #include "RegExpObject.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Collator.h>
 

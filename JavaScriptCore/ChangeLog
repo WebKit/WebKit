@@ -1,6 +1,14 @@
+2008-09-29  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Reviewed and tweaked by Darin Adler.
+
+        Fix build for non-all-in-one platforms.
+
+        * kjs/StringPrototype.cpp: Added missing ASCIICType.h include.
+
 2008-09-29  Bradley T. Hughes  <bradley.hughes@nokia.com>
 
-        Reviewed by Simon.
+        Reviewed by Simon Hausmann.
 
         Fix compilation with icpc
 
@@ -10,7 +18,7 @@
 
 2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
 
-        Reviewed by Simon.
+        Reviewed by Simon Hausmann.
 
         Changed copyright from Trolltech ASA to Nokia.
         
@@ -21,7 +29,7 @@
 
 2008-09-29  Simon Hausmann  <hausmann@webkit.org>
 
-        Reviewed by Lars.
+        Reviewed by Lars Knoll.
 
         Don't accidentially install libJavaScriptCore.a for the build inside
         Qt.
