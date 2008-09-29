@@ -14,6 +14,7 @@ CONFIG(QTDIR_build) {
     GENERATED_SOURCES_DIR = $$PWD/generated
     OLDDESTDIR = $$DESTDIR
     include($$QT_SOURCE_TREE/src/qbase.pri)
+    INSTALLS =
     DESTDIR = $$OLDDESTDIR
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG

@@ -1,3 +1,12 @@
+2008-09-29  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Lars.
+
+        Don't accidentially install libJavaScriptCore.a for the build inside
+        Qt.
+
+        * JavaScriptCore.pro:
+
 2008-09-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.
