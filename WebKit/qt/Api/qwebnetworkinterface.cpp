@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2006 Enrico Ros <enrico.ros@m31engineering.it>
-    Copyright (C) 2007 Trolltech ASA
+    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.  <info@staikos.net>
 
     This library is free software; you can redistribute it and/or

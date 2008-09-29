@@ -1,3 +1,40 @@
+2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon.
+
+        Changed copyright from Trolltech ASA to Nokia.
+        
+        Nokia acquired Trolltech ASA, assets were transferred on September 26th 2008.
+        
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebhistory.cpp:
+        * Api/qwebhistory.h:
+        * Api/qwebhistory_p.h:
+        * Api/qwebkitglobal.h:
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpluginfactory.cpp:
+        * Api/qwebpluginfactory.h:
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+        * Plugins/ICOHandler.cpp:
+        * QtLauncher/main.cpp:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+        * WebCoreSupport/InspectorClientQt.h:
+        * tests/qwebframe/tst_qwebframe.cpp:
+        * tests/qwebpage/tst_qwebpage.cpp:
+
 2008-09-28  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by David Hyatt.

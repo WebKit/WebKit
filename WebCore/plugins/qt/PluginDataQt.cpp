@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Trolltech ASA
+    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2008 Collabora Ltd. All rights reserved.
 
     This library is free software; you can redistribute it and/or

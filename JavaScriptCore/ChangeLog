@@ -1,3 +1,14 @@
+2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon.
+
+        Changed copyright from Trolltech ASA to Nokia.
+        
+        Nokia acquired Trolltech ASA, assets were transferred on September 26th 2008.
+        
+
+        * wtf/qt/MainThreadQt.cpp:
+
 2008-09-29  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Lars.

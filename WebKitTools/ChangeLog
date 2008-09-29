@@ -1,3 +1,19 @@
+2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon.
+
+        Changed copyright from Trolltech ASA to Nokia.
+        
+        Nokia acquired Trolltech ASA, assets were transferred on September 26th 2008.
+        
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        * DumpRenderTree/qt/jsobjects.h:
+        * DumpRenderTree/qt/main.cpp:
+        * DumpRenderTree/qt/testplugin.cpp:
+        * DumpRenderTree/qt/testplugin.h:
+
 2008-09-28  David Kilzer  <ddkilzer@apple.com>
 
         Bug 21185: resolve-ChangeLogs should be able to fix poorly merged ChangeLog entries after a git svn rebase

@@ -1,3 +1,108 @@
+2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon.
+
+        Changed copyright from Trolltech ASA to Nokia.
+
+        Nokia acquired Trolltech ASA, assets were transferred on September 26th 2008.
+
+        * bindings/js/JSMimeTypeArrayCustom.cpp:
+        * bindings/js/JSNavigatorCustom.cpp:
+        * bindings/js/JSPluginArrayCustom.cpp:
+        * bindings/js/JSPluginCustom.cpp:
+        * bindings/js/ScriptControllerMac.mm:
+        * bindings/js/ScriptControllerQt.cpp:
+        * bridge/qt/qt_class.cpp:
+        * bridge/qt/qt_class.h:
+        * bridge/qt/qt_instance.cpp:
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_runtime.cpp:
+        * bridge/qt/qt_runtime.h:
+        * bridge/testqtbindings.cpp:
+        * css/makegrammar.pl:
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+        * dom/Node.cpp:
+        * dom/TagNodeList.cpp:
+        * dom/TagNodeList.h:
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        * dom/XMLTokenizerQt.cpp:
+        * editing/Editor.cpp:
+        * editing/EditorCommand.cpp:
+        * html/CanvasRenderingContext2D.cpp:
+        * html/CanvasStyle.cpp:
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * loader/FrameLoader.cpp:
+        * page/Chrome.cpp:
+        * page/EditorClient.h:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * page/mac/FrameMac.mm:
+        * page/qt/EventHandlerQt.cpp:
+        * platform/graphics/qt/FontCacheQt.cpp:
+        * platform/graphics/qt/FontCustomPlatformData.cpp:
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/qt/FontPlatformData.h:
+        * platform/graphics/qt/FontQt.cpp:
+        * platform/graphics/qt/GlyphPageTreeNodeQt.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        * platform/mac/MIMETypeRegistryMac.mm:
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/network/qt/ResourceRequestQt.cpp:
+        * platform/qt/ClipboardQt.cpp:
+        * platform/qt/EventLoopQt.cpp:
+        * platform/qt/KURLQt.cpp:
+        * platform/qt/LoggingQt.cpp:
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        * platform/qt/PasteboardQt.cpp:
+        * platform/qt/PlatformScreenQt.cpp:
+        * platform/qt/PopupMenuQt.cpp:
+        * platform/qt/QWebPopup.cpp:
+        * platform/qt/QWebPopup.h:
+        * platform/qt/RenderThemeQt.cpp:
+        * platform/qt/ScrollbarQt.cpp:
+        * platform/qt/ScrollbarThemeQt.cpp:
+        * platform/qt/WheelEventQt.cpp:
+        * platform/qt/html4-adjustments-qt.css:
+        * platform/wx/MimeTypeRegistryWx.cpp:
+        * plugins/MimeType.cpp:
+        * plugins/MimeType.h:
+        * plugins/MimeType.idl:
+        * plugins/MimeTypeArray.cpp:
+        * plugins/MimeTypeArray.h:
+        * plugins/MimeTypeArray.idl:
+        * plugins/Plugin.cpp:
+        * plugins/Plugin.h:
+        * plugins/Plugin.idl:
+        * plugins/PluginArray.cpp:
+        * plugins/PluginArray.h:
+        * plugins/PluginArray.idl:
+        * plugins/PluginData.cpp:
+        * plugins/PluginData.h:
+        * plugins/gtk/PluginDataGtk.cpp:
+        * plugins/mac/PluginDataMac.mm:
+        * plugins/qt/PluginDataQt.cpp:
+        * plugins/win/PluginDataWin.cpp:
+        * rendering/RenderTableCol.cpp:
+        * rendering/RenderTableCol.h:
+
 2008-09-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -4,7 +4,7 @@
 #
 #   Copyright (C) 1999 Waldo Bastian (bastian@kde.org)
 #   Copyright (C) 2007 Apple Inc. All rights reserved.
-#   Copyright (C) 2007 Trolltech ASA
+#   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This library is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU Library General Public
