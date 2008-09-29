@@ -1,3 +1,16 @@
+2008-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson
+
+        Fix RenderStyle leak in animation code, and assert that 
+        keyframe resolution in CSSStyleSelector is not going to clobber
+        m_style.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::~KeyframeAnimation):
+
 2008-09-29  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt

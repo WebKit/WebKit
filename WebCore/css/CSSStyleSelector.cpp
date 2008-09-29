@@ -1200,6 +1200,8 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         const WebKitCSSKeyframeRule* kf = rule->item(i);
         addMatchedDeclaration(kf->style());
 
+        ASSERT(!m_style);
+
         // Create the style
         m_style = new (e->document()->renderArena()) RenderStyle(*elementStyle);
         m_style->ref();

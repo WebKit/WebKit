@@ -62,6 +62,9 @@ KeyframeAnimation::~KeyframeAnimation()
     // Do the cleanup here instead of in the base class so the specialized methods get called
     if (!postActive())
         updateStateMachine(AnimationStateInputEndAnimation, -1);
+
+    if (m_unanimatedStyle)
+        const_cast<RenderStyle*>(m_unanimatedStyle)->deref(renderer()->renderArena());
 }
 
 void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* renderer, const RenderStyle* currentStyle, 
