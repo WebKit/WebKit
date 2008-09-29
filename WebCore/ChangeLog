@@ -1,3 +1,16 @@
+2008-09-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Apply the ASCII fast path optimization from StringImpl::lower to StringImpl::upper.
+        In the few places that we call .upper() in WebCore the strings represent things like
+        tag and attribute names, which are nearly always going to be ASCII.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::lower): If we have to resize the buffer, be sure to pass the new length
+        in to Unicode::toLower the second time.
+        (WebCore::StringImpl::upper):
+
 2008-09-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

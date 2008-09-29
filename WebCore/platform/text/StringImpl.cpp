@@ -361,7 +361,7 @@ PassRefPtr<StringImpl> StringImpl::lower()
     if (!error && realLength == length)
         return adopt(data);
     data.resize(realLength);
-    Unicode::toLower(data.characters(), length, m_data, m_length, &error);
+    Unicode::toLower(data.characters(), realLength, m_data, m_length, &error);
     if (error)
         return this;
     return adopt(data);
@@ -369,10 +369,26 @@ PassRefPtr<StringImpl> StringImpl::lower()
 
 PassRefPtr<StringImpl> StringImpl::upper()
 {
+    StringBuffer data(m_length);
+    int32_t length = m_length;
+
+    // Do a faster loop for the case where all the characters are ASCII.
+    UChar ored = 0;
+    for (int i = 0; i < length; i++) {
+        UChar c = m_data[i];
+        ored |= c;
+        data[i] = toASCIIUpper(c);
+    }
+    if (!(ored & ~0x7F))
+        return adopt(data);
+
+    // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
-    int32_t length = Unicode::toUpper(0, 0, m_data, m_length, &error);
-    StringBuffer data(length);
-    Unicode::toUpper(data.characters(), length, m_data, m_length, &error);
+    int32_t realLength = Unicode::toUpper(data.characters(), length, m_data, m_length, &error);
+    if (!error && realLength == length)
+        return adopt(data);
+    data.resize(realLength);
+    Unicode::toUpper(data.characters(), realLength, m_data, m_length, &error);
     if (error)
         return this;
     return adopt(data);
