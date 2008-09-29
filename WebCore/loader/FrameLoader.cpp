@@ -44,6 +44,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
+#include "EmptyClients.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -284,7 +285,7 @@ FrameLoader::~FrameLoader()
     m_client->frameLoaderDestroyed();
 }
 
-void FrameLoader::init()
+void FrameLoader::init(bool shouldCreateEmptyDocument)
 {
     // this somewhat odd set of steps is needed to give the frame an initial empty document
     m_isDisplayingInitialEmptyDocument = false;
@@ -294,8 +295,12 @@ void FrameLoader::init()
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
     m_provisionalDocumentLoader->finishedLoading();
-    begin(KURL(), false);
-    end();
+
+    if (shouldCreateEmptyDocument) {
+        begin(KURL(), false);
+        end();
+    }
+
     m_frame->document()->cancelParsing();
     m_creatingInitialEmptyDocument = false;
     m_didCallImplicitClose = true;
@@ -2291,6 +2296,18 @@ bool FrameLoader::canLoad(const KURL& url, const String& referrer, const Documen
         return shouldTreatURLAsLocal(referrer);
     else
         return false;
+}
+
+void FrameLoader::fakeLoad(SharedBuffer* data, const char* MIMEType)
+{
+    ResourceRequest fakeRequest(KURL(""));
+    load(fakeRequest); // Make sure the DocumentLoader is created
+    cancelContentPolicyCheck(); // cancel any policy checks
+    commitProvisionalLoad(0);
+    setResponseMIMEType(MIMEType);
+    begin(KURL()); // create the empty document
+    write(data->data(), data->size());
+    end();
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
@@ -5128,5 +5145,43 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
 }
 
 #endif
+
+PassRefPtr<Frame> FrameLoader::createDummyFrame(Document* document)
+{
+    static ChromeClient* dummyChromeClient = new EmptyChromeClient;
+    static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
+    static EditorClient* dummyEditorClient = new EmptyEditorClient;
+    static ContextMenuClient* dummyContextMenuClient = new EmptyContextMenuClient;
+    static DragClient* dummyDragClient = new EmptyDragClient;
+    static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
+
+    // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
+    Page* page = new Page(dummyChromeClient, dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient);
+
+    // Giving a document implies that we need to execute JavaScript.
+    page->settings()->setJavaScriptEnabled(document);
+
+    // Disable plugins on dummy frame (it crashes on Qt).
+    page->settings()->setPluginsEnabled(false);
+
+    RefPtr<Frame> frame = Frame::create(page, 0, dummyFrameLoaderClient);
+
+    // The Frame owns its Page and has to free it when released.
+    frame->setIsDummyFrame();
+    frame->setView(new FrameView(frame.get()));
+
+    if (document) {
+        // If a document was provided we need to initialize
+        // the loader but should not create an empty document.
+        frame->setDocument(document);
+        frame->loader()->init(false);
+    } else
+        frame->init();
+
+    if (document)
+        document->setFrame(frame.get());
+
+    return frame.release();
+}
 
 } // namespace WebCore

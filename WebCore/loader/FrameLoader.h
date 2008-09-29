@@ -134,7 +134,7 @@ namespace WebCore {
         FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();
 
-        void init();
+        void init(bool shouldCreateEmptyDocument = true);
 
         Frame* frame() const { return m_frame; }
 
@@ -166,6 +166,8 @@ namespace WebCore {
         void load(const ResourceRequest&, const String& frameName);                                 // Called by WebPluginController
         
         void loadArchive(PassRefPtr<Archive> archive);
+
+        void fakeLoad(SharedBuffer* data, const char* MIMEType);
 
         // Returns true for any non-local URL. If Document parameter is supplied, its local load policy dictates,
         // otherwise if referrer is non-empty and represents a local file, then the local load is allowed.
@@ -457,6 +459,8 @@ namespace WebCore {
         void startIconLoader();
 
         void applyUserAgent(ResourceRequest& request);
+
+        static PassRefPtr<Frame> createDummyFrame(Document* = 0);
 
     private:
         PassRefPtr<HistoryItem> createHistoryItem(bool useOriginal);

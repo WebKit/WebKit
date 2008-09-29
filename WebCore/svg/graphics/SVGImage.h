@@ -71,9 +71,7 @@ private:
         virtual NativeImagePtr nativeImageForCurrentFrame();
         
         SVGDocument* m_document;
-        OwnPtr<Page> m_page;
         RefPtr<Frame> m_frame;
-        RefPtr<FrameView> m_frameView;
         IntSize m_minSize;
         OwnPtr<ImageBuffer> m_frameCache;
     };

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+</head>
+<body>
+<p> bug <a href="https://bugs.webkit.org/show_bug.cgi?id=5727">5727</a>: We want to evaluate scripts in viewless documents </p>
+<p> You should see PASSED once. </p>
+<div id="console"></div>
+<script type="text/javascript">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var testDoc = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null);
+    var testBody = testDoc.createElement("body");
+    var testP = testDoc.createElement("p");
+    testP.id = "result";
+    testP.innerHTML = "FAILED";
+    testBody.appendChild(testP);
+
+    // Create a script element and fill it with innerHTML so that it is interpreted.
+    // The script try to modify the "p" element we have just created.
+    var testScript = testDoc.createElementNS("http://www.w3.org/1999/xhtml", "script");
+    testScript.innerHTML = "var result = document.getElementById('result'); result.innerHTML = 'PASSED';";
+    testBody.appendChild(testScript);
+    testDoc.documentElement.appendChild(testBody);
+
+    document.getElementById('console').innerHTML = testDoc.getElementById('result').innerHTML;
+</script>
+</body>
+</html>

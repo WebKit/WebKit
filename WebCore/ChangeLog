@@ -1,3 +1,53 @@
+2008-09-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 5727: We want to evaluate scripts in viewless documents
+        https://bugs.webkit.org/show_bug.cgi?id=5727
+
+        Add the posibility to evaluate script or fetch resources on viewless
+        document using the EmptyClient workaround.
+
+        Test: fast/loader/viewless-document.html
+
+        * dom/Document.h:
+        (WebCore::Document::setFrame): Method to set the Document's
+        Frame, added a warning that it should be used under special
+        circumstances.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::requestScript): If the
+        frame is empty (viewless document), get a dummy Frame to be
+        able to evalute the script.
+        (WebCore::ScriptElementData::evaluateScript): Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init): Take a bool to toogle
+        empty Document creation.
+
+        (WebCore::FrameLoader::fakeLoad): Fake remote resource load.
+
+        (WebCore::FrameLoader::createDummyFrame):
+        * loader/FrameLoader.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::isDummyFrame):
+        (WebCore::Frame::setIsDummyFrame):
+        (WebCore::Frame::setDocument):
+
+        (WebCore::FramePrivate::FramePrivate): Added m_isDummyFrame.
+        (WebCore::FramePrivate::~FramePrivate): We have to free the Page if it is a dummyFrame
+        (a dummyFrame own its Page).
+
+        * page/Frame.h:
+        * page/FramePrivate.h:
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::SVGImage):
+        (WebCore::SVGImage::dataChanged): Use the dummy Frame
+        work-around.
+
+        * svg/graphics/SVGImage.h: Removed unused members.
+
 2008-09-29  Thiago Macieira  <thiago.macieira@trolltech.com>
 
         Reviewed by Simon

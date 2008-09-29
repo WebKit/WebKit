@@ -1114,6 +1114,21 @@ void Frame::setExcludeFromTextSearch(bool exclude)
     d->m_excludeFromTextSearch = exclude;
 }
 
+bool Frame::isDummyFrame()
+{
+    return d->m_isDummyFrame;
+}
+
+void Frame::setIsDummyFrame()
+{
+    d->m_isDummyFrame = true;
+}
+
+void Frame::setDocument(Document* document)
+{
+    d->m_doc = document;
+}
+
 // returns FloatRect because going through IntRect would truncate any floats
 FloatRect Frame::selectionRect(bool clipToVisibleContent) const
 {
@@ -1884,6 +1899,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_needsReapplyStyles(false)
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
+    , m_isDummyFrame(false)
 #if FRAME_LOADS_USER_STYLESHEET
     , m_userStyleSheetLoader(0)
 #endif
@@ -1892,6 +1908,9 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
 
 FramePrivate::~FramePrivate()
 {
+    // A dummyFrame owns its Page.
+    if (m_isDummyFrame)
+        delete m_page;
 }
 
 } // namespace WebCore
