@@ -442,6 +442,7 @@ WebInspector.documentClick = function(event)
 
             WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
         } else {
+console.log("followLink");
             var profileStringRegEx = new RegExp("webkit-profile://.+/([0-9]+)");
             var profileString = profileStringRegEx.exec(anchor.href);
             if (profileString)
@@ -979,10 +980,8 @@ WebInspector.linkifyStringAsFragment = function(string)
         var profileTitle;
         if (profileStringMatches)
             profileTitle = profileStringMatches[1];
-        if (profileTitle) {
-            var profileNumber = profileStringMatches[0].substring(18 + profileStringMatches[1].length, profileStringMatches[0].length);    // 18 is the number of chars in "webkit-profile://" + "/"
-            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileTitle, profileNumber);
-        }
+        if (profileTitle)
+            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileTitle);
 
         var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
         container.appendChild(WebInspector.linkifyURLAsNode(realURL, title, null, (realURL in WebInspector.resourceURLMap)));

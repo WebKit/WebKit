@@ -63,7 +63,6 @@ namespace WebCore {
     class SessionStorage;
 #endif
     class Settings;
-    class KURL;
 
     enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
     enum FindDirection { FindDirectionForward, FindDirectionBackward };

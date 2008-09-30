@@ -466,7 +466,7 @@ WebInspector.Console.prototype = {
             WebInspector.hoveredDOMNode = null;
     },
 
-    _format: function(output, plainText)
+    _format: function(output)
     {
         var type = Object.type(output, InspectorController.inspectedWindow());
         if (type === "object") {
@@ -498,38 +498,28 @@ WebInspector.Console.prototype = {
 
         var span = document.createElement("span");
         span.addStyleClass("console-formatted-" + type);
-        this[formatter](output, span, plainText);
+        this[formatter](output, span);
         return span;
     },
 
-    _formatvalue: function(val, elem, plainText)
+    _formatvalue: function(val, elem)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
         elem.appendChild(document.createTextNode(val));
     },
 
-    _formatstring: function(str, elem, plainText)
+    _formatstring: function(str, elem)
     {
-        if (plainText)
-            elem.appendChild(document.createTextNode("\"" + str + "\""));
-        else {
-            elem.appendChild(document.createTextNode("\""));
-            elem.appendChild(WebInspector.linkifyStringAsFragment(str));
-            elem.appendChild(document.createTextNode("\""));
-        }
+        elem.appendChild(document.createTextNode("\"" + str + "\""));
     },
 
-    _formatregexp: function(re, elem, plainText)
+    _formatregexp: function(re, elem)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
         var formatted = String(re).replace(/([\\\/])/g, "\\$1").replace(/\\(\/[gim]*)$/, "$1").substring(1);
         elem.appendChild(document.createTextNode(formatted));
     },
 
-    _formatarray: function(arr, elem, plainText)
+    _formatarray: function(arr, elem)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
-        // Especially if expanding array values is added.
         elem.appendChild(document.createTextNode("["));
         for (var i = 0; i < arr.length; ++i) {
             elem.appendChild(this._format(arr[i]));
@@ -539,10 +529,8 @@ WebInspector.Console.prototype = {
         elem.appendChild(document.createTextNode("]"));
     },
 
-    _formatnode: function(node, elem, plainText)
+    _formatnode: function(node, elem)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
-        // Especially if expanding to show children is added.
         var anchor = document.createElement("a");
         anchor.className = "inspectible-node";
         anchor.innerHTML = nodeTitleInfo.call(node).title;
@@ -552,16 +540,13 @@ WebInspector.Console.prototype = {
         elem.appendChild(anchor);
     },
 
-    _formatobject: function(obj, elem, plainText)
+    _formatobject: function(obj, elem)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
-        // Especially if object properties are added.
         elem.appendChild(document.createTextNode(Object.describe(obj)));
     },
 
-    _formaterror: function(obj, elem, plainText)
+    _formaterror: function(obj, elem)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
         elem.appendChild(document.createTextNode(obj.name + ": " + obj.message + " "));
 
         if (obj.sourceURL) {
@@ -616,12 +601,11 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, rep
             this.formattedMessage = span;
             break;
         default:
-            // This _format call passes in true for the plainText argument. The result's textContent is
-            // used for inline message bubbles in SourceFrames, or other plain-text representations.
-            this.message = this._format(Array.prototype.slice.call(arguments, 6), true).textContent;
-
             // The formatedMessage property is used for the rich and interactive console.
             this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 6));
+
+            // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
+            this.message = this.formattedMessage.textContent;
             break;
     }
 }
@@ -632,7 +616,7 @@ WebInspector.ConsoleMessage.prototype = {
         return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);
     },
 
-    _format: function(parameters, plainText)
+    _format: function(parameters)
     {
         var formattedResult = document.createElement("span");
 
@@ -641,7 +625,7 @@ WebInspector.ConsoleMessage.prototype = {
 
         function formatForConsole(obj)
         {
-            return WebInspector.console._format(obj, plainText);
+            return WebInspector.console._format(obj);
         }
 
         if (Object.type(parameters[0], InspectorController.inspectedWindow()) === "string") {

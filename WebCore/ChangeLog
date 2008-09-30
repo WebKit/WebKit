@@ -1,3 +1,16 @@
+2008-09-30  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 21139: Profiler log message is wrong
+        - Correctly fix =(
+        Don't call _format twice.
+
+        * page/Page.h:
+        * page/inspector/Console.js:
+        * page/inspector/ProfilesPanel.js:
+        * page/inspector/inspector.js:
+
 2008-09-30  Dave Hyatt  <hyatt@apple.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=21250

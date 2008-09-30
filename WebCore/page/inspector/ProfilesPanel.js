@@ -97,6 +97,7 @@ WebInspector.ProfilesPanel.prototype = {
     reset: function()
     {
         this.nextUserInitiatedProfileNumber = 1;
+        this.nextUserInitiatedProfileNumberForLinks = 1;
 
         if (this._profiles) {
             var profiledLength = this._profiles.length;
@@ -233,11 +234,11 @@ WebInspector.ProfilesPanel.prototype = {
         delete this.visibleView;
     },
 
-    displayTitleForProfileLink: function(title, profileNumber)
+    displayTitleForProfileLink: function(title)
     {
         title = unescape(title);
         if (title === UserInitiatedProfileName)
-            title = WebInspector.UIString("Profile %d", profileNumber);
+            title = WebInspector.UIString("Profile %d", this.nextUserInitiatedProfileNumberForLinks++);
         else {
             if (!(title in this._profileGroupsForLinks))
                 this._profileGroupsForLinks[title] = 0;
