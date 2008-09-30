@@ -1,3 +1,15 @@
+2008-09-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20396 Abort caused 
+        by failed allocation due to invalid counter/attr
+        and corresponding: <rdar://problem/6152371>
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCounterContent): The spec indicates that 
+        only identifiers should be accepted here.
+
 2008-09-30  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.
