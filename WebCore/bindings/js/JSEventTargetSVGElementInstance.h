@@ -50,11 +50,22 @@ namespace WebCore {
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
-
-        static const char* prototypeClassName() { return "EventTargetSVGElementInstancePrototype"; }
     };
 
-    typedef JSEventTargetBasePrototype<JSEventTargetSVGElementInstance> JSEventTargetSVGElementInstancePrototype;
+    class JSEventTargetSVGElementInstancePrototype : public JSC::JSObject {
+    public:
+        JSEventTargetSVGElementInstancePrototype(PassRefPtr<JSC::StructureID> structure)
+            : JSC::JSObject(structure)
+        {
+        }
+
+        static JSC::JSObject* self(JSC::ExecState*);
+        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
+
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+        static const JSC::ClassInfo s_info;
+    };
+
     EventTargetSVGElementInstance* toEventTargetSVGElementInstance(JSC::JSValue*);
 
 } // namespace WebCore

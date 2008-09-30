@@ -1602,10 +1602,7 @@ sub NativeToJSValue
         $implIncludes{"NameNodeList.h"} = 1;
     }
 
-    if ($type eq "EventTarget") {
-        $implIncludes{"EventTargetNode.h"} = 1;
-        $implIncludes{"JSEventTargetNode.h"} = 1;
-    } elsif ($type eq "SVGElementInstance") {
+    if ($type eq "SVGElementInstance") {
         $implIncludes{"EventTargetSVGElementInstance.h"} = 1;
         $implIncludes{"JSEventTargetSVGElementInstance.h"} = 1;
     } elsif ($type eq "DOMObject") {

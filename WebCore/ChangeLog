@@ -1,3 +1,46 @@
+2008-09-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=21122
+        Autogenerate JS event listeners
+
+        - Generate EventTargetNode.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSEventTarget.cpp: Added.
+        (WebCore::toJS):
+        * bindings/js/JSEventTarget.h: Added.
+        * bindings/js/JSEventTargetBase.cpp: Removed.
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSEventTargetNode.cpp: Removed.
+        * bindings/js/JSEventTargetNode.h: Removed.
+        * bindings/js/JSEventTargetNodeCustom.cpp: Added.
+        (WebCore::JSEventTargetNode::addEventListener):
+        (WebCore::JSEventTargetNode::removeEventListener):
+        (WebCore::JSEventTargetNode::dispatchEvent):
+        (WebCore::JSEventTargetNode::getListener):
+        (WebCore::JSEventTargetNode::setListener):
+        (WebCore::JSEventTargetNode::pushEventHandlerScope):
+        * bindings/js/JSEventTargetSVGElementInstance.cpp:
+        (WebCore::):
+        (WebCore::JSEventTargetSVGElementInstancePrototype::self):
+        (WebCore::JSEventTargetSVGElementInstancePrototype::getOwnPropertySlot):
+        (jsEventTargetAddEventListener):
+        (jsEventTargetRemoveEventListener):
+        (jsEventTargetDispatchEvent):
+        * bindings/js/JSEventTargetSVGElementInstance.h:
+        (WebCore::JSEventTargetSVGElementInstancePrototype::JSEventTargetSVGElementInstancePrototype):
+        (WebCore::JSEventTargetSVGElementInstancePrototype::classInfo):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/EventTargetNode.idl: Added.
+
 2008-09-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

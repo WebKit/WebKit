@@ -88,6 +88,7 @@ DOM_CLASSES = \
     EventException \
     EventListener \
     EventTarget \
+    EventTargetNode \
     File \
     FileList \
     HTMLAnchorElement \
@@ -369,8 +370,6 @@ all : \
     $(filter-out JSEventListener.h JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSDOMWindowBase.lut.h \
-    JSEventTargetBase.lut.h \
-    JSEventTargetNode.lut.h \
     JSEventTargetSVGElementInstance.lut.h \
     JSRGBColor.lut.h \
     \

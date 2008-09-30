@@ -39,6 +39,10 @@ using namespace WebCore::EventNames;
 
 ASSERT_CLASS_FITS_IN_CELL(WebCore::JSEventTargetSVGElementInstance)
 
+static JSValue* jsEventTargetAddEventListener(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* jsEventTargetRemoveEventListener(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* jsEventTargetDispatchEvent(ExecState*, JSObject*, JSValue*, const ArgList&);
+
 static JSValue* jsEventTargetSVGElementInstanceOnAbort(ExecState*, const Identifier&, const PropertySlot&);
 static void setJSEventTargetSVGElementInstanceOnAbort(ExecState*, JSObject*, JSValue*);
 static JSValue* jsEventTargetSVGElementInstanceOnBlur(ExecState*, const Identifier&, const PropertySlot&);
@@ -165,6 +169,14 @@ onunload      jsEventTargetSVGElementInstanceOnUnload       DontDelete|DontEnum
 @end
 */
 
+/*
+@begin JSEventTargetSVGElementInstancePrototypeTable
+addEventListener    jsEventTargetAddEventListener       DontDelete|Function 3
+removeEventListener jsEventTargetRemoveEventListener    DontDelete|Function 3
+dispatchEvent       jsEventTargetDispatchEvent          DontDelete|Function 1
+@end
+*/
+
 using namespace WebCore;
 
 DECLARE_JS_EVENT_LISTENERS(EventTargetSVGElementInstance)
@@ -172,6 +184,18 @@ DECLARE_JS_EVENT_LISTENERS(EventTargetSVGElementInstance)
 #include "JSEventTargetSVGElementInstance.lut.h"
 
 namespace WebCore {
+
+const ClassInfo JSEventTargetSVGElementInstancePrototype::s_info = { "EventTargetSVGElementInstancePrototype", 0, &JSEventTargetSVGElementInstancePrototypeTable, 0 };
+
+JSObject* JSEventTargetSVGElementInstancePrototype::self(ExecState* exec)
+{
+    return getDOMPrototype<JSEventTargetSVGElementInstance>(exec);
+}
+
+bool JSEventTargetSVGElementInstancePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    return getStaticFunctionSlot<JSObject>(exec, &JSEventTargetSVGElementInstancePrototypeTable, this, propertyName, slot);
+}
 
 const ClassInfo JSEventTargetSVGElementInstance::s_info = { "EventTargetSVGElementInstance", &JSSVGElementInstance::s_info, &JSEventTargetSVGElementInstanceTable, 0 };
 
@@ -223,5 +247,59 @@ EventTargetSVGElementInstance* toEventTargetSVGElementInstance(JSValue* val)
 }
 
 } // namespace WebCore
+
+using namespace WebCore;
+
+JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+{
+    if (!thisValue->isObject(&JSSVGElementInstance::s_info))
+        return throwError(exec, TypeError);
+
+    JSEventTargetSVGElementInstance* jsElementInstance = static_cast<JSEventTargetSVGElementInstance*>(thisValue);
+    EventTargetSVGElementInstance* elementInstance = static_cast<EventTargetSVGElementInstance*>(jsElementInstance->impl());
+    WebCore::Node* eventNode = elementInstance->correspondingElement();
+
+    Frame* frame = eventNode->document()->frame();
+    if (!frame)
+        return jsUndefined();
+
+    if (RefPtr<JSEventListener> listener = toJSDOMWindow(frame)->findOrCreateJSEventListener(exec, args.at(exec, 1)))
+        elementInstance->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
+
+    return jsUndefined();
+}
+
+JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+{
+    if (!thisValue->isObject(&JSSVGElementInstance::s_info))
+        return throwError(exec, TypeError);
+
+    JSEventTargetSVGElementInstance* jsElementInstance = static_cast<JSEventTargetSVGElementInstance*>(thisValue);
+    EventTargetSVGElementInstance* elementInstance = static_cast<EventTargetSVGElementInstance*>(jsElementInstance->impl());
+    WebCore::Node* eventNode = elementInstance->correspondingElement();
+
+    Frame* frame = eventNode->document()->frame();
+    if (!frame)
+        return jsUndefined();
+
+    if (JSEventListener* listener = toJSDOMWindow(frame)->findJSEventListener(args.at(exec, 1)))
+        elementInstance->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
+
+    return jsUndefined();
+}
+
+JSValue* jsEventTargetDispatchEvent(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+{
+    if (!thisValue->isObject(&JSSVGElementInstance::s_info))
+        return throwError(exec, TypeError);
+
+    JSEventTargetSVGElementInstance* jsElementInstance = static_cast<JSEventTargetSVGElementInstance*>(thisValue);
+    EventTargetSVGElementInstance* elementInstance = static_cast<EventTargetSVGElementInstance*>(jsElementInstance->impl());
+
+    ExceptionCode ec = 0;
+    JSValue* result = jsBoolean(elementInstance->dispatchEvent(toEvent(args.at(exec, 0)), ec));
+    setDOMException(exec, ec);
+    return result;
+}
 
 #endif // ENABLE(SVG)

@@ -201,8 +201,6 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 LUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
-    bindings/js/JSEventTargetBase.cpp \
-    bindings/js/JSEventTargetNode.cpp \
     bindings/js/JSEventTargetSVGElementInstance.cpp \
     bindings/js/JSRGBColor.cpp
 
@@ -247,6 +245,7 @@ IDL_BINDINGS += \
     dom/EventException.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
+    dom/EventTargetNode.idl \
     dom/KeyboardEvent.idl \
     dom/MouseEvent.idl \
     dom/MessageChannel.idl \
@@ -380,8 +379,8 @@ SOURCES += \
     bindings/js/JSDOMWindowShell.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
-    bindings/js/JSEventTargetBase.cpp \
-    bindings/js/JSEventTargetNode.cpp \
+    bindings/js/JSEventTarget.cpp \
+    bindings/js/JSEventTargetNodeCustom.cpp \
     bindings/js/JSEventTargetSVGElementInstance.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \

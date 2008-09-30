@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,7 @@
     macro(specificEventTarget, OnUnload, unloadEvent) \
 
 #define EVENT_LISTENER_GETTER(specificEventTarget, name, event) \
-JSC::JSValue* js##specificEventTarget##name(JSC::ExecState* exec, const JSC::Identifier&, const JSC::PropertySlot& slot) \
+JSC::JSValue* js##specificEventTarget##name(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot& slot) \
 { \
     return static_cast<JS##specificEventTarget*>(slot.slotBase())->getListener(event); \
 } \
@@ -88,43 +88,5 @@ void setJS##specificEventTarget##name(JSC::ExecState* exec, JSC::JSObject* baseO
 #define DECLARE_JS_EVENT_LISTENERS(specificEventTarget) \
     JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, EVENT_LISTENER_GETTER) \
     JS_EVENT_LISTENER_FOR_EACH_LISTENER(specificEventTarget, EVENT_LISTENER_SETTER) \
-
-namespace WebCore {
-
-    class AtomicString;
-    class EventTarget;
-
-    extern const struct JSC::HashTable JSEventTargetPrototypeTable;
-
-    // The idea here is that classes like JSEventTargetNode and JSEventTargetSVGElementInstance
-    // can share a prototype with the only difference being the name.
-    template<class JSSpecificEventTarget>
-    class JSEventTargetBasePrototype : public JSC::JSObject {
-    public:
-        JSEventTargetBasePrototype(PassRefPtr<JSC::StructureID> structure)
-            : JSC::JSObject(structure)
-        {
-        }
-
-        static JSC::JSObject* self(JSC::ExecState* exec)
-        {
-            return getDOMPrototype<JSSpecificEventTarget>(exec);
-        }
-
-        virtual bool getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
-        {
-            return JSC::getStaticFunctionSlot<JSC::JSObject>(exec, &JSEventTargetPrototypeTable, this, propertyName, slot);
-        }
-
-        virtual const JSC::ClassInfo* classInfo() const
-        {
-            static const JSC::ClassInfo s_classInfo = { JSSpecificEventTarget::prototypeClassName(), 0, &JSEventTargetPrototypeTable, 0 };
-            return &s_classInfo;
-        }
-    };
-
-    JSC::JSValue* toJS(JSC::ExecState*, EventTarget*);
-
-} // namespace WebCore
 
 #endif // JSEventTargetBase_h

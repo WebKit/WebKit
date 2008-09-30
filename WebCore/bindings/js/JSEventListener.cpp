@@ -30,6 +30,7 @@
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
+#include "JSEventTarget.h"
 #include "JSEventTargetNode.h"
 #include "ScriptController.h"
 #include <kjs/FunctionConstructor.h>
