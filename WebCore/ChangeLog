@@ -1,3 +1,21 @@
+2008-09-30  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector's toolbar icons darker when the mouse is
+        pressed on them. This matches the standard NSToolbar look.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21249
+        rdar://problem/6033752
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Images/databasesIcon.png:
+        * page/inspector/Images/elementsIcon.png:
+        * page/inspector/Images/profilesIcon.png:
+        * page/inspector/Images/resourcesIcon.png:
+        * page/inspector/Images/scriptsIcon.png:
+        * page/inspector/Panel.js:
+        * page/inspector/inspector.css:
+
 2008-09-30  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcher.

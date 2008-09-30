@@ -125,21 +125,34 @@ body.attached.inactive #toolbar {
 }
 
 .toolbar-icon {
+    display: inline-block;
     width: 32px;
     height: 32px;
+    -webkit-background-size: 100% auto;
 }
 
 body.attached .toolbar-icon {
-    display: inline-block;
     width: 24px;
     height: 24px;
     vertical-align: middle;
+}
+
+.toolbar-item:active .toolbar-icon {
+    background-position: 0 32px;
+}
+
+body.attached .toolbar-item:active .toolbar-icon {
+    background-position: 0 24px;
 }
 
 .toolbar-label {
     font-size: 11px;
     font-family: Lucida Grande, sans-serif;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+.toolbar-item:active .toolbar-label {
+    text-shadow: none;
 }
 
 body.attached .toolbar-label {
@@ -174,23 +187,23 @@ body.attached #search-results-matches {
 }
 
 .toolbar-item.elements .toolbar-icon {
-    content: url(Images/elementsIcon.png);
+    background-image: url(Images/elementsIcon.png);
 }
 
 .toolbar-item.resources .toolbar-icon {
-    content: url(Images/resourcesIcon.png);
+    background-image: url(Images/resourcesIcon.png);
 }
 
 .toolbar-item.scripts .toolbar-icon {
-    content: url(Images/scriptsIcon.png);
+    background-image: url(Images/scriptsIcon.png);
 }
 
 .toolbar-item.databases .toolbar-icon {
-    content: url(Images/databasesIcon.png);
+    background-image: url(Images/databasesIcon.png);
 }
 
 .toolbar-item.profiles .toolbar-icon {
-    content: url(Images/profilesIcon.png);
+    background-image: url(Images/profilesIcon.png);
 }
 
 #close-button {

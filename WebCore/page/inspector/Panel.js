@@ -41,7 +41,7 @@ WebInspector.Panel.prototype = {
 
         // Sample toolbar item as markup:
         // <button class="toolbar-item resources toggleable">
-        // <img class="toolbar-icon">
+        // <div class="toolbar-icon"></div>
         // <div class="toolbar-label">Resources</div>
         // </button>
 
@@ -52,7 +52,7 @@ WebInspector.Panel.prototype = {
         if ("toolbarItemClass" in this)
             this._toolbarItem.addStyleClass(this.toolbarItemClass);
 
-        var iconElement = document.createElement("img");
+        var iconElement = document.createElement("div");
         iconElement.className = "toolbar-icon";
         this._toolbarItem.appendChild(iconElement);
 
