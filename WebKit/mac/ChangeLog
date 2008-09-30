@@ -1,3 +1,26 @@
+2008-09-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe and Adam Roben.
+
+        No need to use pointers to store C++ objects as pointers in WebViewPrivate, we can just
+        store them directly.
+        
+        * Configurations/Base.xcconfig:
+        Set GCC_OBJC_CALL_CXX_CDTORS to YES.
+        
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        (-[WebViewPrivate finalize]):
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView setApplicationNameForUserAgent:]):
+        (-[WebView setCustomUserAgent:]):
+        (-[WebView customUserAgent]):
+        (-[WebView WebCore::_userAgentForURL:WebCore::]):
+        (-[WebView _addObject:forIdentifier:]):
+        (-[WebView _objectForIdentifier:]):
+        (-[WebView _removeObjectForIdentifier:]):
+
 2008-09-29  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon.
