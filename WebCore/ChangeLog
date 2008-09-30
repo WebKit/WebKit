@@ -1,3 +1,10 @@
+2008-09-29  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * bridge/npapi.h: Tweaked NPNVariable enum. NPNVsupportsCocoaBool,  NPNVsupportsCarbonBool are now in the 3000 range instead of 
+        2000. 
+
 2008-09-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

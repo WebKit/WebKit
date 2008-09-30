@@ -389,9 +389,9 @@ typedef enum {
     , NPNVsupportsOpenGLBool = 2002 /* TRUE if the browser supports the OpenGL drawing model (CGL on Mac) */
 
 #ifndef NP_NO_CARBON
-    , NPNVsupportsCarbonBool = 2003 /* TRUE if the browser supports the Carbon event model */
+    , NPNVsupportsCarbonBool = 3000 /* TRUE if the browser supports the Carbon event model */
 #endif
-    , NPNVsupportsCocoaBool = 2004 /* TRUE if the browser supports the Cocoa event model */
+    , NPNVsupportsCocoaBool = 3001 /* TRUE if the browser supports the Cocoa event model */
     
     , NPNVbrowserTextInputFuncs = 1002 /* The browser text input vtable */
 #endif /* XP_MACOSX */
