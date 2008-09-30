@@ -212,7 +212,7 @@ static inline bool jsLessEq(ExecState* exec, JSValue* v1, JSValue* v2)
     return !(static_cast<const JSString*>(p2)->value() < static_cast<const JSString*>(p1)->value());
 }
 
-static JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
+static NEVER_INLINE JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
 {
     // exception for the Date exception in defaultValue()
     JSValue* p1 = v1->toPrimitive(exec);
@@ -237,15 +237,28 @@ static JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
 //    13962   Add case: 5 3
 //    4000    Add case: 3 5
 
-static inline JSValue* jsAdd(ExecState* exec, JSValue* v1, JSValue* v2)
+static ALWAYS_INLINE JSValue* jsAdd(ExecState* exec, JSValue* v1, JSValue* v2)
 {
     double left;
-    double right;
-    if (fastIsNumber(v1, left) && fastIsNumber(v2, right))
+    double right = 0.0;
+
+    bool rightIsNumber = fastIsNumber(v2, right);
+    if (rightIsNumber && fastIsNumber(v1, left))
         return jsNumber(exec, left + right);
     
-    if (v1->isString() && v2->isString()) {
+    bool leftIsString = v1->isString();
+    if (leftIsString && v2->isString()) {
         RefPtr<UString::Rep> value = concatenate(static_cast<JSString*>(v1)->value().rep(), static_cast<JSString*>(v2)->value().rep());
+        if (!value)
+            return throwOutOfMemoryError(exec);
+        return jsString(exec, value.release());
+    }
+
+    if (rightIsNumber & leftIsString) {
+        RefPtr<UString::Rep> value = JSImmediate::isImmediate(v2) ?
+            concatenate(static_cast<JSString*>(v1)->value().rep(), JSImmediate::getTruncatedInt32(v2)) :
+            concatenate(static_cast<JSString*>(v1)->value().rep(), right);
+
         if (!value)
             return throwOutOfMemoryError(exec);
         return jsString(exec, value.release());
@@ -4169,11 +4182,44 @@ void Machine::cti_op_end(CTI_ARGS)
 
 JSValue* Machine::cti_op_add(CTI_ARGS)
 {
-    JSValue* src1 = ARG_src1;
-    JSValue* src2 = ARG_src2;
+    JSValue* v1 = ARG_src1;
+    JSValue* v2 = ARG_src2;
 
     ExecState* exec = ARG_exec;
-    JSValue* result = jsAdd(exec, src1, src2);
+    double left;
+    double right = 0.0;
+
+    bool rightIsNumber = fastIsNumber(v2, right);
+    if (rightIsNumber && fastIsNumber(v1, left))
+        return jsNumber(exec, left + right);
+    
+    bool leftIsString = v1->isString();
+    if (leftIsString && v2->isString()) {
+        RefPtr<UString::Rep> value = concatenate(static_cast<JSString*>(v1)->value().rep(), static_cast<JSString*>(v2)->value().rep());
+        if (UNLIKELY(!value)) {
+            JSValue* result = throwOutOfMemoryError(exec);
+            VM_CHECK_EXCEPTION_AT_END();
+            return result;
+        }
+
+        return jsString(exec, value.release());
+    }
+
+    if (rightIsNumber & leftIsString) {
+        RefPtr<UString::Rep> value = JSImmediate::isImmediate(v2) ?
+            concatenate(static_cast<JSString*>(v1)->value().rep(), JSImmediate::getTruncatedInt32(v2)) :
+            concatenate(static_cast<JSString*>(v1)->value().rep(), right);
+
+        if (UNLIKELY(!value)) {
+            JSValue* result = throwOutOfMemoryError(exec);
+            VM_CHECK_EXCEPTION_AT_END();
+            return result;
+        }
+        return jsString(exec, value.release());
+    }
+
+    // All other cases are pretty uncommon
+    JSValue* result = jsAddSlowCase(exec, v1, v2);
     VM_CHECK_EXCEPTION_AT_END();
     return result;
 }

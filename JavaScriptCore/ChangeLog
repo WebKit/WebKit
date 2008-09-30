@@ -1,3 +1,37 @@
+2008-09-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - optimize appending a number to a string
+        https://bugs.webkit.org/show_bug.cgi?id=21203
+        
+        It's pretty common in real-world code (and on some of the v8
+        benchmarks) to append a number to a string, so I made this one of
+        the fast cases, and also added support to UString to do it
+        directly without allocating a temporary UString.
+        
+        ~1% speedup on v8 benchmark.
+
+        * VM/Machine.cpp:
+        (JSC::jsAddSlowCase): Make this NEVER_INLINE because somehow otherwise
+        the change is a regression.
+        (JSC::jsAdd): Handle number + string special case.
+        (JSC::Machine::cti_op_add): Integrate much of the logic of jsAdd to
+        avoid exception check in the str + str, num + num and str + num cases.
+        * kjs/ustring.cpp:
+        (JSC::expandedSize): Make this a non-member function, since it needs to be 
+        called in non-member functions but not outside this file.
+        (JSC::expandCapacity): Ditto.
+        (JSC::UString::expandCapacity): Call the non-member version. 
+        (JSC::createRep): Helper to make a rep from a char*.
+        (JSC::UString::UString): Use above helper.
+        (JSC::concatenate): Guts of concatenating constructor for cases where first
+        item is a UString::Rep, and second is a UChar* and length, or a char*.
+        (JSC::UString::append): Implement for cases where first item is a UString::Rep,
+        and second is an int or double. Sadly duplicates logic of UString::from(int)
+        and UString::from(double).
+        * kjs/ustring.h:
+
 2008-09-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
