@@ -206,17 +206,6 @@ void ScrollView::update()
     updateContents(IntRect(0, 0, width(), height()));
 }
 
-void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
-{
-    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
-    newScrollPosition.clampNegativeToZero();
-
-    if (newScrollPosition == scrollPosition())
-        return;
-
-    updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
-}
-
 void ScrollView::setFrameRect(const IntRect& newGeometry)
 {
     IntRect oldGeometry = frameRect();
