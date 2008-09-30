@@ -182,17 +182,6 @@ void ScrollView::platformRepaintContentRectangle(const IntRect& rect, bool now)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void ScrollView::update()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    NSView *view = platformWidget();
-    [[view window] displayIfNeeded];
-    [[view window] flushWindowIfNeeded];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
 IntRect ScrollView::contentsToScreen(const IntRect& rect) const

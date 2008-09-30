@@ -150,14 +150,6 @@ void ScrollView::platformRepaintContentRectangle(const IntRect& updateRect, bool
     }
 }
 
-void ScrollView::update()
-{
-    wxWindow* win = platformWidget();
-    if (win)
-        win->Update();
-}
-
-
 IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
     // FIXME: Need to support includeScrollbars option.

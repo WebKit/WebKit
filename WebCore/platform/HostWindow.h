@@ -27,6 +27,7 @@
 #define HostWindow_h
 
 #include <wtf/Noncopyable.h>
+#include "IntRect.h"
 
 namespace WebCore {
 
@@ -41,6 +42,9 @@ public:
     // contentChanged boolean indicates whether or not the Web page content actually changed (or if a repaint
     // of unchanged content is being requested).
     virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) = 0;
+
+    // The paint method just causes a synchronous update of the window to happen for platforms that need it (Windows).
+    void paint() { repaint(IntRect(), false, true); }
 };
 
 } // namespace WebCore

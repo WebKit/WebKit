@@ -215,11 +215,6 @@ void ScrollView::updateWindowRect(const IntRect& rect, bool now)
         ::UpdateWindow(containingWindowHandle);
 }
 
-void ScrollView::update()
-{
-    ::UpdateWindow(containingWindow());
-}
-
 void ScrollView::setFrameRect(const IntRect& newGeometry)
 {
     IntRect oldGeometry = frameRect();

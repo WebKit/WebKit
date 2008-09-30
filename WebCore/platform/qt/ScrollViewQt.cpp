@@ -180,16 +180,6 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-void ScrollView::update()
-{
-    QWidget* native = platformWidget();
-    if (native) {
-        native->update();
-        return;
-    }
-    repaintContentRectangle(IntRect(0, 0, width(), height()));
-}
-
 void ScrollView::setFrameRect(const IntRect& newGeometry)
 {
     IntRect oldGeometry = frameRect();

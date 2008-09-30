@@ -1,3 +1,39 @@
+2008-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        Remove the update() method on ScrollView.  This method was only called in one place, and its purpose
+        was to cause a display/flush to happen.  Here is a breakdown of the method use on each platform:
+        (1) Not used on Mac
+        (2) Used on Windows
+        (3) Used on Qt, but implemented incorrectly to cause a full repaint for no reason.
+        (4) Used on Gtk, but implemented incorrectly to cause a full repaint for no reason.
+        (5) Used on wx, but probably not needed (since wx has platform widgets like Mac).
+        
+        There is now a paint method on HostWindow that does an immediate mode repaint of an empty rect to
+        cause the display/flush to happen if needed (thus saving an extra method on ChromeClient).
+        With the changes to this method, the new behavior is as follows:
+        (1) Not used on Mac
+        (2) Used on Windows
+        (3) Nothing happens on Qt, but only because they have not implemented immediate mode updating.
+        (4) Gtk now behaves like Windows and will process updates but not do any incorrect additional invalidation.
+        (5) Not used on wx
+        
+        This method was originally added for Windows. It's not clear the display/flush is really even necessary on the other
+        platforms.  At the very least stopping unnecessary full invalidations on Qt/Gtk is a good thing. :)
+        
+        Reviewed by Sam Weinig
+
+        * ChangeLog:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * platform/HostWindow.h:
+        (WebCore::HostWindow::paint):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+
 2008-09-30  Timothy Hatcher  <timothy@apple.com>
 
         Focus the DOM tree in the Web Inspector when a node is inspected.

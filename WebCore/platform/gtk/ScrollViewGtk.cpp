@@ -285,17 +285,6 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
     updateScrollbars(m_scrollOffset);
 }
 
-void ScrollView::update()
-{
-    ASSERT(containingWindow());
-
-    if (!containingWindow() || !GTK_WIDGET_REALIZED(containingWindow()))
-        return;
-
-    GdkRectangle rect = frameRect();
-    gdk_window_invalidate_rect(GTK_WIDGET(containingWindow())->window, &rect, true);
-}
-
 void ScrollView::setFrameRect(const IntRect& newGeometry)
 {
     ASSERT(isFrameView());
