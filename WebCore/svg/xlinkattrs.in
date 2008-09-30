@@ -1,5 +1,4 @@
 namespace="XLink"
-cppNamespace="WebCore"
 namespaceURI="http://www.w3.org/1999/xlink"
 exportStrings="1"
 

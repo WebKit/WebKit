@@ -35,6 +35,8 @@ use IO::File;
 use InFilesParser;
 use Switch;
 
+my $printFactory = 0; 
+my $printWrapperFactory = 0;
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
@@ -48,9 +50,11 @@ my %htmlCustomMappings = ();
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
+    'factory' => \$printFactory,
     'outputDir=s' => \$outputDir,
     'extraDefines=s' => \$extraDefines,
-    'preprocessor=s' => \$preprocessor);
+    'preprocessor=s' => \$preprocessor,
+    'wrapperFactory' => \$printWrapperFactory);
 
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
 
@@ -59,7 +63,6 @@ readNames($attrsFile, "attrs") if length($attrsFile);
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $parameters{'namespace'};
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $parameters{'namespaceURI'};
-die "You must specify a cppNamespace (e.g. DOM) used for <cppNamespace>::<namespace>Names::fooTag" unless $parameters{'cppNamespace'};
 
 $parameters{'namespacePrefix'} = $parameters{'namespace'} unless $parameters{'namespacePrefix'};
 
@@ -71,12 +74,12 @@ my $wrapperFactoryBasePath = "$outputDir/JS$parameters{'namespace'}ElementWrappe
 printNamesHeaderFile("$namesBasePath.h");
 printNamesCppFile("$namesBasePath.cpp");
 
-if ($parameters{'generateFactory'}) {
+if ($printFactory) {
     printFactoryCppFile("$factoryBasePath.cpp");
     printFactoryHeaderFile("$factoryBasePath.h");
 }
 
-if ($parameters{'generateWrapperFactory'}) {
+if ($printWrapperFactory) {
     printWrapperFactoryCppFile("$wrapperFactoryBasePath.cpp");
     printWrapperFactoryHeaderFile("$wrapperFactoryBasePath.h");
 }
@@ -101,10 +104,7 @@ sub initializeParametersHash
     return ('namespace' => '',
             'namespacePrefix' => '',
             'namespaceURI' => '',
-            'cppNamespace' => '',
-            'generateFactory' => 0,
             'guardFactoryWith' => '',
-            'generateWrapperFactory' => 0,
             'tagsNullNamespace' => 0,
             'attrsNullNamespace' => 0,
             'exportStrings' => 0);
@@ -299,7 +299,7 @@ sub printNamesHeaderFile
     print F "#define DOM_$parameters{'namespace'}NAMES_H\n\n";
     print F "#include \"QualifiedName.h\"\n\n";
     
-    print F "namespace $parameters{'cppNamespace'} { namespace $parameters{'namespace'}Names {\n\n";
+    print F "namespace WebCore {\n\n namespace $parameters{'namespace'}Names {\n\n";
     
     my $lowerNamespace = lc($parameters{'namespacePrefix'});
     print F "#ifndef DOM_$parameters{'namespace'}NAMES_HIDE_GLOBALS\n";
@@ -347,7 +347,7 @@ print F "#endif\n\n";
 print F "#include \"$parameters{'namespace'}Names.h\"\n\n";
 print F "#include \"StaticConstructors.h\"\n";
 
-print F "namespace $parameters{'cppNamespace'} { namespace $parameters{'namespace'}Names {
+print F "namespace WebCore {\n\n namespace $parameters{'namespace'}Names {
 
 using namespace WebCore;
 
@@ -483,8 +483,10 @@ sub printDefinitions
 
         my $realName = $name;
         $realName =~ s/_/-/g;
-        print F "    const char *$name","${shortCamelType}String = \"$realName\";\n\n";
+        print F "    const char *$name","${shortCamelType}String = \"$realName\";\n";
     }
+
+    print "\n";
 
     for my $name (sort keys %$namesRef) {
         print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
@@ -526,7 +528,7 @@ typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
 
 static FunctionMap* gFunctionMap = 0;
 
-namespace $parameters{'cppNamespace'} {
+namespace WebCore {
 
 END
 ;
@@ -621,8 +623,8 @@ namespace WebCore {
     class AtomicString;
 }
 
-namespace $parameters{'cppNamespace'}
-{
+namespace WebCore {
+
     class $parameters{'namespace'}Element;
 
     // The idea behind this class is that there will eventually be a mapping from namespace URIs to ElementFactories that can dispense

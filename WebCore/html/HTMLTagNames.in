@@ -1,9 +1,6 @@
 namespace="HTML"
 namespacePrefix="xhtml"
-cppNamespace="WebCore"
 namespaceURI="http://www.w3.org/1999/xhtml"
-generateFactory="1"
-generateWrapperFactory="1"
 
 a upperCase=Anchor
 abbr

@@ -1,8 +1,5 @@
 namespace="SVG"
-cppNamespace="WebCore"
 namespaceURI="http://www.w3.org/2000/svg"
-generateFactory="1"
-generateWrapperFactory="1"
 guardFactoryWith="ENABLE(SVG)"
 attrsNullNamespace="1"
 exportStrings="1"
