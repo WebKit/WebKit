@@ -302,7 +302,7 @@ void ChromeClientQt::repaint(const WebCore::IntRect& windowRect, bool contentCha
     if (contentChanged) {
         QWidget* view = m_webPage->view();
         if (view) {
-            QRect rect(r);
+            QRect rect(windowRect);
             rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
             if (!r.isEmpty())
                 view->update(r);
