@@ -32,6 +32,11 @@ ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
 const ClassInfo InternalFunction::info = { "Function", 0, 0, 0 };
 
+const ClassInfo* InternalFunction::classInfo() const
+{
+    return &info;
+}
+
 InternalFunction::InternalFunction(ExecState* exec)
     : JSObject(exec->globalData().nullProtoStructureID)
 {

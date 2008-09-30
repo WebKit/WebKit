@@ -33,9 +33,9 @@ namespace JSC {
 
     class InternalFunction : public JSObject {
     public:
-        virtual const ClassInfo* classInfo() const { return &info; }
+        virtual const ClassInfo* classInfo() const; 
         static const ClassInfo info;
-        
+
         const UString& name(ExecState*);
 
         static PassRefPtr<StructureID> createStructureID(JSValue* proto) 

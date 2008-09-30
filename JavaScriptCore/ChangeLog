@@ -1,3 +1,15 @@
+2008-09-30  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Build fix.  Move InternalFunction::classInfo implementation into the .cpp
+        file to prevent the vtable for InternalFunction being generated as a weak symbol.
+        Has no effect on SunSpider.
+
+        * kjs/InternalFunction.cpp:
+        (JSC::InternalFunction::classInfo):
+        * kjs/InternalFunction.h:
+
 2008-09-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
