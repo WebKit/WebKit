@@ -1,3 +1,9 @@
+2008-09-30  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * DerivedSources.cpp: Add JSEventTargetNode.cpp.
+
 2008-09-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Tim Hatcher.
