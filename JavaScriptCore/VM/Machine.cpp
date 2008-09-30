@@ -105,6 +105,23 @@ ALWAYS_INLINE static Instruction* vPCForPC(CodeBlock*, void* pc)
 
 #endif // #ENABLE(CTI)
 
+static const intptr_t HostCallFrameMask = 1;
+
+static inline Register* makeHostCallFramePointer(Register* callFrame)
+{
+    return reinterpret_cast<Register*>(reinterpret_cast<intptr_t>(callFrame) | HostCallFrameMask);
+}
+
+static inline bool isHostCallFrame(Register* callFrame)
+{
+    return reinterpret_cast<intptr_t>(callFrame) & HostCallFrameMask;
+}
+
+static inline Register* stripHostCallFrameBit(Register* callFrame)
+{
+    return reinterpret_cast<Register*>(reinterpret_cast<intptr_t>(callFrame) & ~HostCallFrameMask);
+}
+
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, ScopeChain& sc)
 {
@@ -792,7 +809,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     
     void* returnPC = r[RegisterFile::ReturnPC].v();
     r = r[RegisterFile::CallerRegisters].r();
-    if (!r)
+    if (isHostCallFrame(r))
         return false;
 
     exec->m_callFrame = r;
@@ -896,7 +913,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
 
     Register* r = m_registerFile.base() + oldSize + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize;
     r[codeBlock->thisRegister] = thisObj;
-    initializeCallFrame(r, codeBlock, 0, scopeChain, 0, 0, 0, 0);
+    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(0), 0, 0, 0);
 
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
@@ -961,7 +978,7 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         return jsNull();
     }
     // a 0 codeBlock indicates a built-in caller
-    initializeCallFrame(r, codeBlock, 0, scopeChain, 0, 0, argc, function);
+    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(exec->m_callFrame), 0, argc, function);
 
     ExecState newExec(exec, r);
 
@@ -1044,7 +1061,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 
     // a 0 codeBlock indicates a built-in caller
     r[codeBlock->thisRegister] = thisObj;
-    initializeCallFrame(r, codeBlock, 0, scopeChain, 0, 0, 0, 0);
+    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(exec->m_callFrame), 0, 0, 0);
 
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
@@ -3362,7 +3379,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         r = r[RegisterFile::CallerRegisters].r();
         exec->m_callFrame = r;
         
-        if (!r)
+        if (isHostCallFrame(r))
             return returnValue;
 
         r[dst] = returnValue;
@@ -3853,7 +3870,7 @@ JSValue* Machine::retrieveCaller(ExecState* exec, InternalFunction* function) co
         return jsNull();
 
     Register* callerR = r[RegisterFile::CallerRegisters].r();
-    if (!callerR)
+    if (isHostCallFrame(callerR))
         return jsNull();
 
     JSValue* caller = callerR[RegisterFile::Callee].jsValue(exec);
@@ -3871,7 +3888,7 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId
 
     Register* r = exec->m_callFrame;
     Register* callerR = r[RegisterFile::CallerRegisters].r();
-    if (!callerR)
+    if (isHostCallFrame(callerR))
         return;
 
     CodeBlock* callerCodeBlock = codeBlock(callerR);
@@ -3892,11 +3909,9 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId
 
 Register* Machine::callFrame(ExecState* exec, InternalFunction* function) const
 {
-    for (; exec; exec = exec->m_prev)
-        for (Register* r = exec->m_callFrame; r; r = r[RegisterFile::CallerRegisters].r())
-            if (r[RegisterFile::Callee].jsValue(exec) == function)
-                return r;
-                
+    for (Register* r = exec->m_callFrame; r; r = stripHostCallFrameBit(r[RegisterFile::CallerRegisters].r()))
+        if (r[RegisterFile::Callee].getJSValue() == function)
+            return r;
     return 0;
 }
 

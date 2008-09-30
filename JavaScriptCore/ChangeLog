@@ -1,3 +1,34 @@
+2008-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21214
+          work on getting rid of ExecState
+
+        Replaced the m_prev field of ExecState with a bit in the
+        call frame pointer to indicate "host" call frames.
+
+        * VM/Machine.cpp:
+        (JSC::makeHostCallFramePointer): Added. Sets low bit.
+        (JSC::isHostCallFrame): Added. Checks low bit.
+        (JSC::stripHostCallFrameBit): Added. Clears low bit.
+        (JSC::Machine::unwindCallFrame): Replaced null check that was
+        formerly used to detect host call frames with an isHostCallFrame check.
+        (JSC::Machine::execute): Pass in a host call frame pointer rather than
+        always passing 0 when starting execution from the host. This allows us
+        to follow the entire call frame pointer chain when desired, or to stop
+        at the host calls when that's desired.
+        (JSC::Machine::privateExecute): Replaced null check that was
+        formerly used to detect host call frames with an isHostCallFrame check.
+        (JSC::Machine::retrieveCaller): Ditto.
+        (JSC::Machine::retrieveLastCaller): Ditto.
+        (JSC::Machine::callFrame): Removed the code to walk up m_prev pointers
+        and replaced it with code that uses the caller pointer and uses the
+        stripHostCallFrameBit function.
+
+        * kjs/ExecState.cpp: Removed m_prev.
+        * kjs/ExecState.h: Ditto.
+
 2008-09-30  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

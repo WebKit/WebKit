@@ -33,7 +33,6 @@ ExecState::ExecState(JSGlobalObject* globalObject, Register* callFrame)
     : m_globalObject(globalObject)
     , m_exception(0)
     , m_globalData(globalObject->globalData())
-    , m_prev(0)
     , m_callFrame(callFrame)
 {
 }
@@ -42,7 +41,6 @@ ExecState::ExecState(ExecState* exec, Register* callFrame)
     : m_globalObject(exec->m_globalObject)
     , m_exception(0)
     , m_globalData(exec->m_globalData)
-    , m_prev(exec)
     , m_callFrame(callFrame)
 {
     ASSERT(!exec->m_exception);
