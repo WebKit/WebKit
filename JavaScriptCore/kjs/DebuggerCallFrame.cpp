@@ -70,7 +70,7 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
 
     JSObject* thisObject = this->thisObject();
 
-    ExecState newExec(m_scopeChain->globalObject(), thisObject, m_scopeChain);
+    ExecState newExec(m_scopeChain->globalObject(), thisObject, m_registers);
 
     int sourceId;
     int errLine;

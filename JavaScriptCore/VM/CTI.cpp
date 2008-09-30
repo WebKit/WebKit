@@ -100,7 +100,7 @@ asm(
 extern "C"
 {
     
-    __declspec(naked) JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, JSValue** exception, Profiler**)
+    __declspec(naked) JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception, Profiler**)
     {
         __asm {
             push esi;
@@ -144,7 +144,7 @@ ALWAYS_INLINE JSValue* CTI::getConstant(ExecState* exec, int src)
 }
 
 // get arg puts an arg from the SF register array into a h/w register
-ALWAYS_INLINE void CTI::emitGetArg(unsigned src, X86Assembler::RegisterID dst)
+ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst)
 {
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (isConstant(src)) {
@@ -1162,7 +1162,7 @@ void CTI::privateCompileMainPass()
         case op_get_scoped_var: {
             int skip = instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain;
 
-            emitGetCTIParam(CTI_ARGS_scopeChain, X86::eax);
+            emitGetArg(RegisterFile::ScopeChain, X86::eax);
             while (skip--)
                 m_jit.movl_mr(OBJECT_OFFSET(ScopeChainNode, next), X86::eax, X86::eax);
 
@@ -1175,7 +1175,7 @@ void CTI::privateCompileMainPass()
         case op_put_scoped_var: {
             int skip = instruction[i + 2].u.operand + m_codeBlock->needsFullScopeChain;
 
-            emitGetCTIParam(CTI_ARGS_scopeChain, X86::edx);
+            emitGetArg(RegisterFile::ScopeChain, X86::edx);
             emitGetArg(instruction[i + 3].u.operand, X86::eax);
             while (skip--)
                 m_jit.movl_mr(OBJECT_OFFSET(ScopeChainNode, next), X86::edx, X86::edx);
@@ -1204,24 +1204,17 @@ void CTI::privateCompileMainPass()
             // Return the result in %eax.
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
 
-            // Restore the scope chain.
-            m_jit.movl_mr(RegisterFile::CallerScopeChain * static_cast<int>(sizeof(Register)), X86::edi, X86::edx);
-            emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
-            emitPutCTIParam(X86::edx, CTI_ARGS_scopeChain);
-            m_jit.movl_rm(X86::edx, OBJECT_OFFSET(ExecState, m_scopeChain), X86::ecx);
+            // Grab the return address.
+            emitGetArg(RegisterFile::ReturnPC, X86::edx);
 
-            // Restore ExecState::m_callFrame.
+            // Restore our caller's "r".
+            emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
+            emitGetArg(RegisterFile::CallerRegisters, X86::edi);
+            emitPutCTIParam(X86::edi, CTI_ARGS_r);
             m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
 
-            // Grab the return address.
-            m_jit.movl_mr(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), X86::edi, X86::ecx);
-
-            // Restore the machine return addess from the callframe, roll the callframe back to the caller callframe,
-            // and preserve a copy of r on the stack at CTI_ARGS_r. 
-            m_jit.movl_mr(RegisterFile::CallerRegisters * static_cast<int>(sizeof(Register)), X86::edi, X86::edi);
-            emitPutCTIParam(X86::edi, CTI_ARGS_r);
-
-            m_jit.pushl_r(X86::ecx);
+            // Return.
+            m_jit.pushl_r(X86::edx);
             m_jit.ret();
 
             // Activation hook

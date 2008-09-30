@@ -22,40 +22,34 @@
 
 #include "config.h"
 #include "ExecState.h"
+
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "ScopeChainMark.h"
 
 namespace JSC {
 
-ExecState::ExecState(JSGlobalObject* globalObject, JSObject* globalThisValue, ScopeChainNode* globalScopeChain)
+ExecState::ExecState(JSGlobalObject* globalObject, JSObject* globalThisValue, Register* callFrame)
     : m_globalObject(globalObject)
     , m_globalThisValue(globalThisValue)
     , m_exception(0)
     , m_globalData(globalObject->globalData())
     , m_prev(0)
     , m_registerFile(0)
-    , m_scopeChain(globalScopeChain)
-    , m_callFrame(0)
+    , m_callFrame(callFrame)
 {
 }
 
-ExecState::ExecState(ExecState* exec, RegisterFile* registerFile, ScopeChainNode* scopeChain, Register* callFrame)
+ExecState::ExecState(ExecState* exec, RegisterFile* registerFile, Register* callFrame)
     : m_globalObject(exec->m_globalObject)
     , m_globalThisValue(exec->m_globalThisValue)
     , m_exception(0)
     , m_globalData(exec->m_globalData)
     , m_prev(exec)
     , m_registerFile(registerFile)
-    , m_scopeChain(scopeChain)
     , m_callFrame(callFrame)
 {
     ASSERT(!exec->m_exception);
-}
-
-bool ExecState::isGlobalObject(JSObject* o) const
-{
-    return o->isGlobalObject();
 }
 
 } // namespace JSC

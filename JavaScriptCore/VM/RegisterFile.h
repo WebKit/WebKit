@@ -93,7 +93,7 @@ namespace JSC {
             CallFrameHeaderSize = 9,
 
             CodeBlock = -9,
-            CallerScopeChain = -8,
+            ScopeChain = -8,
             CallerRegisters = -7,
             ReturnPC = -6,
             ReturnValueRegister = -5,

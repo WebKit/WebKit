@@ -55,17 +55,14 @@
 #define CTI_ARGS_exec 0x0D
 #define CTI_ARGS_registerFile 0x0E
 #define CTI_ARGS_r 0x0F
-#define CTI_ARGS_scopeChain 0x10
-#define CTI_ARGS_exception 0x11
-#define CTI_ARGS_profilerReference 0x12
+#define CTI_ARGS_exception 0x10
+#define CTI_ARGS_profilerReference 0x11
 #define ARG_exec ((ExecState*)(ARGS)[CTI_ARGS_exec])
 #define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
 #define ARG_r ((Register*)(ARGS)[CTI_ARGS_r])
-#define ARG_scopeChain ((ScopeChainNode*)(ARGS)[CTI_ARGS_scopeChain])
 #define ARG_exception ((JSValue**)(ARGS)[CTI_ARGS_exception])
 #define ARG_profilerReference ((Profiler**)(ARGS)[CTI_ARGS_profilerReference])
 
-#define ARG_setScopeChain(newScopeChain) (*(volatile ScopeChainNode**)&(ARGS)[CTI_ARGS_scopeChain] = newScopeChain)
 #define ARG_setR(newR) (*(volatile Register**)&(ARGS)[CTI_ARGS_r] = newR)
 #define ARG_set2ndResult(new2ndResult) (*(volatile JSValue**)&(ARGS)[CTI_ARGS_2ndResult] = new2ndResult)
 
@@ -235,7 +232,7 @@ namespace JSC {
     };
 
     extern "C" {
-        JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, JSValue** exception, Profiler**);
+        JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception, Profiler**);
         void ctiVMThrowTrampoline();
     };
 
@@ -319,9 +316,9 @@ namespace JSC {
             return cti.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        inline static JSValue* execute(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, JSValue** exception)
+        inline static JSValue* execute(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception)
         {
-            JSValue* value = ctiTrampoline(code, exec, registerFile, r, scopeChain, exception, Profiler::enabledProfilerReference());
+            JSValue* value = ctiTrampoline(code, exec, registerFile, r, exception, Profiler::enabledProfilerReference());
 #if ENABLE(SAMPLING_TOOL)
             currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif
@@ -356,7 +353,7 @@ namespace JSC {
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
         void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
 
-        void emitGetArg(unsigned src, X86Assembler::RegisterID dst);
+        void emitGetArg(int src, X86Assembler::RegisterID dst);
         void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
         void emitPutArg(X86Assembler::RegisterID src, unsigned offset);
         void emitPutArgConstant(unsigned value, unsigned offset);

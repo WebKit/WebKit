@@ -1,3 +1,55 @@
+2008-09-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Store the callee ScopeChain, not the caller ScopeChain, in the call frame
+        header. Nix the "scopeChain" local variable and ExecState::m_scopeChain, and
+        access the callee ScopeChain through the call frame header instead.
+
+        Profit: call + return are simpler, because they don't have to update the
+        "scopeChain" local variable, or ExecState::m_scopeChain.
+        
+        Because CTI keeps "r" in a register, reading the callee ScopeChain relative
+        to "r" can be very fast, in any cases we care to optimize.
+
+        0% speedup on empty function call benchmark. (5.5% speedup in bytecode.)
+        0% speedup on SunSpider. (7.5% speedup on controlflow-recursive.)
+        2% speedup on SunSpider --v8.
+        2% speedup on v8 benchmark.
+
+        * VM/CTI.cpp: Changed scope chain access to read the scope chain from
+        the call frame header. Sped up op_ret by changing it not to fuss with
+        the "scopeChain" local variable or ExecState::m_scopeChain.
+
+        * VM/CTI.h: Updated CTI trampolines not to take a ScopeChainNode*
+        argument, since that's stored in the call frame header now.
+
+        * VM/Machine.cpp: Access "scopeChain" and "codeBlock" through new helper
+        functions that read from the call frame header. Updated functions operating
+        on ExecState::m_callFrame to account for / take advantage of the fact that
+        Exec:m_callFrame is now never NULL.
+        
+        Fixed a bug in op_construct, where it would use the caller's default
+        object prototype, rather than the callee's, when constructing a new object.
+
+        * VM/Machine.h: Made some helper functions available. Removed
+        ScopeChainNode* arguments to a lot of functions, since the ScopeChainNode*
+        is now stored in the call frame header.
+
+        * VM/RegisterFile.h: Renamed "CallerScopeChain" to "ScopeChain", since
+        that's what it is now.
+
+        * kjs/DebuggerCallFrame.cpp: Updated for change to ExecState signature.
+
+        * kjs/ExecState.cpp:
+        * kjs/ExecState.h: Nixed ExecState::m_callFrame, along with the unused
+        isGlobalObject function.
+
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSGlobalObject.h: Gave the global object a fake call frame in
+        which to store the global scope chain, since our code now assumes that
+        it can always read the scope chain out of the ExecState's call frame.
+
 2008-09-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Sam Weinig.
