@@ -367,9 +367,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
     }
 
 #if ENABLE(SAMPLING_TOOL)
-            machine->m_sampler->stop();
-            machine->m_sampler->dump(globalObject->globalExec());
-            delete machine->m_sampler;
+    machine->m_sampler->stop();
+    machine->m_sampler->dump(globalObject->globalExec());
+    delete machine->m_sampler;
 #endif
     return success;
 }
