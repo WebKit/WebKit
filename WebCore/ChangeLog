@@ -1,5 +1,27 @@
 2008-09-30  Timothy Hatcher  <timothy@apple.com>
 
+        Focus the DOM tree in the Web Inspector when a node is inspected.
+        So when the search field has focus, the focus moves to the tree,
+        allowing the arrow keys work. This can happen when using the new
+        find in page feature.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21251
+
+        Reviewed by Geoff Garen.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel): Set currentFocusElement to
+        the main-panels element if the panel is visible.
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        Remove a set of currentFocusElement since this moved.
+        * page/inspector/inspector.js:
+        (WebInspector.set currentFocusElement): Always focus the element.
+        This ensures that when focus changes in the page and we don't
+        catch it, we will still focus the elements even if we think it
+        was already focused.
+
+2008-09-30  Timothy Hatcher  <timothy@apple.com>
+
         Make the Web Inspector's toolbar icons darker when the mouse is
         pressed on them. This matches the standard NSToolbar look.
 

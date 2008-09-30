@@ -44,6 +44,9 @@ WebInspector.ElementsPanel = function()
 
     this.treeOutline.focusedNodeChanged = function(forceUpdate)
     {
+        if (this.panel.visible)
+            WebInspector.currentFocusElement = document.getElementById("main-panels");
+
         this.panel.updateBreadcrumb(forceUpdate);
 
         for (var pane in this.panel.sidebarPanes)
@@ -571,8 +574,6 @@ WebInspector.ElementsPanel.prototype = {
                     panel.rootDOMNode = crumb.representedObject.parentNode;
                 panel.focusedDOMNode = crumb.representedObject;
             }
-
-            WebInspector.currentFocusElement = document.getElementById("main-panels");
 
             event.preventDefault();
         }

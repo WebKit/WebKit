@@ -56,10 +56,8 @@ var WebInspector = {
 
     set currentFocusElement(x)
     {
-        if (!x || this._currentFocusElement === x)
-            return;
-
-        this._previousFocusElement = this._currentFocusElement;
+        if (this._currentFocusElement !== x)
+            this._previousFocusElement = this._currentFocusElement;
         this._currentFocusElement = x;
 
         if (this._currentFocusElement) {
