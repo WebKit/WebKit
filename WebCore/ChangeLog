@@ -1,3 +1,14 @@
+2008-09-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Non-Mac build fixes.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        * webcore-base.bkl:
+        Added DOMProtect.{cpp,h}.
+
 2008-09-39  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John Sullivan.

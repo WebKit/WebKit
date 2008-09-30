@@ -61,6 +61,7 @@ wxWebCore port Bakefile project file.
 
     <template id="webcore_base" template="xml2,iconv,xslt,icu,jscore,curl,sqlite3">
         <include>$(SRCDIR)</include>
+        <include>$(SRCDIR)/bindings</include>
         <include>$(SRCDIR)/bindings/js</include>
         <include>$(SRCDIR)/bridge</include>
         <include>$(SRCDIR)/bridge/c</include>

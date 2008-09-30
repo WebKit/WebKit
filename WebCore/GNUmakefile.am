@@ -10,6 +10,7 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
+	-I$(srcdir)/WebCore/bindings \
 	-I$(srcdir)/WebCore/bindings/js \
 	-I$(srcdir)/WebCore/bridge \
 	-I$(srcdir)/WebCore/bridge/c \
@@ -613,6 +614,8 @@ webcore_sources += \
 	WebCore/ForwardingHeaders/wtf/unicode/Unicode.h \
 	WebCore/ForwardingHeaders/wtf/unicode/icu/UnicodeIcu.h \
 	WebCore/WebCorePrefix.h \
+	WebCore/bindings/DOMProtect.cpp \
+	WebCore/bindings/DOMProtect.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \

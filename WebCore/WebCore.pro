@@ -157,6 +157,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/history \
                 $$PWD/xml \
                 $$PWD/html \
+                $$PWD/bindings \
                 $$PWD/bindings/js \
                 $$PWD/svg \
                 $$PWD/platform/image-decoders \
@@ -361,6 +362,7 @@ IDL_BINDINGS += \
 
 
 SOURCES += \
+    bindings/DOMProtect.cpp \
     bindings/js/GCController.cpp \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCanvasPixelArrayCustom.cpp \
