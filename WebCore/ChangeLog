@@ -1,3 +1,10 @@
+2008-09-39  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * bridge/npapi.h: Added skeleton for a new plug-in drawing model, the NPCoreAnimationDrawingModel. This model will eventually pave the way
+        for hardware accelerated drawing in plug-ins and out of process plug-in rendering.
+
 2008-09-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Maciej Stachowiak.
