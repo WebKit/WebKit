@@ -3267,6 +3267,10 @@
 				RelativePath="..\platform\FloatConversion.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\platform\HostWindow.h"
+				>
+			</File>
 			<File
 				RelativePath="..\platform\KURL.cpp"
 				>

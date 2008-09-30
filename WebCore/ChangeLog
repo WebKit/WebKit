@@ -1,3 +1,18 @@
+2008-09-29  David Hyatt  <hyatt@apple.com>
+
+        Add the new HostWindow base class.  A HostWindow hosts a hierarchy of Widgets.  The Chrome object on Page
+        now subclasses from HostWindow.  The new class will allow objects in platform/ like Widgets, Scrollbars
+        and ScrollViews to talk to the HostWindow object in order to do backing store operations and invalidations.
+        (Right now the platform layering is simply being violated by ScrollViews going directly to the ChromeClient.)
+
+        Reviewed by Sam Weinig
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Chrome.h:
+        * platform/HostWindow.h: Added.
+        (WebCore::HostWindow::HostWindow):
+        (WebCore::HostWindow::~HostWindow):
+
 2008-09-29  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders Carlsson.

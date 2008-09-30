@@ -3714,6 +3714,7 @@
 		BC3A44E30E26D21B00C14DFA /* JSNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3A44E10E26D21B00C14DFA /* JSNSResolver.h */; };
 		BC3BA04E0E8C46DA00FC5D20 /* JSEventTargetNode.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BA04C0E8C46DA00FC5D20 /* JSEventTargetNode.lut.h */; };
 		BC3BA04F0E8C46DA00FC5D20 /* JSEventTargetSVGElementInstance.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BA04D0E8C46DA00FC5D20 /* JSEventTargetSVGElementInstance.lut.h */; };
+		BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BC29B0E91AB0F00835588 /* HostWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */; };
 		BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */; };
 		BC4368E80C226E32005EFB5F /* Rect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4368E70C226E32005EFB5F /* Rect.h */; };
@@ -8257,6 +8258,7 @@
 		BC3A44E10E26D21B00C14DFA /* JSNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNSResolver.h; sourceTree = "<group>"; };
 		BC3BA04C0E8C46DA00FC5D20 /* JSEventTargetNode.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventTargetNode.lut.h; sourceTree = "<group>"; };
 		BC3BA04D0E8C46DA00FC5D20 /* JSEventTargetSVGElementInstance.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventTargetSVGElementInstance.lut.h; sourceTree = "<group>"; };
+		BC3BC29B0E91AB0F00835588 /* HostWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostWindow.h; sourceTree = "<group>"; };
 		BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaList.cpp; sourceTree = "<group>"; };
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
 		BC4368E70C226E32005EFB5F /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
@@ -13137,6 +13139,7 @@
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
+				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
 				BCBD21AA0E417AD400A070F2 /* KURLHash.h */,
@@ -15949,6 +15952,7 @@
 				BC3BA04E0E8C46DA00FC5D20 /* JSEventTargetNode.lut.h in Headers */,
 				BC3BA04F0E8C46DA00FC5D20 /* JSEventTargetSVGElementInstance.lut.h in Headers */,
 				63F5D4F70E8C4B7100C0BD04 /* ElementRareData.h in Headers */,
+				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -21,8 +21,8 @@
 #define Chrome_h
 
 #include "FocusDirection.h"
+#include "HostWindow.h"
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
@@ -45,7 +45,7 @@ namespace WebCore {
     struct FrameLoadRequest;
     struct WindowFeatures;
     
-    class Chrome : Noncopyable {
+    class Chrome : public HostWindow {
     public:
         Chrome(Page*, ChromeClient*);
         ~Chrome();
