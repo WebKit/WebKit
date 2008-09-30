@@ -3862,6 +3862,9 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId
         return;
 
     CodeBlock* callerCodeBlock = codeBlock(callerR);
+    if (!callerCodeBlock)
+        return;
+
     Instruction* vPC = vPCForPC(callerCodeBlock, r[RegisterFile::ReturnPC].v());
     lineNumber = callerCodeBlock->lineNumberForVPC(vPC - 1);
     sourceId = callerCodeBlock->ownerNode->sourceId();
