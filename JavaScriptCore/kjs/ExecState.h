@@ -29,21 +29,9 @@
 
 namespace JSC  {
 
-    class EvalNode;
-    class FunctionBodyNode;
     class JSValue;
-    class GlobalFuncImp;
-    class Interpreter;
-    class JSGlobalObject;
-    class JSVariableObject;
-    class Machine;
-    class ProgramNode;
     class Register;
-    class RegisterFile;
-    class ScopeNode;
 
-    struct Instruction;
-    
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
     class ExecState : Noncopyable {
@@ -53,7 +41,7 @@ namespace JSC  {
         friend class Machine;
         friend class DebuggerCallFrame;
     public:
-        ExecState(JSGlobalObject*, JSObject* globalThisValue, Register* callFrame);
+        ExecState(JSGlobalObject*, Register* callFrame);
 
         // Global object in which execution began.
         JSGlobalObject* dynamicGlobalObject() const { return m_globalObject; }
@@ -100,12 +88,11 @@ namespace JSC  {
         // Default constructor required for gcc 3.
         ExecState() { }
 
-        ExecState(ExecState*, RegisterFile*, Register* callFrame);
+        ExecState(ExecState*, Register* callFrame);
 
         bool isGlobalObject(JSObject*) const;
 
         JSGlobalObject* m_globalObject;
-        JSObject* m_globalThisValue;
 
         JSValue* m_exception;
 #if ENABLE(CTI)
@@ -115,7 +102,6 @@ namespace JSC  {
 
         // These values are controlled by the machine.
         ExecState* m_prev;
-        RegisterFile* m_registerFile;
         Register* m_callFrame; // The most recent call frame.
     };
 

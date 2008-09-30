@@ -1,3 +1,36 @@
+2008-09-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21214
+          work on getting rid of ExecState
+
+        * JavaScriptCore.exp: Updated since JSGlobalObject::init
+        no longer takes a parameter.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::execute): Removed m_registerFile argument
+        for ExecState constructors.
+
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate): Removed globalThisValue
+        argument for ExecState constructor.
+
+        * kjs/ExecState.cpp:
+        (JSC::ExecState::ExecState): Removed globalThisValue and
+        registerFile arguments to constructors.
+
+        * kjs/ExecState.h: Removed m_globalThisValue and
+        m_registerFile data members.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Removed globalThisValue
+        argument for ExecState constructor.
+
+        * kjs/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject): Got rid of parameter
+        for the init function.
+
 2008-09-29  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Cameron Zwarich.

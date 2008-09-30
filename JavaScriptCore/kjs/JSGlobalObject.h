@@ -148,14 +148,14 @@ namespace JSC {
         JSGlobalObject(JSGlobalData* globalData)
             : JSVariableObject(globalData->nullProtoStructureID, new JSGlobalObjectData(this, this))
         {
-            init(this);
+            init();
         }
 
     protected:
-        JSGlobalObject(PassRefPtr<StructureID> structure, JSGlobalObjectData* data, JSObject* globalThisValue)
+        JSGlobalObject(PassRefPtr<StructureID> structure, JSGlobalObjectData* data)
             : JSVariableObject(structure, data)
         {
-            init(globalThisValue);
+            init();
         }
 
     public:
@@ -270,8 +270,8 @@ namespace JSC {
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     private:
-        // FIXME: Fold these functions into the constructor.
-        void init(JSObject* thisValue);
+        // FIXME: Fold reset into init.
+        void init();
         void reset(JSValue* prototype);
 
         void setRegisters(Register* registers, Register* registerArray, size_t count);

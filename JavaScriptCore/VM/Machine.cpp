@@ -888,7 +888,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
 
-    ExecState newExec(exec, &m_registerFile, r);
+    ExecState newExec(exec, r);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -950,7 +950,7 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
     // a 0 codeBlock indicates a built-in caller
     initializeCallFrame(r, codeBlock, 0, scopeChain, 0, 0, argc, function);
 
-    ExecState newExec(exec, &m_registerFile, r);
+    ExecState newExec(exec, r);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -1036,7 +1036,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
 
-    ExecState newExec(exec, &m_registerFile, r);
+    ExecState newExec(exec, r);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)

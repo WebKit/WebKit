@@ -68,9 +68,7 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     if (!m_codeBlock)
         return 0;
 
-    JSObject* thisObject = this->thisObject();
-
-    ExecState newExec(m_scopeChain->globalObject(), thisObject, m_registers);
+    ExecState newExec(m_scopeChain->globalObject(), m_registers);
 
     int sourceId;
     int errLine;
@@ -80,7 +78,7 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     if (!evalNode)
         return Error::create(&newExec, SyntaxError, errMsg, errLine, sourceId, 0);
 
-    return newExec.machine()->execute(evalNode.get(), &newExec, thisObject, m_scopeChain, &exception);
+    return newExec.machine()->execute(evalNode.get(), &newExec, thisObject(), m_scopeChain, &exception);
 }
 
 } // namespace JSC
