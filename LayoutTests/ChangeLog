@@ -1,3 +1,31 @@
+2008-09-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=21227
+        <rdar://problem/6222134> add a way to set color for input placeholder text
+
+        * fast/forms/password-placeholder-text-security.html: Added.
+        * fast/forms/placeholder-pseudo-style.html: Added.
+        * platform/mac/fast/forms/password-placeholder-text-security-expected.checksum: Added.
+        * platform/mac/fast/forms/password-placeholder-text-security-expected.png: Added.
+        * platform/mac/fast/forms/password-placeholder-text-security-expected.txt: Added.
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.checksum: Added.
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.png: Added.
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt: Added.
+
+        Updated results. The placeholder color is now reflected on the RenderTextControl, not just on an inner element.
+
+        * platform/mac/fast/forms/input-disabled-color-expected.checksum:
+        * platform/mac/fast/forms/input-disabled-color-expected.png:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/password-placeholder-expected.checksum:
+        * platform/mac/fast/forms/password-placeholder-expected.png:
+        * platform/mac/fast/forms/password-placeholder-expected.txt:
+        * platform/mac/fast/forms/placeholder-set-attribute-expected.checksum:
+        * platform/mac/fast/forms/placeholder-set-attribute-expected.png:
+        * platform/mac/fast/forms/placeholder-set-attribute-expected.txt:
+
 2008-09-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

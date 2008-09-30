@@ -88,6 +88,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString focus("focus");
     static AtomicString hover("hover");
     static AtomicString indeterminate("indeterminate");
+    static AtomicString inputPlaceholderMode("-webkit-input-placeholder-mode");
     static AtomicString lastChild("last-child");
     static AtomicString lastOfType("last-of-type");
     static AtomicString link("link");
@@ -152,6 +153,8 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoFirstChild;
     else if (m_value == fullPageMedia)
         m_pseudoType = PseudoFullPageMedia;
+    else if (m_value == inputPlaceholderMode)
+        m_pseudoType = PseudoInputPlaceholderMode;
     else if (m_value == lastChild)
         m_pseudoType = PseudoLastChild;
     else if (m_value == lastOfType)

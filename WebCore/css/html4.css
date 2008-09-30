@@ -361,6 +361,10 @@ textarea {
     cursor: auto;
 }
 
+input:-webkit-input-placeholder-mode {
+    color: darkGray;
+}
+
 input[type="password"] {
     -webkit-text-security: disc !important;
 }

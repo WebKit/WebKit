@@ -1,3 +1,44 @@
+2008-09-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21227
+        <rdar://problem/6222134> add a way to set color for input placeholder text
+
+        Test: fast/forms/placeholder-pseudo-style.html
+
+        This change adds "-webkit-input-placeholder-mode" as a pseudo class that can be used to style
+        input elements when they are displaying the placeholder text.
+
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType): Add case for inputPlaceholderMode.
+        * css/CSSSelector.h: (WebCore::CSSSelector::): Add PseudoInputPlaceholderMode.
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        Add check for PseudoInputPlaceholderMode that asks the node if placeholderShouldBeVisible is true.
+        * css/html4.css: Add rule to make placeholder text default to darkGray.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init): Initialize m_placeholderShouldBeVisible.
+        (WebCore::HTMLInputElement::dispatchFocusEvent): Call updatePlaceholderVisibility.
+        (WebCore::HTMLInputElement::dispatchBlurEvent): ditto.
+        (WebCore::HTMLInputElement::parseMappedAttribute): ditto.
+        (WebCore::HTMLInputElement::setValue): ditto.
+        (WebCore::HTMLInputElement::setValueFromRenderer): ditto.
+        (WebCore::HTMLInputElement::updatePlaceholderVisibility): Sets m_placeholderShouldBeVisible based on the current value and the focus state.
+         This calculation used to be done in the renderer, but since the node knows everything about the state, it can make that decision, and the
+         renderer will just ask the node if it should draw the placeholder.
+        * html/HTMLInputElement.h: (WebCore::HTMLInputElement::placeholderShouldBeVisible):
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::disabledTextColor): Moved to the top of the file.  If there's not very much contrast between the disabled color and the background color,
+        just leave the text color alone.  We don't want to change a good contrast color scheme so that it has really bad contrast.
+        If the the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
+        (WebCore::RenderTextControl::createInnerTextStyle): If the node says the placeholder should be visible, prepare by overriding the text security to be "none".
+        This can only happen as a result of either a setStyle call (which will be followed by a call to updateFromElement) or from createSubtreeIfNeeded, which
+        is called directly from updateFromElement.  updateFromElement will immediately update the text displayed.
+        (WebCore::RenderTextControl::updateFromElement): If the placeholder visibility has changed, update the text that is displayed.
+        (WebCore::RenderTextControl::forwardEvent): Remove calls to update the placeholder state.  This is now done in HTMLInputElement.
+        * rendering/RenderTextControl.h:
+
 2008-09-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

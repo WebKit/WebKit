@@ -58,6 +58,28 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+// Value chosen by observation.  This can be tweaked.
+static const int minColorContrastValue = 1300;
+
+static Color disabledTextColor(const Color& textColor, const Color& backgroundColor)
+{
+    // The explicit check for black is an optimization for the 99% case (black on white).
+    // This also means that black on black will turn into grey on black when disabled.
+    Color disabledColor;
+    if (textColor.rgb() == Color::black || differenceSquared(textColor, Color::white) > differenceSquared(backgroundColor, Color::white))
+        disabledColor = textColor.light();
+    else
+        disabledColor = textColor.dark();
+    
+    // If there's not very much contrast between the disabled color and the background color,
+    // just leave the text color alone.  We don't want to change a good contrast color scheme so that it has really bad contrast.
+    // If the the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
+    if (differenceSquared(disabledColor, backgroundColor) < minColorContrastValue)
+        return textColor;
+    
+    return disabledColor;
+}
+
 RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     : RenderBlock(node)
     , m_dirty(false)
@@ -118,15 +140,6 @@ void RenderTextControl::setStyle(RenderStyle* style)
 
     setHasOverflowClip(false);
     setReplaced(isInline());
-}
-
-static Color disabledTextColor(const Color& textColor, const Color& backgroundColor)
-{
-    // The explcit check for black is an optimization for the 99% case (black on white).
-    // This also means that black on black will turn into grey on black when disabled.
-    if (textColor.rgb() == Color::black || differenceSquared(textColor, Color::white) > differenceSquared(backgroundColor, Color::white))
-        return textColor.light();
-    return textColor.dark();
 }
 
 RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
@@ -190,6 +203,12 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
         textBlockStyle->setPaddingLeft(Length(3, Fixed));
         textBlockStyle->setPaddingRight(Length(3, Fixed));
     }
+    
+    // When the placeholder is going to be displayed, temporarily override the text security to be "none".
+    // After this, updateFromElement will immediately update the text displayed.
+    // When the placeholder is no longer visible, style will be recomputed, and the text security mode will be set back to the computed value correctly.
+    if (!m_multiLine && static_cast<HTMLInputElement*>(element)->placeholderShouldBeVisible())
+        textBlockStyle->setTextSecurity(TSNONE);
 
     if (!element->isEnabled())
         textBlockStyle->setColor(disabledTextColor(startStyle->color(), startStyle->backgroundColor()));
@@ -234,50 +253,6 @@ RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
     updateCancelButtonVisibility(cancelBlockStyle);
 
     return cancelBlockStyle;
-}
-
-void RenderTextControl::updatePlaceholder()
-{
-    bool oldPlaceholderVisible = m_placeholderVisible;
-    
-    String placeholder;
-    if (!m_multiLine) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-        if (input->value().isEmpty() && document()->focusedNode() != node())
-            placeholder = input->getAttribute(placeholderAttr);
-    }
-
-    if (!placeholder.isEmpty() || m_placeholderVisible) {
-        ExceptionCode ec = 0;
-        m_innerText->setInnerText(placeholder, ec);
-        m_placeholderVisible = !placeholder.isEmpty();
-    }
-
-    Color color;
-    if (!placeholder.isEmpty())
-        color = Color::darkGray;
-    else if (node()->isEnabled())
-        color = style()->color();
-    else
-        color = disabledTextColor(style()->color(), style()->backgroundColor());
-
-    RenderObject* renderer = m_innerText->renderer();
-    RenderStyle* innerStyle = renderer->style();
-    if (innerStyle->color() != color) {
-        innerStyle->setColor(color);
-        renderer->repaint();
-    }
-
-    // temporary disable textSecurity if placeholder is visible
-    if (style()->textSecurity() != TSNONE && oldPlaceholderVisible != m_placeholderVisible) {
-        RenderStyle* newInnerStyle = new (renderArena()) RenderStyle(*innerStyle);
-        newInnerStyle->setTextSecurity(m_placeholderVisible ? TSNONE : style()->textSecurity());
-        renderer->setStyle(newInnerStyle);
-        for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
-            if (n->renderer())
-                n->renderer()->setStyle(newInnerStyle);
-        }
-    }
 }
 
 void RenderTextControl::createSubtreeIfNeeded()
@@ -327,16 +302,21 @@ void RenderTextControl::updateFromElement()
 {
     HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
 
+    bool placeholderShouldBeVisible = !m_multiLine && static_cast<HTMLInputElement*>(element)->placeholderShouldBeVisible();
+    bool placeholderVisibilityShouldChange = m_placeholderVisible != placeholderShouldBeVisible;
+    m_placeholderVisible = placeholderShouldBeVisible;
+
     createSubtreeIfNeeded();
 
     if (m_cancelButton && m_cancelButton->renderer())
         updateCancelButtonVisibility(m_cancelButton->renderer()->style());
 
-    updatePlaceholder();
-
     m_innerText->renderer()->style()->setUserModify(element->isReadOnlyControl() || element->disabled() ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
-
-    if ((!element->valueMatchesRenderer() || m_multiLine) && !m_placeholderVisible) {
+    
+    if (m_placeholderVisible) {
+        ExceptionCode ec;
+        m_innerText->setInnerText(static_cast<HTMLInputElement*>(element)->getAttribute(placeholderAttr), ec);
+    } else if (!element->valueMatchesRenderer() || m_multiLine || placeholderVisibilityShouldChange) {
         String value;
         if (m_multiLine)
             value = static_cast<HTMLTextAreaElement*>(element)->value();
@@ -871,12 +851,10 @@ void RenderTextControl::forwardEvent(Event* evt)
             if (innerLayer && !m_multiLine)
                 innerLayer->scrollToOffset(style()->direction() == RTL ? innerLayer->scrollWidth() : 0, 0);
         }
-        updatePlaceholder();
         capsLockStateMayHaveChanged();
-    } else if (evt->type() == focusEvent) {
-        updatePlaceholder();
+    } else if (evt->type() == focusEvent)
         capsLockStateMayHaveChanged();
-    } else {
+    else {
         if (evt->isMouseEvent() && m_resultsButton && static_cast<MouseEvent*>(evt)->x() < m_innerText->renderer()->absoluteBoundingBoxRect().x())
             m_resultsButton->defaultEventHandler(evt);
         else if (evt->isMouseEvent() && m_cancelButton && static_cast<MouseEvent*>(evt)->x() > m_innerText->renderer()->absoluteBoundingBoxRect().right())
