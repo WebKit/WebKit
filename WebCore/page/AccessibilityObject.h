@@ -320,6 +320,7 @@ public:
     virtual void childrenChanged();
     virtual const AccessibilityChildrenVector& children() { return m_children; }
     virtual void addChildren();
+    virtual bool canHaveChildren() const { return true; }
     virtual bool hasChildren() const { return m_haveChildren; };
     virtual void selectedChildren(AccessibilityChildrenVector&);
     virtual void visibleChildren(AccessibilityChildrenVector&);

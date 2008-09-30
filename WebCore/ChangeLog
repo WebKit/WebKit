@@ -1,3 +1,20 @@
+2008-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/6255456> AX: <file> input button shouldn't have children exposed
+        Make sure that certain types of elements do not return children and, moreover, do not waste their
+        energy trying to return children
+
+        Test: accessibility/nochildren-elements.html
+
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::canHaveChildren):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * page/AccessibilityRenderObject.h:
+
 2008-09-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

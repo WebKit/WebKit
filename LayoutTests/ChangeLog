@@ -1,3 +1,12 @@
+2008-09-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Tests for <rdar://problem/6255456> AX: <file> input button shouldn't have children exposed
+
+        * accessibility/nochildren-elements-expected.txt: Added.
+        * accessibility/nochildren-elements.html: Added.
+
 2008-09-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

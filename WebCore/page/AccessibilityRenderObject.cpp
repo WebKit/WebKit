@@ -2163,6 +2163,24 @@ void AccessibilityRenderObject::childrenChanged()
             parent->childrenChanged();
     }
 }
+    
+bool AccessibilityRenderObject::canHaveChildren() const
+{
+    if (!m_renderer)
+        return false;
+    
+    // Elements that should not have children
+    switch (roleValue()) {
+        case ImageRole:
+        case ButtonRole:
+        case PopUpButtonRole:
+        case CheckBoxRole:
+        case RadioButtonRole:
+            return false;
+        default:
+            return true;
+    }
+}
 
 const AccessibilityObject::AccessibilityChildrenVector& AccessibilityRenderObject::children()
 {
@@ -2182,6 +2200,9 @@ void AccessibilityRenderObject::addChildren()
         return;
     
     m_haveChildren = true;
+    
+    if (!canHaveChildren())
+        return;
     
     // add all unignored acc children
     for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling()) {

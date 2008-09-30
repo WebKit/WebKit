@@ -182,6 +182,7 @@ public:
     virtual void detach();
     virtual void childrenChanged();
     virtual void addChildren();
+    virtual bool canHaveChildren() const;
     virtual void selectedChildren(AccessibilityChildrenVector&);
     virtual void visibleChildren(AccessibilityChildrenVector&);
     virtual bool shouldFocusActiveDescendant() const;
