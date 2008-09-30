@@ -198,6 +198,8 @@
         Allow fast access to the 'arguments' object by adding an extra slot to
         the callframe to store it.
 
+        This is a 3.0% speedup on the V8 Raytrace benchmark.
+
         * JavaScriptCore.exp:
         * VM/CTI.cpp:
         (JSC::CTI::privateCompileMainPass):
