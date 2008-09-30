@@ -76,6 +76,11 @@ Chrome::~Chrome()
     m_client->chromeDestroyed();
 }
 
+void Chrome::repaint(const IntRect& windowRect, bool contentChanged, bool immediate)
+{
+    m_client->repaint(windowRect, contentChanged, immediate);
+}
+
 void Chrome::setWindowRect(const FloatRect& rect) const
 {
     m_client->setWindowRect(rect);

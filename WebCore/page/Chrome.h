@@ -52,6 +52,9 @@ namespace WebCore {
 
         ChromeClient* client() { return m_client; }
 
+        // HostWindow methods.
+        virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false);
+
         void setWindowRect(const FloatRect&) const;
         FloatRect windowRect() const;
 

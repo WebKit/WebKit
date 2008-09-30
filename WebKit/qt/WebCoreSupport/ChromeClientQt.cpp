@@ -296,6 +296,24 @@ IntRect ChromeClientQt::windowResizerRect() const
     return IntRect();
 }
 
+void ChromeClientQt::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool)
+{
+    // No double buffer.
+    if (!contentChanged)
+        return;
+
+    QWidget* view = m_webPage->view();
+    if (view) {
+        QRect rect(r);
+        rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
+        if (!r.isEmpty())
+            view->update(r);
+    } else
+        emit m_webPage->repaintRequested(r);
+    
+    // FIXME: There is no "immediate" support.
+}
+
 void ChromeClientQt::addToDirtyRegion(const IntRect& r)
 {
     QWidget* view = m_webPage->view();

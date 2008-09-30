@@ -403,6 +403,10 @@ IntRect WebChromeClient::windowResizerRect() const
     return enclosingIntRect([[m_webView window] _growBoxRect]);
 }
 
+void WebChromeClient::repaint(const WebCore::IntRect&, bool, bool)
+{
+}
+
 void WebChromeClient::addToDirtyRegion(const IntRect&)
 {
 }

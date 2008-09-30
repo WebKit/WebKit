@@ -285,28 +285,6 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
     updateScrollbars(m_scrollOffset);
 }
 
-void ScrollView::updateContents(const IntRect& updateRect, bool now)
-{
-    if (updateRect.isEmpty())
-        return;
-
-    IntPoint windowPoint = contentsToWindow(updateRect.location());
-    IntRect containingWindowRect = updateRect;
-    containingWindowRect.setLocation(windowPoint);
-
-    GdkRectangle rect = containingWindowRect;
-    GdkWindow* window = GTK_WIDGET(containingWindow())->window;
-
-    if (window)
-        gdk_window_invalidate_rect(window, &rect, true);
-
-    // Cache the dirty spot.
-    addToDirtyRegion(containingWindowRect);
-
-    if (now && window)
-        gdk_window_process_updates(window, true);
-}
-
 void ScrollView::update()
 {
     ASSERT(containingWindow());

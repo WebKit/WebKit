@@ -621,6 +621,16 @@ void WebView::close()
     deleteBackingStore();
 }
 
+void WebView::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate)
+{
+    RECT rect = windowRect;
+    ::InvalidateRect(m_viewWindow, &rect, false);
+    if (contentChanged)
+        addToDirtyRegion(windowRect);
+    if (immediate)
+        ::UpdateWindow(m_viewWindow);
+}
+
 void WebView::deleteBackingStore()
 {
     pendingDeleteBackingStoreSet.remove(this);

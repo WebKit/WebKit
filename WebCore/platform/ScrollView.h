@@ -54,6 +54,7 @@ class wxScrollWinEvent;
 // Port authors should wait until this refactoring is complete before attempting to implement this interface.
 namespace WebCore {
 
+class HostWindow;
 class PlatformWheelEvent;
 class Scrollbar;
 
@@ -61,6 +62,10 @@ class ScrollView : public Widget {
 public:
     ScrollView();
     ~ScrollView();
+
+    // The window thats hosts the ScrollView.  The ScrollView will communicate scrolls and repaints to the
+    // host window in the window's coordinate space.
+    virtual HostWindow* hostWindow() const = 0;
 
     // Methods for child manipulation and inspection.
     const HashSet<Widget*>* children() const { return &m_children; }
@@ -180,7 +185,7 @@ public:
 #endif
 
 protected:
-    void updateContents(const IntRect&, bool now = false);
+    virtual void repaintContentRectangle(const IntRect&, bool now = false);
     void updateWindowRect(const IntRect&, bool now = false);
 public:
     void update();
@@ -212,7 +217,8 @@ private:
     void platformSetScrollPosition(const IntPoint&);
     bool platformScroll(ScrollDirection, ScrollGranularity);
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
-    
+    void platformRepaintContentRectangle(const IntRect&, bool now);
+
 #if PLATFORM(MAC) && defined __OBJC__
 public:
     NSView* documentView() const;

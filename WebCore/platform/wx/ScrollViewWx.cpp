@@ -137,7 +137,7 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-void ScrollView::updateContents(const IntRect& updateRect, bool now)
+void ScrollView::platformRepaintContentRectangle(const IntRect& updateRect, bool now)
 {
     // we need to convert coordinates to scrolled position
     wxRect contentsRect = updateRect;

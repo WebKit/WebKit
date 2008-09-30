@@ -30,10 +30,17 @@
 
 namespace WebCore {
 
+class IntRect;
+
 class HostWindow : Noncopyable {
 public:
     HostWindow() {}
     virtual ~HostWindow() {}
+
+    // The repaint method asks the host window to repaint a rect in the window's coordinate space.  The
+    // contentChanged boolean indicates whether or not the Web page content actually changed (or if a repaint
+    // of unchanged content is being requested).
+    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) = 0;
 };
 
 } // namespace WebCore

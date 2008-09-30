@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "HostWindow.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "Scrollbar.h"
@@ -340,6 +341,21 @@ void ScrollView::frameRectsChanged() const
         (*current)->frameRectsChanged();
 }
 
+void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
+{
+    if (rect.isEmpty())
+        return;
+
+    ASSERT(!parent());
+
+    if (platformWidget()) {
+        platformRepaintContentRectangle(rect, now);
+        return;
+    }
+
+    hostWindow()->repaint(contentsToWindow(rect), true, now);
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {
@@ -380,6 +396,10 @@ void ScrollView::platformSetScrollPosition(const IntPoint&)
 bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
 {
     return true;
+}
+
+void ScrollView::platformRepaintContentRectangle(const IntRect&, bool now)
+{
 }
 #endif
 

@@ -259,6 +259,26 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
+void ChromeClient::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate)
+{
+    // No double buffer.
+    if (!contentChanged || !m_webView)
+        return;
+
+    GtkWidget* windowWidget = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
+    if (!windowWidget)
+        return;
+
+    GdkRectangle rect = windowRect;
+    GdkWindow* window = GTK_WINDOW(windowWidget);
+
+    if (window) {
+        gdk_window_invalidate_rect(window, &rect, true);
+        if (immediate)
+            gdk_window_process_updates(window, true);
+    }
+}
+
 void ChromeClient::addToDirtyRegion(const IntRect&)
 {
     notImplemented();

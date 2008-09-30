@@ -417,6 +417,12 @@ IntRect WebChromeClient::windowResizerRect() const
     return intRect;
 }
 
+void WebChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate)
+{
+    ASSERT(core(m_webView->topLevelFrame()));
+    m_webView->repaint(windowRect, contentChanged, immediate);
+}
+
 void WebChromeClient::addToDirtyRegion(const IntRect& dirtyRect)
 {
     m_webView->addToDirtyRegion(dirtyRect);

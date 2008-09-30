@@ -1,3 +1,16 @@
+2008-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=21250
+        
+        Rename updateContents to repaintContentRectangle and make it cross-platform by always sending
+        repaints up through the ChromeClient.
+        
+        Reviewed by Darin Adler
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::repaint):
+
 2008-09-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe and Adam Roben.

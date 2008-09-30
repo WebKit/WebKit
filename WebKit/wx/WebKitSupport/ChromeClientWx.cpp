@@ -283,6 +283,11 @@ IntRect ChromeClientWx::windowResizerRect() const
     return IntRect();
 }
 
+void ChromeClientWx::repaint(const WebCore::IntRect&, bool, bool)
+{
+    notImplemented();
+}
+
 void ChromeClientWx::addToDirtyRegion(const IntRect&)
 {
     notImplemented();

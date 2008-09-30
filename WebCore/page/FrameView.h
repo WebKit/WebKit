@@ -61,6 +61,8 @@ public:
 
     virtual ~FrameView();
 
+    virtual HostWindow* hostWindow() const;
+
     Frame* frame() const { return m_frame.get(); }
     void clearFrame();
 
@@ -166,7 +168,7 @@ private:
     void dispatchScheduledEvents();
     void performPostLayoutTasks();
 
-    void repaintContentRectangle(const IntRect&, bool immediate);
+    virtual void repaintContentRectangle(const IntRect&, bool immediate);
 
     unsigned m_refCount;
     IntSize m_size;

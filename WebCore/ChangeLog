@@ -1,3 +1,35 @@
+2008-09-30  Dave Hyatt  <hyatt@apple.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=21250
+        
+        Rename updateContents to repaintContentRectangle and make it cross-platform by always sending
+        repaints up through the ChromeClient.
+
+        Reviewed by Darin Adler
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::repaint):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::repaint):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hostWindow):
+        (WebCore::FrameView::repaintContentRectangle):
+        * page/FrameView.h:
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::repaintContentRectangle):
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformRepaintContentRectangle):
+
 2008-09-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Non-Mac build fixes.

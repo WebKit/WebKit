@@ -201,18 +201,6 @@ void ScrollView::platformRemoveChild(Widget*)
 {
 }
 
-void ScrollView::updateContents(const IntRect& rect, bool now)
-{
-    if (rect.isEmpty())
-        return;
-
-    IntPoint windowPoint = contentsToWindow(rect.location());
-    IntRect containingWindowRect = rect;
-    containingWindowRect.setLocation(windowPoint);
-
-    updateWindowRect(containingWindowRect, now);
-}
-
 void ScrollView::updateWindowRect(const IntRect& rect, bool now)
 {
     RECT containingWindowRectWin = rect;

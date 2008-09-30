@@ -108,9 +108,15 @@ namespace WebCore {
         virtual bool tabsToLinks() const = 0;
 
         virtual IntRect windowResizerRect() const = 0;
+
+        // The following three methods are deprecated and will be removed once all of the callers have been
+        // eliminated.
         virtual void addToDirtyRegion(const IntRect&) = 0;
         virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect) = 0;
         virtual void updateBackingStore() = 0;
+        // End deprecated methods.
+
+        virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) = 0;
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 

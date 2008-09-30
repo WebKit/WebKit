@@ -711,6 +711,7 @@ public:
     void scrollBackingStore(WebCore::FrameView*, int dx, int dy, const WebCore::IntRect& scrollViewRect, const WebCore::IntRect& clipRect);
     void updateBackingStore(WebCore::FrameView*, HDC, bool backingStoreCompletelyDirty);
     void deleteBackingStore();
+    void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false);
     void frameRect(RECT* rect);
     void closeWindow();
     void closeWindowSoon();
