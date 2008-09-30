@@ -1,3 +1,18 @@
+2008-09-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Move all detection of 'arguments' in a lexical scope to the parser, in
+        preparation for fixing
+
+        Bug 21123: using "arguments" in a function should not force creation of an activation object
+        <https://bugs.webkit.org/show_bug.cgi?id=21123>
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        * kjs/NodeInfo.h:
+        * kjs/grammar.y:
+
 2008-09-30  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

@@ -160,7 +160,7 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 
     // expression subtrees
     ExpressionNodeInfo  expressionNode;
-    FuncDeclNode*       funcDeclNode;
+    FuncDeclNodeInfo    funcDeclNode;
     PropertyNodeInfo    propertyNode;
     ArgumentsNodeInfo   argumentsNode;
     ConstDeclNodeInfo   constDeclNode;
@@ -180,7 +180,7 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
     ConstDeclListInfo   constDeclList;
     ClauseListInfo      clauseList;
     ElementListInfo     elementList;
-    ParameterList       parameterList;
+    ParameterListInfo   parameterList;
 
     Operator            op;
 }
@@ -314,7 +314,7 @@ Property:
   | NUMBER ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceRange($5, $7)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
-                                        { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.head, $7, LEXER->sourceRange($6, $8)), ClosureFeature, 0); DBG($7, @6, @8); if (!$$.m_node) YYABORT; }
+                                        { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, LEXER->sourceRange($6, $8)), $4.m_featureInfo | ClosureFeature, 0); DBG($7, @6, @8); if (!$$.m_node) YYABORT; }
 ;
 
 PropertyList:
@@ -819,7 +819,7 @@ VariableDeclarationList:
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = 0;
+                                          $$.m_featureInfo = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
                                           $$.m_numConstants = 0;
                                         }
   | IDENT Initializer                   { AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_featureInfo & AssignFeature);
@@ -828,7 +828,7 @@ VariableDeclarationList:
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = $2.m_featureInfo;
+                                          $$.m_featureInfo = ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_featureInfo;
                                           $$.m_numConstants = $2.m_numConstants;
                                         }
   | VariableDeclarationList ',' IDENT
@@ -836,7 +836,7 @@ VariableDeclarationList:
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$3, 0);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = $1.m_featureInfo;
+                                          $$.m_featureInfo = $1.m_featureInfo | ((*$3 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0);
                                           $$.m_numConstants = $1.m_numConstants;
                                         }
   | VariableDeclarationList ',' IDENT Initializer
@@ -846,7 +846,7 @@ VariableDeclarationList:
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = $1.m_featureInfo | $4.m_featureInfo;
+                                          $$.m_featureInfo = $1.m_featureInfo | ((*$3 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_featureInfo;
                                           $$.m_numConstants = $1.m_numConstants + $4.m_numConstants;
                                         }
 ;
@@ -856,7 +856,7 @@ VariableDeclarationListNoIn:
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, 0);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = 0;
+                                          $$.m_featureInfo = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
                                           $$.m_numConstants = 0;
                                         }
   | IDENT InitializerNoIn               { AssignResolveNode* node = new AssignResolveNode(GLOBAL_DATA, *$1, $2.m_node, $2.m_featureInfo & AssignFeature);
@@ -865,7 +865,7 @@ VariableDeclarationListNoIn:
                                           $$.m_varDeclarations = new ParserRefCountedData<DeclarationStacks::VarStack>(GLOBAL_DATA);
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$1, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = $2.m_featureInfo;
+                                          $$.m_featureInfo = ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_featureInfo;
                                           $$.m_numConstants = $2.m_numConstants;
                                         }
   | VariableDeclarationListNoIn ',' IDENT
@@ -873,7 +873,7 @@ VariableDeclarationListNoIn:
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$3, 0);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = $1.m_featureInfo;
+                                          $$.m_featureInfo = $1.m_featureInfo | ((*$3 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0);
                                           $$.m_numConstants = $1.m_numConstants;
                                         }
   | VariableDeclarationListNoIn ',' IDENT InitializerNoIn
@@ -883,7 +883,7 @@ VariableDeclarationListNoIn:
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
-                                          $$.m_featureInfo = $1.m_featureInfo | $4.m_featureInfo;
+                                          $$.m_featureInfo = $1.m_featureInfo | ((*$3 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_featureInfo;
                                           $$.m_numConstants = $1.m_numConstants + $4.m_numConstants;
                                         }
 ;
@@ -917,8 +917,8 @@ ConstDeclarationList:
 ;
 
 ConstDeclaration:
-    IDENT                               { $$ = createNodeFeatureInfo<ConstDeclNode*>(new ConstDeclNode(GLOBAL_DATA, *$1, 0), 0, 0); }
-  | IDENT Initializer                   { $$ = createNodeFeatureInfo<ConstDeclNode*>(new ConstDeclNode(GLOBAL_DATA, *$1, $2.m_node), $2.m_featureInfo, $2.m_numConstants); }
+    IDENT                               { $$ = createNodeFeatureInfo<ConstDeclNode*>(new ConstDeclNode(GLOBAL_DATA, *$1, 0), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
+  | IDENT Initializer                   { $$ = createNodeFeatureInfo<ConstDeclNode*>(new ConstDeclNode(GLOBAL_DATA, *$1, $2.m_node), ((*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $2.m_featureInfo, $2.m_numConstants); }
 ;
 
 Initializer:
@@ -985,14 +985,14 @@ IterationStatement:
                                         { ForInNode *forIn = new ForInNode(GLOBAL_DATA, *$4, 0, $6.m_node, $8.m_node, @5.first_column, @5.first_column - @4.first_column, @6.last_column - @5.first_column);
                                           SET_EXCEPTION_LOCATION(forIn, @4.first_column, @5.first_column + 1, @6.last_column);
                                           appendToVarDeclarationList(GLOBAL_DATA, $8.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
-                                          $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations, $6.m_featureInfo | $8.m_featureInfo, $6.m_numConstants + $8.m_numConstants);
+                                          $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $8.m_varDeclarations, $8.m_funcDeclarations, ((*$4 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $6.m_featureInfo | $8.m_featureInfo, $6.m_numConstants + $8.m_numConstants);
                                           DBG($$.m_node, @1, @7); }
   | FOR '(' VAR IDENT InitializerNoIn INTOKEN Expr ')' Statement
                                         { ForInNode *forIn = new ForInNode(GLOBAL_DATA, *$4, $5.m_node, $7.m_node, $9.m_node, @5.first_column, @5.first_column - @4.first_column, @5.last_column - @5.first_column);
                                           SET_EXCEPTION_LOCATION(forIn, @4.first_column, @6.first_column + 1, @7.last_column);
                                           appendToVarDeclarationList(GLOBAL_DATA, $9.m_varDeclarations, *$4, DeclarationStacks::HasInitializer);
                                           $$ = createNodeDeclarationInfo<StatementNode*>(forIn, $9.m_varDeclarations, $9.m_funcDeclarations,
-                                                                                         $5.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo,
+                                                                                         ((*$4 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $5.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo,
                                                                                          $5.m_numConstants + $7.m_numConstants + $9.m_numConstants);
                                           DBG($$.m_node, @1, @8); }
 ;
@@ -1157,23 +1157,25 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceRange($5, $7)); DBG($6, @5, @7); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceRange($5, $7)), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
-                                        { $$ = new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceRange($6, $8), $4.head); DBG($7, @6, @8); }
+      { $$ = createNodeFeatureInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceRange($6, $8), $4.m_node.head), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_featureInfo | ClosureFeature, 0); DBG($7, @6, @8); }
 ;
 
 FunctionExpr:
     FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceRange($4, $6)), ClosureFeature, 0); DBG($5, @4, @6); }
-  | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceRange($5, $7), $3.head), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceRange($5, $7), $3.m_node.head), $3.m_featureInfo | ClosureFeature, 0); DBG($6, @5, @7); }
   | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceRange($5, $7)), ClosureFeature, 0); DBG($6, @5, @7); }
-  | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceRange($6, $8), $4.head), ClosureFeature, 0); DBG($7, @6, @8); }
+  | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceRange($6, $8), $4.m_node.head), $4.m_featureInfo | ClosureFeature, 0); DBG($7, @6, @8); }
 ;
 
 FormalParameterList:
-    IDENT                               { $$.head = new ParameterNode(GLOBAL_DATA, *$1);
-                                          $$.tail = $$.head; }
-  | FormalParameterList ',' IDENT       { $$.head = $1.head;
-                                          $$.tail = new ParameterNode(GLOBAL_DATA, $1.tail, *$3); }
+    IDENT                               { $$.m_node.head = new ParameterNode(GLOBAL_DATA, *$1);
+                                          $$.m_featureInfo = (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0;
+                                          $$.m_node.tail = $$.m_node.head; }
+  | FormalParameterList ',' IDENT       { $$.m_node.head = $1.m_node.head;
+                                          $$.m_featureInfo = $1.m_featureInfo | ((*$3 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0);
+                                          $$.m_node.tail = new ParameterNode(GLOBAL_DATA, $1.m_node.tail, *$3);  }
 ;
 
 FunctionBody:
@@ -1219,7 +1221,7 @@ SourceElements:
 ;
 
 SourceElement:
-    FunctionDeclaration                 { $$ = createNodeDeclarationInfo<StatementNode*>($1, 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ClosureFeature, 0); $$.m_funcDeclarations->data.append($1); }
+    FunctionDeclaration                 { $$ = createNodeDeclarationInfo<StatementNode*>($1.m_node, 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), $1.m_featureInfo, 0); $$.m_funcDeclarations->data.append($1.m_node); }
   | Statement                           { $$ = $1; }
 ;
  

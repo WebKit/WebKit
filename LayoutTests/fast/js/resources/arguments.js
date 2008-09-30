@@ -502,4 +502,11 @@ shouldBe("access_after_delete_extra_2(1, 2, 3, 4, 5)", "2");
 shouldBe("access_after_delete_extra_3(1, 2, 3, 4, 5)", "3");
 shouldBe("access_after_delete_extra_5(1, 2, 3, 4, 5)", "5");
 
+function argumentsParam(arguments)
+{
+    return arguments;
+}
+
+shouldBeTrue("argumentsParam(true)");
+
 var successfullyParsed = true;

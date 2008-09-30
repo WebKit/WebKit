@@ -1,0 +1,18 @@
+This test checks corner cases of 'f.arguments'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS assignTest() is true
+PASS assignVarInitTest() is true
+PASS assignVarInitTest2() is true
+PASS assignConstInitTest() is true
+PASS assignConstInitTest2() is true
+PASS assignForInitTest() is true
+PASS assignForInitTest2() is true
+PASS assignForInInitTest() is true
+FAIL paramInitTest(true) should be true (of type boolean). Was [object Arguments] (of type object).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

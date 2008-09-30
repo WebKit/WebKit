@@ -292,34 +292,24 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     emitOpcode(op_init);
     codeBlock->globalData = m_globalData;
 
-    bool usesArguments = functionBody->usesArguments();
-
-    const Node::FunctionStack& functionStack = functionBody->functionStack();
-    for (size_t i = 0; i < functionStack.size(); ++i) {
-        FuncDeclNode* funcDecl = functionStack[i].get();
-        const Identifier& ident = funcDecl->m_ident;
-        if (ident == propertyNames().arguments)
-            usesArguments = true;
-        m_functions.add(ident.ustring().rep());
-        emitNewFunction(addVar(ident, false), funcDecl);
-    }
-
-    const Node::VarStack& varStack = functionBody->varStack();
-    for (size_t i = 0; i < varStack.size(); ++i) {
-        const Identifier& ident = varStack[i].first;
-        if (ident == propertyNames().arguments) {
-            usesArguments = true;
-            continue;
-        }
-        addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
-    }
-
-    if (usesArguments) {
+    if (functionBody->usesArguments()) {
         emitOpcode(op_init_arguments);
         m_codeBlock->needsFullScopeChain = true;
         m_argumentsRegister.setIndex(RegisterFile::OptionalCalleeArguments);
         symbolTable->add(propertyNames().arguments.ustring().rep(), SymbolTableEntry(RegisterFile::OptionalCalleeArguments));
     }
+
+    const Node::FunctionStack& functionStack = functionBody->functionStack();
+    for (size_t i = 0; i < functionStack.size(); ++i) {
+        FuncDeclNode* funcDecl = functionStack[i].get();
+        const Identifier& ident = funcDecl->m_ident;
+        m_functions.add(ident.ustring().rep());
+        emitNewFunction(addVar(ident, false), funcDecl);
+    }
+
+    const Node::VarStack& varStack = functionBody->varStack();
+    for (size_t i = 0; i < varStack.size(); ++i)
+        addVar(varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
 
     Vector<Identifier>& parameters = functionBody->parameters();
     m_nextParameter = -RegisterFile::CallFrameHeaderSize - parameters.size() - 1;

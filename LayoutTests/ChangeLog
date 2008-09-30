@@ -1,3 +1,21 @@
+2008-09-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add some tests for the arguments object, on the way to fixing
+
+        Bug 21123: using "arguments" in a function should not force creation of an activation object
+        <https://bugs.webkit.org/show_bug.cgi?id=21123>
+
+        The function-dot-arguments test includes a case that now fails after
+        r37050, but it should be fixed with bug 21123.
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/function-dot-arguments-expected.txt: Added.
+        * fast/js/function-dot-arguments.html: Added.
+        * fast/js/resources/arguments.js:
+        * fast/js/resources/function-dot-arguments.js: Added.
+
 2008-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by John Sullivan.
