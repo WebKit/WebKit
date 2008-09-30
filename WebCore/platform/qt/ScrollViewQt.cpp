@@ -187,7 +187,7 @@ void ScrollView::update()
         native->update();
         return;
     }
-    updateContents(IntRect(0, 0, width(), height()));
+    repaintContentRectangle(IntRect(0, 0, width(), height()));
 }
 
 void ScrollView::setFrameRect(const IntRect& newGeometry)
