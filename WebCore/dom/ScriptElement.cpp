@@ -133,8 +133,11 @@ void ScriptElementData::requestScript(const String& sourceUrl)
 {
     Document* document = m_element->document();
 
+    // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
+    // viewless document but this'll do for now.
+    // See http://bugs.webkit.org/show_bug.cgi?id=5727
     if (!document->frame())
-        FrameLoader::createDummyFrame(document);
+        return;
 
     ASSERT(!m_cachedScript);
     m_cachedScript = document->docLoader()->requestScript(sourceUrl, scriptCharset());
@@ -157,24 +160,17 @@ void ScriptElementData::evaluateScript(const String& sourceUrl, const String& co
     if (m_evaluated || content.isEmpty() || !shouldExecuteAsJavaScript())
         return;
 
-    Frame* frame = m_element->document()->frame();
-    // Handle viewless document
-    if (!frame) {
-        FrameLoader::createDummyFrame(m_element->document());
-        frame = m_element->document()->frame();
+    if (Frame* frame = m_element->document()->frame()) {
+        if (!frame->script()->isEnabled())
+            return;
+
+        m_evaluated = true;
+
+        // FIXME: This starting line number will be incorrect for evaluation triggered
+        // from insertedIntoDocument or childrenChanged.
+        frame->script()->evaluate(sourceUrl, 1, content);
+        Document::updateDocumentsRendering();
     }
-
-    ASSERT(frame);
-
-    if (!frame->script()->isEnabled())
-        return;
-
-    m_evaluated = true;
-
-    // FIXME: This starting line number will be incorrect for evaluation triggered
-    // from insertedIntoDocument or childrenChanged.
-    frame->script()->evaluate(sourceUrl, 1, content);
-    Document::updateDocumentsRendering();
 }
 
 void ScriptElementData::stopLoadRequest()

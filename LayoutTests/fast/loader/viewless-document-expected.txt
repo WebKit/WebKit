@@ -1,5 +1,0 @@
-bug 5727: We want to evaluate scripts in viewless documents
-
-You should see PASSED once.
-
-PASSED

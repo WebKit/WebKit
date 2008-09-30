@@ -95,7 +95,6 @@ namespace WebCore {
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
 
-        bool m_isDummyFrame;
 #if FRAME_LOADS_USER_STYLESHEET
         UserStyleSheetLoader* m_userStyleSheetLoader;
 #endif

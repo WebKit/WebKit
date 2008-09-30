@@ -53,7 +53,9 @@ namespace WebCore {
 SVGImage::SVGImage(ImageObserver* observer)
     : Image(observer)
     , m_document(0)
+    , m_page(0)
     , m_frame(0)
+    , m_frameView(0)
 {
 }
 
@@ -183,11 +185,35 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
     
     if (allDataReceived) {
-        m_frame = FrameLoader::createDummyFrame();
-        m_frame->loader()->fakeLoad(m_data.get(), "image/svg+xml");
-        m_frame->view()->setTransparent(true); // SVG Images are transparent.
+        static ChromeClient* dummyChromeClient = new EmptyChromeClient;
+        static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
+        static EditorClient* dummyEditorClient = new EmptyEditorClient;
+        static ContextMenuClient* dummyContextMenuClient = new EmptyContextMenuClient;
+        static DragClient* dummyDragClient = new EmptyDragClient;
+        static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
+
+        // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
+        // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
+        m_page.set(new Page(dummyChromeClient, dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient));
+        m_page->settings()->setJavaScriptEnabled(false);
+        m_page->settings()->setPluginsEnabled(false);
+
+        m_frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);
+        m_frameView = new FrameView(m_frame.get());
+        m_frameView->deref(); // FIXME: FrameView starts with a refcount of 1
+        m_frame->setView(m_frameView.get());
+        m_frame->init();
+        ResourceRequest fakeRequest(KURL(""));
+        m_frame->loader()->load(fakeRequest); // Make sure the DocumentLoader is created
+        m_frame->loader()->cancelContentPolicyCheck(); // cancel any policy checks
+        m_frame->loader()->commitProvisionalLoad(0);
+        m_frame->loader()->setResponseMIMEType("image/svg+xml");
+        m_frame->loader()->begin(KURL()); // create the empty document
+        m_frame->loader()->write(m_data->data(), m_data->size());
+        m_frame->loader()->end();
+        m_frameView->setTransparent(true); // SVG Images are transparent.
     }
-    return m_frame ? m_frame->view() : 0;
+    return m_frameView;
 }
 
 }

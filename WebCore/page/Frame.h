@@ -100,12 +100,6 @@ public:
     bool excludeFromTextSearch() const;
     void setExcludeFromTextSearch(bool);
 
-    void setIsDummyFrame();
-    bool isDummyFrame();
-
-    // This method is only used by FrameLoader::createDummyFrame.
-    void setDocument(Document*);
-
     friend class FramePrivate;
 
 private:
