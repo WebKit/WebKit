@@ -1,3 +1,45 @@
+2008-09-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21213
+        MessagePort crash when GC collects an object with a pending close event
+
+        Test: fast/events/message-channel-gc-2.html
+              fast/events/message-channel-listener-circular-ownership.html
+
+        * bindings/DOMProtect.cpp: Added.
+        (WebCore::gcProtectDOMObject):
+        (WebCore::gcUnprotectDOMObject):
+        * bindings/DOMProtect.h: Added.
+        Added an abstraction for GC protection to avoid the need to call JS bindings code from
+        DOM objects directly.
+
+        * dom/MessagePort.cpp:
+        (WebCore::CloseMessagePortTimer::fired):
+        (WebCore::MessagePort::queueCloseEvent):
+        GC protect MessagePort wrapper while there is a pending close event.
+        This may be necessary for message events, too, but that case is not a crasher, and actually
+        behaves to the letter of the current HTML5 text, so I'll consider it later.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        (WebCore::XMLHttpRequest::dropProtection):
+        Use gcProtectDOMObject here, too. Unfortunately, XMLHttpRequest has more dependencies on JSC.
+
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        (WebCore::JSMessagePort::setOnmessage):
+        (WebCore::JSMessagePort::setOnclose):
+        Don't tell DOMWindowBase that MessagePort is a NodeEventTarget, this is not true. I do not
+        know if this was causing any real issues, but we shouldn't lie to DOMWindowBase.
+
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::mark):
+        While at it, changed to use a typedef for event listeners from XMLHttpRequestUpload, not
+        from XMLHttpRequest.
+
 2008-09-30  Adam Roben  <aroben@apple.com>
 
         Windows build fix

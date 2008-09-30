@@ -4151,6 +4151,8 @@
 		E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
+		E1CA84920E923BE900114251 /* DOMProtect.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CA84910E923BE900114251 /* DOMProtect.h */; };
+		E1CA84940E923BEF00114251 /* DOMProtect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CA84930E923BEF00114251 /* DOMProtect.cpp */; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
 		E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */; };
@@ -8713,6 +8715,8 @@
 		E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessagePort.cpp; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
+		E1CA84910E923BE900114251 /* DOMProtect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProtect.h; sourceTree = "<group>"; };
+		E1CA84930E923BEF00114251 /* DOMProtect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMProtect.cpp; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
 		E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSHTMLSelectElement.h; sourceTree = "<group>"; };
 		E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCharsetRule.cpp; sourceTree = "<group>"; };
@@ -12681,6 +12685,8 @@
 			isa = PBXGroup;
 			children = (
 				93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */,
+				E1CA84930E923BEF00114251 /* DOMProtect.cpp */,
+				E1CA84910E923BE900114251 /* DOMProtect.h */,
 				93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */,
 				14813BF309EDF88E00F757E1 /* IDLParser.pm */,
 				93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */,
@@ -15955,6 +15961,7 @@
 				BC3B7AF40E919CA900D54065 /* JSEventTargetNode.h in Headers */,
 				BC60901F0E91B8EC000C68B5 /* JSEventTarget.h in Headers */,
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
+				E1CA84920E923BE900114251 /* DOMProtect.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17805,6 +17812,7 @@
 				BC3B7AF30E919CA900D54065 /* JSEventTargetNode.cpp in Sources */,
 				BC3B7B210E91AAF400D54065 /* JSEventTargetNodeCustom.cpp in Sources */,
 				BC6090200E91B8EC000C68B5 /* JSEventTarget.cpp in Sources */,
+				E1CA84940E923BEF00114251 /* DOMProtect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

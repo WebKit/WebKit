@@ -28,8 +28,9 @@
 #include "MessagePort.h"
 
 #include "AtomicString.h"
-#include "Document.h"
+#include "DOMProtect.h"
 #include "DOMWindow.h"
+#include "Document.h"
 #include "EventException.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
@@ -56,6 +57,7 @@ private:
             m_port->dispatchMessages();
 
         m_port->dispatchCloseEvent();
+        gcUnprotectDOMObject(m_port.get());
         delete this;
     }
 
@@ -209,6 +211,9 @@ void MessagePort::dispatchMessages()
 
 void MessagePort::queueCloseEvent()
 {
+    // Need to keep listeners alive, and they are marked by the wrapper.
+    gcProtectDOMObject(this);
+
     CloseMessagePortTimer* timer = new CloseMessagePortTimer(this);
     timer->startOneShot(0);
 }

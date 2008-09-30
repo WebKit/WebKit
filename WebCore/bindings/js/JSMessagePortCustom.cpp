@@ -54,7 +54,7 @@ JSValue* JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
     JSDOMWindow* window = toJSDOMWindow(document->frame());
     if (!window)
         return jsUndefined();
-    RefPtr<JSUnprotectedEventListener> listener = window->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1), true);
+    RefPtr<JSUnprotectedEventListener> listener = window->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
@@ -69,7 +69,7 @@ JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args
     JSDOMWindow* window = toJSDOMWindow(document->frame());
     if (!window)
         return jsUndefined();
-    JSUnprotectedEventListener* listener = window->findJSUnprotectedEventListener(exec, args.at(exec, 1), true);
+    JSUnprotectedEventListener* listener = window->findJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
@@ -94,7 +94,7 @@ void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
     JSDOMWindow* window = toJSDOMWindow(document->frame());
     if (!window)
         return;
-    impl()->setOnMessageListener(window->findOrCreateJSUnprotectedEventListener(exec, value, true));
+    impl()->setOnMessageListener(window->findOrCreateJSUnprotectedEventListener(exec, value));
 }
 
 JSValue* JSMessagePort::onmessage(ExecState*) const
@@ -113,7 +113,7 @@ void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
     JSDOMWindow* window = toJSDOMWindow(document->frame());
     if (!window)
         return;
-    impl()->setOnCloseListener(window->findOrCreateJSUnprotectedEventListener(exec, value, true));
+    impl()->setOnCloseListener(window->findOrCreateJSUnprotectedEventListener(exec, value));
 }
 
 JSValue* JSMessagePort::onclose(ExecState*) const

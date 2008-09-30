@@ -24,6 +24,7 @@
 #include "CString.h"
 #include "Console.h"
 #include "DOMImplementation.h"
+#include "DOMProtect.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
@@ -47,7 +48,6 @@
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <kjs/JSLock.h>
-#include <kjs/protect.h>
 
 namespace WebCore {
 
@@ -765,8 +765,7 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
         // a request is in progress because we need to keep the listeners alive,
         // and they are referenced by the JavaScript wrapper.
         ref();
-
-        JSC::gcProtectNullTolerant(getCachedDOMObjectWrapper(this));
+        gcProtectDOMObject(this);
     }
 }
 
@@ -874,11 +873,10 @@ void XMLHttpRequest::dropProtection()
     // report the extra cost at that point.
 
     JSC::JSValue* wrapper = getCachedDOMObjectWrapper(this);
-    if (wrapper) {
-        JSC::gcUnprotect(wrapper);
+    if (wrapper)
         JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
-    }
 
+    gcUnprotectDOMObject(this);
     deref();
 }
 

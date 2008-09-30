@@ -66,8 +66,8 @@ void JSXMLHttpRequestUpload::mark()
     if (JSUnprotectedEventListener* onProgressListener = static_cast<JSUnprotectedEventListener*>(m_impl->onProgressListener()))
         onProgressListener->mark();
     
-    typedef XMLHttpRequest::EventListenersMap EventListenersMap;
-    typedef XMLHttpRequest::ListenerVector ListenerVector;
+    typedef XMLHttpRequestUpload::EventListenersMap EventListenersMap;
+    typedef XMLHttpRequestUpload::ListenerVector ListenerVector;
     EventListenersMap& eventListeners = m_impl->eventListeners();
     for (EventListenersMap::iterator mapIter = eventListeners.begin(); mapIter != eventListeners.end(); ++mapIter) {
         for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter) {
