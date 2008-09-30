@@ -1,3 +1,15 @@
+2008-09-30  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 21252: calling console.profile() with a title that is 2 chars or
+        shorter does not linkify it
+
+        - Previously we tried to not linkify very short URLs but since profile
+        titles can be any length this is not always true.
+
+        * page/inspector/inspector.js:
+
 2008-09-30  Dave Hyatt  <hyatt@apple.com>
 
         Remove the update() method on ScrollView.  This method was only called in one place, and its purpose
