@@ -298,20 +298,20 @@ IntRect ChromeClientQt::windowResizerRect() const
 
 void ChromeClientQt::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool)
 {
-    // No double buffer.
-    if (!contentChanged)
-        return;
+    // No double buffer, so only update the QWidget if content changed.
+    if (contentChanged) {
+        QWidget* view = m_webPage->view();
+        if (view) {
+            QRect rect(r);
+            rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
+            if (!r.isEmpty())
+                view->update(r);
+        } else
+            emit m_webPage->repaintRequested(r);
+    }
 
-    QWidget* view = m_webPage->view();
-    if (view) {
-        QRect rect(r);
-        rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
-        if (!r.isEmpty())
-            view->update(r);
-    } else
-        emit m_webPage->repaintRequested(r);
-    
-    // FIXME: There is no "immediate" support.
+    // FIXME: There is no "immediate" support.  This should be done always whenever the flag
+    // is set.
 }
 
 void ChromeClientQt::addToDirtyRegion(const IntRect& r)
