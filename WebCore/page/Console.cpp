@@ -355,6 +355,8 @@ void Console::profileEnd(ExecState* exec, const ArgList& args)
         title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
 
     RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, title);
+    if (!profile)
+        return;
 
     if (Page* page = this->page()) {
         KURL url;
