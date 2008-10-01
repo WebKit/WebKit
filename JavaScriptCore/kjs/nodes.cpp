@@ -198,20 +198,6 @@ void SourceElements::append(PassRefPtr<StatementNode> statement)
     m_statements.append(statement);
 }
 
-// ------------------------------ BreakpointCheckStatement --------------------------------
-
-BreakpointCheckStatement::BreakpointCheckStatement(JSGlobalData* globalData, PassRefPtr<StatementNode> statement)
-    : StatementNode(globalData)
-    , m_statement(statement)
-{
-    ASSERT(m_statement);
-}
-
-void BreakpointCheckStatement::streamTo(SourceStream& stream) const
-{
-    m_statement->streamTo(stream);
-}
-
 // ------------------------------ NullNode -------------------------------------
 
 RegisterID* NullNode::emitCode(CodeGenerator& generator, RegisterID* dst)

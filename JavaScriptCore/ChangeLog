@@ -1,3 +1,13 @@
+2008-10-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Rubberstamped by Geoff .
+
+        Remove BreakpointCheckStatement because it's not used anymore.
+        No effect on sunspider or the jsc tests.
+
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+
 2008-09-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
