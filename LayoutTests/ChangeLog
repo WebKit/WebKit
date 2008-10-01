@@ -1,3 +1,14 @@
+2008-10-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21284
+        Bug 21284: Max height affects max width
+        - Looks like a cut and paste bug
+
+        * fast/css/max-height-and-max-width-expected.txt: Added.
+        * fast/css/max-height-and-max-width.html: Added.
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
