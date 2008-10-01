@@ -403,9 +403,21 @@ IntRect WebChromeClient::windowResizerRect() const
     return enclosingIntRect([[m_webView window] _growBoxRect]);
 }
 
-void WebChromeClient::repaint(const WebCore::IntRect&, bool, bool)
+// Host window methods are really only needed once we have a viewless Mac Webkit.
+void WebChromeClient::repaint(const IntRect&, bool, bool)
 {
 }
+
+IntPoint WebChromeClient::screenToWindow(const IntPoint& p) const
+{
+    return p;
+}
+
+IntRect WebChromeClient::windowToScreen(const IntRect& r) const
+{
+    return r;
+}
+// End host window methods.
 
 void WebChromeClient::addToDirtyRegion(const IntRect&)
 {

@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class IntPoint;
 class IntRect;
 
 class HostWindow : Noncopyable {
@@ -45,6 +46,10 @@ public:
 
     // The paint method just causes a synchronous update of the window to happen for platforms that need it (Windows).
     void paint() { repaint(IntRect(), false, true); }
+    
+    // Methods for doing coordinate conversions to and from screen coordinates.
+    virtual IntPoint screenToWindow(const IntPoint&) const = 0;
+    virtual IntRect windowToScreen(const IntRect&) const = 0;
 };
 
 } // namespace WebCore

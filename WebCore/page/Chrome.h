@@ -54,7 +54,9 @@ namespace WebCore {
 
         // HostWindow methods.
         virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false);
-
+        virtual IntPoint screenToWindow(const IntPoint&) const;
+        virtual IntRect windowToScreen(const IntRect&) const;
+    
         void setWindowRect(const FloatRect&) const;
         FloatRect windowRect() const;
 

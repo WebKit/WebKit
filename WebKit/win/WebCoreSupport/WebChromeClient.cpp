@@ -423,6 +423,35 @@ void WebChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bo
     m_webView->repaint(windowRect, contentChanged, immediate);
 }
 
+IntRect WebChromeClient::windowToScreen(const IntRect& rect) const
+{
+    HWND viewWindow;
+    if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        return rect;
+
+    // Find the top left corner of the Widget's containing window in screen coords,
+    // and adjust the result rect's position by this amount.
+    POINT topLeft = {0, 0};
+    IntRect result = rect;
+    ::ClientToScreen(viewWindow, &topLeft);
+    result.move(topLeft.x, topLeft.y);
+
+    return result;
+}
+
+IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
+{
+    POINT result = point;
+
+    HWND viewWindow;
+    if (FAILED(webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        return point;
+
+    ::ScreenToClient(viewWindow, &result);
+
+    return result;
+}
+
 void WebChromeClient::addToDirtyRegion(const IntRect& dirtyRect)
 {
     m_webView->addToDirtyRegion(dirtyRect);

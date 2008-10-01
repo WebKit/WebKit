@@ -276,6 +276,18 @@ void ChromeClient::repaint(const WebCore::IntRect& windowRect, bool contentChang
     }
 }
 
+IntRect ChromeClient::windowToScreen(const IntRect& rect) const
+{
+    notImplemented();
+    return rect;
+}
+
+IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
+{
+    notImplemented();
+    return point;
+}
+
 void ChromeClient::addToDirtyRegion(const IntRect&)
 {
     notImplemented();

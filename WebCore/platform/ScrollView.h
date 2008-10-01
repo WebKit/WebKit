@@ -139,6 +139,10 @@ public:
     IntRect windowToContents(const IntRect&) const;
     IntRect contentsToWindow(const IntRect&) const;
 
+    // Methods for converting to and from screen coordinates.
+    IntRect contentsToScreen(const IntRect&) const;
+    IntPoint screenToContents(const IntPoint&) const;
+
     // The purpose of this method is to answer whether or not the scroll view is currently visible.  Animations and painting updates can be suspended if
     // we know that we are either not in a window right now or if that window is not visible.
     bool isOffscreen() const;
@@ -182,11 +186,7 @@ public:
         return newPoint;
     }
 
-#if HAVE(ACCESSIBILITY)
-    IntRect contentsToScreen(const IntRect&) const;
-    IntPoint screenToContents(const IntPoint&) const;
-#endif
-
+    // Widget override.  Handles painting of the contents of the view as well as the scrollbars.
     virtual void paint(GraphicsContext*, const IntRect&);
 
 protected:
@@ -223,6 +223,8 @@ private:
     IntRect platformVisibleContentRect(bool includeScrollbars) const;
     IntSize platformContentsSize() const;
     void platformSetContentsSize();
+    IntRect platformContentsToScreen(const IntRect&) const;
+    IntPoint platformScreenToContents(const IntPoint&) const;
     void platformSetScrollPosition(const IntPoint&);
     bool platformScroll(ScrollDirection, ScrollGranularity);
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);

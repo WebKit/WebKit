@@ -1,3 +1,16 @@
+2008-10-01  David Hyatt  <hyatt@apple.com>
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21282
+        
+        Make contentsToScreen/screenToContents cross-platform.  Only implemented by Mac/Win right now.
+        
+        Reviewed by Adam Roben
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::windowToScreen):
+        (WebChromeClient::screenToWindow):
+        * WebCoreSupport/WebChromeClient.h:
+
 2008-09-30   Dave Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21269

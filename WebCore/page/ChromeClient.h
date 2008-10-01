@@ -116,7 +116,11 @@ namespace WebCore {
         virtual void updateBackingStore() = 0;
         // End deprecated methods.
 
+        // Methods used by HostWindow.
         virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) = 0;
+        virtual IntPoint screenToWindow(const IntPoint&) const = 0;
+        virtual IntRect windowToScreen(const IntRect&) const = 0;
+        // End methods used by HostWindow.
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 

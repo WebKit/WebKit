@@ -114,6 +114,8 @@ public:
     virtual void updateBackingStore() { }
 
     virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) { }
+    virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
+    virtual IntRect windowToScreen(const IntRect& r) const { return r; }
 
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) { }
 

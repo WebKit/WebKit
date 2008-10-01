@@ -222,6 +222,20 @@ IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
     return convertToContainingWindow(viewRect);
 }
 
+IntRect ScrollView::contentsToScreen(const IntRect& rect) const
+{
+    if (platformWidget())
+        return platformContentsToScreen(rect);
+    return hostWindow()->windowToScreen(contentsToWindow(rect));
+}
+
+IntPoint ScrollView::screenToContents(const IntPoint& point) const
+{
+    if (platformWidget())
+        return platformScreenToContents(point);
+    return windowToContents(hostWindow()->screenToWindow(point));
+}
+
 bool ScrollView::containsScrollbarsAvoidingResizer() const
 {
     return !m_scrollbarsAvoidingResizer;
@@ -478,6 +492,16 @@ IntSize ScrollView::platformContentsSize() const
 
 void ScrollView::platformSetContentsSize()
 {
+}
+
+IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
+{
+    return rect;
+}
+
+IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
+{
+    return point;
 }
 
 void ScrollView::platformSetScrollPosition(const IntPoint&)

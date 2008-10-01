@@ -184,7 +184,7 @@ void ScrollView::platformRepaintContentRectangle(const IntRect& rect, bool now)
 
 // "Containing Window" means the NSWindow's coord system, which is origin lower left
 
-IntRect ScrollView::contentsToScreen(const IntRect& rect) const
+IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (NSView* documentView = this->documentView()) {
@@ -197,7 +197,7 @@ IntRect ScrollView::contentsToScreen(const IntRect& rect) const
     return IntRect();
 }
 
-IntPoint ScrollView::screenToContents(const IntPoint& point) const
+IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (NSView* documentView = this->documentView()) {

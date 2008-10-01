@@ -1,3 +1,31 @@
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21282
+        
+        Make contentsToScreen/screenToContents cross-platform.  Only implemented by Mac/Win right now.
+        
+        Reviewed by Adam Roben
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::screenToWindow):
+        (WebCore::EmptyChromeClient::windowToScreen):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::screenToWindow):
+        (WebCore::Chrome::windowToScreen):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsToScreen):
+        (WebCore::ScrollView::screenToContents):
+        (WebCore::ScrollView::platformContentsToScreen):
+        (WebCore::ScrollView::platformScreenToContents):
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformContentsToScreen):
+        (WebCore::ScrollView::platformScreenToContents):
+        * platform/win/ScrollViewWin.cpp:
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

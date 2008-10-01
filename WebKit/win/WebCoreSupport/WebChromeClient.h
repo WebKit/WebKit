@@ -93,6 +93,8 @@ public:
     virtual WebCore::IntRect windowResizerRect() const;
 
     virtual void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false);
+    virtual IntPoint screenToWindow(const IntPoint& p) const;
+    virtual IntRect windowToScreen(const IntRect& r) const;
 
     virtual void addToDirtyRegion(const WebCore::IntRect&);
     virtual void scrollBackingStore(int dx, int dy, const WebCore::IntRect& scrollViewRect, const WebCore::IntRect& clipRect);
