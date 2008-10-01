@@ -1,3 +1,16 @@
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6255862> domfuzz: null deref in WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks(WebCore::HTMLStackElem*)
+
+        Test: fast/parser/residual-style-close-across-removed-block.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Removed
+        an assertion that turned out to be wrong in this case, and changed to
+        terminate the algorithm at the first empty block.
+
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         Make setFrameRect on ScrollView cross-platform.
