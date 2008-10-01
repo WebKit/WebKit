@@ -1,6 +1,16 @@
+2008-09-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix many leaks seen on fast/backgrounds/svg-as-mask.html.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::arenaDelete): Balance the calls to addClient on maskLayer's images
+        with calls to removeClient when we're being destroyed.
+
 2008-09-30  Eric Carlson  <eric.carlson@apple.com>
 
-        Reviewed by Antti
+        Reviewed by Antti Koivisto.
 
         https://bugs.webkit.org/show_bug.cgi?id=21243
 
