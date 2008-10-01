@@ -1,3 +1,18 @@
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
+        Make setFrameRect on ScrollView cross-platform.
+
+        Reviewed by Sam Weinig
+
+        * page/FrameView.h:
+        (WebCore::FrameView::contentsResized):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setFrameRect):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+
 2008-10-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.

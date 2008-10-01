@@ -334,6 +334,26 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     }
 }
 
+void ScrollView::setFrameRect(const IntRect& newRect)
+{
+    IntRect oldRect = frameRect();
+    
+    if (newRect == oldRect)
+        return;
+
+    Widget::setFrameRect(newRect);
+
+    if (platformWidget())
+        return;
+    
+    if (newRect.width() != oldRect.width() || newRect.height() != oldRect.height()) {
+        updateScrollbars(m_scrollOffset);
+        contentsResized();
+    }
+
+    frameRectsChanged();
+}
+
 void ScrollView::frameRectsChanged() const
 {
     if (platformWidget())

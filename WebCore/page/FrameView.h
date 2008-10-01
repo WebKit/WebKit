@@ -177,6 +177,7 @@ private:
     void performPostLayoutTasks();
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
+    virtual void contentsResized() { setNeedsLayout(); }
 
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 

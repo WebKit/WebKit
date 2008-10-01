@@ -211,22 +211,6 @@ void ScrollView::updateWindowRect(const IntRect& rect, bool now)
         ::UpdateWindow(containingWindowHandle);
 }
 
-void ScrollView::setFrameRect(const IntRect& newGeometry)
-{
-    IntRect oldGeometry = frameRect();
-    Widget::setFrameRect(newGeometry);
-
-    if (newGeometry == oldGeometry)
-        return;
-
-    if (newGeometry.width() != oldGeometry.width() || newGeometry.height() != oldGeometry.height()) {
-        updateScrollbars(m_scrollOffset);
-        static_cast<FrameView*>(this)->setNeedsLayout();
-    }
-
-    frameRectsChanged();
-}
-
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
     // Don't allow re-entrancy into this function.

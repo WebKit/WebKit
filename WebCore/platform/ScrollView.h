@@ -189,7 +189,8 @@ public:
 protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
-
+    virtual void contentsResized() = 0;
+    
     void updateWindowRect(const IntRect&, bool now = false);
 
 private:

@@ -285,22 +285,6 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
     updateScrollbars(m_scrollOffset);
 }
 
-void ScrollView::setFrameRect(const IntRect& newGeometry)
-{
-    ASSERT(isFrameView());
-    IntRect oldGeometry = frameRect();
-    Widget::setFrameRect(newGeometry);
-
-    if (newGeometry == oldGeometry)
-        return;
-    if (newGeometry.width() != oldGeometry.width() || newGeometry.height() != oldGeometry.height()) {
-        updateScrollbars(m_scrollOffset);
-        static_cast<FrameView*>(this)->setNeedsLayout();
-    }
-
-    frameRectsChanged();
-}
-
 void ScrollView::platformAddChild(Widget* child)
 {
     if (!GTK_IS_SOCKET(child->platformWidget()))

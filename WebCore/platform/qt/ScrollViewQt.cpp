@@ -180,22 +180,6 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-void ScrollView::setFrameRect(const IntRect& newGeometry)
-{
-    IntRect oldGeometry = frameRect();
-    Widget::setFrameRect(newGeometry);
-
-    if (newGeometry == oldGeometry)
-        return;
-
-    if (newGeometry.width() != oldGeometry.width() || newGeometry.height() != oldGeometry.height()) {
-        updateScrollbars(m_scrollOffset);
-        static_cast<FrameView*>(this)->setNeedsLayout();
-    }
-
-    frameRectsChanged();
-}
-
 bool ScrollView::isOffscreen() const
 {
     return false;
