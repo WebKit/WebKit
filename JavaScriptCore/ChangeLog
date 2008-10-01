@@ -1,5 +1,13 @@
 2008-10-01  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Speculative Windows build fix.
+
+        * kjs/grammar.y:
+
+2008-10-01  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 21123: using "arguments" in a function should not force creation of an activation object
