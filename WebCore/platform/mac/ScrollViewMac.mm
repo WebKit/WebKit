@@ -58,6 +58,14 @@ inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
     return static_cast<NSScrollView<WebCoreFrameScrollView> *>(platformWidget());
 }
 
+NSView *ScrollView::documentView() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [scrollView() documentView];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return nil;
+}
+
 void ScrollView::platformAddChild(Widget* child)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -206,14 +214,6 @@ IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
     }
     END_BLOCK_OBJC_EXCEPTIONS;
     return IntPoint();
-}
-
-NSView *ScrollView::documentView() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [scrollView() documentView];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return nil;
 }
 
 bool ScrollView::isOffscreen() const

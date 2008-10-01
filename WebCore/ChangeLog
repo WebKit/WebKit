@@ -1,3 +1,16 @@
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
+        Make show/hide/setParentVisible cross-platform on ScrollView.
+
+        Reviewed by Adam Roben
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setParentVisible):
+        (WebCore::ScrollView::show):
+        (WebCore::ScrollView::hide):
+        * platform/ScrollView.h:
+        * platform/win/ScrollViewWin.cpp:
+
 2008-10-01  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Dan Bernstein.

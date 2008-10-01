@@ -461,6 +461,49 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     }
 }
 
+void ScrollView::setParentVisible(bool visible)
+{
+    if (isParentVisible() == visible)
+        return;
+    
+    Widget::setParentVisible(visible);
+
+    if (!isVisible())
+        return;
+        
+    HashSet<Widget*>::iterator end = m_children.end();
+    for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
+        (*it)->setParentVisible(visible);
+}
+
+void ScrollView::show()
+{
+    if (!isSelfVisible()) {
+        setSelfVisible(true);
+        if (isParentVisible()) {
+            HashSet<Widget*>::iterator end = m_children.end();
+            for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
+                (*it)->setParentVisible(true);
+        }
+    }
+
+    Widget::show();
+}
+
+void ScrollView::hide()
+{
+    if (isSelfVisible()) {
+        if (isParentVisible()) {
+            HashSet<Widget*>::iterator end = m_children.end();
+            for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
+                (*it)->setParentVisible(false);
+        }
+        setSelfVisible(false);
+    }
+
+    Widget::hide();
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {

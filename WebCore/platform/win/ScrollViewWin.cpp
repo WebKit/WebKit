@@ -356,48 +356,6 @@ void ScrollView::themeChanged()
     invalidate();
 }
 
-void ScrollView::setParentVisible(bool visible)
-{
-    if (isParentVisible() == visible)
-        return;
-    
-    Widget::setParentVisible(visible);
-
-    if (isVisible()) {
-        HashSet<Widget*>::iterator end = m_children.end();
-        for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
-            (*it)->setParentVisible(visible);
-    }
-}
-
-void ScrollView::show()
-{
-    if (!isSelfVisible()) {
-        setSelfVisible(true);
-        if (isParentVisible()) {
-            HashSet<Widget*>::iterator end = m_children.end();
-            for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
-                (*it)->setParentVisible(true);
-        }
-    }
-
-    Widget::show();
-}
-
-void ScrollView::hide()
-{
-    if (isSelfVisible()) {
-        if (isParentVisible()) {
-            HashSet<Widget*>::iterator end = m_children.end();
-            for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
-                (*it)->setParentVisible(false);
-        }
-        setSelfVisible(false);
-    }
-
-    Widget::hide();
-}
-
 void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
 {
     ASSERT(isFrameView());
