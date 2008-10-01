@@ -265,7 +265,7 @@ void Cache::pruneLiveResources()
         return;
 
     unsigned capacity = liveCapacity();
-    if (m_liveSize <= capacity)
+    if (capacity && m_liveSize <= capacity)
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
@@ -290,7 +290,7 @@ void Cache::pruneLiveResources()
             // list in m_allResources.
             current->destroyDecodedData();
 
-            if (m_liveSize <= targetSize)
+            if (targetSize && m_liveSize <= targetSize)
                 return;
         }
         current = prev;
@@ -303,7 +303,7 @@ void Cache::pruneDeadResources()
         return;
 
     unsigned capacity = deadCapacity();
-    if (m_deadSize <= capacity)
+    if (capacity && m_deadSize <= capacity)
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
@@ -322,7 +322,7 @@ void Cache::pruneDeadResources()
                 // LRU list in m_allResources.
                 current->destroyDecodedData();
                 
-                if (m_deadSize <= targetSize)
+                if (targetSize && m_deadSize <= targetSize)
                     return;
             }
             current = prev;
@@ -335,7 +335,7 @@ void Cache::pruneDeadResources()
             if (!current->hasClients() && !current->isPreloaded()) {
                 remove(current);
 
-                if (m_deadSize <= targetSize)
+                if (targetSize && m_deadSize <= targetSize)
                     return;
             }
             current = prev;

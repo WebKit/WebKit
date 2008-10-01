@@ -118,7 +118,7 @@ public:
     void setPruneEnabled(bool enabled) { m_pruneEnabled = enabled; }
     void prune()
     {
-        if (m_liveSize + m_deadSize <= m_capacity && m_deadSize <= m_maxDeadCapacity) // Fast path.
+        if (m_liveSize + m_deadSize <= m_capacity && m_maxDeadCapacity && m_deadSize <= m_maxDeadCapacity) // Fast path.
             return;
             
         pruneDeadResources(); // Prune dead first, in case it was "borrowing" capacity from live.

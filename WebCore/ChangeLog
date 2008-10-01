@@ -1,3 +1,19 @@
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix some CachedResource leaks seen on buildbot
+
+        The issue here was that emptying the cache was a no-op when it only
+        contained resources with no data. Changed to go after those
+        resources when the desired cache capacity is zero.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        (WebCore::Cache::pruneDeadResources):
+        * loader/Cache.h:
+        (WebCore::Cache::prune):
+
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         Make isOffscreen cross-platform.  Only Mac implements this method, so hold off on adding API to the
