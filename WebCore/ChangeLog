@@ -1,5 +1,22 @@
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
+        Make isOffscreen cross-platform.  Only Mac implements this method, so hold off on adding API to the
+        HostWindow object until other platforms decide they want this method.  (We need it for Win though at some point.)
+
+        Reviewed by Adam Roben
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::isOffscreen):
+        (WebCore::ScrollView::platformIsOffscreen):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformIsOffscreen):
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/wx/ScrollViewWx.cpp:
+
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
         Make show/hide/setParentVisible cross-platform on ScrollView.
 
         Reviewed by Adam Roben

@@ -216,7 +216,7 @@ IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
     return IntPoint();
 }
 
-bool ScrollView::isOffscreen() const
+bool ScrollView::platformIsOffscreen() const
 {
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }

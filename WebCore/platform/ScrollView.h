@@ -234,6 +234,7 @@ private:
     bool platformScroll(ScrollDirection, ScrollGranularity);
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
     void platformRepaintContentRectangle(const IntRect&, bool now);
+    bool platformIsOffscreen() const;
 
 #if PLATFORM(MAC) && defined __OBJC__
 public:

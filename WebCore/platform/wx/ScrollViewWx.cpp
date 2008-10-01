@@ -300,14 +300,6 @@ void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode
     vertical = m_data->vScrollbarMode;
 }
 
-bool ScrollView::isOffscreen() const
-{
-    // NB: This is called from RenderObject::willRenderImage
-    // and really seems to be more of a "is the window in a valid state" test,
-    // despite the API name.
-    return platformWidget() == NULL;
-}
-
 // used for subframes support
 void ScrollView::platformAddChild(Widget* widget)
 {

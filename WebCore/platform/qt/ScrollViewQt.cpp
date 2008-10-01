@@ -180,11 +180,6 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-bool ScrollView::isOffscreen() const
-{
-    return false;
-}
-
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
     // Don't allow re-entrancy into this function.

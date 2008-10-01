@@ -297,11 +297,6 @@ void ScrollView::platformRemoveChild(Widget* child)
         gtk_container_remove(GTK_CONTAINER(containingWindow()), child->platformWidget());
 }
 
-bool ScrollView::isOffscreen() const
-{
-    return false;
-}
-
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
     // Don't allow re-entrancy into this function.

@@ -504,6 +504,19 @@ void ScrollView::hide()
     Widget::hide();
 }
 
+bool ScrollView::isOffscreen() const
+{
+    if (platformWidget())
+        return platformIsOffscreen();
+    
+    if (!isVisible())
+        return true;
+    
+    // FIXME: Add a HostWindow::isOffscreen method here.  Since only Mac implements this method
+    // currently, we can add the method when the other platforms decide to implement this concept.
+    return false;
+}
+
 #if !PLATFORM(MAC)
 void ScrollView::platformSetCanBlitOnScroll()
 {
@@ -558,6 +571,11 @@ bool ScrollView::platformScroll(ScrollDirection, ScrollGranularity)
 
 void ScrollView::platformRepaintContentRectangle(const IntRect&, bool now)
 {
+}
+
+bool ScrollView::platformIsOffscreen() const
+{
+    return false;
 }
 #endif
 
