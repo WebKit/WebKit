@@ -1,3 +1,14 @@
+2008-10-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix leaks seen during http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoadingPreflight): Balance the ref and GC protect
+        that we do during the loadRequestAsynchronously of the preflight request with a deref and
+        GC unprotect.
+
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         Rename allowsScrolling/setAllowsScrolling to canHaveScrollbars/setCanHaveScrollbars to make it more

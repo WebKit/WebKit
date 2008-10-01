@@ -1101,6 +1101,11 @@ void XMLHttpRequest::didFinishLoadingPreflight(SubresourceLoader* loader)
     // FIXME: this can probably be moved to didReceiveResponsePreflight.
     if (m_async)
         handleAsynchronousPreflightResult();
+
+    if (m_loader) {
+        deref();
+        gcUnprotectDOMObject(this);
+    }
 }
 
 void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)
