@@ -36,6 +36,23 @@ function test(testFuncString, endit)
         endTest();  
 }
 
+function testExpected(testFuncString, expected)
+{
+    try {
+        var observed = eval(testFuncString);
+    } catch (ex) {
+        consoleWrite(ex);
+        return;
+    }
+    
+    var msg = "expected " + testFuncString + "=='" + expected + "', observed '" + observed + "'";
+
+    if (observed == expected)
+        consoleWrite(msg + " - <span style='color:green'>OK</span>");
+    else
+        consoleWrite(msg + " - <span style='color:red'>FAIL</span>");
+}
+
 function run(testFuncString)
 {
     consoleWrite("RUN(" + testFuncString + ")");

@@ -1,3 +1,17 @@
+2008-09-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti
+
+        https://bugs.webkit.org/show_bug.cgi?id=21243
+
+        Test default loopstart and loopend values.
+
+        * media/loopend-limits-expected.txt: Added.
+        * media/loopend-limits.html: Added.
+        * media/loopstart-limits-expected.txt: Added.
+        * media/loopstart-limits.html: Added.
+        * media/video-test.js:
+
 2008-09-30  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

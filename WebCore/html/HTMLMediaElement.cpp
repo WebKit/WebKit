@@ -724,7 +724,7 @@ void HTMLMediaElement::setEnd(float time)
 
 float HTMLMediaElement::loopStart() const 
 { 
-    return getTimeOffsetAttribute(loopstartAttr, 0); 
+    return getTimeOffsetAttribute(loopstartAttr, start()); 
 }
 
 void HTMLMediaElement::setLoopStart(float time) 
@@ -735,7 +735,7 @@ void HTMLMediaElement::setLoopStart(float time)
 
 float HTMLMediaElement::loopEnd() const 
 { 
-    return getTimeOffsetAttribute(loopendAttr, std::numeric_limits<float>::infinity()); 
+    return getTimeOffsetAttribute(loopendAttr, end()); 
 }
 
 void HTMLMediaElement::setLoopEnd(float time) 

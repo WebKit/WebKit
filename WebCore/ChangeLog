@@ -1,3 +1,18 @@
+2008-09-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Antti
+
+        https://bugs.webkit.org/show_bug.cgi?id=21243
+
+        Fix loopstart and loopend default values.
+
+        Tests: media/loopend-limits.html
+               media/loopstart-limits.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loopStart): the spec says start() is the default value
+        (WebCore::HTMLMediaElement::loopEnd): the spec says end() is the default value
+
 2008-09-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes. Add file to build and remove call to (now gone) ScrollView::update.
