@@ -1038,7 +1038,7 @@ public:
         return m_buffer->copy();
     }
 
-#if COMPILER(MSVC)
+#if USE(CTI_ARGUMENT)
     void emitConvertToFastCall()
     {
         movl_mr(4, X86::esp, X86::eax);

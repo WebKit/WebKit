@@ -1,3 +1,29 @@
+2008-09-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Improve performance of CTI on windows.
+
+        Currently on platforms where the compiler doesn't allow us to safely
+        index relative to the address of a parameter we need to actually
+        provide a pointer to CTI runtime call arguments.  This patch improves
+        performance in this case by making the CTI logic for restoring this
+        parameter much less conservative by only resetting it before we actually
+        make a call, rather than between each and every SF bytecode we generate
+        code for.
+
+        This results in a 3.6% progression on the v8 benchmark when compiled with MSVC.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitCall):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        * VM/CTI.h:
+        * masm/X86Assembler.h:
+        * wtf/Platform.h:
+
 2008-09-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
