@@ -44,7 +44,7 @@ WebInspector.ElementsPanel = function()
 
     this.treeOutline.focusedNodeChanged = function(forceUpdate)
     {
-        if (this.panel.visible)
+        if (this.panel.visible && WebInspector.currentFocusElement !== document.getElementById("search"))
             WebInspector.currentFocusElement = document.getElementById("main-panels");
 
         this.panel.updateBreadcrumb(forceUpdate);

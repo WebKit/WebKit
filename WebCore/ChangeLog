@@ -1,3 +1,15 @@
+2008-10-01  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent stealing focus from the search field when focusing a DOM node.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21275
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.treeOutline.focusedNodeChanged):
+        Don't steal focus if the current focus element is the search field.
+
 2008-09-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Nikolas Zimmermann and Alexey Proskuryakov.
