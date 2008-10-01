@@ -32,8 +32,8 @@
 #include "KURL.h"
 #include "Request.h"
 #include "SystemTime.h"
-#include <wtf/Vector.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/Vector.h>
 
 using namespace WTF;
 
