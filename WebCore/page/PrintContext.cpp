@@ -23,6 +23,7 @@
 
 #include "GraphicsContext.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "RenderView.h"
 
 using namespace WebCore;
