@@ -12,8 +12,31 @@ function assignTest()
     arguments = true;
     return g();
 }
-
 shouldBeTrue("assignTest()");
+
+function assignVarUndefinedTest()
+{
+    function g()
+    {
+        return assignVarUndefinedTest.arguments;
+    }
+
+    var arguments;
+    return g();
+}
+shouldBeUndefined("assignVarUndefinedTest()");
+
+function assignVarUndefinedTest2()
+{
+    function g()
+    {
+        return assignVarUndefinedTest2.arguments;
+    }
+
+    var a, arguments;
+    return g();
+}
+shouldBeUndefined("assignVarUndefinedTest2()");
 
 function assignVarInitTest()
 {
@@ -25,7 +48,6 @@ function assignVarInitTest()
     var arguments = true;
     return g();
 }
-
 shouldBeTrue("assignVarInitTest()");
 
 function assignVarInitTest2()
@@ -38,8 +60,31 @@ function assignVarInitTest2()
     var a, arguments = true;
     return g();
 }
-
 shouldBeTrue("assignVarInitTest2()");
+
+function assignConstUndefinedTest()
+{
+    function g()
+    {
+        return assignConstUndefinedTest.arguments;
+    }
+
+    var arguments;
+    return g();
+}
+shouldBeUndefined("assignConstUndefinedTest()");
+
+function assignConstUndefinedTest2()
+{
+    function g()
+    {
+        return assignConstUndefinedTest2.arguments;
+    }
+
+    var a, arguments;
+    return g();
+}
+shouldBeUndefined("assignConstUndefinedTest2()");
 
 function assignConstInitTest()
 {
@@ -51,7 +96,6 @@ function assignConstInitTest()
     const arguments = true;
     return g();
 }
-
 shouldBeTrue("assignConstInitTest()");
 
 function assignConstInitTest2()
@@ -64,7 +108,6 @@ function assignConstInitTest2()
     const a, arguments = true;
     return g();
 }
-
 shouldBeTrue("assignConstInitTest2()");
 
 function assignForInitTest()
@@ -77,7 +120,6 @@ function assignForInitTest()
     for (var arguments = true; false;) { }
     return g();
 }
-
 shouldBeTrue("assignForInitTest()");
 
 function assignForInitTest2()
@@ -90,7 +132,6 @@ function assignForInitTest2()
     for (var a, arguments = true; false;) { }
     return g();
 }
-
 shouldBeTrue("assignForInitTest2()");
 
 function assignForInInitTest()
@@ -103,7 +144,6 @@ function assignForInInitTest()
     for (arguments = true; false;) { }
     return g();
 }
-
 shouldBeTrue("assignForInInitTest()");
 
 function paramInitTest(arguments)
@@ -115,7 +155,34 @@ function paramInitTest(arguments)
 
     return g();
 }
-
 shouldBeTrue("paramInitTest(true)");
+
+function tearOffTest()
+{
+    function g()
+    {
+        var a = 1;
+        return arguments;
+    }
+
+    var b = 2;
+    var arguments = g(true);
+    return arguments;
+}
+shouldBeTrue("tearOffTest()[0]");
+
+function tearOffTest2()
+{
+    function g(a)
+    {
+        var arguments = a;
+        var b = 2;
+        return arguments;
+    }
+
+    var c = 3;
+    return g(arguments);
+}
+shouldBeTrue("tearOffTest2(true)[0]");
 
 var successfullyParsed = true;

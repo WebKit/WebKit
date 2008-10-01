@@ -155,10 +155,18 @@ JSValue* JSActivation::argumentsGetter(ExecState* exec, const Identifier&, const
 {
     JSActivation* thisObj = static_cast<JSActivation*>(slot.slotBase());
 
-    Arguments* arguments = static_cast<Arguments*>(thisObj->d()->registers[RegisterFile::OptionalCalleeArguments].jsValue(exec));
-    if (!arguments) {
-        arguments = thisObj->createArgumentsObject(exec);
-        thisObj->d()->registers[RegisterFile::OptionalCalleeArguments] = arguments;
+    JSValue* arguments;
+    if (thisObj->d()->functionBody->usesArguments()) {
+        PropertySlot slot;
+        thisObj->symbolTableGet(exec->propertyNames().arguments, slot);
+        arguments = slot.getValue(exec, exec->propertyNames().arguments);
+    } else {
+        arguments = thisObj->d()->registers[RegisterFile::OptionalCalleeArguments].getJSValue();
+        if (!arguments) {
+            arguments = new (exec) Arguments(exec, thisObj);
+            thisObj->d()->registers[RegisterFile::OptionalCalleeArguments] = arguments;
+        }
+        ASSERT(arguments->isObject(&Arguments::info));
     }
 
     return arguments;
@@ -170,17 +178,6 @@ JSValue* JSActivation::argumentsGetter(ExecState* exec, const Identifier&, const
 PropertySlot::GetValueFunc JSActivation::getArgumentsGetter()
 {
     return argumentsGetter;
-}
-
-Arguments* JSActivation::createArgumentsObject(ExecState* exec)
-{
-    JSFunction* function;
-    Register* argv;
-    int argc;
-    int firstParameterIndex;
-    exec->machine()->getArgumentsData(d()->registers, function, firstParameterIndex, argv, argc);
-
-    return new (exec) Arguments(exec, function, this, firstParameterIndex, argv, argc);
 }
 
 } // namespace JSC

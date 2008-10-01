@@ -801,10 +801,13 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     if (oldCodeBlock->needsFullScopeChain)
         scopeChain->deref();
 
-    // If this call frame created an activation, tear it off.
-    if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].jsValue(exec))) {
+    // If this call frame created an activation or an 'arguments' object, tear it off.
+    if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue())) {
         ASSERT(activation->isObject(&JSActivation::info));
-        activation->copyRegisters();
+        activation->copyRegisters(r[RegisterFile::OptionalCalleeArguments].getJSValue());
+    } else if (Arguments* arguments = static_cast<Arguments*>(r[RegisterFile::OptionalCalleeArguments].getJSValue())) {
+        ASSERT(arguments->isObject(&Arguments::info));
+        arguments->copyRegisters();
     }
     
     void* returnPC = r[RegisterFile::ReturnPC].v();
@@ -3360,10 +3363,14 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            
         int result = (++vPC)->u.operand;
 
-        if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].jsValue(exec))) {
+        // If this call frame created an activation or an 'arguments' object, tear it off.
+        if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue())) {
             ASSERT(!codeBlock(r)->needsFullScopeChain || scopeChain(r)->object == activation);
             ASSERT(activation->isObject(&JSActivation::info));
-            activation->copyRegisters();
+            activation->copyRegisters(r[RegisterFile::OptionalCalleeArguments].getJSValue());
+        } else if (Arguments* arguments = static_cast<Arguments*>(r[RegisterFile::OptionalCalleeArguments].getJSValue())) {
+            ASSERT(arguments->isObject(&Arguments::info));
+            arguments->copyRegisters();
         }
 
         if (*enabledProfilerReference)
@@ -3417,8 +3424,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_init_arguments) {
-        JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
-        r[RegisterFile::OptionalCalleeArguments] = activation->createArgumentsObject(exec);
+        JSValue* activation = r[RegisterFile::OptionalCalleeActivation].getJSValue();
+        Arguments* arguments;
+        if (activation) {
+            ASSERT(activation->isObject(&JSActivation::info));
+            arguments = new (exec) Arguments(exec, static_cast<JSActivation*>(activation));
+        } else
+            arguments = new (exec) Arguments(exec, r);
+        r[RegisterFile::OptionalCalleeArguments] = arguments;
+        r[RegisterFile::ArgumentsRegister] = arguments;
+        
         ++vPC;
         NEXT_OPCODE;
     }
@@ -3848,16 +3863,24 @@ JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
     if (!r)
         return jsNull();
 
-    Arguments* arguments = static_cast<Arguments*>(r[RegisterFile::OptionalCalleeArguments].jsValue(exec));
-    if (!arguments) {
-        JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
-        if (!activation) {
-            activation = new (exec) JSActivation(exec, function->m_body, r);
-            r[RegisterFile::OptionalCalleeActivation] = activation;
+    JSValue* arguments;
+    CodeBlock* codeBlock = Machine::codeBlock(r);
+    if (codeBlock->usesArguments) {
+        ASSERT(codeBlock->codeType == FunctionCode);
+        SymbolTable& symbolTable = static_cast<FunctionBodyNode*>(codeBlock->ownerNode)->symbolTable();
+        int argumentsIndex = symbolTable.get(exec->propertyNames().arguments.ustring().rep()).getIndex();
+        arguments = r[argumentsIndex].jsValue(exec);
+    } else {
+        arguments = r[RegisterFile::OptionalCalleeArguments].getJSValue();
+        if (!arguments) {
+            JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
+            if (activation)
+                arguments = new (exec) Arguments(exec, activation);
+            else
+                arguments = new (exec) Arguments(exec, r);
+            r[RegisterFile::OptionalCalleeArguments] = arguments;
         }
-
-        arguments = activation->createArgumentsObject(exec);
-        r[RegisterFile::OptionalCalleeArguments] = arguments;
+        ASSERT(arguments->isObject(&Arguments::info));
     }
 
     return arguments;
@@ -4599,21 +4622,31 @@ void Machine::cti_op_init_arguments(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
     Register* r = ARG_r;
-    JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue());
-    r[RegisterFile::OptionalCalleeArguments] = activation->createArgumentsObject(exec);
+
+    JSValue* activation = r[RegisterFile::OptionalCalleeActivation].getJSValue();
+    Arguments* arguments;
+    if (activation) {
+        ASSERT(activation->isObject(&JSActivation::info));
+        arguments = new (exec) Arguments(exec, static_cast<JSActivation*>(activation));
+    } else
+        arguments = new (exec) Arguments(exec, r);
+    r[RegisterFile::OptionalCalleeArguments] = arguments;
+    r[RegisterFile::ArgumentsRegister] = arguments;
 }
 
-void Machine::cti_op_ret_activation(CTI_ARGS)
+void Machine::cti_op_ret_activation_arguments(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
     Register* r = ARG_r;
 
-    JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].jsValue(exec));
-    ASSERT(activation);
-
-    ASSERT(!codeBlock(r)->needsFullScopeChain || scopeChain(r)->object == activation);
-    ASSERT(activation->isObject(&JSActivation::info));
-    activation->copyRegisters();
+    // If this call frame created an activation or an 'arguments' object, tear it off.
+    if (JSActivation* activation = static_cast<JSActivation*>(r[RegisterFile::OptionalCalleeActivation].getJSValue())) {
+        ASSERT(!codeBlock(r)->needsFullScopeChain || scopeChain(r)->object == activation);
+        ASSERT(activation->isObject(&JSActivation::info));
+        activation->copyRegisters(r[RegisterFile::OptionalCalleeArguments].getJSValue());
+    } else if (Arguments* arguments = static_cast<Arguments*>(r[RegisterFile::OptionalCalleeArguments].getJSValue())) {
+        ASSERT(arguments->isObject(&Arguments::info));
+        arguments->copyRegisters();
+    }
 }
 
 void Machine::cti_op_ret_profiler(CTI_ARGS)

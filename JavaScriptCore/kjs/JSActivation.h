@@ -43,53 +43,36 @@ namespace JSC {
     class JSActivation : public JSVariableObject {
         typedef JSVariableObject Base;
     public:
-        JSActivation(ExecState* exec, PassRefPtr<FunctionBodyNode>, Register*);
+        JSActivation(ExecState*, PassRefPtr<FunctionBodyNode>, Register*);
         virtual ~JSActivation();
-        
+
         virtual void mark();
 
         virtual bool isDynamicScope() const;
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
 
-        inline void uncheckedSymbolTableGet(int index, PropertySlot& slot)
-        {
-            slot.setRegisterSlot(&registerAt(index));
-        }
-
-        inline JSValue* uncheckedSymbolTableGetValue(int index)
-        {
-            return registerAt(index).getJSValue();
-        }
-
         virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
-
-        inline void uncheckedSymbolTablePut(int index, JSValue* value)
-        {
-            registerAt(index) = value;
-        }
 
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue*, unsigned attributes);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
         virtual JSObject* toThisObject(ExecState*) const;
 
-        void copyRegisters();
+        void copyRegisters(JSValue* arguments);
         
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
-        NEVER_INLINE Arguments* createArgumentsObject(ExecState*);
-
     private:
         struct JSActivationData : public JSVariableObjectData {
-            JSActivationData(PassRefPtr<FunctionBodyNode> functionBody_, Register* registers)
-                : JSVariableObjectData(&functionBody_->symbolTable(), registers)
-                , functionBody(functionBody_)
+            JSActivationData(PassRefPtr<FunctionBodyNode> functionBody, Register* registers)
+                : JSVariableObjectData(&functionBody->symbolTable(), registers)
+                , functionBody(functionBody)
             {
             }
 
-            RefPtr<FunctionBodyNode> functionBody; // Owns the symbol table and code block
+            RefPtr<FunctionBodyNode> functionBody;
         };
         
         static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
@@ -98,24 +81,6 @@ namespace JSC {
         JSActivationData* d() const { return static_cast<JSActivationData*>(JSVariableObject::d); }
     };
     
-    inline void JSActivation::copyRegisters()
-    {
-        ASSERT(!d()->registerArray);
-
-        size_t numParametersMinusThis = d()->functionBody->generatedByteCode().numParameters - 1;
-        size_t numVars = d()->functionBody->generatedByteCode().numVars;
-        size_t numLocals = numVars + numParametersMinusThis;
-
-        if (!numLocals)
-            return;
-
-        int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
-        size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
-
-        Register* registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
-        setRegisters(registerArray + registerOffset, registerArray);
-    }
-
 } // namespace JSC
 
 #endif // JSActivation_h

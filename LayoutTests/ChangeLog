@@ -1,3 +1,16 @@
+2008-10-01  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add some tests for the 'arguments' object. The included failures are
+        intentional. They are for regressions introduced in r37050, and they
+        will hopefully be fixed in the near future.
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/function-dot-arguments-expected.txt:
+        * fast/js/resources/arguments.js:
+        * fast/js/resources/function-dot-arguments.js:
+
 2008-10-01  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Dan Bernstein.

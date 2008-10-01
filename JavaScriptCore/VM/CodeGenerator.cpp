@@ -292,11 +292,12 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     emitOpcode(op_init);
     codeBlock->globalData = m_globalData;
 
-    if (functionBody->usesArguments()) {
+    bool usesArguments = functionBody->usesArguments();
+    codeBlock->usesArguments = usesArguments;
+    if (usesArguments) {
         emitOpcode(op_init_arguments);
-        m_codeBlock->needsFullScopeChain = true;
         m_argumentsRegister.setIndex(RegisterFile::OptionalCalleeArguments);
-        symbolTable->add(propertyNames().arguments.ustring().rep(), SymbolTableEntry(RegisterFile::OptionalCalleeArguments));
+        addVar(propertyNames().arguments, false);
     }
 
     const Node::FunctionStack& functionStack = functionBody->functionStack();

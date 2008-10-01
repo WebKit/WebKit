@@ -24,19 +24,37 @@
 #ifndef Arguments_h
 #define Arguments_h
 
-#include "JSObject.h"
+#include "JSActivation.h"
+#include "JSFunction.h"
+#include "JSGlobalObject.h"
+#include "Machine.h"
 
 namespace JSC {
 
-    class JSActivation;
-    class JSFunction;
-    class Register;
+    struct ArgumentsData : Noncopyable {
+        JSActivation* activation;
 
-    struct ArgumentsData;
+        unsigned numParameters;
+        int firstParameterIndex;
+        unsigned numArguments;
+
+        Register* registers;
+        OwnArrayPtr<Register> registerArray;
+
+        Register* extraArguments;
+        OwnArrayPtr<bool> deletedArguments;
+        Register extraArgumentsFixedBuffer[4];
+
+        JSFunction* callee;
+        bool overrodeLength : 1;
+        bool overrodeCallee : 1;
+    };
+
 
     class Arguments : public JSObject {
     public:
-        Arguments(ExecState*, JSFunction*, JSActivation*, int firstArgumentIndex, Register* argv, int argc);
+        Arguments(ExecState*, Register* callFrame);
+        Arguments(ExecState*, JSActivation*);
         virtual ~Arguments();
 
         static const ClassInfo info;
@@ -44,6 +62,9 @@ namespace JSC {
         virtual void mark();
 
         void fillArgList(ExecState*, ArgList&);
+
+        void copyRegisters();
+        void setRegisters(Register* registers) { d->registers = registers; }
 
     private:
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -55,8 +76,103 @@ namespace JSC {
 
         virtual const ClassInfo* classInfo() const { return &info; }
 
+        void init(ExecState*, Register* callFrame);
+
         OwnPtr<ArgumentsData> d;
     };
+
+    inline void Arguments::init(ExecState* exec, Register* callFrame)
+    {
+        JSFunction* callee;
+        int firstParameterIndex;
+        Register* argv;
+        int numArguments;
+        exec->machine()->getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
+
+        d->numParameters = callee->numParameters();
+        d->firstParameterIndex = firstParameterIndex;
+        d->numArguments = numArguments;
+
+        d->registers = callFrame;
+
+        Register* extraArguments;
+        if (d->numArguments <= d->numParameters)
+            extraArguments = 0;
+        else {
+            unsigned numExtraArguments = d->numArguments - d->numParameters;
+            if (numExtraArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(Register))
+                extraArguments = new Register[numExtraArguments];
+            else
+                extraArguments = d->extraArgumentsFixedBuffer;
+            for (unsigned i = 0; i < numExtraArguments; ++i)
+                extraArguments[i] = argv[d->numParameters + i];
+        }
+
+        d->extraArguments = extraArguments;
+
+        d->callee = callee;
+        d->overrodeLength = false;
+        d->overrodeCallee = false;
+    }
+
+    inline Arguments::Arguments(ExecState* exec, Register* callFrame)
+        : JSObject(exec->lexicalGlobalObject()->argumentsStructure())
+        , d(new ArgumentsData)
+    {
+        d->activation = 0;
+        init(exec, callFrame);
+    }
+
+    inline Arguments::Arguments(ExecState* exec, JSActivation* activation)
+        : JSObject(exec->lexicalGlobalObject()->argumentsStructure())
+        , d(new ArgumentsData)
+    {
+        ASSERT(activation);
+        d->activation = activation;
+        init(exec, &activation->registerAt(0));
+    }
+
+    inline void Arguments::copyRegisters()
+    {
+        ASSERT(!d->activation);
+        ASSERT(!d->registerArray);
+
+        size_t numParametersMinusThis = d->callee->m_body->generatedByteCode().numParameters - 1;
+
+        if (!numParametersMinusThis)
+            return;
+
+        int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
+        size_t registerArraySize = numParametersMinusThis;
+
+        Register* registerArray = new Register[registerArraySize];
+        memcpy(registerArray, d->registers - registerOffset, registerArraySize * sizeof(Register));
+        d->registerArray.set(registerArray);
+        d->registers = registerArray + registerOffset;
+    }
+
+    // This JSActivation function is defined here so it can get at Arguments::setRegisters.
+    inline void JSActivation::copyRegisters(JSValue* arguments)
+    {
+        ASSERT(!d()->registerArray);
+
+        size_t numParametersMinusThis = d()->functionBody->generatedByteCode().numParameters - 1;
+        size_t numVars = d()->functionBody->generatedByteCode().numVars;
+        size_t numLocals = numVars + numParametersMinusThis;
+
+        if (!numLocals)
+            return;
+
+        int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
+        size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
+
+        Register* registerArray = copyRegisterArray(d()->registers - registerOffset, registerArraySize);
+        setRegisters(registerArray + registerOffset, registerArray);
+        if (arguments) {
+            ASSERT(arguments->isObject(&Arguments::info));
+            static_cast<Arguments*>(arguments)->setRegisters(registerArray + registerOffset);
+        }
+    }
 
 } // namespace JSC
 

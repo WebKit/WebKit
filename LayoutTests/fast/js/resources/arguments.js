@@ -506,7 +506,20 @@ function argumentsParam(arguments)
 {
     return arguments;
 }
-
 shouldBeTrue("argumentsParam(true)");
+
+function argumentsVarUndefined()
+{
+    var arguments;
+    return arguments;
+}
+shouldBeUndefined("argumentsVarUndefined()");
+
+function argumentsConstUndefined()
+{
+    const arguments;
+    return arguments;
+}
+shouldBeUndefined("argumentsConstUndefined()");
 
 var successfullyParsed = true;

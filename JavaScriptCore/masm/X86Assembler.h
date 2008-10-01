@@ -183,6 +183,7 @@ public:
         OP_ADD_EvGv                     = 0x01,
         OP_ADD_GvEv                     = 0x03,
         OP_OR_EvGv                      = 0x09,
+        OP_OR_GvEv                      = 0x0B,
         OP_2BYTE_ESCAPE                 = 0x0F,
         OP_AND_EvGv                     = 0x21,
         OP_SUB_EvGv                     = 0x29,
@@ -441,6 +442,12 @@ public:
     {
         m_buffer->putByte(OP_OR_EvGv);
         emitModRm_rr(src, dst);
+    }
+
+    void orl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_buffer->putByte(OP_OR_GvEv);
+        emitModRm_rm(dst, base, offset);
     }
 
     void orl_i32r(int imm, RegisterID dst)

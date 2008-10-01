@@ -1,3 +1,65 @@
+2008-10-01  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 21123: using "arguments" in a function should not force creation of an activation object
+        <https://bugs.webkit.org/show_bug.cgi?id=21123>
+
+        Make the 'arguments' object not require a JSActivation. We store the
+        'arguments' object in the OptionalCalleeArguments call frame slot. We
+        need to be able to get the original 'arguments' object to tear it off
+        when returning from a function, but 'arguments' may be assigned to in a
+        number of ways.
+
+        Therefore, we use the OptionalCalleeArguments slot when we want to get
+        the original activation or we know that 'arguments' was not assigned a
+        different value. When 'arguments' may have been assigned a new value,
+        we use a new local variable that is initialized with 'arguments'. Since
+        a function parameter named 'arguments' may overwrite the value of
+        'arguments', we also need to be careful to look up 'arguments' in the
+        symbol table, so we get the parameter named 'arguments' instead of the
+        local variable that we have added for holding the 'arguments' object.
+
+        This is a 19.1% win on the V8 Raytrace benchmark using the SunSpider
+        harness, and a 20.7% win using the V8 harness. This amounts to a 6.5%
+        total speedup on the V8 benchmark suite using the V8 harness.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        * VM/Machine.cpp:
+        (JSC::Machine::unwindCallFrame):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::retrieveArguments):
+        (JSC::Machine::cti_op_init_arguments):
+        (JSC::Machine::cti_op_ret_activation_arguments):
+        * VM/Machine.h:
+        * VM/RegisterFile.h:
+        (JSC::RegisterFile::):
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::mark):
+        (JSC::Arguments::fillArgList):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::put):
+        * kjs/Arguments.h:
+        (JSC::Arguments::setRegisters):
+        (JSC::Arguments::init):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::copyRegisters):
+        (JSC::JSActivation::copyRegisters):
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * kjs/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        * kjs/grammar.y:
+        * kjs/nodes.h:
+        (JSC::ScopeNode::setUsesArguments):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::orl_mr):
+
 2008-10-01  Kevin McCullough  <kmccullough@apple.com>
 
         Rubberstamped by Geoff .

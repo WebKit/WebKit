@@ -2176,6 +2176,7 @@ namespace JSC {
         bool usesEval() const { return m_usesEval; }
         bool needsClosure() const { return m_needsClosure; }
         bool usesArguments() const { return m_usesArguments; }
+        void setUsesArguments(bool usesArguments) { m_usesArguments = usesArguments; }
 
         VarStack& varStack() { return m_varStack; }
         FunctionStack& functionStack() { return m_functionStack; }

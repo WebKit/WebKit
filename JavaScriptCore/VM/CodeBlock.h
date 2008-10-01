@@ -241,6 +241,7 @@ namespace JSC {
         int thisRegister;
         bool needsFullScopeChain;
         bool usesEval;
+        bool usesArguments;
         CodeType codeType;
         RefPtr<SourceProvider> source;
         unsigned sourceOffset;
