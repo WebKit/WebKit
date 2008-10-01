@@ -103,14 +103,14 @@ template <typename T> NodeDeclarationInfo<T> createNodeDeclarationInfo(T node, P
                                                                        FeatureInfo info,
                                                                        int numConstants) 
 {
-    ASSERT((info & ~(EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature)) == 0);
+    ASSERT((info & ~AllFeatures) == 0);
     NodeDeclarationInfo<T> result = {node, varDecls, funcDecls, info, numConstants};
     return result;
 }
 
 template <typename T> NodeFeatureInfo<T> createNodeFeatureInfo(T node, FeatureInfo info, int numConstants)
 {
-    ASSERT((info & ~(EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature)) == 0);
+    ASSERT((info & ~AllFeatures) == 0);
     NodeFeatureInfo<T> result = {node, info, numConstants};
     return result;
 }
@@ -337,7 +337,7 @@ PrimaryExpr:
 ;
 
 PrimaryExprNoBrace:
-    THISTOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new ThisNode(GLOBAL_DATA), 0, 0); }
+    THISTOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new ThisNode(GLOBAL_DATA), ThisFeature, 0); }
   | Literal
   | ArrayLiteral
   | IDENT                               { $$ = createNodeFeatureInfo<ExpressionNode*>(new ResolveNode(GLOBAL_DATA, *$1, @1.first_column), (*$1 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0, 0); }
@@ -1058,7 +1058,7 @@ ReturnStatement:
 
 WithStatement:
     WITH '(' Expr ')' Statement         { $$ = createNodeDeclarationInfo<StatementNode*>(new WithNode(GLOBAL_DATA, $3.m_node, $5.m_node, @3.last_column, @3.last_column - @3.first_column),
-                                                                                         $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_featureInfo | $5.m_featureInfo, $3.m_numConstants + $5.m_numConstants);
+                                                                                         $5.m_varDeclarations, $5.m_funcDeclarations, $3.m_featureInfo | $5.m_featureInfo | WithFeature, $3.m_numConstants + $5.m_numConstants);
                                           DBG($$.m_node, @1, @4); }
 ;
 
@@ -1137,14 +1137,14 @@ TryStatement:
   | TRY Block CATCH '(' IDENT ')' Block { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode(GLOBAL_DATA, $2.m_node, *$5, $7.m_node, 0),
                                                                                          mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations),
                                                                                          mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations),
-                                                                                         $2.m_featureInfo | $7.m_featureInfo,
+                                                                                         $2.m_featureInfo | $7.m_featureInfo | CatchFeature,
                                                                                          $2.m_numConstants + $7.m_numConstants);
                                           DBG($$.m_node, @1, @2); }
   | TRY Block CATCH '(' IDENT ')' Block FINALLY Block
                                         { $$ = createNodeDeclarationInfo<StatementNode*>(new TryNode(GLOBAL_DATA, $2.m_node, *$5, $7.m_node, $9.m_node),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_varDeclarations, $7.m_varDeclarations), $9.m_varDeclarations),
                                                                                          mergeDeclarationLists(mergeDeclarationLists($2.m_funcDeclarations, $7.m_funcDeclarations), $9.m_funcDeclarations),
-                                                                                         $2.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo,
+                                                                                         $2.m_featureInfo | $7.m_featureInfo | $9.m_featureInfo | CatchFeature,
                                                                                          $2.m_numConstants + $7.m_numConstants + $9.m_numConstants);
                                           DBG($$.m_node, @1, @2); }
 ;

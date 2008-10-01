@@ -1,3 +1,16 @@
+2008-09-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - track uses of "this", "with" and "catch" in the parser
+        
+        Knowing this up front will be useful for future optimizations.
+        
+        Perf and correctness remain the same.
+        
+        * kjs/NodeInfo.h:
+        * kjs/grammar.y:
+
 2008-09-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
