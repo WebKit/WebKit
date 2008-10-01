@@ -1,3 +1,17 @@
+2008-09-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix HTMLViewSourceDocument leaks by breaking a ref cycle which
+          was fixed in r17249 and re-introduced in r31435. 
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * html/HTMLViewSourceDocument.h:
+
 2008-09-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Eric Seidel.
