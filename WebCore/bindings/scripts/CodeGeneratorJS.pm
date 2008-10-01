@@ -493,11 +493,6 @@ sub GenerateHeader
     # Constructor object getter
     push(@headerContent, "    static JSC::JSValue* getConstructor(JSC::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
 
-    if ($dataNode->extendedAttributes->{"CustomListeners"}) {
-        push(@headerContent, "    JSC::JSValue* getListener(JSC::ExecState*, const AtomicString& eventType) const;\n");
-        push(@headerContent, "    void setListener(JSC::ExecState*, const AtomicString& eventType, JSC::JSValue* function);\n");
-    }
-
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
 
@@ -1021,11 +1016,21 @@ sub GenerateImplementation
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
                     push(@implContent, "    return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())") . " : jsUndefined();\n");
-                } elsif ($type eq "EventListener" && $dataNode->extendedAttributes->{"CustomListeners"}) {
-                    $implIncludes{"EventNames.h"} = 1;
-                    my $eventName = $name . "Event";
-                    $eventName =~ s/^on//;
-                    push(@implContent, "    return static_cast<$className*>(slot.slotBase())->getListener(exec, EventNames::${eventName});\n");
+                } elsif ($type eq "EventListener") {
+                    $implIncludes{"JSEventListener.h"} = 1;
+                    $implIncludes{"EventListener.h"} = 1;
+                    my $listenerType;
+                    if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
+                        $listenerType = "JSEventListener";
+                    } else {
+                        $listenerType = "JSUnprotectedEventListener";
+                    }
+                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
+                    push(@implContent, "    if (${listenerType}* listener = static_cast<${listenerType}*>(imp->$implGetterFunctionName())) {\n");
+                    push(@implContent, "        if (JSObject* listenerObj = listener->listenerObj())\n");
+                    push(@implContent, "            return listenerObj;\n");
+                    push(@implContent, "    }\n");
+                    push(@implContent, "    return jsNull();\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
                     my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                     $constructorType =~ s/Constructor$//;
@@ -1138,13 +1143,27 @@ sub GenerateImplementation
                         }
 
                         if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomSetter"}) {
-                            # FIXME: Custom function can 
                             push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
-                        } elsif ($type eq "EventListener" && $dataNode->extendedAttributes->{"CustomListeners"}) {
-                            $implIncludes{"EventNames.h"} = 1;
-                            my $eventName = $name . "Event";
-                            $eventName =~ s/^on//;
-                            push(@implContent, "    static_cast<$className*>(thisObject)->setListener(exec, EventNames::${eventName}, value);\n");
+                        } elsif ($type eq "EventListener") {
+                            $implIncludes{"JSEventListener.h"} = 1;
+                            push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
+                            my $listenerType;
+                            if ($attribute->signature->extendedAttributes->{"ProtectedListener"}) {
+                                $listenerType = "JSEventListener";
+                            } else {
+                                $listenerType = "JSUnprotectedEventListener";
+                            }
+                            if ($interfaceName eq "DOMWindow") {
+                                push(@implContent, "    JSDOMWindow* window = static_cast<JSDOMWindow*>(thisObject);\n");
+                            } else {
+                                $implIncludes{"Frame.h"} = 1;
+                                $implIncludes{"JSDOMWindow.h"} = 1;
+                                push(@implContent, "    Frame* frame = imp->associatedFrame();\n");
+                                push(@implContent, "    if (!frame)\n");
+                                push(@implContent, "        return;\n");
+                                push(@implContent, "    JSDOMWindow* window = toJSDOMWindow(frame);\n");
+                            }
+                            push(@implContent, "    imp->set$implSetterFunctionName(window->findOrCreate${listenerType}(exec, value, true));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

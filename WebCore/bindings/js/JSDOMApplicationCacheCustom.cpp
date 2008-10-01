@@ -45,10 +45,10 @@ namespace WebCore {
 void JSDOMApplicationCache::mark()
 {
     DOMObject::mark();
- 
+
     if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onchecking()))
         listener->mark();
-        
+
     if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onerror()))
         listener->mark();
 
@@ -66,7 +66,7 @@ void JSDOMApplicationCache::mark()
 
     if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->oncached()))
         listener->mark();
-    
+
     typedef DOMApplicationCache::EventListenersMap EventListenersMap;
     typedef DOMApplicationCache::ListenerVector ListenerVector;
     EventListenersMap& eventListeners = m_impl->eventListeners();
@@ -90,7 +90,7 @@ JSValue* JSDOMApplicationCache::add(ExecState* exec, const ArgList& args)
     setDOMException(exec, ec);
     return jsUndefined();
 }
-    
+
 JSValue* JSDOMApplicationCache::remove(ExecState* exec, const ArgList& args)
 {
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
@@ -103,7 +103,7 @@ JSValue* JSDOMApplicationCache::remove(ExecState* exec, const ArgList& args)
     setDOMException(exec, ec);
     return jsUndefined();
 }
-    
+
 JSValue* JSDOMApplicationCache::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
@@ -126,119 +126,6 @@ JSValue* JSDOMApplicationCache::removeEventListener(ExecState* exec, const ArgLi
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
     return jsUndefined();
-    
-}
-    
-void JSDOMApplicationCache::setOnchecking(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOnchecking(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::onchecking(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onchecking()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDOMApplicationCache::setOnerror(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOnerror(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::onerror(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onerror()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDOMApplicationCache::setOnnoupdate(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOnnoupdate(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::onnoupdate(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onnoupdate()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDOMApplicationCache::setOndownloading(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOndownloading(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::ondownloading(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->ondownloading()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDOMApplicationCache::setOnprogress(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOnprogress(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::onprogress(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onprogress()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDOMApplicationCache::setOnupdateready(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOnupdateready(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::onupdateready(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onupdateready()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDOMApplicationCache::setOncached(ExecState* exec, JSValue* value)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setOncached(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDOMApplicationCache::oncached(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->oncached()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
 }
 
 } // namespace WebCore

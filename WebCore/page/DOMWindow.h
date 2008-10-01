@@ -43,6 +43,7 @@ namespace WebCore {
     class Database;
     class Document;
     class Element;
+    class EventListener;
     class FloatRect;
     class Frame;
     class History;
@@ -189,6 +190,65 @@ namespace WebCore {
         void resizeBy(float x, float y) const;
         void resizeTo(float width, float height) const;
 
+        EventListener* onabort() const;
+        void setOnabort(PassRefPtr<EventListener>);
+        EventListener* onblur() const;
+        void setOnblur(PassRefPtr<EventListener>);
+        EventListener* onchange() const;
+        void setOnchange(PassRefPtr<EventListener>);
+        EventListener* onclick() const;
+        void setOnclick(PassRefPtr<EventListener>);
+        EventListener* ondblclick() const;
+        void setOndblclick(PassRefPtr<EventListener>);
+        EventListener* onerror() const;
+        void setOnerror(PassRefPtr<EventListener>);
+        EventListener* onfocus() const;
+        void setOnfocus(PassRefPtr<EventListener>);
+        EventListener* onkeydown() const;
+        void setOnkeydown(PassRefPtr<EventListener>);
+        EventListener* onkeypress() const;
+        void setOnkeypress(PassRefPtr<EventListener>);
+        EventListener* onkeyup() const;
+        void setOnkeyup(PassRefPtr<EventListener>);
+        EventListener* onload() const;
+        void setOnload(PassRefPtr<EventListener>);
+        EventListener* onmousedown() const;
+        void setOnmousedown(PassRefPtr<EventListener>);
+        EventListener* onmousemove() const;
+        void setOnmousemove(PassRefPtr<EventListener>);
+        EventListener* onmouseout() const;
+        void setOnmouseout(PassRefPtr<EventListener>);
+        EventListener* onmouseover() const;
+        void setOnmouseover(PassRefPtr<EventListener>);
+        EventListener* onmouseup() const;
+        void setOnmouseup(PassRefPtr<EventListener>);
+        EventListener* onmousewheel() const;
+        void setOnmousewheel(PassRefPtr<EventListener>);
+        EventListener* onreset() const;
+        void setOnreset(PassRefPtr<EventListener>);
+        EventListener* onresize() const;
+        void setOnresize(PassRefPtr<EventListener>);
+        EventListener* onscroll() const;
+        void setOnscroll(PassRefPtr<EventListener>);
+        EventListener* onsearch() const;
+        void setOnsearch(PassRefPtr<EventListener>);
+        EventListener* onselect() const;
+        void setOnselect(PassRefPtr<EventListener>);
+        EventListener* onsubmit() const;
+        void setOnsubmit(PassRefPtr<EventListener>);
+        EventListener* onunload() const;
+        void setOnunload(PassRefPtr<EventListener>);
+        EventListener* onbeforeunload() const;
+        void setOnbeforeunload(PassRefPtr<EventListener>);
+        EventListener* onwebkitanimationstart() const;
+        void setOnwebkitanimationstart(PassRefPtr<EventListener>);
+        EventListener* onwebkitanimationiteration() const;
+        void setOnwebkitanimationiteration(PassRefPtr<EventListener>);
+        EventListener* onwebkitanimationend() const;
+        void setOnwebkitanimationend(PassRefPtr<EventListener>);
+        EventListener* onwebkittransitionend() const;
+        void setOnwebkittransitionend(PassRefPtr<EventListener>);
+
         // These methods are used for GC marking. See JSDOMWindow::mark() in
         // JSDOMWindowCustom.cpp.
         Screen* optionalScreen() const { return m_screen.get(); }
@@ -213,6 +273,9 @@ namespace WebCore {
 
     private:
         DOMWindow(Frame*);
+
+        void setEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
+        EventListener* eventListenerForType(const AtomicString& eventType) const;
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;

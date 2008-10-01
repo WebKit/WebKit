@@ -34,11 +34,11 @@ module xml {
     ] XMLHttpRequestUpload {
         // From XMLHttpRequestEventTarget
         // event handler attributes
-        attribute [Custom] EventListener onabort;
-        attribute [Custom] EventListener onerror;
-        attribute [Custom] EventListener onload;
-        attribute [Custom] EventListener onloadstart;
-        attribute [Custom] EventListener onprogress;
+        attribute EventListener onabort;
+        attribute EventListener onerror;
+        attribute EventListener onload;
+        attribute EventListener onloadstart;
+        attribute EventListener onprogress;
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type, 

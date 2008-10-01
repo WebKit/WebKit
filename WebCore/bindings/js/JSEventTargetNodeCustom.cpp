@@ -64,24 +64,6 @@ JSValue* JSEventTargetNode::removeEventListener(ExecState* exec, const ArgList& 
     return jsUndefined();
 }
 
-JSValue* JSEventTargetNode::getListener(ExecState* exec, const AtomicString& eventType) const
-{
-    EventListener* listener = impl()->eventListenerForType(eventType);
-    JSEventListener* jsListener = static_cast<JSEventListener*>(listener);
-    if (jsListener && jsListener->listenerObj())
-        return jsListener->listenerObj();
-
-    return jsNull();
-}
-
-void JSEventTargetNode::setListener(ExecState* exec, const AtomicString& eventType, JSValue* func)
-{
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
-        return;
-    impl()->setEventListenerForType(eventType, toJSDOMWindow(frame)->findOrCreateJSEventListener(exec, func, true));
-}
-
 void JSEventTargetNode::pushEventHandlerScope(ExecState*, ScopeChain&) const
 {
 }

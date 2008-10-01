@@ -23,7 +23,6 @@
 #include "AtomicString.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -40,8 +39,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-using namespace EventNames;
 
 static void markDOMObjectWrapper(void* object)
 {
@@ -172,46 +169,6 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
     }
 }
 
-JSValue* JSDOMWindow::onwebkitanimationstart(ExecState* exec) const
-{
-    return getListener(exec, webkitAnimationStartEvent);
-}
-
-void JSDOMWindow::setOnwebkitanimationstart(ExecState* exec, JSValue* value)
-{
-    setListener(exec, webkitAnimationStartEvent, value);
-}
-
-JSValue* JSDOMWindow::onwebkitanimationiteration(ExecState* exec) const
-{
-    return getListener(exec, webkitAnimationIterationEvent);
-}
-
-void JSDOMWindow::setOnwebkitanimationiteration(ExecState* exec, JSValue* value)
-{
-    setListener(exec, webkitAnimationIterationEvent, value);
-}
-
-JSValue* JSDOMWindow::onwebkitanimationend(ExecState* exec) const
-{
-    return getListener(exec, webkitAnimationEndEvent);
-}
-
-void JSDOMWindow::setOnwebkitanimationend(ExecState* exec, JSValue* value)
-{
-    setListener(exec, webkitAnimationEndEvent, value);
-}
-
-JSValue* JSDOMWindow::onwebkittransitionend(ExecState* exec) const
-{
-    return getListener(exec, webkitTransitionEndEvent);
-}
-
-void JSDOMWindow::setOnwebkittransitionend(ExecState* exec, JSValue* value)
-{
-    setListener(exec, webkitTransitionEndEvent, value);
-}
-
 JSValue* JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 {
     DOMWindow* window = impl();
@@ -261,29 +218,6 @@ JSValue* JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args)
     }
 
     return jsUndefined();
-}
-
-void JSDOMWindow::setListener(ExecState* exec, const AtomicString& eventType, JSValue* func)
-{
-    ASSERT(impl()->frame());
-    Document* doc = impl()->frame()->document();
-    if (!doc)
-        return;
-
-    doc->setWindowEventListenerForType(eventType, findOrCreateJSEventListener(exec, func, true));
-}
-
-JSValue* JSDOMWindow::getListener(ExecState* exec, const AtomicString& eventType) const
-{
-    ASSERT(impl()->frame());
-    Document* doc = impl()->frame()->document();
-    if (!doc)
-        return jsUndefined();
-
-    EventListener* listener = doc->windowEventListenerForType(eventType);
-    if (listener && static_cast<JSEventListener*>(listener)->listenerObj())
-        return static_cast<JSEventListener*>(listener)->listenerObj();
-    return jsNull();
 }
 
 DOMWindow* toDOMWindow(JSValue* val)

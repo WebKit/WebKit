@@ -646,7 +646,7 @@ void EventTargetNode::setEventListenerForTypeAndAttribute(const AtomicString& ev
     setEventListenerForType(eventType, document()->createEventListener(attr->localName().string(), attr->value(), this));
 }
 
-EventListener* EventTargetNode::eventListenerForType(const AtomicString& eventType)
+EventListener* EventTargetNode::eventListenerForType(const AtomicString& eventType) const
 {
     if (!m_regdListeners)
         return 0;
@@ -684,6 +684,406 @@ void EventTargetNode::defaultEventHandler(Event* event)
             if (Frame* frame = document()->frame())
                 frame->eventHandler()->defaultTextInputEventHandler(static_cast<TextEvent*>(event));
     }
+}
+
+EventListener* EventTargetNode::onabort() const
+{
+    return eventListenerForType(abortEvent);
+}
+
+void EventTargetNode::setOnabort(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(abortEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onblur() const
+{
+    return eventListenerForType(blurEvent);
+}
+
+void EventTargetNode::setOnblur(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(blurEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onchange() const
+{
+    return eventListenerForType(changeEvent);
+}
+
+void EventTargetNode::setOnchange(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(changeEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onclick() const
+{
+    return eventListenerForType(clickEvent);
+}
+
+void EventTargetNode::setOnclick(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(clickEvent, eventListener);
+}
+
+EventListener* EventTargetNode::oncontextmenu() const
+{
+    return eventListenerForType(contextmenuEvent);
+}
+
+void EventTargetNode::setOncontextmenu(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(contextmenuEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondblclick() const
+{
+    return eventListenerForType(dblclickEvent);
+}
+
+void EventTargetNode::setOndblclick(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dblclickEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onerror() const
+{
+    return eventListenerForType(errorEvent);
+}
+
+void EventTargetNode::setOnerror(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(errorEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onfocus() const
+{
+    return eventListenerForType(focusEvent);
+}
+
+void EventTargetNode::setOnfocus(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(focusEvent, eventListener);
+}
+
+EventListener* EventTargetNode::oninput() const
+{
+    return eventListenerForType(inputEvent);
+}
+
+void EventTargetNode::setOninput(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(inputEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onkeydown() const
+{
+    return eventListenerForType(keydownEvent);
+}
+
+void EventTargetNode::setOnkeydown(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(keydownEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onkeypress() const
+{
+    return eventListenerForType(keypressEvent);
+}
+
+void EventTargetNode::setOnkeypress(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(keypressEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onkeyup() const
+{
+    return eventListenerForType(keyupEvent);
+}
+
+void EventTargetNode::setOnkeyup(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(keyupEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onload() const
+{
+    return eventListenerForType(loadEvent);
+}
+
+void EventTargetNode::setOnload(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(loadEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onmousedown() const
+{
+    return eventListenerForType(mousedownEvent);
+}
+
+void EventTargetNode::setOnmousedown(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(mousedownEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onmousemove() const
+{
+    return eventListenerForType(mousemoveEvent);
+}
+
+void EventTargetNode::setOnmousemove(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(mousemoveEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onmouseout() const
+{
+    return eventListenerForType(mouseoutEvent);
+}
+
+void EventTargetNode::setOnmouseout(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(mouseoutEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onmouseover() const
+{
+    return eventListenerForType(mouseoverEvent);
+}
+
+void EventTargetNode::setOnmouseover(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(mouseoverEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onmouseup() const
+{
+    return eventListenerForType(mouseupEvent);
+}
+
+void EventTargetNode::setOnmouseup(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(mouseupEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onmousewheel() const
+{
+    return eventListenerForType(mousewheelEvent);
+}
+
+void EventTargetNode::setOnmousewheel(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(mousewheelEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onbeforecut() const
+{
+    return eventListenerForType(beforecutEvent);
+}
+
+void EventTargetNode::setOnbeforecut(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(beforecutEvent, eventListener);
+}
+
+EventListener* EventTargetNode::oncut() const
+{
+    return eventListenerForType(cutEvent);
+}
+
+void EventTargetNode::setOncut(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(cutEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onbeforecopy() const
+{
+    return eventListenerForType(beforecopyEvent);
+}
+
+void EventTargetNode::setOnbeforecopy(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(beforecopyEvent, eventListener);
+}
+
+EventListener* EventTargetNode::oncopy() const
+{
+    return eventListenerForType(copyEvent);
+}
+
+void EventTargetNode::setOncopy(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(copyEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onbeforepaste() const
+{
+    return eventListenerForType(beforepasteEvent);
+}
+
+void EventTargetNode::setOnbeforepaste(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(beforepasteEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onpaste() const
+{
+    return eventListenerForType(pasteEvent);
+}
+
+void EventTargetNode::setOnpaste(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(pasteEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondragenter() const
+{
+    return eventListenerForType(dragenterEvent);
+}
+
+void EventTargetNode::setOndragenter(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dragenterEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondragover() const
+{
+    return eventListenerForType(dragoverEvent);
+}
+
+void EventTargetNode::setOndragover(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dragoverEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondragleave() const
+{
+    return eventListenerForType(dragleaveEvent);
+}
+
+void EventTargetNode::setOndragleave(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dragleaveEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondrop() const
+{
+    return eventListenerForType(dropEvent);
+}
+
+void EventTargetNode::setOndrop(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dropEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondragstart() const
+{
+    return eventListenerForType(dragstartEvent);
+}
+
+void EventTargetNode::setOndragstart(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dragstartEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondrag() const
+{
+    return eventListenerForType(dragEvent);
+}
+
+void EventTargetNode::setOndrag(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dragEvent, eventListener);
+}
+
+EventListener* EventTargetNode::ondragend() const
+{
+    return eventListenerForType(dragendEvent);
+}
+
+void EventTargetNode::setOndragend(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(dragendEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onreset() const
+{
+    return eventListenerForType(resetEvent);
+}
+
+void EventTargetNode::setOnreset(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(resetEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onresize() const
+{
+    return eventListenerForType(resizeEvent);
+}
+
+void EventTargetNode::setOnresize(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(resizeEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onscroll() const
+{
+    return eventListenerForType(scrollEvent);
+}
+
+void EventTargetNode::setOnscroll(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(scrollEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onsearch() const
+{
+    return eventListenerForType(searchEvent);
+}
+
+void EventTargetNode::setOnsearch(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(searchEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onselect() const
+{
+    return eventListenerForType(selectEvent);
+}
+
+void EventTargetNode::setOnselect(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(selectEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onselectstart() const
+{
+    return eventListenerForType(selectstartEvent);
+}
+
+void EventTargetNode::setOnselectstart(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(selectstartEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onsubmit() const
+{
+    return eventListenerForType(submitEvent);
+}
+
+void EventTargetNode::setOnsubmit(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(submitEvent, eventListener);
+}
+
+EventListener* EventTargetNode::onunload() const
+{
+    return eventListenerForType(unloadEvent);
+}
+
+void EventTargetNode::setOnunload(PassRefPtr<EventListener> eventListener)
+{
+    setEventListenerForType(unloadEvent, eventListener);
 }
 
 } // namespace WebCore
