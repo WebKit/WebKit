@@ -1088,7 +1088,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
 
     RefPtr<Frame> newCoreFrame = [WebFrame _createSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
     if (newCoreFrame->view())
-        newCoreFrame->view()->setAllowsScrolling(allowsScrolling);
+        newCoreFrame->view()->setCanHaveScrollbars(allowsScrolling);
 
     [childView release];
 

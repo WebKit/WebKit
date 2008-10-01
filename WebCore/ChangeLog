@@ -1,3 +1,20 @@
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
+        Rename allowsScrolling/setAllowsScrolling to canHaveScrollbars/setCanHaveScrollbars to make it more
+        clear that the boolean doesn't actually stop all scrolling.  It just gets rid of scrollbars.
+
+        Reviewed by Tim Hatcher
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setCanHaveScrollbars):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setCanHaveScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::canHaveScrollbars):
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

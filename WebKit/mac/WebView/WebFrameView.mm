@@ -402,14 +402,14 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 {
     WebCore::Frame *frame = core([self webFrame]);
     if (WebCore::FrameView *view = frame? frame->view() : 0)
-        view->setAllowsScrolling(flag);
+        view->setCanHaveScrollbars(flag);
 }
 
 - (BOOL)allowsScrolling
 {
     WebCore::Frame *frame = core([self webFrame]);
     if (WebCore::FrameView *view = frame? frame->view() : 0)
-        return view->allowsScrolling();
+        return view->canHaveScrollbars();
     return YES;
 }
 

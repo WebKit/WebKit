@@ -258,7 +258,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::setAllowsScrolling(
 {
     if (Frame* frame = core(this))
         if (FrameView* view = frame->view())
-            view->setAllowsScrolling(!!flag);
+            view->setCanHaveScrollbars(!!flag);
 
     return S_OK;
 }
@@ -269,7 +269,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::allowsScrolling(
     if (flag)
         if (Frame* frame = core(this))
             if (FrameView* view = frame->view())
-                *flag = view->allowsScrolling();
+                *flag = view->canHaveScrollbars();
 
     return S_OK;
 }
