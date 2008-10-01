@@ -346,8 +346,6 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
     if (rect.isEmpty())
         return;
 
-    ASSERT(!parent());
-
     if (platformWidget()) {
         platformRepaintContentRectangle(rect, now);
         return;

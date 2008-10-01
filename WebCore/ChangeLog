@@ -1,3 +1,13 @@
+2008-09-30  Darin Adler  <darin@apple.com>
+
+        - roll out assertion breaking regression tests
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::repaintContentRectangle): Temporarily remove assertion
+        that fires in regression tests. Hyatt can add it back later. The assertion
+        fires in the regression test because of layout that triggers repaint occuring
+        during the process of removing a frame.
+
 2008-09-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
