@@ -1,3 +1,145 @@
+2008-09-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        More for https://bugs.webkit.org/show_bug.cgi?id=21122
+        Autogenerate JS event listeners
+
+        - Make EventListener getter/setters names in c++ files match those in 
+          JS (ie. onLoadListener -> onload).
+        - Add standard way to access the frame associated with the EventTarget
+          for EventListener lookup.
+        - Autogenerate dispatchEvent, it wasn't doing anything custom.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::mark):
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        (WebCore::JSDOMApplicationCache::setOnchecking):
+        (WebCore::JSDOMApplicationCache::onchecking):
+        (WebCore::JSDOMApplicationCache::setOnerror):
+        (WebCore::JSDOMApplicationCache::onerror):
+        (WebCore::JSDOMApplicationCache::setOnnoupdate):
+        (WebCore::JSDOMApplicationCache::onnoupdate):
+        (WebCore::JSDOMApplicationCache::setOndownloading):
+        (WebCore::JSDOMApplicationCache::ondownloading):
+        (WebCore::JSDOMApplicationCache::setOnprogress):
+        (WebCore::JSDOMApplicationCache::onprogress):
+        (WebCore::JSDOMApplicationCache::setOnupdateready):
+        (WebCore::JSDOMApplicationCache::onupdateready):
+        (WebCore::JSDOMApplicationCache::setOncached):
+        (WebCore::JSDOMApplicationCache::oncached):
+        * bindings/js/JSEventTargetNodeCustom.cpp:
+        (WebCore::JSEventTargetNode::addEventListener):
+        (WebCore::JSEventTargetNode::removeEventListener):
+        (WebCore::JSEventTargetNode::getListener):
+        (WebCore::JSEventTargetNode::setListener):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+        (WebCore::JSMessagePort::addEventListener):
+        (WebCore::JSMessagePort::removeEventListener):
+        (WebCore::JSMessagePort::setOnmessage):
+        (WebCore::JSMessagePort::onmessage):
+        (WebCore::JSMessagePort::setOnclose):
+        (WebCore::JSMessagePort::onclose):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        (WebCore::JSXMLHttpRequest::onreadystatechange):
+        (WebCore::JSXMLHttpRequest::setOnreadystatechange):
+        (WebCore::JSXMLHttpRequest::onabort):
+        (WebCore::JSXMLHttpRequest::setOnabort):
+        (WebCore::JSXMLHttpRequest::onerror):
+        (WebCore::JSXMLHttpRequest::setOnerror):
+        (WebCore::JSXMLHttpRequest::onload):
+        (WebCore::JSXMLHttpRequest::setOnload):
+        (WebCore::JSXMLHttpRequest::onloadstart):
+        (WebCore::JSXMLHttpRequest::setOnloadstart):
+        (WebCore::JSXMLHttpRequest::onprogress):
+        (WebCore::JSXMLHttpRequest::setOnprogress):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::mark):
+        (WebCore::JSXMLHttpRequestUpload::onabort):
+        (WebCore::JSXMLHttpRequestUpload::setOnabort):
+        (WebCore::JSXMLHttpRequestUpload::onerror):
+        (WebCore::JSXMLHttpRequestUpload::setOnerror):
+        (WebCore::JSXMLHttpRequestUpload::onload):
+        (WebCore::JSXMLHttpRequestUpload::setOnload):
+        (WebCore::JSXMLHttpRequestUpload::onloadstart):
+        (WebCore::JSXMLHttpRequestUpload::setOnloadstart):
+        (WebCore::JSXMLHttpRequestUpload::onprogress):
+        (WebCore::JSXMLHttpRequestUpload::setOnprogress):
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * dom/EventTarget.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::associatedFrame):
+        * dom/EventTargetNode.h:
+        * dom/EventTargetNode.idl:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::associatedFrame):
+        * dom/MessagePort.h:
+        (WebCore::MessagePort::setOnmessage):
+        (WebCore::MessagePort::onmessage):
+        (WebCore::MessagePort::setOnclose):
+        (WebCore::MessagePort::onclose):
+        * dom/MessagePort.idl:
+        * loader/appcache/DOMApplicationCache.h:
+        (WebCore::DOMApplicationCache::setOnchecking):
+        (WebCore::DOMApplicationCache::onchecking):
+        (WebCore::DOMApplicationCache::setOnerror):
+        (WebCore::DOMApplicationCache::onerror):
+        (WebCore::DOMApplicationCache::setOnnoupdate):
+        (WebCore::DOMApplicationCache::onnoupdate):
+        (WebCore::DOMApplicationCache::setOndownloading):
+        (WebCore::DOMApplicationCache::ondownloading):
+        (WebCore::DOMApplicationCache::setOnprogress):
+        (WebCore::DOMApplicationCache::onprogress):
+        (WebCore::DOMApplicationCache::setOnupdateready):
+        (WebCore::DOMApplicationCache::onupdateready):
+        (WebCore::DOMApplicationCache::setOncached):
+        (WebCore::DOMApplicationCache::oncached):
+        (WebCore::DOMApplicationCache::associatedFrame):
+        * loader/appcache/DOMApplicationCache.idl:
+        * svg/EventTargetSVGElementInstance.cpp:
+        (WebCore::EventTargetSVGElementInstance::associatedFrame):
+        (WebCore::EventTargetSVGElementInstance::addEventListener):
+        (WebCore::EventTargetSVGElementInstance::removeEventListener):
+        (WebCore::EventTargetSVGElementInstance::dispatchEvent):
+        * svg/EventTargetSVGElementInstance.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::associatedFrame):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::setOnreadystatechange):
+        (WebCore::XMLHttpRequest::onreadystatechange):
+        (WebCore::XMLHttpRequest::setOnabort):
+        (WebCore::XMLHttpRequest::onabort):
+        (WebCore::XMLHttpRequest::setOnerror):
+        (WebCore::XMLHttpRequest::onerror):
+        (WebCore::XMLHttpRequest::setOnload):
+        (WebCore::XMLHttpRequest::onload):
+        (WebCore::XMLHttpRequest::setOnloadstart):
+        (WebCore::XMLHttpRequest::onloadstart):
+        (WebCore::XMLHttpRequest::setOnprogress):
+        (WebCore::XMLHttpRequest::onprogress):
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::associatedFrame):
+        * xml/XMLHttpRequestUpload.h:
+        (WebCore::XMLHttpRequestUpload::setOnabort):
+        (WebCore::XMLHttpRequestUpload::onabort):
+        (WebCore::XMLHttpRequestUpload::setOnerror):
+        (WebCore::XMLHttpRequestUpload::onerror):
+        (WebCore::XMLHttpRequestUpload::setOnload):
+        (WebCore::XMLHttpRequestUpload::onload):
+        (WebCore::XMLHttpRequestUpload::setOnloadstart):
+        (WebCore::XMLHttpRequestUpload::onloadstart):
+        (WebCore::XMLHttpRequestUpload::setOnprogress):
+        (WebCore::XMLHttpRequestUpload::onprogress):
+        * xml/XMLHttpRequestUpload.idl:
+
 2008-09-30  Darin Adler  <darin@apple.com>
 
         - roll out assertion breaking regression tests

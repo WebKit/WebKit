@@ -30,6 +30,8 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
+#include "Frame.h"
+#include "XMLHttpRequest.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
 
@@ -40,6 +42,14 @@ using namespace EventNames;
 XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
     : m_xmlHttpRequest(xmlHttpRequest)
 {
+}
+
+Frame* XMLHttpRequestUpload::associatedFrame() const
+{
+    XMLHttpRequest* xmlHttpRequest = associatedXMLHttpRequest();
+    if (!xmlHttpRequest)
+        return 0;
+    return xmlHttpRequest->associatedFrame();
 }
 
 void XMLHttpRequestUpload::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)

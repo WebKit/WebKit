@@ -81,6 +81,13 @@ MessagePort::~MessagePort()
         m_document->destroyedMessagePort(this);
 }
 
+Frame* MessagePort::associatedFrame() const
+{
+    if (!m_document)
+        return 0;
+    return m_document->frame();
+}
+
 PassRefPtr<MessagePort> MessagePort::clone(Document* newOwner, ExceptionCode& ec)
 {
     if (!m_entangledPort) {

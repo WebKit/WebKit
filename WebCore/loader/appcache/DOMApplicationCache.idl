@@ -25,9 +25,10 @@
  
 module offline {
  
-    interface [Conditional=OFFLINE_WEB_APPLICATIONS,
-               CustomMarkFunction] DOMApplicationCache {
-    
+    interface [
+        Conditional=OFFLINE_WEB_APPLICATIONS,
+        CustomMarkFunction
+    ] DOMApplicationCache {
         // update status
         const unsigned short UNCACHED = 0;
         const unsigned short IDLE = 1;
@@ -66,8 +67,8 @@ module offline {
         [Custom] void removeEventListener(in DOMString type, 
                                           in EventListener listener, 
                                           in boolean useCapture);
-        [Custom] boolean dispatchEvent(in Event evt)
+        boolean dispatchEvent(in Event evt)
             raises(EventException);
-};
+    };
 
 }

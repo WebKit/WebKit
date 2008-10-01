@@ -41,6 +41,7 @@ namespace WebCore {
     class Event;
     class EventListener;
     class EventTargetNode;
+    class Frame;
     class MessagePort;
     class RegisteredEventListener;
     class SVGElementInstance;
@@ -64,6 +65,8 @@ namespace WebCore {
 #if ENABLE(SVG)
         virtual SVGElementInstance* toSVGElementInstance();
 #endif
+
+        virtual Frame* associatedFrame() const = 0;
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) = 0;
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) = 0;

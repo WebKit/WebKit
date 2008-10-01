@@ -78,7 +78,7 @@ module core {
         [Custom] void removeEventListener(in DOMString type, 
                                           in EventListener listener, 
                                           in boolean useCapture);
-        [Custom] boolean dispatchEvent(in Event event)
+        boolean dispatchEvent(in Event event)
             raises(EventException);
     };
 

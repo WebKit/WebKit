@@ -47,7 +47,7 @@ module xml {
         [Custom] void removeEventListener(in DOMString type, 
                                           in EventListener listener, 
                                           in boolean useCapture);
-        [Custom] boolean dispatchEvent(in Event evt)
+        boolean dispatchEvent(in Event evt)
             raises(EventException);
     };
 

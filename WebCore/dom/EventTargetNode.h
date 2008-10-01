@@ -33,14 +33,15 @@ namespace WebCore {
 class Attribute;
 class Frame;
 
-class EventTargetNode : public Node,
-                        public EventTarget {
+class EventTargetNode : public Node, public EventTarget {
 public:
     EventTargetNode(Document*, bool isElement = false, bool isContainer = false);
     virtual ~EventTargetNode();
 
     virtual bool isEventTargetNode() const { return true; }
     virtual EventTargetNode* toNode() { return this; }
+
+    Frame* associatedFrame() const;
 
     virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);

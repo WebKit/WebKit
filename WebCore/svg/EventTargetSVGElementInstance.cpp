@@ -40,16 +40,23 @@ EventTargetSVGElementInstance::~EventTargetSVGElementInstance()
 {
 }
 
+Frame* EventTargetSVGElementInstance::associatedFrame() const
+{
+    if (SVGElement* element = correspondingElement())
+        return element->associatedFrame();
+    return 0;
+}
+
 void EventTargetSVGElementInstance::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    if (EventTargetNode* node = correspondingElement())
-        node->addEventListener(eventType, listener, useCapture);
+    if (SVGElement* element = correspondingElement())
+        element->addEventListener(eventType, listener, useCapture);
 }
 
 void EventTargetSVGElementInstance::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    if (EventTargetNode* node = correspondingElement())
-        node->removeEventListener(eventType, listener, useCapture);
+    if (SVGElement* element = correspondingElement())
+        element->removeEventListener(eventType, listener, useCapture);
 }
 
 bool EventTargetSVGElementInstance::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent)
@@ -62,14 +69,14 @@ bool EventTargetSVGElementInstance::dispatchEvent(PassRefPtr<Event> e, Exception
     }
 
     // The event has to be dispatched to the shadowTreeElement(), not the correspondingElement()!
-    EventTargetNode* node = shadowTreeElement();
-    if (!node)
+    SVGElement* element = shadowTreeElement();
+    if (!element)
         return false;
 
     evt->setTarget(this);
 
-    RefPtr<FrameView> view = node->document()->view();
-    return node->dispatchGenericEvent(evt.release(), ec, tempEvent);
+    RefPtr<FrameView> view = element->document()->view();
+    return element->dispatchGenericEvent(evt.release(), ec, tempEvent);
 }
 
 } // namespace WebCore

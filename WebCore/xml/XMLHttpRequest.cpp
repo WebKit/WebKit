@@ -231,6 +231,13 @@ XMLHttpRequest::~XMLHttpRequest()
         m_upload->disconnectXMLHttpRequest();
 }
 
+Frame* XMLHttpRequest::associatedFrame() const
+{
+    if (!m_doc)
+        return 0;
+    return m_doc->frame();
+}
+
 XMLHttpRequest::State XMLHttpRequest::readyState() const
 {
     return m_state;

@@ -37,101 +37,15 @@
 using namespace JSC;
 
 namespace WebCore {
-    
-JSValue* JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
-{
-    DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-    const UString& message = args.at(exec, 0)->toString(exec);
-
-    return toJS(exec, impl()->startConversation(window->document(), message).get());
-}
-
-JSValue* JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return jsUndefined();
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return jsUndefined();
-    RefPtr<JSUnprotectedEventListener> listener = window->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
-    if (!listener)
-        return jsUndefined();
-    impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
-    return jsUndefined();
-}
-
-JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return jsUndefined();
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return jsUndefined();
-    JSUnprotectedEventListener* listener = window->findJSUnprotectedEventListener(exec, args.at(exec, 1));
-    if (!listener)
-        return jsUndefined();
-    impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
-    return jsUndefined();
-    
-}
-    
-JSValue* JSMessagePort::dispatchEvent(JSC::ExecState* exec, const ArgList& args)
-{
-    ExceptionCode ec = 0;
-    
-    bool result = impl()->dispatchEvent(toEvent(args.at(exec, 0)), ec);
-    setDOMException(exec, ec);
-    return jsBoolean(result);    
-}
-
-void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return;
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return;
-    impl()->setOnMessageListener(window->findOrCreateJSUnprotectedEventListener(exec, value));
-}
-
-JSValue* JSMessagePort::onmessage(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onMessageListener()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return;
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return;
-    impl()->setOnCloseListener(window->findOrCreateJSUnprotectedEventListener(exec, value));
-}
-
-JSValue* JSMessagePort::onclose(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onCloseListener()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
 
 void JSMessagePort::mark()
 {
     DOMObject::mark();
- 
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onMessageListener()))
+
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onmessage()))
         listener->mark();
 
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onCloseListener()))
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onclose()))
         listener->mark();
 
     if (MessagePort* entangledPort = m_impl->entangledPort()) {
@@ -149,6 +63,71 @@ void JSMessagePort::mark()
             listener->mark();
         }
     }
+}
+
+JSValue* JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
+{
+    DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    const UString& message = args.at(exec, 0)->toString(exec);
+
+    return toJS(exec, impl()->startConversation(window->document(), message).get());
+}
+
+JSValue* JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
+{
+    Frame* frame = impl()->associatedFrame();
+    if (!frame)
+        return jsUndefined();
+    RefPtr<JSUnprotectedEventListener> listener = toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
+    if (!listener)
+        return jsUndefined();
+    impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
+    return jsUndefined();
+}
+
+JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
+{
+    Frame* frame = impl()->associatedFrame();
+    if (!frame)
+        return jsUndefined();
+    JSUnprotectedEventListener* listener = toJSDOMWindow(frame)->findJSUnprotectedEventListener(exec, args.at(exec, 1));
+    if (!listener)
+        return jsUndefined();
+    impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
+    return jsUndefined();
+    
+}
+
+void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
+{
+    Frame* frame = impl()->associatedFrame();
+    if (!frame)
+        return;
+    impl()->setOnmessage(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value));
+}
+
+JSValue* JSMessagePort::onmessage(ExecState*) const
+{
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onmessage()))
+        if (JSObject* listenerObj = listener->listenerObj())
+            return listenerObj;
+    return jsNull();
+}
+
+void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
+{
+    Frame* frame = impl()->associatedFrame();
+    if (!frame)
+        return;
+    impl()->setOnclose(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value));
+}
+
+JSValue* JSMessagePort::onclose(ExecState*) const
+{
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onclose()))
+        if (JSObject* listenerObj = listener->listenerObj())
+            return listenerObj;
+    return jsNull();
 }
 
 } // namespace WebCore
