@@ -1,3 +1,31 @@
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
+        Move prohibitsScrolling from the Frame to the ScrollView.
+
+        Reviewed by Sam Weinig
+
+        * WebCore.base.exp:
+        * page/Frame.cpp:
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollRectIntoViewRecursively):
+        (WebCore::FrameView::setScrollPosition):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::init):
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::setScrollPosition):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::setProhibitsScrolling):
+        (WebCore::ScrollView::prohibitsScrolling):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2008-10-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff Garen.

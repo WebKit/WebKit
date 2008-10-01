@@ -92,6 +92,10 @@ public:
     virtual void setCanHaveScrollbars(bool flag);
     bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarAlwaysOff || verticalScrollbarMode() != ScrollbarAlwaysOff; }
 
+    // If the prohibits scrolling flag is set, then all scrolling in the view (even programmatic scrolling) is turned off.
+    void setProhibitsScrolling(bool b) { m_prohibitsScrolling = b; }
+    bool prohibitsScrolling() const { return m_prohibitsScrolling; }
+
     // Whether or not a scroll view will blit visible contents when it is scrolled.  Blitting is disabled in situations
     // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
     void setCanBlitOnScroll(bool);
@@ -206,7 +210,8 @@ private:
     RefPtr<Scrollbar> m_verticalScrollbar;
     ScrollbarMode m_horizontalScrollbarMode;
     ScrollbarMode m_verticalScrollbarMode;
-    
+    bool m_prohibitsScrolling;
+
     HashSet<Widget*> m_children;
     bool m_canBlitOnScroll;
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.

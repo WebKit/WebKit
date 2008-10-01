@@ -177,9 +177,6 @@ public:
     float pageZoomFactor() const { return shouldApplyPageZoom() ? zoomFactor() : 1.0f; }
     float textZoomFactor() const { return shouldApplyTextZoom() ? zoomFactor() : 1.0f; }
 
-    bool prohibitsScrolling() const;
-    void setProhibitsScrolling(const bool);
-
 // === to be moved into Chrome
 
 public:

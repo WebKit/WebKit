@@ -1,5 +1,14 @@
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
+        Move prohibitsScrolling from the Frame to the ScrollView.
+
+        Reviewed by Sam Weinig
+
+        * WebView/WebView.mm:
+        (-[WebView setProhibitsMainFrameScrolling:]):
+
+2008-10-01  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21282
         
         Make contentsToScreen/screenToContents cross-platform.  Only implemented by Mac/Win right now.

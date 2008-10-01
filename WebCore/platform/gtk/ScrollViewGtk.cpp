@@ -303,9 +303,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     if (m_data->inUpdateScrollbars)
         return;
 
-    // FIXME: This code is here so we don't have to fork FrameView.h/.cpp.
-    // In the end, FrameView should just merge with ScrollView.
-    if (static_cast<const FrameView*>(this)->frame()->prohibitsScrolling())
+    if (prohibitsScrolling())
         return;
 
     m_data->inUpdateScrollbars = true;

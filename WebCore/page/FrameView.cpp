@@ -613,8 +613,6 @@ void FrameView::restoreScrollbar()
 
 void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 {
-    if (frame()->prohibitsScrolling())
-        return;
     bool wasInProgrammaticScroll = d->m_inProgrammaticScroll;
     d->m_inProgrammaticScroll = true;
     ScrollView::scrollRectIntoViewRecursively(r);
@@ -623,8 +621,6 @@ void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 
 void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
-    if (frame()->prohibitsScrolling())
-        return;
     bool wasInProgrammaticScroll = d->m_inProgrammaticScroll;
     d->m_inProgrammaticScroll = true;
     ScrollView::setScrollPosition(scrollPoint);

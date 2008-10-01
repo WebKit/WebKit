@@ -100,6 +100,7 @@
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/GCController.h>
 #import <WebCore/HTMLNames.h>
@@ -1559,7 +1560,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 {
     Frame* mainFrame = core([self mainFrame]);
     if (mainFrame)
-        mainFrame->setProhibitsScrolling(prohibits);
+        mainFrame->view()->setProhibitsScrolling(prohibits);
 }
 
 - (BOOL)alwaysShowHorizontalScroller

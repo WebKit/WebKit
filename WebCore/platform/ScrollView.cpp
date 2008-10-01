@@ -39,6 +39,7 @@ namespace WebCore {
 
 void ScrollView::init()
 {
+    m_prohibitsScrolling = false;
     m_canBlitOnScroll = true;
     m_horizontalScrollbarMode = m_verticalScrollbarMode = ScrollbarAuto;
     if (platformWidget())
@@ -156,6 +157,9 @@ IntPoint ScrollView::maximumScrollPosition() const
 
 void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 {
+    if (prohibitsScrolling())
+        return;
+
     IntPoint p(max(0, r.x()), max(0, r.y()));
     ScrollView* view = this;
     while (view) {
@@ -167,6 +171,9 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
 
 void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 {
+    if (prohibitsScrolling())
+        return;
+
     if (platformWidget()) {
         platformSetScrollPosition(scrollPoint);
         return;
