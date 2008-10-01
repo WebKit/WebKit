@@ -1,3 +1,9 @@
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        - Mac build fix
+
+        * WebCore.base.exp:
+
 2008-10-01  Timothy Hatcher  <timothy@apple.com>
 
         Prevent stealing focus from the search field when focusing a DOM node.
