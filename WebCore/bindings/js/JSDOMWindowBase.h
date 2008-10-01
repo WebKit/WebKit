@@ -69,7 +69,7 @@ namespace WebCore {
 
         int installTimeout(const JSC::UString& handler, int t, bool singleShot);
         int installTimeout(JSC::ExecState*, JSC::JSValue* function, const JSC::ArgList& args, int t, bool singleShot);
-        void clearTimeout(int timerId, bool delAction = true);
+        void removeTimeout(int timerId, bool delAction = true);
 
         void pauseTimeouts(OwnPtr<PausedTimeouts>&);
         void resumeTimeouts(OwnPtr<PausedTimeouts>&);

@@ -23,7 +23,6 @@
 #include "config.h"
 #include "JSDOMWindowBase.h"
 
-#include "Base64.h"
 #include "CString.h"
 #include "Console.h"
 #include "DOMWindow.h"
@@ -72,18 +71,15 @@
 
 using namespace JSC;
 
-static JSValue* windowProtoFuncAToB(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* windowProtoFuncBToA(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* windowProtoFuncOpen(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* windowProtoFuncSetTimeout(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* windowProtoFuncClearTimeoutOrInterval(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* windowProtoFuncSetInterval(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* windowProtoFuncShowModalDialog(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* windowProtoFuncNotImplemented(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 static JSValue* jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&);
 static JSValue* jsDOMWindowBaseEvent(ExecState*, const Identifier&, const PropertySlot&);
 static void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValue*);
+
+// Constructors
 static JSValue* jsDOMWindowBaseAudio(ExecState*, const Identifier&, const PropertySlot&);
 static void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValue*);
 static JSValue* jsDOMWindowBaseImage(ExecState*, const Identifier&, const PropertySlot&);
@@ -149,13 +145,7 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 
 /*
 @begin JSDOMWindowBaseTable
 # -- Functions --
-  atob                          windowProtoFuncAToB                         DontDelete|Function 1
-  btoa                          windowProtoFuncBToA                         DontDelete|Function 1
   open                          windowProtoFuncOpen                         DontDelete|Function 3
-  setTimeout                    windowProtoFuncSetTimeout                   DontDelete|Function 2
-  clearTimeout                  windowProtoFuncClearTimeoutOrInterval       DontDelete|Function 1
-  setInterval                   windowProtoFuncSetInterval                  DontDelete|Function 2
-  clearInterval                 windowProtoFuncClearTimeoutOrInterval       DontDelete|Function 1
   showModalDialog               windowProtoFuncShowModalDialog              DontDelete|Function 1
 # Not implemented
   captureEvents                 windowProtoFuncNotImplemented               DontDelete|Function 0
@@ -799,69 +789,6 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 
 using namespace WebCore;
 
-JSValue* windowProtoFuncAToB(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
-{
-    JSDOMWindow* window = toJSDOMWindow(thisValue);
-    if (!window)
-        return throwError(exec, TypeError);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
-
-    JSValue* v = args.at(exec, 0);
-    if (v->isNull())
-        return jsEmptyString(exec);
-
-    UString s = v->toString(exec);
-    if (!s.is8Bit()) {
-        setDOMException(exec, INVALID_CHARACTER_ERR);
-        return jsUndefined();
-    }
-
-    Vector<char> in(s.size());
-    for (int i = 0; i < s.size(); ++i)
-        in[i] = static_cast<char>(s.data()[i]);
-    Vector<char> out;
-
-    if (!base64Decode(in, out))
-        return throwError(exec, GeneralError, "Cannot decode base64");
-
-    return jsString(exec, String(out.data(), out.size()));
-}
-
-JSValue* windowProtoFuncBToA(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
-{
-    JSDOMWindow* window = toJSDOMWindow(thisValue);
-    if (!window)
-        return throwError(exec, TypeError);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
-
-    JSValue* v = args.at(exec, 0);
-    if (v->isNull())
-        return jsEmptyString(exec);
-
-    UString s = v->toString(exec);
-    if (!s.is8Bit()) {
-        setDOMException(exec, INVALID_CHARACTER_ERR);
-        return jsUndefined();
-    }
-
-    Vector<char> in(s.size());
-    for (int i = 0; i < s.size(); ++i)
-        in[i] = static_cast<char>(s.data()[i]);
-    Vector<char> out;
-
-    base64Encode(in, out);
-
-    return jsString(exec, String(out.data(), out.size()));
-}
-
 JSValue* windowProtoFuncOpen(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
     JSDOMWindow* window = toJSDOMWindow(thisValue);
@@ -931,48 +858,6 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject*, JSValue* thisValue, con
         return jsUndefined();
 
     return toJS(exec, frame->domWindow()); // global object
-}
-
-static JSValue* setTimeoutOrInterval(ExecState* exec, JSValue* thisValue, const ArgList& args, bool timeout)
-{
-    JSDOMWindow* window = toJSDOMWindow(thisValue);
-    if (!window)
-        return throwError(exec, TypeError);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    JSValue* v = args.at(exec, 0);
-    int delay = args.at(exec, 1)->toInt32(exec);
-    if (v->isString())
-        return jsNumber(exec, window->installTimeout(static_cast<JSString*>(v)->value(), delay, timeout));
-    CallData callData;
-    if (v->getCallData(callData) == CallTypeNone)
-        return jsUndefined();
-    ArgList argsTail;
-    args.getSlice(2, argsTail);
-    return jsNumber(exec, window->installTimeout(exec, v, argsTail, delay, timeout));
-}
-
-JSValue* windowProtoFuncClearTimeoutOrInterval(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
-{
-    JSDOMWindow* window = toJSDOMWindow(thisValue);
-    if (!window)
-        return throwError(exec, TypeError);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    window->clearTimeout(args.at(exec, 0)->toInt32(exec));
-    return jsUndefined();
-}
-
-JSValue* windowProtoFuncSetTimeout(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
-{
-    return setTimeoutOrInterval(exec, thisValue, args, true);
-}
-
-JSValue* windowProtoFuncSetInterval(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
-{
-    return setTimeoutOrInterval(exec, thisValue, args, false);
 }
 
 JSValue* windowProtoFuncShowModalDialog(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
@@ -1090,7 +975,7 @@ void JSDOMWindowBase::resumeTimeouts(OwnPtr<PausedTimeouts>& timeouts)
     timeouts.clear();
 }
 
-void JSDOMWindowBase::clearTimeout(int timeoutId, bool delAction)
+void JSDOMWindowBase::removeTimeout(int timeoutId, bool delAction)
 {
     // timeout IDs have to be positive, and 0 and -1 are unsafe to
     // even look up since they are the empty and deleted value

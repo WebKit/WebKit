@@ -12685,11 +12685,11 @@
 			isa = PBXGroup;
 			children = (
 				93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */,
-				E1CA84930E923BEF00114251 /* DOMProtect.cpp */,
-				E1CA84910E923BE900114251 /* DOMProtect.h */,
 				93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */,
 				14813BF309EDF88E00F757E1 /* IDLParser.pm */,
 				93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */,
+				E1CA84930E923BEF00114251 /* DOMProtect.cpp */,
+				E1CA84910E923BE900114251 /* DOMProtect.h */,
 				BC1A3793097C6FB10019F3D8 /* js */,
 				BC1A3794097C6FC40019F3D8 /* objc */,
 			);
@@ -13652,10 +13652,6 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
-				63189AE20E83A33300012E41 /* NodeRareData.h */,
-				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
-				54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */,
-				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
@@ -13713,6 +13709,7 @@
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
+				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
 				A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */,
 				A8EA7EBA0A1945D000A8EF5F /* Entity.h */,
 				93EEC1EB09C2877700C515D1 /* Entity.idl */,
@@ -13733,6 +13730,7 @@
 				85AFA7420AAF298400E84305 /* EventTarget.idl */,
 				14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */,
 				14EC267D09CA07E000E1EEEC /* EventTargetNode.h */,
+				BC3B7AEF0E919ADA00D54065 /* EventTargetNode.idl */,
 				BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */,
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				93831B560D087D6000E5C984 /* ExceptionCode.cpp */,
@@ -13781,6 +13779,8 @@
 				1A750D870A90E394000FF215 /* NodeIterator.idl */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				85ACA9FA0A9B631000671E90 /* NodeList.idl */,
+				63189AE20E83A33300012E41 /* NodeRareData.h */,
+				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
 				9382AAB10D8C386100F357A6 /* NodeWithIndex.h */,
 				A8EA7EB70A1945D000A8EF5F /* Notation.cpp */,
 				A8EA7EB60A1945D000A8EF5F /* Notation.h */,
@@ -13850,7 +13850,7 @@
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				F523D30902DE4476018635CA /* XMLTokenizer.cpp */,
 				F523D30A02DE4476018635CA /* XMLTokenizer.h */,
-				BC3B7AEF0E919ADA00D54065 /* EventTargetNode.idl */,
+				54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */,
 			);
 			path = dom;
 			sourceTree = "<group>";

@@ -21,6 +21,7 @@
 #include "JSDOMWindowCustom.h"
 
 #include "AtomicString.h"
+#include "Base64.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -190,6 +191,93 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     setDOMException(exec, ec);
 
     return jsUndefined();
+}
+
+static JSValue* setTimeoutOrInterval(ExecState* exec, JSDOMWindow* window, const ArgList& args, bool timeout)
+{
+    JSValue* v = args.at(exec, 0);
+    int delay = args.at(exec, 1)->toInt32(exec);
+    if (v->isString())
+        return jsNumber(exec, window->installTimeout(static_cast<JSString*>(v)->value(), delay, timeout));
+    CallData callData;
+    if (v->getCallData(callData) == CallTypeNone)
+        return jsUndefined();
+    ArgList argsTail;
+    args.getSlice(2, argsTail);
+    return jsNumber(exec, window->installTimeout(exec, v, argsTail, delay, timeout));
+}
+
+JSValue* JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
+{
+    return setTimeoutOrInterval(exec, this, args, true);
+}
+
+JSValue* JSDOMWindow::clearTimeout(ExecState* exec, const ArgList& args)
+{
+    removeTimeout(args.at(exec, 0)->toInt32(exec));
+    return jsUndefined();
+}
+
+JSValue* JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
+{
+    return setTimeoutOrInterval(exec, this, args, false);
+}
+
+JSValue* JSDOMWindow::clearInterval(ExecState* exec, const ArgList& args)
+{
+    removeTimeout(args.at(exec, 0)->toInt32(exec));
+    return jsUndefined();
+}
+
+JSValue* JSDOMWindow::atob(ExecState* exec, const ArgList& args)
+{
+    if (args.size() < 1)
+        return throwError(exec, SyntaxError, "Not enough arguments");
+
+    JSValue* v = args.at(exec, 0);
+    if (v->isNull())
+        return jsEmptyString(exec);
+
+    UString s = v->toString(exec);
+    if (!s.is8Bit()) {
+        setDOMException(exec, INVALID_CHARACTER_ERR);
+        return jsUndefined();
+    }
+
+    Vector<char> in(s.size());
+    for (int i = 0; i < s.size(); ++i)
+        in[i] = static_cast<char>(s.data()[i]);
+    Vector<char> out;
+
+    if (!base64Decode(in, out))
+        return throwError(exec, GeneralError, "Cannot decode base64");
+
+    return jsString(exec, String(out.data(), out.size()));
+}
+
+JSValue* JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
+{
+    if (args.size() < 1)
+        return throwError(exec, SyntaxError, "Not enough arguments");
+
+    JSValue* v = args.at(exec, 0);
+    if (v->isNull())
+        return jsEmptyString(exec);
+
+    UString s = v->toString(exec);
+    if (!s.is8Bit()) {
+        setDOMException(exec, INVALID_CHARACTER_ERR);
+        return jsUndefined();
+    }
+
+    Vector<char> in(s.size());
+    for (int i = 0; i < s.size(); ++i)
+        in[i] = static_cast<char>(s.data()[i]);
+    Vector<char> out;
+
+    base64Encode(in, out);
+
+    return jsString(exec, String(out.data(), out.size()));
 }
 
 JSValue* JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)

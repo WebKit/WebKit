@@ -1,3 +1,24 @@
+2008-10-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Move setTimeout, clearTimeout, setInterval, clearInterval, atob and btoa
+        to JSDOMWindow from JSDOMWindowBase.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::removeTimeout):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::setTimeoutOrInterval):
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::clearTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        (WebCore::JSDOMWindow::clearInterval):
+        (WebCore::JSDOMWindow::atob):
+        (WebCore::JSDOMWindow::btoa):
+        * page/DOMWindow.idl:
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         - Mac build fix

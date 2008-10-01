@@ -154,6 +154,22 @@ module window {
         [DoNotCheckDomainSecurity, Custom] void postMessage(in DOMString message, in [Optional] MessagePort messagePort, in DOMString targetOrigin)
             raises(DOMException);
 
+        // Timers
+        [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
+        // [Custom] long setTimeout(in DOMString code, in long timeout);
+        [Custom] void clearTimeout(in long handle);
+
+        [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
+        // [Custom] long setInterval(in DOMString code, in long timeout);
+        [Custom] void clearInterval(in long handle);
+
+        // Base64
+        [Custom] DOMString atob(in DOMString string)
+            raises(DOMException);
+        [Custom] DOMString btoa(in DOMString string)
+            raises(DOMException);
+
+        // Events
         attribute [ProtectedListener] EventListener onabort;
         attribute [ProtectedListener] EventListener onblur;
         attribute [ProtectedListener] EventListener onchange;
