@@ -23,7 +23,7 @@
 
 #include "Base64.h"
 #include "FontPlatformData.h"
-#include "GetEOTHeader.h"
+#include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
 #include "SoftLinking.h"
 #include <ApplicationServices/ApplicationServices.h>
@@ -49,9 +49,12 @@ FontCustomPlatformData::~FontCustomPlatformData()
 {
     CGFontRelease(m_cgFont);
     if (m_fontReference) {
-        ASSERT(T2embedLibrary());
-        ULONG status;
-        TTDeleteEmbeddedFont(m_fontReference, 0, &status);
+        if (m_name.isNull()) {
+            ASSERT(T2embedLibrary());
+            ULONG status;
+            TTDeleteEmbeddedFont(m_fontReference, 0, &status);
+        } else
+            RemoveFontMemResourceEx(m_fontReference);
     }
 }
 
@@ -62,7 +65,10 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     ASSERT(T2embedLibrary());
 
     LOGFONT logFont;
-    TTGetNewFontName(&m_fontReference, logFont.lfFaceName, LF_FACESIZE, 0, 0);
+    if (m_name.isNull())
+        TTGetNewFontName(&m_fontReference, logFont.lfFaceName, LF_FACESIZE, 0, 0);
+    else
+        memcpy(logFont.lfFaceName, m_name.charactersWithNullTermination(), sizeof(logFont.lfFaceName[0]) * min(static_cast<size_t>(LF_FACESIZE), 1 + m_name.length()));
 
     logFont.lfHeight = -size;
     if (renderingMode == NormalRenderingMode)
@@ -213,12 +219,17 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     EOTStream eotStream(eotHeader, buffer, overlayDst, overlaySrc, overlayLength);
 
     LONG loadEmbeddedFontResult = TTLoadEmbeddedFont(&fontReference, TTLOAD_PRIVATE, &privStatus, LICENSE_PREVIEWPRINT, &status, readEmbedProc, &eotStream, const_cast<LPWSTR>(fontName.charactersWithNullTermination()), 0, 0);
-    if (loadEmbeddedFontResult != E_NONE) {
-        CGFontRelease(cgFont);
-        return 0;
+    if (loadEmbeddedFontResult == E_NONE)
+        fontName = String();
+    else {
+        fontReference = renameAndActivateFont(buffer, fontName);
+        if (!fontReference) {
+            CGFontRelease(cgFont);
+            return 0;
+        }
     }
 
-    return new FontCustomPlatformData(cgFont, fontReference);
+    return new FontCustomPlatformData(cgFont, fontReference, fontName);
 }
 
 }

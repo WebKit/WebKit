@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GetEOTHeader.h"
+#include "OpenTypeUtilities.h"
 
 #include "SharedBuffer.h"
 
@@ -32,11 +32,13 @@ namespace WebCore {
 
 struct BigEndianUShort { 
     operator unsigned short() const { return (v & 0x00ff) << 8 | v >> 8; }
+    BigEndianUShort(unsigned short u) : v((u & 0x00ff) << 8 | u >> 8) { }
     unsigned short v;
 };
 
 struct BigEndianULong { 
     operator unsigned() const { return (v & 0xff) << 24 | (v & 0xff00) << 8 | (v & 0xff0000) >> 8 | v >> 24; }
+    BigEndianULong(unsigned u) : v((u & 0xff) << 24 | (u & 0xff00) << 8 | (u & 0xff0000) >> 8 | u >> 24) { }
     unsigned v;
 };
 
@@ -314,6 +316,72 @@ bool getEOTHeader(SharedBuffer* fontData, Vector<UInt8, 512>& eotHeader, size_t&
     prefix->eotSize = eotHeader.size() + fontData->size();
 
     return true;
+}
+
+HANDLE renameAndActivateFont(SharedBuffer* fontData, const String& fontName)
+{
+    size_t originalDataSize = fontData->size();
+    const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(fontData->data());
+
+    unsigned t;
+    for (t = 0; t < sfnt->numTables; ++t) {
+        if (sfnt->tables[t].tag == 'name')
+            break;
+    }
+    if (t == sfnt->numTables)
+        return 0;
+
+    const int nameRecordCount = 5;
+
+    // Rounded up to a multiple of 4 to simplify the checksum calculation.
+    size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + fontName.length() * sizeof(UChar)) & ~3) + 4;
+
+    Vector<char> rewrittenFontData(fontData->size() + nameTableSize);
+    char* data = rewrittenFontData.data();
+    memcpy(data, fontData->data(), originalDataSize);
+
+    // Make the table directory entry point to the new 'name' table.
+    sfntHeader* rewrittenSfnt = reinterpret_cast<sfntHeader*>(data);
+    rewrittenSfnt->tables[t].length = nameTableSize;
+    rewrittenSfnt->tables[t].offset = originalDataSize;
+
+    // Write the new 'name' table after the original font data.
+    nameTable* name = reinterpret_cast<nameTable*>(data + originalDataSize);
+    name->format = 0;
+    name->count = nameRecordCount;
+    name->stringOffset = offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord);
+    for (unsigned i = 0; i < nameRecordCount; ++i) {
+        name->nameRecords[i].platformID = 3;
+        name->nameRecords[i].encodingID = 1;
+        name->nameRecords[i].languageID = 0x0409;
+        name->nameRecords[i].offset = 0;
+        name->nameRecords[i].length = fontName.length() * sizeof(UChar);
+    }
+
+    // The required 'name' record types: Family, Style, Unique, Full and PostScript.
+    name->nameRecords[0].nameID = 1;
+    name->nameRecords[1].nameID = 2;
+    name->nameRecords[2].nameID = 3;
+    name->nameRecords[3].nameID = 4;
+    name->nameRecords[4].nameID = 6;
+
+    for (unsigned i = 0; i < fontName.length(); ++i)
+        reinterpret_cast<BigEndianUShort*>(data + originalDataSize + name->stringOffset)[i] = fontName[i];
+
+    // Update the table checksum in the directory entry.
+    rewrittenSfnt->tables[t].checkSum = 0;
+    for (unsigned i = 0; i * sizeof(BigEndianULong) < nameTableSize; ++i)
+        rewrittenSfnt->tables[t].checkSum = rewrittenSfnt->tables[t].checkSum + reinterpret_cast<BigEndianULong*>(name)[i];
+
+    DWORD numFonts = 0;
+    HANDLE fontHandle = AddFontMemResourceEx(data, originalDataSize + nameTableSize, 0, &numFonts);
+
+    if (fontHandle && numFonts != 1) {
+        RemoveFontMemResourceEx(fontHandle);
+        return 0;
+    }
+
+    return fontHandle;
 }
 
 }

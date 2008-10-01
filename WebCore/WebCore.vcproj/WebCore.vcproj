@@ -4312,14 +4312,6 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\GetEOTHeader.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\GetEOTHeader.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCairoWin.cpp"
 						>
 						<FileConfiguration
@@ -4517,6 +4509,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\OpenTypeUtilities.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\OpenTypeUtilities.h"
 						>
 					</File>
 					<File

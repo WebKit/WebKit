@@ -1,3 +1,43 @@
+2008-09-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21127
+          <rdar://problem/6259134> REGRESSION: CFF format fonts fail to load
+
+        If TTLoadEmbeddedFont fails, use AddFontMemResourceEx after changing
+        the font name in memory.
+
+        * WebCore.vcproj/WebCore.vcproj: Renamed GetEOTHeader.* to
+        OpenTypeUtilities.*.
+
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Added a call
+        to RemoveFontMemResourceEx to match AddFontMemResourceEx when it is
+        used.
+        (WebCore::FontCustomPlatformData::fontPlatformData): Added a code path
+        for fonts loaded using AddFontMemResourceEx.
+        (WebCore::createFontCustomPlatformData): Added a call to
+        renameAndActivateFont() if TTLoadEmbeddedFont fails. If
+        TTLoadEmbeddedFont succeeds, set the font name to the null string, as
+        fontPlatformData() will retrieve the name from the font reference.
+
+        * platform/graphics/win/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Added a
+        font name member.
+
+        * platform/graphics/win/GetEOTHeader.cpp: Renamed.
+        * platform/graphics/win/GetEOTHeader.h: Renamed.
+
+        * platform/graphics/win/OpenTypeUtilities.cpp: Copied from platform/graphics/win/GetEOTHeader.cpp.
+        (WebCore::BigEndianUShort::BigEndianUShort): Added a constructor.
+        (WebCore::BigEndianULong::BigEndianULong): Ditto.
+        (WebCore::renameAndActivateFont): Added. Creates an in-memory copy of
+        the font data and modifies it to have the given name, then activates
+        it using AddFontMemResourceEx.
+
+        * platform/graphics/win/OpenTypeUtilities.h: Copied from platform/graphics/win/GetEOTHeader.h.
+
 2008-09-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
