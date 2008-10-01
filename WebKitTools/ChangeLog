@@ -1,3 +1,19 @@
+2008-09-30  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix many leaks seen on fast/backgrounds/svg-as-background-1.html.
+
+        JavaScript wrappers were keeping DOM objects alive, which was leading to the SVG background image
+        being kept alive in the memory cache past our last attempt to empty the cache prior to quitting.
+        We need to empty the memory cache after forcing a JavaScript garbage collection to ensure that
+        any live JavaScript wrappers are collected and their corresponding DOM objects have a chance to be
+        torn down before we exit.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        (main):
+
 2008-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
