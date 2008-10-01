@@ -1,3 +1,13 @@
+2008-09-30  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remove console output that can cause test to fail on slow
+        machines.
+
+        * animations/transition-and-animation-2-expected.txt:
+        * animations/transition-and-animation-2.html:
+
 2008-09-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
