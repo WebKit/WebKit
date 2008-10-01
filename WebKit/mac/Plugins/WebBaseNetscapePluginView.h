@@ -29,7 +29,6 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import <Cocoa/Cocoa.h>
 
-#import <AGL/agl.h>
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
 #import <WebKit/WebBasePluginPackage.h>
@@ -51,7 +50,6 @@ typedef union PluginPort {
     NP_Port qdPort;
 #endif        
     NP_CGContext cgPort;
-    NP_GLContext aglPort;
 } PluginPort;
 
 typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
@@ -82,9 +80,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     NPDrawingModel drawingModel;
     NPEventModel eventModel;
     
-    // These are only valid when drawingModel is NPDrawingModelOpenGL
-    AGLContext aglContext;
-    NSWindow *aglWindow;
 
 #ifndef NP_NO_QUICKDRAW
     // This is only valid when drawingModel is NPDrawingModelQuickDraw

@@ -1,3 +1,27 @@
+2008-09-30  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the NPDrawingModelOpenGL entirely. To my knowledge no shipping plug-in ever used it, and no other browser engine
+        ever supported it.
+                              
+        * Plugins/WebBaseNetscapePluginView.h: Removed AGL.h import and OpenGL related ivars.
+        * Plugins/WebBaseNetscapePluginView.mm: Removed soft linking for OpenGL and AGL frameworks. 
+        Also removed many methods AGL/CGL support methods that are no longer necessary.
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]): Removed NPDrawingModelOpenGL related code.
+        (-[WebBaseNetscapePluginView restorePortState:]): Ditto.
+        (-[WebBaseNetscapePluginView sendEvent:isDrawRect:]): Ditto.
+        (-[WebBaseNetscapePluginView isNewWindowEqualToOldWindow]): Ditto.
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]): Ditto.
+        (-[WebBaseNetscapePluginView stop]): Ditto.
+        (-[WebBaseNetscapePluginView dealloc]): Ditto.
+        (-[WebBaseNetscapePluginView drawRect:]): 
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]): Ditto.
+        (-[WebBaseNetscapePluginView invalidateRegion:]): Ditto.
+        (-[WebBaseNetscapePluginView getVariable:value:]): Tell plug-ins WebKit does not support NPDrawingModelOpenGL.
+        (-[WebBaseNetscapePluginView setVariable:value:]): Removed NPDrawingModelOpenGL related code. 
+        (-[WebBaseNetscapePluginView _viewHasMoved]): Ditto.
+
 2008-09-30  Dave Hyatt  <hyatt@apple.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=21250
