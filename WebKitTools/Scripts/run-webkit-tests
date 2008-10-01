@@ -627,7 +627,7 @@ for my $test (@tests) {
     my $diffPercentage = "";
     my $diffResult = "passed";
     
-    if ($pixelTests) {
+    if ($pixelTests && !$isText) {
         my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
 
         my $actualHash = "";

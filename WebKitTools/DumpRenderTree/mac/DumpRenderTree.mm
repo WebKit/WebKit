@@ -867,12 +867,12 @@ void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
 
+    bool dumpAsText = gLayoutTestController->dumpAsText();
     if (dumpTree) {
         NSString *resultString = nil;
         NSData *resultData = nil;
         NSString *resultMimeType = @"text/plain";
 
-        bool dumpAsText = gLayoutTestController->dumpAsText();
         dumpAsText |= [[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"];
         gLayoutTestController->setDumpAsText(dumpAsText);
         if (gLayoutTestController->dumpAsText()) {
@@ -915,7 +915,7 @@ void dump()
         }            
     }
     
-    if (dumpPixels)
+    if (dumpAllPixels || (dumpPixels && !dumpAsText))
         dumpWebViewAsPixelsAndCompareWithExpected([currentTest UTF8String], dumpAllPixels);
 
     fflush(stdout);
