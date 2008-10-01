@@ -59,8 +59,6 @@ public:
     ScrollViewPrivate(ScrollView* view)
         : m_view(view)
         , m_inUpdateScrollbars(false)
-        , m_panScrollIconPoint(0,0)
-        , m_drawPanScrollIcon(false)
     {
     }
 
@@ -83,8 +81,6 @@ public:
     ScrollView* m_view;
     bool m_inUpdateScrollbars;
     HRGN m_dirtyRegion;
-    IntPoint m_panScrollIconPoint;
-    bool m_drawPanScrollIcon;
 };
 
 const int panIconSizeLength = 20;
@@ -145,9 +141,9 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     RECT r = updateRect;
     ::InvalidateRect(containingWindowHandle, &r, false);
 
-    if (m_drawPanScrollIcon) {
+    if (m_view->m_drawPanScrollIcon) {
         int panIconDirtySquareSizeLength = 2 * (panIconSizeLength + max(abs(scrollDelta.width()), abs(scrollDelta.height()))); // We only want to repaint what's necessary
-        IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
+        IntPoint panIconDirtySquareLocation = IntPoint(m_view->m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_view->m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
         IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation , IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
         
         m_view->updateWindowRect(panScrollIconDirtyRect);
@@ -356,98 +352,17 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
 void ScrollView::printPanScrollIcon(const IntPoint& iconPosition)
 {
-    m_data->m_drawPanScrollIcon = true;    
-    m_data->m_panScrollIconPoint = IntPoint(iconPosition.x() - panIconSizeLength / 2 , iconPosition.y() - panIconSizeLength / 2) ;
+    m_drawPanScrollIcon = true;    
+    m_panScrollIconPoint = IntPoint(iconPosition.x() - panIconSizeLength / 2 , iconPosition.y() - panIconSizeLength / 2) ;
 
-    updateWindowRect(IntRect(m_data->m_panScrollIconPoint, IntSize(panIconSizeLength,panIconSizeLength)), true);    
+    updateWindowRect(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength,panIconSizeLength)), true);    
 }
 
 void ScrollView::removePanScrollIcon()
 {
-    m_data->m_drawPanScrollIcon = false; 
+    m_drawPanScrollIcon = false; 
 
-    updateWindowRect(IntRect(m_data->m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true);
-}
-
-void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
-{
-    // FIXME: This code is here so we don't have to fork FrameView.h/.cpp.
-    // In the end, FrameView should just merge with ScrollView.
-    ASSERT(isFrameView());
-
-    if (context->paintingDisabled() && !context->updatingControlTints())
-        return;
-
-    IntRect documentDirtyRect = rect;
-    documentDirtyRect.intersect(frameRect());
-
-    context->save();
-
-    context->translate(x(), y());
-    documentDirtyRect.move(-x(), -y());
-
-    context->translate(-scrollX(), -scrollY());
-    documentDirtyRect.move(scrollX(), scrollY());
-
-    context->clip(visibleContentRect());
-
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    frameView->frame()->paint(context, documentDirtyRect);
-
-    context->restore();
-
-    // Now paint the scrollbars.
-    if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
-        context->save();
-        IntRect scrollViewDirtyRect = rect;
-        scrollViewDirtyRect.intersect(frameRect());
-        context->translate(x(), y());
-        scrollViewDirtyRect.move(-x(), -y());
-        if (m_horizontalScrollbar)
-            m_horizontalScrollbar->paint(context, scrollViewDirtyRect);
-        if (m_verticalScrollbar)
-            m_verticalScrollbar->paint(context, scrollViewDirtyRect);
-
-        // Fill the scroll corner with white.
-        IntRect hCorner;
-        if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-            hCorner = IntRect(m_horizontalScrollbar->width(),
-                              height() - m_horizontalScrollbar->height(),
-                              width() - m_horizontalScrollbar->width(),
-                              m_horizontalScrollbar->height());
-            if (hCorner.intersects(scrollViewDirtyRect)) {
-                Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-                if (page && page->settings()->shouldPaintCustomScrollbars()) {
-                    if (!page->chrome()->client()->paintCustomScrollCorner(context, hCorner))
-                        context->fillRect(hCorner, Color::white);
-                }
-            }
-        }
-
-        if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-            IntRect vCorner(width() - m_verticalScrollbar->width(),
-                            m_verticalScrollbar->height(),
-                            m_verticalScrollbar->width(),
-                            height() - m_verticalScrollbar->height());
-            if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect)) {
-                Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-                if (page && page->settings()->shouldPaintCustomScrollbars()) {
-                    if (!page->chrome()->client()->paintCustomScrollCorner(context, vCorner))
-                        context->fillRect(vCorner, Color::white);
-                }
-            }
-        }
-
-        context->restore();
-    }
-
-    //Paint the panScroll Icon
-    static RefPtr<Image> panScrollIcon;
-    if (m_data->m_drawPanScrollIcon) {
-        if (!panScrollIcon)
-            panScrollIcon = Image::loadPlatformResource("panIcon");
-        context->drawImage(panScrollIcon.get(), m_data->m_panScrollIconPoint);
-    }
+    updateWindowRect(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true);
 }
 
 void ScrollView::themeChanged()

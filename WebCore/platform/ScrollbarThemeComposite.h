@@ -43,6 +43,8 @@ public:
     virtual int trackPosition(Scrollbar*);
     virtual int trackLength(Scrollbar*);
 
+    virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
+
 protected:
     virtual bool hasButtons(Scrollbar*) = 0;
     virtual bool hasThumb(Scrollbar*) = 0;

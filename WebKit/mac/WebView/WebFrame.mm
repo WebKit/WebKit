@@ -559,7 +559,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
     GraphicsContext context(platformContext);
     
-    _private->coreFrame->paint(&context, enclosingIntRect(rect));
+    _private->coreFrame->view()->paintContents(&context, enclosingIntRect(rect));
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.

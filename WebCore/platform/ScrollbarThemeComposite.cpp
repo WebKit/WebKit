@@ -281,4 +281,14 @@ int ScrollbarThemeComposite::trackLength(Scrollbar* scrollbar)
     return (scrollbar->orientation() == HorizontalScrollbar) ? trackRect(scrollbar).width() : trackRect(scrollbar).height();
 }
 
+void ScrollbarThemeComposite::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)
+{
+    FrameView* frameView = static_cast<FrameView*>(view);
+    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
+    if (page && page->settings()->shouldPaintCustomScrollbars()) {
+        if (!page->chrome()->client()->paintCustomScrollCorner(context, cornerRect))
+            context->fillRect(cornerRect, Color::white);
+    }
+}
+
 }

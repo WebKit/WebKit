@@ -210,5 +210,17 @@ int ScrollbarThemeQt::trackLength(Scrollbar* scrollbar)
     return scrollbar->orientation() == HorizontalScrollbar ? track.width() : track.height();
 }
 
+void ScrollbarThemeQt::paintScrollbarCorner(ScrollView*, GraphicsContext* context, const IntRect& rect)
+{
+#if QT_VERSION < 0x040500
+    context->fillRect(rect, QApplication::palette().color(QPalette::Normal, QPalette::Window));
+#else
+    QStyleOption option;
+    option.rect = rect;
+    QApplication::style()->drawPrimitive(QStyle::PE_PanelScrollAreaCorner,
+            &option, context->platformContext(), 0);
+#endif
+}
+
 }
 

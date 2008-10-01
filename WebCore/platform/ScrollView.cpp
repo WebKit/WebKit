@@ -26,10 +26,12 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "Scrollbar.h"
+#include "ScrollbarTheme.h"
 
 using std::max;
 
@@ -43,6 +45,7 @@ void ScrollView::init()
         platformSetCanBlitOnScroll();
     m_scrollbarsAvoidingResizer = 0;
     m_scrollbarsSuppressed = false;
+    m_drawPanScrollIcon = false;
 }
 
 void ScrollView::addChild(Widget* child) 
@@ -352,6 +355,76 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
     }
 
     hostWindow()->repaint(contentsToWindow(rect), true, now);
+}
+
+void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
+{
+    if (platformWidget()) {
+        Widget::paint(context, rect);
+        return;
+    }
+
+    if (context->paintingDisabled() && !context->updatingControlTints())
+        return;
+
+    IntRect documentDirtyRect = rect;
+    documentDirtyRect.intersect(frameRect());
+
+    context->save();
+
+    context->translate(x(), y());
+    documentDirtyRect.move(-x(), -y());
+
+    context->translate(-scrollX(), -scrollY());
+    documentDirtyRect.move(scrollX(), scrollY());
+
+    context->clip(visibleContentRect());
+
+    paintContents(context, documentDirtyRect);
+
+    context->restore();
+
+    // Now paint the scrollbars.
+    if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
+        context->save();
+        IntRect scrollViewDirtyRect = rect;
+        scrollViewDirtyRect.intersect(frameRect());
+        context->translate(x(), y());
+        scrollViewDirtyRect.move(-x(), -y());
+        if (m_horizontalScrollbar)
+            m_horizontalScrollbar->paint(context, scrollViewDirtyRect);
+        if (m_verticalScrollbar)
+            m_verticalScrollbar->paint(context, scrollViewDirtyRect);
+
+        IntRect hCorner;
+        if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
+            hCorner = IntRect(m_horizontalScrollbar->width(),
+                              height() - m_horizontalScrollbar->height(),
+                              width() - m_horizontalScrollbar->width(),
+                              m_horizontalScrollbar->height());
+            if (hCorner.intersects(scrollViewDirtyRect))
+                ScrollbarTheme::nativeTheme()->paintScrollCorner(this, context, hCorner);
+        }
+
+        if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
+            IntRect vCorner(width() - m_verticalScrollbar->width(),
+                            m_verticalScrollbar->height(),
+                            m_verticalScrollbar->width(),
+                            height() - m_verticalScrollbar->height());
+            if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect))
+                ScrollbarTheme::nativeTheme()->paintScrollCorner(this, context, vCorner);
+        }
+
+        context->restore();
+    }
+
+    // Paint the panScroll Icon
+    static RefPtr<Image> panScrollIcon;
+    if (m_drawPanScrollIcon) {
+        if (!panScrollIcon)
+            panScrollIcon = Image::loadPlatformResource("panIcon");
+        context->drawImage(panScrollIcon.get(), m_panScrollIconPoint);
+    }
 }
 
 #if !PLATFORM(MAC)

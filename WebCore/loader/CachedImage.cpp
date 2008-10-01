@@ -29,7 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
-#include "Frame.h"
+#include "FrameView.h"
 #include "Request.h"
 #include "SystemTime.h"
 #include <wtf/Vector.h>
@@ -301,7 +301,7 @@ void CachedImage::didDraw(const Image* image)
     if (image != m_image)
         return;
     
-    double timeStamp = Frame::currentPaintTimeStamp();
+    double timeStamp = FrameView::currentPaintTimeStamp();
     if (!timeStamp) // If didDraw is called outside of a Frame paint.
         timeStamp = currentTime();
     

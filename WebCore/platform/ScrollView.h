@@ -184,8 +184,12 @@ public:
     IntPoint screenToContents(const IntPoint&) const;
 #endif
 
+    virtual void paint(GraphicsContext*, const IntRect&);
+
 protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
+    virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
+
     void updateWindowRect(const IntRect&, bool now = false);
 
 private:
@@ -201,6 +205,9 @@ private:
 
     int m_scrollbarsAvoidingResizer;
     bool m_scrollbarsSuppressed;
+
+    IntPoint m_panScrollIconPoint;
+    bool m_drawPanScrollIcon;
 
     void init();
 
@@ -235,8 +242,6 @@ private:
     
 #if !PLATFORM(MAC) && !PLATFORM(WX)
 public:
-    virtual void paint(GraphicsContext*, const IntRect&);
-
     virtual void setFrameRect(const IntRect&);
 
     void addToDirtyRegion(const IntRect&);

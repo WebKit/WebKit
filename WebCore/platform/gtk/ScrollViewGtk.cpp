@@ -465,69 +465,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     m_data->inUpdateScrollbars = false;
 }
 
-void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
-{
-    // FIXME: This code is here so we don't have to fork FrameView.h/.cpp.
-    // In the end, FrameView should just merge with ScrollView.
-    ASSERT(isFrameView());
-
-    if (context->paintingDisabled())
-        return;
-
-    IntRect documentDirtyRect = rect;
-    documentDirtyRect.intersect(frameRect());
-
-    context->save();
-
-    context->translate(x(), y());
-    documentDirtyRect.move(-x(), -y());
-
-    context->translate(-scrollX(), -scrollY());
-    documentDirtyRect.move(scrollX(), scrollY());
-
-    context->clip(enclosingIntRect(visibleContentRect()));
-    static_cast<const FrameView*>(this)->frame()->paint(context, documentDirtyRect);
-    context->restore();
-
-    // Now paint the scrollbars.
-    if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
-        context->save();
-        IntRect scrollViewDirtyRect = rect;
-        scrollViewDirtyRect.intersect(frameRect());
-        context->translate(x(), y());
-        scrollViewDirtyRect.move(-x(), -y());
-        if (m_horizontalScrollbar)
-            m_horizontalScrollbar->paint(context, scrollViewDirtyRect);
-        if (m_verticalScrollbar)
-            m_verticalScrollbar->paint(context, scrollViewDirtyRect);
-
-        /*
-         * FIXME: TODO: Check if that works with RTL
-         */
-        // Fill the scroll corner with white.
-        IntRect hCorner;
-        if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-            hCorner = IntRect(m_horizontalScrollbar->width(),
-                              height() - m_horizontalScrollbar->height(),
-                              width() - m_horizontalScrollbar->width(),
-                              m_horizontalScrollbar->height());
-            if (hCorner.intersects(scrollViewDirtyRect))
-                context->fillRect(hCorner, Color::white);
-        }
-
-        if (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0) {
-            IntRect vCorner(width() - m_verticalScrollbar->width(),
-                            m_verticalScrollbar->height(),
-                            m_verticalScrollbar->width(),
-                            height() - m_verticalScrollbar->height());
-            if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect))
-                context->fillRect(vCorner, Color::white);
-        }
-
-        context->restore();
-    }
-}
-
 void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
 {
     ASSERT(isFrameView());

@@ -45,10 +45,13 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "SystemTime.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+double FrameView::sCurrentPaintTimeStamp = 0.0;
 
 struct ScheduledEvent {
     RefPtr<Event> m_event;
@@ -100,6 +103,8 @@ public:
         m_repaintCount = 0;
         m_repaintRect = IntRect();
         m_repaintRects.clear();
+        m_paintRestriction = PaintRestrictionNone;
+        m_isPainting = false;
     }
 
     bool m_doFullRepaint;
@@ -148,6 +153,10 @@ public:
     Vector<IntRect> m_repaintRects;
 
     bool m_shouldUpdateWhileOffscreen;
+
+    RefPtr<Node> m_nodeToDraw;
+    PaintRestriction m_paintRestriction;
+    bool m_isPainting;
 };
 
 FrameView::FrameView(Frame* frame)
@@ -349,8 +358,8 @@ void FrameView::layout(bool allowSubtree)
     }
     
     // we shouldn't enter layout() while painting
-    ASSERT(!m_frame->isPainting());
-    if (m_frame->isPainting())
+    ASSERT(!isPainting());
+    if (isPainting())
         return;
 
     if (!allowSubtree && d->m_layoutRoot) {
@@ -1049,11 +1058,10 @@ void FrameView::updateControlTints()
         PlatformGraphicsContext* const noContext = 0;
         GraphicsContext context(noContext);
         context.setUpdatingControlTints(true);
-#if !PLATFORM(MAC)
-        ScrollView::paint(&context, frameRect());
-#else
-        m_frame->paint(&context, visibleContentRect());
-#endif
+        if (platformWidget())
+            paintContents(&context, visibleContentRect());
+        else
+            paint(&context, frameRect());
     }
 }
 
@@ -1067,6 +1075,82 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     if (d->m_inProgrammaticScroll)
         return;
     d->m_wasScrolledByUser = wasScrolledByUser;
+}
+
+void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
+{
+    if (!frame())
+        return;
+    
+    Document* document = frame()->document();
+    if (!document)
+        return;
+
+#ifndef NDEBUG
+    bool fillWithRed;
+    if (document || document->printing())
+        fillWithRed = false; // Printing, don't fill with red (can't remember why).
+    else if (document->ownerElement())
+        fillWithRed = false; // Subframe, don't fill with red.
+    else if (isTransparent())
+        fillWithRed = false; // Transparent, don't fill with red.
+    else if (d->m_paintRestriction == PaintRestrictionSelectionOnly || d->m_paintRestriction == PaintRestrictionSelectionOnlyBlackText)
+        fillWithRed = false; // Selections are transparent, don't fill with red.
+    else if (d->m_nodeToDraw)
+        fillWithRed = false; // Element images are transparent, don't fill with red.
+    else
+        fillWithRed = true;
+    
+    if (fillWithRed)
+        p->fillRect(rect, Color(0xFF, 0, 0));
+#endif
+
+    bool isTopLevelPainter = !sCurrentPaintTimeStamp;
+    if (isTopLevelPainter)
+        sCurrentPaintTimeStamp = currentTime();
+    
+    RenderView* contentRenderer = frame()->contentRenderer();
+    if (!contentRenderer) {
+        LOG_ERROR("called Frame::paint with nil renderer");
+        return;
+    }
+
+    ASSERT(!needsLayout());
+    ASSERT(!d->m_isPainting);
+        
+    d->m_isPainting = true;
+        
+    // m_nodeToDraw is used to draw only one element (and its descendants)
+    RenderObject* eltRenderer = d->m_nodeToDraw ? d->m_nodeToDraw->renderer() : 0;
+    if (d->m_paintRestriction == PaintRestrictionNone)
+        document->invalidateRenderedRectsForMarkersInRect(rect);
+    contentRenderer->layer()->paint(p, rect, d->m_paintRestriction, eltRenderer);
+        
+    d->m_isPainting = false;
+
+#if ENABLE(DASHBOARD_SUPPORT)
+    // Regions may have changed as a result of the visibility/z-index of element changing.
+    if (document->dashboardRegionsDirty())
+        updateDashboardRegions();
+#endif
+
+    if (isTopLevelPainter)
+        sCurrentPaintTimeStamp = 0;
+}
+
+void FrameView::setPaintRestriction(PaintRestriction pr)
+{
+    d->m_paintRestriction = pr;
+}
+    
+bool FrameView::isPainting() const
+{
+    return d->m_isPainting;
+}
+
+void FrameView::setNodeToDraw(Node* node)
+{
+    d->m_nodeToDraw = node;
 }
 
 #if PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(QT)

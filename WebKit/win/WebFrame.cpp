@@ -321,7 +321,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
     dirtyRect.setHeight(height);
     gc.clip(dirtyRect);
     gc.translate(-rect.left, -rect.top);
-    coreFrame->paint(&gc, rect);
+    view->paintContents(&gc, rect);
     gc.restore();
 
     return S_OK;
@@ -1839,7 +1839,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
         CGContextTranslateCTM(pctx, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight));   // reserves space for header
         CGContextSetBaseCTM(pctx, ctm);
 
-        coreFrame->paint(&spoolCtx, pageRect);
+        coreFrame->view()->paintContents(&spoolCtx, pageRect);
 
         if (ui2) {
             CGContextTranslateCTM(pctx, CGFloat(pageRect.x()), CGFloat(pageRect.y())-headerHeight);

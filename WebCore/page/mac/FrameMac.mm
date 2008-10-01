@@ -316,10 +316,10 @@ NSImage* Frame::imageFromRect(NSRect rect) const
 
 NSImage* Frame::selectionImage(bool forceBlackText) const
 {
-    d->m_paintRestriction = forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly;
+    d->m_view->setPaintRestriction(forceBlackText ? PaintRestrictionSelectionOnlyBlackText : PaintRestrictionSelectionOnly);
     d->m_doc->updateLayout();
     NSImage* result = imageFromRect(selectionRect());
-    d->m_paintRestriction = PaintRestrictionNone;
+    d->m_view->setPaintRestriction(PaintRestrictionNone);
     return result;
 }
 
@@ -335,11 +335,11 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     IntRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    d->m_elementToDraw = node;              // invoke special sub-tree drawing mode
+    d->m_view->setNodeToDraw(node);              // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(paintingRect);
     renderer->updateDragState(false);
     d->m_doc->updateLayout();
-    d->m_elementToDraw = 0;
+    d->m_view->setNodeToDraw(0);
 
     if (elementRect)
         *elementRect = topLevelRect;
@@ -359,9 +359,9 @@ NSImage* Frame::nodeImage(Node* node) const
     IntRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    d->m_elementToDraw = node; // invoke special sub-tree drawing mode
+    d->m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(paintingRect);
-    d->m_elementToDraw = 0;
+    d->m_view->setNodeToDraw(0);
 
     return result;
 }

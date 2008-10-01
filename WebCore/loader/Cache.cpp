@@ -30,8 +30,8 @@
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameView.h"
 #include "Image.h"
 #include "ResourceHandle.h"
 #include "SystemTime.h"
@@ -269,7 +269,7 @@ void Cache::pruneLiveResources()
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
-    double currentTime = Frame::currentPaintTimeStamp();
+    double currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
         currentTime = WebCore::currentTime();
     

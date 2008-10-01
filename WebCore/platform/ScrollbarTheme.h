@@ -26,20 +26,21 @@
 #ifndef ScrollbarTheme_h
 #define ScrollbarTheme_h
 
+#include "GraphicsContext.h"
 #include "IntRect.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
 
-class GraphicsContext;
 class PlatformMouseEvent;
 class Scrollbar;
+class ScrollView;
 
 class ScrollbarTheme {
 public:
     virtual ~ScrollbarTheme() {};
 
-    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect) { return false; }
+    virtual bool paint(Scrollbar*, GraphicsContext*, const IntRect& damageRect) { return false; }
     virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&) { return NoPart; }
     
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) { return 0; }
@@ -71,6 +72,8 @@ public:
     }
 
     virtual void invalidatePart(Scrollbar*, ScrollbarPart) {}
+
+    virtual void paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect) { context->fillRect(cornerRect, Color::white); }
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
     virtual int thumbPosition(Scrollbar*) { return 0; } // The position of the thumb relative to the track.

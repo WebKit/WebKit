@@ -1,3 +1,26 @@
+2008-09-30   Dave Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21269
+  
+        This patch makes the ScrollView::paint method cross-platform.  The paint method calls the base class
+        Widget paint on platforms with native widgets (Mac and wx).  Otherwise it calls a virtual function,
+        paintContents, to paint the ScrollView's contents, and then it paints each of the two scrollbars and
+        the scrollbar corner.
+        
+        The scrollbar themes are now responsible for painting scrollbar corners.  At the moment ScrollbarThemeWin still
+        paints white (which is incorrect), so a future patch will actually implement proper native scroll corner painting
+        for Windows.
+        
+        paintContents is implemented by FrameView, and replaces Frame::paint.  All of the FramePrivate member
+        variables used by Frame::paint have moved to FrameViewPrivate instead.  All callers of Frame::paint have
+        been patched to use FrameView::paintContents instead.
+        
+        Reviewed by Darin Adler
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        (WebFrame::spoolPages):
+
 2008-09-30  Dave Hyatt  <hyatt@apple.com>
 
         http://bugs.webkit.org/show_bug.cgi?id=21250
