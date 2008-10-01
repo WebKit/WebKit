@@ -1,5 +1,13 @@
 2008-09-30  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Add a leak counter for CachedResources since we've had two recent leaks involving them.
+
+        * Scripts/check-for-global-initializers:
+
+2008-09-30  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Dan Bernstein.
 
         Fix many leaks seen on fast/backgrounds/svg-as-background-1.html.

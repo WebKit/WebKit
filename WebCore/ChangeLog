@@ -1,3 +1,13 @@
+2008-09-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a leak counter for CachedResources since we've had two recent leaks involving them.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+
 2008-09-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

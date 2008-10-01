@@ -33,8 +33,15 @@
 #include "Request.h"
 #include "SystemTime.h"
 #include <wtf/Vector.h>
+#include <wtf/RefCountedLeakCounter.h>
+
+using namespace WTF;
 
 namespace WebCore {
+
+#ifndef NDEBUG
+static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
+#endif
 
 CachedResource::CachedResource(const String& url, Type type)
     : m_url(url)
@@ -51,6 +58,10 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_isBeingRevalidated(false)
     , m_expirationDate(0)
 {
+#ifndef NDEBUG
+    cachedResourceLeakCounter.increment();
+#endif
+
     m_type = type;
     m_status = Pending;
     m_encodedSize = 0;
@@ -80,6 +91,7 @@ CachedResource::~CachedResource()
     ASSERT(url().isNull() || cache()->resourceForURL(url()) != this);
 #ifndef NDEBUG
     m_deleted = true;
+    cachedResourceLeakCounter.decrement();
 #endif
 
     if (m_resourceToRevalidate)
