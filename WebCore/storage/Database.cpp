@@ -94,7 +94,7 @@ PassRefPtr<Database> Database::openDatabase(Document* document, const String& na
         return 0;
     }
     
-    RefPtr<Database> database = new Database(document, name, expectedVersion);
+    RefPtr<Database> database = adoptRef(new Database(document, name, expectedVersion));
 
     if (!database->openAndVerifyVersion(e)) {
        LOG(StorageAPI, "Failed to open and verify version (expected %s) of database %s", expectedVersion.ascii().data(), database->databaseDebugName().ascii().data());

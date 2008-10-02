@@ -1,3 +1,13 @@
+2008-10-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix a Database leak that resulted in Document leaks
+
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase): Account for the fact that RefCounted 
+        objects start out with a ref count of 1.
+
 2008-10-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mr. Geoffrey Garen.
