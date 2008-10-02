@@ -1,3 +1,10 @@
+2008-10-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after Frame/ScrollView changes.
+
+        * WebView.cpp:
+        (wxWebView::OnPaint):
+
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21282

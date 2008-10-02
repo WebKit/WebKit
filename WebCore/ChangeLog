@@ -1,3 +1,13 @@
+2008-10-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after Frame/ScrollView changes.
+
+        * WebCoreSources.bkl:
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformContentsToScreen):
+        (WebCore::ScrollView::platformScreenToContents):
+        (WebCore::ScrollView::platformIsOffscreen):
+
 2008-10-02  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Sam Weinig

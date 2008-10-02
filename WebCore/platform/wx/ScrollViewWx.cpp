@@ -321,4 +321,28 @@ void ScrollView::platformRemoveChild(Widget* widget)
     }
 }
 
+IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
+{
+    if (platformWidget()) {
+        wxRect wxrect = rect;
+        platformWidget()->ClientToScreen(&wxrect.x, &wxrect.y);
+        return wxrect;
+    }
+    return IntRect();
+}
+
+IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
+{
+    if (platformWidget()) {
+        return platformWidget()->ScreenToClient(point);
+    }
+    return IntPoint();
+}
+
+bool ScrollView::platformIsOffscreen() const
+{
+    return !platformWidget() || !platformWidget()->IsShownOnScreen();
+}
+
+
 }
