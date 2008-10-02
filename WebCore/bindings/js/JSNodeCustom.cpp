@@ -118,7 +118,7 @@ void JSNode::mark()
         // But if the document isn't marked we have to mark it to ensure that
         // nodes reachable from this one are also marked
         if (Document* doc = node->ownerDocument())
-            if (DOMObject* docWrapper = getCachedDOMObjectWrapper(doc))
+            if (DOMObject* docWrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), doc))
                 if (!docWrapper->marked())
                     docWrapper->mark();
         DOMObject::mark();

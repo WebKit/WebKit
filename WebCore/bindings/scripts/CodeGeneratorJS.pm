@@ -926,7 +926,7 @@ sub GenerateImplementation
                     push(@implContent, "    JSSVGDynamicPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
                 }
             }
-            push(@implContent, "    forgetDOMObject(m_impl.get());\n");
+            push(@implContent, "    forgetDOMObject(*Heap::heap(this)->globalData(), m_impl.get());\n");
         }
 
         push(@implContent, "\n}\n\n");
@@ -936,7 +936,7 @@ sub GenerateImplementation
     # its own special handling rather than relying on the caching that Node normally does.
     if ($interfaceName eq "Document") {
         push(@implContent, "${className}::~$className()\n");
-        push(@implContent, "{\n    forgetDOMObject(static_cast<${implClassName}*>(impl()));\n}\n\n");
+        push(@implContent, "{\n    forgetDOMObject(*Heap::heap(this)->globalData(), static_cast<${implClassName}*>(impl()));\n}\n\n");
     }
 
     if ($interfaceName ne "DOMWindow") {

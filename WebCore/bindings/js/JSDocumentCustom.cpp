@@ -46,7 +46,8 @@ namespace WebCore {
 void JSDocument::mark()
 {
     JSEventTargetNode::mark();
-    markDOMNodesForDocument(static_cast<Document*>(impl()));
+    markDOMNodesForDocument(impl());
+    markActiveObjectsForDocument(*Heap::heap(this)->globalData(), impl());
 }
 
 JSValue* JSDocument::location(ExecState* exec) const
@@ -111,7 +112,7 @@ JSValue* toJS(ExecState* exec, Document* document)
     if (!document)
         return jsNull();
 
-    DOMObject* wrapper = getCachedDOMObjectWrapper(document);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), document);
     if (wrapper)
         return wrapper;
 

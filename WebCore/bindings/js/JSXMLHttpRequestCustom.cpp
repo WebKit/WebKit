@@ -54,7 +54,7 @@ void JSXMLHttpRequest::mark()
     Base::mark();
 
     if (XMLHttpRequestUpload* upload = m_impl->optionalUpload()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(upload);
+        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), upload);
         if (wrapper && !wrapper->marked())
             wrapper->mark();
     }

@@ -37,13 +37,13 @@ void JSMessageChannel::mark()
     DOMObject::mark();
 
     if (MessagePort* port = m_impl->port1()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(port);
+        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
         if (wrapper && !wrapper->marked())
             wrapper->mark();
     }
 
     if (MessagePort* port = m_impl->port2()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(port);
+        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);
         if (wrapper && !wrapper->marked())
             wrapper->mark();
     }

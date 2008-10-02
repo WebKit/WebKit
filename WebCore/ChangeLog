@@ -1,3 +1,117 @@
+2008-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21304
+        Stop using a static wrapper map for WebCore JS bindings
+
+        The static domObjects map was not thread safe.
+
+        * dom/Document.h:
+        (WebCore::Document::messagePorts): Added an accessor for JSDocument to iterate over message
+        ports.
+        (WebCore::Document::xmlHttpRequests): Ditto for XMLHttpRequests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createdXMLHttpRequest):
+        (WebCore::Document::destroyedXMLHttpRequest):
+        Moved XMLHttpRequest tracking from a global map to Document.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * webcore-base.bkl:
+        * bindings/DOMProtect.cpp: Removed.
+        * bindings/DOMProtect.h: Removed.
+        Removed gcProtect(Unprotect)DOMObject - its callers do not have a JSGlobalData reference,
+        so they can no longer protect bindings objects.
+
+        * dom/MessagePort.cpp:
+        (WebCore::CloseMessagePortTimer::CloseMessagePortTimer):
+        (WebCore::CloseMessagePortTimer::fired):
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::queueCloseEvent):
+        (WebCore::MessagePort::setPendingActivity):
+        (WebCore::MessagePort::unsetPendingActivity):
+        * dom/MessagePort.h:
+        (WebCore::MessagePort::hasPendingActivity):
+        MessagePort now counts outstanding async events, so JSDocument::mark can decide whether
+        to protect it.
+
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::hasPendingActivity):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        (WebCore::XMLHttpRequest::dropProtection):
+        (WebCore::XMLHttpRequest::didFinishLoadingPreflight):
+        (WebCore::XMLHttpRequest::cancelRequests):
+        (WebCore::XMLHttpRequest::detachRequests):
+        (WebCore::XMLHttpRequest::setPendingActivity):
+        (WebCore::XMLHttpRequest::unsetPendingActivity):
+        Moved XMLHttpRequest tracking from a global map to Document. 
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::wrapperSet):
+        (WebCore::DOMObjectWrapperMap::mapFor):
+        (WebCore::DOMObjectWrapperMap::get):
+        (WebCore::DOMObjectWrapperMap::set):
+        (WebCore::DOMObjectWrapperMap::remove):
+        (WebCore::getCachedDOMObjectWrapper):
+        (WebCore::cacheDOMObjectWrapper):
+        (WebCore::forgetDOMObject):
+        (WebCore::getCachedDOMNodeWrapper):
+        (WebCore::forgetDOMNode):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::markActiveObjectsForDocument):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createDOMObjectWrapper):
+        (WebCore::getDOMObjectWrapper):
+        Wrapper map is now kept as JSGlobalData::clientData. Also changed debug-only wrapperSet
+        to be per-thread (this is slower than going to JSGlobalData, but fast enough for debug).
+        WebCore objects can never migrate between threads.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::mark):
+        Call markActiveObjectsForDocument() from JSDOMBinding.
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::markDOMObjectWrapper):
+        (WebCore::JSDOMWindow::mark):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::mark):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::mark):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::mark):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::finishedWithEvent):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Pass a JSGlobalData reference to functions that track JS wrapper objects.
+
 2008-10-02  Dan Bernstein  <mitz@apple.com>
 
         - build fix

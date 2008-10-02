@@ -49,7 +49,7 @@ void JSMessagePort::mark()
         listener->mark();
 
     if (MessagePort* entangledPort = m_impl->entangledPort()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(entangledPort);
+        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), entangledPort);
         if (wrapper && !wrapper->marked())
             wrapper->mark();
     }

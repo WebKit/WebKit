@@ -41,11 +41,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-static void markDOMObjectWrapper(void* object)
+static void markDOMObjectWrapper(JSGlobalData& globalData, void* object)
 {
     if (!object)
         return;
-    DOMObject* wrapper = getCachedDOMObjectWrapper(object);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, object);
     if (!wrapper || wrapper->marked())
         return;
     wrapper->mark();
@@ -53,24 +53,26 @@ static void markDOMObjectWrapper(void* object)
 
 void JSDOMWindow::mark()
 {
-    markDOMObjectWrapper(impl()->optionalConsole());
-    markDOMObjectWrapper(impl()->optionalHistory());
-    markDOMObjectWrapper(impl()->optionalLocationbar());
-    markDOMObjectWrapper(impl()->optionalMenubar());
-    markDOMObjectWrapper(impl()->optionalNavigator());
-    markDOMObjectWrapper(impl()->optionalPersonalbar());
-    markDOMObjectWrapper(impl()->optionalScreen());
-    markDOMObjectWrapper(impl()->optionalScrollbars());
-    markDOMObjectWrapper(impl()->optionalSelection());
-    markDOMObjectWrapper(impl()->optionalStatusbar());
-    markDOMObjectWrapper(impl()->optionalToolbar());
-    markDOMObjectWrapper(impl()->optionalLocation());
+    JSGlobalData& globalData = *Heap::heap(this)->globalData();
+
+    markDOMObjectWrapper(globalData, impl()->optionalConsole());
+    markDOMObjectWrapper(globalData, impl()->optionalHistory());
+    markDOMObjectWrapper(globalData, impl()->optionalLocationbar());
+    markDOMObjectWrapper(globalData, impl()->optionalMenubar());
+    markDOMObjectWrapper(globalData, impl()->optionalNavigator());
+    markDOMObjectWrapper(globalData, impl()->optionalPersonalbar());
+    markDOMObjectWrapper(globalData, impl()->optionalScreen());
+    markDOMObjectWrapper(globalData, impl()->optionalScrollbars());
+    markDOMObjectWrapper(globalData, impl()->optionalSelection());
+    markDOMObjectWrapper(globalData, impl()->optionalStatusbar());
+    markDOMObjectWrapper(globalData, impl()->optionalToolbar());
+    markDOMObjectWrapper(globalData, impl()->optionalLocation());
 #if ENABLE(DOM_STORAGE)
-    markDOMObjectWrapper(impl()->optionalSessionStorage());
-    markDOMObjectWrapper(impl()->optionalLocalStorage());
+    markDOMObjectWrapper(globalData, impl()->optionalSessionStorage());
+    markDOMObjectWrapper(globalData, impl()->optionalLocalStorage());
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    markDOMObjectWrapper(impl()->optionalApplicationCache());
+    markDOMObjectWrapper(globalData, impl()->optionalApplicationCache());
 #endif
 
     JSDOMStructureMap::iterator end = structures().end();

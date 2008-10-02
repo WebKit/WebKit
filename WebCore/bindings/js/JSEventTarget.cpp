@@ -57,7 +57,7 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
 
     if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
         // XMLHttpRequest is always created via JS, so we don't need to use cacheDOMObject() here.
-        return getCachedDOMObjectWrapper(xhr);
+        return getCachedDOMObjectWrapper(exec->globalData(), xhr);
 
     if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload())
         return toJS(exec, upload);
@@ -65,7 +65,7 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (DOMApplicationCache* cache = target->toDOMApplicationCache())
         // DOMApplicationCache is always created via JS, so we don't need to use cacheDOMObject() here.
-        return getCachedDOMObjectWrapper(cache);
+        return getCachedDOMObjectWrapper(exec->globalData(), cache);
 #endif
 
     if (MessagePort* messagePort = target->toMessagePort())

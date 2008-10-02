@@ -1,3 +1,20 @@
+2008-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21304
+        Stop using a static wrapper map for WebCore JS bindings
+
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        (JSC::JSGlobalData::ClientData::~ClientData):
+        * kjs/JSGlobalData.h:
+        Added a client data member to JSGlobalData. WebCore will use it to store bindings-related
+        global data.
+
+        * JavaScriptCore.exp: Export virtual ClientData destructor.
+
 2008-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

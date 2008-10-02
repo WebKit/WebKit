@@ -64,7 +64,7 @@ JSValue* toJS(ExecState* exec, SVGPathSeg* object, SVGElement* context)
     if (!object)
         return jsNull();
 
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(object))
+    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), object))
         return wrapper;
 
     switch (object->pathSegType()) {

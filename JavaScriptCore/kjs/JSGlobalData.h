@@ -96,6 +96,12 @@ namespace JSC {
 
         bool isSharedInstance;
 
+        struct ClientData {
+            virtual ~ClientData() = 0;
+        };
+
+        ClientData* clientData;
+
         HashSet<JSObject*> arrayVisitedElements;
 
     private:

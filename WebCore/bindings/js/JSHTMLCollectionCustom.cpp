@@ -127,7 +127,7 @@ JSValue* toJS(ExecState* exec, HTMLCollection* collection)
     if (!collection)
         return jsNull();
 
-    DOMObject* wrapper = getCachedDOMObjectWrapper(collection);
+    DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), collection);
 
     if (wrapper)
         return wrapper;

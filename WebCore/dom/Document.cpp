@@ -4412,6 +4412,18 @@ void Document::destroyedMessagePort(MessagePort* port)
     m_messagePorts.remove(port);
 }
 
+void Document::createdXMLHttpRequest(XMLHttpRequest* request)
+{
+    ASSERT(request);
+    m_xmlHttpRequests.add(request);
+}
+
+void Document::destroyedXMLHttpRequest(XMLHttpRequest* request)
+{
+    ASSERT(request);
+    m_xmlHttpRequests.remove(request);
+}
+
 void Document::initDNSPrefetch()
 {
     m_haveExplicitlyDisabledDNSPrefetch = false;

@@ -28,7 +28,6 @@
 #include "MessagePort.h"
 
 #include "AtomicString.h"
-#include "DOMProtect.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "EventException.h"
@@ -41,7 +40,7 @@ namespace WebCore {
 
 class CloseMessagePortTimer : public TimerBase {
 public:
-    CloseMessagePortTimer(PassRefPtr<MessagePort> port)
+    CloseMessagePortTimer(MessagePort* port)
         : m_port(port)
     {
         ASSERT(m_port);
@@ -57,17 +56,18 @@ private:
             m_port->dispatchMessages();
 
         m_port->dispatchCloseEvent();
-        gcUnprotectDOMObject(m_port.get());
+        m_port->unsetPendingActivity();
         delete this;
     }
 
-    RefPtr<MessagePort> m_port;
+    MessagePort* m_port;
 };
 
 MessagePort::MessagePort(Document* document)
     : m_entangledPort(0)
     , m_queueIsOpen(false)
     , m_document(document)
+    , m_pendingActivity(0)
 {
     document->createdMessagePort(this);
 }
@@ -219,7 +219,7 @@ void MessagePort::dispatchMessages()
 void MessagePort::queueCloseEvent()
 {
     // Need to keep listeners alive, and they are marked by the wrapper.
-    gcProtectDOMObject(this);
+    setPendingActivity();
 
     CloseMessagePortTimer* timer = new CloseMessagePortTimer(this);
     timer->startOneShot(0);
@@ -288,6 +288,19 @@ bool MessagePort::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec, bool
     }
     
     return !event->defaultPrevented();
+}
+
+void MessagePort::setPendingActivity()
+{
+    ref();
+    ++m_pendingActivity;
+}
+
+void MessagePort::unsetPendingActivity()
+{
+    ASSERT(m_pendingActivity > 0);
+    --m_pendingActivity;
+    deref();
 }
 
 } // namespace WebCore

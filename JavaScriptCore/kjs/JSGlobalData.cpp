@@ -88,6 +88,7 @@ JSGlobalData::JSGlobalData(bool isShared)
     , parser(new Parser)
     , head(0)
     , isSharedInstance(isShared)
+    , clientData(0)
 {
 }
 
@@ -130,6 +131,8 @@ JSGlobalData::~JSGlobalData()
 
     delete newParserObjects;
     delete parserObjectExtraRefCounts;
+    
+    delete clientData;
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::create()
@@ -155,6 +158,10 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
     ASSERT(JSLock::currentThreadIsHoldingLock());
     static JSGlobalData* sharedInstance;
     return sharedInstance;
+}
+
+JSGlobalData::ClientData::~ClientData()
+{
 }
 
 }
