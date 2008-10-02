@@ -1,3 +1,15 @@
+2008-10-02  Adele Peterson  <adele@apple.com>
+
+        Update results for mac-tiger.
+
+        * platform/mac-tiger/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac-tiger/svg/hixie/perf/001-expected.txt:
+        * platform/mac-tiger/svg/hixie/perf/002-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003-expected.txt:
+        * platform/mac-tiger/svg/hixie/text/003a-expected.txt:
+        * platform/mac-tiger/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/mac-tiger/svg/text/text-path-01-b-expected.txt:
+
 2008-10-02  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Sam Weinig.
