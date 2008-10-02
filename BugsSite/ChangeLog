@@ -1,5 +1,9 @@
 2008-10-02  Adam Roben  <aroben@apple.com>
 
+        * template/en/custom/attachment/reviewform.html.tmpl: Fix typo.
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
         * template/en/custom/attachment/review.html.tmpl: Fix URLs
 
 2008-10-02  Adam Roben  <aroben@apple.com>
