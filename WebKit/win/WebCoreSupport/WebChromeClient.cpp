@@ -427,7 +427,7 @@ void WebChromeClient::scroll(const IntSize& delta, const IntRect& scrollViewRect
 {
     ASSERT(core(m_webView->topLevelFrame()));
 
-    m_webView->scrollBackingStore(core(m_webView->topLevelFrame())->view(), delta.x(), delta.y(), scrollViewRect, clipRect);
+    m_webView->scrollBackingStore(core(m_webView->topLevelFrame())->view(), delta.width(), delta.height(), scrollViewRect, clipRect);
 }
 
 IntRect WebChromeClient::windowToScreen(const IntRect& rect) const
