@@ -76,6 +76,21 @@ ScrollbarGtk::~ScrollbarGtk()
     g_object_unref(G_OBJECT(platformWidget()));
 }
 
+void ScrollbarGtk::frameRectsChanged() const
+{
+    if (!parent() || !parent()->isScrollViewScrollbar(this))
+        return;
+
+    IntPoint loc = parent()->convertToContainingWindow(frameRect().location());
+
+    // Don't allow the allocation size to be negative
+    IntSize sz = frameRect().size();
+    sz.clampNegativeToZero();
+
+    GtkAllocation allocation = { loc.x(), loc.y(), sz.width(), sz.height() };
+    gtk_widget_size_allocate(platformWidget(), &allocation);
+}
+
 void ScrollbarGtk::updateThumbPosition()
 {
     if (m_adjustment->value != m_currentPos) {

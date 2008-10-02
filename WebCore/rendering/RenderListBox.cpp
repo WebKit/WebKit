@@ -411,7 +411,8 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
     const int iconRadius = 7;
     const int speedReducer = 4;
 
-    int offsetX = 0, offsetY = windowClipRect().y();
+    int offsetX;
+    int offsetY;
     absolutePosition(offsetX, offsetY);
 
     IntPoint currentMousePosition = document()->frame()->eventHandler()->currentMousePosition();
@@ -595,7 +596,7 @@ IntRect RenderListBox::controlClipRect(int tx, int ty) const
     return clipRect;
 }
 
-IntRect RenderListBox::windowClipRect() const
+IntRect RenderListBox::windowClipRect(const Scrollbar*) const
 {
     FrameView* frameView = view()->frameView();
     if (!frameView)

@@ -260,7 +260,7 @@ void WebScrollBar::valueChanged(Scrollbar* scrollBar)
     m_delegate->valueChanged(this);
 }
 
-IntRect WebScrollBar::windowClipRect() const
+IntRect WebScrollBar::windowClipRect(const Scrollbar*) const
 {
     HWND sbContainingWindow = m_scrollBar->containingWindow();
     RECT clientRect;

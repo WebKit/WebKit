@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -970,6 +971,13 @@ void FrameView::dispatchScheduledEvents()
     }
 }
 
+IntRect FrameView::windowClipRect(const Scrollbar*) const
+{
+    // When we get called by the scrollbar client, it means that we are not clipping to contents, since
+    // these scrollbars are ours.
+    return windowClipRect(false);
+}
+
 IntRect FrameView::windowClipRect() const
 {
     return windowClipRect(true);
@@ -1009,6 +1017,21 @@ IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToL
         clipRect = layer->selfClipRect();
     clipRect = contentsToWindow(clipRect); 
     return intersection(clipRect, windowClipRect());
+}
+
+bool FrameView::isActive() const
+{
+    Page* page = frame()->page();
+    return page && page->focusController()->isActive();
+}
+
+void FrameView::valueChanged(Scrollbar* bar)
+{
+    // Figure out if we really moved.
+    IntSize offset = scrollOffset();
+    ScrollView::valueChanged(bar);
+    if (offset != scrollOffset())
+        frame()->sendScrollEvent();
 }
 
 IntRect FrameView::windowResizerRect() const

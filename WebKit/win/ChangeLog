@@ -1,4 +1,21 @@
 2008-10-01  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21298
+        
+        Make updateScrollbars cross-platform.  For now a stubbed out scrollContents function is invoked to do the scrolling of the backing store.  Next patch
+        will make that cross-platform.  
+        
+        The ScrollView now implements ScrollbarClient, which means that there was a clash of windowClipRect methods from the
+        multiple inheritance.  For now I solved this by adding a Scrollbar* to the ScrollbarClient version of the method, but longer term
+        windowClipRect is going to be removed from ScrollbarClient (when Widget invalidation gets rewritten).
+
+        Reviewed by Sam Weinig
+
+        * WebScrollBar.cpp:
+        (WebScrollBar::windowClipRect):
+        * WebScrollBar.h:
+
+2008-10-01  David Hyatt  <hyatt@apple.com>
         
         https://bugs.webkit.org/show_bug.cgi?id=21282
         

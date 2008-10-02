@@ -111,10 +111,14 @@ public:
     void adjustViewSize();
     void initScrollbars();
     
+    virtual IntRect windowClipRect(const Scrollbar*) const;
     virtual IntRect windowClipRect() const;
     IntRect windowClipRect(bool clipToContents) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
+    virtual bool isActive() const;
+    virtual void valueChanged(Scrollbar*);
+    
     virtual IntRect windowResizerRect() const;
 
     virtual void scrollRectIntoViewRecursively(const IntRect&);
@@ -178,6 +182,7 @@ private:
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
     virtual void contentsResized() { setNeedsLayout(); }
+    virtual void visibleContentsResized() { layout(); }
 
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 

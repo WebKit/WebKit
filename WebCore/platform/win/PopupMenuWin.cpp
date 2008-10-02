@@ -584,7 +584,7 @@ void PopupMenu::valueChanged(Scrollbar* scrollBar)
     ::UpdateWindow(m_popup);
 }
 
-IntRect PopupMenu::windowClipRect() const
+IntRect PopupMenu::windowClipRect(const Scrollbar*) const
 {
     return m_windowRect;
 }

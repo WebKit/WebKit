@@ -424,7 +424,7 @@ IntRect Scrollbar::windowClipRect() const
 
     clipRect = convertToContainingWindow(clipRect);
     if (m_client)
-        clipRect.intersect(m_client->windowClipRect());
+        clipRect.intersect(m_client->windowClipRect(this));
 
     return clipRect;
 }

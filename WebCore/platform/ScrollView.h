@@ -28,6 +28,7 @@
 
 #include "IntRect.h"
 #include "Scrollbar.h"
+#include "ScrollbarClient.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
 
@@ -58,11 +59,14 @@ class HostWindow;
 class PlatformWheelEvent;
 class Scrollbar;
 
-class ScrollView : public Widget {
+class ScrollView : public Widget, public ScrollbarClient {
 public:
     ScrollView();
     ~ScrollView();
 
+    // ScrollbarClient method.  FrameView overrides the other two.
+    virtual void valueChanged(Scrollbar*);
+    
     // The window thats hosts the ScrollView.  The ScrollView will communicate scrolls and repaints to the
     // host window in the window's coordinate space.
     virtual HostWindow* hostWindow() const = 0;
@@ -201,7 +205,9 @@ public:
 protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
+    
     virtual void contentsResized() = 0;
+    virtual void visibleContentsResized() = 0;
     
     void updateWindowRect(const IntRect&, bool now = false);
 
@@ -220,10 +226,23 @@ private:
     int m_scrollbarsAvoidingResizer;
     bool m_scrollbarsSuppressed;
 
+    bool m_inUpdateScrollbars;
+
     IntPoint m_panScrollIconPoint;
     bool m_drawPanScrollIcon;
 
     void init();
+    void destroy();
+
+    // Called to update the scrollbars to accurately reflect the state of the view.
+    void updateScrollbars(const IntSize& desiredOffset);
+
+    // Scroll the actual contents of the view (either blitting or invalidating as needed).
+    void scrollContents(const IntSize& scrollDelta);
+
+    // These methods are used to create/destroy scrollbars.
+    void setHasHorizontalScrollbar(bool);
+    void setHasVerticalScrollbar(bool);
 
     void platformAddChild(Widget*);
     void platformRemoveChild(Widget*);
@@ -240,6 +259,8 @@ private:
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
     void platformRepaintContentRectangle(const IntRect&, bool now);
     bool platformIsOffscreen() const;
+    bool platformHandleHorizontalAdjustment(const IntSize&);
+    bool platformHandleVerticalAdjustment(const IntSize&);
 
 #if PLATFORM(MAC) && defined __OBJC__
 public:
@@ -249,24 +270,19 @@ private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
-// FIXME: ScrollViewPrivate will eventually be completely gone.  It's already gone on Mac.
 #if !PLATFORM(MAC)
+// FIXME: ScrollViewPrivate will eventually be completely gone.
     class ScrollViewPrivate;
     ScrollViewPrivate* m_data;
 
     friend class ScrollViewPrivate; // FIXME: Temporary.
 #endif
-    
+
 #if !PLATFORM(MAC) && !PLATFORM(WX)
 public:
     void addToDirtyRegion(const IntRect&);
     void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
     void updateBackingStore();
-
-private:
-    void updateScrollbars(const IntSize& desiredOffset);
-#else
-    void updateScrollbars(const IntSize& desiredOffset) {} // FIXME: Temporary.
 #endif
 
 #if PLATFORM(WIN)

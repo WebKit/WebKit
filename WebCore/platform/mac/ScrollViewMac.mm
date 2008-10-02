@@ -49,6 +49,7 @@ ScrollView::ScrollView()
 
 ScrollView::~ScrollView()
 {
+    destroy();
 }
 
 inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const

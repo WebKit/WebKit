@@ -133,6 +133,7 @@ void ScrollView::setPlatformWidget(wxWindow* win)
 
 ScrollView::~ScrollView()
 {
+    destroy();
     delete m_data;
 }
 
