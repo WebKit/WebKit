@@ -1,3 +1,17 @@
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21293
+          REGRESSION: Crash beneath RenderSVGViewportContainer::viewportTransform() during SVGSVGElement destruction
+
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::~SVGMarkerElement): Call detach() here so
+        that renderer destruction happens before the SVGMarkerElement is
+        destroyed.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::~SVGSVGElement): Ditto for SVGSVGElement.
+
 2008-10-01  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.

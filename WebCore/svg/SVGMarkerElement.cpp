@@ -55,6 +55,11 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
 
 SVGMarkerElement::~SVGMarkerElement()
 {
+    // Call detach() here because if we wait until ~Node() calls it, we crash during
+    // RenderSVGViewportContainer destruction, as the renderer assumes that the element
+    // is still fully constructed. See <https://bugs.webkit.org/show_bug.cgi?id=21293>.
+    if (renderer())
+        detach();
 }
 
 void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
