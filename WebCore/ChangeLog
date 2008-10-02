@@ -1,3 +1,11 @@
+2008-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try to fix Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler and Cameron Zwarich.

@@ -13277,10 +13277,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSCanvasPixelArrayCustom.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSCanvasPixelArrayCustom.h"
 					>
 				</File>
