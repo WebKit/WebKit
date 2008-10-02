@@ -440,8 +440,8 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
     registerFile.setNumGlobals(symbolTable().size());
 
     if (d()->registerArray) {
-        memcpy(registerFile.base() - d()->registerArraySize, d()->registerArray.get(), d()->registerArraySize * sizeof(Register));
-        setRegisters(registerFile.base(), 0, 0);
+        memcpy(registerFile.start() - d()->registerArraySize, d()->registerArray.get(), d()->registerArraySize * sizeof(Register));
+        setRegisters(registerFile.start(), 0, 0);
     }
 }
 

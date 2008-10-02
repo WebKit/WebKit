@@ -1,5 +1,37 @@
 2008-10-02  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Bug 21317: Replace RegisterFile size and capacity information with Register pointers
+        <https://bugs.webkit.org/show_bug.cgi?id=21317>
+
+        This is a 2.3% speedup on the V8 DeltaBlue benchmark, a 3.3% speedup on
+        the V8 Raytrace benchmark, and a 1.0% speedup on SunSpider.
+
+        * VM/Machine.cpp:
+        (JSC::slideRegisterWindowForCall):
+        (JSC::Machine::callEval):
+        (JSC::Machine::execute):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        * VM/RegisterFile.cpp:
+        (JSC::RegisterFile::~RegisterFile):
+        * VM/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::start):
+        (JSC::RegisterFile::end):
+        (JSC::RegisterFile::size):
+        (JSC::RegisterFile::shrink):
+        (JSC::RegisterFile::grow):
+        (JSC::RegisterFile::lastGlobal):
+        (JSC::RegisterFile::markGlobals):
+        (JSC::RegisterFile::markCallFrames):
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::copyGlobalsTo):
+
+2008-10-02  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Darin Adler.
 
         Change bitwise operations introduced in r37166 to boolean operations. We

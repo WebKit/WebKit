@@ -532,12 +532,12 @@ NEVER_INLINE bool Machine::resolveBaseAndFunc(ExecState* exec, Instruction* vPC,
     return false;
 }
 
-ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* registerBase, Register* r, size_t registerOffset, int argc, JSValue*& exceptionValue)
+ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* r, size_t registerOffset, int argc, JSValue*& exceptionValue)
 {
-    size_t size = r - registerBase + registerOffset + newCodeBlock->numCalleeRegisters;
+    Register* newEnd = r + registerOffset + newCodeBlock->numCalleeRegisters;
 
     if (argc == newCodeBlock->numParameters) { // correct number of arguments
-        if (!registerFile->grow(size)) {
+        if (!registerFile->grow(newEnd)) {
             exceptionValue = createStackOverflowError(exec);
             return r;
         }
@@ -545,8 +545,8 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
     } else if (argc < newCodeBlock->numParameters) { // too few arguments -- fill in the blanks
         size_t omittedArgCount = newCodeBlock->numParameters - argc;
         registerOffset += omittedArgCount;
-        size += omittedArgCount;
-        if (!registerFile->grow(size)) {
+        newEnd += omittedArgCount;
+        if (!registerFile->grow(newEnd)) {
             exceptionValue = createStackOverflowError(exec);
             return r;
         }
@@ -558,9 +558,9 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
     } else { // too many arguments -- copy expected arguments, leaving the extra arguments behind
         size_t numParameters = newCodeBlock->numParameters;
         registerOffset += numParameters;
-        size += numParameters;
+        newEnd += numParameters;
 
-        if (!registerFile->grow(size)) {
+        if (!registerFile->grow(newEnd)) {
             exceptionValue = createStackOverflowError(exec);
             return r;
         }
@@ -603,7 +603,7 @@ NEVER_INLINE JSValue* Machine::callEval(ExecState* exec, JSObject* thisObj, Scop
 
     JSValue* result = 0;
     if (evalNode)
-        result = exec->globalData().machine->execute(evalNode.get(), exec, thisObj, r - registerFile->base() + argv + 1 + RegisterFile::CallFrameHeaderSize, scopeChain, &exceptionValue);
+        result = exec->globalData().machine->execute(evalNode.get(), exec, thisObj, r - registerFile->start() + argv + 1 + RegisterFile::CallFrameHeaderSize, scopeChain, &exceptionValue);
 
     if (*profiler)
         (*profiler)->didExecute(exec, scopeChain->globalObject()->evalFunction());
@@ -886,9 +886,9 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
 
     CodeBlock* codeBlock = &programNode->byteCode(scopeChain);
 
-    size_t oldSize = m_registerFile.size();
-    size_t newSize = oldSize + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize + codeBlock->numCalleeRegisters;
-    if (!m_registerFile.grow(newSize)) {
+    Register* oldEnd = m_registerFile.end();
+    Register* newEnd = oldEnd + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize + codeBlock->numCalleeRegisters;
+    if (!m_registerFile.grow(newEnd)) {
         *exception = createStackOverflowError(exec);
         return jsNull();
     }
@@ -897,7 +897,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
     globalObject->copyGlobalsTo(m_registerFile);
 
-    Register* r = m_registerFile.base() + oldSize + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize;
+    Register* r = oldEnd + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize;
     r[codeBlock->thisRegister] = thisObj;
     initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(0), 0, 0, 0);
 
@@ -928,7 +928,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     if (m_reentryDepth && lastGlobalObject && globalObject != lastGlobalObject)
         lastGlobalObject->copyGlobalsTo(m_registerFile);
 
-    m_registerFile.shrink(oldSize);
+    m_registerFile.shrink(oldEnd);
     return result;
 }
 
@@ -941,15 +941,15 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         return jsNull();
     }
 
-    size_t oldSize = m_registerFile.size();
+    Register* oldEnd = m_registerFile.end();
     int argc = 1 + args.size(); // implicit "this" parameter
 
-    if (!m_registerFile.grow(oldSize + argc)) {
+    if (!m_registerFile.grow(oldEnd + argc)) {
         *exception = createStackOverflowError(exec);
         return jsNull();
     }
 
-    Register* argv = m_registerFile.base() + oldSize;
+    Register* argv = oldEnd;
     size_t dst = 0;
     argv[dst] = thisObj;
 
@@ -958,9 +958,9 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         argv[++dst] = *it;
 
     CodeBlock* codeBlock = &functionBodyNode->byteCode(scopeChain);
-    Register* r = slideRegisterWindowForCall(exec, codeBlock, &m_registerFile, m_registerFile.base(), argv, argc + RegisterFile::CallFrameHeaderSize, argc, *exception);
+    Register* r = slideRegisterWindowForCall(exec, codeBlock, &m_registerFile, argv, argc + RegisterFile::CallFrameHeaderSize, argc, *exception);
     if (UNLIKELY(*exception != 0)) {
-        m_registerFile.shrink(oldSize);
+        m_registerFile.shrink(oldEnd);
         return jsNull();
     }
     // a 0 codeBlock indicates a built-in caller
@@ -984,7 +984,7 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
 
     MACHINE_SAMPLING_privateExecuteReturned();
 
-    m_registerFile.shrink(oldSize);
+    m_registerFile.shrink(oldEnd);
     return result;
 }
 
@@ -1036,14 +1036,14 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 
     }
 
-    size_t oldSize = m_registerFile.size();
-    size_t newSize = registerOffset + codeBlock->numCalleeRegisters;
-    if (!m_registerFile.grow(newSize)) {
+    Register* oldEnd = m_registerFile.end();
+    Register* newEnd = m_registerFile.start() + registerOffset + codeBlock->numCalleeRegisters;
+    if (!m_registerFile.grow(newEnd)) {
         *exception = createStackOverflowError(exec);
         return jsNull();
     }
 
-    Register* r = m_registerFile.base() + registerOffset;
+    Register* r = m_registerFile.start() + registerOffset;
 
     // a 0 codeBlock indicates a built-in caller
     r[codeBlock->thisRegister] = thisObj;
@@ -1073,7 +1073,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     if (*profiler)
         (*profiler)->didExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
 
-    m_registerFile.shrink(oldSize);
+    m_registerFile.shrink(oldEnd);
     return result;
 }
 
@@ -1446,7 +1446,6 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     JSValue* exceptionValue = 0;
     Instruction* handlerVPC = 0;
 
-    Register* registerBase = registerFile->base();
     Instruction* vPC = this->codeBlock(r)->instructions.begin();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
     unsigned tickCount = m_ticksUntilNextTimeoutCheck + 1;
@@ -3284,7 +3283,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             
             Register* savedR = r;
 
-            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, registerOffset, argCount, exceptionValue);
+            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
             exec->m_callFrame = r;
             if (UNLIKELY(exceptionValue != 0))
                 goto vm_throw;
@@ -3467,7 +3466,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             Register* savedR = r;
 
-            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, registerOffset, argCount, exceptionValue);
+            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
             exec->m_callFrame = r;
             if (UNLIKELY(exceptionValue != 0))
                 goto vm_throw;
@@ -4489,8 +4488,6 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     RegisterFile* registerFile = ARG_registerFile;
     Register* r = ARG_r;
 
-    Register* registerBase = registerFile->base();
-    
     JSValue* funcVal = ARG_src1;
     int registerOffset = ARG_int2;
     int argCount = ARG_int3;
@@ -4511,7 +4508,7 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     Register* savedR = r;
 
     JSValue* exceptionValue = 0;
-    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, registerOffset, argCount, exceptionValue);
+    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
     JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
 
     r[RegisterFile::CodeBlock] = newCodeBlock;
@@ -4690,8 +4687,6 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     RegisterFile* registerFile = ARG_registerFile;
     Register* r = ARG_r;
 
-    Register* registerBase = registerFile->base();
-    
     JSValue* constrVal = ARG_src1;
     JSValue* constrProtoVal = ARG_src2;
     int firstArg = ARG_int3;
@@ -4724,7 +4719,7 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     Register* savedR = r;
 
     JSValue* exceptionValue = 0;
-    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, registerOffset, argCount, exceptionValue);
+    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
     JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
 
     r[RegisterFile::CodeBlock] = newCodeBlock;
