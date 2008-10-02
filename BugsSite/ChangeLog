@@ -1,5 +1,26 @@
 2008-10-02  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 21315: bugs.webkit.org should have a nicer patch review
+        interface
+
+        https://bugs.webkit.org/show_bug.cgi?id=21315
+
+        Reviewed by Tim Hatcher.
+
+        * attachment.cgi:
+        (top level): Added support for the "review" and "reviewform" actions.
+        (sub edit): Accept the template name as a parameter. If no name is
+        give, use "edit" as before.
+        * template/en/custom/attachment/list.html.tmpl: Added a "Review Patch"
+        link for all patch attachments.
+        * template/en/custom/attachment/review.html.tmpl: Added. Simple
+        <frameset> page to show the patch on the top and a comment form on the
+        bottom.
+        * template/en/custom/attachment/reviewform.html.tmpl: Added. Simple
+        comment form for reviewing patches.
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
         Remove references to some backup files I created when implementing
         PrettyPatch in Bugzilla
 

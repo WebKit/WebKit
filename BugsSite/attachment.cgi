@@ -99,6 +99,14 @@ elsif ($action eq "edit")
 { 
     edit(); 
 }
+elsif ($action eq "review")
+{
+    edit("review");
+}
+elsif ($action eq "reviewform")
+{
+    edit("reviewform");
+}
 elsif ($action eq "update") 
 { 
     Bugzilla->login(LOGIN_REQUIRED);
@@ -1105,6 +1113,9 @@ sub insert
 # Validations are done later when the user submits changes.
 sub edit
 {
+  my ($template_name) = @_;
+  $template_name = $template_name || "edit";
+
   # Retrieve and validate parameters
   my ($attach_id) = validateID();
 
@@ -1160,7 +1171,7 @@ sub edit
   print Bugzilla->cgi->header();
 
   # Generate and return the UI (HTML page) from the appropriate template.
-  $template->process("attachment/edit.html.tmpl", $vars)
+  $template->process("attachment/$template_name.html.tmpl", $vars)
     || ThrowTemplateError($template->error());
 }
 

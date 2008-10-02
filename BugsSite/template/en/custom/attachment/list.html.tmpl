@@ -72,6 +72,9 @@
         [% END %]
 
         <td valign="top">
+          [% IF attachment.ispatch %]
+          <a href="attachment.cgi?id=[% attachment.attachid %]&amp;action=review">Review Patch</a>
+          [% END %]
           <a href="attachment.cgi?id=[% attachment.attachid %]&amp;action=edit">Edit</a>
           [% IF attachment.ispatch %]
           <a href="attachment.cgi?id=[% attachment.attachid %]&amp;action=prettypatch">Formatted Diff</a>
