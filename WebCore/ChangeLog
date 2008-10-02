@@ -2,6 +2,16 @@
 
         Reviewed by Mark Rowe.
 
+        - fix an assertion failure in http/tests/security/canvas-remote-read-svg-image.html due to re-entry into Cache::pruneDeadResources()
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::remove): Disable pruning temporarily during 
+        CachedResource deletion.
+
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
         - fix SVGFontElement leaks seen on buildbot by breaking a ref cycle
 
         * svg/SVGFontFaceElement.cpp:

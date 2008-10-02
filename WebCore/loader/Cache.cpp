@@ -386,8 +386,15 @@ void Cache::remove(CachedResource* resource)
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
 
-    if (resource->canDelete())
+    if (resource->canDelete()) {
+        // Avoid re-entry into pruning, which may occur in cases like deleting an SVG CachedImage that has subresources.
+        bool pruneWasEnabled = m_pruneEnabled;
+        m_pruneEnabled = false;
+
         delete resource;
+
+        m_pruneEnabled = pruneWasEnabled;
+    }
 }
 
 void Cache::addDocLoader(DocLoader* docLoader)
