@@ -29,7 +29,7 @@ module inspector {
         [Custom] void evaluate(in DOMString script);
 
         readonly attribute JavaScriptCallFrame caller;
-        readonly attribute long sourceIdentifier;
+        readonly attribute long sourceID;
         readonly attribute long line;
         readonly attribute [CustomGetter] Array scopeChain;
         readonly attribute [CustomGetter] Object thisObject;

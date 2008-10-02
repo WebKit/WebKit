@@ -1,3 +1,9 @@
+2008-10-02  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * page/JavaScriptCallFrame.idl:
+
 2008-10-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
