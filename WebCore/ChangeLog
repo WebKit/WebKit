@@ -1,3 +1,13 @@
+2008-10-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Build fix for platform that don't implement WTF::ThreadSpecific.
+
+        * bindings/js/JSDOMBinding.cpp: (WebCore::wrapperSet):
+        Guard ThreadSpecific use with #if ENABLE(WORKERS). No platform defines this yet, but this
+        code is only needed for JS bindings in worker threads.
+
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21298
