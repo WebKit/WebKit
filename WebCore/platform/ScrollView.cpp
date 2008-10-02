@@ -373,12 +373,44 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     m_inUpdateScrollbars = false;
 }
 
-#if PLATFORM(MAC) || PLATFORM(WX)
-// FIXME: This is just temporary so we can commit a cross-platform version of updateScrollbars.
-void ScrollView::scrollContents(const IntSize&)
+const int panIconSizeLength = 20;
+
+void ScrollView::scrollContents(const IntSize& scrollDelta)
 {
+    // Since scrolling is double buffered, we will be blitting the scroll view's intersection
+    // with the clip rect every time to keep it smooth.
+    IntRect clipRect = static_cast<Widget*>(this)->windowClipRect();
+    IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
+    IntRect updateRect = clipRect;
+    updateRect.intersect(scrollViewRect);
+
+    // Invalidate the window (not the backing store).
+    hostWindow()->repaint(updateRect, false);
+
+    if (m_drawPanScrollIcon) {
+        int panIconDirtySquareSizeLength = 2 * (panIconSizeLength + max(abs(scrollDelta.width()), abs(scrollDelta.height()))); // We only want to repaint what's necessary
+        IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
+        IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation , IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
+        panScrollIconDirtyRect.intersect(clipRect);
+        hostWindow()->repaint(panScrollIconDirtyRect, true, true);
+    }
+
+    if (canBlitOnScroll()) { // The main frame can just blit the WebView window
+       // FIXME: Find a way to blit subframes without blitting overlapping content
+       hostWindow()->scroll(-scrollDelta, scrollViewRect, clipRect);
+    } else { 
+       // We need to go ahead and repaint the entire backing store.  Do it now before moving the
+       // plugins.
+       hostWindow()->repaint(updateRect, true, false, true); // Invalidate the backing store and repaint it synchronously
+    }
+
+    // This call will move children with native widgets (plugins) and invalidate them as well.
+    frameRectsChanged();
+
+    // Now update the window (which should do nothing but a blit of the backing store's updateRect and so should
+    // be very fast).
+    hostWindow()->paint();
 }
-#endif
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
 {
@@ -700,6 +732,20 @@ bool ScrollView::isOffscreen() const
     // FIXME: Add a HostWindow::isOffscreen method here.  Since only Mac implements this method
     // currently, we can add the method when the other platforms decide to implement this concept.
     return false;
+}
+
+
+void ScrollView::addPanScrollIcon(const IntPoint& iconPosition)
+{
+    m_drawPanScrollIcon = true;    
+    m_panScrollIconPoint = IntPoint(iconPosition.x() - panIconSizeLength / 2 , iconPosition.y() - panIconSizeLength / 2) ;
+    hostWindow()->repaint(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength,panIconSizeLength)), true, true);    
+}
+
+void ScrollView::removePanScrollIcon()
+{
+    m_drawPanScrollIcon = false; 
+    hostWindow()->repaint(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true, true);
 }
 
 #if !PLATFORM(MAC)

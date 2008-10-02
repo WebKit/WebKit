@@ -113,7 +113,8 @@ public:
     virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect) { }
     virtual void updateBackingStore() { }
 
-    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) { }
+    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false) { }
+    virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) { }
     virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
     virtual IntRect windowToScreen(const IntRect& r) const { return r; }
 

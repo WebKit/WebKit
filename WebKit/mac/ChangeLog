@@ -1,3 +1,16 @@
+2008-10-02  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21314
+        
+        Make scrollBackingStore cross-platform.
+
+        Reviewed by Sam Weinig
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::repaint):
+        (WebChromeClient::scroll):
+
 2008-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler and Cameron Zwarich.

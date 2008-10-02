@@ -202,14 +202,16 @@ public:
     virtual void hide();
     virtual void setParentVisible(bool);
     
+    // Pan scrolling methods.
+    void addPanScrollIcon(const IntPoint&);
+    void removePanScrollIcon();
+
 protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
     
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
-    
-    void updateWindowRect(const IntRect&, bool now = false);
 
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;
@@ -270,7 +272,7 @@ private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
 // FIXME: ScrollViewPrivate will eventually be completely gone.
     class ScrollViewPrivate;
     ScrollViewPrivate* m_data;
@@ -281,16 +283,6 @@ private:
 #if !PLATFORM(MAC) && !PLATFORM(WX)
 public:
     void addToDirtyRegion(const IntRect&);
-    void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
-    void updateBackingStore();
-#endif
-
-#if PLATFORM(WIN)
-public:
-    virtual void themeChanged();
-
-    void printPanScrollIcon(const IntPoint&);
-    void removePanScrollIcon();
 #endif
 
 #if PLATFORM(QT)

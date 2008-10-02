@@ -404,7 +404,11 @@ IntRect WebChromeClient::windowResizerRect() const
 }
 
 // Host window methods are really only needed once we have a viewless Mac Webkit.
-void WebChromeClient::repaint(const IntRect&, bool, bool)
+void WebChromeClient::repaint(const IntRect&, bool, bool, bool)
+{
+}
+
+void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)
 {
 }
 
@@ -420,14 +424,6 @@ IntRect WebChromeClient::windowToScreen(const IntRect& r) const
 // End host window methods.
 
 void WebChromeClient::addToDirtyRegion(const IntRect&)
-{
-}
-
-void WebChromeClient::scrollBackingStore(int, int, const IntRect&, const IntRect&)
-{
-}
-
-void WebChromeClient::updateBackingStore()
 {
 }
 

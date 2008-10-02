@@ -68,7 +68,6 @@ public:
     ScrollViewPrivate(ScrollView* view)
       : m_view(view)
       , m_platformWidgets(0)
-      , m_inUpdateScrollbars(false)
     {
     }
 
@@ -76,33 +75,9 @@ public:
     {
     }
 
-    void scrollBackingStore(const IntSize& scrollDelta);
-
     ScrollView* m_view;
     int  m_platformWidgets;
 };
-
-void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelta)
-{
-    // Since scrolling is double buffered, we will be blitting the scroll view's intersection
-    // with the clip rect every time to keep it smooth.
-    IntRect clipRect = m_view->windowClipRect();
-    IntRect scrollViewRect = m_view->convertToContainingWindow(IntRect(0, 0, m_view->visibleWidth(), m_view->visibleHeight()));
-
-    IntRect updateRect = clipRect;
-    updateRect.intersect(scrollViewRect);
-
-    if (m_view->canBlitOnScroll() && !m_view->root()->hasNativeWidgets()) {
-       m_view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(),
-                                  scrollViewRect, clipRect);
-    } else  {
-       // We need to go ahead and repaint the entire backing store.
-       m_view->addToDirtyRegion(updateRect);
-       m_view->updateBackingStore();
-    }
-
-    m_view->frameRectsChanged();
-}
 
 ScrollView::ScrollView()
     : m_data(new ScrollViewPrivate(this))
@@ -112,12 +87,8 @@ ScrollView::ScrollView()
 
 ScrollView::~ScrollView()
 {
+    destroy();
     delete m_data;
-}
-
-void ScrollView::scrollContents(const IntSize& size)
-{
-    m_data->scrollBackingStore(size);
 }
 
 void ScrollView::platformAddChild(Widget* child)
@@ -139,26 +110,6 @@ void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
     if (!page)
         return;
     page->chrome()->addToDirtyRegion(containingWindowRect);
-}
-
-void ScrollView::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->scrollBackingStore(dx, dy, scrollViewRect, clipRect);
-}
-
-void ScrollView::updateBackingStore()
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->updateBackingStore();
 }
 
 void ScrollView::incrementNativeWidgetCount()

@@ -109,15 +109,12 @@ namespace WebCore {
 
         virtual IntRect windowResizerRect() const = 0;
 
-        // The following three methods are deprecated and will be removed once all of the callers have been
-        // eliminated.
+        // This method is deprecated and will be removed once all of the callers have been eliminated.
         virtual void addToDirtyRegion(const IntRect&) = 0;
-        virtual void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect) = 0;
-        virtual void updateBackingStore() = 0;
-        // End deprecated methods.
 
         // Methods used by HostWindow.
-        virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) = 0;
+        virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false) = 0;
+        virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;
         virtual IntPoint screenToWindow(const IntPoint&) const = 0;
         virtual IntRect windowToScreen(const IntRect&) const = 0;
         // End methods used by HostWindow.

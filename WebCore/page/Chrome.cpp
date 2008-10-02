@@ -76,9 +76,14 @@ Chrome::~Chrome()
     m_client->chromeDestroyed();
 }
 
-void Chrome::repaint(const IntRect& windowRect, bool contentChanged, bool immediate)
+void Chrome::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
-    m_client->repaint(windowRect, contentChanged, immediate);
+    m_client->repaint(windowRect, contentChanged, immediate, repaintContentOnly);
+}
+
+void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+{
+    m_client->scroll(scrollDelta, rectToScroll, clipRect);
 }
 
 IntPoint Chrome::screenToWindow(const IntPoint& point) const
@@ -312,16 +317,6 @@ IntRect Chrome::windowResizerRect() const
 void Chrome::addToDirtyRegion(const IntRect& rect)
 {
     m_client->addToDirtyRegion(rect);
-}
-
-void Chrome::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
-{
-    m_client->scrollBackingStore(dx, dy, scrollViewRect, clipRect);
-}
-
-void Chrome::updateBackingStore()
-{
-    m_client->updateBackingStore();
 }
 
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)

@@ -259,9 +259,10 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClient::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate)
+void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
-    if (!m_webView)
+    // Since we have no backing store, we do nothing if repaintContentOnly is set.
+    if (!m_webView || repaintContentOnly)
         return;
 
     GdkRectangle rect = windowRect;
@@ -274,6 +275,11 @@ void ChromeClient::repaint(const WebCore::IntRect& windowRect, bool contentChang
         if (immediate)
             gdk_window_process_updates(window, true);
     }
+}
+
+void ChromeClient::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect& clipRect)
+{
+    notImplemented();
 }
 
 IntRect ChromeClient::windowToScreen(const IntRect& rect) const
@@ -289,16 +295,6 @@ IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
 }
 
 void ChromeClient::addToDirtyRegion(const IntRect&)
-{
-    notImplemented();
-}
-
-void ChromeClient::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
-{
-    notImplemented();
-}
-
-void ChromeClient::updateBackingStore()
 {
     notImplemented();
 }

@@ -42,7 +42,8 @@ public:
     // The repaint method asks the host window to repaint a rect in the window's coordinate space.  The
     // contentChanged boolean indicates whether or not the Web page content actually changed (or if a repaint
     // of unchanged content is being requested).
-    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false) = 0;
+    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false) = 0;
+    virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;
 
     // The paint method just causes a synchronous update of the window to happen for platforms that need it (Windows).
     void paint() { repaint(IntRect(), false, true); }

@@ -74,8 +74,6 @@ public:
         }
     }
 
-    void scrollBackingStore(const IntSize& scrollDelta);
-
     static void adjustmentChanged(GtkAdjustment*, gpointer);
 
     ScrollView* view;
@@ -83,35 +81,6 @@ public:
     GtkAdjustment* horizontalAdjustment;
     GtkAdjustment* verticalAdjustment;
 };
-
-void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelta)
-{
-    // Since scrolling is double buffered, we will be blitting the scroll view's intersection
-    // with the clip rect every time to keep it smooth.
-    IntRect clipRect = view->windowClipRect();
-    IntRect scrollViewRect = view->convertToContainingWindow(IntRect(0, 0, view->visibleWidth(), view->visibleHeight()));
-
-    IntRect updateRect = clipRect;
-    updateRect.intersect(scrollViewRect);
-
-    //FIXME update here?
-
-    if (view->canBlitOnScroll()) // The main frame can just blit the WebView window
-       // FIXME: Find a way to blit subframes without blitting overlapping content
-       view->scrollBackingStore(-scrollDelta.width(), -scrollDelta.height(), scrollViewRect, clipRect);
-    else  {
-       // We need to go ahead and repaint the entire backing store.  Do it now before moving the
-       // plugins.
-       view->addToDirtyRegion(updateRect);
-       view->updateBackingStore();
-    }
-
-    view->frameRectsChanged();
-
-    // Now update the window (which should do nothing but a blit of the backing store's updateRect and so should
-    // be very fast).
-    invalidate();
-}
 
 void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment, gpointer _that)
 {
@@ -241,26 +210,6 @@ void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
     if (!page)
         return;
     page->chrome()->addToDirtyRegion(containingWindowRect);
-}
-
-void ScrollView::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->scrollBackingStore(dx, dy, scrollViewRect, clipRect);
-}
-
-void ScrollView::updateBackingStore()
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->updateBackingStore();
 }
 
 }

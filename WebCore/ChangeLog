@@ -1,3 +1,35 @@
+2008-10-02  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21314
+        
+        Make scrollBackingStore cross-platform.
+
+        Reviewed by Sam Weinig
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::repaint):
+        (WebCore::EmptyChromeClient::scroll):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::repaint):
+        (WebCore::Chrome::scroll):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAutoscroll):
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::addPanScrollIcon):
+        (WebCore::ScrollView::removePanScrollIcon):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::~ScrollView):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+
 2008-10-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after Frame/ScrollView changes.

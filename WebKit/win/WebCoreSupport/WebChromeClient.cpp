@@ -417,10 +417,17 @@ IntRect WebChromeClient::windowResizerRect() const
     return intRect;
 }
 
-void WebChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate)
+void WebChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
     ASSERT(core(m_webView->topLevelFrame()));
-    m_webView->repaint(windowRect, contentChanged, immediate);
+    m_webView->repaint(windowRect, contentChanged, immediate, repaintContentOnly);
+}
+
+void WebChromeClient::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect& clipRect)
+{
+    ASSERT(core(m_webView->topLevelFrame()));
+
+    m_webView->scrollBackingStore(core(m_webView->topLevelFrame())->view(), delta.x(), delta.y(), scrollViewRect, clipRect);
 }
 
 IntRect WebChromeClient::windowToScreen(const IntRect& rect) const
@@ -455,20 +462,6 @@ IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
 void WebChromeClient::addToDirtyRegion(const IntRect& dirtyRect)
 {
     m_webView->addToDirtyRegion(dirtyRect);
-}
-
-void WebChromeClient::scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
-{
-    ASSERT(core(m_webView->topLevelFrame()));
-
-    m_webView->scrollBackingStore(core(m_webView->topLevelFrame())->view(), dx, dy, scrollViewRect, clipRect);
-}
-
-void WebChromeClient::updateBackingStore()
-{
-    ASSERT(core(m_webView->topLevelFrame()));
-
-    m_webView->updateBackingStore(core(m_webView->topLevelFrame())->view(), 0, false);
 }
 
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)

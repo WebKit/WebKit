@@ -573,7 +573,7 @@ void EventHandler::handleAutoscroll(RenderObject* renderer)
 #if PLATFORM(WIN)
     if (m_panScrollInProgress) {
         m_panScrollStartPos = currentMousePosition();
-        m_frame->view()->printPanScrollIcon(m_panScrollStartPos);
+        m_frame->view()->addPanScrollIcon(m_panScrollStartPos);
         // If we're not in the top frame we notify it that we are using the panScroll
         if (m_frame != m_frame->page()->mainFrame())
             m_frame->page()->mainFrame()->eventHandler()->setPanScrollInProgress(true);

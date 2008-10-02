@@ -53,7 +53,8 @@ namespace WebCore {
         ChromeClient* client() { return m_client; }
 
         // HostWindow methods.
-        virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false);
+        virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
+        virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
         virtual IntPoint screenToWindow(const IntPoint&) const;
         virtual IntRect windowToScreen(const IntRect&) const;
     
@@ -104,8 +105,6 @@ namespace WebCore {
 
         IntRect windowResizerRect() const;
         void addToDirtyRegion(const IntRect&);
-        void scrollBackingStore(int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect);
-        void updateBackingStore();
 
         void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 

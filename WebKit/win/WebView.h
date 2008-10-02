@@ -709,9 +709,9 @@ public:
     void addToDirtyRegion(const WebCore::IntRect&);
     void addToDirtyRegion(HRGN);
     void scrollBackingStore(WebCore::FrameView*, int dx, int dy, const WebCore::IntRect& scrollViewRect, const WebCore::IntRect& clipRect);
-    void updateBackingStore(WebCore::FrameView*, HDC, bool backingStoreCompletelyDirty);
+    void updateBackingStore(WebCore::FrameView*, HDC = 0, bool backingStoreCompletelyDirty = false);
     void deleteBackingStore();
-    void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false);
+    void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
     void frameRect(RECT* rect);
     void closeWindow();
     void closeWindowSoon();
