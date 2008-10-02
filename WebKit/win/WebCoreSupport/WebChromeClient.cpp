@@ -444,7 +444,7 @@ IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
     POINT result = point;
 
     HWND viewWindow;
-    if (FAILED(webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+    if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
         return point;
 
     ::ScreenToClient(viewWindow, &result);
