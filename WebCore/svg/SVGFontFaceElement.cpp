@@ -283,16 +283,13 @@ String SVGFontFaceElement::fontFamily() const
     return m_styleDeclaration->getPropertyValue(CSSPropertyFontFamily);
 }
 
-SVGFontElement* SVGFontFaceElement::associatedFontElement() const
-{
-    return m_fontElement.get();
-}
-
 void SVGFontFaceElement::rebuildFontFace()
 {
     // Ignore changes until we live in the tree
-    if (!parentNode())
+    if (!parentNode()) {
+        m_fontElement = 0;
         return;
+    }
 
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;

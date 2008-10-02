@@ -1,3 +1,14 @@
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix SVGFontElement leaks seen on buildbot by breaking a ref cycle
+
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceElement.h:
+        (WebCore::SVGFontFaceElement::associatedFontElement):
+
 2008-10-01  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Maciej Stachowiak.

@@ -52,14 +52,14 @@ namespace WebCore {
         int descent() const;
         String fontFamily() const;
 
-        SVGFontElement* associatedFontElement() const;
+        SVGFontElement* associatedFontElement() const { return m_fontElement; }
         void rebuildFontFace();
 
     private:
         RefPtr<CSSFontFaceRule> m_fontFaceRule;
         RefPtr<CSSMutableStyleDeclaration> m_styleDeclaration;
 
-        RefPtr<SVGFontElement> m_fontElement;
+        SVGFontElement* m_fontElement;
     };
 
 } // namespace WebCore
