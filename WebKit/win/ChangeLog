@@ -1,3 +1,18 @@
+2008-10-02  Darin Adler  <darin@apple.com>
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21321
+          Bug 21321: speed up JavaScriptCore by inlining Heap in JSGlobalData
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptObjectsCount): Use heap. instead of heap-> to
+        work with the heap.
+        (WebCoreStatistics::javaScriptGlobalObjectsCount): Ditto.
+        (WebCoreStatistics::javaScriptProtectedObjectsCount): Ditto.
+        (WebCoreStatistics::javaScriptProtectedGlobalObjectsCount): Ditto.
+        (WebCoreStatistics::javaScriptProtectedObjectTypeCounts): Ditto.
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::objectCount): Ditto.
+
 2008-10-02  Dave Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21316

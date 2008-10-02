@@ -82,7 +82,7 @@ namespace JSC  {
         static const HashTable* regExpConstructorTable(ExecState* exec) { return exec->m_globalData->regExpConstructorTable; }
         static const HashTable* stringTable(ExecState* exec) { return exec->m_globalData->stringTable; }
 
-        Heap* heap() const { return m_globalData->heap; }
+        Heap* heap() const { return &m_globalData->heap; }
 
     private:
         // Default constructor required for gcc 3.

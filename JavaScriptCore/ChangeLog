@@ -1,3 +1,66 @@
+2008-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21321
+          Bug 21321: speed up JavaScriptCore by inlining Heap in JSGlobalData
+
+        1.019x as fast on SunSpider.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript): Use heap. instead of heap-> to work with the heap.
+        (JSCheckScriptSyntax): Ditto.
+        (JSGarbageCollect): Ditto.
+        (JSReportExtraMemoryCost): Ditto.
+        * API/JSContextRef.cpp:
+        (JSGlobalContextRetain): Ditto.
+        (JSGlobalContextRelease): Destroy the heap with the destroy function instead
+        of the delete operator.
+        (JSContextGetGlobalObject): Use heap. instead of heap-> to work with the heap.
+        * API/JSObjectRef.cpp:
+        (JSObjectMake): Use heap. instead of heap-> to work with the heap.
+        (JSObjectMakeFunctionWithCallback): Ditto.
+        (JSObjectMakeConstructor): Ditto.
+        (JSObjectMakeFunction): Ditto.
+        (JSObjectMakeArray): Ditto.
+        (JSObjectMakeDate): Ditto.
+        (JSObjectMakeError): Ditto.
+        (JSObjectMakeRegExp): Ditto.
+        (JSObjectHasProperty): Ditto.
+        (JSObjectGetProperty): Ditto.
+        (JSObjectSetProperty): Ditto.
+        (JSObjectGetPropertyAtIndex): Ditto.
+        (JSObjectSetPropertyAtIndex): Ditto.
+        (JSObjectDeleteProperty): Ditto.
+        (JSObjectCallAsFunction): Ditto.
+        (JSObjectCallAsConstructor): Ditto.
+        (JSObjectCopyPropertyNames): Ditto.
+        (JSPropertyNameAccumulatorAddName): Ditto.
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual): Ditto.
+        (JSValueIsInstanceOfConstructor): Ditto.
+        (JSValueMakeNumber): Ditto.
+        (JSValueMakeString): Ditto.
+        (JSValueToNumber): Ditto.
+        (JSValueToStringCopy): Ditto.
+        (JSValueToObject): Ditto.
+        (JSValueProtect): Ditto.
+        (JSValueUnprotect): Ditto.
+
+        * kjs/ExecState.h:
+        (JSC::ExecState::heap): Update to use the & operator.
+
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Update to initialize a heap member
+        instead of calling new to make a heap.
+        (JSC::JSGlobalData::~JSGlobalData): Destroy the heap with the destroy
+        function instead of the delete operator.
+        * kjs/JSGlobalData.h: Change from Heap* to a Heap.
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::mark): Use the & operator here.
+        (JSC::JSGlobalObject::operator new): Use heap. instead of heap-> to work
+        with the heap.
+
 2008-10-02  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

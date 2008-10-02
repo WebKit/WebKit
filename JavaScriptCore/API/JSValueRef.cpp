@@ -112,7 +112,7 @@ bool JSValueIsObjectOfClass(JSContextRef, JSValueRef value, JSClassRef jsClass)
 bool JSValueIsEqual(JSContextRef ctx, JSValueRef a, JSValueRef b, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsA = toJS(a);
@@ -139,7 +139,7 @@ bool JSValueIsStrictEqual(JSContextRef, JSValueRef a, JSValueRef b)
 bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObjectRef constructor, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsValue = toJS(value);
@@ -173,7 +173,7 @@ JSValueRef JSValueMakeBoolean(JSContextRef, bool value)
 JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     return toRef(jsNumber(exec, value));
@@ -182,7 +182,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     return toRef(jsString(exec, string->ustring()));
@@ -198,7 +198,7 @@ bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
 double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsValue = toJS(value);
@@ -216,7 +216,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
 JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsValue = toJS(value);
@@ -234,7 +234,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsValue = toJS(value);
@@ -252,7 +252,7 @@ JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exce
 void JSValueProtect(JSContextRef ctx, JSValueRef value)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsValue = toJS(value);
@@ -262,7 +262,7 @@ void JSValueProtect(JSContextRef ctx, JSValueRef value)
 void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsValue = toJS(value);

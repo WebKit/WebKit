@@ -64,6 +64,8 @@ namespace JSC {
         class Thread;
         enum HeapType { PrimaryHeap, NumberHeap };
 
+        void destroy();
+
 #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
         // We can inline these functions because everything is compiled as
         // one file, so the heapAllocate template definitions are available.
@@ -77,8 +79,6 @@ namespace JSC {
 
         bool collect();
         bool isBusy(); // true if an allocation or collection is in progress
-
-        ~Heap();
 
         static const size_t minExtraCostSize = 256;
 
@@ -118,6 +118,7 @@ namespace JSC {
 
         friend class JSGlobalData;
         Heap(JSGlobalData*);
+        ~Heap();
 
         void recordExtraCost(size_t);
         void markProtectedObjects();

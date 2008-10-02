@@ -87,7 +87,7 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 
     JSGlobalData& globalData = exec->globalData();
 
-    globalData.heap->registerThread();
+    globalData.heap.registerThread();
 
     gcProtect(exec->dynamicGlobalObject());
     globalData.ref();
@@ -104,15 +104,11 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     JSGlobalData& globalData = exec->globalData();
     if (globalData.refCount() == 2) { // One reference is held by JSGlobalObject, another added by JSGlobalContextRetain().
         // The last reference was released, this is our last chance to collect.
-        Heap* heap = globalData.heap;
-
-        ASSERT(!heap->protectedObjectCount());
-        ASSERT(!heap->isBusy());
-
-        delete heap;
-        globalData.heap = 0;
+        ASSERT(!globalData.heap.protectedObjectCount());
+        ASSERT(!globalData.heap.isBusy());
+        globalData.heap.destroy();
     } else
-        globalData.heap->collect();
+        globalData.heap.collect();
 
     globalData.deref();
 }
@@ -120,7 +116,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     // It is necessary to call toThisObject to get the wrapper object when used with WebCore.

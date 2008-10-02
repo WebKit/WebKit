@@ -153,7 +153,7 @@ void JSDOMWindowShell::clear()
 
 void* JSDOMWindowShell::operator new(size_t size)
 {
-    return JSDOMWindow::commonJSGlobalData()->heap->allocate(size);
+    return JSDOMWindow::commonJSGlobalData()->heap.allocate(size);
 }
 
 // ----

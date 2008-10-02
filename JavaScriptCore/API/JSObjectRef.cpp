@@ -73,7 +73,7 @@ void JSClassRelease(JSClassRef jsClass)
 JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     if (!jsClass)
@@ -89,7 +89,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     Identifier nameID = name ? name->identifier(exec) : Identifier(exec, "anonymous");
@@ -100,7 +100,7 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
 JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSValue* jsPrototype = jsClass 
@@ -115,7 +115,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
 JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     Identifier nameID = name ? name->identifier(exec) : Identifier(exec, "anonymous");
@@ -138,7 +138,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
 JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* result;
@@ -164,7 +164,7 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
 JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     ArgList argList;
@@ -185,7 +185,7 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
 JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     ArgList argList;
@@ -206,7 +206,7 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
 JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSValueRef arguments[],  JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     ArgList argList;
@@ -241,7 +241,7 @@ void JSObjectSetPrototype(JSContextRef, JSObjectRef object, JSValueRef value)
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -252,7 +252,7 @@ bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -269,7 +269,7 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -293,7 +293,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -311,7 +311,7 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef value, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -328,7 +328,7 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
 bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -378,7 +378,7 @@ bool JSObjectIsFunction(JSContextRef, JSObjectRef object)
 JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -416,7 +416,7 @@ bool JSObjectIsConstructor(JSContextRef, JSObjectRef object)
 JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
@@ -455,7 +455,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
 {
     JSObject* jsObject = toJS(object);
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
     JSGlobalData* globalData = &exec->globalData();
@@ -500,7 +500,7 @@ void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStri
 {
     PropertyNameArray* propertyNames = toJS(array);
 
-    propertyNames->globalData()->heap->registerThread();
+    propertyNames->globalData()->heap.registerThread();
     JSLock lock(propertyNames->globalData()->isSharedInstance);
 
     propertyNames->add(propertyName->identifier(propertyNames->globalData()));

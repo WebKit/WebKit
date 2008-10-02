@@ -1,3 +1,19 @@
+2008-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21321
+          Bug 21321: speed up JavaScriptCore by inlining Heap in JSGlobalData
+
+        * bindings/js/GCController.cpp:
+        (WebCore::collect): Use heap. instead of heap-> to work with the heap.
+        (WebCore::GCController::gcTimerFired): Ditto.
+        (WebCore::GCController::garbageCollectNow): Ditto.
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::operator new): Ditto.
+        * storage/Database.cpp:
+        (WebCore::Database::Database): Ditto.
+
 2008-10-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
