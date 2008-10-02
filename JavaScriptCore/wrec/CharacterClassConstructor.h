@@ -70,6 +70,18 @@ namespace JSC {
         }
 
         void flush();
+        
+        // We need to flush prior to an escaped hyphen to prevent it as being treated as indicating
+        // a range, e.g. [a\-c] we flush prior to adding the hyphen so that this is not treated as
+        // [a-c].  However, we do not want to flush if we have already seen a non escaped hyphen -
+        // e.g. [+-\-] should be treated the same as [+--], producing a range that will also match
+        // a comma.
+        void flushBeforeEscapedHyphen()
+        {
+            if (!m_isPendingDash)
+                flush();
+        }
+        
         void put(UChar ch);
         void append(CharacterClass& other);
 

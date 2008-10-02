@@ -123,7 +123,7 @@ namespace JSC {
         JmpSrc gererateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter);
         void generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail);
 
-        void gernerateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures);
+        void generateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures);
         void terminateDisjunction(JmpSrcVector& successes);
 
     private:

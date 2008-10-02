@@ -1,3 +1,13 @@
+2008-10-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Layout tests for for bug #21232 - plus a range of tests for, um, ranges.
+
+        * fast/js/regexp-ranges-and-escaped-hyphens-expected.txt: Added.
+        * fast/js/regexp-ranges-and-escaped-hyphens.html: Added.
+        * fast/js/resources/regexp-ranges-and-escaped-hyphens.js: Added.
+
 2008-10-01  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.

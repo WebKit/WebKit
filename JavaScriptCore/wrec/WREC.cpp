@@ -743,7 +743,7 @@ void WRECGenerator::generateBackreference(JmpSrcVector& failures, unsigned subpa
     m_jit.addl_i8r(4, X86::esp);
 }
 
-void WRECGenerator::gernerateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures)
+void WRECGenerator::generateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures)
 {
     successes.append(m_jit.emitUnlinkedJmp());
     
@@ -1066,8 +1066,8 @@ bool WRECParser::parseCharacterClass(JmpSrcVector& failures)
 
             case '-':
                 consume();
+                charClassConstructor.flushBeforeEscapedHyphen();
                 charClassConstructor.put(ch);
-                charClassConstructor.flush();
                 break;
 
             // IdentityEscape
@@ -1311,7 +1311,7 @@ void WRECParser::parseDisjunction(JmpSrcVector& failures)
         do {
             consume();
 
-            m_generator.gernerateDisjunction(successes, failures);
+            m_generator.generateDisjunction(successes, failures);
 
             parseAlternative(failures);
         } while (peek() == '|');

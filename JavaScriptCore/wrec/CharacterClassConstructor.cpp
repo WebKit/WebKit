@@ -213,15 +213,32 @@ void CharacterClassConstructor::addSortedRange(Vector<CharacterClassRange>& rang
 
 void CharacterClassConstructor::put(UChar ch)
 {
+    // Parsing a regular expression like [a-z], we start in an initial empty state:
+    //     ((m_charBuffer == -1) && !m_isPendingDash)
+    // When buffer the 'a' sice it may be (and is in this case) part of a range:
+    //     ((m_charBuffer != -1) && !m_isPendingDash)
+    // Having parsed the hyphen we then record that the dash is also pending:
+    //     ((m_charBuffer != -1) && m_isPendingDash)
+    // The next change will always take us back to the initial state - either because
+    // a complete range has been parsed (such as [a-z]), or because a flush is forced,
+    // due to an early end in the regexp ([a-]), or a character class escape being added
+    // ([a-\s]).  The fourth permutation of m_charBuffer and m_isPendingDash is not permitted.
+    ASSERT(!((m_charBuffer == -1) && m_isPendingDash));
+
     if (m_charBuffer != -1) {
         if (m_isPendingDash) {
+            // EXAMPLE: parsing [-a-c], the 'c' reaches this case - we have buffered a previous character and seen a hyphen, so this is a range.
             UChar lo = m_charBuffer;
             UChar hi = ch;
+            // Reset back to the inital state.
             m_charBuffer = -1;
             m_isPendingDash = false;
             
-            if (lo > hi)
+            // This is an error, detected lazily.  Do not proceed.
+            if (lo > hi) {
                 m_isUpsideDown = true;
+                return;
+            }
             
             if (lo <= 0x7f) {
                 char asciiLo = lo;
@@ -270,13 +287,17 @@ void CharacterClassConstructor::put(UChar ch)
                     }
                 }
             }
-        } else if (ch == '-') {
+        } else if (ch == '-')
+            // EXAMPLE: parsing [-a-c], the second '-' reaches this case - the hyphen is treated as potentially indicating a range.
             m_isPendingDash = true;
-        } else {
+        else {
+            // EXAMPLE: Parsing [-a-c], the 'a' reaches this case - we repace the previously buffered char with the 'a'.
             flush();
             m_charBuffer = ch;
         }
     } else
+        // EXAMPLE: Parsing [-a-c], the first hyphen reaches this case - there is no buffered character
+        // (the hyphen not treated as a special character in this case, same handling for any char).
         m_charBuffer = ch;
 }
 
@@ -306,6 +327,7 @@ void CharacterClassConstructor::flush()
     
     if (m_isPendingDash) {
         addSorted(m_matches, '-');
+        m_isPendingDash = false;
     }
 }
 

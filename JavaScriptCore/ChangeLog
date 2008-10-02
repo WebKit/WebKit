@@ -1,3 +1,23 @@
+2008-10-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for bug #21232 - should reset m_isPendingDash on flush,
+        and should allow '\-' as beginning or end of a range (though
+        not to specifiy a range itself).
+
+        * ChangeLog:
+        * wrec/CharacterClassConstructor.cpp:
+        (JSC::CharacterClassConstructor::put):
+        (JSC::CharacterClassConstructor::flush):
+        * wrec/CharacterClassConstructor.h:
+        (JSC::CharacterClassConstructor::flushBeforeEscapedHyphen):
+        * wrec/WREC.cpp:
+        (JSC::WRECGenerator::generateDisjunction):
+        (JSC::WRECParser::parseCharacterClass):
+        (JSC::WRECParser::parseDisjunction):
+        * wrec/WREC.h:
+
 2008-10-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
