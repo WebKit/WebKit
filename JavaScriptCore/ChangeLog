@@ -1,3 +1,14 @@
+2008-10-02  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Change bitwise operations introduced in r37166 to boolean operations. We
+        only use bitwise operations over boolean operations for increasing
+        performance in extremely hot code, but that does not apply to anything
+        in the parser.
+
+        * kjs/grammar.y:
+
 2008-10-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
