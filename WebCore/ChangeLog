@@ -2,7 +2,7 @@
 
         Reviewed by Maciej Stachowiak.
 
-        Build fix for platform that don't implement WTF::ThreadSpecific.
+        Build fix for platforms that don't implement WTF::ThreadSpecific.
 
         * bindings/js/JSDOMBinding.cpp: (WebCore::wrapperSet):
         Guard ThreadSpecific use with #if ENABLE(WORKERS). No platform defines this yet, but this
