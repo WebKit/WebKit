@@ -105,7 +105,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
 
     JSValue* jsPrototype = jsClass 
         ? jsClass->prototype(exec)
-        : exec->dynamicGlobalObject()->objectPrototype();
+        : exec->lexicalGlobalObject()->objectPrototype();
     
     JSCallbackConstructor* constructor = new (exec) JSCallbackConstructor(exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
     constructor->putDirect(exec->propertyNames().prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);

@@ -231,7 +231,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
     if (!fillBufferWithContentsOfFile(fileName, script))
         return throwError(exec, GeneralError, "Could not open file.");
 
-    JSGlobalObject* globalObject = exec->dynamicGlobalObject();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
     stopWatch.start();
     Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
@@ -247,7 +247,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
     if (!fillBufferWithContentsOfFile(fileName, script))
         return throwError(exec, GeneralError, "Could not open file.");
 
-    JSGlobalObject* globalObject = exec->dynamicGlobalObject();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
 
     return jsUndefined();

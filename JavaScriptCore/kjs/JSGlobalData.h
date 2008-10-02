@@ -46,6 +46,7 @@ namespace JSC {
     class Heap;
     class IdentifierTable;
     class JSGlobalObject;
+    class JSObject;
     class Lexer;
     class Machine;
     class Parser;
@@ -83,7 +84,7 @@ namespace JSC {
 
         SmallStrings smallStrings;
         
-        HashMap<OpaqueJSClass*, OpaqueJSClassContextData*>* opaqueJSClassData;
+        HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
 
         HashSet<ParserRefCounted*>* newParserObjects;
         HashCountedSet<ParserRefCounted*>* parserObjectExtraRefCounts;
@@ -94,6 +95,8 @@ namespace JSC {
         JSGlobalObject* head;
 
         bool isSharedInstance;
+
+        HashSet<JSObject*> arrayVisitedElements;
 
     private:
         JSGlobalData(bool isShared = false);

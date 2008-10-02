@@ -185,11 +185,10 @@ OpaqueJSClassContextData::~OpaqueJSClassContextData()
 
 OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
 {
-    HashMap<OpaqueJSClass*, OpaqueJSClassContextData*>* contextDataMap = exec->globalData().opaqueJSClassData;
-    HashMap<OpaqueJSClass*, OpaqueJSClassContextData*>::iterator iter = contextDataMap->find(this);
-    if (iter != contextDataMap->end())
-        return *iter->second;
-    return *contextDataMap->add(this, new OpaqueJSClassContextData(this)).first->second;
+    OpaqueJSClassContextData*& contextData = exec->globalData().opaqueJSClassData.add(this, 0).first->second;
+    if (!contextData)
+        contextData = new OpaqueJSClassContextData(this);
+    return *contextData;
 }
 
 UString OpaqueJSClass::className()
