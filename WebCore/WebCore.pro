@@ -401,6 +401,7 @@ SOURCES += \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
     bindings/js/JSImageConstructor.cpp \
+    bindings/js/JSImageDataCustom.cpp \
     bindings/js/JSInspectedObjectWrapper.cpp \
     bindings/js/JSInspectorCallbackWrapper.cpp \
     bindings/js/JSLocationCustom.cpp \

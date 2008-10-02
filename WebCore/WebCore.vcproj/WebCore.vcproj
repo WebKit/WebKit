@@ -13529,6 +13529,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSImageDataCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSInspectedObjectWrapper.cpp"
 					>
 				</File>

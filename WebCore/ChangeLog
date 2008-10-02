@@ -1,3 +1,13 @@
+2008-10-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Add new file to project files
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

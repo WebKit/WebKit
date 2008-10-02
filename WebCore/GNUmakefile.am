@@ -677,6 +677,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSHistoryCustom.h \
 	WebCore/bindings/js/JSImageConstructor.cpp \
 	WebCore/bindings/js/JSImageConstructor.h \
+	WebCore/bindings/js/JSImageDataCustom.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.h \
 	WebCore/bindings/js/JSInspectorCallbackWrapper.cpp \
