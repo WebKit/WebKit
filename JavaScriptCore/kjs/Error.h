@@ -23,6 +23,8 @@
 #ifndef Error_h
 #define Error_h
 
+#include <stdint.h>
+
 namespace JSC {
 
     class ExecState;
