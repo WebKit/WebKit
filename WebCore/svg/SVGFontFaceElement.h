@@ -39,6 +39,8 @@ namespace WebCore {
 
         virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
         virtual void insertedIntoDocument();
+        virtual void willMoveToNewOwnerDocument();
+        virtual void didMoveToNewOwnerDocument();
 
         unsigned unitsPerEm() const;
         int xHeight() const;
@@ -54,6 +56,7 @@ namespace WebCore {
 
         SVGFontElement* associatedFontElement() const { return m_fontElement; }
         void rebuildFontFace();
+        void removeFromMappedElementSheet();
 
     private:
         RefPtr<CSSFontFaceRule> m_fontFaceRule;

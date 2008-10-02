@@ -58,6 +58,7 @@ SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document* d
 
 SVGFontFaceElement::~SVGFontFaceElement()
 {
+    removeFromMappedElementSheet();
 }
 
 static void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName)
@@ -354,6 +355,30 @@ void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChang
     rebuildFontFace();
 }
 
+void SVGFontFaceElement::willMoveToNewOwnerDocument()
+{
+    removeFromMappedElementSheet();
 }
+
+void SVGFontFaceElement::didMoveToNewOwnerDocument()
+{
+    document()->mappedElementSheet()->append(m_fontFaceRule);
+}
+
+void SVGFontFaceElement::removeFromMappedElementSheet()
+{
+    CSSStyleSheet* mappedElementSheet = document()->mappedElementSheet();
+    if (!mappedElementSheet)
+        return;
+
+    for (unsigned i = 0; i < mappedElementSheet->length(); ++i) {
+        if (mappedElementSheet->item(i) == m_fontFaceRule) {
+            mappedElementSheet->remove(i);
+            break;
+        }
+    }
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)

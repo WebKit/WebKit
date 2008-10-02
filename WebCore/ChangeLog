@@ -1,3 +1,30 @@
+2008-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        - fix SVGFontFaceElement leak seen on svg/custom/acid3-test-77.html
+
+        Broke a ref cycle by changing the m_svgFontFaceElement members of
+        CSSFontFaceSource and CSSFontFaceSrcValue from RefPtrs to plain
+        pointers. Also made sure that the @font-face rule added by
+        SVGFontFaceElement to the document's mapped element sheet is removed
+        when the font-face element is deleted or moved to another document.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h:
+        (WebCore::CSSFontFaceSource::svgFontFaceElement):
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::svgFontFaceElement):
+        (WebCore::CSSFontFaceSrcValue::CSSFontFaceSrcValue):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::~SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::willMoveToNewOwnerDocument):
+        (WebCore::SVGFontFaceElement::didMoveToNewOwnerDocument):
+        (WebCore::SVGFontFaceElement::removeFromMappedElementSheet):
+        * svg/SVGFontFaceElement.h:
+
 2008-10-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
