@@ -1,5 +1,9 @@
 2008-10-02  Adam Roben  <aroben@apple.com>
 
+        * template/en/custom/attachment/review.html.tmpl: Fix URLs
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
         Fix Bug 21315: bugs.webkit.org should have a nicer patch review
         interface
 
