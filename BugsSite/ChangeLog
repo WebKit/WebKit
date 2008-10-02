@@ -1,3 +1,17 @@
+2008-10-02  Adam Roben  <aroben@apple.com>
+
+        Remove references to some backup files I created when implementing
+        PrettyPatch in Bugzilla
+
+        Reviewed by Tim Hatcher.
+
+        * attachment-aroben.cgi: Removed.
+        * template/en/default/attachment/edit-aroben.html.tmpl: Removed.
+
+        * template/en/custom/attachment/edit.html.tmpl: Removed an erroneous
+        reference to attachment-aroben.cgi. attachment.cgi will work just
+        fine.
+
 2008-06-25  David Kilzer  <ddkilzer@apple.com>
 
         Make PrettyPatch handle diffs with no Index or diff headers
