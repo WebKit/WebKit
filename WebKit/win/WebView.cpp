@@ -4498,7 +4498,7 @@ HRESULT WebView::setProhibitsMainFrameScrolling(BOOL b)
     if (!m_page)
         return E_FAIL;
 
-    m_page->mainFrame()->setProhibitsScrolling(b);
+    m_page->mainFrame()->view()->setProhibitsScrolling(b);
     return S_OK;
 }
 
