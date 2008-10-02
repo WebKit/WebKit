@@ -180,7 +180,7 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
 
     // Now update the window (which should do nothing but a blit of the backing store's updateRect and so should
     // be very fast).
-    view->update();
+    view->hostWindow()->paint();
 }
 
 void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment, gpointer _that)
