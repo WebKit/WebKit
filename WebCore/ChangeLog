@@ -1,6 +1,15 @@
 2008-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
+
+        Try to fix some more builds.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+
+2008-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
         
         Try to fix Windows build.
 
