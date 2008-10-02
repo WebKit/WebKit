@@ -1,6 +1,15 @@
 2008-10-01  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20669
+
+        * css/makeprop.pl:
+        Die if gperf fails.
+
+2008-10-01  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
 
         * loader/icon/IconDatabase.h:
         IconDatabase uses HashMap, so it needs to #include the header.
