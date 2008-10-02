@@ -1,3 +1,21 @@
+2008-10-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson and Eric Seidel.
+
+        - fix HTMLCanvaseElement leak from -webkit-canvas() values
+
+        Changed the m_element member of CSSCanvasValue from a RefPtr to a plain
+        pointer, as the document owns the canvas elements. Added code to release
+        those elements in Document::removedLastRef() because they reference
+        the document.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::element):
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+
 2008-10-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -73,7 +73,7 @@ HTMLCanvasElement* CSSCanvasValue::element(Document* document)
             return 0;
         m_element->setObserver(this);
     }
-    return m_element.get();
+    return m_element;
 }
 
 Image* CSSCanvasValue::image(RenderObject* renderer, const IntSize& /*size*/)

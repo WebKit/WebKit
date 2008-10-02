@@ -404,6 +404,8 @@ void Document::removedLastRef()
         delete m_tokenizer;
         m_tokenizer = 0;
 
+        m_cssCanvasElements.clear();
+
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = false;
 #endif
