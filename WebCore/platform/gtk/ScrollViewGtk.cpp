@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "PlatformMouseEvent.h"
