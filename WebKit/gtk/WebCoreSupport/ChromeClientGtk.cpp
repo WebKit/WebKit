@@ -265,7 +265,7 @@ void ChromeClient::repaint(const WebCore::IntRect& windowRect, bool contentChang
         return;
 
     GdkRectangle rect = windowRect;
-    GdkWindow* window = GTK_WIDGET(m_webView);
+    GdkWindow* window = GTK_WIDGET(m_webView)->window;
 
     if (window) {
         // No double buffer.
