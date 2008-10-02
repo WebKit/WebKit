@@ -53,6 +53,8 @@ static void markDOMObjectWrapper(JSGlobalData& globalData, void* object)
 
 void JSDOMWindow::mark()
 {
+    Base::mark();
+
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
     markDOMObjectWrapper(globalData, impl()->optionalConsole());
@@ -84,8 +86,6 @@ void JSDOMWindow::mark()
         if (!it2->second->marked())
             it2->second->mark();
     }
-
-    Base::mark();
 }
 
 bool JSDOMWindow::deleteProperty(ExecState* exec, const Identifier& propertyName)
