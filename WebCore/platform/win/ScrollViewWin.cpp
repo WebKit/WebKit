@@ -384,9 +384,4 @@ void ScrollView::updateBackingStore()
     page->chrome()->updateBackingStore();
 }
 
-bool ScrollView::isOffscreen() const
-{
-    return false;
-}
-
 } // namespace WebCore
