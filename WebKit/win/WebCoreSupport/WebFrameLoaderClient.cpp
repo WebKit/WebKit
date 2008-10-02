@@ -522,7 +522,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         frame->ownerRenderer()->setWidget(frameView);
 
     if (HTMLFrameOwnerElement* owner = frame->ownerElement())
-        frame->view()->setScrollbarModes(owner->scrollingMode(), owner->scrollingMode());
+        frame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
 }
 
 bool WebFrameLoaderClient::canCachePage() const
