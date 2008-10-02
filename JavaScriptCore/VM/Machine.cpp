@@ -105,23 +105,6 @@ ALWAYS_INLINE static Instruction* vPCForPC(CodeBlock*, void* pc)
 
 #endif // #ENABLE(CTI)
 
-static const intptr_t HostCallFrameMask = 1;
-
-static inline Register* makeHostCallFramePointer(Register* callFrame)
-{
-    return reinterpret_cast<Register*>(reinterpret_cast<intptr_t>(callFrame) | HostCallFrameMask);
-}
-
-static inline bool isHostCallFrame(Register* callFrame)
-{
-    return reinterpret_cast<intptr_t>(callFrame) & HostCallFrameMask;
-}
-
-static inline Register* stripHostCallFrameBit(Register* callFrame)
-{
-    return reinterpret_cast<Register*>(reinterpret_cast<intptr_t>(callFrame) & ~HostCallFrameMask);
-}
-
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, ScopeChain& sc)
 {

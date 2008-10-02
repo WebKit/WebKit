@@ -76,7 +76,7 @@ namespace JSC {
                 , datePrototype(0)
                 , regExpPrototype(0)
             {
-                Machine::initializeCallFrame(globalCallFrame + RegisterFile::CallFrameHeaderSize, 0, 0, globalScopeChain.node(), 0, 0, 0, 0);
+                Machine::initializeCallFrame(globalCallFrame + RegisterFile::CallFrameHeaderSize, 0, 0, globalScopeChain.node(), makeHostCallFramePointer(0), 0, 0, 0);
             }
             
             virtual ~JSGlobalObjectData()
