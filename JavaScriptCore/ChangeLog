@@ -1,3 +1,13 @@
+2008-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - remove the "static" from declarations in a header file, since we
+          don't want them to have internal linkage
+
+        * VM/Machine.h: Remove the static keyword from the constant and the
+        three inline functions that Geoff just moved here.
+
 2008-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
