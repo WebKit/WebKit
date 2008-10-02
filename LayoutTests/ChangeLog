@@ -1,3 +1,102 @@
+2008-10-02  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21292
+
+        Revert the changes to enclosingIntRect made in r12530 since the new code
+        doesn't round correctly.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-11-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-60-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-61-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-62-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-63-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-64-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-65-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-70-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/script-handle-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/script-handle-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/script-handle-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * platform/mac/svg/batik/filters/filterRegions-expected.txt:
+        * platform/mac/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor2-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor3-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/mac/svg/batik/text/textLayout-expected.txt:
+        * platform/mac/svg/batik/text/textLayout2-expected.txt:
+        * platform/mac/svg/batik/text/textLength-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath2-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath3-expected.txt:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/mac/svg/batik/text/textPCDATA-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/batik/text/textStyles-expected.txt:
+        * platform/mac/svg/batik/text/verticalText-expected.txt:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/carto.net/button-expected.txt:
+        * platform/mac/svg/carto.net/colourpicker-expected.txt:
+        * platform/mac/svg/carto.net/scrollbar-expected.txt:
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/font-face-cascade-order-expected.txt:
+        * platform/mac/svg/custom/font-face-simple-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/text-xy-updates-expected.txt:
+        * platform/mac/svg/hixie/perf/001-expected.txt:
+        * platform/mac/svg/hixie/perf/002-expected.txt:
+        * platform/mac/svg/hixie/text/003-expected.txt:
+        * platform/mac/svg/hixie/text/003a-expected.txt:
+        * platform/mac/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+        * platform/mac/svg/text/text-align-01-b-expected.txt:
+        * platform/mac/svg/text/text-align-02-b-expected.txt:
+        * platform/mac/svg/text/text-align-05-b-expected.txt:
+        * platform/mac/svg/text/text-align-06-b-expected.txt:
+        * platform/mac/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-07-t-expected.txt:
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt:
+
 2008-10-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

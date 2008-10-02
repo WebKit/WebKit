@@ -52,9 +52,9 @@ layer at (0,0) size 450x500
             chunk 3 text run 1 at (80.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
             chunk 4 text run 1 at (120.00,0.00) startOffset 3 endOffset 4 width 4.00: "i"
             chunk 5 text run 1 at (160.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
-      RenderSVGText {text} at (-6,0) size 169x18 contains 5 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 169x18
-          RenderSVGInlineText {#text} at (1,-14) size 169x18
+      RenderSVGText {text} at (-6,0) size 170x18 contains 5 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 170x18
+          RenderSVGInlineText {#text} at (0,-14) size 170x18
             chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
             chunk 2 (middle anchor) text run 1 at (36.50,0.00) startOffset 1 endOffset 2 width 7.00: "a"
             chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
@@ -88,9 +88,9 @@ layer at (0,0) size 450x500
             chunk 3 text run 1 at (80.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
             chunk 4 text run 1 at (120.00,10.00) startOffset 3 endOffset 4 width 4.00: "i"
             chunk 5 text run 1 at (160.00,0.00) startOffset 4 endOffset 5 width 8.00: "k"
-      RenderSVGText {text} at (-6,0) size 169x28 contains 5 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 169x28
-          RenderSVGInlineText {#text} at (1,-14) size 169x28
+      RenderSVGText {text} at (-6,0) size 170x28 contains 5 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 170x28
+          RenderSVGInlineText {#text} at (0,-14) size 170x28
             chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
             chunk 2 (middle anchor) text run 1 at (36.50,10.00) startOffset 1 endOffset 2 width 7.00: "a"
             chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"

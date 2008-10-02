@@ -10,8 +10,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,-7) size 350x40 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-20) size 98x33
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 98.00: "Normal"
-          RenderSVGTSpan {tspan} at (0,0) size 204x34
-            RenderSVGInlineText {#text} at (98,-27) size 204x34
+          RenderSVGTSpan {tspan} at (0,0) size 204x33
+            RenderSVGInlineText {#text} at (98,-27) size 204x33
               chunk 1 text run 2 at (98.00,-7.00) startOffset 0 endOffset 16 width 204.00: "baseline-shift:7"
           RenderSVGInlineText {#text} at (302,-20) size 48x33
             chunk 1 text run 3 at (302.00,0.00) startOffset 0 endOffset 4 width 48.00: "text"

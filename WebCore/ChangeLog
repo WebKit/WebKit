@@ -1,3 +1,16 @@
+2008-10-02  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=21292
+
+        Revert the changes to enclosingIntRect made in r12530 since the new code
+        doesn't round correctly.
+
+        * ChangeLog:
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingIntRect):
+
 2008-10-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson and Eric Seidel.

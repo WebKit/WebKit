@@ -35,9 +35,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-64,175) size 64x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-13) size 64x17
             chunk 1 (end anchor) text run 1 at (-64.00,175.00) startOffset 0 endOffset 11 width 64.00: "wallclock()"
-      RenderSVGContainer {g} at (197,58) size 151x9 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,-15.00)}]
-        RenderSVGText {text} at (-4,0) size 7x9 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (1,-7) size 7x9
+      RenderSVGContainer {g} at (196,58) size 152x9 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,-15.00)}]
+        RenderSVGText {text} at (-4,0) size 8x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-7) size 8x9
             chunk 1 (middle anchor) text run 1 at (-3.50,0.00) startOffset 0 endOffset 2 width 7.00: "0s"
         RenderSVGText {text} at (8,0) size 8x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-7) size 8x9

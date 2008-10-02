@@ -56,9 +56,9 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,0) size 39x18
           RenderSVGInlineText {#text} at (168,-4) size 39x18
             chunk 5 text run 2 at (168.00,10.00) startOffset 0 endOffset 7 width 39.00: " rules!"
-      RenderSVGText {text} at (-6,0) size 189x28 contains 5 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 150x28
-          RenderSVGInlineText {#text} at (1,-14) size 150x28
+      RenderSVGText {text} at (-6,0) size 190x28 contains 5 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 151x28
+          RenderSVGInlineText {#text} at (0,-14) size 151x28
             chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
             chunk 2 (middle anchor) text run 1 at (36.50,0.00) startOffset 1 endOffset 2 width 7.00: "a"
             chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"
@@ -84,9 +84,9 @@ layer at (0,0) size 450x500
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
             chunk 2 text run 1 at (40.00,0.00) startOffset 1 endOffset 2 width 7.00: "a"
             chunk 3 text run 1 at (80.00,0.00) startOffset 2 endOffset 5 width 16.00: "tik"
-      RenderSVGText {text} at (-6,0) size 93x18 contains 3 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 93x18
-          RenderSVGInlineText {#text} at (1,-14) size 93x18
+      RenderSVGText {text} at (-6,0) size 94x18 contains 3 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 94x18
+          RenderSVGInlineText {#text} at (0,-14) size 94x18
             chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
             chunk 2 (middle anchor) text run 1 at (36.50,0.00) startOffset 1 endOffset 2 width 7.00: "a"
             chunk 3 (middle anchor) text run 1 at (72.00,0.00) startOffset 2 endOffset 5 width 16.00: "tik"
@@ -106,9 +106,9 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,0) size 39x18
           RenderSVGInlineText {#text} at (132,-4) size 39x18
             chunk 4 text run 2 at (132.00,10.00) startOffset 0 endOffset 7 width 39.00: " rules!"
-      RenderSVGText {text} at (-6,0) size 151x28 contains 4 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 112x28
-          RenderSVGInlineText {#text} at (1,-14) size 112x28
+      RenderSVGText {text} at (-6,0) size 152x28 contains 4 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 113x28
+          RenderSVGInlineText {#text} at (0,-14) size 113x28
             chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
             chunk 2 (middle anchor) text run 1 at (36.50,10.00) startOffset 1 endOffset 2 width 7.00: "a"
             chunk 3 (middle anchor) text run 1 at (78.00,0.00) startOffset 2 endOffset 3 width 4.00: "t"

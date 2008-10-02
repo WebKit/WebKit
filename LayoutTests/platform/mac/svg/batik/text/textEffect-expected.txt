@@ -3,8 +3,8 @@ KRenderingPaintServer {id="radialGradient" [type=RADIAL-GRADIENT] [stops=[(0.00,
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (42,16) size 441.80x387
-    RenderSVGContainer {g} at (42,16) size 441.80x387
+  RenderSVGRoot {svg} at (42,16) size 442.80x387
+    RenderSVGContainer {g} at (42,16) size 442.80x387
       RenderSVGText {text} at (136,30) size 178x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 178x17
           chunk 1 (middle anchor) text run 1 at (136.50,30.00) startOffset 0 endOffset 27 width 177.00: "Gradient and filter on text"
@@ -23,20 +23,20 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (44,160) size 152x59 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-48) size 152x59
           chunk 1 (middle anchor) text run 1 at (44.00,160.00) startOffset 0 endOffset 5 width 152.00: "BATIK"
-      RenderSVGText {text} at (252,160) size 155x52 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-42) size 155x52
+      RenderSVGText {text} at (252,160) size 156x52 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-42) size 156x52
           chunk 1 (middle anchor) text run 1 at (252.94,160.00) startOffset 0 endOffset 5 width 154.11: "BATIK"
       RenderSVGText {text} at (44,260) size 152x59 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-48) size 152x59
           chunk 1 (middle anchor) text run 1 at (44.00,260.00) startOffset 0 endOffset 5 width 152.00: "BATIK"
-      RenderSVGText {text} at (252,260) size 155x52 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-42) size 155x52
+      RenderSVGText {text} at (252,260) size 156x52 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-42) size 156x52
           chunk 1 (middle anchor) text run 1 at (252.94,260.00) startOffset 0 endOffset 5 width 154.11: "BATIK"
       RenderSVGText {text} at (44,360) size 152x59 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-48) size 152x59
           chunk 1 (middle anchor) text run 1 at (44.00,360.00) startOffset 0 endOffset 5 width 152.00: "BATIK"
-      RenderSVGText {text} at (252,360) size 155x52 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-42) size 155x52
+      RenderSVGText {text} at (252,360) size 156x52 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-42) size 156x52
           chunk 1 (middle anchor) text run 1 at (252.94,360.00) startOffset 0 endOffset 5 width 154.11: "BATIK"
       RenderSVGText {text} at (87,400) size 66x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 66x14

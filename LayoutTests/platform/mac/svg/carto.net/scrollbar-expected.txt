@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
     RenderSVGViewportContainer {svg} at (40,60) size 2885.60x336.40
       RenderSVGContainer {g} at (40,60) size 2885.60x336.40
         RenderImage {image} at (0,0) size 3607x420
-        RenderSVGContainer {g} at (370.40,112) size 1625.60x260
+        RenderSVGContainer {g} at (370.40,112) size 1626.40x260
           RenderSVGText {text} at (413,88) size 86x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 86x18
               chunk 1 (middle anchor) text run 1 at (413.50,88.80) startOffset 0 endOffset 13 width 85.00: "Furggeltihorn"
@@ -28,17 +28,17 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (2191,178) size 59x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 59x18
               chunk 1 (middle anchor) text run 1 at (2191.90,178.80) startOffset 0 endOffset 8 width 58.00: "Piz Fess"
-          RenderSVGText {text} at (2251,162) size 80x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-14) size 80x18
-              chunk 1 (middle anchor) text run 1 at (2251.40,162.60) startOffset 0 endOffset 11 width 80.00: "Crap Grisch"
-          RenderSVGText {text} at (2380,149) size 65x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-14) size 65x18
-              chunk 1 (middle anchor) text run 1 at (2380.20,149.60) startOffset 0 endOffset 9 width 65.00: "Piz Tom\x{FC}l"
-          RenderSVGText {text} at (1736,112) size 53x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-14) size 53x18
-              chunk 1 (middle anchor) text run 1 at (1736.10,112.60) startOffset 0 endOffset 8 width 53.00: "Fruntalp"
-          RenderSVGText {text} at (963,386) size 81x18 contains 1 chunk(s)
+          RenderSVGText {text} at (2251,162) size 81x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-14) size 81x18
+              chunk 1 (middle anchor) text run 1 at (2251.40,162.60) startOffset 0 endOffset 11 width 80.00: "Crap Grisch"
+          RenderSVGText {text} at (2380,149) size 66x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-14) size 66x18
+              chunk 1 (middle anchor) text run 1 at (2380.20,149.60) startOffset 0 endOffset 9 width 65.00: "Piz Tom\x{FC}l"
+          RenderSVGText {text} at (1736,112) size 54x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-14) size 54x18
+              chunk 1 (middle anchor) text run 1 at (1736.10,112.60) startOffset 0 endOffset 8 width 53.00: "Fruntalp"
+          RenderSVGText {text} at (963,386) size 82x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-14) size 82x18
               chunk 1 (middle anchor) text run 1 at (963.30,386.50) startOffset 0 endOffset 12 width 81.00: "Zervreilasee"
     RenderSVGContainer {g} at (40,60) size 732.80x172.80
       RenderSVGContainer {g} at (40,220) size 720x12.80
@@ -84,15 +84,15 @@ layer at (0,0) size 800x600
         RenderPath {rect} at (39.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00 L159.00,579.00 L159.00,599.00 L49.00,599.00"]
         RenderPath {rect} at (40.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00 L161.00,581.00 L161.00,601.00 L51.00,601.00"]
         RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00 L160.00,580.00 L160.00,600.00 L50.00,600.00"]
-        RenderSVGText {text} at (66,595) size 78x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 78x14
-            RenderSVGInlineText {#text} at (0,-11) size 78x14
+        RenderSVGText {text} at (66,595) size 78x15 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 78x15
+            RenderSVGInlineText {#text} at (0,-11) size 78x15
               chunk 1 (middle anchor) text run 1 at (66.00,595.40) startOffset 0 endOffset 14 width 78.00: "Hide Scrollbar"
       RenderSVGContainer {g} at (135.20,483.20) size 89.60x17.60
         RenderPath {rect} at (135.20,483.20) size 88x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00 L279.00,579.00 L279.00,599.00 L169.00,599.00"]
         RenderPath {rect} at (136.80,484.80) size 88x16 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00 L281.00,581.00 L281.00,601.00 L171.00,601.00"]
         RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00 L280.00,580.00 L280.00,600.00 L170.00,600.00"]
-        RenderSVGText {text} at (176,595) size 98x14 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 98x14
-            RenderSVGInlineText {#text} at (0,-11) size 98x14
+        RenderSVGText {text} at (176,595) size 98x15 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 98x15
+            RenderSVGInlineText {#text} at (0,-11) size 98x15
               chunk 1 (middle anchor) text run 1 at (176.00,595.40) startOffset 0 endOffset 16 width 98.00: "Remove Scrollbar"

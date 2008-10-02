@@ -3,14 +3,14 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (7.10,15.20) size 205.20x47.70 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,50.00)}]
-      RenderSVGText {text} at (-160,-30) size 16x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x37
+      RenderSVGText {text} at (-160,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (-50,-30) size 86x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 86x37
+      RenderSVGText {text} at (-50,-30) size 86x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 86x36
           chunk 1 text run 1 at (-50.00,-30.00) startOffset 0 endOffset 7 width 86.00: "0.8-3.2"
-      RenderSVGText {text} at (140,-30) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (140,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 15.00: "4"
       RenderSVGContainer {g} at (20.00,49.70) size 178.80x0.60
         RenderPath {polyline} at (20.00,49.70) size 178.80x0.60 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [data="M-150.00,0.00 L0.00,0.00 L150.00,0.00"]
@@ -20,17 +20,17 @@ layer at (0,0) size 480x360
         RenderPath {circle} at (187.70,37.70) size 24.60x24.60 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M170.00,0.00 L169.96,1.26 L169.84,2.51 L169.65,3.75 L169.37,4.97 L169.02,6.18 L168.60,7.36 L168.10,8.52 L167.53,9.64 L166.89,10.72 L166.18,11.76 L165.41,12.75 L164.58,13.69 L163.69,14.58 L162.75,15.41 L161.76,16.18 L160.72,16.89 L159.64,17.53 L158.52,18.10 L157.36,18.60 L156.18,19.02 L154.97,19.37 L153.75,19.65 L152.51,19.84 L151.26,19.96 L150.00,20.00 L148.74,19.96 L147.49,19.84 L146.25,19.65 L145.03,19.37 L143.82,19.02 L142.64,18.60 L141.48,18.10 L140.36,17.53 L139.28,16.89 L138.24,16.18 L137.25,15.41 L136.31,14.58 L135.42,13.69 L134.59,12.75 L133.82,11.76 L133.11,10.72 L132.47,9.64 L131.90,8.52 L131.40,7.36 L130.98,6.18 L130.63,4.97 L130.35,3.75 L130.16,2.51 L130.04,1.26 L130.00,-0.00 L130.04,-1.26 L130.16,-2.51 L130.35,-3.75 L130.63,-4.97 L130.98,-6.18 L131.40,-7.36 L131.90,-8.52 L132.47,-9.64 L133.11,-10.72 L133.82,-11.76 L134.59,-12.75 L135.42,-13.69 L136.31,-14.58 L137.25,-15.41 L138.24,-16.18 L139.28,-16.89 L140.36,-17.53 L141.48,-18.10 L142.64,-18.60 L143.82,-19.02 L145.03,-19.37 L146.25,-19.65 L147.49,-19.84 L148.74,-19.96 L150.00,-20.00 L151.26,-19.96 L152.51,-19.84 L153.75,-19.65 L154.97,-19.37 L156.18,-19.02 L157.36,-18.60 L158.52,-18.10 L159.64,-17.53 L160.72,-16.89 L161.76,-16.18 L162.75,-15.41 L163.69,-14.58 L164.58,-13.69 L165.41,-12.75 L166.18,-11.76 L166.89,-10.72 L167.53,-9.64 L168.10,-8.52 L168.60,-7.36 L169.02,-6.18 L169.37,-4.97 L169.65,-3.75 L169.84,-2.51 L169.96,-1.26"]
       RenderPath {circle} at (7.10,37.10) size 25.80x25.80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M20.00,0.00 L19.96,1.26 L19.84,2.51 L19.65,3.75 L19.37,4.97 L19.02,6.18 L18.60,7.36 L18.10,8.52 L17.53,9.64 L16.89,10.72 L16.18,11.76 L15.41,12.75 L14.58,13.69 L13.69,14.58 L12.75,15.41 L11.76,16.18 L10.72,16.89 L9.64,17.53 L8.52,18.10 L7.36,18.60 L6.18,19.02 L4.97,19.37 L3.75,19.65 L2.51,19.84 L1.26,19.96 L-0.00,20.00 L-1.26,19.96 L-2.51,19.84 L-3.75,19.65 L-4.97,19.37 L-6.18,19.02 L-7.36,18.60 L-8.52,18.10 L-9.64,17.53 L-10.72,16.89 L-11.76,16.18 L-12.75,15.41 L-13.69,14.58 L-14.58,13.69 L-15.41,12.75 L-16.18,11.76 L-16.89,10.72 L-17.53,9.64 L-18.10,8.52 L-18.60,7.36 L-19.02,6.18 L-19.37,4.97 L-19.65,3.75 L-19.84,2.51 L-19.96,1.26 L-20.00,-0.00 L-19.96,-1.26 L-19.84,-2.51 L-19.65,-3.75 L-19.37,-4.97 L-19.02,-6.18 L-18.60,-7.36 L-18.10,-8.52 L-17.53,-9.64 L-16.89,-10.72 L-16.18,-11.76 L-15.41,-12.75 L-14.58,-13.69 L-13.69,-14.58 L-12.75,-15.41 L-11.76,-16.18 L-10.72,-16.89 L-9.64,-17.53 L-8.52,-18.10 L-7.36,-18.60 L-6.18,-19.02 L-4.97,-19.37 L-3.75,-19.65 L-2.51,-19.84 L-1.26,-19.96 L0.00,-20.00 L1.26,-19.96 L2.51,-19.84 L3.75,-19.65 L4.97,-19.37 L6.18,-19.02 L7.36,-18.60 L8.52,-18.10 L9.64,-17.53 L10.72,-16.89 L11.76,-16.18 L12.75,-15.41 L13.69,-14.58 L14.58,-13.69 L15.41,-12.75 L16.18,-11.76 L16.89,-10.72 L17.53,-9.64 L18.10,-8.52 L18.60,-7.36 L19.02,-6.18 L19.37,-4.97 L19.65,-3.75 L19.84,-2.51 L19.96,-1.26"]
     RenderSVGContainer {g} at (267.10,15.20) size 205.20x47.70 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,50.00)}]
-      RenderSVGText {text} at (-160,-30) size 16x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x37
+      RenderSVGText {text} at (-160,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (-100,-30) size 16x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x37
+      RenderSVGText {text} at (-100,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-100.00,-30.00) startOffset 0 endOffset 1 width 15.00: "2"
-      RenderSVGText {text} at (80,-30) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (80,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (80.00,-30.00) startOffset 0 endOffset 1 width 15.00: "2"
-      RenderSVGText {text} at (140,-30) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (140,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 15.00: "4"
       RenderSVGContainer {g} at (280,49.70) size 178.80x0.60
         RenderPath {polyline} at (280,49.70) size 34.80x0.60 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [data="M-150.00,0.00 L-90.00,0.00"]
@@ -42,20 +42,20 @@ layer at (0,0) size 480x360
         RenderPath {circle} at (447.70,37.70) size 24.60x24.60 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M170.00,0.00 L169.96,1.26 L169.84,2.51 L169.65,3.75 L169.37,4.97 L169.02,6.18 L168.60,7.36 L168.10,8.52 L167.53,9.64 L166.89,10.72 L166.18,11.76 L165.41,12.75 L164.58,13.69 L163.69,14.58 L162.75,15.41 L161.76,16.18 L160.72,16.89 L159.64,17.53 L158.52,18.10 L157.36,18.60 L156.18,19.02 L154.97,19.37 L153.75,19.65 L152.51,19.84 L151.26,19.96 L150.00,20.00 L148.74,19.96 L147.49,19.84 L146.25,19.65 L145.03,19.37 L143.82,19.02 L142.64,18.60 L141.48,18.10 L140.36,17.53 L139.28,16.89 L138.24,16.18 L137.25,15.41 L136.31,14.58 L135.42,13.69 L134.59,12.75 L133.82,11.76 L133.11,10.72 L132.47,9.64 L131.90,8.52 L131.40,7.36 L130.98,6.18 L130.63,4.97 L130.35,3.75 L130.16,2.51 L130.04,1.26 L130.00,-0.00 L130.04,-1.26 L130.16,-2.51 L130.35,-3.75 L130.63,-4.97 L130.98,-6.18 L131.40,-7.36 L131.90,-8.52 L132.47,-9.64 L133.11,-10.72 L133.82,-11.76 L134.59,-12.75 L135.42,-13.69 L136.31,-14.58 L137.25,-15.41 L138.24,-16.18 L139.28,-16.89 L140.36,-17.53 L141.48,-18.10 L142.64,-18.60 L143.82,-19.02 L145.03,-19.37 L146.25,-19.65 L147.49,-19.84 L148.74,-19.96 L150.00,-20.00 L151.26,-19.96 L152.51,-19.84 L153.75,-19.65 L154.97,-19.37 L156.18,-19.02 L157.36,-18.60 L158.52,-18.10 L159.64,-17.53 L160.72,-16.89 L161.76,-16.18 L162.75,-15.41 L163.69,-14.58 L164.58,-13.69 L165.41,-12.75 L166.18,-11.76 L166.89,-10.72 L167.53,-9.64 L168.10,-8.52 L168.60,-7.36 L169.02,-6.18 L169.37,-4.97 L169.65,-3.75 L169.84,-2.51 L169.96,-1.26"]
       RenderPath {circle} at (267.10,37.10) size 25.80x25.80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M20.00,0.00 L19.96,1.26 L19.84,2.51 L19.65,3.75 L19.37,4.97 L19.02,6.18 L18.60,7.36 L18.10,8.52 L17.53,9.64 L16.89,10.72 L16.18,11.76 L15.41,12.75 L14.58,13.69 L13.69,14.58 L12.75,15.41 L11.76,16.18 L10.72,16.89 L9.64,17.53 L8.52,18.10 L7.36,18.60 L6.18,19.02 L4.97,19.37 L3.75,19.65 L2.51,19.84 L1.26,19.96 L-0.00,20.00 L-1.26,19.96 L-2.51,19.84 L-3.75,19.65 L-4.97,19.37 L-6.18,19.02 L-7.36,18.60 L-8.52,18.10 L-9.64,17.53 L-10.72,16.89 L-11.76,16.18 L-12.75,15.41 L-13.69,14.58 L-14.58,13.69 L-15.41,12.75 L-16.18,11.76 L-16.89,10.72 L-17.53,9.64 L-18.10,8.52 L-18.60,7.36 L-19.02,6.18 L-19.37,4.97 L-19.65,3.75 L-19.84,2.51 L-19.96,1.26 L-20.00,-0.00 L-19.96,-1.26 L-19.84,-2.51 L-19.65,-3.75 L-19.37,-4.97 L-19.02,-6.18 L-18.60,-7.36 L-18.10,-8.52 L-17.53,-9.64 L-16.89,-10.72 L-16.18,-11.76 L-15.41,-12.75 L-14.58,-13.69 L-13.69,-14.58 L-12.75,-15.41 L-11.76,-16.18 L-10.72,-16.89 L-9.64,-17.53 L-8.52,-18.10 L-7.36,-18.60 L-6.18,-19.02 L-4.97,-19.37 L-3.75,-19.65 L-2.51,-19.84 L-1.26,-19.96 L0.00,-20.00 L1.26,-19.96 L2.51,-19.84 L3.75,-19.65 L4.97,-19.37 L6.18,-19.02 L7.36,-18.60 L8.52,-18.10 L9.64,-17.53 L10.72,-16.89 L11.76,-16.18 L12.75,-15.41 L13.69,-14.58 L14.58,-13.69 L15.41,-12.75 L16.18,-11.76 L16.89,-10.72 L17.53,-9.64 L18.10,-8.52 L18.60,-7.36 L19.02,-6.18 L19.37,-4.97 L19.65,-3.75 L19.84,-2.51 L19.96,-1.26"]
     RenderSVGContainer {g} at (34.70,127.20) size 150.60x69.60 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,180.00)}]
-      RenderSVGText {text} at (-115,-30) size 16x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x37
+      RenderSVGText {text} at (-115,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-115.00,-30.00) startOffset 0 endOffset 1 width 15.00: "3"
-      RenderSVGText {text} at (-85,-60) size 39x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 39x37
+      RenderSVGText {text} at (-85,-60) size 38x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 38x36
           chunk 1 text run 1 at (-85.00,-60.00) startOffset 0 endOffset 3 width 38.00: "2.6"
-      RenderSVGText {text} at (60,-60) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (60,-60) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (60.00,-60.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (95,-30) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (95,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (95.00,-30.00) startOffset 0 endOffset 1 width 15.00: "1"
-      RenderSVGText {text} at (-75,20) size 16x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x36
+      RenderSVGText {text} at (-75,20) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-75.00,20.00) startOffset 0 endOffset 1 width 15.00: "4"
       RenderSVGText {text} at (40,20) size 38x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 38x36
@@ -69,20 +69,20 @@ layer at (0,0) size 480x360
         RenderPath {circle} at (160.70,167.70) size 24.60x24.60 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M125.00,0.00 L124.96,1.26 L124.84,2.51 L124.65,3.75 L124.37,4.97 L124.02,6.18 L123.60,7.36 L123.10,8.52 L122.53,9.64 L121.89,10.72 L121.18,11.76 L120.41,12.75 L119.58,13.69 L118.69,14.58 L117.75,15.41 L116.76,16.18 L115.72,16.89 L114.64,17.53 L113.52,18.10 L112.36,18.60 L111.18,19.02 L109.97,19.37 L108.75,19.65 L107.51,19.84 L106.26,19.96 L105.00,20.00 L103.74,19.96 L102.49,19.84 L101.25,19.65 L100.03,19.37 L98.82,19.02 L97.64,18.60 L96.48,18.10 L95.36,17.53 L94.28,16.89 L93.24,16.18 L92.25,15.41 L91.31,14.58 L90.42,13.69 L89.59,12.75 L88.82,11.76 L88.11,10.72 L87.47,9.64 L86.90,8.52 L86.40,7.36 L85.98,6.18 L85.63,4.97 L85.35,3.75 L85.16,2.51 L85.04,1.26 L85.00,-0.00 L85.04,-1.26 L85.16,-2.51 L85.35,-3.75 L85.63,-4.97 L85.98,-6.18 L86.40,-7.36 L86.90,-8.52 L87.47,-9.64 L88.11,-10.72 L88.82,-11.76 L89.59,-12.75 L90.42,-13.69 L91.31,-14.58 L92.25,-15.41 L93.24,-16.18 L94.28,-16.89 L95.36,-17.53 L96.48,-18.10 L97.64,-18.60 L98.82,-19.02 L100.03,-19.37 L101.25,-19.65 L102.49,-19.84 L103.74,-19.96 L105.00,-20.00 L106.26,-19.96 L107.51,-19.84 L108.75,-19.65 L109.97,-19.37 L111.18,-19.02 L112.36,-18.60 L113.52,-18.10 L114.64,-17.53 L115.72,-16.89 L116.76,-16.18 L117.75,-15.41 L118.69,-14.58 L119.58,-13.69 L120.41,-12.75 L121.18,-11.76 L121.89,-10.72 L122.53,-9.64 L123.10,-8.52 L123.60,-7.36 L124.02,-6.18 L124.37,-4.97 L124.65,-3.75 L124.84,-2.51 L124.96,-1.26"]
       RenderPath {circle} at (136.10,149.10) size 25.80x25.80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,-30.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M20.00,0.00 L19.96,1.26 L19.84,2.51 L19.65,3.75 L19.37,4.97 L19.02,6.18 L18.60,7.36 L18.10,8.52 L17.53,9.64 L16.89,10.72 L16.18,11.76 L15.41,12.75 L14.58,13.69 L13.69,14.58 L12.75,15.41 L11.76,16.18 L10.72,16.89 L9.64,17.53 L8.52,18.10 L7.36,18.60 L6.18,19.02 L4.97,19.37 L3.75,19.65 L2.51,19.84 L1.26,19.96 L-0.00,20.00 L-1.26,19.96 L-2.51,19.84 L-3.75,19.65 L-4.97,19.37 L-6.18,19.02 L-7.36,18.60 L-8.52,18.10 L-9.64,17.53 L-10.72,16.89 L-11.76,16.18 L-12.75,15.41 L-13.69,14.58 L-14.58,13.69 L-15.41,12.75 L-16.18,11.76 L-16.89,10.72 L-17.53,9.64 L-18.10,8.52 L-18.60,7.36 L-19.02,6.18 L-19.37,4.97 L-19.65,3.75 L-19.84,2.51 L-19.96,1.26 L-20.00,-0.00 L-19.96,-1.26 L-19.84,-2.51 L-19.65,-3.75 L-19.37,-4.97 L-19.02,-6.18 L-18.60,-7.36 L-18.10,-8.52 L-17.53,-9.64 L-16.89,-10.72 L-16.18,-11.76 L-15.41,-12.75 L-14.58,-13.69 L-13.69,-14.58 L-12.75,-15.41 L-11.76,-16.18 L-10.72,-16.89 L-9.64,-17.53 L-8.52,-18.10 L-7.36,-18.60 L-6.18,-19.02 L-4.97,-19.37 L-3.75,-19.65 L-2.51,-19.84 L-1.26,-19.96 L0.00,-20.00 L1.26,-19.96 L2.51,-19.84 L3.75,-19.65 L4.97,-19.37 L6.18,-19.02 L7.36,-18.60 L8.52,-18.10 L9.64,-17.53 L10.72,-16.89 L11.76,-16.18 L12.75,-15.41 L13.69,-14.58 L14.58,-13.69 L15.41,-12.75 L16.18,-11.76 L16.89,-10.72 L17.53,-9.64 L18.10,-8.52 L18.60,-7.36 L19.02,-6.18 L19.37,-4.97 L19.65,-3.75 L19.84,-2.51 L19.96,-1.26"]
     RenderSVGContainer {g} at (282.70,125.20) size 174.60x69.60 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,160.00)}]
-      RenderSVGText {text} at (-135,-30) size 16x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x37
+      RenderSVGText {text} at (-135,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-135.00,-30.00) startOffset 0 endOffset 1 width 15.00: "3"
-      RenderSVGText {text} at (-95,-30) size 39x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 39x37
+      RenderSVGText {text} at (-95,-30) size 38x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 38x36
           chunk 1 text run 1 at (-95.00,-30.00) startOffset 0 endOffset 3 width 38.00: "2.6"
-      RenderSVGText {text} at (65,-30) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (65,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (65.00,-30.00) startOffset 0 endOffset 1 width 15.00: "0"
-      RenderSVGText {text} at (115,-30) size 15x37 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 15x37
+      RenderSVGText {text} at (115,-30) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (115.00,-30.00) startOffset 0 endOffset 1 width 15.00: "1"
-      RenderSVGText {text} at (-85,50) size 16x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,-28) size 16x36
+      RenderSVGText {text} at (-85,50) size 15x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-28) size 15x36
           chunk 1 text run 1 at (-85.00,50.00) startOffset 0 endOffset 1 width 15.00: "4"
       RenderSVGText {text} at (50,50) size 38x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 38x36
