@@ -101,7 +101,7 @@ void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment,
     if (that->view->scrollbarsSuppressed())
         return;
 
-    that->scrollBackingStore(scrollDelta);
+    that->view->scrollContents(scrollDelta);
     static_cast<FrameView*>(that->view)->frame()->sendScrollEvent();
 }
 
