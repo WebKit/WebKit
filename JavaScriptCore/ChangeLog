@@ -1,3 +1,22 @@
+2008-10-01  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21289: REGRESSION (r37160): Inspector crashes on load
+        <https://bugs.webkit.org/show_bug.cgi?id=21289>
+
+        The code in Arguments::mark() in r37160 was wrong. It marks indices in
+        d->registers, but that makes no sense (they are local variables, not
+        arguments). It should mark those indices in d->registerArray instead.
+
+        This patch also changes Arguments::copyRegisters() to use d->numParameters
+        instead of recomputing it.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::mark):
+        * kjs/Arguments.h:
+        (JSC::Arguments::copyRegisters):
+
 2008-09-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.

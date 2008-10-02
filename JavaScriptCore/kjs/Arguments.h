@@ -137,13 +137,11 @@ namespace JSC {
         ASSERT(!d->activation);
         ASSERT(!d->registerArray);
 
-        size_t numParametersMinusThis = d->callee->m_body->generatedByteCode().numParameters - 1;
-
-        if (!numParametersMinusThis)
+        if (!d->numParameters)
             return;
 
-        int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
-        size_t registerArraySize = numParametersMinusThis;
+        int registerOffset = d->numParameters + RegisterFile::CallFrameHeaderSize;
+        size_t registerArraySize = d->numParameters;
 
         Register* registerArray = new Register[registerArraySize];
         memcpy(registerArray, d->registers - registerOffset, registerArraySize * sizeof(Register));

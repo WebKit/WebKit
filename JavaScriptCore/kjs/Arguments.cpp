@@ -43,13 +43,15 @@ Arguments::~Arguments()
         delete [] d->extraArguments;
 }
 
-void Arguments::mark() 
+void Arguments::mark()
 {
     JSObject::mark();
 
-    for (unsigned i = 0; i < d->numParameters; ++i) {
-        if (!d->registers[i].marked())
-            d->registers[i].mark();
+    if (d->registerArray) {
+        for (unsigned i = 0; i < d->numParameters; ++i) {
+            if (!d->registerArray[i].marked())
+                d->registerArray[i].mark();
+        }
     }
 
     if (d->extraArguments) {
