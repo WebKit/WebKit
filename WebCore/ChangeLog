@@ -1,3 +1,29 @@
+2008-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20315: Memory leak with Canvas getImageData
+        <https://bugs.webkit.org/show_bug.cgi?id=20315>
+
+        This wasn't a leak, the issue was that we were reporting the cost
+        of the CanvasPixelArray when creating the JSCanvasPixelArray wrapper
+        and we should have been reporting the cost when we create the
+        JSImageData wrapper.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasPixelArrayCustom.cpp: Removed.
+          This was only needed to report the extra memory cost
+          of the CPA.
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+          We need a custom toJS function now so that we can report
+          the extra memory cost.
+        * bindings/scripts/CodeGeneratorJS.pm:
+          Need to replace the reference to CanvasPixelArray with ImageData
+          to be able to create the custom toJS implementation.
+        * html/CanvasPixelArray.idl:
+        * html/ImageData.idl:
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

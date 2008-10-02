@@ -31,8 +31,7 @@ module html {
     interface [
         CustomHeader,
         HasCustomIndexGetter,
-        HasCustomIndexSetter,
-        GenerateToJS
+        HasCustomIndexSetter
     ] CanvasPixelArray {
         readonly attribute long length;
     };
