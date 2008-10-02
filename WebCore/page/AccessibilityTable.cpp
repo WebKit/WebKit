@@ -73,6 +73,10 @@ PassRefPtr<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer
 
 bool AccessibilityTable::isTableExposableThroughAccessibility()
 {
+    // the following is a heuristic used to determine if a
+    // <table> should be exposed as an AXTable. The goal
+    // is to only show "data" tables
+    
     if (!m_renderer || !m_renderer->isTable())
         return false;
     
@@ -123,9 +127,17 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
         return false;
     Color tableBGColor = tableStyle->backgroundColor();
     
-    // check no more than 2 rows for the sake of speed.
-    for (int row = 0; row < numRows && row < 2; ++row) {
-        for (int col = 0; col < numCols; ++col) {            
+    // check enough of the cells to find if the table matches our criteria
+    // Criteria: 
+    //   1) must have at least one valid cell (and)
+    //   2) at least half of cells have borders (or)
+    //   3) at least half of cells have different bg colors than the table, and there is cell spacing
+    unsigned validCellCount = 0;
+    unsigned borderedCellCount = 0;
+    unsigned backgroundDifferenceCellCount = 0;
+    
+    for (int row = 0; row < numRows; ++row) {
+        for (int col = 0; col < numCols; ++col) {    
             RenderTableCell* cell = firstBody->cellAt(row, col).cell;
             if (!cell)
                 continue;
@@ -133,8 +145,14 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             if (!cellNode)
                 continue;
             
+            if (cell->width() < 1 || cell->height() < 1)
+                continue;
+            
+            validCellCount++;
+            
             HTMLTableCellElement* cellElement = static_cast<HTMLTableCellElement*>(cellNode);
             
+            // in this case, the developer explicitly assigned a "data" table attribute
             if (!cellElement->headers().isEmpty() || !cellElement->abbr().isEmpty() || 
                 !cellElement->axis().isEmpty() || !cellElement->scope().isEmpty())
                 return true;
@@ -142,19 +160,37 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
             RenderStyle* renderStyle = cell->style();
             if (!renderStyle)
                 continue;
+
+            // a cell needs to have matching bordered sides, before it can be considered a bordered cell.
+            if ((cell->borderTop() > 0 && cell->borderBottom() > 0) ||
+                (cell->borderLeft() > 0 && cell->borderRight() > 0))
+                borderedCellCount++;
             
-            // at least one cell had a border, it is probably a data table
-            if (renderStyle->border().hasBorder())
-                return true;
-            
-            // do our cells have a different color from the table and is there cell spacing?
-            // then probably this is a data table (there were no borders... spacing and 
-            // colors take the place of borders)
+            // if the cell has a different color from the table and there is cell spacing,
+            // then it is probably a data table cell (spacing and colors take the place of borders)
+            Color cellColor = renderStyle->backgroundColor();
             if (table->hBorderSpacing() > 0 && table->vBorderSpacing() > 0 && 
-                tableBGColor != renderStyle->backgroundColor())
+                tableBGColor != cellColor && cellColor.alpha() != 1)
+                backgroundDifferenceCellCount++;
+            
+            // if we've found 10 "good" cells, we don't need to keep searching
+            if (borderedCellCount >= 10 || backgroundDifferenceCellCount >= 10)
                 return true;
         }
     }
+
+    // if there is less than two valid cells, it's not a data table
+    if (validCellCount <= 1)
+        return false;
+    
+    // half of the cells had borders, it's a data table
+    unsigned neededCellCount = validCellCount / 2;
+    if (borderedCellCount >= neededCellCount)
+        return true;
+    
+    // half had different background colors, it's a data table
+    if (backgroundDifferenceCellCount >= neededCellCount)
+        return true;
 
     return false;
 }

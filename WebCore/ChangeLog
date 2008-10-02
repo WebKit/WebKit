@@ -1,3 +1,18 @@
+2008-10-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21280
+        <rdar://problem/6227690> There are a bunch of tables on this page that don't seem to be real tables
+
+        Updated AXTable detection to be more robust to false-positives. Specifically, added checks
+        to ensure that there is more than one valid table cell, and that at least half of the cells
+        have borders or have specific background colors. Modified the table detection layout test
+        to test for the tables mentioned in the bug
+
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+
 2008-10-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

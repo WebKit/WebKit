@@ -1,3 +1,13 @@
+2008-10-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Update table detection tests by adding two more tables
+
+        * accessibility/table-detection.html:
+        * accessibility/table-detection-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-detection-expected.txt:
+
 2008-10-02  Adele Peterson  <adele@apple.com>
 
         Update results for mac-tiger.
