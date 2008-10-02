@@ -33,6 +33,7 @@
 
 #include "StringHash.h"
 #include "Timer.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>

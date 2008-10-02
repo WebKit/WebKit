@@ -1,3 +1,10 @@
+2008-10-01  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        * loader/icon/IconDatabase.h:
+        IconDatabase uses HashMap, so it needs to #include the header.
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
