@@ -147,11 +147,11 @@ static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgLis
 static inline void retrieveLastCaller(ExecState* exec, KURL& url, unsigned& lineNumber)
 {
     int signedLineNumber;
-    int sourceIdentifer;
+    intptr_t sourceID;
     UString urlString;
     JSValue* function;
 
-    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceIdentifer, urlString, function);
+    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, urlString, function);
 
     url = KURL(urlString);
     lineNumber = (signedLineNumber >= 0 ? signedLineNumber : 0);
@@ -283,11 +283,11 @@ void Console::trace(ExecState* exec)
         return;
 
     int signedLineNumber;
-    int sourceIdentifer;
+    intptr_t sourceID;
     UString urlString;
     JSValue* func;
 
-    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceIdentifer, urlString, func);
+    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, urlString, func);
 
     ArgList args;
     while (!func->isNull()) {

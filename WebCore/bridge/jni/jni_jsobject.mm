@@ -41,6 +41,7 @@
 #include <kjs/completion.h>
 #include <kjs/interpreter.h>
 #include <wtf/Assertions.h>
+#include <kjs/SourceProvider.h>
 
 using WebCore::Frame;
 
@@ -291,7 +292,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(false);
     
-    Identifier identifier(exec, JavaString(methodName).ustring());
+    Identifier identifier(exec, JavaString(methodName));
     JSValue* function = _imp->get(exec, identifier);
     CallData callData;
     CallType callType = function->getCallData(callData);
@@ -321,7 +322,7 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->startTimeoutCheck();
-    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), UString(), 1, JavaString(script).ustring());
+    Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script)));
     rootObject->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     
@@ -346,7 +347,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
     ExecState* exec = rootObject->globalObject()->globalExec();
     
     JSLock lock(false);
-    JSValue* result = _imp->get(exec, Identifier(exec, JavaString(memberName).ustring()));
+    JSValue* result = _imp->get(exec, Identifier(exec, JavaString(memberName)));
 
     return convertValueToJObject(result);
 }
@@ -363,7 +364,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
     JSLock lock(false);
     PutPropertySlot slot;
-    _imp->put(exec, Identifier(exec, JavaString(memberName).ustring()), convertJObjectToValue(exec, value), slot);
+    _imp->put(exec, Identifier(exec, JavaString(memberName)), convertJObjectToValue(exec, value), slot);
 }
 
 
@@ -377,7 +378,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(false);
-    _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName).ustring()));
+    _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName)));
 }
 
 

@@ -84,28 +84,23 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     }
 
     // parse the source code
-    int sourceId;
     int errLine;
     UString errMsg;
-    RefPtr<SourceProvider> source = UStringSourceProvider::create(body);
-    RefPtr<FunctionBodyNode> functionBody = exec->parser()->parse<FunctionBodyNode>(exec, sourceURL, lineNumber, source, &sourceId, &errLine, &errMsg);
+    SourceCode source = makeSource(body, sourceURL, lineNumber);
+    RefPtr<FunctionBodyNode> functionBody = exec->parser()->parse<FunctionBodyNode>(exec, source, &errLine, &errMsg);
 
     // No program node == syntax error - throw a syntax error
     if (!functionBody)
         // We can't return a Completion(Throw) here, so just set the exception
         // and return it
-        return throwError(exec, SyntaxError, errMsg, errLine, sourceId, sourceURL);
-    
-    functionBody->setSource(SourceRange(source, 0, source->length()));
-    ScopeChain scopeChain(exec->lexicalGlobalObject(), exec->globalThisValue());
-
-    JSFunction* function = new (exec) JSFunction(exec, functionName, functionBody.get(), scopeChain.node());
+        return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 
     // parse parameter list. throw syntax error on illegal identifiers
     int len = p.size();
     const UChar* c = p.data();
-    int i = 0, params = 0;
+    int i = 0;
     UString param;
+    Vector<Identifier> parameters;
     while (i < len) {
         while (*c == ' ' && i < len)
             c++, i++;
@@ -119,19 +114,22 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
             while (i < len && *c == ' ')
                 c++, i++;
             if (i == len) {
-                functionBody->parameters().append(Identifier(exec, param));
-                params++;
+                parameters.append(Identifier(exec, param));
                 break;
             } else if (*c == ',') {
-                functionBody->parameters().append(Identifier(exec, param));
-                params++;
+                parameters.append(Identifier(exec, param));
                 c++, i++;
                 continue;
             } // else error
         }
         return throwError(exec, SyntaxError, "Syntax error in parameter list");
     }
-  
+    size_t count = parameters.size();
+    functionBody->finishParsing(source, parameters.releaseBuffer(), count);
+
+    ScopeChain scopeChain(exec->lexicalGlobalObject(), exec->globalThisValue());
+    JSFunction* function = new (exec) JSFunction(exec, functionName, functionBody.get(), scopeChain.node());
+
     JSObject* prototype = constructEmptyObject(exec);
     prototype->putDirect(exec->propertyNames().constructor, function, DontEnum);
     function->putDirect(exec->propertyNames().prototype, prototype, DontDelete);

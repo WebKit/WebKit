@@ -35,7 +35,7 @@ namespace JSC {
 
     class Lexer : Noncopyable {
     public:
-        void setCode(int startingLineNumber, PassRefPtr<SourceProvider> source);
+        void setCode(const SourceCode&);
         int lex(void* lvalp, void* llocp);
 
         int lineNo() const { return yylineno; }
@@ -88,7 +88,7 @@ namespace JSC {
         bool sawError() const { return m_error; }
 
         void clear();
-        SourceRange sourceRange(int openBrace, int closeBrace) { return SourceRange(m_source, openBrace + 1, closeBrace); }
+        SourceCode sourceCode(int openBrace, int closeBrace, int firstLine) { return SourceCode(m_source->provider(), openBrace + 1, closeBrace, firstLine); }
 
     private:
         friend class JSGlobalData;
@@ -131,7 +131,7 @@ namespace JSC {
 
         State m_state;
         unsigned int m_position;
-        RefPtr<SourceProvider> m_source;
+        const SourceCode* m_source;
         const UChar* m_code;
         unsigned int m_length;
         int m_atLineStart;

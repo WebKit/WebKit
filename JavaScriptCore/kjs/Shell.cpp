@@ -234,7 +234,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
     stopWatch.start();
-    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
+    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
     stopWatch.stop();
 
     return jsNumber(globalObject->globalExec(), stopWatch.getElapsedMS());
@@ -248,7 +248,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
         return throwError(exec, GeneralError, "Could not open file.");
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
+    Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
 
     return jsUndefined();
 }
@@ -319,8 +319,7 @@ static bool prettyPrintScript(ExecState* exec, const UString& fileName, const Ve
 {
     int errLine = 0;
     UString errMsg;
-    UString scriptUString(script.data());
-    RefPtr<ProgramNode> programNode = exec->parser()->parse<ProgramNode>(exec, fileName, 1, UStringSourceProvider::create(scriptUString), 0, &errLine, &errMsg);
+    RefPtr<ProgramNode> programNode = exec->parser()->parse<ProgramNode>(exec, makeSource(script.data(), fileName), &errLine, &errMsg);
     if (!programNode) {
         fprintf(stderr, "%s:%d: %s.\n", fileName.UTF8String().c_str(), errLine, errMsg.UTF8String().c_str());
         return false;
@@ -353,7 +352,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
         if (prettyPrint)
             prettyPrintScript(globalObject->globalExec(), fileName, script);
         else {
-            Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
+            Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
             success = success && completion.complType() != Throw;
             if (dump) {
                 if (completion.complType() == Throw)
@@ -383,7 +382,7 @@ static void runInteractive(GlobalObject* globalObject)
             break;
         if (line[0])
             add_history(line);
-        Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), interpreterName, 1, line);
+        Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName));
         free(line);
 #else
         puts(interactivePrompt);
@@ -396,7 +395,7 @@ static void runInteractive(GlobalObject* globalObject)
             line.append(c);
         }
         line.append('\0');
-        Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), interpreterName, 1, line.data());
+        Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName));
 #endif
         if (completion.complType() == Throw)
             printf("Exception: %s\n", completion.value()->toString(globalObject->globalExec()).ascii());

@@ -84,7 +84,7 @@ public:
     }
     const jchar *uchars() const { return (const jchar *)_rep->data(); }
     int length() const { return _rep->size(); }
-    UString ustring() const { return UString(_rep); }
+    operator UString() const { return UString(_rep); }
 
 private:
     RefPtr<UString::Rep> _rep;

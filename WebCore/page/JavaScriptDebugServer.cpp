@@ -150,7 +150,7 @@ bool JavaScriptDebugServer::hasListenersInterestedInPage(Page* page)
     return m_pageListenersMap.contains(page);
 }
 
-void JavaScriptDebugServer::addBreakpoint(int sourceID, unsigned lineNumber)
+void JavaScriptDebugServer::addBreakpoint(intptr_t sourceID, unsigned lineNumber)
 {
     HashSet<unsigned>* lines = m_breakpoints.get(sourceID);
     if (!lines) {
@@ -161,7 +161,7 @@ void JavaScriptDebugServer::addBreakpoint(int sourceID, unsigned lineNumber)
     lines->add(lineNumber);
 }
 
-void JavaScriptDebugServer::removeBreakpoint(int sourceID, unsigned lineNumber)
+void JavaScriptDebugServer::removeBreakpoint(intptr_t sourceID, unsigned lineNumber)
 {
     HashSet<unsigned>* lines = m_breakpoints.get(sourceID);
     if (!lines)
@@ -176,7 +176,7 @@ void JavaScriptDebugServer::removeBreakpoint(int sourceID, unsigned lineNumber)
     delete lines;
 }
 
-bool JavaScriptDebugServer::hasBreakpoint(int sourceID, unsigned lineNumber) const
+bool JavaScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) const
 {
     HashSet<unsigned>* lines = m_breakpoints.get(sourceID);
     if (!lines)
@@ -243,20 +243,20 @@ JavaScriptCallFrame* JavaScriptDebugServer::currentCallFrame()
     return m_currentCallFrame.get();
 }
 
-static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const JSC::SourceProvider& source, int startingLineNumber, const String& sourceURL, int sourceID)
+static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const JSC::SourceCode& source)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(exec, source, startingLineNumber, sourceURL, sourceID);
+        copy[i]->didParseSource(exec, source);
 }
 
-static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* exec, const SourceProvider& source, int startingLineNumber, const String& sourceURL, int errorLine, const String& errorMessage)
+static void dispatchFailedToParseSource(const ListenerSet& listeners, ExecState* exec, const SourceCode& source, int errorLine, const String& errorMessage)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->failedToParseSource(exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+        copy[i]->failedToParseSource(exec, source, errorLine, errorMessage);
 }
 
 static Page* toPage(JSGlobalObject* globalObject)
@@ -268,7 +268,7 @@ static Page* toPage(JSGlobalObject* globalObject)
     return frame ? frame->page() : 0;
 }
 
-void JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const UString& sourceURL, const SourceProvider& source, int startingLineNumber, int errorLine, const UString& errorMessage)
+void JavaScriptDebugServer::sourceParsed(ExecState* exec, const SourceCode& source, int errorLine, const UString& errorMessage)
 {
     if (m_callingListeners)
         return;
@@ -285,17 +285,17 @@ void JavaScriptDebugServer::sourceParsed(ExecState* exec, int sourceID, const US
 
     if (!m_listeners.isEmpty()) {
         if (isError)
-            dispatchFailedToParseSource(m_listeners, exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+            dispatchFailedToParseSource(m_listeners, exec, source, errorLine, errorMessage);
         else
-            dispatchDidParseSource(m_listeners, exec, source, startingLineNumber, sourceURL, sourceID);
+            dispatchDidParseSource(m_listeners, exec, source);
     }
 
     if (ListenerSet* pageListeners = m_pageListenersMap.get(page)) {
         ASSERT(!pageListeners->isEmpty());
         if (isError)
-            dispatchFailedToParseSource(*pageListeners, exec, source, startingLineNumber, sourceURL, errorLine, errorMessage);
+            dispatchFailedToParseSource(*pageListeners, exec, source, errorLine, errorMessage);
         else
-            dispatchDidParseSource(*pageListeners, exec, source, startingLineNumber, sourceURL, sourceID);
+            dispatchDidParseSource(*pageListeners, exec, source);
     }
 
     m_callingListeners = false;
@@ -400,7 +400,7 @@ void JavaScriptDebugServer::pauseIfNeeded(Page* page)
 
     bool pauseNow = m_pauseOnNextStatement;
     pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
-    pauseNow |= (m_currentCallFrame->line() > 0 && hasBreakpoint(m_currentCallFrame->sourceIdentifier(), m_currentCallFrame->line()));
+    pauseNow |= (m_currentCallFrame->line() > 0 && hasBreakpoint(m_currentCallFrame->sourceID(), m_currentCallFrame->line()));
     if (!pauseNow)
         return;
 
@@ -424,7 +424,7 @@ void JavaScriptDebugServer::pauseIfNeeded(Page* page)
     m_paused = false;
 }
 
-void JavaScriptDebugServer::callEvent(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::callEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;
@@ -433,7 +433,7 @@ void JavaScriptDebugServer::callEvent(const DebuggerCallFrame& debuggerCallFrame
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
-void JavaScriptDebugServer::atStatement(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::atStatement(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;
@@ -446,7 +446,7 @@ void JavaScriptDebugServer::atStatement(const DebuggerCallFrame& debuggerCallFra
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
-void JavaScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;
@@ -464,7 +464,7 @@ void JavaScriptDebugServer::returnEvent(const DebuggerCallFrame& debuggerCallFra
     m_currentCallFrame = m_currentCallFrame->caller();
 }
 
-void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;
@@ -480,7 +480,7 @@ void JavaScriptDebugServer::exception(const DebuggerCallFrame& debuggerCallFrame
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
-void JavaScriptDebugServer::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;
@@ -489,7 +489,7 @@ void JavaScriptDebugServer::willExecuteProgram(const DebuggerCallFrame& debugger
     pauseIfNeeded(toPage(debuggerCallFrame.dynamicGlobalObject()));
 }
 
-void JavaScriptDebugServer::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;
@@ -507,7 +507,7 @@ void JavaScriptDebugServer::didExecuteProgram(const DebuggerCallFrame& debuggerC
     m_currentCallFrame = m_currentCallFrame->caller();
 }
 
-void JavaScriptDebugServer::didReachBreakpoint(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void JavaScriptDebugServer::didReachBreakpoint(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_paused)
         return;

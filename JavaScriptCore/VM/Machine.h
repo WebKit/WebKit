@@ -101,7 +101,7 @@ namespace JSC {
 
         JSValue* retrieveArguments(ExecState*, JSFunction*) const;
         JSValue* retrieveCaller(ExecState*, InternalFunction*) const;
-        void retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId, UString& sourceURL, JSValue*& function) const;
+        void retrieveLastCaller(ExecState* exec, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue*& function) const;
         
         static ScopeChainNode* scopeChain(const Register* r) { return r[RegisterFile::ScopeChain].scopeChain(); }
         static CodeBlock* codeBlock(const Register* r) { return r[RegisterFile::CodeBlock].codeBlock(); }

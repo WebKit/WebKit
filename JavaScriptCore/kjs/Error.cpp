@@ -37,7 +37,7 @@ const char* expressionBeginOffsetPropertyName = "expressionBeginOffset";
 const char* expressionCaretOffsetPropertyName = "expressionCaretOffset";
 const char* expressionEndOffsetPropertyName = "expressionEndOffset";
 
-JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message, int lineNumber, int sourceId, const UString& sourceURL)
+JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message, int lineNumber, intptr_t sourceID, const UString& sourceURL)
 {
     JSObject* constructor;
     const char* name;
@@ -83,8 +83,8 @@ JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message,
 
     if (lineNumber != -1)
         error->putWithAttributes(exec, Identifier(exec, "line"), jsNumber(exec, lineNumber), ReadOnly | DontDelete);
-    if (sourceId != -1)
-        error->putWithAttributes(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId), ReadOnly | DontDelete);
+    if (sourceID != -1)
+        error->putWithAttributes(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceID), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putWithAttributes(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL), ReadOnly | DontDelete);
 
@@ -117,9 +117,9 @@ JSObject* throwError(ExecState* exec, ErrorType type, const char* message)
     return error;
 }
 
-JSObject* throwError(ExecState* exec, ErrorType type, const UString& message, int line, int sourceId, const UString& sourceURL)
+JSObject* throwError(ExecState* exec, ErrorType type, const UString& message, int line, intptr_t sourceID, const UString& sourceURL)
 {
-    JSObject* error = Error::create(exec, type, message, line, sourceId, sourceURL);
+    JSObject* error = Error::create(exec, type, message, line, sourceID, sourceURL);
     exec->setException(error);
     return error;
 }

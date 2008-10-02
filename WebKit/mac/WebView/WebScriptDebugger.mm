@@ -55,7 +55,7 @@ NSString *toNSString(const UString& s)
     return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.data()) length:s.size()];
 }
 
-NSString *toNSString(const SourceProvider& s)
+NSString *toNSString(const SourceCode& s)
 {
     if (!s.length())
         return nil;
@@ -85,7 +85,7 @@ WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
 }
 
 // callbacks - relay to delegate
-void WebScriptDebugger::sourceParsed(ExecState* exec, int sourceID, const UString& url, const SourceProvider& source, int lineNumber, int errorLine, const UString& errorMsg)
+void WebScriptDebugger::sourceParsed(ExecState* exec, const SourceCode& source, int errorLine, const UString& errorMsg)
 {
     if (m_callingDelegate)
         return;
@@ -93,18 +93,18 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, int sourceID, const UStrin
     m_callingDelegate = true;
 
     NSString *nsSource = toNSString(source);
-    NSURL *nsURL = toNSURL(url);
+    NSURL *nsURL = toNSURL(source.provider()->url());
 
     WebFrame *webFrame = toWebFrame(exec->dynamicGlobalObject());
     WebView *webView = [webFrame webView];
     if (errorLine == -1) {
-        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:nsSource baseLineNumber:lineNumber fromURL:nsURL sourceId:sourceID forWebFrame:webFrame];
-        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:nsSource fromURL:[nsURL absoluteString] sourceId:sourceID forWebFrame:webFrame]; // deprecated delegate method
+        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:nsSource baseLineNumber:source.firstLine() fromURL:nsURL sourceId:static_cast<int>(source.provider()->asID()) forWebFrame:webFrame];
+        [[webView _scriptDebugDelegateForwarder] webView:webView didParseSource:nsSource fromURL:[nsURL absoluteString] sourceId:static_cast<int>(source.provider()->asID()) forWebFrame:webFrame]; // deprecated delegate method
     } else {
         NSString* nsErrorMessage = toNSString(errorMsg);
         NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:nsErrorMessage, WebScriptErrorDescriptionKey, [NSNumber numberWithUnsignedInt:errorLine], WebScriptErrorLineNumberKey, nil];
         NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
-        [[webView _scriptDebugDelegateForwarder] webView:webView failedToParseSource:nsSource baseLineNumber:lineNumber fromURL:nsURL withError:error forWebFrame:webFrame];
+        [[webView _scriptDebugDelegateForwarder] webView:webView failedToParseSource:nsSource baseLineNumber:source.firstLine() fromURL:nsURL withError:error forWebFrame:webFrame];
         [error release];
         [info release];
     }
@@ -112,7 +112,7 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, int sourceID, const UStrin
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_callingDelegate)
         return;
@@ -124,12 +124,12 @@ void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, in
     m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
 
     WebView *webView = [webFrame webView];
-    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:static_cast<int>(sourceID) line:lineNumber forWebFrame:webFrame];
 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_callingDelegate)
         return;
@@ -140,12 +140,12 @@ void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame, 
     WebView *webView = [webFrame webView];
 
     [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willExecuteStatement:m_topCallFrame.get() sourceId:static_cast<int>(sourceID) line:lineNumber forWebFrame:webFrame];
 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_callingDelegate)
         return;
@@ -156,7 +156,7 @@ void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, 
     WebView *webView = [webFrame webView];
 
     [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
-    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView willLeaveCallFrame:m_topCallFrame.get() sourceId:static_cast<int>(sourceID) line:lineNumber forWebFrame:webFrame];
 
     [m_topCallFrame.get() _clearDebuggerCallFrame];
     m_topCallFrame = [m_topCallFrame.get() caller];
@@ -164,7 +164,7 @@ void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, int sourceID, int lineNumber)
+void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
 {
     if (m_callingDelegate)
         return;
@@ -175,20 +175,20 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, in
     WebView *webView = [webFrame webView];
     [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
 
-    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];
+    [[webView _scriptDebugDelegateForwarder] webView:webView exceptionWasRaised:m_topCallFrame.get() sourceId:static_cast<int>(sourceID) line:lineNumber forWebFrame:webFrame];
 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceId, int lineno)
+void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno)
 {
 }
 
-void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceId, int lineno)
+void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno)
 {
 }
 
-void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, int, int)
+void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, intptr_t, int)
 {
     return;
 }

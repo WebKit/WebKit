@@ -58,7 +58,7 @@ WebInspector.CallStackSidebarPane.prototype = {
                 break;
             }
 
-            scriptOrResource = sourceIDMap[callFrame.sourceIdentifier];
+            scriptOrResource = sourceIDMap[callFrame.sourceID];
             subtitle = WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
 
             if (callFrame.line > 0) {

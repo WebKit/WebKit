@@ -282,14 +282,14 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* function, JSValue* thisValue,
 
     UString s = x->toString(exec);
 
-    int sourceId;
     int errLine;
     UString errMsg;
 
-    RefPtr<EvalNode> evalNode = exec->parser()->parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(s), &sourceId, &errLine, &errMsg);
+    SourceCode source = makeSource(s);
+    RefPtr<EvalNode> evalNode = exec->parser()->parse<EvalNode>(exec, source, &errLine, &errMsg);
 
     if (!evalNode)
-        return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
+        return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), NULL);
 
     return exec->machine()->execute(evalNode.get(), exec, thisObject, globalObject->globalScopeChain().node(), exec->exceptionSlot());
 }

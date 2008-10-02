@@ -786,9 +786,9 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
         DebuggerCallFrame debuggerCallFrame(exec, exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
         if (r[RegisterFile::Callee].jsValue(exec))
-            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
+            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->lastLine());
         else
-            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
+            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->lastLine());
     }
 
     if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
@@ -851,7 +851,7 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue*& exc
                     exception->putWithAttributes(exec, Identifier(exec, expressionEndOffsetPropertyName), jsNumber(exec, divotPoint + endOffset), ReadOnly | DontDelete);
                 } else
                     exception->putWithAttributes(exec, Identifier(exec, "line"), jsNumber(exec, codeBlock->lineNumberForVPC(vPC)), ReadOnly | DontDelete);
-                exception->putWithAttributes(exec, Identifier(exec, "sourceId"), jsNumber(exec, codeBlock->ownerNode->sourceId()), ReadOnly | DontDelete);
+                exception->putWithAttributes(exec, Identifier(exec, "sourceId"), jsNumber(exec, codeBlock->ownerNode->sourceID()), ReadOnly | DontDelete);
                 exception->putWithAttributes(exec, Identifier(exec, "sourceURL"), jsOwnedString(exec, codeBlock->ownerNode->sourceURL()), ReadOnly | DontDelete);
             }
             
@@ -867,7 +867,7 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue*& exc
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
         ScopeChainNode* scopeChain = this->scopeChain(r);
         DebuggerCallFrame debuggerCallFrame(exec, exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
-        debugger->exception(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->lineNumberForVPC(vPC));
+        debugger->exception(debuggerCallFrame, codeBlock->ownerNode->sourceID(), codeBlock->lineNumberForVPC(vPC));
     }
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
@@ -1106,22 +1106,22 @@ NEVER_INLINE void Machine::debug(ExecState* exec, Register* r, DebugHookID debug
 
     switch (debugHookID) {
         case DidEnterCallFrame:
-            debugger->callEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+            debugger->callEvent(debuggerCallFrame, codeBlock->ownerNode->sourceID(), firstLine);
             return;
         case WillLeaveCallFrame:
-            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceID(), lastLine);
             return;
         case WillExecuteStatement:
-            debugger->atStatement(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+            debugger->atStatement(debuggerCallFrame, codeBlock->ownerNode->sourceID(), firstLine);
             return;
         case WillExecuteProgram:
-            debugger->willExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+            debugger->willExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceID(), firstLine);
             return;
         case DidExecuteProgram:
-            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceID(), lastLine);
             return;
         case DidReachBreakpoint:
-            debugger->didReachBreakpoint(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+            debugger->didReachBreakpoint(debuggerCallFrame, codeBlock->ownerNode->sourceID(), lastLine);
             return;
     }
 }
@@ -3728,7 +3728,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int message = (++vPC)->u.operand;
 
         CodeBlock* codeBlock = this->codeBlock(r);
-        r[dst] = Error::create(exec, (ErrorType)type, codeBlock->unexpectedConstants[message]->toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
+        r[dst] = Error::create(exec, (ErrorType)type, codeBlock->unexpectedConstants[message]->toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
 
         ++vPC;
         NEXT_OPCODE;
@@ -3903,7 +3903,7 @@ JSValue* Machine::retrieveCaller(ExecState* exec, InternalFunction* function) co
     return caller;
 }
 
-void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId, UString& sourceURL, JSValue*& function) const
+void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue*& function) const
 {
     function = 0;
     lineNumber = -1;
@@ -3920,7 +3920,7 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId
 
     Instruction* vPC = vPCForPC(callerCodeBlock, r[RegisterFile::ReturnPC].v());
     lineNumber = callerCodeBlock->lineNumberForVPC(vPC - 1);
-    sourceId = callerCodeBlock->ownerNode->sourceId();
+    sourceID = callerCodeBlock->ownerNode->sourceID();
     sourceURL = callerCodeBlock->ownerNode->sourceURL();
 
     JSValue* caller = callerR[RegisterFile::Callee].getJSValue();
@@ -5658,7 +5658,7 @@ JSValue* Machine::cti_op_new_error(CTI_ARGS)
     JSValue* message = ARG_src2;
     unsigned lineNumber = ARG_int3;
 
-    return Error::create(exec, static_cast<ErrorType>(type), message->toString(exec), lineNumber, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
+    return Error::create(exec, static_cast<ErrorType>(type), message->toString(exec), lineNumber, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
 }
 
 void Machine::cti_op_debug(CTI_ARGS)

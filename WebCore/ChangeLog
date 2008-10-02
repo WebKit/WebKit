@@ -1,3 +1,72 @@
+2008-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler and Cameron Zwarich.
+
+        Updated for JavaScriptCore API changes: use a SourceCode instead of
+        broken out parameters; treat sourceId as intptr_t.
+
+        * ForwardingHeaders/kjs/SourceRange.h: Copied from ForwardingHeaders/kjs/SourceProvider.h.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::create):
+        (WebCore::StringSourceProvider::StringSourceProvider):
+
+        (WebCore::makeSource): Added a makeSource function for convenience.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+
+        * bridge/jni/jni_runtime.h:
+        (JSC::Bindings::JavaString::operator UString): Replaced the explicit
+        ustring() function with an implicit operator because this class already
+        holds a UString::rep.
+
+        * page/Console.cpp:
+        (WebCore::retrieveLastCaller):
+        (WebCore::Console::trace):
+        * page/InspectorController.cpp:
+        (WebCore::jsStringRef):
+        (WebCore::InspectorController::addBreakpoint):
+        (WebCore::InspectorController::removeBreakpoint):
+        (WebCore::InspectorController::didParseSource):
+        (WebCore::InspectorController::failedToParseSource):
+        * page/InspectorController.h:
+        * page/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        * page/JavaScriptCallFrame.h:
+        (WebCore::JavaScriptCallFrame::create):
+        (WebCore::JavaScriptCallFrame::sourceIdentifier):
+        (WebCore::JavaScriptCallFrame::update):
+        * page/JavaScriptDebugListener.h:
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::addBreakpoint):
+        (WebCore::JavaScriptDebugServer::removeBreakpoint):
+        (WebCore::JavaScriptDebugServer::hasBreakpoint):
+        (WebCore::dispatchDidParseSource):
+        (WebCore::dispatchFailedToParseSource):
+        (WebCore::JavaScriptDebugServer::sourceParsed):
+        (WebCore::JavaScriptDebugServer::callEvent):
+        (WebCore::JavaScriptDebugServer::atStatement):
+        (WebCore::JavaScriptDebugServer::returnEvent):
+        (WebCore::JavaScriptDebugServer::exception):
+        (WebCore::JavaScriptDebugServer::willExecuteProgram):
+        (WebCore::JavaScriptDebugServer::didExecuteProgram):
+        (WebCore::JavaScriptDebugServer::didReachBreakpoint):
+        * page/JavaScriptDebugServer.h:
+        * page/inspector/ScriptsPanel.js: Renamed internal uses of sourceId and 
+        sourceIdentifier to sourceID.
+
 2008-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen.

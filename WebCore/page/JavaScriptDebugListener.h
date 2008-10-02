@@ -32,7 +32,7 @@
 namespace JSC {
     class DebuggerCallFrame;
     class ExecState;
-    class SourceProvider;
+    class SourceCode;
     class UString;
 }
 
@@ -45,8 +45,8 @@ namespace WebCore {
     public:
         virtual ~JavaScriptDebugListener() { }
 
-        virtual void didParseSource(JSC::ExecState*, const JSC::SourceProvider& source, int startingLineNumber, const JSC::UString& sourceURL, int sourceID) = 0;
-        virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceProvider& source, int startingLineNumber, const JSC::UString& sourceURL, int errorLine, const JSC::UString& errorMessage) = 0;
+        virtual void didParseSource(JSC::ExecState*, const JSC::SourceCode& source) = 0;
+        virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceCode& source, int errorLine, const JSC::UString& errorMessage) = 0;
         virtual void didPause() = 0;
     };
 

@@ -66,7 +66,7 @@ using namespace std;
 static ExpressionNode* makeAssignNode(void*, ExpressionNode* loc, Operator, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end);
 static ExpressionNode* makePrefixNode(void*, ExpressionNode* expr, Operator, int start, int divot, int end);
 static ExpressionNode* makePostfixNode(void*, ExpressionNode* expr, Operator, int start, int divot, int end);
-static PropertyNode* makeGetterOrSetterPropertyNode(void*, const Identifier &getOrSet, const Identifier& name, ParameterNode*, FunctionBodyNode*, const SourceRange&);
+static PropertyNode* makeGetterOrSetterPropertyNode(void*, const Identifier &getOrSet, const Identifier& name, ParameterNode*, FunctionBodyNode*, const SourceCode&);
 static ExpressionNodeInfo makeFunctionCallNode(void*, ExpressionNodeInfo func, ArgumentsNodeInfo, int start, int divot, int end);
 static ExpressionNode* makeTypeOfNode(void*, ExpressionNode*);
 static ExpressionNode* makeDeleteNode(void*, ExpressionNode*, int start, int divot, int end);
@@ -312,9 +312,9 @@ Property:
     IDENT ':' AssignmentExpr            { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
   | STRING ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, *$1, $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
   | NUMBER ':' AssignmentExpr           { $$ = createNodeFeatureInfo<PropertyNode*>(new PropertyNode(GLOBAL_DATA, Identifier(GLOBAL_DATA, UString::from($1)), $3.m_node, PropertyNode::Constant), $3.m_featureInfo, $3.m_numConstants); }
-  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceRange($5, $7)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
+  | IDENT IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE    { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, 0, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); if (!$$.m_node) YYABORT; }
   | IDENT IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
-                                        { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, LEXER->sourceRange($6, $8)), $4.m_featureInfo | ClosureFeature, 0); $7->setUsesArguments($7->usesArguments() | (($4.m_featureInfo & ArgumentsFeature) != 0)); DBG($7, @6, @8); if (!$$.m_node) YYABORT; }
+                                        { $$ = createNodeFeatureInfo<PropertyNode*>(makeGetterOrSetterPropertyNode(globalPtr, *$1, *$2, $4.m_node.head, $7, LEXER->sourceCode($6, $8, @6.first_line)), $4.m_featureInfo | ClosureFeature, 0); $7->setUsesArguments($7->usesArguments() | (($4.m_featureInfo & ArgumentsFeature) != 0)); DBG($7, @6, @8); if (!$$.m_node) YYABORT; }
 ;
 
 PropertyList:
@@ -1157,16 +1157,16 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceRange($5, $7)), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
-      { $$ = createNodeFeatureInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceRange($6, $8), $4.m_node.head), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_featureInfo | ClosureFeature, 0); $7->setUsesArguments($7->usesArguments() | (($4.m_featureInfo & ArgumentsFeature) != 0)); DBG($7, @6, @8); }
+      { $$ = createNodeFeatureInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_featureInfo | ClosureFeature, 0); $7->setUsesArguments($7->usesArguments() | (($4.m_featureInfo & ArgumentsFeature) != 0)); DBG($7, @6, @8); }
 ;
 
 FunctionExpr:
-    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceRange($4, $6)), ClosureFeature, 0); DBG($5, @4, @6); }
-    | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceRange($5, $7), $3.m_node.head), $3.m_featureInfo | ClosureFeature, 0); $6->setUsesArguments($6->usesArguments() | (($3.m_featureInfo & ArgumentsFeature) != 0)); DBG($6, @5, @7); }
-  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceRange($5, $7)), ClosureFeature, 0); DBG($6, @5, @7); }
-  | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceRange($6, $8), $4.m_node.head), $4.m_featureInfo | ClosureFeature, 0); $7->setUsesArguments($7->usesArguments() | (($4.m_featureInfo & ArgumentsFeature) != 0)); DBG($7, @6, @8); }
+    FUNCTION '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $5, LEXER->sourceCode($4, $6, @4.first_line)), ClosureFeature, 0); DBG($5, @4, @6); }
+    | FUNCTION '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, GLOBAL_DATA->propertyNames->nullIdentifier, $6, LEXER->sourceCode($5, $7, @5.first_line), $3.m_node.head), $3.m_featureInfo | ClosureFeature, 0); $6->setUsesArguments($6->usesArguments() | (($3.m_featureInfo & ArgumentsFeature) != 0)); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ClosureFeature, 0); DBG($6, @5, @7); }
+  | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeFeatureInfo(new FuncExprNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), $4.m_featureInfo | ClosureFeature, 0); $7->setUsesArguments($7->usesArguments() | (($4.m_featureInfo & ArgumentsFeature) != 0)); DBG($7, @6, @8); }
 ;
 
 FormalParameterList:
@@ -1358,7 +1358,7 @@ static ExpressionNode* makeDeleteNode(void* globalPtr, ExpressionNode* expr, int
     return new DeleteDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), divot, divot - start, end - divot);
 }
 
-static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Identifier& getOrSet, const Identifier& name, ParameterNode* params, FunctionBodyNode* body, const SourceRange& source)
+static PropertyNode* makeGetterOrSetterPropertyNode(void* globalPtr, const Identifier& getOrSet, const Identifier& name, ParameterNode* params, FunctionBodyNode* body, const SourceCode& source)
 {
     PropertyNode::Type type;
     if (getOrSet == "get")

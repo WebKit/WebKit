@@ -30,6 +30,7 @@
 #include "JSRun.h"
 
 #include <JavaScriptCore/completion.h>
+#include <JavaScriptCore/SourceRange.h>
 
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)
     :   JSBase(kJSRunTypeID),
@@ -60,10 +61,10 @@ JSGlobalObject* JSRun::GlobalObject() const
 
 Completion JSRun::Evaluate()
 {
-    return Interpreter::evaluate(fGlobalObject->globalExec(), fGlobalObject->globalScopeChain(), UString(), 0, fSource);
+    return Interpreter::evaluate(fGlobalObject->globalExec(), fGlobalObject->globalScopeChain(), makeSource(fSource));
 }
 
 bool JSRun::CheckSyntax()
 {
-    return Interpreter::checkSyntax(fGlobalObject->globalExec(), UString(), 0, fSource).complType() != Throw;
+    return Interpreter::checkSyntax(fGlobalObject->globalExec(), makeSource(fSource)).complType() != Throw;
 }

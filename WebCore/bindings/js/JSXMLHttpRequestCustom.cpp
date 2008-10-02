@@ -150,7 +150,7 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     }
 
     int signedLineNumber;
-    int sourceID;
+    intptr_t sourceID;
     UString sourceURL;
     JSValue* function;
     exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);

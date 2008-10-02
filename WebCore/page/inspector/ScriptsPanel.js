@@ -206,8 +206,8 @@ WebInspector.ScriptsPanel.prototype = {
         // Hide any views that are visible that are not this panel's current visible view.
         // This can happen when a ResourceView is visible in the Resources panel then switched
         // to the this panel.
-        for (var sourceIdentifier in this._sourceIDMap) {
-            var scriptOrResource = this._sourceIDMap[sourceIdentifier];
+        for (var sourceID in this._sourceIDMap) {
+            var scriptOrResource = this._sourceIDMap[sourceID];
             var view = this._sourceViewForScriptOrResource(scriptOrResource);
             if (!view || view === this.visibleView)
                 continue;
@@ -225,8 +225,8 @@ WebInspector.ScriptsPanel.prototype = {
             views.push(visibleView);
         }
 
-        for (var sourceIdentifier in this._sourceIDMap) {
-            var scriptOrResource = this._sourceIDMap[sourceIdentifier];
+        for (var sourceID in this._sourceIDMap) {
+            var scriptOrResource = this._sourceIDMap[sourceID];
             var view = this._sourceViewForScriptOrResource(scriptOrResource);
             if (!view.performSearch || view.alreadySearching)
                 continue;
@@ -601,7 +601,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.sidebarPanes.scopechain.update(currentFrame);
 
-        var scriptOrResource = this._sourceIDMap[currentFrame.sourceIdentifier];
+        var scriptOrResource = this._sourceIDMap[currentFrame.sourceID];
         this._showScriptOrResource(scriptOrResource, currentFrame.line);
 
         this._executionSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);

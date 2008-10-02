@@ -33,11 +33,12 @@
 #import "JSDOMWindow.h"
 #import "JSDOMWindowCustom.h"
 #import "PlatformString.h"
+#import "StringSourceProvider.h"
 #import "WebCoreObjCExtras.h"
 #import "objc_instance.h"
-#import "runtime_root.h"
 #import "runtime.h"
 #import "runtime_object.h"
+#import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>
 #import <kjs/ExecState.h>
 #import <kjs/JSGlobalObject.h>
@@ -329,7 +330,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock(false);
     
     [self _rootObject]->globalObject()->startTimeoutCheck();
-    Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), UString(), 1, String(script));
+    Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)));
     [self _rootObject]->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     

@@ -92,9 +92,9 @@ Lexer::~Lexer()
     m_mainTable.deleteTable();
 }
 
-void Lexer::setCode(int startingLineNumber, PassRefPtr<SourceProvider> source)
+void Lexer::setCode(const SourceCode& source)
 {
-    yylineno = startingLineNumber;
+    yylineno = source.firstLine();
     m_restrKeyword = false;
     m_delimited = false;
     m_eatNextIdentifier = false;
@@ -102,9 +102,9 @@ void Lexer::setCode(int startingLineNumber, PassRefPtr<SourceProvider> source)
     m_lastToken = -1;
 
     m_position = 0;
-    m_source = source;
-    m_code = m_source->data();
-    m_length = m_source->length();
+    m_source = &source;
+    m_code = source.data();
+    m_length = source.length();
     m_skipLF = false;
     m_skipCR = false;
     m_error = false;

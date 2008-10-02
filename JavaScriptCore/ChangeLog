@@ -1,3 +1,146 @@
+2008-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler and Cameron Zwarich.
+
+        Preliminary step toward dynamic recompilation: Standardized and
+        simplified the parsing interface.
+        
+        The main goal in this patch is to make it easy to ask for a duplicate
+        compilation, and get back a duplicate result -- same source URL, same
+        debugger / profiler ID, same toString behavior, etc.
+        
+        The basic unit of compilation and evaluation is now SourceCode, which
+        encompasses a SourceProvider, a range in that provider, and a starting
+        line number.
+
+        A SourceProvider now encompasses a source URL, and *is* a source ID,
+        since a pointer is a unique identifier.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax): Provide a SourceCode to the Interpreter, since
+        other APIs are no longer supported.
+        
+        * VM/CodeBlock.h:
+        (JSC::EvalCodeCache::get): Provide a SourceCode to the Interpreter, since
+        other APIs are no longer supported.
+        (JSC::CodeBlock::CodeBlock): ASSERT something that used to be ASSERTed
+        by our caller -- this is a better bottleneck.
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator): Updated for the fact that
+        FunctionBodyNode's parameters are no longer a WTF::Vector.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::Arguments): ditto
+
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate): Provide a SourceCode to the Parser,
+        since other APIs are no longer supported.
+
+        * kjs/FunctionConstructor.cpp:
+        (JSC::constructFunction): Provide a SourceCode to the Parser, since
+        other APIs are no longer supported. Adopt FunctionBodyNode's new
+        "finishParsing" API.
+
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::getParameterName): Updated for the fact that
+        FunctionBodyNode's parameters are no longer a wtf::Vector.
+
+        * kjs/JSFunction.h: Nixed some cruft.
+
+        * kjs/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval): Provide a SourceCode to the Parser, since
+        other APIs are no longer supported. 
+
+        * kjs/Parser.cpp:
+        (JSC::Parser::parse): Require a SourceCode argument, instead of a bunch
+        of broken out parameters. Stop tracking sourceId as an integer, since we
+        use the SourceProvider pointer for this now. Don't clamp the
+        startingLineNumber, since SourceCode does that now.
+
+        * kjs/Parser.h:
+        (JSC::Parser::parse): Standardized the parsing interface to require a
+        SourceCode.
+
+        * kjs/Shell.cpp:
+        (functionRun):
+        (functionLoad):
+        (prettyPrintScript):
+        (runWithScripts):
+        (runInteractive): Provide a SourceCode to the Interpreter, since
+        other APIs are no longer supported.
+
+        * kjs/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        (JSC::SourceProvider::url):
+        (JSC::SourceProvider::asId):
+        (JSC::UStringSourceProvider::create):
+        (JSC::UStringSourceProvider::UStringSourceProvider): Added new
+        responsibilities described above.
+
+        * kjs/SourceRange.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::toString):
+        (JSC::SourceCode::provider):
+        (JSC::SourceCode::firstLine):
+        (JSC::SourceCode::data):
+        (JSC::SourceCode::length): Added new responsibilities described above.
+        Renamed SourceRange to SourceCode, based on review feedback. Added
+        a makeSource function for convenience.
+
+        * kjs/debugger.h: Provide a SourceCode to the client, since other APIs
+        are no longer supported.
+
+        * kjs/grammar.y: Provide startingLineNumber when creating a SourceCode.
+
+        * kjs/debugger.h: Treat sourceId as intptr_t to avoid loss of precision
+        on 64bit platforms.
+
+        * kjs/interpreter.cpp:
+        (JSC::Interpreter::checkSyntax):
+        (JSC::Interpreter::evaluate):
+        * kjs/interpreter.h: Require a SourceCode instead of broken out arguments.
+
+        * kjs/lexer.cpp:
+        (JSC::Lexer::setCode):
+        * kjs/lexer.h:
+        (JSC::Lexer::sourceRange): Fold together the SourceProvider and line number
+        into a SourceCode. Fixed a bug where the Lexer would accidentally keep
+        alive the last SourceProvider forever.
+
+        * kjs/nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::generateCode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::finishParsing):
+        (JSC::FunctionBodyNode::create):
+        (JSC::FunctionBodyNode::generateCode):
+        (JSC::ProgramNode::generateCode):
+        (JSC::FunctionBodyNode::paramString):
+        * kjs/nodes.h:
+        (JSC::ScopeNode::):
+        (JSC::ScopeNode::sourceId):
+        (JSC::FunctionBodyNode::):
+        (JSC::FunctionBodyNode::parameterCount):
+        (JSC::FuncExprNode::):
+        (JSC::FuncDeclNode::): Store a SourceCode in all ScopeNodes, since
+        SourceCode is now responsible for tracking URL, ID, etc. Streamlined
+        some ad hoc FunctionBodyNode fixups into a "finishParsing" function, to
+        help make clear what you need to do in order to finish parsing a
+        FunctionBodyNode.
+
+        * wtf/Vector.h:
+        (WTF::::releaseBuffer): Don't ASSERT that releaseBuffer() is only called
+        when buffer is not 0, since FunctionBodyNode is more than happy
+        to get back a 0 buffer, and other functions like RefPtr::release() allow
+        for 0, too.
+
 2008-10-01  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

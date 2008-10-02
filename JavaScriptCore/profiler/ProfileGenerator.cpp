@@ -57,7 +57,7 @@ ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingE
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
 {
     int lineNumber;
-    int sourceID;
+    intptr_t sourceID;
     UString sourceURL;
     JSValue* function;
 

@@ -70,13 +70,12 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
 
     ExecState newExec(m_scopeChain->globalObject(), m_registers);
 
-    int sourceId;
     int errLine;
     UString errMsg;
-    RefPtr<SourceProvider> sourceProvider = UStringSourceProvider::create(script);
-    RefPtr<EvalNode> evalNode = newExec.parser()->parse<EvalNode>(&newExec, UString(), 1, sourceProvider, &sourceId, &errLine, &errMsg);
+    SourceCode source = makeSource(script);
+    RefPtr<EvalNode> evalNode = newExec.parser()->parse<EvalNode>(&newExec, source, &errLine, &errMsg);
     if (!evalNode)
-        return Error::create(&newExec, SyntaxError, errMsg, errLine, sourceId, 0);
+        return Error::create(&newExec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 
     return newExec.machine()->execute(evalNode.get(), &newExec, thisObject(), m_scopeChain, &exception);
 }

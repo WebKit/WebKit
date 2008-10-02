@@ -32,24 +32,13 @@ extern int kjsyyparse(void*);
 
 namespace JSC {
 
-Parser::Parser()
-    : m_sourceId(0)
-{
-}
-
-void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> prpSource,
-                   int* sourceId, int* errLine, UString* errMsg)
+void Parser::parse(ExecState* exec, int* errLine, UString* errMsg)
 {
     ASSERT(!m_sourceElements);
 
-    int defaultSourceId;
     int defaultErrLine;
     UString defaultErrMsg;
 
-    RefPtr<SourceProvider> source = prpSource;
-
-    if (!sourceId)
-        sourceId = &defaultSourceId;
     if (!errLine)
         errLine = &defaultErrLine;
     if (!errMsg)
@@ -59,12 +48,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
     *errMsg = 0;
 
     Lexer& lexer = *exec->lexer();
-
-    if (startingLineNumber <= 0)
-        startingLineNumber = 1;
-
-    lexer.setCode(startingLineNumber, source);
-    *sourceId = ++m_sourceId;
+    lexer.setCode(*m_source);
 
     int parseError = kjsyyparse(&exec->globalData());
     bool lexError = lexer.sawError();
@@ -79,7 +63,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
     }
 
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger())
-        debugger->sourceParsed(exec, *sourceId, sourceURL, *source, startingLineNumber, *errLine, *errMsg);
+        debugger->sourceParsed(exec, *m_source, *errLine, *errMsg);
 }
 
 void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 

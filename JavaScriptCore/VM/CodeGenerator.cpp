@@ -312,16 +312,17 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     for (size_t i = 0; i < varStack.size(); ++i)
         addVar(varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
 
-    Vector<Identifier>& parameters = functionBody->parameters();
-    m_nextParameter = -RegisterFile::CallFrameHeaderSize - parameters.size() - 1;
-    m_parameters.resize(1 + parameters.size()); // reserve space for "this"
+    const Identifier* parameters = functionBody->parameters();
+    size_t parameterCount = functionBody->parameterCount();
+    m_nextParameter = -RegisterFile::CallFrameHeaderSize - parameterCount - 1;
+    m_parameters.resize(1 + parameterCount); // reserve space for "this"
 
     // Add "this" as a parameter
     m_thisRegister.setIndex(m_nextParameter);
     ++m_nextParameter;
     ++m_codeBlock->numParameters;
     
-    for (size_t i = 0; i < parameters.size(); ++i)
+    for (size_t i = 0; i < parameterCount; ++i)
         addParameter(parameters[i]);
 
     allocateConstants(functionBody->neededConstants());

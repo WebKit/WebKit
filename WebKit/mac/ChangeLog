@@ -1,3 +1,26 @@
+2008-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler and Cameron Zwarich.
+
+        Updated for JavaScriptCore API changes: use a SourceCode instead of
+        broken out parameters; treat sourceId as intptr_t.
+        
+        We still treat sourceId as int in some cases because of DashCode. See
+        <rdar://problem/6263293> WebScriptDebugDelegate should use intptr_t for
+        sourceId, not int.
+
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+        (toNSString):
+        (WebScriptDebugger::sourceParsed):
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::exception):
+        (WebScriptDebugger::willExecuteProgram):
+        (WebScriptDebugger::didExecuteProgram):
+        (WebScriptDebugger::didReachBreakpoint):
+
 2008-10-01  David Hyatt  <hyatt@apple.com>
 
         Move prohibitsScrolling from the Frame to the ScrollView.
