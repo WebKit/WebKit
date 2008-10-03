@@ -54,6 +54,7 @@ private:
 
     bool createWindow(HWND parentWindow, const WebCore::IntSize& size);
 
+    virtual void invalidateRect(const WebCore::IntRect&);
     virtual void setFrameRect(const WebCore::IntRect&);
     virtual void frameRectsChanged() const;
     virtual void setFocus();

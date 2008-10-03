@@ -133,7 +133,7 @@ public:
 
     virtual void paint(GraphicsContext*, const IntRect&);
     void invalidate() { invalidateRect(boundsRect()); }
-    virtual void invalidateRect(const IntRect&);
+    virtual void invalidateRect(const IntRect&) = 0;
 
     virtual void setFocus();
 
@@ -157,11 +157,6 @@ public:
     virtual void setParent(ScrollView* view);
     ScrollView* parent() const { return m_parent; }
     ScrollView* root() const;
-
-    // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
-    // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
-    // This clip includes any clips that the widget itself sets up for its children.
-    virtual IntRect windowClipRect() const { return IntRect(); }
 
     virtual void handleEvent(Event*) { }
 

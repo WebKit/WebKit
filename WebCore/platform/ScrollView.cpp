@@ -379,7 +379,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
 {
     // Since scrolling is double buffered, we will be blitting the scroll view's intersection
     // with the clip rect every time to keep it smooth.
-    IntRect clipRect = static_cast<Widget*>(this)->windowClipRect();
+    IntRect clipRect = windowClipRect();
     IntRect scrollViewRect = convertToContainingWindow(IntRect(0, 0, visibleWidth(), visibleHeight()));
     IntRect updateRect = clipRect;
     updateRect.intersect(scrollViewRect);

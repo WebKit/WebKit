@@ -277,7 +277,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     RenderBlock::paintObject(paintInfo, tx, ty);
 
     if (paintInfo.phase == PaintPhaseBlockBackground)
-        paintScrollbar(paintInfo);
+        paintScrollbar(paintInfo, tx, ty);
     else if (paintInfo.phase == PaintPhaseChildBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
@@ -287,16 +287,15 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderListBox::paintScrollbar(PaintInfo& paintInfo)
+void RenderListBox::paintScrollbar(PaintInfo& paintInfo, int tx, int ty)
 {
     if (m_vBar) {
-        IntRect absBounds = absoluteBoundingBoxRect();
-        IntRect scrollRect(absBounds.right() - borderRight() - m_vBar->width(),
-                           absBounds.y() + borderTop(),
+        IntRect scrollRect(tx + width() - borderRight() - m_vBar->width(),
+                           ty + borderTop(),
                            m_vBar->width(),
-                           absBounds.height() - (borderTop() + borderBottom()));
+                           height() - (borderTop() + borderBottom()));
         m_vBar->setFrameRect(scrollRect);
-        m_vBar->paint(paintInfo.context, scrollRect);
+        m_vBar->paint(paintInfo.context, paintInfo.rect);
     }
 }
 
@@ -596,19 +595,17 @@ IntRect RenderListBox::controlClipRect(int tx, int ty) const
     return clipRect;
 }
 
-IntRect RenderListBox::windowClipRect(const Scrollbar*) const
-{
-    FrameView* frameView = view()->frameView();
-    if (!frameView)
-        return IntRect();
-
-    return frameView->windowClipRectForLayer(enclosingLayer(), true);
-}
-
 bool RenderListBox::isActive() const
 {
     Page* page = document()->frame()->page();
     return page && page->focusController()->isActive();
+}
+
+void RenderListBox::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+{
+    IntRect scrollRect = rect;
+    scrollRect.move(width() - borderRight() - scrollbar->width(), borderTop());
+    repaintRectangle(scrollRect);
 }
 
 bool RenderListBox::isScrollable() const

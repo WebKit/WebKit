@@ -349,7 +349,7 @@ private:
     bool shouldBeOverflowOnly() const;
 
     virtual void valueChanged(Scrollbar*);
-    virtual IntRect windowClipRect(const Scrollbar*) const;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);

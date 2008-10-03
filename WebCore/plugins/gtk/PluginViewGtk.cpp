@@ -452,6 +452,16 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     }
 }
 
+void PluginView::invalidateRect(const IntRect& rect)
+{
+    if (m_isWindowed) {
+        gtk_widget_queue_draw_area(GTK_WIDGET(platformPluginWidget()), rect.x(), rect.y(), rect.width(), rect.height());
+        return;
+    }
+
+    invalidateWindowlessPluginRect(rect);
+}
+
 void PluginView::invalidateRect(NPRect* rect)
 {
     if (!rect) {
@@ -460,7 +470,7 @@ void PluginView::invalidateRect(NPRect* rect)
     }
 
     IntRect r(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top);
-    Widget::invalidateRect(r);
+    invalidateRect(r);
 }
 
 void PluginView::forceRedraw()

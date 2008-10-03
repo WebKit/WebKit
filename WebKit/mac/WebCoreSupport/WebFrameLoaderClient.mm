@@ -1237,12 +1237,25 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
     return view;
 }
 
+class PluginWidget : public Widget {
+public:
+    PluginWidget(NSView *view = 0)
+        : Widget(view)
+    {
+    }
+    
+    virtual void invalidateRect(const IntRect& rect)
+    {
+        [platformWidget() setNeedsDisplayInRect:rect];
+    }
+};
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-class NetscapePluginWidget : public Widget {
+class NetscapePluginWidget : public PluginWidget {
 public:
     NetscapePluginWidget(WebNetscapePluginEmbeddedView *view)
-    : Widget(view)
+        : PluginWidget(view)
     {
     }
     
@@ -1290,7 +1303,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
         [arguments release];
 
         if (view)
-            return new Widget(view);
+            return new PluginWidget(view);
     }
 
     NSString *MIMEType;
@@ -1356,7 +1369,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
     }
     
     ASSERT(view);
-    return new Widget(view);
+    return new PluginWidget(view);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -1443,11 +1456,11 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Elemen
     }
 
     ASSERT(view);
-    return new Widget(view);
+    return new PluginWidget(view);
 
     END_BLOCK_OBJC_EXCEPTIONS;
     
-    return new Widget;
+    return new PluginWidget;
 }
 
 String WebFrameLoaderClient::overrideMediaType() const

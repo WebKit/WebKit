@@ -37,8 +37,7 @@ public:
     virtual ~ScrollbarClient() {}
     virtual void valueChanged(Scrollbar*) = 0;
 
-    // Used to obtain a window clip rect.
-    virtual IntRect windowClipRect(const Scrollbar*) const = 0;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
 
     virtual bool isActive() const = 0;
 };

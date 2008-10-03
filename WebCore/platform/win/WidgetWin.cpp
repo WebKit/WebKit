@@ -83,6 +83,7 @@ void Widget::paint(GraphicsContext*, const IntRect&)
 {
 }
 
+/*
 void Widget::invalidateRect(const IntRect& r)
 {
     if (!parent()) {
@@ -110,6 +111,7 @@ void Widget::invalidateRect(const IntRect& r)
     ::InvalidateRect(containingWindow(), &rect, false);
     outermostView->addToDirtyRegion(windowRect);
 }
+*/
 
 void Widget::setFocus()
 {

@@ -1092,20 +1092,20 @@ void RenderLayer::valueChanged(Scrollbar*)
         scrollToOffset(newX, newY, false);
 }
 
-IntRect RenderLayer::windowClipRect(const Scrollbar*) const
-{
-    RenderView* view = renderer()->view();
-    ASSERT(view);
-    FrameView* frameView = view->frameView();
-    if (!frameView)
-        return IntRect();
-    return frameView->windowClipRectForLayer(this, false);
-}
-
 bool RenderLayer::isActive() const
 {
     Page* page = renderer()->document()->frame()->page();
     return page && page->focusController()->isActive();
+}
+
+void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+{
+    IntRect scrollRect = rect;
+    if (scrollbar == m_vBar.get())
+        scrollRect.move(renderer()->width() - renderer()->borderRight() - scrollbar->width(), renderer()->borderTop());
+    else
+        scrollRect.move(renderer()->height() - renderer()->borderBottom() - scrollbar->height(), renderer()->borderLeft());
+    renderer()->repaintRectangle(scrollRect);
 }
 
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)

@@ -64,6 +64,15 @@ bool EmbeddedWidget::createWindow(HWND parentWindow, const IntSize& size)
     return true;
 }
 
+void EmbeddedWidget::invalidateRect(const IntRect& rect)
+{
+    if (!m_window)
+        return;
+
+    RECT r = rect;
+   ::InvalidateRect(m_window, &r, false);
+}
+
 void EmbeddedWidget::setFrameRect(const IntRect& rect)
 {
     if (m_element->document()->printing())

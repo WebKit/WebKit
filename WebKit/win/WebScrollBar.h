@@ -117,7 +117,7 @@ public:
 protected:
     // ScrollbarClient
     virtual void valueChanged(Scrollbar*);
-    virtual IntRect windowClipRect(const Scrollbar*) const;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
 
     // FIXME: We should provide a way to set this value.
     virtual bool isActive() const { return true; }

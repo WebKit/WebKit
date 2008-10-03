@@ -259,6 +259,27 @@ void FrameView::initScrollbars()
     setScrollbarModes(d->m_hmode, d->m_vmode);
 }
 
+void FrameView::invalidateRect(const IntRect& rect)
+{
+    if (!parent()) {
+        if (hostWindow())
+            hostWindow()->repaint(rect, true);
+        return;
+    }
+
+    if (!m_frame)
+        return;
+
+    RenderPart* renderer = m_frame->ownerRenderer();
+    if (!renderer)
+        return;
+
+    IntRect repaintRect = rect;
+    repaintRect.move(renderer->borderLeft() + renderer->paddingLeft(),
+                     renderer->borderTop() + renderer->paddingTop());
+    renderer->repaintRectangle(repaintRect);
+}
+
 void FrameView::setMarginWidth(int w)
 {
     // make it update the rendering area when set
@@ -971,18 +992,6 @@ void FrameView::dispatchScheduledEvents()
     }
 }
 
-IntRect FrameView::windowClipRect(const Scrollbar*) const
-{
-    // When we get called by the scrollbar client, it means that we are not clipping to contents, since
-    // these scrollbars are ours.
-    return windowClipRect(false);
-}
-
-IntRect FrameView::windowClipRect() const
-{
-    return windowClipRect(true);
-}
-
 IntRect FrameView::windowClipRect(bool clipToContents) const
 {
     ASSERT(m_frame->view() == this);
@@ -1032,6 +1041,14 @@ void FrameView::valueChanged(Scrollbar* bar)
     ScrollView::valueChanged(bar);
     if (offset != scrollOffset())
         frame()->sendScrollEvent();
+}
+
+void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+{
+    // Add in our offset within the FrameView.
+    IntRect dirtyRect = rect;
+    dirtyRect.move(scrollbar->x(), scrollbar->y());
+    invalidateRect(dirtyRect);
 }
 
 IntRect FrameView::windowResizerRect() const

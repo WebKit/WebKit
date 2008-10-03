@@ -151,29 +151,6 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
-void Widget::invalidateRect(const IntRect& rect)
-{
-    if (!parent()) {
-        gtk_widget_queue_draw_area(GTK_WIDGET(containingWindow()), rect.x(), rect.y(),
-                                   rect.width(), rect.height());
-        if (isFrameView())
-            static_cast<FrameView*>(this)->addToDirtyRegion(rect);
-        return;
-    }
-
-    // Get the root widget.
-    ScrollView* outermostView = parent();
-    while (outermostView && outermostView->parent())
-        outermostView = outermostView->parent();
-    if (!outermostView)
-        return;
-
-    IntRect windowRect = convertToContainingWindow(rect);
-    gtk_widget_queue_draw_area(GTK_WIDGET(containingWindow()), windowRect.x(), windowRect.y(),
-                               windowRect.width(), windowRect.height());
-    outermostView->addToDirtyRegion(windowRect);
-}
-
 IntRect Widget::frameRect() const
 {
     return m_frame;

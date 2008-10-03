@@ -63,6 +63,8 @@ public:
     virtual ~FrameView();
 
     virtual HostWindow* hostWindow() const;
+    
+    virtual void invalidateRect(const IntRect&);
 
     Frame* frame() const { return m_frame.get(); }
     void clearFrame();
@@ -111,12 +113,11 @@ public:
     void adjustViewSize();
     void initScrollbars();
     
-    virtual IntRect windowClipRect(const Scrollbar*) const;
-    virtual IntRect windowClipRect() const;
-    IntRect windowClipRect(bool clipToContents) const;
+    virtual IntRect windowClipRect(bool clipToContents = true) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
     virtual bool isActive() const;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual void valueChanged(Scrollbar*);
     
     virtual IntRect windowResizerRect() const;

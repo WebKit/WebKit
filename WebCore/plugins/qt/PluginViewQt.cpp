@@ -381,6 +381,16 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     }
 }
 
+void PluginView::invalidateRect(const IntRect& rect)
+{
+    if (platformWidget()) {
+        platformWidget()->update(rect);
+        return;
+    }
+    
+    invalidateWindowlessPluginRect(rect);
+}
+    
 void PluginView::invalidateRect(NPRect* rect)
 {
     notImplemented();

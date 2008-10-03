@@ -136,6 +136,8 @@ namespace WebCore {
         void pushPopupsEnabledState(bool state);
         void popPopupsEnabledState();
 
+        virtual void invalidateRect(const IntRect&);
+
         bool arePopupsAllowed() const;
 
         void setJavaScriptPaused(bool);
@@ -150,7 +152,12 @@ namespace WebCore {
         virtual void show();
         virtual void hide();
         virtual void paint(GraphicsContext*, const IntRect&);
-        virtual IntRect windowClipRect() const;
+
+        // This method is used by plugins on all platforms to obtain a clip rect that includes clips set by WebCore,
+        // e.g., in overflow:auto sections.  The clip rects coordinates are in the containing window's coordinate space.
+        // This clip includes any clips that the widget itself sets up for its children.
+        IntRect windowClipRect() const;
+
         virtual void handleEvent(Event*);
         virtual void setParent(ScrollView*);
         virtual void setParentVisible(bool);
@@ -190,6 +197,8 @@ namespace WebCore {
         static void freeStringArray(char** stringArray, int length);
         void setCallingPlugin(bool) const;
 
+        void invalidateWindowlessPluginRect(const IntRect&);
+        
         Frame* m_parentFrame;
         RefPtr<PluginPackage> m_plugin;
         Element* m_element;

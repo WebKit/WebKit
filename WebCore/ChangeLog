@@ -1,3 +1,60 @@
+2008-10-02  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21328
+        
+        Make widget invalidation more cross-platform.
+        
+        (1) Make invalidateRect a pure virtual function on Widget.  All leaf widgets must now implement this function.
+        
+        (2) Scrollbars now send invalidations through the ScrollbarClient.  windowClipRect on ScrollbarClient has been removed and replaced with this invalidation call.
+        This allows all scrollbar invalidations to go through the render tree so that transforms and reflections will be respected.
+        
+        (3) Plugins now have the native window invalidation code for windowed plugins.  Windowless plugins do a repaintRectangle on the plugin's renderer.
+        
+        (4) FrameViews now do a repaintRectangle on their owner element's renderer.
+
+        Reviewed by Sam Weinig
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::invalidateScrollbarRect):
+        * page/FrameView.h:
+        * platform/PopupMenu.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::setEnabled):
+        (WebCore::Scrollbar::invalidateRect):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarClient.h:
+        * platform/Widget.h:
+        * platform/gtk/WidgetGtk.cpp:
+        * platform/mac/WidgetMac.mm:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::invalidateScrollbarRect):
+        * platform/win/WidgetWin.cpp:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::invalidateTimerFired):
+        (WebCore::PluginView::invalidateWindowlessPluginRect):
+        * plugins/PluginView.h:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::invalidateRect):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::invalidateRect):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::invalidateScrollbarRect):
+        * rendering/RenderListBox.h:
+
 2008-10-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen and Sam Weinig.

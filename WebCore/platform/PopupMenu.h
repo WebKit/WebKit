@@ -144,7 +144,7 @@ private:
 #elif PLATFORM(WIN)
     // ScrollBarClient
     virtual void valueChanged(Scrollbar*);
-    virtual IntRect windowClipRect(const Scrollbar*) const;
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const { return true; }
 
     void calculatePositionAndSize(const IntRect&, FrameView*);

@@ -57,6 +57,7 @@
 #include "PluginDebug.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
+#include "RenderObject.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
@@ -431,7 +432,7 @@ void PluginView::invalidateTimerFired(Timer<PluginView>* timer)
     ASSERT(timer == &m_invalidateTimer);
 
     for (unsigned i = 0; i < m_invalidRects.size(); i++)
-        Widget::invalidateRect(m_invalidRects[i]);
+        invalidateRect(m_invalidRects[i]);
     m_invalidRects.clear();
 }
 
@@ -876,6 +877,20 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32 len, 
     frameLoadRequest.setFrameName(target);
 
     return load(frameLoadRequest, sendNotification, notifyData);
+}
+
+void PluginView::invalidateWindowlessPluginRect(const IntRect& rect)
+{
+    if (!isVisible())
+        return;
+    
+    RenderObject* renderer = m_element->renderer();
+    if (!renderer)
+        return;
+    
+    IntRect dirtyRect = rect;
+    dirtyRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
+    renderer->repaintRectangle(dirtyRect);
 }
 
 } // namespace WebCore
