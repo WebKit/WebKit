@@ -395,7 +395,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
         hostWindow()->repaint(panScrollIconDirtyRect, true, true);
     }
 
-    if (canBlitOnScroll()) { // The main frame can just blit the WebView window
+    if (canBlitOnScroll() && !rootPreventsBlitting()) { // The main frame can just blit the WebView window
        // FIXME: Find a way to blit subframes without blitting overlapping content
        hostWindow()->scroll(-scrollDelta, scrollViewRect, clipRect);
     } else { 

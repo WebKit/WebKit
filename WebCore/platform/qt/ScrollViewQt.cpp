@@ -63,43 +63,29 @@
 
 namespace WebCore {
 
-class ScrollView::ScrollViewPrivate  {
-public:
-    ScrollViewPrivate(ScrollView* view)
-      : m_view(view)
-      , m_platformWidgets(0)
-    {
-    }
-
-    ~ScrollViewPrivate()
-    {
-    }
-
-    ScrollView* m_view;
-    int  m_platformWidgets;
-};
-
 ScrollView::ScrollView()
-    : m_data(new ScrollViewPrivate(this))
 {
     init();
+    m_widgetsThatPreventBlitting = 0;
 }
 
 ScrollView::~ScrollView()
 {
     destroy();
-    delete m_data;
 }
 
 void ScrollView::platformAddChild(Widget* child)
 {
-    root()->incrementNativeWidgetCount();
+    root()->m_widgetsThatPreventBlitting++;
+    if (parent())
+        parent()->platformAddChild(child);
 }
 
 void ScrollView::platformRemoveChild(Widget* child)
 {
+    ASSERT(root()->m_widgetsThatPreventBlitting);
+    root()->m_widgetsThatPreventBlitting--;
     child->hide();
-    root()->decrementNativeWidgetCount();
 }
 
 void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
@@ -110,21 +96,6 @@ void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
     if (!page)
         return;
     page->chrome()->addToDirtyRegion(containingWindowRect);
-}
-
-void ScrollView::incrementNativeWidgetCount()
-{
-    ++m_data->m_platformWidgets;
-}
-
-void ScrollView::decrementNativeWidgetCount()
-{
-    --m_data->m_platformWidgets;
-}
-
-bool ScrollView::hasNativeWidgets() const
-{
-    return m_data->m_platformWidgets != 0;
 }
 
 }

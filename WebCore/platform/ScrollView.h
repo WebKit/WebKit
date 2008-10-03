@@ -290,9 +290,10 @@ public:
 
 #if PLATFORM(QT)
 private:
-    void incrementNativeWidgetCount();
-    void decrementNativeWidgetCount();
-    bool hasNativeWidgets() const;
+    bool rootPreventsBlitting() const { return root()->m_widgetsThatPreventBlitting > 0; }
+    unsigned m_widgetsThatPreventBlitting;
+#else
+    bool rootPreventsBlitting() const { return false; }
 #endif
 
 #if PLATFORM(GTK)

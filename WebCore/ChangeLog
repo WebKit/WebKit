@@ -1,3 +1,20 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+        Preserve Qt's disabling of blitting when any native widgets are present anywhere on the page (ick).
+        Hopefully this is a temporary hack that could eventually be removed.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::rootPreventsBlitting):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::platformAddChild):
+        (WebCore::ScrollView::platformRemoveChild):
+
 2008-10-02  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21328
