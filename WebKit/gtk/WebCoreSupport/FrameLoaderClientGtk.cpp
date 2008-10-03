@@ -793,7 +793,6 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     frame->setView(frameView);
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
     frameView->deref();
-    frameView->setContainingWindow(GTK_WIDGET(containingWindow));
 
     if (frame->ownerRenderer())
         frame->ownerRenderer()->setWidget(frameView);

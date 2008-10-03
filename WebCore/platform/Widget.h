@@ -38,7 +38,6 @@ class NSView;
 class NSWindow;
 #endif
 typedef NSView* PlatformWidget;
-typedef NSWindow* PlatformWindow;
 #endif
 
 #if PLATFORM(WIN)
@@ -64,10 +63,6 @@ typedef QWidget* PlatformWidget;
 #if PLATFORM(WX)
 class wxWindow;
 typedef wxWindow* PlatformWidget;
-#endif
-
-#if !PLATFORM(MAC)
-typedef PlatformWidget PlatformWindow;
 #endif
 
 #include "IntPoint.h"
@@ -160,10 +155,6 @@ public:
 
     virtual void handleEvent(Event*) { }
 
-    // The containing window is used as the coordinate space for event handling.
-    PlatformWindow containingWindow() const;
-    void setContainingWindow(PlatformWindow window) { m_containingWindow = window; } // This method is only used by platforms that can't easily get back to their containing window.
-
     // It is important for cross-platform code to realize that Mac has flipped coordinates.  Therefore any code
     // that tries to convert the location of a rect using the point-based convertFromContainingWindow will end
     // up with an inaccurate rect.  Always make sure to use the rect-based convertFromContainingWindow method
@@ -197,7 +188,6 @@ private:
     bool m_parentVisible;
     
     IntRect m_frame; // Not used when a native widget exists.
-    PlatformWindow m_containingWindow; // Not used when a native widget exists.
 
 #if PLATFORM(MAC) || PLATFORM(GTK)
     WidgetPrivate* m_data;

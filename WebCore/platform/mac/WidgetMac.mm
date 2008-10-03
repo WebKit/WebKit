@@ -275,18 +275,6 @@ void Widget::afterMouseDown(NSView *view, Widget* widget)
     }
 }
 
-NSWindow* Widget::containingWindow() const
-{
-    if (!platformWidget())
-        return m_containingWindow;
-    
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [platformWidget() window];
-    END_BLOCK_OBJC_EXCEPTIONS;
-
-    return nil; 
-}
-
 IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {
     if (!platformWidget() && parent()) {

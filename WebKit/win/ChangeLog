@@ -1,5 +1,21 @@
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=21340
+        
+        Remove "containingWindow()/setContainingWindow()" from Widget.  HostWindow covers this now.
+        
+        Reviewed by Dan Bernstein & Darin Adler
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebScrollBar.cpp:
+        (WebScrollBar::WebScrollBar):
+        (WebScrollBar::init):
+        (WebScrollBar::invalidateScrollbarRect):
+        * WebScrollBar.h:
+
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
          Remove addToDirtyRegion.
         
          Reviewed by Oliver Hunt

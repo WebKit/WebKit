@@ -64,11 +64,8 @@ void ScrollView::addChild(Widget* child)
     ASSERT(child != this && !child->parent());
     child->setParent(this);
     m_children.add(child);
-    if (!child->platformWidget()) {
-        child->setContainingWindow(containingWindow());
-        return;
-    }
-    platformAddChild(child);
+    if (child->platformWidget())
+        platformAddChild(child);
 }
 
 void ScrollView::removeChild(Widget* child)

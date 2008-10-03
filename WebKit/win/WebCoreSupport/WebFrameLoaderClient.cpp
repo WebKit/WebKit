@@ -511,10 +511,6 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_webFrame->updateBackground();
 
-    HWND viewWindow;
-    if (SUCCEEDED(webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
-        frameView->setContainingWindow(viewWindow);
-
     if (isMainFrame)
         frameView->setParentVisible(true);
 

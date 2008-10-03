@@ -1,3 +1,20 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21340
+        
+        Remove "containingWindow()/setContainingWindow()" from Widget.  HostWindow covers this now.
+    
+        Reviewed by Dan Bernstein & Darin Adler
+        
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::addChild):
+        * platform/Widget.cpp:
+        (WebCore::Widget::init):
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+
 2008-10-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam Weinig.
