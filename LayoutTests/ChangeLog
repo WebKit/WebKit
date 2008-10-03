@@ -1,3 +1,10 @@
+2008-10-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen and Sam Weinig.
+
+        * svg/custom/font-face-not-in-document-expected.txt: Added.
+        * svg/custom/font-face-not-in-document.svg: Added.
+
 2008-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

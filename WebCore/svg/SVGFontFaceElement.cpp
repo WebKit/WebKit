@@ -1,6 +1,7 @@
 /*
    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
    Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+   Copyright (C) 2008 Apple Inc. All rights reserved.
     
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -53,7 +54,6 @@ SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document* d
     m_styleDeclaration->setParent(document()->mappedElementSheet());
     m_styleDeclaration->setStrictParsing(true);
     m_fontFaceRule->setDeclaration(m_styleDeclaration.get());
-    document()->mappedElementSheet()->append(m_fontFaceRule);
 }
 
 SVGFontFaceElement::~SVGFontFaceElement()
@@ -121,7 +121,8 @@ void SVGFontFaceElement::parseMappedAttribute(MappedAttribute* attr)
     int propId = cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
         m_styleDeclaration->setProperty(propId, attr->value(), false);
-        rebuildFontFace();
+        if (inDocument())
+            rebuildFontFace();
         return;
     }
     
@@ -286,11 +287,7 @@ String SVGFontFaceElement::fontFamily() const
 
 void SVGFontFaceElement::rebuildFontFace()
 {
-    // Ignore changes until we live in the tree
-    if (!parentNode()) {
-        m_fontElement = 0;
-        return;
-    }
+    ASSERT(inDocument());
 
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;
@@ -317,8 +314,11 @@ void SVGFontFaceElement::rebuildFontFace()
 
         list = CSSValueList::createCommaSeparated();
         list->append(CSSFontFaceSrcValue::createLocal(fontFamily()));
-    } else if (srcElement)
-        list = srcElement->srcValue();
+    } else {
+        m_fontElement = 0;
+        if (srcElement)
+            list = srcElement->srcValue();
+    }
 
     if (!list)
         return;
@@ -345,24 +345,22 @@ void SVGFontFaceElement::rebuildFontFace()
 
 void SVGFontFaceElement::insertedIntoDocument()
 {
-    rebuildFontFace();
     SVGElement::insertedIntoDocument();
+    document()->mappedElementSheet()->append(m_fontFaceRule);
+    rebuildFontFace();
+}
+
+void SVGFontFaceElement::removedFromDocument()
+{
+    removeFromMappedElementSheet();
+    SVGElement::removedFromDocument();
 }
 
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    rebuildFontFace();
-}
-
-void SVGFontFaceElement::willMoveToNewOwnerDocument()
-{
-    removeFromMappedElementSheet();
-}
-
-void SVGFontFaceElement::didMoveToNewOwnerDocument()
-{
-    document()->mappedElementSheet()->append(m_fontFaceRule);
+    if (inDocument())
+        rebuildFontFace();
 }
 
 void SVGFontFaceElement::removeFromMappedElementSheet()
@@ -377,6 +375,7 @@ void SVGFontFaceElement::removeFromMappedElementSheet()
             break;
         }
     }
+    document()->updateStyleSelector();
 }
 
 } // namespace WebCore

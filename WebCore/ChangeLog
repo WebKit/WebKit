@@ -1,3 +1,29 @@
+2008-10-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen and Sam Weinig.
+
+        - fix SVGFontFaceElement leaks seen in Acid3
+        - make font-face elements take effect only when they are in the document tree
+
+        Test: svg/custom/font-face-not-in-document.svg
+
+        * svg/SVGFontData.h: Changed the m_svgFontFaceElement member from a
+        RefPtr to a plain pointer to break a ref cycle.
+        (WebCore::SVGFontData::svgFontFaceElement):
+
+        * svg/SVGFontFaceElement.cpp: Changed to insert and remove the
+        @font-face rule from the document's mapped element sheet when the
+        element is inserted and removed from the document, and to update it
+        only when the element is in the document.
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::parseMappedAttribute):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::insertedIntoDocument):
+        (WebCore::SVGFontFaceElement::removedFromDocument):
+        (WebCore::SVGFontFaceElement::childrenChanged):
+        (WebCore::SVGFontFaceElement::removeFromMappedElementSheet):
+        * svg/SVGFontFaceElement.h:
+
 2008-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
