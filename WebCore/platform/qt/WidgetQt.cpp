@@ -115,6 +115,7 @@ void Widget::invalidateRect(const IntRect& r)
         return;
     }
 
+#if 0
     if (!parent()) {
         if (isFrameView())
             static_cast<FrameView*>(this)->addToDirtyRegion(r);
@@ -133,6 +134,7 @@ void Widget::invalidateRect(const IntRect& r)
     windowRect.intersect(clipRect);
 
     outermostView->addToDirtyRegion(windowRect);
+#endif
 }
 
 QWidget* Widget::containingWindow() const

@@ -1,3 +1,13 @@
+2008-10-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Build fix.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::scroll):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Remove addToDirtyRegion.
