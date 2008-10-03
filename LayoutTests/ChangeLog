@@ -1,3 +1,18 @@
+2008-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        New tests for display types and float on table elements.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21287
+        
+        * fast/table/floating-th.html: Added.
+        * fast/table/table-display-types-strict.html: Added.
+        * fast/table/table-display-types.html: Added.
+        * platform/mac/fast/table/floating-th-expected.txt: Added.
+        * platform/mac/fast/table/table-display-types-expected.txt: Added.
+        * platform/mac/fast/table/table-display-types-strict-expected.txt: Added.
+
 2008-10-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

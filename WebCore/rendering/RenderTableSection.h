@@ -45,8 +45,6 @@ public:
 
     virtual void destroy();
 
-    virtual void setStyle(RenderStyle*);
-
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const { return 0; }

@@ -225,17 +225,7 @@ void RenderTableCell::setStyle(RenderStyle* newStyle)
     if (parent() && section() && style() && style()->height() != newStyle->height())
         section()->setNeedsCellRecalc();
 
-    newStyle->setDisplay(TABLE_CELL);
-
-    if (newStyle->whiteSpace() == KHTML_NOWRAP) {
-        // Figure out if we are really nowrapping or if we should just
-        // use normal instead.  If the width of the cell is fixed, then
-        // we don't actually use NOWRAP.
-        if (newStyle->width().isFixed())
-            newStyle->setWhiteSpace(NORMAL);
-        else
-            newStyle->setWhiteSpace(NOWRAP);
-    }
+    ASSERT(newStyle->display() == TABLE_CELL);
 
     RenderBlock::setStyle(newStyle);
     setHasBoxDecorations(true);

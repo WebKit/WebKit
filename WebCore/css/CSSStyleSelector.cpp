@@ -1360,6 +1360,18 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
                 style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
         }
 
+        if (e && (e->hasTagName(tdTag) || e->hasTagName(thTag))) {
+            if (style->whiteSpace() == KHTML_NOWRAP) {
+                // Figure out if we are really nowrapping or if we should just
+                // use normal instead.  If the width of the cell is fixed, then
+                // we don't actually use NOWRAP.
+                if (style->width().isFixed())
+                    style->setWhiteSpace(NORMAL);
+                else
+                    style->setWhiteSpace(NOWRAP);
+            }
+        }
+
         // Tables never support the -webkit-* values for text-align and will reset back to the default.
         if (e && e->hasTagName(tableTag) && (style->textAlign() == WEBKIT_LEFT || style->textAlign() == WEBKIT_CENTER || style->textAlign() == WEBKIT_RIGHT))
             style->setTextAlign(TAAUTO);

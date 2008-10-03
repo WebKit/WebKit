@@ -79,17 +79,6 @@ void RenderTableSection::destroy()
         recalcTable->setNeedsSectionRecalc();
 }
 
-void RenderTableSection::setStyle(RenderStyle* newStyle)
-{
-    // we don't allow changing this one
-    if (style())
-        newStyle->setDisplay(style()->display());
-    else if (newStyle->display() != TABLE_FOOTER_GROUP && newStyle->display() != TABLE_HEADER_GROUP)
-        newStyle->setDisplay(TABLE_ROW_GROUP);
-
-    RenderContainer::setStyle(newStyle);
-}
-
 void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.

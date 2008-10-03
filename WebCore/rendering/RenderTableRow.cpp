@@ -59,7 +59,7 @@ void RenderTableRow::setStyle(RenderStyle* newStyle)
     if (section() && style() && style()->height() != newStyle->height())
         section()->setNeedsCellRecalc();
 
-    newStyle->setDisplay(TABLE_ROW);
+    ASSERT(newStyle->display() == TABLE_ROW);
 
     RenderContainer::setStyle(newStyle);
 }
