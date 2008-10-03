@@ -52,69 +52,47 @@ using namespace std;
 
 namespace WebCore {
 
-class ScrollView::ScrollViewPrivate
+static void adjustmentChanged(GtkAdjustment* adjustment, gpointer _that)
 {
-public:
-    ScrollViewPrivate(ScrollView* _view)
-        : view(_view)
-        , horizontalAdjustment(0)
-        , verticalAdjustment(0)
-    {}
-
-    ~ScrollViewPrivate()
-    {
-        if (horizontalAdjustment) {
-            g_signal_handlers_disconnect_by_func(G_OBJECT(horizontalAdjustment), (gpointer)ScrollViewPrivate::adjustmentChanged, this);
-            g_object_unref(horizontalAdjustment);
-        }
-
-        if (verticalAdjustment) {
-            g_signal_handlers_disconnect_by_func(G_OBJECT(verticalAdjustment), (gpointer)ScrollViewPrivate::adjustmentChanged, this);
-            g_object_unref(verticalAdjustment);
-        }
-    }
-
-    static void adjustmentChanged(GtkAdjustment*, gpointer);
-
-    ScrollView* view;
-    IntSize viewPortSize;
-    GtkAdjustment* horizontalAdjustment;
-    GtkAdjustment* verticalAdjustment;
-};
-
-void ScrollView::ScrollViewPrivate::adjustmentChanged(GtkAdjustment* adjustment, gpointer _that)
-{
-    ScrollViewPrivate* that = reinterpret_cast<ScrollViewPrivate*>(_that);
+    ScrollView* that = reinterpret_cast<ScrollView*>(_that);
 
     // Figure out if we really moved.
-    IntSize newOffset = that->view->m_scrollOffset;
-    if (adjustment == that->horizontalAdjustment)
+    IntSize newOffset = that->scrollOffset();
+    if (adjustment == that->m_horizontalAdjustment)
         newOffset.setWidth(static_cast<int>(gtk_adjustment_get_value(adjustment)));
-    else if (adjustment == that->verticalAdjustment)
+    else if (adjustment == that->m_verticalAdjustment)
         newOffset.setHeight(static_cast<int>(gtk_adjustment_get_value(adjustment)));
 
-    IntSize scrollDelta = newOffset - that->view->m_scrollOffset;
+    IntSize scrollDelta = newOffset - that->scrollOffset();
     if (scrollDelta == IntSize())
         return;
-    that->view->m_scrollOffset = newOffset;
+    that->setScrollOffset(newOffset);
 
-    if (that->view->scrollbarsSuppressed())
+    if (that->scrollbarsSuppressed())
         return;
 
-    that->view->scrollContents(scrollDelta);
-    static_cast<FrameView*>(that->view)->frame()->sendScrollEvent();
+    that->scrollContents(scrollDelta);
 }
 
 ScrollView::ScrollView()
-    : m_data(new ScrollViewPrivate(this))
 {
     init();
+    m_horizontalAdjustment = 0;
+    m_verticalAdjustment = 0;
 }
 
 ScrollView::~ScrollView()
 {
     destroy();
-    delete m_data;
+    if (m_horizontalAdjustment) {
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_horizontalAdjustment), (gpointer)adjustmentChanged, this);
+        g_object_unref(m_horizontalAdjustment);
+    }
+
+    if (m_verticalAdjustment) {
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_verticalAdjustment), (gpointer)adjustmentChanged, this);
+        g_object_unref(m_verticalAdjustment);
+    }
 }
 
 /*
@@ -125,19 +103,19 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
 {
     ASSERT(!hadj == !vadj);
 
-    if (m_data->horizontalAdjustment) {
-        g_signal_handlers_disconnect_by_func(G_OBJECT(m_data->horizontalAdjustment), (gpointer)ScrollViewPrivate::adjustmentChanged, m_data);
-        g_signal_handlers_disconnect_by_func(G_OBJECT(m_data->verticalAdjustment), (gpointer)ScrollViewPrivate::adjustmentChanged, m_data);
-        g_object_unref(m_data->horizontalAdjustment);
-        g_object_unref(m_data->verticalAdjustment);
+    if (m_horizontalAdjustment) {
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_horizontalAdjustment), (gpointer)adjustmentChanged, this);
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_verticalAdjustment), (gpointer)adjustmentChanged, this);
+        g_object_unref(m_horizontalAdjustment);
+        g_object_unref(m_verticalAdjustment);
     }
 
-    m_data->horizontalAdjustment = hadj;
-    m_data->verticalAdjustment = vadj;
+    m_horizontalAdjustment = hadj;
+    m_verticalAdjustment = vadj;
 
-    if (m_data->horizontalAdjustment) {
-        g_signal_connect(m_data->horizontalAdjustment, "value-changed", G_CALLBACK(ScrollViewPrivate::adjustmentChanged), m_data);
-        g_signal_connect(m_data->verticalAdjustment, "value-changed", G_CALLBACK(ScrollViewPrivate::adjustmentChanged), m_data);
+    if (m_horizontalAdjustment) {
+        g_signal_connect(m_horizontalAdjustment, "value-changed", G_CALLBACK(adjustmentChanged), this);
+        g_signal_connect(m_verticalAdjustment, "value-changed", G_CALLBACK(adjustmentChanged), this);
 
         /*
          * disable the scrollbars (if we have any) as the GtkAdjustment over
@@ -145,8 +123,8 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
         setHasVerticalScrollbar(false);
         setHasHorizontalScrollbar(false);
 
-        g_object_ref(m_data->horizontalAdjustment);
-        g_object_ref(m_data->verticalAdjustment);
+        g_object_ref(m_horizontalAdjustment);
+        g_object_ref(m_verticalAdjustment);
     }
 
     updateScrollbars(m_scrollOffset);
@@ -166,17 +144,17 @@ void ScrollView::platformRemoveChild(Widget* child)
 
 bool ScrollView::platformHandleHorizontalAdjustment(const IntSize& scroll)
 {
-    if (m_data->horizontalAdjustment) {
-        m_data->horizontalAdjustment->page_size = visibleWidth();
-        m_data->horizontalAdjustment->step_increment = visibleWidth() / 10.0;
-        m_data->horizontalAdjustment->page_increment = visibleWidth() * 0.9;
-        m_data->horizontalAdjustment->lower = 0;
-        m_data->horizontalAdjustment->upper = contentsWidth();
-        gtk_adjustment_changed(m_data->horizontalAdjustment);
+    if (m_horizontalAdjustment) {
+        m_horizontalAdjustment->page_size = visibleWidth();
+        m_horizontalAdjustment->step_increment = visibleWidth() / 10.0;
+        m_horizontalAdjustment->page_increment = visibleWidth() * 0.9;
+        m_horizontalAdjustment->lower = 0;
+        m_horizontalAdjustment->upper = contentsWidth();
+        gtk_adjustment_changed(m_horizontalAdjustment);
 
         if (m_scrollOffset.width() != scroll.width()) {
-            m_data->horizontalAdjustment->value = scroll.width();
-            gtk_adjustment_value_changed(m_data->horizontalAdjustment);
+            m_horizontalAdjustment->value = scroll.width();
+            gtk_adjustment_value_changed(m_horizontalAdjustment);
         }
         return true;
     }
@@ -185,21 +163,31 @@ bool ScrollView::platformHandleHorizontalAdjustment(const IntSize& scroll)
 
 bool ScrollView::platformHandleVerticalAdjustment(const IntSize& scroll)
 {
-    if (m_data->verticalAdjustment) {
-        m_data->verticalAdjustment->page_size = visibleHeight();
-        m_data->verticalAdjustment->step_increment = visibleHeight() / 10.0;
-        m_data->verticalAdjustment->page_increment = visibleHeight() * 0.9;
-        m_data->verticalAdjustment->lower = 0;
-        m_data->verticalAdjustment->upper = contentsHeight();
-        gtk_adjustment_changed(m_data->verticalAdjustment);
+    if (m_verticalAdjustment) {
+        m_verticalAdjustment->page_size = visibleHeight();
+        m_verticalAdjustment->step_increment = visibleHeight() / 10.0;
+        m_verticalAdjustment->page_increment = visibleHeight() * 0.9;
+        m_verticalAdjustment->lower = 0;
+        m_verticalAdjustment->upper = contentsHeight();
+        gtk_adjustment_changed(m_verticalAdjustment);
 
         if (m_scrollOffset.height() != scroll.height()) {
-            m_data->verticalAdjustment->value = scroll.height();
-            gtk_adjustment_value_changed(m_data->verticalAdjustment);
+            m_verticalAdjustment->value = scroll.height();
+            gtk_adjustment_value_changed(m_verticalAdjustment);
         }
         return true;
     } 
     return false;
+}
+
+bool ScrollView::platformHasHorizontalAdjustment() const
+{
+    return m_horizontalAdjustment != 0;
+}
+
+bool ScrollView::platformHasVerticalAdjustment() const
+{
+    return m_verticalAdjustment != 0;
 }
 
 void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)

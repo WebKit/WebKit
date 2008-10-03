@@ -79,7 +79,7 @@ void ScrollView::removeChild(Widget* child)
 
 void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 {
-    if (hasBar && !m_horizontalScrollbar) {
+    if (hasBar && !m_horizontalScrollbar && !platformHasHorizontalAdjustment()) {
         m_horizontalScrollbar = Scrollbar::createNativeScrollbar(this, HorizontalScrollbar, RegularScrollbar);
         addChild(m_horizontalScrollbar.get());
     } else if (!hasBar && m_horizontalScrollbar) {
@@ -90,7 +90,7 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
 {
-    if (hasBar && !m_verticalScrollbar) {
+    if (hasBar && !m_verticalScrollbar && !platformHasVerticalAdjustment()) {
         m_verticalScrollbar = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, RegularScrollbar);
         addChild(m_verticalScrollbar.get());
     } else if (!hasBar && m_verticalScrollbar) {
@@ -820,6 +820,17 @@ bool ScrollView::platformHandleVerticalAdjustment(const IntSize&)
 {
     return false;
 }
+
+bool ScrollView::platformHasHorizontalAdjustment() const
+{
+    return false;
+}
+
+bool ScrollView::platformHasVerticalAdjustment() const
+{
+    return false;
+}
+
 #endif
 
 }
