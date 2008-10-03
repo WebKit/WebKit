@@ -1,3 +1,10 @@
+2008-10-02  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * bindings/scripts/CodeGeneratorJS.pm: Need to replace the -> with a . here too.
+        Not just locally in my generated file!
+
 2008-10-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.
