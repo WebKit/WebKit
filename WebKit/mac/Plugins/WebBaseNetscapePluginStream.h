@@ -31,6 +31,7 @@
 
 #import <WebKit/npfunctions.h>
 #import <WebKit/WebPlugInStreamLoaderDelegate.h>
+#import <WebCore/Timer.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
@@ -84,6 +85,9 @@ public:
     NSURLRequest *m_request;
     NPPluginFuncs *m_pluginFuncs;
 
+    void deliverDataTimerFired(WebCore::Timer<WebNetscapePluginStream>* timer);
+    WebCore::Timer<WebNetscapePluginStream> m_deliverDataTimer;
+    
     // FIXME: Remove this once it's not needed anymore.
     WebBaseNetscapePluginStream *m_pluginStream;
     
@@ -104,6 +108,7 @@ private:
         , m_client(0)
         , m_request(0)
         , m_pluginFuncs(0)
+        , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
         , m_pluginStream(stream)
     {
         memset(&m_stream, 0, sizeof(NPStream));

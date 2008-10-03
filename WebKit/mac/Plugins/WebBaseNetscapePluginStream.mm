@@ -438,7 +438,7 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
     ASSERT(_impl->m_reason != WEB_REASON_NONE);
     ASSERT([_impl->m_deliveryData.get() length] == 0);
     
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_deliverData) object:nil];
+    _impl->m_deliverDataTimer.stop();
 
     if (_impl->m_stream.ndata != nil) {
         if (_impl->m_reason == NPRES_DONE && (_impl->m_transferMode == NP_ASFILE || _impl->m_transferMode == NP_ASFILEONLY)) {
@@ -574,7 +574,8 @@ exit:
 
         if (deliveryBytes <= 0) {
             // Plug-in can't receive anymore data right now. Send it later.
-            [self performSelector:@selector(_deliverData) withObject:nil afterDelay:0];
+            if (!_impl->m_deliverDataTimer.isActive())
+                _impl->m_deliverDataTimer.startOneShot(0);
             break;
         } else {
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
@@ -612,6 +613,11 @@ exit:
 
 exit:
     [self release];
+}
+
+void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePluginStream>* timer)
+{
+    [m_pluginStream _deliverData];
 }
 
 - (void)_deliverDataToFile:(NSData *)data

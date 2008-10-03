@@ -2,6 +2,19 @@
 
         Reviewed by David Hyatt.
 
+        Use a Timer instead of -[NSObject performSelector:withObject:afterDelay];
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        (WebNetscapePluginStream::deliverDataTimerFired):
+
+2008-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
         More plug-in stream cleanup.
         
         * Plugins/WebBaseNetscapePluginStream.h:
