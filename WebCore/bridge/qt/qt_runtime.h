@@ -143,9 +143,6 @@ class QtRuntimeMethod : public InternalFunction
 public:
     virtual ~QtRuntimeMethod();
 
-    virtual CodeType codeType() const;
-    virtual Completion execute(ExecState *exec);
-
     static const ClassInfo s_info;
 
     static FunctionPrototype* createPrototype(ExecState* exec)

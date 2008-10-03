@@ -1,5 +1,15 @@
 2008-10-03  Darin Adler  <darin@apple.com>
 
+        - Qt build fix
+
+        * bridge/qt/qt_runtime.cpp: Remove long-obsolete codeType and
+        execute functions. Declarations for these relied on the CodeType
+        enumeration, which used to be in ExecState.h; but the functions
+        aren't needed at all.
+        * bridge/qt/qt_runtime.h: Ditto.
+
+2008-10-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen.
 
         - next step of https://bugs.webkit.org/show_bug.cgi?id=21295

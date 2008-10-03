@@ -870,16 +870,6 @@ QtRuntimeMethod::~QtRuntimeMethod()
     delete d_ptr;
 }
 
-CodeType QtRuntimeMethod::codeType() const
-{
-    return FunctionCode;
-}
-
-Completion QtRuntimeMethod::execute(ExecState*)
-{
-    return Completion(Normal, jsUndefined());
-}
-
 // ===============
 
 QtRuntimeMethodData::~QtRuntimeMethodData()
