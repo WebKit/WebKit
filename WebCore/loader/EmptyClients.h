@@ -117,6 +117,7 @@ public:
     virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) { }
     virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
     virtual IntRect windowToScreen(const IntRect& r) const { return r; }
+    virtual PlatformWidget platformWindow() const { return 0; }
 
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) { }
 

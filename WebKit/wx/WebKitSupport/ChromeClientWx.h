@@ -101,6 +101,7 @@ public:
     virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false);
     virtual IntPoint screenToWindow(const IntPoint&) const;
     virtual IntRect windowToScreen(const IntRect&) const;
+    virtual PlatformWidget platformWindow() const;
 
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 

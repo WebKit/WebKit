@@ -292,6 +292,11 @@ IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
     return point;
 }
 
+PlatformWidget WebChromeClient::platformWindow() const
+{
+    return m_webView ? GTK_WIDGET(m_webView) : 0;
+}
+
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
     // check if the element is a link...

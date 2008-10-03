@@ -106,7 +106,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
         m_popup = ::CreateWindowEx(exStyle, kPopupWindowClassName, _T("PopupMenu"),
             WS_POPUP | WS_BORDER,
             0, 0, 0, 0,
-            v->containingWindow(), 0, 0, 0);
+            v->hostWindow()->platformWindow(), 0, 0, 0);
 
         if (!m_popup)
             return;
@@ -132,7 +132,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 
     if (shouldAnimate) {
         RECT viewRect = {0};
-        ::GetWindowRect(v->containingWindow(), &viewRect);
+        ::GetWindowRect(v->hostWindow()->platformWindow(), &viewRect);
 
         if (!::IsRectEmpty(&viewRect)) {
             // Popups should slide into view away from the <select> box
@@ -167,7 +167,7 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     // Then, translate to screen coordinates
     POINT location(rScreenCoords.location());
-    if (!::ClientToScreen(v->containingWindow(), &location))
+    if (!::ClientToScreen(v->hostWindow()->platformWindow(), &location))
         return;
 
     rScreenCoords.setLocation(location);
@@ -686,13 +686,13 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         }
                         break;
                     case VK_TAB:
-                        ::SendMessage(popup->client()->clientDocument()->view()->containingWindow(), message, wParam, lParam);
+                        ::SendMessage(popup->client()->clientDocument()->view()->hostWindow()->platformWindow(), message, wParam, lParam);
                         popup->client()->hidePopup();
                         break;
                     default:
                         if (isASCIIPrintable(wParam))
                             // Send the keydown to the WebView so it can be used for type-to-select.
-                            ::PostMessage(popup->client()->clientDocument()->view()->containingWindow(), message, wParam, lParam);
+                            ::PostMessage(popup->client()->clientDocument()->view()->hostWindow()->platformWindow(), message, wParam, lParam);
                         else
                             lResult = 1;
                         break;

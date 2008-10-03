@@ -300,6 +300,11 @@ IntPoint ChromeClientWx::screenToWindow(const IntPoint& point) const
     return point;
 }
 
+PlatformWidget WebChromeClient::platformWindow() const
+{
+    return 0;
+}
+
 void ChromeClientWx::scrollBackingStore(int dx, int dy, 
                     const IntRect& scrollViewRect, 
                     const IntRect& clipRect)

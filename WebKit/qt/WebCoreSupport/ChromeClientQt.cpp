@@ -335,6 +335,11 @@ IntPoint ChromeClientQt::screenToWindow(const IntPoint& point) const
     return point;
 }
 
+PlatformWidget WebChromeClient::platformWindow() const
+{
+    return m_webPage->view();
+}
+
 void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     if (result.absoluteLinkURL() != lastHoverURL

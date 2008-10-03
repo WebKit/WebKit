@@ -421,6 +421,11 @@ IntRect WebChromeClient::windowToScreen(const IntRect& r) const
 {
     return r;
 }
+
+PlatformWidget WebChromeClient::platformWindow() const
+{
+    return 0;
+}
 // End host window methods.
 
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)

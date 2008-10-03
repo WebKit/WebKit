@@ -459,6 +459,14 @@ IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
     return result;
 }
 
+PlatformWidget WebChromeClient::platformWindow() const
+{
+    HWND viewWindow;
+    if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        return 0;
+    return viewWindow;
+}
+
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     COMPtr<IWebUIDelegate> uiDelegate;

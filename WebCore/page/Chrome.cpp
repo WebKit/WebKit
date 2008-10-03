@@ -96,6 +96,11 @@ IntRect Chrome::windowToScreen(const IntRect& rect) const
     return m_client->windowToScreen(rect);
 }
 
+PlatformWidget Chrome::platformWindow() const
+{
+    return m_client->platformWindow();
+}
+
 void Chrome::setWindowRect(const FloatRect& rect) const
 {
     m_client->setWindowRect(rect);

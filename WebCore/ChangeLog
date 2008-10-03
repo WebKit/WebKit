@@ -1,3 +1,29 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+        Fix Windows/Qt build bustage.
+
+        Reviewed by ggaren
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::platformWindow):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::platformWindow):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/HostWindow.h:
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        (WebCore::PopupWndProc):
+
 2008-10-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

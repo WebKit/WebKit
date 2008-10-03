@@ -104,7 +104,8 @@ namespace WebCore {
         virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
         virtual IntPoint screenToWindow(const IntPoint&) const;
         virtual IntRect windowToScreen(const IntRect&) const;
-    
+        virtual PlatformWidget platformWindow() const;
+
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
         virtual void setToolTip(const String&);

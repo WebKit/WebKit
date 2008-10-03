@@ -23,6 +23,7 @@
 #include "GraphicsContext.h"
 #include "FocusDirection.h"
 #include "ScrollTypes.h"
+#include "HostWindow.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -114,6 +115,7 @@ namespace WebCore {
         virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;
         virtual IntPoint screenToWindow(const IntPoint&) const = 0;
         virtual IntRect windowToScreen(const IntRect&) const = 0;
+        virtual PlatformWidget platformWindow() const = 0;
         // End methods used by HostWindow.
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;

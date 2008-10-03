@@ -89,7 +89,7 @@ void PopupMenu::populate(const IntRect& r)
 
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
-    QWidget* window = v->containingWindow();
+    QWidget* window = v->hostWindow()->platformWindow();
     populate(r);
     QRect rect = r;
     rect.moveTopLeft(v->contentsToWindow(r.topLeft()));
