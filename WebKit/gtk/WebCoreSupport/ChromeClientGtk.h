@@ -83,8 +83,7 @@ namespace WebKit {
         virtual bool tabsToLinks() const;
 
         virtual WebCore::IntRect windowResizerRect() const;
-        virtual void addToDirtyRegion(const WebCore::IntRect&);
-        
+
         virtual void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
         virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
         virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
