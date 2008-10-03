@@ -45,7 +45,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 const ClassInfo JSFunction::info = { "Function", 0, 0, 0 };
 
 JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* body, ScopeChainNode* scopeChainNode)
-    : Base(exec, exec->lexicalGlobalObject()->functionStructure(), name)
+    : Base(&exec->globalData(), exec->lexicalGlobalObject()->functionStructure(), name)
     , m_body(body)
     , m_scopeChain(scopeChainNode)
 {

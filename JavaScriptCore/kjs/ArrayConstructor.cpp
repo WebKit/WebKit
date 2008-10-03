@@ -33,7 +33,7 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
 
 ArrayConstructor::ArrayConstructor(ExecState* exec, PassRefPtr<StructureID> structure, ArrayPrototype* arrayPrototype)
-    : InternalFunction(exec, structure, Identifier(exec, arrayPrototype->classInfo()->className))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, arrayPrototype->classInfo()->className))
 {
     // ECMA 15.4.3.1 Array.prototype
     putDirect(exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);

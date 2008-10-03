@@ -37,7 +37,7 @@ static JSValue* functionProtoFuncApply(ExecState*, JSObject*, JSValue*, const Ar
 static JSValue* functionProtoFuncCall(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec)
-    : InternalFunction(exec)
+    : InternalFunction(&exec->globalData())
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 }

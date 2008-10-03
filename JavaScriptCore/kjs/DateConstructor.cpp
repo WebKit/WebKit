@@ -52,7 +52,7 @@ static JSValue* dateNow(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateUTC(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 DateConstructor::DateConstructor(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure, DatePrototype* datePrototype)
-    : InternalFunction(exec, structure, Identifier(exec, datePrototype->classInfo()->className))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, datePrototype->classInfo()->className))
 {
       putDirect(exec->propertyNames().prototype, datePrototype, DontEnum|DontDelete|ReadOnly);
 

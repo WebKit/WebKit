@@ -109,45 +109,45 @@ bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Proper
     return JSString::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }
 
-JSString* jsString(ExecState* exec, const UString& s)
+JSString* jsString(JSGlobalData* globalData, const UString& s)
 {
     int size = s.size();
     if (!size)
-        return exec->globalData().smallStrings.emptyString(exec);
+        return globalData->smallStrings.emptyString(globalData);
     if (size == 1) {
         UChar c = s.data()[0];
         if (c <= 0xFF)
-            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+            return globalData->smallStrings.singleCharacterString(globalData, c);
     }
-    return new (exec) JSString(exec, s);
+    return new (globalData) JSString(globalData, s);
 }
     
-JSString* jsSubstring(ExecState* exec, const UString& s, unsigned offset, unsigned length)
+JSString* jsSubstring(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
 {
     ASSERT(offset <= static_cast<unsigned>(s.size()));
     ASSERT(length <= static_cast<unsigned>(s.size()));
     ASSERT(offset + length <= static_cast<unsigned>(s.size()));
     if (!length)
-        return exec->globalData().smallStrings.emptyString(exec);
+        return globalData->smallStrings.emptyString(globalData);
     if (length == 1) {
         UChar c = s.data()[offset];
         if (c <= 0xFF)
-            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+            return globalData->smallStrings.singleCharacterString(globalData, c);
     }
-    return new (exec) JSString(exec, UString::Rep::create(s.rep(), offset, length));
+    return new (globalData) JSString(globalData, UString::Rep::create(s.rep(), offset, length));
 }
 
-JSString* jsOwnedString(ExecState* exec, const UString& s)
+JSString* jsOwnedString(JSGlobalData* globalData, const UString& s)
 {
     int size = s.size();
     if (!size)
-        return exec->globalData().smallStrings.emptyString(exec);
+        return globalData->smallStrings.emptyString(globalData);
     if (size == 1) {
         UChar c = s.data()[0];
         if (c <= 0xFF)
-            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+            return globalData->smallStrings.singleCharacterString(globalData, c);
     }
-    return new (exec) JSString(exec, s, JSString::HasOtherOwner);
+    return new (globalData) JSString(globalData, s, JSString::HasOtherOwner);
 }
 
 } // namespace JSC

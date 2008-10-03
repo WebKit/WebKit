@@ -41,20 +41,30 @@ namespace JSC  {
         friend class Machine;
         friend class DebuggerCallFrame;
     public:
-        ExecState(JSGlobalObject*, Register* callFrame);
+        explicit ExecState(Register* callFrame)
+            : m_exception(0)
+            , m_callFrame(callFrame)
+        {
+        }
 
         // Global object in which execution began.
-        JSGlobalObject* dynamicGlobalObject() const { return m_globalObject; }
-        
+        JSGlobalObject* dynamicGlobalObject() const
+        {
+            return Machine::scopeChain(Machine::firstCallFrame(m_callFrame))->globalObject();
+        }
+
         // Global object in which the current script was defined. (Can differ
         // from dynamicGlobalObject() during function calls across frames.)
         JSGlobalObject* lexicalGlobalObject() const
         {
             return Machine::scopeChain(m_callFrame)->globalObject();
         }
-        
-        JSObject* globalThisValue() const { return Machine::scopeChain(m_callFrame)->globalThisObject(); }
-                
+
+        JSObject* globalThisValue() const
+        {
+            return Machine::scopeChain(m_callFrame)->globalThisObject();
+        }
+
         // Exception propogation.
         void setException(JSValue* exception) { m_exception = exception; }
         void clearException() { m_exception = 0; }
@@ -66,44 +76,39 @@ namespace JSC  {
         void* ctiReturnAddress() const { return m_ctiReturnAddress; }
 #endif
 
-        JSGlobalData& globalData() { return *m_globalData; }
+        JSGlobalData& globalData() const
+        {
+            return *Machine::scopeChain(m_callFrame)->globalData;
+        }
 
-        IdentifierTable* identifierTable() { return m_globalData->identifierTable; }
-        const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
-        const ArgList& emptyList() const { return *m_globalData->emptyList; }
-        Lexer* lexer() { return m_globalData->lexer; }
-        Parser* parser() { return m_globalData->parser; }
-        Machine* machine() const { return m_globalData->machine; }
-        static const HashTable* arrayTable(ExecState* exec) { return exec->m_globalData->arrayTable; }
-        static const HashTable* dateTable(ExecState* exec) { return exec->m_globalData->dateTable; }
-        static const HashTable* mathTable(ExecState* exec) { return exec->m_globalData->mathTable; }
-        static const HashTable* numberTable(ExecState* exec) { return exec->m_globalData->numberTable; }
-        static const HashTable* regExpTable(ExecState* exec) { return exec->m_globalData->regExpTable; }
-        static const HashTable* regExpConstructorTable(ExecState* exec) { return exec->m_globalData->regExpConstructorTable; }
-        static const HashTable* stringTable(ExecState* exec) { return exec->m_globalData->stringTable; }
+        IdentifierTable* identifierTable() { return globalData().identifierTable; }
+        const CommonIdentifiers& propertyNames() const { return *globalData().propertyNames; }
+        const ArgList& emptyList() const { return *globalData().emptyList; }
+        Lexer* lexer() { return globalData().lexer; }
+        Parser* parser() { return globalData().parser; }
+        Machine* machine() const { return globalData().machine; }
+        static const HashTable* arrayTable(ExecState* exec) { return exec->globalData().arrayTable; }
+        static const HashTable* dateTable(ExecState* exec) { return exec->globalData().dateTable; }
+        static const HashTable* mathTable(ExecState* exec) { return exec->globalData().mathTable; }
+        static const HashTable* numberTable(ExecState* exec) { return exec->globalData().numberTable; }
+        static const HashTable* regExpTable(ExecState* exec) { return exec->globalData().regExpTable; }
+        static const HashTable* regExpConstructorTable(ExecState* exec) { return exec->globalData().regExpConstructorTable; }
+        static const HashTable* stringTable(ExecState* exec) { return exec->globalData().stringTable; }
 
-        Heap* heap() const { return &m_globalData->heap; }
+        Heap* heap() const { return &globalData().heap; }
 
     private:
         // Default constructor required for gcc 3.
         ExecState() { }
 
-        ExecState(ExecState*, Register* callFrame);
-
         bool isGlobalObject(JSObject*) const;
-
-        JSGlobalObject* m_globalObject;
 
         JSValue* m_exception;
 #if ENABLE(CTI)
         void* m_ctiReturnAddress;
 #endif
-        JSGlobalData* m_globalData;
-
         Register* m_callFrame; // The most recent call frame.
     };
-
-    enum CodeType { GlobalCode, EvalCode, FunctionCode };
 
 } // namespace JSC
 

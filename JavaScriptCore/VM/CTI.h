@@ -57,11 +57,13 @@
 #define CTI_ARGS_r 0x0F
 #define CTI_ARGS_exception 0x10
 #define CTI_ARGS_profilerReference 0x11
+#define CTI_ARGS_globalData 0x12
 #define ARG_exec ((ExecState*)(ARGS)[CTI_ARGS_exec])
 #define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
 #define ARG_r ((Register*)(ARGS)[CTI_ARGS_r])
 #define ARG_exception ((JSValue**)(ARGS)[CTI_ARGS_exception])
 #define ARG_profilerReference ((Profiler**)(ARGS)[CTI_ARGS_profilerReference])
+#define ARG_globalData ((JSGlobalData*)(ARGS)[CTI_ARGS_globalData])
 
 #define ARG_setR(newR) (*(volatile Register**)&(ARGS)[CTI_ARGS_r] = newR)
 #define ARG_set2ndResult(new2ndResult) (*(volatile JSValue**)&(ARGS)[CTI_ARGS_2ndResult] = new2ndResult)
@@ -232,7 +234,7 @@ namespace JSC {
     };
 
     extern "C" {
-        JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception, Profiler**);
+        JSValue* ctiTrampoline(void* code, ExecState*, RegisterFile*, Register* callFrame, JSValue** exception, Profiler**, JSGlobalData*);
         void ctiVMThrowTrampoline();
     };
 
@@ -321,9 +323,9 @@ namespace JSC {
             return cti.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        inline static JSValue* execute(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception)
+        inline static JSValue* execute(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSGlobalData* globalData, JSValue** exception)
         {
-            JSValue* value = ctiTrampoline(code, exec, registerFile, r, exception, Profiler::enabledProfilerReference());
+            JSValue* value = ctiTrampoline(code, exec, registerFile, r, exception, Profiler::enabledProfilerReference(), globalData);
 #if ENABLE(SAMPLING_TOOL)
             currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif

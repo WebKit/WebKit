@@ -1,3 +1,29 @@
+2008-10-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21295
+          Turn ExecState into a call frame pointer.
+
+        Remove m_globalObject and m_globalData from ExecState.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData):
+        Removed an argument now that JSGlobalObject doesn't need it any more.
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase): Removed the argument from
+        the JSDOMWindowBaseData constructor, and added the this argument to the
+        JSGlobalObject constructor. This is because a couple key bits of
+        initialization moved from the data constructor to the JSGlobalObject
+        constructor.
+        * bindings/js/JSDOMWindowBase.h: Ditto.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod):
+        Pass JSGlobalData* instead of ExecState* to the InternalFunction
+        constructor.
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Fix Windows/Qt build bustage.

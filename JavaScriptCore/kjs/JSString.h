@@ -33,21 +33,29 @@ namespace JSC {
 
     class JSString;
 
+    JSString* jsEmptyString(JSGlobalData*);
     JSString* jsEmptyString(ExecState*);
+    JSString* jsString(JSGlobalData*, const UString&); // returns empty string if passed null string
     JSString* jsString(ExecState*, const UString&); // returns empty string if passed null string
 
+    JSString* jsSingleCharacterString(JSGlobalData*, UChar);
     JSString* jsSingleCharacterString(ExecState*, UChar);
+    JSString* jsSingleCharacterSubstring(JSGlobalData*, const UString&, unsigned offset);
     JSString* jsSingleCharacterSubstring(ExecState*, const UString&, unsigned offset);
+    JSString* jsSubstring(JSGlobalData*, const UString&, unsigned offset, unsigned length);
     JSString* jsSubstring(ExecState*, const UString&, unsigned offset, unsigned length);
 
     // Non-trivial strings are two or more characters long.
     // These functions are faster than just calling jsString.
+    JSString* jsNontrivialString(JSGlobalData*, const UString&);
     JSString* jsNontrivialString(ExecState*, const UString&);
+    JSString* jsNontrivialString(JSGlobalData*, const char*);
     JSString* jsNontrivialString(ExecState*, const char*);
 
     // Should be used for strings that are owned by an object that will
     // likely outlive the JSValue this makes, such as the parse tree or a
     // DOM object that contains a UString
+    JSString* jsOwnedString(JSGlobalData*, const UString&); 
     JSString* jsOwnedString(ExecState*, const UString&); 
 
     class JSString : public JSCell {
@@ -55,21 +63,21 @@ namespace JSC {
         friend class Machine;
 
     public:
-        JSString(ExecState* exec, const UString& value)
-            : JSCell(exec->globalData().stringStructureID.get())
+        JSString(JSGlobalData* globalData, const UString& value)
+            : JSCell(globalData->stringStructureID.get())
             , m_value(value)
         {
             Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
         enum HasOtherOwnerType { HasOtherOwner };
-        JSString(ExecState* exec, const UString& value, HasOtherOwnerType)
-            : JSCell(exec->globalData().stringStructureID.get())
+        JSString(JSGlobalData* globalData, const UString& value, HasOtherOwnerType)
+            : JSCell(globalData->stringStructureID.get())
             , m_value(value)
         {
         }
-        JSString(ExecState* exec, PassRefPtr<UString::Rep> value, HasOtherOwnerType)
-            : JSCell(exec->globalData().stringStructureID.get())
+        JSString(JSGlobalData* globalData, PassRefPtr<UString::Rep> value, HasOtherOwnerType)
+            : JSCell(globalData->stringStructureID.get())
             , m_value(value)
         {
         }
@@ -80,7 +88,7 @@ namespace JSC {
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
         bool canGetIndex(unsigned i) { return i < static_cast<unsigned>(m_value.size()); }
-        JSString* getIndex(ExecState*, unsigned);
+        JSString* getIndex(JSGlobalData*, unsigned);
 
         static PassRefPtr<StructureID> createStructureID(JSValue* proto) { return StructureID::create(proto, TypeInfo(StringType)); }
 
@@ -109,46 +117,55 @@ namespace JSC {
         UString m_value;
     };
 
-    inline JSString* jsEmptyString(ExecState* exec)
+    inline JSString* jsEmptyString(JSGlobalData* globalData)
     {
-        return exec->globalData().smallStrings.emptyString(exec);
+        return globalData->smallStrings.emptyString(globalData);
     }
 
-    inline JSString* jsSingleCharacterString(ExecState* exec, UChar c)
+    inline JSString* jsSingleCharacterString(JSGlobalData* globalData, UChar c)
     {
         if (c <= 0xFF)
-            return exec->globalData().smallStrings.singleCharacterString(exec, c);
-        return new (exec) JSString(exec, UString(&c, 1));
+            return globalData->smallStrings.singleCharacterString(globalData, c);
+        return new (globalData) JSString(globalData, UString(&c, 1));
     }
 
-    inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
+    inline JSString* jsSingleCharacterSubstring(JSGlobalData* globalData, const UString& s, unsigned offset)
     {
         ASSERT(offset < static_cast<unsigned>(s.size()));
         UChar c = s.data()[offset];
         if (c <= 0xFF)
-            return exec->globalData().smallStrings.singleCharacterString(exec, c);
-        return new (exec) JSString(exec, UString::Rep::create(s.rep(), offset, 1));
+            return globalData->smallStrings.singleCharacterString(globalData, c);
+        return new (globalData) JSString(globalData, UString::Rep::create(s.rep(), offset, 1));
     }
 
-    inline JSString* jsNontrivialString(ExecState* exec, const char* s)
+    inline JSString* jsNontrivialString(JSGlobalData* globalData, const char* s)
     {
         ASSERT(s);
         ASSERT(s[0]);
         ASSERT(s[1]);
-        return new (exec) JSString(exec, s);
+        return new (globalData) JSString(globalData, s);
     }
 
-    inline JSString* jsNontrivialString(ExecState* exec, const UString& s)
+    inline JSString* jsNontrivialString(JSGlobalData* globalData, const UString& s)
     {
         ASSERT(s.size() > 1);
-        return new (exec) JSString(exec, s);
+        return new (globalData) JSString(globalData, s);
     }
 
-    inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
+    inline JSString* JSString::getIndex(JSGlobalData* globalData, unsigned i)
     {
         ASSERT(canGetIndex(i));
-        return jsSingleCharacterSubstring(exec, m_value, i);
+        return jsSingleCharacterSubstring(globalData, m_value, i);
     }
+
+    inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }
+    inline JSString* jsString(ExecState* exec, const UString& s) { return jsString(&exec->globalData(), s); }
+    inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->globalData(), c); }
+    inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset) { return jsSingleCharacterSubstring(&exec->globalData(), s, offset); }
+    inline JSString* jsSubstring(ExecState* exec, const UString& s, unsigned offset, unsigned length) { return jsSubstring(&exec->globalData(), s, offset, length); }
+    inline JSString* jsNontrivialString(ExecState* exec, const UString& s) { return jsNontrivialString(&exec->globalData(), s); }
+    inline JSString* jsNontrivialString(ExecState* exec, const char* s) { return jsNontrivialString(&exec->globalData(), s); }
+    inline JSString* jsOwnedString(ExecState* exec, const UString& s) { return jsOwnedString(&exec->globalData(), s); } 
 
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
     {

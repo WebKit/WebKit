@@ -54,10 +54,10 @@ namespace JSC {
         using JSVariableObject::JSVariableObjectData;
 
         struct JSGlobalObjectData : public JSVariableObjectData {
-            JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
+            JSGlobalObjectData()
                 : JSVariableObjectData(&symbolTable, 0)
                 , registerArraySize(0)
-                , globalScopeChain(globalObject, thisValue)
+                , globalScopeChain(NoScopeChain())
                 , regExpConstructor(0)
                 , errorConstructor(0)
                 , evalErrorConstructor(0)
@@ -76,7 +76,6 @@ namespace JSC {
                 , datePrototype(0)
                 , regExpPrototype(0)
             {
-                Machine::initializeCallFrame(globalCallFrame + RegisterFile::CallFrameHeaderSize, 0, 0, globalScopeChain.node(), makeHostCallFramePointer(0), 0, 0, 0);
             }
             
             virtual ~JSGlobalObjectData()
@@ -143,17 +142,17 @@ namespace JSC {
     public:
         void* operator new(size_t, JSGlobalData*);
 
-        JSGlobalObject(JSGlobalData* globalData)
-            : JSVariableObject(globalData->nullProtoStructureID, new JSGlobalObjectData(this, this))
+        explicit JSGlobalObject(JSGlobalData* globalData)
+            : JSVariableObject(globalData->nullProtoStructureID, new JSGlobalObjectData)
         {
-            init();
+            init(this);
         }
 
     protected:
-        JSGlobalObject(PassRefPtr<StructureID> structure, JSGlobalObjectData* data)
+        JSGlobalObject(PassRefPtr<StructureID> structure, JSGlobalObjectData* data, JSObject* thisValue)
             : JSVariableObject(structure, data)
         {
-            init();
+            init(thisValue);
         }
 
     public:
@@ -267,7 +266,7 @@ namespace JSC {
 
     private:
         // FIXME: Fold reset into init.
-        void init();
+        void init(JSObject* thisValue);
         void reset(JSValue* prototype);
 
         void setRegisters(Register* registers, Register* registerArray, size_t count);
@@ -331,7 +330,6 @@ namespace JSC {
         ASSERT(typeInfo().type() == NumberType);
         return exec->lexicalGlobalObject()->numberPrototype();
     }
-
 
 } // namespace JSC
 

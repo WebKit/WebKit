@@ -30,7 +30,7 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
 
 ErrorConstructor::ErrorConstructor(ExecState* exec, PassRefPtr<StructureID> structure, ErrorPrototype* errorPrototype)
-    : InternalFunction(exec, structure, Identifier(exec, errorPrototype->classInfo()->className))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, errorPrototype->classInfo()->className))
 {
     // ECMA 15.11.3.1 Error.prototype
     putDirect(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);

@@ -54,7 +54,7 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
 */
 
 NumberConstructor::NumberConstructor(ExecState* exec, PassRefPtr<StructureID> structure, NumberPrototype* numberPrototype)
-    : InternalFunction(exec, structure, Identifier(exec, numberPrototype->info.className))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
     putDirect(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);

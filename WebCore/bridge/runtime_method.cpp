@@ -42,7 +42,7 @@ ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
 const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", 0, 0, 0 };
 
 RuntimeMethod::RuntimeMethod(ExecState* exec, const Identifier& ident, Bindings::MethodList& m) 
-    : InternalFunction(exec, getDOMStructure<RuntimeMethod>(exec), ident)
+    : InternalFunction(&exec->globalData(), getDOMStructure<RuntimeMethod>(exec), ident)
     , _methodList(new MethodList(m))
 {
 }

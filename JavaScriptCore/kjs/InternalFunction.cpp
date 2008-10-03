@@ -37,16 +37,16 @@ const ClassInfo* InternalFunction::classInfo() const
     return &info;
 }
 
-InternalFunction::InternalFunction(ExecState* exec)
-    : JSObject(exec->globalData().nullProtoStructureID)
+InternalFunction::InternalFunction(JSGlobalData* globalData)
+    : JSObject(globalData->nullProtoStructureID)
 {
-    putDirect(exec->propertyNames().name, jsString(exec, exec->propertyNames().nullIdentifier.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(globalData->propertyNames->name, jsString(globalData, globalData->propertyNames->nullIdentifier.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
-InternalFunction::InternalFunction(ExecState* exec, PassRefPtr<StructureID> structure, const Identifier& name)
+InternalFunction::InternalFunction(JSGlobalData* globalData, PassRefPtr<StructureID> structure, const Identifier& name)
     : JSObject(structure)
 {
-    putDirect(exec->propertyNames().name, jsString(exec, name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(globalData->propertyNames->name, jsString(globalData, name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
 const UString& InternalFunction::name(ExecState* exec)

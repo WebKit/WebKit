@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-    class ExecState;
+    class JSGlobalData;
     class JSString;
 
     class SmallStringsStorage;
@@ -41,16 +41,16 @@ namespace JSC {
         SmallStrings();
         ~SmallStrings();
 
-        JSString* emptyString(ExecState* exec)
+        JSString* emptyString(JSGlobalData* globalData)
         {
             if (!m_emptyString)
-                createEmptyString(exec);
+                createEmptyString(globalData);
             return m_emptyString;
         }
-        JSString* singleCharacterString(ExecState* exec, unsigned char character)
+        JSString* singleCharacterString(JSGlobalData* globalData, unsigned char character)
         {
             if (!m_singleCharacterStrings[character])
-                createSingleCharacterString(exec, character);
+                createSingleCharacterString(globalData, character);
             return m_singleCharacterStrings[character];
         }
 
@@ -59,8 +59,8 @@ namespace JSC {
         void mark();
         
     private:
-        void createEmptyString(ExecState*);
-        void createSingleCharacterString(ExecState*, unsigned char);
+        void createEmptyString(JSGlobalData*);
+        void createSingleCharacterString(JSGlobalData*, unsigned char);
 
         JSString* m_emptyString;
         JSString* m_singleCharacterStrings[0x100];

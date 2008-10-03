@@ -1,3 +1,193 @@
+2008-10-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21295
+          Turn ExecState into a call frame pointer.
+
+        Remove m_globalObject and m_globalData from ExecState.
+
+        SunSpider says this is a wash (slightly faster but not statistically
+        significant); which is good enough since it's a preparation step and
+        not supposed to be a spedup.
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::JSCallbackFunction):
+        * kjs/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        * kjs/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        * kjs/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * kjs/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        * kjs/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * kjs/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * kjs/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        * kjs/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        * kjs/PrototypeFunction.cpp:
+        (JSC::PrototypeFunction::PrototypeFunction):
+        * kjs/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        * kjs/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        Pass JSGlobalData* instead of ExecState* to the InternalFunction
+        constructor.
+
+        * API/OpaqueJSString.cpp: Added now-needed include.
+
+        * JavaScriptCore.exp: Updated.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitSlowScriptCheck): Changed to use ARGS_globalData
+        instead of ARGS_exec.
+
+        * VM/CTI.h: Added a new argument to the CTI, the global data pointer.
+        While it's possible to get to the global data pointer using the
+        ExecState pointer, it's slow enough that it's better to just keep
+        it around in the CTI arguments.
+
+        * VM/CodeBlock.h: Moved the CodeType enum here from ExecState.h.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::execute): Pass fewer arguments when constructing
+        ExecState, and pass the global data pointer when invoking CTI.
+        (JSC::Machine::firstCallFrame): Added. Used to get the dynamic global
+        object, which is in the scope chain of the first call frame.
+        (JSC::Machine::cti_op_add): Use globalData instead of exec when
+        possible, to keep fast cases fast, since it's now more expensive to
+        get to it through the exec pointer.
+        (JSC::Machine::cti_timeout_check): Ditto.
+        (JSC::Machine::cti_op_put_by_id_second): Ditto.
+        (JSC::Machine::cti_op_get_by_id_second): Ditto.
+        (JSC::Machine::cti_op_mul): Ditto.
+        (JSC::Machine::cti_vm_compile): Ditto.
+        (JSC::Machine::cti_op_get_by_val): Ditto.
+        (JSC::Machine::cti_op_sub): Ditto.
+        (JSC::Machine::cti_op_put_by_val): Ditto.
+        (JSC::Machine::cti_op_put_by_val_array): Ditto.
+        (JSC::Machine::cti_op_negate): Ditto.
+        (JSC::Machine::cti_op_div): Ditto.
+        (JSC::Machine::cti_op_pre_dec): Ditto.
+        (JSC::Machine::cti_op_post_inc): Ditto.
+        (JSC::Machine::cti_op_lshift): Ditto.
+        (JSC::Machine::cti_op_bitand): Ditto.
+        (JSC::Machine::cti_op_rshift): Ditto.
+        (JSC::Machine::cti_op_bitnot): Ditto.
+        (JSC::Machine::cti_op_mod): Ditto.
+        (JSC::Machine::cti_op_post_dec): Ditto.
+        (JSC::Machine::cti_op_urshift): Ditto.
+        (JSC::Machine::cti_op_bitxor): Ditto.
+        (JSC::Machine::cti_op_bitor): Ditto.
+        (JSC::Machine::cti_op_call_eval): Ditto.
+        (JSC::Machine::cti_op_throw): Ditto.
+        (JSC::Machine::cti_op_is_string): Ditto.
+        (JSC::Machine::cti_op_debug): Ditto.
+        (JSC::Machine::cti_vm_throw): Ditto.
+
+        * VM/Machine.h: Added firstCallFrame.
+
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate): Pass fewer arguments when
+        constructing ExecState.
+
+        * kjs/ExecState.cpp: Deleted contents. Later we'll remove the
+        file altogether.
+
+        * kjs/ExecState.h: Removed m_globalObject and m_globalData.
+        Moved CodeType into another header.
+        (JSC::ExecState::ExecState): Take only a single argument, a
+        call frame pointer.
+        (JSC::ExecState::dynamicGlobalObject): Get the object from
+        the first call frame since it's no longer stored.
+        (JSC::ExecState::globalData): Get the global data from the
+        scope chain, since we no longer store a pointer to it here.
+        (JSC::ExecState::identifierTable): Ditto.
+        (JSC::ExecState::propertyNames): Ditto.
+        (JSC::ExecState::emptyList): Ditto.
+        (JSC::ExecState::lexer): Ditto.
+        (JSC::ExecState::parser): Ditto.
+        (JSC::ExecState::machine): Ditto.
+        (JSC::ExecState::arrayTable): Ditto.
+        (JSC::ExecState::dateTable): Ditto.
+        (JSC::ExecState::mathTable): Ditto.
+        (JSC::ExecState::numberTable): Ditto.
+        (JSC::ExecState::regExpTable): Ditto.
+        (JSC::ExecState::regExpConstructorTable): Ditto.
+        (JSC::ExecState::stringTable): Ditto.
+        (JSC::ExecState::heap): Ditto.
+
+        * kjs/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor): Pass
+        JSGlobalData* instead of ExecState* to the InternalFunction
+        constructor.
+        (JSC::constructFunction): Pass the global data pointer when
+        constructing a new scope chain.
+
+        * kjs/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction): Take a JSGlobalData*
+        instead of an ExecState*. Later we can change more places to
+        work this way -- it's more efficient to take the type you need
+        since the caller might already have it.
+        * kjs/InternalFunction.h: Ditto.
+
+        * kjs/JSCell.h:
+        (JSC::JSCell::operator new): Added an overload that takes a
+        JSGlobalData* so you can construct without an ExecState*.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Moved creation of the global scope
+        chain in here, since it now requires a pointer to the global data.
+        Moved the initialization of the call frame in here since it requires
+        the global scope chain node. Removed the extra argument to ExecState
+        when creating the global ExecState*.
+        * kjs/JSGlobalObject.h: Removed initialization of globalScopeChain
+        and the call frame from the JSGlobalObjectData constructor. Added
+        a thisValue argument to the init function.
+
+        * kjs/JSNumberCell.cpp: Added versions of jsNumberCell that take
+        JSGlobalData* rather than ExecState*.
+        * kjs/JSNumberCell.h:
+        (JSC::JSNumberCell::operator new): Added a version that takes
+        JSGlobalData*.
+        (JSC::JSNumberCell::JSNumberCell): Ditto.
+        (JSC::jsNumber): Ditto.
+        * kjs/JSString.cpp:
+        (JSC::jsString): Ditto.
+        (JSC::jsSubstring): Ditto.
+        (JSC::jsOwnedString): Ditto.
+        * kjs/JSString.h:
+        (JSC::JSString::JSString): Changed to take JSGlobalData*.
+        (JSC::jsEmptyString): Added a version that takes JSGlobalData*.
+        (JSC::jsSingleCharacterString): Ditto.
+        (JSC::jsSingleCharacterSubstring): Ditto.
+        (JSC::jsNontrivialString): Ditto.
+        (JSC::JSString::getIndex): Ditto.
+        (JSC::jsString): Ditto.
+        (JSC::jsSubstring): Ditto.
+        (JSC::jsOwnedString): Ditto.
+
+        * kjs/ScopeChain.h: Added a globalData pointer to each node.
+        (JSC::ScopeChainNode::ScopeChainNode): Initialize the globalData
+        pointer.
+        (JSC::ScopeChainNode::push): Set the global data pointer in the
+        new node.
+        (JSC::ScopeChain::ScopeChain): Take a globalData argument.
+
+        * kjs/SmallStrings.cpp:
+        (JSC::SmallStrings::createEmptyString): Take JSGlobalData* instead of
+        ExecState*.
+        (JSC::SmallStrings::createSingleCharacterString): Ditto.
+        * kjs/SmallStrings.h:
+        (JSC::SmallStrings::emptyString): Ditto.
+        (JSC::SmallStrings::singleCharacterString): Ditto.
+
 2008-10-03  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

@@ -29,7 +29,7 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(BooleanConstructor);
 
 BooleanConstructor::BooleanConstructor(ExecState* exec, PassRefPtr<StructureID> structure, BooleanPrototype* booleanPrototype)
-    : InternalFunction(exec, structure, Identifier(exec, booleanPrototype->classInfo()->className))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, booleanPrototype->classInfo()->className))
 {
     putDirect(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 

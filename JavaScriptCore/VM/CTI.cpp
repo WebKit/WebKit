@@ -627,8 +627,7 @@ void CTI::emitSlowScriptCheck(unsigned opcodeIndex)
     X86Assembler::JmpSrc skipTimeout = m_jit.emitUnlinkedJne();
     emitCall(opcodeIndex, Machine::cti_timeout_check);
 
-    emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
-    m_jit.movl_mr(OBJECT_OFFSET(ExecState, m_globalData), X86::ecx, X86::ecx);
+    emitGetCTIParam(CTI_ARGS_globalData, X86::ecx);
     m_jit.movl_mr(OBJECT_OFFSET(JSGlobalData, machine), X86::ecx, X86::ecx);
     m_jit.movl_mr(OBJECT_OFFSET(Machine, m_ticksUntilNextTimeoutCheck), X86::ecx, X86::esi);
     m_jit.link(skipTimeout, m_jit.label());

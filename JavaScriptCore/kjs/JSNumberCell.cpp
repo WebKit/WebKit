@@ -111,4 +111,14 @@ NEVER_INLINE JSValue* jsNaN(ExecState* exec)
     return new (exec) JSNumberCell(exec, NaN);
 }
 
+NEVER_INLINE JSValue* jsNumberCell(JSGlobalData* globalData, double d)
+{
+    return new (globalData) JSNumberCell(globalData, d);
+}
+
+NEVER_INLINE JSValue* jsNaN(JSGlobalData* globalData)
+{
+    return new (globalData) JSNumberCell(globalData, NaN);
+}
+
 } // namespace JSC

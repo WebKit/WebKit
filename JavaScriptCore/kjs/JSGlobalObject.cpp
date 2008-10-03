@@ -122,11 +122,14 @@ JSGlobalObject::~JSGlobalObject()
     delete d();
 }
 
-void JSGlobalObject::init()
+void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
 
     d()->globalData = Heap::heap(this)->globalData();
+    d()->globalScopeChain = ScopeChain(this, d()->globalData.get(), thisValue);
+
+    Machine::initializeCallFrame(d()->globalCallFrame + RegisterFile::CallFrameHeaderSize, 0, 0, d()->globalScopeChain.node(), makeHostCallFramePointer(0), 0, 0, 0);
 
     if (JSGlobalObject*& headObject = head()) {
         d()->prev = headObject;
@@ -139,7 +142,7 @@ void JSGlobalObject::init()
     d()->recursion = 0;
     d()->debugger = 0;
 
-    d()->globalExec.set(new ExecState(this, d()->globalCallFrame + RegisterFile::CallFrameHeaderSize));
+    d()->globalExec.set(new ExecState(d()->globalCallFrame + RegisterFile::CallFrameHeaderSize));
 
     d()->profileGroup = 0;
 

@@ -104,7 +104,7 @@ struct RegExpConstructorPrivate {
 };
 
 RegExpConstructor::RegExpConstructor(ExecState* exec, PassRefPtr<StructureID> structure, RegExpPrototype* regExpPrototype)
-    : InternalFunction(exec, structure, Identifier(exec, "RegExp"))
+    : InternalFunction(&exec->globalData(), structure, Identifier(exec, "RegExp"))
     , d(new RegExpConstructorPrivate)
 {
     // ECMA 15.10.5.1 RegExp.prototype
