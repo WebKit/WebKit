@@ -111,7 +111,7 @@ static StreamMap& streams()
 {
     [super init];
     
-    _impl = WebNetscapePluginStream::create().releaseRef();
+    _impl = WebNetscapePluginStream::create(self);
     _impl->m_frameLoader = frameLoader;
     
     return self;
@@ -157,7 +157,7 @@ static StreamMap& streams()
 {
     [super init];
  
-    _impl = WebNetscapePluginStream::create().releaseRef();
+    _impl = WebNetscapePluginStream::create(self);
 
     // Temporarily set isTerminated to true to avoid assertion failure in dealloc in case we are released in this method.
     _impl->m_isTerminated = true;
@@ -168,7 +168,7 @@ static StreamMap& streams()
     }
     
     [self setRequestURL:theRequestURL];
-    [self setPlugin:thePlugin];
+    _impl->setPlugin(thePlugin);
     _impl->m_notifyData = theNotifyData;
     _impl->m_sendNotification = flag;
     _impl->m_fileDescriptor = -1;
@@ -202,7 +202,6 @@ static StreamMap& streams()
     streams().remove(&_impl->m_stream);
 
     ASSERT(_impl);
-    _impl->deref();
     
     [super dealloc];
 }
@@ -227,14 +226,8 @@ static StreamMap& streams()
     streams().remove(&_impl->m_stream);
 
     ASSERT(_impl);
-    _impl->deref();
         
     [super finalize];
-}
-
-- (uint16)transferMode
-{
-    return _impl->m_transferMode;
 }
 
 - (NPP)plugin
@@ -247,33 +240,28 @@ static StreamMap& streams()
     _impl->m_requestURL = theRequestURL;
 }
 
-- (void)setResponseURL:(NSURL *)theResponseURL
-{
-    _impl->m_responseURL = theResponseURL;
-}
-
 - (void)setPlugin:(NPP)thePlugin
 {
-    if (thePlugin) {
-        _impl->m_plugin = thePlugin;
-        _impl->m_pluginView = (WebBaseNetscapePluginView *)_impl->m_plugin->ndata;
-        WebNetscapePluginPackage *pluginPackage = [_impl->m_pluginView.get() pluginPackage];
-        
-        _impl->m_pluginFuncs = [pluginPackage pluginFuncs];
-    } else {
-        WebBaseNetscapePluginView *view = _impl->m_pluginView.get();
-
-        _impl->m_plugin = 0;
-        _impl->m_pluginFuncs = 0;
-
-        [view disconnectStream:self];
-        _impl->m_pluginView = 0;
-    }
+    _impl->setPlugin(thePlugin);
 }
 
-- (void)setMIMEType:(NSString *)theMIMEType
+void WebNetscapePluginStream::setPlugin(NPP plugin)
 {
-    _impl->m_mimeType = theMIMEType;
+    if (plugin) {
+        m_plugin = plugin;
+        m_pluginView = static_cast<WebBaseNetscapePluginView *>(m_plugin->ndata);
+
+        WebNetscapePluginPackage *pluginPackage = [m_pluginView.get() pluginPackage];
+        
+        m_pluginFuncs = [pluginPackage pluginFuncs];
+    } else {
+        WebBaseNetscapePluginView *view = m_pluginView.get();
+        m_plugin = 0;
+        m_pluginFuncs = 0;
+        
+        [view disconnectStream:m_pluginStream];
+        m_pluginView = 0;
+    }        
 }
 
 - (void)startStreamResponseURL:(NSURL *)URL
@@ -284,8 +272,8 @@ static StreamMap& streams()
 {
     ASSERT(!_impl->m_isTerminated);
     
-    [self setResponseURL:URL];
-    [self setMIMEType:theMIMEType];
+    _impl->m_responseURL = URL;
+    _impl->m_mimeType = theMIMEType;
     
     free((void *)_impl->m_stream.url);
     _impl->m_stream.url = strdup([_impl->m_responseURL.get() _web_URLCString]);
@@ -513,7 +501,7 @@ static StreamMap& streams()
 
     _impl->m_isTerminated = true;
 
-    [self setPlugin:NULL];
+    _impl->setPlugin(0);
 
 exit:
     [self release];
@@ -560,7 +548,7 @@ exit:
     [self retain];
     [self cancelLoadWithError:error];
     [self destroyStreamWithError:error];
-    [self setPlugin:NULL];
+    _impl->setPlugin(0);
     [self release];
 }
 

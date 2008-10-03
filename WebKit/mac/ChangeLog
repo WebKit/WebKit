@@ -1,3 +1,22 @@
+2008-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        More plug-in stream cleanup.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::create):
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithFrameLoader:]):
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        (-[WebBaseNetscapePluginStream setPlugin:]):
+        (WebNetscapePluginStream::setPlugin):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Remove addToDirtyRegion.
