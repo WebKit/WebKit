@@ -1,3 +1,18 @@
+2008-10-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - fix a CachedResource leak introduced in r37176 
+
+        Undo r37176 and instead allow pruneDeadResources() to be re-entered, but
+        afterwards bail out of the outer pruneDeadResources().
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::Cache):
+        (WebCore::Cache::pruneDeadResources):
+        (WebCore::Cache::remove):
+        * loader/Cache.h:
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21330

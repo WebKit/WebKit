@@ -52,13 +52,14 @@ Cache* cache()
 }
 
 Cache::Cache()
-: m_disabled(false)
-, m_pruneEnabled(true)
-, m_capacity(cDefaultCacheCapacity)
-, m_minDeadCapacity(0)
-, m_maxDeadCapacity(cDefaultCacheCapacity)
-, m_liveSize(0)
-, m_deadSize(0)
+    : m_disabled(false)
+    , m_pruneEnabled(true)
+    , m_inPruneDeadResources(false)
+    , m_capacity(cDefaultCacheCapacity)
+    , m_minDeadCapacity(0)
+    , m_maxDeadCapacity(cDefaultCacheCapacity)
+    , m_liveSize(0)
+    , m_deadSize(0)
 {
 }
 
@@ -309,6 +310,7 @@ void Cache::pruneDeadResources()
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
     int size = m_allResources.size();
     bool canShrinkLRULists = true;
+    m_inPruneDeadResources = true;
     for (int i = size - 1; i >= 0; i--) {
         // Remove from the tail, since this is the least frequently accessed of the objects.
         CachedResource* current = m_allResources[i].m_tail;
@@ -322,8 +324,10 @@ void Cache::pruneDeadResources()
                 // LRU list in m_allResources.
                 current->destroyDecodedData();
                 
-                if (targetSize && m_deadSize <= targetSize)
+                if (targetSize && m_deadSize <= targetSize) {
+                    m_inPruneDeadResources = false;
                     return;
+                }
             }
             current = prev;
         }
@@ -334,9 +338,15 @@ void Cache::pruneDeadResources()
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (!current->hasClients() && !current->isPreloaded()) {
                 remove(current);
-
-                if (targetSize && m_deadSize <= targetSize)
+                // If remove() caused pruneDeadResources() to be re-entered, bail out. This can happen when removing an
+                // SVG CachedImage that has subresources.
+                if (!m_inPruneDeadResources)
                     return;
+
+                if (targetSize && m_deadSize <= targetSize) {
+                    m_inPruneDeadResources = false;
+                    return;
+                }
             }
             current = prev;
         }
@@ -348,6 +358,7 @@ void Cache::pruneDeadResources()
         else if (canShrinkLRULists)
             m_allResources.resize(i);
     }
+    m_inPruneDeadResources = false;
 }
 
 void Cache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes)
@@ -386,15 +397,8 @@ void Cache::remove(CachedResource* resource)
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
 
-    if (resource->canDelete()) {
-        // Avoid re-entry into pruning, which may occur in cases like deleting an SVG CachedImage that has subresources.
-        bool pruneWasEnabled = m_pruneEnabled;
-        m_pruneEnabled = false;
-
+    if (resource->canDelete())
         delete resource;
-
-        m_pruneEnabled = pruneWasEnabled;
-    }
 }
 
 void Cache::addDocLoader(DocLoader* docLoader)

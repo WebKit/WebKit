@@ -172,6 +172,7 @@ private:
 
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_pruneEnabled;
+    bool m_inPruneDeadResources;
 
     unsigned m_capacity;
     unsigned m_minDeadCapacity;
