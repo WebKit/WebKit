@@ -1,3 +1,35 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+        Instead of a cross-platform init/destroy that forces every ScrollView platform to have a constructor/
+        destructor that calls them, switch to having a cross-platform constructor/destructor that calls
+        platform-specific init/destroy methods.
+
+        With this change, ScrollViewWin.cpp can be removed from the build (yay!).
+
+        Reviewed by Darin Adler
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::platformInit):
+        (WebCore::ScrollView::platformDestroy):
+        (WebCore::ScrollView::platformAddChild):
+        (WebCore::ScrollView::platformRemoveChild):
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformInit):
+        (WebCore::ScrollView::platformDestroy):
+        * platform/mac/ScrollViewMac.mm:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::platformInit):
+        (WebCore::ScrollView::platformDestroy):
+        * platform/win/ScrollViewWin.cpp: Removed.
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformInit):
+        (WebCore::ScrollView::platformDestroy):
+        (WebCore::ScrollView::setPlatformWidget):
+
 2008-10-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

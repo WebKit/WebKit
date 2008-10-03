@@ -42,16 +42,6 @@ using namespace std;
 
 namespace WebCore {
 
-ScrollView::ScrollView()
-{
-    init();
-}
-
-ScrollView::~ScrollView()
-{
-    destroy();
-}
-
 inline NSScrollView<WebCoreFrameScrollView> *ScrollView::scrollView() const
 {
     ASSERT(!platformWidget() || [platformWidget() isKindOfClass:[NSScrollView class]]);

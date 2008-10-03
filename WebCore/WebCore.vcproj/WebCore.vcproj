@@ -3623,10 +3623,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\ScrollViewWin.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\win\SearchPopupMenuWin.cpp"
 					>
 				</File>

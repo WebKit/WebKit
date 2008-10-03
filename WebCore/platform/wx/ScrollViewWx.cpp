@@ -119,22 +119,21 @@ public:
     wxPoint viewStart;
 };
 
-ScrollView::ScrollView()
+void ScrollView::platformInit()
 {
     m_data = new ScrollViewPrivate(this);
-    init();
+}
+
+
+void ScrollView::platformDestroy()
+{
+    delete m_data;
 }
 
 void ScrollView::setPlatformWidget(wxWindow* win)
 {
     Widget::setPlatformWidget(win);
     m_data->bindEvents(win);
-}
-
-ScrollView::~ScrollView()
-{
-    destroy();
-    delete m_data;
 }
 
 void ScrollView::platformRepaintContentRectangle(const IntRect& updateRect, bool now)
