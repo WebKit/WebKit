@@ -27,12 +27,12 @@
 #include "NodeRareData.h"
 
 namespace WebCore {
-    
+
 class ElementRareData : public NodeRareData {
 public:
     ElementRareData(Element*);
     void resetComputedStyle(Element*);
-    
+
     IntSize m_minimumSizeForResizing;
     RenderStyle* m_computedStyle;
 };
@@ -57,4 +57,4 @@ inline void ElementRareData::resetComputedStyle(Element* element)
 }
 
 }
-#endif ElementRareData_h
+#endif // ElementRareData_h
