@@ -109,9 +109,6 @@ namespace WebCore {
 
         virtual IntRect windowResizerRect() const = 0;
 
-        // This method is deprecated and will be removed once all of the callers have been eliminated.
-        virtual void addToDirtyRegion(const IntRect&) = 0;
-
         // Methods used by HostWindow.
         virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false) = 0;
         virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;

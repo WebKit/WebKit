@@ -292,11 +292,6 @@ IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
     return point;
 }
 
-void ChromeClient::addToDirtyRegion(const IntRect&)
-{
-    notImplemented();
-}
-
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
 {
     // check if the element is a link...

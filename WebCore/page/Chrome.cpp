@@ -314,11 +314,6 @@ IntRect Chrome::windowResizerRect() const
     return m_client->windowResizerRect();
 }
 
-void Chrome::addToDirtyRegion(const IntRect& rect)
-{
-    m_client->addToDirtyRegion(rect);
-}
-
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     if (result.innerNode()) {

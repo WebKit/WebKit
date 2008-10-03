@@ -459,11 +459,6 @@ IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
     return result;
 }
 
-void WebChromeClient::addToDirtyRegion(const IntRect& dirtyRect)
-{
-    m_webView->addToDirtyRegion(dirtyRect);
-}
-
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     COMPtr<IWebUIDelegate> uiDelegate;

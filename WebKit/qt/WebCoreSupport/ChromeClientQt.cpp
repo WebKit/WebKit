@@ -335,18 +335,6 @@ IntPoint ChromeClientQt::screenToWindow(const IntPoint& point) const
     return point;
 }
 
-void ChromeClientQt::addToDirtyRegion(const IntRect& r)
-{
-    QWidget* view = m_webPage->view();
-    if (view) {
-        QRect rect(r);
-        rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
-        if (!r.isEmpty())
-            view->update(r);
-    } else
-        emit m_webPage->repaintRequested(r);
-}
-
 void ChromeClientQt::updateBackingStore()
 {
 }

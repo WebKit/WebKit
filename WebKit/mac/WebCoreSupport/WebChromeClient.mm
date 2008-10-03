@@ -423,10 +423,6 @@ IntRect WebChromeClient::windowToScreen(const IntRect& r) const
 }
 // End host window methods.
 
-void WebChromeClient::addToDirtyRegion(const IntRect&)
-{
-}
-
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     WebElementDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:result];

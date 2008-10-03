@@ -1,3 +1,11 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+         Remove addToDirtyRegion.
+        
+         Reviewed by Oliver Hunt
+
+        * WebCoreSupport/WebChromeClient.cpp:
+
 2008-10-02  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21328

@@ -104,7 +104,6 @@ namespace WebCore {
         bool shouldInterruptJavaScript();
 
         IntRect windowResizerRect() const;
-        void addToDirtyRegion(const IntRect&);
 
         void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 

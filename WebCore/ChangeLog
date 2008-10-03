@@ -1,3 +1,17 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+        Remove addToDirtyRegion.
+        
+        Reviewed by Oliver Hunt
+
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ScrollView.h:
+        * platform/gtk/ScrollViewGtk.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        * platform/win/ScrollViewWin.cpp:
+
 2008-10-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -32,17 +32,12 @@
 #include "ScrollView.h"
 
 #include "FloatRect.h"
-#include "FocusController.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
-#include "Page.h"
-#include "RenderLayer.h"
 #include "ScrollbarGtk.h"
 #include "ScrollbarTheme.h"
 
@@ -188,16 +183,6 @@ bool ScrollView::platformHasHorizontalAdjustment() const
 bool ScrollView::platformHasVerticalAdjustment() const
 {
     return m_verticalAdjustment != 0;
-}
-
-void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->addToDirtyRegion(containingWindowRect);
 }
 
 }

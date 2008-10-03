@@ -32,35 +32,6 @@
 #include "config.h"
 #include "ScrollView.h"
 
-#include "FrameView.h"
-#include "FloatRect.h"
-#include "FocusController.h"
-#include "IntPoint.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
-#include "NotImplemented.h"
-#include "Frame.h"
-#include "Page.h"
-#include "GraphicsContext.h"
-#include "Scrollbar.h"
-#include "ScrollbarTheme.h"
-
-#include <QDebug>
-#include <QWidget>
-#include <QPainter>
-#include <QApplication>
-#include <QPalette>
-#include <QStyleOption>
-
-#ifdef Q_WS_MAC
-#include <Carbon/Carbon.h>
-#endif
-
-#include "qwebframe.h"
-#include "qwebpage.h"
-
-// #define DEBUG_SCROLLVIEW
-
 namespace WebCore {
 
 ScrollView::ScrollView()
@@ -86,16 +57,6 @@ void ScrollView::platformRemoveChild(Widget* child)
     ASSERT(root()->m_widgetsThatPreventBlitting);
     root()->m_widgetsThatPreventBlitting--;
     child->hide();
-}
-
-void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->addToDirtyRegion(containingWindowRect);
 }
 
 }

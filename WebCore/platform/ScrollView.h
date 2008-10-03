@@ -277,11 +277,6 @@ private:
     NSScrollView<WebCoreFrameScrollView>* scrollView() const;
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(WX)
-public:
-    void addToDirtyRegion(const IntRect&);
-#endif
-
 #if PLATFORM(QT)
 private:
     bool rootPreventsBlitting() const { return root()->m_widgetsThatPreventBlitting > 0; }

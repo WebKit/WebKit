@@ -26,30 +26,6 @@
 #include "config.h"
 #include "ScrollView.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
-#include "FloatRect.h"
-#include "FocusController.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "IntRect.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "Scrollbar.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
-#include "RenderTheme.h"
-#include "Scrollbar.h"
-#include "ScrollbarClient.h"
-#include "ScrollbarTheme.h"
-#include "Settings.h"
-#include <algorithm>
-#include <winsock2.h>
-#include <windows.h>
-#include <wtf/Assertions.h>
-#include <wtf/HashSet.h>
-
 using namespace std;
 
 namespace WebCore {
@@ -70,16 +46,6 @@ void ScrollView::platformAddChild(Widget*)
 
 void ScrollView::platformRemoveChild(Widget*)
 {
-}
-
-void ScrollView::addToDirtyRegion(const IntRect& containingWindowRect)
-{
-    ASSERT(isFrameView());
-    const FrameView* frameView = static_cast<const FrameView*>(this);
-    Page* page = frameView->frame() ? frameView->frame()->page() : 0;
-    if (!page)
-        return;
-    page->chrome()->addToDirtyRegion(containingWindowRect);
 }
 
 } // namespace WebCore
