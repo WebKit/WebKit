@@ -157,10 +157,18 @@ RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
 
 RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
 {
-    RenderStyle* textBlockStyle = new (renderArena()) RenderStyle();
     HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
+    bool placeholderShouldBeVisible = !m_multiLine && static_cast<HTMLInputElement*>(element)->placeholderShouldBeVisible();
 
-    textBlockStyle->inheritFrom(startStyle);
+    RenderStyle* textBlockStyle = 0;
+    if (placeholderShouldBeVisible) {
+        RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::INPUT_PLACEHOLDER);
+        textBlockStyle = new (renderArena()) RenderStyle(*pseudoStyle);
+    } else {
+        textBlockStyle = new (renderArena()) RenderStyle();    
+        textBlockStyle->inheritFrom(startStyle);
+    }
+    
     // The inner block, if present, always has its direction set to LTR,
     // so we need to inherit the direction from the element.
     textBlockStyle->setDirection(style()->direction());
@@ -206,12 +214,13 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
     
     // When the placeholder is going to be displayed, temporarily override the text security to be "none".
     // After this, updateFromElement will immediately update the text displayed.
-    // When the placeholder is no longer visible, style will be recomputed, and the text security mode will be set back to the computed value correctly.
+    // When the placeholder is no longer visible, updatePlaceholderVisiblity will reset the style, 
+    // and the text security mode will be set back to the computed value correctly.
     if (!m_multiLine && static_cast<HTMLInputElement*>(element)->placeholderShouldBeVisible())
         textBlockStyle->setTextSecurity(TSNONE);
 
     if (!element->isEnabled())
-        textBlockStyle->setColor(disabledTextColor(startStyle->color(), startStyle->backgroundColor()));
+        textBlockStyle->setColor(disabledTextColor(textBlockStyle->color(), startStyle->backgroundColor()));
 
     return textBlockStyle;
 }
@@ -1169,6 +1178,20 @@ bool RenderTextControl::isScrollable() const
 FontSelector* RenderTextControl::fontSelector() const
 {
     return document()->styleSelector()->fontSelector();
+}
+
+void RenderTextControl::updatePlaceholderVisibility()
+{
+    RenderStyle* parentStyle = m_innerBlock ? m_innerBlock->renderer()->style() : style();
+    RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
+    textBlockStyle->ref();
+    m_innerText->renderer()->setStyle(textBlockStyle);
+    for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
+        if (n->renderer())
+            n->renderer()->setStyle(textBlockStyle);
+    }
+    textBlockStyle->deref(renderArena());
+    updateFromElement();
 }
 
 void RenderTextControl::capsLockStateMayHaveChanged()

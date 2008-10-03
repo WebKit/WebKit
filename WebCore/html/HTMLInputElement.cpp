@@ -999,7 +999,8 @@ void HTMLInputElement::setValue(const String& value)
     if (inputType() == FILE && !value.isEmpty())
         return;
 
-    updatePlaceholderVisibility();
+    if (isTextField())
+        updatePlaceholderVisibility();
     
     setValueMatchesRenderer(false);
     if (storesValueSeparateFromAttribute()) {
@@ -1032,7 +1033,8 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // Renderer and our event handler are responsible for constraining values.
     ASSERT(value == constrainValue(value) || constrainValue(value).isEmpty());
 
-    updatePlaceholderVisibility();
+    if (isTextField())
+        updatePlaceholderVisibility();
     
     if (inputType() == FILE) {
         m_fileList->clear();
@@ -1560,14 +1562,16 @@ void HTMLInputElement::unregisterForActivationCallbackIfNeeded()
 
 void HTMLInputElement::updatePlaceholderVisibility()
 {
+    ASSERT(isTextField());
+
     bool oldPlaceholderShouldBeVisible = m_placeholderShouldBeVisible;
     
     m_placeholderShouldBeVisible = value().isEmpty() 
         && document()->focusedNode() != this
         && !getAttribute(placeholderAttr).isEmpty();
 
-    if (oldPlaceholderShouldBeVisible != m_placeholderShouldBeVisible)
-        setChanged();
+    if (oldPlaceholderShouldBeVisible != m_placeholderShouldBeVisible && renderer())
+        static_cast<RenderTextControl*>(renderer())->updatePlaceholderVisibility();
 }
 
 String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen) const

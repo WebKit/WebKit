@@ -361,7 +361,7 @@ textarea {
     cursor: auto;
 }
 
-input:-webkit-input-placeholder-mode {
+input::-webkit-input-placeholder {
     color: darkGray;
 }
 

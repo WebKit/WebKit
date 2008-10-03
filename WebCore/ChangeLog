@@ -1,3 +1,32 @@
+2008-10-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21299
+        REGRESSION: <input> color specified in inline style applies to placeholder
+
+        I recently added a pseudo-class for the placeholder, but that can be overridden by inline style changes.  A pseudo-element
+        is more appropriate.  This change adds "-webkit-input-placeholder".
+
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType):
+        Added definition for "-webkit-input-placeholder" pseudo element.
+        * css/CSSSelector.h: (WebCore::CSSSelector::): Added PseudoInputPlaceholder.
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        Added case for PseudoInputPlaceholder.
+        * css/html4.css: Added rule for -webkit-input-placeholder pseudo-element.
+        * rendering/style/RenderStyle.h: (WebCore::RenderStyle::): Added INPUT_PLACEHOLDER.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): Check that its a text field before calling updatePlaceholderVisibility.
+        (WebCore::HTMLInputElement::setValueFromRenderer): ditto.
+        (WebCore::HTMLInputElement::updatePlaceholderVisibility): Instead of calling setChanged(), call updatePlaceholderVisibility on the renderer.
+        setChanged wouldn't actually trigger setStyle since the style for the input element won't actually change.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle): Get the pseudoStyle when the placeholder is visible.
+        (WebCore::RenderTextControl::updatePlaceholderVisibility): Sets the style on the inner text block, and calls updateFromElement so
+        the text will be updated correctly.
+        * rendering/RenderTextControl.h:
+
 2008-10-02  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

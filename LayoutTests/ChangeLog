@@ -1,3 +1,16 @@
+2008-10-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update tests for https://bugs.webkit.org/show_bug.cgi?id=21299
+        REGRESSION: <input> color specified in inline style applies to placeholder
+
+        * fast/forms/placeholder-pseudo-style.html:
+        * platform/mac/fast/forms/password-placeholder-expected.txt:
+        * platform/mac/fast/forms/password-placeholder-text-security-expected.txt:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/placeholder-set-attribute-expected.txt:
+
 2008-10-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
