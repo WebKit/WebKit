@@ -328,7 +328,7 @@ double RenderSlider::setPositionFromValue(bool inLayout)
 
     setCurrentPosition((int)(factor * trackSize()));
     
-    if (val != oldVal)
+    if (value.isNull() || val != oldVal)
         static_cast<HTMLInputElement*>(node())->setValueFromRenderer(String::number(val));
     
     return val;

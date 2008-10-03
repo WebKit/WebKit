@@ -1,3 +1,17 @@
+2008-10-03  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20134
+        REGRESSION (2.0.4-3.0.4): No default value set for <input type=range> with an even difference of (max - min)
+
+        Make sure the input element gets the right default value when no value is set.
+
+        Test: fast/forms/range-default-value.html
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setPositionFromValue):
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Instead of a cross-platform init/destroy that forces every ScrollView platform to have a constructor/
