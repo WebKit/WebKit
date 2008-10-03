@@ -22,7 +22,6 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include <gdk/gdk.h>
 
 #include <webkit/webkitdefines.h>
 

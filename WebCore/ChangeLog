@@ -1,5 +1,13 @@
 2008-10-03  Alp Toker  <alp@nuanti.com>
 
+        Remove some left-over GTK+ includes. No change in functionality.
+
+        * platform/Cursor.h:
+        * platform/graphics/Icon.h:
+        * platform/gtk/RenderThemeGtk.h:
+
+2008-10-03  Alp Toker  <alp@nuanti.com>
+
         Build fix for trailing comment after #endif
 
         * dom/ElementRareData.h:
