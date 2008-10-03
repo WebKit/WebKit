@@ -1,3 +1,14 @@
+2008-10-03  Darin Adler  <darin@apple.com>
+
+        Suggested by Alexey Proskuryakov.
+
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData): Remove call to heap.destroy() because
+        it's too late to ref the JSGlobalData object once it's already being
+        destroyed. In practice this is not a problem because WebCore's JSGlobalData
+        is never destroyed and JSGlobalContextRelease takes care of calling
+        heap.destroy() in advance.
+
 2008-10-02  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

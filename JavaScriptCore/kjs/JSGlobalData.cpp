@@ -94,7 +94,8 @@ JSGlobalData::JSGlobalData(bool isShared)
 
 JSGlobalData::~JSGlobalData()
 {
-    heap.destroy();
+    // By the time this is destroyed, heap.destroy() must already have been called.
+
     delete machine;
 #ifndef NDEBUG
     // Zeroing out to make the behavior more predictable when someone attempts to use a deleted instance.
