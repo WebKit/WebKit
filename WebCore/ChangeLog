@@ -1,3 +1,13 @@
+2008-10-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6012018> 
+        https://bugs.webkit.org/show_bug.cgi?id=21335
+        CrashTracer: [USER] 4959 crashes in Safari at com.apple.WebCore: WebCore::Frame::settings const + 8
+
+        * css/CSSFontSelector.cpp: (WebCore::fontDataForGenericFamily): Return early if the frame is nil.
+
 2008-10-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Build fix.
