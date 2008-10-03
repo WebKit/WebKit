@@ -1,3 +1,21 @@
+2008-10-03  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21106: .in format discussed changes
+        https://bugs.webkit.org/show_bug.cgi?id=21106
+
+        Change "upperCase" to "interfaceName" per-tag parameter as
+        discussed on the mailing list. Removed the per-attribute version
+        as it was not used.
+
+        Also add the "Element" suffix to all interfaceName parameter to match
+        the class name (and thus remove it from make_names.pl).
+
+        * dom/make_names.pl:
+        * html/HTMLTagNames.in:
+        * svg/svgtags.in:
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Preserve Qt's disabling of blitting when any native widgets are present anywhere on the page (ick).
