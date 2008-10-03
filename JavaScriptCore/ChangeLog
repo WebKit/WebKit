@@ -1,3 +1,11 @@
+2008-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Cameron Zwarich.
+        
+        - fix mistaken change of | to || which caused a big perf regression on EarleyBoyer
+
+        * kjs/grammar.y:
+
 2008-10-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
