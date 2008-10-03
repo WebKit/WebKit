@@ -91,21 +91,25 @@ public:
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
     // grabbing all events in that case anyway.
-    virtual bool handleMouseMoveEvent(const PlatformMouseEvent&);
-    virtual bool handleMouseOutEvent(const PlatformMouseEvent&);
+    bool mouseMoved(const PlatformMouseEvent&);
+    bool mouseExited();
     
     // Used by some platform scrollbars to know when they've been released from capture.
-    virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
+    bool mouseUp();
 
-    virtual bool handleMousePressEvent(const PlatformMouseEvent&);
+    bool mouseDown(const PlatformMouseEvent&);
 
 #if PLATFORM(QT)
     // For platforms that wish to handle context menu events.
     // FIXME: This is misplaced.  Normal hit testing should be used to populate a correct
     // context menu.  There's no reason why the scrollbar should have to do it.
-    virtual bool handleContextMenuEvent(const PlatformMouseEvent& event);
+    bool contextMenu(const PlatformMouseEvent& event);
 #endif
 
+    // Takes an event and accounts for any transforms that might occur on the scrollbar.  Returns
+    // a new event that has had all of the transforms applied.
+    PlatformMouseEvent transformEvent(const PlatformMouseEvent&);
+    
     ScrollbarTheme* theme() const { return m_theme; }
 
     virtual void setParent(ScrollView*);

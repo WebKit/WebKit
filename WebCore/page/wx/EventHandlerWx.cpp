@@ -58,11 +58,6 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
     return passSubframeEventToSubframe(mev, subframe);
 }
 
-bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mouseEvent, Scrollbar* scrollbar)
-{
-    return passMouseDownEventToWidget(scrollbar);
-}
-
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.

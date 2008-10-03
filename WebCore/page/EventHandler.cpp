@@ -1119,7 +1119,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
         swallowClickEvent = dispatchMouseEvent(clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     if (m_lastScrollbarUnderMouse)
-        swallowMouseUpEvent = m_lastScrollbarUnderMouse->handleMouseReleaseEvent(mouseEvent);
+        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp();
             
     bool swallowMouseReleaseEvent = false;
     if (!swallowMouseUpEvent)
@@ -1173,7 +1173,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 
     // Send events right to a scrollbar if the mouse is pressed.
     if (m_lastScrollbarUnderMouse && m_mousePressed)
-        return m_lastScrollbarUnderMouse->handleMouseMoveEvent(mouseEvent);
+        return m_lastScrollbarUnderMouse->mouseMoved(m_lastScrollbarUnderMouse->transformEvent(mouseEvent));
 
     // Treat mouse move events while the mouse is pressed as "read-only" in prepareMouseEvent
     // if we are allowed to select.
@@ -1198,7 +1198,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         if (m_lastScrollbarUnderMouse != scrollbar) {
             // Send mouse exited to the old scrollbar.
             if (m_lastScrollbarUnderMouse)
-                m_lastScrollbarUnderMouse->handleMouseOutEvent(mouseEvent);
+                m_lastScrollbarUnderMouse->mouseExited();
             m_lastScrollbarUnderMouse = m_mousePressed ? 0 : scrollbar;
         }
     }
@@ -1220,7 +1220,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
             swallowEvent |= passMouseMoveEventToSubframe(mev, newSubframe.get(), hoveredNode);
     } else {
         if (scrollbar && !m_mousePressed)
-            scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
+            scrollbar->mouseMoved(scrollbar->transformEvent(mouseEvent)); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && !m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() && m_frame->view())
             m_frame->view()->setCursor(selectCursor(mev, scrollbar));
     }
@@ -1266,7 +1266,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();
-        return m_lastScrollbarUnderMouse->handleMouseReleaseEvent(mouseEvent);
+        return m_lastScrollbarUnderMouse->mouseUp();
     }
 
     MouseEventWithHitTestResults mev = prepareMouseEvent(HitTestRequest(false, false, false, true), mouseEvent);
@@ -2157,4 +2157,12 @@ void EventHandler::removePendingFrameBeforeUnloadEventCount()
     m_pendingFrameBeforeUnloadEventCount = 0;
     return; 
 }
+
+bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, Scrollbar* scrollbar)
+{
+    if (!scrollbar || !scrollbar->enabled())
+        return false;
+    return scrollbar->mouseDown(mev.event());
+}
+
 }

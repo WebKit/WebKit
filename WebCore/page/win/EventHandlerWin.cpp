@@ -77,13 +77,6 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& wheelEvent, Widget
     return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(wheelEvent);
 }
 
-bool EventHandler::passMousePressEventToScrollbar(MouseEventWithHitTestResults& mev, Scrollbar* scrollbar)
-{
-    if (!scrollbar || !scrollbar->enabled())
-        return false;
-    return scrollbar->handleMousePressEvent(mev.event());
-}
-
 bool EventHandler::tabsToAllControls(KeyboardEvent*) const
 {
     return true;

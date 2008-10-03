@@ -46,7 +46,7 @@ using namespace std;
 
 namespace WebCore {
 
-bool Scrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
+bool Scrollbar::contextMenu(const PlatformMouseEvent& event)
 {
 #ifndef QT_NO_CONTEXTMENU
     bool horizontal = (m_orientation == HorizontalScrollbar);

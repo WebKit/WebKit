@@ -1,5 +1,33 @@
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
+        Preparation for enabling scrollbars to hit test properly inside transforms.  Clean up the scrollbar
+        event handlers to no longer be virtual.  Don't pass a mouse event where none is needed.  Add a new
+        method on Scrollbars called transformEvent that will apply all of the transforms to make a new event
+        that will work properly for hit testing.  This patch just stubs out that method to return the same
+        event untransformed.
+
+        Reviewed by Darin Adler
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * page/gtk/EventHandlerGtk.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * page/qt/EventHandlerQt.cpp:
+        * page/win/EventHandlerWin.cpp:
+        * page/wx/EventHandlerWx.cpp:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::mouseExited):
+        (WebCore::Scrollbar::mouseUp):
+        (WebCore::Scrollbar::mouseDown):
+        (WebCore::Scrollbar::transformEvent):
+        * platform/Scrollbar.h:
+
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21340
         
         Remove "containingWindow()/setContainingWindow()" from Widget.  HostWindow covers this now.
