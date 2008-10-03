@@ -1,5 +1,11 @@
 2008-10-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Build fix. Remove addToDirtyRegion from the header file.
+
+        * WebCoreSupport/ChromeClientQt.h:
+
+2008-10-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Build fix.
 
         * WebCoreSupport/ChromeClientQt.cpp:
