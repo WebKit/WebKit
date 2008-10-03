@@ -1,5 +1,11 @@
 2008-10-03  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * kjs/ScopeChain.h: Add forward declaration of JSGlobalData.
+
+2008-10-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen.
 
         - next step of https://bugs.webkit.org/show_bug.cgi?id=21295
