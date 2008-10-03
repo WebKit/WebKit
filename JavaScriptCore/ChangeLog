@@ -1,3 +1,17 @@
+2008-10-03  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 21343: REGRESSSION (r37160): ecma_3/ExecutionContexts/10.1.3-1.js and js1_4/Functions/function-001.js fail on 64-bit
+        <https://bugs.webkit.org/show_bug.cgi?id=21343>
+
+        Add a workaround for a bug in GCC, which affects GCC 4.0, GCC 4.2, and
+        llvm-gcc 4.2. I put it in an #ifdef because it was a slight regression
+        on SunSpider in 32-bit, although that might be entirely random.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+
 2008-10-03  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Alexey Proskuryakov.

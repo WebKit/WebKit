@@ -110,9 +110,16 @@ void Arguments::fillArgList(ExecState* exec, ArgList& args)
 bool Arguments::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
     if (i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
-        if (i < d->numParameters)
+        if (i < d->numParameters) {
+#if COMPILER(GCC) && PLATFORM(X86_64)
+            // The subscript variable is a workaround for a 64-bit code
+            // generation bug in GCC.
+            int subscript = d->firstParameterIndex + i;
+            slot.setRegisterSlot(&d->registers[subscript]);
+#else
             slot.setRegisterSlot(&d->registers[d->firstParameterIndex + i]);
-        else
+#endif
+        } else
             slot.setValue(d->extraArguments[i - d->numParameters].jsValue(exec));
         return true;
     }
@@ -125,9 +132,16 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
     if (isArrayIndex && i < d->numArguments && (!d->deletedArguments || !d->deletedArguments[i])) {
-        if (i < d->numParameters)
+        if (i < d->numParameters) {
+#if COMPILER(GCC) && PLATFORM(X86_64)
+            // The subscript variable is a workaround for a 64-bit code
+            // generation bug in GCC.
+            int subscript = d->firstParameterIndex + i;
+            slot.setRegisterSlot(&d->registers[subscript]);
+#else
             slot.setRegisterSlot(&d->registers[d->firstParameterIndex + i]);
-        else
+#endif
+        } else
             slot.setValue(d->extraArguments[i - d->numParameters].jsValue(exec));
         return true;
     }
