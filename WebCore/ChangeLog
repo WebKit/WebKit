@@ -1,5 +1,10 @@
 2008-10-03  Darin Adler  <darin@apple.com>
 
+        * bindings/js/JSInspectedObjectWrapper.cpp: Try to fix a build failure
+        seen on some machines but not others by adding an include.
+
+2008-10-03  Darin Adler  <darin@apple.com>
+
         - Qt build fix
 
         * bridge/qt/qt_runtime.cpp: Remove long-obsolete codeType and
