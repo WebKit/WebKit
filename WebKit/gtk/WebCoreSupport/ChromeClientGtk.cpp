@@ -259,9 +259,8 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void ChromeClient::repaint(const IntRect& windowRect, bool, bool immediate, bool)
 {
-    // Since we have no backing store, we do nothing if repaintContentOnly is set.
     if (!m_webView)
         return;
 
@@ -269,10 +268,9 @@ void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool 
     GdkWindow* window = GTK_WIDGET(m_webView)->window;
 
     if (window) {
-        // No double buffer.
-        if (contentChanged)
-            gdk_window_invalidate_rect(window, &rect, true);
-        if (immediate && !repaintContentOnly)
+        // No double buffer.  Just always assume we need to invalidate.
+        gdk_window_invalidate_rect(window, &rect, true);
+        if (immediate)
             gdk_window_process_updates(window, true);
     }
 }
