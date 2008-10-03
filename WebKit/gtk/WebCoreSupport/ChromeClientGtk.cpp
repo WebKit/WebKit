@@ -292,7 +292,7 @@ IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
     return point;
 }
 
-PlatformWidget WebChromeClient::platformWindow() const
+PlatformWidget ChromeClient::platformWindow() const
 {
     return m_webView ? GTK_WIDGET(m_webView) : 0;
 }
