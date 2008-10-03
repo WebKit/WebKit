@@ -1,3 +1,16 @@
+2008-10-02  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Replace SSE3 check with an SSE2 check, and implement SSE2 check on windows.
+
+        5.6% win on SunSpider on windows.
+
+        * VM/CTI.cpp:
+        (JSC::isSSE2Present):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+
 2008-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Cameron Zwarich.
