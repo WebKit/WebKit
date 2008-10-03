@@ -1,3 +1,19 @@
+2008-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyat
+        
+        Clean up code that changes the RenderStyle passed in to
+        table renderer setStyle() methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21287
+
+        * fast/table/floating-th.html: Added.
+        * fast/table/table-display-types-strict.html: Added.
+        * fast/table/table-display-types.html: Added.
+        * platform/mac/fast/table/floating-th-expected.txt: Added.
+        * platform/mac/fast/table/table-display-types-expected.txt: Added.
+        * platform/mac/fast/table/table-display-types-strict-expected.txt: Added.
+
 2008-10-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
