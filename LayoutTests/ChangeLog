@@ -1,5 +1,18 @@
 2008-10-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Darin Adler
+
+        Testcase for "white-space: -webkit-nowrap" only being converted to
+        "white-space: nowrap" on <td> and <th> now, not any element with a table-cell
+        dispay type.
+        
+        See https://bugs.webkit.org/show_bug.cgi?id=21287#c3
+
+        * fast/table/td-display-nowrap-expected.txt: Added.
+        * fast/table/td-display-nowrap.html: Added.
+
+2008-10-03  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyat
         
         Clean up code that changes the RenderStyle passed in to
