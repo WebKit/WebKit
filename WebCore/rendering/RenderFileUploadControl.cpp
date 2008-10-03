@@ -73,12 +73,6 @@ RenderFileUploadControl::~RenderFileUploadControl()
 
 void RenderFileUploadControl::setStyle(RenderStyle* newStyle)
 {
-    // Force text-align to match the direction
-    if (newStyle->direction() == LTR)
-        newStyle->setTextAlign(LEFT);
-    else
-        newStyle->setTextAlign(RIGHT);
-
     RenderBlock::setStyle(newStyle);
     if (m_button)
         m_button->renderer()->setStyle(createButtonStyle(newStyle));

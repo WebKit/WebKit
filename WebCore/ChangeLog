@@ -2,6 +2,25 @@
 
         Reviewed by Dave Hyatt
 
+        Fix RenderFileUploadControl::setStyle() and 
+        RenderMenuList::setStyle() to not touch the style; replace
+        with html4.css and CSSStyleSelector changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21287
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * css/html4.css:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setStyle):
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::setStyle):
+
+2008-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         Clean up code that changes the RenderStyle passed in to
         table renderer setStyle() methods.
         

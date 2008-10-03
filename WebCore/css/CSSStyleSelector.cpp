@@ -1464,6 +1464,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
             style->setOverflowY(OVISIBLE);
     }
 
+    // Menulists should have visible overflow
+    if (style->appearance() == MenulistAppearance) {
+        style->setOverflowX(OVISIBLE);
+        style->setOverflowY(OVISIBLE);
+    }
+
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
     style->adjustMaskLayers();

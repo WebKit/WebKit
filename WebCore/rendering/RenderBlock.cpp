@@ -146,11 +146,11 @@ RenderBlock::~RenderBlock()
     }
 }
 
-void RenderBlock::setStyle(RenderStyle* _style)
+void RenderBlock::setStyle(RenderStyle* newStyle)
 {
-    setReplaced(_style->isDisplayReplacedType());
+    setReplaced(newStyle->isDisplayReplacedType());
 
-    RenderFlow::setStyle(_style);
+    RenderFlow::setStyle(newStyle);
 
     // FIXME: We could save this call when the change only affected non-inherited properties
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {

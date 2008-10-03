@@ -378,6 +378,7 @@ input[type="hidden"], input[type="image"], input[type="file"] {
 
 input[type="file"] {
     -webkit-box-align: baseline;
+    text-align: start !important;
 }
 
 input:-webkit-autofill {

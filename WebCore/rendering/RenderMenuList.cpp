@@ -122,8 +122,8 @@ void RenderMenuList::setStyle(RenderStyle* newStyle)
     bool fontChanged = !style() || style()->font() != newStyle->font();
     
     // Don't allow overflow on menu lists.
-    newStyle->setOverflowX(OVISIBLE);
-    newStyle->setOverflowY(OVISIBLE);
+    ASSERT(newStyle->overflowX() == OVISIBLE);
+    ASSERT(newStyle->overflowY() == OVISIBLE);
     
     RenderBlock::setStyle(newStyle);
 
