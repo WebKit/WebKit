@@ -300,7 +300,7 @@ IntPoint ChromeClientWx::screenToWindow(const IntPoint& point) const
     return point;
 }
 
-PlatformWidget WebChromeClient::platformWindow() const
+PlatformWidget ChromeClientWx::platformWindow() const
 {
     return 0;
 }
