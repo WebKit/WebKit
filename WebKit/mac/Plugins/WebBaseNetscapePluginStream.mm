@@ -472,7 +472,10 @@ void WebNetscapePluginStream::destroyStream()
 
         if (m_newStreamSuccessful) {
             [m_pluginView.get() willCallPlugInFunction];
-            NPError npErr = m_pluginFuncs->destroystream(m_plugin, &m_stream, m_reason);
+#if !LOG_DISABLED
+            NPError npErr = 
+#endif
+            m_pluginFuncs->destroystream(m_plugin, &m_stream, m_reason);
             [m_pluginView.get() didCallPlugInFunction];
             LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", m_responseURL.get(), npErr);
         }

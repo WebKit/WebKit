@@ -1,3 +1,11 @@
+2008-10-03  John Sullivan  <sullivan@apple.com>
+
+        Fixed Release build
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::destroyStream):
+        added !LOG_DISABLED guard around declaration of npErr used only in LOG
+
 2008-10-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.
