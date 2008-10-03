@@ -60,6 +60,8 @@ public:
     
     // FIXME: These should all be private once WebBaseNetscapePluginStream is history...
 public:
+    void destroyStream();
+    
     RetainPtr<NSMutableData> m_deliveryData;
     RetainPtr<NSURL> m_requestURL;
     RetainPtr<NSURL> m_responseURL;

@@ -1,6 +1,18 @@
 2008-10-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.
+        
+        Convert destroyStream over to C++.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::destroyStream):
+        (-[WebBaseNetscapePluginStream _destroyStreamWithReason:]):
+        (-[WebBaseNetscapePluginStream _deliverData]):
+
+2008-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
 
         Use a Timer instead of -[NSObject performSelector:withObject:afterDelay];
         
