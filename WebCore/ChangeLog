@@ -1,3 +1,10 @@
+2008-10-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSFontSelector.cpp: (WebCore::fontDataForGenericFamily):
+        Return early if settings is nil.
+
 2008-10-03  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

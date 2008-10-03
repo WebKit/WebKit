@@ -379,6 +379,9 @@ static FontData* fontDataForGenericFamily(Document* document, const FontDescript
         return 0;
 
     const Settings* settings = document->frame()->settings();
+    if (!settings)
+        return 0;
+    
     AtomicString genericFamily;
     if (familyName == "-webkit-serif")
         genericFamily = settings->serifFontFamily();
