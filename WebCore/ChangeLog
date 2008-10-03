@@ -1,3 +1,60 @@
+2008-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Make setStyle() take a const RenderStyle, to ensure that an
+        earlier RenderStyle::diff() remains valid.
+
+        * rendering/RenderBR.cpp:
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderButton.cpp:
+        * rendering/RenderButton.h:
+        * rendering/RenderFieldset.cpp:
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::setStyle):
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGGradientStop.cpp:
+        * rendering/RenderSVGGradientStop.h:
+        * rendering/RenderSlider.cpp:
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderWidget.cpp:
+        * rendering/RenderWidget.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isDisplayReplacedType):
+        (WebCore::RenderStyle::isDisplayInlineType):
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Preparation for enabling scrollbars to hit test properly inside transforms.  Clean up the scrollbar

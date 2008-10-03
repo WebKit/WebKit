@@ -64,7 +64,7 @@ public:
     virtual void calcPrefWidths();
     virtual void calcWidth();
     virtual void setWidth(int);
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
 
     virtual bool expandsToEncloseOverhangingFloats() const { return true; }
 

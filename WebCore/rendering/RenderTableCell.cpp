@@ -220,7 +220,7 @@ int RenderTableCell::baselinePosition(bool /*firstLine*/, bool /*isRootLineBox*/
     return paddingTop() + borderTop() + contentHeight();
 }
 
-void RenderTableCell::setStyle(RenderStyle* newStyle)
+void RenderTableCell::setStyle(const RenderStyle* newStyle)
 {
     if (parent() && section() && style() && style()->height() != newStyle->height())
         section()->setNeedsCellRecalc();

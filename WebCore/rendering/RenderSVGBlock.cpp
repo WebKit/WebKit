@@ -35,17 +35,18 @@ RenderSVGBlock::RenderSVGBlock(SVGElement* node)
 {
 }
 
-void RenderSVGBlock::setStyle(RenderStyle* style) 
+void RenderSVGBlock::setStyle(const RenderStyle* style) 
 {
-    RenderStyle* useStyle = style;
+    const RenderStyle* useStyle = style;
 
     // SVG text layout code expects us to be a block-level style element.   
     if (useStyle->display() == NONE)
         setChildrenInline(false);
     else if (useStyle->isDisplayInlineType()) {
-        useStyle = new (renderArena()) RenderStyle();
-        useStyle->inheritFrom(style);
-        useStyle->setDisplay(BLOCK);
+        RenderStyle* newStyle = new (renderArena()) RenderStyle();
+        newStyle->inheritFrom(style);
+        newStyle->setDisplay(BLOCK);
+        useStyle = newStyle;
     }
 
     RenderBlock::setStyle(useStyle);

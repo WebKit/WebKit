@@ -108,7 +108,7 @@ RenderTextControl::~RenderTextControl()
         m_innerText->detach();
 }
 
-void RenderTextControl::setStyle(RenderStyle* style)
+void RenderTextControl::setStyle(const RenderStyle* style)
 {
     RenderBlock::setStyle(style);
     if (m_innerBlock) {
@@ -142,7 +142,7 @@ void RenderTextControl::setStyle(RenderStyle* style)
     setReplaced(isInline());
 }
 
-RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
+RenderStyle* RenderTextControl::createInnerBlockStyle(const RenderStyle* startStyle)
 {
     RenderStyle* innerBlockStyle = new (renderArena()) RenderStyle();
 
@@ -155,7 +155,7 @@ RenderStyle* RenderTextControl::createInnerBlockStyle(RenderStyle* startStyle)
     return innerBlockStyle;
 }
 
-RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
+RenderStyle* RenderTextControl::createInnerTextStyle(const RenderStyle* startStyle)
 {
     HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
     bool placeholderShouldBeVisible = !m_multiLine && static_cast<HTMLInputElement*>(element)->placeholderShouldBeVisible();
@@ -225,7 +225,7 @@ RenderStyle* RenderTextControl::createInnerTextStyle(RenderStyle* startStyle)
     return textBlockStyle;
 }
 
-RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle)
+RenderStyle* RenderTextControl::createResultsButtonStyle(const RenderStyle* startStyle)
 {
     ASSERT(!m_multiLine);
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
@@ -246,7 +246,7 @@ RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle
     return resultsBlockStyle;
 }
 
-RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
+RenderStyle* RenderTextControl::createCancelButtonStyle(const RenderStyle* startStyle)
 {
     RenderStyle* cancelBlockStyle;
     

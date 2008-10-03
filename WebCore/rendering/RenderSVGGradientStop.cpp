@@ -42,7 +42,7 @@ RenderSVGGradientStop::~RenderSVGGradientStop()
 {
 }
 
-void RenderSVGGradientStop::setStyle(RenderStyle* style)
+void RenderSVGGradientStop::setStyle(const RenderStyle* style)
 {
     RenderObject::setStyle(style);
 

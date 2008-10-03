@@ -117,7 +117,7 @@ void RenderMenuList::removeChild(RenderObject* oldChild)
         m_innerBlock->removeChild(oldChild);
 }
 
-void RenderMenuList::setStyle(RenderStyle* newStyle)
+void RenderMenuList::setStyle(const RenderStyle* newStyle)
 {
     bool fontChanged = !style() || style()->font() != newStyle->font();
     

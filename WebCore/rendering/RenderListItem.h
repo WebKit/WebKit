@@ -39,7 +39,7 @@ public:
     
     virtual void destroy();
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
 
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
     void updateValue();

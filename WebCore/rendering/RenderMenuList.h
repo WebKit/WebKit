@@ -51,7 +51,7 @@ public:
     virtual bool createsAnonymousWrapper() const { return true; }
     virtual bool canHaveChildren() const { return false; }
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
     virtual void updateFromElement();
 
     virtual bool hasControlClip() const { return true; }

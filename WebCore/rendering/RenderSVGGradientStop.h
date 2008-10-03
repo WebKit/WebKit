@@ -40,7 +40,7 @@ namespace WebCore {
         virtual const char* renderName() const { return "RenderSVGGradientStop"; }
         
         virtual void layout();
-        virtual void setStyle(RenderStyle*);
+        virtual void setStyle(const RenderStyle*);
         
     private:
         SVGGradientElement* gradientElement() const;

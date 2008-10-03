@@ -61,7 +61,7 @@ RenderReplaced::~RenderReplaced()
         gOverflowRectMap->remove(this);
 }
 
-void RenderReplaced::setStyle(RenderStyle* newStyle)
+void RenderReplaced::setStyle(const RenderStyle* newStyle)
 {
     bool hadStyle = style();
     float oldZoom = hadStyle ? style()->effectiveZoom() : RenderStyle::initialZoom();

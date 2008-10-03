@@ -47,7 +47,7 @@ public:
 
     virtual bool isListBox() const { return true; }
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
     virtual void updateFromElement();
 
     virtual bool canHaveChildren() const { return false; }

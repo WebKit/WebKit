@@ -41,7 +41,7 @@ RenderInline::~RenderInline()
 {
 }
 
-void RenderInline::setStyle(RenderStyle* newStyle)
+void RenderInline::setStyle(const RenderStyle* newStyle)
 {
     RenderFlow::setStyle(newStyle);
     setInline(true);

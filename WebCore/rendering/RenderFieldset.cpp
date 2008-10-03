@@ -260,7 +260,7 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
     }
 }
 
-void RenderFieldset::setStyle(RenderStyle* newStyle)
+void RenderFieldset::setStyle(const RenderStyle* newStyle)
 {
     RenderBlock::setStyle(newStyle);
 

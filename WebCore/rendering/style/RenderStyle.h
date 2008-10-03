@@ -437,8 +437,8 @@ public:
     EClear clear() const { return static_cast<EClear>(noninherited_flags._clear); }
     ETableLayout tableLayout() const { return static_cast<ETableLayout>(noninherited_flags._table_layout); }
 
-    const Font& font() { return inherited->font; }
-    const FontDescription& fontDescription() { return inherited->font.fontDescription(); }
+    const Font& font() const { return inherited->font; }
+    const FontDescription& fontDescription() const { return inherited->font.fontDescription(); }
     int fontSize() const { return inherited->font.pixelSize(); }
 
     const Color& color() const { return inherited->color; }
@@ -857,7 +857,7 @@ public:
     bool htmlHacks() const { return inherited_flags._htmlHacks; }
     void setHtmlHacks(bool b=true) { inherited_flags._htmlHacks = b; }
 
-    bool hasAutoZIndex() { return box->z_auto; }
+    bool hasAutoZIndex() const { return box->z_auto; }
     void setHasAutoZIndex() { SET_VAR(box, z_auto, true); SET_VAR(box, z_index, 0) }
     int zIndex() const { return box->z_index; }
     void setZIndex(int v) { SET_VAR(box, z_auto, false); SET_VAR(box, z_index, v) }
@@ -975,17 +975,17 @@ public:
     enum Diff { Equal, Repaint, RepaintLayer, LayoutPositionedMovementOnly, Layout };
     Diff diff(const RenderStyle*) const;
 
-    bool isDisplayReplacedType()
+    bool isDisplayReplacedType() const
     {
         return display() == INLINE_BLOCK || display() == INLINE_BOX || display() == INLINE_TABLE;
     }
 
-    bool isDisplayInlineType()
+    bool isDisplayInlineType() const
     {
         return display() == INLINE || isDisplayReplacedType();
     }
 
-    bool isOriginalDisplayInlineType()
+    bool isOriginalDisplayInlineType() const
     {
         return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK ||
                originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;

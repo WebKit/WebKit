@@ -485,7 +485,7 @@ RenderListMarker::~RenderListMarker()
         m_image->removeClient(this);
 }
 
-void RenderListMarker::setStyle(RenderStyle* s)
+void RenderListMarker::setStyle(const RenderStyle* s)
 {
     if (style() && (s->listStylePosition() != style()->listStylePosition() || s->listStyleType() != style()->listStyleType()))
         setNeedsLayoutAndPrefWidthsRecalc();

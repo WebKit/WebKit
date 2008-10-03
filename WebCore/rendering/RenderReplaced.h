@@ -42,7 +42,7 @@ public:
     virtual void layout();
     virtual int minimumReplacedHeight() const { return 0; }
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintReplaced(PaintInfo&, int tx, int ty) { }

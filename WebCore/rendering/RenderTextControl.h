@@ -47,7 +47,7 @@ public:
     virtual void calcHeight();
     virtual void calcPrefWidths();
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
     virtual void updateFromElement();
     virtual bool canHaveChildren() const { return false; }
     virtual int baselinePosition(bool firstLine, bool isRootLineBox) const;
@@ -130,10 +130,10 @@ private:
     virtual bool valueShouldChangeOnHotTrack() const { return false; }
     virtual FontSelector* fontSelector() const;
 
-    RenderStyle* createInnerBlockStyle(RenderStyle* startStyle);
-    RenderStyle* createInnerTextStyle(RenderStyle* startStyle);
-    RenderStyle* createCancelButtonStyle(RenderStyle* startStyle);
-    RenderStyle* createResultsButtonStyle(RenderStyle* startStyle);
+    RenderStyle* createInnerBlockStyle(const RenderStyle* startStyle);
+    RenderStyle* createInnerTextStyle(const RenderStyle* startStyle);
+    RenderStyle* createCancelButtonStyle(const RenderStyle* startStyle);
+    RenderStyle* createResultsButtonStyle(const RenderStyle* startStyle);
 
     void createSubtreeIfNeeded();
     void updateCancelButtonVisibility(RenderStyle*);

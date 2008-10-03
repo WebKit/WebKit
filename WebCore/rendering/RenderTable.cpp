@@ -70,7 +70,7 @@ RenderTable::~RenderTable()
     delete m_tableLayout;
 }
 
-void RenderTable::setStyle(RenderStyle* newStyle)
+void RenderTable::setStyle(const RenderStyle* newStyle)
 {
     ETableLayout oldTableLayout = style() ? style()->tableLayout() : TAUTO;
     RenderBlock::setStyle(newStyle);

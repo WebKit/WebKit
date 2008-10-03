@@ -41,7 +41,7 @@ public:
 
     virtual RenderObject* layoutLegend(bool relayoutChildren);
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
 
     virtual void calcPrefWidths();
     virtual bool avoidsFloats() const { return true; }

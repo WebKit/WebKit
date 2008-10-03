@@ -50,7 +50,7 @@ public:
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                    RenderObject* newChild, RenderFlow* oldCont);
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
 
     virtual void layout() { } // Do nothing for layout()
 

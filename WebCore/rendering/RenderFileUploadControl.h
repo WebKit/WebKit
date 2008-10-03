@@ -39,7 +39,7 @@ public:
 
     virtual const char* renderName() const { return "RenderFileUploadControl"; }
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
     virtual void updateFromElement();
     virtual void calcPrefWidths();
     virtual void paintObject(PaintInfo&, int tx, int ty);
@@ -55,7 +55,7 @@ public:
     
 private:
     int maxFilenameWidth() const;
-    RenderStyle* createButtonStyle(RenderStyle* parentStyle) const;
+    RenderStyle* createButtonStyle(const RenderStyle* parentStyle) const;
 
     RefPtr<HTMLInputElement> m_button;
     RefPtr<FileChooser> m_fileChooser;

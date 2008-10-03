@@ -44,7 +44,7 @@ public:
 
     virtual PassRefPtr<StringImpl> originalText() const;
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
 
     void extractTextBox(InlineTextBox*);
     void attachTextBox(InlineTextBox*);

@@ -71,7 +71,7 @@ RenderFileUploadControl::~RenderFileUploadControl()
     m_fileChooser->disconnectClient();
 }
 
-void RenderFileUploadControl::setStyle(RenderStyle* newStyle)
+void RenderFileUploadControl::setStyle(const RenderStyle* newStyle)
 {
     RenderBlock::setStyle(newStyle);
     if (m_button)
@@ -134,7 +134,7 @@ int RenderFileUploadControl::maxFilenameWidth() const
         - (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 
-RenderStyle* RenderFileUploadControl::createButtonStyle(RenderStyle* parentStyle) const
+RenderStyle* RenderFileUploadControl::createButtonStyle(const RenderStyle* parentStyle) const
 {
     RenderStyle* style = getPseudoStyle(RenderStyle::FILE_UPLOAD_BUTTON);
     if (!style) {

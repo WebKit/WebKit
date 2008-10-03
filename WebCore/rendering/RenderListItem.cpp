@@ -48,7 +48,7 @@ RenderListItem::RenderListItem(Node* node)
     setInline(false);
 }
 
-void RenderListItem::setStyle(RenderStyle* newStyle)
+void RenderListItem::setStyle(const RenderStyle* newStyle)
 {
     RenderBlock::setStyle(newStyle);
 

@@ -64,7 +64,7 @@ void RenderButton::removeChild(RenderObject* oldChild)
         m_inner->removeChild(oldChild);
 }
 
-void RenderButton::setStyle(RenderStyle* style)
+void RenderButton::setStyle(const RenderStyle* style)
 {
     if (m_inner) {
         // RenderBlock::setStyle is going to apply a new style to the inner block, which

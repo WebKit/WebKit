@@ -45,7 +45,7 @@ public:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool createsAnonymousWrapper() const { return true; }
 
-    virtual void setStyle(RenderStyle*);
+    virtual void setStyle(const RenderStyle*);
     virtual void updateFromElement();
 
     virtual void updateBeforeAfterContent(RenderStyle::PseudoId);
