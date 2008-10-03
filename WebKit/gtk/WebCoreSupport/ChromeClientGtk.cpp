@@ -261,7 +261,7 @@ IntRect ChromeClient::windowResizerRect() const
 
 void ChromeClient::repaint(const IntRect& windowRect, bool, bool immediate, bool)
 {
-    if (!m_webView)
+    if (!m_webView || repaintContentOnly)
         return;
 
     GdkRectangle rect = windowRect;
