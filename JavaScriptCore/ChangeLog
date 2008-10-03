@@ -1,5 +1,12 @@
 2008-10-03  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Alexey Proskuryakov.
+
+        * kjs/Shell.cpp: (main): Don't delete JSGlobalData. Later, we need to change
+        this tool to use public JavaScriptCore API instead.
+
+2008-10-03  Darin Adler  <darin@apple.com>
+
         Suggested by Alexey Proskuryakov.
 
         * kjs/JSGlobalData.cpp:

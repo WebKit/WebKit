@@ -22,29 +22,16 @@
 
 #include "config.h"
 
-#include "ObjectPrototype.h"
-#include "ObjectConstructor.h"
-
 #include "CodeGenerator.h"
 #include "InitializeThreading.h"
 #include "JSArray.h"
-#include "JSFunction.h"
-#include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "JSObject.h"
-#include "Parser.h"
 #include "PrototypeFunction.h"
-#include "SamplingTool.h"
-#include "collector.h"
 #include "completion.h"
 #include "interpreter.h"
-#include "nodes.h"
-#include "protect.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <wtf/Assertions.h>
-#include <wtf/HashTraits.h>
 
 #if !PLATFORM(WIN_OS)
 #include <unistd.h>
@@ -308,9 +295,7 @@ int main(int argc, char** argv)
 
     int res = 0;
     TRY
-        JSGlobalData* globalData = JSGlobalData::create().releaseRef();
-        res = jscmain(argc, argv, globalData);
-        delete globalData;
+        res = jscmain(argc, argv, JSGlobalData::create().releaseRef());
     EXCEPT(res = 3)
     return res;
 }
