@@ -314,18 +314,13 @@ void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, boo
     // is set.
 }
 
-void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect& clipRect)
+void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect&)
 {
-    notImplemented();
-
-    // FIXME: implement this using Qt backing store
-#if 0
     QWidget* view = m_webPage->view();
     if (view)
-        view->scroll(delta.x(), delta.y(), scrollViewRect);
+        view->scroll(delta.width(), delta.height(), scrollViewRect);
     else
-        emit m_webPage->scrollRequested(delta.x(), delta.y(), scrollViewRect);
-#endif
+        emit m_webPage->scrollRequested(delta.width(), delta.height(), scrollViewRect);
 }
 
 IntRect ChromeClientQt::windowToScreen(const IntRect& rect) const
