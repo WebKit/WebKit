@@ -262,7 +262,7 @@ IntRect ChromeClient::windowResizerRect() const
 void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
     // Since we have no backing store, we do nothing if repaintContentOnly is set.
-    if (!m_webView || repaintContentOnly)
+    if (!m_webView)
         return;
 
     GdkRectangle rect = windowRect;
@@ -272,7 +272,7 @@ void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool 
         // No double buffer.
         if (contentChanged)
             gdk_window_invalidate_rect(window, &rect, true);
-        if (immediate)
+        if (immediate && !repaintContentOnly)
             gdk_window_process_updates(window, true);
     }
 }
