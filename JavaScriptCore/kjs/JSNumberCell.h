@@ -107,6 +107,8 @@ namespace JSC {
     extern const double NaN;
     extern const double Inf;
 
+    JSValue* jsNumberCell(JSGlobalData*, double);
+    JSValue* jsNaN(JSGlobalData*);
     JSValue* jsNumberCell(ExecState*, double);
     JSValue* jsNaN(ExecState*);
 

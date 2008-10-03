@@ -1,5 +1,12 @@
 2008-10-03  Darin Adler  <darin@apple.com>
 
+        * VM/CTI.cpp: Another Windows build fix. Change the args of ctiTrampoline.
+
+        * kjs/JSNumberCell.h: A build fix for newer versions of gcc. Added
+        declarations of JSGlobalData overloads of jsNumberCell.
+
+2008-10-03  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * kjs/ScopeChain.h: Add forward declaration of JSGlobalData.
