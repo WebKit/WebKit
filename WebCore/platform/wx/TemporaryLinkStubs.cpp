@@ -174,7 +174,7 @@ bool SearchPopupMenu::enabled() { return true; }
 
 namespace WebCore {
 float userIdleTime() { notImplemented(); return FLT_MAX; } // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
-Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
+void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 const char* currentTextBreakLocaleID() { notImplemented(); return "en_us"; }
 

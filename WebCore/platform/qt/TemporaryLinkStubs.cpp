@@ -102,7 +102,7 @@ PluginView::~PluginView() {}
 
 namespace WebCore {
 
-Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
+void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 
 #if !defined(Q_OS_WIN)

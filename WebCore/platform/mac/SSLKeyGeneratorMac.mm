@@ -31,15 +31,12 @@
 
 namespace WebCore {
 
-Vector<String> supportedKeySizes()
+void getSupportedKeySizes(Vector<String>& supportedKeySizes)
 { 
     NSEnumerator *enumerator = [[[WebCoreKeyGenerator sharedGenerator] strengthMenuItemTitles] objectEnumerator];
-    Vector<String> supportedKeySizes;
     NSString *string;
-    while ((string = [enumerator nextObject]) != nil) {
+    while ((string = [enumerator nextObject]) != nil)
         supportedKeySizes.append(string);
-    }
-    return supportedKeySizes;
 }
 
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const KURL& url)

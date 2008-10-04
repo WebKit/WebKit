@@ -1,3 +1,23 @@
+2008-10-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid copying a Vector when using getSupportedKeySizes.
+
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        * platform/SSLKeyGenerator.h:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        (WebCore::getSupportedKeySizes):
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::getSupportedKeySizes):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::getSupportedKeySizes):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::getSupportedKeySizes):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (WebCore::getSupportedKeySizes):
+
 2008-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.

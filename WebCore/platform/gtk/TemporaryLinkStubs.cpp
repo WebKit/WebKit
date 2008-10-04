@@ -62,7 +62,7 @@ Color WebCore::focusRingColor() { return 0xFF0000FF; }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
 namespace WebCore {
-Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
+void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 float userIdleTime() { notImplemented(); return FLT_MAX; } // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
 
