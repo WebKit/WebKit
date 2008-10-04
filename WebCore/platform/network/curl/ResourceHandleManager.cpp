@@ -3,6 +3,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Collabora Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -377,12 +378,24 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
     }
 
     // Obtain the total size of the POST
+    // The size of a curl_off_t could be different in WebKit and in cURL depending on
+    // compilation flags of both. For CURLOPT_POSTFIELDSIZE_LARGE we have to pass the
+    // right size or random data will be used as the size.
+    static int expectedSizeOfCurlOffT = 0;
+    if (!expectedSizeOfCurlOffT) {
+        curl_version_info_data *infoData = curl_version_info(CURLVERSION_NOW);
+        if (infoData->features & CURL_VERSION_LARGEFILE)
+            expectedSizeOfCurlOffT = sizeof(long long);
+        else
+            expectedSizeOfCurlOffT = sizeof(int);
+    }
+
 #if COMPILER(MSVC)
     // work around compiler error in Visual Studio 2005.  It can't properly
     // handle math with 64-bit constant declarations.
 #pragma warning(disable: 4307)
 #endif
-    static const long long maxCurlOffT = (1LL << (sizeof(curl_off_t) * 8 - 1)) - 1;
+    static const long long maxCurlOffT = (1LL << (expectedSizeOfCurlOffT * 8 - 1)) - 1;
     curl_off_t size = 0;
     bool chunkedTransfer = false;
     for (size_t i = 0; i < numElements; i++) {
@@ -409,8 +422,12 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
     // cURL guesses that we want chunked encoding as long as we specify the header
     if (chunkedTransfer)
         *headers = curl_slist_append(*headers, "Transfer-Encoding: chunked");
-    else
-        curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE_LARGE, size);
+    else {
+        if (sizeof(long long) == expectedSizeOfCurlOffT)
+          curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE_LARGE, (long long)size);
+        else
+          curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE_LARGE, (int)size);
+    }
 
     curl_easy_setopt(d->m_handle, CURLOPT_READFUNCTION, readCallback);
     curl_easy_setopt(d->m_handle, CURLOPT_READDATA, job);

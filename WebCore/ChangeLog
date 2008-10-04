@@ -1,3 +1,20 @@
+2008-10-03  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18832
+        [curl] file upload does not work
+
+        The curl_off_t integer type has a different size depending if large
+        file support is enabled or not. There is no different public API for
+        the two cases, so the same function accepts a different type based on
+        a compilation option the could be different in WebKit and libcurl.
+        To fix the bug we query libcurl at runtime for large file support and
+        pass the right type based on that.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::setupPOST):
+
 2008-10-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by David Hyatt.
