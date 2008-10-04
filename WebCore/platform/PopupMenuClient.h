@@ -21,13 +21,14 @@
 #ifndef PopupMenuClient_h
 #define PopupMenuClient_h
 
+#include "PopupMenuStyle.h"
+
 namespace WebCore {
 
 class Color;
-class Document;
 class FontSelector;
+class HostWindow;
 class String;
-class RenderStyle;
 
 class PopupMenuClient {
 public:
@@ -36,10 +37,8 @@ public:
 
     virtual String itemText(unsigned listIndex) const = 0;
     virtual bool itemIsEnabled(unsigned listIndex) const = 0;
-    virtual Color itemBackgroundColor(unsigned listIndex) const = 0;
-    virtual RenderStyle* itemStyle(unsigned listIndex) const = 0;
-    virtual RenderStyle* clientStyle() const = 0;
-    virtual Document* clientDocument() const = 0;
+    virtual PopupMenuStyle itemStyle(unsigned listIndex) const = 0;
+    virtual PopupMenuStyle menuStyle() const = 0;
     virtual int clientInsetLeft() const = 0;
     virtual int clientInsetRight() const = 0;
     virtual int clientPaddingLeft() const = 0;
@@ -53,7 +52,9 @@ public:
     virtual bool shouldPopOver() const = 0;
     virtual bool valueShouldChangeOnHotTrack() const = 0;
     virtual void setTextFromItem(unsigned listIndex) = 0;
+    
     virtual FontSelector* fontSelector() const = 0;
+    virtual HostWindow* hostWindow() const = 0;
 };
 
 }

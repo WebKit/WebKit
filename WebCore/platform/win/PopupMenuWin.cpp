@@ -174,7 +174,7 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     // First, determine the popup's height
     int itemCount = client()->listSize();
-    m_itemHeight = client()->clientStyle()->font().height() + optionSpacingMiddle;
+    m_itemHeight = client()->menuStyle().font().height() + optionSpacingMiddle;
     int naturalHeight = m_itemHeight * itemCount;
     int popupHeight = min(maxPopupHeight, naturalHeight);
     // The popup should show an integral number of items (i.e. no partial items should be visible)
@@ -187,7 +187,7 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
         if (text.isEmpty())
             continue;
 
-        Font itemFont = client()->clientStyle()->font();
+        Font itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(i)) {
             FontDescription d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
@@ -485,26 +485,24 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
     IntRect listRect = damageRect;
     listRect.move(IntSize(0, m_scrollOffset * m_itemHeight));
 
-    RenderStyle* clientStyle = client()->clientStyle();
-
     for (int y = listRect.y(); y < listRect.bottom(); y += m_itemHeight) {
         int index = y / m_itemHeight;
 
         Color optionBackgroundColor, optionTextColor;
-        RenderStyle* itemStyle = client()->itemStyle(index);
+        PopupMenuStyle itemStyle = client()->itemStyle(index);
         if (index == focusedIndex()) {
             optionBackgroundColor = theme()->activeListBoxSelectionBackgroundColor();
             optionTextColor = theme()->activeListBoxSelectionForegroundColor();
         } else {
-            optionBackgroundColor = client()->itemBackgroundColor(index);
-            optionTextColor = itemStyle->color();
+            optionBackgroundColor = itemStyle.backgroundColor();
+            optionTextColor = itemStyle.foregroundColor();
         }
 
         // itemRect is in client coordinates
         IntRect itemRect(0, (index - m_scrollOffset) * m_itemHeight, damageRect.width(), m_itemHeight);
 
         // Draw the background for this menu item
-        if (itemStyle->visibility() != HIDDEN)
+        if (itemStyle.isVisible())
             context.fillRect(itemRect, optionBackgroundColor);
 
         if (client()->itemIsSeparator(index)) {
@@ -521,7 +519,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
 
         context.setFillColor(optionTextColor);
         
-        Font itemFont = client()->clientStyle()->font();
+        Font itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(index)) {
             FontDescription d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
@@ -531,7 +529,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         context.setFont(itemFont);
         
         // Draw the item text
-        if (itemStyle->visibility() != HIDDEN) {
+        if (itemStyle.isVisible()) {
             int textX = max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
             int textY = itemRect.y() + itemFont.ascent() + (itemRect.height() - itemFont.height()) / 2;
             context.drawBidiText(textRun, IntPoint(textX, textY));
@@ -686,13 +684,13 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         }
                         break;
                     case VK_TAB:
-                        ::SendMessage(popup->client()->clientDocument()->view()->hostWindow()->platformWindow(), message, wParam, lParam);
+                        ::SendMessage(popup->client()->hostWindow()->platformWindow(), message, wParam, lParam);
                         popup->client()->hidePopup();
                         break;
                     default:
                         if (isASCIIPrintable(wParam))
                             // Send the keydown to the WebView so it can be used for type-to-select.
-                            ::PostMessage(popup->client()->clientDocument()->view()->hostWindow()->platformWindow(), message, wParam, lParam);
+                            ::PostMessage(popup->client()->hostWindow()->platformWindow(), message, wParam, lParam);
                         else
                             lResult = 1;
                         break;

@@ -73,10 +73,8 @@ private:
     // PopupMenuClient methods
     virtual String itemText(unsigned listIndex) const;
     virtual bool itemIsEnabled(unsigned listIndex) const;
-    virtual Color itemBackgroundColor(unsigned listIndex) const;
-    virtual RenderStyle* itemStyle(unsigned listIndex) const;
-    virtual RenderStyle* clientStyle() const;
-    virtual Document* clientDocument() const;
+    virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
+    virtual PopupMenuStyle menuStyle() const;
     virtual int clientInsetLeft() const;
     virtual int clientInsetRight() const;
     virtual int clientPaddingLeft() const;
@@ -91,8 +89,11 @@ private:
     virtual bool shouldPopOver() const { return !POPUP_MENU_PULLS_DOWN; }
     virtual void valueChanged(unsigned listIndex, bool fireOnChange = true);
     virtual FontSelector* fontSelector() const;
+    virtual HostWindow* hostWindow() const;
 
     virtual bool hasLineIfEmpty() const { return true; }
+
+    Color itemBackgroundColor(unsigned listIndex) const;
 
     void createInnerBlock();
     void adjustInnerStyle();

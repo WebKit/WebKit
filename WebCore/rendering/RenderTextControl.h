@@ -112,10 +112,8 @@ private:
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true);
     virtual String itemText(unsigned listIndex) const;
     virtual bool itemIsEnabled(unsigned listIndex) const;
-    virtual Color itemBackgroundColor(unsigned listIndex) const;
-    virtual RenderStyle* itemStyle(unsigned listIndex) const;
-    virtual RenderStyle* clientStyle() const;
-    virtual Document* clientDocument() const;
+    virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
+    virtual PopupMenuStyle menuStyle() const;
     virtual int clientInsetLeft() const;
     virtual int clientInsetRight() const;
     virtual int clientPaddingLeft() const;
@@ -129,6 +127,7 @@ private:
     virtual bool shouldPopOver() const { return false; }
     virtual bool valueShouldChangeOnHotTrack() const { return false; }
     virtual FontSelector* fontSelector() const;
+    virtual HostWindow* hostWindow() const;
 
     RenderStyle* createInnerBlockStyle(const RenderStyle* startStyle);
     RenderStyle* createInnerTextStyle(const RenderStyle* startStyle);

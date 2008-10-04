@@ -3351,6 +3351,10 @@
 				RelativePath="..\platform\PopupMenuClient.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\platform\PopupMenuStyle.h"
+				>
+			</File>
 			<File
 				RelativePath="..\platform\Scrollbar.cpp"
 				>

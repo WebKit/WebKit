@@ -71,7 +71,7 @@ void PopupMenu::populate(const IntRect& r)
             m_popup->insertItem(i, QString::fromLatin1("---"));
         }
         else {
-            //RenderStyle* style = client()->itemStyle(i);
+            //PopupMenuStyle style = client()->itemStyle(i);
             m_popup->insertItem(i, client()->itemText(i));
 #if 0
             item = new QListWidgetItem(client()->itemText(i));

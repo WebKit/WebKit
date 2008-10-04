@@ -78,10 +78,10 @@ void PopupMenu::populate()
         if (client()->itemIsSeparator(i))
             [[m_popup.get() menu] addItem:[NSMenuItem separatorItem]];
         else {
-            RenderStyle* style = client()->itemStyle(i);
+            PopupMenuStyle style = client()->itemStyle(i);
             NSMutableDictionary* attributes = [[NSMutableDictionary alloc] init];
-            if (style->font() != Font())
-                [attributes setObject:style->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
+            if (style.font() != Font())
+                [attributes setObject:style.font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.
             NSAttributedString* string = [[NSAttributedString alloc] initWithString:client()->itemText(i) attributes:attributes];
@@ -121,7 +121,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     NSMenu* menu = [m_popup.get() menu];
     
     NSPoint location;
-    NSFont* font = client()->clientStyle()->font().primaryFont()->getNSFont();
+    NSFont* font = client()->menuStyle().font().primaryFont()->getNSFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;

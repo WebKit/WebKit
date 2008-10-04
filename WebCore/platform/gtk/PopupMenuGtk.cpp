@@ -79,7 +79,7 @@ void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
         m_indexMap.add(item, i);
         g_signal_connect(item, "activate", G_CALLBACK(menuItemActivated), this);
 
-        // FIXME: Apply the RenderStyle from client()->itemStyle(i)
+        // FIXME: Apply the PopupMenuStyle from client()->itemStyle(i)
         gtk_widget_set_sensitive(item, client()->itemIsEnabled(i));
         gtk_menu_shell_append(GTK_MENU_SHELL(m_popup), item);
         gtk_widget_show(item);

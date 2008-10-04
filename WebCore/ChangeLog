@@ -1,3 +1,33 @@
+2008-10-04  David Hyatt  <hyatt@apple.com>
+
+        Make PopupMenuClient obey the platform abstraction.  Remove any connection to Document and RenderStyle.
+
+        Reviewed by Darin Adler
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PopupMenuClient.h:
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::populate):
+        (WebCore::PopupMenu::show):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::populate):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        (WebCore::PopupMenu::paint):
+        (WebCore::PopupWndProc):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemStyle):
+        (WebCore::RenderMenuList::menuStyle):
+        (WebCore::RenderMenuList::hostWindow):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::itemStyle):
+        (WebCore::RenderTextControl::menuStyle):
+        (WebCore::RenderTextControl::hostWindow):
+        * rendering/RenderTextControl.h:
+
 2008-10-04  Matt Lilek  <webkit@mattlilek.com>
 
         Build fix - restore Private role to headers that had it before the move.
