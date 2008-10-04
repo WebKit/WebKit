@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "FrameView.h"
+#include "HostWindow.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "RenderObject.h"
