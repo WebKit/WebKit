@@ -731,7 +731,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         // Put the point into coordinates relative to the scroll bar
                         mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                         PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                        popup->scrollbar()->handleMouseMoveEvent(event);
+                        popup->scrollbar()->mouseMoved(event);
                         break;
                     }
                 }
@@ -762,7 +762,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         // Put the point into coordinates relative to the scroll bar
                         mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                         PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                        popup->scrollbar()->handleMousePressEvent(event);
+                        popup->scrollbar()->mouseDown(event);
                         popup->setScrollbarCapturingMouse(true);
                         break;
                     }
@@ -782,7 +782,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
                         // Put the point into coordinates relative to the scroll bar
                         mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                         PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                        popup->scrollbar()->handleMouseReleaseEvent(event);
+                        popup->scrollbar()->mouseUp();
                         // FIXME: This is a hack to work around Scrollbar not invalidating correctly when it doesn't have a parent widget
                         RECT r = scrollBarRect;
                         ::InvalidateRect(popup->popupHandle(), &r, TRUE);
