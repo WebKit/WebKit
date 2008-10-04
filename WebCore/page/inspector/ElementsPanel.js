@@ -217,11 +217,18 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
+    includedInSearchResultsPropertyName: "__includedInInspectorSearchResults",
+
     searchCanceled: function()
     {
         if (this._searchResults) {
+            const searchResultsProperty = this.includedInSearchResultsPropertyName;
             for (var i = 0; i < this._searchResults.length; ++i) {
                 var node = this._searchResults[i];
+
+                // Remove the searchResultsProperty since there might be an unfinished search.
+                delete node[searchResultsProperty];
+
                 var treeElement = this.treeOutline.findTreeElement(node);
                 if (treeElement)
                     treeElement.highlighted = false;
@@ -229,6 +236,11 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         WebInspector.updateSearchMatchesCount(0, this);
+
+        if (this._currentSearchChunkIntervalIdentifier) {
+            clearInterval(this._currentSearchChunkIntervalIdentifier);
+            delete this._currentSearchChunkIntervalIdentifier;
+        }
 
         this._currentSearchResultIndex = 0;
         this._searchResults = [];
@@ -239,81 +251,161 @@ WebInspector.ElementsPanel.prototype = {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
 
-        var escapedQuery = query.escapeCharacters("'");
-        var plainTextXPathQuery = "//*[contains(name(),'" + escapedQuery + "') or contains(@*,'" + escapedQuery + "')] | //text()[contains(.,'" + escapedQuery + "')] | //comment()[contains(.,'" + escapedQuery + "')]";
+        const whitespaceTrimmedQuery = query.trimWhitespace();
+        if (!whitespaceTrimmedQuery.length)
+            return;
 
-        var evaluateFunction = InspectorController.inspectedWindow().Document.prototype.evaluate;
-        var querySelectorAllFunction = InspectorController.inspectedWindow().Document.prototype.querySelectorAll;
+        const escapedQuery = query.escapeCharacters("'");
+        const escapedWhitespaceTrimmedQuery = whitespaceTrimmedQuery.escapeCharacters("'");
+        const searchResultsProperty = this.includedInSearchResultsPropertyName;
 
-        const searchResultsProperty = "__includedInInspectorSearchResults";
+        var updatedMatchCountOnce = false;
+        var matchesCountUpdateTimeout = null;
+
+        function updateMatchesCount()
+        {
+            WebInspector.updateSearchMatchesCount(this._searchResults.length, this);
+            matchesCountUpdateTimeout = null;
+            updatedMatchCountOnce = true;
+        }
+
+        function updateMatchesCountSoon()
+        {
+            if (!updatedMatchCountOnce)
+                return updateMatchesCount.call(this);
+            if (matchesCountUpdateTimeout)
+                return;
+            // Update the matches count every half-second so it doesn't feel twitchy.
+            matchesCountUpdateTimeout = setTimeout(updateMatchesCount.bind(this), 500);
+        }
+
         function addNodesToResults(nodes, length, getItem)
         {
+            if (!length)
+                return;
+
             for (var i = 0; i < length; ++i) {
-                var node = getItem(nodes, i);
+                var node = getItem.call(nodes, i);
                 // Skip this node if it already has the property.
                 if (searchResultsProperty in node)
                     continue;
+
+                if (!this._searchResults.length) {
+                    this._currentSearchResultIndex = 0;
+                    this.focusedDOMNode = node;
+                }
+
                 node[searchResultsProperty] = true;
                 this._searchResults.push(node);
+
+                // Highlight the tree element to show it matched the search.
+                // FIXME: highlight the substrings in text nodes and attributes.
+                var treeElement = this.treeOutline.findTreeElement(node);
+                if (treeElement)
+                    treeElement.highlighted = true;
             }
+
+            updateMatchesCountSoon.call(this);
         }
 
-        function searchDocument(doc)
+        function matchPartialTagNamesAndAttributeValues(doc)
         {
-            try {
-                var result = evaluateFunction.call(doc, plainTextXPathQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-                addNodesToResults.call(this, result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
-            } catch(err) {
-                // ignore any exceptions. the query might be malformed, but we allow that.
-            }
+            const result = doc.__proto__.evaluate.call(doc, "//*[contains(name(), '" + escapedWhitespaceTrimmedQuery + "') or contains(@*, '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+        }
 
-            try {
-                var result = evaluateFunction.call(doc, query, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-                addNodesToResults.call(this, result, result.snapshotLength, function(l, i) { return l.snapshotItem(i); });
-            } catch(err) {
-                // ignore any exceptions. the query might be malformed, but we allow that.
-            }
+        function matchPartialAttributeValues(doc)
+        {
+            const result = doc.__proto__.evaluate.call(doc, "//*[contains(@*, '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+        }
 
-            try {
-                var result = querySelectorAllFunction.call(doc, query);
-                addNodesToResults.call(this, result, result.length, function(l, i) { return l.item(i); });
-            } catch(err) {
-                // ignore any exceptions. the query isn't necessarily a valid selector.
-            }
+        function matchStyleSelector(doc)
+        {
+            const result = doc.__proto__.querySelectorAll.call(doc, whitespaceTrimmedQuery);
+            addNodesToResults.call(this, result, result.length, result.item);
+        }
 
+        function matchPlainText(doc)
+        {
+            const result = doc.__proto__.evaluate.call(doc, "//text()[contains(., '" + escapedQuery + "')] | //comment()[contains(., '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+        }
+
+        function matchXPathQuery(doc)
+        {
+            const result = doc.__proto__.evaluate.call(doc, whitespaceTrimmedQuery, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+        }
+
+        function finishedSearching()
+        {
             // Remove the searchResultsProperty now that the search is finished.
             for (var i = 0; i < this._searchResults.length; ++i)
                 delete this._searchResults[i][searchResultsProperty];
         }
 
-        var mainFrameDocument = InspectorController.inspectedWindow().document;
+        const mainFrameDocument = InspectorController.inspectedWindow().document;
+        const searchDocuments = [mainFrameDocument];
 
-        searchDocument.call(this, mainFrameDocument);
+        if (whitespaceTrimmedQuery === "//*" || whitespaceTrimmedQuery === "*") {
+            // These queries will match every node. Matching everything isn't useful and can be slow for large pages,
+            // so limit the search functions list to plain text and attribute matching.
+            const searchFunctions = [matchPartialAttributeValues, matchPlainText];
+        } else
+            const searchFunctions = [matchStyleSelector, matchPartialTagNamesAndAttributeValues, matchPlainText, matchXPathQuery];
 
         // Find all frames, iframes and object elements to search their documents.
-        var subdocumentQuery = "//iframe | //frame | //object";
-        var subdocumentResult = evaluateFunction.call(mainFrameDocument, subdocumentQuery, mainFrameDocument, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+        const querySelectorAllFunction = InspectorController.inspectedWindow().Document.prototype.querySelectorAll;
+        const subdocumentResult = querySelectorAllFunction.call(mainFrameDocument, "iframe, frame, object");
 
-        for (var i = 0; i < subdocumentResult.snapshotLength; ++i) {
-            var element = subdocumentResult.snapshotItem(i);
+        for (var i = 0; i < subdocumentResult.length; ++i) {
+            var element = subdocumentResult.item(i);
             if (element.contentDocument)
-                searchDocument.call(this, element.contentDocument);
+                searchDocuments.push(element.contentDocument);
         }
 
-        if (!this._searchResults.length)
-            return;
+        const panel = this;
+        var documentIndex = 0;
+        var searchFunctionIndex = 0;
+        var chunkIntervalIdentifier = null;
 
-        for (var i = 0; i < this._searchResults.length; ++i) {
-            var node = this._searchResults[i];
-            var treeElement = this.treeOutline.findTreeElement(node);
-            if (treeElement)
-                treeElement.highlighted = true;
+        // Split up the work into chunks so we don't block the UI thread while processing.
+
+        function processChunk()
+        {
+            var searchDocument = searchDocuments[documentIndex];
+            var searchFunction = searchFunctions[searchFunctionIndex];
+
+            if (++searchFunctionIndex > searchFunctions.length) {
+                searchFunction = searchFunctions[0];
+                searchFunctionIndex = 0;
+
+                if (++documentIndex > searchDocuments.length) {
+                    if (panel._currentSearchChunkIntervalIdentifier === chunkIntervalIdentifier)
+                        delete panel._currentSearchChunkIntervalIdentifier;
+                    clearInterval(chunkIntervalIdentifier);
+                    finishedSearching.call(panel);
+                    return;
+                }
+
+                searchDocument = searchDocuments[documentIndex];
+            }
+
+            if (!searchDocument || !searchFunction)
+                return;
+
+            try {
+                searchFunction.call(panel, searchDocument);
+            } catch(err) {
+                // ignore any exceptions. the query might be malformed, but we allow that.
+            }
         }
 
-        WebInspector.updateSearchMatchesCount(this._searchResults.length, this);
+        processChunk();
 
-        this._currentSearchResultIndex = 0;
-        this.focusedDOMNode = this._searchResults[0];
+        chunkIntervalIdentifier = setInterval(processChunk, 25);
+        this._currentSearchChunkIntervalIdentifier = chunkIntervalIdentifier;
     },
 
     jumpToNextSearchResult: function()

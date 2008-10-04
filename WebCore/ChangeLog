@@ -1,3 +1,23 @@
+2008-10-03  Timothy Hatcher  <timothy@apple.com>
+
+        Changes how searching works in the Web Inspector's Elements
+        panel. The search tasks are divided into chunks that are small
+        units of work that are performed at a time interval. This
+        change also prevents queries that will select all elements,
+        since that isn't useful.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21285
+
+        Reviewed by Oliver Hunt.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.searchCancled):
+        Remove the searchResultsProperty form results since there might
+        be an unfinished search.
+        (WebInspector.ElementsPanel.prototype.performSearch): Divide the
+        documents and search functions into chunks that are performed on
+        a interval of 25ms. Prevent searches for "//*" and "*".
+
 2008-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
