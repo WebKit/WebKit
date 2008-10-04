@@ -155,6 +155,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/rendering \
                 $$PWD/rendering/style \
                 $$PWD/history \
+                $$PWD/inspector \
                 $$PWD/xml \
                 $$PWD/html \
                 $$PWD/bindings/js \
