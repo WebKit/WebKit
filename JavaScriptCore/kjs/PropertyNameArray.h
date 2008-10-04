@@ -41,19 +41,20 @@ namespace JSC {
 
         PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
 
-        void setCachedStructureID(PassRefPtr<StructureID> structureID) { m_cachedStructureID = structureID; }
-        StructureID* cachedStructureID() const { return m_cachedStructureID.get(); }
+        void setCachedStructureID(StructureID* structureID) { m_cachedStructureID = structureID; }
+        StructureID* cachedStructureID() const { return m_cachedStructureID; }
 
         void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureIDChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
 
     private:
         PropertyNameArrayData()
+            : m_cachedStructureID(0)
         {
         }
 
         PropertyNameVector m_propertyNameVector;
-        RefPtr<StructureID> m_cachedStructureID;
+        StructureID* m_cachedStructureID;
         RefPtr<StructureIDChain> m_cachedPrototypeChain;
     };
 

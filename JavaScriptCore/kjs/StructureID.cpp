@@ -81,6 +81,9 @@ void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray&
         static_cast<JSObject*>(m_prototype)->getPropertyNames(exec, propertyNames);
 
     if (shouldCache) {
+        if (m_cachedPropertyNameArrayData)
+            m_cachedPropertyNameArrayData->setCachedStructureID(0);
+
         m_cachedPropertyNameArrayData = propertyNames.data();
 
         StructureIDChain* chain = cachedPrototypeChain();
@@ -93,6 +96,8 @@ void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray&
 
 void StructureID::clearEnumerationCache()
 {
+    if (m_cachedPropertyNameArrayData)
+        m_cachedPropertyNameArrayData->setCachedStructureID(0);
     m_cachedPropertyNameArrayData.clear();
 }
 
@@ -182,6 +187,9 @@ StructureID::~StructureID()
         ASSERT(m_previous->m_transitionTable.contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
         m_previous->m_transitionTable.remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
     }
+
+    if (m_cachedPropertyNameArrayData)
+        m_cachedPropertyNameArrayData->setCachedStructureID(0);
 }
 
 StructureIDChain* StructureID::createCachedPrototypeChain()

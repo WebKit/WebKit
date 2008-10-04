@@ -1,3 +1,21 @@
+2008-10-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=21320
+        leaks of PropertyNameArrayData seen on buildbot
+
+        - Fix RefPtr cycle by making PropertyNameArrayData's pointer back
+          to the StructureID a weak pointer.
+
+        * kjs/PropertyNameArray.h:
+        (JSC::PropertyNameArrayData::setCachedStructureID):
+        (JSC::PropertyNameArrayData::cachedStructureID):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::getEnumerablePropertyNames):
+        (JSC::StructureID::clearEnumerationCache):
+        (JSC::StructureID::~StructureID):
+
 2008-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.
