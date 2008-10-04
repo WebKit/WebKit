@@ -227,13 +227,13 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::handleMouseEvent(
     PlatformMouseEvent mouseEvent((HWND)(ULONG64)window, msg, wParam, lParam);
     switch (msg) {
         case WM_LBUTTONDOWN:
-            m_scrollBar->handleMousePressEvent(mouseEvent);
+            m_scrollBar->mouseDown(mouseEvent);
             break;
         case WM_LBUTTONUP:
-            m_scrollBar->handleMouseReleaseEvent(mouseEvent);
+            m_scrollBar->mouseUp();
             break;
         case WM_MOUSEMOVE:
-            m_scrollBar->handleMouseMoveEvent(mouseEvent);
+            m_scrollBar->mouseMoved(mouseEvent);
             break;
     }
 

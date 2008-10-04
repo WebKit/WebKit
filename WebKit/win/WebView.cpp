@@ -1105,7 +1105,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     POINT point(view->contentsToWindow(coreMenu->hitTestResult().point()));
 
     // Translate the point to screen coordinates
-    if (!::ClientToScreen(view->containingWindow(), &point))
+    if (!::ClientToScreen(m_viewWindow, &point))
         return false;
 
     BOOL hasCustomMenus = false;
@@ -1118,7 +1118,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
         // Surprisingly, TPM_RIGHTBUTTON means that items are selectable with either the right OR left mouse button
         UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL
             | TPM_LEFTALIGN | TPM_HORPOSANIMATION;
-        ::TrackPopupMenuEx(coreMenu->platformDescription(), flags, point.x, point.y, view->containingWindow(), 0);
+        ::TrackPopupMenuEx(coreMenu->platformDescription(), flags, point.x, point.y, m_viewWindow, 0);
     }
 
     return true;
