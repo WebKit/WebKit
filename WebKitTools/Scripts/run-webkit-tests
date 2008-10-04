@@ -452,9 +452,10 @@ my %durations;
 my $count = 0;
 my $leaksOutputFileNumber = 1;
 my $totalLeaks = 0;
+my $dumpAllPixels = $pixelTests && $resetResults;
 
 my @toolArgs = ();
-push @toolArgs, "--dump-all-pixels" if $pixelTests && $resetResults;
+push @toolArgs, "--dump-all-pixels" if $dumpAllPixels;
 push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--repaint" if $repaintTests;
 push @toolArgs, "--horizontal-sweep" if $repaintSweepHorizontally;
@@ -626,8 +627,10 @@ for my $test (@tests) {
     my $diffPNG = "";
     my $diffPercentage = "";
     my $diffResult = "passed";
-    
-    if ($pixelTests && !$isText) {
+
+    # DRT and this script need to agree on when pixel data is dumped, so this
+    # test has to match a test in the native code
+    if ($dumpAllPixels || ($pixelTests && !$isText)) {
         my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
 
         my $actualHash = "";
