@@ -1,3 +1,10 @@
+2008-10-04  Darin Adler  <darin@apple.com>
+
+        - try to fix build
+
+        * DerivedSources.make: Add new inspector directory to VPATH.
+        * GNUmakefile.am:
+
 2008-10-04  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, attempt to fix Gtk build.

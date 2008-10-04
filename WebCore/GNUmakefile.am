@@ -18,6 +18,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/editing \
 	-I$(srcdir)/WebCore/history \
 	-I$(srcdir)/WebCore/html \
+	-I$(srcdir)/WebCore/inspector \
 	-I$(srcdir)/WebCore/loader \
 	-I$(srcdir)/WebCore/loader/appcache \
 	-I$(srcdir)/WebCore/loader/archive \
@@ -373,7 +374,6 @@ webcore_built_sources += \
 	DerivedSources/XMLNames.h
 
 IDL_BINDINGS +=  \
-	WebCore/css/Counter.idl \
 	WebCore/css/CSSCharsetRule.idl \
 	WebCore/css/CSSFontFaceRule.idl \
 	WebCore/css/CSSImportRule.idl \
@@ -389,6 +389,7 @@ IDL_BINDINGS +=  \
 	WebCore/css/CSSValueList.idl \
 	WebCore/css/CSSVariablesDeclaration.idl \
 	WebCore/css/CSSVariablesRule.idl \
+	WebCore/css/Counter.idl \
 	WebCore/css/MediaList.idl \
 	WebCore/css/Rect.idl \
 	WebCore/css/StyleSheet.idl \
@@ -397,15 +398,15 @@ IDL_BINDINGS +=  \
 	WebCore/css/WebKitCSSKeyframesRule.idl \
 	WebCore/css/WebKitCSSTransformValue.idl \
 	WebCore/dom/Attr.idl \
+	WebCore/dom/CDATASection.idl \
 	WebCore/dom/CharacterData.idl \
 	WebCore/dom/Clipboard.idl \
-	WebCore/dom/CDATASection.idl \
 	WebCore/dom/Comment.idl \
-	WebCore/dom/DocumentFragment.idl \
-	WebCore/dom/Document.idl \
-	WebCore/dom/DocumentType.idl \
 	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
+	WebCore/dom/Document.idl \
+	WebCore/dom/DocumentFragment.idl \
+	WebCore/dom/DocumentType.idl \
 	WebCore/dom/Element.idl \
 	WebCore/dom/Entity.idl \
 	WebCore/dom/EntityReference.idl \
@@ -426,8 +427,8 @@ IDL_BINDINGS +=  \
 	WebCore/dom/OverflowEvent.idl \
 	WebCore/dom/ProcessingInstruction.idl \
 	WebCore/dom/ProgressEvent.idl \
-	WebCore/dom/RangeException.idl \
 	WebCore/dom/Range.idl \
+	WebCore/dom/RangeException.idl \
 	WebCore/dom/Text.idl \
 	WebCore/dom/TextEvent.idl \
 	WebCore/dom/TreeWalker.idl \
@@ -439,20 +440,22 @@ IDL_BINDINGS +=  \
 	WebCore/html/CanvasPattern.idl \
 	WebCore/html/CanvasPixelArray.idl \
 	WebCore/html/CanvasRenderingContext2D.idl \
+	WebCore/html/File.idl \
+	WebCore/html/FileList.idl \
 	WebCore/html/HTMLAnchorElement.idl \
 	WebCore/html/HTMLAppletElement.idl \
 	WebCore/html/HTMLAreaElement.idl \
+	WebCore/html/HTMLBRElement.idl \
 	WebCore/html/HTMLBaseElement.idl \
 	WebCore/html/HTMLBaseFontElement.idl \
 	WebCore/html/HTMLBlockquoteElement.idl \
 	WebCore/html/HTMLBodyElement.idl \
-	WebCore/html/HTMLBRElement.idl \
 	WebCore/html/HTMLButtonElement.idl \
 	WebCore/html/HTMLCanvasElement.idl \
 	WebCore/html/HTMLCollection.idl \
+	WebCore/html/HTMLDListElement.idl \
 	WebCore/html/HTMLDirectoryElement.idl \
 	WebCore/html/HTMLDivElement.idl \
-	WebCore/html/HTMLDListElement.idl \
 	WebCore/html/HTMLDocument.idl \
 	WebCore/html/HTMLElement.idl \
 	WebCore/html/HTMLEmbedElement.idl \
@@ -461,25 +464,25 @@ IDL_BINDINGS +=  \
 	WebCore/html/HTMLFormElement.idl \
 	WebCore/html/HTMLFrameElement.idl \
 	WebCore/html/HTMLFrameSetElement.idl \
+	WebCore/html/HTMLHRElement.idl \
 	WebCore/html/HTMLHeadElement.idl \
 	WebCore/html/HTMLHeadingElement.idl \
-	WebCore/html/HTMLHRElement.idl \
 	WebCore/html/HTMLHtmlElement.idl \
 	WebCore/html/HTMLIFrameElement.idl \
 	WebCore/html/HTMLImageElement.idl \
 	WebCore/html/HTMLInputElement.idl \
 	WebCore/html/HTMLIsIndexElement.idl \
+	WebCore/html/HTMLLIElement.idl \
 	WebCore/html/HTMLLabelElement.idl \
 	WebCore/html/HTMLLegendElement.idl \
-	WebCore/html/HTMLLIElement.idl \
 	WebCore/html/HTMLLinkElement.idl \
 	WebCore/html/HTMLMapElement.idl \
 	WebCore/html/HTMLMarqueeElement.idl \
 	WebCore/html/HTMLMenuElement.idl \
 	WebCore/html/HTMLMetaElement.idl \
 	WebCore/html/HTMLModElement.idl \
-	WebCore/html/HTMLObjectElement.idl \
 	WebCore/html/HTMLOListElement.idl \
+	WebCore/html/HTMLObjectElement.idl \
 	WebCore/html/HTMLOptGroupElement.idl \
 	WebCore/html/HTMLOptionElement.idl \
 	WebCore/html/HTMLOptionsCollection.idl \
@@ -499,16 +502,14 @@ IDL_BINDINGS +=  \
 	WebCore/html/HTMLTextAreaElement.idl \
 	WebCore/html/HTMLTitleElement.idl \
 	WebCore/html/HTMLUListElement.idl \
+	WebCore/html/ImageData.idl \
 	WebCore/html/TextMetrics.idl \
+	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/page/BarInfo.idl \
 	WebCore/page/Console.idl \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
 	WebCore/page/History.idl \
-	WebCore/html/File.idl \
-	WebCore/html/FileList.idl \
-	WebCore/html/ImageData.idl \
-	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
@@ -518,8 +519,8 @@ IDL_BINDINGS +=  \
 	WebCore/plugins/PluginArray.idl \
 	WebCore/xml/DOMParser.idl \
 	WebCore/xml/XMLHttpRequest.idl \
-	WebCore/xml/XMLHttpRequestProgressEvent.idl \
 	WebCore/xml/XMLHttpRequestException.idl \
+	WebCore/xml/XMLHttpRequestProgressEvent.idl \
 	WebCore/xml/XMLHttpRequestUpload.idl \
 	WebCore/xml/XMLSerializer.idl \
 	WebCore/xml/XSLTProcessor.idl
@@ -3509,6 +3510,7 @@ vpath %.idl = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
+    $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/page \
     $(WebCore)/storage \
