@@ -1,3 +1,39 @@
+2008-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - Some code cleanup to how we handle code features.
+        
+        1) Rename FeatureInfo typedef to CodeFeatures.
+        2) Rename NodeFeatureInfo template to NodeInfo.
+        3) Keep CodeFeature bitmask in ScopeNode instead of trying to break it out into individual bools.
+        4) Rename misleadingly named "needsClosure" method to "containsClosures", which better describes the meaning
+        of ClosureFeature.
+        5) Make setUsersArguments() not take an argument since it only goes one way.
+
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::CodeBlock):
+        * kjs/NodeInfo.h:
+        * kjs/Parser.cpp:
+        (JSC::Parser::didFinishParsing):
+        * kjs/Parser.h:
+        (JSC::Parser::parse):
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        * kjs/nodes.h:
+        (JSC::ScopeNode::usesEval):
+        (JSC::ScopeNode::containsClosures):
+        (JSC::ScopeNode::usesArguments):
+        (JSC::ScopeNode::setUsesArguments):
+
 2008-10-03  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

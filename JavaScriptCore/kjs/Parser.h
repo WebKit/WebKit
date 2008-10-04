@@ -52,7 +52,7 @@ namespace JSC {
         template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
 
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
-                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, bool usesArguments, int lastLine, int numConstants);
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
 
     private:
         friend class JSGlobalData;
@@ -63,9 +63,7 @@ namespace JSC {
         RefPtr<SourceElements> m_sourceElements;
         RefPtr<ParserRefCountedData<DeclarationStacks::VarStack> > m_varDeclarations;
         RefPtr<ParserRefCountedData<DeclarationStacks::FunctionStack> > m_funcDeclarations;
-        bool m_usesEval;
-        bool m_needsClosure;
-        bool m_usesArguments;
+        CodeFeatures m_features;
         int m_lastLine;
         int m_numConstants;
     };
@@ -81,9 +79,7 @@ namespace JSC {
                                          m_varDeclarations ? &m_varDeclarations->data : 0, 
                                          m_funcDeclarations ? &m_funcDeclarations->data : 0,
                                          *m_source,
-                                         m_usesEval,
-                                         m_needsClosure,
-                                         m_usesArguments,
+                                         m_features,
                                          m_numConstants);
             result->setLoc(m_source->firstLine(), m_lastLine);
         }
