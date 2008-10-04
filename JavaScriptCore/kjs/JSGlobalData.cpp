@@ -31,8 +31,10 @@
 
 #include "ArgList.h"
 #include "CommonIdentifiers.h"
+#include "JSActivation.h"
 #include "JSClassRef.h"
 #include "JSLock.h"
+#include "JSStaticScopeObject.h"
 #include "Machine.h"
 #include "Parser.h"
 #include "collector.h"
@@ -76,6 +78,8 @@ JSGlobalData::JSGlobalData(bool isShared)
     , stringTable(&JSC::stringTable)
 #endif
     , nullProtoStructureID(JSObject::createStructureID(jsNull()))
+    , activationStructureID(JSActivation::createStructureID(jsNull()))
+    , staticScopeStructureID(JSStaticScopeObject::createStructureID(jsNull()))
     , stringStructureID(JSString::createStructureID(jsNull()))
     , numberStructureID(JSNumberCell::createStructureID(jsNull()))
     , identifierTable(createIdentifierTable())

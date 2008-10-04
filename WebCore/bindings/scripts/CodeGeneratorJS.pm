@@ -459,6 +459,13 @@ sub GenerateHeader
     push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
 
+    # Structure ID
+    if ($interfaceName eq "DOMWindow") {
+        push(@headerContent, "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* proto)\n" .
+             "    {\n" .
+             "        return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
+             "    }\n\n");
+    }
     # Custom mark function
     push(@headerContent, "    virtual void mark();\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
 

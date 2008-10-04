@@ -299,6 +299,14 @@ namespace JSC {
         return asCell()->toThisObject(exec);
     }
 
+    inline bool JSValue::needsThisConversion() const
+    {
+        if (UNLIKELY(JSImmediate::isImmediate(this)))
+            return true;
+
+        return asCell()->structureID()->typeInfo().needsThisConversion();
+    }
+
     inline UString JSValue::toThisString(ExecState* exec) const
     {
         return JSImmediate::isImmediate(this) ? JSImmediate::toString(this) : asCell()->toThisString(exec);

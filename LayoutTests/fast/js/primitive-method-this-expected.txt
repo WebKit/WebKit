@@ -1,0 +1,13 @@
+This test checks that methods called directly on primitive types get the wrapper, not the primitive, as the 'this' object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (1).thisType() is 'object'
+PASS (2.3).thisType() is 'object'
+PASS 'xxx'.thisType() is 'object'
+PASS (false).thisType() is 'object'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

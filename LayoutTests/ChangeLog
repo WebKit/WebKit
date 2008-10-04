@@ -1,3 +1,13 @@
+2008-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - test case for: "this" object in methods called on primitives should be wrapper object
+
+        * fast/js/primitive-method-this-expected.txt: Added.
+        * fast/js/primitive-method-this.html: Added.
+        * fast/js/resources/primitive-method-this.js: Added.
+
 2008-10-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

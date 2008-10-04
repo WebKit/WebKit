@@ -348,16 +348,21 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 {
     int location = it - begin;
     switch (exec->machine()->getOpcodeID(it->u.opcode)) {
-        case op_init: {
-            printf("[%4d] init\n", location);
+        case op_enter: {
+            printf("[%4d] enter\n", location);
             break;
         }
-        case op_init_activation: {
-            printf("[%4d] init_activation\n", location);
+        case op_enter_with_activation: {
+            printf("[%4d] enter_with_activation\n", location);
             break;
         }
         case op_init_arguments: {
             printf("[%4d] init_arguments\n", location);
+            break;
+        }
+        case op_convert_this: {
+            int r0 = (++it)->u.operand;
+            printf("[%4d] convert_this %s\n", location, registerName(r0).c_str());
             break;
         }
         case op_unexpected_load: {

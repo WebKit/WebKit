@@ -137,8 +137,8 @@ void CodeGenerator::generate()
     m_scopeNode->emitCode(*this);
 
     if (m_codeType == FunctionCode && m_codeBlock->needsFullScopeChain) {
-        ASSERT(globalData()->machine->getOpcodeID(m_codeBlock->instructions[0].u.opcode) == op_init);
-        m_codeBlock->instructions[0] = globalData()->machine->getOpcode(op_init_activation);
+        ASSERT(globalData()->machine->getOpcodeID(m_codeBlock->instructions[0].u.opcode) == op_enter);
+        m_codeBlock->instructions[0] = globalData()->machine->getOpcode(op_enter_with_activation);
     }
 
 #ifndef NDEBUG
@@ -216,7 +216,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 {
-    emitOpcode(op_init);
+    emitOpcode(op_enter);
     codeBlock->globalData = m_globalData;
 
     // FIXME: Move code that modifies the global object to Machine::execute.
@@ -289,7 +289,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 {
-    emitOpcode(op_init);
+    emitOpcode(op_enter);
     codeBlock->globalData = m_globalData;
 
     bool usesArguments = functionBody->usesArguments();
@@ -321,6 +321,11 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     m_thisRegister.setIndex(m_nextParameter);
     ++m_nextParameter;
     ++m_codeBlock->numParameters;
+
+    if (functionBody->usesThis()) {
+        emitOpcode(op_convert_this);
+        instructions().append(m_thisRegister.index());
+    }
     
     for (size_t i = 0; i < parameterCount; ++i)
         addParameter(parameters[i]);
@@ -342,7 +347,7 @@ CodeGenerator::CodeGenerator(EvalNode* evalNode, const Debugger* debugger, const
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 {
-    emitOpcode(op_init);
+    emitOpcode(op_enter);
     codeBlock->globalData = m_globalData;
     m_codeBlock->numParameters = 1; // Allocate space for "this"
 

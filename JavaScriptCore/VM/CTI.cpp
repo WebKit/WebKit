@@ -1964,7 +1964,7 @@ void CTI::privateCompileMainPass()
             i += 3;
             break;
         }
-        case op_init: {
+        case op_enter: {
             // Even though CTI doesn't use them, we initialize our constant
             // registers to zap stale pointers, to avoid unnecessarily prolonging
             // object lifetime and increasing GC pressure.
@@ -1975,7 +1975,7 @@ void CTI::privateCompileMainPass()
             i+= 1;
             break;
         }
-        case op_init_activation: {
+        case op_enter_with_activation: {
             emitCall(i, Machine::cti_op_push_activation);
 
             // Even though CTI doesn't use them, we initialize our constant
@@ -1991,6 +1991,17 @@ void CTI::privateCompileMainPass()
         case op_init_arguments: {
             emitCall(i, Machine::cti_op_init_arguments);
             i += 1;
+            break;
+        }
+        case op_convert_this: {
+            emitGetArg(instruction[i + 1].u.operand, X86::eax);
+
+            emitJumpSlowCaseIfNotJSCell(X86::eax, i);
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::edx);
+            m_jit.testl_i32m(NeedsThisConversion, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::edx);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJnz(), i));
+
+            i += 2;
             break;
         }
         case op_get_array_length:
@@ -2037,6 +2048,15 @@ void CTI::privateCompileSlowCases()
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end(); ++iter) {
         unsigned i = iter->to;
         switch (m_machine->getOpcodeID(instruction[i].u.opcode)) {
+        case op_convert_this: {
+            m_jit.link(iter->from, m_jit.label());
+            m_jit.link((++iter)->from, m_jit.label());
+            emitPutArg(X86::eax, 0);
+            emitCall(i, Machine::cti_op_convert_this);
+            emitPutResult(instruction[i + 1].u.operand);
+            i += 2;
+            break;
+        }
         case op_add: {
             unsigned dst = instruction[i + 1].u.operand;
             unsigned src1 = instruction[i + 2].u.operand;

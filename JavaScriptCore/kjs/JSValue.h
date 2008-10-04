@@ -137,6 +137,7 @@ namespace JSC {
         bool deleteProperty(ExecState*, const Identifier& propertyName);
         bool deleteProperty(ExecState*, unsigned propertyName);
 
+        bool needsThisConversion() const;
         JSObject* toThisObject(ExecState*) const;
         UString toThisString(ExecState*) const;
         JSString* toThisJSString(ExecState*);

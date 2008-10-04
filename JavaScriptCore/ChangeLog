@@ -1,3 +1,58 @@
+2008-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - "this" object in methods called on primitives should be wrapper object
+        https://bugs.webkit.org/show_bug.cgi?id=21362
+
+        I changed things so that functions which use "this" do a fast
+        version of toThisObject conversion if needed. Currently we miss
+        the conversion entirely, at least for primitive types. Using
+        TypeInfo and the primitive check, I made the fast case bail out
+        pretty fast.
+        
+        This is inexplicably an 1.007x SunSpider speedup (and a wash on V8 benchmarks).
+     
+        Also renamed some opcodes for clarity:
+        
+        init ==> enter
+        init_activation ==> enter_with_activation
+        
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::generate):
+        (JSC::CodeGenerator::CodeGenerator):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_convert_this):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        * kjs/JSActivation.h:
+        (JSC::JSActivation::createStructureID):
+        * kjs/JSCell.h:
+        (JSC::JSValue::needsThisConversion):
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/JSNumberCell.h:
+        (JSC::JSNumberCell::createStructureID):
+        * kjs/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        (JSC::JSStaticScopeObject::createStructureID):
+        * kjs/JSString.h:
+        (JSC::JSString::createStructureID):
+        * kjs/JSValue.h:
+        * kjs/TypeInfo.h:
+        (JSC::TypeInfo::needsThisConversion):
+        * kjs/nodes.h:
+        (JSC::ScopeNode::usesThis):
+
 2008-10-03  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

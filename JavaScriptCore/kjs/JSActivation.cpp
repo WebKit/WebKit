@@ -40,7 +40,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 const ClassInfo JSActivation::info = { "JSActivation", 0, 0, 0 };
 
 JSActivation::JSActivation(ExecState* exec, PassRefPtr<FunctionBodyNode> functionBody, Register* registers)
-    : Base(exec->globalData().nullProtoStructureID, new JSActivationData(functionBody, registers))
+    : Base(exec->globalData().activationStructureID, new JSActivationData(functionBody, registers))
 {
 }
 
