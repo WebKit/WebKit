@@ -40,7 +40,7 @@ namespace WebCore {
         JSC::JSGlobalObject* unwrappedGlobalObject() const { return m_unwrappedGlobalObject; };
         JSC::ExecState* unwrappedExecState() const;
 
-        bool allowsUnwrappedAccessFrom(const JSC::ExecState*) const;
+        bool allowsUnwrappedAccessFrom(JSC::ExecState*) const;
 
         static const JSC::ClassInfo s_info;
 

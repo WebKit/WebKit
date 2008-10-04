@@ -1,3 +1,15 @@
+2008-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - prepare for https://bugs.webkit.org/show_bug.cgi?id=21295
+          Bug 21295: Replace ExecState with a call frame Register pointer
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::allowsUnwrappedAccessFrom):
+        Remove bogus "const".
+        * bindings/js/JSQuarantinedObjectWrapper.h: Ditto.
+
 2008-10-04  David Hyatt  <hyatt@apple.com>
 
         Make PopupMenuClient obey the platform abstraction.  Remove any connection to Document and RenderStyle.

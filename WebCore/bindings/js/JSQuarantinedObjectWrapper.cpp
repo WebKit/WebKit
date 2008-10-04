@@ -70,7 +70,7 @@ JSQuarantinedObjectWrapper::~JSQuarantinedObjectWrapper()
 {
 }
 
-bool JSQuarantinedObjectWrapper::allowsUnwrappedAccessFrom(const ExecState* exec) const
+bool JSQuarantinedObjectWrapper::allowsUnwrappedAccessFrom(ExecState* exec) const
 {
     return m_unwrappedGlobalObject->profileGroup() == exec->dynamicGlobalObject()->profileGroup();
 }
