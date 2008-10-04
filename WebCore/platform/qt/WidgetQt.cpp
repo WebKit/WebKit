@@ -108,13 +108,6 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
-QWidget* Widget::containingWindow() const
-{
-    QWebFrame* frame = QWebFramePrivate::kit(static_cast<FrameView*>(root())->frame());
-    QWidget* view = frame->page()->view();
-    return view ? view : platformWidget();
-}
-
 }
 
 // vim: ts=4 sw=4 et
