@@ -106,10 +106,10 @@ namespace JSC {
         enum { ProgramCodeThisRegister = -CallFrameHeaderSize - 1 };
         enum { ArgumentsRegister = 0 };
 
-        enum { DefaultCapacity = 2 * 1024 * 1024 / sizeof(Register) };
-        enum { DefaultMaxGlobals = 8 * 1024 };
+        static const size_t defaultCapacity = 524288;
+        static const size_t defaultMaxGlobals = 8192;
 
-        RegisterFile(size_t capacity = DefaultCapacity, size_t maxGlobals = DefaultMaxGlobals)
+        RegisterFile(size_t capacity = defaultCapacity, size_t maxGlobals = defaultMaxGlobals)
             : m_numGlobals(0)
             , m_maxGlobals(maxGlobals)
             , m_start(0)
