@@ -33,7 +33,7 @@ QWebPopup::QWebPopup(PopupMenuClient* client)
 {
     Q_ASSERT(m_client);
 
-    setFont(m_client->itemStyle().font().font());
+    setFont(m_client->menuStyle().font().font());
     connect(this, SIGNAL(activated(int)),
             SLOT(activeChanged(int)));
 }
