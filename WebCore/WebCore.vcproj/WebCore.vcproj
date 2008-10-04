@@ -2480,6 +2480,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\SecurityOrigin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\SecurityOrigin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\Settings.cpp"
 				>
 				<FileConfiguration
@@ -3381,14 +3389,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\SearchPopupMenu.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\SecurityOrigin.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\SecurityOrigin.h"
 				>
 			</File>
 			<File

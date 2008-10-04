@@ -673,6 +673,7 @@ This file contains the list of files needed to build WebCore.
         page/Page.cpp
         page/PageGroup.cpp
         page/Screen.cpp
+        page/SecurityOrigin.cpp
         page/Settings.cpp
         page/WindowFeatures.cpp
     </set>
@@ -704,7 +705,6 @@ This file contains the list of files needed to build WebCore.
         platform/text/RegularExpression.cpp
         platform/Scrollbar.cpp
         platform/ScrollView.cpp
-        platform/SecurityOrigin.cpp
         platform/text/SegmentedString.cpp
         platform/SharedBuffer.cpp
         platform/text/String.cpp

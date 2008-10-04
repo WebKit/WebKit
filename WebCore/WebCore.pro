@@ -783,6 +783,7 @@ SOURCES += \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PrintContext.cpp \
+    page/SecurityOrigin.cpp \
     page/Screen.cpp \
     page/Settings.cpp \
     page/WindowFeatures.cpp \
@@ -841,7 +842,6 @@ SOURCES += \
     platform/Scrollbar.cpp \
     platform/ScrollView.cpp \
 #    platform/SearchPopupMenu.cpp \
-    platform/SecurityOrigin.cpp \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \

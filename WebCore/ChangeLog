@@ -1,3 +1,25 @@
+2008-10-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David "The Motivator" Hyatt.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=21355
+        Move SecurityOrigin out of platform/ to page/.
+
+        It was a layering violation for SecurityOrigin to be in platform
+        as it depended on FrameLoader.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/SecurityOrigin.cpp: Copied from platform/SecurityOrigin.cpp.
+        * page/SecurityOrigin.h: Copied from platform/SecurityOrigin.h.
+        * page/SecurityOriginHash.h: Copied from platform/SecurityOriginHash.h.
+        * platform/SecurityOrigin.cpp: Removed.
+        * platform/SecurityOrigin.h: Removed.
+        * platform/SecurityOriginHash.h: Removed.
+
 2008-10-03  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.

@@ -1501,6 +1501,9 @@ webcore_sources += \
 	WebCore/page/PrintContext.h \
 	WebCore/page/Screen.cpp \
 	WebCore/page/Screen.h \
+	WebCore/page/SecurityOrigin.cpp \
+	WebCore/page/SecurityOrigin.h \
+	WebCore/page/SecurityOriginHash.h \
 	WebCore/page/Settings.cpp \
 	WebCore/page/Settings.h \
 	WebCore/page/WindowFeatures.cpp \
@@ -1564,9 +1567,6 @@ webcore_sources += \
 	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/Scrollbar.h \
 	WebCore/platform/SearchPopupMenu.h \
-	WebCore/platform/SecurityOrigin.cpp \
-	WebCore/platform/SecurityOrigin.h \
-	WebCore/platform/SecurityOriginHash.h \
 	WebCore/platform/SharedBuffer.cpp \
 	WebCore/platform/SharedBuffer.h \
 	WebCore/platform/SharedTimer.h \
