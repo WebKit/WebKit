@@ -1,5 +1,11 @@
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
+        Fix Gtk bustage from use of containingWindow() over on the WebKit side.  Replace with HostWindow use.
+
+        * webkit/webkitwebview.cpp:
+
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21340
         
         Remove "containingWindow()/setContainingWindow()" from Widget.  HostWindow covers this now.
