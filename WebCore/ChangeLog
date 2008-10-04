@@ -1,3 +1,9 @@
+2008-10-04  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, attempt to fix Gtk build.
+
+        * GNUmakefile.am:
+
 2008-10-03  Timothy Hatcher  <timothy@apple.com>
 
         Move the Web Inspector files into a top-level "inspector" folder.

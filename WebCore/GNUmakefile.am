@@ -508,7 +508,7 @@ IDL_BINDINGS +=  \
 	WebCore/html/File.idl \
 	WebCore/html/FileList.idl \
 	WebCore/html/ImageData.idl \
-	WebCore/page/JavaScriptCallFrame.idl \
+	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
 	WebCore/page/Screen.idl \
