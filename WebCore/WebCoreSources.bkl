@@ -583,7 +583,15 @@ This file contains the list of files needed to build WebCore.
         html/ImageData.cpp
         html/PreloadScanner.cpp
     </set>
-    
+
+    <set append="1" var="WEBCORE_SOURCES_INSPECTOR">
+        inspector/InspectorController.cpp
+        inspector/JavaScriptCallFrame.cpp
+        inspector/JavaScriptDebugServer.cpp
+        inspector/JavaScriptProfile.cpp
+        inspector/JavaScriptProfileNode.cpp
+    </set>
+
     <set append="1" var="WEBCORE_SOURCES_LOADER">
         loader/appcache/ApplicationCache.cpp
         loader/appcache/ApplicationCacheGroup.cpp
@@ -662,11 +670,6 @@ This file contains the list of files needed to build WebCore.
         page/FrameTree.cpp
         page/FrameView.cpp
         page/History.cpp
-        page/InspectorController.cpp
-        page/JavaScriptCallFrame.cpp
-        page/JavaScriptDebugServer.cpp
-        page/JavaScriptProfile.cpp
-        page/JavaScriptProfileNode.cpp
         page/Location.cpp
         page/MouseEventWithHitTestResults.cpp
         page/Navigator.cpp

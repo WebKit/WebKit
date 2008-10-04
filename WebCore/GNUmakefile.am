@@ -1340,6 +1340,18 @@ webcore_sources += \
 	WebCore/icu/unicode/utf_old.h \
 	WebCore/icu/unicode/utypes.h \
 	WebCore/icu/unicode/uversion.h \
+	WebCore/inspector/InspectorClient.h \
+	WebCore/inspector/InspectorController.cpp \
+	WebCore/inspector/InspectorController.h \
+	WebCore/inspector/JavaScriptCallFrame.cpp \
+	WebCore/inspector/JavaScriptCallFrame.h \
+	WebCore/inspector/JavaScriptDebugListener.h \
+	WebCore/inspector/JavaScriptDebugServer.cpp \
+	WebCore/inspector/JavaScriptDebugServer.h \
+	WebCore/inspector/JavaScriptProfile.cpp \
+	WebCore/inspector/JavaScriptProfile.h \
+	WebCore/inspector/JavaScriptProfileNode.cpp \
+	WebCore/inspector/JavaScriptProfileNode.h \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/Cache.h \
 	WebCore/loader/CachePolicy.h \
@@ -1475,18 +1487,6 @@ webcore_sources += \
 	WebCore/page/FrameView.h \
 	WebCore/page/History.cpp \
 	WebCore/page/History.h \
-	WebCore/page/InspectorClient.h \
-	WebCore/page/InspectorController.cpp \
-	WebCore/page/InspectorController.h \
-	WebCore/page/JavaScriptCallFrame.cpp \
-	WebCore/page/JavaScriptCallFrame.h \
-	WebCore/page/JavaScriptDebugListener.h \
-	WebCore/page/JavaScriptDebugServer.cpp \
-	WebCore/page/JavaScriptDebugServer.h \
-	WebCore/page/JavaScriptProfile.cpp \
-	WebCore/page/JavaScriptProfile.h \
-	WebCore/page/JavaScriptProfileNode.cpp \
-	WebCore/page/JavaScriptProfileNode.h \
 	WebCore/page/Location.cpp \
 	WebCore/page/Location.h \
 	WebCore/page/MouseEventWithHitTestResults.cpp \

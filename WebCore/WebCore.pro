@@ -111,7 +111,7 @@ isEmpty(JSCORE_LINKAGE):JSCORE_LINKAGE += -lJavaScriptCore
 LIBS += $$JSCORE_LINKAGE
 
 RESOURCES += \
-    $$PWD/../WebCore/page/inspector/WebKit.qrc \
+    $$PWD/../WebCore/inspector/front-end/WebKit.qrc \
     $$PWD/../WebCore/Resources/WebKitResources.qrc \
     $$PWD/../WebCore/platform/qt/WebCoreResources.qrc
 INCLUDEPATH += \
@@ -338,12 +338,12 @@ IDL_BINDINGS += \
     html/HTMLUListElement.idl \
     html/ImageData.idl \
     html/TextMetrics.idl \
+    inspector/JavaScriptCallFrame.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
     page/History.idl \
-    page/JavaScriptCallFrame.idl \
     page/Location.idl \
     page/Screen.idl \
     page/Navigator.idl \
@@ -708,6 +708,11 @@ SOURCES += \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
+    inspector/InspectorController.cpp \
+    inspector/JavaScriptCallFrame.cpp \
+    inspector/JavaScriptDebugServer.cpp \
+    inspector/JavaScriptProfile.cpp \
+    inspector/JavaScriptProfileNode.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
@@ -773,11 +778,6 @@ SOURCES += \
     page/FrameTree.cpp \
     page/FrameView.cpp \
     page/History.cpp \
-    page/InspectorController.cpp \
-    page/JavaScriptCallFrame.cpp \
-    page/JavaScriptDebugServer.cpp \
-    page/JavaScriptProfile.cpp \
-    page/JavaScriptProfileNode.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Page.cpp \

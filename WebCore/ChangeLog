@@ -1,5 +1,175 @@
 2008-10-03  Timothy Hatcher  <timothy@apple.com>
 
+        Move the Web Inspector files into a top-level "inspector" folder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21359
+
+        Reviewed by Dave Hyatt.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * inspector/InspectorClient.h: Renamed from WebCore/page/InspectorClient.h.
+        * inspector/InspectorController.cpp: Renamed from WebCore/page/InspectorController.cpp.
+        * inspector/InspectorController.h: Renamed from WebCore/page/InspectorController.h.
+        * inspector/JavaScriptCallFrame.cpp: Renamed from WebCore/page/JavaScriptCallFrame.cpp.
+        * inspector/JavaScriptCallFrame.h: Renamed from WebCore/page/JavaScriptCallFrame.h.
+        * inspector/JavaScriptCallFrame.idl: Renamed from WebCore/page/JavaScriptCallFrame.idl.
+        * inspector/JavaScriptDebugListener.h: Renamed from WebCore/page/JavaScriptDebugListener.h.
+        * inspector/JavaScriptDebugServer.cpp: Renamed from WebCore/page/JavaScriptDebugServer.cpp.
+        * inspector/JavaScriptDebugServer.h: Renamed from WebCore/page/JavaScriptDebugServer.h.
+        * inspector/JavaScriptProfile.cpp: Renamed from WebCore/page/JavaScriptProfile.cpp.
+        * inspector/JavaScriptProfile.h: Renamed from WebCore/page/JavaScriptProfile.h.
+        * inspector/JavaScriptProfileNode.cpp: Renamed from WebCore/page/JavaScriptProfileNode.cpp.
+        * inspector/JavaScriptProfileNode.h: Renamed from WebCore/page/JavaScriptProfileNode.h.
+        * inspector/front-end/Breakpoint.js: Renamed from WebCore/page/inspector/Breakpoint.js.
+        * inspector/front-end/BreakpointsSidebarPane.js: Renamed from WebCore/page/inspector/BreakpointsSidebarPane.js.
+        * inspector/front-end/CallStackSidebarPane.js: Renamed from WebCore/page/inspector/CallStackSidebarPane.js.
+        * inspector/front-end/Console.js: Renamed from WebCore/page/inspector/Console.js.
+        * inspector/front-end/DataGrid.js: Renamed from WebCore/page/inspector/DataGrid.js.
+        * inspector/front-end/Database.js: Renamed from WebCore/page/inspector/Database.js.
+        * inspector/front-end/DatabaseQueryView.js: Renamed from WebCore/page/inspector/DatabaseQueryView.js.
+        * inspector/front-end/DatabaseTableView.js: Renamed from WebCore/page/inspector/DatabaseTableView.js.
+        * inspector/front-end/DatabasesPanel.js: Renamed from WebCore/page/inspector/DatabasesPanel.js.
+        * inspector/front-end/ElementsPanel.js: Renamed from WebCore/page/inspector/ElementsPanel.js.
+        * inspector/front-end/ElementsTreeOutline.js: Renamed from WebCore/page/inspector/ElementsTreeOutline.js.
+        * inspector/front-end/FontView.js: Renamed from WebCore/page/inspector/FontView.js.
+        * inspector/front-end/ImageView.js: Renamed from WebCore/page/inspector/ImageView.js.
+        * inspector/front-end/Images/back.png: Renamed from WebCore/page/inspector/Images/back.png.
+        * inspector/front-end/Images/checker.png: Renamed from WebCore/page/inspector/Images/checker.png.
+        * inspector/front-end/Images/clearConsoleButtons.png: Renamed from WebCore/page/inspector/Images/clearConsoleButtons.png.
+        * inspector/front-end/Images/closeButtons.png: Renamed from WebCore/page/inspector/Images/closeButtons.png.
+        * inspector/front-end/Images/consoleButtons.png: Renamed from WebCore/page/inspector/Images/consoleButtons.png.
+        * inspector/front-end/Images/database.png: Renamed from WebCore/page/inspector/Images/database.png.
+        * inspector/front-end/Images/databaseTable.png: Renamed from WebCore/page/inspector/Images/databaseTable.png.
+        * inspector/front-end/Images/databasesIcon.png: Renamed from WebCore/page/inspector/Images/databasesIcon.png.
+        * inspector/front-end/Images/debuggerContinue.png: Renamed from WebCore/page/inspector/Images/debuggerContinue.png.
+        * inspector/front-end/Images/debuggerPause.png: Renamed from WebCore/page/inspector/Images/debuggerPause.png.
+        * inspector/front-end/Images/debuggerStepInto.png: Renamed from WebCore/page/inspector/Images/debuggerStepInto.png.
+        * inspector/front-end/Images/debuggerStepOut.png: Renamed from WebCore/page/inspector/Images/debuggerStepOut.png.
+        * inspector/front-end/Images/debuggerStepOver.png: Renamed from WebCore/page/inspector/Images/debuggerStepOver.png.
+        * inspector/front-end/Images/debuggingButtons.png: Renamed from WebCore/page/inspector/Images/debuggingButtons.png.
+        * inspector/front-end/Images/disclosureTriangleSmallDown.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallDown.png.
+        * inspector/front-end/Images/disclosureTriangleSmallDownBlack.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallDownBlack.png.
+        * inspector/front-end/Images/disclosureTriangleSmallDownWhite.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallDownWhite.png.
+        * inspector/front-end/Images/disclosureTriangleSmallRight.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallRight.png.
+        * inspector/front-end/Images/disclosureTriangleSmallRightBlack.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallRightBlack.png.
+        * inspector/front-end/Images/disclosureTriangleSmallRightDown.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallRightDown.png.
+        * inspector/front-end/Images/disclosureTriangleSmallRightDownBlack.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallRightDownBlack.png.
+        * inspector/front-end/Images/disclosureTriangleSmallRightDownWhite.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallRightDownWhite.png.
+        * inspector/front-end/Images/disclosureTriangleSmallRightWhite.png: Renamed from WebCore/page/inspector/Images/disclosureTriangleSmallRightWhite.png.
+        * inspector/front-end/Images/dockButtons.png: Renamed from WebCore/page/inspector/Images/dockButtons.png.
+        * inspector/front-end/Images/elementsIcon.png: Renamed from WebCore/page/inspector/Images/elementsIcon.png.
+        * inspector/front-end/Images/errorIcon.png: Renamed from WebCore/page/inspector/Images/errorIcon.png.
+        * inspector/front-end/Images/errorMediumIcon.png: Renamed from WebCore/page/inspector/Images/errorMediumIcon.png.
+        * inspector/front-end/Images/excludeButtons.png: Renamed from WebCore/page/inspector/Images/excludeButtons.png.
+        * inspector/front-end/Images/focusButtons.png: Renamed from WebCore/page/inspector/Images/focusButtons.png.
+        * inspector/front-end/Images/forward.png: Renamed from WebCore/page/inspector/Images/forward.png.
+        * inspector/front-end/Images/glossyHeader.png: Renamed from WebCore/page/inspector/Images/glossyHeader.png.
+        * inspector/front-end/Images/glossyHeaderPressed.png: Renamed from WebCore/page/inspector/Images/glossyHeaderPressed.png.
+        * inspector/front-end/Images/glossyHeaderSelected.png: Renamed from WebCore/page/inspector/Images/glossyHeaderSelected.png.
+        * inspector/front-end/Images/glossyHeaderSelectedPressed.png: Renamed from WebCore/page/inspector/Images/glossyHeaderSelectedPressed.png.
+        * inspector/front-end/Images/goArrow.png: Renamed from WebCore/page/inspector/Images/goArrow.png.
+        * inspector/front-end/Images/largerResourcesButtons.png: Renamed from WebCore/page/inspector/Images/largerResourcesButtons.png.
+        * inspector/front-end/Images/nodeSearchButtons.png: Renamed from WebCore/page/inspector/Images/nodeSearchButtons.png.
+        * inspector/front-end/Images/paneBottomGrow.png: Renamed from WebCore/page/inspector/Images/paneBottomGrow.png.
+        * inspector/front-end/Images/paneBottomGrowActive.png: Renamed from WebCore/page/inspector/Images/paneBottomGrowActive.png.
+        * inspector/front-end/Images/paneGrowHandleLine.png: Renamed from WebCore/page/inspector/Images/paneGrowHandleLine.png.
+        * inspector/front-end/Images/pauseOnExceptionButtons.png: Renamed from WebCore/page/inspector/Images/pauseOnExceptionButtons.png.
+        * inspector/front-end/Images/percentButtons.png: Renamed from WebCore/page/inspector/Images/percentButtons.png.
+        * inspector/front-end/Images/profileGroupIcon.png: Renamed from WebCore/page/inspector/Images/profileGroupIcon.png.
+        * inspector/front-end/Images/profileIcon.png: Renamed from WebCore/page/inspector/Images/profileIcon.png.
+        * inspector/front-end/Images/profileSmallIcon.png: Renamed from WebCore/page/inspector/Images/profileSmallIcon.png.
+        * inspector/front-end/Images/profilesIcon.png: Renamed from WebCore/page/inspector/Images/profilesIcon.png.
+        * inspector/front-end/Images/recordButtons.png: Renamed from WebCore/page/inspector/Images/recordButtons.png.
+        * inspector/front-end/Images/reloadButtons.png: Renamed from WebCore/page/inspector/Images/reloadButtons.png.
+        * inspector/front-end/Images/resourceCSSIcon.png: Renamed from WebCore/page/inspector/Images/resourceCSSIcon.png.
+        * inspector/front-end/Images/resourceDocumentIcon.png: Renamed from WebCore/page/inspector/Images/resourceDocumentIcon.png.
+        * inspector/front-end/Images/resourceDocumentIconSmall.png: Renamed from WebCore/page/inspector/Images/resourceDocumentIconSmall.png.
+        * inspector/front-end/Images/resourceJSIcon.png: Renamed from WebCore/page/inspector/Images/resourceJSIcon.png.
+        * inspector/front-end/Images/resourcePlainIcon.png: Renamed from WebCore/page/inspector/Images/resourcePlainIcon.png.
+        * inspector/front-end/Images/resourcePlainIconSmall.png: Renamed from WebCore/page/inspector/Images/resourcePlainIconSmall.png.
+        * inspector/front-end/Images/resourcesIcon.png: Renamed from WebCore/page/inspector/Images/resourcesIcon.png.
+        * inspector/front-end/Images/resourcesSizeGraphIcon.png: Renamed from WebCore/page/inspector/Images/resourcesSizeGraphIcon.png.
+        * inspector/front-end/Images/resourcesTimeGraphIcon.png: Renamed from WebCore/page/inspector/Images/resourcesTimeGraphIcon.png.
+        * inspector/front-end/Images/scriptsIcon.png: Renamed from WebCore/page/inspector/Images/scriptsIcon.png.
+        * inspector/front-end/Images/searchSmallBlue.png: Renamed from WebCore/page/inspector/Images/searchSmallBlue.png.
+        * inspector/front-end/Images/searchSmallBrightBlue.png: Renamed from WebCore/page/inspector/Images/searchSmallBrightBlue.png.
+        * inspector/front-end/Images/searchSmallGray.png: Renamed from WebCore/page/inspector/Images/searchSmallGray.png.
+        * inspector/front-end/Images/searchSmallWhite.png: Renamed from WebCore/page/inspector/Images/searchSmallWhite.png.
+        * inspector/front-end/Images/segment.png: Renamed from WebCore/page/inspector/Images/segment.png.
+        * inspector/front-end/Images/segmentEnd.png: Renamed from WebCore/page/inspector/Images/segmentEnd.png.
+        * inspector/front-end/Images/segmentHover.png: Renamed from WebCore/page/inspector/Images/segmentHover.png.
+        * inspector/front-end/Images/segmentHoverEnd.png: Renamed from WebCore/page/inspector/Images/segmentHoverEnd.png.
+        * inspector/front-end/Images/segmentSelected.png: Renamed from WebCore/page/inspector/Images/segmentSelected.png.
+        * inspector/front-end/Images/segmentSelectedEnd.png: Renamed from WebCore/page/inspector/Images/segmentSelectedEnd.png.
+        * inspector/front-end/Images/splitviewDimple.png: Renamed from WebCore/page/inspector/Images/splitviewDimple.png.
+        * inspector/front-end/Images/splitviewDividerBackground.png: Renamed from WebCore/page/inspector/Images/splitviewDividerBackground.png.
+        * inspector/front-end/Images/statusbarBackground.png: Renamed from WebCore/page/inspector/Images/statusbarBackground.png.
+        * inspector/front-end/Images/statusbarBottomBackground.png: Renamed from WebCore/page/inspector/Images/statusbarBottomBackground.png.
+        * inspector/front-end/Images/statusbarButtons.png: Renamed from WebCore/page/inspector/Images/statusbarButtons.png.
+        * inspector/front-end/Images/statusbarMenuButton.png: Renamed from WebCore/page/inspector/Images/statusbarMenuButton.png.
+        * inspector/front-end/Images/statusbarMenuButtonSelected.png: Renamed from WebCore/page/inspector/Images/statusbarMenuButtonSelected.png.
+        * inspector/front-end/Images/statusbarResizerHorizontal.png: Renamed from WebCore/page/inspector/Images/statusbarResizerHorizontal.png.
+        * inspector/front-end/Images/statusbarResizerVertical.png: Renamed from WebCore/page/inspector/Images/statusbarResizerVertical.png.
+        * inspector/front-end/Images/timelinePillBlue.png: Renamed from WebCore/page/inspector/Images/timelinePillBlue.png.
+        * inspector/front-end/Images/timelinePillGray.png: Renamed from WebCore/page/inspector/Images/timelinePillGray.png.
+        * inspector/front-end/Images/timelinePillGreen.png: Renamed from WebCore/page/inspector/Images/timelinePillGreen.png.
+        * inspector/front-end/Images/timelinePillOrange.png: Renamed from WebCore/page/inspector/Images/timelinePillOrange.png.
+        * inspector/front-end/Images/timelinePillPurple.png: Renamed from WebCore/page/inspector/Images/timelinePillPurple.png.
+        * inspector/front-end/Images/timelinePillRed.png: Renamed from WebCore/page/inspector/Images/timelinePillRed.png.
+        * inspector/front-end/Images/timelinePillYellow.png: Renamed from WebCore/page/inspector/Images/timelinePillYellow.png.
+        * inspector/front-end/Images/tipBalloon.png: Renamed from WebCore/page/inspector/Images/tipBalloon.png.
+        * inspector/front-end/Images/tipBalloonBottom.png: Renamed from WebCore/page/inspector/Images/tipBalloonBottom.png.
+        * inspector/front-end/Images/tipIcon.png: Renamed from WebCore/page/inspector/Images/tipIcon.png.
+        * inspector/front-end/Images/tipIconPressed.png: Renamed from WebCore/page/inspector/Images/tipIconPressed.png.
+        * inspector/front-end/Images/toolbarItemSelected.png: Renamed from WebCore/page/inspector/Images/toolbarItemSelected.png.
+        * inspector/front-end/Images/treeDownTriangleBlack.png: Renamed from WebCore/page/inspector/Images/treeDownTriangleBlack.png.
+        * inspector/front-end/Images/treeDownTriangleWhite.png: Renamed from WebCore/page/inspector/Images/treeDownTriangleWhite.png.
+        * inspector/front-end/Images/treeRightTriangleBlack.png: Renamed from WebCore/page/inspector/Images/treeRightTriangleBlack.png.
+        * inspector/front-end/Images/treeRightTriangleWhite.png: Renamed from WebCore/page/inspector/Images/treeRightTriangleWhite.png.
+        * inspector/front-end/Images/treeUpTriangleBlack.png: Renamed from WebCore/page/inspector/Images/treeUpTriangleBlack.png.
+        * inspector/front-end/Images/treeUpTriangleWhite.png: Renamed from WebCore/page/inspector/Images/treeUpTriangleWhite.png.
+        * inspector/front-end/Images/userInputIcon.png: Renamed from WebCore/page/inspector/Images/userInputIcon.png.
+        * inspector/front-end/Images/userInputPreviousIcon.png: Renamed from WebCore/page/inspector/Images/userInputPreviousIcon.png.
+        * inspector/front-end/Images/warningIcon.png: Renamed from WebCore/page/inspector/Images/warningIcon.png.
+        * inspector/front-end/Images/warningMediumIcon.png: Renamed from WebCore/page/inspector/Images/warningMediumIcon.png.
+        * inspector/front-end/Images/warningsErrors.png: Renamed from WebCore/page/inspector/Images/warningsErrors.png.
+        * inspector/front-end/MetricsSidebarPane.js: Renamed from WebCore/page/inspector/MetricsSidebarPane.js.
+        * inspector/front-end/Object.js: Renamed from WebCore/page/inspector/Object.js.
+        * inspector/front-end/ObjectPropertiesSection.js: Renamed from WebCore/page/inspector/ObjectPropertiesSection.js.
+        * inspector/front-end/Panel.js: Renamed from WebCore/page/inspector/Panel.js.
+        * inspector/front-end/Placard.js: Renamed from WebCore/page/inspector/Placard.js.
+        * inspector/front-end/ProfileView.js: Renamed from WebCore/page/inspector/ProfileView.js.
+        * inspector/front-end/ProfilesPanel.js: Renamed from WebCore/page/inspector/ProfilesPanel.js.
+        * inspector/front-end/PropertiesSection.js: Renamed from WebCore/page/inspector/PropertiesSection.js.
+        * inspector/front-end/PropertiesSidebarPane.js: Renamed from WebCore/page/inspector/PropertiesSidebarPane.js.
+        * inspector/front-end/Resource.js: Renamed from WebCore/page/inspector/Resource.js.
+        * inspector/front-end/ResourceCategory.js: Renamed from WebCore/page/inspector/ResourceCategory.js.
+        * inspector/front-end/ResourceView.js: Renamed from WebCore/page/inspector/ResourceView.js.
+        * inspector/front-end/ResourcesPanel.js: Renamed from WebCore/page/inspector/ResourcesPanel.js.
+        * inspector/front-end/ScopeChainSidebarPane.js: Renamed from WebCore/page/inspector/ScopeChainSidebarPane.js.
+        * inspector/front-end/Script.js: Renamed from WebCore/page/inspector/Script.js.
+        * inspector/front-end/ScriptView.js: Renamed from WebCore/page/inspector/ScriptView.js.
+        * inspector/front-end/ScriptsPanel.js: Renamed from WebCore/page/inspector/ScriptsPanel.js.
+        * inspector/front-end/SidebarPane.js: Renamed from WebCore/page/inspector/SidebarPane.js.
+        * inspector/front-end/SidebarTreeElement.js: Renamed from WebCore/page/inspector/SidebarTreeElement.js.
+        * inspector/front-end/SourceFrame.js: Renamed from WebCore/page/inspector/SourceFrame.js.
+        * inspector/front-end/SourceView.js: Renamed from WebCore/page/inspector/SourceView.js.
+        * inspector/front-end/StylesSidebarPane.js: Renamed from WebCore/page/inspector/StylesSidebarPane.js.
+        * inspector/front-end/TextPrompt.js: Renamed from WebCore/page/inspector/TextPrompt.js.
+        * inspector/front-end/View.js: Renamed from WebCore/page/inspector/View.js.
+        * inspector/front-end/WebKit.qrc: Renamed from WebCore/page/inspector/WebKit.qrc.
+        * inspector/front-end/inspector.css: Renamed from WebCore/page/inspector/inspector.css.
+        * inspector/front-end/inspector.html: Renamed from WebCore/page/inspector/inspector.html.
+        * inspector/front-end/inspector.js: Renamed from WebCore/page/inspector/inspector.js.
+        * inspector/front-end/treeoutline.js: Renamed from WebCore/page/inspector/treeoutline.js.
+        * inspector/front-end/utilities.js: Renamed from WebCore/page/inspector/utilities.js.
+
+2008-10-03  Timothy Hatcher  <timothy@apple.com>
+
         Adds support to the Web Inspector's Elements panel for fast tag name,
         class name, id and attribute name searching. The panel first tries
         using getElementById, getElementsByClassName and getElementsByTagName
