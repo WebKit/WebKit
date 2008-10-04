@@ -114,9 +114,9 @@ WebInspector.Panel.prototype = {
 
         WebInspector.updateSearchMatchesCount(0, this);
 
-        if (this._currentSearchChrunkIntervalIdentifier) {
-            clearInterval(this._currentSearchChrunkIntervalIdentifier);
-            delete this._currentSearchChrunkIntervalIdentifier;
+        if (this._currentSearchChunkIntervalIdentifier) {
+            clearInterval(this._currentSearchChunkIntervalIdentifier);
+            delete this._currentSearchChunkIntervalIdentifier;
         }
 
         this._totalSearchMatches = 0;
@@ -186,8 +186,8 @@ WebInspector.Panel.prototype = {
             var view = searchableViews[i];
 
             if (++i >= searchableViews.length) {
-                if (panel._currentSearchChrunkIntervalIdentifier === chunkIntervalIdentifier)
-                    delete panel._currentSearchChrunkIntervalIdentifier;
+                if (panel._currentSearchChunkIntervalIdentifier === chunkIntervalIdentifier)
+                    delete panel._currentSearchChunkIntervalIdentifier;
                 clearInterval(chunkIntervalIdentifier);
             }
 
@@ -204,7 +204,7 @@ WebInspector.Panel.prototype = {
         processChunk();
 
         chunkIntervalIdentifier = setInterval(processChunk, 25);
-        this._currentSearchChrunkIntervalIdentifier = chunkIntervalIdentifier;
+        this._currentSearchChunkIntervalIdentifier = chunkIntervalIdentifier;
     },
 
     jumpToNextSearchResult: function()
