@@ -20,7 +20,7 @@
  */
 #include "config.h"
 #include "QWebPopup.h"
-#include "RenderStyle.h"
+#include "PopupMenuStyle.h"
 
 #include <QCoreApplication>
 #include <QMouseEvent>
@@ -33,7 +33,7 @@ QWebPopup::QWebPopup(PopupMenuClient* client)
 {
     Q_ASSERT(m_client);
 
-    setFont(m_client->clientStyle()->font().font());
+    setFont(m_client->itemStyle().font().font());
     connect(this, SIGNAL(activated(int)),
             SLOT(activeChanged(int)));
 }
