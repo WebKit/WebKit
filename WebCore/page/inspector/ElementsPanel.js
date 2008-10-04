@@ -255,7 +255,26 @@ WebInspector.ElementsPanel.prototype = {
         if (!whitespaceTrimmedQuery.length)
             return;
 
+        var tagNameQuery = whitespaceTrimmedQuery;
+        var attributeNameQuery = whitespaceTrimmedQuery;
+        var startTagFound = (tagNameQuery.indexOf("<") === 0);
+        var endTagFound = (tagNameQuery.lastIndexOf(">") === (tagNameQuery.length - 1));
+
+        if (startTagFound || endTagFound) {
+            var tagNameQueryLength = tagNameQuery.length;
+            tagNameQuery = tagNameQuery.substring((startTagFound ? 1 : 0), (endTagFound ? (tagNameQueryLength - 1) : tagNameQueryLength));
+        }
+
+        // Check the tagNameQuery is it is a possibly valid tag name.
+        if (!/^[a-zA-Z0-9\-_:]+$/.test(tagNameQuery))
+            tagNameQuery = null;
+
+        // Check the attributeNameQuery is it is a possibly valid tag name.
+        if (!/^[a-zA-Z0-9\-_:]+$/.test(attributeNameQuery))
+            attributeNameQuery = null;
+
         const escapedQuery = query.escapeCharacters("'");
+        const escapedTagNameQuery = (tagNameQuery ? tagNameQuery.escapeCharacters("'") : null);
         const escapedWhitespaceTrimmedQuery = whitespaceTrimmedQuery.escapeCharacters("'");
         const searchResultsProperty = this.includedInSearchResultsPropertyName;
 
@@ -308,9 +327,66 @@ WebInspector.ElementsPanel.prototype = {
             updateMatchesCountSoon.call(this);
         }
 
+        function matchExactItems(doc)
+        {
+            matchExactId.call(this, doc);
+            matchExactClassNames.call(this, doc);
+            matchExactTagNames.call(this, doc);
+            matchExactAttributeNames.call(this, doc);
+        }
+
+        function matchExactId(doc)
+        {
+            const result = doc.__proto__.getElementById.call(doc, whitespaceTrimmedQuery);
+            addNodesToResults.call(this, result, (result ? 1 : 0), function() { return this });
+        }
+
+        function matchExactClassNames(doc)
+        {
+            const result = doc.__proto__.getElementsByClassName.call(doc, whitespaceTrimmedQuery);
+            addNodesToResults.call(this, result, result.length, result.item);
+        }
+
+        function matchExactTagNames(doc)
+        {
+            if (!tagNameQuery)
+                return;
+            const result = doc.__proto__.getElementsByTagName.call(doc, tagNameQuery);
+            addNodesToResults.call(this, result, result.length, result.item);
+        }
+
+        function matchExactAttributeNames(doc)
+        {
+            if (!attributeNameQuery)
+                return;
+            const result = doc.__proto__.querySelectorAll.call(doc, "[" + attributeNameQuery + "]");
+            addNodesToResults.call(this, result, result.length, result.item);
+        }
+
+        function matchPartialTagNames(doc)
+        {
+            if (!tagNameQuery)
+                return;
+            const result = doc.__proto__.evaluate.call(doc, "//*[contains(name(), '" + escapedTagNameQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+        }
+
+        function matchStartOfTagNames(doc)
+        {
+            if (!tagNameQuery)
+                return;
+            const result = doc.__proto__.evaluate.call(doc, "//*[starts-with(name(), '" + escapedTagNameQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
+        }
+
         function matchPartialTagNamesAndAttributeValues(doc)
         {
-            const result = doc.__proto__.evaluate.call(doc, "//*[contains(name(), '" + escapedWhitespaceTrimmedQuery + "') or contains(@*, '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            if (!tagNameQuery) {
+                matchPartialAttributeValues.call(this, doc);
+                return;
+            }
+
+            const result = doc.__proto__.evaluate.call(doc, "//*[contains(name(), '" + escapedTagNameQuery + "') or contains(@*, '" + escapedQuery + "')]", doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
             addNodesToResults.call(this, result, result.snapshotLength, result.snapshotItem);
         }
 
@@ -348,12 +424,20 @@ WebInspector.ElementsPanel.prototype = {
         const mainFrameDocument = InspectorController.inspectedWindow().document;
         const searchDocuments = [mainFrameDocument];
 
-        if (whitespaceTrimmedQuery === "//*" || whitespaceTrimmedQuery === "*") {
+        if (tagNameQuery && startTagFound && endTagFound)
+            const searchFunctions = [matchExactTagNames, matchPlainText];
+        else if (tagNameQuery && startTagFound)
+            const searchFunctions = [matchStartOfTagNames, matchPlainText];
+        else if (tagNameQuery && endTagFound) {
+            // FIXME: we should have a matchEndOfTagNames search function if endTagFound is true but not startTagFound.
+            // This requires ends-with() support in XPath, WebKit only supports starts-with() and contains().
+            const searchFunctions = [matchPartialTagNames, matchPlainText];
+        } else if (whitespaceTrimmedQuery === "//*" || whitespaceTrimmedQuery === "*") {
             // These queries will match every node. Matching everything isn't useful and can be slow for large pages,
             // so limit the search functions list to plain text and attribute matching.
             const searchFunctions = [matchPartialAttributeValues, matchPlainText];
         } else
-            const searchFunctions = [matchStyleSelector, matchPartialTagNamesAndAttributeValues, matchPlainText, matchXPathQuery];
+            const searchFunctions = [matchExactItems, matchStyleSelector, matchPartialTagNamesAndAttributeValues, matchPlainText, matchXPathQuery];
 
         // Find all frames, iframes and object elements to search their documents.
         const querySelectorAllFunction = InspectorController.inspectedWindow().Document.prototype.querySelectorAll;

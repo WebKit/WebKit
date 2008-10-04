@@ -1,5 +1,24 @@
 2008-10-03  Timothy Hatcher  <timothy@apple.com>
 
+        Adds support to the Web Inspector's Elements panel for fast tag name,
+        class name, id and attribute name searching. The panel first tries
+        using getElementById, getElementsByClassName and getElementsByTagName
+        with the search query. Then does a slower search using XPath for partial
+        matches, text and comment matches.
+
+        Adds support for search queries like "<div>", "<h" and "frame>".
+        These forms limit the search to tag names, text and comment matches.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21353
+
+        Reviewed by Maciej Stachowiak.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.performSearch): Add tag syntax
+        support. Add new search functions that try exact matches first.
+
+2008-10-03  Timothy Hatcher  <timothy@apple.com>
+
         Changes how searching works in the Web Inspector's Elements
         panel. The search tasks are divided into chunks that are small
         units of work that are performed at a time interval. This
