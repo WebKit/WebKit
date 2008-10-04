@@ -35,7 +35,7 @@ namespace JSC {
         JSActivation* activation;
 
         unsigned numParameters;
-        int firstParameterIndex;
+        ptrdiff_t firstParameterIndex;
         unsigned numArguments;
 
         Register* registers;
@@ -84,7 +84,7 @@ namespace JSC {
     inline void Arguments::init(ExecState* exec, Register* callFrame)
     {
         JSFunction* callee;
-        int firstParameterIndex;
+        ptrdiff_t firstParameterIndex;
         Register* argv;
         int numArguments;
         exec->machine()->getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);

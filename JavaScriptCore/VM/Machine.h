@@ -107,7 +107,7 @@ namespace JSC {
         static ScopeChainNode* scopeChain(const Register* r) { return r[RegisterFile::ScopeChain].scopeChain(); }
         static CodeBlock* codeBlock(const Register* r) { return r[RegisterFile::CodeBlock].codeBlock(); }
 
-        void getArgumentsData(Register* callFrame, JSFunction*&, int& firstParameterIndex, Register*& argv, int& argc);
+        void getArgumentsData(Register* callFrame, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
         
         void startTimeoutCheck()

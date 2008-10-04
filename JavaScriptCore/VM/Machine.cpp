@@ -3928,7 +3928,7 @@ Register* Machine::callFrame(ExecState* exec, InternalFunction* function) const
     return 0;
 }
 
-void Machine::getArgumentsData(Register* callFrame, JSFunction*& function, int& firstParameterIndex, Register*& argv, int& argc)
+void Machine::getArgumentsData(Register* callFrame, JSFunction*& function, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc)
 {
     function = static_cast<JSFunction*>(callFrame[RegisterFile::Callee].getJSValue());
     ASSERT(function->inherits(&JSFunction::info));
