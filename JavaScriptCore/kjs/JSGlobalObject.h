@@ -91,7 +91,6 @@ namespace JSC {
             
             ScopeChain globalScopeChain;
             Register globalCallFrame[RegisterFile::CallFrameHeaderSize];
-            OwnPtr<ExecState> globalExec;
 
             int recursion;
 

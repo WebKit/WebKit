@@ -36,7 +36,7 @@ namespace JSC {
         virtual const ClassInfo* classInfo() const; 
         static const ClassInfo info;
 
-        const UString& name(ExecState*);
+        const UString& name(JSGlobalData*);
 
         static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
         { 

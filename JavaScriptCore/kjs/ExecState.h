@@ -29,85 +29,71 @@
 
 namespace JSC  {
 
+    class ExecState;
     class JSValue;
     class Register;
 
+    typedef ExecState CallFrame;
+
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
-    class ExecState : Noncopyable {
-#if ENABLE(CTI)
-        friend class CTI;
-#endif
-        friend class Machine;
-        friend class DebuggerCallFrame;
+    class ExecState : private Register, Noncopyable {
     public:
-        explicit ExecState(Register* callFrame)
-            : m_exception(0)
-            , m_callFrame(callFrame)
-        {
-        }
+        static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
+        Register* registers() { return this; }
 
         // Global object in which execution began.
-        JSGlobalObject* dynamicGlobalObject() const
+        JSGlobalObject* dynamicGlobalObject()
         {
-            return Machine::scopeChain(Machine::firstCallFrame(m_callFrame))->globalObject();
+            return Machine::scopeChain(Machine::firstCallFrame(this))->globalObject();
         }
 
-        // Global object in which the current script was defined. (Can differ
-        // from dynamicGlobalObject() during function calls across frames.)
-        JSGlobalObject* lexicalGlobalObject() const
+        // Global object in which the currently executing code was defined.
+        // Differs from dynamicGlobalObject() during function calls across web browser frames.
+        JSGlobalObject* lexicalGlobalObject()
         {
-            return Machine::scopeChain(m_callFrame)->globalObject();
+            return Machine::scopeChain(this)->globalObject();
         }
 
-        JSObject* globalThisValue() const
+        // Differs from lexicalGlobalObject because this will have DOM window shell rather than
+        // the actual DOM window.
+        JSObject* globalThisValue()
         {
-            return Machine::scopeChain(m_callFrame)->globalThisObject();
+            return Machine::scopeChain(this)->globalThisObject();
         }
 
-        // Exception propogation.
-        void setException(JSValue* exception) { m_exception = exception; }
-        void clearException() { m_exception = 0; }
-        JSValue* exception() const { return m_exception; }
-        JSValue** exceptionSlot() { return &m_exception; }
-        bool hadException() const { return !!m_exception; }
-#if ENABLE(CTI)
-        void setCTIReturnAddress(void* ctiRA) { m_ctiReturnAddress = ctiRA; }
-        void* ctiReturnAddress() const { return m_ctiReturnAddress; }
-#endif
-
-        JSGlobalData& globalData() const
+        JSGlobalData& globalData()
         {
-            return *Machine::scopeChain(m_callFrame)->globalData;
+            return *Machine::scopeChain(this)->globalData;
         }
+
+        // Convenience functions for access to global data.
+
+        void setException(JSValue* exception) { globalData().exception = exception; }
+        void clearException() { globalData().exception = 0; }
+        JSValue* exception() { return globalData().exception; }
+        JSValue** exceptionSlot() { return &globalData().exception; }
+        bool hadException() { return !!globalData().exception; }
 
         IdentifierTable* identifierTable() { return globalData().identifierTable; }
-        const CommonIdentifiers& propertyNames() const { return *globalData().propertyNames; }
-        const ArgList& emptyList() const { return *globalData().emptyList; }
+        const CommonIdentifiers& propertyNames() { return *globalData().propertyNames; }
+        const ArgList& emptyList() { return *globalData().emptyList; }
         Lexer* lexer() { return globalData().lexer; }
         Parser* parser() { return globalData().parser; }
-        Machine* machine() const { return globalData().machine; }
-        static const HashTable* arrayTable(ExecState* exec) { return exec->globalData().arrayTable; }
-        static const HashTable* dateTable(ExecState* exec) { return exec->globalData().dateTable; }
-        static const HashTable* mathTable(ExecState* exec) { return exec->globalData().mathTable; }
-        static const HashTable* numberTable(ExecState* exec) { return exec->globalData().numberTable; }
-        static const HashTable* regExpTable(ExecState* exec) { return exec->globalData().regExpTable; }
-        static const HashTable* regExpConstructorTable(ExecState* exec) { return exec->globalData().regExpConstructorTable; }
-        static const HashTable* stringTable(ExecState* exec) { return exec->globalData().stringTable; }
+        Machine* machine() { return globalData().machine; }
+        Heap* heap() { return &globalData().heap; }
 
-        Heap* heap() const { return &globalData().heap; }
+        static const HashTable* arrayTable(CallFrame* callFrame) { return callFrame->globalData().arrayTable; }
+        static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->globalData().dateTable; }
+        static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->globalData().mathTable; }
+        static const HashTable* numberTable(CallFrame* callFrame) { return callFrame->globalData().numberTable; }
+        static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->globalData().regExpTable; }
+        static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->globalData().regExpConstructorTable; }
+        static const HashTable* stringTable(CallFrame* callFrame) { return callFrame->globalData().stringTable; }
 
     private:
-        // Default constructor required for gcc 3.
-        ExecState() { }
-
-        bool isGlobalObject(JSObject*) const;
-
-        JSValue* m_exception;
-#if ENABLE(CTI)
-        void* m_ctiReturnAddress;
-#endif
-        Register* m_callFrame; // The most recent call frame.
+        ExecState();
+        ~ExecState();
     };
 
 } // namespace JSC

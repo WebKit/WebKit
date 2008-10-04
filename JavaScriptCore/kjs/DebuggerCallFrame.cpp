@@ -44,7 +44,7 @@ const UString* DebuggerCallFrame::functionName() const
     JSFunction* function = static_cast<JSFunction*>(m_registers[RegisterFile::Callee].getJSValue());
     if (!function)
         return 0;
-    return &function->name(m_exec);
+    return &function->name(m_scopeChain->globalData);
 }
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const
@@ -68,16 +68,14 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     if (!m_codeBlock)
         return 0;
 
-    ExecState newExec(m_registers);
-
     int errLine;
     UString errMsg;
     SourceCode source = makeSource(script);
-    RefPtr<EvalNode> evalNode = newExec.parser()->parse<EvalNode>(&newExec, source, &errLine, &errMsg);
+    RefPtr<EvalNode> evalNode = m_scopeChain->globalData->parser->parse<EvalNode>(CallFrame::create(m_registers), source, &errLine, &errMsg);
     if (!evalNode)
-        return Error::create(&newExec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
+        return Error::create(CallFrame::create(m_registers), SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 
-    return newExec.machine()->execute(evalNode.get(), &newExec, thisObject(), m_scopeChain, &exception);
+    return m_scopeChain->globalData->machine->execute(evalNode.get(), CallFrame::create(m_registers), thisObject(), m_scopeChain, &exception);
 }
 
 } // namespace JSC

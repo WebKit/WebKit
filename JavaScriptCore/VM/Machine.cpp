@@ -532,24 +532,20 @@ NEVER_INLINE bool Machine::resolveBaseAndFunc(ExecState* exec, Instruction* vPC,
     return false;
 }
 
-ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* r, size_t registerOffset, int argc, JSValue*& exceptionValue)
+ALWAYS_INLINE Register* slideRegisterWindowForCall(CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* r, size_t registerOffset, int argc)
 {
     Register* newEnd = r + registerOffset + newCodeBlock->numCalleeRegisters;
 
-    if (argc == newCodeBlock->numParameters) { // correct number of arguments
-        if (!registerFile->grow(newEnd)) {
-            exceptionValue = createStackOverflowError(exec);
-            return r;
-        }
+    if (LIKELY(argc == newCodeBlock->numParameters)) { // correct number of arguments
+        if (UNLIKELY(!registerFile->grow(newEnd)))
+            return 0;
         r += registerOffset;
     } else if (argc < newCodeBlock->numParameters) { // too few arguments -- fill in the blanks
         size_t omittedArgCount = newCodeBlock->numParameters - argc;
         registerOffset += omittedArgCount;
         newEnd += omittedArgCount;
-        if (!registerFile->grow(newEnd)) {
-            exceptionValue = createStackOverflowError(exec);
-            return r;
-        }
+        if (!registerFile->grow(newEnd))
+            return 0;
         r += registerOffset;
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - omittedArgCount;
@@ -560,10 +556,8 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
         registerOffset += numParameters;
         newEnd += numParameters;
 
-        if (!registerFile->grow(newEnd)) {
-            exceptionValue = createStackOverflowError(exec);
-            return r;
-        }
+        if (!registerFile->grow(newEnd))
+            return 0;
         r += registerOffset;
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argc;
@@ -626,7 +620,7 @@ Machine::Machine()
     , m_ticksUntilNextTimeoutCheck(initialTickCountThreshold)
 {
     initTimeout();
-    privateExecute(InitializeAndReturn);
+    privateExecute(InitializeAndReturn, 0, 0, 0);
     
     // Bizarrely, calling fastMalloc here is faster than allocating space on the stack.
     void* storage = fastMalloc(sizeof(CollectorBlock));
@@ -767,7 +761,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     ScopeChainNode* scopeChain = this->scopeChain(r);
 
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
-        DebuggerCallFrame debuggerCallFrame(exec, exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
+        DebuggerCallFrame debuggerCallFrame(exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
         if (r[RegisterFile::Callee].jsValue(exec))
             debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->lastLine());
         else
@@ -798,7 +792,6 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     if (isHostCallFrame(r))
         return false;
 
-    exec->m_callFrame = r;
     codeBlock = this->codeBlock(r);
     vPC = vPCForPC(codeBlock, returnPC);
     return true;
@@ -849,7 +842,7 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue*& exc
 
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
         ScopeChainNode* scopeChain = this->scopeChain(r);
-        DebuggerCallFrame debuggerCallFrame(exec, exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
+        DebuggerCallFrame debuggerCallFrame(exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
         debugger->exception(debuggerCallFrame, codeBlock->ownerNode->sourceID(), codeBlock->lineNumberForVPC(vPC));
     }
 
@@ -904,8 +897,6 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
 
-    ExecState newExec(r);
-
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
         (*profiler)->willExecute(exec, programNode->sourceURL(), programNode->lineNo());
@@ -914,9 +905,9 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
 #if ENABLE(CTI)
     if (!codeBlock->ctiCode)
         CTI::compile(this, exec, codeBlock);
-    JSValue* result = CTI::execute(codeBlock->ctiCode, &newExec, &m_registerFile, r, &newExec.globalData(), exception);
+    JSValue* result = CTI::execute(codeBlock->ctiCode, &m_registerFile, r, scopeChain->globalData, exception);
 #else
-    JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, exception);
+    JSValue* result = privateExecute(Normal, &m_registerFile, r, exception);
 #endif
     m_reentryDepth--;
 
@@ -958,15 +949,14 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         argv[++dst] = *it;
 
     CodeBlock* codeBlock = &functionBodyNode->byteCode(scopeChain);
-    Register* r = slideRegisterWindowForCall(exec, codeBlock, &m_registerFile, argv, argc + RegisterFile::CallFrameHeaderSize, argc, *exception);
-    if (UNLIKELY(*exception != 0)) {
+    Register* r = slideRegisterWindowForCall(codeBlock, &m_registerFile, argv, argc + RegisterFile::CallFrameHeaderSize, argc);
+    if (UNLIKELY(!r)) {
+        *exception = createStackOverflowError(exec);
         m_registerFile.shrink(oldEnd);
         return jsNull();
     }
     // a 0 codeBlock indicates a built-in caller
-    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(exec->m_callFrame), 0, argc, function);
-
-    ExecState newExec(r);
+    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(exec->registers()), 0, argc, function);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -976,9 +966,9 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
 #if ENABLE(CTI)
     if (!codeBlock->ctiCode)
         CTI::compile(this, exec, codeBlock);
-    JSValue* result = CTI::execute(codeBlock->ctiCode, &newExec, &m_registerFile, r, &newExec.globalData(), exception);
+    JSValue* result = CTI::execute(codeBlock->ctiCode, &m_registerFile, r, scopeChain->globalData, exception);
 #else
-    JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, exception);
+    JSValue* result = privateExecute(Normal, &m_registerFile, r, exception);
 #endif
     m_reentryDepth--;
 
@@ -1047,12 +1037,10 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 
     // a 0 codeBlock indicates a built-in caller
     r[codeBlock->thisRegister] = thisObj;
-    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(exec->m_callFrame), 0, 0, 0);
+    initializeCallFrame(r, codeBlock, 0, scopeChain, makeHostCallFramePointer(exec->registers()), 0, 0, 0);
 
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
-
-    ExecState newExec(r);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -1062,9 +1050,9 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 #if ENABLE(CTI)
     if (!codeBlock->ctiCode)
         CTI::compile(this, exec, codeBlock);
-    JSValue* result = CTI::execute(codeBlock->ctiCode, &newExec, &m_registerFile, r, &newExec.globalData(), exception);
+    JSValue* result = CTI::execute(codeBlock->ctiCode, &m_registerFile, r, scopeChain->globalData, exception);
 #else
-    JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, exception);
+    JSValue* result = privateExecute(Normal, &m_registerFile, r, exception);
 #endif
     m_reentryDepth--;
 
@@ -1085,7 +1073,7 @@ NEVER_INLINE void Machine::debug(ExecState* exec, Register* r, DebugHookID debug
 
     CodeBlock* codeBlock = this->codeBlock(r);
     ScopeChainNode* scopeChain = this->scopeChain(r);
-    DebuggerCallFrame debuggerCallFrame(exec, exec->dynamicGlobalObject(), codeBlock, scopeChain, r, 0);
+    DebuggerCallFrame debuggerCallFrame(exec->dynamicGlobalObject(), codeBlock, scopeChain, r, 0);
 
     switch (debugHookID) {
         case DidEnterCallFrame:
@@ -1418,7 +1406,7 @@ NEVER_INLINE void Machine::uncacheGetByID(CodeBlock* codeBlock, Instruction* vPC
     vPC[4] = 0;
 }
 
-JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception)
+JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile, Register* r, JSValue** exception)
 {
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function.
@@ -1443,6 +1431,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     ASSERT_NOT_REACHED();
 #endif
 
+#define exec CallFrame::create(r)
+
+    JSGlobalData* globalData = &exec->globalData();
     JSValue* exceptionValue = 0;
     Instruction* handlerVPC = 0;
 
@@ -1452,8 +1443,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
 #define VM_CHECK_EXCEPTION() \
     do { \
-        if (UNLIKELY(exec->hadException())) { \
-            exceptionValue = exec->exception(); \
+        if (UNLIKELY(globalData->exception != 0)) { \
+            exceptionValue = globalData->exception; \
             goto vm_throw; \
         } \
     } while (0)
@@ -1526,7 +1517,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int regExp = (++vPC)->u.operand;
-        r[dst] = new (exec) RegExpObject(scopeChain(r)->globalObject()->regExpStructure(), codeBlock(r)->regexps[regExp]);
+        r[dst] = new (globalData) RegExpObject(scopeChain(r)->globalObject()->regExpStructure(), codeBlock(r)->regexps[regExp]);
 
         ++vPC;
         NEXT_OPCODE;
@@ -3283,10 +3274,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             
             Register* savedR = r;
 
-            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
-            exec->m_callFrame = r;
-            if (UNLIKELY(exceptionValue != 0))
+            r = slideRegisterWindowForCall(newCodeBlock, registerFile, r, registerOffset, argCount);
+            if (UNLIKELY(!r)) {
+                r = savedR;
+                exceptionValue = createStackOverflowError(CallFrame::create(r));
                 goto vm_throw;
+            }
 
             initializeCallFrame(r, newCodeBlock, vPC + 1, callDataScopeChain, savedR, dst, argCount, v);
     
@@ -3308,21 +3301,20 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             ScopeChainNode* scopeChain = this->scopeChain(r);
             initializeCallFrame(r + registerOffset, 0, vPC + 1, scopeChain, r, dst, argCount, v);
-            exec->m_callFrame = r + registerOffset;
+            ExecState* callFrame = CallFrame::create(r + registerOffset);
 
             if (*enabledProfilerReference)
-                (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
+                (*enabledProfilerReference)->willExecute(callFrame, static_cast<JSObject*>(v));
 
             MACHINE_SAMPLING_callingHostFunction();
 
-            JSValue* returnValue = callData.native.function(exec, static_cast<JSObject*>(v), thisValue, args);
-            exec->m_callFrame = r;
+            JSValue* returnValue = callData.native.function(callFrame, static_cast<JSObject*>(v), thisValue, args);
             VM_CHECK_EXCEPTION();
 
             r[dst] = returnValue;
 
             if (*enabledProfilerReference)
-                (*enabledProfilerReference)->didExecute(exec, static_cast<JSObject*>(v));
+                (*enabledProfilerReference)->didExecute(CallFrame::create(r), static_cast<JSObject*>(v));
 
             ++vPC;
             NEXT_OPCODE;
@@ -3366,7 +3358,6 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         vPC = r[RegisterFile::ReturnPC].vPC();
         int dst = r[RegisterFile::ReturnValueRegister].i();
         r = r[RegisterFile::CallerRegisters].r();
-        exec->m_callFrame = r;
         
         if (isHostCallFrame(r))
             return returnValue;
@@ -3421,7 +3412,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         for (size_t count = codeBlock->constantRegisters.size(), j = 0; j < count; ++i, ++j)
             r[i] = codeBlock->constantRegisters[j];
 
-        JSActivation* activation = new (exec) JSActivation(exec, static_cast<FunctionBodyNode*>(codeBlock->ownerNode), r);
+        JSActivation* activation = new (globalData) JSActivation(exec, static_cast<FunctionBodyNode*>(codeBlock->ownerNode), r);
         r[RegisterFile::OptionalCalleeActivation] = activation;
         r[RegisterFile::ScopeChain] = scopeChain(r)->copy()->push(activation);
 
@@ -3452,9 +3443,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         Arguments* arguments;
         if (activation) {
             ASSERT(activation->isObject(&JSActivation::info));
-            arguments = new (exec) Arguments(exec, static_cast<JSActivation*>(activation));
+            arguments = new (globalData) Arguments(exec, static_cast<JSActivation*>(activation));
         } else
-            arguments = new (exec) Arguments(exec, r);
+            arguments = new (globalData) Arguments(exec, r);
         r[RegisterFile::OptionalCalleeArguments] = arguments;
         r[RegisterFile::ArgumentsRegister] = arguments;
         
@@ -3502,16 +3493,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
                 structure = static_cast<JSObject*>(prototype)->inheritorID();
             else
                 structure = callDataScopeChain->globalObject()->emptyObjectStructure();
-            JSObject* newObject = new (exec) JSObject(structure);
+            JSObject* newObject = new (globalData) JSObject(structure);
 
             r[firstArg] = newObject; // "this" value
 
             Register* savedR = r;
 
-            r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
-            exec->m_callFrame = r;
-            if (UNLIKELY(exceptionValue != 0))
+            r = slideRegisterWindowForCall(newCodeBlock, registerFile, r, registerOffset, argCount);
+            if (UNLIKELY(!r)) {
+                r = savedR;
+                exceptionValue = createStackOverflowError(CallFrame::create(r));
                 goto vm_throw;
+            }
 
             initializeCallFrame(r, newCodeBlock, vPC + 1, callDataScopeChain, savedR, dst, argCount, v);
     
@@ -3532,7 +3525,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             ScopeChainNode* scopeChain = this->scopeChain(r);
             initializeCallFrame(r + registerOffset, 0, vPC + 1, scopeChain, r, dst, argCount, v);
-            exec->m_callFrame = r + registerOffset;
+            r += registerOffset;
 
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
@@ -3540,7 +3533,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             MACHINE_SAMPLING_callingHostFunction();
 
             JSValue* returnValue = constructData.native.function(exec, static_cast<JSObject*>(v), args);
-            exec->m_callFrame = r;
+            r -= registerOffset;
 
             VM_CHECK_EXCEPTION();
             r[dst] = returnValue;
@@ -3860,11 +3853,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     vm_throw: {
-        exec->clearException();
+        globalData->exception = 0;
         if (!tickCount) {
             // The exceptionValue is a lie! (GCC produces bad code for reasons I 
             // cannot fathom if we don't assign to the exceptionValue before branching)
-            exceptionValue = createInterruptedExecutionException(exec);
+            exceptionValue = createInterruptedExecutionException(globalData);
         }
         handlerVPC = throwException(exec, exceptionValue, vPC, r, false);
         if (!handlerVPC) {
@@ -3879,6 +3872,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     #undef BEGIN_OPCODE
     #undef VM_CHECK_EXCEPTION
     #undef CHECK_FOR_TIMEOUT
+    #undef exec
 }
 
 JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
@@ -3933,7 +3927,7 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, intptr_t& sou
     lineNumber = -1;
     sourceURL = UString();
 
-    Register* r = exec->m_callFrame;
+    Register* r = exec->registers();
     Register* callerR = r[RegisterFile::CallerRegisters].r();
     if (isHostCallFrame(callerR))
         return;
@@ -3964,7 +3958,7 @@ const Register* Machine::firstCallFrame(const Register* callFrame)
 
 Register* Machine::callFrame(ExecState* exec, InternalFunction* function) const
 {
-    for (Register* r = exec->m_callFrame; r; r = stripHostCallFrameBit(r[RegisterFile::CallerRegisters].r()))
+    for (Register* r = exec->registers(); r; r = stripHostCallFrameBit(r[RegisterFile::CallerRegisters].r()))
         if (r[RegisterFile::Callee].getJSValue() == function)
             return r;
     return 0;
@@ -3992,7 +3986,7 @@ void Machine::getArgumentsData(Register* callFrame, JSFunction*& function, ptrdi
 
 NEVER_INLINE static void doSetReturnAddressVMThrowTrampoline(void** returnAddress)
 {
-    ctiSetReturnAddress(returnAddress, (void*)ctiVMThrowTrampoline);
+    ctiSetReturnAddress(returnAddress, reinterpret_cast<void*>(ctiVMThrowTrampoline));
 }
 
 NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBlock, void* returnAddress, JSValue* baseValue, const PutPropertySlot& slot)
@@ -4207,41 +4201,42 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
     CTI::compileGetByIdChain(this, exec, codeBlock, structureID, chain, count, slot.cachedOffset(), returnAddress);
 }
 
+#define VM_THROW_EXCEPTION() \
+    do { \
+        VM_THROW_EXCEPTION_AT_END(); \
+        return 0; \
+    } while (0)
+#define VM_THROW_EXCEPTION_AT_END() \
+    do { \
+        ASSERT(ARG_globalData->exception); \
+        ARG_globalData->throwReturnAddress = CTI_RETURN_ADDRESS; \
+        doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
+    } while (0)
 
-#define JSVALUE_VM_CHECK_EXCEPTION_ARG(exception) \
+#define VM_CHECK_EXCEPTION() \
     do { \
-        if (UNLIKELY(exception != 0)) { \
-            exec->setException(exception); \
-            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
-            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
-            return 0; \
-        } \
+        if (UNLIKELY(ARG_globalData->exception != 0)) \
+            VM_THROW_EXCEPTION(); \
     } while (0)
-#define VM_CHECK_EXCEPTION_v() \
+#define VM_CHECK_EXCEPTION_ARG(exceptionValue) \
     do { \
-        if (UNLIKELY(exec->hadException())) { \
-            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
-            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
-            return; \
-        } \
-    } while (0)
-#define VM_CHECK_EXCEPTION(type) \
-    do { \
-        if (UNLIKELY(exec->hadException())) { \
-            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
-            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
-            return (type)0; \
+        if (UNLIKELY((exceptionValue) != 0)) { \
+            ARG_globalData->exception = (exceptionValue); \
+            VM_THROW_EXCEPTION(); \
         } \
     } while (0)
 #define VM_CHECK_EXCEPTION_AT_END() \
     do { \
-        if (UNLIKELY(exec->hadException())) { \
-            /*printf("VM_CHECK_EXCEPTION_AT_END()\n");*/ \
-            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
-            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
+        if (UNLIKELY(ARG_globalData->exception != 0)) \
+            VM_THROW_EXCEPTION_AT_END(); \
+    } while (0)
+#define VM_CHECK_EXCEPTION_VOID() \
+    do { \
+        if (UNLIKELY(ARG_globalData->exception != 0)) { \
+            VM_THROW_EXCEPTION_AT_END(); \
+            return; \
         } \
     } while (0)
-
 
 JSValue* Machine::cti_op_convert_this(CTI_ARGS)
 {
@@ -4279,9 +4274,8 @@ JSValue* Machine::cti_op_add(CTI_ARGS)
     if (leftIsString && v2->isString()) {
         RefPtr<UString::Rep> value = concatenate(static_cast<JSString*>(v1)->value().rep(), static_cast<JSString*>(v2)->value().rep());
         if (UNLIKELY(!value)) {
-            JSValue* result = throwOutOfMemoryError(exec);
-            VM_CHECK_EXCEPTION_AT_END();
-            return result;
+            throwOutOfMemoryError(exec);
+            VM_THROW_EXCEPTION();
         }
 
         return jsString(ARG_globalData, value.release());
@@ -4293,9 +4287,8 @@ JSValue* Machine::cti_op_add(CTI_ARGS)
             concatenate(static_cast<JSString*>(v1)->value().rep(), right);
 
         if (UNLIKELY(!value)) {
-            JSValue* result = throwOutOfMemoryError(exec);
-            VM_CHECK_EXCEPTION_AT_END();
-            return result;
+            throwOutOfMemoryError(exec);
+            VM_THROW_EXCEPTION();
         }
         return jsString(ARG_globalData, value.release());
     }
@@ -4311,19 +4304,17 @@ JSValue* Machine::cti_op_pre_inc(CTI_ARGS)
     JSValue* v = ARG_src1;
 
     ExecState* exec = ARG_exec;
-    JSValue* result = jsNumber(exec, v->toNumber(exec) + 1);
+    JSValue* result = jsNumber(ARG_globalData, v->toNumber(exec) + 1);
     VM_CHECK_EXCEPTION_AT_END();
     return result;
 }
 
 void Machine::cti_timeout_check(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
-
-    if (ARG_globalData->machine->checkTimeout(exec->dynamicGlobalObject()))
-        exec->setException(createInterruptedExecutionException(exec));
-
-    VM_CHECK_EXCEPTION_AT_END();
+    if (ARG_globalData->machine->checkTimeout(ARG_exec->dynamicGlobalObject())) {
+        ARG_globalData->exception = createInterruptedExecutionException(ARG_globalData);
+        VM_THROW_EXCEPTION_AT_END();
+    }
 }
 
 int Machine::cti_op_loop_if_less(CTI_ARGS)
@@ -4486,8 +4477,8 @@ JSValue* Machine::cti_op_instanceof(CTI_ARGS)
         CodeBlock* codeBlock = Machine::codeBlock(r);
         ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
         unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
-        exec->setException(createInvalidParamError(exec, "instanceof", baseVal, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-        VM_CHECK_EXCEPTION(JSValue*);
+        ARG_globalData->exception = createInvalidParamError(exec, "instanceof", baseVal, codeBlock->instructions.begin() + vPCIndex, codeBlock);
+        VM_THROW_EXCEPTION();
     }
 
     if (!baseCell->structureID()->typeInfo().implementsHasInstance())
@@ -4495,7 +4486,7 @@ JSValue* Machine::cti_op_instanceof(CTI_ARGS)
 
     if (!proto->isObject()) {
         throwError(exec, TypeError, "instanceof called on an object with an invalid prototype property.");
-        VM_CHECK_EXCEPTION(JSValue*);
+        VM_THROW_EXCEPTION();
     }
         
     if (!value->isObject())
@@ -4537,51 +4528,38 @@ JSValue* Machine::cti_op_mul(CTI_ARGS)
 
 JSValue* Machine::cti_op_new_func(CTI_ARGS)
 {
-    Register* r = ARG_r;
-    ScopeChainNode* scopeChain = Machine::scopeChain(r);
-    return ARG_func1->makeFunction(ARG_exec, scopeChain);
+    return ARG_func1->makeFunction(ARG_exec, Machine::scopeChain(ARG_r));
 }
 
 void* Machine::cti_op_call_JSFunction(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
-    RegisterFile* registerFile = ARG_registerFile;
-    Register* r = ARG_r;
-
-    JSValue* funcVal = ARG_src1;
-    int registerOffset = ARG_int2;
-    int argCount = ARG_int3;
-
 #ifndef NDEBUG
     CallData callData;
-    ASSERT(funcVal->getCallData(callData) == CallTypeJS);
+    ASSERT(ARG_src1->getCallData(callData) == CallTypeJS);
 #endif
 
-    if (*ARG_profilerReference)
-        (*ARG_profilerReference)->willExecute(exec, static_cast<JSObject*>(funcVal));
+    if (UNLIKELY(*ARG_profilerReference != 0))
+        (*ARG_profilerReference)->willExecute(CallFrame::create(ARG_r), static_cast<JSObject*>(ARG_src1));
 
-    ScopeChainNode* callDataScopeChain = static_cast<JSFunction*>(funcVal)->m_scopeChain.node();
-    FunctionBodyNode* functionBodyNode = static_cast<JSFunction*>(funcVal)->m_body.get();
+    ScopeChainNode* callDataScopeChain = static_cast<JSFunction*>(ARG_src1)->m_scopeChain.node();
+    CodeBlock* newCodeBlock = &static_cast<JSFunction*>(ARG_src1)->m_body->byteCode(callDataScopeChain);
 
-    CodeBlock* newCodeBlock = &functionBodyNode->byteCode(callDataScopeChain);
-    
-    Register* savedR = r;
-
-    JSValue* exceptionValue = 0;
-    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
-    JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
+    Register* r = slideRegisterWindowForCall(newCodeBlock, ARG_registerFile, ARG_r, ARG_int2, ARG_int3);
+    if (UNLIKELY(!r)) {
+        ARG_globalData->exception = createStackOverflowError(CallFrame::create(ARG_r));
+        VM_THROW_EXCEPTION();
+    }
 
     r[RegisterFile::CodeBlock] = newCodeBlock;
     r[RegisterFile::ScopeChain] = callDataScopeChain;
-    r[RegisterFile::CallerRegisters] = savedR;
+    r[RegisterFile::CallerRegisters] = ARG_r;
     // RegisterFile::ReturnPC is set by callee
     // RegisterFile::ReturnValueRegister is set by caller
-    r[RegisterFile::ArgumentCount] = argCount; // original argument count (for the sake of the "arguments" object)
-    r[RegisterFile::Callee] = funcVal;
+    r[RegisterFile::ArgumentCount] = ARG_int3; // original argument count (for the sake of the "arguments" object)
+    r[RegisterFile::Callee] = ARG_src1;
     r[RegisterFile::OptionalCalleeActivation] = nullJSValue;
     r[RegisterFile::OptionalCalleeArguments] = nullJSValue;
 
-    exec->m_callFrame = r;
     ARG_setR(r);
 
     return newCodeBlock->ctiCode;
@@ -4589,12 +4567,11 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
 
 void* Machine::cti_vm_compile(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
     Register* r = ARG_r;
     CodeBlock* codeBlock = Machine::codeBlock(r);
 
     if (!codeBlock->ctiCode)
-        CTI::compile(ARG_globalData->machine, exec, codeBlock);
+        CTI::compile(ARG_globalData->machine, CallFrame::create(r), codeBlock);
 
     return codeBlock->ctiCode;
 }
@@ -4606,14 +4583,13 @@ void Machine::cti_op_push_activation(CTI_ARGS)
     CodeBlock* codeBlock = Machine::codeBlock(r);
     ScopeChainNode* scopeChain = Machine::scopeChain(r);
 
-    JSActivation* activation = new (exec) JSActivation(exec, static_cast<FunctionBodyNode*>(codeBlock->ownerNode), r);
+    JSActivation* activation = new (ARG_globalData) JSActivation(exec, static_cast<FunctionBodyNode*>(codeBlock->ownerNode), r);
     r[RegisterFile::OptionalCalleeActivation] = activation;
     r[RegisterFile::ScopeChain] = scopeChain->copy()->push(activation);
 }
 
 JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
     JSValue* funcVal = ARG_src1;
 
     CallData callData;
@@ -4628,34 +4604,30 @@ JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
         Register* r = savedR + registerOffset;
 
         initializeCallFrame(r, 0, ARG_instr4 + 1, scopeChain(savedR), savedR, 0, argCount, funcVal);
-        exec->m_callFrame = r;
         ARG_setR(r);
 
         if (*ARG_profilerReference)
-            (*ARG_profilerReference)->willExecute(exec, static_cast<JSObject*>(funcVal));
+            (*ARG_profilerReference)->willExecute(CallFrame::create(r), static_cast<JSObject*>(funcVal));
 
         Register* argv = r - RegisterFile::CallFrameHeaderSize - argCount;
         ArgList argList(argv + 1, argCount - 1);
 
         CTI_MACHINE_SAMPLING_callingHostFunction();
 
-        JSValue* returnValue = callData.native.function(exec, static_cast<JSObject*>(funcVal), argv[0].jsValue(exec), argList);
-        exec->m_callFrame = savedR;
+        JSValue* returnValue = callData.native.function(CallFrame::create(r), static_cast<JSObject*>(funcVal), argv[0].jsValue(CallFrame::create(r)), argList);
         ARG_setR(savedR);
-        VM_CHECK_EXCEPTION(JSValue*);
+        VM_CHECK_EXCEPTION();
 
         if (*ARG_profilerReference)
-            (*ARG_profilerReference)->didExecute(exec, static_cast<JSObject*>(funcVal));
+            (*ARG_profilerReference)->didExecute(CallFrame::create(savedR), static_cast<JSObject*>(funcVal));
 
         return returnValue;
     }
 
     ASSERT(callType == CallTypeNone);
 
-    Register* r = ARG_r;
-    exec->setException(createNotAFunctionError(exec, funcVal, ARG_instr4, codeBlock(r)));
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    ARG_globalData->exception = createNotAFunctionError(CallFrame::create(ARG_r), funcVal, ARG_instr4, codeBlock(ARG_r));
+    VM_THROW_EXCEPTION();
 }
 
 void Machine::cti_op_create_arguments(CTI_ARGS)
@@ -4667,9 +4639,9 @@ void Machine::cti_op_create_arguments(CTI_ARGS)
     Arguments* arguments;
     if (activation) {
         ASSERT(activation->isObject(&JSActivation::info));
-        arguments = new (exec) Arguments(exec, static_cast<JSActivation*>(activation));
+        arguments = new (ARG_globalData) Arguments(exec, static_cast<JSActivation*>(activation));
     } else
-        arguments = new (exec) Arguments(exec, r);
+        arguments = new (ARG_globalData) Arguments(exec, r);
     r[RegisterFile::OptionalCalleeArguments] = arguments;
     r[RegisterFile::ArgumentsRegister] = arguments;
 }
@@ -4736,14 +4708,11 @@ JSValue* Machine::cti_op_resolve(CTI_ARGS)
     ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    VM_THROW_EXCEPTION();
 }
 
 void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
     RegisterFile* registerFile = ARG_registerFile;
     Register* r = ARG_r;
 
@@ -4761,7 +4730,7 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     JSFunction* constructor = static_cast<JSFunction*>(constrVal);
 
     if (*ARG_profilerReference)
-        (*ARG_profilerReference)->willExecute(exec, constructor);
+        (*ARG_profilerReference)->willExecute(CallFrame::create(r), constructor);
 
     ScopeChainNode* callDataScopeChain = constructor->m_scopeChain.node();
     FunctionBodyNode* functionBodyNode = constructor->m_body.get();
@@ -4772,27 +4741,25 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
         structure = static_cast<JSObject*>(constrProtoVal)->inheritorID();
     else
         structure = callDataScopeChain->globalObject()->emptyObjectStructure();
-    JSObject* newObject = new (exec) JSObject(structure);
+    JSObject* newObject = new (ARG_globalData) JSObject(structure);
 
     r[firstArg] = newObject; // "this" value
 
-    Register* savedR = r;
-
-    JSValue* exceptionValue = 0;
-    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, r, registerOffset, argCount, exceptionValue);
-    JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
+    r = slideRegisterWindowForCall(newCodeBlock, registerFile, r, registerOffset, argCount);
+    if (UNLIKELY(!r)) {
+        ARG_globalData->exception = createStackOverflowError(CallFrame::create(ARG_r));
+        VM_THROW_EXCEPTION();
+    }
 
     r[RegisterFile::CodeBlock] = newCodeBlock;
     r[RegisterFile::ScopeChain] = callDataScopeChain;
-    r[RegisterFile::CallerRegisters] = savedR;
+    r[RegisterFile::CallerRegisters] = ARG_r;
     // RegisterFile::ReturnPC is set by callee
     // RegisterFile::ReturnValueRegister is set by caller
     r[RegisterFile::ArgumentCount] = argCount; // original argument count (for the sake of the "arguments" object)
     r[RegisterFile::Callee] = constructor;
     r[RegisterFile::OptionalCalleeActivation] = nullJSValue;
     r[RegisterFile::OptionalCalleeArguments] = nullJSValue;
-
-    exec->m_callFrame = r;
 
     ARG_setR(r);
     return newCodeBlock->ctiCode;
@@ -4821,7 +4788,7 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
         CTI_MACHINE_SAMPLING_callingHostFunction();
 
         JSValue* returnValue = constructData.native.function(exec, constructor, argList);
-        VM_CHECK_EXCEPTION(JSValue*);
+        VM_CHECK_EXCEPTION();
 
         if (*ARG_profilerReference)
             (*ARG_profilerReference)->didExecute(exec, constructor);
@@ -4832,8 +4799,7 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
     ASSERT(constructType == ConstructTypeNone);
 
     exec->setException(createNotAConstructorError(exec, constrVal, ARG_instr6, codeBlock(r)));
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    VM_THROW_EXCEPTION();
 }
 
 JSValue* Machine::cti_op_get_by_val(CTI_ARGS)
@@ -4908,9 +4874,7 @@ JSValue* Machine::cti_op_resolve_func(CTI_ARGS)
     ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    VM_THROW_EXCEPTION();
 }
 
 JSValue* Machine::cti_op_sub(CTI_ARGS)
@@ -4952,7 +4916,7 @@ void Machine::cti_op_put_by_val(CTI_ARGS)
             baseValue->put(exec, i, value);
     } else {
         Identifier property(exec, subscript->toString(exec));
-        if (!exec->hadException()) { // Don't put to an object if toString threw an exception.
+        if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
             baseValue->put(exec, property, value, slot);
         }
@@ -4976,7 +4940,7 @@ void Machine::cti_op_put_by_val_array(CTI_ARGS)
     else {
         Identifier property(exec, JSImmediate::from(i)->toString(exec));
         // FIXME: can toString throw an exception here?
-        if (!exec->hadException()) { // Don't put to an object if toString threw an exception.
+        if (!ARG_globalData->exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot;
             baseValue->put(exec, property, value, slot);
         }
@@ -5053,9 +5017,7 @@ JSValue* Machine::cti_op_resolve_skip(CTI_ARGS)
     ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    VM_THROW_EXCEPTION();
 }
 
 JSValue* Machine::cti_op_resolve_global(CTI_ARGS)
@@ -5083,10 +5045,8 @@ JSValue* Machine::cti_op_resolve_global(CTI_ARGS)
     }
     
     Register* r = ARG_r;
-    exec->setException(createUndefinedVariableError(exec, ident, vPC, codeBlock(r)));
-    
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    exec->setException(createUndefinedVariableError(exec, ident, vPC, codeBlock(r)));    
+    VM_THROW_EXCEPTION();
 }
 
 JSValue* Machine::cti_op_div(CTI_ARGS)
@@ -5155,7 +5115,7 @@ JSValue* Machine::cti_op_post_inc(CTI_ARGS)
     ExecState* exec = ARG_exec;
 
     JSValue* number = v->toJSNumber(exec);
-    VM_CHECK_EXCEPTION(JSValue*);
+    VM_CHECK_EXCEPTION();
     ARG_set2ndResult(jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1));
     return number;
 }
@@ -5270,9 +5230,7 @@ JSValue* Machine::cti_op_resolve_with_base(CTI_ARGS)
     ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-
-    VM_CHECK_EXCEPTION_AT_END();
-    return 0;
+    VM_THROW_EXCEPTION();
 }
 
 JSValue* Machine::cti_op_new_func_exp(CTI_ARGS)
@@ -5320,7 +5278,7 @@ JSValue* Machine::cti_op_post_dec(CTI_ARGS)
     ExecState* exec = ARG_exec;
 
     JSValue* number = v->toJSNumber(exec);
-    VM_CHECK_EXCEPTION(JSValue*);
+    VM_CHECK_EXCEPTION();
 
     ARG_set2ndResult(jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1));
     return number;
@@ -5356,7 +5314,7 @@ JSValue* Machine::cti_op_bitxor(CTI_ARGS)
 
 JSValue* Machine::cti_op_new_regexp(CTI_ARGS)
 {
-    return new (ARG_exec) RegExpObject(scopeChain(ARG_r)->globalObject()->regExpStructure(), ARG_regexp1);
+    return new (ARG_globalData) RegExpObject(scopeChain(ARG_r)->globalObject()->regExpStructure(), ARG_regexp1);
 }
 
 JSValue* Machine::cti_op_bitor(CTI_ARGS)
@@ -5390,7 +5348,7 @@ JSValue* Machine::cti_op_call_eval(CTI_ARGS)
         JSObject* thisObject = static_cast<JSObject*>(r[codeBlock->thisRegister].jsValue(exec));
         JSValue* exceptionValue = 0;
         JSValue* result = machine->callEval(exec, thisObject, scopeChain, registerFile,  r, registerOffset - RegisterFile::CallFrameHeaderSize - argCount, argCount, exceptionValue);
-        JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
+        VM_CHECK_EXCEPTION_ARG(exceptionValue);
         return result;
     }
 
@@ -5407,21 +5365,20 @@ void* Machine::cti_op_throw(CTI_ARGS)
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
 
     JSValue* exceptionValue = ARG_src1;
+    ASSERT(exceptionValue);
+
     Instruction* handlerVPC = ARG_globalData->machine->throwException(exec, exceptionValue, codeBlock->instructions.begin() + vPCIndex, r, true);
 
-    if (handlerVPC) {
-        exec->setException(exceptionValue);
-        ARG_setR(r);
-
-        void* catchRoutine = Machine::codeBlock(r)->nativeExceptionCodeForHandlerVPC(handlerVPC);
-        ASSERT(catchRoutine);
-        ctiSetReturnAddress(&CTI_RETURN_ADDRESS, catchRoutine);
-        return catchRoutine;
-    } else {
-        exec->clearException();
+    if (!handlerVPC) {
         *ARG_exception = exceptionValue;
         return JSImmediate::nullImmediate();
     }
+
+    ARG_setR(r);
+    void* catchRoutine = Machine::codeBlock(r)->nativeExceptionCodeForHandlerVPC(handlerVPC);
+    ASSERT(catchRoutine);
+    ctiSetReturnAddress(&CTI_RETURN_ADDRESS, catchRoutine);
+    return exceptionValue;
 }
 
 JSPropertyNameIterator* Machine::cti_op_get_pnames(CTI_ARGS)
@@ -5444,7 +5401,7 @@ void Machine::cti_op_push_scope(CTI_ARGS)
     JSValue* v = ARG_src1;
 
     JSObject* o = v->toObject(exec);
-    VM_CHECK_EXCEPTION_v();
+    VM_CHECK_EXCEPTION_VOID();
 
     Register* r = ARG_r;
     r[RegisterFile::ScopeChain] = scopeChain(r)->push(o);
@@ -5537,7 +5494,7 @@ JSValue* Machine::cti_op_in(CTI_ARGS)
         ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
         unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
         exec->setException(createInvalidParamError(exec, "in", baseVal, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-        VM_CHECK_EXCEPTION(JSValue*);
+        VM_THROW_EXCEPTION();
     }
 
     JSValue* propName = ARG_src1;
@@ -5548,14 +5505,13 @@ JSValue* Machine::cti_op_in(CTI_ARGS)
         return jsBoolean(baseObj->hasProperty(exec, i));
 
     Identifier property(exec, propName->toString(exec));
-    VM_CHECK_EXCEPTION(JSValue*);
+    VM_CHECK_EXCEPTION();
     return jsBoolean(baseObj->hasProperty(exec, property));
 }
 
 JSValue* Machine::cti_op_push_new_scope(CTI_ARGS)
 {
-    ExecState* exec = ARG_exec;
-    JSObject* scope = new (exec) JSStaticScopeObject(exec, *ARG_id1, ARG_src2, DontDelete);
+    JSObject* scope = new (ARG_globalData) JSStaticScopeObject(ARG_exec, *ARG_id1, ARG_src2, DontDelete);
 
     Register* r = ARG_r;
     r[RegisterFile::ScopeChain] = scopeChain(r)->push(scope);
@@ -5644,9 +5600,9 @@ JSValue* Machine::cti_op_del_by_val(CTI_ARGS)
     if (subscript->getUInt32(i))
         result = jsBoolean(baseObj->deleteProperty(exec, i));
     else {
-        VM_CHECK_EXCEPTION(JSValue*);
+        VM_CHECK_EXCEPTION();
         Identifier property(exec, subscript->toString(exec));
-        VM_CHECK_EXCEPTION(JSValue*);
+        VM_CHECK_EXCEPTION();
         result = jsBoolean(baseObj->deleteProperty(exec, property));
     }
 
@@ -5706,33 +5662,31 @@ void* Machine::cti_vm_throw(CTI_ARGS)
     Register* r = ARG_r;
     CodeBlock* codeBlock = Machine::codeBlock(r);
 
-    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(exec->ctiReturnAddress()));
-    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(exec->ctiReturnAddress());
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(ARG_globalData->throwReturnAddress));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(ARG_globalData->throwReturnAddress);
 
-    ASSERT(exec->hadException());
-
-    JSValue* exceptionValue = exec->exception();
+    JSValue* exceptionValue = ARG_globalData->exception;
+    ASSERT(exceptionValue);
+    ARG_globalData->exception = 0;
 
     Instruction* handlerVPC = ARG_globalData->machine->throwException(exec, exceptionValue, codeBlock->instructions.begin() + vPCIndex, r, false);
 
-    if (handlerVPC) {
-        exec->setException(exceptionValue);
-        ARG_setR(r);
-
-        void* catchRoutine = Machine::codeBlock(r)->nativeExceptionCodeForHandlerVPC(handlerVPC);
-        ASSERT(catchRoutine);
-        ctiSetReturnAddress(&CTI_RETURN_ADDRESS, catchRoutine);
-        return catchRoutine;
-    } else {
-        exec->clearException();
+    if (!handlerVPC) {
         *ARG_exception = exceptionValue;
         return JSImmediate::nullImmediate();
     }
+
+    ARG_setR(r);
+    void* catchRoutine = Machine::codeBlock(r)->nativeExceptionCodeForHandlerVPC(handlerVPC);
+    ASSERT(catchRoutine);
+    ctiSetReturnAddress(&CTI_RETURN_ADDRESS, catchRoutine);
+    return exceptionValue;
 }
 
 #undef VM_CHECK_EXCEPTION
-#undef VM_CHECK_EXCEPTION_v
+#undef VM_CHECK_EXCEPTION_ARG
 #undef VM_CHECK_EXCEPTION_AT_END
+#undef VM_CHECK_EXCEPTION_VOID
 
 #endif // ENABLE(CTI)
 

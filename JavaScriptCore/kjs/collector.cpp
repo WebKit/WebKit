@@ -981,6 +981,8 @@ bool Heap::collect()
     markProtectedObjects();
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
+    if (m_globalData->exception && !m_globalData->exception->marked())
+        m_globalData->exception->mark();
     m_globalData->machine->registerFile().markCallFrames(this);
     m_globalData->smallStrings.mark();
 

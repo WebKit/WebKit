@@ -481,7 +481,7 @@ void JSObject::removeDirect(const Identifier& propertyName)
 
 void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
 {
-    putDirect(Identifier(exec, function->name(exec)), function, attr);
+    putDirect(Identifier(exec, function->name(&exec->globalData())), function, attr);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)

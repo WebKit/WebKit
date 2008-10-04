@@ -67,12 +67,12 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValu
 {
     if (thisValue->isObject(&JSFunction::info)) {
         JSFunction* function = static_cast<JSFunction*>(thisValue);
-        return jsString(exec, "function " + function->name(exec) + "(" + function->m_body->paramString() + ") " + function->m_body->toSourceString());
+        return jsString(exec, "function " + function->name(&exec->globalData()) + "(" + function->m_body->paramString() + ") " + function->m_body->toSourceString());
     }
 
     if (thisValue->isObject(&InternalFunction::info)) {
         InternalFunction* function = static_cast<InternalFunction*>(thisValue);
-        return jsString(exec, "function " + function->name(exec) + "() {\n    [native code]\n}");
+        return jsString(exec, "function " + function->name(&exec->globalData()) + "() {\n    [native code]\n}");
     }
 
     return throwError(exec, TypeError);

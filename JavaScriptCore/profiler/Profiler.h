@@ -38,6 +38,7 @@ namespace JSC {
 
     class CallIdentifier;
     class ExecState;
+    class JSGlobalData;
     class JSObject;
     class ProfileGenerator;
     class UString;
@@ -50,7 +51,7 @@ namespace JSC {
         }
 
         static Profiler* profiler(); 
-        static CallIdentifier createCallIdentifier(ExecState*, JSObject*, const UString& sourceURL, int lineNumber);
+        static CallIdentifier createCallIdentifier(JSGlobalData*, JSObject*, const UString& sourceURL, int lineNumber);
 
         void startProfiling(ExecState*, const UString& title);
         PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);

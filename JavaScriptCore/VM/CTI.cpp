@@ -74,6 +74,7 @@ bool isSSE2Present()
 #endif
 
 #if COMPILER(GCC) && PLATFORM(X86)
+
 asm(
 ".globl _ctiTrampoline" "\n"
 "_ctiTrampoline:" "\n"
@@ -81,7 +82,7 @@ asm(
     "pushl %edi" "\n"
     "subl $0x24, %esp" "\n"
     "movl $512, %esi" "\n"
-    "call *0x30(%esp)" "\n" //Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code
+    "call *0x30(%esp)" "\n" // Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code
     "addl $0x24, %esp" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
@@ -91,13 +92,6 @@ asm(
 asm(
 ".globl _ctiVMThrowTrampoline" "\n"
 "_ctiVMThrowTrampoline:" "\n"
-#ifndef NDEBUG
-    "movl 0x34(%esp), %ecx" "\n" //Ox34 = 0x0D * 4, 0x0D = CTI_ARGS_exec
-    "cmpl $0, 8(%ecx)" "\n"
-    "jne 1f" "\n"
-    "int3" "\n"
-    "1:" "\n"
-#endif
     "call __ZN3JSC7Machine12cti_vm_throwEPv" "\n"
     "addl $0x24, %esp" "\n"
     "popl %edi" "\n"
@@ -106,10 +100,10 @@ asm(
 );
     
 #elif COMPILER(MSVC)
-extern "C"
-{
+
+extern "C" {
     
-    __declspec(naked) JSValue* ctiTrampoline(void* code, ExecState* exec, RegisterFile* registerFile, Register* r, JSValue** exception, Profiler**, JSGlobalData*)
+    __declspec(naked) JSValue* ctiTrampoline(void* code, RegisterFile*, Register*, JSValue** exception, Profiler**, JSGlobalData*)
     {
         __asm {
             push esi;
@@ -128,7 +122,7 @@ extern "C"
     __declspec(naked) void ctiVMThrowTrampoline()
     {
         __asm {
-           mov [esp], esp;
+            mov [esp], esp;
             call JSC::Machine::cti_vm_throw;
             add esp, 0x24;
             pop edi;
@@ -246,22 +240,7 @@ void ctiRepatchCallByReturnAddress(void* where, void* what)
     (static_cast<void**>(where))[-1] = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(what) - reinterpret_cast<uintptr_t>(where));
 }
 
-#ifdef NDEBUG
-
-ALWAYS_INLINE void CTI::emitDebugExceptionCheck()
-{
-}
-
-#else
-
-ALWAYS_INLINE void CTI::emitDebugExceptionCheck()
-{
-    emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
-    m_jit.cmpl_i32m(0, OBJECT_OFFSET(ExecState, m_exception), X86::ecx);
-    X86Assembler::JmpSrc noException = m_jit.emitUnlinkedJe();
-    m_jit.emitInt3();
-    m_jit.link(noException, m_jit.label());
-}
+#ifndef NDEBUG
 
 void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 {
@@ -304,7 +283,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, X86::Regi
     m_jit.emitRestoreArgumentReference();
     X86Assembler::JmpSrc call = m_jit.emitCall(r);
     m_calls.append(CallRecord(call, opcodeIndex));
-    emitDebugExceptionCheck();
 
     return call;
 }
@@ -317,7 +295,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     m_jit.emitRestoreArgumentReference();
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, helper, opcodeIndex));
-    emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
     m_jit.movl_i32m(0, &inCalledCode);
 #endif
@@ -333,7 +310,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     m_jit.emitRestoreArgumentReference();
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, helper, opcodeIndex));
-    emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
     m_jit.movl_i32m(0, &inCalledCode);
 #endif
@@ -349,7 +325,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     m_jit.emitRestoreArgumentReference();
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, helper, opcodeIndex));
-    emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
     m_jit.movl_i32m(0, &inCalledCode);
 #endif
@@ -365,7 +340,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     m_jit.emitRestoreArgumentReference();
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, helper, opcodeIndex));
-    emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
     m_jit.movl_i32m(0, &inCalledCode);
 #endif
@@ -381,7 +355,6 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     m_jit.emitRestoreArgumentReference();
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, helper, opcodeIndex));
-    emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
     m_jit.movl_i32m(0, &inCalledCode);
 #endif
@@ -1223,10 +1196,8 @@ void CTI::privateCompileMainPass()
             emitGetArg(RegisterFile::ReturnPC, X86::edx);
 
             // Restore our caller's "r".
-            emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
             emitGetArg(RegisterFile::CallerRegisters, X86::edi);
             emitPutCTIParam(X86::edi, CTI_ARGS_r);
-            m_jit.movl_rm(X86::edi, OBJECT_OFFSET(ExecState, m_callFrame), X86::ecx);
 
             // Return.
             m_jit.pushl_r(X86::edx);
@@ -1786,9 +1757,6 @@ void CTI::privateCompileMainPass()
         }
         case op_catch: {
             emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
-            emitGetCTIParam(CTI_ARGS_exec, X86::ecx);
-            m_jit.movl_mr(OBJECT_OFFSET(ExecState, m_exception), X86::ecx, X86::eax);
-            m_jit.movl_i32m(0, OBJECT_OFFSET(ExecState, m_exception), X86::ecx);
             emitPutResult(instruction[i + 1].u.operand);
             i += 2;
             break;

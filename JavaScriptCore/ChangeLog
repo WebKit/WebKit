@@ -1,3 +1,159 @@
+2008-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21295
+          Bug 21295: Replace ExecState with a call frame Register pointer
+
+        10% faster on Richards; other v8 benchmarks faster too.
+        A wash on SunSpider.
+
+        This does the minimum necessary to get the speedup. Next step in
+        cleaning this up is to replace ExecState with a CallFrame class,
+        and be more judicious about when to pass a call frame and when
+        to pass a global data pointer, global object pointer, or perhaps
+        something else entirely.
+
+        * VM/CTI.cpp: Remove the debug-only check of the exception in
+        ctiVMThrowTrampoline -- already checked in the code the trampoline
+        jumps to, so not all that useful. Removed the exec argument from
+        ctiTrampoline. Removed emitDebugExceptionCheck -- no longer needed.
+        (JSC::CTI::emitCall): Removed code to set ExecState::m_callFrame.
+        (JSC::CTI::privateCompileMainPass): Removed code in catch to extract
+        the exception from ExecState::m_exception; instead, the code that
+        jumps into catch will make sure the exception is already in eax.
+        * VM/CTI.h: Removed exec from the ctiTrampoline. Also removed the
+        non-helpful "volatile". Temporarily left ARG_exec in as a synonym
+        for ARG_r; I'll change that on a future cleanup pass when introducing
+        more use of the CallFrame type.
+        (JSC::CTI::execute): Removed the ExecState* argument.
+
+        * VM/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError): Take
+        JSGlobalData* instead of ExecState*.
+        (JSC::createInterruptedExecutionException): Ditto.
+        * VM/ExceptionHelpers.h: Ditto. Also removed an unneeded include.
+
+        * VM/Machine.cpp:
+        (JSC::slideRegisterWindowForCall): Removed the exec and
+        exceptionValue arguments. Changed to return 0 when there's a stack
+        overflow rather than using a separate exception argument to cut
+        down on memory accesses in the calling convention.
+        (JSC::Machine::unwindCallFrame): Removed the exec argument when
+        constructing a DebuggerCallFrame. Also removed code to set
+        ExecState::m_callFrame.
+        (JSC::Machine::throwException): Removed the exec argument when
+        construction a DebuggerCallFrame.
+        (JSC::Machine::execute): Updated to use the register instead of
+        ExecState and also removed various uses of ExecState.
+        (JSC::Machine::debug):
+        (JSC::Machine::privateExecute): Put globalData into a local
+        variable so it can be used throughout the interpreter. Changed
+        the VM_CHECK_EXCEPTION to get the exception in globalData instead
+        of through ExecState.
+        (JSC::Machine::retrieveLastCaller): Turn exec into a registers
+        pointer by calling registers() instead of by getting m_callFrame.
+        (JSC::Machine::callFrame): Ditto.
+        Tweaked exception macros. Made new versions for when you know
+        you have an exception. Get at global exception with ARG_globalData.
+        Got rid of the need to pass in the return value type.
+        (JSC::Machine::cti_op_add): Update to use new version of exception
+        macros.
+        (JSC::Machine::cti_op_pre_inc): Ditto.
+        (JSC::Machine::cti_timeout_check): Ditto.
+        (JSC::Machine::cti_op_instanceof): Ditto.
+        (JSC::Machine::cti_op_new_func): Ditto.
+        (JSC::Machine::cti_op_call_JSFunction): Optimized by using the
+        ARG values directly instead of through local variables -- this gets
+        rid of code that just shuffles things around in the stack frame.
+        Also get rid of ExecState and update for the new way exceptions are
+        handled in slideRegisterWindowForCall.
+        (JSC::Machine::cti_vm_compile): Update to make exec out of r since
+        they are both the same thing now.
+        (JSC::Machine::cti_op_call_NotJSFunction): Ditto.
+        (JSC::Machine::cti_op_init_arguments): Ditto.
+        (JSC::Machine::cti_op_resolve): Ditto.
+        (JSC::Machine::cti_op_construct_JSConstruct): Ditto.
+        (JSC::Machine::cti_op_construct_NotJSConstruct): Ditto.
+        (JSC::Machine::cti_op_resolve_func): Ditto.
+        (JSC::Machine::cti_op_put_by_val): Ditto.
+        (JSC::Machine::cti_op_put_by_val_array): Ditto.
+        (JSC::Machine::cti_op_resolve_skip): Ditto.
+        (JSC::Machine::cti_op_resolve_global): Ditto.
+        (JSC::Machine::cti_op_post_inc): Ditto.
+        (JSC::Machine::cti_op_resolve_with_base): Ditto.
+        (JSC::Machine::cti_op_post_dec): Ditto.
+        (JSC::Machine::cti_op_call_eval): Ditto.
+        (JSC::Machine::cti_op_throw): Ditto. Also rearranged to return
+        the exception value as the return value so it can be used by
+        op_catch.
+        (JSC::Machine::cti_op_push_scope): Ditto.
+        (JSC::Machine::cti_op_in): Ditto.
+        (JSC::Machine::cti_op_del_by_val): Ditto.
+        (JSC::Machine::cti_vm_throw): Ditto. Also rearranged to return
+        the exception value as the return value so it can be used by
+        op_catch.
+
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName): Pass globalData.
+        (JSC::DebuggerCallFrame::evaluate): Eliminated code to make a
+        new ExecState.
+        * kjs/DebuggerCallFrame.h: Removed ExecState argument from
+        constructor.
+
+        * kjs/ExecState.h: Eliminated all data members and made ExecState
+        inherit privately from Register instead. Also added a typedef to
+        the future name for this class, which is CallFrame. It's just a
+        Register* that knows it's a pointer at a call frame. The new class
+        can't be constructed or copied. Changed all functions to use
+        the this pointer instead of m_callFrame. Changed exception-related
+        functions to access an exception in JSGlobalData. Removed functions
+        used by CTI to pass the return address to the throw machinery --
+        this is now done directly with a global in the global data.
+
+        * kjs/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString): Pass globalData instead of exec.
+
+        * kjs/InternalFunction.cpp:
+        (JSC::InternalFunction::name): Take globalData instead of exec.
+        * kjs/InternalFunction.h: Ditto.
+
+        * kjs/JSGlobalData.cpp: Initialize the new exception global to 0.
+        * kjs/JSGlobalData.h: Declare two new globals. One for the current
+        exception and another for the return address used by CTI to
+        implement the throw operation.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Removed code to set up globalExec,
+        which is now the same thing as globalCallFrame.
+        (JSC::JSGlobalObject::reset): Get globalExec from our globalExec
+        function so we don't have to repeat the logic twice.
+        (JSC::JSGlobalObject::mark): Removed code to mark the exception;
+        the exception is now stored in JSGlobalData and marked there.
+        (JSC::JSGlobalObject::globalExec): Return a pointer to the end
+        of the global call frame.
+        * kjs/JSGlobalObject.h: Removed the globalExec data member.
+
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::putDirectFunction): Pass globalData instead of exec.
+
+        * kjs/collector.cpp:
+        (JSC::Heap::collect): Mark the global exception.
+
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart): Pass globalData
+        instead of exec to createCallIdentifier.
+
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::willExecute): Pass globalData instead of exec to
+        createCallIdentifier.
+        (JSC::Profiler::didExecute): Ditto.
+        (JSC::Profiler::createCallIdentifier): Take globalData instead of
+        exec.
+        (JSC::createCallIdentifierFromFunctionImp): Ditto.
+        * profiler/Profiler.h: Change interface to take a JSGlobalData
+        instead of an ExecState.
+
 2008-10-04  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.

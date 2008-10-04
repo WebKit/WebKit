@@ -64,6 +64,11 @@ namespace JSC {
 
         Machine* machine;
 
+        JSValue* exception;
+#if ENABLE(CTI)
+        void* throwReturnAddress;
+#endif
+
         const HashTable* arrayTable;
         const HashTable* dateTable;
         const HashTable* mathTable;

@@ -48,9 +48,8 @@ namespace JSC {
             FunctionType
         };
 
-        DebuggerCallFrame(ExecState* exec, JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r, JSValue* exception)
-            : m_exec(exec)
-            , m_dynamicGlobalObject(dynamicGlobalObject)
+        DebuggerCallFrame(JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r, JSValue* exception)
+            : m_dynamicGlobalObject(dynamicGlobalObject)
             , m_codeBlock(codeBlock)
             , m_scopeChain(scopeChain)
             , m_registers(r)
@@ -61,13 +60,12 @@ namespace JSC {
         JSGlobalObject* dynamicGlobalObject() const { return m_dynamicGlobalObject; }
         const ScopeChainNode* scopeChain() const { return m_scopeChain; }
         const UString* functionName() const;
-        DebuggerCallFrame::Type type() const;
+        Type type() const;
         JSObject* thisObject() const;
         JSValue* evaluate(const UString&, JSValue*& exception) const;
         JSValue* exception() const { return m_exception; }
 
     private:
-        ExecState* m_exec;
         JSGlobalObject* m_dynamicGlobalObject;
         const CodeBlock* m_codeBlock;
         ScopeChainNode* m_scopeChain;

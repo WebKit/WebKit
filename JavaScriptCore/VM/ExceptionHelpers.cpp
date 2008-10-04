@@ -50,17 +50,17 @@ static void substitute(UString& string, const UString& substring)
 
 class InterruptedExecutionError : public JSObject {
 public:
-    InterruptedExecutionError(ExecState* exec)
-        : JSObject(exec->globalData().nullProtoStructureID)
+    InterruptedExecutionError(JSGlobalData* globalData)
+        : JSObject(globalData->nullProtoStructureID)
     {
     }
 
     virtual bool isWatchdogException() const { return true; }
 };
 
-JSValue* createInterruptedExecutionException(ExecState* exec)
+JSValue* createInterruptedExecutionException(JSGlobalData* globalData)
 {
-    return new (exec) InterruptedExecutionError(exec);
+    return new (globalData) InterruptedExecutionError(globalData);
 }
 
 JSValue* createError(ExecState* exec, ErrorType e, const char* msg)

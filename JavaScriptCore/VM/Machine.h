@@ -268,7 +268,7 @@ namespace JSC {
 
         Register* callFrame(ExecState*, InternalFunction*) const;
 
-        JSValue* privateExecute(ExecutionFlag, ExecState* = 0, RegisterFile* = 0, Register* = 0, JSValue** exception = 0);
+        JSValue* privateExecute(ExecutionFlag, RegisterFile*, Register*, JSValue** exception);
 
         void dumpCallFrame(const RegisterFile*, const Register*);
         void dumpRegisters(const RegisterFile*, const Register*);

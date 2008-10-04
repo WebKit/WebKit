@@ -1,3 +1,13 @@
+2008-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21295
+          Bug 21295: Replace ExecState with a call frame Register pointer
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::WebScriptDebugger): Remove 0 passed for ExecState.
+
 2008-10-03  John Sullivan  <sullivan@apple.com>
 
         Fixed Release build
