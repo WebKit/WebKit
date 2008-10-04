@@ -1,5 +1,11 @@
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
+        Fix Qt bustage from missing include.
+
+        * platform/qt/PlatformScreenQt.cpp:
+
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
         Fix Windows scrollbar bustage in popup menus.
 
         * platform/win/PopupMenuWin.cpp:

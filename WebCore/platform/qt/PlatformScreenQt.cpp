@@ -33,6 +33,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HostWindow.h"
 #include "Widget.h"
 #include <QApplication>
 #include <QDesktopWidget>
