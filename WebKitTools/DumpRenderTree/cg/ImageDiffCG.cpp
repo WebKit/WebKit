@@ -72,33 +72,44 @@ static RetainPtr<CGImageRef> createImageFromStdin(int bytesRemaining)
     return RetainPtr<CGImageRef>(AdoptCF, CGImageCreateWithPNGDataProvider(dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 }
 
-static RetainPtr<CGContextRef> getDifferenceBitmap(CGImageRef testBitmap, CGImageRef referenceBitmap)
+// Generates an RGBA8 bitmap in the reference image colorspace containing the differences between the 2 images
+static RetainPtr<CGContextRef> createDifferenceBitmap(CGImageRef testImage, CGImageRef referenceImage)
 {
     // we must have both images to take diff
-    if (!testBitmap || !referenceBitmap)
+    if (!testImage || !referenceImage) {
+        fprintf(stderr, "test or reference image is missing!");
         return 0;
+    }
 
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    // we must have both images be the same dimensions
+    if ((CGImageGetWidth(testImage) != CGImageGetWidth(referenceImage)) || (CGImageGetHeight(testImage) != CGImageGetHeight(referenceImage))) {
+        fprintf(stderr, "test and reference image dimensions don't match!");
+        return 0;
+    }
+
+    // we must have both images in the same colorspace
+    if (!CFEqual(CGImageGetColorSpace(testImage), CGImageGetColorSpace(referenceImage))) {
+        fprintf(stderr, "test and reference image colorspaces don't match!");
+        return 0;
+    }
+
     static CFMutableDataRef data = CFDataCreateMutable(kCFAllocatorDefault, 0);
-    CFDataSetLength(data, CGImageGetHeight(testBitmap) * CGImageGetBytesPerRow(testBitmap));
-    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(CFDataGetMutableBytePtr(data), CGImageGetWidth(testBitmap), CGImageGetHeight(testBitmap),
-        CGImageGetBitsPerComponent(testBitmap), CGImageGetBytesPerRow(testBitmap), colorSpace.get(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
+    size_t rowBytes = (4 * CGImageGetWidth(referenceImage) + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
+    CFDataSetLength(data, CGImageGetHeight(referenceImage) * rowBytes);
+    RetainPtr<CGContextRef> context(AdoptCF, CGBitmapContextCreate(CFDataGetMutableBytePtr(data), CGImageGetWidth(referenceImage), CGImageGetHeight(referenceImage), 8, rowBytes, CGImageGetColorSpace(referenceImage), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
 
     CGContextSetBlendMode(context.get(), kCGBlendModeNormal);
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, static_cast<CGFloat>(CGImageGetWidth(testBitmap)), static_cast<CGFloat>(CGImageGetHeight(testBitmap))), testBitmap);
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, static_cast<CGFloat>(CGImageGetWidth(testImage)), static_cast<CGFloat>(CGImageGetHeight(testImage))), testImage);
     CGContextSetBlendMode(context.get(), kCGBlendModeDifference);
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, static_cast<CGFloat>(CGImageGetWidth(referenceBitmap)), static_cast<CGFloat>(CGImageGetHeight(referenceBitmap))), referenceBitmap);
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, static_cast<CGFloat>(CGImageGetWidth(referenceImage)), static_cast<CGFloat>(CGImageGetHeight(referenceImage))), referenceImage);
 
     return context;
 }
 
-/**
- * Counts the number of non-black pixels, and returns the percentage
- * of non-black pixels to total pixels in the image.
- */
+// Counts the number of non-black pixels, and returns the percentage of non-black pixels to total pixels in the image.
 static float computePercentageDifferent(CGContextRef diffBitmap, unsigned threshold)
 {
-    // if diffBiatmap is nil, then there was an error, and it didn't match.
+    // if diffBitmap is nil, then there was an error, and it didn't match.
     if (!diffBitmap)
         return 100.0f;
 
@@ -108,7 +119,6 @@ static float computePercentageDifferent(CGContextRef diffBitmap, unsigned thresh
     unsigned char* pixelRowData = static_cast<unsigned char*>(CGBitmapContextGetData(diffBitmap));
     unsigned differences = 0;
 
-    // NOTE: This may not be safe when switching between ENDIAN types
     for (unsigned row = 0; row < pixelsHigh; row++) {
         for (unsigned col = 0; col < (pixelsWide * 4); col += 4) {
             unsigned char* red = pixelRowData + col;
@@ -130,10 +140,10 @@ static float computePercentageDifferent(CGContextRef diffBitmap, unsigned thresh
     return (differences * 100.f) / totalPixels;
 }
 
-static void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap, unsigned threshold)
+static void compareImages(CGImageRef testImage, CGImageRef referenceImage, unsigned threshold)
 {
     // prepare the difference blend to check for pixel variations
-    RetainPtr<CGContextRef> diffBitmap = getDifferenceBitmap(actualBitmap, baselineBitmap);
+    RetainPtr<CGContextRef> diffBitmap = createDifferenceBitmap(testImage, referenceImage);
 
     float percentage = computePercentageDifferent(diffBitmap.get(), threshold);
 
@@ -142,13 +152,16 @@ static void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap, un
     // send message to let them know if an image was wrong
     if (percentage > 0.0f) {
         // since the diff might actually show something, send it to stdout
-        RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(diffBitmap.get()));
-        RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
-        RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
-        CGImageDestinationAddImage(imageDest.get(), image.get(), 0);
-        CGImageDestinationFinalize(imageDest.get());
-        printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
-        fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
+        if (diffBitmap) {
+            RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(diffBitmap.get()));
+            RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
+            RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
+            CGImageDestinationAddImage(imageDest.get(), image.get(), 0);
+            CGImageDestinationFinalize(imageDest.get());
+            printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
+            fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
+        }
+        
         fprintf(stdout, "diff: %01.2f%% failed\n", percentage);
     } else
         fprintf(stdout, "diff: %01.2f%% passed\n", percentage);
