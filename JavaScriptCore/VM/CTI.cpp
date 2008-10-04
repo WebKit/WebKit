@@ -1988,8 +1988,8 @@ void CTI::privateCompileMainPass()
             i+= 1;
             break;
         }
-        case op_init_arguments: {
-            emitCall(i, Machine::cti_op_init_arguments);
+        case op_create_arguments: {
+            emitCall(i, Machine::cti_op_create_arguments);
             i += 1;
             break;
         }

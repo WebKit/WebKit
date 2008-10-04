@@ -3342,7 +3342,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            restore the scope chain, code block instruction pointer and
            register base to those of the calling function.
         */
-           
+
         int result = (++vPC)->u.operand;
 
         // If this call frame created an activation or an 'arguments' object, tear it off.
@@ -3376,6 +3376,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_enter) {
+        /* enter
+
+           Initializes local variables to undefined and fills constant
+           registers with their values. If the code block requires an
+           activation, enter_with_activation should be used instead.
+
+           This opcode should only be used at the beginning of a code
+           block.
+        */
+
         size_t i = 0;
         CodeBlock* codeBlock = this->codeBlock(r);
         
@@ -3389,6 +3399,19 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_enter_with_activation) {
+        /* enter_with_activation
+
+           Initializes local variables to undefined, fills constant
+           registers with their values, creates an activation object,
+           and places the new activation both in the activation slot
+           in the call frame and at the top of the scope chain. If the
+           code block does not require an activation, enter should be
+           used instead.
+
+           This opcode should only be used at the beginning of a code
+           block.
+        */
+
         size_t i = 0;
         CodeBlock* codeBlock = this->codeBlock(r);
 
@@ -3414,7 +3437,17 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ++vPC;
         NEXT_OPCODE;
     }
-    BEGIN_OPCODE(op_init_arguments) {
+    BEGIN_OPCODE(op_create_arguments) {
+        /* create_arguments
+
+           Creates the 'arguments' object and places it in both the
+           'arguments' call frame slot and the local 'arguments'
+           register.
+
+           This opcode should only be used at the beginning of a code
+           block.
+        */
+
         JSValue* activation = r[RegisterFile::OptionalCalleeActivation].getJSValue();
         Arguments* arguments;
         if (activation) {
@@ -4625,7 +4658,7 @@ JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
     return 0;
 }
 
-void Machine::cti_op_init_arguments(CTI_ARGS)
+void Machine::cti_op_create_arguments(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
     Register* r = ARG_r;

@@ -1,3 +1,25 @@
+2008-10-04  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 21369: Add opcode documentation for all undocumented opcodes
+        <https://bugs.webkit.org/show_bug.cgi?id=21369>
+
+        This patch adds opcode documentation for all undocumented opcodes, and
+        it also renames op_init_arguments to op_create_arguments.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_create_arguments):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+
 2008-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

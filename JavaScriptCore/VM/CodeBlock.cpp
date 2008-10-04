@@ -356,8 +356,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] enter_with_activation\n", location);
             break;
         }
-        case op_init_arguments: {
-            printf("[%4d] init_arguments\n", location);
+        case op_create_arguments: {
+            printf("[%4d] create_arguments\n", location);
             break;
         }
         case op_convert_this: {

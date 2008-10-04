@@ -295,7 +295,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     bool usesArguments = functionBody->usesArguments();
     codeBlock->usesArguments = usesArguments;
     if (usesArguments) {
-        emitOpcode(op_init_arguments);
+        emitOpcode(op_create_arguments);
         m_argumentsRegister.setIndex(RegisterFile::OptionalCalleeArguments);
         addVar(propertyNames().arguments, false);
     }
