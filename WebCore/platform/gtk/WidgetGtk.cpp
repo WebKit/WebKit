@@ -31,6 +31,7 @@
 #include "Cursor.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "RenderObject.h"
@@ -58,14 +59,9 @@ Widget::~Widget()
     delete m_data;
 }
 
-PlatformWidget Widget::containingWindow() const
-{
-    return m_containingWindow;
-}
-
 void Widget::setFocus()
 {
-    gtk_widget_grab_focus(platformWidget() ? platformWidget() : GTK_WIDGET(containingWindow()));
+    gtk_widget_grab_focus(platformWidget() ? platformWidget() : GTK_WIDGET(root()->hostWindow()->platformWindow()));
 }
 
 Cursor Widget::cursor()
@@ -91,7 +87,7 @@ void Widget::setCursor(const Cursor& cursor)
     if (pcur == m_data->cursor)
         return;
 
-    gdk_window_set_cursor(gdkDrawable(platformWidget()) ? GDK_WINDOW(gdkDrawable(platformWidget())) : GTK_WIDGET(containingWindow())->window, pcur);
+    gdk_window_set_cursor(gdkDrawable(platformWidget()) ? GDK_WINDOW(gdkDrawable(platformWidget())) : GTK_WIDGET(root()->hostWindow()->platformWindow())->window, pcur);
     m_data->cursor = pcur;
 }
 

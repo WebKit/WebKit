@@ -1,3 +1,27 @@
+2008-10-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Gtk build fixes.
+
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::FileChooser::openFileChooser):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenAvailableRect):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::show):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformAddChild):
+        (WebCore::ScrollView::platformRemoveChild):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setCursor):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::init):
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Fix Qt bustage from missing include.

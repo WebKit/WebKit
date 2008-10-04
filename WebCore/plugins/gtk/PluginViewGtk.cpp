@@ -439,10 +439,10 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
             void* w = reinterpret_cast<void*>(value);
 
 #if PLATFORM(X11)
-            *((XID *)w) = GDK_WINDOW_XWINDOW(containingWindow()->window);
+            *((XID *)w) = GDK_WINDOW_XWINDOW(m_parentFrame->view()->hostWindow()->platformWindow()->window);
 #endif
 #ifdef GDK_WINDOWING_WIN32
-            *((HWND *)w) = GDK_WINDOWING_HWND(containingWindow()->window);
+            *((HWND *)w) = GDK_WINDOWING_HWND(m_parentFrame->view()->hostWindow()->platformWindow()->window);
 #endif
             return NPERR_NO_ERROR;
         }
@@ -478,7 +478,7 @@ void PluginView::forceRedraw()
     if (m_isWindowed)
         gtk_widget_queue_draw(platformPluginWidget());
     else
-        gtk_widget_queue_draw(containingWindow());
+        gtk_widget_queue_draw(m_parentFrame->view()->hostWindow()->platformWindow());
 }
 
 PluginView::~PluginView()
@@ -536,13 +536,13 @@ void PluginView::init()
 #if PLATFORM(X11)
     if (m_needsXEmbed) {
         setPlatformWidget(gtk_socket_new());
-        gtk_container_add(GTK_CONTAINER(containingWindow()), platformPluginWidget());
+        gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformWindow()), platformPluginWidget());
         g_signal_connect(platformPluginWidget(), "plug_removed", G_CALLBACK(plug_removed_cb), NULL);
     } else if (m_isWindowed)
-        setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->containingWindow()->window, 0));
+        setPlatformWidget(gtk_xtbin_new(m_parentFrame->view()->hostWindow()->platformWindow()->window, 0));
 #else
     setPlatformWidget(gtk_socket_new());
-    gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->containingWindow()), platformPluginWidget());
+    gtk_container_add(GTK_CONTAINER(m_parentFrame->view()->hostWindow()->platformWindow()), platformPluginWidget());
 #endif
     show();
 

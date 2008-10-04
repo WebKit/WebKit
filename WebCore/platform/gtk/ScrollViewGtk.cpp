@@ -126,13 +126,13 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj)
 void ScrollView::platformAddChild(Widget* child)
 {
     if (!GTK_IS_SOCKET(child->platformWidget()))
-        gtk_container_add(GTK_CONTAINER(containingWindow()), child->platformWidget());
+        gtk_container_add(GTK_CONTAINER(hostWindow()->platformWindow()), child->platformWidget());
 }
 
 void ScrollView::platformRemoveChild(Widget* child)
 {
-    if (GTK_WIDGET(containingWindow()) == GTK_WIDGET(child->platformWidget())->parent)
-        gtk_container_remove(GTK_CONTAINER(containingWindow()), child->platformWidget());
+    if (GTK_WIDGET(hostWindow()->platformWindow()) == GTK_WIDGET(child->platformWidget())->parent)
+        gtk_container_remove(GTK_CONTAINER(hostWindow()->platformWindow()), child->platformWidget());
 }
 
 bool ScrollView::platformHandleHorizontalAdjustment(const IntSize& scroll)
