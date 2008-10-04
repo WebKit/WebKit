@@ -98,8 +98,6 @@ public:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect& r) const;
     virtual PlatformWidget platformWindow() const;
 
-    virtual void addToDirtyRegion(const WebCore::IntRect&);
-
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
 
     virtual void setToolTip(const WebCore::String&);
