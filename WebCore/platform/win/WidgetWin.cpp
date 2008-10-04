@@ -48,11 +48,6 @@ Widget::~Widget()
     ASSERT(!parent());
 }
 
-PlatformWindow Widget::containingWindow() const
-{
-    return m_containingWindow;
-}
-
 void Widget::show()
 {
 }

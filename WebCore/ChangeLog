@@ -1,3 +1,17 @@
+2008-10-03  David Hyatt  <hyatt@apple.com>
+
+        Fix Windows bustage.
+
+        * platform/win/FileChooserWin.cpp:
+        (WebCore::FileChooser::openFileChooser):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::monitorInfoForWidget):
+        * platform/win/WidgetWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::init):
+
 2008-10-03  Darin Adler  <darin@apple.com>
 
         * bindings/js/JSInspectedObjectWrapper.cpp: Try to fix a build failure
