@@ -218,6 +218,10 @@ protected:
     
     virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
+    
+    // These methods are used to create/destroy scrollbars.
+    void setHasHorizontalScrollbar(bool);
+    void setHasVerticalScrollbar(bool);
 
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;
@@ -244,10 +248,6 @@ private:
 
     // Called to update the scrollbars to accurately reflect the state of the view.
     void updateScrollbars(const IntSize& desiredOffset);
-
-    // These methods are used to create/destroy scrollbars.
-    void setHasHorizontalScrollbar(bool);
-    void setHasVerticalScrollbar(bool);
 
     void platformInit();
     void platformDestroy();
