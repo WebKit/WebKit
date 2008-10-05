@@ -1,3 +1,15 @@
+2008-10-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Invalid cast from GdkWindow to GtkWidget
+        https://bugs.webkit.org/show_bug.cgi?id=21391
+
+        Fix a misplaced closing parenthesis to actually cast the widget, not the window
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+
 2008-10-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Alder.
