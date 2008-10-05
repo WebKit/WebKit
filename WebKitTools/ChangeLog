@@ -1,3 +1,12 @@
+2008-10-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Update check-for-weak-vtables to check only the final linked image for weak vtables.
+        This gives more useful results than checking each object file independently.
+
+        * Scripts/check-for-weak-vtables:
+
 2008-10-03  Pierre-Olivier Latour <pol@apple.com>
 
         Reviewed by Darin Adler
