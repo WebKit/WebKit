@@ -1,3 +1,27 @@
+2008-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Bug 21381: Incremental parsing of html causes bogus line numbers in some cases
+        <https://bugs.webkit.org/show_bug.cgi?id=21381>
+
+        If we hit a parsing boundary (end of a packet, etc) in the middle of a
+        <script> element when we are doing an incremental parse, we exit the
+        parser, and reenter later when more data is available.  During this
+        reentry we incorrectly reset the scriptStartLineno to the current line
+        in the parser, which is now part way through the script element.
+
+        The solution is to track whether we are entering or reentering the parsing
+        of a script element.  We do this simply by 0 checking scriptStartLineno,
+        and resetting it after we complete parsing of each script element. 
+
+        Test: http/tests/incremental/pause-in-script-element.pl
+
+        * ChangeLog:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::scriptHandler):
+
 2008-10-04  Alp Toker  <alp@nuanti.com>
 
         Reviewed by David Hyatt. Landed by Jan Alonzo.

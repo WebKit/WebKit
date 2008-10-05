@@ -1,3 +1,15 @@
+2008-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Reviewed by Tim Hatcher.
+
+        Bug 21381: Incremental parsing of html causes bogus line numbers in some cases
+        <https://bugs.webkit.org/show_bug.cgi?id=21381>
+
+        Test case for incremental parsing being interrupted midway through a script element.
+
+        * http/tests/incremental/pause-in-script-element-expected.txt: Added.
+        * http/tests/incremental/pause-in-script-element.pl: Added.
+
 2008-10-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
