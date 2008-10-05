@@ -192,7 +192,7 @@ namespace JSC {
             , numConstants(0)
             , numVars(0)
             , numParameters(0)
-            , needsFullScopeChain(ownerNode_->usesEval() || ownerNode_->containsClosures())
+            , needsFullScopeChain(ownerNode_->needsActivation())
             , usesEval(ownerNode_->usesEval())
             , codeType(codeType_)
             , source(source_)

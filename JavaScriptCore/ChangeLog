@@ -1,3 +1,25 @@
+2008-10-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21364: Remove the branch in op_ret for OptionalCalleeActivation and OptionalCalleeArguments
+        <https://bugs.webkit.org/show_bug.cgi?id=21364>
+
+        This patch does not yet remove the branch, but it does a bit of refactoring
+        so that a CodeGenerator now knows whether the associated CodeBlock will need
+        a full scope before doing any code generation. This makes it possible to emit
+        explicit tear-off instructions before every op_ret.
+
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::CodeBlock):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::generate):
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::emitPushScope):
+        (JSC::CodeGenerator::emitPushNewScope):
+        * kjs/nodes.h:
+        (JSC::ScopeNode::needsActivation):
+
 2008-10-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Cameron Zwarich.
