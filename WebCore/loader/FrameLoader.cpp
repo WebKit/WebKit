@@ -330,6 +330,7 @@ Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const F
     // FIXME: Setting the referrer should be the caller's responsibility.
     FrameLoadRequest requestWithReferrer = request;
     requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
+    addHTTPOriginIfNeeded(requestWithReferrer.resourceRequest(), outgoingOrigin());
 
     Page* oldPage = m_frame->page();
     if (!oldPage)
@@ -399,6 +400,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event, boo
     FrameLoadRequest copy = request;
     if (copy.resourceRequest().httpReferrer().isEmpty())
         copy.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
+    addHTTPOriginIfNeeded(copy.resourceRequest(), outgoingOrigin());
 
     loadFrameRequestWithFormAndValues(copy, lockHistory, event, 0, HashMap<String, String>());
 }
@@ -574,6 +576,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     }
 
     frameRequest.resourceRequest().setURL(u);
+    addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
     submitForm(frameRequest, event);
 }
@@ -1784,6 +1787,14 @@ String FrameLoader::outgoingReferrer() const
     return m_outgoingReferrer;
 }
 
+String FrameLoader::outgoingOrigin() const
+{
+    if (m_frame->document())
+        return m_frame->document()->securityOrigin()->toHTTPOrigin();
+
+    return SecurityOrigin::createEmpty()->toHTTPOrigin();
+}
+
 Frame* FrameLoader::opener()
 {
     return m_opener;
@@ -2124,8 +2135,11 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     bool isFormSubmission = formState;
     
     ResourceRequest request(newURL);
-    if (!referrer.isEmpty())
+    if (!referrer.isEmpty()) {
         request.setHTTPReferrer(referrer);
+        RefPtr<SecurityOrigin> referrerOrigin = SecurityOrigin::createFromString(referrer);
+        addHTTPOriginIfNeeded(request, referrerOrigin->toHTTPOrigin());
+    }
     addExtraFieldsToRequest(request, true, event || isFormSubmission);
     if (newLoadType == FrameLoadTypeReload)
         request.setCachePolicy(ReloadIgnoringCacheData);
@@ -3405,6 +3419,35 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainRes
     
     if (mainResource)
         request.setHTTPAccept("application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
+
+    // Make sure we send the Origin header.
+    addHTTPOriginIfNeeded(request, String());
+}
+
+void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
+{
+    if (!request.httpOrigin().isEmpty())
+        return;  // Request already has an Origin header.
+
+    // Don't send an Origin header for GET or HEAD to avoid privacy issues.
+    // For example, if an intranet page has a hyperlink to an external web
+    // site, we don't want to include the Origin of the request because it
+    // will leak the internal host name. Similar privacy concerns have lead
+    // to the widespread suppression of the Referer header at the network
+    // layer.
+    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
+        return;
+
+    // For non-GET and non-HEAD methods, always send an Origin header so the
+    // server knows we support this feature.
+
+    if (origin.isEmpty()) {
+        // If we don't know what origin header to attach, we attach the value
+        // for an empty origin.
+        origin = SecurityOrigin::createEmpty()->toHTTPOrigin();
+    }
+
+    request.setHTTPOrigin(origin);
 }
 
 void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int length)
@@ -3432,15 +3475,17 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
     const KURL& url = inRequest.url();
     RefPtr<FormData> formData = inRequest.httpBody();
     const String& contentType = inRequest.httpContentType();
+    String origin = inRequest.httpOrigin();
 
     ResourceRequest workingResourceRequest(url);    
-    addExtraFieldsToRequest(workingResourceRequest, true, true);
 
     if (!referrer.isEmpty())
         workingResourceRequest.setHTTPReferrer(referrer);
+    workingResourceRequest.setHTTPOrigin(origin);
     workingResourceRequest.setHTTPMethod("POST");
     workingResourceRequest.setHTTPBody(formData);
     workingResourceRequest.setHTTPContentType(contentType);
+    addExtraFieldsToRequest(workingResourceRequest, true, true);
 
     NavigationAction action(url, FrameLoadTypeStandard, true, event);
 
@@ -3482,6 +3527,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     
     if (!referrer.isEmpty())
         initialRequest.setHTTPReferrer(referrer);
+    addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
     if (Page* page = m_frame->page())
         initialRequest.setMainDocumentURL(page->mainFrame()->loader()->documentLoader()->request().url());
@@ -4293,8 +4339,6 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         if (!inPageCache) {
             ResourceRequest request(itemURL);
 
-            addExtraFieldsToRequest(request, true, formData);
-
             // If this was a repost that failed the page cache, we might try to repost the form.
             NavigationAction action;
             if (formData) {
@@ -4305,6 +4349,8 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 request.setHTTPReferrer(item->formReferrer());
                 request.setHTTPBody(formData);
                 request.setHTTPContentType(item->formContentType());
+                RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->formReferrer());
+                addHTTPOriginIfNeeded(request, securityOrigin->toHTTPOrigin());
         
                 // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
                 // We want to know this before talking to the policy delegate, since it affects whether 
@@ -4345,6 +4391,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 action = NavigationAction(itemOriginalURL, loadType, false);
             }
 
+            addExtraFieldsToRequest(request, true, formData);
             loadWithNavigationAction(request, action, loadType, 0);
         }
     }

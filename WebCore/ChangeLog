@@ -1,3 +1,50 @@
+2008-10-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Alder.
+
+        Attach the Origin header to POST requests to help defend against
+        cross-site request forgery.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20792
+
+        Collin Jackson <collinj@webkit.org> also contributed to this patch.
+
+        Tests: http/tests/security/originHeader/origin-header-for-data.html
+               http/tests/security/originHeader/origin-header-for-empty.html
+               http/tests/security/originHeader/origin-header-for-get.html
+               http/tests/security/originHeader/origin-header-for-https.html
+               http/tests/security/originHeader/origin-header-for-post.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::createWindow):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::outgoingOrigin):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toHTTPOrigin):
+        * platform/SecurityOrigin.h:
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::httpOrigin):
+        (WebCore::ResourceRequestBase::setHTTPOrigin):
+        (WebCore::ResourceRequestBase::clearHTTPOrigin):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+
 2008-10-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tim Hatcher.

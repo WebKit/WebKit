@@ -106,6 +106,11 @@ namespace WebCore {
         // SecurityOrigin is represented with the null string.
         String toString() const;
 
+        // Convert this SecurityOrigin into a string for use in the HTTP Origin
+        // header. This is similar to toString(), except that the empty
+        // SecurityOrigin is represented as the string "null".
+        String toHTTPOrigin() const;
+
         // Serialize the security origin for storage in the database. This format is
         // deprecated and should be used only for compatibility with old databases;
         // use toString() and createFromString() instead.

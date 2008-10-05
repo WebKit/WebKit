@@ -1,3 +1,30 @@
+2008-10-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Tests for the new Origin header.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20792
+
+        Collin Jackson <collinj@webkit.org> also contributed to this patch.
+
+        * http/tests/security/originHeader: Added.
+        * http/tests/security/originHeader/origin-header-for-data-expected.txt: Added.
+        * http/tests/security/originHeader/origin-header-for-data.html: Added.
+        * http/tests/security/originHeader/origin-header-for-empty-expected.txt: Added.
+        * http/tests/security/originHeader/origin-header-for-empty.html: Added.
+        * http/tests/security/originHeader/origin-header-for-get-expected.txt: Added.
+        * http/tests/security/originHeader/origin-header-for-get.html: Added.
+        * http/tests/security/originHeader/origin-header-for-https-expected.txt: Added.
+        * http/tests/security/originHeader/origin-header-for-https.html: Added.
+        * http/tests/security/originHeader/origin-header-for-post-expected.txt: Added.
+        * http/tests/security/originHeader/origin-header-for-post.html: Added.
+        * http/tests/security/originHeader/origin-header-for-xmlhttprequest-expected.txt: Added.
+        * http/tests/security/originHeader/origin-header-for-xmlhttprequest.html: Added.
+        * http/tests/security/originHeader/resources: Added.
+        * http/tests/security/originHeader/resources/origin-header-post-to-http.html: Added.
+        * http/tests/security/originHeader/resources/print-origin.cgi: Added.
+
 2008-10-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Reviewed by Tim Hatcher.

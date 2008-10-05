@@ -220,6 +220,15 @@ String SecurityOrigin::toString() const
     return String::adopt(result);
 }
 
+String SecurityOrigin::toHTTPOrigin() const
+{
+    String origin = toString();
+    if (origin.isEmpty())
+        return "null";
+
+    return origin;
+}
+
 PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 {
     return SecurityOrigin::create(KURL(originString));

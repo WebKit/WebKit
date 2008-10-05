@@ -36,6 +36,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
@@ -239,6 +240,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         if ((referrer.protocolIs("http") || referrer.protocolIs("https")) && referrer.path().isEmpty())
             referrer.setPath("/");
         resourceRequest.setHTTPReferrer(referrer.string());
+        FrameLoader::addHTTPOriginIfNeeded(resourceRequest, docLoader->doc()->securityOrigin()->toHTTPOrigin());
         
         if (resourceIsCacheValidator) {
             CachedResource* resourceToRevalidate = request->cachedResource()->resourceToRevalidate();

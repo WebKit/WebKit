@@ -272,6 +272,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
     ResourceRequest request;
 
     request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
+    FrameLoader::addHTTPOriginIfNeeded(request, activeFrame->loader()->outgoingOrigin());
     FrameLoadRequest frameRequest(request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we

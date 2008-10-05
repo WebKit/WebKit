@@ -537,14 +537,6 @@ void XMLHttpRequest::makeCrossSiteAccessRequest(ExceptionCode& ec)
         makeCrossSiteAccessRequestWithPreflight(ec);
 }
 
-String XMLHttpRequest::accessControlOrigin() const
-{
-    String accessControlOrigin = m_doc->securityOrigin()->toString();
-    if (accessControlOrigin.isEmpty())
-        return "null";
-    return accessControlOrigin;
-}
-
 void XMLHttpRequest::makeSimpleCrossSiteAccessRequest(ExceptionCode& ec)
 {
     ASSERT(isSimpleCrossSiteAccessRequest());
@@ -556,7 +548,7 @@ void XMLHttpRequest::makeSimpleCrossSiteAccessRequest(ExceptionCode& ec)
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
-    request.setHTTPHeaderField("Origin", accessControlOrigin());
+    request.setHTTPOrigin(m_doc->securityOrigin()->toHTTPOrigin());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -587,7 +579,7 @@ static bool canSkipPrelight(PreflightResultCache::iterator cacheIt, bool include
 
 void XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight(ExceptionCode& ec)
 {
-    String origin = accessControlOrigin();
+    String origin = m_doc->securityOrigin()->toHTTPOrigin();
     KURL url = m_url;
     url.setUser(String());
     url.setPass(String());
@@ -675,7 +667,7 @@ void XMLHttpRequest::handleAsynchronousPreflightResult()
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
-    request.setHTTPHeaderField("Origin", accessControlOrigin());
+    request.setHTTPOrigin(m_doc->securityOrigin()->toHTTPOrigin());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -1200,7 +1192,7 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
     if (!parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta))
         expiryDelta = 5;
 
-    appendPreflightResultCacheEntry(accessControlOrigin(), m_url, expiryDelta, m_includeCredentials, methods.release(), headers.release());
+    appendPreflightResultCacheEntry(m_doc->securityOrigin()->toHTTPOrigin(), m_url, expiryDelta, m_includeCredentials, methods.release(), headers.release());
 }
 
 void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)
