@@ -1320,6 +1320,7 @@
 				939810B20824BF01008DF038 /* Resources */,
 				939810BB0824BF01008DF038 /* Sources */,
 				939D054F09DA02D500984996 /* Check For Global Initializers */,
+				5D0D54210E98631D0029E223 /* Check For Weak VTables */,
 				939811270824BF01008DF038 /* Frameworks */,
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
 			);
@@ -1410,6 +1411,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -C mac -f \"MigrateHeaders.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+		};
+		5D0D54210E98631D0029E223 /* Check For Weak VTables */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Weak VTables";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-weak-vtables ]; then\n    ../WebKitTools/Scripts/check-for-weak-vtables || exit $?\nfi";
 		};
 		5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
