@@ -465,7 +465,7 @@ function get_posts($args = null) {
 		'order' => 'DESC', 'include' => '',
 		'exclude' => '', 'meta_key' => '',
 		'meta_value' =>'', 'post_type' => 'post',
-		'post_parent' => 0
+		'post_parent' => 0, 'suppress_filters' => true
 	);
 
 	$r = wp_parse_args( $args, $defaults );
@@ -594,27 +594,20 @@ function get_post_meta($post_id, $key, $single = false) {
 
 	$meta_cache = wp_cache_get($post_id, 'post_meta');
 
-	if ( isset($meta_cache[$key]) ) {
-		if ( $single ) {
-			return maybe_unserialize( $meta_cache[$key][0] );
-		} else {
-			return maybe_unserialize( $meta_cache[$key] );
-		}
-	}
-
 	if ( !$meta_cache ) {
 		update_postmeta_cache($post_id);
 		$meta_cache = wp_cache_get($post_id, 'post_meta');
 	}
 
-	if ( $single ) {
-		if ( isset($meta_cache[$key][0]) )
-			return maybe_unserialize($meta_cache[$key][0]);
-		else
-			return '';
-	} else {
-		return maybe_unserialize($meta_cache[$key]);
+	if ( isset($meta_cache[$key]) ) {
+		if ( $single ) {
+			return maybe_unserialize( $meta_cache[$key][0] );
+		} else {
+			return array_map('maybe_unserialize', $meta_cache[$key]);
+		}
 	}
+
+	return '';
 }
 
 /**
@@ -3297,7 +3290,7 @@ function _wp_put_post_revision( $post = null, $autosave = false ) {
 	if ( !$post || empty($post['ID']) )
 		return;
 
-	if ( isset($post['post_type']) && 'revision' == $post_post['type'] )
+	if ( isset($post['post_type']) && 'revision' == $post['post_type'] )
 		return new WP_Error( 'post_type', __( 'Cannot create a revision of a revision' ) );
 
 	$post = _wp_post_revision_fields( $post, $autosave );
