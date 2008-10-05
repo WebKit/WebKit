@@ -65,6 +65,7 @@
 #include <gdk/gdkx.h>
 #endif
 #ifdef GDK_WINDOWING_WIN32
+#include "PluginMessageThrottlerWin.h"
 #include <gdk/gdkwin32.h>
 #endif
 
@@ -436,13 +437,13 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 #endif
 
         case NPNVnetscapeWindow: {
-            void* w = reinterpret_cast<void*>(value);
-
 #if PLATFORM(X11)
+            void* w = reinterpret_cast<void*>(value);
             *((XID *)w) = GDK_WINDOW_XWINDOW(m_parentFrame->view()->hostWindow()->platformWindow()->window);
 #endif
 #ifdef GDK_WINDOWING_WIN32
-            *((HWND *)w) = GDK_WINDOWING_HWND(m_parentFrame->view()->hostWindow()->platformWindow()->window);
+            HGDIOBJ* w = reinterpret_cast<HGDIOBJ*>(value);
+            *w = GDK_WINDOW_HWND(m_parentFrame->view()->hostWindow()->platformWindow()->window);
 #endif
             return NPERR_NO_ERROR;
         }

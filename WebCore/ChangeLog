@@ -1,3 +1,15 @@
+2008-10-05  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
+
+        Reviewed by David Hyatt.
+
+        GTK_WINDOW_HWND not GTK_WINDOWING_HWND
+        https://bugs.webkit.org/show_bug.cgi?id=20725
+
+        Updated to ToT by Jan Alonzo.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::getValue):
+
 2008-10-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Darin Adler.
