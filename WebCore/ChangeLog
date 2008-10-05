@@ -1,3 +1,21 @@
+2008-10-04  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by David Hyatt. Landed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20924
+        [Gtk] Linux/Gtk: Recent tree revisions fail Acid2 and Acid3
+
+        https://bugs.webkit.org/show_bug.cgi?id=19578
+        [CURL] problem in parseDataUrl
+
+        De-obfuscate parseDataUrl() and fix regressions introduced in r35954.
+        This patch also fixes encoding support in escaped (non-Base64) data
+        URLs. All manual data URL tests now pass in both GLib and non-GLib
+        code paths.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+
 2008-10-04  Timothy Hatcher  <timothy@apple.com>
 
         Makes breakpoints and debugging code during page load work in the

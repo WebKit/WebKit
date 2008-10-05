@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
- * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2008 Nuanti Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,14 +32,15 @@
 #include "config.h"
 #include "ResourceHandleManager.h"
 
+#include "Base64.h"
 #include "CString.h"
+#include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
-#include "HTTPParsers.h"
-#include "Base64.h"
+#include "TextEncoding.h"
 
 #include <errno.h>
 #include <wtf/Vector.h>
@@ -468,68 +470,65 @@ bool ResourceHandleManager::startScheduledJobs()
     return started;
 }
 
-// FIXME: This function does not deal properly with text encodings.
 static void parseDataUrl(ResourceHandle* handle)
 {
-    String data = handle->request().url().string();
+    ResourceHandleClient* client = handle->client();
 
-    ASSERT(data.startsWith("data:", false));
+    ASSERT(client);
+    if (!client)
+        return;
 
-    String header;
-    bool base64 = false;
+    String url = handle->request().url().string();
+    ASSERT(url.startsWith("data:", false));
 
-    int index = data.find(',');
-    if (index != -1) {
-        header = data.substring(5, index - 5).lower();
-        data = data.substring(index + 1);
+    int index = url.find(',');
+    if (index == -1) {
+        client->cannotShowURL(handle);
+        return;
+    }
 
-        if (header.endsWith(";base64")) {
-            base64 = true;
-            header = header.left(header.length() - 7);
-        }
-    } else
-        data = String();
+    String mediaType = url.substring(5, index - 5);
+    String data = url.substring(index + 1);
 
-    data = decodeURLEscapeSequences(data);
+    bool base64 = mediaType.endsWith(";base64", false);
+    if (base64)
+        mediaType = mediaType.left(mediaType.length() - 7);
 
-    size_t outLength = 0;
-    char* outData = 0;
-    Vector<char> out;
-    if (base64 && !data.isEmpty()) {
+    if (mediaType.isEmpty())
+        mediaType = "text/plain;charset=US-ASCII";
+
+    String mimeType = extractMIMETypeFromMediaType(mediaType);
+    String charset = extractCharsetFromMediaType(mediaType);
+
+    ResourceResponse response;
+    response.setMimeType(mimeType);
+
+    if (base64) {
+        data = decodeURLEscapeSequences(data);
+        response.setTextEncodingName(charset);
+        client->didReceiveResponse(handle, response);
+
         // Use the GLib Base64 if available, since WebCore's decoder isn't
         // general-purpose and fails on Acid3 test 97 (whitespace).
 #ifdef USE_GLIB_BASE64
+        size_t outLength = 0;
+        char* outData = 0;
         outData = reinterpret_cast<char*>(g_base64_decode(data.utf8().data(), &outLength));
+        if (outData)
+            client->didReceiveData(handle, outData, outLength, 0);
+        g_free(outData);
 #else
-        base64Decode(data.latin1().data(), data.length(), out);
+        Vector<char> out;
+        if (base64Decode(data.latin1().data(), data.latin1().length(), out))
+            client->didReceiveData(handle, out.data(), out.size(), 0);
 #endif
+    } else {
+        // We have to convert to UTF-16 early due to limitations in KURL
+        data = decodeURLEscapeSequences(data, TextEncoding(charset));
+        response.setTextEncodingName("UTF-16");
+        client->didReceiveResponse(handle, response);
+        client->didReceiveData(handle, reinterpret_cast<const char*>(data.characters()), data.length() * sizeof(UChar), 0);
     }
-
-    if (header.isEmpty())
-        header = "text/plain;charset=US-ASCII";
-
-    ResourceHandleClient* client = handle->getInternal()->client();
-
-    ResourceResponse response;
-
-    response.setMimeType(extractMIMETypeFromMediaType(header));
-    response.setTextEncodingName(extractCharsetFromMediaType(header));
-    if (outData)
-        response.setExpectedContentLength(outLength);
-    else
-        response.setExpectedContentLength(data.length());
-    response.setHTTPStatusCode(200);
-
-    client->didReceiveResponse(handle, response);
-
-    if (outData)
-        client->didReceiveData(handle, outData, outLength, 0);
-    else
-        client->didReceiveData(handle, out.data(), out.size(), 0);
-
-#ifdef USE_GLIB_BASE64
-    g_free(outData);
-#endif
 
     client->didFinishLoading(handle);
 }
