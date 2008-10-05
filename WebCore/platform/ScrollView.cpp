@@ -55,8 +55,6 @@ ScrollView::ScrollView()
 ScrollView::~ScrollView()
 {
     platformDestroy();
-    setHasHorizontalScrollbar(false);
-    setHasVerticalScrollbar(false);
 }
 
 void ScrollView::addChild(Widget* child) 
