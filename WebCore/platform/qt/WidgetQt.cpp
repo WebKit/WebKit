@@ -33,10 +33,9 @@
 
 #include "Cursor.h"
 #include "Font.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "IntRect.h"
-#include "RenderObject.h"
 #include "ScrollView.h"
 #include "Widget.h"
 #include "NotImplemented.h"
@@ -82,7 +81,7 @@ void Widget::setFocus()
 void Widget::setCursor(const Cursor& cursor)
 {
 #ifndef QT_NO_CURSOR
-    if (QWidget* widget = containingWindow())
+    if (QWidget* widget = root()->hostWindow()->platformWindow())
         QCoreApplication::postEvent(widget, new SetCursorEvent(cursor.impl()));
 #endif
 }
