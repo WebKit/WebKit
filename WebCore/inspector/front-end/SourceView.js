@@ -80,32 +80,37 @@ WebInspector.SourceView.prototype = {
 
     detach: function()
     {
+        WebInspector.ResourceView.prototype.detach.call(this);
+
         // FIXME: We need to mark the frame for setup on detach because the frame DOM is cleared
         // when it is removed from the document. Is this a bug?
-        WebInspector.ResourceView.prototype.detach.call(this);
         this._frameNeedsSetup = true;
         this._sourceFrameSetup = false;
     },
 
     setupSourceFrameIfNeeded: function()
     {
-        if (this.resource.finished && !this.resource.failed && this._frameNeedsSetup) {
-            delete this._frameNeedsSetup;
+        if (!this._frameNeedsSetup)
+            return;
 
-            this.attach();
+        this.attach();
 
-            InspectorController.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element);
+        if (!InspectorController.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element))
+            return;
 
-            if (this.resource.type === WebInspector.Resource.Type.Script) {
-                this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
-                this.sourceFrame.syntaxHighlightJavascript();
-            } else
-                this._sourceFrameSetupFinished();
-        }
+        delete this._frameNeedsSetup;
+
+        if (this.resource.type === WebInspector.Resource.Type.Script) {
+            this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
+            this.sourceFrame.syntaxHighlightJavascript();
+        } else
+            this._sourceFrameSetupFinished();
     },
 
     _resourceLoadingFinished: function(event)
     {
+        this._frameNeedsSetup = true;
+        this._sourceFrameSetup = false;
         if (this.visible)
             this.setupSourceFrameIfNeeded();
         this.resource.removeEventListener("finished", this._resourceLoadingFinished, this);

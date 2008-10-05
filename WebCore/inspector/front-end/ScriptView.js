@@ -54,14 +54,15 @@ WebInspector.ScriptView.prototype = {
 
     setupSourceFrameIfNeeded: function()
     {
-        if (!("_frameNeedsSetup" in this))
+        if (!this._frameNeedsSetup)
             return;
-
-        delete this._frameNeedsSetup;
 
         this.attach();
 
-        InspectorController.addSourceToFrame("text/javascript", this.script.source, this.sourceFrame.element);
+        if (!InspectorController.addSourceToFrame("text/javascript", this.script.source, this.sourceFrame.element))
+            return;
+
+        delete this._frameNeedsSetup;
 
         this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
         this.sourceFrame.syntaxHighlightJavascript();

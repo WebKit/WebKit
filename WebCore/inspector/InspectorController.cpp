@@ -517,9 +517,8 @@ static JSValueRef addResourceSourceToFrame(JSContextRef ctx, JSObjectRef /*funct
     if (sourceString.isEmpty())
         return undefined;
 
-    addSourceToFrame(resource->mimeType, sourceString, toNode(toJS(arguments[1])));
-
-    return undefined;
+    bool successfullyAddedSource = addSourceToFrame(resource->mimeType, sourceString, toNode(toJS(arguments[1])));
+    return JSValueMakeBoolean(ctx, successfullyAddedSource);
 }
 
 static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -546,9 +545,8 @@ static JSValueRef addSourceToFrame(JSContextRef ctx, JSObjectRef /*function*/, J
     if (source.isEmpty())
         return undefined;
 
-    addSourceToFrame(mimeType, source, toNode(toJS(arguments[2])));
-
-    return undefined;
+    bool successfullyAddedSource = addSourceToFrame(mimeType, source, toNode(toJS(arguments[2])));
+    return JSValueMakeBoolean(ctx, successfullyAddedSource);
 }
 
 static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

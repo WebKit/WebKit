@@ -9209,6 +9209,8 @@
 			);
 			path = inspector;
 			sourceTree = "<group>";
+			tabWidth = 8;
+			usesTabs = 0;
 		};
 		1CDD44660BA9C80000F90147 /* Configurations */ = {
 			isa = PBXGroup;

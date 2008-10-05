@@ -1,3 +1,40 @@
+2008-10-04  Timothy Hatcher  <timothy@apple.com>
+
+        Makes breakpoints and debugging code during page load work in the
+        Web Inspector's debugger. Specifically, this makes the source
+        code for loading resources show up in the Scripts panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19053
+        rdar://problem/5933408
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.xcodeproj/project.pbxproj: Mark the inspector group as
+        not using tabs and a tab width of 8.
+        * inspector/InspectorController.cpp:
+        (WebCore::addResourceSourceToFrame): Return a bool to report if the
+        source was added successfully or not.
+        (WebCore::addSourceToFrame): Ditto.
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        Return early if the InspectorController.addSourceToFrame fails.
+        Moved the delete of the _frameNeedsSetup property after that call so
+        if the source wasn't added it will be attempted again.
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.detach): Move a comment.
+        (WebInspector.SourceView.prototype.setupSourceFrameIfNeeded):
+        Don't check if the resource is finished or failed, just attempt
+        to add the source to the frame. WebCore has the source, but the
+        finished property hasn't been set yet. Return early if the
+        InspectorController.addSourceToFrame fails. Moved the delete
+        of the _frameNeedsSetup property after that call so if the source
+        wasn't added it will be attempted again.
+        (WebInspector.SourceView.prototype._resourceLoadingFinished):
+        Clear the _frameNeedsSetup and _sourceFrameSetup properties so
+        the source frame will we populated again now that the resource
+        load has finished.
+        * manual-tests/inspector/debugger-pause-during-load.html: Added.
+
 2008-10-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
