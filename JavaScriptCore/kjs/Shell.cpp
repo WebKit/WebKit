@@ -27,6 +27,7 @@
 #include "JSArray.h"
 #include "JSLock.h"
 #include "PrototypeFunction.h"
+#include "SamplingTool.h"
 #include "completion.h"
 #include "interpreter.h"
 #include <math.h>

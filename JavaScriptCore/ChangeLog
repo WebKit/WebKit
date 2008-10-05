@@ -1,3 +1,19 @@
+2008-10-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for bug #21387 - using SamplingTool with CTI.
+
+        (1) A repatch offset offset changes due to an additional instruction to update SamplingTool state.
+        (2) Fix an incusion order problem due to ExecState changes.
+        (3) Change to a MACHINE_SAMPLING macro, use of exec should now be accessing global data.
+
+        * VM/CTI.h:
+        (JSC::CTI::execute):
+        * VM/SamplingTool.h:
+        (JSC::SamplingTool::privateExecuteReturned):
+        * kjs/Shell.cpp:
+
 2008-10-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.
