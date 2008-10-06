@@ -1,18 +1,18 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0.50,0) size 479x380
+  RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (0.50,0) size 479x380
+    RenderSVGContainer {g} at (0.50,0.50) size 479x359
       RenderSVGText {text} at (120,40) size 228x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 228x36
           chunk 1 text run 1 at (120.00,40.00) startOffset 0 endOffset 20 width 228.00: "Text fill and stroke"
-      RenderSVGContainer {g} at (20,0) size 445x380
-        RenderSVGText {text} at (60,280) size 152x300 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-240) size 152x300
+      RenderSVGContainer {g} at (20,30) size 445x328
+        RenderSVGText {text} at (60,280) size 152x248 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-210) size 152x248
             chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 1 width 151.50: "A"
-        RenderSVGText {text} at (260,280) size 165x300 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-240) size 165x300
+        RenderSVGText {text} at (260,280) size 165x248 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-210) size 165x248
             chunk 1 text run 1 at (260.00,280.00) startOffset 0 endOffset 1 width 165.00: "B"
       RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-36) size 264x46
