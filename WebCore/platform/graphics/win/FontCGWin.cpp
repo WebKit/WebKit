@@ -127,170 +127,175 @@ static CGPathRef createPathForGlyph(HDC hdc, Glyph glyph)
     return path;
 }
 
+static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, 
+                      int from, int numGlyphs, const FloatPoint& point)
+{
+    Color fillColor = graphicsContext->fillColor();
+
+    bool drawIntoBitmap = false;
+    int drawingMode = graphicsContext->textDrawingMode();
+    if (drawingMode == cTextFill) {
+        if (!fillColor.alpha())
+            return;
+
+        drawIntoBitmap = fillColor.alpha() != 255 || graphicsContext->inTransparencyLayer();
+        if (!drawIntoBitmap) {
+            IntSize size;
+            int blur;
+            Color color;
+            graphicsContext->getShadow(size, blur, color);
+            drawIntoBitmap = !size.isEmpty() || blur;
+        }
+    }
+
+    // We have to convert CG's two-dimensional floating point advances to just horizontal integer advances.
+    Vector<int, 2048> gdiAdvances;
+    int totalWidth = 0;
+    for (int i = 0; i < numGlyphs; i++) {
+        gdiAdvances.append(lroundf(glyphBuffer.advanceAt(from + i)));
+        totalWidth += gdiAdvances[i];
+    }
+
+    HDC hdc = 0;
+    OwnPtr<GraphicsContext::WindowsBitmap> bitmap;
+    IntRect textRect;
+    if (!drawIntoBitmap)
+        hdc = graphicsContext->getWindowsContext(textRect, true, false);
+    if (!hdc) {
+        drawIntoBitmap = true;
+        // We put slop into this rect, since glyphs can overflow the ascent/descent bounds and the left/right edges.
+        // FIXME: Can get glyphs' optical bounds (even from CG) to get this right.
+        int lineGap = font->lineGap();
+        textRect = IntRect(point.x() - (font->ascent() + font->descent()) / 2, point.y() - font->ascent() - lineGap, totalWidth + font->ascent() + font->descent(), font->lineSpacing());
+        bitmap.set(graphicsContext->createWindowsBitmap(textRect.size()));
+        memset(bitmap->buffer(), 255, bitmap->bufferLength());
+        hdc = bitmap->hdc();
+
+        XFORM xform;
+        xform.eM11 = 1.0f;
+        xform.eM12 = 0.0f;
+        xform.eM21 = 0.0f;
+        xform.eM22 = 1.0f;
+        xform.eDx = -textRect.x();
+        xform.eDy = -textRect.y();
+        SetWorldTransform(hdc, &xform);
+    }
+
+    SelectObject(hdc, font->m_font.hfont());
+
+    // Set the correct color.
+    if (drawIntoBitmap)
+        SetTextColor(hdc, RGB(0, 0, 0));
+    else
+        SetTextColor(hdc, RGB(fillColor.red(), fillColor.green(), fillColor.blue()));
+
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextAlign(hdc, TA_LEFT | TA_BASELINE);
+
+    // Uniscribe gives us offsets to help refine the positioning of combining glyphs.
+    FloatSize translation = glyphBuffer.offsetAt(from);
+    if (translation.width() || translation.height()) {
+        XFORM xform;
+        xform.eM11 = 1.0;
+        xform.eM12 = 0;
+        xform.eM21 = 0;
+        xform.eM22 = 1.0;
+        xform.eDx = translation.width();
+        xform.eDy = translation.height();
+        ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+    }
+
+    if (drawingMode == cTextFill) {
+        XFORM xform;
+        xform.eM11 = 1.0;
+        xform.eM12 = 0;
+        xform.eM21 = font->platformData().syntheticOblique() ? -tanf(syntheticObliqueAngle * piFloat / 180.0f) : 0;
+        xform.eM22 = 1.0;
+        xform.eDx = point.x();
+        xform.eDy = point.y();
+        ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+        ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<const WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
+        if (font->m_syntheticBoldOffset) {
+            xform.eM21 = 0;
+            xform.eDx = font->m_syntheticBoldOffset;
+            xform.eDy = 0;
+            ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+            ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<const WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
+        }
+    } else {
+        RetainPtr<CGMutablePathRef> path(AdoptCF, CGPathCreateMutable());
+
+        XFORM xform;
+        GetWorldTransform(hdc, &xform);
+        AffineTransform hdcTransform(xform.eM11, xform.eM21, xform.eM12, xform.eM22, xform.eDx, xform.eDy);
+        CGAffineTransform initialGlyphTransform = hdcTransform.isInvertible() ? hdcTransform.inverse() : CGAffineTransformIdentity;
+        if (font->platformData().syntheticOblique())
+            initialGlyphTransform = CGAffineTransformConcat(initialGlyphTransform, CGAffineTransformMake(1, 0, tanf(syntheticObliqueAngle * piFloat / 180.0f), 1, 0, 0));
+        initialGlyphTransform.tx = 0;
+        initialGlyphTransform.ty = 0;
+        CGAffineTransform glyphTranslation = CGAffineTransformIdentity;
+
+        for (unsigned i = 0; i < numGlyphs; ++i) {
+            RetainPtr<CGPathRef> glyphPath(AdoptCF, createPathForGlyph(hdc, glyphBuffer.glyphAt(from + i)));
+            CGAffineTransform glyphTransform = CGAffineTransformConcat(initialGlyphTransform, glyphTranslation);
+            CGPathAddPath(path.get(), &glyphTransform, glyphPath.get());
+            glyphTranslation = CGAffineTransformTranslate(glyphTranslation, gdiAdvances[i], 0);
+        }
+
+        CGContextRef cgContext = graphicsContext->platformContext();
+        CGContextSaveGState(cgContext);
+
+        BOOL fontSmoothingEnabled = false;
+        SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &fontSmoothingEnabled, 0);
+        CGContextSetShouldAntialias(cgContext, fontSmoothingEnabled);
+
+        CGContextScaleCTM(cgContext, 1.0, -1.0);
+        CGContextTranslateCTM(cgContext, point.x() + glyphBuffer.offsetAt(from).width(), -(point.y() + glyphBuffer.offsetAt(from).height()));
+
+        if (drawingMode & cTextFill) {
+            CGContextAddPath(cgContext, path.get());
+            CGContextFillPath(cgContext);
+            if (font->m_syntheticBoldOffset) {
+                CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
+                CGContextAddPath(cgContext, path.get());
+                CGContextFillPath(cgContext);
+                CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+            }
+        }
+        if (drawingMode & cTextStroke) {
+            CGContextAddPath(cgContext, path.get());
+            CGContextStrokePath(cgContext);
+            if (font->m_syntheticBoldOffset) {
+                CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
+                CGContextAddPath(cgContext, path.get());
+                CGContextStrokePath(cgContext);
+                CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
+            }
+        }
+        CGContextRestoreGState(cgContext);
+    }
+
+    if (drawIntoBitmap) {
+        UInt8* buffer = bitmap->buffer();
+        unsigned bufferLength = bitmap->bufferLength();
+        for (unsigned i = 0; i < bufferLength; i += 4) {
+            // Use green, which is always in the middle.
+            UInt8 alpha = (255 - buffer[i + 1]) * fillColor.alpha() / 255;
+            buffer[i] = fillColor.blue();
+            buffer[i + 1] = fillColor.green();
+            buffer[i + 2] = fillColor.red();
+            buffer[i + 3] = alpha;
+        }
+        graphicsContext->drawWindowsBitmap(bitmap.get(), textRect.topLeft());
+    } else
+        graphicsContext->releaseWindowsContext(hdc, textRect, true, false);
+}
+
 void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, 
                       int from, int numGlyphs, const FloatPoint& point) const
 {
     if (font->m_font.useGDI()) {
-        Color fillColor = graphicsContext->fillColor();
-
-        bool drawIntoBitmap = false;
-        int drawingMode = graphicsContext->textDrawingMode();
-        if (drawingMode == cTextFill) {
-           if (!fillColor.alpha())
-               return;
-
-           drawIntoBitmap = fillColor.alpha() != 255 || graphicsContext->inTransparencyLayer();
-            if (!drawIntoBitmap) {
-                IntSize size;
-                int blur;
-                Color color;
-                graphicsContext->getShadow(size, blur, color);
-                drawIntoBitmap = !size.isEmpty() || blur;
-            }
-        }
-
-        // We have to convert CG's two-dimensional floating point advances to just horizontal integer advances.
-        Vector<int, 2048> gdiAdvances;
-        int totalWidth = 0;
-        for (int i = 0; i < numGlyphs; i++) {
-            gdiAdvances.append(lroundf(glyphBuffer.advanceAt(from + i)));
-            totalWidth += gdiAdvances[i];
-        }
-
-        HDC hdc = 0;
-        OwnPtr<GraphicsContext::WindowsBitmap> bitmap;
-        IntRect textRect;
-        if (!drawIntoBitmap)
-            hdc = graphicsContext->getWindowsContext(textRect, true, false);
-        if (!hdc) {
-            drawIntoBitmap = true;
-            // We put slop into this rect, since glyphs can overflow the ascent/descent bounds and the left/right edges.
-            // FIXME: Can get glyphs' optical bounds (even from CG) to get this right.
-            int lineGap = font->lineGap();
-            textRect = IntRect(point.x() - (font->ascent() + font->descent()) / 2, point.y() - font->ascent() - lineGap, totalWidth + font->ascent() + font->descent(), font->lineSpacing());
-            bitmap.set(graphicsContext->createWindowsBitmap(textRect.size()));
-            memset(bitmap->buffer(), 255, bitmap->bufferLength());
-            hdc = bitmap->hdc();
-
-            XFORM xform;
-            xform.eM11 = 1.0f;
-            xform.eM12 = 0.0f;
-            xform.eM21 = 0.0f;
-            xform.eM22 = 1.0f;
-            xform.eDx = -textRect.x();
-            xform.eDy = -textRect.y();
-            SetWorldTransform(hdc, &xform);
-        }
-
-        SelectObject(hdc, font->m_font.hfont());
-
-        // Set the correct color.
-        if (drawIntoBitmap)
-            SetTextColor(hdc, RGB(0, 0, 0));
-        else
-            SetTextColor(hdc, RGB(fillColor.red(), fillColor.green(), fillColor.blue()));
-
-        SetBkMode(hdc, TRANSPARENT);
-        SetTextAlign(hdc, TA_LEFT | TA_BASELINE);
-
-        // Uniscribe gives us offsets to help refine the positioning of combining glyphs.
-        FloatSize translation = glyphBuffer.offsetAt(from);
-        if (translation.width() || translation.height()) {
-            XFORM xform;
-            xform.eM11 = 1.0;
-            xform.eM12 = 0;
-            xform.eM21 = 0;
-            xform.eM22 = 1.0;
-            xform.eDx = translation.width();
-            xform.eDy = translation.height();
-            ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
-        }
-
-        if (drawingMode == cTextFill) {
-            XFORM xform;
-            xform.eM11 = 1.0;
-            xform.eM12 = 0;
-            xform.eM21 = font->platformData().syntheticOblique() ? -tanf(syntheticObliqueAngle * piFloat / 180.0f) : 0;
-            xform.eM22 = 1.0;
-            xform.eDx = point.x();
-            xform.eDy = point.y();
-            ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
-            ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<const WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
-            if (font->m_syntheticBoldOffset) {
-                xform.eM21 = 0;
-                xform.eDx = font->m_syntheticBoldOffset;
-                xform.eDy = 0;
-                ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
-                ExtTextOut(hdc, 0, 0, ETO_GLYPH_INDEX, 0, reinterpret_cast<const WCHAR*>(glyphBuffer.glyphs(from)), numGlyphs, gdiAdvances.data());
-            }
-        } else {
-            RetainPtr<CGMutablePathRef> path(AdoptCF, CGPathCreateMutable());
-
-            XFORM xform;
-            GetWorldTransform(hdc, &xform);
-            AffineTransform hdcTransform(xform.eM11, xform.eM21, xform.eM12, xform.eM22, xform.eDx, xform.eDy);
-            CGAffineTransform initialGlyphTransform = hdcTransform.isInvertible() ? hdcTransform.inverse() : CGAffineTransformIdentity;
-            if (font->platformData().syntheticOblique())
-                initialGlyphTransform = CGAffineTransformConcat(initialGlyphTransform, CGAffineTransformMake(1, 0, tanf(syntheticObliqueAngle * piFloat / 180.0f), 1, 0, 0));
-            initialGlyphTransform.tx = 0;
-            initialGlyphTransform.ty = 0;
-            CGAffineTransform glyphTranslation = CGAffineTransformIdentity;
-
-            for (unsigned i = 0; i < numGlyphs; ++i) {
-                RetainPtr<CGPathRef> glyphPath(AdoptCF, createPathForGlyph(hdc, glyphBuffer.glyphAt(from + i)));
-                CGAffineTransform glyphTransform = CGAffineTransformConcat(initialGlyphTransform, glyphTranslation);
-                CGPathAddPath(path.get(), &glyphTransform, glyphPath.get());
-                glyphTranslation = CGAffineTransformTranslate(glyphTranslation, gdiAdvances[i], 0);
-            }
-
-            CGContextRef cgContext = graphicsContext->platformContext();
-            CGContextSaveGState(cgContext);
-
-            BOOL fontSmoothingEnabled = false;
-            SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &fontSmoothingEnabled, 0);
-            CGContextSetShouldAntialias(cgContext, fontSmoothingEnabled);
-
-            CGContextScaleCTM(cgContext, 1.0, -1.0);
-            CGContextTranslateCTM(cgContext, point.x() + glyphBuffer.offsetAt(from).width(), -(point.y() + glyphBuffer.offsetAt(from).height()));
-
-            if (drawingMode & cTextFill) {
-                CGContextAddPath(cgContext, path.get());
-                CGContextFillPath(cgContext);
-                if (font->m_syntheticBoldOffset) {
-                    CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
-                    CGContextAddPath(cgContext, path.get());
-                    CGContextFillPath(cgContext);
-                    CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
-                }
-            }
-            if (drawingMode & cTextStroke) {
-                CGContextAddPath(cgContext, path.get());
-                CGContextStrokePath(cgContext);
-                if (font->m_syntheticBoldOffset) {
-                    CGContextTranslateCTM(cgContext, font->m_syntheticBoldOffset, 0);
-                    CGContextAddPath(cgContext, path.get());
-                    CGContextStrokePath(cgContext);
-                    CGContextTranslateCTM(cgContext, -font->m_syntheticBoldOffset, 0);
-                }
-            }
-            CGContextRestoreGState(cgContext);
-        }
-
-        if (drawIntoBitmap) {
-            UInt8* buffer = bitmap->buffer();
-            unsigned bufferLength = bitmap->bufferLength();
-            for (unsigned i = 0; i < bufferLength; i += 4) {
-                // Use green, which is always in the middle.
-                UInt8 alpha = (255 - buffer[i + 1]) * fillColor.alpha() / 255;
-                buffer[i] = fillColor.blue();
-                buffer[i + 1] = fillColor.green();
-                buffer[i + 2] = fillColor.red();
-                buffer[i + 3] = alpha;
-            }
-            graphicsContext->drawWindowsBitmap(bitmap.get(), textRect.topLeft());
-        } else
-            graphicsContext->releaseWindowsContext(hdc, textRect, true, false);
-
+        drawGDIGlyphs(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
         return;
     }
 

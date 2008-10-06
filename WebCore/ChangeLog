@@ -1,3 +1,13 @@
+2008-10-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - separate GDI text drawing into its own function
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        (WebCore::Font::drawGlyphs):
+
 2008-10-03  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6249833> Fix default button appearance
