@@ -100,7 +100,7 @@ struct _GtkXtBinClass
   GtkSocketClass widget_class;
 };
 
-GTKXTBIN_API(GtkType)     gtk_xtbin_get_type (void);
+GTKXTBIN_API(GType)       gtk_xtbin_get_type (void);
 GTKXTBIN_API(GtkWidget *) gtk_xtbin_new (GdkWindow *parent_window, String *f);
 GTKXTBIN_API(void)        gtk_xtbin_set_position (GtkXtBin *xtbin,
                                                   gint       x,

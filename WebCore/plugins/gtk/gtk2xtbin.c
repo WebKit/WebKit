@@ -213,25 +213,31 @@ xt_event_polling_timer_callback(gpointer user_data)
   return TRUE;
 }
 
-GtkType
+GType
 gtk_xtbin_get_type (void)
 {
-  static GtkType xtbin_type = 0;
+  static GType xtbin_type = 0;
 
   if (!xtbin_type) {
-      static const GtkTypeInfo xtbin_info =
+      static const GTypeInfo xtbin_info =
       {
-        "GtkXtBin",
-        sizeof (GtkXtBin),
         sizeof (GtkXtBinClass),
-        (GtkClassInitFunc) gtk_xtbin_class_init,
-        (GtkObjectInitFunc) gtk_xtbin_init,
-        /* reserved_1 */ NULL,
-        /* reserved_2 */ NULL,
-        (GtkClassInitFunc) NULL
+        NULL,
+        NULL,
+
+        (GClassInitFunc)gtk_xtbin_class_init,
+        NULL,
+        NULL,
+
+        sizeof (GtkXtBin),
+        0,
+        (GInstanceInitFunc)gtk_xtbin_init,
       };
-      xtbin_type = gtk_type_unique (GTK_TYPE_SOCKET, &xtbin_info);
-    }
+      xtbin_type = g_type_register_static (GTK_TYPE_SOCKET,
+                                           "GtkXtBin",
+					   &xtbin_info,
+					   0);
+  }
   return xtbin_type;
 }
 

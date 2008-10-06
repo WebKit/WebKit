@@ -1,3 +1,14 @@
+2008-10-05  Chris Lord  <chris@openedhand.com>
+
+        Reviewed by Alp Toker. Landed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20624
+        WebKit-gtk uses deprecated GtkType/GtkObject
+
+        * plugins/gtk/gtk2xtbin.c:
+        (gtk_xtbin_get_type):
+        * plugins/gtk/gtk2xtbin.h:
+
 2008-10-05  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
 
         Reviewed by David Hyatt.
