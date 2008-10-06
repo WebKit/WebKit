@@ -2055,9 +2055,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)webFrame:(WebFrame *)webFrame didFinishLoadWithError:(NSError *)error
 {
     NPReason reason = NPRES_DONE;
-    if (error != nil) {
-        reason = [WebBaseNetscapePluginStream reasonForError:error];
-    }    
+    if (error != nil)
+        reason = WebNetscapePluginStream::reasonForError(error);
     [self webFrame:webFrame didFinishLoadWithReason:reason];
 }
 

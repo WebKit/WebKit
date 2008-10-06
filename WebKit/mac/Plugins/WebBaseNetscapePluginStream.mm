@@ -74,14 +74,14 @@ static StreamMap& streams()
     return streams().get(stream);
 }
 
-+ (NPReason)reasonForError:(NSError *)error
+NPReason WebNetscapePluginStream::reasonForError(NSError *error)
 {
-    if (error == nil) {
+    if (!error)
         return NPRES_DONE;
-    }
-    if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled) {
+
+    if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled)
         return NPRES_USER_BREAK;
-    }
+
     return NPRES_NETWORK_ERR;
 }
 
@@ -503,26 +503,26 @@ void WebNetscapePluginStream::destroyStream()
     setPlugin(0);
 }
 
-- (void)_destroyStreamWithReason:(NPReason)theReason
+void WebNetscapePluginStream::destroyStreamWithReason(NPReason reason)
 {
-    _impl->m_reason = theReason;
-    if (_impl->m_reason != NPRES_DONE) {
+    m_reason = reason;
+    if (m_reason != NPRES_DONE) {
         // Stop any pending data from being streamed.
-        [_impl->m_deliveryData.get() setLength:0];
-    } else if ([_impl->m_deliveryData.get() length] > 0) {
+        [m_deliveryData.get() setLength:0];
+    } else if ([m_deliveryData.get() length] > 0) {
         // There is more data to be streamed, don't destroy the stream now.
         return;
     }
-    _impl->destroyStream();
-    ASSERT(_impl->m_stream.ndata == nil);
+    destroyStream();
+    ASSERT(m_stream.ndata == nil);
 }
 
-- (void)cancelLoadWithError:(NSError *)error
+void WebNetscapePluginStream::cancelLoadWithError(NSError *error)
 {
-    if (_impl->m_frameLoader) {
-        ASSERT(!_impl->m_loader);
+    if (m_frameLoader) {
+        ASSERT(!m_loader);
         
-        DocumentLoader* documentLoader = _impl->m_frameLoader->activeDocumentLoader();
+        DocumentLoader* documentLoader = m_frameLoader->activeDocumentLoader();
         ASSERT(documentLoader);
         
         if (documentLoader->isLoadingMainResource())
@@ -530,22 +530,31 @@ void WebNetscapePluginStream::destroyStream()
         return;
     }
     
-    if (!_impl->m_loader->isDone())
-        _impl->m_loader->cancel(error);
+    if (!m_loader->isDone())
+        m_loader->cancel(error);
+}
+
+- (void)cancelLoadWithError:(NSError *)error
+{
+    _impl->cancelLoadWithError(error);
+}
+
+void WebNetscapePluginStream::destroyStreamWithError(NSError *error)
+{
+    destroyStreamWithReason(reasonForError(error));
 }
 
 - (void)destroyStreamWithError:(NSError *)error
 {
-    [self _destroyStreamWithReason:[[self class] reasonForError:error]];
+    _impl->destroyStreamWithError(error);
 }
 
 - (void)cancelLoadAndDestroyStreamWithError:(NSError *)error
 {
-    [self retain];
-    [self cancelLoadWithError:error];
-    [self destroyStreamWithError:error];
+    RetainPtr<WebBaseNetscapePluginStream> protect(self);
+    _impl->cancelLoadWithError(error);
+    _impl->destroyStreamWithError(error);
     _impl->setPlugin(0);
-    [self release];
 }
 
 - (void)_deliverData
@@ -624,7 +633,7 @@ void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePl
         if (_impl->m_fileDescriptor == -1) {
             LOG_ERROR("Can't create a temporary file.");
             // This is not a network error, but the only error codes are "network error" and "user break".
-            [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
+            _impl->destroyStreamWithReason(NPRES_NETWORK_ERR);
             free(temporaryFileName);
             return;
         }
@@ -645,7 +654,7 @@ void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePl
         _impl->m_fileDescriptor = -1;
 
         // This is not a network error, but the only error codes are "network error" and "user break".
-        [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
+        _impl->destroyStreamWithReason(NPRES_NETWORK_ERR);
         _impl->m_path = 0;
     }
 }
@@ -663,7 +672,7 @@ void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePl
         _impl->m_fileDescriptor = -1;
     }
 
-    [self _destroyStreamWithReason:NPRES_DONE];
+    _impl->destroyStreamWithReason(NPRES_DONE);
 }
 
 - (void)receivedData:(NSData *)data

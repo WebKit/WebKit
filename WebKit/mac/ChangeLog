@@ -1,3 +1,23 @@
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Convert more methods over to C++.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::reasonForError):
+        (WebNetscapePluginStream::destroyStreamWithReason):
+        (WebNetscapePluginStream::cancelLoadWithError):
+        (-[WebBaseNetscapePluginStream cancelLoadWithError:]):
+        (WebNetscapePluginStream::destroyStreamWithError):
+        (-[WebBaseNetscapePluginStream destroyStreamWithError:]):
+        (-[WebBaseNetscapePluginStream cancelLoadAndDestroyStreamWithError:]):
+        (-[WebBaseNetscapePluginStream _deliverDataToFile:]):
+        (-[WebBaseNetscapePluginStream finishedLoading]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithError:]):
+
 2008-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.

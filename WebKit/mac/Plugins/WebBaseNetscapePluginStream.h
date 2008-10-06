@@ -58,10 +58,15 @@ public:
     
     void setPlugin(NPP);
     
+    static NPReason reasonForError(NSError *);
+
     // FIXME: These should all be private once WebBaseNetscapePluginStream is history...
 public:
     void destroyStream();
-    
+    void cancelLoadWithError(NSError *);
+    void destroyStreamWithError(NSError *);
+    void destroyStreamWithReason(NPReason);
+
     RetainPtr<NSMutableData> m_deliveryData;
     RetainPtr<NSURL> m_requestURL;
     RetainPtr<NSURL> m_responseURL;
@@ -123,7 +128,6 @@ private:
 }
 
 + (NPP)ownerForStream:(NPStream *)stream;
-+ (NPReason)reasonForError:(NSError *)error;
 
 - (NSError *)errorForReason:(NPReason)theReason;
 
