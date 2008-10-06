@@ -1,3 +1,13 @@
+2008-10-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Build fix for MinGW.
+
+        * platform/win/SystemTimeWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::invalidateRect):
+
 2008-10-06  Adam Roben  <aroben@apple.com>
 
         Mimic the inspector/ directory structure in WebCore.vcproj

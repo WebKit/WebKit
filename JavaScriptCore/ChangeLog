@@ -1,3 +1,13 @@
+2008-10-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Build fix for MinGW.
+
+        * JavaScriptCore.pri:
+        * kjs/DateMath.cpp:
+        (JSC::highResUpTime):
+
 2008-10-05  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.

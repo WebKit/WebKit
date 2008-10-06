@@ -728,7 +728,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 void PluginView::invalidateRect(const IntRect& rect)
 {
     if (m_isWindowed) {
-        RECT invalidRect = rect;
+        RECT invalidRect = { rect.x(), rect.y(), rect.right(), rect.bottom() };
         ::InvalidateRect(platformPluginWidget(), &invalidRect, false);
         return;
     }

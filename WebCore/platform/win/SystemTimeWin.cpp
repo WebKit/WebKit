@@ -29,6 +29,11 @@
 #include <DateMath.h>
 #include <windows.h>
 
+#if COMPILER(MINGW)
+#include <float.h>
+#define FLOAT_MAX FLT_MAX
+#endif
+
 namespace WebCore {
 
 double currentTime()
