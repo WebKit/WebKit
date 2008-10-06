@@ -105,6 +105,9 @@ namespace WebCore {
         int windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
         void setWindowsVirtualKeyCode(int code) { m_windowsVirtualKeyCode = code; }
 
+        int nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
+        void setNativeVirtualKeyCode(int code) { m_nativeVirtualKeyCode = code; }
+
         String keyIdentifier() const { return m_keyIdentifier; }
         bool isAutoRepeat() const { return m_autoRepeat; }
         void setIsAutoRepeat(bool in) { m_autoRepeat = in; }
@@ -153,6 +156,7 @@ namespace WebCore {
         String m_keyIdentifier;
         bool m_autoRepeat;
         int m_windowsVirtualKeyCode;
+        int m_nativeVirtualKeyCode;
         bool m_isKeypad;
         bool m_shiftKey;
         bool m_ctrlKey;

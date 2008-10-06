@@ -2,6 +2,24 @@
 
         Reviewed by Simon.
 
+        Add native virtual keycode to PlatformKeyboardEvent
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
+2008-10-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Enable WebCore::String <> CFStringRef conversion functions for QtWebKit/Mac
 
         * platform/text/PlatformString.h:

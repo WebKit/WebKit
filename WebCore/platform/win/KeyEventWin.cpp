@@ -193,6 +193,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
     , m_keyIdentifier((type == Char) ? String() : keyIdentifierForWindowsKeyCode(code))
     , m_autoRepeat(HIWORD(keyData) & KF_REPEAT)
     , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? code : 0)
+    , m_nativeVirtualKeyCode(m_windowsVirtualKeyCode)
     , m_isKeypad(isKeypadEvent(code, keyData, type))
     , m_shiftKey(GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT)
     , m_ctrlKey(GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT)

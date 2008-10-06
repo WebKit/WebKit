@@ -341,6 +341,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
     }
     m_autoRepeat = false; // FIXME: not correct.
     m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event.GetKeyCode());
+    m_nativeVirtualKeyCode = event.GetKeyCode();
     m_isKeypad = (event.GetKeyCode() >= WXK_NUMPAD_SPACE) && (event.GetKeyCode() <= WXK_NUMPAD_DIVIDE);
     m_shiftKey = event.ShiftDown();
     m_ctrlKey = event.CmdDown();
