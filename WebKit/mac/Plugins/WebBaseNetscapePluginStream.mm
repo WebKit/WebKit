@@ -69,7 +69,7 @@ static StreamMap& streams()
 }
 #endif
 
-+ (NPP)ownerForStream:(NPStream *)stream
+NPP WebNetscapePluginStream::ownerForStream(NPStream *stream)
 {
     return streams().get(stream);
 }
@@ -85,26 +85,31 @@ NPReason WebNetscapePluginStream::reasonForError(NSError *error)
     return NPRES_NETWORK_ERR;
 }
 
-- (NSError *)_pluginCancelledConnectionError
+NSError *WebNetscapePluginStream::pluginCancelledConnectionError() const
 {
     return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
-                                           contentURL:_impl->m_responseURL ? _impl->m_responseURL.get() : _impl->m_requestURL.get()
+                                           contentURL:m_responseURL ? m_responseURL.get() : m_requestURL.get()
                                         pluginPageURL:nil
-                                           pluginName:[[_impl->m_pluginView.get() pluginPackage] name]
-                                             MIMEType:_impl->m_mimeType.get()] autorelease];
+                                           pluginName:[[m_pluginView.get() pluginPackage] name]
+                                             MIMEType:m_mimeType.get()] autorelease];
+}
+
+NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
+{
+    if (reason == NPRES_DONE)
+        return nil;
+
+    if (reason == NPRES_USER_BREAK)
+        return [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                          code:NSURLErrorCancelled 
+                                           URL:m_responseURL ? m_responseURL.get() : m_requestURL.get()];
+
+    return pluginCancelledConnectionError();
 }
 
 - (NSError *)errorForReason:(NPReason)theReason
 {
-    if (theReason == NPRES_DONE) {
-        return nil;
-    }
-    if (theReason == NPRES_USER_BREAK) {
-        return [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                          code:NSURLErrorCancelled 
-                                           URL:_impl->m_responseURL ? _impl->m_responseURL.get() : _impl->m_requestURL.get()];
-    }
-    return [self _pluginCancelledConnectionError];
+    return _impl->errorForReason(theReason);
 }
 
 - (id)initWithFrameLoader:(FrameLoader *)frameLoader
@@ -308,7 +313,7 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
     if (npErr != NPERR_NO_ERROR) {
         LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, _impl->m_responseURL.get());
         // Calling cancelLoadWithError: cancels the load, but doesn't call NPP_DestroyStream.
-        [self cancelLoadWithError:[self _pluginCancelledConnectionError]];
+        _impl->cancelLoadWithError(_impl->pluginCancelledConnectionError());
         return;
     }
 
@@ -326,7 +331,7 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
             break;
         case NP_SEEK:
             LOG_ERROR("Stream type: NP_SEEK not yet supported");
-            [self cancelLoadAndDestroyStreamWithError:[self _pluginCancelledConnectionError]];
+            _impl->cancelLoadAndDestroyStreamWithError(_impl->pluginCancelledConnectionError());
             break;
         default:
             LOG_ERROR("unknown stream type");
@@ -549,96 +554,96 @@ void WebNetscapePluginStream::destroyStreamWithError(NSError *error)
     _impl->destroyStreamWithError(error);
 }
 
+void WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError(NSError *error)
+{
+    RetainPtr<WebBaseNetscapePluginStream> protect(m_pluginStream);
+    cancelLoadWithError(error);
+    destroyStreamWithError(error);
+    setPlugin(0);
+}    
+
 - (void)cancelLoadAndDestroyStreamWithError:(NSError *)error
 {
-    RetainPtr<WebBaseNetscapePluginStream> protect(self);
-    _impl->cancelLoadWithError(error);
-    _impl->destroyStreamWithError(error);
-    _impl->setPlugin(0);
+    return _impl->cancelLoadAndDestroyStreamWithError(error);
 }
 
-- (void)_deliverData
+void WebNetscapePluginStream::deliverData()
 {
-    if (!_impl->m_stream.ndata || [_impl->m_deliveryData.get() length] == 0)
+    if (!m_stream.ndata || [m_deliveryData.get() length] == 0)
         return;
 
-    [self retain];
+    RetainPtr<WebBaseNetscapePluginStream> protect(m_pluginStream);
 
-    int32 totalBytes = [_impl->m_deliveryData.get() length];
+    int32 totalBytes = [m_deliveryData.get() length];
     int32 totalBytesDelivered = 0;
 
     while (totalBytesDelivered < totalBytes) {
-        WebBaseNetscapePluginView *pv = _impl->m_pluginView.get();
-        [pv willCallPlugInFunction];
-        int32 deliveryBytes = _impl->m_pluginFuncs->writeready(_impl->m_plugin, &_impl->m_stream);
-        [pv didCallPlugInFunction];
-        LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", _impl->m_responseURL.get(), deliveryBytes);
+        [m_pluginView.get() willCallPlugInFunction];
+        int32 deliveryBytes = m_pluginFuncs->writeready(m_plugin, &m_stream);
+        [m_pluginView.get() didCallPlugInFunction];
+        LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", m_responseURL.get(), deliveryBytes);
 
-        if (_impl->m_isTerminated)
-            goto exit;
+        if (m_isTerminated)
+            return;
 
         if (deliveryBytes <= 0) {
             // Plug-in can't receive anymore data right now. Send it later.
-            if (!_impl->m_deliverDataTimer.isActive())
-                _impl->m_deliverDataTimer.startOneShot(0);
+            if (!m_deliverDataTimer.isActive())
+                m_deliverDataTimer.startOneShot(0);
             break;
         } else {
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
-            NSData *subdata = [_impl->m_deliveryData.get() subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
-            pv = _impl->m_pluginView.get();
-            [pv willCallPlugInFunction];
-            deliveryBytes = _impl->m_pluginFuncs->write(_impl->m_plugin, &_impl->m_stream, _impl->m_offset, [subdata length], (void *)[subdata bytes]);
-            [pv didCallPlugInFunction];
+            NSData *subdata = [m_deliveryData.get() subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
+            [m_pluginView.get() willCallPlugInFunction];
+            deliveryBytes = m_pluginFuncs->write(m_plugin, &m_stream, m_offset, [subdata length], (void *)[subdata bytes]);
+            [m_pluginView.get() didCallPlugInFunction];
             if (deliveryBytes < 0) {
                 // Netscape documentation says that a negative result from NPP_Write means cancel the load.
-                [self cancelLoadAndDestroyStreamWithError:[self _pluginCancelledConnectionError]];
+                cancelLoadAndDestroyStreamWithError(pluginCancelledConnectionError());
                 return;
             }
             deliveryBytes = MIN((unsigned)deliveryBytes, [subdata length]);
-            _impl->m_offset += deliveryBytes;
+            m_offset += deliveryBytes;
             totalBytesDelivered += deliveryBytes;
-            LOG(Plugins, "NPP_Write responseURL=%@ bytes=%d total-delivered=%d/%d", _impl->m_responseURL.get(), deliveryBytes, _impl->m_offset, _impl->m_stream.end);
+            LOG(Plugins, "NPP_Write responseURL=%@ bytes=%d total-delivered=%d/%d", m_responseURL.get(), deliveryBytes, m_offset, m_stream.end);
         }
     }
 
     if (totalBytesDelivered > 0) {
         if (totalBytesDelivered < totalBytes) {
             NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
-            [newDeliveryData appendBytes:(char *)[_impl->m_deliveryData.get() bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
-            [_impl->m_deliveryData.get() release];
-            _impl->m_deliveryData = newDeliveryData;
+            [newDeliveryData appendBytes:(char *)[m_deliveryData.get() bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
+            [m_deliveryData.get() release];
+            m_deliveryData = newDeliveryData;
             [newDeliveryData release];
         } else {
-            [_impl->m_deliveryData.get() setLength:0];
-            if (_impl->m_reason != WEB_REASON_NONE) 
-                _impl->destroyStream();
+            [m_deliveryData.get() setLength:0];
+            if (m_reason != WEB_REASON_NONE) 
+                destroyStream();
         }
     }
-
-exit:
-    [self release];
 }
 
 void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePluginStream>* timer)
 {
-    [m_pluginStream _deliverData];
+    deliverData();
 }
 
-- (void)_deliverDataToFile:(NSData *)data
+void WebNetscapePluginStream::deliverDataToFile(NSData *data)
 {
-    if (_impl->m_fileDescriptor == -1 && !_impl->m_path) {
+    if (m_fileDescriptor == -1 && !m_path) {
         NSString *temporaryFileMask = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPlugInStreamXXXXXX"];
         char *temporaryFileName = strdup([temporaryFileMask fileSystemRepresentation]);
-        _impl->m_fileDescriptor = mkstemp(temporaryFileName);
-        if (_impl->m_fileDescriptor == -1) {
+        m_fileDescriptor = mkstemp(temporaryFileName);
+        if (m_fileDescriptor == -1) {
             LOG_ERROR("Can't create a temporary file.");
             // This is not a network error, but the only error codes are "network error" and "user break".
-            _impl->destroyStreamWithReason(NPRES_NETWORK_ERR);
+            destroyStreamWithReason(NPRES_NETWORK_ERR);
             free(temporaryFileName);
             return;
         }
 
-        _impl->m_path.adoptNS([[NSString stringWithUTF8String:temporaryFileName] retain]);
+        m_path.adoptNS([[NSString stringWithUTF8String:temporaryFileName] retain]);
         free(temporaryFileName);
     }
 
@@ -646,16 +651,16 @@ void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePl
     if (!dataLength)
         return;
 
-    int byteCount = write(_impl->m_fileDescriptor, [data bytes], dataLength);
+    int byteCount = write(m_fileDescriptor, [data bytes], dataLength);
     if (byteCount != dataLength) {
         // This happens only rarely, when we are out of disk space or have a disk I/O error.
         LOG_ERROR("error writing to temporary file, errno %d", errno);
-        close(_impl->m_fileDescriptor);
-        _impl->m_fileDescriptor = -1;
+        close(m_fileDescriptor);
+        m_fileDescriptor = -1;
 
         // This is not a network error, but the only error codes are "network error" and "user break".
-        _impl->destroyStreamWithReason(NPRES_NETWORK_ERR);
-        _impl->m_path = 0;
+        destroyStreamWithReason(NPRES_NETWORK_ERR);
+        m_path = 0;
     }
 }
 
@@ -666,7 +671,7 @@ void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePl
 
     if (_impl->m_transferMode == NP_ASFILE || _impl->m_transferMode == NP_ASFILEONLY) {
         // Fake the delivery of an empty data to ensure that the file has been created
-        [self _deliverDataToFile:[NSData data]];
+        _impl->deliverDataToFile([NSData data]);
         if (_impl->m_fileDescriptor != -1)
             close(_impl->m_fileDescriptor);
         _impl->m_fileDescriptor = -1;
@@ -683,11 +688,10 @@ void WebNetscapePluginStream::deliverDataTimerFired(WebCore::Timer<WebNetscapePl
         if (!_impl->m_deliveryData)
             _impl->m_deliveryData.adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
         [_impl->m_deliveryData.get() appendData:data];
-        [self _deliverData];
+        _impl->deliverData();
     }
     if (_impl->m_transferMode == NP_ASFILE || _impl->m_transferMode == NP_ASFILEONLY)
-        [self _deliverDataToFile:data];
-
+        _impl->deliverDataToFile(data);
 }
 
 @end

@@ -1,3 +1,26 @@
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Convert more methods over to C++.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::ownerForStream):
+        (WebNetscapePluginStream::pluginCancelledConnectionError):
+        (WebNetscapePluginStream::errorForReason):
+        (-[WebBaseNetscapePluginStream errorForReason:]):
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]):
+        (WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError):
+        (-[WebBaseNetscapePluginStream cancelLoadAndDestroyStreamWithError:]):
+        (WebNetscapePluginStream::deliverData):
+        (WebNetscapePluginStream::deliverDataTimerFired):
+        (WebNetscapePluginStream::deliverDataToFile):
+        (-[WebBaseNetscapePluginStream finishedLoading]):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Add SPI for a new viewless WebKit mode.  The idea is that when this flag is set there will be no

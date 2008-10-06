@@ -2341,7 +2341,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // This function does a sanity check to ensure that the NPStream provided actually
     // belongs to the plug-in that provided it, which fixes a crash in the DivX 
     // plug-in: <rdar://problem/5093862> | http://bugs.webkit.org/show_bug.cgi?id=13203
-    if (!stream || [WebBaseNetscapePluginStream ownerForStream:stream] != plugin) {
+    if (!stream || WebNetscapePluginStream::ownerForStream(stream) != plugin) {
         LOG(Plugins, "Invalid NPStream passed to NPN_DestroyStream: %p", stream);
         return NPERR_INVALID_INSTANCE_ERROR;
     }
