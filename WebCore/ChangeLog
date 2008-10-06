@@ -1,6 +1,6 @@
 2008-10-06  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Tim Hatcher.
+        Reviewed by Tim Hatcher and Oliver Hunt.
 
         https://bugs.webkit.org/show_bug.cgi?id=21412
         Bug 21412: Refactor user initiated profile count to be more stable
