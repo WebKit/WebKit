@@ -143,7 +143,7 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return 0;
 }
 
-#if defined(Q_WS_X11) || defined(Q_WS_MAC) || defined(Q_WS_QWS)
+#if defined(Q_WS_X11) || defined(Q_WS_QWS)
 bool unloadModule(PlatformModule module)
 {
     if (module->unload()) {
@@ -152,6 +152,14 @@ bool unloadModule(PlatformModule module)
     }
 
     return false;
+}
+#endif
+
+#if defined(Q_WS_MAC)
+bool unloadModule(PlatformModule module)
+{
+    CFRelease(module);
+    return true;
 }
 #endif
 

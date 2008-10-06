@@ -41,6 +41,10 @@
 #endif
 #endif
 
+#if PLATFORM(DARWIN)
+#include <CoreFoundation/CFBundle.h>
+#endif
+
 #include <time.h>
 
 #include <wtf/Platform.h>
@@ -90,7 +94,10 @@ struct PlatformModuleVersion {
 
 typedef QFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
-#if defined(Q_WS_X11) || defined(Q_WS_MAC) || defined(Q_WS_QWS)
+#if defined(Q_WS_MAC)
+typedef CFBundleRef PlatformModule;
+typedef unsigned PlatformModuleVersion;
+#elif defined(Q_WS_X11) || defined(Q_WS_QWS)
 typedef QLibrary* PlatformModule;
 typedef unsigned PlatformModuleVersion;
 #elif defined(Q_OS_WIN32)
