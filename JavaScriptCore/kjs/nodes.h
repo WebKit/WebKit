@@ -2189,7 +2189,6 @@ namespace JSC {
         intptr_t sourceID() const { return m_source.provider()->asID(); }
 
         bool usesEval() const { return m_features & EvalFeature; }
-        bool containsClosures() const { return m_features & ClosureFeature; }
         bool usesArguments() const { return m_features & ArgumentsFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
