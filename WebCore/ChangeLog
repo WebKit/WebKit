@@ -1,3 +1,10 @@
+2008-10-06  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Update the Include path for all
+        configurations to include WebCore/inspector.
+
 2008-10-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
