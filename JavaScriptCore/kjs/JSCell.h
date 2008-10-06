@@ -72,7 +72,7 @@ namespace JSC {
         // Basic conversions.
         virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const = 0;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*&) = 0;
-        virtual bool toBoolean(ExecState*) const = 0;
+        bool toBoolean() const;
         virtual double toNumber(ExecState*) const = 0;
         virtual UString toString(ExecState*) const = 0;
         virtual JSObject* toObject(ExecState*) const = 0;
@@ -272,9 +272,9 @@ namespace JSC {
         return asCell()->getPrimitiveNumber(exec, number, value);
     }
 
-    inline bool JSValue::toBoolean(ExecState* exec) const
+    inline bool JSValue::toBoolean() const
     {
-        return JSImmediate::isImmediate(this) ? JSImmediate::toBoolean(this) : asCell()->toBoolean(exec);
+        return JSImmediate::isImmediate(this) ? JSImmediate::toBoolean(this) : asCell()->toBoolean();
     }
 
     ALWAYS_INLINE double JSValue::toNumber(ExecState* exec) const

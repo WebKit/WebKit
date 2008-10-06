@@ -92,6 +92,8 @@ namespace JSC {
 
         static PassRefPtr<StructureID> createStructureID(JSValue* proto) { return StructureID::create(proto, TypeInfo(StringType, NeedsThisConversion)); }
 
+        bool toBoolean() const { return !m_value.isEmpty(); }
+
     private:
         enum VPtrStealingHackType { VPtrStealingHack };
         JSString(VPtrStealingHackType) 
@@ -101,7 +103,6 @@ namespace JSC {
 
         virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
-        virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual JSObject* toObject(ExecState*) const;
         virtual UString toString(ExecState*) const;

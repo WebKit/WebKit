@@ -1,3 +1,57 @@
+2008-10-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        - optimize op_jtrue, op_loop_if_true and op_not in various ways
+        https://bugs.webkit.org/show_bug.cgi?id=21404
+        
+        1) Make JSValue::toBoolean nonvirtual and completely inline by
+        making use of the StructureID type field.
+        
+        2) Make JSValue::toBoolean not take an ExecState; doesn't need it.
+        
+        3) Make op_not, op_loop_if_true and op_jtrue not read the
+        ExecState (toBoolean doesn't need it any more) and not check
+        exceptions (toBoolean can't throw).
+
+        * API/JSValueRef.cpp:
+        (JSValueToBoolean):
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_loop_if_true):
+        (JSC::Machine::cti_op_not):
+        (JSC::Machine::cti_op_jtrue):
+        * kjs/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncSome):
+        * kjs/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::callBooleanConstructor):
+        * kjs/GetterSetter.h:
+        * kjs/JSCell.h:
+        (JSC::JSValue::toBoolean):
+        * kjs/JSNumberCell.cpp:
+        * kjs/JSNumberCell.h:
+        (JSC::JSNumberCell::toBoolean):
+        * kjs/JSObject.cpp:
+        * kjs/JSObject.h:
+        (JSC::JSObject::toBoolean):
+        (JSC::JSCell::toBoolean):
+        * kjs/JSString.cpp:
+        * kjs/JSString.h:
+        (JSC::JSString::toBoolean):
+        * kjs/JSValue.h:
+        * kjs/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorMultiline):
+        * kjs/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * kjs/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
 2008-10-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

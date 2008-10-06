@@ -430,11 +430,6 @@ void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyName
     m_structureID->getEnumerablePropertyNames(exec, propertyNames, this);
 }
 
-bool JSObject::toBoolean(ExecState*) const
-{
-    return true;
-}
-
 double JSObject::toNumber(ExecState* exec) const
 {
     JSValue* primitive = toPrimitive(exec, PreferNumber);
