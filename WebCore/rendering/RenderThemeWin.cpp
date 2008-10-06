@@ -73,7 +73,14 @@
 #define TUS_PRESSED     3
 #define TUS_FOCUSED     4
 #define TUS_DISABLED    5
- 
+
+// button states
+#define PBS_NORMAL      1
+#define PBS_HOT         2
+#define PBS_PRESSED     3
+#define PBS_DISABLED    4
+#define PBS_DEFAULTED   5
+
 // This is the fixed width IE and Firefox use for buttons on dropdown menus
 static const int dropDownButtonWidth = 17;
 
@@ -284,6 +291,7 @@ bool RenderThemeWin::supportsFocus(EAppearance appearance)
     switch (appearance) {
         case PushButtonAppearance:
         case ButtonAppearance:
+        case DefaultButtonAppearance:
         case TextFieldAppearance:
         case TextAreaAppearance:
             return true;
@@ -300,6 +308,7 @@ unsigned RenderThemeWin::determineClassicState(RenderObject* o)
     switch (o->style()->appearance()) {
         case PushButtonAppearance:
         case ButtonAppearance:
+        case DefaultButtonAppearance:
             state = DFCS_BUTTONPUSH;
             if (!isEnabled(o))
                 state |= DFCS_INACTIVE;
@@ -360,12 +369,29 @@ unsigned RenderThemeWin::determineSliderThumbState(RenderObject* o)
     return result;
 }
 
+unsigned RenderThemeWin::determineButtonState(RenderObject* o)
+{
+    unsigned result = PBS_NORMAL;
+    if (!isEnabled(o))
+        result = PBS_DISABLED;
+    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
+        result = PBS_DEFAULTED;
+    else if (isPressed(o))
+        result = PBS_PRESSED;
+    else if (isHovered(o))
+        result = PBS_HOT;
+    else if (isDefault(o))
+        result = PBS_DEFAULTED;
+    return result;
+}
+
 ThemeData RenderThemeWin::getClassicThemeData(RenderObject* o)
 {
     ThemeData result;
     switch (o->style()->appearance()) {
         case PushButtonAppearance:
         case ButtonAppearance:
+        case DefaultButtonAppearance:
         case CheckboxAppearance:
         case RadioAppearance:
             result.m_part = DFC_BUTTON;
@@ -411,8 +437,9 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
     switch (o->style()->appearance()) {
         case PushButtonAppearance:
         case ButtonAppearance:
+        case DefaultButtonAppearance:
             result.m_part = BP_BUTTON;
-            result.m_state = determineState(o);
+            result.m_state = determineButtonState(o);
             break;
         case CheckboxAppearance:
             result.m_part = BP_CHECKBOX;
@@ -497,9 +524,16 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
                     ::FillRect(hdc, &widgetRect, (HBRUSH)COLOR_3DHILIGHT);
                 ::DeleteObject(patternBmp);
             }
-        } else
+        } else {
             // Push buttons, buttons, checkboxes and radios, and the dropdown arrow in menulists.
+            if (o->style()->appearance() == DefaultButtonAppearance) {
+                HBRUSH brush = ::GetSysColorBrush(COLOR_3DDKSHADOW);
+                ::FrameRect(hdc, &widgetRect, brush);
+                ::InflateRect(&widgetRect, -1, -1);
+                ::DrawEdge(hdc, &widgetRect, BDR_RAISEDOUTER, BF_RECT | BF_MIDDLE);
+            }
             ::DrawFrameControl(hdc, &widgetRect, themeData.m_part, themeData.m_state);
+        }
     }
     context->releaseWindowsContext(hdc, r, alphaBlend);
 }

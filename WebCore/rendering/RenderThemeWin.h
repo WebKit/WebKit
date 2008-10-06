@@ -117,7 +117,8 @@ private:
 
     unsigned determineState(RenderObject*);
     unsigned determineClassicState(RenderObject*);
-    unsigned determineSliderThumbState(RenderObject* o);
+    unsigned determineSliderThumbState(RenderObject*);
+    unsigned determineButtonState(RenderObject*);
 
     bool supportsFocus(EAppearance);
 
