@@ -326,11 +326,13 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
         [self cancelLoadAndDestroyStreamWithError:_impl->m_loader->cancelledError()];    
 }
 
-- (void)startStreamWithResponse:(NSURLResponse *)r
+void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
 {
+    NSURLResponse *r = response.nsURLResponse();
+    
     NSMutableData *theHeaders = nil;
     long long expectedContentLength = [r expectedContentLength];
-
+    
     if ([r isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)r;
         theHeaders = [NSMutableData dataWithCapacity:1024];
@@ -347,14 +349,14 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
         snprintf(statusStr, sizeof(statusStr), "%ld", statusCode);
         [theHeaders appendBytes:statusStr length:strlen(statusStr)];
         [theHeaders appendBytes:" OK\n" length:4];
-
+        
         // HACK: pass the headers through as UTF-8.
         // This is not the intended behavior; we're supposed to pass original bytes verbatim.
         // But we don't have the original bytes, we have NSStrings built by the URL loading system.
         // It hopefully shouldn't matter, since RFC2616/RFC822 require ASCII-only headers,
         // but surely someone out there is using non-ASCII characters, and hopefully UTF-8 is adequate here.
         // It seems better than NSASCIIStringEncoding, which will lose information if non-ASCII is used.
-
+        
         NSDictionary *headerDict = [httpResponse allHeaderFields];
         NSArray *keys = [[headerDict allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
         NSEnumerator *i = [keys objectEnumerator];
@@ -366,38 +368,47 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
             [theHeaders appendData:[v dataUsingEncoding:NSUTF8StringEncoding]];
             [theHeaders appendBytes:"\n" length:1];
         }
-
+        
         // If the content is encoded (most likely compressed), then don't send its length to the plugin,
         // which is only interested in the decoded length, not yet known at the moment.
         // <rdar://problem/4470599> tracks a request for -[NSURLResponse expectedContentLength] to incorporate this logic.
         NSString *contentEncoding = (NSString *)[[(NSHTTPURLResponse *)r allHeaderFields] objectForKey:@"Content-Encoding"];
         if (contentEncoding && ![contentEncoding isEqualToString:@"identity"])
             expectedContentLength = -1;
-
+        
         // startStreamResponseURL:... will null-terminate.
     }
+    
+    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);    
+}
 
-    _impl->startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
+- (void)startStreamWithResponse:(NSURLResponse *)r
+{
+    _impl->didReceiveResponse(0, r);
+}
+
+bool WebNetscapePluginStream::wantsAllStreams() const
+{
+    if (!m_pluginFuncs->getvalue)
+        return false;
+    
+    void *value = 0;
+    NPError error;
+    [m_pluginView.get() willCallPlugInFunction];
+    {
+        JSC::JSLock::DropAllLocks dropAllLocks(false);
+        error = m_pluginFuncs->getvalue(m_plugin, NPPVpluginWantsAllNetworkStreams, &value);
+    }
+    [m_pluginView.get() didCallPlugInFunction];
+    if (error != NPERR_NO_ERROR)
+        return false;
+    
+    return value;
 }
 
 - (BOOL)wantsAllStreams
 {
-    if (!_impl->m_pluginFuncs->getvalue)
-        return NO;
-    
-    void *value = 0;
-    NPError error;
-    WebBaseNetscapePluginView *pv = _impl->m_pluginView.get();
-    [pv willCallPlugInFunction];
-    {
-        JSC::JSLock::DropAllLocks dropAllLocks(false);
-        error = _impl->m_pluginFuncs->getvalue(_impl->m_plugin, NPPVpluginWantsAllNetworkStreams, &value);
-    }
-    [pv didCallPlugInFunction];
-    if (error != NPERR_NO_ERROR)
-        return NO;
-    
-    return value != 0;
+    return _impl->wantsAllStreams();
 }
 
 void WebNetscapePluginStream::destroyStream()
@@ -516,9 +527,14 @@ void WebNetscapePluginStream::destroyStreamWithError(NSError *error)
     destroyStreamWithReason(reasonForError(error));
 }
 
+void WebNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError& error)
+{
+    destroyStreamWithError(error);
+}
+
 - (void)destroyStreamWithError:(NSError *)error
 {
-    _impl->destroyStreamWithError(error);
+    _impl->didFail(0, error);
 }
 
 void WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError(NSError *error)
@@ -631,34 +647,48 @@ void WebNetscapePluginStream::deliverDataToFile(NSData *data)
     }
 }
 
+void WebNetscapePluginStream::didFinishLoading(NetscapePlugInStreamLoader*)
+{
+    if (!m_stream.ndata)
+        return;
+    
+    if (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY) {
+        // Fake the delivery of an empty data to ensure that the file has been created
+        deliverDataToFile([NSData data]);
+        if (m_fileDescriptor != -1)
+            close(m_fileDescriptor);
+        m_fileDescriptor = -1;
+    }
+    
+    destroyStreamWithReason(NPRES_DONE);
+}
+
 - (void)finishedLoading
 {
-    if (!_impl->m_stream.ndata)
-        return;
+    _impl->didFinishLoading(0);
+}
 
-    if (_impl->m_transferMode == NP_ASFILE || _impl->m_transferMode == NP_ASFILEONLY) {
-        // Fake the delivery of an empty data to ensure that the file has been created
-        _impl->deliverDataToFile([NSData data]);
-        if (_impl->m_fileDescriptor != -1)
-            close(_impl->m_fileDescriptor);
-        _impl->m_fileDescriptor = -1;
+void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
+{
+    NSData *data = [[NSData alloc] initWithBytesNoCopy:(void*)bytes length:length freeWhenDone:NO];
+
+    ASSERT([data length] > 0);
+    
+    if (m_transferMode != NP_ASFILEONLY) {
+        if (!m_deliveryData)
+            m_deliveryData.adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
+        [m_deliveryData.get() appendData:data];
+        deliverData();
     }
-
-    _impl->destroyStreamWithReason(NPRES_DONE);
+    if (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)
+        deliverDataToFile(data);
+    
+    [data release];
 }
 
 - (void)receivedData:(NSData *)data
 {
-    ASSERT([data length] > 0);
-    
-    if (_impl->m_transferMode != NP_ASFILEONLY) {
-        if (!_impl->m_deliveryData)
-            _impl->m_deliveryData.adoptNS([[NSMutableData alloc] initWithCapacity:[data length]]);
-        [_impl->m_deliveryData.get() appendData:data];
-        _impl->deliverData();
-    }
-    if (_impl->m_transferMode == NP_ASFILE || _impl->m_transferMode == NP_ASFILEONLY)
-        _impl->deliverDataToFile(data);
+    _impl->didReceiveData(0, (const char*)[data bytes], [data length]);
 }
 
 @end

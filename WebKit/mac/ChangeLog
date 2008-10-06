@@ -1,5 +1,25 @@
 2008-10-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Make WebNetscapePluginStream a WebCore::NetscapePlugInStreamLoaderClient.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::~WebNetscapePluginStream):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::didReceiveResponse):
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]):
+        (WebNetscapePluginStream::wantsAllStreams):
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        (WebNetscapePluginStream::didFail):
+        (-[WebBaseNetscapePluginStream destroyStreamWithError:]):
+        (WebNetscapePluginStream::didFinishLoading):
+        (-[WebBaseNetscapePluginStream finishedLoading]):
+        (WebNetscapePluginStream::didReceiveData):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
         Bring back the stop method. It was called through performSelector, which
         is why I couldn't find any references to it.
 
