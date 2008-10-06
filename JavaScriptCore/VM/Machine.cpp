@@ -755,7 +755,7 @@ bool Machine::isOpcode(Opcode opcode)
 
 //#endif
 
-NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionValue, const Instruction*& vPC, CodeBlock*& codeBlock, Register*& r)
+NEVER_INLINE bool Machine::unwindCallFrame(ExecState*& exec, JSValue* exceptionValue, const Instruction*& vPC, CodeBlock*& codeBlock, Register*& r)
 {
     CodeBlock* oldCodeBlock = codeBlock;
     ScopeChainNode* scopeChain = this->scopeChain(r);
@@ -792,6 +792,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     
     void* returnPC = r[RegisterFile::ReturnPC].v();
     r = r[RegisterFile::CallerRegisters].r();
+    exec = CallFrame::create(r);
     if (isHostCallFrame(r))
         return false;
 

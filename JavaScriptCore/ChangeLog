@@ -1,3 +1,15 @@
+2008-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - fix releas-only test failures caused by the fix to bug 21375
+
+        * VM/Machine.cpp:
+        (JSC::Machine::unwindCallFrame): Update ExecState while unwinding call frames;
+        it now matters more to have a still-valid ExecState, since dynamicGlobalObject
+        will make use of the ExecState's scope chain.
+        * VM/Machine.h:
+
 2008-10-05  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.

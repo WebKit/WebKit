@@ -262,7 +262,7 @@ namespace JSC {
         NEVER_INLINE bool resolveBaseAndProperty(ExecState* exec, Instruction* vPC, Register* r, JSValue*& exceptionValue);
         NEVER_INLINE ScopeChainNode* createExceptionScope(ExecState* exec, const Instruction* vPC, Register* r);
 
-        NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, const Instruction*&, CodeBlock*&, Register*&);
+        NEVER_INLINE bool unwindCallFrame(ExecState*&, JSValue*, const Instruction*&, CodeBlock*&, Register*&);
         NEVER_INLINE Instruction* throwException(ExecState*, JSValue*&, const Instruction*, Register*&, bool);
         NEVER_INLINE bool resolveBaseAndFunc(ExecState* exec, Instruction* vPC, Register* r, JSValue*& exceptionValue);
 
