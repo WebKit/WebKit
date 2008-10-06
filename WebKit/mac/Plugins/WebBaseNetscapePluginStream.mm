@@ -245,57 +245,52 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
     }        
 }
 
-- (void)startStreamResponseURL:(NSURL *)URL
-         expectedContentLength:(long long)expectedContentLength
-              lastModifiedDate:(NSDate *)lastModifiedDate
-                      MIMEType:(NSString *)theMIMEType
-                       headers:(NSData *)theHeaders
+void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentLength, NSDate *lastModifiedDate, NSString *mimeType, NSData *headers)
 {
-    ASSERT(!_impl->m_isTerminated);
+    ASSERT(!m_isTerminated);
     
-    _impl->m_responseURL = URL;
-    _impl->m_mimeType = theMIMEType;
+    m_responseURL = url;
+    m_mimeType = mimeType;
     
-    free((void *)_impl->m_stream.url);
-    _impl->m_stream.url = strdup([_impl->m_responseURL.get() _web_URLCString]);
+    free((void *)m_stream.url);
+    m_stream.url = strdup([m_responseURL.get() _web_URLCString]);
 
-    _impl->m_stream.ndata = self;
-    _impl->m_stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
-    _impl->m_stream.lastmodified = (uint32)[lastModifiedDate timeIntervalSince1970];
-    _impl->m_stream.notifyData = _impl->m_notifyData;
+    m_stream.ndata = m_pluginStream;
+    m_stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
+    m_stream.lastmodified = (uint32)[lastModifiedDate timeIntervalSince1970];
+    m_stream.notifyData = m_notifyData;
 
-    if (theHeaders) {
-        unsigned len = [theHeaders length];
-        _impl->m_headers = (char*) malloc(len + 1);
-        [theHeaders getBytes:_impl->m_headers];
-        _impl->m_headers[len] = 0;
-        _impl->m_stream.headers = _impl->m_headers;
+    if (headers) {
+        unsigned len = [headers length];
+        m_headers = (char*) malloc(len + 1);
+        [headers getBytes:m_headers];
+        m_headers[len] = 0;
+        m_stream.headers = m_headers;
     }
     
-    _impl->m_transferMode = NP_NORMAL;
-    _impl->m_offset = 0;
-    _impl->m_reason = WEB_REASON_NONE;
+    m_transferMode = NP_NORMAL;
+    m_offset = 0;
+    m_reason = WEB_REASON_NONE;
     // FIXME: If WebNetscapePluginStream called our initializer we wouldn't have to do this here.
-    _impl->m_fileDescriptor = -1;
+    m_fileDescriptor = -1;
 
     // FIXME: Need a way to check if stream is seekable
 
-    WebBaseNetscapePluginView *pv = _impl->m_pluginView.get();
-    [pv willCallPlugInFunction];
-    NPError npErr = _impl->m_pluginFuncs->newstream(_impl->m_plugin, (char *)[_impl->m_mimeType.get() UTF8String], &_impl->m_stream, NO, &_impl->m_transferMode);
-    [pv didCallPlugInFunction];
-    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", _impl->m_responseURL.get(), _impl->m_mimeType.get(), npErr);
+    [m_pluginView.get() willCallPlugInFunction];
+    NPError npErr = m_pluginFuncs->newstream(m_plugin, (char *)[m_mimeType.get() UTF8String], &m_stream, NO, &m_transferMode);
+    [m_pluginView.get() didCallPlugInFunction];
+    LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", m_responseURL.get(), m_mimeType.get(), npErr);
 
     if (npErr != NPERR_NO_ERROR) {
-        LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, _impl->m_responseURL.get());
+        LOG_ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, m_responseURL.get());
         // Calling cancelLoadWithError: cancels the load, but doesn't call NPP_DestroyStream.
-        _impl->cancelLoadWithError(_impl->pluginCancelledConnectionError());
+        cancelLoadWithError(pluginCancelledConnectionError());
         return;
     }
 
-    _impl->m_newStreamSuccessful = true;
+    m_newStreamSuccessful = true;
 
-    switch (_impl->m_transferMode) {
+    switch (m_transferMode) {
         case NP_NORMAL:
             LOG(Plugins, "Stream type: NP_NORMAL");
             break;
@@ -307,7 +302,7 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
             break;
         case NP_SEEK:
             LOG_ERROR("Stream type: NP_SEEK not yet supported");
-            _impl->cancelLoadAndDestroyStreamWithError(_impl->pluginCancelledConnectionError());
+            cancelLoadAndDestroyStreamWithError(pluginCancelledConnectionError());
             break;
         default:
             LOG_ERROR("unknown stream type");
@@ -321,14 +316,6 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
     
     _impl->m_loader->documentLoader()->addPlugInStreamLoader(_impl->m_loader);
     _impl->m_loader->load(_impl->m_request);    
-}
-
-- (void)stop
-{
-    ASSERT(!_impl->m_frameLoader);
-    
-    if (!_impl->m_loader->isDone())
-        [self cancelLoadAndDestroyStreamWithError:_impl->m_loader->cancelledError()];    
 }
 
 - (void)startStreamWithResponse:(NSURLResponse *)r
@@ -382,11 +369,7 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
         // startStreamResponseURL:... will null-terminate.
     }
 
-    [self startStreamResponseURL:[r URL]
-           expectedContentLength:expectedContentLength
-                lastModifiedDate:WKGetNSURLResponseLastModifiedDate(r)
-                        MIMEType:[r MIMEType]
-                         headers:theHeaders];
+    _impl->startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
 }
 
 - (BOOL)wantsAllStreams

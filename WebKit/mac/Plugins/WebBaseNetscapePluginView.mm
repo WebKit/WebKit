@@ -2022,11 +2022,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                                                                                             plugin:plugin
                                                                                         notifyData:[JSPluginRequest notifyData]
                                                                                   sendNotification:[JSPluginRequest sendNotification]];
-        [stream startStreamResponseURL:URL
-                 expectedContentLength:[JSData length]
-                      lastModifiedDate:nil
-                              MIMEType:@"text/plain"
-                               headers:nil];
+        
+        NSURLResponse *response = [[NSURLResponse alloc] initWithURL:URL 
+                                                            MIMEType:@"text/plain" 
+                                               expectedContentLength:[JSData length]
+                                                    textEncodingName:nil];
+        
+        [stream startStreamWithResponse:response];
+        [response release];
+        
         [stream receivedData:JSData];
         [stream finishedLoading];
         [stream release];

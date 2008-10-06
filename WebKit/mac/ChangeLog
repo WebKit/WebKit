@@ -2,6 +2,19 @@
 
         Reviewed by Sam Weinig.
 
+        More conversion and cleanup.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::startStream):
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Fold initWithRequestURL into initWithRequest.
         
         * Plugins/WebBaseNetscapePluginStream.h:
