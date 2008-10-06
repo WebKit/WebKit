@@ -960,6 +960,8 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_nextIdentifier(-2)
     , m_groupLevel(0)
     , m_searchingForNode(false)
+    , m_currentUserInitiatedProfileNumber(-1)
+    , m_nextUserInitiatedProfileNumber(1)
     , m_previousMessage(0)
 {
     ASSERT_ARG(page, page);
@@ -1503,7 +1505,11 @@ void InspectorController::startUserInitiatedProfiling()
     m_recordingUserInitiatedProfile = true;
 
     ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    Profiler::profiler()->startProfiling(exec, UserInitiatedProfileName);
+    m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;
+    UString title = UserInitiatedProfileName;
+    title += ".";
+    title += UString::from(m_currentUserInitiatedProfileNumber);
+    Profiler::profiler()->startProfiling(exec, title);
     toggleRecordButton(true);
 }
 
@@ -1515,7 +1521,10 @@ void InspectorController::stopUserInitiatedProfiling()
     m_recordingUserInitiatedProfile = false;
 
     ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, UserInitiatedProfileName);
+    UString title =  UserInitiatedProfileName;
+    title += ".";
+    title += UString::from(m_currentUserInitiatedProfileNumber);
+    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, title);
     if (profile)
         addProfile(profile, 0, UString());
     toggleRecordButton(false);

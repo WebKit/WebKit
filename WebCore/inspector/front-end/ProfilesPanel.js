@@ -96,9 +96,6 @@ WebInspector.ProfilesPanel.prototype = {
 
     reset: function()
     {
-        this.nextUserInitiatedProfileNumber = 1;
-        this.nextUserInitiatedProfileNumberForLinks = 1;
-
         if (this._profiles) {
             var profiledLength = this._profiles.length;
             for (var i = 0; i < profiledLength; ++i) {
@@ -137,7 +134,7 @@ WebInspector.ProfilesPanel.prototype = {
         var small = false;
         var alternateTitle;
 
-        if (profile.title !== UserInitiatedProfileName) {
+        if (profile.title.indexOf(UserInitiatedProfileName) !== 0) {
             if (!(profile.title in this._profileGroups))
                 this._profileGroups[profile.title] = [];
 
@@ -237,9 +234,9 @@ WebInspector.ProfilesPanel.prototype = {
     displayTitleForProfileLink: function(title)
     {
         title = unescape(title);
-        if (title === UserInitiatedProfileName)
-            title = WebInspector.UIString("Profile %d", this.nextUserInitiatedProfileNumberForLinks++);
-        else {
+        if (title.indexOf(UserInitiatedProfileName) === 0) {
+            title = WebInspector.UIString("Profile %d", title.substring(UserInitiatedProfileName.length + 1));
+        } else {
             if (!(title in this._profileGroupsForLinks))
                 this._profileGroupsForLinks[title] = 0;
 
@@ -380,8 +377,8 @@ WebInspector.ProfileSidebarTreeElement = function(profile)
 {
     this.profile = profile;
 
-    if (this.profile.title === UserInitiatedProfileName)
-        this._profileNumber = WebInspector.panels.profiles.nextUserInitiatedProfileNumber++;
+    if (this.profile.title.indexOf(UserInitiatedProfileName) === 0)
+        this._profileNumber = this.profile.title.substring(UserInitiatedProfileName.length + 1);
 
     WebInspector.SidebarTreeElement.call(this, "profile-sidebar-tree-item", "", "", profile, false);
 
@@ -398,7 +395,7 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     {
         if (this._mainTitle)
             return this._mainTitle;
-        if (this.profile.title === UserInitiatedProfileName)
+        if (this.profile.title.indexOf(UserInitiatedProfileName) === 0)
             return WebInspector.UIString("Profile %d", this._profileNumber);
         return this.profile.title;
     },

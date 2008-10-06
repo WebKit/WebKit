@@ -1,3 +1,20 @@
+2008-10-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21412
+        Bug 21412: Refactor user initiated profile count to be more stable
+
+        * inspector/InspectorController.cpp: Keep track of the user-initiated
+        profiles here now.
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        * inspector/InspectorController.h:
+        The front end will now need to check for the existence of the user-
+        initiated profile title and use its count instead of keeping its own.
+        * inspector/front-end/ProfilesPanel.js:
+
 2008-10-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
