@@ -318,6 +318,14 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
     _impl->m_loader->load(_impl->m_request);    
 }
 
+- (void)stop
+{
+    ASSERT(!_impl->m_frameLoader);
+    
+    if (!_impl->m_loader->isDone())
+        [self cancelLoadAndDestroyStreamWithError:_impl->m_loader->cancelledError()];    
+}
+
 - (void)startStreamWithResponse:(NSURLResponse *)r
 {
     NSMutableData *theHeaders = nil;

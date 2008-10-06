@@ -1,5 +1,14 @@
 2008-10-06  Anders Carlsson  <andersca@apple.com>
 
+        Bring back the stop method. It was called through performSelector, which
+        is why I couldn't find any references to it.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream stop]):
+
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         More conversion and cleanup.

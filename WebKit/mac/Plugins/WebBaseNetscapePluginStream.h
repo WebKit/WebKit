@@ -156,6 +156,7 @@ private:
 - (void)cancelLoadWithError:(NSError *)error;
 
 - (void)start;
+- (void)stop;
 
 @end
 #endif
