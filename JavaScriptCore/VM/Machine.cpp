@@ -868,6 +868,25 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue*& exc
     return handlerVPC;
 }
 
+class DynamicGlobalObjectScope {
+public:
+    DynamicGlobalObjectScope(ExecState* exec, JSGlobalObject* dynamicGlobalObject) 
+        : m_exec(exec)
+        , m_savedGlobalObject(exec->globalData().dynamicGlobalObject)
+    {
+        exec->globalData().dynamicGlobalObject = dynamicGlobalObject;
+    }
+
+    ~DynamicGlobalObjectScope()
+    {
+        m_exec->globalData().dynamicGlobalObject = m_savedGlobalObject;
+    }
+
+private:
+    ExecState* m_exec;
+    JSGlobalObject* m_savedGlobalObject;
+};
+
 JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainNode* scopeChain, JSObject* thisObj, JSValue** exception)
 {
     ASSERT(!exec->hadException());
@@ -885,6 +904,8 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
         *exception = createStackOverflowError(exec);
         return jsNull();
     }
+
+    DynamicGlobalObjectScope globalObjectScope(exec, scopeChain->globalObject());
 
     JSGlobalObject* lastGlobalObject = m_registerFile.globalObject();
     JSGlobalObject* globalObject = exec->dynamicGlobalObject();
@@ -920,6 +941,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
         lastGlobalObject->copyGlobalsTo(m_registerFile);
 
     m_registerFile.shrink(oldEnd);
+
     return result;
 }
 
@@ -939,6 +961,8 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         *exception = createStackOverflowError(exec);
         return jsNull();
     }
+
+    DynamicGlobalObjectScope globalObjectScope(exec, exec->globalData().dynamicGlobalObject ? exec->globalData().dynamicGlobalObject : scopeChain->globalObject());
 
     Register* argv = oldEnd;
     size_t dst = 0;
@@ -991,6 +1015,8 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
         *exception = createStackOverflowError(exec);
         return jsNull();
     }
+
+    DynamicGlobalObjectScope globalObjectScope(exec, exec->globalData().dynamicGlobalObject ? exec->globalData().dynamicGlobalObject : scopeChain->globalObject());
 
     EvalCodeBlock* codeBlock = &evalNode->byteCode(scopeChain);
 
@@ -3946,14 +3972,6 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, intptr_t& sou
         return;
 
     function = caller;
-}
-
-const Register* Machine::firstCallFrame(const Register* callFrame)
-{
-    const Register* first = 0;
-    for (const Register* frame = callFrame; frame; frame = stripHostCallFrameBit(frame[RegisterFile::CallerRegisters].r()))
-        first = frame;
-    return first;
 }
 
 Register* Machine::callFrame(ExecState* exec, InternalFunction* function) const

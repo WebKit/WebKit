@@ -330,6 +330,17 @@ namespace JSC {
         return exec->lexicalGlobalObject()->numberPrototype();
     }
 
+    inline JSGlobalObject* ExecState::dynamicGlobalObject()
+    {
+        if (this == lexicalGlobalObject()->globalExec())
+            return lexicalGlobalObject();
+
+        // For any ExecState that's not a globalExec, the 
+        // dynamic global object must be set since code is running
+        ASSERT(globalData().dynamicGlobalObject);
+        return globalData().dynamicGlobalObject;
+    }
+    
 } // namespace JSC
 
 #endif // JSGlobalObject_h

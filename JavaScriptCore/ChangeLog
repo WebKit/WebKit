@@ -1,3 +1,35 @@
+2008-10-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        - fixed "REGRESSION (r37297): fast/js/deep-recursion-test takes too long and times out"
+        https://bugs.webkit.org/show_bug.cgi?id=21375
+        
+        The problem is that dynamicGlobalObject had become O(N) in number
+        of call frames, but unwinding the stack for an exception called it
+        for every call frame, resulting in O(N^2) behavior for an
+        exception thrown from inside deep recursion.
+
+        Instead of doing it that way, stash the dynamic global object in JSGlobalData.
+        
+        * JavaScriptCore.exp:
+        * VM/Machine.cpp:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope): Helper class to temporarily
+        store and later restore a dynamicGlobalObject in JSGlobalData.
+        (JSC::DynamicGlobalObjectScope::~DynamicGlobalObjectScope):
+        (JSC::Machine::execute): In each version, establish a DynamicGlobalObjectScope.
+        For ProgramNode, always establish set new dynamicGlobalObject, for FunctionBody and Eval,
+        only if none is currently set.
+        * VM/Machine.h:
+        * kjs/ExecState.h:
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Ininitalize new dynamicGlobalObject field to 0.
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalObject.h:
+        (JSC::ExecState::dynamicGlobalObject): Moved here from ExecState for benefit of inlining.
+        Return lexical global object if this is a globalExec(), otherwise look in JSGlobalData
+        for the one stashed there.
+
 2008-10-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

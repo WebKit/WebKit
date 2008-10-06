@@ -98,6 +98,7 @@ namespace JSC {
         Parser* parser;
 
         JSGlobalObject* head;
+        JSGlobalObject* dynamicGlobalObject;
 
         bool isSharedInstance;
 
