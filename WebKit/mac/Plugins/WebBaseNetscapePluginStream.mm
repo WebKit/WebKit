@@ -132,16 +132,23 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
     // This check has already been done by the plug-in view.
     ASSERT(FrameLoader::canLoad([theRequest URL], String(), core([view webFrame])->document()));
     
-    if ([self initWithRequestURL:[theRequest URL]
-                          plugin:thePlugin
-                      notifyData:theNotifyData
-                sendNotification:flag] == nil) {
-        return nil;
-    }
+    ASSERT([theRequest URL]);
+    ASSERT(thePlugin);
+    
+    _impl = WebNetscapePluginStream::create(self);
     
     // Temporarily set isTerminated to true to avoid assertion failure in dealloc in case we are released in this method.
     _impl->m_isTerminated = true;
     
+    _impl->m_requestURL = [theRequest URL];
+    _impl->setPlugin(thePlugin);
+    _impl->m_notifyData = theNotifyData;
+    _impl->m_sendNotification = flag;
+    _impl->m_fileDescriptor = -1;
+    _impl->m_newStreamSuccessful = false;
+    
+    streams().add(&_impl->m_stream, thePlugin);
+        
     _impl->m_request = [theRequest mutableCopy];
     if (core([view webFrame])->loader()->shouldHideReferrer([theRequest URL], core([view webFrame])->loader()->outgoingReferrer()))
         [(NSMutableURLRequest *)_impl->m_request _web_setHTTPReferrer:nil];
@@ -149,35 +156,6 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
     _impl->m_client = new WebNetscapePlugInStreamLoaderClient(self);
     _impl->m_loader = NetscapePlugInStreamLoader::create(core([view webFrame]), _impl->m_client).releaseRef();
     _impl->m_loader->setShouldBufferData(false);
-    
-    _impl->m_isTerminated = false;
-    
-    return self;
-}
-
-- (id)initWithRequestURL:(NSURL *)theRequestURL
-                  plugin:(NPP)thePlugin
-              notifyData:(void *)theNotifyData
-        sendNotification:(BOOL)flag
-{
-    [super init];
-
-    ASSERT(theRequestURL);
-    ASSERT(thePlugin);
-    
-    _impl = WebNetscapePluginStream::create(self);
-
-    // Temporarily set isTerminated to true to avoid assertion failure in dealloc in case we are released in this method.
-    _impl->m_isTerminated = true;
-    
-    [self setRequestURL:theRequestURL];
-    _impl->setPlugin(thePlugin);
-    _impl->m_notifyData = theNotifyData;
-    _impl->m_sendNotification = flag;
-    _impl->m_fileDescriptor = -1;
-    _impl->m_newStreamSuccessful = false;
-
-    streams().add(&_impl->m_stream, thePlugin);
     
     _impl->m_isTerminated = false;
     

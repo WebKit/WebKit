@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Fold initWithRequestURL into initWithRequest.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Change the init methods not to return nil on failures. (These failures never occur anyway)
         
         Use initWithRequest as the initializer, initWithRequestURL is going to be merged with it.

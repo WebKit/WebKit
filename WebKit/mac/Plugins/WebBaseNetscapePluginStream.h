@@ -145,11 +145,6 @@ private:
            notifyData:(void *)theNotifyData
      sendNotification:(BOOL)sendNotification;
 
-- (id)initWithRequestURL:(NSURL *)theRequestURL
-                  plugin:(NPP)thePlugin
-              notifyData:(void *)theNotifyData
-        sendNotification:(BOOL)flag;
-
 - (void)setRequestURL:(NSURL *)theRequestURL;
 
 - (void)setPlugin:(NPP)thePlugin;
