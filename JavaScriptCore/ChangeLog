@@ -1,3 +1,22 @@
+2008-10-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Avoid an extra lookup when transitioning to an existing StructureID
+        by caching the offset of property that caused the transition.
+
+        1% win on V8 suite.  Wash on SunSpider.
+
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::put):
+        * kjs/PropertyMap.h:
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::addPropertyTransition):
+        * kjs/StructureID.h:
+        (JSC::StructureID::setCachedTransistionOffset):
+        (JSC::StructureID::cachedTransistionOffset):
+
 2008-10-05  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

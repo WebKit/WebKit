@@ -94,7 +94,7 @@ namespace JSC {
 
         bool isEmpty() { return !m_table; }
 
-        void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&, PropertyStorage&);
+        size_t put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&, PropertyStorage&);
         void remove(const Identifier& propertyName, PropertyStorage&);
 
         size_t getOffset(const Identifier& propertyName);

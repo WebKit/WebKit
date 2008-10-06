@@ -114,7 +114,7 @@ PropertyMap::~PropertyMap()
     fastFree(m_table);
 }
 
-void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
+size_t PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
 {
     ASSERT(!propertyName.isNull());
     ASSERT(value);
@@ -144,12 +144,12 @@ void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned a
 
         if (m_table->entries()[entryIndex - 1].key == rep) {
             if (checkReadOnly && (m_table->entries()[entryIndex - 1].attributes & ReadOnly))
-                return;
+                return WTF::notFound;
             // Put a new value in an existing hash table entry.
             propertyStorage[entryIndex - 2] = value;
             // Attributes are intentionally not updated.
             slot.setExistingProperty(slotBase, entryIndex - 2);
-            return;
+            return entryIndex - 2;
         } else if (entryIndex == deletedSentinelIndex) {
             // If we find a deleted-element sentinel, remember it for use later.
             if (!foundDeletedElement) {
@@ -202,6 +202,7 @@ void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned a
 
     checkConsistency(propertyStorage);
     slot.setNewProperty(slotBase, entryIndex - 2);
+    return entryIndex - 2;
 }
 
 void PropertyMap::remove(const Identifier& propertyName, PropertyStorage& propertyStorage)
