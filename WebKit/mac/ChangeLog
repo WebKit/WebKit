@@ -1,5 +1,19 @@
 2008-10-06  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Change the init methods not to return nil on failures. (These failures never occur anyway)
+        
+        Use initWithRequest as the initializer, initWithRequestURL is going to be merged with it.
+        
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+
+2008-10-06  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by David Hyatt.
 
         Convert more methods over to C++.

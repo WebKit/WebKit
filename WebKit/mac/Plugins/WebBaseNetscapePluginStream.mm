@@ -129,8 +129,8 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
 {   
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePlugin->ndata;
     
-    if (!core([view webFrame])->loader()->canLoad([theRequest URL], String(), core([view webFrame])->document()))
-        return nil;
+    // This check has already been done by the plug-in view.
+    ASSERT(FrameLoader::canLoad([theRequest URL], String(), core([view webFrame])->document()));
     
     if ([self initWithRequestURL:[theRequest URL]
                           plugin:thePlugin
@@ -161,16 +161,14 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
         sendNotification:(BOOL)flag
 {
     [super init];
- 
+
+    ASSERT(theRequestURL);
+    ASSERT(thePlugin);
+    
     _impl = WebNetscapePluginStream::create(self);
 
     // Temporarily set isTerminated to true to avoid assertion failure in dealloc in case we are released in this method.
     _impl->m_isTerminated = true;
-
-    if (theRequestURL == nil || thePlugin == NULL) {
-        [self release];
-        return nil;
-    }
     
     [self setRequestURL:theRequestURL];
     _impl->setPlugin(thePlugin);

@@ -2018,10 +2018,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     } else if ([result length] > 0) {
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
-        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequestURL:URL
-                                                                                               plugin:plugin
-                                                                                           notifyData:[JSPluginRequest notifyData]
-                                                                                     sendNotification:[JSPluginRequest sendNotification]];
+        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequest:[NSURLRequest requestWithURL:URL]
+                                                                                            plugin:plugin
+                                                                                        notifyData:[JSPluginRequest notifyData]
+                                                                                  sendNotification:[JSPluginRequest sendNotification]];
         [stream startStreamResponseURL:URL
                  expectedContentLength:[JSData length]
                       lastModifiedDate:nil
