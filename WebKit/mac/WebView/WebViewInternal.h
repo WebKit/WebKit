@@ -140,6 +140,9 @@ typedef WebCore::Page WebCorePage;
 - (BOOL)_canResetZoom:(BOOL)isTextOnly;
 - (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly;
 
+- (BOOL)_usesDocumentViews;
+- (void)_setUsesDocumentViews:(BOOL)useViews;
+
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
 @end

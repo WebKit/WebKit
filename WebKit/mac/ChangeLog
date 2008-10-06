@@ -1,3 +1,13 @@
+2008-10-06  David Hyatt  <hyatt@apple.com>
+
+        Add SPI for a new viewless WebKit mode.  The idea is that when this flag is set there will be no
+        views created except for the outermost WebView.
+
+        Reviewed by Tim Hatcher
+
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+
 2008-10-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.

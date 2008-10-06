@@ -390,6 +390,9 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     KeyboardUIMode _keyboardUIMode;
 
     BOOL shouldUpdateWhileOffscreen;
+    
+    // When this flag is set, we will not make any subviews underneath this WebView.  This means no WebFrameViews and no WebHTMLViews.
+    BOOL useDocumentViews;
 }
 @end
 
