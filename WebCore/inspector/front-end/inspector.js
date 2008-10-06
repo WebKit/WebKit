@@ -440,7 +440,6 @@ WebInspector.documentClick = function(event)
 
             WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
         } else {
-console.log("followLink");
             var profileStringRegEx = new RegExp("webkit-profile://.+/([0-9]+)");
             var profileString = profileStringRegEx.exec(anchor.href);
             if (profileString)
