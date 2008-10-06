@@ -810,11 +810,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_tear_off_activation: {
-            printf("[%4d] tear_off_activation\n", location);
+            int r0 = (++it)->u.operand;
+            printf("[%4d] tear_off_activation\t %s\n", location, registerName(r0).c_str());
             break;
         }
         case op_tear_off_arguments: {
-            printf("[%4d] tear_off_arguments\n", location);
+            int r0 = (++it)->u.operand;
+            printf("[%4d] tear_off_arguments\t %s\n", location, registerName(r0).c_str());
             break;
         }
         case op_ret: {

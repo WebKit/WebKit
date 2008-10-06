@@ -106,11 +106,11 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue,
 
     UString result = "/" + static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().source)->toString(exec);
     result.append('/');
-    if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().global)->toBoolean())
+    if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().global)->toBoolean(exec))
         result.append('g');
-    if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().ignoreCase)->toBoolean())
+    if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().ignoreCase)->toBoolean(exec))
         result.append('i');
-    if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().multiline)->toBoolean())
+    if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().multiline)->toBoolean(exec))
         result.append('m');
     return jsNontrivialString(exec, result);
 }

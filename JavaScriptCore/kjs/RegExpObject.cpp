@@ -121,7 +121,7 @@ bool RegExpObject::match(ExecState* exec, const ArgList& args)
         }
     }
 
-    bool global = get(exec, exec->propertyNames().global)->toBoolean();
+    bool global = get(exec, exec->propertyNames().global)->toBoolean(exec);
     int lastIndex = 0;
     if (global) {
         if (d->lastIndex < 0 || d->lastIndex > input.size()) {

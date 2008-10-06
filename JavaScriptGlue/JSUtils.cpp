@@ -207,7 +207,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
 
         if (inValue->isBoolean())
             {
-                result = inValue->toBoolean() ? kCFBooleanTrue : kCFBooleanFalse;
+                result = inValue->toBoolean(exec) ? kCFBooleanTrue : kCFBooleanFalse;
                 RetainCFType(result);
                 return result;
             }

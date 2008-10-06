@@ -1,5 +1,14 @@
 2008-10-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed. Build fix.
+
+        - revert toBoolean changes (r37333 and r37335); need to make WebCore work with these
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+
+2008-10-06  Maciej Stachowiak  <mjs@apple.com>
+
         Not reviewed.
         
         - fix build; toBoolean no longer takes an ExecState

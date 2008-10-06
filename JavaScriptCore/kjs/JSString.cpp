@@ -42,6 +42,11 @@ bool JSString::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
     return false;
 }
 
+bool JSString::toBoolean(ExecState*) const
+{
+    return !m_value.isEmpty();
+}
+
 double JSString::toNumber(ExecState*) const
 {
     return m_value.toDouble();

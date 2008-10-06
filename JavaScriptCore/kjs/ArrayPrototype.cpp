@@ -582,7 +582,7 @@ JSValue* arrayProtoFuncFilter(ExecState* exec, JSObject*, JSValue* thisValue, co
 
         JSValue* result = call(exec, function, callType, callData, applyThis, eachArguments);
 
-        if (result->toBoolean())
+        if (result->toBoolean(exec))
             resultArray->put(exec, filterIndex++, v);
     }
     return resultArray;
@@ -656,7 +656,7 @@ JSValue* arrayProtoFuncEvery(ExecState* exec, JSObject*, JSValue* thisValue, con
         eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments)->toBoolean();
+        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments)->toBoolean(exec);
 
         if (!predicateResult) {
             result = jsBoolean(false);
@@ -720,7 +720,7 @@ JSValue* arrayProtoFuncSome(ExecState* exec, JSObject*, JSValue* thisValue, cons
         eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments)->toBoolean();
+        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments)->toBoolean(exec);
 
         if (predicateResult) {
             result = jsBoolean(true);

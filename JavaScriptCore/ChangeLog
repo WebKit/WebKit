@@ -1,5 +1,49 @@
 2008-10-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed. Build fix.
+        
+        - revert toBoolean changes (r37333 and r37335); need to make WebCore work with these
+
+        * API/JSValueRef.cpp:
+        (JSValueToBoolean):
+        * ChangeLog:
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_loop_if_true):
+        (JSC::Machine::cti_op_not):
+        (JSC::Machine::cti_op_jtrue):
+        * kjs/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncSome):
+        * kjs/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::callBooleanConstructor):
+        * kjs/GetterSetter.h:
+        * kjs/JSCell.h:
+        (JSC::JSValue::toBoolean):
+        * kjs/JSNumberCell.cpp:
+        (JSC::JSNumberCell::toBoolean):
+        * kjs/JSNumberCell.h:
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::toBoolean):
+        * kjs/JSObject.h:
+        * kjs/JSString.cpp:
+        (JSC::JSString::toBoolean):
+        * kjs/JSString.h:
+        * kjs/JSValue.h:
+        * kjs/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorMultiline):
+        * kjs/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * kjs/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+
+2008-10-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam Weinig.
         
         - optimize op_jtrue, op_loop_if_true and op_not in various ways
