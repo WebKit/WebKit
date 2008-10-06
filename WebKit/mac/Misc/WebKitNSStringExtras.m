@@ -339,7 +339,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return path;
 }
 
-+ (NSString *)_webkit_applicationCacheDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier
++ (NSString *)_webkit_localCacheDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier
 {
     NSString* cacheDir = nil;
     

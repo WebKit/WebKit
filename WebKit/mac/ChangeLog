@@ -1,3 +1,17 @@
+2008-10-06  Kevin Decker  <kdecker@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Rename _webkit_applicationCacheDirectoryWithBundleIdentifier to _webkit_localCacheDirectoryWithBundleIdentifier.
+        
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.m:
+        (+[NSString _webkit_localCacheDirectoryWithBundleIdentifier:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _transferApplicationCache:]):
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationCachePathIfNecessary):
+
 2008-10-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

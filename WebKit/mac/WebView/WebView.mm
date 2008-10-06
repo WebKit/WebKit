@@ -1920,7 +1920,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     
     ASSERT(appName);
 
-    NSString* cacheDir = [NSString _webkit_applicationCacheDirectoryWithBundleIdentifier:appName];
+    NSString* cacheDir = [NSString _webkit_localCacheDirectoryWithBundleIdentifier:appName];
 
     cacheStorage().setCacheDirectory(cacheDir);
     initialized = YES;
