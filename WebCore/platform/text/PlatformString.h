@@ -33,7 +33,7 @@
 #include <kjs/identifier.h>
 #endif
 
-#if PLATFORM(CF)
+#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
 typedef const struct __CFString * CFStringRef;
 #endif
 
@@ -178,7 +178,7 @@ public:
 
     StringImpl* impl() const { return m_impl.get(); }
 
-#if PLATFORM(CF)
+#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
     String(CFStringRef);
     CFStringRef createCFString() const;
 #endif

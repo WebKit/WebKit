@@ -21,7 +21,7 @@
 #include "config.h"
 #include "StringImpl.h"
 
-#if PLATFORM(CF)
+#if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -34,4 +34,4 @@ CFStringRef StringImpl::createCFString()
 
 }
 
-#endif // PLATFORM(CF)
+#endif // PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))

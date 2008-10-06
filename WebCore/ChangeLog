@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        Enable WebCore::String <> CFStringRef conversion functions for QtWebKit/Mac
+
+        * platform/text/PlatformString.h:
+        * platform/text/StringImpl.h:
+        * platform/text/cf/StringCF.cpp:
+        * platform/text/cf/StringImplCF.cpp:
+
+2008-10-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
         Use bundles on QtWebKit/Mac for platform modules
 
         * platform/FileSystem.h:
