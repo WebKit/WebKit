@@ -1,3 +1,14 @@
+2008-10-06  Steve Falkenburg  <sfalken@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21416
+        Pass 0 for size to VirtualAlloc, as documented by MSDN.
+        Identified by Application Verifier.
+        
+        Reviewed by Darin Adler.
+
+        * kjs/collector.cpp:
+        (KJS::freeBlock):
+
 2008-10-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcheri and Oliver Hunt.

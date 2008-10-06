@@ -142,7 +142,8 @@ void setSharedTimerFiredFunction(void (*f)())
 static void clearTimer()
 {
     MutexLocker locker(timerMutex);
-    DeleteTimerQueueTimer(timerQueue, timer, 0);
+    if (timerQueue && timer)
+        DeleteTimerQueueTimer(timerQueue, timer, 0);
     timer = 0;
 }
 

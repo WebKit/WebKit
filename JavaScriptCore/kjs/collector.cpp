@@ -231,7 +231,7 @@ static void freeBlock(CollectorBlock* block)
 #if PLATFORM(DARWIN)    
     vm_deallocate(current_task(), reinterpret_cast<vm_address_t>(block), BLOCK_SIZE);
 #elif PLATFORM(WIN_OS)
-    VirtualFree(block, BLOCK_SIZE, MEM_RELEASE);
+    VirtualFree(block, 0, MEM_RELEASE);
 #elif HAVE(POSIX_MEMALIGN)
     free(block);
 #else
