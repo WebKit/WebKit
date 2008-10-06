@@ -59,7 +59,7 @@ namespace JSC {
 
         virtual JSObject* toThisObject(ExecState*) const;
 
-        void copyRegisters(JSValue* arguments);
+        void copyRegisters(Arguments* arguments);
         
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;

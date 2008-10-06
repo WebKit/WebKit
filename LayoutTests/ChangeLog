@@ -1,3 +1,15 @@
+2008-10-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for bug 21364: Remove the branch in op_ret for OptionalCalleeActivation and OptionalCalleeArguments
+        <https://bugs.webkit.org/show_bug.cgi?id=21364>
+
+        Add tests for changes to the liveness of 'f.arguments'.
+
+        * fast/js/function-dot-arguments-expected.txt:
+        * fast/js/resources/function-dot-arguments.js:
+
 2008-10-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

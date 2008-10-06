@@ -1,3 +1,47 @@
+2008-10-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 21364: Remove the branch in op_ret for OptionalCalleeActivation and OptionalCalleeArguments
+        <https://bugs.webkit.org/show_bug.cgi?id=21364>
+
+        Use information from the parser to detect whether an activation is
+        needed or 'arguments' is used, and emit explicit instructions to tear
+        them off before op_ret. This allows a branch to be removed from op_ret
+        and simplifies some other code. This does cause a small change in the
+        behaviour of 'f.arguments'; it is no longer live when 'arguments' is not
+        mentioned in the lexical scope of the function.
+
+        It should now be easy to remove the OptionaCalleeActivation slot in the
+        call frame, but this will be done in a later patch.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitReturn):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (JSC::Machine::unwindCallFrame):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::retrieveArguments):
+        (JSC::Machine::cti_op_create_arguments):
+        (JSC::Machine::cti_op_tear_off_activation):
+        (JSC::Machine::cti_op_tear_off_arguments):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::mark):
+        * kjs/Arguments.h:
+        (JSC::Arguments::isTornOff):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::copyRegisters):
+        (JSC::JSActivation::copyRegisters):
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * kjs/JSActivation.h:
+
 2008-10-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.

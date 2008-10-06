@@ -18,6 +18,19 @@ PASS assignForInInitTest() is true
 PASS paramInitTest(true) is true
 PASS tearOffTest()[0] is true
 PASS tearOffTest2(true)[0] is true
+PASS lexicalArgumentsLiveRead1(0, 2, 3) is 1
+PASS lexicalArgumentsLiveRead2(1, 0, 3) is 2
+PASS lexicalArgumentsLiveRead3(1, 2, 0) is 3
+PASS lexicalArgumentsLiveWrite1(0, 2, 3) is 1
+PASS lexicalArgumentsLiveWrite2(1, 0, 3) is 2
+PASS lexicalArgumentsLiveWrite3(1, 2, 0) is 3
+PASS argumentsNotLiveRead1(0, 2, 3) is 0
+PASS argumentsNotLiveRead2(1, 0, 3) is 0
+PASS argumentsNotLiveRead3(1, 2, 0) is 0
+PASS argumentsNotLiveWrite1(0, 2, 3) is 0
+PASS argumentsNotLiveWrite2(1, 0, 3) is 0
+PASS argumentsNotLiveWrite3(1, 2, 0) is 0
+PASS argumentsIdentity() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

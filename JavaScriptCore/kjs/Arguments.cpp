@@ -64,9 +64,6 @@ void Arguments::mark()
 
     if (!d->callee->marked())
         d->callee->mark();
-
-    if (d->activation && !d->activation->marked())
-        d->activation->mark();
 }
 
 void Arguments::fillArgList(ExecState* exec, ArgList& args)

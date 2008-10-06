@@ -164,7 +164,8 @@ namespace JSC {
         static void* SFX_CALL cti_op_call_JSFunction(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_call_NotJSFunction(CTI_ARGS);
         static void SFX_CALL cti_op_create_arguments(CTI_ARGS);
-        static void SFX_CALL cti_op_ret_activation_arguments(CTI_ARGS);
+        static void SFX_CALL cti_op_tear_off_activation(CTI_ARGS);
+        static void SFX_CALL cti_op_tear_off_arguments(CTI_ARGS);
         static void SFX_CALL cti_op_ret_profiler(CTI_ARGS);
         static void SFX_CALL cti_op_ret_scopeChain(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_new_array(CTI_ARGS);

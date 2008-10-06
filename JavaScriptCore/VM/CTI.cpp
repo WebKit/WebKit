@@ -1170,15 +1170,17 @@ void CTI::privateCompileMainPass()
             i += 4;
             break;
         }
+        case op_tear_off_activation: {
+            emitCall(i, Machine::cti_op_tear_off_activation);
+            i += 1;
+            break;
+        }
+        case op_tear_off_arguments: {
+            emitCall(i, Machine::cti_op_tear_off_arguments);
+            i += 1;
+            break;
+        }
         case op_ret: {
-            // If there is an activation or an 'arguments' object, we tear it
-            // off by jumping to the hook below.
-            m_jit.movl_mr(RegisterFile::OptionalCalleeActivation * static_cast<int>(sizeof(Register)), X86::edi, X86::eax);
-            m_jit.orl_mr(RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edi, X86::eax);
-            m_jit.cmpl_i32r(0, X86::eax);
-            X86Assembler::JmpSrc activation = m_jit.emitUnlinkedJne();
-            X86Assembler::JmpDst activated = m_jit.label();
-
             // Check for a profiler - if there is one, jump to the hook below.
             emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
             m_jit.cmpl_i32m(0, X86::eax);
@@ -1202,11 +1204,6 @@ void CTI::privateCompileMainPass()
             // Return.
             m_jit.pushl_r(X86::edx);
             m_jit.ret();
-
-            // Activation and 'arguments' hook
-            m_jit.link(activation, m_jit.label());
-            emitCall(i, Machine::cti_op_ret_activation_arguments);
-            m_jit.link(m_jit.emitUnlinkedJmp(), activated);
 
             // Profiling hook
             m_jit.link(profile, m_jit.label());
