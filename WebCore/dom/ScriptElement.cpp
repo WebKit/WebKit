@@ -186,10 +186,13 @@ void ScriptElementData::notifyFinished(CachedResource* o)
     CachedScript* cs = static_cast<CachedScript*>(o);
     ASSERT(cs == m_cachedScript);
 
+    // Evaluating the script could lead to a garbage collection which can
+    // delete the script element so we need to protect it and us with it!
+    RefPtr<Element> protector(m_element);
+
     if (cs->errorOccurred())
         m_scriptElement->dispatchErrorEvent();
     else {
-        RefPtr<Element> protector(m_element);
         evaluateScript(cs->url(), cs->script());
         m_scriptElement->dispatchLoadEvent();
     }
