@@ -85,12 +85,14 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     WRAP(MediaList)
     WRAP(NamedNodeMap)
     WRAP(Node)
+    WRAP(NodeIterator)
     WRAP(NodeList)
     WRAP(RGBColor)
     WRAP(Range)
     WRAP(Rect)
     WRAP(StyleSheet)
     WRAP(StyleSheetList)
+    WRAP(TreeWalker)
 #if ENABLE(XPATH)
     WRAP(XPathExpression)
     WRAP(XPathResult)
@@ -107,10 +109,6 @@ static inline id createDOMWrapper(JSC::JSObject* object)
 
     if (object->inherits(&WebCore::JSDOMImplementation::s_info))
         return [DOMImplementation _wrapDOMImplementation:implementationFront(static_cast<WebCore::JSDOMImplementation*>(object))];
-    if (object->inherits(&WebCore::JSNodeIterator::s_info))
-        return [DOMNodeIterator _wrapNodeIterator:static_cast<WebCore::JSNodeIterator*>(object)->impl() filter:nil];
-    if (object->inherits(&WebCore::JSTreeWalker::s_info))
-        return [DOMTreeWalker _wrapTreeWalker:static_cast<WebCore::JSTreeWalker*>(object)->impl() filter:nil];
 
     return nil;
 }

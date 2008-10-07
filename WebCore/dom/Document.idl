@@ -93,18 +93,16 @@ module core {
 
         // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-#if !defined(LANGUAGE_OBJECTIVE_C)
-        NodeIterator       createNodeIterator(in Node root,
-                                              in unsigned long whatToShow,
-                                              in NodeFilter filter,
-                                              in boolean entityReferenceExpansion)
+        [OldStyleObjC] NodeIterator createNodeIterator(in Node root,
+                                                       in unsigned long whatToShow,
+                                                       in NodeFilter filter,
+                                                       in boolean expandEntityReferences)
             raises(DOMException);
-        TreeWalker         createTreeWalker(in Node root,
-                                            in unsigned long whatToShow,
-                                            in NodeFilter filter,
-                                            in boolean entityReferenceExpansion)
+        [OldStyleObjC] TreeWalker createTreeWalker(in Node root,
+                                                   in unsigned long whatToShow,
+                                                   in NodeFilter filter,
+                                                   in boolean expandEntityReferences)
             raises(DOMException);
-#endif // !defined(LANGUAGE_OBJECTIVE_C)
 
         // DOM Level 2 Abstract Views (DocumentView interface)
 

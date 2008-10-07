@@ -24,7 +24,7 @@ module traversal {
     interface [CustomMarkFunction] TreeWalker {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;
-        readonly attribute [ObjCIvar] NodeFilter filter;
+        readonly attribute NodeFilter filter;
         readonly attribute boolean expandEntityReferences;        
                  attribute Node currentNode
                      setter raises(DOMException);

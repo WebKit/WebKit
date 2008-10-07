@@ -24,7 +24,7 @@ module traversal {
     interface [CustomMarkFunction] NodeIterator {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;
-        readonly attribute [ObjCIvar] NodeFilter filter;
+        readonly attribute NodeFilter filter;
         readonly attribute boolean expandEntityReferences;
         readonly attribute Node referenceNode;
         readonly attribute boolean pointerBeforeReferenceNode;

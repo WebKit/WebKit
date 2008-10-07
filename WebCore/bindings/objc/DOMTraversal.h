@@ -31,18 +31,3 @@
 #import <WebCore/DOMNodeFilter.h>
 #import <WebCore/DOMNodeIterator.h>
 #import <WebCore/DOMTreeWalker.h>
-
-@interface DOMDocument (DOMDocumentTraversal)
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences;
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences;
-@end
-
-@interface DOMDocument (DOMDocumentTraversalDeprecated)
-#ifndef BUILDING_ON_TIGER
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
-#else
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
-#endif
-@end

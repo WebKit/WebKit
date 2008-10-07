@@ -1,5 +1,46 @@
 2008-10-07  Timothy Hatcher  <timothy@apple.com>
 
+        Auto-generate DOMDocument's createNodeIterator: and createTreeWalker: methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21433
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.xcodeproj/project.pbxproj: Add ObjCNodeFilterCondition.{mm,h}.
+        * bindings/objc/DOM.mm: Remove previous category implementations
+        on DOMDocument for createNodeIterator: and createTreeWalker:. Also
+        moves ObjCNodeFilterCondition to its own file.
+        * bindings/objc/DOMTraversal.h: Remove the category methods that added
+        createNodeIterator: and createTreeWalker: to DOMDocument. This is fine
+        to do since DOmDocument.h is included still, and has these methods.
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper): Remove special case for JSNodeIterator and
+        JSTreeWalker now that the ObjC binding conforms to the standard wrap.
+        * bindings/objc/ObjCNodeFilterCondition.h: Split out from DOM.mm.
+        (WebCore::ObjCNodeFilterCondition::create): Moved from DOM.mm.
+        (WebCore::ObjCNodeFilterCondition::ObjCNodeFilterCondition): Ditto.
+        * bindings/objc/ObjCNodeFilterCondition.mm: Split out from DOM.mm.
+        (WebCore::ObjCNodeFilterCondition::acceptNode): Moved from DOM.mm.
+        * bindings/objc/PublicDOMInterfaces.h: Add the createNodeIterator: and
+        createTreeWalker: methods to DOMDocument.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GetObjCTypeGetter): Add a case for NodeFilter.
+        (AddIncludesForType): Include ObjCNodeFilterCondition.h for NodeFilter.
+        (GenerateImplementation): Remove existing NodeFilter special case that
+        used the m_filter member variable. Add a new special getter for protocol
+        types that aren't EventTarget, so the right class is used for NodeFilter.
+        Add a special case for NodeFilter where it creates an ObjCNodeFilterCondition.
+        * dom/Document.idl: Remove the #ifdef LANGUAGE_OBJECTIVE_C. Add the
+        OldStyleObjC extended attribute to createNodeIterator and createTreeWalker.
+        Rename the entityReferenceExpansion parameter to expandEntityReferences to
+        match the previous ObjC API.
+        * dom/NodeIterator.idl: Remove ObjCIvar from the filter attribute. The
+        m_filter member variable was never used in practice, it was always nil!
+        We can remove it and not pad the object because this can't be subclassed.
+        * dom/TreeWalker.idl: Ditto.
+
+2008-10-07  Timothy Hatcher  <timothy@apple.com>
+
         Auto-generate the DOMEventTarget protocol implementation for
         DOMNode and DOMSVGElementInstance.
 

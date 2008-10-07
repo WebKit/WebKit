@@ -505,6 +505,7 @@ sub GetObjCTypeGetter
     my $typeGetterMethodName = GetObjCTypeGetterName($type);
 
     return "WTF::getPtr(nativeEventListener)" if $type eq "EventListener";
+    return "WTF::getPtr(nativeNodeFilter)" if $type eq "NodeFilter";
     return "WTF::getPtr(nativeResolver)" if $type eq "XPathNSResolver";
     return "[$argName $typeGetterMethodName]";
 }
@@ -655,6 +656,7 @@ sub AddIncludesForType
     }
 
     $implIncludes{"ObjCEventListener.h"} = 1 if $type eq "EventListener";
+    $implIncludes{"ObjCNodeFilterCondition.h"} = 1 if $type eq "NodeFilter";
     $implIncludes{"EventTargetSVGElementInstance.h"} = 1 if $type eq "SVGElementInstance";
     $implIncludes{"DOMCustomXPathNSResolver.h"} = 1 if $type eq "XPathNSResolver";
 
@@ -1191,13 +1193,6 @@ sub GenerateImplementation
                     }
                 }
                 $implIncludes{"DOMPrivate.h"} = 1;
-            } elsif ($idlType eq "NodeFilter") {
-                push(@customGetterContent, "    if (m_filter)\n");
-                push(@customGetterContent, "        // This node iterator was created from the Objective-C side.\n");
-                push(@customGetterContent, "        return [[m_filter retain] autorelease];\n\n");
-                push(@customGetterContent, "    // This node iterator was created from the C++ side.\n");
-                $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
-                $getterContentTail .= ")]";
             } elsif ($attribute->signature->extendedAttributes->{"ConvertToString"}) {
                 $getterContentHead = "WebCore::String::number(" . $getterContentHead;
                 $getterContentTail .= ")";
@@ -1206,6 +1201,9 @@ sub GenerateImplementation
             } elsif ($codeGenerator->IsPodType($idlType)) {
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:" . $getterContentHead;
                 $getterContentTail .= "]";
+            } elsif (IsProtocolType($idlType) and $idlType ne "EventTarget") {
+                $getterContentHead = "[$attributeClassName $typeMaker:WTF::getPtr(" . $getterContentHead;
+                $getterContentTail .= ")]";
             } elsif ($typeMaker ne "") {
                 # Surround getter with TypeMaker
                 $getterContentHead = "[$attributeTypeSansPtr $typeMaker:WTF::getPtr(" . $getterContentHead;
@@ -1316,6 +1314,7 @@ sub GenerateImplementation
 
                 push(@parameterNames, $implGetter);
                 $needsCustom{"XPathNSResolver"} = $paramName if $idlType eq "XPathNSResolver";
+                $needsCustom{"NodeFilter"} = $paramName if $idlType eq "NodeFilter";
                 $needsCustom{"EventListener"} = $paramName if $idlType eq "EventListener";
                 $needsCustom{"EventTarget"} = $paramName if $idlType eq "EventTarget";
                 $needsCustom{"NodeToReturn"} = $paramName if $param->extendedAttributes->{"Return"};
@@ -1387,6 +1386,14 @@ sub GenerateImplementation
             if (defined $needsCustom{"EventListener"}) {
                 my $paramName = $needsCustom{"EventListener"};
                 push(@functionContent, "    RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap($paramName);\n");
+            }
+
+            # special case the NodeFilter
+            if (defined $needsCustom{"NodeFilter"}) {
+                my $paramName = $needsCustom{"NodeFilter"};
+                push(@functionContent, "    RefPtr<WebCore::NodeFilter> nativeNodeFilter;\n");
+                push(@functionContent, "    if ($paramName)\n");
+                push(@functionContent, "        nativeNodeFilter = WebCore::NodeFilter::create(WebCore::ObjCNodeFilterCondition::create($paramName));\n");
             }
 
             # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGLength/MatrixCustom.mm
