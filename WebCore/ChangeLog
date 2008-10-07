@@ -1,3 +1,14 @@
+2008-10-06  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Dan Bernstein.
+        
+        Added C++ forward declaration for the NSURLAuthenticationChallenge class
+        so that the m_currentMacChallenge variable doesn't cause a
+        compilation error when ResourceHandleInternal.h is included from a C++ file.
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=21411
+
+        * platform/network/ResourceHandleInternal.h:
+
 2008-10-06  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

@@ -59,8 +59,10 @@ class QNetworkReplyHandler;
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
+@class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 #else
+class NSURLAuthenticationChallenge;
 class NSURLConnection;
 #endif
 #endif
