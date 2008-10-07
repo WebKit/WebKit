@@ -963,6 +963,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     Frame* coreFrame = core(m_webFrame.get());
+    Page* page = coreFrame->page();
+    bool isMainFrame = coreFrame == page->mainFrame();
+    if (isMainFrame && coreFrame->view())
+        coreFrame->view()->setParentVisible(false);
     coreFrame->setView(0);
     FrameView* coreView;
     if (useDocumentViews)
@@ -975,6 +979,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     [m_webFrame.get() _updateBackgroundAndUpdatesWhileOffscreen];
 
     [v _install];
+
+    if (isMainFrame)
+        coreView->setParentVisible(true);
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
