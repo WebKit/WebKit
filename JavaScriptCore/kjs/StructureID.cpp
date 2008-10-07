@@ -44,7 +44,6 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     , m_previous(0)
     , m_nameInPrevious(0)
     , m_transitionCount(0)
-    , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
     , m_cachedTransistionOffset(WTF::notFound)
 {
     ASSERT(m_prototype);
@@ -103,30 +102,32 @@ void StructureID::clearEnumerationCache()
     m_cachedPropertyNameArrayData.clear();
 }
 
-void StructureID::growPropertyStorageCapacity()
+void StructureID::transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase)
 {
-    if (m_propertyStorageCapacity == JSObject::inlineStorageCapacity)
-        m_propertyStorageCapacity = JSObject::nonInlineBaseStorageCapacity;
-    else
-        m_propertyStorageCapacity *= 2;
+    if (!slotBase->usingInlineStorage() && oldStructureID->m_propertyMap.size() != newStructureID->m_propertyMap.size())
+        slotBase->allocatePropertyStorage(oldStructureID->m_propertyMap.size(), newStructureID->m_propertyMap.size());
 }
 
-PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structureID, const Identifier& propertyName, unsigned attributes, size_t& offset)
+PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structureID, const Identifier& propertyName, JSValue* value, unsigned attributes, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
 {
     ASSERT(!structureID->m_isDictionary);
     ASSERT(structureID->typeInfo().type() == ObjectType);
 
     if (StructureID* existingTransition = structureID->m_transitionTable.get(make_pair(propertyName.ustring().rep(), attributes))) {
-        offset = existingTransition->cachedTransistionOffset();
+        if (!slotBase->usingInlineStorage() && structureID->m_propertyMap.size() != existingTransition->m_propertyMap.size())
+            slotBase->allocatePropertyStorage(structureID->m_propertyMap.size(), existingTransition->m_propertyMap.size());
+
+        size_t offset = existingTransition->cachedTransistionOffset();
         ASSERT(offset != WTF::notFound);
+        propertyStorage[offset] = value;
+        slot.setNewProperty(slotBase, offset);
+
         return existingTransition;
     }
 
     if (structureID->m_transitionCount > s_maxTransitionLength) {
         RefPtr<StructureID> transition = toDictionaryTransition(structureID);
-        offset = transition->m_propertyMap.put(propertyName, attributes);
-        if (transition->m_propertyMap.storageSize() > transition->propertyStorageCapacity())
-            transition->growPropertyStorageCapacity();
+        transition->m_propertyMap.put(propertyName, value, attributes, false, slotBase, slot, propertyStorage);
         return transition.release();
     }
 
@@ -137,12 +138,8 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
     transition->m_attributesInPrevious = attributes;
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
-    transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
 
-    offset = transition->m_propertyMap.put(propertyName, attributes);
-    if (transition->m_propertyMap.storageSize() > transition->propertyStorageCapacity())
-        transition->growPropertyStorageCapacity();
-
+    size_t offset = transition->m_propertyMap.put(propertyName, value, attributes, false, slotBase, slot, propertyStorage);
     transition->setCachedTransistionOffset(offset);
 
     structureID->m_transitionTable.add(make_pair(propertyName.ustring().rep(), attributes), transition.get());
@@ -156,7 +153,6 @@ PassRefPtr<StructureID> StructureID::toDictionaryTransition(StructureID* structu
     RefPtr<StructureID> transition = create(structureID->m_prototype, structureID->typeInfo());
     transition->m_isDictionary = true;
     transition->m_propertyMap = structureID->m_propertyMap;
-    transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
     return transition.release();
 }
 
@@ -176,7 +172,6 @@ PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* stru
     RefPtr<StructureID> transition = create(prototype, structureID->typeInfo());
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
-    transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
     return transition.release();
 }
 
@@ -185,7 +180,6 @@ PassRefPtr<StructureID> StructureID::getterSetterTransition(StructureID* structu
     RefPtr<StructureID> transition = create(structureID->storedPrototype(), structureID->typeInfo());
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
-    transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
     return transition.release();
 }
 

@@ -2743,7 +2743,13 @@ extern "C" {
 
 static JSValue* SFX_CALL transitionObject(StructureID* newStructureID, size_t cachedOffset, JSObject* baseObject, JSValue* value)
 {
+    StructureID* oldStructureID = newStructureID->previousID();
+
     baseObject->transitionTo(newStructureID);
+
+    if (oldStructureID->propertyMap().storageSize() == JSObject::inlineStorageCapacity)
+        baseObject->allocatePropertyStorage(oldStructureID->propertyMap().storageSize(), oldStructureID->propertyMap().size());
+
     baseObject->putDirectOffset(cachedOffset, value);
     return baseObject;
 }
@@ -2752,7 +2758,16 @@ static JSValue* SFX_CALL transitionObject(StructureID* newStructureID, size_t ca
 
 static inline bool transitionWillNeedStorageRealloc(StructureID* oldStructureID, StructureID* newStructureID)
 {
-    return oldStructureID->propertyStorageCapacity() != newStructureID->propertyStorageCapacity();
+    if (oldStructureID->propertyMap().storageSize() == JSObject::inlineStorageCapacity)
+        return true;
+
+    if (oldStructureID->propertyMap().storageSize() < JSObject::inlineStorageCapacity)
+        return false;
+
+    if (oldStructureID->propertyMap().size() != newStructureID->propertyMap().size())
+        return true;
+
+    return false;
 }
 
 void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, StructureID* newStructureID, size_t cachedOffset, StructureIDChain* sIDC, void* returnAddress)
