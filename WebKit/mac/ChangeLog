@@ -1,5 +1,22 @@
 2008-10-07  David Hyatt  <hyatt@apple.com>
 
+        Move viewless WebKit methods that Safari needs from WebViewInternal to WebViewPrivate.
+
+        Reviewed by Tim Hatcher
+
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationCachePathIfNecessary):
+        (-[WebView _registerDraggedTypes]):
+        (-[WebView _usesDocumentViews]):
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _initWithFrame:frameName:groupName:usesDocumentViews:]):
+        (-[WebView isFlipped]):
+        (-[WebView viewWillDraw]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
         Fix crash in isFlipped.  Null check _private since isFlipped can get called from within AppKit
         machinery during teardown of the WebView.
 

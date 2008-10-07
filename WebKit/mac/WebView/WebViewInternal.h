@@ -140,9 +140,6 @@ typedef WebCore::Page WebCorePage;
 - (BOOL)_canResetZoom:(BOOL)isTextOnly;
 - (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly;
 
-- (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews;
-- (BOOL)_usesDocumentViews;
-
 - (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count;
 - (void)_updateFocusedAndActiveStateForFrame:(WebFrame *)webFrame;
 

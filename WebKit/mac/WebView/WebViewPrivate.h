@@ -376,6 +376,9 @@ Could be worth adding to the API.
 - (void)_setCustomHTMLTokenizerTimeDelay:(double)timeDelay;
 - (void)_setCustomHTMLTokenizerChunkSize:(int)chunkSize;
 
+- (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews;
+- (BOOL)_usesDocumentViews;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)
