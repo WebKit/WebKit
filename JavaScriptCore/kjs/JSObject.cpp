@@ -134,7 +134,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
     }
     
     unsigned attributes;
-    if ((m_structureID->propertyMap().getOffset(propertyName, attributes) != WTF::notFound) && attributes & ReadOnly)
+    if ((m_structureID->propertyMap().get(propertyName, attributes) != WTF::notFound) && attributes & ReadOnly)
         return;
 
     for (JSObject* obj = this; ; obj = static_cast<JSObject*>(prototype)) {
@@ -200,7 +200,7 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     unsigned attributes;
-    if (m_structureID->propertyMap().getOffset(propertyName, attributes) != WTF::notFound) {
+    if (m_structureID->propertyMap().get(propertyName, attributes) != WTF::notFound) {
         if ((attributes & DontDelete))
             return false;
         removeDirect(propertyName);
@@ -412,7 +412,7 @@ bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyN
 
 bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
-    if (m_structureID->propertyMap().getOffset(propertyName, attributes) != WTF::notFound)
+    if (m_structureID->propertyMap().get(propertyName, attributes) != WTF::notFound)
         return true;
     
     // Look in the static hashtable of properties
@@ -468,14 +468,20 @@ JSGlobalObject* JSObject::toGlobalObject(ExecState*) const
 
 void JSObject::removeDirect(const Identifier& propertyName)
 {
+    size_t offset;
     if (m_structureID->isDictionary()) {
-        m_structureID->propertyMap().remove(propertyName, m_propertyStorage);
-        m_structureID->clearEnumerationCache();
+        offset = m_structureID->propertyMap().remove(propertyName);
+        if (offset != WTF::notFound) {
+            m_propertyStorage[offset] = jsUndefined();
+            m_structureID->clearEnumerationCache();
+        }
         return;
     }
 
     RefPtr<StructureID> structureID = StructureID::toDictionaryTransition(m_structureID);
-    structureID->propertyMap().remove(propertyName, m_propertyStorage);
+    offset = structureID->propertyMap().remove(propertyName);
+    if (offset != WTF::notFound)
+        m_propertyStorage[offset] = jsUndefined();
     setStructureID(structureID.release());
 }
 
@@ -500,6 +506,8 @@ StructureID* JSObject::createInheritorID()
 
 void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
 {
+    ASSERT(newSize > oldSize);
+
     JSValue** oldPropertStorage = m_propertyStorage;
     m_propertyStorage = new JSValue*[newSize];
 

@@ -1,3 +1,80 @@
+2008-10-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21415
+        Improve the division between PropertyStorageArray and PropertyMap
+
+        - Rework ProperyMap to store offsets in the value so that they don't
+          change when rehashing.  This allows us not to have to keep the 
+          PropertyStorageArray in sync and thus not have to pass it in.
+        - Rename PropertyMap::getOffset -> PropertyMap::get since put/remove
+          now also return offsets.
+        - A Vector of deleted offsets is now needed since the storage is out of
+          band.
+
+        1% win on SunSpider.  Wash on V8 suite.
+
+        * JavaScriptCore.exp:
+        * VM/CTI.cpp:
+        (JSC::transitionWillNeedStorageRealloc):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        Transition logic can be greatly simplified by the fact that
+        the storage capacity is always known, and is correct for the
+        inline case.
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::put): Rename getOffset -> get.
+        (JSC::JSObject::deleteProperty): Ditto.
+        (JSC::JSObject::getPropertyAttributes): Ditto.
+        (JSC::JSObject::removeDirect): Use returned offset to
+        clear the value in the PropertyNameArray.
+        (JSC::JSObject::allocatePropertyStorage): Add assert.
+        * kjs/JSObject.h:
+        (JSC::JSObject::getDirect): Rename getOffset -> get
+        (JSC::JSObject::getDirectLocation): Rename getOffset -> get
+        (JSC::JSObject::putDirect): Use propertyStorageCapacity to determine whether
+        or not to resize.  Also, since put now returns an offset (and thus 
+        addPropertyTransition does also) setting of the PropertyStorageArray is
+        now done here.
+        (JSC::JSObject::transitionTo):
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::checkConsistency): PropertyStorageArray is no longer 
+        passed in.
+        (JSC::PropertyMap::operator=): Copy the delete offsets vector.
+        (JSC::PropertyMap::put): Instead of setting the PropertyNameArray
+        explicitly, return the offset where the value should go.
+        (JSC::PropertyMap::remove): Instead of removing from the PropertyNameArray
+        explicitly, return the offset where the value should be removed.
+        (JSC::PropertyMap::get): Switch to using the stored offset, instead
+        of the implicit one.
+        (JSC::PropertyMap::insert):
+        (JSC::PropertyMap::expand): This is never called when m_table is null,
+        so remove that branch and add it as an assertion.
+        (JSC::PropertyMap::createTable): Consistency checks no longer take
+        a PropertyNameArray.
+        (JSC::PropertyMap::rehash): No need to rehash the PropertyNameArray
+        now that it is completely out of band.
+        * kjs/PropertyMap.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry): Store offset into PropertyNameArray.
+        (JSC::PropertyMap::get): Switch to using the stored offset, instead
+        of the implicit one.
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID): Initialize the propertyStorageCapacity to 
+        JSObject::inlineStorageCapacity.
+        (JSC::StructureID::growPropertyStorageCapacity): Grow the storage capacity as
+        described below.
+        (JSC::StructureID::addPropertyTransition): Copy the storage capacity.
+        (JSC::StructureID::toDictionaryTransition): Ditto.
+        (JSC::StructureID::changePrototypeTransition): Ditto.
+        (JSC::StructureID::getterSetterTransition): Ditto.
+        * kjs/StructureID.h:
+        (JSC::StructureID::propertyStorageCapacity): Add propertyStorageCapacity
+        which is the current capacity for the JSObjects PropertyStorageArray.
+        It starts at the JSObject::inlineStorageCapacity (currently 2), then
+        when it first needs to be resized moves to the JSObject::nonInlineBaseStorageCapacity
+        (currently 16), and after that doubles each time.
+
 2008-10-06  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
