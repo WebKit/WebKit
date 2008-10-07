@@ -1,3 +1,12 @@
+2008-10-06  David Hyatt  <hyatt@apple.com>
+
+        Enable viewless Mac WebKit to paint some basic pages.
+        
+        Reviewed by Sam Weinig
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
          Remove addToDirtyRegion.

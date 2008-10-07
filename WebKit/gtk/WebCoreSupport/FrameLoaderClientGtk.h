@@ -47,7 +47,6 @@ namespace WebKit {
         WebKitWebFrame*  webFrame() const { return m_frame; }
 
         virtual bool hasWebView() const;
-        virtual bool hasFrameView() const;
 
         virtual void makeRepresentation(WebCore::DocumentLoader*);
         virtual void forceLayout();

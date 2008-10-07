@@ -2263,7 +2263,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     // Unfortunately the view must be non-nil, this is ultimately due
     // to parser requiring a FrameView.  We should fix this dependency.
 
-    ASSERT(m_client->hasFrameView());
+    ASSERT(m_frame->view());
 
     m_policyLoadType = type;
     RefPtr<FormState> formState = prpFormState;
@@ -2833,7 +2833,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     m_responseMIMEType = dl->responseMIMEType();
 
     // Tell the client we've committed this URL.
-    ASSERT(m_client->hasFrameView());
+    ASSERT(m_frame->view());
 
     if (m_creatingInitialEmptyDocument)
         return;

@@ -60,7 +60,6 @@ namespace WebCore {
         virtual void deref();
 
         virtual bool hasWebView() const; // mainly for assertions
-        virtual bool hasFrameView() const; // ditto
 
         virtual bool hasBackForwardList() const;
         virtual void resetBackForwardList();

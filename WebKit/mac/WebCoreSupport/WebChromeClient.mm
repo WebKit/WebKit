@@ -400,12 +400,24 @@ bool WebChromeClient::tabsToLinks() const
 
 IntRect WebChromeClient::windowResizerRect() const
 {
-    return enclosingIntRect([[m_webView window] _growBoxRect]);
+    NSRect rect = [[m_webView window] _growBoxRect];
+    if ([m_webView _usesDocumentViews])
+        return enclosingIntRect(rect);
+    return enclosingIntRect([m_webView convertRect:rect fromView:nil]);
 }
 
-// Host window methods are really only needed once we have a viewless Mac Webkit.
-void WebChromeClient::repaint(const IntRect&, bool, bool, bool)
+void WebChromeClient::repaint(const IntRect& rect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
+    if ([m_webView _usesDocumentViews])
+        return;
+    
+    if (contentChanged)
+        [m_webView setNeedsDisplayInRect:rect];
+    
+    if (immediate) {
+        [[m_webView window] displayIfNeeded];
+        [[m_webView window] flushWindowIfNeeded];
+    }
 }
 
 void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)
@@ -414,17 +426,27 @@ void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)
 
 IntPoint WebChromeClient::screenToWindow(const IntPoint& p) const
 {
-    return p;
+    if ([m_webView _usesDocumentViews])
+        return p;
+    NSPoint windowCoord = [[m_webView window] convertScreenToBase:p];
+    return IntPoint([m_webView convertPoint:windowCoord fromView:nil]);
 }
 
 IntRect WebChromeClient::windowToScreen(const IntRect& r) const
 {
-    return r;
+    if ([m_webView _usesDocumentViews])
+        return r;
+    NSRect tempRect = r;
+    tempRect = [m_webView convertRect:tempRect toView:nil];
+    tempRect.origin = [[m_webView window] convertBaseToScreen:tempRect.origin];
+    return enclosingIntRect(tempRect);
 }
 
 PlatformWidget WebChromeClient::platformWindow() const
 {
-    return 0;
+    if ([m_webView _usesDocumentViews])
+        return 0;
+    return m_webView;
 }
 // End host window methods.
 

@@ -2936,7 +2936,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
             NSRectFill (rect);
         }
 
-        [[self _frame] _drawRect:rect];
+        [[self _frame] _drawRect:rect contentsOnly:YES];
 
         WebView *webView = [self _webView];
 
@@ -2978,27 +2978,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     double start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    // If count == 0 here, use the rect passed in for drawing. This is a workaround for:
-    // <rdar://problem/3908282> REGRESSION (Mail): No drag image dragging selected text in Blot and Mail
-    // The reason for the workaround is that this method is called explicitly from the code
-    // to generate a drag image, and at that time, getRectsBeingDrawn:count: will return a zero count.
-    const int cRectThreshold = 10;
-    const float cWastedSpaceThreshold = 0.75f;
-    BOOL useUnionedRect = (count <= 1) || (count > cRectThreshold);
-    if (!useUnionedRect) {
-        // Attempt to guess whether or not we should use the unioned rect or the individual rects.
-        // We do this by computing the percentage of "wasted space" in the union.  If that wasted space
-        // is too large, then we will do individual rect painting instead.
-        float unionPixels = (rect.size.width * rect.size.height);
-        float singlePixels = 0;
-        for (int i = 0; i < count; ++i)
-            singlePixels += rects[i].size.width * rects[i].size.height;
-        float wastedSpace = 1 - (singlePixels / unionPixels);
-        if (wastedSpace <= cWastedSpaceThreshold)
-            useUnionedRect = YES;
-    }
-    
-    if (useUnionedRect)
+    if ([[self _webView] _mustDrawUnionedRect:rect singleRects:rects count:count])
         [self drawSingleRect:rect];
     else
         for (int i = 0; i < count; ++i)

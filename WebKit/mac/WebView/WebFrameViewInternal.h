@@ -37,10 +37,6 @@
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view;
 - (NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
 - (void)_setWebFrame:(WebFrame *)webFrame;
-- (int)_marginWidth;
-- (int)_marginHeight;
-- (void)_setMarginWidth:(int)w;
-- (void)_setMarginHeight:(int)h;
 - (float)_verticalPageScrollDistance;
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType;

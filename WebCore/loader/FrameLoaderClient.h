@@ -74,7 +74,6 @@ namespace WebCore {
         virtual void frameLoaderDestroyed() = 0;
         
         virtual bool hasWebView() const = 0; // mainly for assertions
-        virtual bool hasFrameView() const = 0; // ditto
 
         virtual bool hasHTMLView() const { return true; }
 

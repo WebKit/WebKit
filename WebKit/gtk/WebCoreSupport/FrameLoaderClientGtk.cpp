@@ -400,12 +400,6 @@ bool FrameLoaderClient::hasWebView() const
     return true;
 }
 
-bool FrameLoaderClient::hasFrameView() const
-{
-    notImplemented();
-    return true;
-}
-
 void FrameLoaderClient::dispatchDidFinishLoad()
 {
     g_signal_emit_by_name(m_frame, "load-done", true);
@@ -799,19 +793,6 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
 
     if (!frame->ownerElement())
         return;
-
-    HTMLFrameOwnerElement* ownerElement = frame->ownerElement();
-    if (ownerElement->hasTagName(HTMLNames::frameTag) || ownerElement->hasTagName(HTMLNames::iframeTag)) {
-        HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
-        if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
-            frameView->setCanHaveScrollbars(false);
-        int marginWidth = frameElt->getMarginWidth();
-        int marginHeight = frameElt->getMarginHeight();
-        if (marginWidth != -1)
-            frameView->setMarginWidth(marginWidth);
-        if (marginHeight != -1)
-            frameView->setMarginHeight(marginHeight);
-    }
 }
 
 }

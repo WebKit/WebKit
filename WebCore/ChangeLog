@@ -1,3 +1,25 @@
+2008-10-06  David Hyatt  <hyatt@apple.com>
+
+        Enable viewless Mac WebKit to (kinda sorta) paint basic pages (with no frames on them).
+
+        Reviewed by Sam Weinig
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::hasWebView):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::transitionToCommitted):
+        * loader/FrameLoaderClient.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::init):
+        (WebCore::FrameView::layoutIfNeededRecursive):
+        * page/FrameView.h:
+
 2008-10-06  Dan Bernstein  <mitz@apple.com>
 
         - build fix

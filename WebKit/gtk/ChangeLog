@@ -1,3 +1,13 @@
+2008-10-06  David Hyatt  <hyatt@apple.com>
+
+        Enable viewless Mac WebKit to paint some basic pages.
+        
+        Reviewed by Sam Weinig
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2008-10-03  David Hyatt  <hyatt@apple.com>
 
         Fix Gtk bustage from use of containingWindow() over on the WebKit side.  Replace with HostWindow use.

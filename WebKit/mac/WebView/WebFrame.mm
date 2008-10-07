@@ -553,13 +553,18 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return [[[NSString alloc] initWithCharactersNoCopy:buf length:length freeWhenDone:YES] autorelease];
 }
 
-- (void)_drawRect:(NSRect)rect
+- (void)_drawRect:(NSRect)rect contentsOnly:(BOOL)contentsOnly
 {
     PlatformGraphicsContext* platformContext = static_cast<PlatformGraphicsContext*>([[NSGraphicsContext currentContext] graphicsPort]);
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
     GraphicsContext context(platformContext);
     
-    _private->coreFrame->view()->paintContents(&context, enclosingIntRect(rect));
+    if (contentsOnly)
+        _private->coreFrame->view()->paintContents(&context, enclosingIntRect(rect));
+    else {
+        _private->coreFrame->view()->layoutIfNeededRecursive();
+        _private->coreFrame->view()->paint(&context, enclosingIntRect(rect));
+    }
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.

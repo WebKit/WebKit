@@ -1,3 +1,45 @@
+2008-10-06  David Hyatt  <hyatt@apple.com>
+
+        Enable viewless Mac WebKit to paint some basic pages.
+        
+        Reviewed by Sam Weinig
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::windowResizerRect):
+        (WebChromeClient::repaint):
+        (WebChromeClient::screenToWindow):
+        (WebChromeClient::windowToScreen):
+        (WebChromeClient::platformWindow):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::createFrame):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        * WebView/WebFrameViewInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawSingleRect:]):
+        (-[WebHTMLView drawRect:]):
+        * WebView/WebView.mm:
+        (-[WebView isFlipped]):
+        (-[WebView _boundsChanged]):
+        (-[WebView _mustDrawUnionedRect:singleRects:count:]):
+        (-[WebView drawSingleRect:]):
+        (-[WebView drawRect:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView initWithFrame:frameName:groupName:]):
+        (-[WebView _initWithFrame:frameName:groupName:usesDocumentViews:]):
+        (-[WebView initWithCoder:]):
+        (-[WebView removeSizeObservers]):
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewWillMoveToSuperview:]):
+        (-[WebView _usesDocumentViews]):
+        * WebView/WebViewInternal.h:
+
 2008-10-06  Kevin Decker  <kdecker@apple.com>
 
         Rubber-stamped by Anders Carlsson.

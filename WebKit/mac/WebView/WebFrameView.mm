@@ -90,25 +90,10 @@ enum {
 @public
     WebFrame *webFrame;
     WebDynamicScrollBarsView *frameScrollView;
-    
-    // These margin values are used to temporarily hold the margins of a frame until
-    // we have the appropriate document view type.
-    int marginWidth;
-    int marginHeight;
 }
 @end
 
 @implementation WebFrameViewPrivate
-
-- init
-{
-    [super init];
-    
-    marginWidth = -1;
-    marginHeight = -1;
-    
-    return self;
-}
 
 - (void)dealloc
 {
@@ -139,26 +124,6 @@ enum {
 - (WebView *)_webView
 {
     return [_private->webFrame webView];
-}
-
-- (void)_setMarginWidth:(int)w
-{
-    _private->marginWidth = w;
-}
-
-- (int)_marginWidth
-{
-    return _private->marginWidth;
-}
-
-- (void)_setMarginHeight:(int)h
-{
-    _private->marginHeight = h;
-}
-
-- (int)_marginHeight
-{
-    return _private->marginHeight;
 }
 
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view
