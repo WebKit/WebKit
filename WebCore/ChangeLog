@@ -1,3 +1,29 @@
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
+        Add new pseudo-elements and pseudo-classes that will enable scrollbars to be styled by CSS.
+
+        The new pseudo-elements are:
+            scrollbar
+            scrollbar-button
+            scrollbar-corner
+            scrollbar-thumb
+            scrollbar-track
+        
+        These elements will work with all the usual pseudo-classes (:hover, :active, :enabled, :disabled, etc.) and with
+        the following new pseudo-classes:
+            scrollbar-active
+            scrollbar-back
+            scrollbar-forward
+            scrollbar-horizontal
+            scrollbar-vertical
+        
+        Reviewed by Adele
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+
 2008-10-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler, Nikolas Zimmermann and Dave Hyatt.

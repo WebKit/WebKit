@@ -105,6 +105,16 @@ void CSSSelector::extractPseudoType() const
     static AtomicString onlyChild("only-child");
     static AtomicString onlyOfType("only-of-type");
     static AtomicString root("root");
+    static AtomicString scrollbar("-webkit-scrollbar");
+    static AtomicString scrollbarActive("-webkit-scrollbar-active");
+    static AtomicString scrollbarBack("-webkit-scrollbar-back");
+    static AtomicString scrollbarButton("-webkit-scrollbar-button");
+    static AtomicString scrollbarCorner("-webkit-scrollbar-corner");
+    static AtomicString scrollbarForward("-webkit-scrollbar-forward");
+    static AtomicString scrollbarHorizontal("-webkit-scrollbar-horizontal");
+    static AtomicString scrollbarThumb("-webkit-scrollbar-thumb");
+    static AtomicString scrollbarTrack("-webkit-scrollbar-track");
+    static AtomicString scrollbarVertical("-webkit-scrollbar-vertical");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
     static AtomicString searchDecoration("-webkit-search-decoration");
     static AtomicString searchResultsDecoration("-webkit-search-results-decoration");
@@ -113,7 +123,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString sliderThumb("-webkit-slider-thumb");
     static AtomicString target("target");
     static AtomicString visited("visited");
-
+    
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
 
@@ -220,6 +230,31 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoNthLastOfType;
     else if (m_value == root)
         m_pseudoType = PseudoRoot;
+    else if (m_value == scrollbar) {
+        element = true;
+        m_pseudoType = PseudoScrollbar;
+    } else if (m_value == scrollbarActive)
+        m_pseudoType = PseudoScrollbarActive;
+    else if (m_value == scrollbarBack)
+        m_pseudoType = PseudoScrollbarBack;
+    else if (m_value == scrollbarButton) {
+        element = true;
+        m_pseudoType = PseudoScrollbarButton;
+    } else if (m_value == scrollbarCorner) {
+        element = true;
+        m_pseudoType = PseudoScrollbarCorner;
+    } else if (m_value == scrollbarForward)
+        m_pseudoType = PseudoScrollbarForward;
+    else if (m_value == scrollbarHorizontal)
+        m_pseudoType = PseudoScrollbarHorizontal;
+    else if (m_value == scrollbarThumb) {
+        element = true;
+        m_pseudoType = PseudoScrollbarThumb;
+    } else if (m_value == scrollbarTrack) {
+        element = true;
+        m_pseudoType = PseudoScrollbarTrack;
+    } else if (m_value == scrollbarVertical)
+        m_pseudoType = PseudoScrollbarVertical;
     else if (m_value == searchCancelButton) {
         m_pseudoType = PseudoSearchCancelButton;
         element = true;
