@@ -327,7 +327,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         if (platformPluginWidget())
             *(void **)value = platformPluginWidget()->x11Info().display();
         else
-            *(void **)value = containingWindow()->x11Info().display();
+            *(void **)value = m_parentFrame->view()->hostWindow()->platformWindow()->x11Info().display();
         return NPERR_NO_ERROR;                
 
     case NPNVxtAppContext:
@@ -372,7 +372,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
     case NPNVnetscapeWindow: {
         void* w = reinterpret_cast<void*>(value);
-        *((XID *)w) = containingWindow()->winId();
+        *((XID *)w) = m_parentFrame->view()->hostWindow()->platformWindow()->winId();
         return NPERR_NO_ERROR;
     }
 
@@ -455,7 +455,7 @@ void PluginView::init()
     }
 
     if (m_needsXEmbed) {
-        setPlatformWidget(new QX11EmbedContainer(containingWindow()));
+        setPlatformWidget(new QX11EmbedContainer(m_parentFrame->view()->hostWindow()->platformWindow()));
         setIsNPAPIPlugin(true);
     } else {
         notImplemented();

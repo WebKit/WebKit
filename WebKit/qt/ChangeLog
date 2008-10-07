@@ -1,3 +1,10 @@
+2008-10-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        [qt] Build fix after Scrollbar.h and Widget.h changes.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::swallowContextMenuEvent):
+
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Enable viewless Mac WebKit to paint some basic pages.
