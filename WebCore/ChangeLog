@@ -1,3 +1,16 @@
+2008-10-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Don't attempt to paint when updating control tints
+
+        We don't have a valid PlatformGraphicsContext so schedule
+        the dirty scrollbar/scrollview area for repaint instead.
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paint):
+        (WebCore::ScrollbarThemeQt::paintScrollCorner):
+
 2008-10-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         [qt] Build fix after Scrollbar.h and Widget.h changes.
