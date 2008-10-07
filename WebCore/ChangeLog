@@ -1,5 +1,16 @@
 2008-10-06  Jeremy Moskovich  <jeremy@chromium.org>
 
+        Reviewed by Tim Hatcher.
+
+        WebCoreObjCExtras.c is actually an obj-c++ file, so change its name
+        to reflect that.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/WebCoreObjCExtras.c: Removed.
+        * platform/mac/WebCoreObjCExtras.mm: Copied from WebCore/platform/mac/WebCoreObjCExtras.c.
+
+2008-10-06  Jeremy Moskovich  <jeremy@chromium.org>
+
         Reviewed by Dan Bernstein.
         
         Added C++ forward declaration for the NSURLAuthenticationChallenge class

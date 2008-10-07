@@ -3613,6 +3613,7 @@
 		B2FA3E170AB75A6F000E5AC4 /* JSSVGViewElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */; };
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
+		B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00EFFE0E0A185500FD04E3 /* DOMFile.h */; };
 		BC00F0050E0A185500FD04E3 /* DOMFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */; };
 		BC00F0060E0A185500FD04E3 /* DOMFileInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00F0000E0A185500FD04E3 /* DOMFileInternal.h */; };
@@ -4114,7 +4115,6 @@
 		DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */; };
 		DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */; };
 		DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD05FE0E0B8BA3C6009ACDFE /* WebCoreObjCExtras.c in Sources */ = {isa = PBXBuildFile; fileRef = DD05FE0C0B8BA3C6009ACDFE /* WebCoreObjCExtras.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
 		DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */; };
@@ -8149,6 +8149,7 @@
 		B2FA3D2F0AB75A6F000E5AC4 /* JSSVGViewElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGViewElement.h; sourceTree = "<group>"; };
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
+		B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreObjCExtras.mm; sourceTree = "<group>"; };
 		BC00EFFE0E0A185500FD04E3 /* DOMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFile.h; sourceTree = "<group>"; };
 		BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMFile.mm; sourceTree = "<group>"; };
 		BC00F0000E0A185500FD04E3 /* DOMFileInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileInternal.h; sourceTree = "<group>"; };
@@ -8679,7 +8680,6 @@
 		DB23C2C90A508D29002489EB /* IndentOutdentCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IndentOutdentCommand.cpp; sourceTree = "<group>"; };
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
-		DD05FE0C0B8BA3C6009ACDFE /* WebCoreObjCExtras.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = WebCoreObjCExtras.c; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannel.cpp; sourceTree = "<group>"; };
 		E107400C0E77BDC00033AF24 /* JSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageChannel.h; sourceTree = "<group>"; };
@@ -9490,7 +9490,7 @@
 				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
 				934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */,
 				934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */,
-				DD05FE0C0B8BA3C6009ACDFE /* WebCoreObjCExtras.c */,
+				B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */,
 				DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */,
 				93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */,
 				93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */,
@@ -17482,7 +17482,7 @@
 				B25599700D00D8BA00BB825C /* WKTableTransferFilter.m in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */,
-				DD05FE0E0B8BA3C6009ACDFE /* WebCoreObjCExtras.c in Sources */,
+				B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
 				BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
