@@ -504,7 +504,8 @@ sub GetObjCTypeGetter
 
     my $typeGetterMethodName = GetObjCTypeGetterName($type);
 
-    return "nativeResolver" if $type eq "XPathNSResolver";
+    return "WTF::getPtr(nativeEventListener)" if $type eq "EventListener";
+    return "WTF::getPtr(nativeResolver)" if $type eq "XPathNSResolver";
     return "[$argName $typeGetterMethodName]";
 }
 
@@ -653,9 +654,9 @@ sub AddIncludesForType
         return;
     }
 
-    if ($type eq "XPathNSResolver") {
-        $implIncludes{"DOMCustomXPathNSResolver.h"} = 1;
-    }
+    $implIncludes{"ObjCEventListener.h"} = 1 if $type eq "EventListener";
+    $implIncludes{"EventTargetSVGElementInstance.h"} = 1 if $type eq "SVGElementInstance";
+    $implIncludes{"DOMCustomXPathNSResolver.h"} = 1 if $type eq "XPathNSResolver";
 
     # FIXME: won't compile without these
     $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";
@@ -671,11 +672,6 @@ sub GenerateHeader
 {
     my $object = shift;
     my $dataNode = shift;
-
-    # We only support multiple parents with SVG (for now).
-    if (@{$dataNode->parents} > 1) {
-        die "A class can't have more than one parent" unless $module eq "svg";
-    }
 
     my $interfaceName = $dataNode->name;
     my $className = GetClassName($interfaceName);
@@ -995,9 +991,7 @@ sub GenerateImplementation
     my $object = shift;
     my $dataNode = shift;
 
-    # We only support multiple parents with SVG (for now).
     if (@{$dataNode->parents} > 1) {
-        die "A class can't have more than one parent" unless $module eq "svg";
         $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
     }
 
@@ -1292,8 +1286,6 @@ sub GenerateImplementation
         }
     }
 
-    my @deprecatedFunctions = ();
-
     # - Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
@@ -1324,6 +1316,7 @@ sub GenerateImplementation
 
                 push(@parameterNames, $implGetter);
                 $needsCustom{"XPathNSResolver"} = $paramName if $idlType eq "XPathNSResolver";
+                $needsCustom{"EventListener"} = $paramName if $idlType eq "EventListener";
                 $needsCustom{"EventTarget"} = $paramName if $idlType eq "EventTarget";
                 $needsCustom{"NodeToReturn"} = $paramName if $param->extendedAttributes->{"Return"};
 
@@ -1355,7 +1348,7 @@ sub GenerateImplementation
                 push(@functionContent, "            nativeResolver = [(DOMNativeXPathNSResolver *)$paramName _xpathNSResolver];\n");
                 push(@functionContent, "        else {\n");
                 push(@functionContent, "            customResolver = WebCore::DOMCustomXPathNSResolver::create($paramName);\n");
-                push(@functionContent, "            nativeResolver = customResolver.get();\n");
+                push(@functionContent, "            nativeResolver = WTF::getPtr(customResolver);\n");
                 push(@functionContent, "        }\n");
                 push(@functionContent, "    }\n");
             }
@@ -1376,6 +1369,24 @@ sub GenerateImplementation
                 push(@functionContent, "        return nil;\n");
                 $implIncludes{"DOMWindow.h"} = 1;
                 $caller = "dv";
+            }
+
+            if ($function->signature->extendedAttributes->{"EventTargetNodeCast"}) {
+                if ($dataNode->name =~ /^SVG/) {
+                    push(@functionContent, "    if (!$caller->isEventTargetSVGElementInstance())\n");
+                    $caller = "WebCore::EventTargetSVGElementInstanceCast($caller)";
+                } else {
+                    push(@functionContent, "    if (!$caller->isEventTargetNode())\n");
+                    $caller = "WebCore::EventTargetNodeCast($caller)";
+                }
+
+                push(@functionContent, "        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);\n");
+            }
+
+            # special case the EventListener
+            if (defined $needsCustom{"EventListener"}) {
+                my $paramName = $needsCustom{"EventListener"};
+                push(@functionContent, "    RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap($paramName);\n");
             }
 
             # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGLength/MatrixCustom.mm
@@ -1478,10 +1489,10 @@ sub GenerateImplementation
                 my $deprecatedFunctionSig = $functionSig;
                 $deprecatedFunctionSig =~ s/\s\w+:/ :/g; # remove parameter names
 
-                push(@deprecatedFunctions, "$deprecatedFunctionSig\n");
-                push(@deprecatedFunctions, "{\n");
-                push(@deprecatedFunctions, @functionContent);
-                push(@deprecatedFunctions, "}\n\n");
+                push(@implContent, "$deprecatedFunctionSig\n");
+                push(@implContent, "{\n");
+                push(@implContent, @functionContent);
+                push(@implContent, "}\n\n");
             }
 
             # Clear the hash
@@ -1491,14 +1502,6 @@ sub GenerateImplementation
 
     # END implementation
     push(@implContent, "\@end\n");
-
-    if (@deprecatedFunctions > 0) {
-        # - Deprecated category @implementation
-        push(@implContent, "\n\@implementation $className (" . $className . "Deprecated)\n\n");
-        push(@implContent, @deprecatedFunctions);
-        push(@implContent, "\@end\n");
-    }
-
 
     # Generate internal interfaces
     unless ($dataNode->extendedAttributes->{ObjCCustomInternalImpl}) {

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +25,11 @@
  */
 
 module svg {
-    interface [Conditional=SVG, ObjCCustomInternalImpl] SVGElementInstance {
+    interface [Conditional=SVG, ObjCCustomInternalImpl] SVGElementInstance
+#if defined(LANGUAGE_OBJECTIVE_C)
+        : Object, EventTarget
+#endif /* defined(LANGUAGE_OBJECTIVE_C) */
+    {
         readonly attribute SVGElement correspondingElement;
         readonly attribute SVGUseElement correspondingUseElement;
         readonly attribute SVGElementInstance parentNode;

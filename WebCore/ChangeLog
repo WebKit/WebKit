@@ -1,3 +1,45 @@
+2008-10-07  Timothy Hatcher  <timothy@apple.com>
+
+        Auto-generate the DOMEventTarget protocol implementation for
+        DOMNode and DOMSVGElementInstance.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21432
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Add ObjCEventListener.{mm,h}.
+        * bindings/objc/DOM.mm: Remove many unneeded header includes. Move
+        ObjCEventListener to it's own file. Remove the manual impelmentations
+        of the DOMEventTarget protocol for DOMNode and DOMSVGElementInstance.
+        * bindings/objc/DOMEvents.h: Remove the categories that defined
+        DOMEventTarget for DOMNode and DOMSVGElementInstance.
+        * bindings/objc/ObjCEventListener.h: Split out from DOM.mm.
+        * bindings/objc/ObjCEventListener.mm: Split out from DOM.mm.
+        (WebCore::ObjCEventListener::find): Moved from DOM.mm.
+        (WebCore::ObjCEventListener::wrap): Use PassRefPtr to prevent the
+        callers from doing a manual deref.
+        (WebCore::ObjCEventListener::ObjCEventListener): Moved from DOM.mm.
+        (WebCore::ObjCEventListener::~ObjCEventListener): Ditto.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GetObjCTypeGetter): Add a case for EventListener and use WTF::getPtr.
+        (AddIncludesForType): Include ObjCEventListener.h for EventListener.
+        And include EventTargetSVGElementInstance.h for SVGElementInstance.
+        (GenerateHeader): Remove the check for multiple parents.
+        (GenerateImplementation): Remove the check for multiple parents. Remove
+        the @deprecatedFunctions array since deprecated methods get generated
+        into the main @interface now to work with protocols. Add support
+        for the EventTargetNodeCast extended attribute. Add support for
+        EventListener parameters.
+        * dom/Node.idl: Define superclasses for ObjC so the implementation
+        and interface implement the DOMEventTarget protocol. Explicitly
+        specify Object as a superclass to use DOMEventTarget. Object will turn
+        into DOMObject. This is needed to take the code generator down the right
+        path of multiple super-classes as protocols. It is ObjC only for legacy
+        reasons. The event target methods are normally on NodeEventTarget, a
+        subclass of Node. But the ObjC API has never has this subclass and
+        they are on DOMNode.
+        * svg/SVGElementInstance.idl: Ditto.
+
 2008-10-07  David Hyatt  <hyatt@apple.com>
 
         Add new pseudo-elements and pseudo-classes that will enable scrollbars to be styled by CSS.

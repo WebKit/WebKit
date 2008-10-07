@@ -384,6 +384,8 @@
 		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
 		1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CEFC9BA0D78DC8C007D2579 /* SchedulePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */; };
+		1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF6BDF80E9BB26A0025E1CD /* ObjCEventListener.h */; };
+		1CF6BDFB0E9BB26A0025E1CD /* ObjCEventListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF6BDF90E9BB26A0025E1CD /* ObjCEventListener.mm */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
 		1CFCEE960AACC40100348750 /* DOMHTMLBodyElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8D0AACC3CD00348750 /* DOMHTMLBodyElementPrivate.h */; };
 		1CFCEE970AACC40100348750 /* DOMHTMLButtonElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEE8E0AACC3CD00348750 /* DOMHTMLButtonElementPrivate.h */; };
@@ -5074,6 +5076,8 @@
 		1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
 		1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePair.cpp; sourceTree = "<group>"; };
+		1CF6BDF80E9BB26A0025E1CD /* ObjCEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCEventListener.h; sourceTree = "<group>"; };
+		1CF6BDF90E9BB26A0025E1CD /* ObjCEventListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCEventListener.mm; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		1CFCEE7F0AACC3B300348750 /* DOMHTMLAnchorElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAnchorElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEE880AACC3C000348750 /* DOMHTMLAreaElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLAreaElementPrivate.h; sourceTree = "<group>"; };
@@ -12804,6 +12808,8 @@
 				1A1D137F0A5325520064BF5F /* DOMXPath.mm */,
 				148AFDA30AF58360008CC700 /* ExceptionHandlers.h */,
 				148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */,
+				1CF6BDF80E9BB26A0025E1CD /* ObjCEventListener.h */,
+				1CF6BDF90E9BB26A0025E1CD /* ObjCEventListener.mm */,
 				1CAF347E0A6C405200ABE06E /* WebScriptObject.h */,
 				1CAF347F0A6C405200ABE06E /* WebScriptObject.mm */,
 				1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */,
@@ -15964,6 +15970,7 @@
 				1C81BA0C0E97348300266E07 /* JavaScriptDebugListener.h in Headers */,
 				1C81BA0E0E97348300266E07 /* JavaScriptDebugServer.h in Headers */,
 				BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */,
+				1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17827,6 +17834,7 @@
 				1C81BA020E9733CB00266E07 /* JavaScriptProfile.cpp in Sources */,
 				1C81BA090E97348300266E07 /* JavaScriptCallFrame.cpp in Sources */,
 				1C81BA0D0E97348300266E07 /* JavaScriptDebugServer.cpp in Sources */,
+				1CF6BDFB0E9BB26A0025E1CD /* ObjCEventListener.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

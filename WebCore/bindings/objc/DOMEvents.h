@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,12 +39,3 @@
 #import <WebCore/DOMOverflowEvent.h>
 #import <WebCore/DOMUIEvent.h>
 #import <WebCore/DOMWheelEvent.h>
-
-@interface DOMNode (DOMEventTarget) <DOMEventTarget>
-@end
-
-#if ENABLE_SVG
-#import <WebCore/DOMSVGElementInstance.h>
-@interface DOMSVGElementInstance (DOMEventTarget) <DOMEventTarget>
-@end
-#endif
