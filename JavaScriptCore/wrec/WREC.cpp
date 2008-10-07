@@ -568,7 +568,7 @@ void WRECGenerator::generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst 
     failures.append(fail);
 }
 
-WRECGenerator::JmpSrc WRECGenerator::gererateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
+WRECGenerator::JmpSrc WRECGenerator::generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
 {
     JmpSrc skip = m_jit.emitUnlinkedJmp();
 
