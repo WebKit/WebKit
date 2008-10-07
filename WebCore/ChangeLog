@@ -1,5 +1,22 @@
 2008-10-06  Mark Mentovai  <mark@moxienet.com>
 
+        Reviewed by Tim Hatcher.
+
+        Use #if ENABLE(feature) where possible, and #if ENABLE_feature where
+        Platform.h is not available, in preference to #ifdef ENABLE_feature.
+        #ifdef is wrong now that features are disabled by #defining
+        ENABLE_feature to 0.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21338
+
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * dom/Document.idl:
+        * page/DOMWindow.idl:
+        * svg/svgtags.in:
+
+2008-10-06  Mark Mentovai  <mark@moxienet.com>
+
         Reviewed by Sam Weinig.
 
         * platform/network/mac/FormDataStreamMac.mm: #import <wtf/Threading.h>

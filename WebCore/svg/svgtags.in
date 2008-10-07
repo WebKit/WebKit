@@ -11,7 +11,7 @@ altGlyph
 altGlyphDef
 altGlyphItem
 #endif
-#ifdef ENABLE_SVG_ANIMATION
+#if ENABLE_SVG_ANIMATION
 animate
 animateColor
 animateMotion
@@ -30,7 +30,7 @@ definition_src
 defs
 desc
 ellipse
-#ifdef ENABLE_SVG_FILTERS
+#if ENABLE_SVG_FILTERS
 feBlend
 feColorMatrix
 feComponentTransfer
@@ -61,7 +61,7 @@ feTile
 feTurbulence
 filter
 #endif
-#ifdef ENABLE_SVG_FONTS
+#if ENABLE_SVG_FONTS
 font
 font_face
 font_face_format
@@ -69,17 +69,17 @@ font_face_name
 font_face_src
 font_face_uri
 #endif
-#ifdef ENABLE_SVG_FOREIGN_OBJECT
+#if ENABLE_SVG_FOREIGN_OBJECT
 foreignObject
 #endif
 g
-#ifdef ENABLE_SVG_FONTS
+#if ENABLE_SVG_FONTS
 glyph
 #endif
 #if 0
 glyphRef
 #endif
-#ifdef ENABLE_SVG_FONTS
+#if ENABLE_SVG_FONTS
 hkern interfaceName=HKernElement
 #endif
 image
@@ -88,7 +88,7 @@ linearGradient
 marker
 mask
 metadata
-#ifdef ENABLE_SVG_FONTS
+#if ENABLE_SVG_FONTS
 missing_glyph
 #endif
 mpath interfaceName=MPathElement

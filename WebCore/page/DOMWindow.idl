@@ -136,14 +136,14 @@ module window {
                                        in [Optional] boolean authorOnly);
         attribute [Replaceable] double devicePixelRatio;
 
-#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS)
+#if ENABLE_OFFLINE_WEB_APPLICATIONS
         readonly attribute DOMApplicationCache applicationCache;
 #endif    
-#if defined(ENABLE_DATABASE)
+#if ENABLE_DATABASE
         Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize)
             raises(DOMException);
 #endif
-#if defined(ENABLE_DOM_STORAGE)
+#if ENABLE_DOM_STORAGE
         readonly attribute Storage sessionStorage;
         readonly attribute Storage localStorage;
 #endif
@@ -362,25 +362,25 @@ module window {
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
 
-#if defined(ENABLE_DOM_STORAGE)
+#if ENABLE_DOM_STORAGE
         attribute StorageConstructor Storage;
         attribute StorageEventConstructor StorageEvent;
 #endif
 
-#if defined(ENABLE_VIDEO)
+#if ENABLE_VIDEO
         attribute HTMLAudioElementConstructor HTMLAudioElement;
         attribute HTMLMediaElementConstructor HTMLMediaElement;
         attribute HTMLVideoElementConstructor HTMLVideoElement;
         attribute MediaErrorConstructor MediaError;
 #endif
 
-#if defined(ENABLE_XPATH)
+#if ENABLE_XPATH
         attribute XPathEvaluatorConstructor XPathEvaluator;
         attribute XPathResultConstructor XPathResult;
         attribute XPathExceptionConstructor XPathException;
 #endif
 
-#if defined(ENABLE_SVG)
+#if ENABLE_SVG
         attribute SVGAngleConstructor SVGAngle;
         attribute SVGColorConstructor SVGColor;
 //      attribute SVGCSSRuleConstructor SVGCSSRule;
@@ -399,7 +399,7 @@ module window {
 //      attribute SVGZoomAndPanConstructor SVGZoomAndPan;
 #endif
 
-#if defined(ENABLED_SVG_FILTERS)
+#if ENABLE_SVG_FILTERS
         attribute SVGComponentTransferFunctionElementConstructor SVGComponentTransferFunctionElement;
         attribute SVGFEBlendElementConstructor SVGFEBlendElement;
         attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;
