@@ -1,3 +1,35 @@
+2008-10-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Move callframe initialization into JIT code, again.
+        
+        As a part of the restructuring the second result from functions is now
+        returned in edx, allowing the new value of 'r' to be returned via a
+        register, and stored to the stack from JIT code, too.
+
+        4.5% progression on v8-tests. (3% in their harness)
+
+        * VM/CTI.cpp:
+        (JSC::):
+        (JSC::CTI::emitCall):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        * VM/CTI.h:
+        (JSC::CallRecord::CallRecord):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_resolve_func):
+        (JSC::Machine::cti_op_post_inc):
+        (JSC::Machine::cti_op_resolve_with_base):
+        (JSC::Machine::cti_op_post_dec):
+        * VM/Machine.h:
+        * kjs/JSFunction.h:
+        * kjs/ScopeChain.h:
+
 2008-10-07  Mark Rowe  <mrowe@apple.com>
 
         Fix typo in method name.

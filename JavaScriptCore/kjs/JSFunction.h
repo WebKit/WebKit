@@ -38,6 +38,7 @@ namespace JSC {
     class JSGlobalObject;
 
     class JSFunction : public InternalFunction {
+        friend class CTI;
         friend class Machine;
 
         typedef InternalFunction Base;

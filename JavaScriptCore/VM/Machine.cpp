@@ -4235,6 +4235,12 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
         VM_THROW_EXCEPTION_AT_END(); \
         return 0; \
     } while (0)
+#define VM_THROW_EXCEPTION_2() \
+    do { \
+        VM_THROW_EXCEPTION_AT_END(); \
+        VoidPtrPair pair = { (void*)0, (void*)0, }; \
+        return pair; \
+    } while (0)
 #define VM_THROW_EXCEPTION_AT_END() \
     do { \
         ASSERT(ARG_globalData->exception); \
@@ -4264,6 +4270,12 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
         if (UNLIKELY(ARG_globalData->exception != 0)) { \
             VM_THROW_EXCEPTION_AT_END(); \
             return; \
+        } \
+    } while (0)
+#define VM_CHECK_EXCEPTION_2() \
+    do { \
+        if (UNLIKELY(ARG_globalData->exception != 0)) { \
+            VM_THROW_EXCEPTION_2(); \
         } \
     } while (0)
 
@@ -4560,7 +4572,7 @@ JSValue* Machine::cti_op_new_func(CTI_ARGS)
     return ARG_func1->makeFunction(ARG_exec, Machine::scopeChain(ARG_r));
 }
 
-void* Machine::cti_op_call_JSFunction(CTI_ARGS)
+VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
 {
 #ifndef NDEBUG
     CallData callData;
@@ -4576,21 +4588,11 @@ void* Machine::cti_op_call_JSFunction(CTI_ARGS)
     Register* r = slideRegisterWindowForCall(newCodeBlock, ARG_registerFile, ARG_r, ARG_int2, ARG_int3);
     if (UNLIKELY(!r)) {
         ARG_globalData->exception = createStackOverflowError(CallFrame::create(ARG_r));
-        VM_THROW_EXCEPTION();
+        VM_THROW_EXCEPTION_2();
     }
 
-    r[RegisterFile::CodeBlock] = newCodeBlock;
-    r[RegisterFile::ScopeChain] = callDataScopeChain;
-    r[RegisterFile::CallerRegisters] = ARG_r;
-    // RegisterFile::ReturnPC is set by callee
-    // RegisterFile::ReturnValueRegister is set by caller
-    r[RegisterFile::ArgumentCount] = ARG_int3; // original argument count (for the sake of the "arguments" object)
-    r[RegisterFile::Callee] = ARG_src1;
-    r[RegisterFile::OptionalCalleeArguments] = nullJSValue;
-
-    ARG_setR(r);
-
-    return newCodeBlock->ctiCode;
+    VoidPtrPair pair = { newCodeBlock, r };
+    return pair;
 }
 
 void* Machine::cti_vm_compile(CTI_ARGS)
@@ -4742,12 +4744,12 @@ JSValue* Machine::cti_op_resolve(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
+VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
 {
     RegisterFile* registerFile = ARG_registerFile;
     Register* r = ARG_r;
 
-    JSValue* constrVal = ARG_src1;
+    JSFunction* constructor = static_cast<JSFunction*>(ARG_src1);
     JSValue* constrProtoVal = ARG_src2;
     int firstArg = ARG_int3;
     int registerOffset = ARG_int4;
@@ -4755,10 +4757,8 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
 
 #ifndef NDEBUG
     ConstructData constructData;
-    ASSERT(constrVal->getConstructData(constructData) == ConstructTypeJS);
+    ASSERT(ARG_src1->getConstructData(constructData) == ConstructTypeJS);
 #endif
-
-    JSFunction* constructor = static_cast<JSFunction*>(constrVal);
 
     if (*ARG_profilerReference)
         (*ARG_profilerReference)->willExecute(CallFrame::create(r), constructor);
@@ -4779,20 +4779,11 @@ void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     r = slideRegisterWindowForCall(newCodeBlock, registerFile, r, registerOffset, argCount);
     if (UNLIKELY(!r)) {
         ARG_globalData->exception = createStackOverflowError(CallFrame::create(ARG_r));
-        VM_THROW_EXCEPTION();
+        VM_THROW_EXCEPTION_2();
     }
 
-    r[RegisterFile::CodeBlock] = newCodeBlock;
-    r[RegisterFile::ScopeChain] = callDataScopeChain;
-    r[RegisterFile::CallerRegisters] = ARG_r;
-    // RegisterFile::ReturnPC is set by callee
-    // RegisterFile::ReturnValueRegister is set by caller
-    r[RegisterFile::ArgumentCount] = argCount; // original argument count (for the sake of the "arguments" object)
-    r[RegisterFile::Callee] = constructor;
-    r[RegisterFile::OptionalCalleeArguments] = nullJSValue;
-
-    ARG_setR(r);
-    return newCodeBlock->ctiCode;
+    VoidPtrPair pair = { newCodeBlock, r };
+    return pair;
 }
 
 JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
@@ -4864,7 +4855,7 @@ JSValue* Machine::cti_op_get_by_val(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_resolve_func(CTI_ARGS)
+VoidPtrPair Machine::cti_op_resolve_func(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
     Register* r = ARG_r;
@@ -4894,8 +4885,8 @@ JSValue* Machine::cti_op_resolve_func(CTI_ARGS)
             JSValue* result = slot.getValue(exec, ident);
             VM_CHECK_EXCEPTION_AT_END();
 
-            ARG_set2ndResult(result);
-            return thisObj;
+            VoidPtrPair pair = { thisObj, result };
+            return pair;
         }
         ++iter;
     } while (iter != end);
@@ -4904,7 +4895,7 @@ JSValue* Machine::cti_op_resolve_func(CTI_ARGS)
     ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-    VM_THROW_EXCEPTION();
+    VM_THROW_EXCEPTION_2();
 }
 
 JSValue* Machine::cti_op_sub(CTI_ARGS)
@@ -5138,16 +5129,17 @@ int SFX_CALL Machine::cti_op_jtrue(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_post_inc(CTI_ARGS)
+VoidPtrPair Machine::cti_op_post_inc(CTI_ARGS)
 {
     JSValue* v = ARG_src1;
 
     ExecState* exec = ARG_exec;
 
     JSValue* number = v->toJSNumber(exec);
-    VM_CHECK_EXCEPTION();
-    ARG_set2ndResult(jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1));
-    return number;
+    VM_CHECK_EXCEPTION_2();
+
+    VoidPtrPair pair = { number, jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1) };
+    return pair;
 }
 
 JSValue* Machine::cti_op_eq(CTI_ARGS)
@@ -5229,7 +5221,7 @@ JSValue* Machine::cti_op_bitnot(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_resolve_with_base(CTI_ARGS)
+VoidPtrPair Machine::cti_op_resolve_with_base(CTI_ARGS)
 {
     ExecState* exec = ARG_exec;
     Register* r = ARG_r;
@@ -5250,8 +5242,9 @@ JSValue* Machine::cti_op_resolve_with_base(CTI_ARGS)
         if (base->getPropertySlot(exec, ident, slot)) {
             JSValue* result = slot.getValue(exec, ident);
             VM_CHECK_EXCEPTION_AT_END();
-            ARG_set2ndResult(result);
-            return base;
+
+            VoidPtrPair pair = { base, result };
+            return pair;
         }
         ++iter;
     } while (iter != end);
@@ -5260,7 +5253,7 @@ JSValue* Machine::cti_op_resolve_with_base(CTI_ARGS)
     ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
     unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
     exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
-    VM_THROW_EXCEPTION();
+    VM_THROW_EXCEPTION_2();
 }
 
 JSValue* Machine::cti_op_new_func_exp(CTI_ARGS)
@@ -5301,17 +5294,17 @@ JSValue* Machine::cti_op_neq(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_post_dec(CTI_ARGS)
+VoidPtrPair Machine::cti_op_post_dec(CTI_ARGS)
 {
     JSValue* v = ARG_src1;
 
     ExecState* exec = ARG_exec;
 
     JSValue* number = v->toJSNumber(exec);
-    VM_CHECK_EXCEPTION();
+    VM_CHECK_EXCEPTION_2();
 
-    ARG_set2ndResult(jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1));
-    return number;
+    VoidPtrPair pair = { number, jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1) };
+    return pair;
 }
 
 JSValue* Machine::cti_op_urshift(CTI_ARGS)

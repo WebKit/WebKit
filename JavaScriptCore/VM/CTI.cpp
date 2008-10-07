@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "JSArray.h"
+#include "JSFunction.h"
 #include "Machine.h"
 #include "wrec/WREC.h"
 #include "ResultType.h"
@@ -82,6 +83,7 @@ asm(
     "pushl %edi" "\n"
     "subl $0x24, %esp" "\n"
     "movl $512, %esi" "\n"
+    "movl 0x38(%esp), %edi" "\n" // Ox38 = 0x0E * 4, 0x0E = CTI_ARGS_r
     "call *0x30(%esp)" "\n" // Ox30 = 0x0C * 4, 0x0C = CTI_ARGS_code
     "addl $0x24, %esp" "\n"
     "popl %edi" "\n"
@@ -111,6 +113,7 @@ extern "C" {
             sub esp, 0x24;
             mov esi, 512;
             mov [esp], esp;
+            mov edi, [esp + 0x38];
             call [esp + 0x30];
             add esp, 0x24;
             pop edi;
@@ -362,6 +365,21 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper
     return call;
 }
 
+ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCall(unsigned opcodeIndex, CTIHelper_2 helper)
+{
+#if ENABLE(SAMPLING_TOOL)
+    m_jit.movl_i32m(1, &inCalledCode);
+#endif
+    m_jit.emitRestoreArgumentReference();
+    X86Assembler::JmpSrc call = m_jit.emitCall();
+    m_calls.append(CallRecord(call, helper, opcodeIndex));
+#if ENABLE(SAMPLING_TOOL)
+    m_jit.movl_i32m(0, &inCalledCode);
+#endif
+
+    return call;
+}
+
 ALWAYS_INLINE void CTI::emitJumpSlowCaseIfNotJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex)
 {
     m_jit.testl_i32r(JSImmediate::TagMask, reg);
@@ -460,9 +478,23 @@ CTI::CTI(Machine* machine, ExecState* exec, CodeBlock* codeBlock)
 OpcodeID currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif
 
+void CTI::compileOpCallInitializeCallFrame(unsigned callee, unsigned argCount)
+{
+    emitGetArg(callee, X86::ecx); // Load callee JSFunction into ecx
+    m_jit.movl_rm(X86::eax, RegisterFile::CodeBlock * static_cast<int>(sizeof(Register)), X86::edx); // callee CodeBlock was returned in eax
+    m_jit.movl_i32m(reinterpret_cast<unsigned>(nullJSValue), RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edx);
+    m_jit.movl_rm(X86::ecx, RegisterFile::Callee * static_cast<int>(sizeof(Register)), X86::edx);
+
+    m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_scopeChain) + OBJECT_OFFSET(ScopeChain, m_node), X86::ecx, X86::ecx); // newScopeChain
+    m_jit.movl_i32m(argCount, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)), X86::edx);
+    m_jit.movl_rm(X86::edi, RegisterFile::CallerRegisters * static_cast<int>(sizeof(Register)), X86::edx);
+    m_jit.movl_rm(X86::ecx, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)), X86::edx);
+}
+
 void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type)
 {
     int dst = instruction[i + 1].u.operand;
+    int callee = instruction[i + 2].u.operand;
     int firstArg = instruction[i + 4].u.operand;
     int argCount = instruction[i + 5].u.operand;
     int registerOffset = instruction[i + 6].u.operand;
@@ -493,19 +525,17 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
 
     X86Assembler::JmpSrc wasEval;
     if (type == OpCallEval) {
-        emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+        emitGetPutArg(callee, 0, X86::ecx);
         emitCall(i, Machine::cti_op_call_eval);
-
-        emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
 
         m_jit.cmpl_i32r(reinterpret_cast<unsigned>(JSImmediate::impossibleValue()), X86::eax);
         wasEval = m_jit.emitUnlinkedJne();
 
         // this sets up the first arg to op_cti_call (func), and explicitly leaves the value in ecx (checked just below).
-        emitGetArg(instruction[i + 2].u.operand, X86::ecx);
+        emitGetArg(callee, X86::ecx);
     } else {
         // this sets up the first arg to op_cti_call (func), and explicitly leaves the value in ecx (checked just below).
-        emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+        emitGetPutArg(callee, 0, X86::ecx);
     }
 
     // Fast check for JS function.
@@ -522,7 +552,16 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
     m_jit.link(isJSFunction, m_jit.label());
 
     // This handles JSFunctions
-    emitCall(i, ((type == OpConstruct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction));
+    emitCall(i, (type == OpConstruct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction);
+
+    compileOpCallInitializeCallFrame(callee, argCount);
+
+    // load ctiCode from the new codeBlock.
+    m_jit.movl_mr(OBJECT_OFFSET(CodeBlock, ctiCode), X86::eax, X86::eax);
+
+    // Setup the new value of 'r' in edi, and on the stack, too.
+    emitPutCTIParam(X86::edx, CTI_ARGS_r);
+    m_jit.movl_rr(X86::edx, X86::edi);
 
     // Check the ctiCode has been generated - if not, this is handled in a slow case.
     m_jit.testl_rr(X86::eax, X86::eax);
@@ -1279,8 +1318,7 @@ void CTI::privateCompileMainPass()
             emitPutArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCall(i, Machine::cti_op_resolve_func);
             emitPutResult(instruction[i + 1].u.operand);
-            emitGetCTIParam(CTI_ARGS_2ndResult, X86::eax);
-            emitPutResult(instruction[i + 2].u.operand);
+            emitPutResult(instruction[i + 2].u.operand, X86::edx);
             i += 4;
             break;
         }
@@ -1564,8 +1602,7 @@ void CTI::privateCompileMainPass()
             emitPutArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCall(i, Machine::cti_op_resolve_with_base);
             emitPutResult(instruction[i + 1].u.operand);
-            emitGetCTIParam(CTI_ARGS_2ndResult, X86::eax);
-            emitPutResult(instruction[i + 2].u.operand);
+            emitPutResult(instruction[i + 2].u.operand, X86::edx);
             i += 4;
             break;
         }
@@ -2327,8 +2364,7 @@ void CTI::privateCompileSlowCases()
             emitPutArg(X86::eax, 0);
             emitCall(i, Machine::cti_op_post_inc);
             emitPutResult(instruction[i + 1].u.operand);
-            emitGetCTIParam(CTI_ARGS_2ndResult, X86::eax);
-            emitPutResult(srcDst);
+            emitPutResult(srcDst, X86::edx);
             i += 3;
             break;
         }
@@ -2383,8 +2419,7 @@ void CTI::privateCompileSlowCases()
             emitPutArg(X86::eax, 0);
             emitCall(i, Machine::cti_op_post_dec);
             emitPutResult(instruction[i + 1].u.operand);
-            emitGetCTIParam(CTI_ARGS_2ndResult, X86::eax);
-            emitPutResult(srcDst);
+            emitPutResult(srcDst, X86::edx);
             i += 3;
             break;
         }
@@ -2499,7 +2534,6 @@ void CTI::privateCompile()
 {
     // Could use a popl_m, but would need to offset the following instruction if so.
     m_jit.popl_r(X86::ecx);
-    emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
     emitPutToCallFrameHeader(X86::ecx, RegisterFile::ReturnPC);
 
     privateCompileMainPass();

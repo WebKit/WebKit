@@ -153,6 +153,7 @@ namespace JSC {
     class NoScopeChain {};
 
     class ScopeChain {
+        friend class CTI;
     public:
         ScopeChain(NoScopeChain)
             : m_node(0)
