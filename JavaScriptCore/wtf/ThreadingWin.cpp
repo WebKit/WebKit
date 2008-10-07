@@ -69,7 +69,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(PTHREADS)
 // Currently, Apple's Windows port uses a mixture of native and pthreads functions in FastMalloc.
 // To ensure that thread-specific data is properly destroyed, we need to end each thread with pthread_exit().
 #include <pthread.h>
@@ -168,7 +168,7 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
 
     void* result = invocation.function(invocation.data);
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(PTHREADS)
     // pthreads-win32 knows how to work with threads created with Win32 or CRT functions, so it's OK to mix APIs.
     pthread_exit(result);
 #endif
@@ -429,7 +429,7 @@ void ThreadCondition::broadcast()
 {
     unsigned signals = 0;
 
-    WORD res = ::WaitForSingleObject(m_condition.m_mutex, INFINITE);
+    DWORD res = ::WaitForSingleObject(m_condition.m_mutex, INFINITE);
     ASSERT(res == WAIT_OBJECT_0);
 
     if (m_condition.m_waitingForRemoval != 0) { // the m_gate is already closed
