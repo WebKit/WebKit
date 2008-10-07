@@ -1,3 +1,12 @@
+2008-10-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler, Nikolas Zimmermann and Dave Hyatt.
+        
+        svgElement.className.baseValue = "foo" doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=20651
+
+        * svg/custom/class-baseValue.svg: Added.
+
 2008-10-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
