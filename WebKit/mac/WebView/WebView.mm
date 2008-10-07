@@ -584,9 +584,11 @@ static CFMutableSetRef allWebViewsSet;
 
 - (void)viewWillDraw
 {
-    Frame* frame = core([self mainFrame]);
-    if (frame && frame->view())
-        frame->view()->layoutIfNeededRecursive();
+    if (!_private->useDocumentViews) {
+        Frame* frame = core([self mainFrame]);
+        if (frame && frame->view())
+            frame->view()->layoutIfNeededRecursive();
+    }
     [super viewWillDraw];
 }
 

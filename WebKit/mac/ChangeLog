@@ -1,5 +1,14 @@
 2008-10-07  David Hyatt  <hyatt@apple.com>
 
+        Make sure viewless Mac WebKit does a layout if needed before drawing.
+
+        Reviewed by Sam Weinig
+
+        * WebView/WebView.mm:
+        (-[WebView viewWillDraw]):
+
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
         Make sure observers get hooked up to watch for size changes in viewless WebKit mode.
 
         Reviewed by Sam Weinig
