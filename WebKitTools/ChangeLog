@@ -1,3 +1,16 @@
+2008-10-07  Adam Roben  <aroben@apple.com>
+
+        Make sure short functions get included in ChangeLog output for git
+        repositories
+
+        Reviewed by Dave Kilzer.
+
+        * Scripts/prepare-ChangeLog:
+        (sub diffCommand): Pass -U0 to git diff so that each contiguous change
+        will get its own chunk without any surrounding context.
+        (sub extractLineRange): Use the line numbers from the chunk header
+        without modifying them now that they're accurate.
+
 2008-10-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

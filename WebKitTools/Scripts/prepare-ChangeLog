@@ -947,7 +947,7 @@ sub diffCommand(@)
     if ($isSVN) {
         $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
     } elsif ($isGit) {
-        $command = "$GIT diff " . diffFromToString();
+        $command = "$GIT diff -U0 " . diffFromToString();
         $command .= " -- $pathsString" unless $gitCommit;
     }
 
@@ -1156,18 +1156,9 @@ sub extractLineRange($)
     if ($isSVN && $string =~ /^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
         $start = $2;
         $end = $4 || $2;
-    } elsif ($isGit && $string =~ /^@@ -\d+,\d+ \+(\d+),(\d+) @@/) {
-        $start = $1;
-        $end = $1 + $2 - 1;
-
-        # git-diff shows 3 lines of context above and below the actual changes,
-        # so we need to subtract that context to find the actual changed range.
-
-        # FIXME: This won't work if there's a change at the very beginning or
-        # very end of a file.
-
-        $start += 3;
-        $end -= 6;
+    } elsif ($isGit && $string =~ /^@@ -\d+(,\d+)? \+(\d+)(,(\d+))? @@/) {
+        $start = $2;
+        $end = defined($4) ? $4 + $2 - 1 : $2;
     }
 
     return ($start, $end);
