@@ -1,3 +1,14 @@
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=18989
+
+        Remove global substitution from SunSpider regexp test, since only Firefox was honoring it and
+        we want all browsers to be doing the same thing on the test.
+
+        Reviewed by Maciej
+
+        * tests/regexp-dna.js:
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Maciej Stachowiak.
