@@ -1797,35 +1797,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     [self _cancelUpdateFocusedAndActiveStateTimer];
 
-    // This method does the job of updating the view based on the view's firstResponder-ness and
-    // the window key-ness of the window containing this view. This involves four kinds of 
-    // drawing updates right now. 
-    // 
-    // The four display attributes are as follows:
-    // 
-    // 1. The background color used to draw behind selected content (active | inactive color)
-    // 2. Caret blinking (blinks | does not blink)
-    // 3. The drawing of a focus ring around links in web pages.
-    //
-    // Also, this is responsible for letting the bridge know if the window has gained or lost focus
-    // so we can send focus and blur events.
-
-    Frame* frame = core([self _frame]);
-    if (!frame)
-        return;
-    
-    Page* page = frame->page();
-    if (!page)
-        return;
-
-    NSWindow *window = [self window];
-    BOOL windowIsKey = [window isKeyWindow];
-    BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
-
-    page->focusController()->setActive(windowIsKey);
-
-    Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
-    frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
+    [[self _webView] _updateFocusedAndActiveStateForFrame:[self _frame]];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard

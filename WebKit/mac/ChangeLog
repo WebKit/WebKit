@@ -1,5 +1,23 @@
 2008-10-07  David Hyatt  <hyatt@apple.com>
 
+        Make viewless WebKit update focused and active state when the window becomes and loses key.
+        The focus controller has been patched to understand that in viewless mode it can recur down and
+        update all of the frames, which is why this code works now when placed just on the WebView.
+
+        Reviewed by Adam Roben
+
+        * WebView/WebView.mm:
+        (-[WebView addWindowObservers]):
+        (-[WebView removeWindowObservers]):
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewDidMoveToWindow]):
+        (-[WebView _updateFocusedAndActiveState]):
+        (-[WebView _windowDidBecomeKey:]):
+        (-[WebView _windowDidResignKey:]):
+        (-[WebView _windowWillOrderOnScreen:]):
+
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
         Make sure the parent visibility state is set up properly on the outermost ScrollView widget.
         This fixes the repainting issues with viewless WebKit on Mac.
 

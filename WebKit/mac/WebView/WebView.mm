@@ -98,6 +98,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/ExceptionHandlers.h>
+#import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
@@ -2265,6 +2266,32 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     }
 }
 
+- (void)addWindowObservers
+{
+    NSWindow *window = [self window];
+    if (!_private->useDocumentViews && window) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidBecomeKey:)
+            name:NSWindowDidBecomeKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResignKey:)
+            name:NSWindowDidResignKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
+            name:WKWindowWillOrderOnScreenNotification() object:window];
+    }
+}
+
+- (void)removeWindowObservers
+{
+    NSWindow *window = [self window];
+    if (!_private->useDocumentViews && window) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidBecomeKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowDidResignKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:WKWindowWillOrderOnScreenNotification() object:window];
+    }
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     // Don't do anything if the WebView isn't initialized.
@@ -2281,13 +2308,14 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
     if (window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:window];
-
+         
         // Ensure that we will receive the events that WebHTMLView (at least) needs.
         // The following are expensive enough that we don't want to call them over
         // and over, so do them when we move into a window.
         [window setAcceptsMouseMovedEvents:YES];
         WKSetNSWindowShouldPostEventNotifications(window, YES);
         
+        [self removeWindowObservers];
         [self removeSizeObservers];
     }
 }
@@ -2301,8 +2329,59 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     if (!_private || _private->closed)
         return;
         
-    if ([self window])
+    if ([self window]) {
+        [self addWindowObservers];
         [self addSizeObservers];
+    }
+}
+
+- (void)_updateFocusedAndActiveState
+{
+    ASSERT(!_private->useDocumentViews);
+    [self _updateFocusedAndActiveStateForFrame:[self mainFrame]];
+}
+
+- (void)_updateFocusedAndActiveStateForFrame:(WebFrame *)webFrame
+{
+    Frame* frame = core(webFrame);
+    if (!frame)
+        return;
+    
+    Page* page = frame->page();
+    if (!page)
+        return;
+
+    NSWindow *window = [self window];
+    BOOL windowIsKey = [window isKeyWindow];
+    BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
+
+    page->focusController()->setActive(windowIsKey);
+
+    Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
+}
+
+- (void)_windowDidBecomeKey:(NSNotification *)notification
+{
+    ASSERT(!_private->useDocumentViews);
+    NSWindow *keyWindow = [notification object];
+    if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
+        [self _updateFocusedAndActiveState];
+}
+
+- (void)_windowDidResignKey:(NSNotification *)notification
+{
+    ASSERT(!_private->useDocumentViews);
+    NSWindow *formerKeyWindow = [notification object];
+    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
+        [self _updateFocusedAndActiveState];
+}
+
+- (void)_windowWillOrderOnScreen:(NSNotification *)notification
+{
+    ASSERT(!_private->useDocumentViews);
+    if (![self shouldUpdateWhileOffscreen])
+        [self setNeedsDisplay:YES];
 }
 
 - (void)_windowWillClose:(NSNotification *)notification
