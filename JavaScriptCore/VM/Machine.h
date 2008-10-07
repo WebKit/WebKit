@@ -235,7 +235,7 @@ namespace JSC {
 
         static void* SFX_CALL cti_vm_throw(CTI_ARGS);
         static void* SFX_CALL cti_vm_compile(CTI_ARGS);
-        static void SFX_CALL cti_op_push_activation(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_push_activation(CTI_ARGS);
         
 #endif // ENABLE(CTI)
 
@@ -324,7 +324,6 @@ namespace JSC {
         callFrame[RegisterFile::ReturnValueRegister] = returnValueRegister;
         callFrame[RegisterFile::ArgumentCount] = argc; // original argument count (for the sake of the "arguments" object)
         callFrame[RegisterFile::Callee] = function;
-        callFrame[RegisterFile::OptionalCalleeActivation] = nullJSValue;
         callFrame[RegisterFile::OptionalCalleeArguments] = nullJSValue;
     }
 

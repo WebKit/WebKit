@@ -287,20 +287,25 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     if (m_shouldEmitDebugHooks)
         m_codeBlock->needsFullScopeChain = true;
 
-    if (m_codeBlock->needsFullScopeChain)
-        emitOpcode(op_enter_with_activation);
-    else
-        emitOpcode(op_enter);
-
     codeBlock->globalData = m_globalData;
 
     bool usesArguments = functionBody->usesArguments();
     codeBlock->usesArguments = usesArguments;
     if (usesArguments) {
-        emitOpcode(op_create_arguments);
         m_argumentsRegister.setIndex(RegisterFile::OptionalCalleeArguments);
         addVar(propertyNames().arguments, false);
     }
+
+    if (m_codeBlock->needsFullScopeChain) {
+        ++m_codeBlock->numVars;
+        m_activationRegisterIndex = newRegister()->index();
+        emitOpcode(op_enter_with_activation);
+        instructions().append(m_activationRegisterIndex);
+    } else
+        emitOpcode(op_enter);
+
+    if (usesArguments)
+        emitOpcode(op_create_arguments);
 
     const Node::FunctionStack& functionStack = functionBody->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i) {
@@ -1160,9 +1165,10 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
 
 RegisterID* CodeGenerator::emitReturn(RegisterID* src)
 {
-    if (m_codeBlock->needsFullScopeChain)
+    if (m_codeBlock->needsFullScopeChain) {
         emitOpcode(op_tear_off_activation);
-    else if (m_codeBlock->usesArguments)
+        instructions().append(m_activationRegisterIndex);
+    } else if (m_codeBlock->usesArguments)
         emitOpcode(op_tear_off_arguments);
 
     return emitUnaryNoDstOp(op_ret, src);

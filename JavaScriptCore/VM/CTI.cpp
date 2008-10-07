@@ -1171,8 +1171,9 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_tear_off_activation: {
+            emitGetPutArg(instruction[i + 1].u.operand, 0, X86::ecx);
             emitCall(i, Machine::cti_op_tear_off_activation);
-            i += 1;
+            i += 2;
             break;
         }
         case op_tear_off_arguments: {
@@ -1941,8 +1942,6 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_enter_with_activation: {
-            emitCall(i, Machine::cti_op_push_activation);
-
             // Even though CTI doesn't use them, we initialize our constant
             // registers to zap stale pointers, to avoid unnecessarily prolonging
             // object lifetime and increasing GC pressure.
@@ -1950,7 +1949,10 @@ void CTI::privateCompileMainPass()
             for (size_t j = 0; j < count; ++j)
                 emitInitRegister(j);
 
-            i+= 1;
+            emitCall(i, Machine::cti_op_push_activation);
+            emitPutResult(instruction[i + 1].u.operand);
+
+            i+= 2;
             break;
         }
         case op_create_arguments: {

@@ -420,6 +420,7 @@ namespace JSC {
         HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
         RegisterID m_argumentsRegister;
+        int m_activationRegisterIndex;
         SegmentedVector<RegisterID, 512> m_calleeRegisters;
         SegmentedVector<RegisterID, 512> m_parameters;
         SegmentedVector<RegisterID, 512> m_globals;
