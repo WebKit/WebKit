@@ -2,6 +2,31 @@
 
         Reviewed by Cameron Zwarich.
 
+        Move hasGetterSetterProperties flag from PropertyMap to StructureID.
+
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        * kjs/JSObject.h:
+        (JSC::JSObject::hasGetterSetterProperties):
+        (JSC::JSObject::getOwnPropertySlotForWrite):
+        (JSC::JSObject::getOwnPropertySlot):
+        * kjs/PropertyMap.h:
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::addPropertyTransition):
+        (JSC::StructureID::toDictionaryTransition):
+        (JSC::StructureID::changePrototypeTransition):
+        (JSC::StructureID::getterSetterTransition):
+        * kjs/StructureID.h:
+        (JSC::StructureID::hasGetterSetterProperties):
+        (JSC::StructureID::setHasGetterSetterProperties):
+
+2008-10-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
         Roll r37370 back in with bug fixes.
 
         - PropertyMap::storageSize() should reflect the number of keys + deletedOffsets

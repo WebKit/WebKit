@@ -124,6 +124,9 @@ namespace JSC {
         void getEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
         void clearEnumerationCache();
 
+        bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
+        void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
+
     private:
         typedef std::pair<RefPtr<UString::Rep>, unsigned> TransitionTableKey;
         typedef HashMap<TransitionTableKey, StructureID*, TransitionTableHash, TransitionTableHashTraits> TransitionTable;
@@ -135,6 +138,8 @@ namespace JSC {
         TypeInfo m_typeInfo;
 
         bool m_isDictionary;
+
+        bool m_hasGetterSetterProperties;
 
         JSValue* m_prototype;
         RefPtr<StructureIDChain> m_cachedPrototypeChain;

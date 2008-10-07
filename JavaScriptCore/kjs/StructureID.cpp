@@ -39,6 +39,7 @@ namespace JSC {
 StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
     , m_isDictionary(false)
+    , m_hasGetterSetterProperties(false)
     , m_prototype(prototype)
     , m_cachedPrototypeChain(0)
     , m_previous(0)
@@ -138,6 +139,7 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
     transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
+    transition->m_hasGetterSetterProperties = structureID->m_hasGetterSetterProperties;
 
     offset = transition->m_propertyMap.put(propertyName, attributes);
     if (transition->m_propertyMap.storageSize() > transition->propertyStorageCapacity())
@@ -157,6 +159,7 @@ PassRefPtr<StructureID> StructureID::toDictionaryTransition(StructureID* structu
     transition->m_isDictionary = true;
     transition->m_propertyMap = structureID->m_propertyMap;
     transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
+    transition->m_hasGetterSetterProperties = structureID->m_hasGetterSetterProperties;
     return transition.release();
 }
 
@@ -177,6 +180,7 @@ PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* stru
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
     transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
+    transition->m_hasGetterSetterProperties = structureID->m_hasGetterSetterProperties;
     return transition.release();
 }
 
@@ -186,6 +190,7 @@ PassRefPtr<StructureID> StructureID::getterSetterTransition(StructureID* structu
     transition->m_transitionCount = structureID->m_transitionCount + 1;
     transition->m_propertyMap = structureID->m_propertyMap;
     transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
+    transition->m_hasGetterSetterProperties = transition->m_hasGetterSetterProperties;
     return transition.release();
 }
 

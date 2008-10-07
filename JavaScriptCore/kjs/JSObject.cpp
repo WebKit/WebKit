@@ -125,7 +125,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
     
     // Check if there are any setters or getters in the prototype chain
     JSValue* prototype;
-    for (JSObject* obj = this; !obj->structureID()->propertyMap().hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
+    for (JSObject* obj = this; !obj->structureID()->hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
         prototype = obj->prototype();
         if (prototype->isNull()) {
             putDirect(propertyName, value, 0, true, slot);
@@ -292,7 +292,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
 {
     JSValue* object = getDirect(propertyName);
     if (object && object->isGetterSetter()) {
-        ASSERT(m_structureID->propertyMap().hasGetterSetterProperties());
+        ASSERT(m_structureID->hasGetterSetterProperties());
         GetterSetter* getterSetter = static_cast<GetterSetter*>(object);
         getterSetter->setGetter(getterFunction);
         return;
@@ -312,7 +312,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
         }
     }
 
-    m_structureID->propertyMap().setHasGetterSetterProperties(true);
+    m_structureID->setHasGetterSetterProperties(true);
     getterSetter->setGetter(getterFunction);
 }
 
@@ -320,7 +320,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
 {
     JSValue* object = getDirect(propertyName);
     if (object && object->isGetterSetter()) {
-        ASSERT(m_structureID->propertyMap().hasGetterSetterProperties());
+        ASSERT(m_structureID->hasGetterSetterProperties());
         GetterSetter* getterSetter = static_cast<GetterSetter*>(object);
         getterSetter->setSetter(setterFunction);
         return;
@@ -340,7 +340,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
         }
     }
 
-    m_structureID->propertyMap().setHasGetterSetterProperties(true);
+    m_structureID->setHasGetterSetterProperties(true);
     getterSetter->setSetter(setterFunction);
 }
 

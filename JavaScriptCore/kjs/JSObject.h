@@ -152,7 +152,7 @@ namespace JSC {
 
         void removeDirect(const Identifier& propertyName);
         bool hasCustomProperties() { return !m_structureID->propertyMap().isEmpty(); }
-        bool hasGetterSetterProperties() { return m_structureID->propertyMap().hasGetterSetterProperties(); }
+        bool hasGetterSetterProperties() { return m_structureID->hasGetterSetterProperties(); }
 
         void putDirect(const Identifier& propertyName, JSValue* value, unsigned attr = 0);
         void putDirect(const Identifier& propertyName, JSValue* value, unsigned attr, bool checkReadOnly, PutPropertySlot& slot);
@@ -313,7 +313,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
 {
     unsigned attributes;
     if (JSValue** location = getDirectLocation(propertyName, attributes)) {
-        if (m_structureID->propertyMap().hasGetterSetterProperties() && location[0]->isGetterSetter()) {
+        if (m_structureID->hasGetterSetterProperties() && location[0]->isGetterSetter()) {
             slotIsWriteable = false;
             fillGetterPropertySlot(slot, location);
         } else {
@@ -339,7 +339,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (JSValue** location = getDirectLocation(propertyName)) {
-        if (m_structureID->propertyMap().hasGetterSetterProperties() && location[0]->isGetterSetter())
+        if (m_structureID->hasGetterSetterProperties() && location[0]->isGetterSetter())
             fillGetterPropertySlot(slot, location);
         else
             slot.setValueSlot(this, location, offsetForLocation(location));
