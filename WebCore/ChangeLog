@@ -1,3 +1,10 @@
+2008-10-06  Mark Mentovai  <mark@moxienet.com>
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/mac/FormDataStreamMac.mm: #import <wtf/Threading.h>
+        to get the declaration for isMainThread().
+
 2008-10-06  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Tim Hatcher.

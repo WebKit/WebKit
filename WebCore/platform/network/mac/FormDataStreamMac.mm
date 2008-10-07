@@ -42,6 +42,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/HashMap.h>
 #import <wtf/MainThread.h>
+#import <wtf/Threading.h>
 
 namespace WebCore {
 
