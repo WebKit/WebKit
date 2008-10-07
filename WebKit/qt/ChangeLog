@@ -1,3 +1,9 @@
+2008-10-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        QtWebKit build fix after changes to FrameLoaderClient.h in r37371
+
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2008-10-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         [qt] Build fix after Scrollbar.h and Widget.h changes.

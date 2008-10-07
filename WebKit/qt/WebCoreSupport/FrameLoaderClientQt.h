@@ -77,7 +77,6 @@ namespace WebCore {
         QWebFrame* webFrame() const;
 
         virtual bool hasWebView() const; // mainly for assertions
-        virtual bool hasFrameView() const; // ditto
 
         virtual void makeRepresentation(DocumentLoader*);
         virtual void forceLayout();
