@@ -1,3 +1,9 @@
+2008-10-06  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * bindings/objc/DOMEvents.h:
+
 2008-10-06  Mark Mentovai  <mark@moxienet.com>
 
         Reviewed by Tim Hatcher.

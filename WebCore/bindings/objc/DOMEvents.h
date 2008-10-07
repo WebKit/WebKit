@@ -43,7 +43,7 @@
 @interface DOMNode (DOMEventTarget) <DOMEventTarget>
 @end
 
-#if ENABLE(SVG)
+#if ENABLE_SVG
 #import <WebCore/DOMSVGElementInstance.h>
 @interface DOMSVGElementInstance (DOMEventTarget) <DOMEventTarget>
 @end
