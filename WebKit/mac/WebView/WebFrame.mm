@@ -561,10 +561,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     
     if (contentsOnly)
         _private->coreFrame->view()->paintContents(&context, enclosingIntRect(rect));
-    else {
-        _private->coreFrame->view()->layoutIfNeededRecursive();
+    else
         _private->coreFrame->view()->paint(&context, enclosingIntRect(rect));
-    }
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.

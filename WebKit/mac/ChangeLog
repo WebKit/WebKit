@@ -1,3 +1,30 @@
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
+        Make sure observers get hooked up to watch for size changes in viewless WebKit mode.
+
+        Reviewed by Sam Weinig
+
+        * ChangeLog:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebView.mm:
+        (-[WebView viewWillDraw]):
+        (-[WebView _boundsChanged]):
+        (-[WebView addSizeObservers]):
+        (-[WebView viewDidMoveToWindow]):
+        (-[WebView viewDidMoveToSuperview]):
+
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
+        Make sure WebView listens for size changes and resizes the frame view in viewless mode.
+
+        Reviewed by Sam Weinig
+
+        * WebView/WebView.mm:
+        (-[WebView addSizeObservers]):
+        (-[WebView viewDidMoveToWindow]):
+        (-[WebView viewDidMoveToSuperview]):
+
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Enable viewless Mac WebKit to paint some basic pages.

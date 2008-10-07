@@ -580,10 +580,25 @@ static CFMutableSetRef allWebViewsSet;
     return !_private->useDocumentViews;
 }
 
+#ifndef BUILDING_ON_TIGER
+
+- (void)viewWillDraw
+{
+    Frame* frame = core([self mainFrame]);
+    if (frame && frame->view())
+        frame->view()->layoutIfNeededRecursive();
+    [super viewWillDraw];
+}
+
+#endif
+
 - (void)_boundsChanged
 {
     Frame* frame = core([self mainFrame]);
+    IntSize oldSize = frame->view()->frameRect().size();
     frame->view()->resize([self bounds].size.width, [self bounds].size.height);
+    if (oldSize != frame->view()->frameRect().size())
+        [self setNeedsDisplay: YES];
 }
 
 - (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count
@@ -2237,6 +2252,17 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     }
 }
 
+- (void)addSizeObservers
+{
+    if (!_private->useDocumentViews && [self window]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 
+            name:NSViewFrameDidChangeNotification object:self];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_boundsChanged) 
+            name:NSViewBoundsDidChangeNotification object:self];
+        [self _boundsChanged];
+    }
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     // Don't do anything if the WebView isn't initialized.
@@ -2262,6 +2288,19 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
         
         [self removeSizeObservers];
     }
+}
+
+- (void)viewDidMoveToWindow
+{
+    // Don't do anything if we aren't initialized.  This happens
+    // when decoding a WebView.  When WebViews are decoded their subviews
+    // are created by initWithCoder: and so won't be normally
+    // initialized.  The stub views are discarded by WebView.
+    if (!_private || _private->closed)
+        return;
+        
+    if ([self window])
+        [self addSizeObservers];
 }
 
 - (void)_windowWillClose:(NSNotification *)notification
@@ -2552,6 +2591,12 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview
 {
     [self removeSizeObservers];
+}
+
+- (void)viewDidMoveToSuperview
+{
+    if ([self superview] != nil)
+        [self addSizeObservers];
 }
 
 - (BOOL)_usesDocumentViews
