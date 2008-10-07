@@ -1,3 +1,17 @@
+2008-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        <rdar://problem/6273887> Crash in ApplicationCacheGroup
+        
+        Make sure to stop loading even before a cache update is in progress so that the
+        manifest load will be stopped.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::stopLoading):
+        (WebCore::ApplicationCacheGroup::cacheUpdateFailed):
+
 2008-10-07  Timothy Hatcher  <timothy@apple.com>
 
         Auto-generate DOMDocument's createNodeIterator: and createTreeWalker: methods.

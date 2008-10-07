@@ -71,8 +71,7 @@ ApplicationCacheGroup::~ApplicationCacheGroup()
     ASSERT(!m_newestCache);
     ASSERT(m_caches.isEmpty());
     
-    if (m_cacheBeingUpdated)
-        stopLoading();
+    stopLoading();
     
     cacheStorage().cacheGroupDestroyed(this);
 }
@@ -245,12 +244,11 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
 }
 
 void ApplicationCacheGroup::stopLoading()
-{
-    ASSERT(m_cacheBeingUpdated);
-    
+{    
     if (m_manifestHandle) {
         ASSERT(!m_currentHandle);
-        
+        ASSERT(!m_cacheBeingUpdated);
+
         m_manifestHandle->setClient(0);
         m_manifestHandle->cancel();
         m_manifestHandle = 0;
@@ -258,7 +256,8 @@ void ApplicationCacheGroup::stopLoading()
     
     if (m_currentHandle) {
         ASSERT(!m_manifestHandle);
-        
+        ASSERT(m_cacheBeingUpdated);
+
         m_currentHandle->setClient(0);
         m_currentHandle->cancel();
         m_currentHandle = 0;
@@ -530,8 +529,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
 
 void ApplicationCacheGroup::cacheUpdateFailed()
 {
-    if (m_cacheBeingUpdated)
-        stopLoading();
+    stopLoading();
         
     callListenersOnAssociatedDocuments(&DOMApplicationCache::callErrorListener);
 
