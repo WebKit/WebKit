@@ -66,314 +66,14 @@ webcore_built_sources += \
 	DerivedSources/HTMLEntityNames.c \
 	DerivedSources/HTMLNames.cpp \
 	DerivedSources/HTMLNames.h \
-	DerivedSources/JSAttr.cpp \
-	DerivedSources/JSAttr.h \
-	DerivedSources/JSBarInfo.cpp \
-	DerivedSources/JSBarInfo.h \
-	DerivedSources/JSCDATASection.cpp \
-	DerivedSources/JSCDATASection.h \
-	DerivedSources/JSCSSCharsetRule.cpp \
-	DerivedSources/JSCSSCharsetRule.h \
-	DerivedSources/JSCSSFontFaceRule.cpp \
-	DerivedSources/JSCSSFontFaceRule.h \
-	DerivedSources/JSCSSImportRule.cpp \
-	DerivedSources/JSCSSImportRule.h \
-	DerivedSources/JSCSSMediaRule.cpp \
-	DerivedSources/JSCSSMediaRule.h \
-	DerivedSources/JSCSSPageRule.cpp \
-	DerivedSources/JSCSSPageRule.h \
-	DerivedSources/JSCSSPrimitiveValue.cpp \
-	DerivedSources/JSCSSPrimitiveValue.h \
-	DerivedSources/JSCSSRule.cpp \
-	DerivedSources/JSCSSRule.h \
-	DerivedSources/JSCSSRuleList.cpp \
-	DerivedSources/JSCSSRuleList.h \
-	DerivedSources/JSCSSStyleDeclaration.cpp \
-	DerivedSources/JSCSSStyleDeclaration.h \
-	DerivedSources/JSCSSStyleRule.cpp \
-	DerivedSources/JSCSSStyleRule.h \
-	DerivedSources/JSCSSStyleSheet.cpp \
-	DerivedSources/JSCSSStyleSheet.h \
-	DerivedSources/JSCSSValue.cpp \
-	DerivedSources/JSCSSValue.h \
-	DerivedSources/JSCSSValueList.cpp \
-	DerivedSources/JSCSSValueList.h \
-	DerivedSources/JSCSSVariablesDeclaration.cpp \
-	DerivedSources/JSCSSVariablesDeclaration.h \
-	DerivedSources/JSCSSVariablesRule.cpp \
-	DerivedSources/JSCSSVariablesRule.h \
-	DerivedSources/JSCanvasGradient.cpp \
-	DerivedSources/JSCanvasGradient.h \
-	DerivedSources/JSCanvasPattern.cpp \
-	DerivedSources/JSCanvasPattern.h \
-	DerivedSources/JSCanvasPixelArray.cpp \
-	DerivedSources/JSCanvasPixelArray.h \
-	DerivedSources/JSCanvasRenderingContext2D.cpp \
-	DerivedSources/JSCanvasRenderingContext2D.h \
-	DerivedSources/JSCharacterData.cpp \
-	DerivedSources/JSCharacterData.h \
-	DerivedSources/JSClipboard.cpp \
-	DerivedSources/JSClipboard.h \
-	DerivedSources/JSComment.cpp \
-	DerivedSources/JSComment.h \
-	DerivedSources/JSConsole.cpp \
-	DerivedSources/JSConsole.h \
-	DerivedSources/JSCounter.cpp \
-	DerivedSources/JSCounter.h \
-	DerivedSources/JSDOMCoreException.cpp \
-	DerivedSources/JSDOMCoreException.h \
-	DerivedSources/JSDOMImplementation.cpp \
-	DerivedSources/JSDOMImplementation.h \
-	DerivedSources/JSDOMParser.cpp \
-	DerivedSources/JSDOMParser.h \
-	DerivedSources/JSDOMSelection.cpp \
-	DerivedSources/JSDOMSelection.h \
-	DerivedSources/JSDOMWindow.cpp \
-	DerivedSources/JSDOMWindow.h \
-	DerivedSources/JSDocument.cpp \
-	DerivedSources/JSDocument.h \
-	DerivedSources/JSDocumentFragment.cpp \
-	DerivedSources/JSDocumentFragment.h \
-	DerivedSources/JSDocumentType.cpp \
-	DerivedSources/JSDocumentType.h \
-	DerivedSources/JSElement.cpp \
-	DerivedSources/JSElement.h \
-	DerivedSources/JSEntity.cpp \
-	DerivedSources/JSEntity.h \
-	DerivedSources/JSEntityReference.cpp \
-	DerivedSources/JSEntityReference.h \
-	DerivedSources/JSEvent.cpp \
-	DerivedSources/JSEvent.h \
-	DerivedSources/JSEventException.cpp \
-	DerivedSources/JSEventException.h \
-	DerivedSources/JSEventTargetNode.cpp \
-	DerivedSources/JSEventTargetNode.h \
-	DerivedSources/JSFile.cpp \
-	DerivedSources/JSFile.h \
-	DerivedSources/JSFileList.cpp \
-	DerivedSources/JSFileList.h \
-	DerivedSources/JSHTMLAnchorElement.cpp \
-	DerivedSources/JSHTMLAnchorElement.h \
-	DerivedSources/JSHTMLAppletElement.cpp \
-	DerivedSources/JSHTMLAppletElement.h \
-	DerivedSources/JSHTMLAreaElement.cpp \
-	DerivedSources/JSHTMLAreaElement.h \
-	DerivedSources/JSHTMLBRElement.cpp \
-	DerivedSources/JSHTMLBRElement.h \
-	DerivedSources/JSHTMLBaseElement.cpp \
-	DerivedSources/JSHTMLBaseElement.h \
-	DerivedSources/JSHTMLBaseFontElement.cpp \
-	DerivedSources/JSHTMLBaseFontElement.h \
-	DerivedSources/JSHTMLBlockquoteElement.cpp \
-	DerivedSources/JSHTMLBlockquoteElement.h \
-	DerivedSources/JSHTMLBodyElement.cpp \
-	DerivedSources/JSHTMLBodyElement.h \
-	DerivedSources/JSHTMLButtonElement.cpp \
-	DerivedSources/JSHTMLButtonElement.h \
-	DerivedSources/JSHTMLCanvasElement.cpp \
-	DerivedSources/JSHTMLCanvasElement.h \
-	DerivedSources/JSHTMLCollection.cpp \
-	DerivedSources/JSHTMLCollection.h \
-	DerivedSources/JSHTMLDListElement.cpp \
-	DerivedSources/JSHTMLDListElement.h \
-	DerivedSources/JSHTMLDirectoryElement.cpp \
-	DerivedSources/JSHTMLDirectoryElement.h \
-	DerivedSources/JSHTMLDivElement.cpp \
-	DerivedSources/JSHTMLDivElement.h \
-	DerivedSources/JSHTMLDocument.cpp \
-	DerivedSources/JSHTMLDocument.h \
-	DerivedSources/JSHTMLElement.cpp \
-	DerivedSources/JSHTMLElement.h \
 	DerivedSources/JSHTMLElementWrapperFactory.cpp \
-	DerivedSources/JSHTMLEmbedElement.cpp \
-	DerivedSources/JSHTMLEmbedElement.h \
-	DerivedSources/JSHTMLFieldSetElement.cpp \
-	DerivedSources/JSHTMLFieldSetElement.h \
-	DerivedSources/JSHTMLFontElement.cpp \
-	DerivedSources/JSHTMLFontElement.h \
-	DerivedSources/JSHTMLFormElement.cpp \
-	DerivedSources/JSHTMLFormElement.h \
-	DerivedSources/JSHTMLFrameElement.cpp \
-	DerivedSources/JSHTMLFrameElement.h \
-	DerivedSources/JSHTMLFrameSetElement.cpp \
-	DerivedSources/JSHTMLFrameSetElement.h \
-	DerivedSources/JSHTMLHRElement.cpp \
-	DerivedSources/JSHTMLHRElement.h \
-	DerivedSources/JSHTMLHeadElement.cpp \
-	DerivedSources/JSHTMLHeadElement.h \
-	DerivedSources/JSHTMLHeadingElement.cpp \
-	DerivedSources/JSHTMLHeadingElement.h \
-	DerivedSources/JSHTMLHtmlElement.cpp \
-	DerivedSources/JSHTMLHtmlElement.h \
-	DerivedSources/JSHTMLIFrameElement.cpp \
-	DerivedSources/JSHTMLIFrameElement.h \
-	DerivedSources/JSHTMLImageElement.cpp \
-	DerivedSources/JSHTMLImageElement.h \
-	DerivedSources/JSHTMLInputElement.cpp \
-	DerivedSources/JSHTMLInputElement.h \
-	DerivedSources/JSHTMLIsIndexElement.cpp \
-	DerivedSources/JSHTMLIsIndexElement.h \
-	DerivedSources/JSHTMLLIElement.cpp \
-	DerivedSources/JSHTMLLIElement.h \
-	DerivedSources/JSHTMLLabelElement.cpp \
-	DerivedSources/JSHTMLLabelElement.h \
-	DerivedSources/JSHTMLLegendElement.cpp \
-	DerivedSources/JSHTMLLegendElement.h \
-	DerivedSources/JSHTMLLinkElement.cpp \
-	DerivedSources/JSHTMLLinkElement.h \
-	DerivedSources/JSHTMLMapElement.cpp \
-	DerivedSources/JSHTMLMapElement.h \
-	DerivedSources/JSHTMLMarqueeElement.cpp \
-	DerivedSources/JSHTMLMarqueeElement.h \
-	DerivedSources/JSHTMLMenuElement.cpp \
-	DerivedSources/JSHTMLMenuElement.h \
-	DerivedSources/JSHTMLMetaElement.cpp \
-	DerivedSources/JSHTMLMetaElement.h \
-	DerivedSources/JSHTMLModElement.cpp \
-	DerivedSources/JSHTMLModElement.h \
-	DerivedSources/JSHTMLOListElement.cpp \
-	DerivedSources/JSHTMLOListElement.h \
-	DerivedSources/JSHTMLObjectElement.cpp \
-	DerivedSources/JSHTMLObjectElement.h \
-	DerivedSources/JSHTMLOptGroupElement.cpp \
-	DerivedSources/JSHTMLOptGroupElement.h \
-	DerivedSources/JSHTMLOptionElement.cpp \
-	DerivedSources/JSHTMLOptionElement.h \
-	DerivedSources/JSHTMLOptionsCollection.cpp \
-	DerivedSources/JSHTMLOptionsCollection.h \
-	DerivedSources/JSHTMLParagraphElement.cpp \
-	DerivedSources/JSHTMLParagraphElement.h \
-	DerivedSources/JSHTMLParamElement.cpp \
-	DerivedSources/JSHTMLParamElement.h \
-	DerivedSources/JSHTMLPreElement.cpp \
-	DerivedSources/JSHTMLPreElement.h \
-	DerivedSources/JSHTMLQuoteElement.cpp \
-	DerivedSources/JSHTMLQuoteElement.h \
-	DerivedSources/JSHTMLScriptElement.cpp \
-	DerivedSources/JSHTMLScriptElement.h \
-	DerivedSources/JSHTMLSelectElement.cpp \
-	DerivedSources/JSHTMLSelectElement.h \
-	DerivedSources/JSHTMLStyleElement.cpp \
-	DerivedSources/JSHTMLStyleElement.h \
-	DerivedSources/JSHTMLTableCaptionElement.cpp \
-	DerivedSources/JSHTMLTableCaptionElement.h \
-	DerivedSources/JSHTMLTableCellElement.cpp \
-	DerivedSources/JSHTMLTableCellElement.h \
-	DerivedSources/JSHTMLTableColElement.cpp \
-	DerivedSources/JSHTMLTableColElement.h \
-	DerivedSources/JSHTMLTableElement.cpp \
-	DerivedSources/JSHTMLTableElement.h \
-	DerivedSources/JSHTMLTableRowElement.cpp \
-	DerivedSources/JSHTMLTableRowElement.h \
-	DerivedSources/JSHTMLTableSectionElement.cpp \
-	DerivedSources/JSHTMLTableSectionElement.h \
-	DerivedSources/JSHTMLTextAreaElement.cpp \
-	DerivedSources/JSHTMLTextAreaElement.h \
-	DerivedSources/JSHTMLTitleElement.cpp \
-	DerivedSources/JSHTMLTitleElement.h \
-	DerivedSources/JSHTMLUListElement.cpp \
-	DerivedSources/JSHTMLUListElement.h \
-	DerivedSources/JSHistory.cpp \
-	DerivedSources/JSHistory.h \
-	DerivedSources/JSImageData.cpp \
-	DerivedSources/JSImageData.h \
-	DerivedSources/JSJavaScriptCallFrame.cpp \
-	DerivedSources/JSJavaScriptCallFrame.h \
-	DerivedSources/JSKeyboardEvent.cpp \
-	DerivedSources/JSKeyboardEvent.h \
-	DerivedSources/JSLocation.cpp \
-	DerivedSources/JSLocation.h \
-	DerivedSources/JSMediaList.cpp \
-	DerivedSources/JSMediaList.h \
-	DerivedSources/JSMessageChannel.cpp \
-	DerivedSources/JSMessageChannel.h \
-	DerivedSources/JSMessageEvent.cpp \
-	DerivedSources/JSMessageEvent.h \
-	DerivedSources/JSMessagePort.cpp \
-	DerivedSources/JSMessagePort.h \
-	DerivedSources/JSMimeType.cpp \
-	DerivedSources/JSMimeType.h \
-	DerivedSources/JSMimeTypeArray.cpp \
-	DerivedSources/JSMimeTypeArray.h \
-	DerivedSources/JSMouseEvent.cpp \
-	DerivedSources/JSMouseEvent.h \
-	DerivedSources/JSMutationEvent.cpp \
-	DerivedSources/JSMutationEvent.h \
-	DerivedSources/JSNamedNodeMap.cpp \
-	DerivedSources/JSNamedNodeMap.h \
-	DerivedSources/JSNavigator.cpp \
-	DerivedSources/JSNavigator.h \
-	DerivedSources/JSNode.cpp \
-	DerivedSources/JSNode.h \
-	DerivedSources/JSNodeFilter.cpp \
-	DerivedSources/JSNodeFilter.h \
-	DerivedSources/JSNodeIterator.cpp \
-	DerivedSources/JSNodeIterator.h \
-	DerivedSources/JSNodeList.cpp \
-	DerivedSources/JSNodeList.h \
-	DerivedSources/JSNotation.cpp \
-	DerivedSources/JSNotation.h \
-	DerivedSources/JSOverflowEvent.cpp \
-	DerivedSources/JSOverflowEvent.h \
-	DerivedSources/JSPlugin.cpp \
-	DerivedSources/JSPlugin.h \
-	DerivedSources/JSPluginArray.cpp \
-	DerivedSources/JSPluginArray.h \
-	DerivedSources/JSProcessingInstruction.cpp \
-	DerivedSources/JSProcessingInstruction.h \
-	DerivedSources/JSProgressEvent.cpp \
-	DerivedSources/JSProgressEvent.h \
-	DerivedSources/JSRange.cpp \
-	DerivedSources/JSRange.h \
-	DerivedSources/JSRangeException.cpp \
-	DerivedSources/JSRangeException.h \
-	DerivedSources/JSRect.cpp \
-	DerivedSources/JSRect.h \
-	DerivedSources/JSScreen.cpp \
-	DerivedSources/JSScreen.h \
-	DerivedSources/JSStyleSheet.cpp \
-	DerivedSources/JSStyleSheet.h \
-	DerivedSources/JSStyleSheetList.cpp \
-	DerivedSources/JSStyleSheetList.h \
-	DerivedSources/JSText.cpp \
-	DerivedSources/JSText.h \
-	DerivedSources/JSTextEvent.cpp \
-	DerivedSources/JSTextEvent.h \
-	DerivedSources/JSTextMetrics.cpp \
-	DerivedSources/JSTextMetrics.h \
-	DerivedSources/JSTreeWalker.cpp \
-	DerivedSources/JSTreeWalker.h \
-	DerivedSources/JSUIEvent.cpp \
-	DerivedSources/JSUIEvent.h \
-	DerivedSources/JSWebKitAnimationEvent.cpp \
-	DerivedSources/JSWebKitAnimationEvent.h \
-	DerivedSources/JSWebKitCSSKeyframeRule.cpp \
-	DerivedSources/JSWebKitCSSKeyframeRule.h \
-	DerivedSources/JSWebKitCSSKeyframesRule.cpp \
-	DerivedSources/JSWebKitCSSKeyframesRule.h \
-	DerivedSources/JSWebKitCSSTransformValue.cpp \
-	DerivedSources/JSWebKitCSSTransformValue.h \
-	DerivedSources/JSWebKitTransitionEvent.cpp \
-	DerivedSources/JSWebKitTransitionEvent.h \
-	DerivedSources/JSWheelEvent.cpp \
-	DerivedSources/JSWheelEvent.h \
-	DerivedSources/JSXMLHttpRequest.cpp \
-	DerivedSources/JSXMLHttpRequest.h \
-	DerivedSources/JSXMLHttpRequestException.cpp \
-	DerivedSources/JSXMLHttpRequestException.h \
-	DerivedSources/JSXMLHttpRequestProgressEvent.cpp \
-	DerivedSources/JSXMLHttpRequestUpload.cpp \
-	DerivedSources/JSXMLHttpRequestUpload.h \
-	DerivedSources/JSXMLSerializer.cpp \
-	DerivedSources/JSXMLSerializer.h \
-	DerivedSources/JSXSLTProcessor.cpp \
-	DerivedSources/JSXSLTProcessor.h \
+	DerivedSources/JSHTMLElementWrapperFactory.h \
 	DerivedSources/UserAgentStyleSheets.h \
 	DerivedSources/UserAgentStyleSheetsData.cpp \
 	DerivedSources/XMLNames.cpp \
 	DerivedSources/XMLNames.h
 
-IDL_BINDINGS +=  \
+IDL_BINDINGS += \
 	WebCore/css/CSSCharsetRule.idl \
 	WebCore/css/CSSFontFaceRule.idl \
 	WebCore/css/CSSImportRule.idl \
@@ -412,6 +112,7 @@ IDL_BINDINGS +=  \
 	WebCore/dom/EntityReference.idl \
 	WebCore/dom/Event.idl \
 	WebCore/dom/EventException.idl \
+	WebCore/dom/EventTargetNode.idl \
 	WebCore/dom/KeyboardEvent.idl \
 	WebCore/dom/MessageChannel.idl \
 	WebCore/dom/MessageEvent.idl \
@@ -1032,8 +733,8 @@ webcore_sources += \
 	WebCore/dom/WheelEvent.cpp \
 	WebCore/dom/WheelEvent.h \
 	WebCore/dom/XMLTokenizer.cpp \
-	WebCore/dom/XMLTokenizerLibxml2.cpp \
 	WebCore/dom/XMLTokenizer.h \
+	WebCore/dom/XMLTokenizerLibxml2.cpp \
 	WebCore/editing/AppendNodeCommand.cpp \
 	WebCore/editing/AppendNodeCommand.h \
 	WebCore/editing/ApplyStyleCommand.cpp \
@@ -1563,9 +1264,9 @@ webcore_sources += \
 	WebCore/platform/PopupMenuClient.h \
 	WebCore/platform/SSLKeyGenerator.h \
 	WebCore/platform/ScrollTypes.h \
+	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/ScrollView.h \
 	WebCore/platform/Scrollbar.cpp \
-	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/Scrollbar.h \
 	WebCore/platform/SearchPopupMenu.h \
 	WebCore/platform/SharedBuffer.cpp \
@@ -1580,7 +1281,6 @@ webcore_sources += \
 	WebCore/platform/TreeShared.h \
 	WebCore/platform/Widget.cpp \
 	WebCore/platform/Widget.h \
-	WebCore/platform/WidgetClient.h \
 	WebCore/platform/graphics/AffineTransform.cpp \
 	WebCore/platform/graphics/AffineTransform.h \
 	WebCore/platform/graphics/BitmapImage.cpp \
@@ -1762,7 +1462,6 @@ webcore_sources += \
 	WebCore/rendering/AutoTableLayout.h \
 	WebCore/rendering/CounterNode.cpp \
 	WebCore/rendering/CounterNode.h \
-	WebCore/rendering/style/DataRef.h \
 	WebCore/rendering/EllipsisBox.cpp \
 	WebCore/rendering/EllipsisBox.h \
 	WebCore/rendering/FixedTableLayout.cpp \
@@ -1895,6 +1594,9 @@ webcore_sources += \
 	WebCore/rendering/style/CounterContent.h \
 	WebCore/rendering/style/CounterDirectives.cpp \
 	WebCore/rendering/style/CounterDirectives.h \
+	WebCore/rendering/style/CursorData.h \
+	WebCore/rendering/style/CursorList.h \
+	WebCore/rendering/style/DataRef.h \
 	WebCore/rendering/style/FillLayer.cpp \
 	WebCore/rendering/style/FillLayer.h \
 	WebCore/rendering/style/IdentityTransformOperation.h \
@@ -1928,10 +1630,17 @@ webcore_sources += \
 	WebCore/rendering/style/StyleGeneratedImage.cpp \
 	WebCore/rendering/style/StyleGeneratedImage.h \
 	WebCore/rendering/style/StyleImage.h \
+	WebCore/rendering/style/StyleInheritedData.cpp \
+	WebCore/rendering/style/StyleInheritedData.h \
 	WebCore/rendering/style/StyleMarqueeData.cpp \
 	WebCore/rendering/style/StyleMarqueeData.h \
 	WebCore/rendering/style/StyleMultiColData.cpp \
 	WebCore/rendering/style/StyleMultiColData.h \
+	WebCore/rendering/style/StyleRareInheritedData.cpp \
+	WebCore/rendering/style/StyleRareInheritedData.h \
+	WebCore/rendering/style/StyleRareNonInheritedData.cpp \
+	WebCore/rendering/style/StyleRareNonInheritedData.h \
+	WebCore/rendering/style/StyleReflection.h \
 	WebCore/rendering/style/StyleSurroundData.cpp \
 	WebCore/rendering/style/StyleSurroundData.h \
 	WebCore/rendering/style/StyleTransformData.cpp \
@@ -1944,15 +1653,6 @@ webcore_sources += \
 	WebCore/rendering/style/TransformOperations.h \
 	WebCore/rendering/style/TranslateTransformOperation.cpp \
 	WebCore/rendering/style/TranslateTransformOperation.h \
-	WebCore/rendering/style/CursorData.h \
-	WebCore/rendering/style/CursorList.h \
-	WebCore/rendering/style/StyleInheritedData.cpp \
-	WebCore/rendering/style/StyleInheritedData.h \
-	WebCore/rendering/style/StyleRareInheritedData.cpp \
-	WebCore/rendering/style/StyleRareInheritedData.h \
-	WebCore/rendering/style/StyleRareNonInheritedData.cpp \
-	WebCore/rendering/style/StyleRareNonInheritedData.h \
-	WebCore/rendering/style/StyleReflection.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \
@@ -2016,9 +1716,9 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/EventLoopGtk.cpp \
 	WebCore/platform/gtk/FileChooserGtk.cpp \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
+	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/KeyboardCodes.h \
-	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
@@ -2143,9 +1843,6 @@ endif # END USE_PANGO
 if ENABLE_OFFLINE_WEB_APPLICATIONS
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_OFFLINE_WEB_APPLICATIONS=1
 
-webcore_built_sources += \
-	DerivedSources/JSDOMApplicationCache.cpp
-
 IDL_BINDINGS += \
 	WebCore/loader/appcache/DOMApplicationCache.idl
 
@@ -2186,18 +1883,6 @@ endif # END ENABLE_DASHBOARD_SUPPORT
 # ----
 if ENABLE_DATABASE
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATABASE=1
-
-webcore_built_sources += \
-	DerivedSources/JSDatabase.cpp \
-	DerivedSources/JSDatabase.h \
-	DerivedSources/JSSQLError.cpp \
-	DerivedSources/JSSQLError.h \
-	DerivedSources/JSSQLResultSet.cpp \
-	DerivedSources/JSSQLResultSet.h \
-	DerivedSources/JSSQLResultSetRowList.cpp \
-	DerivedSources/JSSQLResultSetRowList.h \
-	DerivedSources/JSSQLTransaction.cpp \
-	DerivedSources/JSSQLTransaction.h
 
 IDL_BINDINGS += \
 	WebCore/storage/Database.idl \
@@ -2272,12 +1957,6 @@ endif # END ENABLE_DATABASE
 if ENABLE_DOM_STORAGE
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE=1
 
-webcore_built_sources += \
-	DerivedSources/JSStorage.cpp \
-	DerivedSources/JSStorage.h \
-	DerivedSources/JSStorageEvent.cpp \
-	DerivedSources/JSStorageEvent.h
-
 IDL_BINDINGS += \
 	WebCore/storage/Storage.idl \
 	WebCore/storage/StorageEvent.idl
@@ -2344,22 +2023,6 @@ if ENABLE_DEBUG
 webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
 
-webcore_built_sources += \
-	DerivedSources/JSHTMLAudioElement.cpp \
-	DerivedSources/JSHTMLAudioElement.h \
-	DerivedSources/JSHTMLMediaElement.cpp \
-	DerivedSources/JSHTMLMediaElement.h \
-	DerivedSources/JSHTMLSourceElement.cpp \
-	DerivedSources/JSHTMLSourceElement.h \
-	DerivedSources/JSHTMLVideoElement.cpp \
-	DerivedSources/JSHTMLVideoElement.h \
-	DerivedSources/JSMediaError.cpp \
-	DerivedSources/JSMediaError.h \
-	DerivedSources/JSTimeRanges.cpp \
-	DerivedSources/JSTimeRanges.h \
-	DerivedSources/JSVoidCallback.cpp \
-	DerivedSources/JSVoidCallback.h
-
 IDL_BINDINGS += \
 	WebCore/html/HTMLAudioElement.idl \
 	WebCore/html/HTMLMediaElement.idl \
@@ -2406,16 +2069,6 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_XPATH=1
 webcore_cppflags += -DENABLE_XPATH=1
 
 webcore_built_sources += \
-	DerivedSources/JSXPathEvaluator.cpp \
-	DerivedSources/JSXPathEvaluator.h \
-	DerivedSources/JSXPathException.cpp \
-	DerivedSources/JSXPathException.h \
-	DerivedSources/JSXPathExpression.cpp \
-	DerivedSources/JSXPathExpression.h \
-	DerivedSources/JSXPathNSResolver.cpp \
-	DerivedSources/JSXPathNSResolver.h \
-	DerivedSources/JSXPathResult.cpp \
-	DerivedSources/JSXPathResult.h \
 	DerivedSources/XPathGrammar.cpp \
 	DerivedSources/XPathGrammar.h
 
@@ -2513,271 +2166,7 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/svg/graphics/cairo
 
 webcore_built_sources += \
-	DerivedSources/JSSVGAElement.cpp \
-	DerivedSources/JSSVGAElement.h \
-	DerivedSources/JSSVGAltGlyphElement.cpp \
-	DerivedSources/JSSVGAltGlyphElement.h \
-	DerivedSources/JSSVGAngle.cpp \
-	DerivedSources/JSSVGAngle.h \
-	DerivedSources/JSSVGAnimateColorElement.cpp \
-	DerivedSources/JSSVGAnimateColorElement.h \
-	DerivedSources/JSSVGAnimateElement.cpp \
-	DerivedSources/JSSVGAnimateElement.h \
-	DerivedSources/JSSVGAnimateTransformElement.cpp \
-	DerivedSources/JSSVGAnimateTransformElement.h \
-	DerivedSources/JSSVGAnimatedAngle.cpp \
-	DerivedSources/JSSVGAnimatedAngle.h \
-	DerivedSources/JSSVGAnimatedBoolean.cpp \
-	DerivedSources/JSSVGAnimatedBoolean.h \
-	DerivedSources/JSSVGAnimatedEnumeration.cpp \
-	DerivedSources/JSSVGAnimatedEnumeration.h \
-	DerivedSources/JSSVGAnimatedInteger.cpp \
-	DerivedSources/JSSVGAnimatedInteger.h \
-	DerivedSources/JSSVGAnimatedLength.cpp \
-	DerivedSources/JSSVGAnimatedLength.h \
-	DerivedSources/JSSVGAnimatedLengthList.cpp \
-	DerivedSources/JSSVGAnimatedLengthList.h \
-	DerivedSources/JSSVGAnimatedNumber.cpp \
-	DerivedSources/JSSVGAnimatedNumber.h \
-	DerivedSources/JSSVGAnimatedNumberList.cpp \
-	DerivedSources/JSSVGAnimatedNumberList.h \
-	DerivedSources/JSSVGAnimatedPreserveAspectRatio.cpp \
-	DerivedSources/JSSVGAnimatedPreserveAspectRatio.h \
-	DerivedSources/JSSVGAnimatedRect.cpp \
-	DerivedSources/JSSVGAnimatedRect.h \
-	DerivedSources/JSSVGAnimatedString.cpp \
-	DerivedSources/JSSVGAnimatedString.h \
-	DerivedSources/JSSVGAnimatedTransformList.cpp \
-	DerivedSources/JSSVGAnimatedTransformList.h \
-	DerivedSources/JSSVGAnimationElement.cpp \
-	DerivedSources/JSSVGAnimationElement.h \
-	DerivedSources/JSSVGCircleElement.cpp \
-	DerivedSources/JSSVGCircleElement.h \
-	DerivedSources/JSSVGClipPathElement.cpp \
-	DerivedSources/JSSVGClipPathElement.h \
-	DerivedSources/JSSVGColor.cpp \
-	DerivedSources/JSSVGColor.h \
-	DerivedSources/JSSVGComponentTransferFunctionElement.cpp \
-	DerivedSources/JSSVGComponentTransferFunctionElement.h \
-	DerivedSources/JSSVGCursorElement.cpp \
-	DerivedSources/JSSVGCursorElement.h \
-	DerivedSources/JSSVGDefinitionSrcElement.cpp \
-	DerivedSources/JSSVGDefinitionSrcElement.h \
-	DerivedSources/JSSVGDefsElement.cpp \
-	DerivedSources/JSSVGDefsElement.h \
-	DerivedSources/JSSVGDescElement.cpp \
-	DerivedSources/JSSVGDescElement.h \
-	DerivedSources/JSSVGDocument.cpp \
-	DerivedSources/JSSVGDocument.h \
-	DerivedSources/JSSVGElement.cpp \
-	DerivedSources/JSSVGElement.h \
-	DerivedSources/JSSVGElementInstance.cpp \
-	DerivedSources/JSSVGElementInstance.h \
-	DerivedSources/JSSVGElementInstanceList.cpp \
-	DerivedSources/JSSVGElementInstanceList.h \
 	DerivedSources/JSSVGElementWrapperFactory.cpp \
-	DerivedSources/JSSVGEllipseElement.cpp \
-	DerivedSources/JSSVGEllipseElement.h \
-	DerivedSources/JSSVGException.cpp \
-	DerivedSources/JSSVGException.h \
-	DerivedSources/JSSVGFEBlendElement.cpp \
-	DerivedSources/JSSVGFEBlendElement.h \
-	DerivedSources/JSSVGFEColorMatrixElement.cpp \
-	DerivedSources/JSSVGFEColorMatrixElement.h \
-	DerivedSources/JSSVGFEComponentTransferElement.cpp \
-	DerivedSources/JSSVGFEComponentTransferElement.h \
-	DerivedSources/JSSVGFECompositeElement.cpp \
-	DerivedSources/JSSVGFECompositeElement.h \
-	DerivedSources/JSSVGFEDiffuseLightingElement.cpp \
-	DerivedSources/JSSVGFEDiffuseLightingElement.h \
-	DerivedSources/JSSVGFEDisplacementMapElement.cpp \
-	DerivedSources/JSSVGFEDisplacementMapElement.h \
-	DerivedSources/JSSVGFEDistantLightElement.cpp \
-	DerivedSources/JSSVGFEDistantLightElement.h \
-	DerivedSources/JSSVGFEFloodElement.cpp \
-	DerivedSources/JSSVGFEFloodElement.h \
-	DerivedSources/JSSVGFEFuncAElement.cpp \
-	DerivedSources/JSSVGFEFuncAElement.h \
-	DerivedSources/JSSVGFEFuncBElement.cpp \
-	DerivedSources/JSSVGFEFuncBElement.h \
-	DerivedSources/JSSVGFEFuncGElement.cpp \
-	DerivedSources/JSSVGFEFuncGElement.h \
-	DerivedSources/JSSVGFEFuncRElement.cpp \
-	DerivedSources/JSSVGFEFuncRElement.h \
-	DerivedSources/JSSVGFEGaussianBlurElement.cpp \
-	DerivedSources/JSSVGFEGaussianBlurElement.h \
-	DerivedSources/JSSVGFEImageElement.cpp \
-	DerivedSources/JSSVGFEImageElement.h \
-	DerivedSources/JSSVGFEMergeElement.cpp \
-	DerivedSources/JSSVGFEMergeElement.h \
-	DerivedSources/JSSVGFEMergeNodeElement.cpp \
-	DerivedSources/JSSVGFEMergeNodeElement.h \
-	DerivedSources/JSSVGFEOffsetElement.cpp \
-	DerivedSources/JSSVGFEOffsetElement.h \
-	DerivedSources/JSSVGFEPointLightElement.cpp \
-	DerivedSources/JSSVGFEPointLightElement.h \
-	DerivedSources/JSSVGFESpecularLightingElement.cpp \
-	DerivedSources/JSSVGFESpecularLightingElement.h \
-	DerivedSources/JSSVGFESpotLightElement.cpp \
-	DerivedSources/JSSVGFESpotLightElement.h \
-	DerivedSources/JSSVGFETileElement.cpp \
-	DerivedSources/JSSVGFETileElement.h \
-	DerivedSources/JSSVGFETurbulenceElement.cpp \
-	DerivedSources/JSSVGFETurbulenceElement.h \
-	DerivedSources/JSSVGFilterElement.cpp \
-	DerivedSources/JSSVGFilterElement.h \
-	DerivedSources/JSSVGFontElement.cpp \
-	DerivedSources/JSSVGFontElement.h \
-	DerivedSources/JSSVGFontFaceElement.cpp \
-	DerivedSources/JSSVGFontFaceElement.h \
-	DerivedSources/JSSVGFontFaceFormatElement.cpp \
-	DerivedSources/JSSVGFontFaceFormatElement.h \
-	DerivedSources/JSSVGFontFaceNameElement.cpp \
-	DerivedSources/JSSVGFontFaceNameElement.h \
-	DerivedSources/JSSVGFontFaceSrcElement.cpp \
-	DerivedSources/JSSVGFontFaceSrcElement.h \
-	DerivedSources/JSSVGFontFaceUriElement.cpp \
-	DerivedSources/JSSVGFontFaceUriElement.h \
-	DerivedSources/JSSVGForeignObjectElement.cpp \
-	DerivedSources/JSSVGForeignObjectElement.h \
-	DerivedSources/JSSVGGElement.cpp \
-	DerivedSources/JSSVGGElement.h \
-	DerivedSources/JSSVGGlyphElement.cpp \
-	DerivedSources/JSSVGGlyphElement.h \
-	DerivedSources/JSSVGGradientElement.cpp \
-	DerivedSources/JSSVGGradientElement.h \
-	DerivedSources/JSSVGImageElement.cpp \
-	DerivedSources/JSSVGImageElement.h \
-	DerivedSources/JSSVGLength.cpp \
-	DerivedSources/JSSVGLength.h \
-	DerivedSources/JSSVGLengthList.cpp \
-	DerivedSources/JSSVGLengthList.h \
-	DerivedSources/JSSVGLineElement.cpp \
-	DerivedSources/JSSVGLineElement.h \
-	DerivedSources/JSSVGLinearGradientElement.cpp \
-	DerivedSources/JSSVGLinearGradientElement.h \
-	DerivedSources/JSSVGMarkerElement.cpp \
-	DerivedSources/JSSVGMarkerElement.h \
-	DerivedSources/JSSVGMaskElement.cpp \
-	DerivedSources/JSSVGMaskElement.h \
-	DerivedSources/JSSVGMatrix.cpp \
-	DerivedSources/JSSVGMatrix.h \
-	DerivedSources/JSSVGMetadataElement.cpp \
-	DerivedSources/JSSVGMetadataElement.h \
-	DerivedSources/JSSVGMissingGlyphElement.cpp \
-	DerivedSources/JSSVGMissingGlyphElement.h \
-	DerivedSources/JSSVGNumber.cpp \
-	DerivedSources/JSSVGNumber.h \
-	DerivedSources/JSSVGNumberList.cpp \
-	DerivedSources/JSSVGNumberList.h \
-	DerivedSources/JSSVGPaint.cpp \
-	DerivedSources/JSSVGPaint.h \
-	DerivedSources/JSSVGPathElement.cpp \
-	DerivedSources/JSSVGPathElement.h \
-	DerivedSources/JSSVGPathSeg.cpp \
-	DerivedSources/JSSVGPathSeg.h \
-	DerivedSources/JSSVGPathSegArcAbs.cpp \
-	DerivedSources/JSSVGPathSegArcAbs.h \
-	DerivedSources/JSSVGPathSegArcRel.cpp \
-	DerivedSources/JSSVGPathSegArcRel.h \
-	DerivedSources/JSSVGPathSegClosePath.cpp \
-	DerivedSources/JSSVGPathSegClosePath.h \
-	DerivedSources/JSSVGPathSegCurvetoCubicAbs.cpp \
-	DerivedSources/JSSVGPathSegCurvetoCubicAbs.h \
-	DerivedSources/JSSVGPathSegCurvetoCubicRel.cpp \
-	DerivedSources/JSSVGPathSegCurvetoCubicRel.h \
-	DerivedSources/JSSVGPathSegCurvetoCubicSmoothAbs.cpp \
-	DerivedSources/JSSVGPathSegCurvetoCubicSmoothAbs.h \
-	DerivedSources/JSSVGPathSegCurvetoCubicSmoothRel.cpp \
-	DerivedSources/JSSVGPathSegCurvetoCubicSmoothRel.h \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticAbs.cpp \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticAbs.h \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticRel.cpp \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticRel.h \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticSmoothAbs.h \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticSmoothRel.cpp \
-	DerivedSources/JSSVGPathSegCurvetoQuadraticSmoothRel.h \
-	DerivedSources/JSSVGPathSegLinetoAbs.cpp \
-	DerivedSources/JSSVGPathSegLinetoAbs.h \
-	DerivedSources/JSSVGPathSegLinetoHorizontalAbs.cpp \
-	DerivedSources/JSSVGPathSegLinetoHorizontalAbs.h \
-	DerivedSources/JSSVGPathSegLinetoHorizontalRel.cpp \
-	DerivedSources/JSSVGPathSegLinetoHorizontalRel.h \
-	DerivedSources/JSSVGPathSegLinetoRel.cpp \
-	DerivedSources/JSSVGPathSegLinetoRel.h \
-	DerivedSources/JSSVGPathSegLinetoVerticalAbs.cpp \
-	DerivedSources/JSSVGPathSegLinetoVerticalAbs.h \
-	DerivedSources/JSSVGPathSegLinetoVerticalRel.cpp \
-	DerivedSources/JSSVGPathSegLinetoVerticalRel.h \
-	DerivedSources/JSSVGPathSegList.cpp \
-	DerivedSources/JSSVGPathSegList.h \
-	DerivedSources/JSSVGPathSegMovetoAbs.cpp \
-	DerivedSources/JSSVGPathSegMovetoAbs.h \
-	DerivedSources/JSSVGPathSegMovetoRel.cpp \
-	DerivedSources/JSSVGPathSegMovetoRel.h \
-	DerivedSources/JSSVGPatternElement.cpp \
-	DerivedSources/JSSVGPatternElement.h \
-	DerivedSources/JSSVGPoint.cpp \
-	DerivedSources/JSSVGPoint.h \
-	DerivedSources/JSSVGPointList.cpp \
-	DerivedSources/JSSVGPointList.h \
-	DerivedSources/JSSVGPolygonElement.cpp \
-	DerivedSources/JSSVGPolygonElement.h \
-	DerivedSources/JSSVGPolylineElement.cpp \
-	DerivedSources/JSSVGPolylineElement.h \
-	DerivedSources/JSSVGPreserveAspectRatio.cpp \
-	DerivedSources/JSSVGPreserveAspectRatio.h \
-	DerivedSources/JSSVGRadialGradientElement.cpp \
-	DerivedSources/JSSVGRadialGradientElement.h \
-	DerivedSources/JSSVGRect.cpp \
-	DerivedSources/JSSVGRect.h \
-	DerivedSources/JSSVGRectElement.cpp \
-	DerivedSources/JSSVGRectElement.h \
-	DerivedSources/JSSVGRenderingIntent.cpp \
-	DerivedSources/JSSVGRenderingIntent.h \
-	DerivedSources/JSSVGSVGElement.cpp \
-	DerivedSources/JSSVGSVGElement.h \
-	DerivedSources/JSSVGScriptElement.cpp \
-	DerivedSources/JSSVGScriptElement.h \
-	DerivedSources/JSSVGSetElement.cpp \
-	DerivedSources/JSSVGSetElement.h \
-	DerivedSources/JSSVGStopElement.cpp \
-	DerivedSources/JSSVGStopElement.h \
-	DerivedSources/JSSVGStringList.cpp \
-	DerivedSources/JSSVGStringList.h \
-	DerivedSources/JSSVGStyleElement.cpp \
-	DerivedSources/JSSVGStyleElement.h \
-	DerivedSources/JSSVGSwitchElement.cpp \
-	DerivedSources/JSSVGSwitchElement.h \
-	DerivedSources/JSSVGSymbolElement.cpp \
-	DerivedSources/JSSVGSymbolElement.h \
-	DerivedSources/JSSVGTRefElement.cpp \
-	DerivedSources/JSSVGTRefElement.h \
-	DerivedSources/JSSVGTSpanElement.cpp \
-	DerivedSources/JSSVGTSpanElement.h \
-	DerivedSources/JSSVGTextContentElement.cpp \
-	DerivedSources/JSSVGTextContentElement.h \
-	DerivedSources/JSSVGTextElement.cpp \
-	DerivedSources/JSSVGTextElement.h \
-	DerivedSources/JSSVGTextPathElement.cpp \
-	DerivedSources/JSSVGTextPathElement.h \
-	DerivedSources/JSSVGTextPositioningElement.cpp \
-	DerivedSources/JSSVGTextPositioningElement.h \
-	DerivedSources/JSSVGTitleElement.cpp \
-	DerivedSources/JSSVGTitleElement.h \
-	DerivedSources/JSSVGTransform.cpp \
-	DerivedSources/JSSVGTransform.h \
-	DerivedSources/JSSVGTransformList.cpp \
-	DerivedSources/JSSVGTransformList.h \
-	DerivedSources/JSSVGUnitTypes.cpp \
-	DerivedSources/JSSVGUnitTypes.h \
-	DerivedSources/JSSVGUseElement.cpp \
-	DerivedSources/JSSVGUseElement.h \
-	DerivedSources/JSSVGViewElement.cpp \
-	DerivedSources/JSSVGViewElement.h \
-	DerivedSources/JSSVGZoomEvent.cpp \
-	DerivedSources/JSSVGZoomEvent.h \
 	DerivedSources/SVGElementFactory.cpp \
 	DerivedSources/SVGNames.cpp \
 	DerivedSources/XLinkNames.cpp
@@ -2976,14 +2365,14 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGInlineText.h \
 	WebCore/rendering/RenderSVGRoot.cpp \
 	WebCore/rendering/RenderSVGRoot.h \
+	WebCore/rendering/RenderSVGTSpan.cpp \
+	WebCore/rendering/RenderSVGTSpan.h \
 	WebCore/rendering/RenderSVGText.cpp \
 	WebCore/rendering/RenderSVGText.h \
 	WebCore/rendering/RenderSVGTextPath.cpp \
 	WebCore/rendering/RenderSVGTextPath.h \
 	WebCore/rendering/RenderSVGTransformableContainer.cpp \
 	WebCore/rendering/RenderSVGTransformableContainer.h \
-	WebCore/rendering/RenderSVGTSpan.cpp \
-	WebCore/rendering/RenderSVGTSpan.h \
 	WebCore/rendering/RenderSVGViewportContainer.cpp \
 	WebCore/rendering/RenderSVGViewportContainer.h \
 	WebCore/rendering/SVGCharacterLayoutInfo.cpp \
@@ -3489,6 +2878,8 @@ DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(
 
 # HTML tag and attribute names
 DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp;
+DerivedSources/JSHTMLElementWrapperFactory.cpp: DerivedSources/HTMLNames.cpp;
+DerivedSources/JSHTMLElementWrapperFactory.h: DerivedSources/JSHTMLElementWrapperFactory.cpp;
 
 if HTML_FLAGS
 DerivedSources/HTMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
@@ -3503,8 +2894,7 @@ DerivedSources/XMLNames.h: DerivedSources/XMLNames.cpp;
 DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES)"
 
-vpath %.idl = \
-    $(WebCore) \
+IDL_PATH := \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
     $(WebCore)/css \
@@ -3518,10 +2908,47 @@ vpath %.idl = \
     $(WebCore)/xml \
     $(WebCore)/plugins
 
+vpath %.idl = $(IDL_PATH)
+
 DerivedSources/JS%.h: DerivedSources/JS%.cpp;
 
+.SECONDARY:
 DerivedSources/JS%.cpp: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
-	$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl --include $(WebCore)/dom --include $(WebCore)/html --include $(WebCore)/css --include $(WebCore)/page --include $(WebCore)/xml --include $(WebCore)/svg --outputDir "$(GENSOURCES)" --defines "$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS $<
+	$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES)" --defines "$(FEATURE_DEFINES_JAVASCRIPT)" --generator JS $<
+
+IDL_BINDINGS_JS_PURE := \
+	WebCore/svg/ElementTimeControl.idl \
+	WebCore/svg/SVGAnimatedPathData.idl \
+	WebCore/svg/SVGAnimatedPoints.idl \
+	WebCore/svg/SVGExternalResourcesRequired.idl \
+	WebCore/svg/SVGFilterPrimitiveStandardAttributes.idl \
+	WebCore/svg/SVGFitToViewBox.idl \
+	WebCore/svg/SVGLangSpace.idl \
+	WebCore/svg/SVGLocatable.idl \
+	WebCore/svg/SVGStylable.idl \
+	WebCore/svg/SVGTests.idl \
+	WebCore/svg/SVGTransformable.idl \
+	WebCore/svg/SVGURIReference.idl \
+	WebCore/svg/SVGViewSpec.idl \
+	WebCore/svg/SVGZoomAndPan.idl
+
+IDL_BINDINGS_JS := $(filter-out $(IDL_BINDINGS_JS_PURE),$(IDL_BINDINGS))
+
+webcore_built_nosources += $(patsubst %.idl,DerivedSources/JS%.h,$(notdir $(IDL_BINDINGS)))
+
+libWebCoreJS_objects := $(patsubst %.idl,DerivedSources/JS%.lo,$(notdir $(IDL_BINDINGS_JS)))
+
+libWebCoreJS_depfiles := $(patsubst %.idl,DerivedSources/$(DEPDIR)/JS%.Plo,$(notdir $(IDL_BINDINGS_JS)))
+
+-include $(libWebCoreJS_depfiles)
+
+$(libWebCoreJS_objects): CPPFLAGS+=$(libWebCore_la_CPPFLAGS)
+
+$(libWebCoreJS_objects): CXXFLAGS+=$(libWebCore_la_CXXFLAGS)
+
+libWebCoreJS.la: $(libWebCoreJS_objects)
+	$(CXXLINK) $(libWebCoreJS_objects) $(LIBS)
+
 
 noinst_HEADERS += \
 	$(IDL_BINDINGS)
