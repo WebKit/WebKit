@@ -11,17 +11,14 @@
         margin-right: 2em;
         overflow-x: auto;
     }
-    .comment {
-        font-style: italic;
-    }
-    p .function, p .class, p .variable, li .function, li .class, li .variable {
+    .comment .function, .class, .variable {
         font-style: italic;
     }
 </style>
 
 <h1><span class="class">RefPtr</span> and <span class="class">PassRefPtr</span> Basics</h1>
 <div>Darin Adler</div>
-<div>first draft, 2007-03-24</div>
+<div>second draft, 2008-10-07</div>
 
 <h2>History</h2>
 
@@ -32,7 +29,7 @@ has to be matched by a call to <span class="function">deref</span>. When the ref
 the object is deleted. Many of these classes create new objects with a reference count of 0; this
 is referred to as the floating state. An object in floating state must have <span class="function">ref</span> and then
 <span class="function">deref</span> called on it before it will be deleted. Many classes in WebCore implement this by
-inheriting from the <span class="class">Shared</span> class template.</p>
+inheriting from the <span class="class">RefCounted</span> class template.</p>
 
 <p>Back in 2005, we discovered that there were many memory leaks, especially in WebCore
 editor code, caused either by mismatches of <span class="function">ref</span> and
@@ -124,14 +121,15 @@ RefPtr&lt;Node&gt; createSpecialNode()
 
 RefPtr&lt;Node&gt; b = createSpecialNode();</pre>
 
-<p>The node object starts with a reference count of 0. When it’s assigned to <span class="variable">a</span>,
+<p>For purposes of this discussion, lets assume that the node object starts with a
+reference count of 0 (more on this later). When it’s assigned to <span class="variable">a</span>,
 the reference count is incremented to 1. The reference count is incremented to 2 to
 create the return value, then decremented back to 1 when <span class="variable">a</span> is destroyed.
 Then the reference count is incremented to 2 to create <span class="variable">b</span>, and then decremented back
 to 1 when the return value of <span class="function">createSpecialNode</span> is destroyed.</p>
 
 <p>(This analysis ignores the possibility that the compiler might implement the
-<a href="http://www.awprofessional.com/articles/article.asp?p=25033&amp;seqNum=3&amp;rl=1">return value optimization</a>.
+<a href="http://www.informit.com/articles/article.aspx?p=25033">return value optimization</a>.
 If the compiler does, some of the reference count churn may be mitigated.)</p>
 
 <p>The overhead of reference count churn is even greater when both function arguments and return
@@ -201,7 +199,9 @@ and wish to transfer ownership as <span class="class">PassRefPtr</span> does.
 <span class="class">RefPtr</span> to 0 and constructs a <span class="class">PassRefPtr</span>, without
 changing reference counts.</p>
 
-<pre class="code">PassRefPtr&lt;Node&gt; createSpecialNode()
+<pre class="code"><span class="comment">// example, assuming new Node starts with reference count 0</span>
+ 
+PassRefPtr&lt;Node&gt; createSpecialNode()
 {
     RefPtr&lt;Node&gt; a = new Node;
     a-&gt;setCreated(true);
@@ -272,6 +272,47 @@ Node* rawNodePointer = node.release().releaseRef();</pre>
 then <span class="function">releaseRef</span>. If we find this is used often we could
 provide <span class="function">releaseRef</span> for <span class="class">RefPtr</span> too.</p>
 
+<h2>RefPtr and new objects</h2>
+
+<p>In the examples in this discussion, we talked about objects with a reference
+count of 0. However, for efficiency and simplicity, the <span class="class">RefCounted</span> class doesn't
+use a reference count of 0 at all. Objects are created with a reference count
+of 1. The best programming idiom to use is to put such objects right into a
+<span class="class">RefPtr</span>, to make it impossible to forget to deref the object when we're done with
+it. This means that any one calling new on such an object should immediately
+call adoptRef. In WebCore we use functions named create instead of direct calls
+to new.</p>
+
+<pre class="code"><span class="comment">// preferred style</span>
+ 
+PassRefPtr&lt;Node&gt; Node::create()
+{
+    return adoptRef(new Node);
+}
+
+RefPtr&lt;Node&gt; e = Node::create();</pre>
+
+<p>Because of the way <span class="function">adoptRef</span> and
+<span class="class">PassRefPtr</span> are implemented, this is an efficient idiom.
+The object starts with a reference count of 1 and no manipulation of the reference
+count happens at all.</p>
+
+<pre class="code"><span class="comment">// preferred style</span>
+ 
+PassRefPtr&lt;Node&gt; createSpecialNode()
+{
+    RefPtr&lt;Node&gt; a = Node::create();
+    a-&gt;setCreated(true);
+    return a.release();
+}
+
+RefPtr&lt;Node&gt; b = createSpecialNode();</pre>
+
+<p>The node object is put into a <span class="class">PassRefPtr</span> by a call
+to <span class="function">adoptRef</span> inside <span class="function">Node::create</span>,
+then passes into <span class="variable">a</span> and is released and passes into
+<span class="variable">b</span>, all without touching the reference count.</p>
+
 <h2>Guidelines</h2>
 
 <p>We’ve developed these guidelines for use of <span class="class">RefPtr</span>
@@ -318,7 +359,8 @@ Since local variables are typically <span class="class">RefPtr</span>, it’s co
 <ul>
 <li>New objects should be put into a <span class="class">RefPtr</span> as soon as possible
 after creation to avoid possibly leaking an object while it’s in a floating state.</li>
-<li>Best idiom is to use a private constructor and have a public factory function that
+<li>Best idiom is to use a private constructor and a public
+<span class="function">create</span> function that
 returns a <span class="class">PassRefPtr</span>.</li>
 </ul>
 
@@ -326,20 +368,19 @@ returns a <span class="class">PassRefPtr</span>.</li>
 
 <p>What frequently asked questions are not covered by this document?</p>
 
-<p>Which of these topics should also be covered by this document?</p>
+<p>Is there a better link for discussion of the return value optimization?</p>
+
+<p>Which of the following topics should also be covered by this document?</p>
 
 <ul>
 
 <li>The “protector” idiom, where a local RefPtr variable is used to keep an object alive.</li>
 
-<li>Perils of programming with floating objects.</li>
-
-<li>Why we should use create functions that return <span class="class">PassRefPtr</span>
-rather than use <span class="function">new</span> directly.</li>
+<li>Perils of programming with “floating objects”, which are a thing of the
+past for <span class="class">RefCounted</span> but still may exist for
+<span class="class">TreeShared</span> and other cases.</li>
 
 <li>Perils of programming with <span class="class">TreeShared</span>.</li>
-
-<li>Our desire to rename <span class="class">Shared</span> to <span class="class">RefCounted</span>.</li>
 
 <li>Our desire to eliminate <span class="class">TreeShared</span> and instead have
 <span class="variable">m_firstChild</span> and <span class="variable">m_next</span> be
@@ -366,7 +407,8 @@ and the lack of a <span class="class">PassRetainPtr</span>.</li>
 
 </ul>
 
-<p>Any other ideas about improving the clarity, scope, or presentation?</p>
+<p>If you have any comments on the above or other ideas about improving the clarity,
+scope, or presentation, please send mail to the <a href="/contact.html">WebKit mailing list</a>.</p>
 
 <?php
     include("../footer.inc");
