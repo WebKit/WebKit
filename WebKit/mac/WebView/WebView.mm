@@ -578,7 +578,7 @@ static CFMutableSetRef allWebViewsSet;
 
 - (BOOL)isFlipped 
 {
-    return !_private->useDocumentViews;
+    return _private && !_private->useDocumentViews;
 }
 
 #ifndef BUILDING_ON_TIGER

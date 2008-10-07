@@ -1,5 +1,15 @@
 2008-10-07  David Hyatt  <hyatt@apple.com>
 
+        Fix crash in isFlipped.  Null check _private since isFlipped can get called from within AppKit
+        machinery during teardown of the WebView.
+
+        Reviewed by Adam Roben
+
+        * WebView/WebView.mm:
+        (-[WebView isFlipped]):
+
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
         Make viewless WebKit update focused and active state when the window becomes and loses key.
         The focus controller has been patched to understand that in viewless mode it can recur down and
         update all of the frames, which is why this code works now when placed just on the WebView.
