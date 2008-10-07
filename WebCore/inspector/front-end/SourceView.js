@@ -148,11 +148,44 @@ WebInspector.SourceView.prototype = {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
 
+        var lineQueryRegex = /(^|\s)(?:#|line:\s*)(\d+)(\s|$)/i;
+        var lineQueryMatch = query.match(lineQueryRegex);
+        if (lineQueryMatch) {
+            var lineToSearch = parseInt(lineQueryMatch[2]);
+
+            // If there was a space before and after the line query part, replace with a space.
+            // Otherwise replace with an empty string to eat the prefix or postfix space.
+            var lineQueryReplacement = (lineQueryMatch[1] && lineQueryMatch[3] ? " " : "");
+            var filterlessQuery = query.replace(lineQueryRegex, lineQueryReplacement);
+        }
+
         this._searchFinishedCallback = finishedCallback;
 
         function findSearchMatches(query, finishedCallback)
         {
-            this._searchResults = InspectorController.search(this.sourceFrame.element.contentDocument, query);
+            if (isNaN(lineToSearch)) {
+                // Search the whole document since there was no line to search.
+                this._searchResults = (InspectorController.search(this.sourceFrame.element.contentDocument, query) || []);
+            } else {
+                var sourceRow = this.sourceFrame.sourceRow(lineToSearch);
+                if (sourceRow) {
+                    if (filterlessQuery) {
+                        // There is still a query string, so search for that string in the line.
+                        this._searchResults = (InspectorController.search(sourceRow, filterlessQuery) || []);
+                    } else {
+                        // Match the whole line, since there was no remaining query string to match.
+                        var rowRange = this.sourceFrame.element.contentDocument.createRange();
+                        rowRange.selectNodeContents(sourceRow);
+                        this._searchResults = [rowRange];
+                    }
+                }
+
+                // Attempt to search for the whole query, just incase it matches a color like "#333".
+                var wholeQueryMatches = InspectorController.search(this.sourceFrame.element.contentDocument, query);
+                if (wholeQueryMatches)
+                    this._searchResults = this._searchResults.concat(wholeQueryMatches);
+            }
+
             if (this._searchResults)
                 finishedCallback(this, this._searchResults.length);
         }

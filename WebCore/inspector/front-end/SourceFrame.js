@@ -92,8 +92,6 @@ WebInspector.SourceFrame.prototype = {
 
         // Line numbers are a 1-based index, but the rows collection is 0-based.
         --lineNumber;
-        if (lineNumber >= rows.length)
-            lineNumber = rows.length - 1;
 
         return rows[lineNumber];
     },

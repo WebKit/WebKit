@@ -1,3 +1,24 @@
+2008-10-06  Timothy Hatcher  <timothy@apple.com>
+
+        Add support to the Resources panel for queries like "#123", "foo #123",
+        "line: 123" and "foo line: 123". These will match the query limiting
+        the search only to the line specified. If only a line is specified,
+        the whole line is matched.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21422
+
+        Reviewed by Darin Adler.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.sourceRow): Don't return the last
+        row if the index is greater than the rows collection. Let it return
+        undefined by indexing out-of-bounds.
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.performSearch): Add support for
+        queries like "#123", "foo #123", "line: 123" and "foo line: 123".
+        Also match the whole query to the whole document in case there are
+        colors like "#333".
+
 2008-10-07  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Mark Rowe.
