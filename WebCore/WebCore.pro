@@ -11,7 +11,7 @@ contains(QT_CONFIG, embedded):CONFIG += embedded
 CONFIG(QTDIR_build) {
     GENERATED_SOURCES_DIR = $$PWD/generated
     include($$QT_SOURCE_TREE/src/qbase.pri)
-    CONFIG -= create_prl
+    !win32-msvc*: CONFIG -= create_prl
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
 }

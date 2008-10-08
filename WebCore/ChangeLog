@@ -1,3 +1,15 @@
+2008-10-08  Prasanth Ullattil  <pullatti@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix the linking of applications against WebKit on Qt/Windows.
+
+        The prl files that qmake creates are buggy on Unix, but we they're
+        fine on Windows and we have to have them there in order to get the
+        dependencies correct.
+
+        * WebCore.pro:
+
 2008-10-08  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
