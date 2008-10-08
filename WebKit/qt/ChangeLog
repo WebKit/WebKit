@@ -1,3 +1,14 @@
+2008-10-08  Matthias Ettrich <ettrich@nokia.com>
+
+        Reviewed by Simon.
+
+        Make QWebView ignore focus changes with PopupFocusReason to avoid
+        massive updates when menus open and close.
+
+        * Api/qwebview.cpp:
+        (QWebView::focusInEvent):
+        (QWebView::focusOutEvent):
+
 2008-10-08  Kavindra Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon.
