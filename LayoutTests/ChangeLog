@@ -2,6 +2,16 @@
 
         Reviewed by Oliver Hunt.
         
+        - update for new -0 handling in shouldBe
+        
+        (I confirmed the correctness of this change against other browsers, too.)
+
+        * fast/xpath/4XPath/Core/test_numeric_expr.html:
+
+2008-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
         - update regression testing system to be able to tell 0 from -0
         
         * fast/js/resources/js-test-pre.js:
