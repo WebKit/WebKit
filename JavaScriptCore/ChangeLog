@@ -1,3 +1,11 @@
+2008-10-08  André Pönitz  <apoenitz@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with Qt namespaces.
+
+        * wtf/Threading.h:
+
 2008-10-07  Sam Weinig  <sam@webkit.org>
 
         Roll out r37405.

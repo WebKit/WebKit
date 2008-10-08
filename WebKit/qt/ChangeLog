@@ -1,3 +1,11 @@
+2008-10-08  André Pönitz  <apoenitz@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation with Qt namespaces.
+
+        * WebCoreSupport/EditCommandQt.h:
+
 2008-10-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         QtWebKit build fix after changes to FrameLoaderClient.h in r37371
