@@ -94,7 +94,7 @@ namespace JSC {
 
             CodeBlock = -8,
             ScopeChain = -7,
-            CallerFrame = -6,
+            CallerRegisters = -6,
             ReturnPC = -5,
             ReturnValueRegister = -4,
             ArgumentCount = -3,

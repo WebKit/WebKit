@@ -116,12 +116,25 @@ namespace JSC {
         PrecExpression
     };
 
-    namespace DeclarationStacks {
+    struct DeclarationStacks {
         typedef Vector<Node*, 16> NodeStack;
-        enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
+        enum { IsConstant = 1, HasInitializer = 2 } VarAttrs;
         typedef Vector<std::pair<Identifier, unsigned>, 16> VarStack;
         typedef Vector<RefPtr<FuncDeclNode>, 16> FunctionStack;
-    }
+
+        DeclarationStacks(ExecState* e, NodeStack& n, VarStack& v, FunctionStack& f)
+            : exec(e)
+            , nodeStack(n)
+            , varStack(v)
+            , functionStack(f)
+        {
+        }
+
+        ExecState* exec;
+        NodeStack& nodeStack;
+        VarStack& varStack;
+        FunctionStack& functionStack;
+    };
 
     struct SwitchInfo {
         enum SwitchType { SwitchNone, SwitchImmediate, SwitchCharacter, SwitchString };

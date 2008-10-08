@@ -39,8 +39,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
 const ClassInfo JSActivation::info = { "JSActivation", 0, 0, 0 };
 
-JSActivation::JSActivation(CallFrame* callFrame, PassRefPtr<FunctionBodyNode> functionBody)
-    : Base(callFrame->globalData().activationStructureID, new JSActivationData(functionBody, callFrame))
+JSActivation::JSActivation(ExecState* exec, PassRefPtr<FunctionBodyNode> functionBody, Register* registers)
+    : Base(exec->globalData().activationStructureID, new JSActivationData(functionBody, registers))
 {
 }
 
@@ -153,20 +153,19 @@ bool JSActivation::isDynamicScope() const
 
 JSValue* JSActivation::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    JSActivation* activation = static_cast<JSActivation*>(slot.slotBase());
+    JSActivation* thisObj = static_cast<JSActivation*>(slot.slotBase());
 
-    if (activation->d()->functionBody->usesArguments()) {
+    if (thisObj->d()->functionBody->usesArguments()) {
         PropertySlot slot;
-        activation->symbolTableGet(exec->propertyNames().arguments, slot);
+        thisObj->symbolTableGet(exec->propertyNames().arguments, slot);
         return slot.getValue(exec, exec->propertyNames().arguments);
     }
 
-    CallFrame* callFrame = CallFrame::create(activation->d()->registers);
-    Arguments* arguments = callFrame->optionalCalleeArguments();
+    Arguments* arguments = static_cast<Arguments*>(thisObj->d()->registers[RegisterFile::OptionalCalleeArguments].getJSValue());
     if (!arguments) {
-        arguments = new (exec) Arguments(exec);
+        arguments = new (exec) Arguments(exec, &thisObj->registerAt(0));
         arguments->copyRegisters();
-        callFrame->setCalleeArguments(arguments);
+        thisObj->d()->registers[RegisterFile::OptionalCalleeArguments] = arguments;
     }
     ASSERT(arguments->isObject(&Arguments::info));
 

@@ -29,22 +29,36 @@
 #ifndef DebuggerCallFrame_h
 #define DebuggerCallFrame_h
 
-#include "ExecState.h"
-
 namespace JSC {
+    
+    class CodeBlock;
+    class ExecState;
+    class JSGlobalObject;
+    class JSObject;
+    class JSValue;
+    class Machine;
+    class UString;
+    class Register;
+    class ScopeChainNode;
     
     class DebuggerCallFrame {
     public:
-        enum Type { ProgramType, FunctionType };
+        enum Type {
+            ProgramType,
+            FunctionType
+        };
 
-        DebuggerCallFrame(CallFrame* callFrame, JSValue* exception)
-            : m_callFrame(callFrame)
+        DebuggerCallFrame(JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r, JSValue* exception)
+            : m_dynamicGlobalObject(dynamicGlobalObject)
+            , m_codeBlock(codeBlock)
+            , m_scopeChain(scopeChain)
+            , m_registers(r)
             , m_exception(exception)
         {
         }
 
-        JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
-        const ScopeChainNode* scopeChain() const { return m_callFrame->scopeChain(); }
+        JSGlobalObject* dynamicGlobalObject() const { return m_dynamicGlobalObject; }
+        const ScopeChainNode* scopeChain() const { return m_scopeChain; }
         const UString* functionName() const;
         Type type() const;
         JSObject* thisObject() const;
@@ -52,7 +66,10 @@ namespace JSC {
         JSValue* exception() const { return m_exception; }
 
     private:
-        CallFrame* m_callFrame;
+        JSGlobalObject* m_dynamicGlobalObject;
+        const CodeBlock* m_codeBlock;
+        ScopeChainNode* m_scopeChain;
+        Register* m_registers;
         JSValue* m_exception;
     };
 

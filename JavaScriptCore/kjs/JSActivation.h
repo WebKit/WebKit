@@ -43,7 +43,7 @@ namespace JSC {
     class JSActivation : public JSVariableObject {
         typedef JSVariableObject Base;
     public:
-        JSActivation(CallFrame*, PassRefPtr<FunctionBodyNode>);
+        JSActivation(ExecState*, PassRefPtr<FunctionBodyNode>, Register*);
         virtual ~JSActivation();
 
         virtual void mark();

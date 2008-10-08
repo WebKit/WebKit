@@ -29,9 +29,10 @@
 #include <kjs/ustring.h>
 
 namespace JSC {
+    class ExecState;
     class Identifier;
     class JSGlobalData;
-}
+};
 
 struct OpaqueJSString : public ThreadSafeShared<OpaqueJSString> {
 
@@ -51,6 +52,8 @@ struct OpaqueJSString : public ThreadSafeShared<OpaqueJSString> {
     unsigned length() { return this ? m_length : 0; }
 
     JSC::UString ustring() const;
+
+    JSC::Identifier identifier(JSC::ExecState*) const;
     JSC::Identifier identifier(JSC::JSGlobalData*) const;
 
 private:

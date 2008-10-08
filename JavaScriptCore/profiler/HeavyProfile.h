@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+    class ExecState;
     class UString;
 
     class HeavyProfile : public Profile {

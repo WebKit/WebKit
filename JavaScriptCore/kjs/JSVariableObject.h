@@ -61,11 +61,11 @@ namespace JSC {
         // without increasing their own size (since there's a hard limit on the
         // size of a JSCell).
         struct JSVariableObjectData {
-            JSVariableObjectData(SymbolTable* symbolTable, Register* registers)
-                : symbolTable(symbolTable)
-                , registers(registers)
+            JSVariableObjectData(SymbolTable* symbolTable_, Register* registers_)
+                : symbolTable(symbolTable_)
+                , registers(registers_)
             {
-                ASSERT(symbolTable);
+                ASSERT(symbolTable_);
             }
 
             SymbolTable* symbolTable; // Maps name -> offset from "r" in register file.

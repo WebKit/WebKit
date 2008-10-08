@@ -38,18 +38,18 @@ namespace JSC {
 
 const UString* DebuggerCallFrame::functionName() const
 {
-    if (!m_callFrame->codeBlock())
+    if (!m_codeBlock)
         return 0;
 
-    JSFunction* function = static_cast<JSFunction*>(m_callFrame->callee());
+    JSFunction* function = static_cast<JSFunction*>(m_registers[RegisterFile::Callee].getJSValue());
     if (!function)
         return 0;
-    return &function->name(&m_callFrame->globalData());
+    return &function->name(m_scopeChain->globalData);
 }
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const
 {
-    if (m_callFrame->callee())
+    if (m_registers[RegisterFile::Callee].getJSValue())
         return FunctionType;
 
     return ProgramType;
@@ -57,26 +57,25 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
 
 JSObject* DebuggerCallFrame::thisObject() const
 {
-    if (!m_callFrame->codeBlock())
+    if (!m_codeBlock)
         return 0;
 
-    // FIXME: Why is it safe to cast this to JSObject?
-    return static_cast<JSObject*>(m_callFrame->thisValue());
+    return static_cast<JSObject*>(m_registers[m_codeBlock->thisRegister].getJSValue());
 }
 
 JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception) const
 {
-    if (!m_callFrame->codeBlock())
+    if (!m_codeBlock)
         return 0;
 
     int errLine;
     UString errMsg;
     SourceCode source = makeSource(script);
-    RefPtr<EvalNode> evalNode = m_callFrame->scopeChain()->globalData->parser->parse<EvalNode>(m_callFrame, source, &errLine, &errMsg);
+    RefPtr<EvalNode> evalNode = m_scopeChain->globalData->parser->parse<EvalNode>(CallFrame::create(m_registers), source, &errLine, &errMsg);
     if (!evalNode)
-        return Error::create(m_callFrame, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
+        return Error::create(CallFrame::create(m_registers), SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 
-    return m_callFrame->scopeChain()->globalData->machine->execute(evalNode.get(), m_callFrame, thisObject(), m_callFrame->scopeChain(), &exception);
+    return m_scopeChain->globalData->machine->execute(evalNode.get(), CallFrame::create(m_registers), thisObject(), m_scopeChain, &exception);
 }
 
 } // namespace JSC

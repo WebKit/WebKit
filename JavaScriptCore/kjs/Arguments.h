@@ -51,7 +51,7 @@ namespace JSC {
 
     class Arguments : public JSObject {
     public:
-        Arguments(CallFrame*);
+        Arguments(ExecState*, Register* callFrame);
         virtual ~Arguments();
 
         static const ClassInfo info;
@@ -74,26 +74,26 @@ namespace JSC {
 
         virtual const ClassInfo* classInfo() const { return &info; }
 
-        void init(CallFrame*);
+        void init(ExecState*, Register* callFrame);
 
         OwnPtr<ArgumentsData> d;
     };
 
-    inline Arguments::Arguments(CallFrame* callFrame)
-        : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
+    inline Arguments::Arguments(ExecState* exec, Register* callFrame)
+        : JSObject(exec->lexicalGlobalObject()->argumentsStructure())
         , d(new ArgumentsData)
     {
         JSFunction* callee;
         ptrdiff_t firstParameterIndex;
         Register* argv;
         int numArguments;
-        callFrame->machine()->getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
+        exec->machine()->getArgumentsData(callFrame, callee, firstParameterIndex, argv, numArguments);
 
         d->numParameters = callee->m_body->parameterCount();
         d->firstParameterIndex = firstParameterIndex;
         d->numArguments = numArguments;
 
-        d->registers = callFrame->registers();
+        d->registers = callFrame;
 
         Register* extraArguments;
         if (d->numArguments <= d->numParameters)
