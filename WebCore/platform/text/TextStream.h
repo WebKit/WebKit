@@ -43,6 +43,10 @@ public:
     TextStream& operator<<(double);
     TextStream& operator<<(const char*);
     TextStream& operator<<(const String&);
+#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+    TextStream& operator<<(unsigned __int64);
+    TextStream& operator<<(__int64);
+#endif
 
     String release();
 
