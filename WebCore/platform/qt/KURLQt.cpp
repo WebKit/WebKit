@@ -19,17 +19,20 @@
  */
 #include "config.h"
 #include "KURL.h"
+#include "CString.h"
 
 #include "NotImplemented.h"
 #include "qurl.h"
 
 namespace WebCore {
 
+#if QT_VERSION < 0x040500
 static const char hexnumbers[] = "0123456789ABCDEF";
 static inline char toHex(char c)
 {
     return hexnumbers[c & 0xf];
 }
+#endif
 
 KURL::KURL(const QUrl& url)
 {
@@ -38,6 +41,7 @@ KURL::KURL(const QUrl& url)
 
 KURL::operator QUrl() const
 {
+#if QT_VERSION < 0x040500
     unsigned length = m_string.length();
 
     QByteArray ba;
@@ -78,6 +82,11 @@ KURL::operator QUrl() const
                 break;
         }
     }
+#else
+    // Qt 4.5 or later
+    // No need for special encoding
+    QByteArray ba = m_string.utf8().data();
+#endif
 
     QUrl url = QUrl::fromEncoded(ba);
     return url;
