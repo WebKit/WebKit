@@ -1,5 +1,14 @@
 2008-10-08  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, trying to fix bot.
+        
+        Update -0 expectations better.
+
+        * fast/xpath/4XPath/Core/test_numeric_expr-expected.txt:
+        * fast/xpath/4XPath/Core/test_numeric_expr.html:
+
+2008-10-08  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver Hunt.
         
         - update for new -0 handling in shouldBe

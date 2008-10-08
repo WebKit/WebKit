@@ -37,10 +37,10 @@
     shouldBe('DOM.evaluate("-1 div 0", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-Infinity');
     shouldBe('DOM.evaluate("0 div (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '0');
     shouldBe('DOM.evaluate("1 div (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '0');
-    shouldBe('DOM.evaluate("-1 div (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '0');
+    shouldBe('DOM.evaluate("-1 div (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-0');
     shouldBe('DOM.evaluate("0 div (-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-0');
     shouldBe('DOM.evaluate("1 div (-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-0');
-    shouldBe('DOM.evaluate("-1 div (-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-0');
+    shouldBe('DOM.evaluate("-1 div (-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '0');
     shouldBe('DOM.evaluate("(1 div 0) div (1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', 'NaN');
     shouldBe('DOM.evaluate("(1 div 0) div (-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', 'NaN');
     shouldBe('DOM.evaluate("(-1 div 0) div (-1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', 'NaN');
