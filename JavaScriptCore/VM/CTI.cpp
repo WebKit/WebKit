@@ -1767,8 +1767,20 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_to_jsnumber: {
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCall(i, Machine::cti_op_to_jsnumber);
+            emitGetArg(instruction[i + 2].u.operand, X86::eax);
+            
+            m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
+            X86Assembler::JmpSrc wasImmediate = m_jit.emitUnlinkedJnz();
+
+            emitJumpSlowCaseIfNotJSCell(X86::eax, i);
+
+            m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
+            m_jit.cmpl_i32m(NumberType, OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::ecx);
+            
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+            
+            m_jit.link(wasImmediate, m_jit.label());
+
             emitPutResult(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -2516,6 +2528,17 @@ void CTI::privateCompileSlowCases()
             // Put the return value in dst. In the interpreter, op_ret does this.
             emitPutResult(instruction[i + 1].u.operand);
             i += 7;
+            break;
+        }
+        case op_to_jsnumber: {
+            m_jit.link(iter->from, m_jit.label());
+            m_jit.link(iter->from, m_jit.label());
+
+            emitPutArg(X86::eax, 0);
+            emitCall(i, Machine::cti_op_to_jsnumber);
+
+            emitPutResult(instruction[i + 1].u.operand);
+            i += 3;
             break;
         }
 

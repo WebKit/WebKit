@@ -1424,13 +1424,26 @@ static ExpressionNode* makeBitwiseNotNode(void* globalPtr, ExpressionNode* expr)
 
 static ExpressionNode* makeMultNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    expr1 = expr1->stripUnaryPlus();
+    expr2 = expr2->stripUnaryPlus();
+
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
+
+    if (expr1->isNumber() && static_cast<NumberNode*>(expr1)->value() == 1)
+        return new UnaryPlusNode(GLOBAL_DATA, expr2);
+
+    if (expr2->isNumber() && static_cast<NumberNode*>(expr2)->value() == 1)
+        return new UnaryPlusNode(GLOBAL_DATA, expr1);
+
     return new MultNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeDivNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    expr1 = expr1->stripUnaryPlus();
+    expr2 = expr2->stripUnaryPlus();
+
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
     return new DivNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
@@ -1445,6 +1458,9 @@ static ExpressionNode* makeAddNode(void* globalPtr, ExpressionNode* expr1, Expre
 
 static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
+    expr1 = expr1->stripUnaryPlus();
+    expr2 = expr2->stripUnaryPlus();
+
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
     return new SubNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
