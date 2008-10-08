@@ -768,6 +768,9 @@ PassRefPtr<UString::Rep> concatenate(UString::Rep* rep, double d)
     if (isnan(d))
         return concatenate(rep, "NaN");
 
+    if (d == 0.0) // stringify -0 as 0
+        d = 0.0;
+
     char buf[80];
     int decimalPoint;
     int sign;

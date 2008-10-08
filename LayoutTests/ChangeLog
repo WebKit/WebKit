@@ -1,3 +1,17 @@
+2008-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - added test case for: correctly handle appending -0 to a string, it should stringify as just 0
+        (added to existing test)
+        
+        * fast/js/number-toString-expected.txt:
+        * fast/js/resources/number-toString.js:
+
+        - updated results in light of above fix
+        
+        * fast/js/math-transforms-expected.txt:
+
 2008-10-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

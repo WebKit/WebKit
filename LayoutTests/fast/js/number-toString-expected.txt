@@ -54,6 +54,7 @@ PASS (1234.567).toString(negInf) threw exception RangeError: toString() radix ar
 PASS posInf.toString() is "Infinity"
 PASS negInf.toString() is "-Infinity"
 PASS nan.toString() is "NaN"
+PASS "" + -0.0 is "0"
 PASS successfullyParsed is true
 
 TEST COMPLETE
