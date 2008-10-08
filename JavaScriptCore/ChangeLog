@@ -1,3 +1,29 @@
+2008-10-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Switch CTI runtime calls to the fastcall calling convention
+
+        Basically this means that we get to store the argument for CTI
+        calls in the ECX register, which saves a register->memory write
+        and subsequent memory->register read.
+        
+        This is a 1.7% progression in SunSpider and 2.4% on commandline
+        v8 tests on Windows
+
+        * VM/CTI.cpp:
+        (JSC::):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        * VM/CTI.h:
+        * VM/Machine.h:
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::emitRestoreArgumentReference):
+        (JSC::X86Assembler::emitRestoreArgumentReferenceForTrampoline):
+          We need this to correctly reload ecx from inside certain property access
+          trampolines.
+        * wtf/Platform.h:
+
 2008-10-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

@@ -107,12 +107,24 @@ namespace JSC {
 
     struct VoidPtrPair { void* first; void* second; };
 
-    typedef JSValue* (*CTIHelper_j)(CTI_ARGS);
-    typedef JSPropertyNameIterator* (*CTIHelper_p)(CTI_ARGS);
-    typedef void (*CTIHelper_v)(CTI_ARGS);
-    typedef void* (*CTIHelper_s)(CTI_ARGS);
-    typedef int (*CTIHelper_b)(CTI_ARGS);
-    typedef VoidPtrPair (*CTIHelper_2)(CTI_ARGS);
+#if COMPILER(MSVC)
+
+#if USE(FAST_CALL_CTI_ARGUMENT)
+#define SFX_CALL __fastcall
+#else
+#define SFX_CALL __cdecl
+#endif
+
+#else
+#define SFX_CALL
+#endif
+
+    typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
+    typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(CTI_ARGS);
+    typedef void (SFX_CALL *CTIHelper_v)(CTI_ARGS);
+    typedef void* (SFX_CALL *CTIHelper_s)(CTI_ARGS);
+    typedef int (SFX_CALL *CTIHelper_b)(CTI_ARGS);
+    typedef VoidPtrPair (SFX_CALL *CTIHelper_2)(CTI_ARGS);
 
     struct CallRecord {
         X86Assembler::JmpSrc from;
@@ -250,7 +262,9 @@ namespace JSC {
         // will compress the displacement, and we may not be able to fit a repatched offset.
         static const int repatchGetByIdDefaultOffset = 256;
 
-#if USE(CTI_ARGUMENT)
+#if USE(FAST_CALL_CTI_ARGUMENT)
+        static const int ctiArgumentInitSize = 2;
+#elif USE(CTI_ARGUMENT)
         static const int ctiArgumentInitSize = 4;
 #else
         static const int ctiArgumentInitSize = 0;
