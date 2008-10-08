@@ -1,3 +1,13 @@
+2008-10-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        - test cases that will check some possible edge cases for math optimizations
+
+        * fast/js/math-transforms-expected.txt: Added.
+        * fast/js/math-transforms.html: Added.
+        * fast/js/resources/math-transforms.js: Added.
+
 2008-10-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
