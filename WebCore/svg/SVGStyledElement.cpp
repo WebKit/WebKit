@@ -159,17 +159,25 @@ bool SVGStyledElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
 
 void SVGStyledElement::parseMappedAttribute(MappedAttribute* attr)
 {
+    const QualifiedName& attrName = attr->name();
     // NOTE: Any subclass which overrides parseMappedAttribute for a property handled by
     // cssPropertyIdForSVGAttributeName will also have to override mapToEntry to disable the default eSVG mapping
-    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
+    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName);
     if (propId > 0) {
         addCSSProperty(attr, propId, attr->value());
         setChanged();
         return;
     }
     
-    // id and class are handled by StyledElement
-    SVGElement::parseMappedAttribute(attr);
+    // SVG animation has currently requires special storage of values so we set
+    // the className here.  svgAttributeChanged actually causes the resulting
+    // style updates (instead of StyledElement::parseMappedAttribute). We don't
+    // tell StyledElement about the change to avoid parsing the class list twice
+    if (attrName.matches(HTMLNames::classAttr))
+        setClassName(attr->value());
+    else
+        // id is handled by StyledElement which SVGElement inherits from
+        SVGElement::parseMappedAttribute(attr);
 }
 
 bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
@@ -185,6 +193,9 @@ bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
 void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGElement::svgAttributeChanged(attrName);
+
+    if (attrName.matches(HTMLNames::classAttr))
+        classAttributeChanged(className());
 
     // If we're the child of a resource element, be sure to invalidate it.
     invalidateResourcesInAncestorChain();
