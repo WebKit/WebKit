@@ -205,6 +205,8 @@ public:
     QStack<TransparencyLayer *> layers;
     QPainter* redirect;
 
+    QBrush solidColor;
+
     // Only used by SVG for now.
     QPainterPath currentPath;
 
@@ -217,6 +219,8 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
 {
     painter = p;
     redirect = 0;
+
+    solidColor = QBrush(Qt::black);
 
     if (painter) {
         // use the default the QPainter was constructed with
@@ -575,7 +579,8 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& c)
     if (paintingDisabled())
         return;
 
-    m_data->p()->fillRect(rect, QColor(c));
+    m_data->solidColor.setColor(QColor(c));
+    m_data->p()->fillRect(rect, m_data->solidColor);
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color)
