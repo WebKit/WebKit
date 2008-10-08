@@ -1,3 +1,12 @@
+2008-10-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Updated the qrc file for the Web Inspector to contain the current set
+        of images.
+
+        * inspector/front-end/WebKit.qrc:
+
 2008-10-08  Prasanth Ullattil  <pullatti@trolltech.com>
 
         Reviewed by Simon.
