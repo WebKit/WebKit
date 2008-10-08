@@ -1,3 +1,12 @@
+2008-10-08  Mark Rowe  <mrowe@apple.com>
+
+        Typed by Maciej Stachowiak, reviewed by Mark Rowe.
+
+        Fix crash in fast/js/constant-folding.html with CTI disabled.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+
 2008-10-08  Timothy Hatcher  <timothy@apple.com>
 
         Roll out r37427 because it causes an infinite recursion loading about:blank.

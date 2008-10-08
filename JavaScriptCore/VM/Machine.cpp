@@ -1819,9 +1819,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile,
 
         JSValue* srcVal = r[src].jsValue(exec);
 
-        if (LIKELY(JSImmediate::isNumber(srcVal) || static_cast<JSCell*>(srcVal)->structureID()->typeInfo().type() == NumberType)) {
+        if (LIKELY(srcVal->isNumber()))
             r[dst] = r[src];
-        } else {
+        else {
             JSValue* result = srcVal->toJSNumber(exec);
             VM_CHECK_EXCEPTION();
             r[dst] = result;
