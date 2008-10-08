@@ -76,6 +76,7 @@ static ExpressionNode* makeBitwiseNotNode(void*, ExpressionNode*);
 static ExpressionNode* makeMultNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static ExpressionNode* makeDivNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static ExpressionNode* makeAddNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
+static ExpressionNode* makeSubNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static ExpressionNode* makeLeftShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static ExpressionNode* makeRightShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static StatementNode* makeVarStatementNode(void*, ExpressionNode*);
@@ -524,9 +525,9 @@ MultiplicativeExpr:
 MultiplicativeExprNoBF:
     UnaryExprNoBF
   | MultiplicativeExprNoBF '*' UnaryExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new MultNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(makeMultNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | MultiplicativeExprNoBF '/' UnaryExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new DivNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(makeDivNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | MultiplicativeExprNoBF '%' UnaryExpr
                                         { $$ = createNodeInfo<ExpressionNode*>(new ModNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
@@ -534,15 +535,15 @@ MultiplicativeExprNoBF:
 AdditiveExpr:
     MultiplicativeExpr
   | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeInfo<ExpressionNode*>(makeAddNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeInfo<ExpressionNode*>(new SubNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeInfo<ExpressionNode*>(makeSubNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 AdditiveExprNoBF:
     MultiplicativeExprNoBF
   | AdditiveExprNoBF '+' MultiplicativeExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new AddNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(makeAddNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | AdditiveExprNoBF '-' MultiplicativeExpr
-                                        { $$ = createNodeInfo<ExpressionNode*>(new SubNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+                                        { $$ = createNodeInfo<ExpressionNode*>(makeSubNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ShiftExpr:
@@ -554,8 +555,8 @@ ShiftExpr:
 
 ShiftExprNoBF:
     AdditiveExprNoBF
-  | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = createNodeInfo<ExpressionNode*>(new LeftShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
-  | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = createNodeInfo<ExpressionNode*>(new RightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = createNodeInfo<ExpressionNode*>(makeLeftShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = createNodeInfo<ExpressionNode*>(makeRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
   | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = createNodeInfo<ExpressionNode*>(new UnsignedRightShiftNode(GLOBAL_DATA, $1.m_node, $3.m_node, $3.m_features & AssignFeature), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
@@ -1440,6 +1441,13 @@ static ExpressionNode* makeAddNode(void* globalPtr, ExpressionNode* expr1, Expre
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
     return new AddNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
+}
+
+static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+{
+    if (expr1->isNumber() && expr2->isNumber())
+        return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
+    return new SubNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeLeftShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
