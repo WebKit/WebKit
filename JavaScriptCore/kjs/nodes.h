@@ -226,8 +226,6 @@ namespace JSC {
         virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return false; }
         virtual bool isDotAccessorNode() const JSC_FAST_CALL { return false; }
 
-        virtual ExpressionNode* stripUnaryPlus() { return this; }
-
         ResultType resultDescriptor() const JSC_FAST_CALL { return m_resultDesc; }
 
         // This needs to be in public in order to compile using GCC 3.x 
@@ -1180,8 +1178,6 @@ namespace JSC {
             : UnaryOpNode(globalData, ResultType::constNumber(), expr)
         {
         }
-
-        virtual ExpressionNode* stripUnaryPlus() { return m_expr.get(); }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_to_jsnumber; }
         virtual void streamTo(SourceStream&) const JSC_FAST_CALL;

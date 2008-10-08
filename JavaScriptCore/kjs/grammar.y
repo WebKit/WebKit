@@ -1424,31 +1424,13 @@ static ExpressionNode* makeBitwiseNotNode(void* globalPtr, ExpressionNode* expr)
 
 static ExpressionNode* makeMultNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    // these transforms are valid because unary + only does a toNumber
-    // conversion, which * does anyway:
-    expr1 = expr1->stripUnaryPlus(); // +FOO * BAR ==> FOO * BAR
-    expr2 = expr2->stripUnaryPlus(); // FOO * +BAR ==> FOO * BAR
-
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
-
-    // these transforms are valid because multiplying by 1 has no
-    // effect but toNumber conversion
-    if (expr1->isNumber() && static_cast<NumberNode*>(expr1)->value() == 1)
-        return new UnaryPlusNode(GLOBAL_DATA, expr2); // 1 * FOO ==> +FOO
-    if (expr2->isNumber() && static_cast<NumberNode*>(expr2)->value() == 1)
-        return new UnaryPlusNode(GLOBAL_DATA, expr1); // FOO * 1 ==> +FOO
-
     return new MultNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeDivNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    // these transforms are valid because unary + only does a toNumber
-    // conversion, which / does anyway:
-    expr1 = expr1->stripUnaryPlus(); // +FOO / BAR ==> FOO / BAR
-    expr2 = expr2->stripUnaryPlus(); // FOO / +BAR ==> FOO / BAR
-
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
     return new DivNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
@@ -1463,11 +1445,6 @@ static ExpressionNode* makeAddNode(void* globalPtr, ExpressionNode* expr1, Expre
 
 static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
-    // these transforms are valid because unary + only does a toNumber
-    // conversion, which - does anyway:
-    expr1 = expr1->stripUnaryPlus(); // +FOO - BAR ==> FOO - BAR
-    expr2 = expr2->stripUnaryPlus(); // FOO - +BAR ==> FOO - BAR
-
     if (expr1->isNumber() && expr2->isNumber())
         return makeNumberNode(globalPtr, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
     return new SubNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);

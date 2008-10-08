@@ -1815,16 +1815,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile,
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
+        JSValue* result = r[src].jsValue(exec)->toJSNumber(exec);
+        VM_CHECK_EXCEPTION();
 
-        JSValue* srcVal = r[src].jsValue(exec);
-
-        if (LIKELY(JSImmediate::isNumber(srcVal) || static_cast<JSCell*>(srcVal)->structureID()->typeInfo().type() == NumberType))
-            r[dst] = r[src];
-        else {
-            JSValue* result = srcVal->toJSNumber(exec);
-            VM_CHECK_EXCEPTION();
-            r[dst] = result;
-        }
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
