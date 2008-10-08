@@ -152,6 +152,9 @@ webcore_dist :=
 webcoregtk_cppflags :=
 webcoregtk_sources :=
 
+nodist_EXTRA_libWebCore_la_SOURCES = \
+	$(webcore_built_nosources)
+
 nodist_libWebCore_la_SOURCES = \
 	$(webcore_built_sources)
 
@@ -474,6 +477,11 @@ MAINTAINERCLEANFILES += \
 	GNUmakefile.in \
 	INSTALL \
 	README
+
+# Older automake versions (1.7) place Plo files in a different place so we need
+# to create the output directory manually.
+all-local:
+	mkdir -p $(top_builddir)/$(DEPDIR)/DerivedSources
 
 # remove built sources and program directories
 clean-local:

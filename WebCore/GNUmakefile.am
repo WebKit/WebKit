@@ -2936,9 +2936,14 @@ IDL_BINDINGS_JS := $(filter-out $(IDL_BINDINGS_JS_PURE),$(IDL_BINDINGS))
 
 webcore_built_nosources += $(patsubst %.idl,DerivedSources/JS%.h,$(notdir $(IDL_BINDINGS)))
 
+webcore_built_nosources += $(patsubst %.idl,DerivedSources/JS%.cpp,$(notdir $(IDL_BINDINGS_JS)))
+
 libWebCoreJS_objects := $(patsubst %.idl,DerivedSources/JS%.lo,$(notdir $(IDL_BINDINGS_JS)))
 
 libWebCoreJS_depfiles := $(patsubst %.idl,DerivedSources/$(DEPDIR)/JS%.Plo,$(notdir $(IDL_BINDINGS_JS)))
+
+# Older automake versions (1.7) place Plo files in a different place:
+libWebCoreJS_depfiles += $(patsubst %.lo,$(DEPDIR)/%.Plo,$(libWebCoreJS_objects))
 
 -include $(libWebCoreJS_depfiles)
 
