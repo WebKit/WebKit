@@ -1,5 +1,40 @@
 2008-10-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mark Rowe.
+        
+        - optimize away multiplication by constant 1.0
+        
+        2.3% speedup on v8 RayTrace benchmark
+
+        Apparently it's not uncommon for JavaScript code to multiply by
+        constant 1.0 in the mistaken belief that this converts integer to
+        floating point and that there is any operational difference.
+        
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass): Optimize to_jsnumber for
+        case where parameter is already number.
+        (JSC::CTI::privateCompileSlowCases): ditto
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute): ditto
+        * kjs/grammar.y:
+        (makeMultNode): Transform as follows:
+        +FOO * BAR ==> FOO * BAR
+        FOO * +BAR ==> FOO * BAR
+        FOO * 1 ==> +FOO
+        1 * FOO ==> +FOO
+        (makeDivNode): Transform as follows:
+        +FOO / BAR ==> FOO / BAR
+        FOO / +BAR ==> FOO / BAR
+        (makeSubNode): Transform as follows:
+        +FOO - BAR ==> FOO - BAR
+        FOO - +BAR ==> FOO - BAR
+        * kjs/nodes.h:
+        (JSC::ExpressionNode::stripUnaryPlus): Helper for above
+        grammar.y changes
+        (JSC::UnaryPlusNode::stripUnaryPlus): ditto
+
+2008-10-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver Hunt.
         
         - make constant folding code more consistent
