@@ -1,3 +1,14 @@
+2008-10-08  Marius Storm-Olsen  <marius@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixes dependencies in qmake generated visual studio projects.
+
+        Only add debug lib name if we're in the debug build_pass, else the release version.
+        The MSVC solution generator would pick up the debug javascriptcore lib as a dependency.
+
+        * WebCore.pro:
+
 2008-10-08  Prasanth Ullattil  <pullatti@trolltech.com>
 
         Reviewed by Simon.

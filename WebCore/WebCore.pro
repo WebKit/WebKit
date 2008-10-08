@@ -102,7 +102,7 @@ contains(CONFIG, debug_and_release_target) {
 
 unset(JSCORE_LINKAGE)
 CONFIG(QTDIR_build) {
-    CONFIG(debug, debug|release) {
+    if(!debug_and_release|build_pass):CONFIG(debug, debug|release) {
         win32:JSCORE_LINKAGE = -lJavaScriptCored
         mac:JSCORE_LINKAGE = -lJavaScriptCore_debug
     }
