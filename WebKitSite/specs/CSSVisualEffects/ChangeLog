@@ -1,3 +1,11 @@
+2008-10-08  Dean Jackson  <dino@apple.com>
+
+        Forgot to set the date on the spec documents with last commit.
+        
+        * CSSAnimations.html:
+        * CSSTransforms.html:
+        * CSSTransitions.html:
+
 2008-09-04  Dean Jackson  <dino@apple.com>
 
         Change transform operation values in CSSTransformValue -
