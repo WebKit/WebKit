@@ -1503,13 +1503,14 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile,
 #endif
     NEXT_OPCODE;
 #else
-    #define NEXT_OPCODE MACHINE_SAMPLING_sample(this->codeBlock(r), vPC); continue
+    #define NEXT_OPCODE MACHINE_SAMPLING_sample(this->codeBlock(r), vPC); goto interpreterLoopStart
 #if DUMP_OPCODE_STATS
     #define BEGIN_OPCODE(opcode) case opcode: OpcodeStats::recordInstruction(opcode);
 #else
     #define BEGIN_OPCODE(opcode) case opcode:
 #endif
-    while (1) // iterator loop begins
+    while (1) { // iterator loop begins
+    interpreterLoopStart:;
     switch (vPC->u.opcode)
 #endif
     {
@@ -3913,6 +3914,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile,
         NEXT_OPCODE;
     }
     }
+#if !HAVE(COMPUTED_GOTO)
+    } // iterator loop ends
+#endif
     #undef NEXT_OPCODE
     #undef BEGIN_OPCODE
     #undef VM_CHECK_EXCEPTION

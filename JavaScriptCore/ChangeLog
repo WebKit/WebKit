@@ -1,3 +1,16 @@
+2008-10-08  Prasanth Ullattil  <pullatti@trolltech.com>
+
+        Reviewed by Oliver Hunt.
+
+        Avoid endless loops when compiling without the computed goto
+        optimization.
+
+        NEXT_OPCODE expands to "continue", which will not work inside
+        loops.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+
 2008-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
