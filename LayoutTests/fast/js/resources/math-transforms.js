@@ -27,10 +27,10 @@ for (var name in values) {
     var numForStr = numberForString[name] ? numberForString[name] : name;
 
     shouldBe("values." + name + " * 1", "+values." + name);
-    shouldBe("values." + name + " * 1", "" + values[numForStr]);
+    shouldBe("values." + name + " * 1", stringify(values[numForStr]));
 
     shouldBe("1 * values." + name, "+values." + name);
-    shouldBe("1 * values." + name, "" + values[numForStr]);
+    shouldBe("1 * values." + name, stringify(values[numForStr]));
 }
 
 for (var name1 in values) {
@@ -39,25 +39,25 @@ for (var name1 in values) {
         var numForStr2 = numberForString[name2] ? numberForString[name2] : name2;
 
         shouldBe("+values." + name1 + " * values." + name2, "values." + name1 + " * values." + name2);
-        shouldBe("+values." + name1 + " * values." + name2, "" + (values[name1] * values[name2]));
+        shouldBe("+values." + name1 + " * values." + name2, stringify(values[name1] * values[name2]));
         shouldBe("values." + name1 + " * +values." + name2, "values." + name1 + " * values." + name2);
-        shouldBe("values." + name1 + " * +values." + name2, "" + (values[name1] * values[name2]));
+        shouldBe("values." + name1 + " * +values." + name2, stringify(values[name1] * values[name2]));
         shouldBe("+values." + name1 + " * +values." + name2, "values." + name1 + " * values." + name2);
-        shouldBe("+values." + name1 + " * +values." + name2, "" + (values[name1] * values[name2]));
+        shouldBe("+values." + name1 + " * +values." + name2, stringify(values[name1] * values[name2]));
 
         shouldBe("+values." + name1 + " / values." + name2, "values." + name1 + " / values." + name2);
-        shouldBe("+values." + name1 + " / values." + name2, "" + (values[name1] / values[name2]));
+        shouldBe("+values." + name1 + " / values." + name2, stringify(values[name1] / values[name2]));
         shouldBe("values." + name1 + " / +values." + name2, "values." + name1 + " / values." + name2);
-        shouldBe("values." + name1 + " / +values." + name2, "" + (values[name1] / values[name2]));
+        shouldBe("values." + name1 + " / +values." + name2, stringify(values[name1] / values[name2]));
         shouldBe("+values." + name1 + " / +values." + name2, "values." + name1 + " / values." + name2);
-        shouldBe("+values." + name1 + " / +values." + name2, "" + (values[name1] / values[name2]));
+        shouldBe("+values." + name1 + " / +values." + name2, stringify(values[name1] / values[name2]));
 
         shouldBe("+values." + name1 + " - values." + name2, "values." + name1 + " - values." + name2);
-        shouldBe("+values." + name1 + " - values." + name2, "" + (values[name1] - values[name2]));
+        shouldBe("+values." + name1 + " - values." + name2, stringify(values[name1] - values[name2]));
         shouldBe("values." + name1 + " - +values." + name2, "values." + name1 + " - values." + name2);
-        shouldBe("values." + name1 + " - +values." + name2, "" + (values[name1] - values[name2]));
+        shouldBe("values." + name1 + " - +values." + name2, stringify(values[name1] - values[name2]));
         shouldBe("+values." + name1 + " - +values." + name2, "values." + name1 + " - values." + name2);
-        shouldBe("+values." + name1 + " - +values." + name2, "" + (values[name1] - values[name2]));
+        shouldBe("+values." + name1 + " - +values." + name2, stringify(values[name1] - values[name2]));
     }
 }
 

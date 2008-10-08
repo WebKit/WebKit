@@ -1,6 +1,21 @@
 2008-10-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
+        
+        - update regression testing system to be able to tell 0 from -0
+        
+        * fast/js/resources/js-test-pre.js:
+
+        Update tests and results appropriately.
+
+        * fast/js/resources/constant-folding.js:
+        * fast/js/constant-folding-expected.txt:
+        * fast/js/math-transforms-expected.txt:
+        * fast/js/resources/math-transforms.js:
+
+2008-10-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
 
         - added test case for: correctly handle appending -0 to a string, it should stringify as just 0
         (added to existing test)

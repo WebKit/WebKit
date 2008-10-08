@@ -433,7 +433,7 @@ shouldBe('-3.1', '-3.1');
 shouldBe('- -3.1', '3.1');
 shouldBe('-"3.1"', '-3.1');
 shouldBe('-true', '-1');
-shouldBe('-false', '0');
+shouldBe('-false', '-0');
 
 shouldBe('~3', '-4');
 shouldBe('~ ~3', '3');

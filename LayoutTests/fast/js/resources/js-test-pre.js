@@ -45,8 +45,17 @@ function areArraysEqual(_a, _b)
     return true;
 }
 
+function isMinusZero(n)
+{
+    // the only way to tell 0 from -0 in JS is the fact that 1/-0 is
+    // -Infinity instead of Infinity
+    return n === 0 && 1/n < 0;
+}
+
 function isResultCorrect(_actual, _expected)
 {
+    if (_expected === 0)
+        return _actual === _expected && (1/_actual) === (1/_expected);
     if (_actual === _expected)
         return true;
     if (typeof(_expected) == "number" && isNaN(_expected))
@@ -54,6 +63,13 @@ function isResultCorrect(_actual, _expected)
     if (Object.prototype.toString.call(_expected) == Object.prototype.toString.call([]))
         return areArraysEqual(_actual, _expected);
     return false;
+}
+
+function stringify(v)
+{
+    if (v === 0 && 1/v < 0)
+        return "-0";
+    else return "" + v;
 }
 
 function shouldBe(_a, _b)
@@ -74,7 +90,7 @@ function shouldBe(_a, _b)
   else if (isResultCorrect(_av, _bv))
     testPassed(_a + " is " + _b);
   else if (typeof(_av) == typeof(_bv))
-    testFailed(_a + " should be " + _bv + ". Was " + _av + ".");
+    testFailed(_a + " should be " + _bv + ". Was " + stringify(_av) + ".");
   else
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }

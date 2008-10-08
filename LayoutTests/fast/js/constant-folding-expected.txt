@@ -410,7 +410,7 @@ PASS -3.1 is -3.1
 PASS - -3.1 is 3.1
 PASS -"3.1" is -3.1
 PASS -true is -1
-PASS -false is 0
+PASS -false is -0
 PASS ~3 is -4
 PASS ~ ~3 is 3
 PASS ~"3" is -4
