@@ -46,11 +46,6 @@ UString OpaqueJSString::ustring() const
     return UString::null();
 }
 
-Identifier OpaqueJSString::identifier(ExecState* exec) const
-{
-    return identifier(&exec->globalData());
-}
-
 Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
 {
     if (!this || !m_characters)

@@ -159,7 +159,7 @@ static void substitute(UString& string, const UString& substring)
 RegisterID* ThrowableExpressionData::emitThrowError(CodeGenerator& generator, ErrorType e, const char* msg)
 {
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    RegisterID* exception = generator.emitNewError(generator.newTemporary(), e, jsString(generator.globalExec(), msg));
+    RegisterID* exception = generator.emitNewError(generator.newTemporary(), e, jsString(generator.globalData(), msg));
     generator.emitThrow(exception);
     return exception;
 }
@@ -169,7 +169,7 @@ RegisterID* ThrowableExpressionData::emitThrowError(CodeGenerator& generator, Er
     UString message = msg;
     substitute(message, label.ustring());
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    RegisterID* exception = generator.emitNewError(generator.newTemporary(), e, jsString(generator.globalExec(), message));
+    RegisterID* exception = generator.emitNewError(generator.newTemporary(), e, jsString(generator.globalData(), message));
     generator.emitThrow(exception);
     return exception;
 }
@@ -238,7 +238,7 @@ RegisterID* StringNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* RegExpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegExp> regExp = RegExp::create(generator.globalExec(), m_pattern, m_flags);
+    RefPtr<RegExp> regExp = RegExp::create(generator.globalData(), m_pattern, m_flags);
     if (!regExp->isValid())
         return emitThrowError(generator, SyntaxError, ("Invalid regular expression: " + UString(regExp->errorMessage())).UTF8String().c_str());
     if (dst == ignoredResult())
@@ -300,7 +300,7 @@ RegisterID* ArrayNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     }
 
     if (m_elision) {
-        RegisterID* value = generator.emitLoad(0, jsNumber(generator.globalExec(), m_elision + length));
+        RegisterID* value = generator.emitLoad(0, jsNumber(generator.globalData(), m_elision + length));
         generator.emitPutById(array.get(), generator.propertyNames().length, value);
     }
 
@@ -775,7 +775,7 @@ RegisterID* InstanceOfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     RefPtr<RegisterID> src2 = generator.emitNode(m_expr2.get());
 
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    RegisterID* src2Prototype = generator.emitGetById(generator.newTemporary(), src2.get(), generator.globalExec()->propertyNames().prototype);
+    RegisterID* src2Prototype = generator.emitGetById(generator.newTemporary(), src2.get(), generator.globalData()->propertyNames->prototype);
 
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
     return generator.emitInstanceOf(generator.finalDestination(dst, src1.get()), src1.get(), src2.get(), src2Prototype);

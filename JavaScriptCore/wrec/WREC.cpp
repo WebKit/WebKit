@@ -29,7 +29,6 @@
 #if ENABLE(WREC)
 
 #include "CharacterClassConstructor.h"
-#include "ExecState.h"
 #include "Machine.h"
 #include "pcre_internal.h"
 

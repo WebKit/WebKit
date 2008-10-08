@@ -92,7 +92,7 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    Identifier nameID = name ? name->identifier(exec) : Identifier(exec, "anonymous");
+    Identifier nameID = name ? name->identifier(&exec->globalData()) : Identifier(exec, "anonymous");
     
     return toRef(new (exec) JSCallbackFunction(exec, callAsFunction, nameID));
 }
@@ -118,7 +118,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    Identifier nameID = name ? name->identifier(exec) : Identifier(exec, "anonymous");
+    Identifier nameID = name ? name->identifier(&exec->globalData()) : Identifier(exec, "anonymous");
     
     ArgList args;
     for (unsigned i = 0; i < parameterCount; i++)
@@ -246,7 +246,7 @@ bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
     JSObject* jsObject = toJS(object);
     
-    return jsObject->hasProperty(exec, propertyName->identifier(exec));
+    return jsObject->hasProperty(exec, propertyName->identifier(&exec->globalData()));
 }
 
 JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
@@ -257,7 +257,7 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 
     JSObject* jsObject = toJS(object);
 
-    JSValue* jsValue = jsObject->get(exec, propertyName->identifier(exec));
+    JSValue* jsValue = jsObject->get(exec, propertyName->identifier(&exec->globalData()));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -273,7 +273,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
-    Identifier name(propertyName->identifier(exec));
+    Identifier name(propertyName->identifier(&exec->globalData()));
     JSValue* jsValue = toJS(value);
 
     if (attributes && !jsObject->hasProperty(exec, name))
@@ -333,7 +333,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 
     JSObject* jsObject = toJS(object);
 
-    bool result = jsObject->deleteProperty(exec,  propertyName->identifier(exec));
+    bool result = jsObject->deleteProperty(exec, propertyName->identifier(&exec->globalData()));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());

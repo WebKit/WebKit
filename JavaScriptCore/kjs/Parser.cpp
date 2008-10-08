@@ -47,7 +47,7 @@ void Parser::parse(ExecState* exec, int* errLine, UString* errMsg)
     *errLine = -1;
     *errMsg = 0;
 
-    Lexer& lexer = *exec->lexer();
+    Lexer& lexer = *exec->globalData().lexer;
     lexer.setCode(*m_source);
 
     int parseError = kjsyyparse(&exec->globalData());

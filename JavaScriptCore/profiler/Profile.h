@@ -33,8 +33,6 @@
 
 namespace JSC {
 
-    class ExecState;
-
     class Profile : public RefCounted<Profile> {
     public:
         static PassRefPtr<Profile> create(const UString& title, unsigned uid);

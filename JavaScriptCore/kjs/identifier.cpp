@@ -240,7 +240,7 @@ void Identifier::remove(UString::Rep* r)
 
 void Identifier::checkSameIdentifierTable(ExecState* exec, UString::Rep* rep)
 {
-    ASSERT(rep->identifierTable() == exec->identifierTable());
+    ASSERT(rep->identifierTable() == exec->globalData().identifierTable);
 }
 
 void Identifier::checkSameIdentifierTable(JSGlobalData* globalData, UString::Rep* rep)

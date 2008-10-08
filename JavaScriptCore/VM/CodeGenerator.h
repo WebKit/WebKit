@@ -320,8 +320,6 @@ namespace JSC {
 
         CodeType codeType() const { return m_codeType; }
 
-        ExecState* globalExec() { return m_scopeChain->globalObject()->globalExec(); }
-
     private:
         void emitOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);

@@ -1,3 +1,230 @@
+2008-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21403
+          Bug 21403: use new CallFrame class rather than Register* for call frame manipulation
+
+        Add CallFrame as a synonym for ExecState. Arguably, some day we should switch every
+        client over to the new name.
+
+        Use CallFrame* consistently rather than Register* or ExecState* in low-level code such
+        as Machine.cpp and CTI.cpp. Similarly, use callFrame rather than r as its name and use
+        accessor functions to get at things in the frame.
+
+        Eliminate other uses of ExecState* that aren't needed, replacing in some cases with
+        JSGlobalData* and in other cases eliminating them entirely.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeFunction):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectDeleteProperty):
+        * API/OpaqueJSString.cpp:
+        * API/OpaqueJSString.h:
+        * VM/CTI.cpp:
+        (JSC::CTI::getConstant):
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::getConstantImmediateNumericArg):
+        (JSC::CTI::printOpcodeOperandTypes):
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::compileRegExp):
+        * VM/CTI.h:
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitEqualityOp):
+        (JSC::CodeGenerator::emitLoad):
+        (JSC::CodeGenerator::emitUnexpectedLoad):
+        (JSC::CodeGenerator::emitConstruct):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::jsAddSlowCase):
+        (JSC::jsAdd):
+        (JSC::jsTypeStringForValue):
+        (JSC::Machine::resolve):
+        (JSC::Machine::resolveSkip):
+        (JSC::Machine::resolveGlobal):
+        (JSC::inlineResolveBase):
+        (JSC::Machine::resolveBase):
+        (JSC::Machine::resolveBaseAndProperty):
+        (JSC::Machine::resolveBaseAndFunc):
+        (JSC::Machine::slideRegisterWindowForCall):
+        (JSC::isNotObject):
+        (JSC::Machine::callEval):
+        (JSC::Machine::dumpCallFrame):
+        (JSC::Machine::dumpRegisters):
+        (JSC::Machine::unwindCallFrame):
+        (JSC::Machine::throwException):
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope):
+        (JSC::DynamicGlobalObjectScope::~DynamicGlobalObjectScope):
+        (JSC::Machine::execute):
+        (JSC::Machine::debug):
+        (JSC::Machine::createExceptionScope):
+        (JSC::cachePrototypeChain):
+        (JSC::Machine::tryCachePutByID):
+        (JSC::Machine::tryCacheGetByID):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::retrieveArguments):
+        (JSC::Machine::retrieveCaller):
+        (JSC::Machine::retrieveLastCaller):
+        (JSC::Machine::findFunctionCallFrame):
+        (JSC::Machine::getArgumentsData):
+        (JSC::Machine::tryCTICachePutByID):
+        (JSC::Machine::getCTIArrayLengthTrampoline):
+        (JSC::Machine::getCTIStringLengthTrampoline):
+        (JSC::Machine::tryCTICacheGetByID):
+        (JSC::Machine::cti_op_convert_this):
+        (JSC::Machine::cti_op_end):
+        (JSC::Machine::cti_op_add):
+        (JSC::Machine::cti_op_pre_inc):
+        (JSC::Machine::cti_timeout_check):
+        (JSC::Machine::cti_op_loop_if_less):
+        (JSC::Machine::cti_op_loop_if_lesseq):
+        (JSC::Machine::cti_op_new_object):
+        (JSC::Machine::cti_op_put_by_id):
+        (JSC::Machine::cti_op_put_by_id_second):
+        (JSC::Machine::cti_op_put_by_id_generic):
+        (JSC::Machine::cti_op_put_by_id_fail):
+        (JSC::Machine::cti_op_get_by_id):
+        (JSC::Machine::cti_op_get_by_id_second):
+        (JSC::Machine::cti_op_get_by_id_generic):
+        (JSC::Machine::cti_op_get_by_id_fail):
+        (JSC::Machine::cti_op_instanceof):
+        (JSC::Machine::cti_op_del_by_id):
+        (JSC::Machine::cti_op_mul):
+        (JSC::Machine::cti_op_new_func):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_vm_compile):
+        (JSC::Machine::cti_op_push_activation):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_create_arguments):
+        (JSC::Machine::cti_op_tear_off_activation):
+        (JSC::Machine::cti_op_tear_off_arguments):
+        (JSC::Machine::cti_op_ret_profiler):
+        (JSC::Machine::cti_op_ret_scopeChain):
+        (JSC::Machine::cti_op_new_array):
+        (JSC::Machine::cti_op_resolve):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_get_by_val):
+        (JSC::Machine::cti_op_resolve_func):
+        (JSC::Machine::cti_op_sub):
+        (JSC::Machine::cti_op_put_by_val):
+        (JSC::Machine::cti_op_put_by_val_array):
+        (JSC::Machine::cti_op_lesseq):
+        (JSC::Machine::cti_op_loop_if_true):
+        (JSC::Machine::cti_op_negate):
+        (JSC::Machine::cti_op_resolve_base):
+        (JSC::Machine::cti_op_resolve_skip):
+        (JSC::Machine::cti_op_resolve_global):
+        (JSC::Machine::cti_op_div):
+        (JSC::Machine::cti_op_pre_dec):
+        (JSC::Machine::cti_op_jless):
+        (JSC::Machine::cti_op_not):
+        (JSC::Machine::cti_op_jtrue):
+        (JSC::Machine::cti_op_post_inc):
+        (JSC::Machine::cti_op_eq):
+        (JSC::Machine::cti_op_lshift):
+        (JSC::Machine::cti_op_bitand):
+        (JSC::Machine::cti_op_rshift):
+        (JSC::Machine::cti_op_bitnot):
+        (JSC::Machine::cti_op_resolve_with_base):
+        (JSC::Machine::cti_op_new_func_exp):
+        (JSC::Machine::cti_op_mod):
+        (JSC::Machine::cti_op_less):
+        (JSC::Machine::cti_op_neq):
+        (JSC::Machine::cti_op_post_dec):
+        (JSC::Machine::cti_op_urshift):
+        (JSC::Machine::cti_op_bitxor):
+        (JSC::Machine::cti_op_new_regexp):
+        (JSC::Machine::cti_op_bitor):
+        (JSC::Machine::cti_op_call_eval):
+        (JSC::Machine::cti_op_throw):
+        (JSC::Machine::cti_op_get_pnames):
+        (JSC::Machine::cti_op_next_pname):
+        (JSC::Machine::cti_op_push_scope):
+        (JSC::Machine::cti_op_pop_scope):
+        (JSC::Machine::cti_op_typeof):
+        (JSC::Machine::cti_op_to_jsnumber):
+        (JSC::Machine::cti_op_in):
+        (JSC::Machine::cti_op_push_new_scope):
+        (JSC::Machine::cti_op_jmp_scopes):
+        (JSC::Machine::cti_op_put_by_index):
+        (JSC::Machine::cti_op_switch_imm):
+        (JSC::Machine::cti_op_switch_char):
+        (JSC::Machine::cti_op_switch_string):
+        (JSC::Machine::cti_op_del_by_val):
+        (JSC::Machine::cti_op_put_getter):
+        (JSC::Machine::cti_op_put_setter):
+        (JSC::Machine::cti_op_new_error):
+        (JSC::Machine::cti_op_debug):
+        (JSC::Machine::cti_vm_throw):
+        * VM/Machine.h:
+        * VM/Register.h:
+        * VM/RegisterFile.h:
+        * kjs/Arguments.h:
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName):
+        (JSC::DebuggerCallFrame::type):
+        (JSC::DebuggerCallFrame::thisObject):
+        (JSC::DebuggerCallFrame::evaluate):
+        * kjs/DebuggerCallFrame.h:
+        * kjs/ExecState.cpp:
+        (JSC::CallFrame::thisValue):
+        * kjs/ExecState.h:
+        * kjs/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * kjs/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::argumentsGetter):
+        * kjs/JSActivation.h:
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * kjs/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * kjs/JSVariableObject.h:
+        * kjs/Parser.cpp:
+        (JSC::Parser::parse):
+        * kjs/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * kjs/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * kjs/Shell.cpp:
+        (prettyPrintScript):
+        * kjs/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        * kjs/identifier.cpp:
+        (JSC::Identifier::checkSameIdentifierTable):
+        * kjs/interpreter.cpp:
+        (JSC::Interpreter::checkSyntax):
+        (JSC::Interpreter::evaluate):
+        * kjs/nodes.cpp:
+        (JSC::ThrowableExpressionData::emitThrowError):
+        (JSC::RegExpNode::emitCode):
+        (JSC::ArrayNode::emitCode):
+        (JSC::InstanceOfNode::emitCode):
+        * kjs/nodes.h:
+        * kjs/regexp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+        * kjs/regexp.h:
+        * profiler/HeavyProfile.h:
+        * profiler/Profile.h:
+        * wrec/WREC.cpp:
+        * wrec/WREC.h:
+
 2008-10-08  Prasanth Ullattil  <pullatti@trolltech.com>
 
         Reviewed by Oliver Hunt.
