@@ -618,7 +618,8 @@ int QWebFrame::scrollBarMinimum(Qt::Orientation orientation) const
 
 /*!
   \since 4.5
-  Moves the current scroll offset.
+  Scrolls the frame \a dx pixels to the right and \a dy pixels downward. Both
+  \a dx and \a dy may be negative.
   
   \sa QWebFrame::scrollOffset
 */
@@ -687,15 +688,15 @@ void QWebFrame::render(QPainter *painter)
 }
 
 /*!
-  \property QWebFrame::textSizeMultiplier
-  \brief the scaling factor for all text in the frame
-  \obsolete
+    \property QWebFrame::textSizeMultiplier
+    \brief the scaling factor for all text in the frame
+    \obsolete
 
-  Use setZoomFactor instead, in combination with the
-  ZoomTextOnly attribute in QWebSettings.
+    Use setZoomFactor instead, in combination with the ZoomTextOnly attribute in
+    QWebSettings.
 
-  \note Setting this property also enables the
-  ZoomTextOnly attribute in QWebSettings.
+    \note Setting this property also enables the ZoomTextOnly attribute in
+    QWebSettings.
 */
 
 void QWebFrame::setTextSizeMultiplier(qreal factor)

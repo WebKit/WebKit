@@ -1,3 +1,11 @@
+2008-10-08  Kavindra Palaraja  <kdpalara@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixed a qdoc warning and adjusted some spacing
+
+        * Api/qwebframe.cpp:
+
 2008-10-08  Rhys Weatherley  <rhys.weatherley@nokia.com>
 
         Reviewed by Simon.
