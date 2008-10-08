@@ -2,6 +2,16 @@
 
         Reviewed by Simon.
 
+        Fix WebKit compilation with VC2008SP1
+
+        Apply the TR1 workaround for JavaScriptCore, too.
+
+        * JavaScriptCore.pro:
+
+2008-10-08  Prasanth Ullattil  <pullatti@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix compilation errors on VS2008 64Bit
 
         * kjs/collector.cpp:
