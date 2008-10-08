@@ -1,3 +1,14 @@
+2008-10-08  Anthony Ricaud  <rik24d@gmail.com>
+
+        Make the toolbar label text-shadow not disappear when clicking on the
+        search result count or around the search field.
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/inspector.css:
+        (.toolbar-item:active .toolbar-label): Make this rule also require the
+        toggleable class with the toolbar-item class.
+
 2008-10-08  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
