@@ -1,3 +1,195 @@
+2008-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver Hunt & Sam Weining.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=15413 (SVGElementInstance does not implement EventTarget)
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=20550 (SVGUseElement.setAttribute crashes Safari)
+
+        Rebuild SVG use element shadow tree lazily. Mark SVGElementInstance with the "needsUpdate" flag.
+        Next time SVGUseElement::recalcStyle is invoked (ie. via Document::updateDocumentsRendering()) the
+        use tree is rebuild.
+
+        Make SVGElementInstance a real EventTarget, as the SVG specification demands.
+        When dispatching events to a shadow tree element of a use element, the associated SVGElementInstance
+        is used as event target. The SVGElementInstance, the shadow tree element and the corresponding element
+        share an event listener list. Every event listener change on the SVGElementInstance object is forwared
+        to the corresponding element. Each change marks the SVGElementInstance tree dirty, and causes a reclone.
+        Each event listener defined via attributes (onclick/onkeydown/...) is copied from the correspondingElement
+        to the shadow tree element - through the cloneNode calls - if the use element's shadow tree gets rebuild.
+        Each listener, dynamically created using addEventListener, gets copied to the corersponding element as well.
+
+        Now that the target/currentTarget properties of the Events are correct, event bubbling works as expected,
+        see resources/use-instanceRoot-event-bubbling.js for details.
+
+        Tests: svg/custom/use-elementInstance-event-target.svg (reenabled)
+               svg/custom/use-elementInstance-methods.svg (reenabled)
+               svg/custom/use-setAttribute-crash.svg (covers bug 20550)
+               svg/custom/use-instanceRoot-as-event-target.xhtml (covers bug 15413)
+               svg/custom/use-instanceRoot-event-bubbling.xhtml (covers bug 15413)
+               svg/custom/use-instanceRoot-event-listeners.xhtml (covers bug 15413 & 15430)
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSLazyEventListener::wasCreatedFromMarkup):
+        * bindings/js/JSEventTarget.cpp:
+        * bindings/js/JSEventTargetSVGElementInstance.cpp: Removed.
+        * bindings/js/JSEventTargetSVGElementInstance.h: Removed.
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        (WebCore::JSSVGElementInstance::pushEventHandlerScope):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * dom/EventListener.h:
+        (WebCore::EventListener::wasCreatedFromMarkup):
+        * dom/EventTargetNode.cpp:
+        (WebCore::updateSVGElementInstancesAfterEventListenerChange):
+        (WebCore::EventTargetNode::addEventListener):
+        (WebCore::EventTargetNode::removeEventListener):
+        (WebCore::eventTargetAsSVGElementInstance):
+        (WebCore::eventTargetRespectingSVGTargetRules):
+        (WebCore::EventTargetNode::dispatchEvent):
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        (WebCore::EventTargetNode::removeEventListenerForType):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::instanceAssociatedWithShadowTreeElement):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        * page/EventHandler.h:
+        * svg/EventTargetSVGElementInstance.cpp: Removed.
+        * svg/EventTargetSVGElementInstance.h: Removed.
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance):
+        (WebCore::SVGElementInstance::~SVGElementInstance):
+        (WebCore::SVGElementInstance::childNodes):
+        (WebCore::SVGElementInstance::setShadowTreeElement):
+        (WebCore::SVGElementInstance::forgetWrapper):
+        (WebCore::SVGElementInstance::appendChild):
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement):
+        (WebCore::SVGElementInstance::setNeedsUpdate):
+        (WebCore::SVGElementInstance::associatedFrame):
+        (WebCore::SVGElementInstance::addEventListener):
+        (WebCore::SVGElementInstance::removeEventListener):
+        (WebCore::SVGElementInstance::dispatchEvent):
+        (WebCore::SVGElementInstance::onabort):
+        (WebCore::SVGElementInstance::setOnabort):
+        (WebCore::SVGElementInstance::onblur):
+        (WebCore::SVGElementInstance::setOnblur):
+        (WebCore::SVGElementInstance::onchange):
+        (WebCore::SVGElementInstance::setOnchange):
+        (WebCore::SVGElementInstance::onclick):
+        (WebCore::SVGElementInstance::setOnclick):
+        (WebCore::SVGElementInstance::oncontextmenu):
+        (WebCore::SVGElementInstance::setOncontextmenu):
+        (WebCore::SVGElementInstance::ondblclick):
+        (WebCore::SVGElementInstance::setOndblclick):
+        (WebCore::SVGElementInstance::onerror):
+        (WebCore::SVGElementInstance::setOnerror):
+        (WebCore::SVGElementInstance::onfocus):
+        (WebCore::SVGElementInstance::setOnfocus):
+        (WebCore::SVGElementInstance::oninput):
+        (WebCore::SVGElementInstance::setOninput):
+        (WebCore::SVGElementInstance::onkeydown):
+        (WebCore::SVGElementInstance::setOnkeydown):
+        (WebCore::SVGElementInstance::onkeypress):
+        (WebCore::SVGElementInstance::setOnkeypress):
+        (WebCore::SVGElementInstance::onkeyup):
+        (WebCore::SVGElementInstance::setOnkeyup):
+        (WebCore::SVGElementInstance::onload):
+        (WebCore::SVGElementInstance::setOnload):
+        (WebCore::SVGElementInstance::onmousedown):
+        (WebCore::SVGElementInstance::setOnmousedown):
+        (WebCore::SVGElementInstance::onmousemove):
+        (WebCore::SVGElementInstance::setOnmousemove):
+        (WebCore::SVGElementInstance::onmouseout):
+        (WebCore::SVGElementInstance::setOnmouseout):
+        (WebCore::SVGElementInstance::onmouseover):
+        (WebCore::SVGElementInstance::setOnmouseover):
+        (WebCore::SVGElementInstance::onmouseup):
+        (WebCore::SVGElementInstance::setOnmouseup):
+        (WebCore::SVGElementInstance::onmousewheel):
+        (WebCore::SVGElementInstance::setOnmousewheel):
+        (WebCore::SVGElementInstance::onbeforecut):
+        (WebCore::SVGElementInstance::setOnbeforecut):
+        (WebCore::SVGElementInstance::oncut):
+        (WebCore::SVGElementInstance::setOncut):
+        (WebCore::SVGElementInstance::onbeforecopy):
+        (WebCore::SVGElementInstance::setOnbeforecopy):
+        (WebCore::SVGElementInstance::oncopy):
+        (WebCore::SVGElementInstance::setOncopy):
+        (WebCore::SVGElementInstance::onbeforepaste):
+        (WebCore::SVGElementInstance::setOnbeforepaste):
+        (WebCore::SVGElementInstance::onpaste):
+        (WebCore::SVGElementInstance::setOnpaste):
+        (WebCore::SVGElementInstance::ondragenter):
+        (WebCore::SVGElementInstance::setOndragenter):
+        (WebCore::SVGElementInstance::ondragover):
+        (WebCore::SVGElementInstance::setOndragover):
+        (WebCore::SVGElementInstance::ondragleave):
+        (WebCore::SVGElementInstance::setOndragleave):
+        (WebCore::SVGElementInstance::ondrop):
+        (WebCore::SVGElementInstance::setOndrop):
+        (WebCore::SVGElementInstance::ondragstart):
+        (WebCore::SVGElementInstance::setOndragstart):
+        (WebCore::SVGElementInstance::ondrag):
+        (WebCore::SVGElementInstance::setOndrag):
+        (WebCore::SVGElementInstance::ondragend):
+        (WebCore::SVGElementInstance::setOndragend):
+        (WebCore::SVGElementInstance::onreset):
+        (WebCore::SVGElementInstance::setOnreset):
+        (WebCore::SVGElementInstance::onresize):
+        (WebCore::SVGElementInstance::setOnresize):
+        (WebCore::SVGElementInstance::onscroll):
+        (WebCore::SVGElementInstance::setOnscroll):
+        (WebCore::SVGElementInstance::onsearch):
+        (WebCore::SVGElementInstance::setOnsearch):
+        (WebCore::SVGElementInstance::onselect):
+        (WebCore::SVGElementInstance::setOnselect):
+        (WebCore::SVGElementInstance::onselectstart):
+        (WebCore::SVGElementInstance::setOnselectstart):
+        (WebCore::SVGElementInstance::onsubmit):
+        (WebCore::SVGElementInstance::setOnsubmit):
+        (WebCore::SVGElementInstance::onunload):
+        (WebCore::SVGElementInstance::setOnunload):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::needsUpdate):
+        (WebCore::SVGElementInstance::toNode):
+        (WebCore::SVGElementInstance::toSVGElementInstance):
+        (WebCore::SVGElementInstance::correspondingElement):
+        (WebCore::SVGElementInstance::correspondingUseElement):
+        (WebCore::SVGElementInstance::shadowTreeElement):
+        (WebCore::SVGElementInstance::parentNode):
+        (WebCore::SVGElementInstance::previousSibling):
+        (WebCore::SVGElementInstance::nextSibling):
+        (WebCore::SVGElementInstance::firstChild):
+        (WebCore::SVGElementInstance::lastChild):
+        (WebCore::SVGElementInstance::ownerDocument):
+        (WebCore::SVGElementInstance::hasChildNodes):
+        (WebCore::SVGElementInstance::setFirstChild):
+        (WebCore::SVGElementInstance::setLastChild):
+        (WebCore::SVGElementInstance::setNextSibling):
+        (WebCore::SVGElementInstance::setPreviousSibling):
+        (WebCore::SVGElementInstance::refEventTarget):
+        (WebCore::SVGElementInstance::derefEventTarget):
+        * svg/SVGElementInstance.idl:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::svgAttributeChanged):
+        (WebCore::SVGStyledElement::childrenChanged):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::shadowTreeContainsChangedNodes):
+        (WebCore::SVGUseElement::recalcStyle):
+        (WebCore::dumpInstanceTree):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::transferEventListenersToShadowTree):
+        * svg/SVGUseElement.h:
+
 2008-10-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

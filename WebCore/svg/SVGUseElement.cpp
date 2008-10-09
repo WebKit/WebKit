@@ -35,7 +35,10 @@
 #include "CString.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventListener.h"
 #include "HTMLNames.h"
+#include "NodeRenderStyle.h"
+#include "RegisteredEventListener.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGElementInstance.h"
 #include "SVGElementInstanceList.h"
@@ -47,8 +50,6 @@
 #include "SVGSymbolElement.h"
 #include "XLinkNames.h"
 #include "XMLSerializer.h"
-#include "NodeRenderStyle.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -134,8 +135,6 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGURIReference::isKnownAttribute(attrName) ||
         SVGStyledTransformableElement::isKnownAttribute(attrName)) {
-        // TODO: Now that we're aware of the attribute name, we can finally optimize
-        // updating <use> attributes - to not reclone every time.
         buildPendingResource();
 
         if (m_shadowTreeRootElement)
@@ -155,9 +154,28 @@ void SVGUseElement::childrenChanged(bool changedByParser, Node* beforeChange, No
     if (m_shadowTreeRootElement)
         m_shadowTreeRootElement->setChanged();
 }
+ 
+static bool shadowTreeContainsChangedNodes(SVGElementInstance* target)
+{
+    if (target->needsUpdate())
+        return true;
+
+    for (SVGElementInstance* instance = target->firstChild(); instance; instance = instance->nextSibling())
+        if (shadowTreeContainsChangedNodes(instance))
+            return true;
+
+    return false;
+}
 
 void SVGUseElement::recalcStyle(StyleChange change)
 {
+    if (attached() && changed() && shadowTreeContainsChangedNodes(m_targetElementInstance.get())) {
+        buildPendingResource();
+
+        if (m_shadowTreeRootElement)
+            m_shadowTreeRootElement->setChanged();
+    }
+
     SVGStyledElement::recalcStyle(change);
 
     // The shadow tree root element is NOT a direct child element of us.
@@ -204,15 +222,31 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
     for (unsigned int i = 0; i < depth; ++i)
         text += "  ";
 
-    text += String::format("SVGElementInstance (parentNode=%s, firstChild=%s, correspondingElement=%s, id=%s)\n",
-                           parentNodeName.latin1().data(), firstChildNodeName.latin1().data(), elementNodeName.latin1().data(), elementId.latin1().data());
- 
-    depth++;
+    text += String::format("SVGElementInstance this=%p, (parentNode=%s, firstChild=%s, correspondingElement=%s (%p), shadowTreeElement=%p, id=%s)\n",
+                           targetInstance, parentNodeName.latin1().data(), firstChildNodeName.latin1().data(), elementNodeName.latin1().data(),
+                           element, targetInstance->shadowTreeElement(), elementId.latin1().data());
+
+    for (unsigned int i = 0; i < depth; ++i)
+        text += "  ";
+
+    HashSet<SVGElementInstance*> elementInstances = element->instancesForElement();
+    text += String::format("Corresponding element is associated with %i instance(s):\n", elementInstances.size());
+
+    HashSet<SVGElementInstance*>::iterator end = elementInstances.end();
+    for (HashSet<SVGElementInstance*>::iterator it = elementInstances.begin(); it != end; ++it) {
+        for (unsigned int i = 0; i < depth; ++i)
+            text += "  ";
+
+        text += String::format(" -> SVGElementInstance this=%p, (refCount: %i, shadowTreeElement in document? %i)\n",
+                               *it, (*it)->refCount(), (*it)->shadowTreeElement()->inDocument());
+    }
+
+    ++depth;
 
     for (SVGElementInstance* instance = targetInstance->firstChild(); instance; instance = instance->nextSibling())
         dumpInstanceTree(depth, text, instance);
 
-    depth--;
+    --depth;
 }
 #endif
 
@@ -270,10 +304,14 @@ void SVGUseElement::buildPendingResource()
     if (targetElement && targetElement->isSVGElement())
         target = static_cast<SVGElement*>(targetElement);
 
+    if (m_targetElementInstance) {
+        m_targetElementInstance->forgetWrapper();
+        m_targetElementInstance = 0;
+    }
+
     // Do not allow self-referencing.
     // 'target' may be null, if it's a non SVG namespaced element.
     if (!target || target == this) {
-        m_targetElementInstance = 0;
         m_shadowTreeRootElement = 0;
         return;
     }
@@ -359,6 +397,9 @@ void SVGUseElement::buildPendingResource()
     fprintf(stderr, "Dumping <use> shadow tree markup:\n%s\n", markup.latin1().data());
 #endif
 
+    // Transfer event listeners assigned to the referenced element to our shadow tree elements.
+    transferEventListenersToShadowTree(m_targetElementInstance.get());
+
     // The DOM side is setup properly. Now we have to attach the root shadow
     // tree element manually - using attach() won't work for "shadow nodes".
     attachShadowTree();
@@ -436,9 +477,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
 
         // Create SVGElementInstance object, for both container/non-container nodes.
         SVGElementInstance* instancePtr = new SVGElementInstance(this, element);
-
-        RefPtr<SVGElementInstance> instance = instancePtr;
-        targetInstance->appendChild(instance.release());
+        targetInstance->appendChild(instancePtr);
 
         // Enter recursion, appending new instance tree nodes to the "instance" object.
         if (element->hasChildNodes())
@@ -722,6 +761,34 @@ void SVGUseElement::attachShadowTree()
         for (Node* child = m_shadowTreeRootElement->firstChild(); child; child = child->nextSibling())
             child->attach();
     }
+}
+ 
+void SVGUseElement::transferEventListenersToShadowTree(SVGElementInstance* target)
+{
+    if (!target)
+        return;
+
+    SVGElement* originalElement = target->correspondingElement();
+    ASSERT(originalElement);
+
+    if (SVGElement* shadowTreeElement = target->shadowTreeElement()) {
+        if (RegisteredEventListenerList* localEventListeners = originalElement->localEventListeners()) {
+            RegisteredEventListenerList::Iterator end = localEventListeners->end();
+            for (RegisteredEventListenerList::Iterator it = localEventListeners->begin(); it != end; ++it) {
+                EventListener* listener = (*it)->listener();
+                ASSERT(listener);
+
+                // Event listeners created from markup have already been transfered to the shadow tree during cloning!
+                if (listener->wasCreatedFromMarkup())
+                    continue;
+
+                shadowTreeElement->addEventListener((*it)->eventType(), listener, (*it)->useCapture());
+            }
+        }
+    }
+
+    for (SVGElementInstance* instance = target->firstChild(); instance; instance = instance->nextSibling())
+        transferEventListenersToShadowTree(instance);
 }
 
 void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGElementInstance* targetInstance)

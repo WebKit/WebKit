@@ -1,3 +1,39 @@
+2008-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver Hunt & Sam Weining.
+
+        The SVGElementInstance tree should be rebuild lazily.
+        Allow SVGElementInstance to be used as EventTarget, as described in SVG 1.1 spec.
+
+        Reenable temporarily disabled tests.
+
+        * platform/mac/svg/custom/use-elementInstance-event-target-expected.txt: Removed.
+        * platform/mac/svg/custom/use-elementInstance-methods-expected.txt: Removed.
+        * platform/mac/svg/custom/use-instanceRoot-as-event-target-expected.checksum: Added.
+        * platform/mac/svg/custom/use-instanceRoot-as-event-target-expected.png: Added.
+        * platform/mac/svg/custom/use-instanceRoot-event-bubbling-expected.checksum: Added.
+        * platform/mac/svg/custom/use-instanceRoot-event-bubbling-expected.png: Added.
+        * platform/mac/svg/custom/use-instanceRoot-event-listeners-expected.checksum: Added.
+        * platform/mac/svg/custom/use-instanceRoot-event-listeners-expected.png: Added.
+        * platform/mac/svg/custom/use-setAttribute-crash-expected.checksum: Added.
+        * platform/mac/svg/custom/use-setAttribute-crash-expected.png: Added.
+        * svg/custom/resources/use-instanceRoot-event-bubbling.js: Added.
+        * svg/custom/resources/use-instanceRoot-event-listeners.js: Added.
+        * svg/custom/use-elementInstance-event-target-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/use-elementInstance-event-target-expected.txt.
+        * svg/custom/use-elementInstance-event-target.svg: Copied from LayoutTests/svg/custom/use-elementInstance-event-target.svg-disabled.
+        * svg/custom/use-elementInstance-event-target.svg-disabled: Removed.
+        * svg/custom/use-elementInstance-methods-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/use-elementInstance-methods-expected.txt.
+        * svg/custom/use-elementInstance-methods.svg: Copied from LayoutTests/svg/custom/use-elementInstance-methods.svg-disabled.
+        * svg/custom/use-elementInstance-methods.svg-disabled: Removed.
+        * svg/custom/use-instanceRoot-as-event-target-expected.txt: Added.
+        * svg/custom/use-instanceRoot-as-event-target.xhtml: Added.
+        * svg/custom/use-instanceRoot-event-bubbling-expected.txt: Added.
+        * svg/custom/use-instanceRoot-event-bubbling.xhtml: Added.
+        * svg/custom/use-instanceRoot-event-listeners-expected.txt: Added.
+        * svg/custom/use-instanceRoot-event-listeners.xhtml: Added.
+        * svg/custom/use-setAttribute-crash-expected.txt: Added.
+        * svg/custom/use-setAttribute-crash.svg: Added.
+
 2008-10-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

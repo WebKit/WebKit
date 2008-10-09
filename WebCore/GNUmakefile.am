@@ -55,7 +55,6 @@ webcore_built_nosources += \
 	DerivedSources/tokenizer.cpp \
 	DerivedSources/ColorData.c \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
-	WebCore/bindings/js/JSEventTargetSVGElementInstance.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h
 
 webcore_built_sources += \
@@ -348,8 +347,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSEventTargetBase.h \
 	WebCore/bindings/js/JSEventTargetNodeCustom.cpp \
-	WebCore/bindings/js/JSEventTargetSVGElementInstance.cpp \
-	WebCore/bindings/js/JSEventTargetSVGElementInstance.h \
 	WebCore/bindings/js/JSHTMLAllCollection.cpp \
 	WebCore/bindings/js/JSHTMLAllCollection.h \
 	WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -2394,8 +2391,6 @@ webcore_sources += \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
 	WebCore/svg/ElementTimeControl.h \
-	WebCore/svg/EventTargetSVGElementInstance.cpp \
-	WebCore/svg/EventTargetSVGElementInstance.h \
 	WebCore/svg/Filter.cpp \
 	WebCore/svg/Filter.h \
 	WebCore/svg/FilterBuilder.h \
@@ -2997,7 +2992,6 @@ webcore_dist += \
 # Clean rules for WebCore
 
 CLEANFILES += \
-	WebCore/bindings/js/JSEventTargetSVGElementInstance.lut.h \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h
 

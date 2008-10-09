@@ -26,19 +26,42 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "EventTargetSVGElementInstance.h"
-#include "JSEventTargetSVGElementInstance.h"
+#include "SVGElementInstance.h"
+#include "JSSVGElementInstance.h"
+
+#include "JSEventListener.h"
+#include "JSDOMWindow.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSValue* toJS(ExecState* exec, SVGElementInstance* object)
+JSValue* JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
 {
-    if (!object)
-        return jsNull();
+    Frame* frame = impl()->associatedFrame();
+    if (!frame)
+        return jsUndefined();
 
-    return getDOMObjectWrapper<JSSVGElementInstance>(exec, object);
+    if (RefPtr<JSEventListener> listener = toJSDOMWindow(frame)->findOrCreateJSEventListener(exec, args.at(exec, 1)))
+        impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
+
+    return jsUndefined();
+}
+
+JSValue* JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
+{
+    Frame* frame = impl()->associatedFrame();
+    if (!frame)
+        return jsUndefined();
+
+    if (JSEventListener* listener = toJSDOMWindow(frame)->findJSEventListener(args.at(exec, 1)))
+        impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
+
+    return jsUndefined();
+}
+
+void JSSVGElementInstance::pushEventHandlerScope(ExecState*, ScopeChain&) const
+{
 }
 
 }

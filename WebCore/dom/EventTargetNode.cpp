@@ -51,6 +51,11 @@
 #include "StorageEvent.h"
 #endif
 
+#if ENABLE(SVG)
+#include "SVGElementInstance.h"
+#include "SVGUseElement.h"
+#endif
+
 namespace WebCore {
 
 using namespace EventNames;
@@ -109,6 +114,30 @@ void EventTargetNode::didMoveToNewOwnerDocument()
     Node::didMoveToNewOwnerDocument();
 }
 
+static inline void updateSVGElementInstancesAfterEventListenerChange(EventTargetNode* referenceNode)
+{
+    ASSERT(referenceNode);
+
+#if ENABLE(SVG)
+    if (!referenceNode->isSVGElement())
+        return;
+
+    // Elements living inside a <use> shadow tree, never cause any updates!
+    if (referenceNode->shadowTreeRootNode())
+        return;
+
+    // We're possibly (a child of) an element that is referenced by a <use> client
+    // If an event listeners changes on a referenced element, update all instances.
+    for (Node* node = referenceNode; node; node = node->parentNode()) {
+        if (!node->hasID() || !node->isSVGElement())
+            continue;
+
+        SVGElementInstance::invalidateAllInstancesOfElement(static_cast<SVGElement*>(node));
+        break;
+    }
+#endif
+}
+
 void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     Document* doc = document();
@@ -129,6 +158,7 @@ void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr
         doc->registerDisconnectedNodeWithEventListeners(this);
 
     m_regdListeners->append(RegisteredEventListener::create(eventType, listener, useCapture));
+    updateSVGElementInstancesAfterEventListenerChange(this);
 }
 
 void EventTargetNode::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
@@ -147,6 +177,7 @@ void EventTargetNode::removeEventListener(const AtomicString& eventType, EventLi
             if (m_regdListeners->isEmpty() && !inDocument())
                 document()->unregisterDisconnectedNodeWithEventListeners(this);
 
+            updateSVGElementInstancesAfterEventListenerChange(this);
             return;
         }
     }
@@ -175,12 +206,41 @@ void EventTargetNode::handleLocalEvents(Event *evt, bool useCapture)
     }
 }
 
-static inline EventTargetNode* setCurrentEventTargetRespectingSVGTargetRules(EventTargetNode* referenceNode, Event* event)
+#if ENABLE(SVG)
+static inline SVGElementInstance* eventTargetAsSVGElementInstance(EventTargetNode* referenceNode)
+{
+    ASSERT(referenceNode);
+    if (!referenceNode->isSVGElement())
+        return 0;
+
+    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
+    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
+    for (Node* n = referenceNode; n; n = n->parentNode()) {
+        if (!n->isShadowNode() || !n->isSVGElement())
+            continue;
+
+        Node* shadowTreeParentElement = n->shadowParentNode();
+        ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
+
+        if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
+            return instance;
+    }
+
+    return 0;
+}
+#endif
+
+static inline EventTarget* eventTargetRespectingSVGTargetRules(EventTargetNode* referenceNode)
 {
     ASSERT(referenceNode);
 
-    // TODO: SVG will add logic here soon.
-    event->setCurrentTarget(referenceNode);
+#if ENABLE(SVG)
+    if (SVGElementInstance* instance = eventTargetAsSVGElementInstance(referenceNode)) {
+        ASSERT(instance->shadowTreeElement() == referenceNode);
+        return instance;
+    }
+#endif
+
     return referenceNode;
 }
 
@@ -193,10 +253,7 @@ bool EventTargetNode::dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool
         return false;
     }
 
-    EventTarget* target = this;
-
-    // TODO: SVG will add logic here soon.
-    evt->setTarget(target);
+    evt->setTarget(eventTargetRespectingSVGTargetRules(this));
 
     RefPtr<FrameView> view = document()->view();
     return dispatchGenericEvent(evt.release(), ec, tempEvent);
@@ -214,7 +271,13 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode& e
     DeprecatedPtrList<Node> nodeChain;
 
     if (inDocument()) {
-        for (Node* n = this; n; n = n->eventParentNode()) {
+            for (Node* n = this; n; n = n->eventParentNode()) {
+#if ENABLE(SVG)
+            // Skip <use> shadow tree elements    
+            if (n->isSVGElement() && n->isShadowNode())
+                continue;
+#endif
+
             n->ref();
             nodeChain.prepend(n);
         }
@@ -241,7 +304,9 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode& e
 
     EventTargetNode* eventTargetNode = 0;
     for (; it.current() && it.current() != this && !evt->propagationStopped(); ++it) {
-        eventTargetNode = setCurrentEventTargetRespectingSVGTargetRules(EventTargetNodeCast(it.current()), evt.get());
+        eventTargetNode = EventTargetNodeCast(it.current());
+        evt->setCurrentTarget(eventTargetRespectingSVGTargetRules(eventTargetNode));
+
         eventTargetNode->handleLocalEvents(evt.get(), true);
     }
 
@@ -250,7 +315,9 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode& e
 
     if (!evt->propagationStopped()) {
         evt->setEventPhase(Event::AT_TARGET);
-        eventTargetNode = setCurrentEventTargetRespectingSVGTargetRules(EventTargetNodeCast(it.current()), evt.get());
+
+        eventTargetNode = EventTargetNodeCast(it.current());
+        evt->setCurrentTarget(eventTargetRespectingSVGTargetRules(eventTargetNode));
 
         // We do want capturing event listeners to be invoked here, even though
         // that violates the specification since Mozilla does it.
@@ -277,7 +344,9 @@ bool EventTargetNode::dispatchGenericEvent(PassRefPtr<Event> e, ExceptionCode& e
         evt->setEventPhase(Event::BUBBLING_PHASE);
 
         for (; it.current() && !evt->propagationStopped() && !evt->cancelBubble(); --it) {
-            eventTargetNode = setCurrentEventTargetRespectingSVGTargetRules(EventTargetNodeCast(it.current()), evt.get());
+            eventTargetNode = EventTargetNodeCast(it.current());
+            evt->setCurrentTarget(eventTargetRespectingSVGTargetRules(eventTargetNode));
+
             eventTargetNode->handleLocalEvents(evt.get(), false);
         }
 
@@ -620,15 +689,17 @@ void EventTargetNode::removeEventListenerForType(const AtomicString& eventType)
     
     RegisteredEventListenerList::Iterator end = m_regdListeners->end();
     for (RegisteredEventListenerList::Iterator it = m_regdListeners->begin(); it != end; ++it) {
-        if ((*it)->eventType() != eventType || !(*it)->listener()->isAttachedToEventTargetNode())
+        EventListener* listener = (*it)->listener();
+        if ((*it)->eventType() != eventType || !listener->isAttachedToEventTargetNode())
             continue;
-        
+
         it = m_regdListeners->remove(it);
 
         // removed last
         if (m_regdListeners->isEmpty() && !inDocument())
             document()->unregisterDisconnectedNodeWithEventListeners(this);
 
+        updateSVGElementInstancesAfterEventListenerChange(this);
         return;
     }
 }

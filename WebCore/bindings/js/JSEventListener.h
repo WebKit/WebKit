@@ -97,6 +97,8 @@ namespace WebCore {
 #endif
         };
 
+        virtual bool wasCreatedFromMarkup() const { return true; }
+
         static PassRefPtr<JSLazyEventListener> create(LazyEventListenerType type, const String& functionName, const String& code, JSDOMWindow* window, Node* node, int lineNumber)
         {
             return adoptRef(new JSLazyEventListener(type, functionName, code, window, node, lineNumber));

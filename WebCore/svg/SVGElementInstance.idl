@@ -25,7 +25,15 @@
  */
 
 module svg {
-    interface [Conditional=SVG, ObjCCustomInternalImpl] SVGElementInstance
+
+    interface [
+        Conditional=SVG,
+        ObjCCustomInternalImpl,
+        CustomListeners,
+        CustomPushEventHandlerScope,
+        GenerateToJS,
+        GenerateNativeConverter
+    ] SVGElementInstance
 #if defined(LANGUAGE_OBJECTIVE_C)
         : Object, EventTarget
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
@@ -38,5 +46,58 @@ module svg {
         readonly attribute SVGElementInstance lastChild;
         readonly attribute SVGElementInstance previousSibling;
         readonly attribute SVGElementInstance nextSibling;
+
+        // EventTarget
+#if !defined(LANGUAGE_OBJECTIVE_C)
+        attribute [DontEnum, ProtectedListener] EventListener onabort;
+        attribute [DontEnum, ProtectedListener] EventListener onblur;
+        attribute [DontEnum, ProtectedListener] EventListener onchange;
+        attribute [DontEnum, ProtectedListener] EventListener onclick;
+        attribute [DontEnum, ProtectedListener] EventListener oncontextmenu;
+        attribute [DontEnum, ProtectedListener] EventListener ondblclick;
+        attribute [DontEnum, ProtectedListener] EventListener onerror;
+        attribute [DontEnum, ProtectedListener] EventListener onfocus;
+        attribute [DontEnum, ProtectedListener] EventListener oninput;
+        attribute [DontEnum, ProtectedListener] EventListener onkeydown;
+        attribute [DontEnum, ProtectedListener] EventListener onkeypress;
+        attribute [DontEnum, ProtectedListener] EventListener onkeyup;
+        attribute [DontEnum, ProtectedListener] EventListener onload;
+        attribute [DontEnum, ProtectedListener] EventListener onmousedown;
+        attribute [DontEnum, ProtectedListener] EventListener onmousemove;
+        attribute [DontEnum, ProtectedListener] EventListener onmouseout;
+        attribute [DontEnum, ProtectedListener] EventListener onmouseover;
+        attribute [DontEnum, ProtectedListener] EventListener onmouseup;
+        attribute [DontEnum, ProtectedListener] EventListener onmousewheel;
+        attribute [DontEnum, ProtectedListener] EventListener onbeforecut;
+        attribute [DontEnum, ProtectedListener] EventListener oncut;
+        attribute [DontEnum, ProtectedListener] EventListener onbeforecopy;
+        attribute [DontEnum, ProtectedListener] EventListener oncopy;
+        attribute [DontEnum, ProtectedListener] EventListener onbeforepaste;
+        attribute [DontEnum, ProtectedListener] EventListener onpaste;
+        attribute [DontEnum, ProtectedListener] EventListener ondragenter;
+        attribute [DontEnum, ProtectedListener] EventListener ondragover;
+        attribute [DontEnum, ProtectedListener] EventListener ondragleave;
+        attribute [DontEnum, ProtectedListener] EventListener ondrop;
+        attribute [DontEnum, ProtectedListener] EventListener ondragstart;
+        attribute [DontEnum, ProtectedListener] EventListener ondrag;
+        attribute [DontEnum, ProtectedListener] EventListener ondragend;
+        attribute [DontEnum, ProtectedListener] EventListener onreset;
+        attribute [DontEnum, ProtectedListener] EventListener onresize;
+        attribute [DontEnum, ProtectedListener] EventListener onscroll;
+        attribute [DontEnum, ProtectedListener] EventListener onsearch;
+        attribute [DontEnum, ProtectedListener] EventListener onselect;
+        attribute [DontEnum, ProtectedListener] EventListener onselectstart;
+        attribute [DontEnum, ProtectedListener] EventListener onsubmit;
+        attribute [DontEnum, ProtectedListener] EventListener onunload;
+
+        [Custom] void addEventListener(in DOMString type, 
+                                       in EventListener listener, 
+                                       in boolean useCapture);
+        [Custom] void removeEventListener(in DOMString type, 
+                                          in EventListener listener, 
+                                          in boolean useCapture);
+        boolean dispatchEvent(in Event event)
+            raises(EventException);
+#endif /* defined(LANGUAGE_OBJECTIVE_C) */
     };
 }

@@ -200,12 +200,8 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
     // If we're the child of a resource element, be sure to invalidate it.
     invalidateResourcesInAncestorChain();
 
-    // TODO: Fix bug http://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
-
-    // In case we're referenced by a <use> element, we have element instances registered
-    // to us in the SVGDocument. If svgAttributeChanged() is called, we need
-    // to recursively update all children including ourselves.
-    SVGElementInstance::updateAllInstancesOfElement(this);
+    // Invalidate all SVGElementInstances associated with us
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 void SVGStyledElement::invalidateResourcesInAncestorChain() const
@@ -231,12 +227,8 @@ void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange,
     if (document()->parsing())
         return;
 
-    // TODO: Fix bug http://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)
-
-    // In case we're referenced by a <use> element, we have element instances registered
-    // to us in the SVGDocument. If childrenChanged() is called, we need
-    // to recursively update all children including ourselves.
-    SVGElementInstance::updateAllInstancesOfElement(this);
+    // Invalidate all SVGElementInstances associated with us
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 RenderStyle* SVGStyledElement::resolveStyle(RenderStyle* parentStyle)

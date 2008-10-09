@@ -202,7 +202,6 @@ STYLESHEETS_EMBED = $$PWD/css/html4.css
 
 LUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
-    bindings/js/JSEventTargetSVGElementInstance.cpp \
     bindings/js/JSRGBColor.cpp
 
 IDL_BINDINGS += \
@@ -381,7 +380,6 @@ SOURCES += \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTarget.cpp \
     bindings/js/JSEventTargetNodeCustom.cpp \
-    bindings/js/JSEventTargetSVGElementInstance.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
     bindings/js/JSJavaScriptCallFrameCustom.cpp \
@@ -1469,7 +1467,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/style/SVGRenderStyleDefs.cpp \
         svg/SVGZoomEvent.cpp \
         rendering/PointerEventsHitRules.cpp \
-        svg/EventTargetSVGElementInstance.cpp \
         svg/FilterEffect.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \

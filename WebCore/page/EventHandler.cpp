@@ -66,7 +66,9 @@
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "SVGUseElement.h"
 #endif
 
 namespace WebCore {
@@ -159,6 +161,10 @@ void EventHandler::clear()
     m_resizeLayer = 0;
     m_nodeUnderMouse = 0;
     m_lastNodeUnderMouse = 0;
+#if ENABLE(SVG)
+    m_instanceUnderMouse = 0;
+    m_lastInstanceUnderMouse = 0;
+#endif
     m_lastMouseMoveEventSubframe = 0;
     m_lastScrollbarUnderMouse = 0;
     m_clickCount = 0;
@@ -1398,11 +1404,6 @@ void EventHandler::clearDragState()
 #endif
 }
 
-Node* EventHandler::nodeUnderMouse() const
-{
-    return m_nodeUnderMouse.get();
-}
-
 void EventHandler::setCapturingMouseEventsNode(PassRefPtr<Node> n)
 {
     m_capturingMouseEventsNode = n;
@@ -1416,6 +1417,25 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     IntPoint documentPoint = m_frame->view()->windowToContents(mev.pos());
     return m_frame->document()->prepareMouseEvent(request, documentPoint, mev);
 }
+
+#if ENABLE(SVG)
+static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* referenceNode)
+{
+    if (!referenceNode || !referenceNode->isSVGElement())
+        return 0;
+
+    Node* shadowTreeElement = referenceNode->shadowTreeRootNode();
+    if (!shadowTreeElement)
+        return 0;
+
+    Node* shadowTreeParentElement = shadowTreeElement->shadowParentNode();
+    if (!shadowTreeParentElement)
+        return 0;
+
+    ASSERT(shadowTreeParentElement->hasTagName(useTag));
+    return static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode);
+}
+#endif
 
 void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMouseEvent& mouseEvent, bool fireMouseOverOut)
 {
@@ -1432,12 +1452,49 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             result = result->shadowAncestorNode();
     }
     m_nodeUnderMouse = result;
-    
+#if ENABLE(SVG)
+    m_instanceUnderMouse = instanceAssociatedWithShadowTreeElement(result);
+
+    // <use> shadow tree elements may have been recloned, update node under mouse in any case
+    if (m_lastInstanceUnderMouse) {
+        SVGElement* lastCorrespondingElement = m_lastInstanceUnderMouse->correspondingElement();
+        SVGElement* lastCorrespondingUseElement = m_lastInstanceUnderMouse->correspondingUseElement();
+
+        if (lastCorrespondingElement && lastCorrespondingUseElement) {
+            HashSet<SVGElementInstance*> instances = lastCorrespondingElement->instancesForElement();
+
+            // Locate the recloned shadow tree element for our corresponding instance
+            HashSet<SVGElementInstance*>::iterator end = instances.end();
+            for (HashSet<SVGElementInstance*>::iterator it = instances.begin(); it != end; ++it) {
+                SVGElementInstance* instance = (*it);
+                ASSERT(instance->correspondingElement() == lastCorrespondingElement);
+
+                if (instance == m_lastInstanceUnderMouse)
+                    continue;
+
+                if (instance->correspondingUseElement() != lastCorrespondingUseElement)
+                    continue;
+
+                SVGElement* shadowTreeElement = instance->shadowTreeElement();
+                if (!shadowTreeElement->inDocument() || m_lastNodeUnderMouse == shadowTreeElement)
+                    continue;
+
+                m_lastNodeUnderMouse = shadowTreeElement;
+                m_lastInstanceUnderMouse = instance;
+                break;
+            }
+        }
+    }
+#endif
+
     // Fire mouseout/mouseover if the mouse has shifted to a different node.
     if (fireMouseOverOut) {
         if (m_lastNodeUnderMouse && m_lastNodeUnderMouse->document() != m_frame->document()) {
             m_lastNodeUnderMouse = 0;
             m_lastScrollbarUnderMouse = 0;
+#if ENABLE(SVG)
+            m_lastInstanceUnderMouse = 0;
+#endif
         }
 
         if (m_lastNodeUnderMouse != m_nodeUnderMouse) {
@@ -1449,6 +1506,9 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
                 EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, mouseoverEvent, 0, m_lastNodeUnderMouse.get());
         }
         m_lastNodeUnderMouse = m_nodeUnderMouse;
+#if ENABLE(SVG)
+        m_lastInstanceUnderMouse = instanceAssociatedWithShadowTreeElement(m_nodeUnderMouse.get());
+#endif
     }
 }
 

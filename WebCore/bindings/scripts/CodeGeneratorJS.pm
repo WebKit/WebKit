@@ -145,7 +145,7 @@ sub UsesManualToJSImplementation
 {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "ImageData" or $type eq "Element" or $type eq "Text" or $type eq "SVGElementInstance";
+    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "ImageData" or $type eq "Element" or $type eq "Text";
     return 0;
 }
 
@@ -365,8 +365,6 @@ sub GenerateHeader
     }
     if ($interfaceName eq "Node") {
         push(@headerContentHeader, "#include \"EventTargetNode.h\"\n");
-    } elsif ($interfaceName eq "SVGElementInstance") {
-        push(@headerContentHeader, "#include \"EventTargetSVGElementInstance.h\"\n");
     }
 
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
@@ -611,8 +609,6 @@ sub GenerateHeader
         # Resolve ambiguity with EventTarget that otherwise exists.
         if ($interfaceName eq "Node") {
             push(@headerContent, "inline JSC::JSValue* toJS(JSC::ExecState* exec, EventTargetNode* node) { return toJS(exec, static_cast<Node*>(node)); }\n");
-        } elsif ($interfaceName eq "SVGElementInstance") {
-            push(@headerContent, "inline JSC::JSValue* toJS(JSC::ExecState* exec, EventTargetSVGElementInstance* instance) { return toJS(exec, static_cast<SVGElementInstance*>(instance)); }\n");
         }
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
@@ -1629,10 +1625,7 @@ sub NativeToJSValue
         $implIncludes{"NameNodeList.h"} = 1;
     }
 
-    if ($type eq "SVGElementInstance") {
-        $implIncludes{"EventTargetSVGElementInstance.h"} = 1;
-        $implIncludes{"JSEventTargetSVGElementInstance.h"} = 1;
-    } elsif ($type eq "DOMObject") {
+    if ($type eq "DOMObject") {
         $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;

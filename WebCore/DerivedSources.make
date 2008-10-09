@@ -371,7 +371,6 @@ all : \
     $(filter-out JSEventListener.h JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSDOMWindowBase.lut.h \
-    JSEventTargetSVGElementInstance.lut.h \
     JSRGBColor.lut.h \
     \
     JSJavaScriptCallFrame.h \

@@ -66,6 +66,7 @@ class RenderObject;
 class RenderWidget;
 class Scrollbar;
 class String;
+class SVGElementInstance;
 class TextEvent;
 class VisiblePosition;
 class Widget;
@@ -307,6 +308,8 @@ private:
     bool m_mouseDownWasInSubframe;
 #if ENABLE(SVG)
     bool m_svgPan;
+    RefPtr<SVGElementInstance> m_instanceUnderMouse;
+    RefPtr<SVGElementInstance> m_lastInstanceUnderMouse;
 #endif
 
     RenderLayer* m_resizeLayer;

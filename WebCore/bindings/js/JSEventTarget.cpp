@@ -33,8 +33,8 @@
 #include "JSXMLHttpRequestUpload.h"
 
 #if ENABLE(SVG)
-#include "EventTargetSVGElementInstance.h"
-#include "JSEventTargetSVGElementInstance.h"
+#include "SVGElementInstance.h"
+#include "JSSVGElementInstance.h"
 #endif
 
 using namespace JSC;

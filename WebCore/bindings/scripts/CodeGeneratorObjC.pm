@@ -657,7 +657,6 @@ sub AddIncludesForType
 
     $implIncludes{"ObjCEventListener.h"} = 1 if $type eq "EventListener";
     $implIncludes{"ObjCNodeFilterCondition.h"} = 1 if $type eq "NodeFilter";
-    $implIncludes{"EventTargetSVGElementInstance.h"} = 1 if $type eq "SVGElementInstance";
     $implIncludes{"DOMCustomXPathNSResolver.h"} = 1 if $type eq "XPathNSResolver";
 
     # FIXME: won't compile without these
@@ -1372,14 +1371,12 @@ sub GenerateImplementation
 
             if ($function->signature->extendedAttributes->{"EventTargetNodeCast"}) {
                 if ($dataNode->name =~ /^SVG/) {
-                    push(@functionContent, "    if (!$caller->isEventTargetSVGElementInstance())\n");
-                    $caller = "WebCore::EventTargetSVGElementInstanceCast($caller)";
+                    $caller = "static_cast<WebCore::SVGElementInstance*>($caller)";
                 } else {
                     push(@functionContent, "    if (!$caller->isEventTargetNode())\n");
                     $caller = "WebCore::EventTargetNodeCast($caller)";
+                    push(@functionContent, "        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);\n");
                 }
-
-                push(@functionContent, "        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);\n");
             }
 
             # special case the EventListener

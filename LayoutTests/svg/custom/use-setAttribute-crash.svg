@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<head><script type="text/javascript"><![CDATA[
+var state = true;
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    if (state) {
+        var svg = document.getElementById('svg');
+        var circle = document.getElementById('circle');
+        var use = document.getElementById('use');
+        use.setAttribute('fill', '#f00');
+        svg.setAttribute('width', 200);
+        svg.setAttribute('height', 200);
+        circle.setAttribute('transform', 'scale(' + 10 + ')');
+    } else {
+        var svg = document.getElementById('svg');
+        var circle = document.getElementById('circle');
+        var use = document.getElementById('use');
+        use.setAttribute('fill', '#fff');
+        svg.setAttribute('width', 100);
+        svg.setAttribute('height', 100);
+        circle.setAttribute('transform', 'scale(' + 2 + ')');
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+
+    state = !state;
+}
+
+function startTest() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(10, 10);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+setTimeout("startTest()", 100);
+]]></script>
+
+<title>test</title>
+
+</head>
+<body onclick="test()">
+<svg:svg id="svg" width="100" height="100">
+<svg:defs>
+<svg:symbol id="symbol" overflow="visible">
+<svg:circle id="circle" cx="0" cy="0" r="2" stroke="#000" transform="scale(2)" />
+</svg:symbol>
+</svg:defs>
+<svg:use id="use" x="50" y="50" fill="#fff" xlink:href="#symbol" />
+</svg:svg>
+</body>
+</html>
+
