@@ -1,3 +1,11 @@
+2008-10-09  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Build fix for MinGW.
+
+        * wtf/AlwaysInline.h:
+
 2008-10-08  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.
