@@ -1,3 +1,13 @@
+2008-10-09  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21390
+        [Gtk] Linux/Gtk: GtkLauncher crashes on Acid3 (but after test 80 this time)
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformRemoveChild):
+
 2008-10-09  Darin Adler  <darin@apple.com>
 
        - try to fix Qt build

@@ -131,8 +131,17 @@ void ScrollView::platformAddChild(Widget* child)
 
 void ScrollView::platformRemoveChild(Widget* child)
 {
-    if (GTK_WIDGET(hostWindow()->platformWindow()) == GTK_WIDGET(child->platformWidget())->parent)
-        gtk_container_remove(GTK_CONTAINER(hostWindow()->platformWindow()), child->platformWidget());
+    GtkWidget* parent;
+
+    // HostWindow can be NULL here. If that's the case
+    // let's grab the child's parent instead.
+    if (hostWindow())
+        parent = GTK_WIDGET(hostWindow()->platformWindow());
+    else
+        parent = GTK_WIDGET(child->platformWidget()->parent);
+
+    if (GTK_IS_CONTAINER(parent) && parent == child->platformWidget()->parent)
+        gtk_container_remove(GTK_CONTAINER(parent), child->platformWidget());
 }
 
 bool ScrollView::platformHandleHorizontalAdjustment(const IntSize& scroll)
