@@ -26,23 +26,27 @@
 #include "CSSPrimitiveValue.h"
 #include "JSCSSPrimitiveValue.h"
 
-#include "JSRGBColor.lut.h"
-
 using namespace JSC;
+
+static JSValue* jsRGBColorRed(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue* jsRGBColorGreen(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue* jsRGBColorBlue(ExecState*, const Identifier&, const PropertySlot&);
+
+/*
+@begin JSRGBColorTable
+  red   jsRGBColorRed        DontDelete|ReadOnly
+  green jsRGBColorGreen      DontDelete|ReadOnly
+  blue  jsRGBColorBlue       DontDelete|ReadOnly
+@end
+*/
+
+#include "JSRGBColor.lut.h"
 
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSRGBColor)
 
 const ClassInfo JSRGBColor::s_info = { "RGBColor", 0, &JSRGBColorTable, 0 };
-
-/*
-@begin JSRGBColorTable
-  red   WebCore::JSRGBColor::Red        DontDelete|ReadOnly
-  green WebCore::JSRGBColor::Green      DontDelete|ReadOnly
-  blue  WebCore::JSRGBColor::Blue       DontDelete|ReadOnly
-@end
-*/
 
 JSRGBColor::JSRGBColor(ExecState* exec, unsigned color)
     : DOMObject(getDOMStructure<JSRGBColor>(exec))
@@ -55,26 +59,27 @@ bool JSRGBColor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return getStaticValueSlot<JSRGBColor, DOMObject>(exec, &JSRGBColorTable, this, propertyName, slot);
 }
 
-JSValue* JSRGBColor::getValueProperty(ExecState* exec, int token) const
-{
-    int color = m_color;
-    switch (token) {
-        case Red:
-            color >>= 8;
-            // fall through
-        case Green:
-            color >>= 8;
-            // fall through
-        case Blue:
-            return toJS(exec, CSSPrimitiveValue::create(color & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
-        default:
-            return 0;
-    }
-}
-
 JSValue* getJSRGBColor(ExecState* exec, unsigned color)
 {
     return new (exec) JSRGBColor(exec, color);
 }
 
 } // namespace WebCore
+
+using namespace WebCore;
+
+JSValue* jsRGBColorRed(ExecState* exec, const Identifier&, const PropertySlot& slot)
+{
+    return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(slot.slotBase())->impl() >> 16) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+}
+
+JSValue* jsRGBColorGreen(ExecState* exec, const Identifier&, const PropertySlot& slot)
+{
+    return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(slot.slotBase())->impl() >> 8) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+}
+
+JSValue* jsRGBColorBlue(ExecState* exec, const Identifier&, const PropertySlot& slot)
+{
+    return toJS(exec, CSSPrimitiveValue::create(static_cast<JSRGBColor*>(slot.slotBase())->impl() & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+}
+

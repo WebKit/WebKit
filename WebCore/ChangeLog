@@ -1,3 +1,21 @@
+2008-10-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21241
+        REGRESSION (r36977): getRGBColorValue().red returning incorrect value
+
+        Update JSRGBColor to use the new static function per getter approach.
+
+        Test: fast/dom/css-RGBValue.html
+
+        * bindings/js/JSRGBColor.cpp:
+        (WebCore::):
+        (jsRGBColorRed):
+        (jsRGBColorGreen):
+        (jsRGBColorBlue):
+        * bindings/js/JSRGBColor.h:
+
 2008-10-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler, Nikolas Zimmermann and Dave Hyatt.
