@@ -3329,7 +3329,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile,
             JSValue* returnValue = callData.native.function(newCallFrame, static_cast<JSFunction*>(v), thisValue, args);
             VM_CHECK_EXCEPTION();
 
-            newCallFrame[dst] = returnValue;
+            callFrame[dst] = returnValue;
 
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->didExecute(callFrame, static_cast<JSFunction*>(v));

@@ -1,3 +1,16 @@
+2008-10-08  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21497: REGRESSION (r37433): Bytecode JSC tests are severely broken
+        <https://bugs.webkit.org/show_bug.cgi?id=21497>
+
+        Fix a typo in r37433 that causes the failure of a large number of JSC
+        tests with the bytecode interpreter enabled.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+
 2008-10-08  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix.
