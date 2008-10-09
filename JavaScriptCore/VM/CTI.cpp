@@ -113,7 +113,7 @@ asm(
 
 extern "C" {
     
-    __declspec(naked) JSValue* ctiTrampoline(void* code, RegisterFile*, Register*, JSValue** exception, Profiler**, JSGlobalData*)
+    __declspec(naked) JSValue* ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValue** exception, Profiler**, JSGlobalData*)
     {
         __asm {
             push esi;
