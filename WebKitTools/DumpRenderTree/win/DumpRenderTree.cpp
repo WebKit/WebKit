@@ -605,8 +605,7 @@ void dump()
     }
 
     if (dumpPixels) {
-        if (gLayoutTestController->dumpAsText() || gLayoutTestController->dumpDOMAsWebArchive() || gLayoutTestController->dumpSourceAsWebArchive())
-        else
+        if (!gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive())
             dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
     }
 

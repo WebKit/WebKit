@@ -1,3 +1,10 @@
+2008-10-08  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Windows build after r37434.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump): Update code to approximate valid C++ syntax.
+
 2008-10-08  Timothy Hatcher  <timothy@apple.com>
 
         Add SVGElementInstance to the list of exceptions that have
