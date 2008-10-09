@@ -43,14 +43,6 @@ else
     PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
 fi
 
-if [ `echo "$PROPOSEDVERSION" | grep -c -E "4\.|4$"` -ne 0 ]; then
-    echo "
-    Can't set WebKit's version to something that ends in a 4!
-    If we do, someone's going to think it's Netscape 4.
-    Radar bug 3787996 has some details."
-    exit 1
-fi
-
 BLDMAJORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\1/'`
 BLDMINORVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\3/'`
 BLDVARIANTVERSION=`echo "$PROPOSEDVERSION" | sed 's/\([^\.]*\)\(\.\([^.]*\)\(\.\([^.]*\)\)\?\)\?/\5/'`
