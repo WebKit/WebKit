@@ -1,6 +1,6 @@
 2008-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
 
-        Reviewed by Oliver Hunt & Sam Weining.
+        Reviewed by Oliver Hunt & Sam Weinig.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=15413 (SVGElementInstance does not implement EventTarget)
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=15430 (SVGElementInstances should rebuild themselves lazily)

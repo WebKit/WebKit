@@ -1,6 +1,6 @@
 2008-10-08  Nikolas Zimmermann  <zimmermann@kde.org>
 
-        Reviewed by Oliver Hunt & Sam Weining.
+        Reviewed by Oliver Hunt & Sam Weinig.
 
         The SVGElementInstance tree should be rebuild lazily.
         Allow SVGElementInstance to be used as EventTarget, as described in SVG 1.1 spec.
