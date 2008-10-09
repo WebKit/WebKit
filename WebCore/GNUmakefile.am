@@ -2942,9 +2942,9 @@ libWebCoreJS_depfiles += $(patsubst %.lo,$(DEPDIR)/%.Plo,$(libWebCoreJS_objects)
 
 -include $(libWebCoreJS_depfiles)
 
-$(libWebCoreJS_objects): CPPFLAGS+=$(libWebCore_la_CPPFLAGS)
+$(libWebCoreJS_objects): AM_CPPFLAGS+=$(libWebCore_la_CPPFLAGS)
 
-$(libWebCoreJS_objects): CXXFLAGS+=$(libWebCore_la_CXXFLAGS)
+$(libWebCoreJS_objects): AM_CXXFLAGS+=$(libWebCore_la_CXXFLAGS)
 
 libWebCoreJS.la: $(libWebCoreJS_objects)
 	$(CXXLINK) $(libWebCoreJS_objects) $(LIBS)
