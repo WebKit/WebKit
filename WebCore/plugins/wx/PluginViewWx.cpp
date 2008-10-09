@@ -102,6 +102,11 @@ void PluginView::invalidateRect(NPRect* rect)
     notImplemented();
 }
 
+void PluginView::invalidateRect(const IntRect&)
+{
+    notImplemented();
+}
+
 void PluginView::invalidateRegion(NPRegion region)
 {
     notImplemented();

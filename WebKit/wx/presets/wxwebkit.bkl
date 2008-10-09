@@ -105,12 +105,12 @@ and WebCore. Include this file to use these settings.
         <include>$(WK_ROOT)/WebCore/DerivedSources/WebCore</include>
         <include>$(WK_ROOT)/WebCore/bindings/js</include>
         <include>$(WK_ROOT)/WebCore/bridge</include>
+        <include>$(WK_ROOT)/WebCore/css</include>
+        <include>$(WK_ROOT)/WebCore/dom</include>
         <include>$(WK_ROOT)/WebCore/editing</include>
         <include>$(WK_ROOT)/WebCore/history</include>
         <include>$(WK_ROOT)/WebCore/html</include>
-        <include>$(WK_ROOT)/WebCore/css</include>
-        <include>$(WK_ROOT)/WebCore/dom</include>
-        <include>$(WK_ROOT)/WebCore/kwq</include>
+        <include>$(WK_ROOT)/WebCore/inspector</include>
         <include>$(WK_ROOT)/WebCore/loader</include>
         <include>$(WK_ROOT)/WebCore/loader/icon</include>
         <include>$(WK_ROOT)/WebCore/page</include>

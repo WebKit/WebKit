@@ -44,6 +44,7 @@ wxWebCore port Bakefile project file.
         $(WEBCORE_SOURCES_HTML)
         $(WEBCORE_SOURCES_ICO)
         $(WEBCORE_SOURCES_ICON)
+        $(WEBCORE_SOURCES_INSPECTOR)
         $(WEBCORE_SOURCES_JS)
         $(WEBCORE_SOURCES_LOADER)
         $(WEBCORE_SOURCES_PAGE)
@@ -70,6 +71,7 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/editing</include>
         <include>$(SRCDIR)/history</include>
         <include>$(SRCDIR)/html</include>
+        <include>$(SRCDIR)/inspector</include>
         <include>$(SRCDIR)/loader</include>
         <include>$(SRCDIR)/loader/gdk</include>
         <include>$(SRCDIR)/loader/appcache</include>

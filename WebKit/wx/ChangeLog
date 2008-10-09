@@ -1,3 +1,13 @@
+2008-10-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::repaint):
+        (WebCore::ChromeClientWx::scroll):
+        * WebKitSupport/ChromeClientWx.h:
+        * presets/wxwebkit.bkl:
+
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Enable viewless Mac WebKit to paint some basic pages.
