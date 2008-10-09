@@ -414,8 +414,13 @@ ALWAYS_INLINE unsigned CTI::getDeTaggedConstantImmediate(JSValue* imm)
 
 ALWAYS_INLINE void CTI::emitFastArithDeTagImmediate(X86Assembler::RegisterID reg)
 {
-    // op_mod relies on this being a sub - setting zf if result is 0.
     m_jit.subl_i8r(JSImmediate::TagBitTypeInteger, reg);
+}
+
+ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitFastArithDeTagImmediateJumpIfZero(X86Assembler::RegisterID reg)
+{
+    m_jit.subl_i8r(JSImmediate::TagBitTypeInteger, reg);
+    return m_jit.emitUnlinkedJe();
 }
 
 ALWAYS_INLINE void CTI::emitFastArithReTagImmediate(X86Assembler::RegisterID reg)
@@ -808,8 +813,19 @@ void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         emitFastArithReTagImmediate(X86::eax);
     } else {
         ASSERT(opcodeID == op_mul);
-        emitFastArithDeTagImmediate(X86::eax);
+        // convert eax & edx from JSImmediates to ints, and check if either are zero
         emitFastArithImmToInt(X86::edx);
+        X86Assembler::JmpSrc op1Zero = emitFastArithDeTagImmediateJumpIfZero(X86::eax);
+        m_jit.testl_rr(X86::edx, X86::edx);
+        X86Assembler::JmpSrc op2NonZero = m_jit.emitUnlinkedJne();
+        m_jit.link(op1Zero, m_jit.label());
+        // if either input is zero, add the two together, and check if the result is < 0.
+        // If it is, we have a problem (N < 0), (N * 0) == -0, not representatble as a JSImmediate. 
+        m_jit.movl_rr(X86::eax, X86::ecx);
+        m_jit.addl_rr(X86::edx, X86::ecx);
+        m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJs(), i));
+        // Skip the above check if neither input is zero
+        m_jit.link(op2NonZero, m_jit.label());
         m_jit.imull_rr(X86::edx, X86::eax);
         m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
         emitFastArithReTagImmediate(X86::eax);
@@ -851,6 +867,10 @@ void CTI::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>:
         }
         m_jit.link((++iter)->from, here);
     } else
+        m_jit.link((++iter)->from, here);
+
+    // additional entry point to handle -0 cases.
+    if (opcodeID == op_mul)
         m_jit.link((++iter)->from, here);
 
     emitGetPutArg(src1, 0, X86::ecx);
@@ -1139,19 +1159,23 @@ void CTI::privateCompileMainPass()
             unsigned src1 = instruction[i + 2].u.operand;
             unsigned src2 = instruction[i + 3].u.operand;
 
-            if (JSValue* src1Value = getConstantImmediateNumericArg(src1)) {
+            // For now, only plant a fast int case if the constant operand is greater than zero.
+            JSValue* src1Value = getConstantImmediateNumericArg(src1);
+            JSValue* src2Value = getConstantImmediateNumericArg(src2);
+            int32_t value;
+            if (src1Value && ((value = JSImmediate::intValue(src1Value)) > 0)) {
                 emitGetArg(src2, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-                emitFastArithImmToInt(X86::eax);
-                m_jit.imull_i32r(X86::eax, getDeTaggedConstantImmediate(src1Value), X86::eax);
+                emitFastArithDeTagImmediate(X86::eax);
+                m_jit.imull_i32r(X86::eax, value, X86::eax);
                 m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
                 emitFastArithReTagImmediate(X86::eax);
                 emitPutResult(dst);
-            } else if (JSValue* src2Value = getConstantImmediateNumericArg(src2)) {
+            } else if (src2Value && ((value = JSImmediate::intValue(src2Value)) > 0)) {
                 emitGetArg(src1, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-                emitFastArithImmToInt(X86::eax);
-                m_jit.imull_i32r(X86::eax, getDeTaggedConstantImmediate(src2Value), X86::eax);
+                emitFastArithDeTagImmediate(X86::eax);
+                m_jit.imull_i32r(X86::eax, value, X86::eax);
                 m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
                 emitFastArithReTagImmediate(X86::eax);
                 emitPutResult(dst);
@@ -1627,8 +1651,7 @@ void CTI::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             emitJumpSlowCaseIfNotImmNum(X86::ecx, i);
             emitFastArithDeTagImmediate(X86::eax);
-            emitFastArithDeTagImmediate(X86::ecx);
-            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), i)); // This is checking if the last detag resulted in a value 0.
+            m_slowCases.append(SlowCaseEntry(emitFastArithDeTagImmediateJumpIfZero(X86::ecx), i));
             m_jit.cdq();
             m_jit.idivl_r(X86::ecx);
             emitFastArithReTagImmediate(X86::edx);
@@ -2509,8 +2532,19 @@ void CTI::privateCompileSlowCases()
             int dst = instruction[i + 1].u.operand;
             int src1 = instruction[i + 2].u.operand;
             int src2 = instruction[i + 3].u.operand;
-            if (getConstantImmediateNumericArg(src1) || getConstantImmediateNumericArg(src2)) {
+            JSValue* src1Value = getConstantImmediateNumericArg(src1);
+            JSValue* src2Value = getConstantImmediateNumericArg(src2);
+            int32_t value;
+            if (src1Value && ((value = JSImmediate::intValue(src1Value)) > 0)) {
                 m_jit.link(iter->from, m_jit.label());
+                // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
+                emitGetPutArg(src1, 0, X86::ecx);
+                emitGetPutArg(src2, 4, X86::ecx);
+                emitCall(i, Machine::cti_op_mul);
+                emitPutResult(dst);
+            } else if (src2Value && ((value = JSImmediate::intValue(src2Value)) > 0)) {
+                m_jit.link(iter->from, m_jit.label());
+                // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
                 emitGetPutArg(src1, 0, X86::ecx);
                 emitGetPutArg(src2, 4, X86::ecx);
                 emitCall(i, Machine::cti_op_mul);

@@ -1,3 +1,22 @@
+2008-10-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for bug #21160, x=0;1/(x*-1) == -Infinity
+
+        * ChangeLog:
+        * VM/CTI.cpp:
+        (JSC::CTI::emitFastArithDeTagImmediate):
+        (JSC::CTI::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::emitUnlinkedJs):
+
 2008-10-09  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.

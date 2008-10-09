@@ -1,3 +1,11 @@
+2008-10-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Correct results for -0 cases.
+
+        * fast/js/math-transforms-expected.txt:
+
 2008-10-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dan Bernstein.

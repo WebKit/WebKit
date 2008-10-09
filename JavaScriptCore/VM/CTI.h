@@ -400,6 +400,7 @@ namespace JSC {
         void emitJumpSlowCaseIfNotImmNums(X86Assembler::RegisterID, X86Assembler::RegisterID, unsigned opcodeIndex);
 
         void emitFastArithDeTagImmediate(X86Assembler::RegisterID);
+        X86Assembler::JmpSrc emitFastArithDeTagImmediateJumpIfZero(X86Assembler::RegisterID);
         void emitFastArithReTagImmediate(X86Assembler::RegisterID);
         void emitFastArithPotentiallyReTagImmediate(X86Assembler::RegisterID);
         void emitFastArithImmToInt(X86Assembler::RegisterID);

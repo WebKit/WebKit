@@ -235,6 +235,7 @@ public:
         OP2_JNE_rel32       = 0x85,
         OP2_JBE_rel32       = 0x86,
         OP2_JA_rel32        = 0x87,
+        OP2_JS_rel32        = 0x88,
         OP2_JP_rel32        = 0x8A,
         OP2_JL_rel32        = 0x8C,
         OP2_JGE_rel32       = 0x8D,
@@ -973,6 +974,14 @@ public:
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_JP_rel32);
+        m_buffer->putInt(0);
+        return JmpSrc(m_buffer->getOffset());
+    }
+    
+    JmpSrc emitUnlinkedJs()
+    {
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_JS_rel32);
         m_buffer->putInt(0);
         return JmpSrc(m_buffer->getOffset());
     }

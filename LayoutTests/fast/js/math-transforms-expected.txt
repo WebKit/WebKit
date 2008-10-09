@@ -714,11 +714,11 @@ PASS values.minusOne - +values.minusOne is 0
 PASS +values.minusOne - +values.minusOne is values.minusOne - values.minusOne
 PASS +values.minusOne - +values.minusOne is 0
 PASS +values.minusOne * values.zero is values.minusOne * values.zero
-PASS +values.minusOne * values.zero is 0
+PASS +values.minusOne * values.zero is -0
 PASS values.minusOne * +values.zero is values.minusOne * values.zero
-PASS values.minusOne * +values.zero is 0
+PASS values.minusOne * +values.zero is -0
 PASS +values.minusOne * +values.zero is values.minusOne * values.zero
-PASS +values.minusOne * +values.zero is 0
+PASS +values.minusOne * +values.zero is -0
 PASS +values.minusOne / values.zero is values.minusOne / values.zero
 PASS +values.minusOne / values.zero is -Infinity
 PASS values.minusOne / +values.zero is values.minusOne / values.zero
@@ -894,11 +894,11 @@ PASS values.zero - +values.one is -1
 PASS +values.zero - +values.one is values.zero - values.one
 PASS +values.zero - +values.one is -1
 PASS +values.zero * values.minusOne is values.zero * values.minusOne
-PASS +values.zero * values.minusOne is 0
+PASS +values.zero * values.minusOne is -0
 PASS values.zero * +values.minusOne is values.zero * values.minusOne
-PASS values.zero * +values.minusOne is 0
+PASS values.zero * +values.minusOne is -0
 PASS +values.zero * +values.minusOne is values.zero * values.minusOne
-PASS +values.zero * +values.minusOne is 0
+PASS +values.zero * +values.minusOne is -0
 PASS +values.zero / values.minusOne is values.zero / values.minusOne
 PASS +values.zero / values.minusOne is -0
 PASS values.zero / +values.minusOne is values.zero / values.minusOne
