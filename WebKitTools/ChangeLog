@@ -1,3 +1,12 @@
+2008-10-08  Timothy Hatcher  <timothy@apple.com>
+
+        Add SVGElementInstance to the list of exceptions that have
+        global initializers in debug builds.
+
+        Rubber-stamped by Mark Rowe.
+
+        * Scripts/check-for-global-initializers: Add SVGElementInstance.o.
+
 2008-10-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
