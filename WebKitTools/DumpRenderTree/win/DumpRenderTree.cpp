@@ -598,7 +598,7 @@ void dump()
     }
 
     if (printSeparators) {
-        puts("#EOF");
+        puts("#EOF");   // terminate the content block
         fputs("#EOF\n", stderr);
         fflush(stdout);
         fflush(stderr);
@@ -606,11 +606,12 @@ void dump()
 
     if (dumpPixels) {
         if (gLayoutTestController->dumpAsText() || gLayoutTestController->dumpDOMAsWebArchive() || gLayoutTestController->dumpSourceAsWebArchive())
-            printf("#EOF\n");
         else
             dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
-        fflush(stdout);
     }
+
+    printf("#EOF\n");   // terminate the (possibly empty) pixels block
+    fflush(stdout);
 
 fail:
     SysFreeString(resultString);

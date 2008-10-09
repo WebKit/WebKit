@@ -910,13 +910,15 @@ void dump()
             printf("ERROR: nil result from %s", methodNameStringForFailedTest());
 
         if (printSeparators) {
-            puts("#EOF");
+            puts("#EOF");       // terminate the content block
             fputs("#EOF\n", stderr);
         }            
     }
     
     if (dumpAllPixels || (dumpPixels && !dumpAsText))
         dumpWebViewAsPixelsAndCompareWithExpected([currentTest UTF8String], dumpAllPixels);
+    
+    puts("#EOF");   // terminate the (possibly empty) pixels block
 
     fflush(stdout);
     fflush(stderr);

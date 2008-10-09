@@ -575,6 +575,12 @@ for my $test (@tests) {
         }
     }
 
+    # DumpRenderTree is expected to dump two "blocks" to stdout for each test.
+    # Each block is terminated by a #EOF on a line by itself.
+    # The first block is the output of the test (in text, RenderTree or other formats).
+    # The second block is for optional pixel data in PNG format, and may be empty if
+    # pixel tests are not being run, or the test does not dump pixels (e.g. text tests).
+    
     my $actualRead = readFromDumpToolWithTimer(IN);
     my $errorRead = readFromDumpToolWithTimer(ERROR, $actualRead->{status} eq "timedOut");
 
@@ -628,26 +634,26 @@ for my $test (@tests) {
     my $diffPercentage = "";
     my $diffResult = "passed";
 
-    # DRT and this script need to agree on when pixel data is dumped, so this
-    # test has to match a test in the native code
-    if ($dumpAllPixels || ($pixelTests && !$isText)) {
-        my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
+    # Look for the pixel block, and do an image diff if we find one
+    my $actualHash = "";
+    my $expectedHash = "";
+    my $actualPNGSize = 0;
 
-        my $actualHash = "";
-        my $expectedHash = "";
-        my $actualPNGSize = 0;
-
-        while (<IN>) {
-            last if /#EOF/;
-            if (/ActualHash: ([a-f0-9]{32})/) {
-                $actualHash = $1;
-            } elsif (/BaselineHash: ([a-f0-9]{32})/) {
-                $expectedHash = $1;
-            } elsif (/Content-Length: (\d+)\s*/) {
-                $actualPNGSize = $1;
-                read(IN, $actualPNG, $actualPNGSize);
-            }
+    while (<IN>) {
+        last if /#EOF/;
+        if (/ActualHash: ([a-f0-9]{32})/) {
+            $actualHash = $1;
+        } elsif (/BaselineHash: ([a-f0-9]{32})/) {
+            $expectedHash = $1;
+        } elsif (/Content-Length: (\d+)\s*/) {
+            $actualPNGSize = $1;
+            read(IN, $actualPNG, $actualPNGSize);
         }
+    }
+
+    # If we got some PNG data, diff with expected
+    if ($actualPNGSize > 0) {
+        my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
 
         if ($expectedHash ne $actualHash && -f "$expectedPixelDir/$base-$expectedTag.png") {
             my $expectedPNGSize = -s "$expectedPixelDir/$base-$expectedTag.png";
@@ -1739,6 +1745,7 @@ sub extensionForMimeType($)
     return "txt";
 }
 
+# Read up to the first #EOF (the content block of the test), or until detecting crashes or timeouts.
 sub readFromDumpToolWithTimer(*;$)
 {
     my ($fh, $dontWaitForTimeOut) = @_;

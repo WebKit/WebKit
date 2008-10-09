@@ -1,3 +1,23 @@
+2008-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Avoid disconnect between DRT and run-webkit-tests
+        about whether to expect PNG dumps by having DRT always
+        print two blocks terminated by #EOF, the second of which
+        may be empty.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21483
+        
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG):
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        * Scripts/run-webkit-tests:
+
 2008-10-07  Adam Roben  <aroben@apple.com>
 
         Make sure short functions get included in ChangeLog output for git

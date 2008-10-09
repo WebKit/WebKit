@@ -55,7 +55,10 @@ static void printPNG(CGImageRef image)
     RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
     CGImageDestinationAddImage(imageDest.get(), image, 0);
     CGImageDestinationFinalize(imageDest.get());
+
+    printf("Content-Type: %s\n", "image/png");
     printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
+
     fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
 }
 
@@ -121,6 +124,4 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const char* /*currentTest*/, bool
         RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context.get()));
         printPNG(image.get());
     }
-
-    printf("#EOF\n");
 }
