@@ -22,7 +22,6 @@
 #define KJS_REGEXP_H
 
 #include "ustring.h"
-#include "ExecState.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wrec/WREC.h>
@@ -31,10 +30,12 @@ struct JSRegExp;
 
 namespace JSC {
 
+    class JSGlobalData;
+
     class RegExp : public RefCounted<RegExp> {
     public:
-        static PassRefPtr<RegExp> create(ExecState*, const UString& pattern);
-        static PassRefPtr<RegExp> create(ExecState*, const UString& pattern, const UString& flags);
+        static PassRefPtr<RegExp> create(JSGlobalData*, const UString& pattern);
+        static PassRefPtr<RegExp> create(JSGlobalData*, const UString& pattern, const UString& flags);
         ~RegExp();
 
         bool global() const { return m_flagBits & Global; }
@@ -51,8 +52,8 @@ namespace JSC {
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
     private:
-        RegExp(ExecState*, const UString& pattern);
-        RegExp(ExecState*, const UString& pattern, const UString& flags);
+        RegExp(JSGlobalData*, const UString& pattern);
+        RegExp(JSGlobalData*, const UString& pattern, const UString& flags);
 
         void compile();
 

@@ -34,13 +34,19 @@
 
 namespace JSC {
 
+    class Arguments;
     class CodeBlock;
     class ExecState;
+    class JSActivation;
+    class JSFunction;
     class JSPropertyNameIterator;
     class JSValue;
     class ScopeChainNode;
+
     struct Instruction;
-    
+
+    typedef ExecState CallFrame;
+
     static JSValue* const nullJSValue = 0;
 
     class Register {
@@ -48,94 +54,113 @@ namespace JSC {
         Register();
         Register(JSValue*);
 
-        JSValue* jsValue(ExecState*) const;
+        JSValue* jsValue(CallFrame*) const;
         JSValue* getJSValue() const;
 
         bool marked() const;
         void mark();
         
     private:
+        friend class ExecState;
         friend class Machine;
 
-        // Only the Machine should use these functions.
+        // Only CallFrame and Machine should use these functions.
 
-        Register(CodeBlock*);
-        Register(ScopeChainNode*);
         Register(intptr_t);
-        Register(Register*);
-        Register(Instruction*);
-        Register(JSPropertyNameIterator*);
-        explicit Register(void*);
 
-        CodeBlock* codeBlock() const;
-        ScopeChainNode* scopeChain() const;
+        Register(JSActivation*);
+        Register(Arguments*);
+        Register(CallFrame*);
+        Register(CodeBlock*);
+        Register(JSFunction*);
+        Register(JSPropertyNameIterator*);
+        Register(ScopeChainNode*);
+        Register(Instruction*);
+
         intptr_t i() const;
-        Register* r() const;
-        Instruction* vPC() const;
-        JSPropertyNameIterator* jsPropertyNameIterator() const;
         void* v() const;
 
-        union {
-        private:
-            friend class Register;
+        JSActivation* activation() const;
+        Arguments* arguments() const;
+        CallFrame* callFrame() const;
+        CodeBlock* codeBlock() const;
+        JSFunction* function() const;
+        JSPropertyNameIterator* propertyNameIterator() const;
+        ScopeChainNode* scopeChain() const;
+        Instruction* vPC() const;
 
-            CodeBlock* codeBlock;
-            Instruction* vPC;
-            JSValue* jsValue;
-            ScopeChainNode* scopeChain;
-            JSPropertyNameIterator* jsPropertyNameIterator;
-            Register* r;
-            void* v;
+        union {
             intptr_t i;
+            void* v;
+            JSValue* value;
+
+            JSActivation* activation;
+            Arguments* arguments;
+            CallFrame* callFrame;
+            CodeBlock* codeBlock;
+            JSFunction* function;
+            JSPropertyNameIterator* propertyNameIterator;
+            ScopeChainNode* scopeChain;
+            Instruction* vPC;
         } u;
 
 #ifndef NDEBUG
         enum {
-            CodeBlockType = 0, 
-            InstructionType, 
-            JSValueType, 
-            ScopeChainNodeType, 
-            JSPropertyNameIteratorType, 
-            RegisterType, 
-            IntType
+            EmptyType,
+
+            IntType,
+            ValueType,
+
+            ActivationType,
+            ArgumentsType,
+            CallFrameType,
+            CodeBlockType,
+            FunctionType,
+            InstructionType,
+            PropertyNameIteratorType,
+            RegisterType,
+            ScopeChainNodeType
         } m_type;
 #endif
-
-// FIXME: The commented out ASSERTs below are valid; NDEBUG CTI should set these when up to date.
-//        static inline ptrdiff_t offsetOf_type()
-//        {
-//            return OBJECT_OFFSET(Register, m_type);
-//        }
     };
+
+#ifndef NDEBUG
+    #define SET_TYPE(type) m_type = (type)
+    // FIXME: The CTI code to put value into registers doesn't set m_type.
+    // Once it does, we can turn this assertion back on.
+    #define ASSERT_TYPE(type)
+#else
+    #define SET_TYPE(type)
+    #define ASSERT_TYPE(type)
+#endif
 
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
+        SET_TYPE(EmptyType);
         *this = nullJSValue;
 #endif
     }
 
     ALWAYS_INLINE Register::Register(JSValue* v)
     {
-#ifndef NDEBUG
-        m_type = JSValueType;
-#endif
-        u.jsValue = v;
+        SET_TYPE(ValueType);
+        u.value = v;
     }
     
     // This function is scaffolding for legacy clients. It will eventually go away.
-    ALWAYS_INLINE JSValue* Register::jsValue(ExecState*) const
+    ALWAYS_INLINE JSValue* Register::jsValue(CallFrame*) const
     {
         // Once registers hold doubles, this function will allocate a JSValue*
         // if the register doesn't hold one already. 
-//        ASSERT(m_type == JSValueType);
-        return u.jsValue;
+        ASSERT_TYPE(ValueType);
+        return u.value;
     }
     
     ALWAYS_INLINE JSValue* Register::getJSValue() const
     {
-//        ASSERT(m_type == JSValueType);
-        return u.jsValue;
+        ASSERT_TYPE(JSValueType);
+        return u.value;
     }
     
     ALWAYS_INLINE bool Register::marked() const
@@ -150,99 +175,121 @@ namespace JSC {
     
     // Machine functions
 
+    ALWAYS_INLINE Register::Register(Arguments* arguments)
+    {
+        SET_TYPE(ArgumentsType);
+        u.arguments = arguments;
+    }
+
+    ALWAYS_INLINE Register::Register(JSActivation* activation)
+    {
+        SET_TYPE(ActivationType);
+        u.activation = activation;
+    }
+
+    ALWAYS_INLINE Register::Register(CallFrame* callFrame)
+    {
+        SET_TYPE(CallFrameType);
+        u.callFrame = callFrame;
+    }
+
     ALWAYS_INLINE Register::Register(CodeBlock* codeBlock)
     {
-#ifndef NDEBUG
-        m_type = CodeBlockType;
-#endif
+        SET_TYPE(CodeBlockType);
         u.codeBlock = codeBlock;
+    }
+
+    ALWAYS_INLINE Register::Register(JSFunction* function)
+    {
+        SET_TYPE(FunctionType);
+        u.function = function;
     }
 
     ALWAYS_INLINE Register::Register(Instruction* vPC)
     {
-#ifndef NDEBUG
-        m_type = InstructionType;
-#endif
+        SET_TYPE(InstructionType);
         u.vPC = vPC;
     }
 
     ALWAYS_INLINE Register::Register(ScopeChainNode* scopeChain)
     {
-#ifndef NDEBUG
-        m_type = ScopeChainNodeType;
-#endif
+        SET_TYPE(ScopeChainNodeType);
         u.scopeChain = scopeChain;
     }
 
-    ALWAYS_INLINE Register::Register(JSPropertyNameIterator* jsPropertyNameIterator)
+    ALWAYS_INLINE Register::Register(JSPropertyNameIterator* propertyNameIterator)
     {
-#ifndef NDEBUG
-        m_type = JSPropertyNameIteratorType;
-#endif
-        u.jsPropertyNameIterator = jsPropertyNameIterator;
-    }
-
-    ALWAYS_INLINE Register::Register(Register* r)
-    {
-#ifndef NDEBUG
-        m_type = RegisterType;
-#endif
-        u.r = r;
+        SET_TYPE(PropertyNameIteratorType);
+        u.propertyNameIterator = propertyNameIterator;
     }
 
     ALWAYS_INLINE Register::Register(intptr_t i)
     {
-#ifndef NDEBUG
-        m_type = IntType;
-#endif
+        SET_TYPE(IntType);
         u.i = i;
     }
 
-    ALWAYS_INLINE Register::Register(void* v)
-    {
-        u.v = v;
-    }
-
-    ALWAYS_INLINE CodeBlock* Register::codeBlock() const
-    {
-//        ASSERT(m_type == CodeBlockType);
-        return u.codeBlock;
-    }
-    
-    ALWAYS_INLINE ScopeChainNode* Register::scopeChain() const
-    {
-//        ASSERT(m_type == ScopeChainNodeType);
-        return u.scopeChain;
-    }
-    
     ALWAYS_INLINE intptr_t Register::i() const
     {
-//        ASSERT(m_type == IntType);
+        ASSERT_TYPE(IntType);
         return u.i;
-    }
-    
-    ALWAYS_INLINE Register* Register::r() const
-    {
-//        ASSERT(m_type == RegisterType);
-        return u.r;
-    }
-    
-    ALWAYS_INLINE Instruction* Register::vPC() const
-    {
-//        ASSERT(m_type == InstructionType);
-        return u.vPC;
-    }
-    
-    ALWAYS_INLINE JSPropertyNameIterator* Register::jsPropertyNameIterator() const
-    {
-//        ASSERT(m_type == JSPropertyNameIteratorType);
-        return u.jsPropertyNameIterator;
     }
     
     ALWAYS_INLINE void* Register::v() const
     {
         return u.v;
     }
+
+    ALWAYS_INLINE JSActivation* Register::activation() const
+    {
+        ASSERT_TYPE(ActivationType);
+        return u.activation;
+    }
+    
+    ALWAYS_INLINE Arguments* Register::arguments() const
+    {
+        ASSERT_TYPE(ArgumentsType);
+        return u.arguments;
+    }
+    
+    ALWAYS_INLINE CallFrame* Register::callFrame() const
+    {
+        ASSERT_TYPE(CallFrameType);
+        return u.callFrame;
+    }
+    
+    ALWAYS_INLINE CodeBlock* Register::codeBlock() const
+    {
+        ASSERT_TYPE(CodeBlockType);
+        return u.codeBlock;
+    }
+    
+    ALWAYS_INLINE JSFunction* Register::function() const
+    {
+        ASSERT_TYPE(FunctionType);
+        return u.function;
+    }
+    
+    ALWAYS_INLINE JSPropertyNameIterator* Register::propertyNameIterator() const
+    {
+        ASSERT_TYPE(PropertyNameIteratorType);
+        return u.propertyNameIterator;
+    }
+    
+    ALWAYS_INLINE ScopeChainNode* Register::scopeChain() const
+    {
+        ASSERT_TYPE(ScopeChainNodeType);
+        return u.scopeChain;
+    }
+    
+    ALWAYS_INLINE Instruction* Register::vPC() const
+    {
+        ASSERT_TYPE(InstructionType);
+        return u.vPC;
+    }
+
+    #undef SET_TYPE
+    #undef ASSERT_TYPE
 
 } // namespace JSC
 

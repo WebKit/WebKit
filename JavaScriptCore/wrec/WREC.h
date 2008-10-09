@@ -43,7 +43,6 @@ namespace JSC {
 
     typedef int (*WRECFunction)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
 
-    class ExecState;
     class GenerateAtomFunctor;
     struct CharacterClassRange;
     struct CharacterClass;

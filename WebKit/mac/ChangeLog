@@ -1,3 +1,13 @@
+2008-10-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21403
+          Bug 21403: use new CallFrame class rather than Register* for call frame manipulation
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::WebScriptDebugger): Update since DebuggerCallFrame is simpler now.
+
 2008-10-08  Timothy Hatcher  <timothy@apple.com>
 
         Roll out r37427 because it causes an infinite recursion loading about:blank.
