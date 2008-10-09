@@ -9,6 +9,18 @@
 
 2008-10-09  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21217
+        Animations assert when navigating from page
+
+        Changed assertions to test the right flag for the paused state
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+
+2008-10-09  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fixed > 180 degree rotation bug
