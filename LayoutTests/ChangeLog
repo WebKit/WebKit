@@ -1,3 +1,13 @@
+2008-10-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Testcase for > 180 degree rotation bug fix
+        https://bugs.webkit.org/show_bug.cgi?id=21420
+
+        * animations/big-rotation-expected.txt: Added.
+        * animations/big-rotation.html: Added.
+
 2008-10-09  Darin Adler  <darin@apple.com>
 
         - checked in a missing expected result

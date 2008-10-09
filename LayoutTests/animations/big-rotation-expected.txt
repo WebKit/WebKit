@@ -1,0 +1,3 @@
+This test shows rotation of > 180 degrees. The box should make one and a half rotations.
+
+PASS

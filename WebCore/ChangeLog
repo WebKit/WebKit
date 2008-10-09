@@ -1,3 +1,17 @@
+2008-10-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed > 180 degree rotation bug
+        Ensure that validateTransformFunctionList() is called after updating keyframe styles
+
+        https://bugs.webkit.org/show_bug.cgi?id=21420
+
+        Test: animations/big-rotation.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+
 2008-10-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
