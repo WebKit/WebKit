@@ -385,6 +385,8 @@ void FrameLoader::changeLocation(const String& url, const String& referrer, bool
 
 void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool lockHistory, bool userGesture)
 {
+    RefPtr<Frame> protect(m_frame);
+
     ResourceRequestCachePolicy policy = (m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)
         ? ReloadIgnoringCacheData : UseProtocolCachePolicy;
     ResourceRequest request(url, referrer, policy);
@@ -3877,6 +3879,12 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
 
     FrameLoadType type = m_policyLoadType;
     stopAllLoaders();
+    
+    // <rdar://problem/6250856> - In certain circumstances on pages with multiple frames, stopAllLoaders()
+    // might detach the current FrameLoader, in which case we should bail on this newly defunct load. 
+    if (!m_frame->page())
+        return;
+        
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_loadType = type;
     setState(FrameStateProvisional);

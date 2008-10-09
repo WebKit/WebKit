@@ -1,3 +1,16 @@
+2008-10-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/6250856> - Calling [WebView close] from within a redirection callback can cause bad things
+
+        The API usage to reveal this crash was so particular that a layout test is not possible with our current infrastructure.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation): Protect the Frame from deletion
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): stopAllLoaders() might clear the Frame's page,
+          so perform a second null check on the page.  Bail if it has been cleared.
+
 2008-10-09  Alp Toker  <alp@nuanti.com>
 
         Build fix for recent DOM generation Makefile changes when custom
