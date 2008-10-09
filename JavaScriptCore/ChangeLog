@@ -1,3 +1,28 @@
+2008-10-09  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 21459: REGRESSION (r37324): Safari crashes inside JavaScriptCore while browsing hulu.com
+        <https://bugs.webkit.org/show_bug.cgi?id=21459>
+
+        After r37324, an Arguments object does not mark an associated activation
+        object. This change was made because Arguments no longer directly used
+        the activation object in any way. However, if an activation is torn off,
+        then the backing store of Arguments becomes the register array of the
+        activation object. Arguments directly marks all of the arguments, but
+        the activation object is being collected, which causes its register
+        array to be freed and new memory to be allocated in its place.
+
+        Unfortunately, it does not seem possible to reproduce this issue in a
+        layout test.
+
+        * kjs/Arguments.cpp:
+        (JSC::Arguments::mark):
+        * kjs/Arguments.h:
+        (JSC::Arguments::setActivation):
+        (JSC::Arguments::Arguments):
+        (JSC::JSActivation::copyRegisters):
+
 2008-10-09  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
