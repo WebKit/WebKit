@@ -106,15 +106,11 @@ void CSSSelector::extractPseudoType() const
     static AtomicString onlyOfType("only-of-type");
     static AtomicString root("root");
     static AtomicString scrollbar("-webkit-scrollbar");
-    static AtomicString scrollbarBack("-webkit-scrollbar-back");
     static AtomicString scrollbarButton("-webkit-scrollbar-button");
     static AtomicString scrollbarCorner("-webkit-scrollbar-corner");
-    static AtomicString scrollbarForward("-webkit-scrollbar-forward");
-    static AtomicString scrollbarHorizontal("-webkit-scrollbar-horizontal");
     static AtomicString scrollbarThumb("-webkit-scrollbar-thumb");
     static AtomicString scrollbarTrack("-webkit-scrollbar-track");
     static AtomicString scrollbarTrackPiece("-webkit-scrollbar-track-piece");
-    static AtomicString scrollbarVertical("-webkit-scrollbar-vertical");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
     static AtomicString searchDecoration("-webkit-search-decoration");
     static AtomicString searchResultsDecoration("-webkit-search-results-decoration");
@@ -124,7 +120,13 @@ void CSSSelector::extractPseudoType() const
     static AtomicString target("target");
     static AtomicString visited("visited");
     static AtomicString windowInactive("-webkit-window-inactive");
-
+    static AtomicString decrement("-webkit-decrement");
+    static AtomicString increment("-webkit-increment");
+    static AtomicString start("-webkit-start");
+    static AtomicString end("-webkit-end");
+    static AtomicString horizontal("-webkit-horizontal");
+    static AtomicString vertical("-webkit-vertical");
+    
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
 
@@ -231,24 +233,30 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoNthLastOfType;
     else if (m_value == root)
         m_pseudoType = PseudoRoot;
+    else if (m_value == windowInactive)
+        m_pseudoType = PseudoWindowInactive;
+    else if (m_value == decrement)
+        m_pseudoType = PseudoDecrement;
+    else if (m_value == increment)
+        m_pseudoType = PseudoIncrement;
+    else if (m_value == start)
+        m_pseudoType = PseudoStart;
+    else if (m_value == end)
+        m_pseudoType = PseudoEnd;
+    else if (m_value == horizontal)
+        m_pseudoType = PseudoHorizontal;
+    else if (m_value == vertical)
+        m_pseudoType = PseudoVertical;
     else if (m_value == scrollbar) {
         element = true;
         m_pseudoType = PseudoScrollbar;
-    } else if (m_value == windowInactive)
-        m_pseudoType = PseudoWindowInactive;
-    else if (m_value == scrollbarBack)
-        m_pseudoType = PseudoScrollbarBack;
-    else if (m_value == scrollbarButton) {
+    } else if (m_value == scrollbarButton) {
         element = true;
         m_pseudoType = PseudoScrollbarButton;
     } else if (m_value == scrollbarCorner) {
         element = true;
         m_pseudoType = PseudoScrollbarCorner;
-    } else if (m_value == scrollbarForward)
-        m_pseudoType = PseudoScrollbarForward;
-    else if (m_value == scrollbarHorizontal)
-        m_pseudoType = PseudoScrollbarHorizontal;
-    else if (m_value == scrollbarThumb) {
+    } else if (m_value == scrollbarThumb) {
         element = true;
         m_pseudoType = PseudoScrollbarThumb;
     } else if (m_value == scrollbarTrack) {
@@ -257,9 +265,7 @@ void CSSSelector::extractPseudoType() const
     } else if (m_value == scrollbarTrackPiece) {
         element = true;
         m_pseudoType = PseudoScrollbarTrackPiece;
-    } else if (m_value == scrollbarVertical)
-        m_pseudoType = PseudoScrollbarVertical;
-    else if (m_value == searchCancelButton) {
+    } else if (m_value == searchCancelButton) {
         m_pseudoType = PseudoSearchCancelButton;
         element = true;
     } else if (m_value == searchDecoration) {

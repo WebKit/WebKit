@@ -2390,9 +2390,9 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
             return scrollbar->enabled();
         case CSSSelector::PseudoDisabled:
             return !scrollbar->enabled();
-        case CSSSelector::PseudoScrollbarHorizontal:
+        case CSSSelector::PseudoHorizontal:
             return scrollbar->orientation() == HorizontalScrollbar;
-        case CSSSelector::PseudoScrollbarVertical:
+        case CSSSelector::PseudoVertical:
             return scrollbar->orientation() == VerticalScrollbar;
         case CSSSelector::PseudoWindowInactive:
             return !scrollbar->isWindowActive();
