@@ -105,14 +105,30 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
         Document::ListenerType listenerType = Document::TRANSITIONEND_LISTENER;
 
         if (shouldSendEventForListener(listenerType)) {
-            if (Element* element = elementForEventDispatch()) {
-                String propertyName;
-                if (m_animatingProperty != cAnimateAll)
-                    propertyName = getPropertyName(static_cast<CSSPropertyID>(m_animatingProperty));
-                m_waitingForEndEvent = true;
-                m_animationEventDispatcher.startTimer(element, propertyName, m_animatingProperty, true, eventType, elapsedTime);
-                return true; // Did dispatch an event
-            }
+            String propertyName;
+            if (m_animatingProperty != cAnimateAll)
+                propertyName = getPropertyName(static_cast<CSSPropertyID>(m_animatingProperty));
+                
+            // Dispatch the event
+            RefPtr<Element> element = 0;
+            if (m_object->node() && m_object->node()->isElementNode())
+                element = static_cast<Element*>(m_object->node());
+
+            ASSERT(!element || element->document() && !element->document()->inPageCache());
+            if (!element)
+                return false;
+
+            // Keep a reference to this ImplicitAnimation so it doesn't go away in the handler
+            RefPtr<ImplicitAnimation> retainer(this);
+            
+            // Call the event handler
+            element->dispatchWebKitTransitionEvent(eventType, propertyName, elapsedTime);
+
+            // Restore the original (unanimated) style
+            if (eventType == EventNames::webkitAnimationEndEvent && element->renderer())
+                setChanged(element.get());
+
+            return true; // Did dispatch an event
         }
     }
 

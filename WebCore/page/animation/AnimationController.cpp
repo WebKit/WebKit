@@ -98,7 +98,7 @@ bool AnimationControllerPrivate::clear(RenderObject* renderer)
     if (!animation)
         return false;
     animation->resetTransitions(renderer);
-    bool wasSuspended = animation->suspended();
+    bool wasSuspended = animation->isSuspended();
     delete animation;
     return !wasSuspended;
 }
@@ -112,18 +112,18 @@ void AnimationControllerPrivate::styleAvailable()
 
 void AnimationControllerPrivate::updateAnimationTimer()
 {
-    bool animating = false;
+    bool isAnimating = false;
 
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         CompositeAnimation* compAnim = it->second;
-        if (!compAnim->suspended() && compAnim->animating()) {
-            animating = true;
+        if (!compAnim->isSuspended() && compAnim->isAnimating()) {
+            isAnimating = true;
             break;
         }
     }
     
-    if (animating) {
+    if (isAnimating) {
         if (!m_animationTimer.isActive())
             m_animationTimer.startRepeating(cAnimationTimerDelay);
     } else if (m_animationTimer.isActive())
@@ -146,12 +146,12 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
 {
     // When the timer fires, all we do is call setChanged on all DOM nodes with running animations and then do an immediate
     // updateRendering.  It will then call back to us with new information.
-    bool animating = false;
+    bool isAnimating = false;
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         CompositeAnimation* compAnim = it->second;
-        if (!compAnim->suspended() && compAnim->animating()) {
-            animating = true;
+        if (!compAnim->isSuspended() && compAnim->isAnimating()) {
+            isAnimating = true;
             compAnim->setAnimating(false);
 
             Node* node = it->first->element();

@@ -199,11 +199,26 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
     }
 
     if (shouldSendEventForListener(listenerType)) {
-        if (Element* element = elementForEventDispatch()) {
-            m_waitingForEndEvent = true;
-            m_animationEventDispatcher.startTimer(element, m_keyframes.animationName(), -1, true, eventType, elapsedTime);
-            return true; // Did dispatch an event
-        }
+        // Dispatch the event
+        RefPtr<Element> element;
+        if (m_object->node() && m_object->node()->isElementNode())
+            element = static_cast<Element*>(m_object->node());
+
+        ASSERT(!element || element->document() && !element->document()->inPageCache());
+        if (!element)
+            return false;
+
+        // Keep a reference to this ImplicitAnimation so it doesn't go away in the handler
+        RefPtr<KeyframeAnimation> retainer(this);
+        
+        // Call the event handler
+        element->dispatchWebKitAnimationEvent(eventType, m_keyframes.animationName(), elapsedTime);
+
+        // Restore the original (unanimated) style
+        if (eventType == EventNames::webkitAnimationEndEvent && element->renderer())
+            setChanged(element.get());
+
+        return true; // Did dispatch an event
     }
 
     return false; // Did not dispatch an event

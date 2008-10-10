@@ -70,19 +70,6 @@ void AnimationTimerCallback::timerFired(Timer<AnimationTimerBase>*)
     m_anim->animationTimerCallbackFired(m_eventType, m_elapsedTime);
 }
 
-AnimationEventDispatcher::AnimationEventDispatcher(AnimationBase* anim) 
-    : AnimationTimerBase(anim)
-    , m_property(CSSPropertyInvalid)
-    , m_reset(false)
-    , m_elapsedTime(-1)
-{
-}
-
-void AnimationEventDispatcher::timerFired(Timer<AnimationTimerBase>*)
-{
-    m_anim->animationEventDispatcherFired(m_element.get(), m_name, m_property, m_reset, m_eventType, m_elapsedTime);
-}
-
 static inline int blendFunc(const AnimationBase* anim, int from, int to, double progress)
 {  
     return int(from + (to - from) * progress);
@@ -390,16 +377,14 @@ static void ensurePropertyMap()
 AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim)
     : m_animState(AnimationStateNew)
     , m_iteration(0)
-    , m_animating(false)
+    , m_isAnimating(false)
     , m_waitedForResponse(false)
     , m_startTime(0)
     , m_pauseTime(-1)
     , m_object(renderer)
     , m_animationTimerCallback(const_cast<AnimationBase*>(this))
-    , m_animationEventDispatcher(const_cast<AnimationBase*>(this))
     , m_animation(const_cast<Animation*>(transition))
     , m_compAnim(compAnim)
-    , m_waitingForEndEvent(false)
     , m_transformFunctionListValid(false)
 {
 }
@@ -498,13 +483,6 @@ bool AnimationBase::playStatePlaying() const
 bool AnimationBase::animationsMatch(const Animation* anim) const
 {
     return m_animation->animationsMatch(anim);
-}
-
-Element* AnimationBase::elementForEventDispatch()
-{
-    if (m_object->node() && m_object->node()->isElementNode())
-        return static_cast<Element*>(m_object->node());
-    return 0;
 }
 
 void AnimationBase::updateStateMachine(AnimStateInput input, double param)
@@ -742,33 +720,6 @@ void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, d
         updateStateMachine(AnimationStateInputEndTimerFired, elapsedTime);
         // |this| may be deleted here
     }
-}
-
-void AnimationBase::animationEventDispatcherFired(Element* element, const AtomicString& name, int property,
-                                                  bool reset, const AtomicString& eventType, double elapsedTime)
-{
-    m_waitingForEndEvent = false;
-
-    // Keep an atomic string on the stack to keep it alive until we exit this method
-    // (since dispatching the event may cause |this| to be deleted, therefore removing
-    // the last ref to the atomic string).
-    AtomicString animName(name);
-    AtomicString animEventType(eventType);
-    // Make sure the element sticks around too
-    RefPtr<Element> elementRetainer(element);
-
-    ASSERT(!element || (element->document() && !element->document()->inPageCache()));
-    if (!element)
-        return;
-
-    if (eventType == EventNames::webkitTransitionEndEvent)
-        element->dispatchWebKitTransitionEvent(eventType, name, elapsedTime);
-    else
-        element->dispatchWebKitAnimationEvent(eventType, name, elapsedTime);
-
-    // Restore the original (unanimated) style
-    if (animEventType == EventNames::webkitAnimationEndEvent && element->renderer())
-        setChanged(element->renderer()->element());
 }
 
 void AnimationBase::updatePlayState(bool run)

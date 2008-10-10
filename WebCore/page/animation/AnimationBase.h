@@ -40,8 +40,6 @@ class AnimationBase;
 class AnimationController;
 class CompositeAnimation;
 class Element;
-class ImplicitAnimation;
-class KeyframeAnimation;
 class Node;
 class RenderObject;
 class RenderStyle;
@@ -77,34 +75,6 @@ protected:
     AnimationBase* m_anim;
 };
 
-class AnimationEventDispatcher : public AnimationTimerBase {
-public:
-    AnimationEventDispatcher(AnimationBase* anim);    
-    virtual ~AnimationEventDispatcher() { }
-
-    void startTimer(Element* element, const AtomicString& name, int property, bool reset,
-                    const AtomicString& eventType, double elapsedTime)
-    {
-        m_element = element;
-        m_name = name;
-        m_property = property;
-        m_reset = reset;
-        m_eventType = eventType;
-        m_elapsedTime = elapsedTime;
-        AnimationTimerBase::startTimer();
-    }
-
-    virtual void timerFired(Timer<AnimationTimerBase>*);
-
-private:
-    RefPtr<Element> m_element;
-    AtomicString m_name;
-    int m_property;
-    bool m_reset;
-    AtomicString m_eventType;
-    double m_elapsedTime;
-};
-
 class AnimationTimerCallback : public AnimationTimerBase {
 public:
     AnimationTimerCallback(AnimationBase* anim) 
@@ -129,8 +99,8 @@ private:
     double m_elapsedTime;
 };
 
-class AnimationBase : public Noncopyable {
-    friend class CompositeAnimation;
+class AnimationBase : public RefCounted<AnimationBase> {
+    friend class CompositeAnimationPrivate;
 
 public:
     AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);
@@ -143,7 +113,6 @@ public:
     void cancelTimers()
     {
         m_animationTimerCallback.cancelTimer();
-        m_animationEventDispatcher.cancelTimer();
     }
 
     // Animations and Transitions go through the states below. When entering the STARTED state
@@ -203,12 +172,11 @@ public:
     bool isNew() const { return m_animState == AnimationStateNew; }
     bool waitingForStartTime() const { return m_animState == AnimationStateStartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animState == AnimationStateStartWaitStyleAvailable; }
-    bool waitingForEndEvent() const  { return m_waitingForEndEvent; }
 
     // "animating" means that something is running that requires a timer to keep firing
     // (e.g. a software animation)
-    void setAnimating(bool inAnimating = true) { m_animating = inAnimating; }
-    bool animating() const { return m_animating; }
+    void setAnimating(bool inAnimating = true) { m_isAnimating = inAnimating; }
+    bool isAnimating() const { return m_isAnimating; }
 
     double progress(double scale, double offset, const TimingFunction*) const;
 
@@ -218,8 +186,6 @@ public:
     virtual bool shouldFireEvents() const { return false; }
 
     void animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime);
-    void animationEventDispatcherFired(Element*, const AtomicString& name, int property, bool reset,
-                                       const AtomicString& eventType, double elapsedTime);
 
     bool animationsMatch(const Animation*) const;
 
@@ -244,8 +210,6 @@ public:
     bool isTransformFunctionListValid() const { return m_transformFunctionListValid; }
     
 protected:
-    Element* elementForEventDispatch();
-
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }
 
@@ -273,17 +237,15 @@ protected:
     AnimState m_animState;
     int m_iteration;
 
-    bool m_animating;       // transition/animation requires continual timer firing
+    bool m_isAnimating;       // transition/animation requires continual timer firing
     bool m_waitedForResponse;
     double m_startTime;
     double m_pauseTime;
     RenderObject* m_object;
 
     AnimationTimerCallback m_animationTimerCallback;
-    AnimationEventDispatcher m_animationEventDispatcher;
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
-    bool m_waitingForEndEvent;
     bool m_transformFunctionListValid;
 };
 

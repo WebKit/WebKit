@@ -38,8 +38,10 @@ namespace WebCore {
 // for a single RenderObject.
 class ImplicitAnimation : public AnimationBase {
 public:
-    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*, const RenderStyle* fromStyle);
-    virtual ~ImplicitAnimation();
+    static PassRefPtr<ImplicitAnimation> create(const Animation* animation, int animatingProperty, RenderObject* renderer, CompositeAnimation* compositeAnimation, const RenderStyle* fromStyle)
+    {
+        return adoptRef(new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
+    };
     
     int transitionProperty() const { return m_transitionProperty; }
     int animatingProperty() const { return m_animatingProperty; }
@@ -69,6 +71,9 @@ protected:
     void validateTransformFunctionList();
 
 private:
+    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*, const RenderStyle* fromStyle);    
+    virtual ~ImplicitAnimation();
+
     int m_transitionProperty;   // Transition property as specified in the RenderStyle. May be cAnimateAll
     int m_animatingProperty;    // Specific property for this ImplicitAnimation
     bool m_overridden;          // true when there is a keyframe animation that overrides the transitioning property

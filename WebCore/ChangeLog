@@ -46,6 +46,78 @@
         * css/CSSStyleSelector.cpp:
         (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
 
+2008-10-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21310
+
+        Redesigned how animation events are sent in order to get rid of
+        AnimationEventDispatcher. ImplicitAnimation and KeyframeAnimation
+        are now ref counted. While calling the event handler, I keep a 
+        reference to this class to avoid it getting destroyed out from under me.
+
+        I also moved most of the functionality of CompositeAnimation to
+        and internal class (CompositeAnimationPrivate) to reduce the exposure
+        of the internals of the various animation classes.
+
+        We have several transition and animation LayoutTests which verify that
+        this fix works as expected and continues to avoid crashes.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::cancelTimers):
+        (WebCore::AnimationBase::waitingForStyleAvailable):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::CompositeAnimationPrivate):
+        (WebCore::CompositeAnimationPrivate::suspended):
+        (WebCore::CompositeAnimationPrivate::~CompositeAnimationPrivate):
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        (WebCore::CompositeAnimationPrivate::updateKeyframeAnimations):
+        (WebCore::CompositeAnimationPrivate::animate):
+        (WebCore::CompositeAnimationPrivate::setAnimating):
+        (WebCore::CompositeAnimationPrivate::animating):
+        (WebCore::CompositeAnimationPrivate::getAnimationForProperty):
+        (WebCore::CompositeAnimationPrivate::resetTransitions):
+        (WebCore::CompositeAnimationPrivate::resetAnimations):
+        (WebCore::CompositeAnimationPrivate::cleanupFinishedAnimations):
+        (WebCore::CompositeAnimationPrivate::setAnimationStartTime):
+        (WebCore::CompositeAnimationPrivate::setTransitionStartTime):
+        (WebCore::CompositeAnimationPrivate::suspendAnimations):
+        (WebCore::CompositeAnimationPrivate::resumeAnimations):
+        (WebCore::CompositeAnimationPrivate::overrideImplicitAnimations):
+        (WebCore::CompositeAnimationPrivate::resumeOverriddenImplicitAnimations):
+        (WebCore::compareAnimationIndices):
+        (WebCore::CompositeAnimationPrivate::styleAvailable):
+        (WebCore::CompositeAnimationPrivate::isAnimatingProperty):
+        (WebCore::CompositeAnimationPrivate::setWaitingForStyleAvailable):
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        (WebCore::CompositeAnimation::~CompositeAnimation):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::animating):
+        (WebCore::CompositeAnimation::setWaitingForStyleAvailable):
+        (WebCore::CompositeAnimation::resetTransitions):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::suspended):
+        (WebCore::CompositeAnimation::styleAvailable):
+        (WebCore::CompositeAnimation::setAnimating):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::setAnimationStartTime):
+        (WebCore::CompositeAnimation::setTransitionStartTime):
+        (WebCore::CompositeAnimation::overrideImplicitAnimations):
+        (WebCore::CompositeAnimation::resumeOverriddenImplicitAnimations):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::create):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * page/animation/KeyframeAnimation.h:
+        (WebCore::KeyframeAnimation::create):
+
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
         Add support for scrollbar orientation as a pseudoclass.  Add support for whether or not the scrollbar
@@ -391,7 +463,7 @@
         * platform/graphics/qt/GraphicsContextQt.cpp:
         * platform/graphics/wx/GraphicsContextWx.cpp:
 
-2008-10-09  Kevin Ollivier  <kevino@theolliviers.com>
+08-10-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes.
 
