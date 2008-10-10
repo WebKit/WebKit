@@ -2383,9 +2383,8 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
 bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel, RenderStyle::PseudoId& dynamicPseudo) const
 {
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
-    ScrollbarPart part = RenderScrollbar::partForStyleResolve();
     
-    ASSERT(sel->m_match == CSSSelector::PseudoClass && scrollbar && part != NoPart);
+    ASSERT(sel->m_match == CSSSelector::PseudoClass && scrollbar);
     switch (sel->pseudoType()) {
         case CSSSelector::PseudoEnabled:
             return scrollbar->enabled();
