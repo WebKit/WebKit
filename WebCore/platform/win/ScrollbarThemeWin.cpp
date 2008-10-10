@@ -194,7 +194,7 @@ IntRect ScrollbarThemeWin::trackRect(Scrollbar* scrollbar, bool)
     return IntRect(scrollbar->x(), scrollbar->y() + thickness, thickness, scrollbar->height() - 2 * thickness);
 }
 
-void ScrollbarThemeWin::paintTrack(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
+void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
 {
     checkAndInitScrollbarTheme();
 
