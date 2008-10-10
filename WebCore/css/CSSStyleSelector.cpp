@@ -2339,6 +2339,24 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             case CSSSelector::PseudoMediaControlsFullscreenButton:
                 dynamicPseudo = RenderStyle::MEDIA_CONTROLS_FULLSCREEN_BUTTON;
                 return true;
+            case CSSSelector::PseudoScrollbar:
+                dynamicPseudo = RenderStyle::SCROLLBAR;
+                return true;
+            case CSSSelector::PseudoScrollbarButton:
+                dynamicPseudo = RenderStyle::SCROLLBAR_BUTTON;
+                return true;
+            case CSSSelector::PseudoScrollbarCorner:
+                dynamicPseudo = RenderStyle::SCROLLBAR_CORNER;
+                return true;
+            case CSSSelector::PseudoScrollbarThumb:
+                dynamicPseudo = RenderStyle::SCROLLBAR_THUMB;
+                return true;
+            case CSSSelector::PseudoScrollbarTrack:
+                dynamicPseudo = RenderStyle::SCROLLBAR_TRACK;
+                return true;
+            case CSSSelector::PseudoScrollbarTrackPiece:
+                dynamicPseudo = RenderStyle::SCROLLBAR_TRACK_PIECE;
+                return true;
             case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:
             default:

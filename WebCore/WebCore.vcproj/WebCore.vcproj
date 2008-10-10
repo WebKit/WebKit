@@ -8501,6 +8501,54 @@
 				RelativePath="..\rendering\RenderReplica.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\rendering\RenderScrollbar.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderScrollbar.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\rendering\RenderScrollbarPart.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderScrollbarPart.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\rendering\RenderScrollbarTheme.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderScrollbarTheme.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\RenderSlider.cpp"
 				>

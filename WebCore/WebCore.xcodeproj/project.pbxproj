@@ -3717,6 +3717,12 @@
 		BC3B7B210E91AAF400D54065 /* JSEventTargetNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3B7B200E91AAF400D54065 /* JSEventTargetNodeCustom.cpp */; };
 		BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BC29B0E91AB0F00835588 /* HostWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3BE9900E9C1C7C00835588 /* RenderScrollbar.cpp */; };
+		BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE9910E9C1C7C00835588 /* RenderScrollbar.h */; };
+		BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE9920E9C1C7C00835588 /* RenderScrollbarPart.h */; };
+		BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3BE9980E9C1E5D00835588 /* RenderScrollbarTheme.h */; };
+		BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3BE9A40E9C239600835588 /* RenderScrollbarTheme.cpp */; };
+		BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3BE9AA0E9C242000835588 /* RenderScrollbarPart.cpp */; };
 		BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */; };
 		BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */; };
 		BC4368E80C226E32005EFB5F /* Rect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4368E70C226E32005EFB5F /* Rect.h */; };
@@ -8260,6 +8266,12 @@
 		BC3B7B200E91AAF400D54065 /* JSEventTargetNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventTargetNodeCustom.cpp; sourceTree = "<group>"; };
 		BC3BC29B0E91AB0F00835588 /* HostWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostWindow.h; sourceTree = "<group>"; };
 		BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupMenuStyle.h; sourceTree = "<group>"; };
+		BC3BE9900E9C1C7C00835588 /* RenderScrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderScrollbar.cpp; sourceTree = "<group>"; };
+		BC3BE9910E9C1C7C00835588 /* RenderScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderScrollbar.h; sourceTree = "<group>"; };
+		BC3BE9920E9C1C7C00835588 /* RenderScrollbarPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderScrollbarPart.h; sourceTree = "<group>"; };
+		BC3BE9980E9C1E5D00835588 /* RenderScrollbarTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderScrollbarTheme.h; sourceTree = "<group>"; };
+		BC3BE9A40E9C239600835588 /* RenderScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderScrollbarTheme.cpp; sourceTree = "<group>"; };
+		BC3BE9AA0E9C242000835588 /* RenderScrollbarPart.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderScrollbarPart.cpp; sourceTree = "<group>"; };
 		BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaList.cpp; sourceTree = "<group>"; };
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
 		BC4368E70C226E32005EFB5F /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
@@ -13559,6 +13571,9 @@
 				ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */,
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
+				BC3BE9AA0E9C242000835588 /* RenderScrollbarPart.cpp */,
+				BC3BE9A40E9C239600835588 /* RenderScrollbarTheme.cpp */,
+				BC3BE9980E9C1E5D00835588 /* RenderScrollbarTheme.h */,
 				BCEA4841097D93020094C9E4 /* RenderObject.h */,
 				A871DEC80A1530C700B12A68 /* RenderPart.cpp */,
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
@@ -13570,6 +13585,9 @@
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
 				BCA846D50DC67A350026C309 /* RenderReplica.h */,
+				BC3BE9900E9C1C7C00835588 /* RenderScrollbar.cpp */,
+				BC3BE9910E9C1C7C00835588 /* RenderScrollbar.h */,
+				BC3BE9920E9C1C7C00835588 /* RenderScrollbarPart.h */,
 				AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */,
 				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
 				A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */,
@@ -15961,6 +15979,9 @@
 				1C81BA0C0E97348300266E07 /* JavaScriptDebugListener.h in Headers */,
 				1C81BA0E0E97348300266E07 /* JavaScriptDebugServer.h in Headers */,
 				BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */,
+				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
+				BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */,
+				BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */,
 				1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */,
 				1CF6BE150E9BB4670025E1CD /* ObjCNodeFilterCondition.h in Headers */,
 				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
@@ -17825,6 +17846,9 @@
 				1C81BA020E9733CB00266E07 /* JavaScriptProfile.cpp in Sources */,
 				1C81BA090E97348300266E07 /* JavaScriptCallFrame.cpp in Sources */,
 				1C81BA0D0E97348300266E07 /* JavaScriptDebugServer.cpp in Sources */,
+				BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */,
+				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
+				BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */,
 				1CF6BDFB0E9BB26A0025E1CD /* ObjCEventListener.mm in Sources */,
 				1CF6BE140E9BB4670025E1CD /* ObjCNodeFilterCondition.mm in Sources */,
 			);

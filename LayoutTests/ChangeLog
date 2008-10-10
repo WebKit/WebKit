@@ -1,3 +1,16 @@
+2008-10-09  David Hyatt  <hyatt@apple.com>
+
+        Land layout test for CSS scrollbars.
+
+        Reviewed by Oliver Hunt
+
+        * platform/mac/scrollbars: Added.
+        * platform/mac/scrollbars/basic-scrollbar-expected.checksum: Added.
+        * platform/mac/scrollbars/basic-scrollbar-expected.png: Added.
+        * platform/mac/scrollbars/basic-scrollbar-expected.txt: Added.
+        * scrollbars: Added.
+        * scrollbars/basic-scrollbar.html: Added.
+
 2008-10-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

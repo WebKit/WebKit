@@ -1,3 +1,96 @@
+2008-10-09  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21446
+
+        This patch gets CSS scrollbars up and limping.  There's no way to distinguish between states or between
+        orientation and back vs. forward on the buttons, but it's a start.
+
+        Reviewed by Oliver Hunt
+
+        Added scrollbars/basic-scrollbar.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * platform/ScrollTypes.h:
+        (WebCore::):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::styleChanged):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        (WebCore::ScrollbarThemeComposite::splitTrack):
+        * platform/ScrollbarThemeComposite.h:
+        (WebCore::ScrollbarThemeComposite::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeComposite::paintTrackBackground):
+        (WebCore::ScrollbarThemeComposite::paintTrackPiece):
+        * platform/win/ScrollbarThemeSafari.cpp:
+        (WebCore::ScrollbarThemeSafari::paintTrackBackground):
+        * platform/win/ScrollbarThemeSafari.h:
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintTrack):
+        * platform/win/ScrollbarThemeWin.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderScrollbar.cpp: Added.
+        (WebCore::RenderScrollbar::createCustomScrollbar):
+        (WebCore::RenderScrollbar::RenderScrollbar):
+        (WebCore::RenderScrollbar::~RenderScrollbar):
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+        (WebCore::RenderScrollbar::updateScrollbarParts):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        (WebCore::RenderScrollbar::paintPart):
+        (WebCore::RenderScrollbar::buttonRect):
+        (WebCore::RenderScrollbar::minimumThumbLength):
+        * rendering/RenderScrollbar.h: Added.
+        (WebCore::RenderScrollbar::styleChanged):
+        (WebCore::RenderScrollbar::owningRenderer):
+        * rendering/RenderScrollbarPart.cpp: Added.
+        (WebCore::RenderScrollbarPart::RenderScrollbarPart):
+        (WebCore::RenderScrollbarPart::~RenderScrollbarPart):
+        (WebCore::RenderScrollbarPart::layout):
+        (WebCore::RenderScrollbarPart::layoutHorizontalPart):
+        (WebCore::RenderScrollbarPart::layoutVerticalPart):
+        (WebCore::calcScrollbarThicknessUsing):
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+        (WebCore::RenderScrollbarPart::calcPrefWidths):
+        (WebCore::RenderScrollbarPart::setStyle):
+        * rendering/RenderScrollbarPart.h: Added.
+        (WebCore::RenderScrollbarPart::renderName):
+        (WebCore::RenderScrollbarPart::requiresLayer):
+        * rendering/RenderScrollbarTheme.cpp: Added.
+        (WebCore::RenderScrollbarTheme::renderScrollbarTheme):
+        (WebCore::RenderScrollbarTheme::buttonSizesAlongTrackAxis):
+        (WebCore::RenderScrollbarTheme::hasButtons):
+        (WebCore::RenderScrollbarTheme::hasThumb):
+        (WebCore::RenderScrollbarTheme::minimumThumbLength):
+        (WebCore::RenderScrollbarTheme::backButtonRect):
+        (WebCore::RenderScrollbarTheme::forwardButtonRect):
+        (WebCore::RenderScrollbarTheme::trackRect):
+        (WebCore::RenderScrollbarTheme::paintScrollCorner):
+        (WebCore::RenderScrollbarTheme::paintScrollbarBackground):
+        (WebCore::RenderScrollbarTheme::paintTrackBackground):
+        (WebCore::RenderScrollbarTheme::paintTrackPiece):
+        (WebCore::RenderScrollbarTheme::paintButton):
+        (WebCore::RenderScrollbarTheme::paintThumb):
+        * rendering/RenderScrollbarTheme.h: Added.
+        (WebCore::RenderScrollbarTheme::~RenderScrollbarTheme):
+        (WebCore::RenderScrollbarTheme::scrollbarThickness):
+        (WebCore::RenderScrollbarTheme::buttonsPlacement):
+        (WebCore::RenderScrollbarTheme::supportsControlTints):
+        (WebCore::RenderScrollbarTheme::shouldCenterOnThumb):
+        (WebCore::RenderScrollbarTheme::initialAutoscrollTimerDelay):
+        (WebCore::RenderScrollbarTheme::autoscrollTimerDelay):
+        (WebCore::RenderScrollbarTheme::registerScrollbar):
+        (WebCore::RenderScrollbarTheme::unregisterScrollbar):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::):
+
 2008-10-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -159,6 +159,7 @@ namespace WebCore {
             PseudoScrollbarHorizontal,
             PseudoScrollbarThumb,
             PseudoScrollbarTrack,
+            PseudoScrollbarTrackPiece,
             PseudoScrollbarVertical,
             PseudoSelection,
             PseudoFileUploadButton,

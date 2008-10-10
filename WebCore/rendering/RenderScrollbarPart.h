@@ -23,38 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeWin_h
-#define ScrollbarThemeWin_h
+#ifndef RenderScrollbarPart_h
+#define RenderScrollbarPart_h
 
-#include "ScrollbarThemeComposite.h"
+#include "RenderBlock.h"
+#include "ScrollTypes.h"
 
 namespace WebCore {
 
-class ScrollbarThemeWin : public ScrollbarThemeComposite {
+class RenderScrollbar;
+
+class RenderScrollbarPart : public RenderBlock {
 public:
-    ScrollbarThemeWin();
-    virtual ~ScrollbarThemeWin();
+    RenderScrollbarPart(RenderScrollbar*, ScrollbarPart, Node*);
+    virtual ~RenderScrollbarPart();
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
-
-    virtual void themeChanged();
+    virtual const char* renderName() const { return "RenderScrollbarPart"; }
     
-    virtual bool invalidateOnMouseEnterExit();
+    virtual bool requiresLayer() { return false; }
 
-protected:
-    virtual bool hasButtons(Scrollbar*) { return true; }
-    virtual bool hasThumb(Scrollbar*);
+    virtual void layout();
+    virtual void calcPrefWidths();
+    
+    virtual void setStyle(const RenderStyle*);
 
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+private:
+    void layoutHorizontalPart();
+    void layoutVerticalPart();
 
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
-
-    virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
+    void computeScrollbarWidth();
+    void computeScrollbarHeight();
+    
+    RenderScrollbar* m_scrollbar;
+    ScrollbarPart m_part;
 };
 
-}
-#endif
+} // namespace WebCore
+
+#endif // RenderScrollbarPart_h

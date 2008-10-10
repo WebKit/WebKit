@@ -120,6 +120,8 @@ public:
     bool suppressInvalidation() const { return m_suppressInvalidation; }
     void setSuppressInvalidation(bool s) { m_suppressInvalidation = s; }
 
+    virtual void styleChanged() { }
+
 protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();

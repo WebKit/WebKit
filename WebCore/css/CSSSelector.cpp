@@ -114,6 +114,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString scrollbarHorizontal("-webkit-scrollbar-horizontal");
     static AtomicString scrollbarThumb("-webkit-scrollbar-thumb");
     static AtomicString scrollbarTrack("-webkit-scrollbar-track");
+    static AtomicString scrollbarTrackPiece("-webkit-scrollbar-track-piece");
     static AtomicString scrollbarVertical("-webkit-scrollbar-vertical");
     static AtomicString searchCancelButton("-webkit-search-cancel-button");
     static AtomicString searchDecoration("-webkit-search-decoration");
@@ -253,6 +254,9 @@ void CSSSelector::extractPseudoType() const
     } else if (m_value == scrollbarTrack) {
         element = true;
         m_pseudoType = PseudoScrollbarTrack;
+    } else if (m_value == scrollbarTrackPiece) {
+        element = true;
+        m_pseudoType = PseudoScrollbarTrackPiece;
     } else if (m_value == scrollbarVertical)
         m_pseudoType = PseudoScrollbarVertical;
     else if (m_value == searchCancelButton) {

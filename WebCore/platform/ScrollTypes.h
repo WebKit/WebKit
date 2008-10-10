@@ -65,6 +65,8 @@ namespace WebCore {
         ForwardTrackPart = 1 << 4,
         BackButtonEndPart = 1 << 5,
         ForwardButtonEndPart = 1 << 6,
+        ScrollbarBGPart = 1 << 7,
+        TrackBGPart = 1 << 8,
         AllParts = 0xffffffff,
     };
 

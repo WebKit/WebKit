@@ -84,15 +84,8 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
     if (thumbPresent) {
         IntRect track = trackRect(scrollbar);
         splitTrack(scrollbar, track, startTrackRect, thumbRect, endTrackRect);
-        if (damageRect.intersects(thumbRect)) {
+        if (damageRect.intersects(thumbRect))
             scrollMask |= ThumbPart;
-            if (trackIsSinglePiece()) {
-                // The track is a single strip that paints under the thumb.
-                // Add both components of the track to the mask.
-                scrollMask |= BackTrackPart;
-                scrollMask |= ForwardTrackPart;
-            }
-        }
         if (damageRect.intersects(startTrackRect))
             scrollMask |= BackTrackPart;
         if (damageRect.intersects(endTrackRect))
@@ -131,16 +124,20 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
     }
 #endif
 
-    // Paint the track.
+    // Paint the scrollbar background (only used by custom CSS scrollbars).
+    paintScrollbarBackground(graphicsContext, scrollbar);
+
+    // Paint the track background.
+    if ((scrollMask & ForwardTrackPart) || (scrollMask & BackTrackPart) || (scrollMask && ThumbPart))
+        paintTrackBackground(graphicsContext, scrollbar, trackPaintRect);
+    
+    // Paint the track pieces above and below the thumb.
     if ((scrollMask & ForwardTrackPart) || (scrollMask & BackTrackPart)) {
-        if (!thumbPresent || trackIsSinglePiece())
-            paintTrack(graphicsContext, scrollbar, trackPaintRect, ForwardTrackPart | BackTrackPart);
-        else {
-            if (scrollMask & BackTrackPart)
-                paintTrack(graphicsContext, scrollbar, startTrackRect, BackTrackPart);
-            if (scrollMask & ForwardTrackPart)
-                paintTrack(graphicsContext, scrollbar, endTrackRect, ForwardTrackPart);
-        }
+        
+        if (scrollMask & BackTrackPart)
+            paintTrackPiece(graphicsContext, scrollbar, startTrackRect, BackTrackPart);
+        if (scrollMask & ForwardTrackPart)
+            paintTrackPiece(graphicsContext, scrollbar, endTrackRect, ForwardTrackPart);
     }
 
     // Paint the back and forward buttons.
@@ -232,7 +229,7 @@ void ScrollbarThemeComposite::splitTrack(Scrollbar* scrollbar, const IntRect& tr
 {
     // This function won't even get called unless we're big enough to have some combination of these three rects where at least
     // one of them is non-empty.
-    int thickness = scrollbarThickness();
+    int thickness = scrollbar->orientation() == HorizontalScrollbar ? scrollbar->height() : scrollbar->width();
     int thumbPos = thumbPosition(scrollbar);
     if (scrollbar->orientation() == HorizontalScrollbar) {
         thumbRect = IntRect(trackRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness);

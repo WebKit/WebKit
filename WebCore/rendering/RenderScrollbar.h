@@ -23,38 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeWin_h
-#define ScrollbarThemeWin_h
+#ifndef RenderScrollbar_h
+#define RenderScrollbar_h
 
-#include "ScrollbarThemeComposite.h"
+#include "Scrollbar.h"
+#include "RenderStyle.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class ScrollbarThemeWin : public ScrollbarThemeComposite {
-public:
-    ScrollbarThemeWin();
-    virtual ~ScrollbarThemeWin();
+class RenderObject;
+class RenderScrollbarPart;
+class RenderStyle;
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
-
-    virtual void themeChanged();
-    
-    virtual bool invalidateOnMouseEnterExit();
-
+class RenderScrollbar : public Scrollbar {
 protected:
-    virtual bool hasButtons(Scrollbar*) { return true; }
-    virtual bool hasThumb(Scrollbar*);
+    RenderScrollbar(ScrollbarClient*, ScrollbarOrientation, RenderStyle*, RenderObject*);
 
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+public:
+    friend class Scrollbar;
+    static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollbarClient*, ScrollbarOrientation, RenderStyle*, RenderObject*);
+    virtual ~RenderScrollbar();
 
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    void updateScrollbarParts(RenderStyle* = 0, bool destroy = false);
 
-    virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
+    static ScrollbarPart partForStyleResolve();
+    static RenderScrollbar* scrollbarForStyleResolve();
+
+    virtual void styleChanged() { updateScrollbarParts(); }
+
+    RenderObject* owningRenderer() const { return m_owner; }
+
+    void paintPart(GraphicsContext*, ScrollbarPart, const IntRect&);
+
+    IntRect buttonRect(ScrollbarPart);
+    
+    int minimumThumbLength();
+
+private:
+    RenderStyle* getScrollbarPseudoStyle(ScrollbarPart, RenderStyle::PseudoId);
+    void updateScrollbarPart(ScrollbarPart, RenderStyle::PseudoId, RenderStyle*, bool destroy);
+
+    RenderObject* m_owner;
+    HashMap<unsigned, RenderScrollbarPart*> m_parts;
 };
 
-}
-#endif
+} // namespace WebCore
+
+#endif // RenderScrollbar_h

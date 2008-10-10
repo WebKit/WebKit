@@ -52,7 +52,7 @@ protected:
     
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
 
-    virtual void paintTrack(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarControlPartMask);
+    virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
     virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
     virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
 };
