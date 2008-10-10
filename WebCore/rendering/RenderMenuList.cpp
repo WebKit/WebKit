@@ -117,21 +117,18 @@ void RenderMenuList::removeChild(RenderObject* oldChild)
         m_innerBlock->removeChild(oldChild);
 }
 
-void RenderMenuList::setStyle(const RenderStyle* newStyle)
+void RenderMenuList::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    bool fontChanged = !style() || style()->font() != newStyle->font();
-    
-    // Don't allow overflow on menu lists.
-    ASSERT(newStyle->overflowX() == OVISIBLE);
-    ASSERT(newStyle->overflowY() == OVISIBLE);
-    
-    RenderBlock::setStyle(newStyle);
+    RenderBlock::styleDidChange(diff, oldStyle);
 
     if (m_buttonText)
-        m_buttonText->setStyle(newStyle);
+        m_buttonText->setStyle(style());
     if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
         adjustInnerStyle();
+
     setReplaced(isInline());
+
+    bool fontChanged = !oldStyle || oldStyle->font() != style()->font();
     if (fontChanged)
         updateOptionsWidth();
 }

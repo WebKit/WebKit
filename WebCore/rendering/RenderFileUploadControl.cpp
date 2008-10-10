@@ -71,11 +71,11 @@ RenderFileUploadControl::~RenderFileUploadControl()
     m_fileChooser->disconnectClient();
 }
 
-void RenderFileUploadControl::setStyle(const RenderStyle* newStyle)
+void RenderFileUploadControl::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::setStyle(newStyle);
+    RenderBlock::styleDidChange(diff, oldStyle);
     if (m_button)
-        m_button->renderer()->setStyle(createButtonStyle(newStyle));
+        m_button->renderer()->setStyle(createButtonStyle(style()));
 
     setReplaced(isInline());
 }

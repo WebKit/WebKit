@@ -64,7 +64,7 @@ void RenderButton::removeChild(RenderObject* oldChild)
         m_inner->removeChild(oldChild);
 }
 
-void RenderButton::setStyle(const RenderStyle* style)
+void RenderButton::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
 {
     if (m_inner) {
         // RenderBlock::setStyle is going to apply a new style to the inner block, which
@@ -73,9 +73,15 @@ void RenderButton::setStyle(const RenderStyle* style)
         // because of the difference.
         m_inner->style()->setBoxFlex(0);
     }
-    RenderBlock::setStyle(style);
+    RenderBlock::styleWillChange(diff, newStyle);
+}
+
+void RenderButton::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
     if (m_buttonText)
-        m_buttonText->setStyle(style);
+        m_buttonText->setStyle(style());
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
         m_inner->style()->setBoxFlex(1.0f);
     setReplaced(isInline());

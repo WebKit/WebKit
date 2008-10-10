@@ -42,8 +42,6 @@ public:
     virtual void layout();
     virtual int minimumReplacedHeight() const { return 0; }
 
-    virtual void setStyle(const RenderStyle*);
-
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintReplaced(PaintInfo&, int tx, int ty) { }
 
@@ -66,6 +64,8 @@ public:
     bool isSelected() const;
 
 protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
+
     void setIntrinsicSize(const IntSize&);
     virtual void intrinsicSizeChanged();
 

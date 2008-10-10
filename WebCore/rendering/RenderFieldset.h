@@ -41,14 +41,15 @@ public:
 
     virtual RenderObject* layoutLegend(bool relayoutChildren);
 
-    virtual void setStyle(const RenderStyle*);
-
     virtual void calcPrefWidths();
     virtual bool avoidsFloats() const { return true; }
     virtual bool expandsToEncloseOverhangingFloats() const { return style()->height().isAuto(); }
     virtual bool stretchesToMinIntrinsicWidth() const { return true; }
 
     RenderObject* findLegend() const;
+
+protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
 private:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);

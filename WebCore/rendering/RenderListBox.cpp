@@ -90,9 +90,9 @@ RenderListBox::~RenderListBox()
     }
 }
 
-void RenderListBox::setStyle(const RenderStyle* style)
+void RenderListBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::setStyle(style);
+    RenderBlock::styleDidChange(diff, oldStyle);
     setReplaced(isInline());
 }
 

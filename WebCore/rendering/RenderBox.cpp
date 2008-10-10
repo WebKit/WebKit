@@ -50,10 +50,13 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
-    
+
 // Used by flexible boxes when flexing this element.
 typedef WTF::HashMap<const RenderBox*, int> OverrideSizeMap;
 static OverrideSizeMap* gOverrideSizeMap = 0;
+
+bool RenderBox::s_wasFloating = false;
+bool RenderBox::s_hadOverflowClip = false;
 
 RenderBox::RenderBox(Node* node)
     : RenderObject(node)
@@ -70,107 +73,6 @@ RenderBox::RenderBox(Node* node)
     , m_layer(0)
     , m_inlineBoxWrapper(0)
 {
-}
-
-void RenderBox::setStyle(const RenderStyle* newStyle)
-{
-    bool wasFloating = isFloating();
-    bool hadOverflowClip = hasOverflowClip();
-
-    RenderStyle* oldStyle = style();
-    if (oldStyle)
-        oldStyle->ref();
-
-    RenderObject::setStyle(newStyle);
-
-    if (needsLayout() && oldStyle && (oldStyle->height().isPercent() || oldStyle->minHeight().isPercent() || oldStyle->maxHeight().isPercent()))
-        RenderBlock::removePercentHeightDescendant(this);
-
-    // The root and the RenderView always paint their backgrounds/borders.
-    if (isRoot() || isRenderView())
-        setHasBoxDecorations(true);
-
-    setInline(newStyle->isDisplayInlineType());
-
-    switch (newStyle->position()) {
-        case AbsolutePosition:
-        case FixedPosition:
-            setPositioned(true);
-            break;
-        default:
-            setPositioned(false);
-
-            if (newStyle->isFloating())
-                setFloating(true);
-
-            if (newStyle->position() == RelativePosition)
-                setRelPositioned(true);
-    }
-
-    // We also handle <body> and <html>, whose overflow applies to the viewport.
-    if (!isRoot() && (!isBody() || !document()->isHTMLDocument()) && (isRenderBlock() || isTableRow() || isTableSection())) {
-        // Check for overflow clip.
-        // It's sufficient to just check one direction, since it's illegal to have visible on only one overflow value.
-        if (newStyle->overflowX() != OVISIBLE) {
-            if (!hadOverflowClip)
-                // Erase the overflow
-                repaint();
-            setHasOverflowClip();
-        }
-    }
-
-    setHasTransform(newStyle->hasTransform());
-    setHasReflection(newStyle->boxReflect());
-
-    if (requiresLayer()) {
-        if (!m_layer) {
-            if (wasFloating && isFloating())
-                setChildNeedsLayout(true);
-            m_layer = new (renderArena()) RenderLayer(this);
-            setHasLayer(true);
-            m_layer->insertOnlyThisLayer();
-            if (parent() && !needsLayout() && containingBlock())
-                m_layer->updateLayerPositions();
-        }
-    } else if (m_layer && !isRoot() && !isRenderView()) {
-        ASSERT(m_layer->parent());
-        RenderLayer* layer = m_layer;
-        m_layer = 0;
-        setHasLayer(false);
-        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
-        setHasReflection(false);
-        layer->removeOnlyThisLayer();
-        if (wasFloating && isFloating())
-            setChildNeedsLayout(true);
-    }
-
-    // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
-    // new zoomed coordinate space.
-    if (hasOverflowClip() && oldStyle && style() && oldStyle->effectiveZoom() != style()->effectiveZoom()) {
-        int left = scrollLeft();
-        if (left) {
-            left = (left / oldStyle->effectiveZoom()) * style()->effectiveZoom();
-            setScrollLeft(left);
-        }
-        int top = scrollTop();
-        if (top) {
-            top = (top / oldStyle->effectiveZoom()) * style()->effectiveZoom();
-            setScrollTop(top);
-        }
-    }
-
-    if (m_layer)
-        m_layer->styleChanged(oldStyle);
-
-    // Set the text color if we're the body.
-    if (isBody())
-        document()->setTextColor(newStyle->color());
-
-    if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
-        static_cast<RenderView*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
-
-    if (oldStyle)
-        oldStyle->deref(renderArena());
 }
 
 RenderBox::~RenderBox()
@@ -193,6 +95,106 @@ void RenderBox::destroy()
         RenderBlock::removePercentHeightDescendant(this);
 
     RenderObject::destroy();
+}
+
+void RenderBox::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
+{
+    s_wasFloating = isFloating();
+    s_hadOverflowClip = hasOverflowClip();
+
+    RenderObject::styleWillChange(diff, newStyle);
+}
+
+void RenderBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+{
+    RenderObject::styleDidChange(diff, oldStyle);
+
+    if (needsLayout() && oldStyle && (oldStyle->height().isPercent() || oldStyle->minHeight().isPercent() || oldStyle->maxHeight().isPercent()))
+        RenderBlock::removePercentHeightDescendant(this);
+
+    // The root and the RenderView always paint their backgrounds/borders.
+    if (isRoot() || isRenderView())
+        setHasBoxDecorations(true);
+
+    setInline(style()->isDisplayInlineType());
+
+    switch (style()->position()) {
+        case AbsolutePosition:
+        case FixedPosition:
+            setPositioned(true);
+            break;
+        default:
+            setPositioned(false);
+
+            if (style()->isFloating())
+                setFloating(true);
+
+            if (style()->position() == RelativePosition)
+                setRelPositioned(true);
+            break;
+    }
+
+    // We also handle <body> and <html>, whose overflow applies to the viewport.
+    if (!isRoot() && (!isBody() || !document()->isHTMLDocument()) && (isRenderBlock() || isTableRow() || isTableSection())) {
+        // Check for overflow clip.
+        // It's sufficient to just check one direction, since it's illegal to have visible on only one overflow value.
+        if (style()->overflowX() != OVISIBLE) {
+            if (!s_hadOverflowClip)
+                // Erase the overflow
+                repaint();
+            setHasOverflowClip();
+        }
+    }
+
+    setHasTransform(style()->hasTransform());
+    setHasReflection(style()->boxReflect());
+
+    if (requiresLayer()) {
+        if (!m_layer) {
+            if (s_wasFloating && isFloating())
+                setChildNeedsLayout(true);
+            m_layer = new (renderArena()) RenderLayer(this);
+            setHasLayer(true);
+            m_layer->insertOnlyThisLayer();
+            if (parent() && !needsLayout() && containingBlock())
+                m_layer->updateLayerPositions();
+        }
+    } else if (m_layer && !isRoot() && !isRenderView()) {
+        ASSERT(m_layer->parent());
+        RenderLayer* layer = m_layer;
+        m_layer = 0;
+        setHasLayer(false);
+        setHasTransform(false); // Either a transform wasn't specified or the object doesn't support transforms, so just null out the bit.
+        setHasReflection(false);
+        layer->removeOnlyThisLayer();
+        if (s_wasFloating && isFloating())
+            setChildNeedsLayout(true);
+    }
+
+    // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
+    // new zoomed coordinate space.
+    if (hasOverflowClip() && oldStyle && style() && oldStyle->effectiveZoom() != style()->effectiveZoom()) {
+        int left = scrollLeft();
+        if (left) {
+            left = (left / oldStyle->effectiveZoom()) * style()->effectiveZoom();
+            setScrollLeft(left);
+        }
+        int top = scrollTop();
+        if (top) {
+            top = (top / oldStyle->effectiveZoom()) * style()->effectiveZoom();
+            setScrollTop(top);
+        }
+    }
+
+    if (m_layer)
+        m_layer->styleChanged(diff, oldStyle);
+
+    // Set the text color if we're the body.
+    if (isBody())
+        document()->setTextColor(style()->color());
+
+    if (style()->outlineWidth() > 0 && style()->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
+        static_cast<RenderView*>(document()->renderer())->setMaximalOutlineSize(style()->outlineSize());
 }
 
 int RenderBox::minPrefWidth() const

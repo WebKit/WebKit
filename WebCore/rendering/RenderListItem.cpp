@@ -48,9 +48,9 @@ RenderListItem::RenderListItem(Node* node)
     setInline(false);
 }
 
-void RenderListItem::setStyle(const RenderStyle* newStyle)
+void RenderListItem::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::setStyle(newStyle);
+    RenderBlock::styleDidChange(diff, oldStyle);
 
     if (style()->listStyleType() != LNONE ||
         (style()->listStyleImage() && !style()->listStyleImage()->errorOccurred())) {

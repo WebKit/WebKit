@@ -39,8 +39,6 @@ public:
     
     virtual void destroy();
 
-    virtual void setStyle(const RenderStyle*);
-
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
     void updateValue();
 
@@ -61,6 +59,9 @@ public:
     bool notInList() const { return m_notInList; }
 
     const String& markerText() const;
+
+protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
 private:
     void updateMarkerLocation();

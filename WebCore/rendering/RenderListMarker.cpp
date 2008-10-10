@@ -485,12 +485,17 @@ RenderListMarker::~RenderListMarker()
         m_image->removeClient(this);
 }
 
-void RenderListMarker::setStyle(const RenderStyle* s)
+void RenderListMarker::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
 {
-    if (style() && (s->listStylePosition() != style()->listStylePosition() || s->listStyleType() != style()->listStyleType()))
+    if (style() && (newStyle->listStylePosition() != style()->listStylePosition() || newStyle->listStyleType() != style()->listStyleType()))
         setNeedsLayoutAndPrefWidthsRecalc();
     
-    RenderBox::setStyle(s);
+    RenderBox::styleWillChange(diff, newStyle);
+}
+
+void RenderListMarker::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
+{
+    RenderBox::styleDidChange(diff, oldStyle);
 
     if (m_image != style()->listStyleImage()) {
         if (m_image)

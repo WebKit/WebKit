@@ -54,14 +54,14 @@ void RenderTableRow::destroy()
         recalcSection->setNeedsCellRecalc();
 }
 
-void RenderTableRow::setStyle(const RenderStyle* newStyle)
+void RenderTableRow::styleWillChange(RenderStyle::Diff diff, const RenderStyle* newStyle)
 {
     if (section() && style() && style()->height() != newStyle->height())
         section()->setNeedsCellRecalc();
 
     ASSERT(newStyle->display() == TABLE_ROW);
 
-    RenderContainer::setStyle(newStyle);
+    RenderContainer::styleWillChange(diff, newStyle);
 }
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)

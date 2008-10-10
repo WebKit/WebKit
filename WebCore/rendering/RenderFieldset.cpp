@@ -260,9 +260,9 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
     }
 }
 
-void RenderFieldset::setStyle(const RenderStyle* newStyle)
+void RenderFieldset::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::setStyle(newStyle);
+    RenderBlock::styleDidChange(diff, oldStyle);
 
     // WinIE renders fieldsets with display:inline like they're inline-blocks.  For us,
     // an inline-block is just a block element with replaced set to true and inline set

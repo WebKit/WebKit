@@ -37,8 +37,6 @@ public:
 
     virtual bool isWidget() const { return true; }
 
-    virtual void setStyle(const RenderStyle*);
-
     virtual void paint(PaintInfo&, int tx, int ty);
 
     virtual void destroy();
@@ -57,6 +55,9 @@ public:
     virtual void setWidget(Widget*);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+
+protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
 private:
     void setWidgetGeometry(const IntRect&);

@@ -115,9 +115,9 @@ void RenderScrollbarPart::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
-void RenderScrollbarPart::setStyle(const RenderStyle* s)
+void RenderScrollbarPart::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::setStyle(s);
+    RenderBlock::styleDidChange(diff, oldStyle);
     setInline(false);
     setPositioned(false);
     setFloating(false);

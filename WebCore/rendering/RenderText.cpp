@@ -91,18 +91,14 @@ bool RenderText::isWordBreak() const
     return false;
 }
 
-void RenderText::setStyle(const RenderStyle* newStyle)
+void RenderText::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderStyle* oldStyle = style();
-    if (oldStyle == newStyle)
-        return;
+    RenderObject::styleDidChange(diff, oldStyle);
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
 
-    RenderObject::setStyle(newStyle);
-
-    if (oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()
+    if (oldTransform != style()->textTransform() || oldSecurity != style()->textSecurity()
 #if ENABLE(SVG)
         || isSVGText() /* All SVG text has to be transformed */
 #endif

@@ -156,9 +156,9 @@ void RenderWidget::layout()
     setNeedsLayout(false);
 }
 
-void RenderWidget::setStyle(const RenderStyle* newStyle)
+void RenderWidget::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
 {
-    RenderReplaced::setStyle(newStyle);
+    RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_widget) {
         if (style()->visibility() != VISIBLE)
             m_widget->hide();

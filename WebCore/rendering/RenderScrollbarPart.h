@@ -45,7 +45,8 @@ public:
     virtual void layout();
     virtual void calcPrefWidths();
     
-    virtual void setStyle(const RenderStyle*);
+protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
 private:
     void layoutHorizontalPart();

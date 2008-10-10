@@ -51,7 +51,6 @@ public:
     virtual bool createsAnonymousWrapper() const { return true; }
     virtual bool canHaveChildren() const { return false; }
 
-    virtual void setStyle(const RenderStyle*);
     virtual void updateFromElement();
 
     virtual bool hasControlClip() const { return true; }
@@ -68,7 +67,10 @@ public:
     void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
 
     String text() const;
-    
+
+protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
+
 private:
     // PopupMenuClient methods
     virtual String itemText(unsigned listIndex) const;

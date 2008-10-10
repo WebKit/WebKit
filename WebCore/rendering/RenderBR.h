@@ -47,7 +47,6 @@ public:
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
-    virtual void setStyle(const RenderStyle*);
 
     // overrides
     virtual InlineBox* createInlineBox(bool, bool, bool isOnlyRun = false);
@@ -59,6 +58,9 @@ public:
     virtual unsigned caretMaxRenderedOffset() const;
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
+
+protected:
+    virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);
 
 private:
     mutable int m_lineHeight;
