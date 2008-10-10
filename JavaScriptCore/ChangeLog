@@ -1,3 +1,43 @@
+2008-10-09  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20760
+        Implement support for x86 Linux in CTI
+
+        Prepare to enable CTI/WREC on supported architectures.
+
+        Make it possible to use the CTI_ARGUMENT workaround with GCC as well
+        as MSVC by fixing some preprocessor conditionals.
+
+        Note that CTI/WREC no longer requires CTI_ARGUMENT on Linux so we
+        don't actually enable it except when building with MSVC. GCC on Win32
+        remains untested.
+
+        Adapt inline ASM code to use the global symbol underscore prefix only
+        on Darwin and to call the properly mangled Machine::cti_vm_throw
+        symbol name depending on CTI_ARGUMENT.
+
+        Also avoid global inclusion of the JIT infrastructure headers
+        throughout WebCore and WebKit causing recompilation of about ~1500
+        source files after modification to X86Assembler.h, CTI.h, WREC.h,
+        which are only used deep inside JavaScriptCore.
+
+        * GNUmakefile.am:
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        * VM/Machine.h:
+        * kjs/regexp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::~RegExp):
+        (JSC::RegExp::match):
+        * kjs/regexp.h:
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::emitConvertToFastCall):
+        (JSC::X86Assembler::emitRestoreArgumentReferenceForTrampoline):
+        (JSC::X86Assembler::emitRestoreArgumentReference):
+
 2008-10-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Cameron Zwarich.

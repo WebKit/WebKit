@@ -56,6 +56,10 @@
 #include "SamplingTool.h"
 #include <stdio.h>
 
+#if ENABLE(CTI)
+#include "CTI.h"
+#endif
+
 #if PLATFORM(DARWIN)
 #include <mach/mach.h>
 #endif

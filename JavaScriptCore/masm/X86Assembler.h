@@ -1054,14 +1054,18 @@ public:
         return m_buffer->copy();
     }
 
-#if USE(CTI_ARGUMENT)
+#if COMPILER(MSVC)
     void emitConvertToFastCall()
     {
         movl_mr(4, X86::esp, X86::eax);
         movl_mr(8, X86::esp, X86::edx);
         movl_mr(12, X86::esp, X86::ecx);
     }
+#else
+    void emitConvertToFastCall() {}
+#endif
 
+#if USE(CTI_ARGUMENT)
     void emitRestoreArgumentReference()
     {
 #if USE(FAST_CALL_CTI_ARGUMENT)
@@ -1076,13 +1080,11 @@ public:
 #if USE(FAST_CALL_CTI_ARGUMENT)
         movl_rr(X86::esp, X86::ecx);
         addl_i32r(4, X86::ecx);
-#else
 #endif
     }
 #else
-    void emitConvertToFastCall() {};
-    void emitRestoreArgumentReference() {};
-    void emitRestoreArgumentReferenceForTrampoline() {};
+    void emitRestoreArgumentReference() {}
+    void emitRestoreArgumentReferenceForTrampoline() {}
 #endif
 
 private:

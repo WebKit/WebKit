@@ -7,6 +7,7 @@ m4_define([webkit_micro_version], [2])
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
 AC_CONFIG_HEADERS([autotoolsconfig.h])
+AC_CANONICAL_SYSTEM
 
 WEBKIT_MAJOR_VERSION=webkit_major_version
 WEBKIT_MINOR_VERSION=webkit_minor_version
@@ -23,8 +24,6 @@ LIBWEBKITGTK_VERSION=1:0:0
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
-
-AC_CANONICAL_HOST
 
 # host checking - inspired by the GTK+ configure.in
 # TODO: os_mac, os_bsd
@@ -501,6 +500,24 @@ AC_ARG_ENABLE(fast_malloc,
               [],[if test "$enable_debug" = "yes"; then enable_fast_malloc="no"; else enable_fast_malloc="yes"; fi])
 AC_MSG_RESULT([$enable_fast_malloc])
 
+AC_MSG_CHECKING([whether to enable JIT compilation])
+AC_ARG_ENABLE([jit],
+              AC_HELP_STRING([--enable-jit],
+                             [Enable JIT compilation default=no]),
+              [],[enable_jit="no"])
+if test "$enable_jit" = "yes"; then
+    case "$target_cpu" in
+        i*86)
+            AC_DEFINE([ENABLE_CTI], [1], [Define to enable CTI])
+            AC_DEFINE([ENABLE_WREC], [1], [Define to enable WREC])
+        ;;
+        *)
+            enable_jit="no (CPU '$target_cpu' not supported)"
+        ;;
+    esac
+fi
+AC_MSG_RESULT([$enable_jit])
+
 # determine the font backend
 AC_MSG_CHECKING([the font backend to use])
 AC_ARG_WITH(font_backend,
@@ -658,6 +675,7 @@ Build configuration:
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
 Features:
+ JIT compilation                                          : $enable_jit
  Dashboard support                                        : $enable_dashboard_support
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 client-side session and persistent storage support : $enable_dom_storage

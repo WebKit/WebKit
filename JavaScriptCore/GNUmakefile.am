@@ -2,6 +2,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/API \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/VM \
+	-I$(srcdir)/JavaScriptCore/pcre \
 	-I$(srcdir)/JavaScriptCore/profiler \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
 	-I$(top_builddir)/JavaScriptCore/pcre \
@@ -62,6 +63,8 @@ javascriptcore_sources += \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/OpaqueJSString.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/WebKitAvailability.h \
 	JavaScriptCore/JavaScriptCorePrefix.h \
+	JavaScriptCore/VM/CTI.cpp \
+	JavaScriptCore/VM/CTI.h \
 	JavaScriptCore/VM/CodeBlock.cpp \
 	JavaScriptCore/VM/CodeBlock.h \
 	JavaScriptCore/VM/CodeGenerator.h \
@@ -199,6 +202,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/protect.h \
 	JavaScriptCore/kjs/regexp.h \
 	JavaScriptCore/kjs/ustring.h \
+	JavaScriptCore/masm/X86Assembler.h \
 	JavaScriptCore/os-win32/stdbool.h \
 	JavaScriptCore/os-win32/stdint.h \
 	JavaScriptCore/pcre/pcre.h \
@@ -222,6 +226,10 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/Profiler.h \
 	JavaScriptCore/profiler/TreeProfile.cpp \
 	JavaScriptCore/profiler/TreeProfile.h \
+	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
+	JavaScriptCore/wrec/CharacterClassConstructor.h \
+	JavaScriptCore/wrec/WREC.cpp \
+	JavaScriptCore/wrec/WREC.h \
 	JavaScriptCore/wtf/ASCIICType.h \
 	JavaScriptCore/wtf/AVLTree.h \
 	JavaScriptCore/wtf/AlwaysInline.h \

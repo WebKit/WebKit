@@ -30,20 +30,13 @@
 
 #define WTF_USE_CTI_REPATCH_PIC 1
 
+#include "Machine.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
 #include <masm/X86Assembler.h>
 #include <profiler/Profiler.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
-
-#if COMPILER(MSVC)
-#define CTI_ARGS void** args
-#define ARGS (args)
-#else
-#define CTI_ARGS void* args
-#define ARGS (&args)
-#endif
 
 #define CTI_ARGS_code 0x0C
 #define CTI_ARGS_registerFile 0x0D
@@ -101,20 +94,6 @@ namespace JSC {
     class StructureIDChain;
     struct Instruction;
     struct OperandTypes;
-
-    struct VoidPtrPair { void* first; void* second; };
-
-#if COMPILER(MSVC)
-
-#if USE(FAST_CALL_CTI_ARGUMENT)
-#define SFX_CALL __fastcall
-#else
-#define SFX_CALL __cdecl
-#endif
-
-#else
-#define SFX_CALL
-#endif
 
     typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
     typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(CTI_ARGS);

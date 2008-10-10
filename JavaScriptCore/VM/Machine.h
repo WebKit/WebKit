@@ -36,10 +36,6 @@
 #include "RegisterFile.h"
 #include <wtf/HashMap.h>
 
-#if ENABLE(CTI)
-#include "CTI.h"
-#endif
-
 namespace JSC {
 
     class CodeBlock;
@@ -47,12 +43,37 @@ namespace JSC {
     class FunctionBodyNode;
     class Instruction;
     class InternalFunction;
+    class JITCodeBuffer;
     class JSFunction;
     class JSGlobalObject;
     class ProgramNode;
     class Register;
     class ScopeChainNode;
     class SamplingTool;
+
+#if ENABLE(CTI)
+
+#if USE(CTI_ARGUMENT)
+#define CTI_ARGS void** args
+#define ARGS (args)
+#else
+#define CTI_ARGS void* args
+#define ARGS (&args)
+#endif
+
+#if COMPILER(MSVC)
+#if USE(FAST_CALL_CTI_ARGUMENT)
+#define SFX_CALL __fastcall
+#else
+#define SFX_CALL __cdecl
+#endif
+#else
+#define SFX_CALL
+
+#endif
+
+    struct VoidPtrPair { void* first; void* second; };
+#endif
 
     enum DebugHookID {
         WillExecuteProgram,

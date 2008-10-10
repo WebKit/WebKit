@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wrec/WREC.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
@@ -40,7 +41,7 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern)
     , m_numSubpatterns(0)
 {
 #if ENABLE(WREC)
-    m_wrecFunction = reinterpret_cast<WRECFunction>(CTI::compileRegExp(globalData->machine, pattern, &m_numSubpatterns, &m_constructionError));
+    m_wrecFunction = CTI::compileRegExp(globalData->machine, pattern, &m_numSubpatterns, &m_constructionError);
     if (m_wrecFunction)
         return;
     // Fall through to non-WREC case.
@@ -83,7 +84,7 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& pattern, const US
     }
 
 #if ENABLE(WREC)
-    m_wrecFunction = reinterpret_cast<WRECFunction>(CTI::compileRegExp(globalData->machine, pattern, &m_numSubpatterns, &m_constructionError, (m_flagBits & IgnoreCase), (m_flagBits & Multiline)));
+    m_wrecFunction = CTI::compileRegExp(globalData->machine, pattern, &m_numSubpatterns, &m_constructionError, (m_flagBits & IgnoreCase), (m_flagBits & Multiline));
     if (m_wrecFunction)
         return;
     // Fall through to non-WREC case.
@@ -104,7 +105,7 @@ RegExp::~RegExp()
     jsRegExpFree(m_regExp);
 #if ENABLE(WREC)
     if (m_wrecFunction)
-        fastFree(reinterpret_cast<void*>(m_wrecFunction));
+        fastFree(m_wrecFunction);
 #endif
 }
 
@@ -131,7 +132,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
         else
             ovector->set(offsetVector);
 
-        int result = m_wrecFunction(s.data(), i, s.size(), offsetVector);
+        int result = reinterpret_cast<WRECFunction>(m_wrecFunction)(s.data(), i, s.size(), offsetVector);
 
         if (result < 0) {
 #ifndef NDEBUG
