@@ -803,7 +803,7 @@ sub GenerateHeader
                 $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
             }
 
-            $availabilityMacro = "WEBKIT_PROTOCOL_METHOD_ANNOTATION($availabilityMacro)" if $isProtocol and length $availabilityMacro;
+            $availabilityMacro = "WEBKIT_OBJC_METHOD_ANNOTATION($availabilityMacro)" if length $availabilityMacro and $buildingForTigerOrEarlier;
 
             my $declarationSuffix = ";\n";
             $declarationSuffix = " $availabilityMacro;\n" if length $availabilityMacro;
@@ -903,7 +903,7 @@ sub GenerateHeader
                 $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
             }
 
-            $availabilityMacro = "WEBKIT_PROTOCOL_METHOD_ANNOTATION($availabilityMacro)" if $isProtocol and length $availabilityMacro;
+            $availabilityMacro = "WEBKIT_OBJC_METHOD_ANNOTATION($availabilityMacro)" if length $availabilityMacro and $buildingForTigerOrEarlier;
 
             my $functionDeclaration = $functionSig;
             $functionDeclaration .= " " . $availabilityMacro if length $availabilityMacro;
@@ -933,8 +933,7 @@ sub GenerateHeader
                     $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
                 }
 
-                $availabilityMacro = "WEBKIT_CATEGORY_METHOD_ANNOTATION($availabilityMacro)" unless $isProtocol;
-                $availabilityMacro = "WEBKIT_PROTOCOL_METHOD_ANNOTATION($availabilityMacro)" if $isProtocol;
+                $availabilityMacro = "WEBKIT_OBJC_METHOD_ANNOTATION($availabilityMacro)" if $buildingForTigerOrEarlier;
 
                 $functionDeclaration = "$deprecatedFunctionSig $availabilityMacro;\n";
 
