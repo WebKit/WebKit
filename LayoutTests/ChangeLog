@@ -1,3 +1,62 @@
+2008-10-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+        
+        Update fast/canvas results to match leopard text drawing
+        https://bugs.webkit.org/show_bug.cgi?id=21498
+        
+        platform/mac/fast/canvas/patternfill-repeat-expected.*
+        also updated to match new expected results
+        As far as I can tell the old results were off by a few pixels
+        in the lower two quadrants.
+
+        * fast/canvas/canvas-transform-identity-expected.png:
+        * fast/canvas/canvas-transform-infinity-expected.png:
+        * fast/canvas/canvas-transform-multiply-expected.png:
+        * fast/canvas/canvas-transform-nan-expected.png:
+        * fast/canvas/canvas-transform-non-invertible-expected.png:
+        * fast/canvas/canvas-transform-skewed-expected.png:
+        * platform/mac/fast/canvas/canvas-before-css-expected.checksum:
+        * platform/mac/fast/canvas/canvas-before-css-expected.png:
+        * platform/mac/fast/canvas/canvas-bg-expected.png:
+        * platform/mac/fast/canvas/canvas-composite-expected.checksum:
+        * platform/mac/fast/canvas/canvas-composite-expected.png:
+        * platform/mac/fast/canvas/canvas-draw-xbm-image-expected.checksum:
+        * platform/mac/fast/canvas/canvas-draw-xbm-image-expected.png:
+        * platform/mac/fast/canvas/canvas-resize-reset-expected.checksum:
+        * platform/mac/fast/canvas/canvas-resize-reset-expected.png:
+        * platform/mac/fast/canvas/canvas-size-change-after-layout-expected.checksum:
+        * platform/mac/fast/canvas/canvas-size-change-after-layout-expected.png:
+        * platform/mac/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/mac/fast/canvas/canvas-text-baseline-expected.png:
+        * platform/mac/fast/canvas/canvas-transforms-during-path-expected.checksum:
+        * platform/mac/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/mac/fast/canvas/canvasDrawingIntoSelf-expected.png:
+        * platform/mac/fast/canvas/drawImage-expected.png:
+        * platform/mac/fast/canvas/fillrect-gradient-zero-stops-expected.checksum:
+        * platform/mac/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/mac/fast/canvas/fillrect_gradient-expected.checksum:
+        * platform/mac/fast/canvas/fillrect_gradient-expected.png:
+        * platform/mac/fast/canvas/gradient-add-second-start-end-stop-expected.checksum:
+        * platform/mac/fast/canvas/gradient-add-second-start-end-stop-expected.png:
+        * platform/mac/fast/canvas/gradient-empty-path-expected.checksum:
+        * platform/mac/fast/canvas/gradient-empty-path-expected.png:
+        * platform/mac/fast/canvas/image-object-in-canvas-expected.checksum:
+        * platform/mac/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/mac/fast/canvas/patternfill-repeat-expected.checksum:
+        * platform/mac/fast/canvas/patternfill-repeat-expected.png:
+        * platform/mac/fast/canvas/quadraticCurveTo-expected.checksum:
+        * platform/mac/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-1-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-2-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-3-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-4-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-5-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-6-expected.png:
+        * platform/mac/fast/canvas/shadow-offset-7-expected.png:
+        * platform/mac/fast/canvas/zero-size-fill-rect-expected.checksum:
+        * platform/mac/fast/canvas/zero-size-fill-rect-expected.png:
+
 2008-10-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

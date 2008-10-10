@@ -1,3 +1,30 @@
+2008-10-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+        
+        Fix transformed patterns
+        https://bugs.webkit.org/show_bug.cgi?id=21498
+        
+        Test: fast/canvas/patternfill-repeat.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::applyStrokePattern):
+        (WebCore::applyFillPattern):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+
 2008-10-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes.

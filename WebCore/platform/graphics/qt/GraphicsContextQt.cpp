@@ -1001,22 +1001,6 @@ void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
     p->setPen(newPen);
 }
 
-void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
-{
-}
-
-void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
-{
-}
-
-void GraphicsContext::setPlatformFillGradient(Gradient* gradient)
-{
-}
-
-void GraphicsContext::setPlatformStrokeGradient(Gradient* gradient)
-{
-}
-
 void GraphicsContext::setPlatformStrokeThickness(float thickness)
 {
     if (paintingDisabled())

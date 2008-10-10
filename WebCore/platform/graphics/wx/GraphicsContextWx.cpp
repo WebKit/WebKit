@@ -500,20 +500,4 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
 }
 
-void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
-{
-}
-
-void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
-{
-}
-
-void GraphicsContext::setPlatformFillGradient(Gradient* gradient)
-{
-}
-
-void GraphicsContext::setPlatformStrokeGradient(Gradient* gradient)
-{
-}
-
 }

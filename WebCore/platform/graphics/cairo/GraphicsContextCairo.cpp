@@ -1046,23 +1046,6 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return InterpolationDefault;
 }
 
-void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
-{
-}
-
-void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
-{
-}
-
-void GraphicsContext::setPlatformFillGradient(Gradient* gradient)
-{
-}
-
-void GraphicsContext::setPlatformStrokeGradient(Gradient* gradient)
-{
-}
-
-
 } // namespace WebCore
 
 #endif // PLATFORM(CAIRO)

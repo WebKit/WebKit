@@ -1951,6 +1951,7 @@
 		A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */; };
 		A809F1AB0B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */; };
 		A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */; };
+		A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */ = {isa = PBXBuildFile; fileRef = A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
 		A80E6CE50A1989CA007FB8C5 /* CSSBorderImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6594,6 +6595,7 @@
 		A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGHiddenContainer.h; sourceTree = "<group>"; };
 		A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGHiddenContainer.cpp; sourceTree = "<group>"; };
 		A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternCG.cpp; sourceTree = "<group>"; };
+		A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivateCG.h; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
 		A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageValue.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
@@ -12458,6 +12460,7 @@
 				B275352D0B053814002CE64F /* FloatSizeCG.cpp */,
 				BC53C60A0DA56CF10021EB5D /* GradientCG.cpp */,
 				B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */,
+				A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */,
 				B2A10B930B3818D700099AA4 /* ImageBufferCG.cpp */,
 				B27535300B053814002CE64F /* ImageCG.cpp */,
 				B27535310B053814002CE64F /* ImageSourceCG.cpp */,
@@ -15960,6 +15963,7 @@
 				BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */,
 				1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */,
 				1CF6BE150E9BB4670025E1CD /* ObjCNodeFilterCondition.h in Headers */,
+				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

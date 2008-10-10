@@ -210,7 +210,6 @@ void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
     }
     m_common->state.strokeColorSpace = PatternColorSpace;
     m_common->state.strokePattern = pattern;
-    setPlatformStrokePattern(m_common->state.strokePattern.get());
 }
 
 void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
@@ -222,7 +221,6 @@ void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
     }
     m_common->state.fillColorSpace = PatternColorSpace;
     m_common->state.fillPattern = pattern;
-    setPlatformFillPattern(m_common->state.fillPattern.get());
 }
 
 void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
@@ -234,7 +232,6 @@ void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
     }
     m_common->state.strokeColorSpace = GradientColorSpace;
     m_common->state.strokeGradient = gradient;
-    setPlatformStrokeGradient(m_common->state.strokeGradient.get());
 }
 
 void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
@@ -246,7 +243,6 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
     }
     m_common->state.fillColorSpace = GradientColorSpace;
     m_common->state.fillGradient = gradient;
-    setPlatformFillGradient(m_common->state.fillGradient.get());
 }
 
 bool GraphicsContext::updatingControlTints() const
