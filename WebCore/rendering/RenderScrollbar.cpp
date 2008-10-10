@@ -64,12 +64,24 @@ void RenderScrollbar::setEnabled(bool e)
         updateScrollbarParts();
 }
 
+void RenderScrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
+{
+    if (context->updatingControlTints())
+        updateScrollbarParts();
+    Scrollbar::paint(context, damageRect);
+}
+
 static ScrollbarPart s_styleResolvePart;
 static RenderScrollbar* s_styleResolveScrollbar;
 
 RenderScrollbar* RenderScrollbar::scrollbarForStyleResolve()
 {
     return s_styleResolveScrollbar;
+}
+
+ScrollbarPart RenderScrollbar::partForStyleResolve()
+{
+    return s_styleResolvePart;
 }
 
 RenderStyle* RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, RenderStyle::PseudoId pseudoId)

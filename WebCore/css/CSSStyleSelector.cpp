@@ -2382,12 +2382,20 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
 bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* sel, RenderStyle::PseudoId& dynamicPseudo) const
 {
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
-    ASSERT(sel->m_match == CSSSelector::PseudoClass && scrollbar);
+    ScrollbarPart part = RenderScrollbar::partForStyleResolve();
+    
+    ASSERT(sel->m_match == CSSSelector::PseudoClass && scrollbar && part != NoPart);
     switch (sel->pseudoType()) {
         case CSSSelector::PseudoEnabled:
             return scrollbar->enabled();
         case CSSSelector::PseudoDisabled:
             return !scrollbar->enabled();
+        case CSSSelector::PseudoScrollbarHorizontal:
+            return scrollbar->orientation() == HorizontalScrollbar;
+        case CSSSelector::PseudoScrollbarVertical:
+            return scrollbar->orientation() == VerticalScrollbar;
+        case CSSSelector::PseudoWindowActive:
+            return scrollbar->isWindowActive();
         default:
             return false;
     }

@@ -1,5 +1,16 @@
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
+        Add layout test for scrollbars honoring orientation and window active state.
+
+        Reviewed by Tim Hatcher
+
+        * platform/mac/scrollbars/scrollbar-orientation-expected.checksum: Added.
+        * platform/mac/scrollbars/scrollbar-orientation-expected.png: Added.
+        * platform/mac/scrollbars/scrollbar-orientation-expected.txt: Added.
+        * scrollbars/scrollbar-orientation.html: Added.
+
+2008-10-09  David Hyatt  <hyatt@apple.com>
+
         Add test case for disabled scrollbars.
 
         Reviewed by Tim Hatcher

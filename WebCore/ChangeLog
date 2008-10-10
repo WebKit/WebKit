@@ -1,5 +1,28 @@
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
+        Add support for scrollbar orientation as a pseudoclass.  Add support for whether or not the scrollbar
+        is active as well.
+
+        Reviewed by Tim Hatcher
+
+        Added scrollbars/scrollbar-orientation.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::isWindowActive):
+        * platform/Scrollbar.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::paint):
+        (WebCore::RenderScrollbar::partForStyleResolve):
+        * rendering/RenderScrollbar.h:
+
+2008-10-09  David Hyatt  <hyatt@apple.com>
+
         Add support for pseudo classes on scrollbar pseudo elements.  As an initial proof of concept only
         :enabled/:disabled are supported.  More pseudo classes will follow quickly now that this works.
 

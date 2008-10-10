@@ -418,6 +418,11 @@ void Scrollbar::setEnabled(bool e)
     invalidate();
 }
 
+bool Scrollbar::isWindowActive() const
+{
+    return m_client->isActive();
+}
+ 
 void Scrollbar::invalidateRect(const IntRect& rect)
 {
     if (suppressInvalidation())
