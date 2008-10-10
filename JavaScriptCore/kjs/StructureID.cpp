@@ -26,15 +26,20 @@
 #include "config.h"
 #include "StructureID.h"
 
-#include "identifier.h"
 #include "JSObject.h"
 #include "PropertyNameArray.h"
+#include "identifier.h"
 #include "lookup.h"
+#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 
 using namespace std;
 
 namespace JSC {
+
+#ifndef NDEBUG    
+static WTF::RefCountedLeakCounter structureIDCounter("StructureID");
+#endif
 
 StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
@@ -50,6 +55,25 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
+
+#ifndef NDEBUG
+    structureIDCounter.increment();
+#endif
+}
+
+StructureID::~StructureID()
+{
+    if (m_previous) {
+        ASSERT(m_previous->m_transitionTable.contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
+        m_previous->m_transitionTable.remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
+    }
+
+    if (m_cachedPropertyNameArrayData)
+        m_cachedPropertyNameArrayData->setCachedStructureID(0);
+
+#ifndef NDEBUG
+    structureIDCounter.decrement();
+#endif
 }
 
 void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& propertyNames, JSObject* baseObject)
@@ -192,17 +216,6 @@ PassRefPtr<StructureID> StructureID::getterSetterTransition(StructureID* structu
     transition->m_propertyStorageCapacity = structureID->m_propertyStorageCapacity;
     transition->m_hasGetterSetterProperties = transition->m_hasGetterSetterProperties;
     return transition.release();
-}
-
-StructureID::~StructureID()
-{
-    if (m_previous) {
-        ASSERT(m_previous->m_transitionTable.contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
-        m_previous->m_transitionTable.remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
-    }
-
-    if (m_cachedPropertyNameArrayData)
-        m_cachedPropertyNameArrayData->setCachedStructureID(0);
 }
 
 StructureIDChain* StructureID::createCachedPrototypeChain()
