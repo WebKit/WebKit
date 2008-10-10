@@ -453,6 +453,8 @@ void Console::reportException(ExecState* exec, JSValue* exception)
     int lineNumber = exceptionObject->get(exec, Identifier(exec, "line"))->toInt32(exec);
     UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
     addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, exceptionSourceURL);
+    if (exec->hadException())
+        exec->clearException();
 }
 
 void Console::reportCurrentException(ExecState* exec)

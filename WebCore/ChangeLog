@@ -1,3 +1,19 @@
+2008-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Part of <rdar://problem/6278147> Cannot stop a slow script -- Fix assertion.
+
+        When JS is terminated by the user choosing to stop a slow script
+        the exception toString method throws, yet the console logger does
+        not perform exception checks after logging.  This leaves an
+        exception on the Machine, which in turn results in an assertion
+        failure next time we attempt to enter JS.  The solution is just to
+        clear the exception state after attempting to record the exception.
+
+        * page/Console.cpp:
+        (WebCore::Console::reportException):
+
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
         Make textareas work with custom CSS scrollbars and resizers.  Need to access the correct renderer
