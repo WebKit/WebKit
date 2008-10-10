@@ -121,12 +121,10 @@ namespace JSC {
 
         Table* m_table;
         Vector<unsigned> m_deletedOffsets;
-        bool m_getterSetterFlag : 1;
     };
 
     inline PropertyMap::PropertyMap() 
         : m_table(0)
-        , m_getterSetterFlag(false)
     {
     }
 

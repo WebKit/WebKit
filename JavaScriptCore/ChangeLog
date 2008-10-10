@@ -1,3 +1,14 @@
+2008-10-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Remove now unused m_getterSetterFlag variable from PropertyMap.
+
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::operator=):
+        * kjs/PropertyMap.h:
+        (JSC::PropertyMap::PropertyMap):
+
 2008-10-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
