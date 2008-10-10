@@ -56,16 +56,29 @@ void RenderScrollbar::setParent(ScrollView* parent)
     }
 }
 
-static ScrollbarPart gStyleResolvePart;
-static RenderScrollbar* gStyleResolveScrollbar;
+void RenderScrollbar::setEnabled(bool e)
+{
+    bool wasEnabled = enabled();
+    Scrollbar::setEnabled(e);
+    if (wasEnabled != e)
+        updateScrollbarParts();
+}
+
+static ScrollbarPart s_styleResolvePart;
+static RenderScrollbar* s_styleResolveScrollbar;
+
+RenderScrollbar* RenderScrollbar::scrollbarForStyleResolve()
+{
+    return s_styleResolveScrollbar;
+}
 
 RenderStyle* RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, RenderStyle::PseudoId pseudoId)
 {
-    gStyleResolvePart = partType;
-    gStyleResolveScrollbar = this;
-    RenderStyle* result = m_owner->getPseudoStyle(pseudoId, m_owner->style());
-    gStyleResolvePart = NoPart;
-    gStyleResolveScrollbar = 0;
+    s_styleResolvePart = partType;
+    s_styleResolveScrollbar = this;
+    RenderStyle* result = m_owner->getPseudoStyle(pseudoId, m_owner->style(), false);
+    s_styleResolvePart = NoPart;
+    s_styleResolveScrollbar = 0;
     return result;
 }
 
@@ -131,6 +144,8 @@ void RenderScrollbar::paintPart(GraphicsContext* graphicsContext, ScrollbarPart 
     partRenderer->setPos(rect.x() - x(), rect.y() - y());
     partRenderer->setWidth(rect.width());
     partRenderer->setHeight(rect.height());
+    partRenderer->setOverflowWidth(max(rect.width(), partRenderer->overflowWidth()));
+    partRenderer->setOverflowHeight(max(rect.height(), partRenderer->overflowHeight()));
 
     // Now do the paint.
     RenderObject::PaintInfo paintInfo(graphicsContext, rect, PaintPhaseBlockBackground, false, 0, 0);

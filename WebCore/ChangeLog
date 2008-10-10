@@ -1,3 +1,27 @@
+2008-10-09  David Hyatt  <hyatt@apple.com>
+
+        Add support for pseudo classes on scrollbar pseudo elements.  As an initial proof of concept only
+        :enabled/:disabled are supported.  More pseudo classes will follow quickly now that this works.
+
+        Reviewed by Tim Hatcher
+
+        Added scrollbars/disabled-scrollbar.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * css/CSSStyleSelector.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getPseudoStyle):
+        * rendering/RenderObject.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::setEnabled):
+        (WebCore::RenderScrollbar::scrollbarForStyleResolve):
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+        (WebCore::RenderScrollbar::paintPart):
+        * rendering/RenderScrollbar.h:
+
 2008-10-09  Eric Carlson  <eric.carlson@apple.com>
 
         Media controls should not show when element is not visible

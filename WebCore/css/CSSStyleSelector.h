@@ -186,6 +186,7 @@ public:
             SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
             bool checkOneSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle*, RenderStyle* elementParentStyle) const;
             PseudoState checkPseudoState(Element*, bool checkVisited = true) const;
+            bool checkScrollbarPseudoClass(CSSSelector*, RenderStyle::PseudoId& dynamicPseudo) const;
 
             void allVisitedStateChanged();
             void visitedStateChanged(unsigned visitedHash);

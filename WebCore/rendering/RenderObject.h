@@ -376,7 +376,7 @@ private:
     bool includeHorizontalScrollbarSize() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO); }
 
 public:
-    RenderStyle* getPseudoStyle(RenderStyle::PseudoId, RenderStyle* parentStyle = 0) const;
+    RenderStyle* getPseudoStyle(RenderStyle::PseudoId, RenderStyle* parentStyle = 0, bool useCachedStyle = true) const;
 
     void updateDragState(bool dragOn);
 

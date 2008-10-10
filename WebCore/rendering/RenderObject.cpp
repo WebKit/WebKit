@@ -2822,7 +2822,7 @@ RenderStyle* RenderObject::firstLineStyle() const
     return s;
 }
 
-RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle) const
+RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle, bool useCachedStyle) const
 {
     if (pseudo < RenderStyle::FIRST_INTERNAL_PSEUDOID && !style()->hasPseudoStyle(pseudo))
         return 0;
@@ -2830,7 +2830,7 @@ RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderSt
     if (!parentStyle)
         parentStyle = style();
 
-    RenderStyle* result = style()->getPseudoStyle(pseudo);
+    RenderStyle* result = useCachedStyle ? style()->getPseudoStyle(pseudo) : 0;
     if (result)
         return result;
 
@@ -2845,7 +2845,7 @@ RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderSt
         result->setStyleType(RenderStyle::FIRST_LINE_INHERITED);
     } else
         result = document()->styleSelector()->pseudoStyleForElement(pseudo, static_cast<Element*>(node), parentStyle);
-    if (result) {
+    if (result && useCachedStyle) {
         style()->addPseudoStyle(result);
         result->deref(document()->renderArena());
     }
