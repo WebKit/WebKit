@@ -1265,6 +1265,8 @@ webcore_sources += \
 	WebCore/platform/ScrollView.h \
 	WebCore/platform/Scrollbar.cpp \
 	WebCore/platform/Scrollbar.h \
+	WebCore/platform/ScrollbarThemeComposite.cpp \
+	WebCore/platform/ScrollbarThemeComposite.h \
 	WebCore/platform/SearchPopupMenu.h \
 	WebCore/platform/SharedBuffer.cpp \
 	WebCore/platform/SharedBuffer.h \
