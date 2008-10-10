@@ -1,6 +1,23 @@
 2008-10-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
+
+        Fix Canvex DOOM Game
+        Gradient clips were not getting cleared after filling the
+        gradient, this was causing nothing to draw in Canvex
+        https://bugs.webkit.org/show_bug.cgi?id=21498
+        
+        Tests forthcoming.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+
+2008-10-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
         
         Fix transformed patterns
         https://bugs.webkit.org/show_bug.cgi?id=21498
