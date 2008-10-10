@@ -798,10 +798,15 @@ sub GenerateHeader
 
             my $publicInterfaceKey = $property . ";";
 
-            my $declarationSuffix = ";\n";
+            my $availabilityMacro = "";
             if (defined $publicInterfaces{$publicInterfaceKey} and length $publicInterfaces{$publicInterfaceKey}) {
-                $declarationSuffix = " " . $publicInterfaces{$publicInterfaceKey} . $declarationSuffix;
+                $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
             }
+
+            $availabilityMacro = "WEBKIT_PROTOCOL_METHOD_ANNOTATION($availabilityMacro)" if $isProtocol and length $availabilityMacro;
+
+            my $declarationSuffix = ";\n";
+            $declarationSuffix = " $availabilityMacro;\n" if length $availabilityMacro;
 
             my $public = (defined $publicInterfaces{$publicInterfaceKey} or $newPublicClass);
             delete $publicInterfaces{$publicInterfaceKey};
@@ -893,10 +898,16 @@ sub GenerateHeader
                 $fatalError = 1;
             }
 
-            my $declarationSuffix = ";\n";
+            my $availabilityMacro = "";
             if (defined $publicInterfaces{$publicInterfaceKey} and length $publicInterfaces{$publicInterfaceKey}) {
-                $declarationSuffix = " " . $publicInterfaces{$publicInterfaceKey} . ";\n";
+                $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
             }
+
+            $availabilityMacro = "WEBKIT_PROTOCOL_METHOD_ANNOTATION($availabilityMacro)" if $isProtocol and length $availabilityMacro;
+
+            my $functionDeclaration = $functionSig;
+            $functionDeclaration .= " " . $availabilityMacro if length $availabilityMacro;
+            $functionDeclaration .= ";\n";
 
             my $public = (defined $publicInterfaces{$publicInterfaceKey} or $newPublicClass);
             delete $publicInterfaces{$publicInterfaceKey};
@@ -906,8 +917,6 @@ sub GenerateHeader
                 AddForwardDeclarationsForType($type, 1) if $needsDeprecatedVersion;
                 AddForwardDeclarationsForType($type, $public) unless $public and $needsDeprecatedVersion;
             }
-
-            my $functionDeclaration = $functionSig . $declarationSuffix;
 
             push(@headerFunctions, $functionDeclaration) if $public;
             push(@privateHeaderFunctions, $functionDeclaration) unless $public;
@@ -925,6 +934,7 @@ sub GenerateHeader
                 }
 
                 $availabilityMacro = "WEBKIT_CATEGORY_METHOD_ANNOTATION($availabilityMacro)" unless $isProtocol;
+                $availabilityMacro = "WEBKIT_PROTOCOL_METHOD_ANNOTATION($availabilityMacro)" if $isProtocol;
 
                 $functionDeclaration = "$deprecatedFunctionSig $availabilityMacro;\n";
 
