@@ -1,6 +1,20 @@
 2008-10-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
+
+        Test cases for https://bugs.webkit.org/show_bug.cgi?id=21498
+
+        * fast/canvas/gradient-with-clip-expected.txt: Added.
+        * fast/canvas/gradient-with-clip.html: Added.
+        * fast/canvas/pattern-with-transform-expected.txt: Added.
+        * fast/canvas/pattern-with-transform.html: Added.
+        * fast/canvas/resources/TEMPLATE.html: Copied from LayoutTests/fast/dom/resources/TEMPLATE.html.
+        * fast/canvas/resources/gradient-with-clip.js: Added.
+        * fast/canvas/resources/pattern-with-transform.js: Added.
+
+2008-10-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
         
         Update fast/canvas results to match leopard text drawing
         https://bugs.webkit.org/show_bug.cgi?id=21498

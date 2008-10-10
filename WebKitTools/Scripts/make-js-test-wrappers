@@ -104,6 +104,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;
         next if $file =~ m:resources/wrapper-identity-base\.js$:;
         next if $file =~ m:resources/xhtml-scripts\.js$:;
+        next if $file =~ m:resources/shadow-offset\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;
