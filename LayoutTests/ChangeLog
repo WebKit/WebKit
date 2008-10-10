@@ -1,3 +1,14 @@
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
+        Add test for scrollbar buttons and track supporting increment/decrement/start/end.
+
+        Reviewed by Adam Roben
+
+        * platform/mac/scrollbars/scrollbar-buttons-expected.checksum: Added.
+        * platform/mac/scrollbars/scrollbar-buttons-expected.png: Added.
+        * platform/mac/scrollbars/scrollbar-buttons-expected.txt: Added.
+        * scrollbars/scrollbar-buttons.html: Added.
+
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
         Add layout test for scrollbars honoring orientation and window active state.

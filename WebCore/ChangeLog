@@ -1,5 +1,19 @@
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=21522
+
+        Support increment/decrement/start/end on scrollbars.  Allows a fully functional scrollbar to be
+        created.  (Just :hover/:active left to finish it up.)
+
+        Reviewed by Adam Roben
+
+        Added scrollbars/scrollbar-buttons.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
         Rename some pseudoclasses.  Removing "-scrollbar-" from a bunch of the pseudoclasses.  Renaming
         back/forward to decrement/increment.  Adding start/end pseudoclasses.
 
