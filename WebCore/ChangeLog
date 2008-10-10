@@ -1,3 +1,22 @@
+2008-10-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Media controls should not show when element is not visible
+
+        https://bugs.webkit.org/show_bug.cgi?id=21155
+        
+        Reviewed by Adele Peterson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::recalcStyle): New, call renderer()->updateFromElement to stay
+        in sync with visibility changes
+        * html/HTMLMediaElement.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia): initialize m_previousVisible
+        (WebCore::RenderMedia::updateControlVisibility): consider style()->visibility() when determining
+        if element is visible or not. Don't animate controller visibility when change triggered by
+        showing or hiding media element.
+        * rendering/RenderMedia.h: declare m_previousVisible
+
 2008-10-09  Timothy Hatcher  <timothy@apple.com>
 
         Annotate the Objective-C DOM APIs with the JavaScriptCore/WebKitAvailability.h

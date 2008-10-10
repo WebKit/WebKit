@@ -61,6 +61,7 @@ RenderMedia::RenderMedia(HTMLMediaElement* video)
     , m_opacityAnimationStartTime(0)
     , m_opacityAnimationFrom(0)
     , m_opacityAnimationTo(1.0f)
+    , m_previousVisible(VISIBLE)
 {
 }
 
@@ -312,9 +313,18 @@ void RenderMedia::updateControlVisibility()
     if (player() && !player()->hasVideo() || !media->isVideo())
         return;
     // do fading manually, css animations don't work well with shadow trees
-    bool visible = m_mouseOver || media->paused() || media->ended() || media->networkState() < HTMLMediaElement::LOADED_METADATA;
+    bool visible = style()->visibility() == VISIBLE && (m_mouseOver || media->paused() || media->ended() || media->networkState() < HTMLMediaElement::LOADED_METADATA);
     if (visible == (m_opacityAnimationTo > 0))
         return;
+
+    if (style()->visibility() != m_previousVisible) {
+        // don't fade gradually if it the element has just changed visibility
+        m_previousVisible = style()->visibility();
+        m_opacityAnimationTo = m_previousVisible == VISIBLE ? 1.0f : 0;
+        changeOpacity(m_panel.get(), 0);
+        return;
+    }
+
     if (visible) {
         m_opacityAnimationFrom = m_panel->renderer()->style()->opacity();
         m_opacityAnimationTo = 1.0f;

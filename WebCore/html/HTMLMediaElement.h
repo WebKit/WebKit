@@ -53,6 +53,7 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void attach();
+    virtual void recalcStyle(StyleChange);
     
     MediaPlayer* player() const { return m_player.get(); }
     

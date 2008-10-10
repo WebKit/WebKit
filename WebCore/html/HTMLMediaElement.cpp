@@ -152,6 +152,14 @@ void HTMLMediaElement::attach()
         renderer()->updateFromElement();
 }
 
+void HTMLMediaElement::recalcStyle(StyleChange change)
+{
+    HTMLElement::recalcStyle(change);
+
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 void HTMLMediaElement::scheduleLoad()
 {
     m_loadTimer.startOneShot(0);
