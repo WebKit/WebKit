@@ -1,3 +1,22 @@
+2008-10-10  Ada Chan  <adachan@apple.com>
+
+        Bug 21526: The hashmap webPreferencesInstances in WebPreferences.cpp can 
+        potentially hold onto stale instances of WebPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=21526
+        
+        webPreferencesInstances now keeps a reference to all the instances it holds.
+        Fix up callers of WebPreferences::removeReferenceForIdentifier() to call 
+        it after they have released their references to the WebPreferences objects.
+
+        Reviewed by Adam Roben.
+
+        * WebPreferences.cpp:
+        (WebPreferences::getInstanceForIdentifier):
+        (WebPreferences::removeReferenceForIdentifier):
+        * WebView.cpp:
+        (WebView::close):
+        (WebView::setPreferences):
+
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Enable viewless Mac WebKit to paint some basic pages.

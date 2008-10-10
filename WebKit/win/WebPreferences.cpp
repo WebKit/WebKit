@@ -27,8 +27,8 @@
 #include "WebKit.h"
 #include "WebKitDLL.h"
 #include "WebPreferences.h"
-#include "WebKit.h"
 
+#include "COMPtr.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
@@ -99,7 +99,7 @@ static bool booleanValueForPreferencesValue(CFPropertyListRef value)
 
 static CFDictionaryRef defaultSettings;
 
-static HashMap<WebCore::String, WebPreferences*> webPreferencesInstances;
+static HashMap<WebCore::String, COMPtr<WebPreferences> > webPreferencesInstances;
 
 WebPreferences* WebPreferences::sharedStandardPreferences()
 {
@@ -152,7 +152,7 @@ WebPreferences* WebPreferences::getInstanceForIdentifier(BSTR identifier)
         return sharedStandardPreferences();
 
     WebCore::String identifierString(identifier, SysStringLen(identifier));
-    return webPreferencesInstances.get(identifierString);
+    return webPreferencesInstances.get(identifierString).get();
 }
 
 void WebPreferences::setInstance(WebPreferences* instance, BSTR identifier)
@@ -169,7 +169,7 @@ void WebPreferences::removeReferenceForIdentifier(BSTR identifier)
         return;
 
     WebCore::String identifierString(identifier, SysStringLen(identifier));
-    WebPreferences* webPreference = webPreferencesInstances.get(identifierString);
+    WebPreferences* webPreference = webPreferencesInstances.get(identifierString).get();
     if (webPreference && webPreference->m_refCount == 1)
         webPreferencesInstances.remove(identifierString);
 }
