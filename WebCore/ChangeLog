@@ -1,5 +1,18 @@
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
+        Make sure to destroy a custom scrollbar's RenderObject's before the arena goes away.  When our widget
+        parent is nulled out is a good time.
+
+        Reviewed by Oliver Hunt
+
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::~RenderScrollbar):
+        (WebCore::RenderScrollbar::setParent):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderScrollbar.h:
+
+2008-10-09  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21446
 
         This patch gets CSS scrollbars up and limping.  There's no way to distinguish between states or between

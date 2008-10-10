@@ -45,6 +45,8 @@ public:
     static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollbarClient*, ScrollbarOrientation, RenderStyle*, RenderObject*);
     virtual ~RenderScrollbar();
 
+    virtual void setParent(ScrollView*);
+
     void updateScrollbarParts(RenderStyle* = 0, bool destroy = false);
 
     static ScrollbarPart partForStyleResolve();

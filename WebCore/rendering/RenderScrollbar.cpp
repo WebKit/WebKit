@@ -44,8 +44,16 @@ RenderScrollbar::RenderScrollbar(ScrollbarClient* client, ScrollbarOrientation o
 
 RenderScrollbar::~RenderScrollbar()
 {
-    // Destroy all of the scrollbar's RenderObjects.
-    updateScrollbarParts(0, true);
+    ASSERT(m_parts.isEmpty());
+}
+
+void RenderScrollbar::setParent(ScrollView* parent)
+{
+    Scrollbar::setParent(parent);
+    if (!parent) {
+        // Destroy all of the scrollbar's RenderObjects.
+        updateScrollbarParts(0, true);
+    }
 }
 
 static ScrollbarPart gStyleResolvePart;
@@ -94,7 +102,7 @@ void RenderScrollbar::updateScrollbarParts(RenderStyle* scrollbarStyle, bool des
 
 void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, RenderStyle::PseudoId pseudoId, RenderStyle* partStyle, bool destroy)
 {
-    if (!partStyle)
+    if (!partStyle && !destroy)
         partStyle = getScrollbarPseudoStyle(partType, pseudoId);
     
     bool needRenderer = !destroy && partStyle && partStyle->display() != NONE && partStyle->visibility() == VISIBLE;
