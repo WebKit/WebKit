@@ -1120,9 +1120,9 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar> widget;
-    RenderStyle* style = renderer()->getPseudoStyle(RenderStyle::SCROLLBAR);
+    RenderStyle* style = m_object->node()->shadowAncestorNode()->renderer()->getPseudoStyle(RenderStyle::SCROLLBAR);
     if (style)
-        widget = RenderScrollbar::createCustomScrollbar(this, orientation, style, renderer());
+        widget = RenderScrollbar::createCustomScrollbar(this, orientation, style, m_object->node()->shadowAncestorNode()->renderer());
     else
         widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
     m_object->document()->view()->addChild(widget.get());        
@@ -2421,7 +2421,8 @@ void RenderLayer::styleChanged(RenderStyle::Diff, const RenderStyle* oldStyle)
         m_vBar->styleChanged();
        
     // Update our scroll corner style.
-    RenderStyle* corner = m_object->hasOverflowClip() ? m_object->getPseudoStyle(RenderStyle::SCROLLBAR_CORNER, m_object->style()) : 0;
+    RenderObject* actualRenderer = m_object->node()->shadowAncestorNode()->renderer();
+    RenderStyle* corner = m_object->hasOverflowClip() ? actualRenderer->getPseudoStyle(RenderStyle::SCROLLBAR_CORNER, actualRenderer->style()) : 0;
     if (corner) {
         if (!m_scrollCorner)
             m_scrollCorner = new (m_object->renderArena()) RenderScrollbarPart(m_object->document());
@@ -2432,7 +2433,7 @@ void RenderLayer::styleChanged(RenderStyle::Diff, const RenderStyle* oldStyle)
     }
         
     // Update our scroll corner resizer style.
-    RenderStyle* resizer = m_object->hasOverflowClip() ? m_object->getPseudoStyle(RenderStyle::RESIZER, m_object->style()) : 0;
+    RenderStyle* resizer = m_object->hasOverflowClip() ? actualRenderer->getPseudoStyle(RenderStyle::RESIZER, actualRenderer->style()) : 0;
     if (resizer) {
         if (!m_resizer)
             m_resizer = new (m_object->renderArena()) RenderScrollbarPart(m_object->document());

@@ -1,5 +1,16 @@
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
+        Make textareas work with custom CSS scrollbars and resizers.  Need to access the correct renderer
+        when looking for pseudo styles.
+
+        Reviewed by Tim Hatcher
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::styleChanged):
+
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
         Add the ability to style the scroll corner and the resizer from CSS.
 
         Reviewed by Tim Hatcher
