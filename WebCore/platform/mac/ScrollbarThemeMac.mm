@@ -64,7 +64,7 @@ static HashSet<Scrollbar*>* gScrollbars;
         return;
     HashSet<Scrollbar*>::iterator end = gScrollbars->end();
     for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it)
-        (*it)->invalidate();
+        (*it)->styleChanged();
 }
 
 + (void)behaviorPrefsChanged:(NSNotification*)theNotification
@@ -150,9 +150,9 @@ ScrollbarThemeMac::~ScrollbarThemeMac()
 
 void ScrollbarThemeMac::preferencesChanged()
 {
-    updateArrowPlacement();
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults synchronize];
+    updateArrowPlacement();
     gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
     gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
     gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];

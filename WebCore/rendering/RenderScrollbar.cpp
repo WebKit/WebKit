@@ -64,6 +64,12 @@ void RenderScrollbar::setEnabled(bool e)
         updateScrollbarParts();
 }
 
+void RenderScrollbar::styleChanged()
+{
+    updateScrollbarParts();
+    Scrollbar::styleChanged();
+}
+
 void RenderScrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
 {
     if (context->updatingControlTints())
@@ -182,9 +188,32 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, RenderStyle* p
         return;
 
     if (!partStyle && !destroy)
-        partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
+        partStyle = getScrollbarPseudoStyle(partType,  pseudoForScrollbarPart(partType));
     
     bool needRenderer = !destroy && partStyle && partStyle->display() != NONE && partStyle->visibility() == VISIBLE;
+    
+    if (needRenderer && partStyle->display() != BLOCK) {
+        // See if we are a button that should not be visible according to OS settings.
+        ScrollbarButtonsPlacement buttonsPlacement = theme()->buttonsPlacement();
+        switch (partType) {
+            case BackButtonStartPart:
+                needRenderer = (buttonsPlacement == ScrollbarButtonsSingle || buttonsPlacement == ScrollbarButtonsDoubleStart ||
+                                buttonsPlacement == ScrollbarButtonsDoubleBoth);
+                break;
+            case ForwardButtonStartPart:
+                needRenderer = (buttonsPlacement == ScrollbarButtonsDoubleStart || buttonsPlacement == ScrollbarButtonsDoubleBoth);
+                break;
+            case BackButtonEndPart:
+                needRenderer = (buttonsPlacement == ScrollbarButtonsDoubleEnd || buttonsPlacement == ScrollbarButtonsDoubleBoth);
+                break;
+            case ForwardButtonEndPart:
+                needRenderer = (buttonsPlacement == ScrollbarButtonsSingle || buttonsPlacement == ScrollbarButtonsDoubleEnd ||
+                                buttonsPlacement == ScrollbarButtonsDoubleBoth);
+                break;
+            default:
+                break;
+        }
+    }
     
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer && needRenderer) {

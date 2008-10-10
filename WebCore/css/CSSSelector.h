@@ -153,6 +153,7 @@ namespace WebCore {
             PseudoScrollbar,
             PseudoScrollbarBack,
             PseudoScrollbarButton,
+            PseudoScrollbarButtonDouble,
             PseudoScrollbarCorner,
             PseudoScrollbarForward,
             PseudoScrollbarThumb,

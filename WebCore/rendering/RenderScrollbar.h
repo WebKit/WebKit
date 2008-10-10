@@ -58,7 +58,7 @@ public:
     static ScrollbarPart partForStyleResolve();
     static RenderScrollbar* scrollbarForStyleResolve();
 
-    virtual void styleChanged() { updateScrollbarParts(); }
+    virtual void styleChanged();
 
     RenderObject* owningRenderer() const { return m_owner; }
 

@@ -40,7 +40,7 @@ public:
     
     virtual int scrollbarThickness(ScrollbarControlSize controlSize) { return ScrollbarTheme::nativeTheme()->scrollbarThickness(controlSize); }
 
-    virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarButtonsDoubleBoth; }
+    virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarTheme::nativeTheme()->buttonsPlacement(); }
 
     virtual bool supportsControlTints() const { return true; }
 

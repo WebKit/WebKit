@@ -1,3 +1,31 @@
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
+        Make CSS scrollbars respect the OS setting regarding where buttons should be placed.
+
+        Reviewed by Sam Weinig
+
+        No test case possible, since the OS setting can vary.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::styleChanged):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        (WebCore::ScrollbarThemeMac::preferencesChanged):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::styleChanged):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbarTheme.h:
+        (WebCore::RenderScrollbarTheme::buttonsPlacement):
+
 2008-10-10  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a regression with input search fields, where the placeholder text

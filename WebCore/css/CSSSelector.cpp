@@ -107,6 +107,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString root("root");
     static AtomicString scrollbar("-webkit-scrollbar");
     static AtomicString scrollbarButton("-webkit-scrollbar-button");
+    static AtomicString scrollbarButtonDouble("-webkit-scrollbar-button-double");
     static AtomicString scrollbarCorner("-webkit-scrollbar-corner");
     static AtomicString scrollbarThumb("-webkit-scrollbar-thumb");
     static AtomicString scrollbarTrack("-webkit-scrollbar-track");
@@ -247,6 +248,8 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoHorizontal;
     else if (m_value == vertical)
         m_pseudoType = PseudoVertical;
+    else if (m_value == scrollbarButtonDouble)
+        m_pseudoType = PseudoScrollbarButtonDouble;
     else if (m_value == scrollbar) {
         element = true;
         m_pseudoType = PseudoScrollbar;
