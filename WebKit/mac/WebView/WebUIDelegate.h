@@ -544,13 +544,13 @@ typedef enum {
 
 // The following delegate methods are deprecated in favor of the ones above that specify
 // the WebFrame whose JavaScript initiated this call.
-- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
-- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
-- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
+- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
 
 // The following delegate methods are deprecated. Content rect calculations are now done automatically.
-- (void)webView:(WebView *)sender setContentRect:(NSRect)frame WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
-- (NSRect)webViewContentRect:(WebView *)sender WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
+- (void)webView:(WebView *)sender setContentRect:(NSRect)frame WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
+- (NSRect)webViewContentRect:(WebView *)sender WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
 
 @end
 
