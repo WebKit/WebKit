@@ -32,7 +32,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderScrollbarPart::RenderScrollbarPart(RenderScrollbar* scrollbar, ScrollbarPart part, Node* node)
+RenderScrollbarPart::RenderScrollbarPart(Node* node, RenderScrollbar* scrollbar, ScrollbarPart part)
     : RenderBlock(node)
     , m_scrollbar(scrollbar)
     , m_part(part)
@@ -135,6 +135,28 @@ void RenderScrollbarPart::styleDidChange(RenderStyle::Diff diff, const RenderSty
     setPositioned(false);
     setFloating(false);
     setHasOverflowClip(false);
+}
+
+void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, int tx, int ty, const IntRect& rect)
+{
+    // Make sure our dimensions match the rect.
+    setPos(rect.x() - tx, rect.y() - ty);
+    setWidth(rect.width());
+    setHeight(rect.height());
+    setOverflowWidth(max(rect.width(), overflowWidth()));
+    setOverflowHeight(max(rect.height(), overflowHeight()));
+
+    // Now do the paint.
+    RenderObject::PaintInfo paintInfo(graphicsContext, rect, PaintPhaseBlockBackground, false, 0, 0);
+    paint(paintInfo, tx, ty);
+    paintInfo.phase = PaintPhaseChildBlockBackgrounds;
+    paint(paintInfo, tx, ty);
+    paintInfo.phase = PaintPhaseFloat;
+    paint(paintInfo, tx, ty);
+    paintInfo.phase = PaintPhaseForeground;
+    paint(paintInfo, tx, ty);
+    paintInfo.phase = PaintPhaseOutline;
+    paint(paintInfo, tx, ty);
 }
 
 }

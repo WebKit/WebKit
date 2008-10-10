@@ -1,5 +1,35 @@
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
+        Add the ability to style the scroll corner and the resizer from CSS.
+
+        Reviewed by Tim Hatcher
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        (WebCore::RenderScrollbar::paintPart):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::RenderScrollbarPart):
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::):
+
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
         Make CSS scrollbars respect the OS setting regarding where buttons should be placed.
 
         Reviewed by Sam Weinig

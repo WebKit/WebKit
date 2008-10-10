@@ -58,6 +58,7 @@ class RenderFrameSet;
 class RenderMarquee;
 class RenderObject;
 class RenderReplica;
+class RenderScrollbarPart;
 class RenderStyle;
 class RenderTable;
 class RenderText;
@@ -236,6 +237,8 @@ public:
     IntSize offsetFromResizeCorner(const IntPoint&) const;
 
     void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
+    void paintScrollCorner(GraphicsContext*, const IntRect&);
+    void paintResizer(GraphicsContext*, const IntRect&);
 
     void updateScrollInfoAfterLayout();
 
@@ -450,6 +453,10 @@ protected:
     
     // May ultimately be extended to many replicas (with their own paint order).
     RenderReplica* m_reflection;
+    
+    // Renderers to hold our custom scroll corner and resizer.
+    RenderScrollbarPart* m_scrollCorner;
+    RenderScrollbarPart* m_resizer;
 };
 
 } // namespace WebCore

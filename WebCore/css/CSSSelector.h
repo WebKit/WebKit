@@ -149,6 +149,7 @@ namespace WebCore {
             PseudoAfter,
             PseudoLang,
             PseudoNot,
+            PseudoResizer,
             PseudoRoot,
             PseudoScrollbar,
             PseudoScrollbarBack,

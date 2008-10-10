@@ -217,7 +217,7 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, RenderStyle* p
     
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer && needRenderer) {
-        partRenderer = new (m_owner->renderArena()) RenderScrollbarPart(this, partType, m_owner->document());
+        partRenderer = new (m_owner->renderArena()) RenderScrollbarPart(m_owner->document(), this, partType);
         m_parts.set(partType, partRenderer);
     } else if (partRenderer && !needRenderer) {
         m_parts.remove(partType);
@@ -234,25 +234,7 @@ void RenderScrollbar::paintPart(GraphicsContext* graphicsContext, ScrollbarPart 
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer)
         return;
-
-    // Make sure our dimensions match the rect.
-    partRenderer->setPos(rect.x() - x(), rect.y() - y());
-    partRenderer->setWidth(rect.width());
-    partRenderer->setHeight(rect.height());
-    partRenderer->setOverflowWidth(max(rect.width(), partRenderer->overflowWidth()));
-    partRenderer->setOverflowHeight(max(rect.height(), partRenderer->overflowHeight()));
-
-    // Now do the paint.
-    RenderObject::PaintInfo paintInfo(graphicsContext, rect, PaintPhaseBlockBackground, false, 0, 0);
-    partRenderer->paint(paintInfo, x(), y());
-    paintInfo.phase = PaintPhaseChildBlockBackgrounds;
-    partRenderer->paint(paintInfo, x(), y());
-    paintInfo.phase = PaintPhaseFloat;
-    partRenderer->paint(paintInfo, x(), y());
-    paintInfo.phase = PaintPhaseForeground;
-    partRenderer->paint(paintInfo, x(), y());
-    paintInfo.phase = PaintPhaseOutline;
-    partRenderer->paint(paintInfo, x(), y());
+    partRenderer->paintIntoRect(graphicsContext, x(), y(), rect);
 }
 
 IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)
