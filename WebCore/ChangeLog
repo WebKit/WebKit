@@ -1,3 +1,9 @@
+2008-10-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Add new scrollbar-related sources.
+
+        * WebCoreSources.bkl:
+
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21522

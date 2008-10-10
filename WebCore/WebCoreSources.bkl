@@ -707,6 +707,7 @@ This file contains the list of files needed to build WebCore.
         platform/MIMETypeRegistry.cpp
         platform/text/RegularExpression.cpp
         platform/Scrollbar.cpp
+        platform/ScrollbarThemeComposite.cpp
         platform/ScrollView.cpp
         platform/text/SegmentedString.cpp
         platform/SharedBuffer.cpp
@@ -857,6 +858,9 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderPartObject.cpp
         rendering/RenderReplaced.cpp
         rendering/RenderReplica.cpp
+        rendering/RenderScrollbar.cpp
+        rendering/RenderScrollbarPart.cpp
+        rendering/RenderScrollbarTheme.cpp
         rendering/RenderSlider.cpp
         rendering/RenderTable.cpp
         rendering/RenderTableCell.cpp
