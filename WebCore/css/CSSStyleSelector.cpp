@@ -50,6 +50,7 @@
 #include "CachedImage.h"
 #include "Counter.h"
 #include "CounterContent.h"
+#include "FocusController.h"
 #include "FontFamilyValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -2394,8 +2395,8 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
             return scrollbar->orientation() == HorizontalScrollbar;
         case CSSSelector::PseudoScrollbarVertical:
             return scrollbar->orientation() == VerticalScrollbar;
-        case CSSSelector::PseudoWindowActive:
-            return scrollbar->isWindowActive();
+        case CSSSelector::PseudoWindowInactive:
+            return !scrollbar->isWindowActive();
         default:
             return false;
     }

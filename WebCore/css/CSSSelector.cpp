@@ -123,7 +123,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString sliderThumb("-webkit-slider-thumb");
     static AtomicString target("target");
     static AtomicString visited("visited");
-    static AtomicString windowActive("-webkit-window-active");
+    static AtomicString windowInactive("-webkit-window-inactive");
 
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
@@ -234,8 +234,8 @@ void CSSSelector::extractPseudoType() const
     else if (m_value == scrollbar) {
         element = true;
         m_pseudoType = PseudoScrollbar;
-    } else if (m_value == windowActive)
-        m_pseudoType = PseudoWindowActive;
+    } else if (m_value == windowInactive)
+        m_pseudoType = PseudoWindowInactive;
     else if (m_value == scrollbarBack)
         m_pseudoType = PseudoScrollbarBack;
     else if (m_value == scrollbarButton) {

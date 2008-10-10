@@ -1,3 +1,17 @@
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
+        Switch window-active to window-inactive, since that will work better as far as degrading in other
+        browsers.
+
+        Reviewed by Tim Hatcher
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
         Add support for scrollbar orientation as a pseudoclass.  Add support for whether or not the scrollbar
