@@ -1,3 +1,9 @@
+2008-10-10  Dean Jackson  <dino@apple.com>
+
+        Keyframe example had "0" rather than "0%".
+        
+        * CSSAnimations.html:
+
 2008-10-08  Dean Jackson  <dino@apple.com>
 
         Forgot to set the date on the spec documents with last commit.
