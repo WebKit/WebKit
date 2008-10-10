@@ -86,8 +86,6 @@ void RenderScrollbar::setHoveredPart(ScrollbarPart part)
     updateScrollbarPart(ScrollbarBGPart);
     updateScrollbarPart(TrackBGPart);
     invalidate();
-
-    m_hoveredPart = part;
 }
 
 void RenderScrollbar::setPressedPart(ScrollbarPart part)
@@ -259,6 +257,31 @@ IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)
                    isHorizontal ? y() : y() + height() - followingButton.height() - partRenderer->height(),
                    isHorizontal ? partRenderer->width() : width(),
                    isHorizontal ? height() : partRenderer->height());
+}
+
+IntRect RenderScrollbar::trackRect(int startLength, int endLength)
+{
+    
+    RenderScrollbarPart* part = m_parts.get(TrackBGPart);
+    if (part)
+        part->layout();
+
+    if (orientation() == HorizontalScrollbar) {
+        int marginLeft = part ? part->marginLeft() : 0;
+        int marginRight = part ? part->marginRight() : 0;
+        startLength += marginLeft;
+        endLength += marginRight;
+        int totalLength = startLength + endLength;
+        return IntRect(x() + startLength, y(), width() - totalLength, height());
+    }
+    
+    int marginTop = part ? part->marginTop() : 0;
+    int marginBottom = part ? part->marginBottom() : 0;
+    startLength += marginTop;
+    endLength += marginBottom;
+    int totalLength = startLength + endLength;
+
+    return IntRect(x(), y() + startLength, width(), height() - totalLength);
 }
 
 int RenderScrollbar::minimumThumbLength()

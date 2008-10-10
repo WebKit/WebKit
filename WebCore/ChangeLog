@@ -1,5 +1,27 @@
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
+        Allow the track part to have negative margins so that it can slightly overlap buttons.  This
+        is necessary to emulate the Aqua look in CSS.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        (WebCore::ScrollbarThemeComposite::hitTest):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::setHoveredPart):
+        (WebCore::RenderScrollbar::trackRect):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::backButtonRect):
+        (WebCore::RenderScrollbarTheme::forwardButtonRect):
+        (WebCore::RenderScrollbarTheme::trackRect):
+
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21527
 
         Make CSS scrollbars support :not, :hover and :active.

@@ -65,7 +65,8 @@ public:
     void paintPart(GraphicsContext*, ScrollbarPart, const IntRect&);
 
     IntRect buttonRect(ScrollbarPart);
-    
+    IntRect trackRect(int startLength, int endLength);
+
     int minimumThumbLength();
 
 private:
