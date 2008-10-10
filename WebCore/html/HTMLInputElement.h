@@ -222,7 +222,7 @@ private:
     void registerForActivationCallbackIfNeeded();
     void unregisterForActivationCallbackIfNeeded();
 
-    void updatePlaceholderVisibility();
+    void updatePlaceholderVisibility(bool placeholderValueChanged = false);
     
     String m_value;
     String m_originalValue;

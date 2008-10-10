@@ -1,3 +1,22 @@
+2008-10-10  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression with input search fields, where the placeholder text
+        would not be updated when the value of the placeholder attribute changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21521
+
+        Reviewed by Adele Peterson.
+
+        Test: fast/forms/search-placeholder-value-changed.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Pass true for the
+        placeholderValueChanged parameter of updatePlaceholderVisibility.
+        (WebCore::HTMLInputElement::updatePlaceholderVisibility): Add parameter
+        for placeholderValueChanged that informs the method that the value changed.
+        * html/HTMLInputElement.h: Add the placeholderValueChanged to the
+        updatePlaceholderVisibility method. Made it default to false.
+
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
         Allow the track part to have negative margins so that it can slightly overlap buttons.  This

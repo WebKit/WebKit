@@ -693,7 +693,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         }
         setChanged();
     } else if (attr->name() == placeholderAttr)
-        updatePlaceholderVisibility();
+        updatePlaceholderVisibility(true);
     else if (attr->name() == autosaveAttr ||
                attr->name() == incrementalAttr ||
                attr->name() == minAttr ||
@@ -1560,17 +1560,17 @@ void HTMLInputElement::unregisterForActivationCallbackIfNeeded()
         document()->unregisterForDocumentActivationCallbacks(this);
 }
 
-void HTMLInputElement::updatePlaceholderVisibility()
+void HTMLInputElement::updatePlaceholderVisibility(bool placeholderValueChanged)
 {
     ASSERT(isTextField());
 
     bool oldPlaceholderShouldBeVisible = m_placeholderShouldBeVisible;
-    
+
     m_placeholderShouldBeVisible = value().isEmpty() 
         && document()->focusedNode() != this
         && !getAttribute(placeholderAttr).isEmpty();
 
-    if (oldPlaceholderShouldBeVisible != m_placeholderShouldBeVisible && renderer())
+    if ((oldPlaceholderShouldBeVisible != m_placeholderShouldBeVisible || placeholderValueChanged) && renderer())
         static_cast<RenderTextControl*>(renderer())->updatePlaceholderVisibility();
 }
 

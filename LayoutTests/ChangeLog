@@ -1,3 +1,14 @@
+2008-10-10  Timothy Hatcher  <timothy@apple.com>
+
+        Layout test for placeholder attribute changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21521.
+
+        Reviewed by Adele Peterson.
+
+        * fast/forms/search-placeholder-value-changed.html: Added.
+        * platform/mac/fast/forms/search-placeholder-value-changed-expected.txt: Added.
+
 2008-10-10  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dan Bernstein.
