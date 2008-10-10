@@ -109,12 +109,7 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, const 
     // Check to see if we need to update the active transitions
     for (size_t i = 0; i < targetStyle->transitions()->size(); ++i) {
         const Animation* anim = targetStyle->transitions()->animation(i);
-        double duration = anim->duration();
-        double delay = anim->delay();
-
-        // If this is an empty transition, skip it
-        if (duration == 0 && delay <= 0)
-            continue;
+        bool isActiveTransition = anim->duration() || anim->delay() > 0;
 
         int prop = anim->property();
 
@@ -150,13 +145,11 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, const 
                // you have both an explicit transition-property and 'all' in the same
                // list. In this case, the latter one overrides the earlier one, so we
                // behave as though this is a running animation being replaced.
-                if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
+                if (!isActiveTransition || !implAnim->isTargetPropertyEqual(prop, targetStyle))
                     m_transitions.remove(prop);
-                    equal = false;
-                }
             } else {
-                // See if we need to start a new transition
-                equal = AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);
+                // We need to start a transition if it is active and the properties don't match
+                equal = !isActiveTransition || AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);
             }
 
             if (!equal) {
@@ -210,8 +203,7 @@ void CompositeAnimationPrivate::updateKeyframeAnimations(RenderObject* renderer,
                 keyframeAnim->setIndex(i);
             } else if ((anim->duration() || anim->delay()) && anim->iterationCount()) {
                 keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(anim), renderer, i, m_compositeAnimation, currentStyle ? currentStyle : targetStyle);
-                if (keyframeAnim->hasKeyframes())
-                    m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
+                m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
             }
         }
     }

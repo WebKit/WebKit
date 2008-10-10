@@ -1,3 +1,15 @@
+2008-10-10  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21025
+        CSS transition with duration=0 and delay=0 doesn't override ongoing transition
+
+        Test: transitions/interrupt-zero-duration.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+
 2008-10-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add new scrollbar-related sources.
