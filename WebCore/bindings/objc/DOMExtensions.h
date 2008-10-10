@@ -48,15 +48,15 @@
 @class NSURL;
 
 @interface DOMNode (DOMNodeExtensions)
-- (NSRect)boundingBox;
-- (NSArray *)lineBoxRects;
+- (NSRect)boundingBox WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER);
+- (NSArray *)lineBoxRects WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER);
 @end
 
 @interface DOMElement (DOMElementAppKitExtensions)
-- (NSImage *)image;
+- (NSImage *)image WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER);
 @end
 
 @interface DOMHTMLDocument (DOMHTMLDocumentExtensions)
-- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
-- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text;
+- (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER);
+- (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text WEBKIT_CATEGORY_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER);
 @end

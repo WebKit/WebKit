@@ -31,4 +31,3 @@
 @interface DOMAbstractView (Frame)
 - (void)_disconnectFrame;
 @end
-

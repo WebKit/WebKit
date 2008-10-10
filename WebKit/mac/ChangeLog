@@ -1,3 +1,13 @@
+2008-10-09  Timothy Hatcher  <timothy@apple.com>
+
+        Don't convert JavaScriptCore header include paths to WebKit paths. This was needed
+        back when NPAPI and WebScriptObject migrated from JavaScriptCore. Also remove
+        JavaScriptCore from the VPATH.
+
+        Reviewed by Sam Weinig.
+
+        * MigrateHeaders.make:
+
 2008-10-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.
