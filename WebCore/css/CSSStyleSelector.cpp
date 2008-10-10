@@ -1837,16 +1837,30 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             break;
         }
     }
+    
     if (sel->m_match == CSSSelector::PseudoClass) {
-        
-        // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
-        // (since there are no elements involved).
-        if (RenderScrollbar::scrollbarForStyleResolve() && dynamicPseudo != RenderStyle::NOPSEUDO)
+        // Handle :not up front.
+        if (sel->pseudoType() == CSSSelector::PseudoNot) {
+            // check the simple selector
+            for (CSSSelector* subSel = sel->m_simpleSelector; subSel; subSel = subSel->m_tagHistory) {
+                // :not cannot nest. I don't really know why this is a
+                // restriction in CSS3, but it is, so let's honor it.
+                if (subSel->m_simpleSelector)
+                    break;
+                if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle))
+                    return true;
+            }
+        } else if (RenderScrollbar::scrollbarForStyleResolve() && dynamicPseudo != RenderStyle::NOPSEUDO) {
+            // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
+            // (since there are no elements involved).
             return checkScrollbarPseudoClass(sel, dynamicPseudo);
+        }
         
         // Normal element pseudo class checking.
         switch (sel->pseudoType()) {
             // Pseudo classes:
+            case CSSSelector::PseudoNot:
+                break; // Already handled up above.
             case CSSSelector::PseudoEmpty: {
                 bool result = true;
                 for (Node* n = e->firstChild(); n; n = n->nextSibling()) {
@@ -2262,18 +2276,6 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     break;
                 return true;
             }
-            case CSSSelector::PseudoNot: {
-                // check the simple selector
-                for (CSSSelector* subSel = sel->m_simpleSelector; subSel; subSel = subSel->m_tagHistory) {
-                    // :not cannot nest. I don't really know why this is a
-                    // restriction in CSS3, but it is, so let's honour it.
-                    if (subSel->m_simpleSelector)
-                        break;
-                    if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle))
-                        return true;
-                }
-                break;
-            }
             case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:
             default:
@@ -2391,6 +2393,22 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
             return scrollbar->enabled();
         case CSSSelector::PseudoDisabled:
             return !scrollbar->enabled();
+        case CSSSelector::PseudoHover: {
+            ScrollbarPart hoveredPart = scrollbar->hoveredPart();
+            if (part == ScrollbarBGPart)
+                return hoveredPart != NoPart;
+            if (part == TrackBGPart)
+                return hoveredPart == BackTrackPart || hoveredPart == ForwardTrackPart || hoveredPart == ThumbPart;
+            return part == hoveredPart;
+        }
+        case CSSSelector::PseudoActive: {
+            ScrollbarPart pressedPart = scrollbar->pressedPart();
+            if (part == ScrollbarBGPart)
+                return pressedPart != NoPart;
+            if (part == TrackBGPart)
+                return pressedPart == BackTrackPart || pressedPart == ForwardTrackPart || pressedPart == ThumbPart;
+            return part == pressedPart;
+        }
         case CSSSelector::PseudoHorizontal:
             return scrollbar->orientation() == HorizontalScrollbar;
         case CSSSelector::PseudoVertical:

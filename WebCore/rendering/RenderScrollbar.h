@@ -50,6 +50,9 @@ public:
 
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
+    virtual void setHoveredPart(ScrollbarPart);
+    virtual void setPressedPart(ScrollbarPart);
+
     void updateScrollbarParts(RenderStyle* = 0, bool destroy = false);
 
     static ScrollbarPart partForStyleResolve();
@@ -67,7 +70,7 @@ public:
 
 private:
     RenderStyle* getScrollbarPseudoStyle(ScrollbarPart, RenderStyle::PseudoId);
-    void updateScrollbarPart(ScrollbarPart, RenderStyle::PseudoId, RenderStyle*, bool destroy);
+    void updateScrollbarPart(ScrollbarPart, RenderStyle* = 0, bool destroy = false);
 
     RenderObject* m_owner;
     HashMap<unsigned, RenderScrollbarPart*> m_parts;

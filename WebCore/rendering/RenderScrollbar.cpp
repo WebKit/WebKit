@@ -71,6 +71,39 @@ void RenderScrollbar::paint(GraphicsContext* context, const IntRect& damageRect)
     Scrollbar::paint(context, damageRect);
 }
 
+void RenderScrollbar::setHoveredPart(ScrollbarPart part)
+{
+    if (part == m_hoveredPart)
+        return;
+
+    ScrollbarPart oldPart = m_hoveredPart;
+    Scrollbar::setHoveredPart(part);
+
+    updateScrollbarPart(oldPart);
+    updateScrollbarPart(m_hoveredPart);
+
+    // FIXME: Shouldn't always update the hover state of the scrollbar and track bg.
+    updateScrollbarPart(ScrollbarBGPart);
+    updateScrollbarPart(TrackBGPart);
+    invalidate();
+
+    m_hoveredPart = part;
+}
+
+void RenderScrollbar::setPressedPart(ScrollbarPart part)
+{
+    ScrollbarPart oldPart = m_pressedPart;
+    Scrollbar::setPressedPart(part);
+    
+    updateScrollbarPart(oldPart);
+    updateScrollbarPart(part);
+    
+    // FIXME: Shouldn't always update the active state of the scrollbar and track bg.
+    updateScrollbarPart(ScrollbarBGPart);
+    updateScrollbarPart(TrackBGPart);
+    invalidate();
+}
+
 static ScrollbarPart s_styleResolvePart;
 static RenderScrollbar* s_styleResolveScrollbar;
 
@@ -96,15 +129,15 @@ RenderStyle* RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, Re
 
 void RenderScrollbar::updateScrollbarParts(RenderStyle* scrollbarStyle, bool destroy)
 {
-    updateScrollbarPart(ScrollbarBGPart, RenderStyle::SCROLLBAR, scrollbarStyle, destroy);
-    updateScrollbarPart(BackButtonStartPart, RenderStyle::SCROLLBAR_BUTTON, 0, destroy);
-    updateScrollbarPart(ForwardButtonStartPart, RenderStyle::SCROLLBAR_BUTTON, 0, destroy);
-    updateScrollbarPart(BackTrackPart, RenderStyle::SCROLLBAR_TRACK_PIECE, 0, destroy);
-    updateScrollbarPart(ThumbPart, RenderStyle::SCROLLBAR_THUMB, 0, destroy);
-    updateScrollbarPart(ForwardTrackPart, RenderStyle::SCROLLBAR_TRACK_PIECE, 0, destroy);
-    updateScrollbarPart(BackButtonEndPart, RenderStyle::SCROLLBAR_BUTTON, 0, destroy);
-    updateScrollbarPart(ForwardButtonEndPart, RenderStyle::SCROLLBAR_BUTTON, 0, destroy);
-    updateScrollbarPart(TrackBGPart, RenderStyle::SCROLLBAR_TRACK, 0, destroy);
+    updateScrollbarPart(ScrollbarBGPart, scrollbarStyle, destroy);
+    updateScrollbarPart(BackButtonStartPart, 0, destroy);
+    updateScrollbarPart(ForwardButtonStartPart, 0, destroy);
+    updateScrollbarPart(BackTrackPart, 0, destroy);
+    updateScrollbarPart(ThumbPart, 0, destroy);
+    updateScrollbarPart(ForwardTrackPart, 0, destroy);
+    updateScrollbarPart(BackButtonEndPart, 0, destroy);
+    updateScrollbarPart(ForwardButtonEndPart, 0, destroy);
+    updateScrollbarPart(TrackBGPart, 0, destroy);
     
     if (destroy)
         return;
@@ -125,10 +158,33 @@ void RenderScrollbar::updateScrollbarParts(RenderStyle* scrollbarStyle, bool des
     }
 }
 
-void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, RenderStyle::PseudoId pseudoId, RenderStyle* partStyle, bool destroy)
+static RenderStyle::PseudoId pseudoForScrollbarPart(ScrollbarPart part)
 {
+    switch (part) {
+        case BackButtonStartPart:
+        case ForwardButtonStartPart:
+        case BackButtonEndPart:
+        case ForwardButtonEndPart:
+            return RenderStyle::SCROLLBAR_BUTTON;
+        case BackTrackPart:
+        case ForwardTrackPart:
+            return RenderStyle::SCROLLBAR_TRACK_PIECE;
+        case ThumbPart:
+            return RenderStyle::SCROLLBAR_THUMB;
+        case TrackBGPart:
+            return RenderStyle::SCROLLBAR_TRACK;
+        default:
+            return RenderStyle::SCROLLBAR;
+    }
+}
+
+void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, RenderStyle* partStyle, bool destroy)
+{
+    if (partType == NoPart)
+        return;
+
     if (!partStyle && !destroy)
-        partStyle = getScrollbarPseudoStyle(partType, pseudoId);
+        partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
     
     bool needRenderer = !destroy && partStyle && partStyle->display() != NONE && partStyle->visibility() == VISIBLE;
     
