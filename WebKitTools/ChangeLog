@@ -1,3 +1,12 @@
+2008-10-09  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Add StructureID.o to the exclusion list in the global initializers
+        script to fix the Debug build.
+
+        * Scripts/check-for-global-initializers:
+
 2008-10-08  Mark Rowe  <mrowe@apple.com>
 
         Fix the Windows build after r37434.
