@@ -129,7 +129,7 @@
 
 2008-10-09  David Hyatt  <hyatt@apple.com>
 
-        Make sure to destroy a custom scrollbar's RenderObject's before the arena goes away.  When our widget
+        Make sure to destroy a custom scrollbar's RenderObjects before the arena goes away.  When our widget
         parent is nulled out is a good time.
 
         Reviewed by Oliver Hunt
