@@ -1,5 +1,23 @@
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
+        Make sure specialized ::scrollbar rules are still triggering custom scrollbar creation.
+
+        Reviewed by Tim Hatcher
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::createCustomScrollbar):
+        (WebCore::RenderScrollbar::RenderScrollbar):
+        (WebCore::RenderScrollbar::setParent):
+        (WebCore::RenderScrollbar::updateScrollbarParts):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderScrollbar.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::):
+
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
         Make sure scrollbar background images cause proper part invalidation to occur.
 
         Reviewed by Tim Hatcher

@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-PassRefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, RenderStyle* style, RenderObject* renderer)
+PassRefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, RenderObject* renderer)
 {
-    return adoptRef(new RenderScrollbar(client, orientation, style, renderer));
+    return adoptRef(new RenderScrollbar(client, orientation, renderer));
 }
 
-RenderScrollbar::RenderScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, RenderStyle* style, RenderObject* renderer)
+RenderScrollbar::RenderScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, RenderObject* renderer)
     : Scrollbar(client, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme())
     , m_owner(renderer)
 {
-    updateScrollbarParts(style);
+    updateScrollbarParts();
 }
 
 RenderScrollbar::~RenderScrollbar()
@@ -52,7 +52,7 @@ void RenderScrollbar::setParent(ScrollView* parent)
     Scrollbar::setParent(parent);
     if (!parent) {
         // Destroy all of the scrollbar's RenderObjects.
-        updateScrollbarParts(0, true);
+        updateScrollbarParts(true);
     }
 }
 
@@ -127,17 +127,17 @@ RenderStyle* RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, Re
     return result;
 }
 
-void RenderScrollbar::updateScrollbarParts(RenderStyle* scrollbarStyle, bool destroy)
+void RenderScrollbar::updateScrollbarParts(bool destroy)
 {
-    updateScrollbarPart(ScrollbarBGPart, scrollbarStyle, destroy);
-    updateScrollbarPart(BackButtonStartPart, 0, destroy);
-    updateScrollbarPart(ForwardButtonStartPart, 0, destroy);
-    updateScrollbarPart(BackTrackPart, 0, destroy);
-    updateScrollbarPart(ThumbPart, 0, destroy);
-    updateScrollbarPart(ForwardTrackPart, 0, destroy);
-    updateScrollbarPart(BackButtonEndPart, 0, destroy);
-    updateScrollbarPart(ForwardButtonEndPart, 0, destroy);
-    updateScrollbarPart(TrackBGPart, 0, destroy);
+    updateScrollbarPart(ScrollbarBGPart, destroy);
+    updateScrollbarPart(BackButtonStartPart, destroy);
+    updateScrollbarPart(ForwardButtonStartPart, destroy);
+    updateScrollbarPart(BackTrackPart, destroy);
+    updateScrollbarPart(ThumbPart, destroy);
+    updateScrollbarPart(ForwardTrackPart, destroy);
+    updateScrollbarPart(BackButtonEndPart, destroy);
+    updateScrollbarPart(ForwardButtonEndPart, destroy);
+    updateScrollbarPart(TrackBGPart, destroy);
     
     if (destroy)
         return;
@@ -178,13 +178,12 @@ static RenderStyle::PseudoId pseudoForScrollbarPart(ScrollbarPart part)
     }
 }
 
-void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, RenderStyle* partStyle, bool destroy)
+void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
 {
     if (partType == NoPart)
         return;
 
-    if (!partStyle && !destroy)
-        partStyle = getScrollbarPseudoStyle(partType,  pseudoForScrollbarPart(partType));
+    RenderStyle* partStyle = !destroy ? getScrollbarPseudoStyle(partType,  pseudoForScrollbarPart(partType)) : 0;
     
     bool needRenderer = !destroy && partStyle && partStyle->display() != NONE && partStyle->visibility() == VISIBLE;
     
