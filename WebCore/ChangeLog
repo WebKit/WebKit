@@ -1,3 +1,17 @@
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
+        Drop -webkit-scrollbar- from all the scrollbar pseudo-classes, since they are scoped to
+        the scrollbar pseudo-elements anyway.
+
+        Reviewed by Tim Hatcher
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+
 2008-10-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

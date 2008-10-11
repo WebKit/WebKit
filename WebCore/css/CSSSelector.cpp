@@ -108,7 +108,6 @@ void CSSSelector::extractPseudoType() const
     static AtomicString root("root");
     static AtomicString scrollbar("-webkit-scrollbar");
     static AtomicString scrollbarButton("-webkit-scrollbar-button");
-    static AtomicString scrollbarButtonDouble("-webkit-scrollbar-button-double");
     static AtomicString scrollbarCorner("-webkit-scrollbar-corner");
     static AtomicString scrollbarThumb("-webkit-scrollbar-thumb");
     static AtomicString scrollbarTrack("-webkit-scrollbar-track");
@@ -121,14 +120,17 @@ void CSSSelector::extractPseudoType() const
     static AtomicString sliderThumb("-webkit-slider-thumb");
     static AtomicString target("target");
     static AtomicString visited("visited");
-    static AtomicString windowInactive("-webkit-window-inactive");
-    static AtomicString decrement("-webkit-decrement");
-    static AtomicString increment("-webkit-increment");
-    static AtomicString start("-webkit-start");
-    static AtomicString end("-webkit-end");
-    static AtomicString horizontal("-webkit-horizontal");
-    static AtomicString vertical("-webkit-vertical");
-    
+    static AtomicString windowInactive("window-inactive");
+    static AtomicString decrement("decrement");
+    static AtomicString increment("increment");
+    static AtomicString start("start");
+    static AtomicString end("end");
+    static AtomicString horizontal("horizontal");
+    static AtomicString vertical("vertical");
+    static AtomicString doubleButton("double-button");
+    static AtomicString singleButton("single-button");
+    static AtomicString noButton("no-button");
+
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
 
@@ -249,8 +251,12 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoHorizontal;
     else if (m_value == vertical)
         m_pseudoType = PseudoVertical;
-    else if (m_value == scrollbarButtonDouble)
-        m_pseudoType = PseudoScrollbarButtonDouble;
+    else if (m_value == doubleButton)
+        m_pseudoType = PseudoDoubleButton;
+    else if (m_value == singleButton)
+        m_pseudoType = PseudoSingleButton;
+    else if (m_value == noButton)
+        m_pseudoType = PseudoNoButton;
     else if (m_value == scrollbarCorner) {
         element = true;
         m_pseudoType = PseudoScrollbarCorner;

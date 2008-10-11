@@ -2422,17 +2422,31 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
         case CSSSelector::PseudoIncrement:
             return part == ForwardButtonStartPart || part == ForwardButtonEndPart || part == ForwardTrackPart;
         case CSSSelector::PseudoStart:
-            return part == BackButtonStartPart || part == ForwardButtonStartPart;
+            return part == BackButtonStartPart || part == ForwardButtonStartPart || part == BackTrackPart;
         case CSSSelector::PseudoEnd:
-            return part == BackButtonEndPart || part == ForwardButtonEndPart;
-        case CSSSelector::PseudoScrollbarButtonDouble: {
+            return part == BackButtonEndPart || part == ForwardButtonEndPart || part == ForwardTrackPart;
+        case CSSSelector::PseudoDoubleButton: {
             ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
-            if (part == BackButtonStartPart || part == ForwardButtonStartPart)
+            if (part == BackButtonStartPart || part == ForwardButtonStartPart || part == BackTrackPart)
                 return buttonsPlacement == ScrollbarButtonsDoubleStart || buttonsPlacement == ScrollbarButtonsDoubleBoth;
-            if (part == BackButtonEndPart || part == ForwardButtonEndPart)
+            if (part == BackButtonEndPart || part == ForwardButtonEndPart || part == ForwardTrackPart)
                 return buttonsPlacement == ScrollbarButtonsDoubleEnd || buttonsPlacement == ScrollbarButtonsDoubleBoth;
             return false;
         } 
+        case CSSSelector::PseudoSingleButton: {
+            ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
+            if (part == BackButtonStartPart || part == ForwardButtonEndPart || part == BackTrackPart || part == ForwardTrackPart)
+                return buttonsPlacement == ScrollbarButtonsSingle;
+            return false;
+        }
+        case CSSSelector::PseudoNoButton: {
+            ScrollbarButtonsPlacement buttonsPlacement = scrollbar->theme()->buttonsPlacement();
+            if (part == BackTrackPart)
+                return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleEnd;
+            if (part == ForwardTrackPart)
+                return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleStart;
+            return false;
+        }
         case CSSSelector::PseudoWindowInactive:
             return !scrollbar->isWindowActive();
         default:
