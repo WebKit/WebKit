@@ -1,3 +1,14 @@
+2008-10-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - Update tests after fixing ceil(-0.1) behavior on darwin.
+
+        * fast/js/math-expected.txt:
+        * fast/js/resources/math.js: Remove code to detect sign of 0 now that the harness can handle it.
+        * fast/xpath/4XPath/Core/test_core_functions-expected.txt:
+        * fast/xpath/4XPath/Core/test_core_functions.html: Update test expect correct result of -0.
+
 2008-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -94,7 +94,7 @@
     shouldBe('DOM.evaluate("ceiling(number(\'NaN\'))", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', 'NaN');
     shouldBe('DOM.evaluate("ceiling(1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', 'Infinity');
     shouldBe('DOM.evaluate("ceiling(0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '1');
-    shouldBe('DOM.evaluate("ceiling(-0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '0'); // actually should be negative zero
+    shouldBe('DOM.evaluate("ceiling(-0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-0');
     shouldBe('DOM.evaluate("round(3.14)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '3');
     shouldBe('DOM.evaluate("round(-4.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', '-4');
     shouldBe('DOM.evaluate("round(number(\'NaN\'))", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue', 'NaN');

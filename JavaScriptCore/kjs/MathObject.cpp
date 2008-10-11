@@ -114,8 +114,7 @@ bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
 
 JSValue* mathProtoFuncAbs(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    double arg = args.at(exec, 0)->toNumber(exec);
-    return signbit(arg) ? jsNumber(exec, -arg) : jsNumber(exec, arg);
+    return jsNumber(exec, fabs(args.at(exec, 0)->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncACos(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
@@ -140,10 +139,7 @@ JSValue* mathProtoFuncATan2(ExecState* exec, JSObject*, JSValue*, const ArgList&
 
 JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    double arg = args.at(exec, 0)->toNumber(exec);
-    if (signbit(arg) && arg > -1.0)
-        return jsNumber(exec, -0.0);
-    return jsNumber(exec, ceil(arg));
+    return jsNumber(exec, ceil(args.at(exec, 0)->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncCos(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
@@ -158,10 +154,7 @@ JSValue* mathProtoFuncExp(ExecState* exec, JSObject*, JSValue*, const ArgList& a
 
 JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    double arg = args.at(exec, 0)->toNumber(exec);
-    if (signbit(arg) && arg == 0.0)
-        return jsNumber(exec, -0.0);
-    return jsNumber(exec, floor(arg));
+    return jsNumber(exec, floor(args.at(exec, 0)->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncLog(ExecState* exec, JSObject*, JSValue*, const ArgList& args)

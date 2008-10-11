@@ -58,7 +58,7 @@ PASS DOM.evaluate("ceiling(3.14)", CHILD1, null, XPathResult.ANY_TYPE, null).num
 PASS DOM.evaluate("ceiling(number('NaN'))", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN
 PASS DOM.evaluate("ceiling(1 div 0)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is Infinity
 PASS DOM.evaluate("ceiling(0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 1
-PASS DOM.evaluate("ceiling(-0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 0
+PASS DOM.evaluate("ceiling(-0.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -0
 PASS DOM.evaluate("round(3.14)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is 3
 PASS DOM.evaluate("round(-4.5)", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is -4
 PASS DOM.evaluate("round(number('NaN'))", CHILD1, null, XPathResult.ANY_TYPE, null).numberValue is NaN

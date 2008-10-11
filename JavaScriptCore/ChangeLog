@@ -1,5 +1,22 @@
 2008-10-10  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        - Add a workaround for a bug in ceil in Darwin libc.
+        - Remove old workarounds for JS math functions that are not needed
+          anymore.
+
+        The math functions are heavily tested by fast/js/math.html.
+
+        * kjs/MathObject.cpp:
+        (JSC::mathProtoFuncAbs): Remove workaround.
+        (JSC::mathProtoFuncCeil): Ditto.
+        (JSC::mathProtoFuncFloor): Ditto.
+        * wtf/MathExtras.h:
+        (wtf_ceil): Add ceil workaround for darwin.
+
+2008-10-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler
 
         Add Assertions to JSObject constructor.
