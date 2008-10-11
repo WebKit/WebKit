@@ -319,13 +319,4 @@ void JSLazyEventListener::parseCode() const
     }
 }
 
-JSValue* getNodeEventListener(EventTargetNode* n, const AtomicString& eventType)
-{
-    if (JSAbstractEventListener* listener = static_cast<JSAbstractEventListener*>(n->eventListenerForType(eventType))) {
-        if (JSValue* obj = listener->listenerObj())
-            return obj;
-    }
-    return jsNull();
-}
-
 } // namespace WebCore
