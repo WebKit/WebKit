@@ -1,5 +1,16 @@
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
+        Fix a math error when splitting a vertical track.  Clean up more of ScrollbarThemeComposite
+        now that the track pieces meet under the thumb.
+
+        Reviewed by Tim Hatcher
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        (WebCore::ScrollbarThemeComposite::splitTrack):
+
+2008-10-10  David Hyatt  <hyatt@apple.com>
+
         Make the track pieces of a scrollbar extend under the thumb (each gets half the thumb).
 
         Reviewed by Tim Hatcher
