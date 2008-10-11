@@ -6,16 +6,17 @@ div::-webkit-scrollbar {
 }
 
 div::-webkit-scrollbar-button {
+  display:block;
   width: 17px;
   height: 17px;
 }
 
-div::-webkit-scrollbar-button:-webkit-vertical {
+div::-webkit-scrollbar-button:vertical {
   background-color:lightblue;
   border:2px solid black;
 }
 
-div::-webkit-scrollbar-button:-webkit-horizontal {
+div::-webkit-scrollbar-button:horizontal {
   background-color:#208020;
   border:2px solid black;
 }
@@ -27,7 +28,7 @@ div::-webkit-scrollbar-thumb {
   border:2px solid #cccccc;
 }
 
-div::-webkit-scrollbar-thumb:-webkit-horizontal {
+div::-webkit-scrollbar-thumb:horizontal {
   background-color: #004000;
 }
 
@@ -39,7 +40,7 @@ div::-webkit-scrollbar-track {
   background-color: #2060a0;
 }
 
-div::-webkit-scrollbar-track:-webkit-horizontal {
+div::-webkit-scrollbar-track:horizontal {
   background-color: #40a040;
 }
 </style>
