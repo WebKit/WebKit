@@ -1,3 +1,16 @@
+2008-10-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - separate Cache::remove() into a private method and a public interface,
+          then make Cache::pruneDeadResources() use the private method.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneDeadResources):
+        (WebCore::Cache::evict):
+        * loader/Cache.h:
+        (WebCore::Cache::remove):
+
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
         Fix a math error when splitting a vertical track.  Clean up more of ScrollbarThemeComposite

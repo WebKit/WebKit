@@ -126,7 +126,7 @@ public:
     }
 
     // Remove an existing cache entry from both the resource map and from the LRU list.
-    void remove(CachedResource*);
+    void remove(CachedResource* resource) { evict(resource); }
 
     void addDocLoader(DocLoader*);
     void removeDocLoader(DocLoader*);
@@ -165,6 +165,8 @@ private:
     
     void pruneDeadResources(); // Flush decoded and encoded data from resources not referenced by Web pages.
     void pruneLiveResources(); // Flush decoded data from resources still referenced by Web pages.
+
+    void evict(CachedResource*);
 
     // Member variables.
     HashSet<DocLoader*> m_docLoaders;
