@@ -1,0 +1,3 @@
+Box should start moving right, then move down
+
+PASS
