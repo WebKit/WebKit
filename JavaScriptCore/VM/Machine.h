@@ -61,14 +61,23 @@ namespace JSC {
 #define ARGS (&args)
 #endif
 
-#if COMPILER(MSVC)
 #if USE(FAST_CALL_CTI_ARGUMENT)
+
+#if COMPILER(MSVC)
 #define SFX_CALL __fastcall
+#elif COMPILER(GCC)
+#define SFX_CALL  __attribute__ ((fastcall))
 #else
-#define SFX_CALL __cdecl
+#error Need to support fastcall calling convention in this compiler
 #endif
+
+#else
+
+#if COMPILER(MSVC)
+#define SFX_CALL __cdecl
 #else
 #define SFX_CALL
+#endif
 
 #endif
 

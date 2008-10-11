@@ -1,3 +1,16 @@
+2008-10-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Use fastcall calling convention on GCC > 4.0
+
+        Results in a 2-3% improvement in GCC 4.2 performance, so
+        that it is no longer a regression vs. GCC 4.0
+
+        * VM/CTI.cpp:
+        * VM/Machine.h:
+        * wtf/Platform.h:
+
 2008-10-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
