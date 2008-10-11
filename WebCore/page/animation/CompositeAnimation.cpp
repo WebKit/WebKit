@@ -145,8 +145,12 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, const 
                // you have both an explicit transition-property and 'all' in the same
                // list. In this case, the latter one overrides the earlier one, so we
                // behave as though this is a running animation being replaced.
-                if (!isActiveTransition || !implAnim->isTargetPropertyEqual(prop, targetStyle))
+                if (!isActiveTransition)
                     m_transitions.remove(prop);
+                else if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
+                    m_transitions.remove(prop);
+                    equal = false;
+                }
             } else {
                 // We need to start a transition if it is active and the properties don't match
                 equal = !isActiveTransition || AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);

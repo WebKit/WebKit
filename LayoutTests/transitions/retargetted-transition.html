@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Retargetted transition</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-duration: 2s;
+      -webkit-transform: translate(0, 0);
+    }
+    
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+
+    function test()
+    {
+      var t = window.getComputedStyle(document.getElementById('box')).webkitTransform;
+      // grab the last value from the matrix()
+      var lastValueRE = /(\d+)\)$/;
+      var yTranslate = parseInt(lastValueRE.exec(t));
+
+      var result = (yTranslate < 200) ? 'PASS' : 'FAIL: transition should still be running, so y < 200';
+      document.getElementById('result').innerHTML = result;
+
+      if (window.layoutTestController)
+          layoutTestController.notifyDone();
+    }
+    
+    function startTest()
+    {
+      var box = document.getElementById('box');
+      box.style.webkitTransform = 'translate(100px, 0)';
+      
+      window.setTimeout(function() {
+        box.style.webkitTransform = 'translate(0, 200px)';
+        window.setTimeout(function() {
+          test();
+        }, 200);
+      }, 300);
+    }
+    window.addEventListener('load', startTest, false)
+  </script>
+</head>
+<body>
+<p>Box should start moving right, then move down</p>
+<div id="box">
+</div>
+
+<div id="result">
+</div>
+</body>
+</html>
