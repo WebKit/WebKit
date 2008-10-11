@@ -83,15 +83,13 @@ void RenderScrollbar::setHoveredPart(ScrollbarPart part)
         return;
 
     ScrollbarPart oldPart = m_hoveredPart;
-    Scrollbar::setHoveredPart(part);
+    m_hoveredPart = part;
 
     updateScrollbarPart(oldPart);
     updateScrollbarPart(m_hoveredPart);
 
-    // FIXME: Shouldn't always update the hover state of the scrollbar and track bg.
     updateScrollbarPart(ScrollbarBGPart);
     updateScrollbarPart(TrackBGPart);
-    invalidate();
 }
 
 void RenderScrollbar::setPressedPart(ScrollbarPart part)
@@ -102,10 +100,8 @@ void RenderScrollbar::setPressedPart(ScrollbarPart part)
     updateScrollbarPart(oldPart);
     updateScrollbarPart(part);
     
-    // FIXME: Shouldn't always update the active state of the scrollbar and track bg.
     updateScrollbarPart(ScrollbarBGPart);
     updateScrollbarPart(TrackBGPart);
-    invalidate();
 }
 
 static ScrollbarPart s_styleResolvePart;
