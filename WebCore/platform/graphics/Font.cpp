@@ -58,7 +58,7 @@ const uint8_t Font::gRoundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-Font::CodePath Font::codePath = Auto;
+Font::CodePath Font::s_codePath = Auto;
 
 struct WidthIterator {
     WidthIterator(const Font* font, const TextRun& run);
@@ -559,12 +559,17 @@ bool Font::isFixedPitch() const
 
 void Font::setCodePath(CodePath p)
 {
-    codePath = p;
+    s_codePath = p;
+}
+
+Font::CodePath Font::codePath()
+{
+    return s_codePath;
 }
 
 bool Font::canUseGlyphCache(const TextRun& run) const
 {
-    switch (codePath) {
+    switch (s_codePath) {
         case Auto:
             break;
         case Simple:

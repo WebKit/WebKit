@@ -138,4 +138,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setDefersCallbacks([in] BOOL defersCallbacks);
     HRESULT defersCallbacks([out, retval] BOOL* defersCallbacks);
+
+    HRESULT setAlwaysUsesComplexTextCodePath([in] BOOL complex);
+    HRESULT alwaysUsesComplexTextCodePath([out, retval] BOOL* complex);
 }

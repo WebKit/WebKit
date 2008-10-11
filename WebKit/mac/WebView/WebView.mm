@@ -885,7 +885,12 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 + (void)_setAlwaysUseATSU:(BOOL)f
 {
-    WebCoreSetAlwaysUseATSU(f);
+    [self _setAlwaysUsesComplexTextCodePath:f];
+}
+
++ (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f
+{
+    WebCoreSetAlwaysUsesComplexTextCodePath(f);
 }
 
 + (BOOL)canShowFile:(NSString *)path

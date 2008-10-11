@@ -31,7 +31,8 @@ extern void WebCoreDrawTextAtPoint(const UniChar*, unsigned length, NSPoint, NSF
 extern float WebCoreTextFloatWidth(const UniChar*, unsigned length, NSFont*);
 extern void WebCoreSetShouldUseFontSmoothing(bool);
 extern bool WebCoreShouldUseFontSmoothing();
-extern void WebCoreSetAlwaysUseATSU(bool);
+extern void WebCoreSetAlwaysUsesComplexTextCodePath(bool);
+extern bool WebCoreAlwaysUsesComplexTextCodePath();
 extern NSFont* WebCoreFindFont(NSString* familyName, NSFontTraitMask, int weight, int size);
 
 #ifdef __cplusplus

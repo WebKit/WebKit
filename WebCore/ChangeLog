@@ -1,3 +1,25 @@
+2008-10-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - rename WebCoreSetAlwaysUseATSU to WebCoreSetAlwaysUsesComplexTextCodePath
+          and add a corresponding getter; add the same functions on Windows
+
+        * WebCore.base.exp:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::setCodePath):
+        (WebCore::codePath):
+        (WebCore::Font::canUseGlyphCache):
+        * platform/graphics/Font.h:
+        * platform/mac/WebCoreTextRenderer.h:
+        * platform/mac/WebCoreTextRenderer.mm:
+        (WebCoreSetAlwaysUsesComplexTextCodePath):
+        (WebCoreAlwaysUsesComplexTextCodePath):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::WebCoreSetAlwaysUsesComplexTextCodePath):
+        (WebCore::WebCoreAlwaysUsesComplexTextCodePath):
+        * platform/win/WebCoreTextRenderer.h:
+
 2008-10-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

@@ -160,14 +160,15 @@ private:
 #endif
     friend struct WidthIterator;
 
-    // Useful for debugging the different font rendering code paths.
 public:
 #if PLATFORM(QT)
     FontSelector* fontSelector() const { return 0; }
 #else
+    // Useful for debugging the different font rendering code paths.
     enum CodePath { Auto, Simple, Complex };
     static void setCodePath(CodePath);
-    static CodePath codePath;
+    static CodePath codePath();
+    static CodePath s_codePath;
 
     static const uint8_t gRoundingHackCharacterTable[256];
     static bool isRoundingHackCharacter(UChar32 c)

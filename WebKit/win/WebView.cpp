@@ -37,6 +37,7 @@
 #include "WebBackForwardList.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
+#include "WebCoreTextRenderer.h"
 #include "WebDragClient.h"
 #include "WebIconDatabase.h"
 #include "WebInspector.h"
@@ -4922,6 +4923,22 @@ HRESULT STDMETHODCALLTYPE WebView::defersCallbacks(BOOL* defersCallbacks)
         return E_FAIL;
 
     *defersCallbacks = m_page->defersLoading();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::setAlwaysUsesComplexTextCodePath(BOOL complex)
+{
+    WebCoreSetAlwaysUsesComplexTextCodePath(complex);
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::alwaysUsesComplexTextCodePath(BOOL* complex)
+{
+    if (!complex)
+        return E_POINTER;
+
+    *complex = WebCoreAlwaysUsesComplexTextCodePath();
     return S_OK;
 }
 

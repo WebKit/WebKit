@@ -1,3 +1,16 @@
+2008-10-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - rename _setAlwaysUseATSU to _setAlwaysUsesComplexTextCodePath and
+          update it for the renamed WebCoreTextRenderer method; keep the old
+          method around for clients that use it
+
+        * WebView/WebView.mm:
+        (+[WebView _setAlwaysUseATSU:]):
+        (+[WebView _setAlwaysUsesComplexTextCodePath:]):
+        * WebView/WebViewPrivate.h:
+
 2008-10-09  Timothy Hatcher  <timothy@apple.com>
 
         Don't convert JavaScriptCore header include paths to WebKit paths. This was needed
