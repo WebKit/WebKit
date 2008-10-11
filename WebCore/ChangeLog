@@ -2,6 +2,16 @@
 
         Reviewed by Cameron Zwarich.
 
+        Stop leaking the event parameter names.  The protected strings were showing up
+        in the caches window after one use.  No measurable performance loss.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::eventParameterName):
+
+2008-10-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
         Remove unused function getNodeEventListener.
 
         * bindings/js/JSEventListener.cpp:
