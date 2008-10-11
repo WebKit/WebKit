@@ -1,3 +1,18 @@
+2008-10-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        - update Mac DumpRenderTree to use the new WebView SPI for forcing the
+          complex text code path
+        - add --complex-text support to Windows DumpRenderTree
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (createWebViewAndOffscreenWindow):
+        (main):
+        * Scripts/run-webkit-tests:
+
 2008-10-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

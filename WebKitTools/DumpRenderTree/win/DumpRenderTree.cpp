@@ -74,6 +74,7 @@ static bool dumpAllPixels;
 static bool printSeparators;
 static bool leakChecking = false;
 static bool threaded = false;
+static bool forceComplexText = false;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 static const char* currentTest;
@@ -953,6 +954,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
         return 0;
 
     viewPrivate->setShouldApplyMacFontAscentHack(TRUE);
+    viewPrivate->setAlwaysUsesComplexTextCodePath(forceComplexText);
 
     BSTR pluginPath = SysAllocStringLen(0, exePath().length() + _tcslen(TestPluginDir));
     _tcscpy(pluginPath, exePath().c_str());
@@ -1025,6 +1027,11 @@ int main(int argc, char* argv[])
 
         if (!stricmp(argv[i], "--pixel-tests")) {
             dumpPixels = true;
+            continue;
+        }
+
+        if (!stricmp(argv[i], "--complex-text")) {
+            forceComplexText = true;
             continue;
         }
 

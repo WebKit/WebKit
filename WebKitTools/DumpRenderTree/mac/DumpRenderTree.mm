@@ -475,7 +475,7 @@ void dumpRenderTree(int argc, const char *argv[])
         installSignalHandlers();
 
     if (forceComplexText)
-        [WebView _setAlwaysUseATSU:YES];
+        [WebView _setAlwaysUsesComplexTextCodePath:YES];
 
     WebView *webView = createWebViewAndOffscreenWindow();
     mainFrame = [webView mainFrame];
