@@ -267,7 +267,6 @@ IntRect RenderScrollbar::buttonRect(ScrollbarPart partType)
 
 IntRect RenderScrollbar::trackRect(int startLength, int endLength)
 {
-    
     RenderScrollbarPart* part = m_parts.get(TrackBGPart);
     if (part)
         part->layout();
@@ -288,6 +287,25 @@ IntRect RenderScrollbar::trackRect(int startLength, int endLength)
     int totalLength = startLength + endLength;
 
     return IntRect(x(), y() + startLength, width(), height() - totalLength);
+}
+
+IntRect RenderScrollbar::trackPieceRectWithMargins(ScrollbarPart partType, const IntRect& oldRect)
+{
+    RenderScrollbarPart* partRenderer = m_parts.get(partType);
+    if (!partRenderer)
+        return oldRect;
+    
+    partRenderer->layout();
+    
+    IntRect rect = oldRect;
+    if (orientation() == HorizontalScrollbar) {
+        rect.setX(rect.x() + partRenderer->marginLeft());
+        rect.setWidth(rect.width() - (partRenderer->marginLeft() + partRenderer->marginRight()));
+    } else {
+        rect.setY(rect.y() + partRenderer->marginTop());
+        rect.setHeight(rect.height() - (partRenderer->marginTop() + partRenderer->marginBottom()));
+    }
+    return rect;
 }
 
 int RenderScrollbar::minimumThumbLength()

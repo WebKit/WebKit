@@ -80,6 +80,8 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
     IntRect thumbRect;
     IntRect endTrackRect;
     IntRect trackPaintRect = trackRect(scrollbar, true);
+    if (damageRect.intersects(trackPaintRect))
+        scrollMask |= TrackBGPart;
     bool thumbPresent = hasThumb(scrollbar);
     if (thumbPresent) {
         IntRect track = trackRect(scrollbar);
@@ -137,10 +139,10 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
     if (scrollMask & ForwardButtonEndPart)
         paintButton(graphicsContext, scrollbar, forwardButtonEndPaintRect, ForwardButtonEndPart);
     
-    // Paint the track background.
-    if ((scrollMask & ForwardTrackPart) || (scrollMask & BackTrackPart)) {
+    if (scrollMask & TrackBGPart)
         paintTrackBackground(graphicsContext, scrollbar, trackPaintRect);
     
+    if ((scrollMask & ForwardTrackPart) || (scrollMask & BackTrackPart)) {
         // Paint the track pieces above and below the thumb.
         if (scrollMask & BackTrackPart)
             paintTrackPiece(graphicsContext, scrollbar, startTrackRect, BackTrackPart);
@@ -163,6 +165,12 @@ ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar* scrollbar, const Platf
 
     IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.pos());
     mousePosition.move(scrollbar->x(), scrollbar->y());
+    
+    if (!scrollbar->frameRect().contains(mousePosition))
+        return NoPart;
+
+    result = ScrollbarBGPart;
+
     IntRect track = trackRect(scrollbar);
     if (track.contains(mousePosition)) {
         IntRect beforeThumbRect;
@@ -173,8 +181,10 @@ ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar* scrollbar, const Platf
             result = ThumbPart;
         else if (beforeThumbRect.contains(mousePosition))
             result = BackTrackPart;
-        else 
+        else if (afterThumbRect.contains(mousePosition))
             result = ForwardTrackPart;
+        else
+            result = TrackBGPart;
     } else if (backButtonRect(scrollbar, BackButtonStartPart).contains(mousePosition))
         result = BackButtonStartPart;
     else if (backButtonRect(scrollbar, BackButtonEndPart).contains(mousePosition))
@@ -224,16 +234,30 @@ void ScrollbarThemeComposite::splitTrack(Scrollbar* scrollbar, const IntRect& tr
 {
     // This function won't even get called unless we're big enough to have some combination of these three rects where at least
     // one of them is non-empty.
+    trackPieceRects(scrollbar, trackRect, beforeThumbRect, afterThumbRect);
+    
     int thickness = scrollbar->orientation() == HorizontalScrollbar ? scrollbar->height() : scrollbar->width();
     int thumbPos = thumbPosition(scrollbar);
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        thumbRect = IntRect(trackRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness);
-        beforeThumbRect = IntRect(trackRect.x(), trackRect.y(), thumbPos + thumbRect.width() / 2, trackRect.height());
-        afterThumbRect = IntRect(trackRect.x() + beforeThumbRect.width(), trackRect.y(), trackRect.right() - beforeThumbRect.right(), trackRect.height());
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        thumbRect = IntRect(beforeThumbRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness);
+    else
+        thumbRect = IntRect(trackRect.x() + (trackRect.width() - thickness) / 2, beforeThumbRect.y() + thumbPos, thickness, thumbLength(scrollbar));
+}
+
+void ScrollbarThemeComposite::trackPieceRects(Scrollbar* scrollbar, const IntRect& trackRect, IntRect& beforeThumbRect, IntRect& afterThumbRect)
+{
+    // This function won't even get called unless we're big enough to have some combination of these three rects where at least
+    // one of them is non-empty.
+     if (scrollbar->orientation() == HorizontalScrollbar) {
+        IntRect preThumbRect = IntRect(trackRect.x(), trackRect.y(), trackRect.width() / 2, trackRect.height());
+        beforeThumbRect = adjustTrackPieceRect(scrollbar, BackTrackPart, preThumbRect);
+        IntRect postThumbRect = IntRect(trackRect.x() + preThumbRect.width(), trackRect.y(), trackRect.right() - preThumbRect.right(), trackRect.height());
+        afterThumbRect = adjustTrackPieceRect(scrollbar, ForwardTrackPart, postThumbRect);
     } else {
-        thumbRect = IntRect(trackRect.x() + (trackRect.width() - thickness) / 2, trackRect.y() + thumbPos, thickness, thumbLength(scrollbar));
-        beforeThumbRect = IntRect(trackRect.x(), trackRect.y(), trackRect.width(), thumbPos + thumbRect.height() / 2);
-        afterThumbRect = IntRect(trackRect.x(), trackRect.y() + beforeThumbRect.height(), trackRect.width(), trackRect.bottom() - beforeThumbRect.bottom());
+        IntRect preThumbRect = IntRect(trackRect.x(), trackRect.y(), trackRect.width(), trackRect.height() / 2);
+        beforeThumbRect = adjustTrackPieceRect(scrollbar, BackTrackPart, preThumbRect);
+        IntRect postThumbRect = IntRect(trackRect.x(), trackRect.y() + preThumbRect.height(), trackRect.width(), trackRect.bottom() - preThumbRect.bottom());
+        afterThumbRect = adjustTrackPieceRect(scrollbar, ForwardTrackPart, postThumbRect);
     }
 }
 
@@ -265,12 +289,16 @@ int ScrollbarThemeComposite::minimumThumbLength(Scrollbar* scrollbar)
 
 int ScrollbarThemeComposite::trackPosition(Scrollbar* scrollbar)
 {
-    return (scrollbar->orientation() == HorizontalScrollbar) ? trackRect(scrollbar).x() - scrollbar->x() : trackRect(scrollbar).y() - scrollbar->y();
+    IntRect beforeThumbRect, afterThumbRect;
+    trackPieceRects(scrollbar, trackRect(scrollbar), beforeThumbRect, afterThumbRect);
+    return (scrollbar->orientation() == HorizontalScrollbar) ? beforeThumbRect.x() - scrollbar->x() : beforeThumbRect.y() - scrollbar->y();
 }
 
 int ScrollbarThemeComposite::trackLength(Scrollbar* scrollbar)
 {
-    return (scrollbar->orientation() == HorizontalScrollbar) ? trackRect(scrollbar).width() : trackRect(scrollbar).height();
+    IntRect beforeThumbRect, afterThumbRect;
+    trackPieceRects(scrollbar, trackRect(scrollbar), beforeThumbRect, afterThumbRect);
+    return (scrollbar->orientation() == HorizontalScrollbar) ? afterThumbRect.right() - beforeThumbRect.x() : afterThumbRect.bottom() - beforeThumbRect.y();
 }
 
 void ScrollbarThemeComposite::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)

@@ -1,3 +1,29 @@
+2008-10-11  David Hyatt  <hyatt@apple.com>
+
+        Add support for both positive and negative margins to tracks and track pieces.
+
+        Reviewed by Tim Hatcher
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        (WebCore::ScrollbarThemeComposite::hitTest):
+        (WebCore::ScrollbarThemeComposite::splitTrack):
+        (WebCore::ScrollbarThemeComposite::trackPieceRects):
+        (WebCore::ScrollbarThemeComposite::trackPosition):
+        (WebCore::ScrollbarThemeComposite::trackLength):
+        * platform/ScrollbarThemeComposite.h:
+        (WebCore::ScrollbarThemeComposite::adjustTrackPieceRect):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::trackRect):
+        (WebCore::RenderScrollbar::trackPieceRectWithMargins):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::adjustTrackPieceRect):
+        * rendering/RenderScrollbarTheme.h:
+
 2008-10-10  David Hyatt  <hyatt@apple.com>
 
         Drop -webkit-scrollbar- from all the scrollbar pseudo-classes, since they are scoped to

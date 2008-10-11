@@ -54,7 +54,7 @@ protected:
     virtual IntRect trackRect(Scrollbar*, bool painting = false) = 0;
 
     virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
-
+    
     virtual int minimumThumbLength(Scrollbar*);
 
     virtual void paintScrollbarBackground(GraphicsContext*, Scrollbar*) {}
@@ -62,6 +62,11 @@ protected:
     virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart) {}
     virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart) {}
     virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&) {}
+    
+    virtual IntRect adjustTrackPieceRect(Scrollbar*, ScrollbarPart, const IntRect& rect) { return rect; }
+    
+private:
+    void trackPieceRects(Scrollbar* scrollbar, const IntRect& trackRect, IntRect& beforeThumbRect, IntRect& afterThumbRect);
 };
 
 }
