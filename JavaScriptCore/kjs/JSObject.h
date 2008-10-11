@@ -202,6 +202,8 @@ inline JSObject::JSObject(PassRefPtr<StructureID> structureID)
     , m_propertyStorage(m_inlineStorage)
 {
     ASSERT(m_structureID);
+    ASSERT(m_structureID->propertyStorageCapacity() == inlineStorageCapacity);
+    ASSERT(m_structureID->propertyMap().isEmpty());
     ASSERT(prototype()->isNull() || Heap::heap(this) == Heap::heap(prototype()));
 }
 
