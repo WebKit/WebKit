@@ -1,3 +1,29 @@
+2008-10-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 21525: 55 StructureID leaks on Wikitravel's main page
+        <https://bugs.webkit.org/show_bug.cgi?id=21525>
+
+        Bug 21533: Simple JavaScript code leaks StructureIDs
+        <https://bugs.webkit.org/show_bug.cgi?id=21533>
+
+        StructureID::getEnumerablePropertyNames() ends up calling back to itself
+        via JSObject::getPropertyNames(), which causes the PropertyNameArray to
+        be cached twice. This leads to a memory leak in almost every use of
+        JSObject::getPropertyNames() on an object. The fix here is based on a
+        suggestion of Sam Weinig.
+
+        This patch also fixes every StructureID leaks that occurs while running
+        the Mozilla MemBuster test.
+
+        * kjs/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::setCacheable):
+        (JSC::PropertyNameArray::cacheable):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::getEnumerablePropertyNames):
+
 2008-10-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

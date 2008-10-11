@@ -78,13 +78,16 @@ StructureID::~StructureID()
 
 void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& propertyNames, JSObject* baseObject)
 {
-    bool shouldCache = !(propertyNames.size() || m_isDictionary);
+    bool shouldCache = propertyNames.cacheable() && !(propertyNames.size() || m_isDictionary);
 
-    if (shouldCache && m_cachedPropertyNameArrayData) {
-        if (structureIDChainsAreEqual(m_cachedPropertyNameArrayData->cachedPrototypeChain(), cachedPrototypeChain())) {
-            propertyNames.setData(m_cachedPropertyNameArrayData);
-            return;
+    if (shouldCache) {
+        if (m_cachedPropertyNameArrayData) {
+            if (structureIDChainsAreEqual(m_cachedPropertyNameArrayData->cachedPrototypeChain(), cachedPrototypeChain())) {
+                propertyNames.setData(m_cachedPropertyNameArrayData);
+                return;
+            }
         }
+        propertyNames.setCacheable(false);
     }
 
     m_propertyMap.getEnumerablePropertyNames(propertyNames);
