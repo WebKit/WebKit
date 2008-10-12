@@ -1,3 +1,15 @@
+2008-10-11  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by David Hyatt.
+
+        Implement release/retain for Widget GTK+.
+
+        * platform/Widget.cpp:
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::releasePlatformWidget):
+        (WebCore::Widget::retainPlatformWidget):
+
 2008-10-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

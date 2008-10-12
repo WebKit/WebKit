@@ -56,6 +56,7 @@ Widget::Widget(PlatformWidget widget)
 Widget::~Widget()
 {
     ASSERT(!parent());
+    releasePlatformWidget();
     delete m_data;
 }
 
@@ -155,6 +156,25 @@ IntRect Widget::frameRect() const
 void Widget::setFrameRect(const IntRect& rect)
 {
     m_frame = rect;
+}
+
+void Widget::releasePlatformWidget()
+{
+    if (!platformWidget())
+         return;
+    g_object_unref(platformWidget());
+}
+
+void Widget::retainPlatformWidget()
+{
+    if (!platformWidget())
+         return;
+#if GLIB_CHECK_VERSION(2,10,0)
+    g_object_ref_sink(platformWidget());
+#else
+    g_object_ref(platformWidget());
+    gtk_object_sink(GTK_OBJECT(platformWidget()));
+#endif
 }
 
 }

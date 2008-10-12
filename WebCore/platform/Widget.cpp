@@ -106,7 +106,9 @@ IntRect Widget::convertFromContainingWindow(const IntRect& rect) const
     result.setLocation(convertFromContainingWindow(rect.location()));
     return result;
 }
+#endif
 
+#if !PLATFORM(MAC) && !PLATFORM(GTK)
 void Widget::releasePlatformWidget()
 {
 }
