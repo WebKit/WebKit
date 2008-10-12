@@ -3000,6 +3000,7 @@ webcore_dist += \
 # Clean rules for WebCore
 
 CLEANFILES += \
+	libWebCoreJS.la \
 	WebCore/bindings/js/JSDOMWindowBase.lut.h \
 	WebCore/bindings/js/JSRGBColor.lut.h
 
