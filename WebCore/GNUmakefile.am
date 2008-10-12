@@ -1478,6 +1478,7 @@ webcore_sources += \
 	WebCore/rendering/InlineTextBox.h \
 	WebCore/rendering/LayoutState.cpp \
 	WebCore/rendering/LayoutState.h \
+	WebCore/rendering/Length.cpp \
 	WebCore/rendering/Length.h \
 	WebCore/rendering/ListMarkerBox.cpp \
 	WebCore/rendering/ListMarkerBox.h \

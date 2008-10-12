@@ -519,16 +519,6 @@ bool String::isEmpty() const
     return !m_impl || !m_impl->length();
 }
 
-Length* String::toCoordsArray(int& len) const 
-{
-    return m_impl ? m_impl->toCoordsArray(len) : 0;
-}
-
-Length* String::toLengthArray(int& len) const 
-{
-    return m_impl ? m_impl->toLengthArray(len) : 0;
-}
-
 void String::split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const
 {
     result.clear();

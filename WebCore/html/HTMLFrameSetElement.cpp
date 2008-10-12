@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "Length.h"
+#include "Length.h"
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
 #include "Text.h"
@@ -88,13 +89,13 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
     if (attr->name() == rowsAttr) {
         if (!attr->isNull()) {
             if (m_rows) delete [] m_rows;
-            m_rows = attr->value().toLengthArray(m_totalRows);
+            m_rows = newLengthArray(attr->value().string(), m_totalRows);
             setChanged();
         }
     } else if (attr->name() == colsAttr) {
         if (!attr->isNull()) {
             delete [] m_cols;
-            m_cols = attr->value().toLengthArray(m_totalCols);
+            m_cols = newLengthArray(attr->value().string(), m_totalCols);
             setChanged();
         }
     } else if (attr->name() == frameborderAttr) {

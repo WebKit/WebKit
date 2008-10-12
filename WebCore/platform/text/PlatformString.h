@@ -164,8 +164,7 @@ public:
     uint64_t toUInt64(bool* ok = 0) const;
     double toDouble(bool* ok = 0) const;
     float toFloat(bool* ok = 0) const;
-    Length* toLengthArray(int& len) const;
-    Length* toCoordsArray(int& len) const;
+
     bool percentage(int& percentage) const;
 
     // Makes a deep copy. Helpful only if you need to use a String on another thread.

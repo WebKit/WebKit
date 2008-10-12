@@ -26,6 +26,7 @@
 #include "FloatRect.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "Length.h"
 #include "RenderObject.h"
 
 using namespace std;
@@ -61,7 +62,7 @@ void HTMLAreaElement::parseMappedAttribute(MappedAttribute *attr)
             m_shape = Rect;
     } else if (attr->name() == coordsAttr) {
         delete [] m_coords;
-        m_coords = attr->value().toCoordsArray(m_coordsLen);
+        m_coords = newCoordsArray(attr->value().string(), m_coordsLen);
     } else if (attr->name() == altAttr || attr->name() == accesskeyAttr) {
         // Do nothing.
     } else

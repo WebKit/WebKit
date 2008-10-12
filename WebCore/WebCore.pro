@@ -874,6 +874,7 @@ SOURCES += \
     rendering/InlineFlowBox.cpp \
     rendering/InlineTextBox.cpp \
     rendering/LayoutState.cpp \
+    rendering/Length.cpp \
     rendering/ListMarkerBox.cpp \
     rendering/RenderApplet.cpp \
     rendering/RenderArena.cpp \

@@ -29,7 +29,6 @@
 #include "CString.h"
 #include "CharacterNames.h"
 #include "FloatConversion.h"
-#include "Length.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
 #include "TextBreakIterator.h"
@@ -192,124 +191,6 @@ UChar32 StringImpl::characterStartingAt(unsigned i)
     if (i + 1 < m_length && U16_IS_LEAD(m_data[i]) && U16_IS_TRAIL(m_data[i + 1]))
         return U16_GET_SUPPLEMENTARY(m_data[i], m_data[i + 1]);
     return 0;
-}
-
-static Length parseLength(const UChar* data, unsigned length)
-{
-    if (length == 0)
-        return Length(1, Relative);
-
-    unsigned i = 0;
-    while (i < length && isSpaceOrNewline(data[i]))
-        ++i;
-    if (i < length && (data[i] == '+' || data[i] == '-'))
-        ++i;
-    while (i < length && isASCIIDigit(data[i]))
-        ++i;
-    unsigned intLength = i;
-    while (i < length && (isASCIIDigit(data[i]) || data[i] == '.'))
-        ++i;
-    unsigned doubleLength = i;
-
-    // IE quirk: Skip whitespace between the number and the % character (20 % => 20%).
-    while (i < length && isSpaceOrNewline(data[i]))
-        ++i;
-
-    bool ok;
-    UChar next = (i < length) ? data[i] : ' ';
-    if (next == '%') {
-        // IE quirk: accept decimal fractions for percentages.
-        double r = charactersToDouble(data, doubleLength, &ok);
-        if (ok)
-            return Length(r, Percent);
-        return Length(1, Relative);
-    }
-    int r = charactersToIntStrict(data, intLength, &ok);
-    if (next == '*') {
-        if (ok)
-            return Length(r, Relative);
-        return Length(1, Relative);
-    }
-    if (ok)
-        return Length(r, Fixed);
-    return Length(0, Relative);
-}
-
-Length StringImpl::toLength()
-{
-    return parseLength(m_data, m_length);
-}
-
-static int countCharacter(StringImpl* string, UChar character)
-{
-    int count = 0;
-    int length = string->length();
-    for (int i = 0; i < length; ++i)
-            count += (*string)[i] == character;
-    return count;
-}
-
-Length* StringImpl::toCoordsArray(int& len)
-{
-    StringBuffer spacified(m_length);
-    for (unsigned i = 0; i < m_length; i++) {
-        UChar cc = m_data[i];
-        if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
-            spacified[i] = ' ';
-        else
-            spacified[i] = cc;
-    }
-    RefPtr<StringImpl> str = adopt(spacified);
-
-    str = str->simplifyWhiteSpace();
-
-    len = countCharacter(str.get(), ' ') + 1;
-    Length* r = new Length[len];
-
-    int i = 0;
-    int pos = 0;
-    int pos2;
-
-    while ((pos2 = str->find(' ', pos)) != -1) {
-        r[i++] = parseLength(str->characters() + pos, pos2 - pos);
-        pos = pos2+1;
-    }
-    r[i] = parseLength(str->characters() + pos, str->length() - pos);
-
-    ASSERT(i == len - 1);
-
-    return r;
-}
-
-Length* StringImpl::toLengthArray(int& len)
-{
-    RefPtr<StringImpl> str = simplifyWhiteSpace();
-    if (!str->length()) {
-        len = 1;
-        return 0;
-    }
-
-    len = countCharacter(str.get(), ',') + 1;
-    Length* r = new Length[len];
-
-    int i = 0;
-    int pos = 0;
-    int pos2;
-
-    while ((pos2 = str->find(',', pos)) != -1) {
-        r[i++] = parseLength(str->characters() + pos, pos2 - pos);
-        pos = pos2+1;
-    }
-
-    ASSERT(i == len - 1);
-
-    /* IE Quirk: If the last comma is the last char skip it and reduce len by one */
-    if (str->length()-pos > 0)
-        r[i] = parseLength(str->characters() + pos, str->length() - pos);
-    else
-        len--;
-
-    return r;
 }
 
 bool StringImpl::isLower()

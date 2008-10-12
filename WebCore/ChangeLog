@@ -1,3 +1,36 @@
+2008-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21560
+        Layering violation: String should not be responsible for creating Lengths
+
+        It was a layering violation for String to know haw to parse
+        into Lengths, LengthArrays, and CoordsArrays.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * platform/text/AtomicString.h:
+        (WebCore::AtomicString::percentage):
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        * platform/text/StringImpl.cpp:
+        * platform/text/StringImpl.h:
+        * rendering/Length.cpp: Added.
+        (WebCore::parseLength):
+        (WebCore::countCharacter):
+        (WebCore::newCoordsArray):
+        (WebCore::newLengthArray):
+        * rendering/Length.h:
+        (WebCore::LengthSize::LengthSize):
+
 2008-10-12  Brad Garcia  <bgarcia@google.com>
 
         Reviewed by Darin Adler.

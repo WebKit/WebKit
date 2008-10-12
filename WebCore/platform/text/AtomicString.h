@@ -77,8 +77,6 @@ public:
     double toDouble(bool* ok = 0) const { return m_string.toDouble(ok); }
     float toFloat(bool* ok = 0) const { return m_string.toFloat(ok); }
     bool percentage(int& p) const { return m_string.percentage(p); }
-    Length* toLengthArray(int& len) const { return m_string.toLengthArray(len); }
-    Length* toCoordsArray(int& len) const { return m_string.toCoordsArray(len); }
 
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
