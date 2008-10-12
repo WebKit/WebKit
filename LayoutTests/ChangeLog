@@ -1,3 +1,14 @@
+2008-10-12  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Treat x-user-defined as windows-1252 for html files with meta charset
+        declaration to be compatible with Indian web sites.
+        ( https://bugs.webkit.org/show_bug.cgi?id=18270 )
+
+        * fast/encoding/charset-xuser-defined-expected.txt: Added.
+        * fast/encoding/charset-xuser-defined.html: Added.
+
 2008-10-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

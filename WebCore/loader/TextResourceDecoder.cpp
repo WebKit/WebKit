@@ -340,7 +340,11 @@ void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSour
     if (!encoding.isValid())
         return;
 
-    if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
+    // When encoding comes from meta tag (i.e. it cannot be XML files sent via XHR),
+    // treat x-user-defined as windows-1252 (bug 18270)
+    if (source == EncodingFromMetaTag && strcasecmp(encoding.name(), "x-user-defined") == 0)
+        m_decoder.reset("windows-1252"); 
+    else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
         m_decoder.reset(encoding.closest8BitEquivalent());
     else
         m_decoder.reset(encoding);
