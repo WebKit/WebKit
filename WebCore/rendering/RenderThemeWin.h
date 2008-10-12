@@ -61,6 +61,7 @@ public:
 
     // System fonts.
     virtual void systemFont(int propId, FontDescription&) const;
+    virtual Color systemColor(int cssValueId) const;
 
     virtual bool paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
     { return paintButton(o, i, r); }

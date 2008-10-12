@@ -1,3 +1,15 @@
+2008-10-12  Eric Roman  <eroman@chromium.org>
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20246
+          Implement RenderThemeWin::systemColor() to match Windows colors.
+
+        Reviewed by David Hyatt.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::cssValueIdToSysColorIndex):
+        (WebCore::RenderThemeWin::systemColor):
+        * rendering/RenderThemeWin.h:
+
 2008-10-12  Aaron Bockover  <abockover@novell.com>
 
         Reviewed by Alp Toker.
