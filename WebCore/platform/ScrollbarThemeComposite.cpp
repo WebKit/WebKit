@@ -215,6 +215,12 @@ void ScrollbarThemeComposite::invalidatePart(Scrollbar* scrollbar, ScrollbarPart
         case ForwardButtonEndPart:
             result = forwardButtonRect(scrollbar, ForwardButtonEndPart, true);
             break;
+        case TrackBGPart:
+            result = trackRect(scrollbar, true);
+            break;
+        case ScrollbarBGPart:
+            result = scrollbar->frameRect();
+            break;
         default: {
             IntRect beforeThumbRect, thumbRect, afterThumbRect;
             splitTrack(scrollbar, trackRect(scrollbar), beforeThumbRect, thumbRect, afterThumbRect);

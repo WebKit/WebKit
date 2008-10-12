@@ -1,5 +1,14 @@
 2008-10-11  David Hyatt  <hyatt@apple.com>
 
+        Make sure invalidatePart knows how to invalidate the track and scrollbar backgrounds.
+
+        Reviewed by Tim Hatcher
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::invalidatePart):
+
+2008-10-11  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=21549 (regression in before/after track pieces).
 
         Also fixed resizer positioning problems.
