@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -529,27 +530,48 @@ void GraphicsContext::drawFocusRing(const Color& color)
     if (paintingDisabled())
         return;
 
-    int radius = (focusRingWidth() - 1) / 2;
-    int offset = radius + focusRingOffset();
-
     const Vector<IntRect>& rects = focusRingRects();
     unsigned rectCount = rects.size();
-    IntRect finalFocusRect;
-    for (unsigned i = 0; i < rectCount; i++) {
-        IntRect focusRect = rects[i];
-        focusRect.inflate(offset);
-        finalFocusRect.unite(focusRect);
-    }
 
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
-    // FIXME: These rects should be rounded
-    cairo_rectangle(cr, finalFocusRect.x(), finalFocusRect.y(), finalFocusRect.width(), finalFocusRect.height());
+    cairo_push_group(cr);
+    cairo_new_path(cr);
+
+#if PLATFORM(GTK)
+    GdkRegion* reg = gdk_region_new();
+    for (unsigned i = 0; i < rectCount; i++) {
+        GdkRectangle rect = rects[i];
+        gdk_region_union_with_rect(reg, &rect);
+    }
+    gdk_cairo_region(cr, reg);
+    gdk_region_destroy(reg);
+
+    setColor(cr, color);
+    cairo_set_line_width(cr, 2.0f);
+    setPlatformStrokeStyle(DottedStroke);
+#else
+    int radius = (focusRingWidth() - 1) / 2;
+    for (unsigned i = 0; i < rectCount; i++)
+        addPath(Path::createRoundedRectangle(rects[i], FloatSize(radius, radius)));
 
     // Force the alpha to 50%.  This matches what the Mac does with outline rings.
     Color ringColor(color.red(), color.green(), color.blue(), 127);
     setColor(cr, ringColor);
-    cairo_stroke(cr);
+    cairo_set_line_width(cr, focusRingWidth());
+    setPlatformStrokeStyle(SolidStroke);
+#endif
+
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_stroke_preserve(cr);
+
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
+    cairo_fill(cr);
+
+    cairo_pop_group_to_source(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_paint(cr);
     cairo_restore(cr);
 }
 

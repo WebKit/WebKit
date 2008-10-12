@@ -58,7 +58,7 @@ Vector<char> loadResourceIntoArray(const char* resourceName)
 
 void PluginView::invalidateRegion(NPRegion) { notImplemented(); }
 
-Color WebCore::focusRingColor() { return 0xFF0000FF; }
+Color WebCore::focusRingColor() { return Color(); }
 void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
 namespace WebCore {
