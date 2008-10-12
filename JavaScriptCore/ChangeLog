@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Clean up RegExpMatchesArray.h to match our coding style.
+
+        * kjs/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertySlot):
+        (JSC::RegExpMatchesArray::put):
+        (JSC::RegExpMatchesArray::deleteProperty):
+        (JSC::RegExpMatchesArray::getPropertyNames):
+
+2008-10-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Bug 21525: 55 StructureID leaks on Wikitravel's main page
         <https://bugs.webkit.org/show_bug.cgi?id=21525>
 
