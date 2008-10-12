@@ -808,7 +808,7 @@
         * platform/graphics/qt/GraphicsContextQt.cpp:
         * platform/graphics/wx/GraphicsContextWx.cpp:
 
-08-10-09  Kevin Ollivier  <kevino@theolliviers.com>
+2008-10-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes.
 
