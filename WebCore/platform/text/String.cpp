@@ -731,7 +731,7 @@ static unsigned lengthOfCharactersAsInteger(const UChar* data, size_t length)
     
     // Allow digits.
     for (; i != length; ++i) {
-        if (!Unicode::isDigit(data[i]))
+        if (!isASCIIDigit(data[i]))
             break;
     }
 

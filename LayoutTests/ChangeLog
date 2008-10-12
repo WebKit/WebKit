@@ -1,3 +1,26 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - tests for https://bugs.webkit.org/show_bug.cgi?id=21556
+          Bug 21556: non-ASCII digits are allowed in places where only ASCII should be
+
+        The fix was in a function used all over the place. I set a breakpoint in the
+        function and made some regression tests for the first few places it was used.
+
+        * fast/dom/HTMLFontElement: Added.
+        * fast/dom/HTMLFontElement/resources: Added.
+        * fast/dom/HTMLFontElement/resources/TEMPLATE.html: Added.
+        * fast/dom/HTMLFontElement/resources/size-attribute.js: Added.
+        * fast/dom/HTMLFontElement/size-attribute-expected.txt: Added.
+        * fast/dom/HTMLFontElement/size-attribute.html: Added.
+        * fast/dom/HTMLInputElement/resources/size-attribute.js: Added.
+        * fast/dom/HTMLInputElement/size-attribute-expected.txt: Added.
+        * fast/dom/HTMLInputElement/size-attribute.html: Added.
+        * fast/dom/HTMLTableElement/cellpadding-attribute-expected.txt: Added.
+        * fast/dom/HTMLTableElement/cellpadding-attribute.html: Added.
+        * fast/dom/HTMLTableElement/resources/cellpadding-attribute.js: Added.
+
 2008-10-12  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,23 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21556
+          Bug 21556: non-ASCII digits are allowed in places where only ASCII should be
+
+        Tests: fast/dom/HTMLFontElement/size-attribute.html
+               fast/dom/HTMLInputElement/size-attribute.html
+               fast/dom/HTMLTableElement/cellpadding-attribute.html
+
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSizeNumber): Use isASCIIDigit instead of
+        Unicode::isDigit, since non-ASCII digits are not valid here.
+        * html/HTMLFontElement.h: Tweaked formatting a bit and removed
+        the unneeded destructor declaration.
+        * platform/text/String.cpp:
+        (WebCore::lengthOfCharactersAsInteger): Use isASCIIDigit instead
+        of Unicode::isDigit, since non-ASCII digits are not valid.
+
 2008-10-12  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,13 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21556
+          Bug 21556: non-ASCII digits are allowed in places where only ASCII should be
+
+        * wtf/unicode/icu/UnicodeIcu.h: Removed isDigit, digitValue, and isFormatChar.
+        * wtf/unicode/qt4/UnicodeQt4.h: Ditto.
+
 2008-10-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

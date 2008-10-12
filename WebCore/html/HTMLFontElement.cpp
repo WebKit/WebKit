@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,12 +33,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLFontElement::HTMLFontElement(Document* doc)
-    : HTMLElement(fontTag, doc)
-{
-}
-
-HTMLFontElement::~HTMLFontElement()
+HTMLFontElement::HTMLFontElement(Document* document)
+    : HTMLElement(fontTag, document)
 {
 }
 
@@ -67,12 +61,12 @@ static bool parseFontSizeNumber(const String& s, int& size)
     }
     
     // Parse a single digit.
-    if (!Unicode::isDigit(s[pos]))
+    if (!isASCIIDigit(s[pos]))
         return false;
-    int num = Unicode::digitValue(s[pos++]);
+    int num = s[pos++] - '0';
     
     // Check for an additional digit.
-    if (Unicode::isDigit(s[pos]))
+    if (isASCIIDigit(s[pos]))
         num = 10;
     
     if (sawPlus) {

@@ -317,11 +317,6 @@ namespace WTF {
       return srcLength;
     }
 
-    inline bool isFormatChar(UChar32 c)
-    {
-      return QChar::category(c) == QChar::Other_Format;
-    }
-
     inline bool isArabicChar(UChar32 c)
     {
         return c >= 0x0600 && c <= 0x06FF;
@@ -351,19 +346,9 @@ namespace WTF {
       return U_MASK(QChar::category(c)) & test;
     }
 
-    inline bool isDigit(UChar32 c)
-    {
-      return QChar::category(c) == QChar::Number_DecimalDigit;
-    }
-
     inline bool isLower(UChar32 c)
     {
       return QChar::category(c) == QChar::Letter_Lowercase;
-    }
-
-    inline int digitValue(UChar32 c)
-    {
-      return QChar::digitValue(c);
     }
 
     inline UChar32 mirroredChar(UChar32 c)
@@ -462,11 +447,6 @@ namespace WTF {
       return toLower(result, resultLength, src, srcLength, error);
     }
 
-    inline bool isFormatChar(UChar32 c)
-    {
-      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Other_Format;
-    }
-
     inline bool isPrintableChar(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPrint();
@@ -487,21 +467,9 @@ namespace WTF {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isPunct();
     }
 
-    inline bool isDigit(UChar32 c)
-    {
-      return (c & 0xffff0000) == 0 && QChar((unsigned short)c).isDigit();
-    }
-
     inline bool isLower(UChar32 c)
     {
       return (c & 0xffff0000) == 0 && QChar((unsigned short)c).category() == QChar::Letter_Lowercase;
-    }
-
-    inline int digitValue(UChar32 c)
-    {
-      if (c > 0xffff)
-        return 0;
-      return QChar(c).digitValue();
     }
 
     inline UChar32 mirroredChar(UChar32 c)
