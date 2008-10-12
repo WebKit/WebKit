@@ -204,38 +204,34 @@ static Length parseLength(const UChar* data, unsigned length)
         ++i;
     if (i < length && (data[i] == '+' || data[i] == '-'))
         ++i;
-    while (i < length && Unicode::isDigit(data[i]))
+    while (i < length && isASCIIDigit(data[i]))
         ++i;
-
-    bool ok;
-    int r = charactersToIntStrict(data, i, &ok);
-
-    /* Skip over any remaining digits, we are not that accurate (5.5% => 5%) */
-    while (i < length && (Unicode::isDigit(data[i]) || data[i] == '.'))
+    unsigned intLength = i;
+    while (i < length && (isASCIIDigit(data[i]) || data[i] == '.'))
         ++i;
+    unsigned doubleLength = i;
 
-    /* IE Quirk: Skip any whitespace (20 % => 20%) */
+    // IE quirk: Skip whitespace between the number and the % character (20 % => 20%).
     while (i < length && isSpaceOrNewline(data[i]))
         ++i;
 
-    if (ok) {
-        if (i < length) {
-            UChar next = data[i];
-            if (next == '%')
-                return Length(static_cast<double>(r), Percent);
-            if (next == '*')
-                return Length(r, Relative);
-        }
-        return Length(r, Fixed);
-    } else {
-        if (i < length) {
-            UChar next = data[i];
-            if (next == '*')
-                return Length(1, Relative);
-            if (next == '%')
-                return Length(1, Relative);
-        }
+    bool ok;
+    UChar next = (i < length) ? data[i] : ' ';
+    if (next == '%') {
+        // IE quirk: accept decimal fractions for percentages.
+        double r = charactersToDouble(data, doubleLength, &ok);
+        if (ok)
+            return Length(r, Percent);
+        return Length(1, Relative);
     }
+    int r = charactersToIntStrict(data, intLength, &ok);
+    if (next == '*') {
+        if (ok)
+            return Length(r, Relative);
+        return Length(1, Relative);
+    }
+    if (ok)
+        return Length(r, Fixed);
     return Length(0, Relative);
 }
 

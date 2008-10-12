@@ -1,3 +1,14 @@
+2008-10-12  Brad Garcia  <bgarcia@google.com>
+
+        Reviewed by Darin Adler.
+
+        Interpret fractional percentage values for %MultiLength values.
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=3591
+        Test: fast/frames/frame-length-fractional-percentage.html
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::parseLength):
+
 2008-10-12  Timothy Hatcher  <timothy@apple.com>
 
         Remember the expanded state of the rules in the Styles pane. So

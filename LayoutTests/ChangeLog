@@ -1,3 +1,13 @@
+2008-10-12  Brad Garcia  <bgarcia@google.com>
+
+        Reviewed by Darin Adler.
+
+        Testcases for fractional frame lengths.
+        https://bugs.webkit.org/show_bug.cgi?id=3591
+
+        * fast/frames/frame-length-fractional.html: Added.
+        * fast/frames/frame-length-fractional-expected.txt: Added.
+
 2008-10-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
