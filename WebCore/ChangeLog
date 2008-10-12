@@ -1,3 +1,15 @@
+2008-10-11  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        - change all internal callers to use Cache::evict() instead of remove()
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::revalidateResource):
+        (WebCore::Cache::revalidationSucceeded):
+        (WebCore::Cache::pruneDeadResources):
+        (WebCore::Cache::setDisabled):
+
 2008-10-11  David Hyatt  <hyatt@apple.com>
 
         Make sure invalidatePart knows how to invalidate the track and scrollbar backgrounds.
