@@ -1,3 +1,15 @@
+2008-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make the append method that takes a Vector more strict - it now requires the elements 
+        of the vector to be appended same type as the elements of the Vector they're being appended to.
+        
+        This would cause problems when dealing with Vectors containing other Vectors.
+        
+        * wtf/Vector.h:
+        (WTF::::append):
+
 2008-10-11  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.
