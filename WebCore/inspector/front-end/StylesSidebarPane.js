@@ -229,8 +229,14 @@ WebInspector.StylesSidebarPane.prototype = {
                 var section = new WebInspector.StylePropertiesSection(styleRule, subtitle, computedStyle, (ruleUsedProperties || usedProperties), editable);
                 if (computedStyle)
                     section.disabledComputedProperties = disabledComputedProperties;
-                section.expanded = true;
                 section.pane = this;
+
+                if (Preferences.styleRulesExpandedState && section.identifier in Preferences.styleRulesExpandedState)
+                    section.expanded = Preferences.styleRulesExpandedState[section.identifier];
+                else if (computedStyle)
+                    section.collapse(true);
+                else
+                    section.expand(true);
 
                 body.appendChild(section.element);
                 this.sections.push(section);
@@ -299,6 +305,10 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
 
         this.subtitle = subtitle;
     }
+
+    this.identifier = styleRule.selectorText;
+    if (this.subtitle)
+        this.identifier += ":" + this.subtitleElement.textContent;
 }
 
 WebInspector.StylePropertiesSection.prototype = {
@@ -311,6 +321,28 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         this._usedProperties = x;
         this.update();
+    },
+
+    expand: function(dontRememberState)
+    {
+        WebInspector.PropertiesSection.prototype.expand.call(this);
+        if (dontRememberState)
+            return;
+
+        if (!Preferences.styleRulesExpandedState)
+            Preferences.styleRulesExpandedState = {};
+        Preferences.styleRulesExpandedState[this.identifier] = true;
+    },
+
+    collapse: function(dontRememberState)
+    {
+        WebInspector.PropertiesSection.prototype.collapse.call(this);
+        if (dontRememberState)
+            return;
+
+        if (!Preferences.styleRulesExpandedState)
+            Preferences.styleRulesExpandedState = {};
+        Preferences.styleRulesExpandedState[this.identifier] = false;
     },
 
     isPropertyInherited: function(property)

@@ -1,3 +1,34 @@
+2008-10-12  Timothy Hatcher  <timothy@apple.com>
+
+        Remember the expanded state of the rules in the Styles pane. So
+        collapsing a rule will persist across all the elements that have
+        that same rule. The same applies to Computed Style, so the Computed
+        Style rule is now collapsed by default. This should help lessen the
+        confusion on why Computed Style can't be edited (a common confusion.)
+
+        https://bugs.webkit.org/show_bug.cgi?id=21553
+
+        Reviewed by Darin Adler.
+
+        * inspector/front-end/PropertiesSection.js:
+        (WebInspector.PropertiesSection): Set the _expanded property directly,
+        instead of using the setter. Expanded is the default, so no work is needed.
+        This prevents calling StylesSidebarPane.collapse before object initialization
+        is complete.
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update): Check the Preferences object
+        for the expanded state of the StylePropertiesSection. Collapse computed style
+        by default and expand everything else.
+        (WebInspector.StylePropertiesSection): Make a semi unique identifier to be used
+        when remembering expanded state.
+        (WebInspector.StylePropertiesSection.prototype.expand): Set the expanded state
+        to true for this identifier in Preferences.styleRulesExpandedState. Don't remember
+        the state if the dontRememberState property is true.
+        (WebInspector.StylePropertiesSection.prototype.collapse): Set the expanded state
+        to false for this identifier in Preferences.styleRulesExpandedState.
+        * inspector/front-end/inspector.js:
+        (Preferences.styleRulesExpandedState): Initialize to an empty object.
+
 2008-10-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Alp Toker.

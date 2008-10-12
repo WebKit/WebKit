@@ -36,6 +36,7 @@ var Preferences = {
     minElementsSidebarWidth: 200,
     minScriptsSidebarWidth: 200,
     showInheritedComputedStyleProperties: false,
+    styleRulesExpandedState: {},
     showMissingLocalizedStrings: false
 }
 

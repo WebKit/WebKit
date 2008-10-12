@@ -55,7 +55,7 @@ WebInspector.PropertiesSection = function(title, subtitle)
 
     this.title = title;
     this.subtitle = subtitle;
-    this.expanded = false;
+    this._expanded = false;
 }
 
 WebInspector.PropertiesSection.prototype = {
