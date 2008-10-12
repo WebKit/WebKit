@@ -1,3 +1,13 @@
+2008-10-12  Aaron Bockover  <abockover@novell.com>
+
+        Reviewed by Alp Toker.
+
+        Add version parsing for Flash, and the PluginQuirkDontSetNullWindowHandleOnDestroy 
+        plugin quirk if Flash 10 or newer since at least in b218, setting a NULL window 
+        handler on destroy crashes WebKit <https://bugs.webkit.org/show_bug.cgi?id=19859>
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+
 2008-10-12  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Oliver Hunt.

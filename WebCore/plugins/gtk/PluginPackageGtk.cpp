@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2008 Novell Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,49 @@
 
 namespace WebCore {
 
+static PlatformModuleVersion getModuleVersion(const char *description)
+{
+    // It's a bit lame to detect the plugin version by parsing it
+    // from the plugin description string, but it doesn't seem that
+    // version information is available in any standardized way at
+    // the module level, like in Windows
+
+    PlatformModuleVersion version = 0;
+
+    if (!description)
+        return 0;
+
+    if (g_str_has_prefix(description, "Shockwave Flash ") && strlen(description) >= 19) {
+        // The flash version as a PlatformModuleVersion differs in GTK from Windows
+        // since the revision can be larger than a 8 bits, so we allow it 16 here and
+        // push the major/minor up 8 bits. Thus in GTK, Flash's version may be
+        // 0x0a000000 instead of 0x000a0000. This avoids having to modify 
+        // PlatformModuleVersion in the GTK port 
+
+        char **version_parts = g_strsplit(description + 16, " ", -1);
+        if (!version_parts)
+            return 0;
+
+        int parts_length = g_strv_length(version_parts);
+
+        if (parts_length >= 1) {
+            guint16 major = 0, minor = 0;
+            if (sscanf(version_parts[0], "%" G_GUINT16_FORMAT ".%" G_GUINT16_FORMAT, &major, &minor) == 2)
+                version = ((guint8)major << 24) | ((guint8)minor << 16);
+        }
+
+        if (parts_length >= 2) {
+            char *rev_str = version_parts[1];
+            if (strlen(rev_str) > 1 && (rev_str[0] == 'r' || rev_str[0] == 'b'))
+                version |= (guint16)atoi(rev_str + 1);
+        }
+        
+        g_strfreev(version_parts);
+    }
+
+    return version;
+}
+
 void PluginPackage::determineQuirks(const String& mimeType)
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
@@ -46,16 +90,24 @@ void PluginPackage::determineQuirks(const String& mimeType)
         // Setting the window region to an empty region causes bad scrolling repaint problems
         // with the Java plug-in.
         m_quirks.add(PluginQuirkDontClipToZeroRectWhenScrolling);
+        return;
     }
     
     if (mimeType == "application/x-shockwave-flash") {
-        // The flash plugin only requests windowless plugins if we return a mozilla user agent
-        m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        static const PlatformModuleVersion flashTenVersion(0x0a000000);
+
+        if (compareFileVersion(flashTenVersion) >= 0) {
+            // Flash 10.0 b218 doesn't like having a NULL window handle
+            m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
+        } else {
+            // Flash 9 and older requests windowless plugins if we return a mozilla user agent
+            m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        }
+
         m_quirks.add(PluginQuirkThrottleInvalidate);
         m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
         m_quirks.add(PluginQuirkFlashURLNotifyBug);
     }
-
 }
 
 bool PluginPackage::fetchInfo()
@@ -69,6 +121,18 @@ bool PluginPackage::fetchInfo()
 
     g_module_symbol(m_module, "NP_GetMIMEDescription", (void**)&NP_GetMIMEDescription);
     g_module_symbol(m_module, "NP_GetValue", (void**)&NPP_GetValue);
+
+    char* buffer = 0;
+    NPError err = NPP_GetValue(0, NPPVpluginNameString, &buffer);
+    if (err == NPERR_NO_ERROR)
+        m_name = buffer;
+
+    buffer = 0;
+    err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
+    if (err == NPERR_NO_ERROR) {
+        m_description = buffer;
+        m_moduleVersion = getModuleVersion(buffer); 
+    }
 
     const gchar* types = NP_GetMIMEDescription();
     gchar** mimeDescs = g_strsplit(types, ";", -1);
@@ -94,16 +158,6 @@ bool PluginPackage::fetchInfo()
         g_strfreev(mimeData);
     }
     g_strfreev(mimeDescs);
-
-    char* buffer = 0;
-    NPError err = NPP_GetValue(0, NPPVpluginNameString, &buffer);
-    if (err == NPERR_NO_ERROR)
-        m_name = buffer;
-
-    buffer = 0;
-    err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
-    if (err == NPERR_NO_ERROR)
-        m_description = buffer;
 
     return true;
 #else
