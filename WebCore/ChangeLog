@@ -1,5 +1,22 @@
 2008-10-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21557
+          Bug 21557: REGRESSION: generated-layer-scrollbar-crash.html is crashing
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getPseudoStyle): Keep walking up the parent chain
+        until we hit an Element. Nowadays, Node::isElementNode() is just as efficient
+        as RenderObject::isText(), and this guarantees that the node can be cast to
+        Element*, which is done just below. The reason this is hit is that RenderLayer
+        can call getPseudoStyle on a RenderView, which has the document as its
+        element() -- and a document is neither a Text node nor an Element. A loose
+        end is that this seems to mean you can't style the scrollbar corner or the
+        resizer on a RenderView. Hyatt may want to look into that later.
+
+2008-10-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         - https://bugs.webkit.org/show_bug.cgi?id=21556
