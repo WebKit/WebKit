@@ -89,10 +89,15 @@ for my $tfile (@templates) {
     for my $file (@files) {
         next if $file =~ /js-test-.*\.js$/;
         next if $file =~ /SVGTestCase\.js/;
+
+        next if $file =~ m:resources/NSResolver-exceptions\.js$:;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
         next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
+        next if $file =~ m:resources/constructors-cached-navigate\.js$:;
         next if $file =~ m:resources/frame-loading-via-document-write\.js$:;
+        next if $file =~ m:resources/id-fastpath-almost-strict\.js$:;
+        next if $file =~ m:resources/id-fastpath-strict\.js$:;
         next if $file =~ m:resources/intersectsNode\.js$:;
         next if $file =~ m:resources/p-in-scope\.js$:;
         next if $file =~ m:resources/script-element-gc\.js$:;
@@ -101,10 +106,12 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/script4\.js$:;
         next if $file =~ m:resources/script5\.js$:;
         next if $file =~ m:resources/select-options-remove\.js$:;
+        next if $file =~ m:resources/shadow-offset\.js$:;
         next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;
+        next if $file =~ m:resources/use-instanceRoot-event-bubbling\.js$:;
+        next if $file =~ m:resources/use-instanceRoot-event-listeners\.js$:;
         next if $file =~ m:resources/wrapper-identity-base\.js$:;
         next if $file =~ m:resources/xhtml-scripts\.js$:;
-        next if $file =~ m:resources/shadow-offset\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;

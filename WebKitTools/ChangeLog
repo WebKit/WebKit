@@ -1,3 +1,8 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        * Scripts/make-js-test-wrappers: Update exceptions list so the script
+        won't overwrite files and mangle tests.
+
 2008-10-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig and Anders Carlsson.
