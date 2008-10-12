@@ -1,3 +1,18 @@
+2008-10-12  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        Reviewed by Oliver Hunt.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19331
+          <rdar://problem/5984433>: Drag and drop of links in edit mode violates assert in MoveSelectionCommand::doApply()
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): When a link is dragged without any
+        text selected (note: for this to work, the EditableLinkBehavior setting must be
+        set to 'live' or 'default') and then dropped into an editable html document it
+        will eventually violate an ASSERT in MoveSelectionCommand that requires that there
+        is a selection.  To prevent this, expand the selection to the enclosing anchor tag
+        when the drag begins.
+
 2008-10-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

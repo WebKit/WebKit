@@ -59,6 +59,7 @@
 #include "Settings.h"
 #include "SystemTime.h"
 #include "Text.h"
+#include "htmlediting.h"
 #include "markup.h"
 #include <wtf/RefPtr.h>
 
@@ -653,7 +654,17 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
             // Simplify whitespace so the title put on the clipboard resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
             clipboard->writeURL(linkURL, dragSource.textContent().simplifyWhiteSpace(), src);
-        
+
+        if (src->selection()->isCaret() && src->selection()->isContentEditable()) {
+            // a user can initiate a drag on a link without having any text
+            // selected.  In this case, we should expand the selection to
+            // the enclosing anchor element
+            Position pos = src->selection()->base();
+            Node* node = enclosingAnchorElement(pos);
+            if (node)
+                src->selection()->setSelection(Selection::selectionFromContentsOfNode(node));
+        }
+
         m_client->willPerformDragSourceAction(DragSourceActionLink, dragOrigin, clipboard);
         if (!dragImage) {
             dragImage = m_client->createDragImageForLink(linkURL, dragSource.textContent(), src);
