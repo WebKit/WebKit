@@ -46,3 +46,5 @@ function executeTest() {
 }
 
 startTest(rectElement, 150, 150);
+
+var successfullyParsed = true;

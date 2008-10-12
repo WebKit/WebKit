@@ -22,3 +22,5 @@ function executeTest() {
 }
 
 startTest(ellipseElement, 150, 50);
+
+var successfullyParsed = true;

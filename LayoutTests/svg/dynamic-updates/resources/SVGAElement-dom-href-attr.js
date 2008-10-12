@@ -25,3 +25,5 @@ function executeTest() {
 }
 
 executeTest();
+
+var successfullyParsed = true;

@@ -23,3 +23,5 @@ function executeTest() {
 }
 
 startTest(lineElement, 11, 101);
+
+var successfullyParsed = true;

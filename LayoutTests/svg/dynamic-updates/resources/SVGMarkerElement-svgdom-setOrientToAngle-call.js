@@ -45,3 +45,5 @@ function executeTest() {
 }
 
 startTest(pathElement, 180, 180);
+
+var successfullyParsed = true;

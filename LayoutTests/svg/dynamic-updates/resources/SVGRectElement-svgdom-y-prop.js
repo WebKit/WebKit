@@ -22,3 +22,5 @@ function executeTest() {
 }
 
 startTest(rectElement, 100, 0);
+
+var successfullyParsed = true;

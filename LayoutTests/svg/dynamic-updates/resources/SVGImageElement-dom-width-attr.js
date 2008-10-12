@@ -23,3 +23,5 @@ function executeTest() {
 }
 
 startTest(imageElement, 50, 150);
+
+var successfullyParsed = true;

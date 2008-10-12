@@ -21,3 +21,5 @@ function executeTest() {
 }
 
 startTest(circleElement, 150, 50);
+
+var successfullyParsed = true;

@@ -1,3 +1,20 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21559
+          Bug 21559: many SVG tests are slightly different from what make-js-test-wrappers would make
+
+        * svg/custom/immutable-properties.html: Updated path to test resources so it
+        does not go up out of and back into LayoutTests.
+        * svg/custom/svg-modify-currentTranslate.html: Ditto.
+        * svg/custom/svg-xml-dom-sync.html: Ditto.
+        * svg/custom/tearoffs-with-tearoffs.html: Ditto.
+
+        * svg/dynamic-updates/resources/*.js: Allow the make-js-test-wrappers script to
+        add var successfullyParsed = true; to these files. It's not helpful for the tests,
+        but it's not harmful either.
+
 2008-10-12  Brad Garcia  <bgarcia@google.com>
 
         Reviewed by Darin Adler.

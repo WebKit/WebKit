@@ -27,3 +27,5 @@ function executeTest() {
 }
 
 startTest(foreignObjectElement, 150, 50);
+
+var successfullyParsed = true;
