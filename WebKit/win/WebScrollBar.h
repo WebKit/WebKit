@@ -122,6 +122,8 @@ protected:
     // FIXME: We should provide a way to set this value.
     virtual bool isActive() const { return true; }
 
+    virtual bool scrollbarCornerPresent() const { return false; }
+
     ULONG m_refCount;
     HWND m_containingWindow;
     RefPtr<WebCore::Scrollbar> m_scrollBar;
