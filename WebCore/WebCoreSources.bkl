@@ -702,6 +702,7 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/GlyphWidthMap.cpp
         platform/graphics/SegmentedFontData.cpp
         platform/graphics/SimpleFontData.cpp
+        platform/graphics/WidthIterator.cpp
         platform/KURL.cpp
         platform/Logging.cpp
         platform/MIMETypeRegistry.cpp

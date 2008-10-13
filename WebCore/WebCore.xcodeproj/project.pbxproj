@@ -1804,6 +1804,8 @@
 		9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392F14F0AD1862300691BD4 /* CounterNode.cpp */; };
 		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */; };
+		939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B02ED0EA2DBC400C54570 /* WidthIterator.h */; };
 		939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */; };
 		93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */; };
 		93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6483,6 +6485,8 @@
 		93955A4203D72932008635CE /* RenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeAsText.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WidthIterator.cpp; sourceTree = "<group>"; };
+		939B02ED0EA2DBC400C54570 /* WidthIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidthIterator.h; sourceTree = "<group>"; };
 		939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuffer.h; sourceTree = "<group>"; };
 		93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorCommand.cpp; sourceTree = "<group>"; };
 		93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContextMenu.h; sourceTree = "<group>"; };
@@ -12589,6 +12593,8 @@
 				B27535530B053814002CE64F /* Path.h */,
 				A88DD4880B4629B000C02990 /* PathTraversalState.cpp */,
 				A88DD4860B4629A300C02990 /* PathTraversalState.h */,
+				A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */,
+				A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */,
 				B27535540B053814002CE64F /* Pen.cpp */,
 				B27535550B053814002CE64F /* Pen.h */,
 				371F4FFB0D25E7F300ECE0D5 /* SegmentedFontData.cpp */,
@@ -12599,8 +12605,8 @@
 				B23540F10D00782E002382FA /* StringTruncator.h */,
 				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
-				A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */,
-				A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */,
+				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
+				939B02ED0EA2DBC400C54570 /* WidthIterator.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -15988,6 +15994,7 @@
 				1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */,
 				1CF6BE150E9BB4670025E1CD /* ObjCNodeFilterCondition.h in Headers */,
 				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
+				939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17855,6 +17862,7 @@
 				1CF6BDFB0E9BB26A0025E1CD /* ObjCEventListener.mm in Sources */,
 				1CF6BE140E9BB4670025E1CD /* ObjCNodeFilterCondition.mm in Sources */,
 				BC80FA130EA287B000B0821D /* Length.cpp in Sources */,
+				939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

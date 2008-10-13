@@ -1353,6 +1353,8 @@ webcore_sources += \
 	WebCore/platform/graphics/StringTruncator.h \
 	WebCore/platform/graphics/TextRun.h \
 	WebCore/platform/graphics/UnitBezier.h \
+	WebCore/platform/graphics/WidthIterator.cpp \
+	WebCore/platform/graphics/WidthIterator.h \
 	WebCore/platform/graphics/filters/FEBlend.h \
 	WebCore/platform/graphics/filters/FEColorMatrix.h \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \

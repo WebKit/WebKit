@@ -1,3 +1,19 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        Based on work by Holger Freyther.
+
+        - part of https://bugs.webkit.org/show_bug.cgi?id=20953
+          Split WidthIterator into its own source file.
+
+        * GNUmakefile.am: Added new source files.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * platform/graphics/Font.cpp: Use WidthIterator from its new place.
+        * platform/graphics/WidthIterator.cpp: Added.
+        * platform/graphics/WidthIterator.h: Added.
+
 2008-10-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Sam Weinig.

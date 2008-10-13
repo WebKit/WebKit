@@ -6065,6 +6065,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\WidthIterator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\WidthIterator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextBoundaries.h"
 					>
 				</File>
