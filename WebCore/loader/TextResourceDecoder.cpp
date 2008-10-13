@@ -27,6 +27,7 @@
 #include "HTMLNames.h"
 #include "TextCodec.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/StringExtras.h>
 
 using namespace WTF;
 
