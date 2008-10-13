@@ -1,3 +1,57 @@
+2008-10-13  Timothy Hatcher  <timothy@apple.com>
+
+        Adds an complex styled scrollbar test that exercises all pseudo-elements and pseudo-classes.
+        Also uses positive and negative margins on the scrollbar track and track pieces.
+        Tests all the combinations of scrollbars for overflow elements, with and without resizers.
+
+        Rubber-stamped by Dave Hyatt.
+
+        * platform/mac/scrollbars/overflow-scrollbar-combinations-expected.checksum: Added.
+        * platform/mac/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/mac/scrollbars/overflow-scrollbar-combinations-expected.txt: Added.
+        * scrollbars/overflow-scrollbar-combinations.html: Added.
+        * scrollbars/resources: Added.
+        * scrollbars/resources/corner-inactive.png: Added.
+        * scrollbars/resources/corner.png: Added.
+        * scrollbars/resources/horizontal-button-active.png: Added.
+        * scrollbars/resources/horizontal-button-background-active.png: Added.
+        * scrollbars/resources/horizontal-button-background-hover.png: Added.
+        * scrollbars/resources/horizontal-button-background-inactive.png: Added.
+        * scrollbars/resources/horizontal-button-background.png: Added.
+        * scrollbars/resources/horizontal-button-hover.png: Added.
+        * scrollbars/resources/horizontal-button-inactive.png: Added.
+        * scrollbars/resources/horizontal-button.png: Added.
+        * scrollbars/resources/horizontal-decrement-arrow.png: Added.
+        * scrollbars/resources/horizontal-increment-arrow.png: Added.
+        * scrollbars/resources/horizontal-thumb-active.png: Added.
+        * scrollbars/resources/horizontal-thumb-hover.png: Added.
+        * scrollbars/resources/horizontal-thumb-inactive.png: Added.
+        * scrollbars/resources/horizontal-thumb.png: Added.
+        * scrollbars/resources/horizontal-track-active.png: Added.
+        * scrollbars/resources/horizontal-track-disabled.png: Added.
+        * scrollbars/resources/horizontal-track-hover.png: Added.
+        * scrollbars/resources/horizontal-track.png: Added.
+        * scrollbars/resources/resizer-inactive.png: Added.
+        * scrollbars/resources/resizer.png: Added.
+        * scrollbars/resources/vertical-button-active.png: Added.
+        * scrollbars/resources/vertical-button-background-active.png: Added.
+        * scrollbars/resources/vertical-button-background-hover.png: Added.
+        * scrollbars/resources/vertical-button-background-inactive.png: Added.
+        * scrollbars/resources/vertical-button-background.png: Added.
+        * scrollbars/resources/vertical-button-hover.png: Added.
+        * scrollbars/resources/vertical-button-inactive.png: Added.
+        * scrollbars/resources/vertical-button.png: Added.
+        * scrollbars/resources/vertical-decrement-arrow.png: Added.
+        * scrollbars/resources/vertical-increment-arrow.png: Added.
+        * scrollbars/resources/vertical-thumb-active.png: Added.
+        * scrollbars/resources/vertical-thumb-hover.png: Added.
+        * scrollbars/resources/vertical-thumb-inactive.png: Added.
+        * scrollbars/resources/vertical-thumb.png: Added.
+        * scrollbars/resources/vertical-track-active.png: Added.
+        * scrollbars/resources/vertical-track-disabled.png: Added.
+        * scrollbars/resources/vertical-track-hover.png: Added.
+        * scrollbars/resources/vertical-track.png: Added.
+
 2008-10-12  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.
