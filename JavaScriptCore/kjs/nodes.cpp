@@ -1079,23 +1079,6 @@ static inline void statementListPushFIFO(StatementVector& statements, Declaratio
     }
 }
 
-static inline Node* statementListInitializeVariableAccessStack(StatementVector& statements, DeclarationStacks::NodeStack& stack)
-{
-    if (statements.isEmpty())
-        return 0;
-
-    StatementVector::iterator it = statements.end();
-    StatementVector::iterator begin = statements.begin();
-    StatementVector::iterator beginPlusOne = begin + 1;
-
-    while (it != beginPlusOne) {
-        --it;
-        stack.append((*it).get());
-    }
-
-    return (*begin).get();
-}
-
 // ------------------------------ BlockNode ------------------------------------
 
 BlockNode::BlockNode(JSGlobalData* globalData, SourceElements* children)
