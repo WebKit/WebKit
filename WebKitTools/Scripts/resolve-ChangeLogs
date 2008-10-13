@@ -34,76 +34,82 @@ use FindBin;
 use lib $FindBin::Bin;
 
 use File::Basename;
+use File::Path;
 use File::Spec;
 use Getopt::Long;
+use POSIX;
 use VCSUtils;
 
 sub conflictFiles($);
 sub findChangeLog($);
 sub fixChangeLogPatch($);
-sub fixMergedChangeLog($);
+sub fixMergedChangeLogs($;@);
+sub fixOneMergedChangeLog($);
 sub mergeChanges($$$);
+sub parseFixMerged($$;$);
+sub removeChangeLogArguments();
+sub resolveChangeLog($);
 sub resolveConflict($);
 sub showStatus($;$);
+sub usageAndExit();
 
 my $SVN = "svn";
 my $GIT = "git";
 
-my $fixMerged = 0;
+my $fixMerged;
 my $printWarnings = 1;
 my $showHelp;
 
 my $getOptionsResult = GetOptions(
-    'f|fix-merged'   => \$fixMerged,
+    'f|fix-merged:s' => \&parseFixMerged,
     'h|help'         => \$showHelp,
     'w|warnings!'    => \$printWarnings,
 );
 
-my @changeLogFiles = grep { defined $_ } map { findChangeLog($_) } @ARGV;
+my @changeLogFiles = removeChangeLogArguments();
 
-if (scalar(@changeLogFiles) != scalar(@ARGV)) {
+if (scalar(@ARGV) > 0) {
     print STDERR "ERROR: Files listed on command-line that are not ChangeLogs.\n";
     undef $getOptionsResult;
-} elsif (scalar(@changeLogFiles) == 0) {
+} elsif (!defined $fixMerged && scalar(@changeLogFiles) == 0) {
     print STDERR "ERROR: No ChangeLog files listed on command-line.\n";
     undef $getOptionsResult;
-} elsif ($fixMerged && !isGit()) {
-    print STDERR "ERROR: --fix-merge may only be used with a git repository\n";
+} elsif (defined $fixMerged && !isGit()) {
+    print STDERR "ERROR: --fix-merged may only be used with a git repository\n";
     undef $getOptionsResult;
 }
 
-if (!$getOptionsResult || $showHelp) {
+sub usageAndExit()
+{
     print STDERR <<__END__;
 Usage: @{[ basename($0) ]} [options] path/to/ChangeLog [path/to/another/ChangeLog ...]
-  -f|--fix-merge      fix a git-merged ChangeLog entry to appear at the top
-  -h|--help           show this help message
-  -w|--[no-]warnings  show or suppress warnings (default: show warnings)
+  -f|--fix-merged [revision-range] fix git-merged ChangeLog entries; if a revision-range
+                                   is specified, run git filter-branch on the range
+  -h|--help                        show this help message
+  -w|--[no-]warnings               show or suppress warnings (default: show warnings)
 __END__
     exit 1;
 }
 
-for my $file (@changeLogFiles) {
-    if ($fixMerged) {
-        fixMergedChangeLog($file);
-    } else {
-        my ($fileMine, $fileOlder, $fileNewer) = conflictFiles($file);
-        if (!$fileMine || !$fileOlder || !$fileNewer) {
-            next;
-        }
-        if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
-            if ($file ne $fileNewer) {
-                unlink($file);
-                rename($fileNewer, $file) || die;
-            }
-            unlink($fileMine, $fileOlder);
-            resolveConflict($file);
-            showStatus($file, 1);
+if (!$getOptionsResult || $showHelp) {
+    usageAndExit();
+}
+
+if (defined $fixMerged && length($fixMerged) > 0) {
+    my $commitRange = $fixMerged;
+    $commitRange = $commitRange . "..HEAD" if index($commitRange, "..") < 0;
+    fixMergedChangeLogs($commitRange, @changeLogFiles);
+} elsif (@changeLogFiles) {
+    for my $file (@changeLogFiles) {
+        if (defined $fixMerged) {
+            fixOneMergedChangeLog($file);
         } else {
-            showStatus($file);
-            print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
-            unlink($fileMine, $fileOlder, $fileNewer) if isGit();
+            resolveChangeLog($file);
         }
     }
+} else {
+    print STDERR "ERROR: Unknown combination of switches and arguments.\n";
+    usageAndExit();
 }
 
 exit 0;
@@ -180,10 +186,10 @@ sub conflictFiles($)
 }
 
 sub findChangeLog($) {
-    return $_ if basename($_) eq "ChangeLog";
+    return $_[0] if basename($_[0]) eq "ChangeLog";
 
-    my $file = File::Spec->catfile($_, "ChangeLog");
-    return $file if -d $_ and -e $file;
+    my $file = File::Spec->catfile($_[0], "ChangeLog");
+    return $file if -d $_[0] and -e $file;
 
     return undef;
 }
@@ -239,7 +245,32 @@ sub fixChangeLogPatch($)
     return $newPatch;
 }
 
-sub fixMergedChangeLog($)
+sub fixMergedChangeLogs($;@)
+{
+    my $revisionRange = shift;
+    my @changedFiles = @_;
+
+    if (scalar(@changedFiles) < 1) {
+        # Read in list of files changed in $revisionRange
+        open GIT, "-|", $GIT, "diff", "--name-only", $revisionRange || die;
+        push @changedFiles, <GIT>;
+        close GIT || die;
+        die "No changed files in $revisionRange" if scalar(@changedFiles) < 1;
+        chomp @changedFiles;
+    }
+
+    my @changeLogs = grep { defined $_ } map { findChangeLog($_) } @changedFiles;
+    die "No changed ChangeLog files in $revisionRange" if scalar(@changeLogs) < 1;
+
+    system("$GIT filter-branch --tree-filter 'PREVIOUS_COMMIT=\`$GIT rev-parse \$GIT_COMMIT^\` && MAPPED_PREVIOUS_COMMIT=\`map \$PREVIOUS_COMMIT\` $0 -f \"" . join('" "', @changeLogs) . "\"' $revisionRange");
+
+    # On success, remove the backup refs directory
+    if (WEXITSTATUS($?) == 0) {
+        rmtree(qw(.git/refs/original));
+    }
+}
+
+sub fixOneMergedChangeLog($)
 {
     my $file = shift;
     my $patch;
@@ -247,14 +278,17 @@ sub fixMergedChangeLog($)
     # Read in patch for incorrectly merged ChangeLog entry
     {
         local $/ = undef;
-        open GIT, "-|", $GIT, "diff", "HEAD^", $file || die;
+        open GIT, "-|", $GIT, "diff", ($ENV{GIT_COMMIT} || "HEAD") . "^", $file || die;
         $patch = <GIT>;
         close GIT || die;
     }
 
-    # The patch must have 1 or more lines of context, then 1 or more lines
+    # Always checkout the previous commit's copy of the ChangeLog
+    system($GIT, "checkout", $ENV{MAPPED_PREVIOUS_COMMIT} || "HEAD^", $file);
+
+    # The patch must have 0 or more lines of context, then 1 or more lines
     # of additions, and then 1 or more lines of context.  If not, we skip it.
-    if ($patch =~ /\n@@ -(\d+),(\d+) \+(\d+),(\d+) @@\n( .*\n)+((\+.*\n)+)( .*\n)+$/m) {
+    if ($patch =~ /\n@@ -(\d+),(\d+) \+(\d+),(\d+) @@\n( .*\n)*((\+.*\n)+)( .*\n)+$/m) {
         # Copy the header from the original patch.
         my $newPatch = substr($patch, 0, index($patch, "@@ -${1},${2} +${3},${4} @@"));
 
@@ -285,11 +319,6 @@ sub fixMergedChangeLog($)
         }
         close FILE;
 
-        # Unapply the old patch
-        open(PATCH, "| patch -p1 --reverse $file > /dev/null") || die;
-        print PATCH $patch;
-        close(PATCH) || die;
-
         # Apply the new patch
         open(PATCH, "| patch -p1 $file > /dev/null") || die;
         print PATCH $newPatch;
@@ -299,7 +328,9 @@ sub fixMergedChangeLog($)
         system($GIT, "add", $file);
 
         showStatus($file, 1);
-    } else {
+    } elsif ($patch) {
+        # Restore the current copy of the ChangeLog file since we can't repatch it
+        system($GIT, "checkout", $ENV{GIT_COMMIT} || "HEAD", $file);
         print STDERR "WARNING: Last change to ${file} could not be fixed and re-merged.\n" if $printWarnings;
     }
 }
@@ -351,6 +382,61 @@ sub mergeChanges($$$)
     }
 
     return $result;
+}
+
+sub parseFixMerged($$;$)
+{
+    my ($switchName, $key, $value) = @_;
+    if (defined $key) {
+        if (defined findChangeLog($key)) {
+            unshift(@ARGV, $key);
+            $fixMerged = "";
+        } else {
+            $fixMerged = $key;
+        }
+    } else {
+        $fixMerged = "";
+    }
+}
+
+sub removeChangeLogArguments()
+{
+    my @results = ();
+
+    for (my $i = 0; $i < scalar(@ARGV); ) {
+        my $file = findChangeLog($ARGV[$i]);
+        if (defined $file) {
+            splice(@ARGV, $i, 1);
+            push @results, $file;
+        } else {
+            $i++;
+        }
+    }
+
+    return @results;
+}
+
+sub resolveChangeLog($)
+{
+    my ($file) = @_;
+
+    my ($fileMine, $fileOlder, $fileNewer) = conflictFiles($file);
+
+    return unless $fileMine && $fileOlder && $fileNewer;
+
+    if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
+        if ($file ne $fileNewer) {
+            unlink($file);
+            rename($fileNewer, $file) || die;
+        }
+        unlink($fileMine, $fileOlder);
+        resolveConflict($file);
+        showStatus($file, 1);
+    } else {
+        showStatus($file);
+        print STDERR "WARNING: ${file} could not be merged using fuzz level 3.\n" if $printWarnings;
+        unlink($fileMine, $fileOlder, $fileNewer) if isGit();
+    }
 }
 
 sub resolveConflict($)
