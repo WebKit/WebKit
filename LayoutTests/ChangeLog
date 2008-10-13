@@ -1,3 +1,14 @@
+2008-10-12  Pamela Greene  <pam@chromium.org>
+
+        Add a test for null character data.
+        See https://bugs.webkit.org/show_bug.cgi?id=21535
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        * fast/dom/null-chardata-crash-expected.txt: Added.
+        * fast/dom/null-chardata-crash.html: Added.
+
 2008-10-12  Glenn Wilson  <gwilson@google.com>
 
         Reviewed by Darin Adler.

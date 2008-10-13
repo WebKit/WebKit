@@ -1,0 +1,15 @@
+<html>
+<body>
+  <p>To pass, this test should not crash</p>
+  <script>
+    if (window.layoutTestController)
+      window.layoutTestController.dumpAsText();
+
+    var o = document.createTextNode();
+    try {
+      o.data = null;
+      o.splitText(1);
+    } catch (e) {}
+  </script>
+</body>
+</html>
