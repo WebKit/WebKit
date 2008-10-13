@@ -212,6 +212,8 @@ public:
     void addPanScrollIcon(const IntPoint&);
     void removePanScrollIcon();
 
+    virtual bool scrollbarCornerPresent() const;
+
 protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;

@@ -1107,6 +1107,57 @@ bool RenderLayer::isActive() const
     return page && page->focusController()->isActive();
 }
 
+
+static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
+{
+    int horizontalThickness;
+    int verticalThickness;
+    if (!layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
+        // FIXME: This isn't right.  We need to know the thickness of custom scrollbars
+        // even when they don't exist in order to set the resizer square size properly.
+        horizontalThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+        verticalThickness = horizontalThickness;
+    } else if (layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
+        horizontalThickness = layer->verticalScrollbar()->width();
+        verticalThickness = horizontalThickness;
+    } else if (layer->horizontalScrollbar() && !layer->verticalScrollbar()) {
+        verticalThickness = layer->horizontalScrollbar()->height();
+        horizontalThickness = verticalThickness;
+    } else {
+        horizontalThickness = layer->verticalScrollbar()->width();
+        verticalThickness = layer->horizontalScrollbar()->height();
+    }
+    return IntRect(bounds.right() - horizontalThickness - layer->renderer()->style()->borderRightWidth(), 
+                   bounds.bottom() - verticalThickness - layer->renderer()->style()->borderBottomWidth(),
+                   horizontalThickness, verticalThickness);
+}
+
+static IntRect scrollCornerRect(const RenderLayer* layer, const IntRect& bounds)
+{
+    // We have a scrollbar corner when a scrollbar is visible and not filling the entire length of the box.
+    // This happens when:
+    // (a) A resizer is present and at least one scrollbar is present
+    // (b) Both scrollbars are present.
+    bool hasHorizontalBar = layer->horizontalScrollbar();
+    bool hasVerticalBar = layer->verticalScrollbar();
+    bool hasResizer = layer->renderer()->style()->resize() != RESIZE_NONE;
+    if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
+        return cornerRect(layer, bounds);
+    return IntRect();
+}
+
+static IntRect resizerCornerRect(const RenderLayer* layer, const IntRect& bounds)
+{
+    if (layer->renderer()->style()->resize() == RESIZE_NONE)
+        return IntRect();
+    return cornerRect(layer, bounds);
+}
+
+bool RenderLayer::scrollbarCornerPresent() const
+{
+    return !scrollCornerRect(this, m_object->borderBox()).isEmpty();
+}
+
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     IntRect scrollRect = rect;
@@ -1149,6 +1200,10 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
     else
         destroyScrollbar(HorizontalScrollbar);
 
+    // Destroying or creating one bar can cause our scrollbar corner to come and go.  We need to update the opposite scrollbar's style.
+    if (m_vBar)
+        m_vBar->styleChanged();
+
 #if ENABLE(DASHBOARD_SUPPORT)
     // Force an update since we know the scrollbars have changed things.
     if (m_object->document()->hasDashboardRegions())
@@ -1165,6 +1220,10 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
         m_vBar = createScrollbar(VerticalScrollbar);
     else
         destroyScrollbar(VerticalScrollbar);
+
+     // Destroying or creating one bar can cause our scrollbar corner to come and go.  We need to update the opposite scrollbar's style.
+    if (m_hBar)
+        m_hBar->styleChanged();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // Force an update since we know the scrollbars have changed things.
@@ -1194,51 +1253,6 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& p) const
     int y = height();
     convertToLayerCoords(root(), x, y);
     return p - IntPoint(x, y);
-}
-
-static IntRect cornerRect(RenderLayer* layer, const IntRect& bounds)
-{
-    int horizontalThickness;
-    int verticalThickness;
-    if (!layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
-        // FIXME: This isn't right.  We need to know the thickness of custom scrollbars
-        // even when they don't exist in order to set the resizer square size properly.
-        horizontalThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
-        verticalThickness = horizontalThickness;
-    } else if (layer->verticalScrollbar() && !layer->horizontalScrollbar()) {
-        horizontalThickness = layer->verticalScrollbar()->width();
-        verticalThickness = horizontalThickness;
-    } else if (layer->horizontalScrollbar() && !layer->verticalScrollbar()) {
-        verticalThickness = layer->horizontalScrollbar()->height();
-        horizontalThickness = verticalThickness;
-    } else {
-        horizontalThickness = layer->verticalScrollbar()->width();
-        verticalThickness = layer->horizontalScrollbar()->height();
-    }
-    return IntRect(bounds.right() - horizontalThickness - layer->renderer()->style()->borderRightWidth(), 
-                   bounds.bottom() - verticalThickness - layer->renderer()->style()->borderBottomWidth(),
-                   horizontalThickness, verticalThickness);
-}
-
-static IntRect scrollCornerRect(RenderLayer* layer, const IntRect& bounds)
-{
-    // We have a scrollbar corner when a scrollbar is visible and not filling the entire length of the box.
-    // This happens when:
-    // (a) A resizer is present and at least one scrollbar is present
-    // (b) Both scrollbars are present.
-    bool hasHorizontalBar = layer->horizontalScrollbar();
-    bool hasVerticalBar = layer->verticalScrollbar();
-    bool hasResizer = layer->renderer()->style()->resize() != RESIZE_NONE;
-    if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
-        return cornerRect(layer, bounds);
-    return IntRect();
-}
-
-static IntRect resizerCornerRect(RenderLayer* layer, const IntRect& bounds)
-{
-    if (layer->renderer()->style()->resize() == RESIZE_NONE)
-        return IntRect();
-    return cornerRect(layer, bounds);
 }
 
 void RenderLayer::positionOverflowControls(int tx, int ty)

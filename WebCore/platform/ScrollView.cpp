@@ -676,6 +676,12 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     }
 }
 
+bool ScrollView::scrollbarCornerPresent() const
+{
+    return (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) ||
+           (m_verticalScrollbar && height() - m_verticalScrollbar->height() > 0);
+}
+
 void ScrollView::setParentVisible(bool visible)
 {
     if (isParentVisible() == visible)

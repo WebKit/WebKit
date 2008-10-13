@@ -1,5 +1,35 @@
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
+        Add support for the :corner-present pseudoclass, which enables scrollbar pieces to change their
+        artwork based on whether there is a scrollbar corner present.
+
+        Reviewed by Tim Hatcher
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarCornerPresent):
+        * platform/ScrollView.h:
+        * platform/ScrollbarClient.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::cornerRect):
+        (WebCore::scrollCornerRect):
+        (WebCore::resizerCornerRect):
+        (WebCore::RenderLayer::scrollbarCornerPresent):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::horizontalScrollbar):
+        (WebCore::RenderLayer::verticalScrollbar):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::scrollbarCornerPresent):
+
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
         Make resizers and scrollbar corners respect :window-inactive (one more bug fix and then Tim's master
         test case for all this can land).
 

@@ -130,6 +130,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString doubleButton("double-button");
     static AtomicString singleButton("single-button");
     static AtomicString noButton("no-button");
+    static AtomicString cornerPresent("corner-present");
 
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
@@ -281,7 +282,9 @@ void CSSSelector::extractPseudoType() const
     } else if (m_value == scrollbarTrackPiece) {
         element = true;
         m_pseudoType = PseudoScrollbarTrackPiece;
-    } else if (m_value == searchCancelButton) {
+    } else if (m_value == cornerPresent)
+         m_pseudoType = PseudoCornerPresent;
+    else if (m_value == searchCancelButton) {
         m_pseudoType = PseudoSearchCancelButton;
         element = true;
     } else if (m_value == searchDecoration) {
