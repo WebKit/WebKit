@@ -1,3 +1,11 @@
+2008-10-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Reorder methods to preserve compatibility.
+        
+        Rubber stamped by Oliver Hunt.
+
+        * Interfaces/IWebViewPrivate.idl:
+
 2008-10-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
