@@ -46,6 +46,7 @@
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "Page.h"
+#include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Scrollbar.h"
@@ -83,11 +84,7 @@ RenderListBox::RenderListBox(HTMLSelectElement* element)
 
 RenderListBox::~RenderListBox()
 {
-    if (m_vBar) {
-        if (FrameView* view = node()->document()->view())
-            view->removeChild(m_vBar.get());
-        m_vBar->setClient(0);
-    }
+    setHasVerticalScrollbar(false);
 }
 
 void RenderListBox::styleDidChange(RenderStyle::Diff diff, const RenderStyle* oldStyle)
@@ -125,13 +122,8 @@ void RenderListBox::updateFromElement()
         m_optionsWidth = static_cast<int>(ceilf(width));
         m_optionsChanged = false;
         
-        if (!m_vBar)
-            if (FrameView* view = node()->document()->view()) {
-                RefPtr<Scrollbar> widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, SmallScrollbar);
-                view->addChild(widget.get());
-                m_vBar = widget.release();
-            }
-        
+        setHasVerticalScrollbar(true);
+
         setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
@@ -613,6 +605,48 @@ bool RenderListBox::isScrollable() const
     if (numVisibleItems() < numItems())
         return true;
     return RenderObject::isScrollable();
+}
+
+PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
+{
+    RefPtr<Scrollbar> widget;
+    bool hasCustomScrollbarStyle = style()->hasPseudoStyle(RenderStyle::SCROLLBAR);
+    if (hasCustomScrollbarStyle)
+        widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, this);
+    else
+        widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, SmallScrollbar);
+    document()->view()->addChild(widget.get());        
+    return widget.release();
+}
+
+void RenderListBox::destroyScrollbar()
+{
+    if (!m_vBar)
+        return;
+    
+    m_vBar->removeFromParent();
+    m_vBar->setClient(0);
+    m_vBar = 0;
+}
+
+void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
+{
+    if (hasScrollbar == (m_vBar != 0))
+        return;
+
+    if (hasScrollbar)
+        m_vBar = createScrollbar();
+    else
+        destroyScrollbar();
+
+    if (m_vBar)
+        m_vBar->styleChanged();
+
+#if ENABLE(DASHBOARD_SUPPORT)
+    // Force an update since we know the scrollbars have changed things.
+    if (document()->hasDashboardRegions())
+        document()->setDashboardRegionsDirty(true);
+#endif
 }
 
 } // namespace WebCore

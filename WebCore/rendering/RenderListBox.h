@@ -103,6 +103,10 @@ private:
     virtual bool isActive() const;
     virtual bool scrollbarCornerPresent() const { return false; } // We don't support resize on list boxes yet.  If we did this would have to change.
 
+    void setHasVerticalScrollbar(bool hasScrollbar);
+    PassRefPtr<Scrollbar> createScrollbar();
+    void destroyScrollbar();
+    
     int itemHeight() const;
     void valueChanged(unsigned listIndex);
     int size() const;

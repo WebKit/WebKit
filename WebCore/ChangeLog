@@ -1,5 +1,23 @@
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
+        Make RenderListBox work with CSS scrollbars.  Refactoring this code to support creation/destruction in
+        the same way RenderLayer does also fixes a bug where the PLT would assert on the next-to-last page (no
+        idea how to make a test case for that, though, since I couldn't repro without running the whole PLT).
+
+        Reviewed by Tim Hatcher
+
+        Added scrollbars/listbox-scrollbar-combinations.html
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::createScrollbar):
+        (WebCore::RenderListBox::destroyScrollbar):
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderListBox.h:
+
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
         In order to always match the :corner-present pseudo-class properly, delay initial updating of
         scrollbar styles until the layer has the scrollbars in its member variables.
 

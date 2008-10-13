@@ -1,3 +1,14 @@
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
+        Add test case for custom CSS listbox scrollbars.
+
+        Reviewed by Tim Hatcher
+
+        * platform/mac/scrollbars/listbox-scrollbar-combinations-expected.checksum: Added.
+        * platform/mac/scrollbars/listbox-scrollbar-combinations-expected.png: Added.
+        * platform/mac/scrollbars/listbox-scrollbar-combinations-expected.txt: Added.
+        * scrollbars/listbox-scrollbar-combinations.html: Added.
+
 2008-10-13  Timothy Hatcher  <timothy@apple.com>
 
         Adds an complex styled scrollbar test that exercises all pseudo-elements and pseudo-classes.
