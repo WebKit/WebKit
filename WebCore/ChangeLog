@@ -1,3 +1,20 @@
+2008-10-12  Glenn Wilson  <gwilson@google.com>
+
+        Reviewed by Darin Adler.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20461
+
+        Added feature to allow multi-line inputs into text fields.
+        HTMLInputElement would cut the set text at the first 'system' character,
+        so it would truncate at the first carriage return or newline.
+        This fix modifies that behavior to truncate at any non-space system character
+        but changes \r, \n, and \r\n to a single space.
+
+        Tests: editing/pasteboard/paste-multiline-text-input.html
+               
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::constrainValue):
+
 2008-10-12  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.

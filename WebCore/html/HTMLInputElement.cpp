@@ -1576,8 +1576,12 @@ void HTMLInputElement::updatePlaceholderVisibility(bool placeholderValueChanged)
 
 String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen) const
 {
+    String string = proposedValue;
     if (isTextField()) {
-        StringImpl* s = proposedValue.impl();
+        string.replace("\r\n", " ");
+        string.replace('\r', ' ');
+        string.replace('\n', ' ');
+        StringImpl* s = string.impl();
         int newLen = numCharactersInGraphemeClusters(s, maxLen);
         for (int i = 0; i < newLen; ++i) {
             const UChar current = (*s)[i];
@@ -1586,10 +1590,10 @@ String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen)
                 break;
             }
         }
-        if (newLen < static_cast<int>(proposedValue.length()))
-            return proposedValue.substring(0, newLen);
+        if (newLen < static_cast<int>(string.length()))
+            return string.substring(0, newLen);
     }
-    return proposedValue;
+    return string;
 }
 
 void HTMLInputElement::addSearchResult()
