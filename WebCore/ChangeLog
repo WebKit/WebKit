@@ -1,3 +1,33 @@
+2008-10-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/6271864> Links from image maps not being included in AXLinkUIElements
+
+        Links from image maps were not being included in the web area's AXLinkUIElements attribute.
+        The position of image map links was being reported incorrectly and the parent-chain
+        hierarchy for image map links was incorrect because image map links did not have a reference
+        to their parent image. 
+
+        Test: accessibility/document-links.html
+
+        * page/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::parentObject):
+        (WebCore::AccessibilityImageMapLink::actionElement):
+        (WebCore::AccessibilityImageMapLink::elementRect):
+        * page/AccessibilityImageMapLink.h:
+        (WebCore::AccessibilityImageMapLink::setHTMLMapElement):
+        (WebCore::AccessibilityImageMapLink::setParent):
+        * page/AccessibilityObject.cpp:
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
         Make RenderListBox work with CSS scrollbars.  Refactoring this code to support creation/destruction in

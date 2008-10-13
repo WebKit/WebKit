@@ -48,6 +48,10 @@ void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>&
 {
 }
 
+void AccessibilityUIElement::getDocumentLinks(Vector<AccessibilityUIElement>&)
+{
+}
+
 void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& children)
 {
     long childCount;
@@ -80,6 +84,10 @@ JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
     return JSStringCreateWithCharacters(0, 0);
 }
 
+JSStringRef AccessibilityUIElement::attributesOfDocumentLinks()
+{
+    return JSStringCreateWithCharacters(0, 0);
+}
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
     return 0;

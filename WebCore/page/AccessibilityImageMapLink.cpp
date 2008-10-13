@@ -29,10 +29,12 @@
 #include "config.h"
 #include "AccessibilityImageMapLink.h"
 
+#include "AccessibilityRenderObject.h"
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "IntRect.h"
+#include "RenderObject.h"
 
 using namespace std;
 
@@ -57,10 +59,18 @@ PassRefPtr<AccessibilityImageMapLink> AccessibilityImageMapLink::create()
 
 AccessibilityObject* AccessibilityImageMapLink::parentObject() const
 {
+    if (m_parent)
+        return m_parent;
+    
     if (!m_mapElement || !m_mapElement->renderer())
         return 0;
     
     return m_mapElement->document()->axObjectCache()->get(m_mapElement->renderer());
+}
+    
+Element* AccessibilityImageMapLink::actionElement() const
+{
+    return anchorElement();
 }
     
 Element* AccessibilityImageMapLink::anchorElement() const
@@ -97,10 +107,19 @@ String AccessibilityImageMapLink::title() const
     
 IntRect AccessibilityImageMapLink::elementRect() const
 {
-    if (!m_areaElement)
+    if (!m_mapElement || !m_areaElement)
+        return IntRect();
+
+    RenderObject* renderer;
+    if (m_parent && m_parent->isAccessibilityRenderObject())
+        renderer = static_cast<AccessibilityRenderObject*>(m_parent)->renderer();
+    else
+        renderer = m_mapElement->renderer();
+    
+    if (!renderer)
         return IntRect();
     
-    return m_areaElement->getRect(m_mapElement->renderer());
+    return m_areaElement->getRect(renderer);
 }
     
 IntSize AccessibilityImageMapLink::size() const

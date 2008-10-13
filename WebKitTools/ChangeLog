@@ -1,3 +1,20 @@
+2008-10-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Added a method to get the links in a webpage
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (attributesOfDocumentLinksCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::getDocumentLinks):
+        (AccessibilityUIElement::attributesOfDocumentLinks):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::getDocumentLinks):
+        (AccessibilityUIElement::attributesOfDocumentLinks):
+
 2008-10-13  David Kilzer  <ddkilzer@apple.com>
 
         Bug 21457: resolve-ChangeLogs should be able to operate on a git revision range

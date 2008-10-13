@@ -44,13 +44,16 @@ public:
     virtual ~AccessibilityImageMapLink();
     
     void setHTMLAreaElement(HTMLAreaElement* element) { m_areaElement = element; }
-    void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }
-    
+    void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }    
+    void setParent(AccessibilityObject* parent) { m_parent = parent; }
+        
     virtual AccessibilityRole roleValue() const { return WebCoreLinkRole; }
     virtual bool accessibilityIsIgnored() const { return false; }
 
     virtual AccessibilityObject* parentObject() const;
     virtual Element* anchorElement() const;
+    virtual Element* actionElement() const;
+    
     virtual bool isLink() const { return true; } 
     virtual String title() const;
     virtual String accessibilityDescription() const;
@@ -61,6 +64,7 @@ public:
 private:    
     HTMLAreaElement* m_areaElement;
     HTMLMapElement* m_mapElement;
+    AccessibilityObject* m_parent;
 };
     
 } // namespace WebCore

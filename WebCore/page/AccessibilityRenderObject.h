@@ -170,7 +170,7 @@ public:
     virtual const String& actionVerb() const;
     virtual Widget* widget() const;
     virtual Widget* widgetForAttachmentView() const;
-    virtual void getDocumentLinks(AccessibilityChildrenVector&) const;
+    virtual void getDocumentLinks(AccessibilityChildrenVector&);
     virtual FrameView* documentFrameView() const;
     
     virtual const AccessibilityChildrenVector& children();
@@ -227,6 +227,8 @@ private:
     IntRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     AccessibilityObject* internalLinkElement() const;
+    AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement* map) const;
+
 };
     
 } // namespace WebCore

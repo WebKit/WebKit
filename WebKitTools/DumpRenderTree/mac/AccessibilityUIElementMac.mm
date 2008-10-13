@@ -167,6 +167,12 @@ void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>&
     convertNSArrayToVector(linkedElements, elementVector);
 }
 
+void AccessibilityUIElement::getDocumentLinks(Vector<AccessibilityUIElement>& elementVector)
+{
+    NSArray* linkElements = [m_element accessibilityAttributeValue:@"AXLinkUIElements"];
+    convertNSArrayToVector(linkElements, elementVector);
+}
+
 void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& elementVector)
 {
     NSArray* children = [m_element accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
@@ -197,6 +203,13 @@ JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
     Vector<AccessibilityUIElement> linkedElements;
     getLinkedUIElements(linkedElements);
     return descriptionOfElements(linkedElements);
+}
+
+JSStringRef AccessibilityUIElement::attributesOfDocumentLinks()
+{
+    Vector<AccessibilityUIElement> linkElements;
+    getDocumentLinks(linkElements);
+    return descriptionOfElements(linkElements);
 }
 
 JSStringRef AccessibilityUIElement::attributesOfChildren()

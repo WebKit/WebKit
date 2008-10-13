@@ -1135,7 +1135,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isWebArea()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
             AccessibilityObject::AccessibilityChildrenVector links;
-            m_object->getDocumentLinks(links);
+            static_cast<AccessibilityRenderObject*>(m_object)->getDocumentLinks(links);
             return convertToNSArray(links);
         }
         if ([attributeName isEqualToString: @"AXLoaded"])

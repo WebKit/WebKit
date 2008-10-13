@@ -300,7 +300,6 @@ public:
     const String& actionVerb() const;
     virtual Widget* widget() const;
     virtual Widget* widgetForAttachmentView() const;
-    virtual void getDocumentLinks(Vector< RefPtr<AccessibilityObject> >&) const;
     virtual Document* document() const { return 0; }
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;

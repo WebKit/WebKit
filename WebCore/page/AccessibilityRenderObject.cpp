@@ -1440,7 +1440,28 @@ AXObjectCache* AccessibilityRenderObject::axObjectCache() const
     return m_renderer->document()->axObjectCache();
 }
 
-void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result) const
+AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const
+{
+    // find an image that is using this map
+    if (!m_renderer || !map)
+        return 0;
+
+    RefPtr<HTMLCollection> coll = m_renderer->document()->images();
+    for (Node* curr = coll->firstItem(); curr; curr = coll->nextItem()) {
+        RenderObject* obj = curr->renderer();
+        if (!obj || !curr->hasTagName(imgTag))
+            continue;
+        
+        // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning,
+        // which has to be stripped off
+        if (static_cast<HTMLImageElement*>(curr)->useMap().substring(1) == map->getName())
+            return axObjectCache()->get(obj);
+    }
+    
+    return 0;
+}
+    
+void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
 {
     Document* document = m_renderer->document();
     RefPtr<HTMLCollection> coll = document->links();
@@ -1453,6 +1474,16 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
             ASSERT(axobj->roleValue() == WebCoreLinkRole);
             if (!axobj->accessibilityIsIgnored())
                 result.append(axobj);
+        } else {
+            Node* parent = curr->parent();
+            if (parent && curr->hasTagName(areaTag) && parent->hasTagName(mapTag)) {
+                AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->get(ImageMapLinkRole));
+                areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(curr));
+                areaObject->setHTMLMapElement(static_cast<HTMLMapElement*>(parent));
+                areaObject->setParent(accessibilityParentForImageMap(static_cast<HTMLMapElement*>(parent)));
+
+                result.append(areaObject);
+            }
         }
         curr = coll->nextItem();
     }
@@ -2225,9 +2256,10 @@ void AccessibilityRenderObject::addChildren()
 
                 // add an <area> element for this child if it has a link
                 if (current->isLink()) {
-                    AccessibilityObject* areaObject = m_renderer->document()->axObjectCache()->get(ImageMapLinkRole);
-                    static_cast<AccessibilityImageMapLink*>(areaObject)->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
-                    static_cast<AccessibilityImageMapLink*>(areaObject)->setHTMLMapElement(map);
+                    AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(m_renderer->document()->axObjectCache()->get(ImageMapLinkRole));
+                    areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
+                    areaObject->setHTMLMapElement(map);
+                    areaObject->setParent(this);
 
                     m_children.append(areaObject);
                 }
