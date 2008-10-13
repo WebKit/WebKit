@@ -1675,7 +1675,8 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             // a selector is invalid if something follows a pseudo-element
             // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
             // to follow the pseudo elements.
-            if (elementStyle && dynamicPseudo != RenderStyle::NOPSEUDO && !(RenderScrollbar::scrollbarForStyleResolve() && sel->m_match == CSSSelector::PseudoClass))
+            if (elementStyle && dynamicPseudo != RenderStyle::NOPSEUDO && 
+                !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == RenderStyle::SCROLLBAR_CORNER || dynamicPseudo == RenderStyle::RESIZER) && sel->m_match == CSSSelector::PseudoClass))
                 return SelectorFailsCompletely;
             return checkSelector(sel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle);
     }
@@ -1851,7 +1852,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle))
                     return true;
             }
-        } else if (RenderScrollbar::scrollbarForStyleResolve() && dynamicPseudo != RenderStyle::NOPSEUDO) {
+        } else if (dynamicPseudo != RenderStyle::NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == RenderStyle::SCROLLBAR_CORNER || dynamicPseudo == RenderStyle::RESIZER)) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
             return checkScrollbarPseudoClass(sel, dynamicPseudo);
@@ -2391,7 +2392,15 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
     RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
     ScrollbarPart part = RenderScrollbar::partForStyleResolve();
 
-    ASSERT(sel->m_match == CSSSelector::PseudoClass && scrollbar);
+    // FIXME: This is a temporary hack for resizers and scrollbar corners.  Eventually :window-inactive should become a real
+    // pseudo class and just apply to everything.
+    if (sel->pseudoType() == CSSSelector::PseudoWindowInactive)
+        return !m_document->page()->focusController()->isActive();
+    
+    if (!scrollbar)
+        return false;
+        
+    ASSERT(sel->m_match == CSSSelector::PseudoClass);
     switch (sel->pseudoType()) {
         case CSSSelector::PseudoEnabled:
             return scrollbar->enabled();
@@ -2447,8 +2456,6 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
                 return buttonsPlacement == ScrollbarButtonsNone || buttonsPlacement == ScrollbarButtonsDoubleStart;
             return false;
         }
-        case CSSSelector::PseudoWindowInactive:
-            return !scrollbar->isWindowActive();
         default:
             return false;
     }

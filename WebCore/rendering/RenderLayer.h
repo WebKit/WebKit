@@ -369,6 +369,9 @@ private:
 
     RenderLayer* enclosingTransformedAncestor() const;
 
+    void updateScrollCornerStyle();
+    void updateResizerStyle();
+
 protected:   
     RenderObject* m_object;
 

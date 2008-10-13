@@ -1,5 +1,29 @@
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
+        Make resizers and scrollbar corners respect :window-inactive (one more bug fix and then Tim's master
+        test case for all this can land).
+
+        Reviewed by Tim Hatcher
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::styleChanged):
+        (WebCore::RenderLayer::updateScrollCornerStyle):
+        (WebCore::RenderLayer::updateResizerStyle):
+        * rendering/RenderLayer.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::paint):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::paintIntoRect):
+
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
         Rework resizer and scroll corner painting so that custom resizers and scroll corners will paint
         and invalidate properly as images load, etc.
 

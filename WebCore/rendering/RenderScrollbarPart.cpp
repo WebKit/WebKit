@@ -150,6 +150,9 @@ void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, int tx
     setOverflowWidth(max(rect.width(), overflowWidth()));
     setOverflowHeight(max(rect.height(), overflowHeight()));
 
+    if (graphicsContext->paintingDisabled())
+        return;
+
     // Now do the paint.
     RenderObject::PaintInfo paintInfo(graphicsContext, rect, PaintPhaseBlockBackground, false, 0, 0);
     paint(paintInfo, tx, ty);
