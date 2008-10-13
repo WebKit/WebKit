@@ -33,20 +33,6 @@ namespace WebCore {
 
 struct PluginInfo;
 
-struct MimeClassInfo {
-    String type;
-    String desc;
-    String suffixes;
-    PluginInfo* plugin;
-};
-
-struct PluginInfo {
-    String name;
-    String file;
-    String desc;
-    Vector<MimeClassInfo*> mimes;
-};
-
 class PluginInfoStore {
 public:
     PluginInfo *createPluginInfoForPluginAtIndex(unsigned);

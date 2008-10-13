@@ -27,6 +27,7 @@
 #include "PluginInfoStore.h"
 
 #include "KURL.h"
+#include "PluginData.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
