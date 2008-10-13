@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 #include "config.h"
 #include "Gradient.h"
 
-#include "CSSParser.h"
+#include "Color.h"
 
 namespace WebCore {
 
@@ -60,28 +60,14 @@ Gradient::~Gradient()
     platformDestroy();
 }
 
-void Gradient::addColorStop(float value, const String& color)
-{
-    RGBA32 rgba = 0; // default is transparant black
-    CSSParser::parseColor(rgba, color);
-    m_stops.append(ColorStop(value,
-        ((rgba >> 16) & 0xFF) / 255.0f,
-        ((rgba >> 8) & 0xFF) / 255.0f,
-        (rgba & 0xFF) / 255.0f,
-        ((rgba >> 24) & 0xFF) / 255.0f));
-
-    m_stopsSorted = false;
-
-    platformDestroy();
-}
-
 void Gradient::addColorStop(float value, const Color& color)
 {
-    m_stops.append(ColorStop(value,
-        color.red() / 255.0f,
-        color.green() / 255.0f,
-        color.blue() / 255.0f,
-        color.alpha() / 255.0f));
+    float r;
+    float g;
+    float b;
+    float a;
+    color.getRGBA(r, g, b, a);
+    m_stops.append(ColorStop(value, r, g, b, a));
 
     m_stopsSorted = false;
 

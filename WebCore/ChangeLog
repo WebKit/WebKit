@@ -1,3 +1,16 @@
+2008-10-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21563
+          Bug 21563: platform Gradient class should not use the CSS parser
+
+        * platform/graphics/Gradient.cpp: Removed the overload of addColorStop
+        that accepts a CSS color string. That's handled in the DOM now, not here.
+        (WebCore::Gradient::addColorStop): Use getRGBA instead of having our own
+        copy of it here.
+        * platform/graphics/Gradient.h: More of the same. Tweak formatting a bit.
+
 2008-10-12  Glenn Wilson  <gwilson@google.com>
 
         Reviewed by Darin Adler.
