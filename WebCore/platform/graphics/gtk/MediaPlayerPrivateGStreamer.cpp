@@ -54,20 +54,17 @@ gboolean mediaPlayerPrivateErrorCallback(GstBus* bus, GstMessage* message, gpoin
 {
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_ERROR)
     {
-        GError* err;
-        gchar* debug;
+        GOwnPtr<GError> err;
+        GOwnPtr<gchar> debug;
 
-        gst_message_parse_error(message, &err, &debug);
+        gst_message_parse_error(message, &err.rawPtr(), &debug.rawPtr());
         if (err->code == 3) {
             LOG_VERBOSE(Media, "File not found");
             MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
             if (mp)
                 mp->loadingFailed();
-        } else {
+        } else
             LOG_VERBOSE(Media, "Error: %d, %s", err->code,  err->message);
-            g_error_free(err);
-            g_free(debug);
-        }
     }
     return true;
 }

@@ -1,3 +1,51 @@
+2008-10-13  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Darin Adler. Landed by Jan Alonzo.
+
+        WebKit GTK Port needs a smartpointer to handle g_free (GFreePtr?)
+        http://bugs.webkit.org/show_bug.cgi?id=20483
+
+        Add a GOwnPtr smart pointer (similar to OwnPtr) to handle memory
+        allocated by GLib and start the conversion to use it.
+
+        * GNUmakefile.am:
+        * wtf/GOwnPtr.cpp: Added.
+        (WTF::GError):
+        (WTF::GList):
+        (WTF::GCond):
+        (WTF::GMutex):
+        (WTF::GPatternSpec):
+        (WTF::GDir):
+        * wtf/GOwnPtr.h: Added.
+        (WTF::freeOwnedPtr):
+        (WTF::GOwnPtr::GOwnPtr):
+        (WTF::GOwnPtr::~GOwnPtr):
+        (WTF::GOwnPtr::get):
+        (WTF::GOwnPtr::release):
+        (WTF::GOwnPtr::rawPtr):
+        (WTF::GOwnPtr::set):
+        (WTF::GOwnPtr::clear):
+        (WTF::GOwnPtr::operator*):
+        (WTF::GOwnPtr::operator->):
+        (WTF::GOwnPtr::operator!):
+        (WTF::GOwnPtr::operator UnspecifiedBoolType):
+        (WTF::GOwnPtr::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::getPtr):
+        * wtf/Threading.h:
+        * wtf/ThreadingGtk.cpp:
+        (WTF::Mutex::~Mutex):
+        (WTF::Mutex::lock):
+        (WTF::Mutex::tryLock):
+        (WTF::Mutex::unlock):
+        (WTF::ThreadCondition::~ThreadCondition):
+        (WTF::ThreadCondition::wait):
+        (WTF::ThreadCondition::timedWait):
+        (WTF::ThreadCondition::signal):
+        (WTF::ThreadCondition::broadcast):
+
 2008-10-12  Gabriella Toth  <gtoth@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

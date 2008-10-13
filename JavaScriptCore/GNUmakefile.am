@@ -240,6 +240,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/FastMalloc.h \
 	JavaScriptCore/wtf/Forward.h \
 	JavaScriptCore/wtf/GetPtr.h \
+	JavaScriptCore/wtf/GOwnPtr.cpp \
+	JavaScriptCore/wtf/GOwnPtr.h \
 	JavaScriptCore/wtf/HashCountedSet.h \
 	JavaScriptCore/wtf/HashFunctions.h \
 	JavaScriptCore/wtf/HashIterators.h \

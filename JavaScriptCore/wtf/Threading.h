@@ -62,6 +62,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+#if PLATFORM(GTK)
+#include <wtf/GOwnPtr.h>
+#endif
 
 #if PLATFORM(WIN_OS)
 #include <windows.h>
@@ -117,8 +120,8 @@ void detachThread(ThreadIdentifier);
 typedef pthread_mutex_t PlatformMutex;
 typedef pthread_cond_t PlatformCondition;
 #elif PLATFORM(GTK)
-typedef GMutex* PlatformMutex;
-typedef GCond* PlatformCondition;
+typedef GOwnPtr<GMutex> PlatformMutex;
+typedef GOwnPtr<GCond> PlatformCondition;
 #elif PLATFORM(QT)
 typedef QT_PREPEND_NAMESPACE(QMutex)* PlatformMutex;
 typedef QT_PREPEND_NAMESPACE(QWaitCondition)* PlatformCondition;
