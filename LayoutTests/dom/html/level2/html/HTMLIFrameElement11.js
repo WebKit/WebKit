@@ -49,11 +49,15 @@ function setUpPage() {
       docsLoaded += preload(docRef, "doc", "iframe2");
         
        if (docsLoaded == 1) {
-          setUpPage = 'complete';
+         // WebKit fix: corrected variable name from 'setUpPage':
+         // <http://bugs.webkit.org/show_bug.cgi?id=21506>
+          setUpPageStatus = 'complete';
        }
     } catch(ex) {
-    	catchInitializationError(builder, ex);
-        setUpPage = 'complete';
+        catchInitializationError(builder, ex);
+         // WebKit fix: corrected variable name from 'setUpPage':
+         // <http://bugs.webkit.org/show_bug.cgi?id=21506>
+        setUpPageStatus = 'complete';
     }
 }
 
