@@ -1,5 +1,16 @@
 2008-10-12  Pamela Greene  <pam@chromium.org>
 
+        Remove a race condition in a test by promoting layoutTestController
+        calls outside document.write().  Add document.close().
+        See https://bugs.webkit.org/show_bug.cgi?id=21524
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        * fast/encoding/script-in-head.html:
+
+2008-10-12  Pamela Greene  <pam@chromium.org>
+
         Remove data: URLs to avoid cross-domain security restrictions.
         See https://bugs.webkit.org/show_bug.cgi?id=21528
 

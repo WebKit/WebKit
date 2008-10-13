@@ -1,9 +1,9 @@
 <!-- temp --><script language="JavaScript" type="text/JavaScript">
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 document.write ('<SCR' + 'IPT>' +
-    'if (window.layoutTestController) {' +
-        'layoutTestController.dumpAsText();' +
-        'layoutTestController.waitUntilDone();' +
-    '}' +
 
     'setTimeout(function () {' +
         <!-- The letters CCE below are Cyrillic, so we do test that the encoding is correct. -->
@@ -12,7 +12,7 @@ document.write ('<SCR' + 'IPT>' +
         'if (window.layoutTestController)' +
             'layoutTestController.notifyDone();' +
     '}, 0);' +
-'</SCR' + 'IPT>'); </script>
+'</SCR' + 'IPT>');document.close(); </script>
 <!-- /temp --><!--HEADER-->
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
