@@ -60,6 +60,7 @@ namespace JSC {
         static JSGlobalData& sharedInstance();
 
         static PassRefPtr<JSGlobalData> create();
+        static PassRefPtr<JSGlobalData> createLeaked();
         ~JSGlobalData();
 
         Machine* machine;

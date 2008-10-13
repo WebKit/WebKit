@@ -39,6 +39,9 @@ namespace JSC {
 
 #ifndef NDEBUG    
 static WTF::RefCountedLeakCounter structureIDCounter("StructureID");
+
+static bool shouldIgnoreLeaks;
+static HashSet<StructureID*> ignoreSet;
 #endif
 
 StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
@@ -57,7 +60,10 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 
 #ifndef NDEBUG
-    structureIDCounter.increment();
+    if (shouldIgnoreLeaks)
+        ignoreSet.add(this);
+    else
+        structureIDCounter.increment();
 #endif
 }
 
@@ -72,7 +78,25 @@ StructureID::~StructureID()
         m_cachedPropertyNameArrayData->setCachedStructureID(0);
 
 #ifndef NDEBUG
-    structureIDCounter.decrement();
+    HashSet<StructureID*>::iterator it = ignoreSet.find(this);
+    if (it != ignoreSet.end())
+        ignoreSet.remove(it);
+    else
+        structureIDCounter.decrement();
+#endif
+}
+
+void StructureID::startIgnoringLeaks()
+{
+#ifndef NDEBUG
+    shouldIgnoreLeaks = true;
+#endif
+}
+
+void StructureID::stopIgnoringLeaks()
+{
+#ifndef NDEBUG
+    shouldIgnoreLeaks = false;
 #endif
 }
 

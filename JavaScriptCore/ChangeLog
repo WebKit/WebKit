@@ -1,3 +1,25 @@
+2008-10-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21577
+        5 false positive StructureID leaks
+
+        - Add leak ignore set to StructureID to selectively ignore leaking some StructureIDs.
+        - Add create method to JSGlolalData to be used when the data will be intentionally
+          leaked and ignore all leaks caused the StructureIDs stored in it.
+
+        * JavaScriptCore.exp:
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::createLeaked):
+        * kjs/JSGlobalData.h:
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::~StructureID):
+        (JSC::StructureID::startIgnoringLeaks):
+        (JSC::StructureID::stopIgnoringLeaks):
+        * kjs/StructureID.h:
+
 2008-10-13  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Darin Adler. Landed by Jan Alonzo.

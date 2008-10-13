@@ -82,6 +82,9 @@ namespace JSC {
             return adoptRef(new StructureID(prototype, typeInfo));
         }
 
+        static void startIgnoringLeaks();
+        static void stopIgnoringLeaks();
+
         static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
         static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& propertyName, unsigned attributes, size_t& offset);
         static PassRefPtr<StructureID> getterSetterTransition(StructureID*);

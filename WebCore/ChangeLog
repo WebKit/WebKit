@@ -1,3 +1,17 @@
+2008-10-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21577
+        5 false positive StructureID leaks
+
+        In WebCore, we intentionally leak the common JSGlobalData which in turn
+        leaks 5 StructureIDs.  Use the new JSGlobalData::createLeaked in order to
+        ignore the StructureIDs leaked within.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData):
+
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
         Add support for the :corner-present pseudoclass, which enables scrollbar pieces to change their

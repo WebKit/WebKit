@@ -781,7 +781,7 @@ JSDOMWindowShell* JSDOMWindowBase::shell() const
 
 JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 {
-    static JSGlobalData* globalData = JSGlobalData::create().releaseRef();
+    static JSGlobalData* globalData = JSGlobalData::createLeaked().releaseRef();
     return globalData;
 }
 
