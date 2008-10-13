@@ -1,3 +1,25 @@
+2008-10-12  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20435
+
+        Added exception codes to canvas gradients to match current specification.
+
+        Tests: fast/canvas/gradient-addColorStop-with-invalid-color.html
+               fast/canvas/linearGradient-infinite-values.html
+               fast/canvas/radialGradient-infinite-values.html
+
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        * html/CanvasGradient.h:
+        * html/CanvasGradient.idl:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createLinearGradient):
+        (WebCore::CanvasRenderingContext2D::createRadialGradient):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+
 2008-10-12  Eric Roman  <eroman@chromium.org>
 
         - https://bugs.webkit.org/show_bug.cgi?id=20246

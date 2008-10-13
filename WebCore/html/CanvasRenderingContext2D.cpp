@@ -997,13 +997,23 @@ void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
     setGlobalCompositeOperation(operation);
 }
 
-PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1)
+PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode& ec)
 {
+    if (!isfinite(x0) || !isfinite(y0) || !isfinite(x1) || !isfinite(y1)) {
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    }
+
     return CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
 }
 
-PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1)
+PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode& ec)
 {
+    if (!isfinite(x0) || !isfinite(y0) || !isfinite(r0) || 
+        !isfinite(x1) || !isfinite(y1) || !isfinite(r1)) {
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    }
     return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
 }
 

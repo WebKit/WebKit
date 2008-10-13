@@ -30,7 +30,8 @@ module html {
         ImplementationUUID=a2942ae6-2731-4286-98cc-9d5e79e20de1
     ] CanvasGradient {
 
-        void addColorStop(in float offset, in DOMString color);
+        void addColorStop(in float offset, in DOMString color)
+            raises (DOMException);
 
     };
 

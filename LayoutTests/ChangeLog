@@ -1,3 +1,22 @@
+2008-10-12  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=20435
+
+        Added new tests to check behavior of canvas gradients to infinite values
+        or invalid colors.
+
+        * fast/canvas/gradient-addColorStop-with-invalid-color-expected.txt: Added.
+        * fast/canvas/gradient-addColorStop-with-invalid-color.html: Added.
+        * fast/canvas/linearGradient-infinite-values-expected.txt: Added.
+        * fast/canvas/linearGradient-infinite-values.html: Added.
+        * fast/canvas/radialGradient-infinite-values-expected.txt: Added.
+        * fast/canvas/radialGradient-infinite-values.html: Added.
+        * fast/canvas/resources/gradient-addColorStop-with-invalid-color.js: Added.
+        * fast/canvas/resources/linearGradient-infinite-values.js: Added.
+        * fast/canvas/resources/radialGradient-infinite-values.js: Added.
+
 2008-10-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

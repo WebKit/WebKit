@@ -35,6 +35,8 @@ namespace WebCore {
 
     class String;
 
+    typedef int ExceptionCode;
+
     class CanvasGradient : public RefCounted<CanvasGradient> {
     public:
         static PassRefPtr<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1)
@@ -48,7 +50,7 @@ namespace WebCore {
         
         Gradient* gradient() const { return m_gradient.get(); }
 
-        void addColorStop(float value, const String& color) { m_gradient->addColorStop(value, color); }
+        void addColorStop(float value, const String& color, ExceptionCode&);
 
         void getColor(float value, float* r, float* g, float* b, float* a) const { m_gradient->getColor(value, r, g, b, a); }
 
