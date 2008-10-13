@@ -7,28 +7,48 @@ layer at (0,0) size 800x600
         text run at (0,0) width 771: "Each square canvas should contain a colored gradient bordered by a narrow white margin and a black line. The column on"
         text run at (0,18) width 457: "the left contains linear gradients, the column on the right radial gradients."
       RenderBR {BR} at (457,32) size 0x0
-      RenderHTMLCanvas {CANVAS} at (0,36) size 102x102 [border: (1px solid #000000)]
-      RenderHTMLCanvas {CANVAS} at (102,36) size 102x102 [border: (1px solid #000000)]
-      RenderText {#text} at (204,124) size 98x18
-        text run at (204,124) width 98: " Green to white"
-      RenderBR {BR} at (302,138) size 0x0
-      RenderHTMLCanvas {CANVAS} at (0,142) size 102x102 [border: (1px solid #000000)]
-      RenderHTMLCanvas {CANVAS} at (102,142) size 102x102 [border: (1px solid #000000)]
-      RenderText {#text} at (204,230) size 138x18
-        text run at (204,230) width 138: " Green to white to red"
-      RenderBR {BR} at (342,244) size 0x0
-      RenderHTMLCanvas {CANVAS} at (0,248) size 102x102 [border: (1px solid #000000)]
-      RenderHTMLCanvas {CANVAS} at (102,248) size 102x102 [border: (1px solid #000000)]
-      RenderText {#text} at (204,336) size 478x18
-        text run at (204,336) width 478: " Blue to white in the top (inner) half, red to yellow in the bottom (outer) half"
-      RenderBR {BR} at (682,350) size 0x0
-      RenderHTMLCanvas {CANVAS} at (0,354) size 102x102 [border: (1px solid #000000)]
-      RenderHTMLCanvas {CANVAS} at (102,354) size 102x102 [border: (1px solid #000000)]
-      RenderText {#text} at (204,442) size 301x18
-        text run at (204,442) width 301: " Blue to white, red to yellow (same as previous)"
-      RenderBR {BR} at (505,456) size 0x0
-      RenderHTMLCanvas {CANVAS} at (0,460) size 102x102 [border: (1px solid #000000)]
-      RenderHTMLCanvas {CANVAS} at (102,460) size 102x102 [border: (1px solid #000000)]
-      RenderText {#text} at (204,548) size 301x18
-        text run at (204,548) width 301: " Blue to white, red to yellow (same as previous)"
-      RenderBR {BR} at (505,562) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,36) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,36) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,74) size 98x18
+        text run at (104,74) width 98: " Green to white"
+      RenderBR {BR} at (202,88) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,92) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,92) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,130) size 138x18
+        text run at (104,130) width 138: " Green to white to red"
+      RenderBR {BR} at (242,144) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,148) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,148) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,186) size 220x18
+        text run at (104,186) width 220: " Larger green to white to larger red"
+      RenderBR {BR} at (324,200) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,204) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,204) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,242) size 61x18
+        text run at (104,242) width 61: " Solid red"
+      RenderBR {BR} at (165,256) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,260) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,260) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,298) size 61x18
+        text run at (104,298) width 61: " Solid red"
+      RenderBR {BR} at (165,312) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,316) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,316) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,354) size 61x18
+        text run at (104,354) width 61: " Solid red"
+      RenderBR {BR} at (165,368) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,372) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,372) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,410) size 478x18
+        text run at (104,410) width 478: " Blue to white in the top (inner) half, red to yellow in the bottom (outer) half"
+      RenderBR {BR} at (582,424) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,428) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,428) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,466) size 301x18
+        text run at (104,466) width 301: " Blue to white, red to yellow (same as previous)"
+      RenderBR {BR} at (405,480) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,484) size 52x52 [border: (1px solid #000000)]
+      RenderHTMLCanvas {CANVAS} at (52,484) size 52x52 [border: (1px solid #000000)]
+      RenderText {#text} at (104,522) size 301x18
+        text run at (104,522) width 301: " Blue to white, red to yellow (same as previous)"
+      RenderBR {BR} at (405,536) size 0x0

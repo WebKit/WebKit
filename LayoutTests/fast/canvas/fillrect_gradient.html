@@ -12,13 +12,13 @@ The column on the left contains linear gradients, the column on the right radial
         // Create canvas elements
         var lin = document.createElement('canvas');
         lin.setAttribute('id', 'canvas' + counter + 'lin');
-        lin.setAttribute('height', 100);
-        lin.setAttribute('width', 100);
+        lin.setAttribute('height', 50);
+        lin.setAttribute('width', 50);
         var rad = document.createElement('canvas');
         rad.setAttribute('id', 'canvas' + counter + 'rad');
-        rad.setAttribute('height', 100);
-        rad.setAttribute('width', 100);
-        
+        rad.setAttribute('height', 50);
+        rad.setAttribute('width', 50);
+
         document.body.appendChild(lin);
         document.body.appendChild(rad);
         document.body.appendChild(document.createTextNode(' ' + description));
@@ -29,8 +29,8 @@ The column on the left contains linear gradients, the column on the right radial
         var radctx = rad.getContext('2d')
 
         // Create linear and radial gradients from array
-        var lingrad = linctx.createLinearGradient(0, 0, 0, 100);
-        var radgrad = linctx.createRadialGradient(50, 50, 0, 50, 50, 50);
+        var lingrad = linctx.createLinearGradient(0, 0, 0, 50);
+        var radgrad = linctx.createRadialGradient(25, 25, 0, 25, 25, 25);
         for (var i = 0; i < gradient.length - 1; i+=2) {
             lingrad.addColorStop(gradient[i], gradient[i + 1]);
             radgrad.addColorStop(gradient[i], gradient[i + 1]);
@@ -38,12 +38,15 @@ The column on the left contains linear gradients, the column on the right radial
 
         // Apply them
         linctx.fillStyle = lingrad;
-        linctx.fillRect(5, 5, 90, 90);
+        linctx.fillRect(2, 2, 46, 46);
         radctx.fillStyle = radgrad;
-        radctx.fillRect(5, 5, 90, 90);
+        radctx.fillRect(2, 2, 46, 46);
 
         counter++;
     }
+
+    // Note: This test won't be as useful with many more cases added, since
+    // they'll scroll below the pixel-test boundary.
 
     // Simple gradient
     Test('Green to white',
@@ -55,6 +58,24 @@ The column on the left contains linear gradients, the column on the right radial
          new Array(  0, '#0f0',
                    0.5, '#fff',
                    1,   '#f00'));
+
+    // No stops at 0.0 or 1.0
+    Test('Larger green to white to larger red',
+         new Array(0.4, '#0f0',
+                   0.5, '#fff',
+                   0.6, '#f00'));
+
+    // Only one stop, at zero
+    Test('Solid red',
+         new Array(0.0, '#f00'));
+
+    // Only one stop, at 1.0
+    Test('Solid red',
+         new Array(1.0, '#f00'));
+
+    // Only one stop, in the middle
+    Test('Solid red',
+         new Array(0.5, '#f00'));
 
     // Disjoint gradients (multiple stops at the same offset)
     Test('Blue to white in the top (inner) half, red to yellow in the bottom (outer) half',

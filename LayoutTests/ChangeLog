@@ -1,5 +1,19 @@
 2008-10-12  Pamela Greene  <pam@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21523
+
+        Add tests to cover more gradient edge cases: missing endpoints, only
+        endpoints, only one stop.
+
+        * fast/canvas/fillrect_gradient.html:
+        * platform/mac/fast/canvas/fillrect_gradient-expected.checksum:
+        * platform/mac/fast/canvas/fillrect_gradient-expected.png:
+        * platform/mac/fast/canvas/fillrect_gradient-expected.txt:
+
+2008-10-12  Pamela Greene  <pam@chromium.org>
+
         Fixed 'completed' variable name to match 'running' one.
         See https://bugs.webkit.org/show_bug.cgi?id=21506
 
