@@ -237,8 +237,8 @@ public:
     IntSize offsetFromResizeCorner(const IntPoint&) const;
 
     void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
-    void paintScrollCorner(GraphicsContext*, const IntRect&);
-    void paintResizer(GraphicsContext*, const IntRect&);
+    void paintScrollCorner(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
+    void paintResizer(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
 
     void updateScrollInfoAfterLayout();
 

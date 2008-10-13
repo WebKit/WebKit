@@ -1,3 +1,28 @@
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
+        Rework resizer and scroll corner painting so that custom resizers and scroll corners will paint
+        and invalidate properly as images load, etc.
+
+        Reviewed by Tim Hatcher
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::cornerRect):
+        (WebCore::scrollCornerRect):
+        (WebCore::resizerCornerRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setRect):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::styleDidChange):
+        (WebCore::RenderScrollbarPart::imageChanged):
+
 2008-10-13  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Darin Adler. Landed by Jan Alonzo.
