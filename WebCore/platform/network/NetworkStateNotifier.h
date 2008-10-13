@@ -27,11 +27,17 @@
 #define NetworkStateNotifier_h
 
 #if PLATFORM(MAC)
+
 #include <wtf/RetainPtr.h>
 #include "Timer.h"
 
 typedef const struct __CFArray * CFArrayRef;
 typedef const struct __SCDynamicStore * SCDynamicStoreRef;
+
+#elif PLATFORM(WIN)
+
+#include <windows.h>
+
 #endif
 
 namespace WebCore {
@@ -69,12 +75,13 @@ private:
 };
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)
+
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)
 {    
 }
 
-inline void updateState() { }
+inline void NetworkStateNotifier::updateState() { }
 
 #endif
 
