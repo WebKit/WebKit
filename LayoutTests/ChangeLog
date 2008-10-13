@@ -1,5 +1,16 @@
 2008-10-12  Pamela Greene  <pam@chromium.org>
 
+        Remove inadvertent const redefinition, and add specific test for it.
+        See https://bugs.webkit.org/show_bug.cgi?id=21532
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        * fast/js/const-expected.txt:
+        * fast/js/resources/const.js:
+
+2008-10-12  Pamela Greene  <pam@chromium.org>
+
         Add a test for null character data.
         See https://bugs.webkit.org/show_bug.cgi?id=21535
 

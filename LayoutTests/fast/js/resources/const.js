@@ -2,11 +2,14 @@ description(
 "This test checks that const declarations in JavaScript work and are readonly."
 );
 
+
+shouldThrow("const redef='a'; const redef='a';");
+
 const x = "RIGHT";
 x = "WRONG";
 shouldBe("x", '"RIGHT"');
 
-const x = "RIGHT", y = "RIGHT";
+const z = "RIGHT", y = "RIGHT";
 y = "WRONG";
 shouldBe("y", '"RIGHT"');
 
