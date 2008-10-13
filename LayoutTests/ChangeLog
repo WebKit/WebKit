@@ -1,5 +1,18 @@
 2008-10-12  Pamela Greene  <pam@chromium.org>
 
+        Remove data: URLs to avoid cross-domain security restrictions.
+        See https://bugs.webkit.org/show_bug.cgi?id=21528
+
+        Reviewed by Darin Adler.
+        Landed by Adam Barth.
+
+        * fast/events/resources/tabindex-focus-blur-all-frame1.html:
+        * fast/events/resources/tabindex-focus-blur-all-frame2.html:
+        * fast/events/resources/tabindex-focus-blur-all-frame3.html: Added.
+        * fast/events/tabindex-focus-blur-all.html:
+
+2008-10-12  Pamela Greene  <pam@chromium.org>
+
         Fix test when removesExtraParentheses == false.
         See https://bugs.webkit.org/show_bug.cgi?id=21529
 
