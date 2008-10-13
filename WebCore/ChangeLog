@@ -1,3 +1,16 @@
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
+        In order to always match the :corner-present pseudo-class properly, delay initial updating of
+        scrollbar styles until the layer has the scrollbars in its member variables.
+
+        Reviewed by Tim Hatcher
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::RenderScrollbar):
+
 2008-10-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

@@ -39,7 +39,6 @@ RenderScrollbar::RenderScrollbar(ScrollbarClient* client, ScrollbarOrientation o
     : Scrollbar(client, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme())
     , m_owner(renderer)
 {
-    updateScrollbarParts();
 }
 
 RenderScrollbar::~RenderScrollbar()
