@@ -1,3 +1,20 @@
+2008-10-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 21602: Bugzilla times out trying to display formatted diff for
+        attachment 24345
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21602
+
+        Reviewed by Dave Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.BINARY_FILE_MARKER_FORMAT): Added.
+        (PrettyPatch.FileDiff.initialize): If any of the lines in the diff
+        are a binary file marker, mark this FileDiff as binary and stop trying
+        to process the lines.
+        (PrettyDiff.FileDiff.to_html): If we're binary, just print a string
+        saying so.
+
 2008-10-02  Adam Roben  <aroben@apple.com>
 
         * template/en/custom/attachment/reviewform.html.tmpl: Fix typo.

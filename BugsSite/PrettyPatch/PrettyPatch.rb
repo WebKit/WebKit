@@ -38,6 +38,8 @@ private
         /^diff/
     ]
 
+    BINARY_FILE_MARKER_FORMAT = /^(?:Cannot display: file marked as a binary type.)|(?:GIT binary patch)$/
+
     START_OF_SECTION_FORMAT = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@\s*(.*)/
 
     START_OF_EXTENT_STRING = "%c" % 0
@@ -187,17 +189,23 @@ EOF
                     @to = PrettyPatch.revisionOrDescription(lines[i])
                     startOfSections = i + 1
                     break
+                when BINARY_FILE_MARKER_FORMAT
+                    @binary = true
+                    break
                 end
             end
-            @sections = DiffSection.parse(lines[startOfSections...lines.length])
+            @sections = DiffSection.parse(lines[startOfSections...lines.length]) unless @binary
             nil
         end
 
         def to_html
             str = "<div class='FileDiff'>\n"
             str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
-            #str += "<span class='from'>#{@from}</span>\n"
-            str += @sections.collect{ |section| section.to_html }.join("<br>\n") unless @sections.nil?
+            if @binary then
+                str += "<span class='text'>Binary file, nothing to see here</span>"
+            else
+                str += @sections.collect{ |section| section.to_html }.join("<br>\n") unless @sections.nil?
+            end
             str += "</div>\n"
         end
 
