@@ -1,0 +1,2 @@
+This test performs an animation of the left property and makes sure it is animating. Then it stops the animation, changes the keyframes to an animation of the top property, restarts the animation and makes sure top is animating.
+PASS

@@ -1,3 +1,13 @@
+2008-10-14  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Testcase for https://bugs.webkit.org/show_bug.cgi?id=21490
+        Optimize keyframe style sheet changes by avoiding styleSheetChanged()
+
+        * css3/change-keyframes-expected.txt: Added.
+        * css3/change-keyframes.html: Added.
+
 2008-10-14  David Hyatt  <hyatt@apple.com>
 
         Add layout tests for body propagation of overflow and background to the viewport.
