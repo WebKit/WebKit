@@ -61,7 +61,6 @@ extern const HashTable stringTable;
 JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
     , exception(0)
-#if ENABLE(JSC_MULTIPLE_THREADS)
     , arrayTable(new HashTable(JSC::arrayTable))
     , dateTable(new HashTable(JSC::dateTable))
     , mathTable(new HashTable(JSC::mathTable))
@@ -69,15 +68,6 @@ JSGlobalData::JSGlobalData(bool isShared)
     , regExpTable(new HashTable(JSC::regExpTable))
     , regExpConstructorTable(new HashTable(JSC::regExpConstructorTable))
     , stringTable(new HashTable(JSC::stringTable))
-#else
-    , arrayTable(&JSC::arrayTable)
-    , dateTable(&JSC::dateTable)
-    , mathTable(&JSC::mathTable)
-    , numberTable(&JSC::numberTable)
-    , regExpTable(&JSC::regExpTable)
-    , regExpConstructorTable(&JSC::regExpConstructorTable)
-    , stringTable(&JSC::stringTable)
-#endif
     , nullProtoStructureID(JSObject::createStructureID(jsNull()))
     , activationStructureID(JSActivation::createStructureID(jsNull()))
     , staticScopeStructureID(JSStaticScopeObject::createStructureID(jsNull()))
@@ -108,7 +98,6 @@ JSGlobalData::~JSGlobalData()
     machine = 0;
 #endif
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
     arrayTable->deleteTable();
     dateTable->deleteTable();
     mathTable->deleteTable();
@@ -123,7 +112,6 @@ JSGlobalData::~JSGlobalData()
     delete regExpTable;
     delete regExpConstructorTable;
     delete stringTable;
-#endif
 
     delete parser;
     delete lexer;
