@@ -63,8 +63,10 @@ static HashSet<Scrollbar*>* gScrollbars;
     if (!gScrollbars)
         return;
     HashSet<Scrollbar*>::iterator end = gScrollbars->end();
-    for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it)
+    for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it) {
         (*it)->styleChanged();
+        (*it)->invalidate();
+    }
 }
 
 + (void)behaviorPrefsChanged:(NSNotification*)theNotification

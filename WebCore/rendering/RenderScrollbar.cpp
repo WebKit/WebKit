@@ -66,7 +66,6 @@ void RenderScrollbar::setEnabled(bool e)
 void RenderScrollbar::styleChanged()
 {
     updateScrollbarParts();
-    Scrollbar::styleChanged();
 }
 
 void RenderScrollbar::paint(GraphicsContext* context, const IntRect& damageRect)

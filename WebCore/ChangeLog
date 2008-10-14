@@ -1,3 +1,16 @@
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
+        Fix over-invalidation of native scrollbars.
+
+        Reviewed by Oliver Hunt
+
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::styleChanged):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::styleChanged):
+
 2008-10-13  Alp Toker  <alp@nuanti.com>
 
         Fix autotools dist build target by listing recently added header
