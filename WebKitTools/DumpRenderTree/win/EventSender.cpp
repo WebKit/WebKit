@@ -26,10 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "EventSender.h"
 
 #include "DraggingInfo.h"
+#include "DumpRenderTree.h"
 
 #include <WebCore/COMPtr.h>
 #include <wtf/ASCIICType.h>

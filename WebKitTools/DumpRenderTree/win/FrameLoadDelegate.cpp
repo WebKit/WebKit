@@ -26,10 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "FrameLoadDelegate.h"
 
 #include "AccessibilityController.h"
+#include "DumpRenderTree.h"
 #include "EventSender.h"
 #include "GCController.h"
 #include "LayoutTestController.h"

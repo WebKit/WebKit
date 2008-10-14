@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "ResourceLoadDelegate.h"
 
+#include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

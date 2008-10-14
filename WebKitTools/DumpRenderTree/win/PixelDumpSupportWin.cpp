@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "PixelDumpSupportCG.h"
 
+#include "DumpRenderTree.h"
 #include <CoreGraphics/CGBitmapContext.h>
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>

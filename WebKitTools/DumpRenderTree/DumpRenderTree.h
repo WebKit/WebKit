@@ -29,7 +29,10 @@
 #ifndef DumpRenderTree_h
 #define DumpRenderTree_h
 
+// FIXME: Remove this when all platforms are using config.h
+#ifndef Config_H
 #include <wtf/Platform.h>
+#endif
 
 #if PLATFORM(MAC)
 #include "DumpRenderTreeMac.h"

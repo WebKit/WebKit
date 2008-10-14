@@ -45,6 +45,7 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/WorkQueue.cpp \
 	WebKitTools/DumpRenderTree/WorkQueue.h \
 	WebKitTools/DumpRenderTree/WorkQueueItem.h \
+	WebKitTools/DumpRenderTree/config.h \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \
 	WebKitTools/DumpRenderTree/gtk/DumpRenderTreeGtk.h \
 	WebKitTools/DumpRenderTree/gtk/GCControllerGtk.cpp \

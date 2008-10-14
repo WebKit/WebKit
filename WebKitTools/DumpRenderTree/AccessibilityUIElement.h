@@ -28,7 +28,6 @@
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <wtf/Vector.h>
-#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__

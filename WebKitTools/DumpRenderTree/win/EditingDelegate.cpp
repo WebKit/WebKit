@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "EditingDelegate.h"
 
+#include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/Platform.h>

@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "AccessibilityUIElement.h"
+
 #include <JavaScriptCore/JSStringRef.h>
 #include <tchar.h>
 #include <string>

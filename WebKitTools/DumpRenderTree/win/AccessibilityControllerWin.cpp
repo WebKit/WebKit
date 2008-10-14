@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
 #include "AccessibilityController.h"
+
 #include "AccessibilityUIElement.h"
 #include "DumpRenderTree.h"
 #include <JavaScriptCore/Assertions.h>

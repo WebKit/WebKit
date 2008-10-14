@@ -27,6 +27,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+#include "DumpRenderTree.h"
+
 #include "LayoutTestController.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"

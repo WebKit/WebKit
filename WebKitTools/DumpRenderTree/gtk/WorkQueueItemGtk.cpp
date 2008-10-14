@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
 #include "WorkQueueItem.h"
+
 #include "DumpRenderTree.h"
 
 #include <JavaScriptCore/JSStringRef.h>
