@@ -1,5 +1,20 @@
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
+        <rdar://problem/6289712> REGRESSION(r37432-37490): Scroll bar is not drawn in Bookmark View, Preferences sheets.
+
+        Fix for disabled scrollbars not painting in Windows Safari.  Make sure that the Windows theme
+        implements paintTrackBackground so that when the thumb is not present the track still paints.
+
+        Reviewed by Oliver Hunt
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintTrackBackground):
+        * platform/win/ScrollbarThemeWin.h:
+
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
         Fix over-invalidation of native scrollbars.
 
         Reviewed by Oliver Hunt

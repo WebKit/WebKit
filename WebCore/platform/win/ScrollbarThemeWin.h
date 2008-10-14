@@ -51,6 +51,7 @@ protected:
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
 
+    virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
     virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
     virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
     virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
