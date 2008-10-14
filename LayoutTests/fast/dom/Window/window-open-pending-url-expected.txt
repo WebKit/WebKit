@@ -1,0 +1,10 @@
+location: /
+href: /
+pathname: /
+host: 
+hostname: 
+hash: 
+port: 
+protocol: :
+search: 
+

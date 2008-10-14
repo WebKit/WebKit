@@ -1,3 +1,15 @@
+2008-10-14  Pamela Greene  <pam@chromium.org>
+
+        Add test to verify popup properties while they're opening.
+        The expected result is currently not the desired result.
+        See https://bugs.webkit.org/show_bug.cgi?id=21419 and
+        https://bugs.webkit.org/show_bug.cgi?id=21597 .
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/Window/window-open-pending-url-expected.txt: Added.
+        * fast/dom/Window/window-open-pending-url.html: Added.
+
 2008-10-14  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.
