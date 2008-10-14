@@ -44,41 +44,41 @@
 #define CTI_ARGS_exception 0x0F
 #define CTI_ARGS_profilerReference 0x10
 #define CTI_ARGS_globalData 0x11
-#define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
-#define ARG_callFrame ((CallFrame*)(ARGS)[CTI_ARGS_callFrame])
-#define ARG_exception ((JSValue**)(ARGS)[CTI_ARGS_exception])
-#define ARG_profilerReference ((Profiler**)(ARGS)[CTI_ARGS_profilerReference])
-#define ARG_globalData ((JSGlobalData*)(ARGS)[CTI_ARGS_globalData])
+#define ARG_registerFile ((RegisterFile*)(args)[CTI_ARGS_registerFile])
+#define ARG_callFrame ((CallFrame*)(args)[CTI_ARGS_callFrame])
+#define ARG_exception ((JSValue**)(args)[CTI_ARGS_exception])
+#define ARG_profilerReference ((Profiler**)(args)[CTI_ARGS_profilerReference])
+#define ARG_globalData ((JSGlobalData*)(args)[CTI_ARGS_globalData])
 
-#define ARG_setCallFrame(newCallFrame) (*(CallFrame**)&(ARGS)[CTI_ARGS_callFrame] = (newCallFrame))
+#define ARG_setCallFrame(newCallFrame) (*(CallFrame**)&(args)[CTI_ARGS_callFrame] = (newCallFrame))
 
-#define ARG_src1 ((JSValue*)((ARGS)[1]))
-#define ARG_src2 ((JSValue*)((ARGS)[2]))
-#define ARG_src3 ((JSValue*)((ARGS)[3]))
-#define ARG_src4 ((JSValue*)((ARGS)[4]))
-#define ARG_src5 ((JSValue*)((ARGS)[5]))
-#define ARG_id1 ((Identifier*)((ARGS)[1]))
-#define ARG_id2 ((Identifier*)((ARGS)[2]))
-#define ARG_id3 ((Identifier*)((ARGS)[3]))
-#define ARG_id4 ((Identifier*)((ARGS)[4]))
-#define ARG_int1 ((int)((ARGS)[1]))
-#define ARG_int2 ((int)((ARGS)[2]))
-#define ARG_int3 ((int)((ARGS)[3]))
-#define ARG_int4 ((int)((ARGS)[4]))
-#define ARG_int5 ((int)((ARGS)[5]))
-#define ARG_func1 ((FuncDeclNode*)((ARGS)[1]))
-#define ARG_funcexp1 ((FuncExprNode*)((ARGS)[1]))
-#define ARG_registers1 ((Register*)((ARGS)[1]))
-#define ARG_regexp1 ((RegExp*)((ARGS)[1]))
-#define ARG_pni1 ((JSPropertyNameIterator*)((ARGS)[1]))
-#define ARG_instr1 ((Instruction*)((ARGS)[1]))
-#define ARG_instr2 ((Instruction*)((ARGS)[2]))
-#define ARG_instr3 ((Instruction*)((ARGS)[3]))
-#define ARG_instr4 ((Instruction*)((ARGS)[4]))
-#define ARG_instr5 ((Instruction*)((ARGS)[5]))
-#define ARG_instr6 ((Instruction*)((ARGS)[6]))
+#define ARG_src1 ((JSValue*)((args)[1]))
+#define ARG_src2 ((JSValue*)((args)[2]))
+#define ARG_src3 ((JSValue*)((args)[3]))
+#define ARG_src4 ((JSValue*)((args)[4]))
+#define ARG_src5 ((JSValue*)((args)[5]))
+#define ARG_id1 ((Identifier*)((args)[1]))
+#define ARG_id2 ((Identifier*)((args)[2]))
+#define ARG_id3 ((Identifier*)((args)[3]))
+#define ARG_id4 ((Identifier*)((args)[4]))
+#define ARG_int1 ((int)((args)[1]))
+#define ARG_int2 ((int)((args)[2]))
+#define ARG_int3 ((int)((args)[3]))
+#define ARG_int4 ((int)((args)[4]))
+#define ARG_int5 ((int)((args)[5]))
+#define ARG_func1 ((FuncDeclNode*)((args)[1]))
+#define ARG_funcexp1 ((FuncExprNode*)((args)[1]))
+#define ARG_registers1 ((Register*)((args)[1]))
+#define ARG_regexp1 ((RegExp*)((args)[1]))
+#define ARG_pni1 ((JSPropertyNameIterator*)((args)[1]))
+#define ARG_instr1 ((Instruction*)((args)[1]))
+#define ARG_instr2 ((Instruction*)((args)[2]))
+#define ARG_instr3 ((Instruction*)((args)[3]))
+#define ARG_instr4 ((Instruction*)((args)[4]))
+#define ARG_instr5 ((Instruction*)((args)[5]))
+#define ARG_instr6 ((Instruction*)((args)[6]))
 
-#define CTI_RETURN_ADDRESS ((ARGS)[-1])
+#define CTI_RETURN_ADDRESS ((args)[-1])
 
 namespace JSC {
 
@@ -95,12 +95,12 @@ namespace JSC {
     struct Instruction;
     struct OperandTypes;
 
-    typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
-    typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(CTI_ARGS);
-    typedef void (SFX_CALL *CTIHelper_v)(CTI_ARGS);
-    typedef void* (SFX_CALL *CTIHelper_s)(CTI_ARGS);
-    typedef int (SFX_CALL *CTIHelper_b)(CTI_ARGS);
-    typedef VoidPtrPair (SFX_CALL *CTIHelper_2)(CTI_ARGS);
+    typedef JSValue* (SFX_CALL *CTIHelper_j)(void** args);
+    typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(void** args);
+    typedef void (SFX_CALL *CTIHelper_v)(void** args);
+    typedef void* (SFX_CALL *CTIHelper_s)(void** args);
+    typedef int (SFX_CALL *CTIHelper_b)(void** args);
+    typedef VoidPtrPair (SFX_CALL *CTIHelper_2)(void** args);
 
     struct CallRecord {
         X86Assembler::JmpSrc from;
@@ -238,13 +238,8 @@ namespace JSC {
         // will compress the displacement, and we may not be able to fit a repatched offset.
         static const int repatchGetByIdDefaultOffset = 256;
 
-#if USE(FAST_CALL_CTI_ARGUMENT)
         static const int ctiArgumentInitSize = 2;
-#elif USE(CTI_ARGUMENT)
-        static const int ctiArgumentInitSize = 4;
-#else
-        static const int ctiArgumentInitSize = 0;
-#endif
+
         // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
         static const int repatchOffsetPutByIdStructureID = 19;
         static const int repatchOffsetPutByIdPropertyMapOffset = 34;

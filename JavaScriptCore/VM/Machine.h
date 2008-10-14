@@ -53,32 +53,12 @@ namespace JSC {
 
 #if ENABLE(CTI)
 
-#if USE(CTI_ARGUMENT)
-#define CTI_ARGS void** args
-#define ARGS (args)
-#else
-#define CTI_ARGS void* args
-#define ARGS (&args)
-#endif
-
-#if USE(FAST_CALL_CTI_ARGUMENT)
-
 #if COMPILER(MSVC)
 #define SFX_CALL __fastcall
 #elif COMPILER(GCC)
 #define SFX_CALL  __attribute__ ((fastcall))
 #else
 #error Need to support fastcall calling convention in this compiler
-#endif
-
-#else
-
-#if COMPILER(MSVC)
-#define SFX_CALL __cdecl
-#else
-#define SFX_CALL
-#endif
-
 #endif
 
     struct VoidPtrPair { void* first; void* second; };
@@ -161,103 +141,103 @@ namespace JSC {
 
 #if ENABLE(CTI)
 
-        static void SFX_CALL cti_timeout_check(CTI_ARGS);
-        static void SFX_CALL cti_register_file_check(CTI_ARGS);
+        static void SFX_CALL cti_timeout_check(void** args);
+        static void SFX_CALL cti_register_file_check(void** args);
 
-        static JSValue* SFX_CALL cti_op_convert_this(CTI_ARGS);
-        static void SFX_CALL cti_op_end(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_add(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_pre_inc(CTI_ARGS);
-        static int SFX_CALL cti_op_loop_if_less(CTI_ARGS);
-        static int SFX_CALL cti_op_loop_if_lesseq(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_new_object(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_id(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_id_second(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_id_generic(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_id_fail(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_get_by_id(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_get_by_id_second(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_get_by_id_generic(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_get_by_id_fail(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_del_by_id(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_instanceof(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_mul(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_new_func(CTI_ARGS);
-        static VoidPtrPair SFX_CALL cti_op_call_JSFunction(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_call_NotJSFunction(CTI_ARGS);
-        static void SFX_CALL cti_op_create_arguments(CTI_ARGS);
-        static void SFX_CALL cti_op_tear_off_activation(CTI_ARGS);
-        static void SFX_CALL cti_op_tear_off_arguments(CTI_ARGS);
-        static void SFX_CALL cti_op_ret_profiler(CTI_ARGS);
-        static void SFX_CALL cti_op_ret_scopeChain(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_new_array(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_resolve(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_resolve_global(CTI_ARGS);
-        static VoidPtrPair SFX_CALL cti_op_construct_JSConstruct(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_construct_NotJSConstruct(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_get_by_val(CTI_ARGS);
-        static VoidPtrPair SFX_CALL cti_op_resolve_func(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_sub(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_val(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_val_array(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_lesseq(CTI_ARGS);
-        static int SFX_CALL cti_op_loop_if_true(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_resolve_base(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_negate(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_resolve_skip(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_div(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_pre_dec(CTI_ARGS);
-        static int SFX_CALL cti_op_jless(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_not(CTI_ARGS);
-        static int SFX_CALL cti_op_jtrue(CTI_ARGS);
-        static VoidPtrPair SFX_CALL cti_op_post_inc(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_eq(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_lshift(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_bitand(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_rshift(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_bitnot(CTI_ARGS);
-        static VoidPtrPair SFX_CALL cti_op_resolve_with_base(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_new_func_exp(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_mod(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_less(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_neq(CTI_ARGS);
-        static VoidPtrPair SFX_CALL cti_op_post_dec(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_urshift(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_bitxor(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_new_regexp(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_bitor(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_call_eval(CTI_ARGS);
-        static void* SFX_CALL cti_op_throw(CTI_ARGS);
-        static JSPropertyNameIterator* SFX_CALL cti_op_get_pnames(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_next_pname(CTI_ARGS);
-        static void SFX_CALL cti_op_push_scope(CTI_ARGS);
-        static void SFX_CALL cti_op_pop_scope(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_typeof(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_is_undefined(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_is_boolean(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_is_number(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_is_string(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_is_object(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_is_function(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_stricteq(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_nstricteq(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_to_jsnumber(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_in(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_push_new_scope(CTI_ARGS);
-        static void SFX_CALL cti_op_jmp_scopes(CTI_ARGS);
-        static void SFX_CALL cti_op_put_by_index(CTI_ARGS);
-        static void* SFX_CALL cti_op_switch_imm(CTI_ARGS);
-        static void* SFX_CALL cti_op_switch_char(CTI_ARGS);
-        static void* SFX_CALL cti_op_switch_string(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_del_by_val(CTI_ARGS);
-        static void SFX_CALL cti_op_put_getter(CTI_ARGS);
-        static void SFX_CALL cti_op_put_setter(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_new_error(CTI_ARGS);
-        static void SFX_CALL cti_op_debug(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_convert_this(void** args);
+        static void SFX_CALL cti_op_end(void** args);
+        static JSValue* SFX_CALL cti_op_add(void** args);
+        static JSValue* SFX_CALL cti_op_pre_inc(void** args);
+        static int SFX_CALL cti_op_loop_if_less(void** args);
+        static int SFX_CALL cti_op_loop_if_lesseq(void** args);
+        static JSValue* SFX_CALL cti_op_new_object(void** args);
+        static void SFX_CALL cti_op_put_by_id(void** args);
+        static void SFX_CALL cti_op_put_by_id_second(void** args);
+        static void SFX_CALL cti_op_put_by_id_generic(void** args);
+        static void SFX_CALL cti_op_put_by_id_fail(void** args);
+        static JSValue* SFX_CALL cti_op_get_by_id(void** args);
+        static JSValue* SFX_CALL cti_op_get_by_id_second(void** args);
+        static JSValue* SFX_CALL cti_op_get_by_id_generic(void** args);
+        static JSValue* SFX_CALL cti_op_get_by_id_fail(void** args);
+        static JSValue* SFX_CALL cti_op_del_by_id(void** args);
+        static JSValue* SFX_CALL cti_op_instanceof(void** args);
+        static JSValue* SFX_CALL cti_op_mul(void** args);
+        static JSValue* SFX_CALL cti_op_new_func(void** args);
+        static VoidPtrPair SFX_CALL cti_op_call_JSFunction(void** args);
+        static JSValue* SFX_CALL cti_op_call_NotJSFunction(void** args);
+        static void SFX_CALL cti_op_create_arguments(void** args);
+        static void SFX_CALL cti_op_tear_off_activation(void** args);
+        static void SFX_CALL cti_op_tear_off_arguments(void** args);
+        static void SFX_CALL cti_op_ret_profiler(void** args);
+        static void SFX_CALL cti_op_ret_scopeChain(void** args);
+        static JSValue* SFX_CALL cti_op_new_array(void** args);
+        static JSValue* SFX_CALL cti_op_resolve(void** args);
+        static JSValue* SFX_CALL cti_op_resolve_global(void** args);
+        static VoidPtrPair SFX_CALL cti_op_construct_JSConstruct(void** args);
+        static JSValue* SFX_CALL cti_op_construct_NotJSConstruct(void** args);
+        static JSValue* SFX_CALL cti_op_get_by_val(void** args);
+        static VoidPtrPair SFX_CALL cti_op_resolve_func(void** args);
+        static JSValue* SFX_CALL cti_op_sub(void** args);
+        static void SFX_CALL cti_op_put_by_val(void** args);
+        static void SFX_CALL cti_op_put_by_val_array(void** args);
+        static JSValue* SFX_CALL cti_op_lesseq(void** args);
+        static int SFX_CALL cti_op_loop_if_true(void** args);
+        static JSValue* SFX_CALL cti_op_resolve_base(void** args);
+        static JSValue* SFX_CALL cti_op_negate(void** args);
+        static JSValue* SFX_CALL cti_op_resolve_skip(void** args);
+        static JSValue* SFX_CALL cti_op_div(void** args);
+        static JSValue* SFX_CALL cti_op_pre_dec(void** args);
+        static int SFX_CALL cti_op_jless(void** args);
+        static JSValue* SFX_CALL cti_op_not(void** args);
+        static int SFX_CALL cti_op_jtrue(void** args);
+        static VoidPtrPair SFX_CALL cti_op_post_inc(void** args);
+        static JSValue* SFX_CALL cti_op_eq(void** args);
+        static JSValue* SFX_CALL cti_op_lshift(void** args);
+        static JSValue* SFX_CALL cti_op_bitand(void** args);
+        static JSValue* SFX_CALL cti_op_rshift(void** args);
+        static JSValue* SFX_CALL cti_op_bitnot(void** args);
+        static VoidPtrPair SFX_CALL cti_op_resolve_with_base(void** args);
+        static JSValue* SFX_CALL cti_op_new_func_exp(void** args);
+        static JSValue* SFX_CALL cti_op_mod(void** args);
+        static JSValue* SFX_CALL cti_op_less(void** args);
+        static JSValue* SFX_CALL cti_op_neq(void** args);
+        static VoidPtrPair SFX_CALL cti_op_post_dec(void** args);
+        static JSValue* SFX_CALL cti_op_urshift(void** args);
+        static JSValue* SFX_CALL cti_op_bitxor(void** args);
+        static JSValue* SFX_CALL cti_op_new_regexp(void** args);
+        static JSValue* SFX_CALL cti_op_bitor(void** args);
+        static JSValue* SFX_CALL cti_op_call_eval(void** args);
+        static void* SFX_CALL cti_op_throw(void** args);
+        static JSPropertyNameIterator* SFX_CALL cti_op_get_pnames(void** args);
+        static JSValue* SFX_CALL cti_op_next_pname(void** args);
+        static void SFX_CALL cti_op_push_scope(void** args);
+        static void SFX_CALL cti_op_pop_scope(void** args);
+        static JSValue* SFX_CALL cti_op_typeof(void** args);
+        static JSValue* SFX_CALL cti_op_is_undefined(void** args);
+        static JSValue* SFX_CALL cti_op_is_boolean(void** args);
+        static JSValue* SFX_CALL cti_op_is_number(void** args);
+        static JSValue* SFX_CALL cti_op_is_string(void** args);
+        static JSValue* SFX_CALL cti_op_is_object(void** args);
+        static JSValue* SFX_CALL cti_op_is_function(void** args);
+        static JSValue* SFX_CALL cti_op_stricteq(void** args);
+        static JSValue* SFX_CALL cti_op_nstricteq(void** args);
+        static JSValue* SFX_CALL cti_op_to_jsnumber(void** args);
+        static JSValue* SFX_CALL cti_op_in(void** args);
+        static JSValue* SFX_CALL cti_op_push_new_scope(void** args);
+        static void SFX_CALL cti_op_jmp_scopes(void** args);
+        static void SFX_CALL cti_op_put_by_index(void** args);
+        static void* SFX_CALL cti_op_switch_imm(void** args);
+        static void* SFX_CALL cti_op_switch_char(void** args);
+        static void* SFX_CALL cti_op_switch_string(void** args);
+        static JSValue* SFX_CALL cti_op_del_by_val(void** args);
+        static void SFX_CALL cti_op_put_getter(void** args);
+        static void SFX_CALL cti_op_put_setter(void** args);
+        static JSValue* SFX_CALL cti_op_new_error(void** args);
+        static void SFX_CALL cti_op_debug(void** args);
 
-        static void* SFX_CALL cti_vm_throw(CTI_ARGS);
-        static void* SFX_CALL cti_vm_compile(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_push_activation(CTI_ARGS);
+        static void* SFX_CALL cti_vm_throw(void** args);
+        static void* SFX_CALL cti_vm_compile(void** args);
+        static JSValue* SFX_CALL cti_op_push_activation(void** args);
         
 #endif // ENABLE(CTI)
 

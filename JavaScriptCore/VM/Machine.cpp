@@ -4241,7 +4241,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(CallFrame* callFrame, CodeBlock* c
         } \
     } while (0)
 
-JSValue* Machine::cti_op_convert_this(CTI_ARGS)
+JSValue* Machine::cti_op_convert_this(void** args)
 {
     JSValue* v1 = ARG_src1;
     CallFrame* callFrame = ARG_callFrame;
@@ -4251,14 +4251,14 @@ JSValue* Machine::cti_op_convert_this(CTI_ARGS)
     return result;
 }
 
-void Machine::cti_op_end(CTI_ARGS)
+void Machine::cti_op_end(void** args)
 {
     ScopeChainNode* scopeChain = ARG_callFrame->scopeChain();
     ASSERT(scopeChain->refCount > 1);
     scopeChain->deref();
 }
 
-JSValue* Machine::cti_op_add(CTI_ARGS)
+JSValue* Machine::cti_op_add(void** args)
 {
     JSValue* v1 = ARG_src1;
     JSValue* v2 = ARG_src2;
@@ -4301,7 +4301,7 @@ JSValue* Machine::cti_op_add(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_pre_inc(CTI_ARGS)
+JSValue* Machine::cti_op_pre_inc(void** args)
 {
     JSValue* v = ARG_src1;
 
@@ -4311,7 +4311,7 @@ JSValue* Machine::cti_op_pre_inc(CTI_ARGS)
     return result;
 }
 
-void Machine::cti_timeout_check(CTI_ARGS)
+void Machine::cti_timeout_check(void** args)
 {
     if (ARG_globalData->machine->checkTimeout(ARG_callFrame->dynamicGlobalObject())) {
         ARG_globalData->exception = createInterruptedExecutionException(ARG_globalData);
@@ -4319,7 +4319,7 @@ void Machine::cti_timeout_check(CTI_ARGS)
     }
 }
 
-void Machine::cti_register_file_check(CTI_ARGS)
+void Machine::cti_register_file_check(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
@@ -4335,7 +4335,7 @@ void Machine::cti_register_file_check(CTI_ARGS)
     }
 }
 
-int Machine::cti_op_loop_if_less(CTI_ARGS)
+int Machine::cti_op_loop_if_less(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -4346,7 +4346,7 @@ int Machine::cti_op_loop_if_less(CTI_ARGS)
     return result;
 }
 
-int Machine::cti_op_loop_if_lesseq(CTI_ARGS)
+int Machine::cti_op_loop_if_lesseq(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -4357,12 +4357,12 @@ int Machine::cti_op_loop_if_lesseq(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_new_object(CTI_ARGS)
+JSValue* Machine::cti_op_new_object(void** args)
 {
     return constructEmptyObject(ARG_callFrame);;
 }
 
-void Machine::cti_op_put_by_id(CTI_ARGS)
+void Machine::cti_op_put_by_id(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4375,7 +4375,7 @@ void Machine::cti_op_put_by_id(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-void Machine::cti_op_put_by_id_second(CTI_ARGS)
+void Machine::cti_op_put_by_id_second(void** args)
 {
     PutPropertySlot slot;
     ARG_src1->put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
@@ -4383,14 +4383,14 @@ void Machine::cti_op_put_by_id_second(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-void Machine::cti_op_put_by_id_generic(CTI_ARGS)
+void Machine::cti_op_put_by_id_generic(void** args)
 {
     PutPropertySlot slot;
     ARG_src1->put(ARG_callFrame, *ARG_id2, ARG_src3, slot);
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-void Machine::cti_op_put_by_id_fail(CTI_ARGS)
+void Machine::cti_op_put_by_id_fail(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4404,7 +4404,7 @@ void Machine::cti_op_put_by_id_fail(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-JSValue* Machine::cti_op_get_by_id(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4419,7 +4419,7 @@ JSValue* Machine::cti_op_get_by_id(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_get_by_id_second(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id_second(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4434,7 +4434,7 @@ JSValue* Machine::cti_op_get_by_id_second(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_get_by_id_generic(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id_generic(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4447,7 +4447,7 @@ JSValue* Machine::cti_op_get_by_id_generic(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_get_by_id_fail(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id_fail(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4463,7 +4463,7 @@ JSValue* Machine::cti_op_get_by_id_fail(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_instanceof(CTI_ARGS)
+JSValue* Machine::cti_op_instanceof(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     JSValue* value = ARG_src1;
@@ -4504,7 +4504,7 @@ JSValue* Machine::cti_op_instanceof(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_del_by_id(CTI_ARGS)
+JSValue* Machine::cti_op_del_by_id(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Identifier& ident = *ARG_id2;
@@ -4516,7 +4516,7 @@ JSValue* Machine::cti_op_del_by_id(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_mul(CTI_ARGS)
+JSValue* Machine::cti_op_mul(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -4532,12 +4532,12 @@ JSValue* Machine::cti_op_mul(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_new_func(CTI_ARGS)
+JSValue* Machine::cti_op_new_func(void** args)
 {
     return ARG_func1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
 }
 
-VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
+VoidPtrPair Machine::cti_op_call_JSFunction(void** args)
 {
 #ifndef NDEBUG
     CallData callData;
@@ -4586,7 +4586,7 @@ VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
     return pair;
 }
 
-void* Machine::cti_vm_compile(CTI_ARGS)
+void* Machine::cti_vm_compile(void** args)
 {
     CodeBlock* codeBlock = ARG_callFrame->codeBlock();
     if (!codeBlock->ctiCode)
@@ -4594,14 +4594,14 @@ void* Machine::cti_vm_compile(CTI_ARGS)
     return codeBlock->ctiCode;
 }
 
-JSValue* Machine::cti_op_push_activation(CTI_ARGS)
+JSValue* Machine::cti_op_push_activation(void** args)
 {
     JSActivation* activation = new (ARG_globalData) JSActivation(ARG_callFrame, static_cast<FunctionBodyNode*>(ARG_callFrame->codeBlock()->ownerNode));
     ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->copy()->push(activation));
     return activation;
 }
 
-JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
+JSValue* Machine::cti_op_call_NotJSFunction(void** args)
 {
     JSValue* funcVal = ARG_src1;
 
@@ -4643,45 +4643,45 @@ JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-void Machine::cti_op_create_arguments(CTI_ARGS)
+void Machine::cti_op_create_arguments(void** args)
 {
     Arguments* arguments = new (ARG_globalData) Arguments(ARG_callFrame);
     ARG_callFrame->setCalleeArguments(arguments);
     ARG_callFrame[RegisterFile::ArgumentsRegister] = arguments;
 }
 
-void Machine::cti_op_tear_off_activation(CTI_ARGS)
+void Machine::cti_op_tear_off_activation(void** args)
 {
     ASSERT(ARG_callFrame->codeBlock()->needsFullScopeChain);
     ASSERT(ARG_src1->isObject(&JSActivation::info));
     static_cast<JSActivation*>(ARG_src1)->copyRegisters(ARG_callFrame->optionalCalleeArguments());
 }
 
-void Machine::cti_op_tear_off_arguments(CTI_ARGS)
+void Machine::cti_op_tear_off_arguments(void** args)
 {
     ASSERT(ARG_callFrame->codeBlock()->usesArguments && !ARG_callFrame->codeBlock()->needsFullScopeChain);
     ARG_callFrame->optionalCalleeArguments()->copyRegisters();
 }
 
-void Machine::cti_op_ret_profiler(CTI_ARGS)
+void Machine::cti_op_ret_profiler(void** args)
 {
     ASSERT(*ARG_profilerReference);
     (*ARG_profilerReference)->didExecute(ARG_callFrame, ARG_callFrame->callee());
 }
 
-void Machine::cti_op_ret_scopeChain(CTI_ARGS)
+void Machine::cti_op_ret_scopeChain(void** args)
 {
     ASSERT(ARG_callFrame->codeBlock()->needsFullScopeChain);
     ARG_callFrame->scopeChain()->deref();
 }
 
-JSValue* Machine::cti_op_new_array(CTI_ARGS)
+JSValue* Machine::cti_op_new_array(void** args)
 {
     ArgList argList(ARG_registers1, ARG_int2);
     return constructArray(ARG_callFrame, argList);
 }
 
-JSValue* Machine::cti_op_resolve(CTI_ARGS)
+JSValue* Machine::cti_op_resolve(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
@@ -4708,7 +4708,7 @@ JSValue* Machine::cti_op_resolve(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
+VoidPtrPair Machine::cti_op_construct_JSConstruct(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -4771,7 +4771,7 @@ VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     return pair;
 }
 
-JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
+JSValue* Machine::cti_op_construct_NotJSConstruct(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -4807,7 +4807,7 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValue* Machine::cti_op_get_by_val(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_val(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Machine* machine = ARG_globalData->machine;
@@ -4839,7 +4839,7 @@ JSValue* Machine::cti_op_get_by_val(CTI_ARGS)
     return result;
 }
 
-VoidPtrPair Machine::cti_op_resolve_func(CTI_ARGS)
+VoidPtrPair Machine::cti_op_resolve_func(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
@@ -4881,7 +4881,7 @@ VoidPtrPair Machine::cti_op_resolve_func(CTI_ARGS)
     VM_THROW_EXCEPTION_2();
 }
 
-JSValue* Machine::cti_op_sub(CTI_ARGS)
+JSValue* Machine::cti_op_sub(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -4897,7 +4897,7 @@ JSValue* Machine::cti_op_sub(CTI_ARGS)
     return result;
 }
 
-void Machine::cti_op_put_by_val(CTI_ARGS)
+void Machine::cti_op_put_by_val(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     Machine* machine = ARG_globalData->machine;
@@ -4929,7 +4929,7 @@ void Machine::cti_op_put_by_val(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-void Machine::cti_op_put_by_val_array(CTI_ARGS)
+void Machine::cti_op_put_by_val_array(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -4953,7 +4953,7 @@ void Machine::cti_op_put_by_val_array(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-JSValue* Machine::cti_op_lesseq(CTI_ARGS)
+JSValue* Machine::cti_op_lesseq(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     JSValue* result = jsBoolean(jsLessEq(callFrame, ARG_src1, ARG_src2));
@@ -4961,7 +4961,7 @@ JSValue* Machine::cti_op_lesseq(CTI_ARGS)
     return result;
 }
 
-int Machine::cti_op_loop_if_true(CTI_ARGS)
+int Machine::cti_op_loop_if_true(void** args)
 {
     JSValue* src1 = ARG_src1;
 
@@ -4972,7 +4972,7 @@ int Machine::cti_op_loop_if_true(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_negate(CTI_ARGS)
+JSValue* Machine::cti_op_negate(void** args)
 {
     JSValue* src = ARG_src1;
 
@@ -4986,12 +4986,12 @@ JSValue* Machine::cti_op_negate(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_resolve_base(CTI_ARGS)
+JSValue* Machine::cti_op_resolve_base(void** args)
 {
     return inlineResolveBase(ARG_callFrame, *ARG_id1, ARG_callFrame->scopeChain());
 }
 
-JSValue* Machine::cti_op_resolve_skip(CTI_ARGS)
+JSValue* Machine::cti_op_resolve_skip(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
@@ -5023,7 +5023,7 @@ JSValue* Machine::cti_op_resolve_skip(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValue* Machine::cti_op_resolve_global(CTI_ARGS)
+JSValue* Machine::cti_op_resolve_global(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(ARG_src1);
@@ -5051,7 +5051,7 @@ JSValue* Machine::cti_op_resolve_global(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValue* Machine::cti_op_div(CTI_ARGS)
+JSValue* Machine::cti_op_div(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5067,7 +5067,7 @@ JSValue* Machine::cti_op_div(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_pre_dec(CTI_ARGS)
+JSValue* Machine::cti_op_pre_dec(void** args)
 {
     JSValue* v = ARG_src1;
 
@@ -5077,7 +5077,7 @@ JSValue* Machine::cti_op_pre_dec(CTI_ARGS)
     return result;
 }
 
-int Machine::cti_op_jless(CTI_ARGS)
+int Machine::cti_op_jless(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5088,7 +5088,7 @@ int Machine::cti_op_jless(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_not(CTI_ARGS)
+JSValue* Machine::cti_op_not(void** args)
 {
     JSValue* src = ARG_src1;
 
@@ -5099,7 +5099,7 @@ JSValue* Machine::cti_op_not(CTI_ARGS)
     return result;
 }
 
-int SFX_CALL Machine::cti_op_jtrue(CTI_ARGS)
+int SFX_CALL Machine::cti_op_jtrue(void** args)
 {
     JSValue* src1 = ARG_src1;
 
@@ -5110,7 +5110,7 @@ int SFX_CALL Machine::cti_op_jtrue(CTI_ARGS)
     return result;
 }
 
-VoidPtrPair Machine::cti_op_post_inc(CTI_ARGS)
+VoidPtrPair Machine::cti_op_post_inc(void** args)
 {
     JSValue* v = ARG_src1;
 
@@ -5123,7 +5123,7 @@ VoidPtrPair Machine::cti_op_post_inc(CTI_ARGS)
     return pair;
 }
 
-JSValue* Machine::cti_op_eq(CTI_ARGS)
+JSValue* Machine::cti_op_eq(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5136,7 +5136,7 @@ JSValue* Machine::cti_op_eq(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_lshift(CTI_ARGS)
+JSValue* Machine::cti_op_lshift(void** args)
 {
     JSValue* val = ARG_src1;
     JSValue* shift = ARG_src2;
@@ -5154,7 +5154,7 @@ JSValue* Machine::cti_op_lshift(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_bitand(CTI_ARGS)
+JSValue* Machine::cti_op_bitand(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5170,7 +5170,7 @@ JSValue* Machine::cti_op_bitand(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_rshift(CTI_ARGS)
+JSValue* Machine::cti_op_rshift(void** args)
 {
     JSValue* val = ARG_src1;
     JSValue* shift = ARG_src2;
@@ -5188,7 +5188,7 @@ JSValue* Machine::cti_op_rshift(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_bitnot(CTI_ARGS)
+JSValue* Machine::cti_op_bitnot(void** args)
 {
     JSValue* src = ARG_src1;
 
@@ -5202,7 +5202,7 @@ JSValue* Machine::cti_op_bitnot(CTI_ARGS)
     return result;
 }
 
-VoidPtrPair Machine::cti_op_resolve_with_base(CTI_ARGS)
+VoidPtrPair Machine::cti_op_resolve_with_base(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     ScopeChainNode* scopeChain = callFrame->scopeChain();
@@ -5236,12 +5236,12 @@ VoidPtrPair Machine::cti_op_resolve_with_base(CTI_ARGS)
     VM_THROW_EXCEPTION_2();
 }
 
-JSValue* Machine::cti_op_new_func_exp(CTI_ARGS)
+JSValue* Machine::cti_op_new_func_exp(void** args)
 {
     return ARG_funcexp1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
 }
 
-JSValue* Machine::cti_op_mod(CTI_ARGS)
+JSValue* Machine::cti_op_mod(void** args)
 {
     JSValue* dividendValue = ARG_src1;
     JSValue* divisorValue = ARG_src2;
@@ -5253,7 +5253,7 @@ JSValue* Machine::cti_op_mod(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_less(CTI_ARGS)
+JSValue* Machine::cti_op_less(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     JSValue* result = jsBoolean(jsLess(callFrame, ARG_src1, ARG_src2));
@@ -5261,7 +5261,7 @@ JSValue* Machine::cti_op_less(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_neq(CTI_ARGS)
+JSValue* Machine::cti_op_neq(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5274,7 +5274,7 @@ JSValue* Machine::cti_op_neq(CTI_ARGS)
     return result;
 }
 
-VoidPtrPair Machine::cti_op_post_dec(CTI_ARGS)
+VoidPtrPair Machine::cti_op_post_dec(void** args)
 {
     JSValue* v = ARG_src1;
 
@@ -5287,7 +5287,7 @@ VoidPtrPair Machine::cti_op_post_dec(CTI_ARGS)
     return pair;
 }
 
-JSValue* Machine::cti_op_urshift(CTI_ARGS)
+JSValue* Machine::cti_op_urshift(void** args)
 {
     JSValue* val = ARG_src1;
     JSValue* shift = ARG_src2;
@@ -5303,7 +5303,7 @@ JSValue* Machine::cti_op_urshift(CTI_ARGS)
     }
 }
 
-JSValue* Machine::cti_op_bitxor(CTI_ARGS)
+JSValue* Machine::cti_op_bitxor(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5315,12 +5315,12 @@ JSValue* Machine::cti_op_bitxor(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_new_regexp(CTI_ARGS)
+JSValue* Machine::cti_op_new_regexp(void** args)
 {
     return new (ARG_globalData) RegExpObject(ARG_callFrame->lexicalGlobalObject()->regExpStructure(), ARG_regexp1);
 }
 
-JSValue* Machine::cti_op_bitor(CTI_ARGS)
+JSValue* Machine::cti_op_bitor(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5332,7 +5332,7 @@ JSValue* Machine::cti_op_bitor(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_call_eval(CTI_ARGS)
+JSValue* Machine::cti_op_call_eval(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     RegisterFile* registerFile = ARG_registerFile;
@@ -5357,7 +5357,7 @@ JSValue* Machine::cti_op_call_eval(CTI_ARGS)
     return JSImmediate::impossibleValue();
 }
 
-void* Machine::cti_op_throw(CTI_ARGS)
+void* Machine::cti_op_throw(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
@@ -5382,12 +5382,12 @@ void* Machine::cti_op_throw(CTI_ARGS)
     return exceptionValue;
 }
 
-JSPropertyNameIterator* Machine::cti_op_get_pnames(CTI_ARGS)
+JSPropertyNameIterator* Machine::cti_op_get_pnames(void** args)
 {
     return JSPropertyNameIterator::create(ARG_callFrame, ARG_src1);
 }
 
-JSValue* Machine::cti_op_next_pname(CTI_ARGS)
+JSValue* Machine::cti_op_next_pname(void** args)
 {
     JSPropertyNameIterator* it = ARG_pni1;
     JSValue* temp = it->next(ARG_callFrame);
@@ -5396,55 +5396,55 @@ JSValue* Machine::cti_op_next_pname(CTI_ARGS)
     return temp;
 }
 
-void Machine::cti_op_push_scope(CTI_ARGS)
+void Machine::cti_op_push_scope(void** args)
 {
     JSObject* o = ARG_src1->toObject(ARG_callFrame);
     VM_CHECK_EXCEPTION_VOID();
     ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->push(o));
 }
 
-void Machine::cti_op_pop_scope(CTI_ARGS)
+void Machine::cti_op_pop_scope(void** args)
 {
     ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->pop());
 }
 
-JSValue* Machine::cti_op_typeof(CTI_ARGS)
+JSValue* Machine::cti_op_typeof(void** args)
 {
     return jsTypeStringForValue(ARG_callFrame, ARG_src1);
 }
 
-JSValue* Machine::cti_op_is_undefined(CTI_ARGS)
+JSValue* Machine::cti_op_is_undefined(void** args)
 {
     JSValue* v = ARG_src1;
     return jsBoolean(JSImmediate::isImmediate(v) ? v->isUndefined() : v->asCell()->structureID()->typeInfo().masqueradesAsUndefined());
 }
 
-JSValue* Machine::cti_op_is_boolean(CTI_ARGS)
+JSValue* Machine::cti_op_is_boolean(void** args)
 {
     return jsBoolean(ARG_src1->isBoolean());
 }
 
-JSValue* Machine::cti_op_is_number(CTI_ARGS)
+JSValue* Machine::cti_op_is_number(void** args)
 {
     return jsBoolean(ARG_src1->isNumber());
 }
 
-JSValue* Machine::cti_op_is_string(CTI_ARGS)
+JSValue* Machine::cti_op_is_string(void** args)
 {
     return jsBoolean(ARG_globalData->machine->isJSString(ARG_src1));
 }
 
-JSValue* Machine::cti_op_is_object(CTI_ARGS)
+JSValue* Machine::cti_op_is_object(void** args)
 {
     return jsBoolean(jsIsObjectType(ARG_src1));
 }
 
-JSValue* Machine::cti_op_is_function(CTI_ARGS)
+JSValue* Machine::cti_op_is_function(void** args)
 {
     return jsBoolean(jsIsFunctionType(ARG_src1));
 }
 
-JSValue* Machine::cti_op_stricteq(CTI_ARGS)
+JSValue* Machine::cti_op_stricteq(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5456,7 +5456,7 @@ JSValue* Machine::cti_op_stricteq(CTI_ARGS)
     return jsBoolean(strictEqualSlowCaseInline(src1, src2));
 }
 
-JSValue* Machine::cti_op_nstricteq(CTI_ARGS)
+JSValue* Machine::cti_op_nstricteq(void** args)
 {
     JSValue* src1 = ARG_src1;
     JSValue* src2 = ARG_src2;
@@ -5468,7 +5468,7 @@ JSValue* Machine::cti_op_nstricteq(CTI_ARGS)
     return jsBoolean(!strictEqualSlowCaseInline(src1, src2));
 }
 
-JSValue* Machine::cti_op_to_jsnumber(CTI_ARGS)
+JSValue* Machine::cti_op_to_jsnumber(void** args)
 {
     JSValue* src = ARG_src1;
     CallFrame* callFrame = ARG_callFrame;
@@ -5478,7 +5478,7 @@ JSValue* Machine::cti_op_to_jsnumber(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_in(CTI_ARGS)
+JSValue* Machine::cti_op_in(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     JSValue* baseVal = ARG_src2;
@@ -5504,7 +5504,7 @@ JSValue* Machine::cti_op_in(CTI_ARGS)
     return jsBoolean(baseObj->hasProperty(callFrame, property));
 }
 
-JSValue* Machine::cti_op_push_new_scope(CTI_ARGS)
+JSValue* Machine::cti_op_push_new_scope(void** args)
 {
     JSObject* scope = new (ARG_globalData) JSStaticScopeObject(ARG_callFrame, *ARG_id1, ARG_src2, DontDelete);
 
@@ -5513,7 +5513,7 @@ JSValue* Machine::cti_op_push_new_scope(CTI_ARGS)
     return scope;
 }
 
-void Machine::cti_op_jmp_scopes(CTI_ARGS)
+void Machine::cti_op_jmp_scopes(void** args)
 {
     unsigned count = ARG_int1;
     CallFrame* callFrame = ARG_callFrame;
@@ -5524,7 +5524,7 @@ void Machine::cti_op_jmp_scopes(CTI_ARGS)
     callFrame->setScopeChain(tmp);
 }
 
-void Machine::cti_op_put_by_index(CTI_ARGS)
+void Machine::cti_op_put_by_index(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     unsigned property = ARG_int2;
@@ -5532,7 +5532,7 @@ void Machine::cti_op_put_by_index(CTI_ARGS)
     ARG_src1->put(callFrame, property, ARG_src3);
 }
 
-void* Machine::cti_op_switch_imm(CTI_ARGS)
+void* Machine::cti_op_switch_imm(void** args)
 {
     JSValue* scrutinee = ARG_src1;
     unsigned tableIndex = ARG_int2;
@@ -5547,7 +5547,7 @@ void* Machine::cti_op_switch_imm(CTI_ARGS)
     return codeBlock->immediateSwitchJumpTables[tableIndex].ctiDefault;
 }
 
-void* Machine::cti_op_switch_char(CTI_ARGS)
+void* Machine::cti_op_switch_char(void** args)
 {
     JSValue* scrutinee = ARG_src1;
     unsigned tableIndex = ARG_int2;
@@ -5565,7 +5565,7 @@ void* Machine::cti_op_switch_char(CTI_ARGS)
     return result;
 }
 
-void* Machine::cti_op_switch_string(CTI_ARGS)
+void* Machine::cti_op_switch_string(void** args)
 {
     JSValue* scrutinee = ARG_src1;
     unsigned tableIndex = ARG_int2;
@@ -5582,7 +5582,7 @@ void* Machine::cti_op_switch_string(CTI_ARGS)
     return result;
 }
 
-JSValue* Machine::cti_op_del_by_val(CTI_ARGS)
+JSValue* Machine::cti_op_del_by_val(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -5605,7 +5605,7 @@ JSValue* Machine::cti_op_del_by_val(CTI_ARGS)
     return result;
 }
 
-void Machine::cti_op_put_getter(CTI_ARGS)
+void Machine::cti_op_put_getter(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -5616,7 +5616,7 @@ void Machine::cti_op_put_getter(CTI_ARGS)
     baseObj->defineGetter(callFrame, ident, static_cast<JSObject*>(ARG_src3));
 }
 
-void Machine::cti_op_put_setter(CTI_ARGS)
+void Machine::cti_op_put_setter(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -5627,7 +5627,7 @@ void Machine::cti_op_put_setter(CTI_ARGS)
     baseObj->defineSetter(callFrame, ident, static_cast<JSObject*>(ARG_src3));
 }
 
-JSValue* Machine::cti_op_new_error(CTI_ARGS)
+JSValue* Machine::cti_op_new_error(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
@@ -5638,7 +5638,7 @@ JSValue* Machine::cti_op_new_error(CTI_ARGS)
     return Error::create(callFrame, static_cast<ErrorType>(type), message->toString(callFrame), lineNumber, codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
 }
 
-void Machine::cti_op_debug(CTI_ARGS)
+void Machine::cti_op_debug(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
 
@@ -5649,7 +5649,7 @@ void Machine::cti_op_debug(CTI_ARGS)
     ARG_globalData->machine->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 }
 
-void* Machine::cti_vm_throw(CTI_ARGS)
+void* Machine::cti_vm_throw(void** args)
 {
     CallFrame* callFrame = ARG_callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();

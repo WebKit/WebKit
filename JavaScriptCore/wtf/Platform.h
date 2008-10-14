@@ -364,13 +364,4 @@
 #endif
 #endif
 
-// Use "fastcall" calling convention on MSVC and GCC > 4.0
-#if COMPILER(MSVC) || (COMPILER(GCC) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 0)))
-#define WTF_USE_FAST_CALL_CTI_ARGUMENT 1
-#endif
-
-#if COMPILER(MSVC) || USE(FAST_CALL_CTI_ARGUMENT)
-#define WTF_USE_CTI_ARGUMENT 1
-#endif
-
 #endif /* WTF_Platform_h */
