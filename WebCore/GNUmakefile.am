@@ -608,6 +608,7 @@ webcore_sources += \
 	WebCore/dom/Comment.h \
 	WebCore/dom/ContainerNode.cpp \
 	WebCore/dom/ContainerNode.h \
+	WebCore/dom/ContainerNodeAlgorithms.h \
 	WebCore/dom/DOMCoreException.h \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DOMImplementation.h \
@@ -625,6 +626,7 @@ webcore_sources += \
 	WebCore/dom/EditingText.h \
 	WebCore/dom/Element.cpp \
 	WebCore/dom/Element.h \
+	WebCore/dom/ElementRareData.h \
 	WebCore/dom/Entity.cpp \
 	WebCore/dom/Entity.h \
 	WebCore/dom/EntityReference.cpp \
@@ -677,6 +679,8 @@ webcore_sources += \
 	WebCore/dom/NodeIterator.cpp \
 	WebCore/dom/NodeIterator.h \
 	WebCore/dom/NodeList.h \
+	WebCore/dom/NodeRareData.h \
+	WebCore/dom/NodeRenderStyle.h \
 	WebCore/dom/NodeWithIndex.h \
 	WebCore/dom/Notation.cpp \
 	WebCore/dom/Notation.h \
@@ -1011,6 +1015,7 @@ webcore_sources += \
 	WebCore/html/MediaError.h \
 	WebCore/html/PreloadScanner.cpp \
 	WebCore/html/PreloadScanner.h \
+	WebCore/html/TextMetrics.h \
 	WebCore/html/VoidCallback.h \
 	WebCore/icu/unicode/parseerr.h \
 	WebCore/icu/unicode/platform.h \
@@ -1241,6 +1246,7 @@ webcore_sources += \
 	WebCore/platform/FileChooser.h \
 	WebCore/platform/FileSystem.h \
 	WebCore/platform/FloatConversion.h \
+	WebCore/platform/HostWindow.h \
 	WebCore/platform/KURL.cpp \
 	WebCore/platform/KURL.h \
 	WebCore/platform/KURLHash.h \
@@ -1259,12 +1265,15 @@ webcore_sources += \
 	WebCore/platform/PlatformWheelEvent.h \
 	WebCore/platform/PopupMenu.h \
 	WebCore/platform/PopupMenuClient.h \
+	WebCore/platform/PopupMenuStyle.h \
 	WebCore/platform/SSLKeyGenerator.h \
 	WebCore/platform/ScrollTypes.h \
 	WebCore/platform/ScrollView.cpp \
 	WebCore/platform/ScrollView.h \
 	WebCore/platform/Scrollbar.cpp \
 	WebCore/platform/Scrollbar.h \
+	WebCore/platform/ScrollbarClient.h \
+	WebCore/platform/ScrollbarTheme.h \
 	WebCore/platform/ScrollbarThemeComposite.cpp \
 	WebCore/platform/ScrollbarThemeComposite.h \
 	WebCore/platform/SearchPopupMenu.h \
@@ -1545,14 +1554,14 @@ webcore_sources += \
 	WebCore/rendering/RenderReplaced.h \
 	WebCore/rendering/RenderReplica.cpp \
 	WebCore/rendering/RenderReplica.h \
-	WebCore/rendering/RenderSlider.cpp \
-	WebCore/rendering/RenderSlider.h \
 	WebCore/rendering/RenderScrollbar.cpp \
 	WebCore/rendering/RenderScrollbar.h \
 	WebCore/rendering/RenderScrollbarPart.cpp \
 	WebCore/rendering/RenderScrollbarPart.h \
 	WebCore/rendering/RenderScrollbarTheme.cpp \
 	WebCore/rendering/RenderScrollbarTheme.h \
+	WebCore/rendering/RenderSlider.cpp \
+	WebCore/rendering/RenderSlider.h \
 	WebCore/rendering/RenderTable.cpp \
 	WebCore/rendering/RenderTable.h \
 	WebCore/rendering/RenderTableCell.cpp \
@@ -1742,6 +1751,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/ScrollbarGtk.cpp \
 	WebCore/platform/gtk/ScrollbarGtk.h \
 	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
+	WebCore/platform/gtk/ScrollbarThemeGtk.h \
 	WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	WebCore/platform/gtk/SharedBufferGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \
@@ -2902,7 +2912,6 @@ DerivedSources/XMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattr
 
 IDL_PATH := \
     $(WebCore)/bindings/js \
-    $(WebCore)/bindings/objc \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/html \
