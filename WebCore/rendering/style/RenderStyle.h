@@ -954,6 +954,15 @@ public:
 #if ENABLE(SVG)
     const SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
     SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
+    
+    float fillOpacity() const { return svgStyle()->fillOpacity(); }
+    void setFillOpacity(float f) { accessSVGStyle()->setFillOpacity(f); }
+    
+    float strokeOpacity() const { return svgStyle()->strokeOpacity(); }
+    void setStrokeOpacity(float f) { accessSVGStyle()->setStrokeOpacity(f); }
+    
+    float floodOpacity() const { return svgStyle()->floodOpacity(); }
+    void setFloodOpacity(float f) { accessSVGStyle()->setFloodOpacity(f); }
 #endif
 
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }

@@ -1,5 +1,22 @@
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
+        Add support for CSS transitions on some SVG properties.  This patch is intended to be a guideline
+        for how to add support for the rest.
+
+        Reviewed by Oliver Hunt
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::ensurePropertyMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fillOpacity):
+        (WebCore::RenderStyle::setFillOpacity):
+        (WebCore::RenderStyle::strokeOpacity):
+        (WebCore::RenderStyle::setStrokeOpacity):
+        (WebCore::RenderStyle::floodOpacity):
+        (WebCore::RenderStyle::setFloodOpacity):
+
+2008-10-13  David Hyatt  <hyatt@apple.com>
+
         <rdar://problem/6289712> REGRESSION(r37432-37490): Scroll bar is not drawn in Bookmark View, Preferences sheets.
 
         Fix for disabled scrollbars not painting in Windows Safari.  Make sure that the Windows theme
