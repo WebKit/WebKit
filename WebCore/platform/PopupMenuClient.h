@@ -22,12 +22,15 @@
 #define PopupMenuClient_h
 
 #include "PopupMenuStyle.h"
+#include "ScrollTypes.h"
 
 namespace WebCore {
 
 class Color;
 class FontSelector;
 class HostWindow;
+class Scrollbar;
+class ScrollbarClient;
 class String;
 
 class PopupMenuClient {
@@ -55,6 +58,8 @@ public:
     
     virtual FontSelector* fontSelector() const = 0;
     virtual HostWindow* hostWindow() const = 0;
+    
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) = 0;
 };
 
 }

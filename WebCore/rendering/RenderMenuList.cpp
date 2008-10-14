@@ -34,6 +34,7 @@
 #include "HTMLSelectElement.h"
 #include "PopupMenu.h"
 #include "RenderBR.h"
+#include "RenderScrollbar.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "NodeRenderStyle.h"
@@ -354,6 +355,17 @@ PopupMenuStyle RenderMenuList::menuStyle() const
 HostWindow* RenderMenuList::hostWindow() const
 {
     return document()->view()->hostWindow();
+}
+
+PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+{
+    RefPtr<Scrollbar> widget;
+    bool hasCustomScrollbarStyle = style()->hasPseudoStyle(RenderStyle::SCROLLBAR);
+    if (hasCustomScrollbarStyle)
+        widget = RenderScrollbar::createCustomScrollbar(client, orientation, this);
+    else
+        widget = Scrollbar::createNativeScrollbar(client, orientation, controlSize);
+    return widget.release();
 }
 
 int RenderMenuList::clientInsetLeft() const

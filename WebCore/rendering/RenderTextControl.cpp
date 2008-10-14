@@ -39,8 +39,8 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "RenderScrollbar.h"
 #include "RenderTheme.h"
-#include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SearchPopupMenu.h"
 #include "SelectionController.h"
@@ -1062,6 +1062,17 @@ PopupMenuStyle RenderTextControl::menuStyle() const
 HostWindow* RenderTextControl::hostWindow() const
 {
     return document()->view()->hostWindow();
+}
+
+PassRefPtr<Scrollbar> RenderTextControl::createScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+{
+    RefPtr<Scrollbar> widget;
+    bool hasCustomScrollbarStyle = style()->hasPseudoStyle(RenderStyle::SCROLLBAR);
+    if (hasCustomScrollbarStyle)
+        widget = RenderScrollbar::createCustomScrollbar(client, orientation, this);
+    else
+        widget = Scrollbar::createNativeScrollbar(client, orientation, controlSize);
+    return widget.release();
 }
 
 int RenderTextControl::clientInsetLeft() const

@@ -130,6 +130,7 @@ private:
     virtual bool valueShouldChangeOnHotTrack() const { return false; }
     virtual FontSelector* fontSelector() const;
     virtual HostWindow* hostWindow() const;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
     RenderStyle* createInnerBlockStyle(const RenderStyle* startStyle);
     RenderStyle* createInnerTextStyle(const RenderStyle* startStyle);

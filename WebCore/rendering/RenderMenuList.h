@@ -92,6 +92,7 @@ private:
     virtual void valueChanged(unsigned listIndex, bool fireOnChange = true);
     virtual FontSelector* fontSelector() const;
     virtual HostWindow* hostWindow() const;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
     virtual bool hasLineIfEmpty() const { return true; }
 
