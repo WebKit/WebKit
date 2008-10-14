@@ -1,3 +1,15 @@
+2008-10-14  Ada Chan  <adachan@apple.com>
+
+        Fix windows build.
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        * DumpRenderTree/config.h:
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/win/UIDelegate.cpp:
+
 2008-10-13  Timothy Hatcher  <timothy@apple.com>
 
         Make prepare-ChangeLog populate the changed functions for JavaScript files.

@@ -25,3 +25,23 @@
 #endif
 
 #include <wtf/Platform.h>
+
+#if PLATFORM(WIN)
+#define WTF_PLATFORM_CF 1 
+
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+
+#undef WINVER
+#define WINVER 0x0500
+
+// If we don't define these, they get defined in windef.h. 
+// We want to use std::min and std::max
+#undef max
+#define max max
+#undef min
+#define min min
+
+#undef _WINSOCKAPI_
+#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+#endif  // PLATFORM(WIN)

@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "LayoutTestController.h"
 
+#include "DumpRenderTree.h"
 #include "EditingDelegate.h"
 #include "PolicyDelegate.h"
 #include "WorkQueue.h"

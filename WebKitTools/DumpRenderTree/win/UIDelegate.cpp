@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "UIDelegate.h"
 
+#include "DumpRenderTree.h"
 #include "DraggingInfo.h"
 #include "EventSender.h"
 #include "LayoutTestController.h"

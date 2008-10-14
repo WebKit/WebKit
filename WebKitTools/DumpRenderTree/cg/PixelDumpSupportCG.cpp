@@ -28,9 +28,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h"
+#include "config.h"
 #include "PixelDumpSupportCG.h"
 
+#include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 #include <ImageIO/CGImageDestination.h>
 #include <wtf/Assertions.h>
