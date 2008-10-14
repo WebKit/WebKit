@@ -144,6 +144,7 @@ class StylePainter
 {
 public:
     explicit StylePainter(const RenderObject::PaintInfo& paintInfo);
+    explicit StylePainter(GraphicsContext* context);
     ~StylePainter();
 
     bool isValid() const { return painter && style; }
@@ -160,6 +161,8 @@ public:
     { style->drawComplexControl(cc, &opt, painter, widget); }
 
 private:
+    void init(GraphicsContext* context);
+
     QBrush oldBrush;
     bool oldAntialiasing;
 

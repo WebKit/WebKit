@@ -58,9 +58,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+
 StylePainter::StylePainter(const RenderObject::PaintInfo& paintInfo)
 {
-    painter = (paintInfo.context ? static_cast<QPainter*>(paintInfo.context->platformContext()) : 0);
+    init(paintInfo.context ? paintInfo.context : 0);
+}
+
+StylePainter::StylePainter(GraphicsContext* context)
+{
+    init(context);
+}
+
+void StylePainter::init(GraphicsContext* context)
+{
+    painter = static_cast<QPainter*>(context->platformContext());
     widget = 0;
     QPaintDevice* dev = 0;
     if (painter)

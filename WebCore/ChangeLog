@@ -1,3 +1,21 @@
+2008-10-14  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Use style-painter to draw scrollbars in ScrollbarThemeQt
+        
+        This has the benefit of setting up the painter properly without
+        antialiasing and saving and restoring the brush. It also ensures
+        that we use the style of the QWebView over the QApplication style
+        if possible.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::init):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paint):
+
 2008-10-13  David Hyatt  <hyatt@apple.com>
 
         Add support for CSS transitions on some SVG properties.  This patch is intended to be a guideline
