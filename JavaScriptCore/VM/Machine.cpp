@@ -3973,23 +3973,6 @@ CallFrame* Machine::findFunctionCallFrame(CallFrame* callFrame, InternalFunction
     return 0;
 }
 
-void Machine::getArgumentsData(CallFrame* callFrame, JSFunction*& function, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc)
-{
-    function = callFrame->callee();
-    
-    CodeBlock* codeBlock = &function->m_body->generatedByteCode();
-    int numParameters = codeBlock->numParameters;
-    argc = callFrame->argumentCount();
-
-    if (argc <= numParameters)
-        argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numParameters + 1; // + 1 to skip "this"
-    else
-        argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numParameters - argc + 1; // + 1 to skip "this"
-
-    argc -= 1; // - 1 to skip "this"
-    firstParameterIndex = -RegisterFile::CallFrameHeaderSize - numParameters + 1; // + 1 to skip "this"
-}
-
 #if ENABLE(CTI)
 
 NEVER_INLINE static void doSetReturnAddressVMThrowTrampoline(void** returnAddress)
