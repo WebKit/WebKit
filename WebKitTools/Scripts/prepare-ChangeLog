@@ -82,6 +82,7 @@ sub testListForChangeLog(@);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
+sub get_function_line_ranges_for_javascript($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
 sub reviewerAndDescriptionForGitCommit($);
@@ -174,8 +175,8 @@ if (@changed_files) {
 if (%changed_line_ranges) {
     print STDERR "  Extracting affected function names from source files.\n";
     foreach my $file (keys %changed_line_ranges) {
-        # Only look for function names in .c files.
-        next unless $file =~ /\.(c|cpp|m|mm|h|java)/;
+        # Only look for function names in certain source files.
+        next unless $file =~ /\.(c|cpp|m|mm|h|java|js)/;
     
         # Find all the functions in the file.
         open SOURCE, $file or next;
@@ -386,6 +387,8 @@ sub get_function_line_ranges($$)
         return get_function_line_ranges_for_c ($file_handle, $file_name);
     } elsif ($file_name =~ /\.java$/) {
         return get_function_line_ranges_for_java ($file_handle, $file_name);
+    } elsif ($file_name =~ /\.js$/) {
+        return get_function_line_ranges_for_javascript ($file_handle, $file_name);
     }
     return ();
 }
@@ -892,6 +895,190 @@ sub get_function_line_ranges_for_java($$)
 
     return @ranges;
 }
+
+
+
+# Read a file and get all the line ranges of the things that look like
+# JavaScript functions.
+#
+# A function name is the word that immediately follows `function' when
+# followed by an open curly brace. It can appear at the top level, or
+# inside other functions.
+#
+# An anonymous function name is the identifier chain immediately before
+# an assignment with the equals operator or object notation that has a
+# value starting with `function' followed by an open curly brace.
+#
+# A getter or setter name is the word that immediately follows `get' or
+# `set' when followed by an open curly brace .
+#
+# Comment handling is simple-minded but will work for all but pathological cases.
+#
+# Result is a list of triples: [ start_line, end_line, function_name ].
+
+sub get_function_line_ranges_for_javascript($$)
+{
+    my ($fileHandle, $fileName) = @_;
+
+    my @currentScopes;
+    my @currentIdentifiers;
+    my @currentFunctionNames;
+    my @currentFunctionDepths;
+    my @currentFunctionStartLines;
+
+    my @ranges;
+
+    my $inComment = 0;
+    my $parenthesesDepth = 0;
+    my $bracesDepth = 0;
+
+    my $functionJustSeen = 0;
+    my $getterJustSeen = 0;
+    my $setterJustSeen = 0;
+    my $assignmentJustSeen = 0;
+
+    my $word = "";
+
+    while (<$fileHandle>) {
+        # Handle continued multi-line comment.
+        if ($inComment) {
+            next unless s-.*\*/--;
+            $inComment = 0;
+        }
+
+        # Handle comments and quoted text.
+        while (m-(/\*|//|\'|\")-) { # \' and \" keep emacs perl mode happy
+            my $match = $1;
+            if ($match eq '/*') {
+                if (!s-/\*.*?\*/--) {
+                    s-/\*.*--;
+                    $inComment = 1;
+                }
+            } elsif ($match eq '//') {
+                s-//.*--;
+            } else { # ' or "
+                if (!s-$match([^\\]|\\.)*?$match--) {
+                    warn "mismatched quotes at line $. in $fileName\n";
+                    s-$match.*--;
+                }
+            }
+        }
+
+        # Find function names.
+        while (m-(\w+|[(){}=:;])-g) {
+            # Open parenthesis.
+            if ($1 eq '(') {
+                $parenthesesDepth++;
+                next;
+            }
+
+            # Close parenthesis.
+            if ($1 eq ')') {
+                $parenthesesDepth--;
+                next;
+            }
+
+            # Open brace.
+            if ($1 eq '{') {
+                push(@currentScopes, join(".", @currentIdentifiers));
+                @currentIdentifiers = ();
+
+                $bracesDepth++;
+                next;
+            }
+
+            # Close brace.
+            if ($1 eq '}') {
+                $bracesDepth--;
+
+                if (@currentFunctionDepths and $bracesDepth == $currentFunctionDepths[$#currentFunctionDepths]) {
+                    pop(@currentFunctionDepths);
+
+                    my $currentFunction = pop(@currentFunctionNames);
+                    my $start = pop(@currentFunctionStartLines);
+
+                    push(@ranges, [$start, $., $currentFunction]);
+                }
+
+                pop(@currentScopes);
+                @currentIdentifiers = ();
+
+                next;
+            }
+
+            # Semicolon.
+            if ($1 eq ';') {
+                @currentIdentifiers = ();
+                next;
+            }
+
+            # Function.
+            if ($1 eq 'function') {
+                $functionJustSeen = 1;
+
+                if ($assignmentJustSeen) {
+                    my $currentFunction = join('.', (@currentScopes, @currentIdentifiers));
+                    $currentFunction =~ s/\.{2,}/\./g; # Removes consecutive periods.
+
+                    push(@currentFunctionNames, $currentFunction);
+                    push(@currentFunctionDepths, $bracesDepth);
+                    push(@currentFunctionStartLines, $.);
+                }
+
+                next;
+            }
+
+            # Getter prefix.
+            if ($1 eq 'get') {
+                $getterJustSeen = 1;
+                next;
+            }
+
+            # Setter prefix.
+            if ($1 eq 'set') {
+                $setterJustSeen = 1;
+                next;
+            }
+
+            # Assignment operator.
+            if ($1 eq '=' or $1 eq ':') {
+                $assignmentJustSeen = 1;
+                next;
+            }
+
+            next if $parenthesesDepth;
+
+            # Word.
+            $word = $1;
+            $word = "get $word" if $getterJustSeen;
+            $word = "set $word" if $setterJustSeen;
+
+            if (($functionJustSeen and !$assignmentJustSeen) or $getterJustSeen or $setterJustSeen) {
+                push(@currentIdentifiers, $word);
+
+                my $currentFunction = join('.', (@currentScopes, @currentIdentifiers));
+                $currentFunction =~ s/\.{2,}/\./g; # Removes consecutive periods.
+
+                push(@currentFunctionNames, $currentFunction);
+                push(@currentFunctionDepths, $bracesDepth);
+                push(@currentFunctionStartLines, $.);
+            } elsif ($word ne 'if' and $word ne 'for' and $word ne 'do' and $word ne 'while' and $word ne 'which' and $word ne 'var') {
+                push(@currentIdentifiers, $word);
+            }
+
+            $functionJustSeen = 0;
+            $getterJustSeen = 0;
+            $setterJustSeen = 0;
+            $assignmentJustSeen = 0;
+        }
+    }
+
+    warn "mismatched braces in $fileName\n" if $bracesDepth;
+    warn "mismatched parentheses in $fileName\n" if $parenthesesDepth;
+
+    return @ranges;
+}
+
 
 sub processPaths(\@)
 {
