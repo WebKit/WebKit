@@ -535,6 +535,8 @@ AC_MSG_RESULT([$with_font_backend])
 if test "$enable_debug" = "yes"; then
    CXXFLAGS="$CXXFLAGS -g"
    CFLAGS="$CFLAGS -g"
+else
+   AC_DEFINE([NDEBUG], [1], [Define to disable debugging features])
 fi
 
 # check if curl is available

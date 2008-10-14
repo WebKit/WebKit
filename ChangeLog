@@ -1,3 +1,12 @@
+2008-10-13  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix: Ensure correct builds when debugging is
+        enabled/disabled by defining NDEBUG in autotoolsconfig.h as needed.
+        It's still passed as a compiler flag since some sources (DRT) don't
+        use config.h yet.
+
+        * configure.ac:
+
 2008-10-09  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Mark Rowe.
