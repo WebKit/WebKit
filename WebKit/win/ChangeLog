@@ -1,3 +1,12 @@
+2008-10-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Export currentThread.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2008-10-13  Steve Falkenburg  <sfalken@apple.com>
 
         Reorder methods to preserve compatibility.
