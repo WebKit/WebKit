@@ -1,3 +1,33 @@
+2008-10-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 21541: Move RegisterFile growth check to callee
+        <https://bugs.webkit.org/show_bug.cgi?id=21541>
+
+        Move the RegisterFile growth check to the callee in the common case,
+        where some of the information is known statically at JIT time. There is
+        still a check in the caller in the case where the caller provides too
+        few arguments.
+
+        This is a 2.1% speedup on the V8 benchmark, including a 5.1% speedup on
+        the Richards benchmark, a 4.1% speedup on the DeltaBlue benchmark, and a
+        1.4% speedup on the Earley-Boyer benchmark. It is also a 0.5% speedup on
+        SunSpider.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompile):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_register_file_check):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        * VM/Machine.h:
+        * VM/RegisterFile.h:
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::cmpl_mr):
+        (JSC::X86Assembler::emitUnlinkedJg):
+
 2008-10-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

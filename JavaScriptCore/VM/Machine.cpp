@@ -4336,6 +4336,22 @@ void Machine::cti_timeout_check(CTI_ARGS)
     }
 }
 
+void Machine::cti_register_file_check(CTI_ARGS)
+{
+    CallFrame* callFrame = ARG_callFrame;
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    RegisterFile* registerFile = ARG_registerFile;
+
+    if (!registerFile->grow(callFrame + codeBlock->numCalleeRegisters)) {
+        CallFrame* callerFrame = callFrame->callerFrame();
+        ARG_setCallFrame(callerFrame);
+        ARG_globalData->exception = createStackOverflowError(callerFrame);
+        ASSERT(ARG_globalData->exception);
+        ARG_globalData->throwReturnAddress = callFrame->returnPC();
+        doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS);
+    }
+}
+
 int Machine::cti_op_loop_if_less(CTI_ARGS)
 {
     JSValue* src1 = ARG_src1;
@@ -4550,14 +4566,40 @@ VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
 
     ScopeChainNode* callDataScopeChain = static_cast<JSFunction*>(ARG_src1)->m_scopeChain.node();
     CodeBlock* newCodeBlock = &static_cast<JSFunction*>(ARG_src1)->m_body->byteCode(callDataScopeChain);
+    CallFrame* callFrame = ARG_callFrame;
+    size_t registerOffset = ARG_int2;
+    int argCount = ARG_int3;
 
-    CallFrame* callFrame = slideRegisterWindowForCall(newCodeBlock, ARG_registerFile, ARG_callFrame, ARG_int2, ARG_int3);
-    if (UNLIKELY(!callFrame)) {
-        ARG_globalData->exception = createStackOverflowError(ARG_callFrame);
+    if (LIKELY(argCount == newCodeBlock->numParameters)) {
+        VoidPtrPair pair = { newCodeBlock, CallFrame::create(callFrame->registers() + registerOffset) };
+        return pair;
+    }
+
+    if (argCount > newCodeBlock->numParameters) {
+        size_t numParameters = newCodeBlock->numParameters;
+        Register* r = callFrame->registers() + registerOffset + numParameters;
+
+        Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
+        for (size_t i = 0; i < numParameters; ++i)
+            argv[i + argCount] = argv[i];
+
+        VoidPtrPair pair = { newCodeBlock, CallFrame::create(r) };
+        return pair;
+    }
+
+    size_t omittedArgCount = newCodeBlock->numParameters - argCount;
+    Register* r = callFrame->registers() + registerOffset + omittedArgCount;
+    Register* newEnd = r + newCodeBlock->numCalleeRegisters;
+    if (!ARG_registerFile->grow(newEnd)) {
+        ARG_globalData->exception = createStackOverflowError(callFrame);
         VM_THROW_EXCEPTION_2();
     }
 
-    VoidPtrPair pair = { newCodeBlock, callFrame };
+    Register* argv = r - RegisterFile::CallFrameHeaderSize - omittedArgCount;
+    for (size_t i = 0; i < omittedArgCount; ++i)
+        argv[i] = jsUndefined();
+
+    VoidPtrPair pair = { newCodeBlock, CallFrame::create(r) };
     return pair;
 }
 
@@ -4685,7 +4727,6 @@ JSValue* Machine::cti_op_resolve(CTI_ARGS)
 
 VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
 {
-    RegisterFile* registerFile = ARG_registerFile;
     CallFrame* callFrame = ARG_callFrame;
 
     JSFunction* constructor = static_cast<JSFunction*>(ARG_src1);
@@ -4712,16 +4753,38 @@ VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     else
         structure = callDataScopeChain->globalObject()->emptyObjectStructure();
     JSObject* newObject = new (ARG_globalData) JSObject(structure);
-
     callFrame[firstArg] = newObject; // "this" value
 
-    callFrame = slideRegisterWindowForCall(newCodeBlock, registerFile, callFrame, registerOffset, argCount);
-    if (UNLIKELY(!callFrame)) {
-        ARG_globalData->exception = createStackOverflowError(ARG_callFrame);
+    if (LIKELY(argCount == newCodeBlock->numParameters)) {
+        VoidPtrPair pair = { newCodeBlock, CallFrame::create(callFrame->registers() + registerOffset) };
+        return pair;
+    }
+
+    if (argCount > newCodeBlock->numParameters) {
+        size_t numParameters = newCodeBlock->numParameters;
+        Register* r = callFrame->registers() + registerOffset + numParameters;
+
+        Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
+        for (size_t i = 0; i < numParameters; ++i)
+            argv[i + argCount] = argv[i];
+
+        VoidPtrPair pair = { newCodeBlock, CallFrame::create(r) };
+        return pair;
+    }
+
+    size_t omittedArgCount = newCodeBlock->numParameters - argCount;
+    Register* r = callFrame->registers() + registerOffset + omittedArgCount;
+    Register* newEnd = r + newCodeBlock->numCalleeRegisters;
+    if (!ARG_registerFile->grow(newEnd)) {
+        ARG_globalData->exception = createStackOverflowError(callFrame);
         VM_THROW_EXCEPTION_2();
     }
 
-    VoidPtrPair pair = { newCodeBlock, callFrame };
+    Register* argv = r - RegisterFile::CallFrameHeaderSize - omittedArgCount;
+    for (size_t i = 0; i < omittedArgCount; ++i)
+        argv[i] = jsUndefined();
+
+    VoidPtrPair pair = { newCodeBlock, CallFrame::create(r) };
     return pair;
 }
 

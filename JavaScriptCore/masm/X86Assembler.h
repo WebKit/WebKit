@@ -191,6 +191,7 @@ public:
         PRE_PREDICT_BRANCH_NOT_TAKEN    = 0x2E,
         OP_XOR_EvGv                     = 0x31,
         OP_CMP_EvGv                     = 0x39,
+        OP_CMP_GvEv                     = 0x3B,
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
         PRE_OPERAND_SIZE                = 0x66,
@@ -240,6 +241,7 @@ public:
         OP2_JL_rel32        = 0x8C,
         OP2_JGE_rel32       = 0x8D,
         OP2_JLE_rel32       = 0x8E,
+        OP2_JG_rel32       = 0x8F,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVZX_GvEw      = 0xB7,
@@ -371,6 +373,12 @@ public:
     {
         m_buffer->putByte(OP_CMP_EvGv);
         emitModRm_rm(src, base, offset);
+    }
+
+    void cmpl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_buffer->putByte(OP_CMP_GvEv);
+        emitModRm_rm(dst, base, offset);
     }
 
     void cmpl_i32r(int imm, RegisterID dst)
@@ -945,7 +953,15 @@ public:
         m_buffer->putInt(0);
         return JmpSrc(m_buffer->getOffset());
     }
-    
+
+    JmpSrc emitUnlinkedJg()
+    {
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_JG_rel32);
+        m_buffer->putInt(0);
+        return JmpSrc(m_buffer->getOffset());
+    }
+
     JmpSrc emitUnlinkedJa()
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);

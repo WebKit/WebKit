@@ -2615,9 +2615,26 @@ void CTI::privateCompile()
     m_jit.popl_r(X86::ecx);
     emitPutToCallFrameHeader(X86::ecx, RegisterFile::ReturnPC);
 
+    X86Assembler::JmpSrc slowRegisterFileCheck;
+    X86Assembler::JmpDst afterRegisterFileCheck;
+    if (m_codeBlock->codeType == FunctionCode) {
+        emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
+        m_jit.leal_mr(m_codeBlock->numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
+        m_jit.cmpl_mr(OBJECT_OFFSET(RegisterFile, m_end), X86::eax, X86::edx);
+        slowRegisterFileCheck = m_jit.emitUnlinkedJg();
+        afterRegisterFileCheck = m_jit.label();
+    }
+
     privateCompileMainPass();
     privateCompileLinkPass();
     privateCompileSlowCases();
+
+    if (m_codeBlock->codeType == FunctionCode) {
+        m_jit.link(slowRegisterFileCheck, m_jit.label());
+        emitCall(0, Machine::cti_register_file_check);
+        X86Assembler::JmpSrc backToBody = m_jit.emitUnlinkedJmp();
+        m_jit.link(backToBody, afterRegisterFileCheck);
+    }
 
     ASSERT(m_jmpTable.isEmpty());
 
