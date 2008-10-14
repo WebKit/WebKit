@@ -1,3 +1,16 @@
+2008-10-13  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Don't run a SQLite query on every iteration of the sync thread when the query
+        will touch a large portion of the icon database while performing no useful work.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::writeToDatabase): Don't call checkForDanglingPageURLs unless
+        we modified the database.
+        (WebCore::IconDatabase::checkForDanglingPageURLs): Don't do any work in a release build
+        unless we've been asked to prune any dangling pageURLs that we find.
+
 2008-10-13  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Mark Rowe.

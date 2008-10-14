@@ -1564,7 +1564,8 @@ bool IconDatabase::writeToDatabase()
     syncTransaction.commit();
     
     // Check to make sure there are no dangling PageURLs - If there are, we want to output one log message but not spam the console potentially every few seconds
-    checkForDanglingPageURLs(false);
+    if (didAnyWork)
+        checkForDanglingPageURLs(false);
 
     LOG(IconDatabase, "Updating the database took %.4f seconds", currentTime() - timeStamp);
 
@@ -1651,19 +1652,21 @@ void IconDatabase::pruneUnretainedIcons()
 void IconDatabase::checkForDanglingPageURLs(bool pruneIfFound)
 {
     ASSERT_ICON_SYNC_THREAD();
-    
-    // We don't want to keep performing this check and reporting this error if it has already found danglers so we keep track
+
+    // This check can be relatively expensive so we don't do it in a release build unless the caller has asked us to prune any dangling
+    // entries.  We also don't want to keep performing this check and reporting this error if it has already found danglers before so we
+    // keep track of whether we've found any.  We skip the check in the release build pretending to have already found danglers already.
+#ifndef NDEBUG
+    static bool danglersFound = true;
+#else
     static bool danglersFound = false;
-    
-    // However, if the caller wants us to prune the danglers, we will reset this flag and prune every time
-    if (pruneIfFound)
-        danglersFound = false;
-        
-    if (!danglersFound && SQLiteStatement(m_syncDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM IconInfo) LIMIT 1;").returnsAtLeastOneResult()) {
+#endif
+
+    if ((pruneIfFound || !danglersFound) && SQLiteStatement(m_syncDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM IconInfo) LIMIT 1;").returnsAtLeastOneResult()) {
         danglersFound = true;
-        LOG_ERROR("Dangling PageURL entries found");
+        LOG(IconDatabase, "Dangling PageURL entries found");
         if (pruneIfFound && !m_syncDB.executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM IconInfo);"))
-            LOG_ERROR("Unable to prune dangling PageURLs");
+            LOG(IconDatabase, "Unable to prune dangling PageURLs");
     }
 }
 
