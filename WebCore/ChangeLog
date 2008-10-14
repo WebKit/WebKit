@@ -1,3 +1,33 @@
+2008-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed and landed by Sam Weinig.
+
+        Due to change in spec (http://dev.w3.org/2006/webapi/selectors-api/#namespace),
+        remove NSResolver code, leaving only checking for selectors that need
+        NS resolution and throwing a coresponding error.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSDocumentFragmentCustom.cpp:
+        * bindings/js/JSElementCustom.cpp:
+        * bindings/js/JSNSResolver.cpp: Removed.
+        * bindings/js/JSNSResolver.h: Removed.
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/Element.idl:
+        * dom/NSResolver.h: Removed.
+        * dom/NSResolver.idl: Removed.
+        * dom/Node.h:
+        * dom/Node.cpp:
+        (WebCore::forEachTagSelector):
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        (WebCore::selectorNeedsNamespaceResolution):
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+
 2008-10-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig (all but the FormDataListItem rename).

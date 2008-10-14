@@ -2,7 +2,7 @@ Selectors API Test Suite
 
 Testrunner by John Resig, tests by John Resig, Disruptive Innovations, W3C CSS Working Group, jQuery JavaScript Library.
 
-99.6%: 4135 passed, 17 failed
+72.4%: 3007 passed, 1145 failed
 PASS Element supports querySelector
 PASS Element supports querySelectorAll
 PASS Element.querySelectorAll Empty String
@@ -599,22 +599,22 @@ PASS Syntax Error: Element.querySelectorAll: .foo..quux
 PASS Syntax Error: Element.querySelector: .foo..quux
 PASS Syntax Error: Element.querySelectorAll: .bar.
 PASS Syntax Error: Element.querySelector: .bar.
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 *|svg)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 *|svg)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 *|svg)
@@ -626,30 +626,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 *|svg)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 *|svg)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 *|svg)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 *|svg)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg)
@@ -661,30 +661,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg *|circle)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg *|circle)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg *|circle)
@@ -696,30 +696,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg *|circle)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg *|circle)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg *|circle)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg *|circle)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg svg|circle)
@@ -731,22 +731,22 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg svg|circle)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div *|svg)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div *|svg)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div *|svg)
@@ -758,30 +758,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div *|svg)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div *|svg)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div *|svg)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div *|svg)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 div svg|svg)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 div svg|svg)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 div svg|svg)
@@ -793,30 +793,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 div svg|svg)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 div svg|svg)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 div svg|svg)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 div svg|svg)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg)
@@ -828,30 +828,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle)
@@ -863,22 +863,22 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
@@ -890,30 +890,30 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
@@ -925,22 +925,22 @@ PASS Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Element: Element Selector Good Resolver #1 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #2 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #3 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #4 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #5 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #6 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #7 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Element Selector Good Resolver #8 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #1 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #2 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #3 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #4 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #5 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #6 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #7 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Element Selector Good Resolver #8 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Element Selector Bad Resolver #1 (xHTML|*#root3 xHTML|p)
 PASS Element: Element Selector Bad Resolver #2 (xHTML|*#root3 xHTML|p)
 PASS Element: Element Selector Bad Resolver #3 (xHTML|*#root3 xHTML|p)
@@ -952,30 +952,30 @@ PASS Element: Element Selector Bad Resolver #8 (xHTML|*#root3 xHTML|p)
 PASS Element: Element Selector Bad Resolver #9 (xHTML|*#root3 xHTML|p)
 PASS Element: Element Selector Bad Resolver #10 (xHTML|*#root3 xHTML|p)
 PASS Element: Element Selector Bad Resolver #11 (xHTML|*#root3 xHTML|p)
-PASS Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
 PASS Element: Parent Element Bad Resolver #1 (xHTML|*#root3 xHTML|div p)
 PASS Element: Parent Element Bad Resolver #2 (xHTML|*#root3 xHTML|div p)
 PASS Element: Parent Element Bad Resolver #3 (xHTML|*#root3 xHTML|div p)
@@ -987,22 +987,22 @@ PASS Element: Parent Element Bad Resolver #8 (xHTML|*#root3 xHTML|div p)
 PASS Element: Parent Element Bad Resolver #9 (xHTML|*#root3 xHTML|div p)
 PASS Element: Parent Element Bad Resolver #10 (xHTML|*#root3 xHTML|div p)
 PASS Element: Parent Element Bad Resolver #11 (xHTML|*#root3 xHTML|div p)
-PASS Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Parent Element Bad Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p)
@@ -1014,22 +1014,22 @@ PASS Element: Parent Element Bad Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #9 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #10 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #11 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Parent Element Bad Resolver #1 (xHTML|*#root3 *|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #2 (xHTML|*#root3 *|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #3 (xHTML|*#root3 *|div xHTML|p)
@@ -1041,22 +1041,22 @@ PASS Element: Parent Element Bad Resolver #8 (xHTML|*#root3 *|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #9 (xHTML|*#root3 *|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #10 (xHTML|*#root3 *|div xHTML|p)
 PASS Element: Parent Element Bad Resolver #11 (xHTML|*#root3 *|div xHTML|p)
-PASS Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Parent Element Bad Resolver #1 (xHTML|*#root3 *|div *|p)
 PASS Element: Parent Element Bad Resolver #2 (xHTML|*#root3 *|div *|p)
 PASS Element: Parent Element Bad Resolver #3 (xHTML|*#root3 *|div *|p)
@@ -1068,22 +1068,22 @@ PASS Element: Parent Element Bad Resolver #8 (xHTML|*#root3 *|div *|p)
 PASS Element: Parent Element Bad Resolver #9 (xHTML|*#root3 *|div *|p)
 PASS Element: Parent Element Bad Resolver #10 (xHTML|*#root3 *|div *|p)
 PASS Element: Parent Element Bad Resolver #11 (xHTML|*#root3 *|div *|p)
-PASS Element: Child Good Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #4 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #5 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #6 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #7 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Child Good Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #4 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #5 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #6 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #7 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Child Good Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Child Bad Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Element: Child Bad Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Element: Child Bad Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
@@ -1095,22 +1095,22 @@ PASS Element: Child Bad Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Element: Child Bad Resolver #9 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Element: Child Bad Resolver #10 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Element: Child Bad Resolver #11 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Adjacent Bad Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Element: Adjacent Bad Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Element: Adjacent Bad Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a)
@@ -1122,30 +1122,30 @@ PASS Element: Adjacent Bad Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Element: Adjacent Bad Resolver #9 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Element: Adjacent Bad Resolver #10 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Element: Adjacent Bad Resolver #11 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
 PASS Element: Adjacent Bad Resolver #1 (xHTML|*#root3 xHTML|a + a)
 PASS Element: Adjacent Bad Resolver #2 (xHTML|*#root3 xHTML|a + a)
 PASS Element: Adjacent Bad Resolver #3 (xHTML|*#root3 xHTML|a + a)
@@ -1157,22 +1157,22 @@ PASS Element: Adjacent Bad Resolver #8 (xHTML|*#root3 xHTML|a + a)
 PASS Element: Adjacent Bad Resolver #9 (xHTML|*#root3 xHTML|a + a)
 PASS Element: Adjacent Bad Resolver #10 (xHTML|*#root3 xHTML|a + a)
 PASS Element: Adjacent Bad Resolver #11 (xHTML|*#root3 xHTML|a + a)
-PASS Element: Nth-child Good Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #4 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #5 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #6 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #7 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Element: Nth-child Good Resolver #8 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #4 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #5 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #6 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #7 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Element: Nth-child Good Resolver #8 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Element: Nth-child Bad Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Element: Nth-child Bad Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Element: Nth-child Bad Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
@@ -1782,22 +1782,22 @@ PASS Syntax Error: Disconnected Element.querySelectorAll: .foo..quux
 PASS Syntax Error: Disconnected Element.querySelector: .foo..quux
 PASS Syntax Error: Disconnected Element.querySelectorAll: .bar.
 PASS Syntax Error: Disconnected Element.querySelector: .bar.
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 *|svg)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 *|svg)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 *|svg)
@@ -1809,30 +1809,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 *|svg)
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 *|svg)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 *|svg)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 *|svg)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg)
@@ -1844,30 +1844,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg *|circle)
@@ -1879,30 +1879,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg *|circle)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg svg|circle)
@@ -1914,22 +1914,22 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg svg|circle
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg svg|circle)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div *|svg)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div *|svg)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div *|svg)
@@ -1941,30 +1941,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div *|svg)
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div *|svg)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div *|svg)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div *|svg)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 div svg|svg)
@@ -1976,30 +1976,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 div svg|svg)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg)
@@ -2011,30 +2011,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle)
@@ -2046,22 +2046,22 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg 
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
@@ -2073,30 +2073,30 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg *|ci
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
@@ -2108,22 +2108,22 @@ PASS Disconnected Element: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg 
 PASS Disconnected Element: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Disconnected Element: Element Selector Good Resolver #1 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #2 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #3 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #4 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #5 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #6 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #7 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Element Selector Good Resolver #8 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #1 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #2 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #3 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #4 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #5 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #6 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #7 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Element Selector Good Resolver #8 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Element Selector Bad Resolver #1 (xHTML|*#root3 xHTML|p)
 PASS Disconnected Element: Element Selector Bad Resolver #2 (xHTML|*#root3 xHTML|p)
 PASS Disconnected Element: Element Selector Bad Resolver #3 (xHTML|*#root3 xHTML|p)
@@ -2135,30 +2135,30 @@ PASS Disconnected Element: Element Selector Bad Resolver #8 (xHTML|*#root3 xHTML
 PASS Disconnected Element: Element Selector Bad Resolver #9 (xHTML|*#root3 xHTML|p)
 PASS Disconnected Element: Element Selector Bad Resolver #10 (xHTML|*#root3 xHTML|p)
 PASS Disconnected Element: Element Selector Bad Resolver #11 (xHTML|*#root3 xHTML|p)
-PASS Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Parent Element Bad Resolver #1 (xHTML|*#root3 xHTML|div p)
 PASS Disconnected Element: Parent Element Bad Resolver #2 (xHTML|*#root3 xHTML|div p)
 PASS Disconnected Element: Parent Element Bad Resolver #3 (xHTML|*#root3 xHTML|div p)
@@ -2170,22 +2170,22 @@ PASS Disconnected Element: Parent Element Bad Resolver #8 (xHTML|*#root3 xHTML|d
 PASS Disconnected Element: Parent Element Bad Resolver #9 (xHTML|*#root3 xHTML|div p)
 PASS Disconnected Element: Parent Element Bad Resolver #10 (xHTML|*#root3 xHTML|div p)
 PASS Disconnected Element: Parent Element Bad Resolver #11 (xHTML|*#root3 xHTML|div p)
-PASS Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Parent Element Bad Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p)
@@ -2197,22 +2197,22 @@ PASS Disconnected Element: Parent Element Bad Resolver #8 (xHTML|*#root3 xHTML|d
 PASS Disconnected Element: Parent Element Bad Resolver #9 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #10 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #11 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Parent Element Bad Resolver #1 (xHTML|*#root3 *|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #2 (xHTML|*#root3 *|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #3 (xHTML|*#root3 *|div xHTML|p)
@@ -2224,22 +2224,22 @@ PASS Disconnected Element: Parent Element Bad Resolver #8 (xHTML|*#root3 *|div x
 PASS Disconnected Element: Parent Element Bad Resolver #9 (xHTML|*#root3 *|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #10 (xHTML|*#root3 *|div xHTML|p)
 PASS Disconnected Element: Parent Element Bad Resolver #11 (xHTML|*#root3 *|div xHTML|p)
-PASS Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #1 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #2 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #3 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #4 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #5 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #6 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #7 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Parent Element Good Resolver #8 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Parent Element Bad Resolver #1 (xHTML|*#root3 *|div *|p)
 PASS Disconnected Element: Parent Element Bad Resolver #2 (xHTML|*#root3 *|div *|p)
 PASS Disconnected Element: Parent Element Bad Resolver #3 (xHTML|*#root3 *|div *|p)
@@ -2251,22 +2251,22 @@ PASS Disconnected Element: Parent Element Bad Resolver #8 (xHTML|*#root3 *|div *
 PASS Disconnected Element: Parent Element Bad Resolver #9 (xHTML|*#root3 *|div *|p)
 PASS Disconnected Element: Parent Element Bad Resolver #10 (xHTML|*#root3 *|div *|p)
 PASS Disconnected Element: Parent Element Bad Resolver #11 (xHTML|*#root3 *|div *|p)
-PASS Disconnected Element: Child Good Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #4 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #5 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #6 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #7 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Child Good Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #4 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #5 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #6 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #7 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Child Good Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Child Bad Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Disconnected Element: Child Bad Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Disconnected Element: Child Bad Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
@@ -2278,22 +2278,22 @@ PASS Disconnected Element: Child Bad Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHT
 PASS Disconnected Element: Child Bad Resolver #9 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Disconnected Element: Child Bad Resolver #10 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Disconnected Element: Child Bad Resolver #11 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Disconnected Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Adjacent Bad Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Disconnected Element: Adjacent Bad Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Disconnected Element: Adjacent Bad Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a)
@@ -2305,30 +2305,30 @@ PASS Disconnected Element: Adjacent Bad Resolver #8 (xHTML|*#root3 xHTML|a + xHT
 PASS Disconnected Element: Adjacent Bad Resolver #9 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Disconnected Element: Adjacent Bad Resolver #10 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Disconnected Element: Adjacent Bad Resolver #11 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Disconnected Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Adjacent Bad Resolver #1 (xHTML|*#root3 xHTML|a + a)
 PASS Disconnected Element: Adjacent Bad Resolver #2 (xHTML|*#root3 xHTML|a + a)
 PASS Disconnected Element: Adjacent Bad Resolver #3 (xHTML|*#root3 xHTML|a + a)
@@ -2340,22 +2340,22 @@ PASS Disconnected Element: Adjacent Bad Resolver #8 (xHTML|*#root3 xHTML|a + a)
 PASS Disconnected Element: Adjacent Bad Resolver #9 (xHTML|*#root3 xHTML|a + a)
 PASS Disconnected Element: Adjacent Bad Resolver #10 (xHTML|*#root3 xHTML|a + a)
 PASS Disconnected Element: Adjacent Bad Resolver #11 (xHTML|*#root3 xHTML|a + a)
-PASS Disconnected Element: Nth-child Good Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #4 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #5 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #6 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #7 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Disconnected Element: Nth-child Good Resolver #8 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #4 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #5 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #6 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #7 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Disconnected Element: Nth-child Good Resolver #8 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Disconnected Element: Nth-child Bad Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Disconnected Element: Nth-child Bad Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Disconnected Element: Nth-child Bad Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
@@ -3444,22 +3444,22 @@ PASS Syntax Error: Document.querySelectorAll: .foo..quux
 PASS Syntax Error: Document.querySelector: .foo..quux
 PASS Syntax Error: Document.querySelectorAll: .bar.
 PASS Syntax Error: Document.querySelector: .bar.
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 *|svg)
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 *|svg)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 *|svg)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 *|svg)
@@ -3471,30 +3471,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 *|svg)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 *|svg)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 *|svg)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 *|svg)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg)
@@ -3506,30 +3506,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg *|circle)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg *|circle)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg *|circle)
@@ -3541,30 +3541,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg *|circle)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg *|circle)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg *|circle)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg *|circle)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 svg|svg svg|circle)
@@ -3576,22 +3576,22 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 svg|svg svg|circle)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div *|svg)
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div *|svg) Expected: ['svg1','svg2','svg3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div *|svg)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div *|svg)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div *|svg)
@@ -3603,30 +3603,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div *|svg)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div *|svg)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div *|svg)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div *|svg)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 div svg|svg)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 div svg|svg)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 div svg|svg)
@@ -3638,30 +3638,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 div svg|svg)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 div svg|svg)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 div svg|svg)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 div svg|svg)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg) Expected: ['svg2','svg3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg)
@@ -3673,30 +3673,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg *|circle)
@@ -3708,22 +3708,22 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg *|circle)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle1','circle2','circle3'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
@@ -3735,30 +3735,30 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg *|circle)
-PASS Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
-PASS Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Namespaces Resolved: svg
-PASS Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
+FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle) Expected: ['circle2','circle3'] Received: []
+FAIL Namespaces Resolved: svg
+FAIL Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #3 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
@@ -3770,22 +3770,22 @@ PASS Document: SVG Bad Resolver #8 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #9 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg svg|circle)
-PASS Document: Element Selector Good Resolver #1 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #2 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #3 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #4 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #5 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #6 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #7 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Element Selector Good Resolver #8 (xHTML|*#root3 xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #1 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #2 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #3 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #4 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #5 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #6 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #7 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Element Selector Good Resolver #8 (xHTML|*#root3 xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Element Selector Bad Resolver #1 (xHTML|*#root3 xHTML|p)
 PASS Document: Element Selector Bad Resolver #2 (xHTML|*#root3 xHTML|p)
 PASS Document: Element Selector Bad Resolver #3 (xHTML|*#root3 xHTML|p)
@@ -3797,30 +3797,30 @@ PASS Document: Element Selector Bad Resolver #8 (xHTML|*#root3 xHTML|p)
 PASS Document: Element Selector Bad Resolver #9 (xHTML|*#root3 xHTML|p)
 PASS Document: Element Selector Bad Resolver #10 (xHTML|*#root3 xHTML|p)
 PASS Document: Element Selector Bad Resolver #11 (xHTML|*#root3 xHTML|p)
-PASS Document: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div p)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
 PASS Document: Parent Element Bad Resolver #1 (xHTML|*#root3 xHTML|div p)
 PASS Document: Parent Element Bad Resolver #2 (xHTML|*#root3 xHTML|div p)
 PASS Document: Parent Element Bad Resolver #3 (xHTML|*#root3 xHTML|div p)
@@ -3832,22 +3832,22 @@ PASS Document: Parent Element Bad Resolver #8 (xHTML|*#root3 xHTML|div p)
 PASS Document: Parent Element Bad Resolver #9 (xHTML|*#root3 xHTML|div p)
 PASS Document: Parent Element Bad Resolver #10 (xHTML|*#root3 xHTML|div p)
 PASS Document: Parent Element Bad Resolver #11 (xHTML|*#root3 xHTML|div p)
-PASS Document: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #4 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #5 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #6 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #7 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Parent Element Bad Resolver #1 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #2 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #3 (xHTML|*#root3 xHTML|div xHTML|p)
@@ -3859,22 +3859,22 @@ PASS Document: Parent Element Bad Resolver #8 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #9 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #10 (xHTML|*#root3 xHTML|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #11 (xHTML|*#root3 xHTML|div xHTML|p)
-PASS Document: Parent Element Good Resolver #1 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #2 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #3 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #4 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #5 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #6 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #7 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #8 (xHTML|*#root3 *|div xHTML|p)
-PASS Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #1 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #2 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #3 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #4 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #5 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #6 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #7 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #8 (xHTML|*#root3 *|div xHTML|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Parent Element Bad Resolver #1 (xHTML|*#root3 *|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #2 (xHTML|*#root3 *|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #3 (xHTML|*#root3 *|div xHTML|p)
@@ -3886,22 +3886,22 @@ PASS Document: Parent Element Bad Resolver #8 (xHTML|*#root3 *|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #9 (xHTML|*#root3 *|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #10 (xHTML|*#root3 *|div xHTML|p)
 PASS Document: Parent Element Bad Resolver #11 (xHTML|*#root3 *|div xHTML|p)
-PASS Document: Parent Element Good Resolver #1 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #2 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #3 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #4 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #5 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #6 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #7 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
-PASS Document: Parent Element Good Resolver #8 (xHTML|*#root3 *|div *|p)
-PASS Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #1 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #2 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #3 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #4 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #5 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #6 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #7 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Parent Element Good Resolver #8 (xHTML|*#root3 *|div *|p) Expected: ['firstp','ap','sndp','en','sap','first'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Parent Element Bad Resolver #1 (xHTML|*#root3 *|div *|p)
 PASS Document: Parent Element Bad Resolver #2 (xHTML|*#root3 *|div *|p)
 PASS Document: Parent Element Bad Resolver #3 (xHTML|*#root3 *|div *|p)
@@ -3913,22 +3913,22 @@ PASS Document: Parent Element Bad Resolver #8 (xHTML|*#root3 *|div *|p)
 PASS Document: Parent Element Bad Resolver #9 (xHTML|*#root3 *|div *|p)
 PASS Document: Parent Element Bad Resolver #10 (xHTML|*#root3 *|div *|p)
 PASS Document: Parent Element Bad Resolver #11 (xHTML|*#root3 *|div *|p)
-PASS Document: Child Good Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #4 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #5 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #6 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #7 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Child Good Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #4 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #5 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #6 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #7 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Child Good Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a) Expected: ['simon1','google','groups','mark','yahoo','simon'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Child Bad Resolver #1 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Document: Child Bad Resolver #2 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Document: Child Bad Resolver #3 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
@@ -3940,22 +3940,22 @@ PASS Document: Child Bad Resolver #8 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Document: Child Bad Resolver #9 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Document: Child Bad Resolver #10 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
 PASS Document: Child Bad Resolver #11 (xHTML|*#root3 xHTML|p &gt; xHTML|a)
-PASS Document: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Adjacent Bad Resolver #1 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Document: Adjacent Bad Resolver #2 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Document: Adjacent Bad Resolver #3 (xHTML|*#root3 xHTML|a + xHTML|a)
@@ -3967,30 +3967,30 @@ PASS Document: Adjacent Bad Resolver #8 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Document: Adjacent Bad Resolver #9 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Document: Adjacent Bad Resolver #10 (xHTML|*#root3 xHTML|a + xHTML|a)
 PASS Document: Adjacent Bad Resolver #11 (xHTML|*#root3 xHTML|a + xHTML|a)
-PASS Document: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
-PASS Document: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + a)
-PASS Namespaces Resolved: null
-PASS Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #1 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #2 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #3 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #4 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #5 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #6 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #7 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Adjacent Good Resolver #8 (xHTML|*#root3 xHTML|a + a) Expected: ['groups'] Received: []
+FAIL Namespaces Resolved: null
+FAIL Namespaces Resolved: xHTML
 PASS Document: Adjacent Bad Resolver #1 (xHTML|*#root3 xHTML|a + a)
 PASS Document: Adjacent Bad Resolver #2 (xHTML|*#root3 xHTML|a + a)
 PASS Document: Adjacent Bad Resolver #3 (xHTML|*#root3 xHTML|a + a)
@@ -4002,22 +4002,22 @@ PASS Document: Adjacent Bad Resolver #8 (xHTML|*#root3 xHTML|a + a)
 PASS Document: Adjacent Bad Resolver #9 (xHTML|*#root3 xHTML|a + a)
 PASS Document: Adjacent Bad Resolver #10 (xHTML|*#root3 xHTML|a + a)
 PASS Document: Adjacent Bad Resolver #11 (xHTML|*#root3 xHTML|a + a)
-PASS Document: Nth-child Good Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #4 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #5 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #6 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #7 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
-PASS Document: Nth-child Good Resolver #8 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
-PASS Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #4 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #5 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #6 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #7 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
+FAIL Document: Nth-child Good Resolver #8 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3)) Expected: ['option1c'] Received: []
+FAIL Namespaces Resolved: xHTML
 PASS Document: Nth-child Bad Resolver #1 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Document: Nth-child Bad Resolver #2 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Document: Nth-child Bad Resolver #3 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))

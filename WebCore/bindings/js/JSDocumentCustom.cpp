@@ -32,7 +32,6 @@
 #include "Location.h"
 #include "NodeList.h"
 #include "ScriptController.h"
-#include "JSNSResolver.h"
 
 #if ENABLE(SVG)
 #include "JSSVGDocument.h"
@@ -75,36 +74,6 @@ void JSDocument::setLocation(ExecState* exec, JSValue* value)
 
     bool userGesture = activeFrame->script()->processingUserGesture();
     frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
-}
-
-JSValue* JSDocument::querySelector(ExecState* exec, const ArgList& args)
-{
-    Document* imp = impl();
-    ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
-
-    RefPtr<Element> element = imp->querySelector(selectors, resolver.get(), ec, exec);
-    if (exec->hadException())
-        return jsUndefined();
-    JSValue* result = toJS(exec, element.get());
-    setDOMException(exec, ec);
-    return result;
-}
-
-JSValue* JSDocument::querySelectorAll(ExecState* exec, const ArgList& args)
-{
-    Document* imp = impl();
-    ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
-
-    RefPtr<NodeList> nodeList = imp->querySelectorAll(selectors, resolver.get(), ec, exec);
-    if (exec->hadException())
-        return jsUndefined();
-    JSValue* result = toJS(exec, nodeList.get());
-    setDOMException(exec, ec);
-    return result;
 }
 
 JSValue* toJS(ExecState* exec, Document* document)

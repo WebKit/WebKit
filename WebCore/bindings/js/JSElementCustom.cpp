@@ -39,7 +39,6 @@
 #include "JSHTMLElementWrapperFactory.h"
 #include "JSNodeList.h"
 #include "NodeList.h"
-#include "JSNSResolver.h"
 
 #if ENABLE(SVG)
 #include "JSSVGElementWrapperFactory.h"
@@ -125,36 +124,6 @@ JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const ArgList& args)
         return jsUndefined();
 
     JSValue* result = toJS(exec, WTF::getPtr(imp->setAttributeNodeNS(newAttr, ec)));
-    setDOMException(exec, ec);
-    return result;
-}
-
-JSValue* JSElement::querySelector(ExecState* exec, const ArgList& args)
-{
-    Element* imp = impl();
-    ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
-
-    RefPtr<Element> element = imp->querySelector(selectors, resolver.get(), ec, exec);
-    if (exec->hadException())
-        return jsUndefined();
-    JSValue* result = toJS(exec, element.get());
-    setDOMException(exec, ec);
-    return result;
-}
-
-JSValue* JSElement::querySelectorAll(ExecState* exec, const ArgList& args)
-{
-    Element* imp = impl();
-    ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
-    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
-
-    RefPtr<NodeList> nodeList = imp->querySelectorAll(selectors, resolver.get(), ec, exec);
-    if (exec->hadException())
-        return jsUndefined();
-    JSValue* result = toJS(exec, nodeList.get());
     setDOMException(exec, ec);
     return result;
 }

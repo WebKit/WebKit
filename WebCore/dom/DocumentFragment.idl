@@ -25,18 +25,11 @@ module core {
         ImplementationUUID=E57BF71F-3FAA-495c-A307-E288F8E5B2EC
     ] DocumentFragment : EventTargetNode {
         // NodeSelector - Selector API
-#if defined(LANGUAGE_JAVASCRIPT)
-        [Custom] Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors, in NSResolver resolver)
-            raises(DOMException);
-        [Custom] NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors, in NSResolver resolver)
-            raises(DOMException);
-#else
         // FIXME: add support for NSResolver in languages other than JS
         Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
         NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
-#endif
     };
 
 }

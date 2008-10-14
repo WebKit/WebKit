@@ -1,3 +1,16 @@
+2008-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed and landed by Sam Weinig.
+
+        Due to change in spec (http://dev.w3.org/2006/webapi/selectors-api/#namespace),
+        remove no longer relevant NSResolver tests.
+
+        * fast/dom/SelectorAPI/NSResolver-basic-expected.txt: Removed.
+        * fast/dom/SelectorAPI/NSResolver-basic.xhtml: Removed.
+        * fast/dom/SelectorAPI/NSResolver-exceptions-expected.txt: Removed.
+        * fast/dom/SelectorAPI/NSResolver-exceptions.xhtml: Removed.
+        * fast/dom/SelectorAPI/resources/NSResolver-exceptions.js: Removed.
+
 2008-10-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -386,8 +386,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSMessageChannelCustom.cpp \
 	WebCore/bindings/js/JSMessagePortCustom.cpp \
 	WebCore/bindings/js/JSMimeTypeArrayCustom.cpp \
-	WebCore/bindings/js/JSNSResolver.cpp \
-	WebCore/bindings/js/JSNSResolver.h \
 	WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	WebCore/bindings/js/JSNamedNodesCollection.cpp \
 	WebCore/bindings/js/JSNamedNodesCollection.h \
@@ -662,7 +660,6 @@ webcore_sources += \
 	WebCore/dom/MouseRelatedEvent.h \
 	WebCore/dom/MutationEvent.cpp \
 	WebCore/dom/MutationEvent.h \
-	WebCore/dom/NSResolver.h \
 	WebCore/dom/NameNodeList.cpp \
 	WebCore/dom/NameNodeList.h \
 	WebCore/dom/NamedAttrMap.cpp \

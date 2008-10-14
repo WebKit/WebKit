@@ -43,7 +43,6 @@
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
 #include "Logging.h"
-#include "NSResolver.h"
 #include "NameNodeList.h"
 #include "NamedAttrMap.h"
 #include "NodeRareData.h"
@@ -1287,72 +1286,13 @@ public:
     }
 };
 
-class ResolveNamespaceFunctor {
-public:
-    ResolveNamespaceFunctor(NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
-        : m_resolver(resolver)
-        , m_exceptionCode(ec)
-        , m_exec(exec)
-    {
-    }
-
-    bool operator()(CSSSelector* selector)
-    {
-        if (selector->hasTag() && selector->m_tag.prefix() != nullAtom && selector->m_tag.prefix() != starAtom) {
-            String resolvedNamespaceURI = m_resolver->lookupNamespaceURI(m_exec, selector->m_tag.prefix());
-            if (m_exec && m_exec->hadException())
-                return true;
-            if (resolvedNamespaceURI.isEmpty()) {
-                m_exceptionCode = NAMESPACE_ERR;
-                return true;
-            }
-            QualifiedName newQualifiedName(selector->m_tag.prefix(), selector->m_tag.localName(), resolvedNamespaceURI);
-            selector->m_tag = newQualifiedName;
-        }
-        if (selector->hasAttribute() && selector->m_attr.prefix() != nullAtom && selector->m_attr.prefix() != starAtom) {
-            String resolvedNamespaceURI = m_resolver->lookupNamespaceURI(m_exec, selector->m_attr.prefix());
-            if (m_exec && m_exec->hadException())
-                return true;
-            if (resolvedNamespaceURI.isEmpty()) {
-                m_exceptionCode = NAMESPACE_ERR;
-                return true;
-            }
-            QualifiedName newQualifiedName(selector->m_attr.prefix(), selector->m_attr.localName(), resolvedNamespaceURI);
-            selector->m_attr = newQualifiedName;
-        }
-
-        return false;
-    }
-
-private:
-    NSResolver* m_resolver;
-    ExceptionCode& m_exceptionCode;
-    JSC::ExecState* m_exec;
-};
-
 static bool selectorNeedsNamespaceResolution(CSSSelector* currentSelector)
 {
     SelectorNeedsNamespaceResolutionFunctor functor;
     return forEachSelector(functor, currentSelector);
 }
 
-static bool resolveNamespacesForSelector(CSSSelector* currentSelector, NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
-{
-    ResolveNamespaceFunctor functor(resolver, ec, exec);
-    return forEachSelector(functor, currentSelector);
-}
-
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
-{
-    return querySelector(selectors, 0, ec, execStateFromNode(this));
-}
-
-PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
-{
-    return querySelectorAll(selectors, 0, ec, execStateFromNode(this));
-}
-
-PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -1360,13 +1300,6 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
     }
     bool strictParsing = !document()->inCompatMode();
     CSSParser p(strictParsing);
-    if (resolver) {
-        String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
-        if (exec && exec->hadException())
-            return 0;
-        if (!defaultNamespace.isEmpty())
-            p.m_defaultNamespace = defaultNamespace;
-    }
 
     std::auto_ptr<CSSSelector> querySelector = p.parseSelector(selectors, document());
     if (!querySelector.get()) {
@@ -1374,16 +1307,10 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
         return 0;
     }
 
-    if (resolver) {
-        if (resolveNamespacesForSelector(querySelector.get(), resolver, ec, exec))
-            return 0;
-    } else {
-        // No NSResolver was passed, so throw a NAMESPACE_ERR if the selector includes any 
-        // namespace prefixes.
-        if (selectorNeedsNamespaceResolution(querySelector.get())) {
-            ec = NAMESPACE_ERR;
-            return 0;
-        }
+    // throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
+    if (selectorNeedsNamespaceResolution(querySelector.get())) {
+        ec = NAMESPACE_ERR;
+        return 0;
     }
 
     CSSStyleSelector::SelectorChecker selectorChecker(document(), strictParsing);
@@ -1411,7 +1338,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
     return 0;
 }
 
-PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
+PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -1419,13 +1346,6 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver*
     }
     bool strictParsing = !document()->inCompatMode();
     CSSParser p(strictParsing);
-    if (resolver) {
-        String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
-        if (exec && exec->hadException())
-            return false;
-        if (!defaultNamespace.isEmpty())
-            p.m_defaultNamespace = defaultNamespace;
-    }
 
     std::auto_ptr<CSSSelector> querySelector = p.parseSelector(selectors, document());
 
@@ -1434,16 +1354,10 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver*
         return 0;
     }
 
-    if (resolver) {
-        if (resolveNamespacesForSelector(querySelector.get(), resolver, ec, exec))
-            return 0;
-    } else {
-        // No NSResolver was passed, so throw a NAMESPACE_ERR if the selector includes any 
-        // namespace prefixes.
-        if (selectorNeedsNamespaceResolution(querySelector.get())) {
-            ec = NAMESPACE_ERR;
-            return 0;
-        }
+    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes.
+    if (selectorNeedsNamespaceResolution(querySelector.get())) {
+        ec = NAMESPACE_ERR;
+        return 0;
     }
 
     return createSelectorNodeList(this, querySelector.get());
