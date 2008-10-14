@@ -668,8 +668,17 @@ void QWebFrame::render(QPainter *painter, const QRegion &clip)
     GraphicsContext ctx(painter);
     QVector<QRect> vector = clip.rects();
     WebCore::FrameView* view = d->frame->view();
-    for (int i = 0; i < vector.size(); ++i)
+    for (int i = 0; i < vector.size(); ++i) {
+        if (i > 0) {
+            painter->save();
+            painter->setClipRect(vector.at(i), Qt::IntersectClip);
+        }
+
         view->paint(&ctx, vector.at(i));
+
+        if (i > 0)
+            painter->restore();
+    }
 }
 
 /*!

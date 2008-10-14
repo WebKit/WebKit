@@ -1,3 +1,16 @@
+2008-10-14  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Clip painter to dirty rect before passing on to WebKit
+        
+        This was previously done in ScrollViewQt, but after the
+        refactoring of ScrollView we need to do it in QWebFrame
+        instead, similar to Safari/Win.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::render):
+
 2008-10-08  Matthias Ettrich <ettrich@nokia.com>
 
         Reviewed by Simon.
