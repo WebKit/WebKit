@@ -460,26 +460,23 @@ void FrameView::layout(bool allowSubtree)
 
     if (!subtree) {
         RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
-        if (document->isHTMLDocument()) {
-            Node* body = static_cast<HTMLDocument*>(document)->body();
-            if (body && body->renderer()) {
-                if (body->hasTagName(framesetTag)) {
+        Node* body = document->body();
+        if (body && body->renderer()) {
+            if (body->hasTagName(framesetTag)) {
+                body->renderer()->setChildNeedsLayout(true);
+                vMode = ScrollbarAlwaysOff;
+                hMode = ScrollbarAlwaysOff;
+            } else if (body->hasTagName(bodyTag)) {
+                if (!d->m_firstLayout && m_size.height() != visibleHeight()
+                        && static_cast<RenderBox*>(body->renderer())->stretchesToViewHeight())
                     body->renderer()->setChildNeedsLayout(true);
-                    vMode = ScrollbarAlwaysOff;
-                    hMode = ScrollbarAlwaysOff;
-                } else if (body->hasTagName(bodyTag)) {
-                    if (!d->m_firstLayout && m_size.height() != visibleHeight()
-                            && static_cast<RenderBox*>(body->renderer())->stretchesToViewHeight())
-                        body->renderer()->setChildNeedsLayout(true);
-                    // It's sufficient to just check the X overflow,
-                    // since it's illegal to have visible in only one direction.
-                    RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE 
-                        ? body->renderer() : rootRenderer;
-                    applyOverflowToViewport(o, hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs
-                }
+                // It's sufficient to just check the X overflow,
+                // since it's illegal to have visible in only one direction.
+                RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
+                applyOverflowToViewport(o, hMode, vMode);
             }
         } else if (rootRenderer)
-            applyOverflowToViewport(rootRenderer, hMode, vMode); // XML/XHTML UAs use the root element.
+            applyOverflowToViewport(rootRenderer, hMode, vMode);
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (d->m_firstLayout && !document->ownerElement())
             printf("Elapsed time before first layout: %d\n", document->elapsedTime());

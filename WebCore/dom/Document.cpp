@@ -1487,7 +1487,7 @@ HTMLElement* Document::body()
         if (i->hasTagName(framesetTag))
             return static_cast<HTMLElement*>(i);
         
-        if (i->hasTagName(bodyTag))
+        if (i->hasTagName(bodyTag) && !body)
             body = i;
     }
     return static_cast<HTMLElement*>(body);

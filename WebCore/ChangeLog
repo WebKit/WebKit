@@ -1,3 +1,25 @@
+2008-10-14  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21595
+
+        Clean up background and overflow propagation from the body to the viewport.  Make it match the
+        latest CSS2.1 spec thinking.
+
+        Reviewed by Adam Roben
+
+        Added many tests at fast/body-propagation/.  These are Simon Pieters' tests of propagation handling
+        (available at http://simon.html5.org/test/css/magic-body/).
+
+        * dom/Document.cpp:
+        (WebCore::Document::body):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+
 2008-10-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed and landed by Sam Weinig.
