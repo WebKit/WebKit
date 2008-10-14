@@ -248,18 +248,18 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
         if (!control->disabled() && control->appendFormData(list, m_multipart)) {
             size_t ln = list.list().size();
             for (size_t j = 0; j < ln; ++j) {
-                const FormDataListItem& item = list.list()[j];
+                const FormDataList::Item& item = list.list()[j];
                 if (!m_multipart) {
                     // Omit the name "isindex" if it's the first form data element.
                     // FIXME: Why is this a good rule? Is this obsolete now?
-                    if (encodedData.isEmpty() && item.m_data == "isindex")
-                        appendEncodedString(encodedData, list.list()[++j].m_data);
+                    if (encodedData.isEmpty() && item.data() == "isindex")
+                        appendEncodedString(encodedData, list.list()[++j].data());
                     else {
                         if (!encodedData.isEmpty())
                             encodedData.append('&');
-                        appendEncodedString(encodedData, item.m_data);
+                        appendEncodedString(encodedData, item.data());
                         encodedData.append('=');
-                        appendEncodedString(encodedData, list.list()[++j].m_data);
+                        appendEncodedString(encodedData, list.list()[++j].data());
                     }
                 } else {
                     Vector<char> header;
@@ -267,30 +267,24 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     appendString(header, boundary);
                     appendString(header, "\r\n");
                     appendString(header, "Content-Disposition: form-data; name=\"");
-                    header.append(item.m_data.data(), item.m_data.length());
+                    header.append(item.data().data(), item.data().length());
                     header.append('"');
 
                     bool shouldGenerateFile = false;
                     // if the current type is FILE, then we also need to
                     // include the filename
-                    if (control->hasLocalName(inputTag)
-                            && static_cast<HTMLInputElement*>(control)->inputType() == HTMLInputElement::FILE) {
-                        String path;
-                        String filename;
-                        const FileList* files = static_cast<HTMLInputElement*>(control)->files();
-                        if (!files->isEmpty()) {
-                            // NOTE: We currently only handle one file; some day we'll add multiple file support.
-                            const File* file = files->item(0);
-                            path = file->path();
-                            filename = file->fileName();
-                        }
+                    if (item.file()) {
+                        const String& path = item.file()->path();
+                        String filename = item.file()->fileName();
 
                         // Let the application specify a filename if it's going to generate a replacement file for the upload.
-                        if (Page* page = document()->page()) {
-                            String generatedFilename;
-                            shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFilename);
-                            if (shouldGenerateFile)
-                                filename = generatedFilename;
+                        if (!path.isEmpty()) {
+                            if (Page* page = document()->page()) {
+                                String generatedFilename;
+                                shouldGenerateFile = page->chrome()->client()->shouldReplaceWithGeneratedFileForUpload(path, generatedFilename);
+                                if (shouldGenerateFile)
+                                    filename = generatedFilename;
+                            }
                         }
 
                         // FIXME: This won't work if the filename includes a " mark,
@@ -302,9 +296,10 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                         header.append('"');
 
                         if (!filename.isEmpty()) {
-                            // FIXME: This function's name makes it sound like it takes a path, not just a basename.
-                            // But filename is not the path. But note, that it's not safe to just use path, instead
-                            // since in the generated-file case it will not reflect the MIME type of the generated file.
+                            // FIXME: The MIMETypeRegistry function's name makes it sound like it takes a path,
+                            // not just a basename. But filename is not the path. But note that it's not safe to
+                            // just use path instead since in the generated-file case it will not reflect the
+                            // MIME type of the generated file.
                             String mimeType = MIMETypeRegistry::getMIMETypeForPath(filename);
                             if (!mimeType.isEmpty()) {
                                 appendString(header, "\r\nContent-Type: ");
@@ -317,11 +312,11 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
 
                     // append body
                     result->appendData(header.data(), header.size());
-                    const FormDataListItem& item = list.list()[j + 1];
-                    if (size_t dataSize = item.m_data.length())
-                        result->appendData(item.m_data.data(), dataSize);
-                    else if (!item.m_path.isEmpty())
-                        result->appendFile(item.m_path, shouldGenerateFile);
+                    const FormDataList::Item& item = list.list()[j + 1];
+                    if (size_t dataSize = item.data().length())
+                        result->appendData(item.data().data(), dataSize);
+                    else if (item.file() && !item.file()->path().isEmpty())
+                        result->appendFile(item.file()->path(), shouldGenerateFile);
                     result->appendData("\r\n", 2);
 
                     ++j;

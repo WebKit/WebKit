@@ -1,3 +1,29 @@
+2008-10-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig (all but the FormDataListItem rename).
+
+        - https://bugs.webkit.org/show_bug.cgi?id=21593
+          Bug 21593: add multiple-file support to HTMLFormElement
+
+        * html/FormDataList.cpp: Removed appendFile since it's now inline.
+        Also took incorrect old copyrights off of this file that are left
+        over from when it was split.
+        * html/FormDataList.h: Ditto. Renamed FormDataListItem to Item and
+        made it a member of FormDataList. Changed it to hold a File object
+        instead of a path. And made its data members private. Changed
+        FormDataList::appendFile accordingly.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData): Updated for above changes.
+        Removed the code that special-cases HTMLInputElement, because now
+        the FormDataListItem has everything we need. And if there are
+        multiple files, we'll get multiple list items for them.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData): Changed the code for
+        <input type=file> to use File objects instead of path strings and
+        also to append multiple files if the file list has them.
+
 2008-10-14  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.

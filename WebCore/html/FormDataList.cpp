@@ -1,11 +1,5 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
- *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,11 +34,11 @@ void FormDataList::appendString(const CString& s)
 }
 
 // Change plain CR and plain LF to CRLF pairs.
-static CString fixLineBreaks(const CString &s)
+static CString fixLineBreaks(const CString& s)
 {
     // Compute the length.
     unsigned newLen = 0;
-    const char *p = s.data();
+    const char* p = s.data();
     while (char c = *p++) {
         if (c == '\r') {
             // Safe to look ahead because of trailing '\0'.
@@ -66,7 +60,7 @@ static CString fixLineBreaks(const CString &s)
     
     // Make a copy of the string.
     p = s.data();
-    char *q;
+    char* q;
     CString result = CString::newUninitialized(newLen, q);
     while (char c = *p++) {
         if (c == '\r') {
@@ -92,12 +86,6 @@ void FormDataList::appendString(const String& s)
 {
     CString cstr = fixLineBreaks(m_encoding.encode(s.characters(), s.length(), EntitiesForUnencodables));
     m_list.append(cstr);
-}
-
-void FormDataList::appendFile(const String& key, const String& filename)
-{
-    appendString(key);
-    m_list.append(filename);
 }
 
 } // namespace

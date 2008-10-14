@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -868,20 +868,23 @@ bool HTMLInputElement::appendFormData(FormDataList& encoding, bool multipart)
             }
             break;
 
-        case FILE:
+        case FILE: {
             // Can't submit file on GET.
             if (!multipart)
                 return false;
 
             // If no filename at all is entered, return successful but empty.
             // Null would be more logical, but Netscape posts an empty file. Argh.
-            if (m_fileList->isEmpty()) {
-                encoding.appendData(name(), String(""));
+            unsigned numFiles = m_fileList->length();
+            if (!numFiles) {
+                encoding.appendFile(name(), File::create(""));
                 return true;
             }
 
-            encoding.appendFile(name(), m_fileList->item(0)->path());
+            for (unsigned i = 0; i < numFiles; ++i)
+                encoding.appendFile(name(), m_fileList->item(i));
             return true;
+        }
     }
     return false;
 }
