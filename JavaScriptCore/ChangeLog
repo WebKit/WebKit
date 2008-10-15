@@ -1,3 +1,14 @@
+2008-10-15  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Cameron Zwarich.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20912>
+        Use simple uint32_t multiplication on op_mul if both operands are
+        immediate number and they are between zero and 0x7FFF.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+
 2008-10-09  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Sam Weinig.

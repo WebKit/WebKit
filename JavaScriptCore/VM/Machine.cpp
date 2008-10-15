@@ -1864,7 +1864,14 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFile,
         JSValue* src2 = callFrame[(++vPC)->u.operand].jsValue(callFrame);
         double left;
         double right;
-        if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+        if (JSImmediate::areBothImmediateNumbers(src1, src2)) {
+            int32_t left = JSImmediate::getTruncatedInt32(src1);
+            int32_t right = JSImmediate::getTruncatedInt32(src2);
+            if ((left | right) >> 15 == 0)
+                callFrame[dst] = jsNumber(callFrame, left * right);
+            else
+                callFrame[dst] = jsNumber(callFrame, static_cast<double>(left) * static_cast<double>(right));
+        } else if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
             callFrame[dst] = jsNumber(callFrame, left * right);
         else {
             JSValue* result = jsNumber(callFrame, src1->toNumber(callFrame) * src2->toNumber(callFrame));
