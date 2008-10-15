@@ -108,8 +108,16 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+#if USE(CTI_ARGUMENT)
+#if USE(FAST_CALL_CTI_ARGUMENT)
     "movl %esp, %ecx" "\n"
+#else
+    "movl %esp, 0(%esp)" "\n"
+#endif
     "call " SYMBOL_STRING(_ZN3JSC7Machine12cti_vm_throwEPPv) "\n"
+#else
+    "call " SYMBOL_STRING(_ZN3JSC7Machine12cti_vm_throwEPv) "\n"
+#endif
     "addl $0x24, %esp" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
