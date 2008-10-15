@@ -576,6 +576,56 @@ static CFMutableSetRef allWebViewsSet;
 
 @implementation WebView (WebPrivate)
 
+static inline int callGestalt(OSType selector)
+{
+    SInt32 value = 0;
+    Gestalt(selector, &value);
+    return value;
+}
+
+// Uses underscores instead of dots because if "4." ever appears in a user agent string, old DHTML libraries treat it as Netscape 4.
+static NSString *createMacOSXVersionString()
+{
+    // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
+    int major = callGestalt(gestaltSystemVersionMajor);
+    ASSERT(major);
+
+    int minor = callGestalt(gestaltSystemVersionMinor);
+    int bugFix = callGestalt(gestaltSystemVersionBugFix);
+    if (bugFix)
+        return [[NSString alloc] initWithFormat:@"%d_%d_%d", major, minor, bugFix];
+    if (minor)
+        return [[NSString alloc] initWithFormat:@"%d_%d", major, minor];
+    return [[NSString alloc] initWithFormat:@"%d", major];
+}
+
+static NSString *createUserVisibleWebKitVersionString()
+{
+    // If the version is 4 digits long or longer, then the first digit represents
+    // the version of the OS. Our user agent string should not include this first digit,
+    // so strip it off and report the rest as the version. <rdar://problem/4997547>
+    NSString *fullVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+    NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
+    if (nonDigitRange.location == NSNotFound && [fullVersion length] >= 4)
+        return [[fullVersion substringFromIndex:1] copy];
+    if (nonDigitRange.location != NSNotFound && nonDigitRange.location >= 4)
+        return [[fullVersion substringFromIndex:1] copy];
+    return [fullVersion copy];
+}
+
++ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName andWebKitVersion:(NSString *)version
+{
+    // Note: Do *not* move the initialization of osVersion into the declaration.
+    // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
+    static NSString *osVersion;
+    if (!osVersion)
+        osVersion = createMacOSXVersionString();
+    NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
+    if ([applicationName length])
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, language, version, applicationName];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, language, version];
+}
+
 static void WebKitInitializeApplicationCachePathIfNecessary()
 {
     static BOOL initialized = NO;
@@ -4596,68 +4646,20 @@ static WebFrameView *containingFrameView(NSView *view)
     [self _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
-- (NSString *)_userVisibleBundleVersionFromFullVersion:(NSString *)fullVersion
-{
-    // If the version is 4 digits long or longer, then the first digit represents
-    // the version of the OS. Our user agent string should not include this first digit,
-    // so strip it off and report the rest as the version. <rdar://problem/4997547>
-    NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
-    if (nonDigitRange.location == NSNotFound && [fullVersion length] >= 4)
-        return [fullVersion substringFromIndex:1];
-    if (nonDigitRange.location != NSNotFound && nonDigitRange.location >= 4)
-        return [fullVersion substringFromIndex:1];
-    return fullVersion;
-}
-
-static inline int callGestalt(OSType selector)
-{
-    SInt32 value = 0;
-    Gestalt(selector, &value);
-    return value;
-}
-
-// Uses underscores instead of dots because if "4." ever appears in a user agent string, old DHTML libraries treat it as Netscape 4.
-static NSString *createMacOSXVersionString()
-{
-    // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
-    int major = callGestalt(gestaltSystemVersionMajor);
-    ASSERT(major);
-
-    int minor = callGestalt(gestaltSystemVersionMinor);
-    int bugFix = callGestalt(gestaltSystemVersionBugFix);
-    if (bugFix)
-        return [[NSString alloc] initWithFormat:@"%d_%d_%d", major, minor, bugFix];
-    if (minor)
-        return [[NSString alloc] initWithFormat:@"%d_%d", major, minor];
-    return [[NSString alloc] initWithFormat:@"%d", major];
-}
-
-- (NSString *)_userAgentWithApplicationName:(NSString *)applicationName andWebKitVersion:(NSString *)version
-{
-    // Note: Do *not* move the initialization of osVersion into the declaration.
-    // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
-    static NSString *osVersion;
-    if (!osVersion)
-        osVersion = createMacOSXVersionString();
-    NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
-    if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
-            osVersion, language, version, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko)",
-        osVersion, language, version];
-}
-
 // Get the appropriate user-agent string for a particular URL.
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
 {
     if (_private->useSiteSpecificSpoofing) {
         // No current site-specific spoofs.
     }
-    
+
     if (_private->userAgent.isNull()) {
-        NSString *sourceVersion = [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-        sourceVersion = [self _userVisibleBundleVersionFromFullVersion:sourceVersion];
-        _private->userAgent = [self _userAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:sourceVersion];
+        // Note: Do *not* move the initialization of webKitVersion into the declaration.
+        // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
+        static NSString *webKitVersion;
+        if (!webKitVersion)
+            webKitVersion = createUserVisibleWebKitVersionString();
+        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:webKitVersion];
     }
 
     return _private->userAgent;

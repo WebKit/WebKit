@@ -1,3 +1,21 @@
+2008-10-14  Timothy Hatcher  <timothy@apple.com>
+
+        Make the user agent generation method a class method and cache the WebKit
+        version in a static to prevent generating it every time. This is needed
+        clean up to fix <rdar://problem/6292331>. Moved all code to WebPrivate so
+        the class method can be in the WebViewPrivate.h header.
+
+        Reviewed by John Sullivan.
+
+        * WebView/WebView.mm:
+        (callGestalt): Moved. Same code.
+        (createMacOSXVersionString): Moved. Same code.
+        (createUserVisibleWebKitVersionString): Moved from _userVisibleBundleVersionFromFullVersion:
+        and returns a copied string.
+        (+[WebView _standardUserAgentWithApplicationName:andWebKitVersion:]): Made into a class method.
+        (-[WebView WebCore::_userAgentForURL:]): Changed to cache the WebKit version.
+        * WebView/WebViewPrivate.h: Added +_standardUserAgentWithApplicationName:andWebKitVersion:.
+
 2008-10-13  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Mark Rowe.

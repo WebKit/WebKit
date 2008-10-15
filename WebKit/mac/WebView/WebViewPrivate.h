@@ -224,6 +224,8 @@ Could be worth adding to the API.
 */
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
 
++ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName andWebKitVersion:(NSString *)version;
+
 // May well become public
 - (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
 - (id<WebFormDelegate>)_formDelegate;
