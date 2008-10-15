@@ -274,11 +274,6 @@ void PluginView::stop()
 
     // Clear the window
     m_npWindow.window = 0;
-#ifdef XP_UNIX
-    if (m_isWindowed && m_npWindow.ws_info) 
-           delete (NPSetWindowCallbackStruct *)m_npWindow.ws_info;
-    m_npWindow.ws_info = 0;
-#endif
     if (m_plugin->pluginFuncs()->setwindow && !m_plugin->quirks().contains(PluginQuirkDontSetNullWindowHandleOnDestroy)) {
         PluginView::setCurrentPluginView(this);
         setCallingPlugin(true);
@@ -286,6 +281,12 @@ void PluginView::stop()
         setCallingPlugin(false);
         PluginView::setCurrentPluginView(0);
     }
+
+#ifdef XP_UNIX
+    if (m_isWindowed && m_npWindow.ws_info)
+           delete (NPSetWindowCallbackStruct *)m_npWindow.ws_info;
+    m_npWindow.ws_info = 0;
+#endif
 
     // Destroy the plugin
     {
