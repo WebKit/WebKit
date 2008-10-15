@@ -70,9 +70,9 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::NoBrush);
 
-    if (spreadMethod() == SPREADMETHOD_REPEAT)
+    if (spreadMethod() == SpreadMethodRepeat)
         gradient.setSpread(QGradient::RepeatSpread);
-    else if (spreadMethod() == SPREADMETHOD_REFLECT)
+    else if (spreadMethod() == SpreadMethodReflect)
         gradient.setSpread(QGradient::ReflectSpread);
     else
         gradient.setSpread(QGradient::PadSpread);    

@@ -7,6 +7,7 @@
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
  *
  * All rights reserved.
  *
@@ -51,6 +52,7 @@
 #include "NotImplemented.h"
 
 #include <QDebug>
+#include <QGradient>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPaintEngine>
@@ -148,6 +150,22 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
     }
     qWarning("couldn't recognize the pen style");
     return Qt::NoPen;
+}
+
+static inline QGradient applySpreadMethod(QGradient gradient, GradientSpreadMethod spreadMethod)
+{
+    switch (spreadMethod) {
+        case SpreadMethodPad:
+            gradient.setSpread(QGradient::PadSpread);
+           break;
+        case SpreadMethodReflect:
+            gradient.setSpread(QGradient::ReflectSpread);
+            break;
+        case SpreadMethodRepeat:
+            gradient.setSpread(QGradient::RepeatSpread);
+            break;
+    }
+    return gradient;
 }
 
 struct TransparencyLayer
@@ -519,7 +537,9 @@ void GraphicsContext::fillPath()
         p->fillPath(path, QBrush(m_common->state.fillPattern.get()->createPlatformPattern(getCTM())));
         break;
     case GradientColorSpace:
-        p->fillPath(path, QBrush(*(m_common->state.fillGradient.get()->platformGradient())));
+        QGradient* gradient = m_common->state.fillGradient.get()->platformGradient();
+        *gradient = applySpreadMethod(*gradient, spreadMethod());  
+        p->fillPath(path, QBrush(*gradient));
         break;
     }
 }
@@ -545,7 +565,9 @@ void GraphicsContext::strokePath()
         break;
     }
     case GradientColorSpace: {
-        pen.setBrush(QBrush(*(m_common->state.strokeGradient.get()->platformGradient())));
+        QGradient* gradient = m_common->state.strokeGradient.get()->platformGradient();
+        *gradient = applySpreadMethod(*gradient, spreadMethod()); 
+        pen.setBrush(QBrush(*gradient));
         p->setPen(pen);
         p->strokePath(path, pen);
         break;

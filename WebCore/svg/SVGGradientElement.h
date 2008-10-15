@@ -38,13 +38,6 @@ namespace WebCore {
                                public SVGURIReference,
                                public SVGExternalResourcesRequired {
     public:
-        enum SVGGradientType {
-            SVG_SPREADMETHOD_UNKNOWN = 0,
-            SVG_SPREADMETHOD_PAD     = 1,
-            SVG_SPREADMETHOD_REFLECT = 2,
-            SVG_SPREADMETHOD_REPEAT  = 3
-        };
-
         SVGGradientElement(const QualifiedName&, Document*);
         virtual ~SVGGradientElement();
 

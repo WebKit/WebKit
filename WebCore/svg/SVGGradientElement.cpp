@@ -69,11 +69,11 @@ void SVGGradientElement::parseMappedAttribute(MappedAttribute* attr)
         }
     } else if (attr->name() == SVGNames::spreadMethodAttr) {
         if (attr->value() == "reflect")
-            setSpreadMethodBaseValue(SVG_SPREADMETHOD_REFLECT);
+            setSpreadMethodBaseValue(SpreadMethodReflect);
         else if (attr->value() == "repeat")
-            setSpreadMethodBaseValue(SVG_SPREADMETHOD_REPEAT);
+            setSpreadMethodBaseValue(SpreadMethodRepeat);
         else if (attr->value() == "pad")
-            setSpreadMethodBaseValue(SVG_SPREADMETHOD_PAD);
+            setSpreadMethodBaseValue(SpreadMethodPad);
     } else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;

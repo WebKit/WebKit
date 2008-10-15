@@ -114,13 +114,13 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     cairo_pattern_set_filter(pattern, CAIRO_FILTER_BILINEAR);
 
     switch (spreadMethod()) {
-        case SPREADMETHOD_PAD:
+        case SpreadMethodPad:
             cairo_pattern_set_extend(pattern, CAIRO_EXTEND_PAD);
             break;
-        case SPREADMETHOD_REFLECT:
+        case SpreadMethodReflect:
             cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REFLECT);
             break;
-        case SPREADMETHOD_REPEAT:
+        case SpreadMethodRepeat:
             cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
             break;
         default:
