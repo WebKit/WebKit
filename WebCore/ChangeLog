@@ -6,6 +6,17 @@
 
 2008-10-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Build fix attempt.
+
+        Try to fix static/non-static declaration of g_string_append_uri_escape
+        by renaming that string. Another look needs to be taken.
+
+        * platform/gtk/guriescape.c:
+        (_webcore_g_string_append_uri_escaped):
+        (_webcore_g_uri_escape_string):
+
+2008-10-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Build fix.
 
         m_animatingImageType is gone.

@@ -66,7 +66,7 @@ gunichar_ok (gunichar c)
 }
 
 static GString *
-g_string_append_uri_escaped (GString *string,
+_webcore_g_string_append_uri_escaped (GString *string,
                              const char *unescaped,
                              const char *reserved_chars_allowed,
                              gboolean allow_utf8)
@@ -128,7 +128,7 @@ _webcore_g_uri_escape_string (const char *unescaped,
 
   s = g_string_sized_new (strlen (unescaped) + 10);
   
-  g_string_append_uri_escaped (s, unescaped, reserved_chars_allowed, allow_utf8);
+  _webcore_g_string_append_uri_escaped (s, unescaped, reserved_chars_allowed, allow_utf8);
   
   return g_string_free (s, FALSE);
 }
