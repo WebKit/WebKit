@@ -73,6 +73,7 @@
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <kjs/JSLock.h>
 #include <kjs/ustring.h>
+#include <kjs/CollectorHeapIterator.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
 #include <wtf/RefCounted.h>
@@ -430,7 +431,7 @@ SIMPLE_INSPECTOR_CALLBACK(loaded, scriptObjectReady);
 SIMPLE_INSPECTOR_CALLBACK(unloading, close);
 SIMPLE_INSPECTOR_CALLBACK(attach, attachWindow);
 SIMPLE_INSPECTOR_CALLBACK(detach, detachWindow);
-SIMPLE_INSPECTOR_CALLBACK(startDebuggingAndReloadInspectedPage, startDebuggingAndReloadInspectedPage);
+SIMPLE_INSPECTOR_CALLBACK(startDebugging, startDebugging);
 SIMPLE_INSPECTOR_CALLBACK(stopDebugging, stopDebugging);
 SIMPLE_INSPECTOR_CALLBACK(pauseInDebugger, pauseInDebugger);
 SIMPLE_INSPECTOR_CALLBACK(resumeDebugger, resumeDebugger);
@@ -1114,7 +1115,7 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         if (m_nodeToFocus)
             focusNode();
         if (m_attachDebuggerWhenShown)
-            startDebuggingAndReloadInspectedPage();
+            startDebugging();
         if (m_showAfterVisible != CurrentPanel)
             showPanel(m_showAfterVisible);
     } else {
@@ -1321,7 +1322,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "windowUnloading", WebCore::unloading, kJSPropertyAttributeNone },
         { "attach", WebCore::attach, kJSPropertyAttributeNone },
         { "detach", WebCore::detach, kJSPropertyAttributeNone },
-        { "startDebuggingAndReloadInspectedPage", WebCore::startDebuggingAndReloadInspectedPage, kJSPropertyAttributeNone },
+        { "startDebugging", WebCore::startDebugging, kJSPropertyAttributeNone },
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { "pauseInDebugger", WebCore::pauseInDebugger, kJSPropertyAttributeNone },
         { "resumeDebugger", WebCore::resumeDebugger, kJSPropertyAttributeNone },
@@ -2312,7 +2313,7 @@ void InspectorController::moveWindowBy(float x, float y) const
     m_page->chrome()->setWindowRect(frameRect);
 }
 
-void InspectorController::startDebuggingAndReloadInspectedPage()
+void InspectorController::startDebugging()
 {
     if (!enabled())
         return;
@@ -2331,8 +2332,6 @@ void InspectorController::startDebuggingAndReloadInspectedPage()
     m_attachDebuggerWhenShown = false;
 
     callSimpleFunction(m_scriptContext, m_scriptObject, "debuggerAttached");
-
-    m_inspectedPage->mainFrame()->loader()->reload();
 }
 
 void InspectorController::stopDebugging()

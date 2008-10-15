@@ -87,7 +87,7 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     int errLine;
     UString errMsg;
     SourceCode source = makeSource(body, sourceURL, lineNumber);
-    RefPtr<FunctionBodyNode> functionBody = exec->globalData().parser->parse<FunctionBodyNode>(exec, source, &errLine, &errMsg);
+    RefPtr<FunctionBodyNode> functionBody = exec->globalData().parser->parse<FunctionBodyNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
 
     // No program node == syntax error - throw a syntax error
     if (!functionBody)
@@ -125,7 +125,7 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
         return throwError(exec, SyntaxError, "Syntax error in parameter list");
     }
     size_t count = parameters.size();
-    functionBody->finishParsing(source, parameters.releaseBuffer(), count);
+    functionBody->finishParsing(parameters.releaseBuffer(), count);
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     ScopeChain scopeChain(globalObject, globalObject->globalData(), exec->globalThisValue());

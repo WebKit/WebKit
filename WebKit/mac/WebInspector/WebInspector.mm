@@ -88,7 +88,7 @@ using namespace WebCore;
     if (!page)
         return;
     page->inspectorController()->showPanel(InspectorController::ScriptsPanel);
-    page->inspectorController()->startDebuggingAndReloadInspectedPage();
+    page->inspectorController()->startDebugging();
 }
 
 - (void)stopDebuggingJavaScript:(id)sender

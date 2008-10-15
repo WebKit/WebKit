@@ -1,3 +1,78 @@
+2008-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21345
+        Start the debugger without reloading the inspected page
+
+        * JavaScriptCore.exp: New symbols.
+        * JavaScriptCore.xcodeproj/project.pbxproj: New files.
+
+        * VM/CodeBlock.h:
+        (JSC::EvalCodeCache::get): Updated for tweak to parsing API.
+
+        * kjs/CollectorHeapIterator.h: Added. An iterator for the object heap,
+        which we use to find all the live functions and recompile them.
+
+        * kjs/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate): Updated for tweak to parsing API.
+
+        * kjs/FunctionConstructor.cpp:
+        (JSC::constructFunction): Updated for tweak to parsing API.
+
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction): Try to validate our SourceCode in debug
+        builds by ASSERTing that it's syntactically valid. This doesn't catch
+        all SourceCode bugs, but it catches a lot of them.
+
+        * kjs/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval): Updated for tweak to parsing API.
+
+        * kjs/Parser.cpp:
+        (JSC::Parser::parse):
+        * kjs/Parser.h:
+        (JSC::Parser::parse): Tweaked the parser to make it possible to parse
+        without an ExecState, and to allow the client to specify a debugger to
+        notify (or not) about the source we parse. This allows the inspector
+        to recompile even though no JavaScript is executing, then notify the
+        debugger about all source code when it's done.
+
+        * kjs/Shell.cpp:
+        (prettyPrintScript): Updated for tweak to parsing API.
+
+        * kjs/SourceRange.h:
+        (JSC::SourceCode::isNull): Added to help with ASSERTs.
+
+        * kjs/collector.cpp:
+        (JSC::Heap::heapAllocate):
+        (JSC::Heap::sweep):
+        (JSC::Heap::primaryHeapBegin):
+        (JSC::Heap::primaryHeapEnd):
+        * kjs/collector.h:
+        (JSC::): Moved a bunch of declarations around to enable compilation of
+        CollectorHeapIterator.
+
+        * kjs/interpreter.cpp:
+        (JSC::Interpreter::checkSyntax):
+        (JSC::Interpreter::evaluate): Updated for tweak to parsing API.
+
+        * kjs/lexer.h:
+        (JSC::Lexer::sourceCode): BUG FIX: Calculate SourceCode ranges relative
+        to the SourceCode range in which we're lexing, otherwise nested functions
+        that are compiled individually get SourceCode ranges that don't reflect
+        their nesting.
+
+        * kjs/nodes.cpp:
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::finishParsing):
+        (JSC::FunctionBodyNode::create):
+        (JSC::FunctionBodyNode::copyParameters):
+        * kjs/nodes.h:
+        (JSC::ScopeNode::setSource):
+        (JSC::FunctionBodyNode::parameterCount): Added some helper functions for
+        copying one FunctionBodyNode's parameters to another. The recompiler uses
+        these when calling "finishParsing".
+
 2008-10-15  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Darin Adler.

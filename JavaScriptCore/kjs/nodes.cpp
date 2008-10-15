@@ -1746,9 +1746,10 @@ EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, V
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, SourceCode(), children, varStack, funcStack, features, numConstants)
+FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, sourceCode, children, varStack, funcStack, features, numConstants)
     , m_parameters(0)
+    , m_parameterCount(0)
     , m_refCount(0)
 {
 }
@@ -1765,12 +1766,14 @@ void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* fi
     for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
         parameters.append(parameter->ident());
     size_t count = parameters.size();
-    finishParsing(source, parameters.releaseBuffer(), count);
+
+    setSource(source);
+    finishParsing(parameters.releaseBuffer(), count);
 }
 
-void FunctionBodyNode::finishParsing(const SourceCode& source, Identifier* parameters, size_t parameterCount)
+void FunctionBodyNode::finishParsing(Identifier* parameters, size_t parameterCount)
 {
-    setSource(source);
+    ASSERT(!source().isNull());
     m_parameters = parameters;
     m_parameterCount = parameterCount;
 }
@@ -1783,12 +1786,12 @@ void FunctionBodyNode::mark()
 
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, features, numConstants);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, SourceCode(), features, numConstants);
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode&, CodeFeatures features, int numConstants)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, features, numConstants);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, sourceCode, features, numConstants);
 }
 
 void FunctionBodyNode::generateCode(ScopeChainNode* scopeChainNode)
@@ -1848,6 +1851,13 @@ UString FunctionBodyNode::paramString() const
     }
 
     return s;
+}
+
+Identifier* FunctionBodyNode::copyParameters()
+{
+    Identifier* parameters = static_cast<Identifier*>(fastMalloc(m_parameterCount * sizeof(Identifier)));
+    VectorCopier<false, Identifier>::uninitializedCopy(m_parameters, m_parameters + m_parameterCount, parameters);
+    return parameters;
 }
 
 // ------------------------------ FuncDeclNode ---------------------------------

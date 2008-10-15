@@ -30,7 +30,6 @@
 #define JavaScriptDebugListener_h
 
 namespace JSC {
-    class DebuggerCallFrame;
     class ExecState;
     class SourceCode;
     class UString;

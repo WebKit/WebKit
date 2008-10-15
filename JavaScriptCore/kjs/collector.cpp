@@ -22,6 +22,7 @@
 #include "collector.h"
 
 #include "ArgList.h"
+#include "CollectorHeapIterator.h"
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -181,7 +182,7 @@ void Heap::destroy()
     m_globalData = 0;
 }
 
-template <Heap::HeapType heapType>
+template <HeapType heapType>
 static NEVER_INLINE CollectorBlock* allocateBlock()
 {
 #if PLATFORM(DARWIN)
@@ -265,25 +266,7 @@ void Heap::recordExtraCost(size_t cost)
     primaryHeap.extraCost += cost;
 }
 
-template <Heap::HeapType heapType> struct HeapConstants;
-
-template <> struct HeapConstants<Heap::PrimaryHeap> {
-    static const size_t cellSize = CELL_SIZE;
-    static const size_t cellsPerBlock = CELLS_PER_BLOCK;
-    static const size_t bitmapShift = 0;
-    typedef CollectorCell Cell;
-    typedef CollectorBlock Block;
-};
-
-template <> struct HeapConstants<Heap::NumberHeap> {
-    static const size_t cellSize = SMALL_CELL_SIZE;
-    static const size_t cellsPerBlock = SMALL_CELLS_PER_BLOCK;
-    static const size_t bitmapShift = 1;
-    typedef SmallCollectorCell Cell;
-    typedef SmallCellCollectorBlock Block;
-};
-
-template <Heap::HeapType heapType> ALWAYS_INLINE void* Heap::heapAllocate(size_t s)
+template <HeapType heapType> ALWAYS_INLINE void* Heap::heapAllocate(size_t s)
 {
     typedef typename HeapConstants<heapType>::Block Block;
     typedef typename HeapConstants<heapType>::Cell Cell;
@@ -859,13 +842,13 @@ void Heap::markProtectedObjects()
         m_protectedValuesMutex->unlock();
 }
 
-template <Heap::HeapType heapType> size_t Heap::sweep()
+template <HeapType heapType> size_t Heap::sweep()
 {
     typedef typename HeapConstants<heapType>::Block Block;
     typedef typename HeapConstants<heapType>::Cell Cell;
 
     // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
-    CollectorHeap& heap = heapType == Heap::PrimaryHeap ? primaryHeap : numberHeap;
+    CollectorHeap& heap = heapType == PrimaryHeap ? primaryHeap : numberHeap;
     
     size_t emptyBlocks = 0;
     size_t numLiveObjects = heap.numLiveObjects;
@@ -882,7 +865,7 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
                 if (!curBlock->marked.get(i >> HeapConstants<heapType>::bitmapShift)) {
                     Cell* cell = curBlock->cells + i;
                     
-                    if (heapType != Heap::NumberHeap) {
+                    if (heapType != NumberHeap) {
                         JSCell* imp = reinterpret_cast<JSCell*>(cell);
                         // special case for allocated but uninitialized object
                         // (We don't need this check earlier because nothing prior this point 
@@ -910,7 +893,7 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
                     ++minimumCellsToProcess;
                 } else {
                     if (!curBlock->marked.get(i >> HeapConstants<heapType>::bitmapShift)) {
-                        if (heapType != Heap::NumberHeap) {
+                        if (heapType != NumberHeap) {
                             JSCell* imp = reinterpret_cast<JSCell*>(cell);
                             imp->~JSCell();
                         }
@@ -1084,6 +1067,16 @@ HashCountedSet<const char*>* Heap::protectedObjectTypeCounts()
 bool Heap::isBusy()
 {
     return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
+}
+
+Heap::iterator Heap::primaryHeapBegin()
+{
+    return iterator(primaryHeap.blocks, primaryHeap.blocks + primaryHeap.usedBlocks);
+}
+
+Heap::iterator Heap::primaryHeapEnd()
+{
+    return iterator(primaryHeap.blocks + primaryHeap.usedBlocks, primaryHeap.blocks + primaryHeap.usedBlocks);
 }
 
 } // namespace JSC

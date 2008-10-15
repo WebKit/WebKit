@@ -364,7 +364,7 @@
 		1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */; };
 		1C81BA0C0E97348300266E07 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81BA060E97348300266E07 /* JavaScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81BA0D0E97348300266E07 /* JavaScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C81BA070E97348300266E07 /* JavaScriptDebugServer.cpp */; };
-		1C81BA0E0E97348300266E07 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81BA080E97348300266E07 /* JavaScriptDebugServer.h */; };
+		1C81BA0E0E97348300266E07 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81BA080E97348300266E07 /* JavaScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CA19E050DC255950065A994 /* EventLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CA19E030DC255950065A994 /* EventLoopMac.mm */; };
 		1CA19E160DC255CA0065A994 /* EventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA19E150DC255CA0065A994 /* EventLoop.h */; };
 		1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF347E0A6C405200ABE06E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };

@@ -72,7 +72,7 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     int errLine;
     UString errMsg;
     SourceCode source = makeSource(script);
-    RefPtr<EvalNode> evalNode = m_callFrame->scopeChain()->globalData->parser->parse<EvalNode>(m_callFrame, source, &errLine, &errMsg);
+    RefPtr<EvalNode> evalNode = m_callFrame->scopeChain()->globalData->parser->parse<EvalNode>(m_callFrame, m_callFrame->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
     if (!evalNode)
         return Error::create(m_callFrame, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 

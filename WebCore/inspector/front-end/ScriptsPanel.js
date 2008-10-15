@@ -143,12 +143,6 @@ WebInspector.ScriptsPanel = function()
     this.attachOverlayElement = document.createElement("div");
     this.attachOverlayElement.id = "scripts-attach-overlay";
 
-    var headerElement = document.createElement("h1");
-    headerElement.textContent = WebInspector.UIString("Starting debugging will reload the inspected page.");
-    this.attachOverlayElement.appendChild(headerElement);
-
-    this.attachOverlayElement.appendChild(document.createElement("br"));
-
     var attachButton = document.createElement("button");
     attachButton.textContent = WebInspector.UIString("Start Debugging");
     attachButton.addEventListener("click", this._toggleDebugging.bind(this), false);
@@ -667,7 +661,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (this.attachOverlayElement.parentNode)
                 this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
         } else {
-            this.debuggingButton.title = WebInspector.UIString("Start debugging and reload inspected page.");
+            this.debuggingButton.title = WebInspector.UIString("Start debugging.");
             this.debuggingButton.removeStyleClass("toggled-on");
             this.pauseButton.disabled = true;
 
@@ -748,7 +742,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (InspectorController.debuggerAttached())
             InspectorController.stopDebugging();
         else
-            InspectorController.startDebuggingAndReloadInspectedPage();
+            InspectorController.startDebugging();
 
         this._clearInterface();
     },

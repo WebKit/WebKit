@@ -160,7 +160,7 @@ public:
     void moveWindowBy(float x, float y) const;
     void closeWindow();
 
-    void startDebuggingAndReloadInspectedPage();
+    void startDebugging();
     void stopDebugging();
     bool debuggerAttached() const { return m_debuggerAttached; }
 

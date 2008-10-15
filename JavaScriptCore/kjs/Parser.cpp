@@ -32,7 +32,7 @@ extern int kjsyyparse(void*);
 
 namespace JSC {
 
-void Parser::parse(ExecState* exec, int* errLine, UString* errMsg)
+void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
 {
     ASSERT(!m_sourceElements);
 
@@ -47,23 +47,20 @@ void Parser::parse(ExecState* exec, int* errLine, UString* errMsg)
     *errLine = -1;
     *errMsg = 0;
 
-    Lexer& lexer = *exec->globalData().lexer;
+    Lexer& lexer = *globalData->lexer;
     lexer.setCode(*m_source);
 
-    int parseError = kjsyyparse(&exec->globalData());
+    int parseError = kjsyyparse(globalData);
     bool lexError = lexer.sawError();
     lexer.clear();
 
-    ParserRefCounted::deleteNewObjects(&exec->globalData());
+    ParserRefCounted::deleteNewObjects(globalData);
 
     if (parseError || lexError) {
         *errLine = lexer.lineNo();
         *errMsg = "Parse error";
         m_sourceElements.clear();
     }
-
-    if (Debugger* debugger = exec->dynamicGlobalObject()->debugger())
-        debugger->sourceParsed(exec, *m_source, *errLine, *errMsg);
 }
 
 void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 

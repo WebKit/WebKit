@@ -46,7 +46,7 @@ Completion Interpreter::checkSyntax(ExecState* exec, const SourceCode& source)
     int errLine;
     UString errMsg;
 
-    RefPtr<ProgramNode> progNode = exec->globalData().parser->parse<ProgramNode>(exec, source, &errLine, &errMsg);
+    RefPtr<ProgramNode> progNode = exec->globalData().parser->parse<ProgramNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
     if (!progNode)
         return Completion(Throw, Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url()));
     return Completion(Normal);
@@ -58,7 +58,7 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
     
     int errLine;
     UString errMsg;
-    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(exec, source, &errLine, &errMsg);
+    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
 
     if (!programNode)
         return Completion(Throw, Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url()));

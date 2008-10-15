@@ -178,7 +178,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::toggleDebuggingJavaScript()
         inspector->stopDebugging();
     else {
         inspector->showPanel(InspectorController::ScriptsPanel);
-        inspector->startDebuggingAndReloadInspectedPage();
+        inspector->startDebugging();
     }
 
     return S_OK;

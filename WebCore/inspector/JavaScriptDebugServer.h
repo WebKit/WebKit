@@ -29,8 +29,8 @@
 #ifndef JavaScriptDebugServer_h
 #define JavaScriptDebugServer_h
 
+#include "Timer.h"
 #include <kjs/debugger.h>
-
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -73,6 +73,8 @@ namespace WebCore {
         void stepOverStatement();
         void stepOutOfFunction();
 
+        void recompileAllJSFunctions(Timer<JavaScriptDebugServer>*);
+
         JavaScriptCallFrame* currentCallFrame();
 
         void pageCreated(Page*);
@@ -103,6 +105,9 @@ namespace WebCore {
         virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
         virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
         virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
+        
+        void willAddFirstListener();
+        void didRemoveLastListener();
 
         typedef HashMap<Page*, ListenerSet*> PageListenersMap;
         PageListenersMap m_pageListenersMap;
@@ -116,6 +121,7 @@ namespace WebCore {
         RefPtr<JavaScriptCallFrame> m_currentCallFrame;
         HashMap<RefPtr<Frame>, PausedTimeouts*> m_pausedTimeouts;
         HashMap<intptr_t, HashSet<unsigned>*> m_breakpoints;
+        Timer<JavaScriptDebugServer> m_recompileTimer;
     };
 
 } // namespace WebCore

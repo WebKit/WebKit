@@ -23,6 +23,7 @@
 #ifndef Parser_h
 #define Parser_h
 
+#include "debugger.h"
 #include "SourceProvider.h"
 #include "nodes.h"
 #include <wtf/Forward.h>
@@ -48,16 +49,13 @@ namespace JSC {
 
     class Parser : Noncopyable {
     public:
-        template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, PassRefPtr<SourceProvider>, int* errLine = 0, UString* errMsg = 0);
-        template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
+        template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
 
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
                               ParserRefCountedData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
 
     private:
-        friend class JSGlobalData;
-
-        void parse(ExecState*, int* errLine, UString* errMsg);
+        void parse(JSGlobalData*, int* errLine, UString* errMsg);
 
         const SourceCode* m_source;
         RefPtr<SourceElements> m_sourceElements;
@@ -68,10 +66,10 @@ namespace JSC {
         int m_numConstants;
     };
 
-    template <class ParsedNode> PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, const SourceCode& source, int* errLine, UString* errMsg)
+    template <class ParsedNode> PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, Debugger* debugger, const SourceCode& source, int* errLine, UString* errMsg)
     {
         m_source = &source;
-        parse(exec, errLine, errMsg);
+        parse(&exec->globalData(), errLine, errMsg);
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {
             result = ParsedNode::create(&exec->globalData(),
@@ -88,6 +86,9 @@ namespace JSC {
         m_sourceElements = 0;
         m_varDeclarations = 0;
         m_funcDeclarations = 0;
+
+        if (debugger)
+            debugger->sourceParsed(exec, source, *errLine, *errMsg);
         return result.release();
     }
 
