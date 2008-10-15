@@ -165,6 +165,12 @@ String roamingUserSpecificStorageDirectory();
 bool safeCreateFile(const String&, CFDataRef);
 #endif
 
+#if PLATFORM(GTK)
+String filenameToString(const char*);
+char* filenameFromString(const String&);
+String filenameForDisplay(const String&);
+#endif
+
 } // namespace WebCore
 
 #endif // FileSystem_h

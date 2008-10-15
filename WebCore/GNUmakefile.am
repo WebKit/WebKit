@@ -1759,6 +1759,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/WidgetGtk.cpp \
 	WebCore/platform/gtk/gtk2drawing.c \
 	WebCore/platform/gtk/gtkdrawing.h \
+	WebCore/platform/gtk/guriescape.c \
+	WebCore/platform/gtk/guriescape.h \
 	WebCore/platform/image-decoders/ImageDecoder.h \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \

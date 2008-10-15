@@ -20,6 +20,7 @@
 #include "KURL.h"
 
 #include "CString.h"
+#include "FileSystem.h"
 
 #include <glib.h>
 
@@ -31,7 +32,7 @@ String KURL::fileSystemPath() const
     if (!filename)
         return String();
 
-    String path = String::fromUTF8(filename);
+    String path = filenameToString(filename);
     g_free(filename);
     return path;
 }

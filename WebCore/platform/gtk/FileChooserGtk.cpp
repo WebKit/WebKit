@@ -29,6 +29,7 @@
 
 #include "CString.h"
 #include "Document.h"
+#include "FileSystem.h"
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "Icon.h"
@@ -46,14 +47,9 @@ static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, Stri
     if (!systemFilename)
         return false;
 
-    gchar* filename = g_filename_to_utf8(systemFilename, -1, 0, 0, 0);
+    result = filenameToString(systemFilename);
     g_free(systemFilename);
 
-    if (!filename)
-        return false;
-
-    result = String::fromUTF8(filename);
-    g_free(filename);
     return true;
 }
 
@@ -89,13 +85,10 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     String string = fileButtonNoFileSelectedLabel();
 
     if (!m_filename.isEmpty()) {
-        gchar* systemFilename = g_filename_from_utf8(m_filename.utf8().data(), -1, 0, 0, 0);
-        if (systemFilename) {
-            gchar* systemBasename = g_path_get_basename(systemFilename);
-            g_free(systemFilename);
-
-            stringByAdoptingFileSystemRepresentation(systemBasename, string);
-        }
+        gchar* systemFilename = filenameFromString(m_filename);
+        gchar* systemBasename = g_path_get_basename(systemFilename);
+        g_free(systemFilename);
+        stringByAdoptingFileSystemRepresentation(systemBasename, string);
     }
 
     return StringTruncator::centerTruncate(string, width, font, false);

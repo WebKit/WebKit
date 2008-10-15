@@ -1,3 +1,44 @@
+2008-10-15  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20664
+        [GTK] File names are not always encodable in UTF-8
+
+        On Linux file names are just raw data and cannot always be directly
+        encoded in UTF-8 or in any other encodings, so we escape them before
+        storing the file name in a String and unescape them before passing
+        them to native functions handling files.
+
+        * GNUmakefile.am:
+        * platform/FileSystem.h:
+        * platform/gtk/FileChooserGtk.cpp:
+        (WebCore::stringByAdoptingFileSystemRepresentation):
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::filenameToString):
+        (WebCore::filenameFromString):
+        (WebCore::filenameForDisplay):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::makeAllDirectories):
+        (WebCore::homeDirectoryPath):
+        (WebCore::pathGetFileName):
+        (WebCore::listDirectory):
+        * platform/gtk/KURLGtk.cpp:
+        (WebCore::KURL::fileSystemPath):
+        * platform/gtk/SharedBufferGtk.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/gtk/guriescape.c: Added.
+        (is_valid):
+        (gunichar_ok):
+        (g_string_append_uri_escaped):
+        (_webcore_g_uri_escape_string):
+        * platform/gtk/guriescape.h: Added.
+
 2008-10-15  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.
