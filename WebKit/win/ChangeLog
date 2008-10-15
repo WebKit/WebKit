@@ -1,3 +1,10 @@
+2008-10-15  Adam Roben  <aroben@apple.com>
+
+        Export WTF::Mutex::tryLock
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2008-10-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Export currentThread.

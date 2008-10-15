@@ -117,6 +117,7 @@ EXPORTS
         ?isMainThread@WTF@@YA_NXZ
         ?lock@Mutex@WTF@@QAEXXZ
         ?signal@ThreadCondition@WTF@@QAEXXZ
+        ?tryLock@Mutex@WTF@@QAE_NXZ
         ?unlock@Mutex@WTF@@QAEXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
