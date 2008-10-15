@@ -1,3 +1,13 @@
+2008-10-15  David Hyatt  <hyatt@apple.com>
+
+        Make sure scrollbar styles get deleted if they aren't assigned to a renderer.
+
+        Reviewed by Mark Rowe
+
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+
 2008-10-15  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
