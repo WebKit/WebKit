@@ -235,7 +235,7 @@ static struct tm *localTimeQt(const time_t *const timep, struct tm *result)
 }
 
 #define localtime_r(x, y) localTimeQt(x, y)
-#elif PLATFORM(WIN) && !defined(localtime_r)
+#elif PLATFORM(WIN_OS) && !defined(localtime_r)
 #define localtime_r(x, y) localtime_s((y), (x))
 #endif
 

@@ -53,6 +53,10 @@ class NSArray;
 typedef struct HWND__* HWND;
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "PasteboardPrivate.h"
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(MAC)
@@ -119,6 +123,10 @@ private:
 
 #if PLATFORM(QT)
     bool m_selectionMode;
+#endif
+
+#if PLATFORM(CHROMIUM)
+    PasteboardPrivate p;
 #endif
 };
 

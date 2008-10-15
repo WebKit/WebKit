@@ -137,7 +137,7 @@ namespace WebCore {
 #endif
 
 
-    private:
+    protected:
         IntPoint m_position;
         IntPoint m_globalPosition;
         MouseButton m_button;

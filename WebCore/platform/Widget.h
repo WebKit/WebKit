@@ -65,6 +65,10 @@ class wxWindow;
 typedef wxWindow* PlatformWidget;
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "PlatformWidget.h"
+#endif
+
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"

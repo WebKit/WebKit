@@ -169,6 +169,8 @@ namespace WebCore {
     };
 #elif PLATFORM(WX)
     typedef wxMenuItem* PlatformMenuItemDescription;
+#else
+    typedef void* PlatformMenuItemDescription;
 #endif
 
     class ContextMenuItem {

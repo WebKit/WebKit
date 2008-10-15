@@ -116,7 +116,7 @@ namespace WebCore {
         PlatformWheelEvent(const wxMouseEvent&, const wxPoint&);
 #endif
 
-    private:
+    protected:
 #if !PLATFORM(WIN)
         int horizontalLineMultiplier() const { return cLineMultiplier; }
         int verticalLineMultiplier() const { return cLineMultiplier; }

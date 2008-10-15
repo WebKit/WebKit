@@ -51,7 +51,7 @@ static struct tm *gmtimeQt(const time_t *const timep, struct tm *result)
 }
 
 #define gmtime_r(x, y) gmtimeQt(x, y)
-#elif PLATFORM(WIN) && !defined(gmtime_r)
+#elif PLATFORM(WIN_OS) && !defined(gmtime_r)
 #define gmtime_r(x, y) gmtime_s((y), (x))
 #endif
 

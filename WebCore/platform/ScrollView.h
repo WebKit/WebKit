@@ -42,10 +42,6 @@
 typedef struct _GtkAdjustment GtkAdjustment;
 #endif
 
-#if PLATFORM(WIN)
-typedef struct HRGN__* HRGN;
-#endif
-
 #if PLATFORM(WX)
 class wxScrollWinEvent;
 #endif
