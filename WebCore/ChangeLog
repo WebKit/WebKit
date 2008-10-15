@@ -1,3 +1,9 @@
+2008-10-15  Adele Peterson  <adele@apple.com>
+
+        Attempt to fix the Tiger build.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+
 2008-10-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix.

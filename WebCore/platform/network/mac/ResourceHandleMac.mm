@@ -42,6 +42,10 @@
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
 
+#ifdef BUILDING_ON_TIGER
+typedef int NSInteger;
+#endif
+
 using namespace WebCore;
 
 @interface WebCoreResourceHandleAsDelegate : NSObject <NSURLAuthenticationChallengeSender>
