@@ -45,6 +45,7 @@
 @class WebFrame;
 @class WebInspector;
 @class WebPreferences;
+@class WebTextIterator;
 
 @protocol WebFormDelegate;
 
@@ -360,6 +361,13 @@ Could be worth adding to the API.
 
 - (BOOL)usesPageCache;
 - (void)setUsesPageCache:(BOOL)usesPageCache;
+
+/*!
+ @method textIteratorForRect:
+ @param rectangle from which we want the WebTextIterator to load text from
+ @result a WebtextIterator object.
+ */
+- (WebTextIterator *)textIteratorForRect:(NSRect)rect;
 
 #if ENABLE_DASHBOARD_SUPPORT
 // <rdar://problem/5217124> Clients other than dashboard, don't use this.

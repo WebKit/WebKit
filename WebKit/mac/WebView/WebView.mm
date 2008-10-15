@@ -84,6 +84,7 @@
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
+#import "WebTextIterator.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
@@ -1932,6 +1933,20 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
     // Post a notification so the WebCore settings update.
     [[self preferences] _postPreferencesChangesNotification];
+}
+
+- (WebTextIterator *)textIteratorForRect:(NSRect)rect
+{
+    IntPoint rectStart(rect.origin.x, rect.origin.y);
+    IntPoint rectEnd(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+    
+    Frame* coreFrame = core([self mainFrame]);
+    if (!coreFrame)
+        return nil;
+    
+    Selection selectionInsideRect(coreFrame->visiblePositionForPoint(rectStart), coreFrame->visiblePositionForPoint(rectEnd));
+    
+    return [[[WebTextIterator alloc] initWithRange:[DOMRange _wrapRange:selectionInsideRect.toRange().get()]] autorelease];
 }
 
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 

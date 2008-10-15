@@ -1,3 +1,10 @@
+2008-10-14  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Added two files for the 
+        WebTextIterator, and made the WebTextIterator.h private
+
 2008-10-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

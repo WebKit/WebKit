@@ -294,6 +294,8 @@
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */; };
 		EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */; };
+		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -590,6 +592,8 @@
 		F7EBEE9B03F9DBA103CA0DE6 /* HIViewAdapter.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = HIViewAdapter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEEAA03F9DBA103CA0DE6 /* HIWebView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HIWebView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F7EBEEAB03F9DBA103CA0DE6 /* HIWebView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = HIWebView.m; sourceTree = "<group>"; usesTabs = 0; };
+		F834AAD50E64B1C700E2737C /* WebTextIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextIterator.h; sourceTree = "<group>"; };
+		F834AAD60E64B1C700E2737C /* WebTextIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextIterator.mm; sourceTree = "<group>"; };
 		F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebAuthenticationPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 /* End PBXFileReference section */
@@ -919,6 +923,8 @@
 		9C7CABBB0190A37C0ECA16EA /* WebView */ = {
 			isa = PBXGroup;
 			children = (
+				F834AAD50E64B1C700E2737C /* WebTextIterator.h */,
+				F834AAD60E64B1C700E2737C /* WebTextIterator.mm */,
 				F52CA6BD02DF9D0F018635CA /* HTML */,
 				51E94C0706C02CA300A9B09E /* PDF */,
 				8373435A0624EE0D00F3B289 /* WebArchive.h */,
@@ -1303,6 +1309,7 @@
 				1A2D754D0DE480B900F0A648 /* WebIconFetcher.h in Headers */,
 				1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */,
 				5D1638F30E35B45D00F3038E /* EmptyProtocolDefinitions.h in Headers */,
+				F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1585,6 +1592,7 @@
 				1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */,
 				1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */,
 				1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */,
+				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

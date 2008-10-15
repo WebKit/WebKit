@@ -1,3 +1,27 @@
+2008-10-14  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added SPI to use WebCore's TextIterator with WebKit.
+
+        * WebView/WebTextIterator.h: Added.
+        * WebView/WebTextIterator.mm: Added.
+        (-[WebTextIteratorPrivate dealloc]):
+        (-[WebTextIterator dealloc]):
+        (-[WebTextIterator initWithRange:]): Creates a TextIterator 
+        instance
+        (-[WebTextIterator advance]): Asks the iterator to advance() .
+        (-[WebTextIterator currentNode]): Returns the current DOMNode from 
+        the iterator
+        (-[WebTextIterator currentText]): Returns the current text from the 
+        iterator
+        (-[WebTextIterator atEnd]): Indicated whether the iterator has 
+        reached the end of the range.
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (-[WebView textIteratorForRect:]): Returns a WebTextIterator with 
+        the DOMRange contained in the rectangle given as a parameter.
+
 2008-10-15  Timothy Hatcher  <timothy@apple.com>
 
         Clean up user agent generation to simplify the _standardUserAgentWithApplicationName:

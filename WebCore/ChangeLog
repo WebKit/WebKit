@@ -1,3 +1,14 @@
+2008-10-14  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Darin Adler, tweaked and landed by Beth.
+
+        * WebCore.base.exp: Exposes two functions to be able to create a 
+        selection from a point on the screen. Also exposes the new 
+        TextIterator::currentNode function.
+        * WebCore/editing/TextIterator.cpp:
+        (TextIterator::currentNode) : New function that returns the current 
+        text node or NULL if there is no text node.
+
 2008-10-15  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger Freyther.
