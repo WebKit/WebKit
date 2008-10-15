@@ -31,6 +31,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "PlatformString.h"
+#include "SystemTime.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
 #include "MIMETypeRegistry.h"
@@ -41,15 +42,21 @@ namespace WebCore {
 // one frame at a time.
 const unsigned cLargeAnimationCutoff = 5242880;
 
+// When an animated image is more than five minutes out of date, don't try to
+// resync on repaint, so we don't waste CPU cycles on an edge case the user
+// doesn't care about.
+const double cAnimationResyncCutoff = 5 * 60;
+
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
     , m_frames(0)
     , m_frameTimer(0)
-    , m_repetitionCount(0)
+    , m_repetitionCount(cAnimationNone)
+    , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
+    , m_desiredFrameStartTime(0)
     , m_isSolidColor(false)
-    , m_animatingImageType(true)
     , m_animationFinished(false)
     , m_allDataReceived(false)
     , m_haveSize(false)
@@ -68,14 +75,15 @@ BitmapImage::~BitmapImage()
     stopAnimation();
 }
 
-void BitmapImage::destroyDecodedData(bool incremental)
+void BitmapImage::destroyDecodedData(bool incremental, bool preserveNearbyFrames)
 {
     // Destroy the cached images and release them.
     if (m_frames.size()) {
         int sizeChange = 0;
         int frameSize = m_size.width() * m_size.height() * 4;
+        const size_t nextFrame = (preserveNearbyFrames && frameCount()) ? ((m_currentFrame + 1) % frameCount()) : 0;
         for (unsigned i = incremental ? m_frames.size() - 1 : 0; i < m_frames.size(); i++) {
-            if (m_frames[i].m_frame) {
+            if (m_frames[i].m_frame && (!preserveNearbyFrames || (i != m_currentFrame && i != nextFrame))) {
                 sizeChange -= frameSize;
                 m_frames[i].clear();
             }
@@ -106,16 +114,6 @@ void BitmapImage::cacheFrame(size_t index)
     size_t numFrames = frameCount();
     ASSERT(m_decodedSize == 0 || numFrames > 1);
     
-    if (!m_frames.size() && shouldAnimate()) {            
-        // Snag the repetition count.  Note that the repetition count may not be
-        // accurate yet for GIFs; if we haven't gotten the count from the source
-        // image yet, it will default to cAnimationLoopOnce, and we'll try and
-        // read it again once the whole image is decoded.
-        m_repetitionCount = m_source.repetitionCount();
-        if (m_repetitionCount == cAnimationNone)
-            m_animatingImageType = false;
-    }
-    
     if (m_frames.size() < numFrames)
         m_frames.grow(numFrames);
 
@@ -123,7 +121,9 @@ void BitmapImage::cacheFrame(size_t index)
     if (numFrames == 1 && m_frames[index].m_frame)
         checkForSolidColor();
 
-    if (shouldAnimate())
+    m_frames[index].m_haveMetadata = true;
+    m_frames[index].m_isComplete = m_source.frameIsCompleteAtIndex(index);
+    if (repetitionCount(false) != cAnimationNone)
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
 
@@ -207,12 +207,23 @@ NativeImagePtr BitmapImage::frameAtIndex(size_t index)
     return m_frames[index].m_frame;
 }
 
+bool BitmapImage::frameIsCompleteAtIndex(size_t index)
+{
+    if (index >= frameCount())
+        return true;
+
+    if (index >= m_frames.size() || !m_frames[index].m_haveMetadata)
+        cacheFrame(index);
+
+    return m_frames[index].m_isComplete;
+}
+
 float BitmapImage::frameDurationAtIndex(size_t index)
 {
     if (index >= frameCount())
         return 0;
 
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
+    if (index >= m_frames.size() || !m_frames[index].m_haveMetadata)
         cacheFrame(index);
 
     return m_frames[index].m_duration;
@@ -223,35 +234,122 @@ bool BitmapImage::frameHasAlphaAtIndex(size_t index)
     if (index >= frameCount())
         return true;
 
-    if (index >= m_frames.size() || !m_frames[index].m_frame)
+    if (index >= m_frames.size() || !m_frames[index].m_haveMetadata)
         cacheFrame(index);
 
     return m_frames[index].m_hasAlpha;
 }
 
-bool BitmapImage::shouldAnimate()
+int BitmapImage::repetitionCount(bool imageKnownToBeComplete)
 {
-    return (m_animatingImageType && !m_animationFinished && imageObserver());
+    if ((m_repetitionCountStatus == Unknown) || ((m_repetitionCountStatus == Uncertain) && imageKnownToBeComplete)) {
+        // Snag the repetition count.  If |imageKnownToBeComplete| is false, the
+        // repetition count may not be accurate yet for GIFs; in this case the
+        // decoder will default to cAnimationLoopOnce, and we'll try and read
+        // the count again once the whole image is decoded.
+        m_repetitionCount = m_source.repetitionCount();
+        m_repetitionCountStatus = (imageKnownToBeComplete || m_repetitionCount == cAnimationNone) ? Certain : Uncertain;
+    }
+    return m_repetitionCount;
 }
 
-void BitmapImage::startAnimation()
+bool BitmapImage::shouldAnimate()
+{
+    return (repetitionCount(false) != cAnimationNone && !m_animationFinished && imageObserver());
+}
+
+void BitmapImage::startAnimation(bool catchUpIfNecessary)
 {
     if (m_frameTimer || !shouldAnimate() || frameCount() <= 1)
         return;
 
-    // Don't advance the animation until the current frame has completely loaded.
-    if (!m_source.frameIsCompleteAtIndex(m_currentFrame))
+    // Determine time for next frame to start.  By ignoring paint and timer lag
+    // in this calculation, we make the animation appear to run at its desired
+    // rate regardless of how fast it's being repainted.
+    const double currentDuration = frameDurationAtIndex(m_currentFrame);
+    const double time = currentTime();
+    if (m_desiredFrameStartTime == 0) {
+        m_desiredFrameStartTime = time + currentDuration;
+    } else {
+        m_desiredFrameStartTime += currentDuration;
+        // If we're too far behind, the user probably doesn't care about
+        // resyncing and we could burn a lot of time looping through frames
+        // below.  Just reset the timings.
+        if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
+            m_desiredFrameStartTime = time + currentDuration;
+    }
+
+    // Don't advance the animation to an incomplete frame.
+    size_t nextFrame = (m_currentFrame + 1) % frameCount();
+    if (!frameIsCompleteAtIndex(nextFrame))
         return;
 
     // Don't advance past the last frame if we haven't decoded the whole image
     // yet and our repetition count is potentially unset.  The repetition count
     // in a GIF can potentially come after all the rest of the image data, so
     // wait on it.
-    if (!m_allDataReceived && m_repetitionCount == cAnimationLoopOnce && m_currentFrame >= (frameCount() - 1))
+    if (!m_allDataReceived && repetitionCount(false) == cAnimationLoopOnce && m_currentFrame >= (frameCount() - 1))
         return;
 
-    m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
-    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
+    // The image may load more slowly than it's supposed to animate, so that by
+    // the time we reach the end of the first repetition, we're well behind.
+    // Clamp the desired frame start time in this case, so that we don't skip
+    // frames (or whole iterations) trying to "catch up".  This is a tradeoff:
+    // It guarantees users see the whole animation the second time through and
+    // don't miss any repetitions, and is closer to what other browsers do; on
+    // the other hand, it makes animations "less accurate" for pages that try to
+    // sync an image and some other resource (e.g. audio), especially if users
+    // switch tabs (and thus stop drawing the animation, which will pause it)
+    // during that initial loop, then switch back later.
+    if (nextFrame == 0 && m_repetitionsComplete == 0 && m_desiredFrameStartTime < time)
+      m_desiredFrameStartTime = time;
+
+    if (!catchUpIfNecessary || time < m_desiredFrameStartTime) {
+        // Haven't yet reached time for next frame to start; delay until then.
+        m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
+        m_frameTimer->startOneShot(std::max(m_desiredFrameStartTime - time, 0.));
+    } else {
+        // We've already reached or passed the time for the next frame to start.
+        // See if we've also passed the time for frames after that to start, in
+        // case we need to skip some frames entirely.  Remember not to advance
+        // to an incomplete frame.
+        for (size_t frameAfterNext = (nextFrame + 1) % frameCount(); frameIsCompleteAtIndex(frameAfterNext); frameAfterNext = (nextFrame + 1) % frameCount()) {
+            // Should we skip the next frame?
+            double frameAfterNextStartTime = m_desiredFrameStartTime + frameDurationAtIndex(nextFrame);
+            if (time < frameAfterNextStartTime)
+                break;
+
+            // Yes; skip over it without notifying our observers.
+            if (!internalAdvanceAnimation(true))
+                return;
+            m_desiredFrameStartTime = frameAfterNextStartTime;
+            nextFrame = frameAfterNext;
+        }
+
+        // Draw the next frame immediately.  Note that m_desiredFrameStartTime
+        // may be in the past, meaning the next time through this function we'll
+        // kick off the next advancement sooner than this frame's duration would
+        // suggest.
+        if (internalAdvanceAnimation(false)) {
+            // The image region has been marked dirty, but once we return to our
+            // caller, draw() will clear it, and nothing will cause the
+            // animation to advance again.  We need to start the timer for the
+            // next frame running, or the animation can hang.  (Compare this
+            // with when advanceAnimation() is called, and the region is dirtied
+            // while draw() is not in the callstack, meaning draw() gets called
+            // to update the region and thus startAnimation() is reached again.)
+            // NOTE: For large images with slow or heavily-loaded systems,
+            // throwing away data as we go (see destroyDecodedData()) means we
+            // can spend so much time re-decoding data above that by the time we
+            // reach here we're behind again.  If we let startAnimation() run
+            // the catch-up code again, we can get long delays without painting
+            // as we race the timer, or even infinite recursion.  In this
+            // situation the best we can do is to simply change frames as fast
+            // as possible, so force startAnimation() to set a zero-delay timer
+            // and bail out if we're not caught up.
+            startAnimation(false);
+        }
+    }
 }
 
 void BitmapImage::stopAnimation()
@@ -267,6 +365,7 @@ void BitmapImage::resetAnimation()
     stopAnimation();
     m_currentFrame = 0;
     m_repetitionsComplete = 0;
+    m_desiredFrameStartTime = 0;
     m_animationFinished = false;
     int frameSize = m_size.width() * m_size.height() * 4;
     
@@ -277,47 +376,61 @@ void BitmapImage::resetAnimation()
 
 void BitmapImage::advanceAnimation(Timer<BitmapImage>* timer)
 {
+    internalAdvanceAnimation(false);
+    // At this point the image region has been marked dirty, and if it's
+    // onscreen, we'll soon make a call to draw(), which will call
+    // startAnimation() again to keep the animation moving.
+}
+
+bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
+{
     // Stop the animation.
     stopAnimation();
     
     // See if anyone is still paying attention to this animation.  If not, we don't
     // advance and will remain suspended at the current frame until the animation is resumed.
-    if (imageObserver()->shouldPauseAnimation(this))
-        return;
+    if (!skippingFrames && imageObserver()->shouldPauseAnimation(this))
+        return false;
 
     m_currentFrame++;
     if (m_currentFrame >= frameCount()) {
-        m_repetitionsComplete += 1;
+        ++m_repetitionsComplete;
         // Get the repetition count again.  If we weren't able to get a
         // repetition count before, we should have decoded the whole image by
         // now, so it should now be available.
-        m_repetitionCount = m_source.repetitionCount();
-        if (m_repetitionCount && m_repetitionsComplete >= m_repetitionCount) {
+        if (repetitionCount(true) && m_repetitionsComplete >= m_repetitionCount) {
             m_animationFinished = true;
+            m_desiredFrameStartTime = 0;
             m_currentFrame--;
-            return;
+            if (skippingFrames) {
+                // Uh oh.  We tried to skip past the end of the animation.  We'd
+                // better draw this last frame.
+                notifyObserverAndTrimDecodedData();
+            }
+            return false;
         }
         m_currentFrame = 0;
     }
 
+    if (!skippingFrames)
+        notifyObserverAndTrimDecodedData();
+
+    return true;
+}
+
+void BitmapImage::notifyObserverAndTrimDecodedData()
+{
     // Notify our observer that the animation has advanced.
     imageObserver()->animationAdvanced(this);
 
-    // For large animated images, go ahead and throw away frames as we go to save
-    // footprint.
+    // For large animated images, go ahead and throw away frames as we go to
+    // save footprint.
     int frameSize = m_size.width() * m_size.height() * 4;
     if (frameCount() * frameSize > cLargeAnimationCutoff) {
-        // Destroy all of our frames and just redecode every time.
-        destroyDecodedData();
-
-        // Go ahead and decode the next frame.
-        frameAtIndex(m_currentFrame);
+        // Destroy all of our frames and just redecode every time.  We save the
+        // current frame since we'll need it in draw() anyway.
+        destroyDecodedData(false, true);
     }
-    
-    // We do not advance the animation explicitly.  We rely on a subsequent draw of the image
-    // to force a request for the next frame via startAnimation().  This allows images that move offscreen while
-    // scrolling to stop animating (thus saving memory from additional decoded frames and
-    // CPU time spent doing the decoding).
 }
 
 }

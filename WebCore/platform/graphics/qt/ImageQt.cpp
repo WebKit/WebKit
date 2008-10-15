@@ -73,8 +73,9 @@ void FrameData::clear()
 {
     if (m_frame) {
         m_frame = 0;
-        m_duration = 0.0f;
-        m_hasAlpha = true;
+        // NOTE: We purposefully don't reset metadata here, so that even if we
+        // throw away previously-decoded data, animation loops can still access
+        // properties like frame durations without re-decoding.
     }
 }
 
@@ -108,6 +109,8 @@ void BitmapImage::invalidatePlatformData()
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
                        const FloatRect& src, CompositeOperator op)
 {
+    startAnimation();
+
     QPixmap* image = nativeImageForCurrentFrame();
     if (!image)
         return;
@@ -131,8 +134,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     painter->drawPixmap(dst, *image, src);
 
     ctxt->restore();
-
-    startAnimation();
 }
 
 void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,

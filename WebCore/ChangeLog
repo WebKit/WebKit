@@ -1,3 +1,52 @@
+2008-10-15  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19663 (Second attempt)
+        Account for paint and timer lag when animating images.  Also pretend
+        that images whose animations were paused (by becoming invisible)
+        continued to animate, by "catching up" to the correct frame when they're
+        shown again.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::destroyDecodedData):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::frameIsCompleteAtIndex):
+        (WebCore::BitmapImage::frameDurationAtIndex):
+        (WebCore::BitmapImage::frameHasAlphaAtIndex):
+        (WebCore::BitmapImage::repetitionCount):
+        (WebCore::BitmapImage::shouldAnimate):
+        (WebCore::BitmapImage::startAnimation):
+        (WebCore::BitmapImage::resetAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        (WebCore::BitmapImage::notifyObserverAndTrimDecodedData):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        (WebCore::BitmapImage::):
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::destroyDecodedData):
+        * platform/graphics/Image.h:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::destroyDecodedData):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::draw):
+        * svg/graphics/SVGImage.h:
+        (WebCore::SVGImage::destroyDecodedData):
+
 2008-10-14  Maxime Britto  <britto@apple.com>
 
         Reviewed by Darin Adler, tweaked and landed by Beth.

@@ -52,8 +52,9 @@ void FrameData::clear()
     if (m_frame) {
         CGImageRelease(m_frame);
         m_frame = 0;
-        m_duration = 0.0f;
-        m_hasAlpha = true;
+        // NOTE: We purposefully don't reset metadata here, so that even if we
+        // throw away previously-decoded data, animation loops can still access
+        // properties like frame durations without re-decoding.
     }
 }
 
@@ -66,10 +67,10 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     , m_currentFrame(0)
     , m_frames(0)
     , m_frameTimer(0)
-    , m_repetitionCount(0)
+    , m_repetitionCount(cAnimationNone)
+    , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
     , m_isSolidColor(false)
-    , m_animatingImageType(false)
     , m_animationFinished(true)
     , m_allDataReceived(true)
     , m_haveSize(true)
@@ -129,6 +130,8 @@ CGImageRef BitmapImage::getCGImageRef()
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
+    startAnimation();
+
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
@@ -192,8 +195,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         CGImageRelease(image);
 
     ctxt->restore();
-
-    startAnimation();
 
     if (imageObserver())
         imageObserver()->didDraw(this);

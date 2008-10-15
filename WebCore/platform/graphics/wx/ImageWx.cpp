@@ -57,8 +57,9 @@ void FrameData::clear()
     if (m_frame) {
         delete m_frame;
         m_frame = 0;
-        m_duration = 0.;
-        m_hasAlpha = true;
+        // NOTE: We purposefully don't reset metadata here, so that even if we
+        // throw away previously-decoded data, animation loops can still access
+        // properties like frame durations without re-decoding.
     }
 }
 
@@ -97,6 +98,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 #else
     wxWindowDC* context = ctxt->platformContext();
 #endif
+
+    startAnimation();
 
     wxBitmap* bitmap = frameAtIndex(m_currentFrame);
     if (!bitmap) // If it's too early we won't have an image yet.
@@ -141,7 +144,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
         bitmap = NULL;
     }
     ctxt->restore();
-    startAnimation();
 }
 
 void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& dstRect)
