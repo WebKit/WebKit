@@ -1,3 +1,11 @@
+2008-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        <rdar://problem/5803460> A file named StringsNotToBeLocalized.txt file is installed Webkit.framework/Resources.
+
+        * WebKit.xcodeproj/project.pbxproj: Don't install StringsNotToBeLocalized.txt.
+
 2008-10-14  Maxime Britto  <britto@apple.com>
 
         Reviewed by Darin Adler.
