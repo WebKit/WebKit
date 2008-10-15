@@ -1,3 +1,15 @@
+2008-10-15  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Darin Adler.
+
+        - part of https://bugs.webkit.org/show_bug.cgi?id=20746
+          Fix compilation on Windows CE.
+
+        str(n)icmp, strdup and vsnprintf are not available on Windows CE,
+        they are called _str(n)icmp, etc. instead
+
+        * wtf/StringExtras.h: Added inline function implementations.
+
 2008-10-15  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Cameron Zwarich.

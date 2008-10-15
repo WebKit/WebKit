@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +26,58 @@
 #ifndef WTF_StringExtras_h
 #define WTF_StringExtras_h
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #if COMPILER(MSVC)
 
-inline int snprintf(char *str, size_t size, const char* format, ...) 
+inline int snprintf(char* buffer, size_t count, const char* format, ...) 
 {
     int result;
     va_list args;
     va_start(args, format);
-    result = _vsnprintf(str, size, format, args);
+    result = _vsnprintf(buffer, count, format, args);
     va_end(args);
     return result;
 }
 
-#if COMPILER(MSVC7)
-// MSVC8 and above define this function
-#define vsnprintf snprintf
+#if COMPILER(MSVC7) || PLATFORM(WIN_CE)
+
+inline int vsnprintf(char* buffer, size_t count, const char* format, va_list args)
+{
+    return _vsnprintf(buffer, count, format, args);
+}
+
 #endif
 
-inline int strncasecmp(const char* s1, const char* s2, size_t len) { return strnicmp(s1, s2, len); }
+#if PLATFORM(WIN_CE)
 
-inline int strcasecmp(const char* s1, const char* s2) { return stricmp(s1, s2); }
+inline int strnicmp(const char* string1, const char* string2, size_t count)
+{
+    return _strnicmp(string1, string2, count);
+}
+
+inline int stricmp(const char* string1, const char* string2)
+{
+    return _stricmp(string1, string2);
+}
+
+inline char* strdup(const char* strSource)
+{
+    return _strdup(strSource);
+}
+
+#endif
+
+inline int strncasecmp(const char* s1, const char* s2, size_t len)
+{
+    return strnicmp(s1, s2, len);
+}
+
+inline int strcasecmp(const char* s1, const char* s2)
+{
+    return stricmp(s1, s2);
+}
 
 #endif
 
