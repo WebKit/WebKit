@@ -1,3 +1,17 @@
+2008-10-09  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Make pan scrolling a platform configurable option
+        https://bugs.webkit.org/show_bug.cgi?id=21515
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAutoscroll):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::keyEvent):
+
 2008-10-10  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
