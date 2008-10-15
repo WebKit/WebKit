@@ -62,6 +62,27 @@
 
         Reviewed by Holger Freyther.
 
+        http://bugs.webkit.org/show_bug.cgi?id=21211
+        [CURL] Upload doesn't work because cancel is called
+
+        FormDataStream::read returns 0 when retrieving data from the form
+        fails, but also when there is no more data to send. This means that
+        ResourceHandleManager::cancel is always called even when the data was
+        successfully sent.
+
+        Check if there are more elements in the form before calling
+        FormDataStream::read.
+
+        * platform/network/curl/FormDataStreamCurl.cpp:
+        (WebCore::FormDataStream::hasMoreElements):
+        * platform/network/curl/FormDataStreamCurl.h:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::readCallback):
+
+2008-10-15  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
         http://bugs.webkit.org/show_bug.cgi?id=20664
         [GTK] File names are not always encodable in UTF-8
 

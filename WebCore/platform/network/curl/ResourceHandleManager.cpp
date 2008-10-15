@@ -238,6 +238,9 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (!size || !nmemb)
         return 0;
 
+    if (!d->m_formDataStream.hasMoreElements())
+        return 0;
+
     size_t sent = d->m_formDataStream.read(ptr, size, nmemb);
 
     // Something went wrong so cancel the job.

@@ -46,6 +46,7 @@ public:
     ~FormDataStream();
 
     size_t read(void* ptr, size_t blockSize, size_t numberOfBlocks);
+    bool hasMoreElements() const;
 
 private:
     // We can hold a weak reference to our ResourceHandle as it holds a strong reference
