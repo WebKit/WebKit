@@ -613,17 +613,20 @@ static NSString *createUserVisibleWebKitVersionString()
     return [fullVersion copy];
 }
 
-+ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName andWebKitVersion:(NSString *)version
++ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName
 {
-    // Note: Do *not* move the initialization of osVersion into the declaration.
+    // Note: Do *not* move the initialization of osVersion nor webKitVersion into the declaration.
     // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
     static NSString *osVersion;
+    static NSString *webKitVersion;
     if (!osVersion)
         osVersion = createMacOSXVersionString();
+    if (!webKitVersion)
+        webKitVersion = createUserVisibleWebKitVersionString();
     NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
     if ([applicationName length])
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, language, version, applicationName];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, language, version];
+        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko) %@", osVersion, language, webKitVersion, applicationName];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X %@; %@) AppleWebKit/%@ (KHTML, like Gecko)", osVersion, language, webKitVersion];
 }
 
 static void WebKitInitializeApplicationCachePathIfNecessary()
@@ -4653,14 +4656,8 @@ static WebFrameView *containingFrameView(NSView *view)
         // No current site-specific spoofs.
     }
 
-    if (_private->userAgent.isNull()) {
-        // Note: Do *not* move the initialization of webKitVersion into the declaration.
-        // Garbage collection won't correctly mark the global variable in that case <rdar://problem/5733674>.
-        static NSString *webKitVersion;
-        if (!webKitVersion)
-            webKitVersion = createUserVisibleWebKitVersionString();
-        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent andWebKitVersion:webKitVersion];
-    }
+    if (_private->userAgent.isNull())
+        _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent];
 
     return _private->userAgent;
 }
