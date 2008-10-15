@@ -103,7 +103,10 @@ public:
 
     static void loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data, Frame* frame);
     static bool willLoadFromCache(ResourceRequest&);
-    
+#if PLATFORM(MAC)
+    static bool didSendBodyDataDelegateExists();
+#endif
+
     ~ResourceHandle();
 
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)

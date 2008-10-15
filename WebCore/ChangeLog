@@ -1,3 +1,20 @@
+2008-10-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement didSendBodyData delegate method, and use older code path when that delegate doesn't exist. 
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/mac/FormDataStreamMac.mm: (WebCore::formRead):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didSendBodyDataDelegateExists):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+
 2008-10-15  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.
