@@ -1,3 +1,10 @@
+2008-10-16  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix. Not reviewed.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setSmartInsertDeleteEnabled):
+
 2008-10-15  Glenn Wilson  <gwilson@google.com>
 
         Added new method to allow tests to disable smart editing in the course of a test.

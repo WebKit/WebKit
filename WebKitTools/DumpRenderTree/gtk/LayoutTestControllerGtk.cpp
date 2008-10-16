@@ -183,6 +183,11 @@ void LayoutTestController::setWindowIsKey(bool windowIsKey)
     // FIXME: implement
 }
 
+void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+{
+    // FIXME: implement
+}
+
 static gboolean waitToDumpWatchdogFired(void*)
 {
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
