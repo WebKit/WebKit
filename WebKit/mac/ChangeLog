@@ -1,3 +1,15 @@
+2008-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6272508> Crash occurs after loading flash content at http://www.macrumors.com/
+
+        Restore some code related to the CoreGraphics drawing model that was misplaced in r37131.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView invalidateRegion:]):
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+
 2008-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

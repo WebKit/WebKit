@@ -2407,7 +2407,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         break;
 #endif /* NP_NO_QUICKDRAW */
         
-        case NPDrawingModelCoreGraphics:    
+        case NPDrawingModelCoreGraphics:
+        {
+            CGRect cgRect = CGPathGetBoundingBox((NPCGRegion)invalidRegion);
+            invalidRect = *(NSRect*)&cgRect;
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
         break;
@@ -2563,7 +2568,11 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
                 // Supported drawing models:
 #ifndef NP_NO_QUICKDRAW
                 case NPDrawingModelQuickDraw:
-#endif                
+#endif
+                case NPDrawingModelCoreGraphics:
+                    drawingModel = newDrawingModel;
+                    return NPERR_NO_ERROR;
+
                 // Unsupported (or unknown) drawing models:
                 default:
                     LOG(Plugins, "Plugin %@ uses unsupported drawing model: %d", pluginPackage, drawingModel);
