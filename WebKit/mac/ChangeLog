@@ -1,3 +1,13 @@
+2008-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix a leak of a CFStringRef reported by the build bot.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]): Use a autoreleased
+        NSString rather than manually releasing a CFStringRef when we're done with it.
+
 2008-10-15  Kenneth Russell  <kenneth.russell@sun.com>
 
         Reviewed and landed by Anders Carlsson.
