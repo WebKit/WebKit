@@ -1,3 +1,14 @@
+2008-10-15  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Geoffrey Garen.
+
+        1.40% speedup on SunSpider, 1.44% speedup on V8. (Linux)
+        
+        No change on Mac.
+
+        * VM/Machine.cpp:
+        (JSC::fastIsNumber): ALWAYS_INLINE modifier added.
+
 2008-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
