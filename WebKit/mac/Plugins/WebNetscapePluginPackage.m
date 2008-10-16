@@ -569,6 +569,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
         LOG(Plugins, "%f NP_Initialize took %f seconds", currentTime, duration);
 
+        pluginFuncs.size = sizeof(NPPluginFuncs);
+        
         npErr = NP_GetEntryPoints(&pluginFuncs);
         if (npErr != NPERR_NO_ERROR)
             goto abort;
