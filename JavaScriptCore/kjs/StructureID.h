@@ -152,7 +152,11 @@ namespace JSC {
         unsigned m_attributesInPrevious;
 
         size_t m_transitionCount;
-        TransitionTable m_transitionTable;
+        bool m_usingSingleTransitionSlot;
+        union {
+            StructureID* singleTransition;
+            TransitionTable* table;
+        } m_transitions;
 
         RefPtr<PropertyNameArrayData> m_cachedPropertyNameArrayData;
 

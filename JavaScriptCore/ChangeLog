@@ -1,3 +1,21 @@
+2008-10-15  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21633: Avoid using a HashMap when there is only a single transition
+        <https://bugs.webkit.org/show_bug.cgi?id=21633>
+
+        This is a 0.8% speedup on SunSpider and between a 0.5% and 1.0% speedup
+        on the V8 benchmark suite, depending on which harness we use. It will
+        also slightly reduce the memory footprint of a StructureID.
+
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::~StructureID):
+        (JSC::StructureID::addPropertyTransition):
+        * kjs/StructureID.h:
+        (JSC::StructureID::):
+
 2008-10-15  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Geoffrey Garen.

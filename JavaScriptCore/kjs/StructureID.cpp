@@ -53,11 +53,14 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     , m_previous(0)
     , m_nameInPrevious(0)
     , m_transitionCount(0)
+    , m_usingSingleTransitionSlot(true)
     , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
     , m_cachedTransistionOffset(WTF::notFound)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
+
+    m_transitions.singleTransition = 0;
 
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)
@@ -70,12 +73,23 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
 StructureID::~StructureID()
 {
     if (m_previous) {
-        ASSERT(m_previous->m_transitionTable.contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
-        m_previous->m_transitionTable.remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
+        if (m_previous->m_usingSingleTransitionSlot) {
+            m_previous->m_transitions.singleTransition->deref();
+            m_previous->m_transitions.singleTransition = 0;
+        } else {
+            ASSERT(m_previous->m_transitions.table->contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
+            m_previous->m_transitions.table->remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
+        }
     }
 
     if (m_cachedPropertyNameArrayData)
         m_cachedPropertyNameArrayData->setCachedStructureID(0);
+
+    if (m_usingSingleTransitionSlot) {
+        if (m_transitions.singleTransition)
+            m_transitions.singleTransition->deref();
+    } else
+        delete m_transitions.table;
 
 #ifndef NDEBUG
     HashSet<StructureID*>::iterator it = ignoreSet.find(this);
@@ -168,10 +182,19 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
     ASSERT(!structureID->m_isDictionary);
     ASSERT(structureID->typeInfo().type() == ObjectType);
 
-    if (StructureID* existingTransition = structureID->m_transitionTable.get(make_pair(propertyName.ustring().rep(), attributes))) {
-        offset = existingTransition->cachedTransistionOffset();
-        ASSERT(offset != WTF::notFound);
-        return existingTransition;
+    if (structureID->m_usingSingleTransitionSlot) {
+        StructureID* existingTransition = structureID->m_transitions.singleTransition;
+        if (existingTransition && existingTransition->m_nameInPrevious == propertyName.ustring().rep() && existingTransition->m_attributesInPrevious == attributes) {
+            offset = structureID->m_transitions.singleTransition->cachedTransistionOffset();
+            ASSERT(offset != WTF::notFound);
+            return existingTransition;
+        }
+    } else {
+        if (StructureID* existingTransition = structureID->m_transitions.table->get(make_pair(propertyName.ustring().rep(), attributes))) {
+            offset = existingTransition->cachedTransistionOffset();
+            ASSERT(offset != WTF::notFound);
+            return existingTransition;
+        }        
     }
 
     if (structureID->m_transitionCount > s_maxTransitionLength) {
@@ -198,7 +221,21 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
 
     transition->setCachedTransistionOffset(offset);
 
-    structureID->m_transitionTable.add(make_pair(propertyName.ustring().rep(), attributes), transition.get());
+    if (structureID->m_usingSingleTransitionSlot) {
+        if (!structureID->m_transitions.singleTransition) {
+            structureID->m_transitions.singleTransition = transition.get();
+            transition->ref();
+            return transition.release();
+        }
+
+        StructureID* existingTransition = structureID->m_transitions.singleTransition;
+        structureID->m_usingSingleTransitionSlot = false;
+        TransitionTable* transitionTable = new TransitionTable;
+        structureID->m_transitions.table = transitionTable;
+        transitionTable->add(make_pair(existingTransition->m_nameInPrevious, existingTransition->m_attributesInPrevious), existingTransition);
+        existingTransition->deref();
+    }
+    structureID->m_transitions.table->add(make_pair(propertyName.ustring().rep(), attributes), transition.get());
     return transition.release();
 }
 
