@@ -249,6 +249,11 @@ void LayoutTestController::setWindowIsKey(bool windowIsKey)
         [(WebHTMLView *)documentView _updateFocusedAndActiveState];
 }
 
+void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+{
+    [[mainFrame webView] setSmartInsertDeleteEnabled:flag];
+}
+
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)

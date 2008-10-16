@@ -660,6 +660,10 @@ static void resetWebViewToConsistentStateBeforeTesting()
             prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
     }
 
+    COMPtr<IWebViewEditing> viewEditing;
+    if (SUCCEEDED(webView->QueryInterface(&viewEditing)))
+        viewEditing->setSmartInsertDeleteEnabled(TRUE);
+
     COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
     if (!webViewPrivate)
         return;

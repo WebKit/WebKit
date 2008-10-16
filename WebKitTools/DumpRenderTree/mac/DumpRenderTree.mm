@@ -964,6 +964,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
         [preferences setUserStyleSheetEnabled:YES];
     } else
         [preferences setUserStyleSheetEnabled:NO];
+    [[mainFrame webView] setSmartInsertDeleteEnabled:YES];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
 }

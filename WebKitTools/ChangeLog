@@ -1,3 +1,23 @@
+2008-10-15  Glenn Wilson  <gwilson@google.com>
+
+        Added new method to allow tests to disable smart editing in the course of a test.
+        This is a possible solution to bug .20655
+
+        Reviewed by Tim Hatcher.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setSmartInsertDeleteEnabledCallback): new method
+        (LayoutTestController::staticFunctions): added new method to static list of callbacks
+        * DumpRenderTree/LayoutTestController.h: added signature of new method
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting): added state resetting
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setSmartInsertDeleteEnabled): added new method
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting): added state resetting
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setSmartInsertDeleteEnabled): added new method
+
 2008-10-14  Ada Chan  <adachan@apple.com>
 
         Fix windows build.

@@ -508,6 +508,19 @@ void LayoutTestController::setWindowIsKey(bool flag)
     ::SendMessage(webViewWindow, flag ? WM_SETFOCUS : WM_KILLFOCUS, (WPARAM)::GetDesktopWindow(), 0);
 }
 
+void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return;
+
+    viewEditing->setSmartInsertDeleteEnabled(flag ? TRUE : FALSE);
+}
+
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
