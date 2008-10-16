@@ -99,6 +99,7 @@ void PluginMainThreadScheduler::dispatchCalls()
             it->second.clear();
     }
 
+    m_callPending = false;
     m_queueMutex.unlock();
 
     CallQueueMap::iterator end = copy.end();

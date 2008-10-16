@@ -1,3 +1,14 @@
+2008-10-16  Kenneth Russell  <kenneth.russell@sun.com>
+
+        Reviewed and landed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21587
+        NPN_PluginThreadAsyncCall does not work properly
+        
+        * plugins/PluginMainThreadScheduler.cpp:
+        (WebCore::PluginMainThreadScheduler::dispatchCalls):
+        Make sure to set m_callPending to false once the queue has been cleared.
+
 2008-10-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
