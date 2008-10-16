@@ -1,3 +1,14 @@
+2008-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove unneeded check of whether a Page defers loading before running it
+        in a modal dialog.
+
+        No test possible.
+
+        Reviewed by Tim Hatcher.
+
+        * page/Chrome.cpp:
+
 2008-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

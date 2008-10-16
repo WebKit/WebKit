@@ -173,11 +173,6 @@ bool Chrome::canRunModalNow() const
 
 void Chrome::runModal() const
 {
-    if (m_page->defersLoading()) {
-        LOG_ERROR("Tried to run modal in a page when it was deferring loading -- should never happen.");
-        return;
-    }
-
     // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
     PageGroupLoadDeferrer deferrer(m_page, false);
