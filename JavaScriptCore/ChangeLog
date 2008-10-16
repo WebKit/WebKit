@@ -1,3 +1,18 @@
+2008-10-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - fix for: REGRESSION: over 100 StructureIDs leak loading about:blank (result of fix for bug 21633)
+        
+        Apparent slight progression (< 0.5%) on v8 benchmarks and SunSpider.
+
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::~StructureID): Don't deref this object's parent's pointer to
+        itself from the destructor; that doesn't even make sense.
+        (JSC::StructureID::addPropertyTransition): Don't refer the single transition;
+        the rule is that parent StructureIDs are ref'd but child ones are not. Refing
+        the child creates a cycle.
+
 2008-10-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
