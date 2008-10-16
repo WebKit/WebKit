@@ -1,3 +1,11 @@
+2008-10-16  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Remove duplicated code in this test.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-post-crash.html:
+
 2008-10-15  Glenn Wilson  <gwilson@google.com>
 
         Added tests to verify that smart editing can be disabled for some tests.
