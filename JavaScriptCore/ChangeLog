@@ -1,3 +1,15 @@
+2008-10-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21610
+        run-webkit-threads --threaded crashes in StructureID destructor
+
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::~StructureID):
+        Protect access to a static (debug-only) HashSet with a lock.
+
 2008-10-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Goeffrey Garen.

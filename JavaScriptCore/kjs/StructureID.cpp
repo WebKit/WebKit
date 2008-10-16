@@ -33,12 +33,20 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(JSC_MULTIPLE_THREADS)
+#include <wtf/Threading.h>
+#endif
+
 using namespace std;
 
 namespace JSC {
 
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter structureIDCounter("StructureID");
+
+#if ENABLE(JSC_MULTIPLE_THREADS)
+static Mutex ignoreSetMutex;
+#endif
 
 static bool shouldIgnoreLeaks;
 static HashSet<StructureID*> ignoreSet;
@@ -82,6 +90,9 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     m_transitions.singleTransition = 0;
 
 #ifndef NDEBUG
+#if ENABLE(JSC_MULTIPLE_THREADS)
+    MutexLocker protect(ignoreSetMutex);
+#endif
     if (shouldIgnoreLeaks)
         ignoreSet.add(this);
     else
@@ -115,6 +126,9 @@ StructureID::~StructureID()
         delete m_transitions.table;
 
 #ifndef NDEBUG
+#if ENABLE(JSC_MULTIPLE_THREADS)
+    MutexLocker protect(ignoreSetMutex);
+#endif
     HashSet<StructureID*>::iterator it = ignoreSet.find(this);
     if (it != ignoreSet.end())
         ignoreSet.remove(it);
