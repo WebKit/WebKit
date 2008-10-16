@@ -969,6 +969,12 @@ bool Heap::collect()
     m_globalData->machine->registerFile().markCallFrames(this);
     m_globalData->smallStrings.mark();
 
+    JSGlobalObject* globalObject = m_globalData->head;
+    do {
+        globalObject->markCrossHeapDependentObjects();
+        globalObject = globalObject->next();
+    } while (globalObject != m_globalData->head);
+
     JAVASCRIPTCORE_GC_MARKED();
 
     size_t originalLiveObjects = primaryHeap.numLiveObjects + numberHeap.numLiveObjects;

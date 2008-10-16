@@ -399,6 +399,11 @@ void JSGlobalObject::mark()
     }
 }
 
+void JSGlobalObject::markCrossHeapDependentObjects()
+{
+    // Overridden by subclasses.
+}
+
 JSGlobalObject* JSGlobalObject::toGlobalObject(ExecState*) const
 {
     return const_cast<JSGlobalObject*>(this);

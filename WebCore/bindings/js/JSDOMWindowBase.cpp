@@ -507,6 +507,15 @@ JSValue* JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& pro
     return toJS(exec, collection.get());
 }
 
+void JSDOMWindowBase::markCrossHeapDependentObjects()
+{
+    Document* document = impl()->document();
+    if (!document)
+        return;
+
+    markCrossHeapDependentObjectsForDocument(*globalData(), document);
+}
+
 bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // Check for child frames by name before built-in properties to

@@ -1,3 +1,29 @@
+2008-10-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21609
+        Make MessagePorts protect their peers across heaps
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        * dom/MessagePort.h:
+        (WebCore::MessagePort::setJSWrapperIsKnownToBeInaccessible):
+        (WebCore::MessagePort::jsWrapperIsKnownToBeInaccessible):
+        Track objects whose JS wrappers are no longer reachable in MessagePort. Unfortunately, this
+        means that the implementation object knows about JS bindings - but it is not possible to
+        access JS wrappers from another heap/thread.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markCrossHeapDependentObjectsForDocument):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::markCrossHeapDependentObjects):
+        * bindings/js/JSDOMWindowBase.h:
+        Implement cross-heap dependency tracking for entangled MessagePorts. If a wrapper object
+        hasn't been marked normally, it is marked as inaccessible. It is then marked manually,
+        as long as its entangled port is accessible itself.
+
 2008-10-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove unneeded check of whether a Page defers loading before running it
