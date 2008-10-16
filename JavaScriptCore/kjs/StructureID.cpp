@@ -37,11 +37,30 @@ using namespace std;
 
 namespace JSC {
 
-#ifndef NDEBUG    
+#ifndef NDEBUG
 static WTF::RefCountedLeakCounter structureIDCounter("StructureID");
 
 static bool shouldIgnoreLeaks;
 static HashSet<StructureID*> ignoreSet;
+#endif
+
+#if DUMP_STRUCTURE_ID_STATISTICS
+static HashSet<StructureID*> liveStructureIDSet;
+
+void StructureID::dumpStatistics()
+{
+    unsigned numberUsingSingleSlot = 0;
+
+    HashSet<StructureID*>::const_iterator end = liveStructureIDSet.end();
+    for (HashSet<StructureID*>::const_iterator it = liveStructureIDSet.begin(); it != end; ++it) {
+        StructureID* structureID = *it;
+        if (structureID->m_usingSingleTransitionSlot)
+            ++numberUsingSingleSlot;
+    }
+
+    printf("Number of live StructureIDs: %d\n", liveStructureIDSet.size());
+    printf("Number of StructureIDs using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
+}
 #endif
 
 StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
@@ -67,6 +86,10 @@ StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
         ignoreSet.add(this);
     else
         structureIDCounter.increment();
+#endif
+
+#if DUMP_STRUCTURE_ID_STATISTICS
+    liveStructureIDSet.add(this);
 #endif
 }
 
@@ -97,6 +120,10 @@ StructureID::~StructureID()
         ignoreSet.remove(it);
     else
         structureIDCounter.decrement();
+#endif
+
+#if DUMP_STRUCTURE_ID_STATISTICS
+    liveStructureIDSet.remove(this);
 #endif
 }
 

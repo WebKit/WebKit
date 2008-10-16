@@ -1,3 +1,15 @@
+2008-10-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Goeffrey Garen.
+
+        Add function to dump statistics for StructureIDs.
+
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::dumpStatistics):
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::~StructureID):
+        * kjs/StructureID.h:
+
 2008-10-15  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.
