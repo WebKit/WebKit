@@ -1,3 +1,31 @@
+2008-10-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21683
+        Don't create intermediate StructureIDs for builtin objects
+
+        First step in reduce number of StructureIDs created when initializing the
+        JSGlobalObject.
+
+        - In order to avoid creating the intermediate StructureIDs use the new putDirectWithoutTransition
+          and putDirectFunctionWithoutTransition to add properties to JSObjects without transitioning
+          the StructureID.  This patch just implements this strategy for ObjectPrototype but alone
+          reduces the number of StructureIDs create for about:blank by 10, from 142 to 132.
+
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        * kjs/JSObject.h:
+        (JSC::JSObject::putDirectWithoutTransition):
+        * kjs/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * kjs/ObjectPrototype.h:
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::addPropertyWithoutTransition):
+        * kjs/StructureID.h:
+
 2008-10-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

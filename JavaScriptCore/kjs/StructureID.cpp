@@ -317,6 +317,14 @@ PassRefPtr<StructureID> StructureID::getterSetterTransition(StructureID* structu
     return transition.release();
 }
 
+size_t StructureID::addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes)
+{
+    size_t offset = m_propertyMap.put(propertyName, attributes);
+    if (m_propertyMap.storageSize() > propertyStorageCapacity())
+        growPropertyStorageCapacity();
+    return offset;
+}
+
 StructureIDChain* StructureID::createCachedPrototypeChain()
 {
     ASSERT(typeInfo().type() == ObjectType);

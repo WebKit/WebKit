@@ -205,7 +205,8 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->callbackFunctionStructure = JSCallbackFunction::createStructureID(d()->functionPrototype);
     d()->prototypeFunctionStructure = PrototypeFunction::createStructureID(d()->functionPrototype);
     d()->functionPrototype->addFunctionProperties(exec, d()->prototypeFunctionStructure.get());
-    d()->objectPrototype = new (exec) ObjectPrototype(exec, d()->prototypeFunctionStructure.get());
+
+    d()->objectPrototype = new (exec) ObjectPrototype(exec, ObjectPrototype::createStructureID(jsNull()), d()->prototypeFunctionStructure.get());
     d()->emptyObjectStructure = d()->objectPrototype->inheritorID();
     d()->functionPrototype->setPrototype(d()->objectPrototype);
     d()->argumentsStructure = Arguments::createStructureID(d()->objectPrototype);
@@ -258,10 +259,11 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->syntaxErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, syntaxErrorPrototype);
     d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, typeErrorPrototype);
     d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, URIErrorPrototype);
-    
+
     d()->functionPrototype->putDirect(exec->propertyNames().constructor, functionConstructor, DontEnum);
 
-    d()->objectPrototype->putDirect(exec->propertyNames().constructor, objectConstructor, DontEnum);
+    d()->objectPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, objectConstructor, DontEnum);
+
     d()->functionPrototype->putDirect(exec->propertyNames().constructor, functionConstructor, DontEnum);
     d()->arrayPrototype->putDirect(exec->propertyNames().constructor, arrayConstructor, DontEnum);
     d()->booleanPrototype->putDirect(exec->propertyNames().constructor, booleanConstructor, DontEnum);

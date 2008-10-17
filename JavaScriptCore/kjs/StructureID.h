@@ -105,6 +105,8 @@ namespace JSC {
                 m_prototype->mark();
         }
 
+        size_t addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes);
+
         bool isDictionary() const { return m_isDictionary; }
 
         const TypeInfo& typeInfo() const { return m_typeInfo; }
