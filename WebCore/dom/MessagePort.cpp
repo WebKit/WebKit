@@ -195,6 +195,17 @@ void MessagePort::unentangle()
     m_entangledPort = 0;
 }
 
+void MessagePort::contextDestroyed()
+{
+    if (m_entangledPort) {
+        RefPtr<MessagePort> survivingPort = m_entangledPort;
+        unentangle();
+        if (survivingPort->document() != document()) // Otherwise, survivingPort won't really survive.
+            survivingPort->queueCloseEvent();
+    }
+    m_document = 0;
+}
+
 void MessagePort::dispatchMessages()
 {
     // Messages for documents that are not fully active get dispatched too, but JSAbstractEventListener::handleEvent() doesn't call handlers for these.

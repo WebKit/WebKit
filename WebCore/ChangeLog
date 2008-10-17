@@ -1,3 +1,62 @@
+2008-10-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21642
+        Abstract out active object tracking
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markActiveObjectsForDocument):
+        * dom/ActiveDOMObject.cpp: Added.
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        (WebCore::ActiveDOMObject::contextDestroyed):
+        (WebCore::ActiveDOMObject::stop):
+        * dom/ActiveDOMObject.h: Added.
+        (WebCore::ActiveDOMObject::document):
+        (WebCore::ActiveDOMObject::hasPendingActivity):
+        (WebCore::ActiveDOMObject::setPendingActivity):
+        (WebCore::ActiveDOMObject::unsetPendingActivity):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::stopActiveDOMObjects):
+        (WebCore::Document::createdActiveDOMObject):
+        (WebCore::Document::destroyedActiveDOMObject):
+        * dom/Document.h:
+        (WebCore::Document::activeDOMObjects):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::contextDestroyed):
+        * dom/MessagePort.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+        (WebCore::XMLHttpRequest::associatedFrame):
+        (WebCore::XMLHttpRequest::responseXML):
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::initSend):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+        (WebCore::XMLHttpRequest::loadRequestSynchronously):
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        (WebCore::XMLHttpRequest::dropProtection):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::processSyncLoadResults):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didFinishLoadingPreflight):
+        (WebCore::XMLHttpRequest::willSendRequest):
+        (WebCore::XMLHttpRequest::accessControlCheck):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        (WebCore::XMLHttpRequest::stop):
+        (WebCore::XMLHttpRequest::contextDestroyed):
+        * xml/XMLHttpRequest.h:
+        Move activity tracking to a new ActiveDOMObject class.
+
 2008-10-16  David Hyatt  <hyatt@apple.com>
 
         Simplify styleForRenderer to avoid confusion.  Callers in the SVG filter code thought "forRenderer" meant

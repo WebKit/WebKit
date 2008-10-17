@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMBinding.h"
 
+#include "ActiveDOMObject.h"
 #include "DOMCoreException.h"
 #include "Document.h"
 #include "EventException.h"
@@ -43,7 +44,6 @@
 #include "MessagePort.h"
 #include "RangeException.h"
 #include "ScriptController.h"
-#include "XMLHttpRequest.h"
 #include "XMLHttpRequestException.h"
 #include <kjs/PrototypeFunction.h>
 
@@ -245,11 +245,11 @@ void markActiveObjectsForDocument(JSGlobalData& globalData, Document* doc)
     // If an element has pending activity that may result in listeners being called
     // (e.g. an XMLHttpRequest), we need to keep all JS wrappers alive.
 
-    const HashSet<XMLHttpRequest*>& xmlHttpRequests = doc->xmlHttpRequests();
-    HashSet<XMLHttpRequest*>::const_iterator requestsEnd = xmlHttpRequests.end();
-    for (HashSet<XMLHttpRequest*>::const_iterator iter = xmlHttpRequests.begin(); iter != requestsEnd; ++iter) {
-        if ((*iter)->hasPendingActivity()) {
-            DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, *iter);
+    const HashMap<ActiveDOMObject*, void*>& activeObjects = doc->activeDOMObjects();
+    HashMap<ActiveDOMObject*, void*>::const_iterator activeObjectsEnd = activeObjects.end();
+    for (HashMap<ActiveDOMObject*, void*>::const_iterator iter = activeObjects.begin(); iter != activeObjectsEnd; ++iter) {
+        if (iter->first->hasPendingActivity()) {
+            DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, iter->second);
             // An object with pending activity must have a wrapper to mark its listeners, so no null check.
             if (!wrapper->marked())
                 wrapper->mark();

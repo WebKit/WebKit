@@ -65,7 +65,7 @@ namespace WebCore {
         static void entangle(MessagePort*, MessagePort*);
         void unentangle();
 
-        void contextDestroyed() { m_document = 0; } 
+        void contextDestroyed();
         Document* document() { return m_document; }
 
         virtual MessagePort* toMessagePort() { return this; }

@@ -426,7 +426,18 @@ Document::~Document()
 
     removeAllEventListeners();
 
-    XMLHttpRequest::detachRequests(this);
+    HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
+    for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
+        ASSERT(iter->first->document() == this);
+        iter->first->contextDestroyed();
+    }
+
+    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
+    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
+        ASSERT((*iter)->document() == this);
+        (*iter)->contextDestroyed();
+    }
+
     forgetAllDOMNodesForDocument(this);
 
     if (m_docChanged && changedDocuments)
@@ -468,18 +479,6 @@ Document::~Document()
 
     if (m_styleSheets)
         m_styleSheets->documentDestroyed();
-
-    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
-    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != m_messagePorts.end(); ++iter) {
-        ASSERT((*iter)->document() == this);
-        (*iter)->contextDestroyed();
-        if ((*iter)->entangledPort()) {
-            RefPtr<MessagePort> survivingPort = (*iter)->entangledPort();
-            (*iter)->unentangle();
-            if (survivingPort->document() != this) // Otherwise, survivingPort won't really survive.
-                survivingPort->queueCloseEvent();
-        }
-    }
 
     m_document = 0;
 }
@@ -4406,16 +4405,26 @@ void Document::destroyedMessagePort(MessagePort* port)
     m_messagePorts.remove(port);
 }
 
-void Document::createdXMLHttpRequest(XMLHttpRequest* request)
+void Document::stopActiveDOMObjects()
 {
-    ASSERT(request);
-    m_xmlHttpRequests.add(request);
+    HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();
+    for (HashMap<ActiveDOMObject*, void*>::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
+        ASSERT(iter->first->document() == this);
+        iter->first->stop();
+    }
 }
 
-void Document::destroyedXMLHttpRequest(XMLHttpRequest* request)
+void Document::createdActiveDOMObject(ActiveDOMObject* object, void* upcastPointer)
 {
-    ASSERT(request);
-    m_xmlHttpRequests.remove(request);
+    ASSERT(object);
+    ASSERT(upcastPointer);
+    m_activeDOMObjects.add(object, upcastPointer);
+}
+
+void Document::destroyedActiveDOMObject(ActiveDOMObject* object)
+{
+    ASSERT(object);
+    m_activeDOMObjects.remove(object);
 }
 
 void Document::initDNSPrefetch()

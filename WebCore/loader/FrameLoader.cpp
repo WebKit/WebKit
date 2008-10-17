@@ -623,8 +623,8 @@ void FrameLoader::stopLoading(bool sendUnload)
     if (Document* doc = m_frame->document()) {
         if (DocLoader* docLoader = doc->docLoader())
             cache()->loader()->cancelRequests(docLoader);
-        
-        XMLHttpRequest::cancelRequests(doc);
+
+        doc->stopActiveDOMObjects();
         
 #if ENABLE(DATABASE)
         doc->stopDatabases();

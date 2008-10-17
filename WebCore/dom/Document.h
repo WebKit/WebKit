@@ -48,6 +48,7 @@
 
 namespace WebCore {
 
+    class ActiveDOMObject;
     class AXObjectCache;
     class Attr;
     class Attribute;
@@ -764,15 +765,18 @@ public:
     CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
 
+    // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
+    void stopActiveDOMObjects();
+    void createdActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
+    void destroyedActiveDOMObject(ActiveDOMObject*);
+    const HashMap<ActiveDOMObject*, void*>& activeDOMObjects() const { return m_activeDOMObjects; }
+
+    // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch, and for cross-heap GC support.
     void processMessagePortMessagesSoon();
     void dispatchMessagePortEvents();
     void createdMessagePort(MessagePort*);
     void destroyedMessagePort(MessagePort*);
     const HashSet<MessagePort*>& messagePorts() const { return m_messagePorts; }
-
-    void createdXMLHttpRequest(XMLHttpRequest*);
-    void destroyedXMLHttpRequest(XMLHttpRequest*);
-    const HashSet<XMLHttpRequest*>& xmlHttpRequests() const { return m_xmlHttpRequests; }
 
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void initDNSPrefetch();
@@ -934,7 +938,7 @@ private:
     bool m_firedMessagePortTimer;
     HashSet<MessagePort*> m_messagePorts;
 
-    HashSet<XMLHttpRequest*> m_xmlHttpRequests;
+    HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
 
 public:
     bool inPageCache();
