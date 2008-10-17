@@ -1,3 +1,15 @@
+2008-10-15  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Have ImageDocument generate its own filename for the title of images
+        without relying on the suggested filename from the network layer, which
+        may be nonexistant or not relevant.
+        https://bugs.webkit.org/show_bug.cgi?id=21565
+
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageTokenizer::finish):
+
 2008-10-17  Alexey Proskuryakov  <ap@webkit.org>
 
         Non-Mac build fix.

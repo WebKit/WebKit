@@ -120,8 +120,14 @@ void ImageTokenizer::finish()
         cachedImage->setResponse(m_doc->frame()->loader()->documentLoader()->response());
 
         IntSize size = cachedImage->imageSize(m_doc->frame()->pageZoomFactor());
-        if (size.width())
-            m_doc->setTitle(imageTitle(cachedImage->response().suggestedFilename(), size));
+        if (size.width()) {
+            // Compute the title, we use the filename of the resource, falling
+            // back on the hostname if there is no path.
+            String fileName = m_doc->url().lastPathComponent();
+            if (fileName.isEmpty())
+                fileName = m_doc->url().host();
+            m_doc->setTitle(imageTitle(fileName, size));
+        }
 
         m_doc->imageChanged();
     }
