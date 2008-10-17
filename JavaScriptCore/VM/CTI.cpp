@@ -3036,7 +3036,7 @@ void CTI::patchGetByIdSelf(CodeBlock* codeBlock, StructureID* structureID, size_
 
     // We don't want to repatch more than once - in future go to cti_op_get_by_id_generic.
     // Should probably go to Machine::cti_op_get_by_id_fail, but that doesn't do anything interesting right now.
-    ctiRepatchCallByReturnAddress(returnAddress, (void*)(Machine::cti_op_get_by_id_generic));
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Machine::cti_op_get_by_id_generic));
 
     // Repatch the offset into the propoerty map to load from, then repatch the StructureID to look for.
     X86Assembler::repatchDisplacement(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset, cachedOffset * sizeof(JSValue*));
@@ -3049,7 +3049,7 @@ void CTI::patchPutByIdReplace(CodeBlock* codeBlock, StructureID* structureID, si
     
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
     // Should probably go to Machine::cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
-    ctiRepatchCallByReturnAddress(returnAddress, (void*)(Machine::cti_op_put_by_id_generic));
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Machine::cti_op_put_by_id_generic));
 
     // Repatch the offset into the propoerty map to load from, then repatch the StructureID to look for.
     X86Assembler::repatchDisplacement(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetPutByIdPropertyMapOffset, cachedOffset * sizeof(JSValue*));

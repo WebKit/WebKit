@@ -3996,7 +3996,7 @@ NEVER_INLINE void Machine::tryCTICachePutByID(CallFrame* callFrame, CodeBlock* c
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_put_by_id_generic));
         return;
     }
     
@@ -4004,7 +4004,7 @@ NEVER_INLINE void Machine::tryCTICachePutByID(CallFrame* callFrame, CodeBlock* c
     StructureID* structureID = baseCell->structureID();
 
     if (structureID->isDictionary()) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_put_by_id_generic));
         return;
     }
 
@@ -4018,7 +4018,7 @@ NEVER_INLINE void Machine::tryCTICachePutByID(CallFrame* callFrame, CodeBlock* c
 
     // If baseCell != base, then baseCell must be a proxy for another object.
     if (baseCell != slot.base()) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_put_by_id_generic));
         return;
     }
 
@@ -4079,7 +4079,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(CallFrame* callFrame, CodeBlock* c
 
     // FIXME: Cache property access for immediates.
     if (JSImmediate::isImmediate(baseValue)) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_get_by_id_generic));
         return;
     }
 
@@ -4100,7 +4100,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(CallFrame* callFrame, CodeBlock* c
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_get_by_id_generic));
         return;
     }
 
@@ -4108,7 +4108,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(CallFrame* callFrame, CodeBlock* c
     StructureID* structureID = baseCell->structureID();
 
     if (structureID->isDictionary()) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(cti_op_get_by_id_generic));
         return;
     }
 
@@ -4377,7 +4377,7 @@ void Machine::cti_op_put_by_id(CTI_ARGS)
     PutPropertySlot slot;
     ARG_src1->put(callFrame, ident, ARG_src3, slot);
 
-    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_put_by_id_second);
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_id_second));
 
     VM_CHECK_EXCEPTION_AT_END();
 }
@@ -4406,7 +4406,7 @@ void Machine::cti_op_put_by_id_fail(CTI_ARGS)
     ARG_src1->put(callFrame, ident, ARG_src3, slot);
 
     // should probably uncachePutByID() ... this would mean doing a vPC lookup - might be worth just bleeding this until the end.
-    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_put_by_id_generic);
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_id_generic));
 
     VM_CHECK_EXCEPTION_AT_END();
 }
@@ -4420,7 +4420,7 @@ JSValue* Machine::cti_op_get_by_id(CTI_ARGS)
     PropertySlot slot(baseValue);
     JSValue* result = baseValue->get(callFrame, ident, slot);
 
-    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_get_by_id_second);
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_second));
 
     VM_CHECK_EXCEPTION_AT_END();
     return result;
@@ -4464,7 +4464,7 @@ JSValue* Machine::cti_op_get_by_id_fail(CTI_ARGS)
     JSValue* result = baseValue->get(callFrame, ident, slot);
 
     // should probably uncacheGetByID() ... this would mean doing a vPC lookup - might be worth just bleeding this until the end.
-    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_get_by_id_generic);
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
 
     VM_CHECK_EXCEPTION_AT_END();
     return result;

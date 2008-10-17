@@ -1,3 +1,20 @@
+2008-10-17  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Remove some C style casts.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::patchGetByIdSelf):
+        (JSC::CTI::patchPutByIdReplace):
+        * VM/Machine.cpp:
+        (JSC::Machine::tryCTICachePutByID):
+        (JSC::Machine::tryCTICacheGetByID):
+        (JSC::Machine::cti_op_put_by_id):
+        (JSC::Machine::cti_op_put_by_id_fail):
+        (JSC::Machine::cti_op_get_by_id):
+        (JSC::Machine::cti_op_get_by_id_fail):
+
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
