@@ -24,6 +24,11 @@
 #define RenderTheme_h
 
 #include "RenderObject.h"
+#if USE(NEW_THEME)
+#include "Theme.h"
+#else
+#include "ThemeTypes.h"
+#endif
 
 namespace WebCore {
 
@@ -32,19 +37,9 @@ class PopupMenu;
 class RenderMenuList;
 class CSSStyleSheet;
 
-enum ControlState {
-    HoverState,
-    PressedState,
-    FocusState,
-    EnabledState,
-    CheckedState,
-    ReadOnlyState,
-    DefaultState
-};
-
 class RenderTheme {
 public:
-    RenderTheme() { }
+    RenderTheme();
     virtual ~RenderTheme() { }
 
     // This method is called whenever style has been computed for an element and the appearance
@@ -212,6 +207,9 @@ protected:
 private:
     mutable Color m_activeSelectionColor;
     mutable Color m_inactiveSelectionColor;
+#if USE(NEW_THEME)
+    Theme* m_theme; // The platform-specific theme.
+#endif
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

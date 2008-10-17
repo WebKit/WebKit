@@ -40,6 +40,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+RenderTheme::RenderTheme()
+#if USE(NEW_THEME)
+    : m_theme(platformTheme())
+#endif
+{
+}
+
 void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e,
                               bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
 {

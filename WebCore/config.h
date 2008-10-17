@@ -112,6 +112,7 @@
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 0
 #endif
+#define WTF_USE_NEW_THEME 1
 #endif
 
 #if PLATFORM(SYMBIAN)

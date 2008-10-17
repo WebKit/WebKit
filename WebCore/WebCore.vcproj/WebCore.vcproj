@@ -3195,6 +3195,14 @@
 				RelativePath="..\platform\text\TextStyle.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\platform\Theme.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\platform\ThemeTypes.h"
+				>
+			</File>
 			<File
 				RelativePath="..\platform\Timer.cpp"
 				>

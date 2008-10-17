@@ -1,3 +1,53 @@
+2008-10-17  David Hyatt  <hyatt@apple.com>
+
+        Beginning of the RenderTheme re-architecture (to share more code).  Add the new Theme API header
+        file.  Add new USE(NEW_THEME) switch that is enabled on Mac.  The Mac theme will be converted first.
+
+        Reviewed by Tim Hatcher
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * platform/Theme.h: Added.
+        (WebCore::Theme::Theme):
+        (WebCore::Theme::~Theme):
+        (WebCore::Theme::baselinePositionAdjustment):
+        (WebCore::Theme::controlHasInactiveAppearance):
+        (WebCore::Theme::controlsCanHaveInactiveAppearance):
+        (WebCore::Theme::controlsCanHaveHoveredAppearance):
+        (WebCore::Theme::controlDrawsBorder):
+        (WebCore::Theme::controlDrawsBackground):
+        (WebCore::Theme::controlDrawsFocusOutline):
+        (WebCore::Theme::selectionColor):
+        (WebCore::Theme::textSearchHighlightColor):
+        (WebCore::Theme::systemColor):
+        (WebCore::Theme::systemFont):
+        (WebCore::Theme::caretBlinkFrequency):
+        (WebCore::Theme::themeChanged):
+        (WebCore::Theme::controlSize):
+        (WebCore::Theme::controlFont):
+        (WebCore::Theme::controlPadding):
+        (WebCore::Theme::controlInternalPadding):
+        (WebCore::Theme::controlBorder):
+        (WebCore::Theme::controlBorderRadius):
+        (WebCore::Theme::paint):
+        (WebCore::Theme::inflateControlPaintRect):
+        * platform/ThemeTypes.h: Added.
+        (WebCore::):
+        (WebCore::ControlBox::ControlBox):
+        (WebCore::ControlBox::top):
+        (WebCore::ControlBox::right):
+        (WebCore::ControlBox::bottom):
+        (WebCore::ControlBox::left):
+        * platform/mac/ThemeMac.h: Added.
+        (WebCore::ThemeMac::ThemeMac):
+        (WebCore::ThemeMac::~ThemeMac):
+        * platform/mac/ThemeMac.mm: Added.
+        (WebCore::platformTheme):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::RenderTheme):
+        * rendering/RenderTheme.h:
+
 2008-10-17  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Sam Weinig. Landed by Jan Alonzo.
