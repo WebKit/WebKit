@@ -1,5 +1,50 @@
 2008-10-17  Pamela Greene  <pam@chromium.org>
 
+        Add a number of new tests.
+        See https://bugs.webkit.org/show_bug.cgi?id=21407
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/css/border-height.html: Added.
+        * fast/dom/Window/orphaned-frame-access-expected.txt: Added.
+        * fast/dom/Window/orphaned-frame-access.html: Added.
+        * fast/forms/image-border.html: Added.
+        * fast/forms/input-field-text-truncated.html: Added.
+        * fast/forms/input-type-text-min-width.html: Added.
+        * fast/forms/textarea-scrollbar-height-expected.txt: Added.
+        * fast/forms/textarea-scrollbar-height.html: Added.
+        * fast/forms/textarea-width.html: Added.
+        * fast/overflow/overflow_hidden.html: Added.
+        * fast/parser/resources/xml-declaration-missing-ending-mark.xml: Added.
+        * fast/parser/xml-declaration-missing-ending-mark-expected.txt: Added.
+        * fast/parser/xml-declaration-missing-ending-mark.html: Added.
+        * fast/text/international/hindi-spacing.html: Added.
+        * http/tests/misc/crash-multiple-family-fontface-expected.txt: Added.
+        * http/tests/misc/crash-multiple-family-fontface.html: Added.
+        * platform/mac/fast/css/border-height-expected.checksum: Added.
+        * platform/mac/fast/css/border-height-expected.png: Added.
+        * platform/mac/fast/css/border-height-expected.txt: Added.
+        * platform/mac/fast/forms/image-border-expected.checksum: Added.
+        * platform/mac/fast/forms/image-border-expected.png: Added.
+        * platform/mac/fast/forms/image-border-expected.txt: Added.
+        * platform/mac/fast/forms/input-field-text-truncated-expected.checksum: Added.
+        * platform/mac/fast/forms/input-field-text-truncated-expected.png: Added.
+        * platform/mac/fast/forms/input-field-text-truncated-expected.txt: Added.
+        * platform/mac/fast/forms/input-type-text-min-width-expected.checksum: Added.
+        * platform/mac/fast/forms/input-type-text-min-width-expected.png: Added.
+        * platform/mac/fast/forms/input-type-text-min-width-expected.txt: Added.
+        * platform/mac/fast/forms/textarea-width-expected.checksum: Added.
+        * platform/mac/fast/forms/textarea-width-expected.png: Added.
+        * platform/mac/fast/forms/textarea-width-expected.txt: Added.
+        * platform/mac/fast/overflow/overflow_hidden-expected.checksum: Added.
+        * platform/mac/fast/overflow/overflow_hidden-expected.png: Added.
+        * platform/mac/fast/overflow/overflow_hidden-expected.txt: Added.
+        * platform/mac/fast/text/international/hindi-spacing-expected.checksum: Added.
+        * platform/mac/fast/text/international/hindi-spacing-expected.png: Added.
+        * platform/mac/fast/text/international/hindi-spacing-expected.txt: Added.
+
+2008-10-17  Pamela Greene  <pam@chromium.org>
+
         Fix potential race by running two passes of test to defer notifyDone.
         See https://bugs.webkit.org/show_bug.cgi?id=21576
 
