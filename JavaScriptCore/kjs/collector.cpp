@@ -970,10 +970,12 @@ bool Heap::collect()
     m_globalData->smallStrings.mark();
 
     JSGlobalObject* globalObject = m_globalData->head;
-    do {
-        globalObject->markCrossHeapDependentObjects();
-        globalObject = globalObject->next();
-    } while (globalObject != m_globalData->head);
+    if (globalObject) {
+        do {
+            globalObject->markCrossHeapDependentObjects();
+            globalObject = globalObject->next();
+        } while (globalObject != m_globalData->head);
+    }
 
     JAVASCRIPTCORE_GC_MARKED();
 
