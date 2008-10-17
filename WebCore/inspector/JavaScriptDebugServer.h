@@ -87,6 +87,7 @@ namespace WebCore {
         ~JavaScriptDebugServer();
 
         bool hasListeners() const { return !m_listeners.isEmpty() || !m_pageListenersMap.isEmpty(); }
+        bool hasGlobalListeners() const { return !m_listeners.isEmpty(); }
         bool hasListenersInterestedInPage(Page*);
 
         void setJavaScriptPaused(const PageGroup&, bool paused);
@@ -106,7 +107,8 @@ namespace WebCore {
         virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
         virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
         
-        void willAddFirstListener();
+        void didAddListener(Page*);
+        void didRemoveListener(Page*);
         void didRemoveLastListener();
 
         typedef HashMap<Page*, ListenerSet*> PageListenersMap;

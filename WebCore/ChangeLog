@@ -1,3 +1,33 @@
+2008-10-17  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression where starting a debugging session in
+        another Web Inspector window would not show any scripts.
+        Also only attach the debugger to only the required Pages.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21708
+
+        Reviewed by Darin Adler.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::addListener): Add an assert and
+        remove the call to willAddFirstListener(). Add a call to
+        didAddListener().
+        (WebCore::JavaScriptDebugServer::removeListener): Add an assert
+        and call to didRemoveListener().
+        (WebCore::JavaScriptDebugServer::pageCreated): Attach the debugger
+        if there is a listener interested in the new Page.
+        (WebCore::JavaScriptDebugServer::hasListenersInterestedInPage):
+        Use hasGlobalListeners() instead of isEmpty().
+        (WebCore::JavaScriptDebugServer::sourceParsed): Ditto.
+        (WebCore::JavaScriptDebugServer::didAddListener): Added. Attach the
+        debugger to the page if non-null, or all pages if page is null.
+        (WebCore::JavaScriptDebugServer::didRemoveListener): Added. Detach
+        the debugger only if there are no interested listeners.
+        (WebCore::JavaScriptDebugServer::didRemoveLastListener): Remove the
+        call to Page::setDebuggerForAllPages().
+        * inspector/JavaScriptDebugServer.h:
+        (WebCore::JavaScriptDebugServer::hasGlobalListeners): Added.
+
 2008-10-15  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Timothy Hatcher.
