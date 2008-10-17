@@ -1,3 +1,14 @@
+2008-10-17  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. EAppearance -> ControlPart.
+
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::isControlStyled):
+        (WebCore::RenderThemeWx::adjustRepaintRect):
+        (WebCore::RenderThemeWx::controlSupportsTints):
+        (WebCore::RenderThemeWx::supportsFocus):
+        (WebCore::RenderThemeWx::paintButton):
+
 2008-10-17  David Hyatt  <hyatt@apple.com>
 
         Eliminate the EAppearance enum in favor of the new ControlPart enum.  Cut out the scrollbar

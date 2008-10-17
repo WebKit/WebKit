@@ -101,7 +101,7 @@ private:
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
 
-    bool supportsFocus(EAppearance) const;
+    bool supportsFocus(ControlPart) const;
 };
 
 
@@ -127,7 +127,7 @@ RenderTheme* theme()
 bool RenderThemeWx::isControlStyled(const RenderStyle* style, const BorderData& border,
                                      const FillLayer& background, const Color& backgroundColor) const
 {
-    if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance)
+    if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart)
         return style->border() != border;
 
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
@@ -136,7 +136,7 @@ bool RenderThemeWx::isControlStyled(const RenderStyle* style, const BorderData& 
 void RenderThemeWx::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
     switch (o->style()->appearance()) {
-        case MenulistAppearance: {
+        case MenulistPart: {
             r.setWidth(r.width() + 100);
             break;
         }
@@ -151,7 +151,7 @@ bool RenderThemeWx::controlSupportsTints(const RenderObject* o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o->style()->appearance() == CheckboxAppearance)
+    if (o->style()->appearance() == CheckboxPart)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -213,12 +213,12 @@ void RenderThemeWx::setRadioSize(RenderStyle* style) const
     setCheckboxSize(style);
 }
 
-bool RenderThemeWx::supportsFocus(EAppearance appearance) const
+bool RenderThemeWx::supportsFocus(ControlPart part) const
 {
-    switch (appearance) {
-        case PushButtonAppearance:
-        case ButtonAppearance:
-        case TextFieldAppearance:
+    switch (part) {
+        case PushButtonPart:
+        case ButtonPart:
+        case TextFieldPart:
             return true;
         default: // No for all others...
             return false;
@@ -239,21 +239,21 @@ bool RenderThemeWx::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     if (!isEnabled(o))
         flags |= wxCONTROL_DISABLED;
 
-    EAppearance appearance = o->style()->appearance();
-    if (supportsFocus(o->style()->appearance()) && isFocused(o))
+    ControlPart part = o->style()->appearance();
+    if (supportsFocus(part) && isFocused(o))
         flags |= wxCONTROL_FOCUSED;
 
     if (isPressed(o))
         flags |= wxCONTROL_PRESSED;
     
-    if (appearance == PushButtonAppearance || appearance == ButtonAppearance)
+    if (part == PushButtonPart || part == ButtonPart)
         wxRendererNative::Get().DrawPushButton(window, *dc, r, flags);
-    else if(appearance == RadioAppearance) {
+    else if(part == RadioPart) {
         if (isChecked(o))
             flags |= wxCONTROL_CHECKED;        
         wxRenderer_DrawRadioButton(window, *dc, r, flags);
     }
-    else if(appearance == CheckboxAppearance) {
+    else if(part == CheckboxPart) {
         if (isChecked(o))
             flags |= wxCONTROL_CHECKED;
         wxRendererNative::Get().DrawCheckBox(window, *dc, r, flags);
