@@ -1,5 +1,23 @@
 2008-10-16  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        - fixed <rdar://problem/5806316> JavaScriptCore should not force building with gcc 4.0
+        - use gcc 4.2 when building with Xcode 3.1 or newer on Leopard, even though this is not the default
+
+        This time there is no performance regression; we can avoid having
+        to use the fastcall calling convention for CTI functions by using
+        varargs to prevent the compiler from moving things around on the
+        stack.
+        
+        * Configurations/DebugRelease.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        * VM/Machine.h:
+        * wtf/Platform.h:
+
+2008-10-16  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - fix for REGRESSION: r37631 causing crashes on buildbot

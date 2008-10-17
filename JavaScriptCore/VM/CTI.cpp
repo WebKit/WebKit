@@ -116,7 +116,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #endif
     "call " SYMBOL_STRING(_ZN3JSC7Machine12cti_vm_throwEPPv) "\n"
 #else
-    "call " SYMBOL_STRING(_ZN3JSC7Machine12cti_vm_throwEPv) "\n"
+    "call " SYMBOL_STRING(_ZN3JSC7Machine12cti_vm_throwEPvz) "\n"
 #endif
     "addl $0x24, %esp" "\n"
     "popl %edi" "\n"

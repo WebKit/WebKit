@@ -302,73 +302,6 @@
 		E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EF79A80CE97BA60088D500 /* UTF8.cpp */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		1CFE4BEC0B0BA1EB00CC444D /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		1CFE4BF10B0BA22200CC444D /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B88E0014FEFF /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B88E0014FFFF /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B88F0014FEFF /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B88F0014FFFF /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B89F0014FEFF /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5DAD97A80B39B89F0014FFFF /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXContainerItemProxy section */
 		141211350A48796100480255 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1620,8 +1553,6 @@
 				144005C70A5338C60005F061 /* Headers */,
 			);
 			buildRules = (
-				5DAD97A80B39B88E0014FEFF /* PBXBuildRule */,
-				5DAD97A80B39B88E0014FFFF /* PBXBuildRule */,
 			);
 			dependencies = (
 				141211360A48796100480255 /* PBXTargetDependency */,
@@ -1640,8 +1571,6 @@
 				14BD59BD0A3E8F9000BAF59C /* Frameworks */,
 			);
 			buildRules = (
-				5DAD97A80B39B88F0014FEFF /* PBXBuildRule */,
-				5DAD97A80B39B88F0014FFFF /* PBXBuildRule */,
 			);
 			dependencies = (
 				14270B080A451DA10080EEEA /* PBXTargetDependency */,
@@ -1664,8 +1593,6 @@
 				1C395CBC0C6BCC16000D1E52 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
-				1CFE4BF10B0BA22200CC444D /* PBXBuildRule */,
-				1CFE4BEC0B0BA1EB00CC444D /* PBXBuildRule */,
 			);
 			dependencies = (
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
@@ -1686,8 +1613,6 @@
 				5D5D8ABF0E0D0B0300F9C692 /* Fix Framework Reference */,
 			);
 			buildRules = (
-				5DAD97A80B39B89F0014FEFF /* PBXBuildRule */,
-				5DAD97A80B39B89F0014FFFF /* PBXBuildRule */,
 			);
 			dependencies = (
 				14270B0C0A451DA40080EEEA /* PBXTargetDependency */,
@@ -2098,7 +2023,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_VERSION = 4.0;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;

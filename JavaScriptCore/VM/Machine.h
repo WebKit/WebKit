@@ -57,7 +57,7 @@ namespace JSC {
 #define CTI_ARGS void** args
 #define ARGS (args)
 #else
-#define CTI_ARGS void* args
+#define CTI_ARGS void* args, ...
 #define ARGS (&args)
 #endif
 
