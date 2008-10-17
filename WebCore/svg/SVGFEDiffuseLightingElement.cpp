@@ -88,9 +88,6 @@ bool SVGFEDiffuseLightingElement::build(FilterBuilder* builder)
     RefPtr<RenderStyle> filterStyle = resolveStyle(parentStyle.get());
     Color color = filterStyle->svgStyle()->lightingColor();
     
-    parentStyle->deref(document()->renderArena());
-    filterStyle->deref(document()->renderArena());
-    
     RefPtr<FilterEffect> addedEffect = FEDiffuseLighting::create(input1, color, surfaceScale(), diffuseConstant(), 
                                             kernelUnitLengthX(), kernelUnitLengthY(), findLights());
     builder->add(result(), addedEffect.release());
