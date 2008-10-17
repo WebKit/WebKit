@@ -4,21 +4,26 @@
         function test() {
             var tempConsole = document.getElementById('console');
             var console = window.opener.document.getElementById('console');
+            // On the first pass, we'll temporarily set the output to
+            // to failure, and then go(0).  On the second pass,
+            // we set the output back to success and close the window.
             if (window.opener.i == 0) {
                 tempConsole.innerHTML = 'Test Failed';
                 console.innerHTML = tempConsole.innerHTML;
-                window.opener.i = window.opener.i + 1;
+                window.opener.i = 1;
                 history.go(0);
             } else {
                 console.innerHTML = tempConsole.innerHTML;
+                window.opener.i = 2;
                 window.close();
             }
         }
 
         function closed()
         {
-            if (window.layoutTestController)
-                opener.setTimeout("layoutTestController.notifyDone()", 0);
+            if (window.opener.i == 2)
+                if (window.layoutTestController)
+                    opener.setTimeout("layoutTestController.notifyDone()", 0);
         }
         </script>
     </head>

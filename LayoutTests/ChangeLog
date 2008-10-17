@@ -1,3 +1,12 @@
+2008-10-17  Pamela Greene  <pam@chromium.org>
+
+        Fix potential race by running two passes of test to defer notifyDone.
+        See https://bugs.webkit.org/show_bug.cgi?id=21576
+
+        Reviewed by Timothy Hatcher.
+
+        * fast/history/resources/history_reload_window.html:
+
 2008-10-16  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Rubber-stamped by Alexey Proskuryakov.
