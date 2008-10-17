@@ -511,16 +511,7 @@ StructureID* JSObject::createInheritorID()
 
 void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
 {
-    ASSERT(newSize > oldSize);
-
-    JSValue** oldPropertStorage = m_propertyStorage;
-    m_propertyStorage = new JSValue*[newSize];
-
-    for (unsigned i = 0; i < oldSize; ++i)
-        m_propertyStorage[i] = oldPropertStorage[i];
-
-    if (oldPropertStorage != m_inlineStorage)
-        delete [] oldPropertStorage;
+    allocatePropertyStorageInline(oldSize, newSize);
 }
 
 JSObject* constructEmptyObject(ExecState* exec)

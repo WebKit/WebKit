@@ -196,6 +196,7 @@ public:
         OP_POP_EAX                      = 0x58,
         PRE_OPERAND_SIZE                = 0x66,
         PRE_SSE_66                      = 0x66,
+        OP_PUSH_Iz                      = 0x68,
         OP_IMUL_GvEvIz                  = 0x69,
         OP_GROUP1_EvIz                  = 0x81,
         OP_GROUP1_EvIb                  = 0x83,
@@ -291,6 +292,12 @@ public:
     {
         m_buffer->putByte(OP_GROUP5_Ev);
         emitModRm_opm(GROUP5_OP_PUSH, base, offset);
+    }
+
+    void pushl_i32(int imm)
+    {
+        m_buffer->putByte(OP_PUSH_Iz);
+        m_buffer->putInt(imm);
     }
     
     void popl_r(RegisterID reg)

@@ -177,6 +177,7 @@ namespace JSC {
         virtual bool isNotAnObjectErrorStub() const { return false; }
 
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
+        void allocatePropertyStorageInline(size_t oldSize, size_t newSize);
         bool usingInlineStorage() const { return m_propertyStorage == m_inlineStorage; }
 
         static const size_t inlineStorageCapacity = 2;
@@ -504,6 +505,20 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue* value)
         return;
     }
     asCell()->put(exec, propertyName, value);
+}
+
+ALWAYS_INLINE void JSObject::allocatePropertyStorageInline(size_t oldSize, size_t newSize)
+{
+    ASSERT(newSize > oldSize);
+
+    JSValue** oldPropertStorage = m_propertyStorage;
+    m_propertyStorage = new JSValue*[newSize];
+
+    for (unsigned i = 0; i < oldSize; ++i)
+        m_propertyStorage[i] = oldPropertStorage[i];
+
+    if (oldPropertStorage != m_inlineStorage)
+        delete [] oldPropertStorage;
 }
 
 } // namespace JSC

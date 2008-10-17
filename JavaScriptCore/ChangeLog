@@ -1,3 +1,26 @@
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - speed up transitions that resize the property storage a fair bit
+        
+        ~3% speedup on v8 RayTrace benchmark, ~1% on DeltaBlue
+
+        * VM/CTI.cpp:
+        (JSC::resizePropertyStorage): renamed from transitionObject, and reduced to just resize
+        the object's property storage with one inline call.
+        (JSC::CTI::privateCompilePutByIdTransition): Use a separate function for property storage
+        resize, but still do all the rest of the work in assembly in that case, and pass the known
+        compile-time constants of old and new size rather than structureIDs, saving a bunch of
+        redundant memory access.
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::allocatePropertyStorage): Just call the inline version.
+        * kjs/JSObject.h:
+        (JSC::JSObject::allocatePropertyStorageInline): Inline version of allocatePropertyStorage
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::pushl_i32): Add code to assmeble push of a constant; code originally by Cameron Zwarich.
+
 2008-10-17  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -2875,12 +2875,11 @@ void CTI::privateCompilePutByIdReplace(StructureID* structureID, size_t cachedOf
 
 extern "C" {
 
-static JSValue* transitionObject(StructureID* newStructureID, size_t cachedOffset, JSObject* baseObject, JSValue* value)
-{
-    baseObject->transitionTo(newStructureID);
-    baseObject->putDirectOffset(cachedOffset, value);
-    return baseObject;
-}
+    static JSValue* resizePropertyStorage(JSObject* baseObject, size_t oldSize, size_t newSize)
+    {
+        baseObject->allocatePropertyStorageInline(oldSize, newSize);
+        return baseObject;
+    }
 
 }
 
@@ -2927,29 +2926,28 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
         m_jit.link(successCases[i], m_jit.label());
 
     X86Assembler::JmpSrc callTarget;
-    // Fast case, don't need to do any heavy lifting, so don't bother making a call.
-    if (!transitionWillNeedStorageRealloc(oldStructureID, newStructureID)) {
-        // Assumes m_refCount can be decremented easily, refcount decrement is safe as 
-        // codeblock should ensure oldStructureID->m_refCount > 0
-        m_jit.subl_i8m(1, reinterpret_cast<void*>(oldStructureID));
-        m_jit.addl_i8m(1, reinterpret_cast<void*>(newStructureID));
-        m_jit.movl_i32m(reinterpret_cast<uint32_t>(newStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
 
-        // write the value
-        m_jit.movl_mr(OBJECT_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
-        m_jit.movl_rm(X86::edx, cachedOffset * sizeof(JSValue*), X86::eax);
-    } else {
-        // Slow case transition -- we're going to need to quite a bit of work,
-        // so just make a call
+    // emit a call only if storage realloc is needed
+    if (transitionWillNeedStorageRealloc(oldStructureID, newStructureID)) {
         m_jit.pushl_r(X86::edx);
-        m_jit.pushl_r(X86::eax);
-        m_jit.movl_i32r(cachedOffset, X86::eax);
-        m_jit.pushl_r(X86::eax);
-        m_jit.movl_i32r(reinterpret_cast<uint32_t>(newStructureID), X86::eax);
+        m_jit.pushl_i32(newStructureID->propertyStorageCapacity());
+        m_jit.pushl_i32(oldStructureID->propertyStorageCapacity());
         m_jit.pushl_r(X86::eax);
         callTarget = m_jit.emitCall();
-        m_jit.addl_i32r(4 * sizeof(void*), X86::esp);
+        m_jit.addl_i32r(3 * sizeof(void*), X86::esp);
+        m_jit.popl_r(X86::edx);
     }
+
+    // Assumes m_refCount can be decremented easily, refcount decrement is safe as 
+    // codeblock should ensure oldStructureID->m_refCount > 0
+    m_jit.subl_i8m(1, reinterpret_cast<void*>(oldStructureID));
+    m_jit.addl_i8m(1, reinterpret_cast<void*>(newStructureID));
+    m_jit.movl_i32m(reinterpret_cast<uint32_t>(newStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+
+    // write the value
+    m_jit.movl_mr(OBJECT_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
+    m_jit.movl_rm(X86::edx, cachedOffset * sizeof(JSValue*), X86::eax);
+
     m_jit.ret();
     
     X86Assembler::JmpSrc failureJump;
@@ -2967,7 +2965,7 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
         X86Assembler::link(code, failureJump, reinterpret_cast<void*>(Machine::cti_op_put_by_id_fail));
 
     if (transitionWillNeedStorageRealloc(oldStructureID, newStructureID))
-        X86Assembler::link(code, callTarget, reinterpret_cast<void*>(transitionObject));
+        X86Assembler::link(code, callTarget, reinterpret_cast<void*>(resizePropertyStorage));
     
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
     
