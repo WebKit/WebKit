@@ -57,14 +57,11 @@ SVGFilterEffect* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) cons
 
 bool SVGFEFloodElement::build(FilterBuilder* builder)
 {
-    RenderStyle* parentStyle = this->styleForRenderer(parent()->renderer());
-    RenderStyle* filterStyle = this->resolveStyle(parentStyle);
+    RefPtr<RenderStyle> parentStyle = styleForRenderer(parent()->renderer());
+    RefPtr<RenderStyle> filterStyle = resolveStyle(parentStyle.get());
 
     Color color = filterStyle->svgStyle()->floodColor();
     float opacity = filterStyle->svgStyle()->floodOpacity();
-
-    parentStyle->deref(document()->renderArena());
-    filterStyle->deref(document()->renderArena());
 
     builder->add(result(), FEFlood::create(color, opacity));
     
