@@ -40,12 +40,12 @@ namespace WebCore {
 // for a single RenderObject.
 class KeyframeAnimation : public AnimationBase {
 public:
-    static PassRefPtr<KeyframeAnimation> create(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compositeAnimation, const RenderStyle* unanimatedStyle)
+    static PassRefPtr<KeyframeAnimation> create(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     {
         return adoptRef(new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     };
     
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
 
     const AtomicString& name() const { return m_keyframes.animationName(); }
     int index() const { return m_index; }
@@ -55,7 +55,7 @@ public:
     
     bool hasAnimationForProperty(int property) const;
     
-    const RenderStyle* unanimatedStyle() const { return m_unanimatedStyle; }
+    RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
 
 protected:
     virtual void onAnimationStart(double elapsedTime);
@@ -74,7 +74,7 @@ protected:
     void validateTransformFunctionList();
 
 private:
-    KeyframeAnimation(const Animation* animation, RenderObject*, int index, CompositeAnimation*, const RenderStyle* unanimatedStyle);
+    KeyframeAnimation(const Animation* animation, RenderObject*, int index, CompositeAnimation*, RenderStyle* unanimatedStyle);
     virtual ~KeyframeAnimation();
     
     // The keyframes that we are blending.
@@ -84,7 +84,7 @@ private:
     int m_index;
 
     // The style just before we started animation
-    const RenderStyle* m_unanimatedStyle;
+    RefPtr<RenderStyle> m_unanimatedStyle;
 };
 
 } // namespace WebCore

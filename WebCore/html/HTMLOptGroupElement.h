@@ -41,7 +41,7 @@ public:
     virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     virtual void attach();
     virtual void detach();
-    virtual void setRenderStyle(RenderStyle*);
+    virtual void setRenderStyle(PassRefPtr<RenderStyle>);
 
     virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
     virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
@@ -62,7 +62,7 @@ private:
     
     void recalcSelectOptions();
 
-    RenderStyle* m_style;
+    RefPtr<RenderStyle> m_style;
 };
 
 } //namespace

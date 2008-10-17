@@ -34,7 +34,7 @@ public:
     void resetComputedStyle(Element*);
 
     IntSize m_minimumSizeForResizing;
-    RenderStyle* m_computedStyle;
+    RefPtr<RenderStyle> m_computedStyle;
 };
 
 inline IntSize defaultMinimumSizeForResizing()
@@ -44,16 +44,12 @@ inline IntSize defaultMinimumSizeForResizing()
 
 inline ElementRareData::ElementRareData(Element* e)
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
-    , m_computedStyle(0)
 {
 }
 
 inline void ElementRareData::resetComputedStyle(Element* element)
 {
-    if (!m_computedStyle)
-        return;
-    m_computedStyle->deref(element->document()->renderArena());
-    m_computedStyle = 0;
+    m_computedStyle.clear();
 }
 
 }

@@ -114,20 +114,20 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
     if (ch == NoChange && s1->hasPseudoStyle(RenderStyle::BEFORE)) {
-        RenderStyle* ps2 = s2->getPseudoStyle(RenderStyle::BEFORE);
+        RenderStyle* ps2 = s2->getCachedPseudoStyle(RenderStyle::BEFORE);
         if (!ps2)
             ch = NoInherit;
         else {
-            RenderStyle* ps1 = s1->getPseudoStyle(RenderStyle::BEFORE);
+            RenderStyle* ps1 = s1->getCachedPseudoStyle(RenderStyle::BEFORE);
             ch = ps1 && *ps1 == *ps2 ? NoChange : NoInherit;
         }
     }
     if (ch == NoChange && s1->hasPseudoStyle(RenderStyle::AFTER)) {
-        RenderStyle* ps2 = s2->getPseudoStyle(RenderStyle::AFTER);
+        RenderStyle* ps2 = s2->getCachedPseudoStyle(RenderStyle::AFTER);
         if (!ps2)
             ch = NoInherit;
         else {
-            RenderStyle* ps1 = s1->getPseudoStyle(RenderStyle::AFTER);
+            RenderStyle* ps1 = s1->getCachedPseudoStyle(RenderStyle::AFTER);
             ch = ps2 && *ps1 == *ps2 ? NoChange : NoInherit;
         }
     }
@@ -1027,10 +1027,10 @@ void Node::createRendererIfNeeded()
         && parent->childShouldCreateRenderer(this)
 #endif
         ) {
-        RenderStyle* style = styleForRenderer(parentRenderer);
-        if (rendererIsNeeded(style)) {
-            if (RenderObject* r = createRenderer(document()->renderArena(), style)) {
-                if (!parentRenderer->isChildAllowed(r, style))
+        RefPtr<RenderStyle> style = styleForRenderer(parentRenderer);
+        if (rendererIsNeeded(style.get())) {
+            if (RenderObject* r = createRenderer(document()->renderArena(), style.get())) {
+                if (!parentRenderer->isChildAllowed(r, style.get()))
                     r->destroy();
                 else {
                     setRenderer(r);
@@ -1039,17 +1039,14 @@ void Node::createRendererIfNeeded()
                 }
             }
         }
-        style->deref(document()->renderArena());
     }
 }
 
-RenderStyle* Node::styleForRenderer(RenderObject* parent)
+PassRefPtr<RenderStyle> Node::styleForRenderer(RenderObject* parent)
 {
     if (isElementNode())
         return document()->styleSelector()->styleForElement(static_cast<Element*>(this));
-    RenderStyle* style = parent->style();
-    style->ref();
-    return style;
+    return parent->style();
 }
 
 bool Node::rendererIsNeeded(RenderStyle *style)
@@ -1068,7 +1065,7 @@ RenderStyle* Node::nonRendererRenderStyle() const
     return 0; 
 }   
 
-void Node::setRenderStyle(RenderStyle* s)
+void Node::setRenderStyle(PassRefPtr<RenderStyle> s)
 {
     if (m_renderer)
         m_renderer->setAnimatableStyle(s); 

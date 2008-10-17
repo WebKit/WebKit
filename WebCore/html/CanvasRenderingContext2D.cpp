@@ -1181,21 +1181,17 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    RenderArena* arena = m_canvas->document()->renderArena();
-    RenderStyle* newStyle = new (arena) RenderStyle();
-    newStyle->ref();
+    RefPtr<RenderStyle> newStyle = RenderStyle::create();
     if (m_canvas->computedStyle())
         newStyle->setFontDescription(m_canvas->computedStyle()->fontDescription());
 
     // Now map the font property into the style.
     CSSStyleSelector* styleSelector = m_canvas->document()->styleSelector();
-    styleSelector->applyPropertyToStyle(CSSPropertyFont, tempDecl->getPropertyCSSValue(CSSPropertyFont).get(), newStyle);
+    styleSelector->applyPropertyToStyle(CSSPropertyFont, tempDecl->getPropertyCSSValue(CSSPropertyFont).get(), newStyle.get());
     
     state().m_font = newStyle->font();
     state().m_font.update(styleSelector->fontSelector());
     state().m_realizedFont = true;
-
-    newStyle->deref(arena);
     
     // Set the font in the graphics context.
     GraphicsContext* c = drawingContext();

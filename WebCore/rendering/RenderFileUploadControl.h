@@ -57,7 +57,7 @@ protected:
 
 private:
     int maxFilenameWidth() const;
-    RenderStyle* createButtonStyle(const RenderStyle* parentStyle) const;
+    PassRefPtr<RenderStyle> createButtonStyle(const RenderStyle* parentStyle) const;
 
     RefPtr<HTMLInputElement> m_button;
     RefPtr<FileChooser> m_fileChooser;

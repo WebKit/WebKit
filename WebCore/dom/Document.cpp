@@ -1129,22 +1129,18 @@ void Document::recalcStyle(StyleChange change)
         // style selector may set this again during recalc
         m_hasNodesWithPlaceholderStyle = false;
         
-        RenderStyle* oldStyle = renderer()->style();
-        if (oldStyle)
-            oldStyle->ref();
-        RenderStyle* _style = new (m_renderArena) RenderStyle();
-        _style->ref();
-        _style->setDisplay(BLOCK);
-        _style->setVisuallyOrdered(visuallyOrdered);
-        _style->setZoom(frame()->pageZoomFactor());
-        m_styleSelector->setStyle(_style);
+        RefPtr<RenderStyle> documentStyle = RenderStyle::create();
+        documentStyle->setDisplay(BLOCK);
+        documentStyle->setVisuallyOrdered(visuallyOrdered);
+        documentStyle->setZoom(frame()->pageZoomFactor());
+        m_styleSelector->setStyle(documentStyle);
     
         FontDescription fontDescription;
         fontDescription.setUsePrinterFont(printing());
         if (Settings* settings = this->settings()) {
             fontDescription.setRenderingMode(settings->fontRenderingMode());
             if (printing() && !settings->shouldPrintBackgrounds())
-                _style->setForceBackgroundsToWhite(true);
+                documentStyle->setForceBackgroundsToWhite(true);
             const AtomicString& stdfont = settings->standardFontFamily();
             if (!stdfont.isEmpty()) {
                 fontDescription.firstFamily().setFamily(stdfont);
@@ -1154,20 +1150,16 @@ void Document::recalcStyle(StyleChange change)
             m_styleSelector->setFontSize(fontDescription, m_styleSelector->fontSizeForKeyword(CSSValueMedium, inCompatMode(), false));
         }
 
-        _style->setFontDescription(fontDescription);
-        _style->font().update(m_styleSelector->fontSelector());
+        documentStyle->setFontDescription(fontDescription);
+        documentStyle->font().update(m_styleSelector->fontSelector());
         if (inCompatMode())
-            _style->setHtmlHacks(true); // enable html specific rendering tricks
+            documentStyle->setHtmlHacks(true); // enable html specific rendering tricks
 
-        StyleChange ch = diff(_style, oldStyle);
+        StyleChange ch = diff(documentStyle.get(), renderer()->style());
         if (renderer() && ch != NoChange)
-            renderer()->setStyle(_style);
+            renderer()->setStyle(documentStyle.release());
         if (change != Force)
             change = ch;
-
-        _style->deref(m_renderArena);
-        if (oldStyle)
-            oldStyle->deref(m_renderArena);
     }
 
     for (Node* n = firstChild(); n; n = n->nextSibling())

@@ -1,3 +1,200 @@
+2008-10-16  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/attachment.cgi?bugid=21647
+
+        Make RenderStyle inherit from RefCounted so that it works with RefPtr.  RenderStyle was being malloced
+        out of the RenderArena.  Years and years ago (before TCMalloc), the plan was to make RenderStyles and
+        all their associated sub-structs use the arena.  However only the RenderStyle itself was ever changed
+        to use the arena.
+
+        At a later point style sharing was implemented, which made using the arena for styles pretty pointless,
+        as the bulk of the styles on a given page are actually shared.  Not ever making the sub-structs use the
+        arena also limited the usefulness.
+
+        Now that we have RefPtr/PassRefPtr to eliminate manual ref/deref and now that we use TCMalloc for fast
+        mallocs, there is no reason to keep RenderStyles in the arena.  The benefits of being able to eliminate
+        manual ref/deref far outweigh keeping them in the arena.
+
+        Reviewed by Adam Roben
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        These methods now return a PassRefPtr.  They will null out the m_style variable as they hand it back
+        so that it isn't left pointing to the previous style resolve RenderStyle (which is what the old code did).
+
+        (WebCore::CSSStyleSelector::updateFont):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::style):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Element.cpp:
+        (WebCore::Element::styleForRenderer):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::computedStyle):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::resetComputedStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::styleForRenderer):
+        (WebCore::Node::setRenderStyle):
+        * dom/Node.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::attach):
+        (WebCore::HTMLOptGroupElement::detach):
+        (WebCore::HTMLOptGroupElement::setRenderStyle):
+        (WebCore::HTMLOptGroupElement::nonRendererRenderStyle):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::attach):
+        (WebCore::HTMLOptionElement::detach):
+        (WebCore::HTMLOptionElement::setRenderStyle):
+        (WebCore::HTMLOptionElement::nonRendererRenderStyle):
+        * html/HTMLOptionElement.h:
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::animate):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations):
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::updateTransitions):
+        (WebCore::CompositeAnimationPrivate::updateKeyframeAnimations):
+        (WebCore::CompositeAnimationPrivate::animate):
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::~ImplicitAnimation):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::isTargetPropertyEqual):
+        (WebCore::ImplicitAnimation::blendPropertyValueInStyle):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::create):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::~KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::validateTransformFunctionList):
+        * page/animation/KeyframeAnimation.h:
+        (WebCore::KeyframeAnimation::create):
+        (WebCore::KeyframeAnimation::unanimatedStyle):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlShadowRootElement::MediaControlShadowRootElement):
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild):
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        (WebCore::RenderFileUploadControl::createButtonStyle):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::createAnonymousFlow):
+        * rendering/RenderFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildToFlow):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollCornerStyle):
+        (WebCore::RenderLayer::updateResizerStyle):
+        (WebCore::RenderLayer::updateReflectionStyle):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::styleDidChange):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createPanel):
+        (WebCore::RenderMedia::createTimeDisplay):
+        (WebCore::RenderMedia::changeOpacity):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        (WebCore::RenderObject::selectionForegroundColor):
+        (WebCore::RenderObject::createAnonymousBlock):
+        (WebCore::RenderObject::setAnimatableStyle):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::setStyleInternal):
+        (WebCore::RenderObject::arenaDelete):
+        (WebCore::RenderObject::firstLineStyle):
+        (WebCore::RenderObject::getPseudoStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::style):
+        * rendering/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::setStyle):
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::styleDidChange):
+        (WebCore::RenderSlider::createThumbStyle):
+        (WebCore::RenderSlider::updateFromElement):
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        (WebCore::RenderTextControl::createInnerBlockStyle):
+        (WebCore::RenderTextControl::createInnerTextStyle):
+        (WebCore::RenderTextControl::createResultsButtonStyle):
+        (WebCore::RenderTextControl::createCancelButtonStyle):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        (WebCore::RenderTextControl::updatePlaceholderVisibility):
+        * rendering/RenderTextControl.h:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::attachInnerElement):
+        * rendering/TextControlInnerElements.h:
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::clear):
+        (WebCore::KeyframeList::operator==):
+        (WebCore::KeyframeList::insert):
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeValue::KeyframeValue):
+        (WebCore::KeyframeValue::~KeyframeValue):
+        (WebCore::KeyframeValue::key):
+        (WebCore::KeyframeValue::style):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::defaultStyle):
+        (WebCore::RenderStyle::create):
+        (WebCore::RenderStyle::createDefaultStyle):
+        (WebCore::RenderStyle::clone):
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::getCachedPseudoStyle):
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        (WebCore::InheritedFlags::operator!=):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::resolveStyle):
+        * svg/SVGStyledElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::recalcStyle):
+        (WebCore::SVGUseElement::attachShadowTree):
+
 2008-10-16  Kenneth Russell  <kenneth.russell@sun.com>
 
         Reviewed and landed by Anders Carlsson.

@@ -41,7 +41,7 @@ public:
     virtual bool isShadowNode() const { return m_shadowParent; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
     void setShadowParentNode(Node* node) { m_shadowParent = node; }
-    void attachInnerElement(Node*, RenderStyle*, RenderArena*);
+    void attachInnerElement(Node*, PassRefPtr<RenderStyle>, RenderArena*);
     
 private:
     Node* m_shadowParent;

@@ -34,7 +34,7 @@ class CSSValueList;
 
 class CSSVariableDependentValue : public CSSValue {
 public:
-    static PassRefPtr<CSSVariableDependentValue> create(const PassRefPtr<CSSValueList>& valueList)
+    static PassRefPtr<CSSVariableDependentValue> create(PassRefPtr<CSSValueList> valueList)
     {
         return adoptRef(new CSSVariableDependentValue(valueList));
     }
@@ -47,7 +47,7 @@ public:
     CSSValueList* valueList() const { return m_list.get(); }
 
 private:
-    CSSVariableDependentValue(const PassRefPtr<CSSValueList>&);
+    CSSVariableDependentValue(PassRefPtr<CSSValueList>);
     
     RefPtr<CSSValueList> m_list;
 };

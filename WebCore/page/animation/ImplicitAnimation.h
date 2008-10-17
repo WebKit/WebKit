@@ -38,7 +38,7 @@ namespace WebCore {
 // for a single RenderObject.
 class ImplicitAnimation : public AnimationBase {
 public:
-    static PassRefPtr<ImplicitAnimation> create(const Animation* animation, int animatingProperty, RenderObject* renderer, CompositeAnimation* compositeAnimation, const RenderStyle* fromStyle)
+    static PassRefPtr<ImplicitAnimation> create(const Animation* animation, int animatingProperty, RenderObject* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
     {
         return adoptRef(new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
     };
@@ -48,8 +48,8 @@ public:
 
     virtual void onAnimationEnd(double elapsedTime);
 
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
-    virtual void reset(const RenderStyle* to);
+    virtual void animate(CompositeAnimation*, RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
+    virtual void reset(RenderStyle* to);
 
     void setOverridden(bool);
     virtual bool overridden() const { return m_overridden; }
@@ -71,7 +71,7 @@ protected:
     void validateTransformFunctionList();
 
 private:
-    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*, const RenderStyle* fromStyle);    
+    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*, RenderStyle* fromStyle);    
     virtual ~ImplicitAnimation();
 
     int m_transitionProperty;   // Transition property as specified in the RenderStyle. May be cAnimateAll
@@ -79,8 +79,8 @@ private:
     bool m_overridden;          // true when there is a keyframe animation that overrides the transitioning property
 
     // The two styles that we are blending.
-    const RenderStyle* m_fromStyle;
-    const RenderStyle* m_toStyle;
+    RefPtr<RenderStyle> m_fromStyle;
+    RefPtr<RenderStyle> m_toStyle;
 };
 
 } // namespace WebCore

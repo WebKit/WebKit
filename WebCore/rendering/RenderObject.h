@@ -376,8 +376,11 @@ private:
     bool includeHorizontalScrollbarSize() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO); }
 
 public:
-    RenderStyle* getPseudoStyle(RenderStyle::PseudoId, RenderStyle* parentStyle = 0, bool useCachedStyle = true) const;
-
+    // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
+    // any pseudo classes (and therefore has no concept of changing state).
+    RenderStyle* getCachedPseudoStyle(RenderStyle::PseudoId, RenderStyle* parentStyle = 0) const;
+    PassRefPtr<RenderStyle> getUncachedPseudoStyle(RenderStyle::PseudoId, RenderStyle* parentStyle = 0) const;
+    
     void updateDragState(bool dragOn);
 
     RenderView* view() const;
@@ -539,14 +542,14 @@ public:
     // Called to update a style that is allowed to trigger animations.
     // FIXME: Right now this will typically be called only when updating happens from the DOM on explicit elements.
     // We don't yet handle generated content animation such as first-letter or before/after (we'll worry about this later).
-    void setAnimatableStyle(RenderStyle*);
+    void setAnimatableStyle(PassRefPtr<RenderStyle>);
 
     // Set the style of the object and update the state of the object accordingly.
-    virtual void setStyle(const RenderStyle*);
+    virtual void setStyle(PassRefPtr<RenderStyle>);
 
     // Updates only the local style ptr of the object.  Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(RenderStyle*);
+    void setStyleInternal(PassRefPtr<RenderStyle>);
 
     // returns the containing block level element for this element.
     RenderBlock* containingBlock() const;
@@ -695,7 +698,7 @@ public:
     virtual int minPrefWidth() const { return 0; }
     virtual int maxPrefWidth() const { return 0; }
 
-    RenderStyle* style() const { return m_style; }
+    RenderStyle* style() const { return m_style.get(); }
     RenderStyle* firstLineStyle() const;
     RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
 
@@ -911,7 +914,7 @@ protected:
     void arenaDelete(RenderArena*, void* objectBase);
 
 private:
-    RenderStyle* m_style;
+    RefPtr<RenderStyle> m_style;
 
     Node* m_node;
 

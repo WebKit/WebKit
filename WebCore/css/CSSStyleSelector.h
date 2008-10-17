@@ -83,15 +83,17 @@ public:
 
         void initElementAndPseudoState(Element*);
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, RenderStyle::PseudoId = RenderStyle::NOPSEUDO);
-        RenderStyle* styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
+        PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
         void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
 
-        RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle = 0);
+        PassRefPtr<RenderStyle> pseudoStyleForElement(RenderStyle::PseudoId, Element*, RenderStyle* parentStyle = 0);
 
     private:
         RenderStyle* locateSharedStyle();
         Node* locateCousinList(Element* parent, unsigned depth = 1);
         bool canShareStyleWithElement(Node*);
+
+        RenderStyle* style() const { return m_style.get(); }
 
     public:
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
@@ -111,7 +113,7 @@ public:
         float smallerFontSize(float size, bool quirksMode) const;
 
     public:
-        void setStyle(RenderStyle* s) { m_style = s; } // Used by the document when setting up its root style.
+        void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
         void setFontSize(FontDescription&, float size);
 
         void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
@@ -249,13 +251,13 @@ public:
         RefPtr<CSSRuleList> m_ruleList;
 
         MediaQueryEvaluator* m_medium;
-        RenderStyle* m_rootDefaultStyle;
+        RefPtr<RenderStyle> m_rootDefaultStyle;
 
         RenderStyle::PseudoId m_dynamicPseudo;
 
         SelectorChecker m_checker;
 
-        RenderStyle* m_style;
+        RefPtr<RenderStyle> m_style;
         RenderStyle* m_parentStyle;
         Element* m_element;
         StyledElement* m_styledElement;

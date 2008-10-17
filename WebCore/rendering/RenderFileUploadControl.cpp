@@ -107,10 +107,10 @@ void RenderFileUploadControl::updateFromElement()
         m_button = new HTMLFileUploadInnerButtonElement(document(), inputElement);
         m_button->setInputType("button");
         m_button->setValue(fileButtonChooseFileLabel());
-        RenderStyle* buttonStyle = createButtonStyle(style());
-        RenderObject* renderer = m_button->createRenderer(renderArena(), buttonStyle);
+        RefPtr<RenderStyle> buttonStyle = createButtonStyle(style());
+        RenderObject* renderer = m_button->createRenderer(renderArena(), buttonStyle.get());
         m_button->setRenderer(renderer);
-        renderer->setStyle(buttonStyle);
+        renderer->setStyle(buttonStyle.release());
         renderer->updateFromElement();
         m_button->setAttached();
         m_button->setInDocument(true);
@@ -134,11 +134,11 @@ int RenderFileUploadControl::maxFilenameWidth() const
         - (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 
-RenderStyle* RenderFileUploadControl::createButtonStyle(const RenderStyle* parentStyle) const
+PassRefPtr<RenderStyle> RenderFileUploadControl::createButtonStyle(const RenderStyle* parentStyle) const
 {
-    RenderStyle* style = getPseudoStyle(RenderStyle::FILE_UPLOAD_BUTTON);
+    RefPtr<RenderStyle> style = getCachedPseudoStyle(RenderStyle::FILE_UPLOAD_BUTTON);
     if (!style) {
-        style = new (renderArena()) RenderStyle;
+        style = RenderStyle::create();
         if (parentStyle)
             style->inheritFrom(parentStyle);
     }
@@ -147,7 +147,7 @@ RenderStyle* RenderFileUploadControl::createButtonStyle(const RenderStyle* paren
     // without this setWhiteSpace.
     style->setWhiteSpace(NOWRAP);
 
-    return style;
+    return style.release();
 }
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)

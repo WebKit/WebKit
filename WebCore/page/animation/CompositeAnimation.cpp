@@ -50,7 +50,7 @@ public:
     
     ~CompositeAnimationPrivate();
 
-    RenderStyle* animate(RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle);
+    PassRefPtr<RenderStyle> animate(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
 
     void setAnimating(bool);
     bool isAnimating() const;
@@ -79,8 +79,8 @@ public:
     void setWaitingForStyleAvailable(bool);
 
 protected:
-    void updateTransitions(RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle);
-    void updateKeyframeAnimations(RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle);
+    void updateTransitions(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
+    void updateKeyframeAnimations(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
 
 private:
     typedef HashMap<int, RefPtr<ImplicitAnimation> > CSSPropertyTransitionsMap;
@@ -100,7 +100,7 @@ CompositeAnimationPrivate::~CompositeAnimationPrivate()
     m_keyframeAnimations.clear();
 }
     
-void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, const RenderStyle* currentStyle, RenderStyle* targetStyle)
+void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     // If currentStyle is null, we don't do transitions
     if (!currentStyle || !targetStyle->transitions())
@@ -133,7 +133,7 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, const 
             // and we have to use the unanimatedStyle from the animation. We do the test
             // against the unanimated style here, but we "override" the transition later.
             const KeyframeAnimation* keyframeAnim = getAnimationForProperty(prop);
-            const RenderStyle* fromStyle = keyframeAnim ? keyframeAnim->unanimatedStyle() : currentStyle;
+            RenderStyle* fromStyle = keyframeAnim ? keyframeAnim->unanimatedStyle() : currentStyle;
 
             // See if there is a current transition for this prop
             ImplicitAnimation* implAnim = m_transitions.get(prop).get();
@@ -168,7 +168,7 @@ void CompositeAnimationPrivate::updateTransitions(RenderObject* renderer, const 
     }
 }
 
-void CompositeAnimationPrivate::updateKeyframeAnimations(RenderObject* renderer, const RenderStyle* currentStyle, RenderStyle* targetStyle)
+void CompositeAnimationPrivate::updateKeyframeAnimations(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     // Nothing to do if we don't have any animations, and didn't have any before
     if (m_keyframeAnimations.isEmpty() && !targetStyle->hasAnimations())
@@ -226,9 +226,9 @@ void CompositeAnimationPrivate::updateKeyframeAnimations(RenderObject* renderer,
         m_keyframeAnimations.remove(animsToBeRemoved[j]);
 }
 
-RenderStyle* CompositeAnimationPrivate::animate(RenderObject* renderer, const RenderStyle* currentStyle, RenderStyle* targetStyle)
+PassRefPtr<RenderStyle> CompositeAnimationPrivate::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
-    RenderStyle* resultStyle = 0;
+    RefPtr<RenderStyle> resultStyle;
 
     // Update animations first so we can see if any transitions are overridden
     updateKeyframeAnimations(renderer, currentStyle, targetStyle);
@@ -263,7 +263,7 @@ RenderStyle* CompositeAnimationPrivate::animate(RenderObject* renderer, const Re
 
     cleanupFinishedAnimations(renderer);
 
-    return resultStyle ? resultStyle : targetStyle;
+    return resultStyle ? resultStyle.release() : targetStyle;
 }
 
 // "animating" means that something is running that requires the timer to keep firing
@@ -521,7 +521,7 @@ CompositeAnimation::~CompositeAnimation()
     delete m_data;
 }
 
-RenderStyle* CompositeAnimation::animate(RenderObject* renderer, const RenderStyle* currentStyle, RenderStyle* targetStyle)
+PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     return m_data->animate(renderer, currentStyle, targetStyle);
 }

@@ -231,14 +231,10 @@ void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange,
     SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
-RenderStyle* SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> SVGStyledElement::resolveStyle(RenderStyle* parentStyle)
 {
-    if (renderer()) {
-        RenderStyle* renderStyle = renderer()->style();
-        renderStyle->ref();
-        return renderStyle;
-    }
-
+    if (renderer())
+        return renderer()->style();
     return document()->styleSelector()->styleForElement(this, parentStyle);
 }
 

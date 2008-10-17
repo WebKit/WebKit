@@ -122,7 +122,7 @@ void RenderTextControl::styleDidChange(RenderStyle::Diff diff, const RenderStyle
 
     if (m_innerText) {
         RenderBlock* textBlockRenderer = static_cast<RenderBlock*>(m_innerText->renderer());
-        RenderStyle* textBlockStyle = createInnerTextStyle(style());
+        RefPtr<RenderStyle> textBlockStyle = createInnerTextStyle(style());
         // We may have set the width and the height in the old style in layout(). Reset them now to avoid
         // getting a spurious layout hint.
         textBlockRenderer->style()->setHeight(Length());
@@ -143,9 +143,9 @@ void RenderTextControl::styleDidChange(RenderStyle::Diff diff, const RenderStyle
     setReplaced(isInline());
 }
 
-RenderStyle* RenderTextControl::createInnerBlockStyle(const RenderStyle* startStyle)
+PassRefPtr<RenderStyle> RenderTextControl::createInnerBlockStyle(const RenderStyle* startStyle)
 {
-    RenderStyle* innerBlockStyle = new (renderArena()) RenderStyle();
+    RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
 
     innerBlockStyle->inheritFrom(startStyle);
     innerBlockStyle->setDisplay(BLOCK);
@@ -153,20 +153,20 @@ RenderStyle* RenderTextControl::createInnerBlockStyle(const RenderStyle* startSt
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
     innerBlockStyle->setUserModify(READ_ONLY);
 
-    return innerBlockStyle;
+    return innerBlockStyle.release();
 }
 
-RenderStyle* RenderTextControl::createInnerTextStyle(const RenderStyle* startStyle)
+PassRefPtr<RenderStyle> RenderTextControl::createInnerTextStyle(const RenderStyle* startStyle)
 {
     HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(node());
     bool placeholderShouldBeVisible = !m_multiLine && static_cast<HTMLInputElement*>(element)->placeholderShouldBeVisible();
 
-    RenderStyle* textBlockStyle = 0;
+    RefPtr<RenderStyle> textBlockStyle;
     if (placeholderShouldBeVisible) {
-        RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::INPUT_PLACEHOLDER);
-        textBlockStyle = new (renderArena()) RenderStyle(*pseudoStyle);
+        RenderStyle* pseudoStyle = getCachedPseudoStyle(RenderStyle::INPUT_PLACEHOLDER);
+        textBlockStyle = RenderStyle::clone(pseudoStyle);
     } else {
-        textBlockStyle = new (renderArena()) RenderStyle();    
+        textBlockStyle = RenderStyle::create();   
         textBlockStyle->inheritFrom(startStyle);
     }
     
@@ -223,46 +223,46 @@ RenderStyle* RenderTextControl::createInnerTextStyle(const RenderStyle* startSty
     if (!element->isEnabled())
         textBlockStyle->setColor(disabledTextColor(textBlockStyle->color(), startStyle->backgroundColor()));
 
-    return textBlockStyle;
+    return textBlockStyle.release();
 }
 
-RenderStyle* RenderTextControl::createResultsButtonStyle(const RenderStyle* startStyle)
+PassRefPtr<RenderStyle> RenderTextControl::createResultsButtonStyle(const RenderStyle* startStyle)
 {
     ASSERT(!m_multiLine);
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    RenderStyle* resultsBlockStyle;
+    RefPtr<RenderStyle> resultsBlockStyle;
     if (input->maxResults() < 0)
-        resultsBlockStyle = getPseudoStyle(RenderStyle::SEARCH_DECORATION);
+        resultsBlockStyle = getCachedPseudoStyle(RenderStyle::SEARCH_DECORATION);
     else if (!input->maxResults())
-        resultsBlockStyle = getPseudoStyle(RenderStyle::SEARCH_RESULTS_DECORATION);
+        resultsBlockStyle = getCachedPseudoStyle(RenderStyle::SEARCH_RESULTS_DECORATION);
     else
-        resultsBlockStyle = getPseudoStyle(RenderStyle::SEARCH_RESULTS_BUTTON);
+        resultsBlockStyle = getCachedPseudoStyle(RenderStyle::SEARCH_RESULTS_BUTTON);
 
     if (!resultsBlockStyle)
-        resultsBlockStyle = new (renderArena()) RenderStyle();
+        resultsBlockStyle = RenderStyle::create();
 
     if (startStyle)
         resultsBlockStyle->inheritFrom(startStyle);
 
-    return resultsBlockStyle;
+    return resultsBlockStyle.release();
 }
 
-RenderStyle* RenderTextControl::createCancelButtonStyle(const RenderStyle* startStyle)
+PassRefPtr<RenderStyle> RenderTextControl::createCancelButtonStyle(const RenderStyle* startStyle)
 {
-    RenderStyle* cancelBlockStyle;
+    RefPtr<RenderStyle> cancelBlockStyle;
     
-    if (RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SEARCH_CANCEL_BUTTON))
+    if (RefPtr<RenderStyle> pseudoStyle = getCachedPseudoStyle(RenderStyle::SEARCH_CANCEL_BUTTON))
         // We may be sharing style with another search field, but we must not share the cancel button style.
-        cancelBlockStyle = new (renderArena()) RenderStyle(*pseudoStyle);
+        cancelBlockStyle = RenderStyle::clone(pseudoStyle.get());
     else
-        cancelBlockStyle = new (renderArena()) RenderStyle();
+        cancelBlockStyle = RenderStyle::create();
 
     if (startStyle)
         cancelBlockStyle->inheritFrom(startStyle);
 
-    updateCancelButtonVisibility(cancelBlockStyle);
+    updateCancelButtonVisibility(cancelBlockStyle.get());
 
-    return cancelBlockStyle;
+    return cancelBlockStyle.release();
 }
 
 void RenderTextControl::createSubtreeIfNeeded()
@@ -271,18 +271,12 @@ void RenderTextControl::createSubtreeIfNeeded()
     if (isSearchField && !m_innerBlock) {
         // Create the inner block element
         m_innerBlock = new TextControlInnerElement(document(), node());
-        RenderStyle* innerBlockStyle = createInnerBlockStyle(style());
-        innerBlockStyle->ref();
-        m_innerBlock->attachInnerElement(node(), innerBlockStyle, renderArena());
-        innerBlockStyle->deref(renderArena());
+        m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
     }
     if (isSearchField && !m_resultsButton) {
         // Create the search results button element
         m_resultsButton = new SearchFieldResultsButtonElement(document());
-        RenderStyle* resultsButtonStyle = createResultsButtonStyle(m_innerBlock->renderer()->style());
-        resultsButtonStyle->ref();
-        m_resultsButton->attachInnerElement(m_innerBlock.get(), resultsButtonStyle, renderArena());
-        resultsButtonStyle->deref(renderArena());
+        m_resultsButton->attachInnerElement(m_innerBlock.get(), createResultsButtonStyle(m_innerBlock->renderer()->style()), renderArena());
     }
     if (!m_innerText) {
         // Create the text block element
@@ -292,19 +286,13 @@ void RenderTextControl::createSubtreeIfNeeded()
         RenderStyle* parentStyle = style();
         if (m_innerBlock)
             parentStyle = m_innerBlock->renderer()->style();
-        RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
-        textBlockStyle->ref();
         m_innerText = new TextControlInnerTextElement(document(), m_innerBlock ? 0 : node());
-        m_innerText->attachInnerElement(m_innerBlock ? m_innerBlock.get() : node(), textBlockStyle, renderArena());
-        textBlockStyle->deref(renderArena());
+        m_innerText->attachInnerElement(m_innerBlock ? m_innerBlock.get() : node(), createInnerTextStyle(parentStyle), renderArena());
     }
     if (isSearchField && !m_cancelButton) {
         // Create the cancel button element
         m_cancelButton = new SearchFieldCancelButtonElement(document());
-        RenderStyle* cancelButtonStyle = createCancelButtonStyle(m_innerBlock->renderer()->style());
-        cancelButtonStyle->ref();
-        m_cancelButton->attachInnerElement(m_innerBlock.get(), cancelButtonStyle, renderArena());
-        cancelButtonStyle->deref(renderArena());
+        m_cancelButton->attachInnerElement(m_innerBlock.get(), createCancelButtonStyle(m_innerBlock->renderer()->style()), renderArena());
     }
 }
 
@@ -1190,14 +1178,12 @@ FontSelector* RenderTextControl::fontSelector() const
 void RenderTextControl::updatePlaceholderVisibility()
 {
     RenderStyle* parentStyle = m_innerBlock ? m_innerBlock->renderer()->style() : style();
-    RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
-    textBlockStyle->ref();
+    RefPtr<RenderStyle> textBlockStyle = createInnerTextStyle(parentStyle);
     m_innerText->renderer()->setStyle(textBlockStyle);
     for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
         if (n->renderer())
             n->renderer()->setStyle(textBlockStyle);
     }
-    textBlockStyle->deref(renderArena());
     updateFromElement();
 }
 

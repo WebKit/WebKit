@@ -181,7 +181,7 @@ public:
     double progress(double scale, double offset, const TimingFunction*) const;
 
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, 
-                         const RenderStyle* targetStyle, RenderStyle*& animatedStyle) { }
+                         const RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) { }
 
     virtual bool shouldFireEvents() const { return false; }
 

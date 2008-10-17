@@ -29,6 +29,8 @@
 #ifndef AnimationController_h
 #define AnimationController_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class AnimationControllerPrivate;
@@ -43,7 +45,7 @@ public:
     ~AnimationController();
 
     void cancelAnimations(RenderObject*);
-    RenderStyle* updateAnimations(RenderObject*, RenderStyle* newStyle);
+    PassRefPtr<RenderStyle> updateAnimations(RenderObject*, RenderStyle* newStyle);
 
     void setAnimationStartTime(RenderObject*, double t);
     void setTransitionStartTime(RenderObject*, int property, double t);

@@ -59,13 +59,13 @@ TextControlInnerElement::TextControlInnerElement(Document* doc, Node* shadowPare
 {
 }
 
-void TextControlInnerElement::attachInnerElement(Node* parent, RenderStyle* style, RenderArena* arena)
+void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<RenderStyle> style, RenderArena* arena)
 {
     // When adding these elements, create the renderer & style first before adding to the DOM.
     // Otherwise, the render tree will create some anonymous blocks that will mess up our layout.
 
     // Create the renderer with the specified style
-    RenderObject* renderer = createRenderer(arena, style);
+    RenderObject* renderer = createRenderer(arena, style.get());
     if (renderer) {
         setRenderer(renderer);
         renderer->setStyle(style);

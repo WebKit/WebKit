@@ -132,36 +132,25 @@ bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 
 void HTMLOptGroupElement::attach()
 {
-    if (parentNode()->renderStyle()) {
-        RenderStyle* style = styleForRenderer(0);
-        setRenderStyle(style);
-        style->deref(document()->renderArena());
-    }
+    if (parentNode()->renderStyle())
+        setRenderStyle(styleForRenderer(0));
     HTMLFormControlElement::attach();
 }
 
 void HTMLOptGroupElement::detach()
 {
-    if (m_style) {
-        m_style->deref(document()->renderArena());
-        m_style = 0;
-    }
+    m_style.clear();
     HTMLFormControlElement::detach();
 }
 
-void HTMLOptGroupElement::setRenderStyle(RenderStyle* newStyle)
+void HTMLOptGroupElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
 {
-    RenderStyle* oldStyle = m_style;
     m_style = newStyle;
-    if (newStyle)
-        newStyle->ref();
-    if (oldStyle)
-        oldStyle->deref(document()->renderArena());
 }
     
 RenderStyle* HTMLOptGroupElement::nonRendererRenderStyle() const 
 { 
-    return m_style; 
+    return m_style.get(); 
 }
 
 String HTMLOptGroupElement::groupLabelText() const

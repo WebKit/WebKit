@@ -93,10 +93,10 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         }
 
         RenderTableCell* cell = new (renderArena()) RenderTableCell(document() /* anonymous object */);
-        RenderStyle* newStyle = new (renderArena()) RenderStyle();
+        RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(style());
         newStyle->setDisplay(TABLE_CELL);
-        cell->setStyle(newStyle);
+        cell->setStyle(newStyle.release());
         addChild(cell, beforeChild);
         cell->addChild(child);
         return;

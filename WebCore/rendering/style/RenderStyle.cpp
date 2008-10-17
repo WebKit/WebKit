@@ -33,55 +33,35 @@
 
 namespace WebCore {
 
-static RenderStyle* defaultStyle;
-
-void* RenderStyle::operator new(size_t sz, RenderArena* renderArena) throw()
+inline RenderStyle* defaultStyle()
 {
-    return renderArena->allocate(sz);
+    static RenderStyle* s_defaultStyle = RenderStyle::createDefaultStyle().releaseRef();
+    return s_defaultStyle;
 }
 
-void RenderStyle::operator delete(void* ptr, size_t sz)
+PassRefPtr<RenderStyle> RenderStyle::create()
 {
-    // Stash size where destroy can find it.
-    *(size_t *)ptr = sz;
+    return adoptRef(new RenderStyle());
 }
 
-void RenderStyle::arenaDelete(RenderArena *arena)
+PassRefPtr<RenderStyle> RenderStyle::createDefaultStyle()
 {
-    RenderStyle* ps = pseudoStyle;
-    RenderStyle* prev = 0;
-
-    while (ps) {
-        prev = ps;
-        ps = ps->pseudoStyle;
-        // to prevent a double deletion.
-        // this works only because the styles below aren't really shared
-        // Dirk said we need another construct as soon as these are shared
-        prev->pseudoStyle = 0;
-        prev->deref(arena);
-    }
-    delete this;
-
-    // Recover the size left there for us by operator delete and free the memory.
-    arena->free(*(size_t *)this, this);
+    return adoptRef(new RenderStyle(true));
 }
 
-inline RenderStyle* initDefaultStyle()
+PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
 {
-    if (!defaultStyle)
-        defaultStyle = ::new RenderStyle(true);
-    return defaultStyle;
+    return adoptRef(new RenderStyle(*other));
 }
 
 RenderStyle::RenderStyle()
-    : box(initDefaultStyle()->box)
-    , visual(defaultStyle->visual)
-    , background(defaultStyle->background)
-    , surround(defaultStyle->surround)
-    , rareNonInheritedData(defaultStyle->rareNonInheritedData)
-    , rareInheritedData(defaultStyle->rareInheritedData)
-    , inherited(defaultStyle->inherited)
-    , pseudoStyle(0)
+    : box(defaultStyle()->box)
+    , visual(defaultStyle()->visual)
+    , background(defaultStyle()->background)
+    , surround(defaultStyle()->surround)
+    , rareNonInheritedData(defaultStyle()->rareNonInheritedData)
+    , rareInheritedData(defaultStyle()->rareInheritedData)
+    , inherited(defaultStyle()->inherited)
     , m_pseudoState(PseudoUnknown)
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
@@ -95,17 +75,15 @@ RenderStyle::RenderStyle()
     , m_firstChildState(false)
     , m_lastChildState(false)
     , m_childIndex(0)
-    , m_ref(0)
 #if ENABLE(SVG)
-    , m_svgStyle(defaultStyle->m_svgStyle)
+    , m_svgStyle(defaultStyle()->m_svgStyle)
 #endif
 {
     setBitDefaults(); // Would it be faster to copy this from the default style?
 }
 
 RenderStyle::RenderStyle(bool)
-    : pseudoStyle(0)
-    , m_pseudoState(PseudoUnknown)
+    : m_pseudoState(PseudoUnknown)
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
     , m_affectedByEmpty(false)
@@ -118,7 +96,6 @@ RenderStyle::RenderStyle(bool)
     , m_firstChildState(false)
     , m_lastChildState(false)
     , m_childIndex(0)
-    , m_ref(1)
 {
     setBitDefaults();
 
@@ -140,7 +117,8 @@ RenderStyle::RenderStyle(bool)
 }
 
 RenderStyle::RenderStyle(const RenderStyle& o)
-    : inherited_flags(o.inherited_flags)
+    : RefCounted<RenderStyle>()
+    , inherited_flags(o.inherited_flags)
     , noninherited_flags(o.noninherited_flags)
     , box(o.box)
     , visual(o.visual)
@@ -149,7 +127,6 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     , rareNonInheritedData(o.rareNonInheritedData)
     , rareInheritedData(o.rareInheritedData)
     , inherited(o.inherited)
-    , pseudoStyle(0)
     , m_pseudoState(o.m_pseudoState)
     , m_affectedByAttributeSelectors(false)
     , m_unique(false)
@@ -163,7 +140,6 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     , m_firstChildState(false)
     , m_lastChildState(false)
     , m_childIndex(0)
-    , m_ref(0)
 #if ENABLE(SVG)
     , m_svgStyle(o.m_svgStyle)
 #endif
@@ -227,23 +203,23 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
     noninherited_flags._pseudoBits |= pseudoBit(pseudo);
 }
 
-RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
+RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid)
 {
-    if (!pseudoStyle || styleType() != NOPSEUDO)
+    if (!m_cachedPseudoStyle || styleType() != NOPSEUDO)
         return 0;
-    RenderStyle* ps = pseudoStyle;
+    RenderStyle* ps = m_cachedPseudoStyle.get();
     while (ps && ps->styleType() != pid)
-        ps = ps->pseudoStyle;
+        ps = ps->m_cachedPseudoStyle.get();
     return ps;
 }
 
-void RenderStyle::addPseudoStyle(RenderStyle* pseudo)
+RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
 {
     if (!pseudo)
-        return;
-    pseudo->ref();
-    pseudo->pseudoStyle = pseudoStyle;
-    pseudoStyle = pseudo;
+        return 0;
+    pseudo->m_cachedPseudoStyle = m_cachedPseudoStyle;
+    m_cachedPseudoStyle = pseudo;
+    return m_cachedPseudoStyle.get();
 }
 
 bool RenderStyle::inheritedNotEqual(RenderStyle* other) const

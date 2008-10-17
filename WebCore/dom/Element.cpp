@@ -609,7 +609,7 @@ const QualifiedName& Element::imageSourceAttributeName() const
     return srcAttr;
 }
 
-RenderStyle* Element::styleForRenderer(RenderObject* parentRenderer)
+PassRefPtr<RenderStyle> Element::styleForRenderer(RenderObject* parentRenderer)
 {
     return document()->styleSelector()->styleForElement(this);
 }
@@ -694,17 +694,15 @@ void Element::recalcStyle(StyleChange change)
             rareData()->resetComputedStyle(this);
     }
     if (hasParentStyle && (change >= Inherit || changed())) {
-        RenderStyle *newStyle = document()->styleSelector()->styleForElement(this);
-        StyleChange ch = diff(currentStyle, newStyle);
+        RefPtr<RenderStyle> newStyle = document()->styleSelector()->styleForElement(this);
+        StyleChange ch = diff(currentStyle, newStyle.get());
         if (ch == Detach || !currentStyle) {
             if (attached())
                 detach();
-            // ### Suboptimal. Style gets calculated again.
-            attach();
+            attach(); // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
             // attach recalulates the style for all children. No need to do it twice.
             setChanged(NoStyleChange);
             setHasChangedChild(false);
-            newStyle->deref(document()->renderArena());
             return;
         }
 
@@ -737,13 +735,11 @@ void Element::recalcStyle(StyleChange change)
             // sibling/descendant rules, since otherwise it isn't possible for ancestor styles to affect sharing of
             // descendants.
             if (renderer())
-                renderer()->setStyleInternal(newStyle);
+                renderer()->setStyleInternal(newStyle.get());
             else
                 setRenderStyle(newStyle);
         } else if (styleChangeType() == AnimationStyleChange)
              setRenderStyle(newStyle);
-
-        newStyle->deref(document()->renderArena());
 
         if (change != Force) {
             if ((document()->usesDescendantRules() || hasPositionalRules) && styleChangeType() >= FullStyleChange)
@@ -1188,7 +1184,7 @@ RenderStyle* Element::computedStyle()
     ElementRareData* data = ensureRareData();
     if (!data->m_computedStyle)
         data->m_computedStyle = document()->styleSelector()->styleForElement(this, parent() ? parent()->computedStyle() : 0);
-    return data->m_computedStyle;
+    return data->m_computedStyle.get();
 }
 
 void Element::cancelFocusAppearanceUpdate()

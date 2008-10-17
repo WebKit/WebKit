@@ -62,13 +62,13 @@ public:
     CSSGradientType type() const { return m_type; }
     void setType(CSSGradientType type) { m_type = type; }
     
-    void setFirstX(const PassRefPtr<CSSPrimitiveValue>& val) { m_firstX = val; }
-    void setFirstY(const PassRefPtr<CSSPrimitiveValue>& val) { m_firstY = val; }
-    void setSecondX(const PassRefPtr<CSSPrimitiveValue>& val) { m_secondX = val; }
-    void setSecondY(const PassRefPtr<CSSPrimitiveValue>& val) { m_secondY = val; }
+    void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
+    void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
+    void setSecondX(PassRefPtr<CSSPrimitiveValue> val) { m_secondX = val; }
+    void setSecondY(PassRefPtr<CSSPrimitiveValue> val) { m_secondY = val; }
     
-    void setFirstRadius(const PassRefPtr<CSSPrimitiveValue>& val) { m_firstRadius = val; }
-    void setSecondRadius(const PassRefPtr<CSSPrimitiveValue>& val) { m_secondRadius = val; }
+    void setFirstRadius(PassRefPtr<CSSPrimitiveValue> val) { m_firstRadius = val; }
+    void setSecondRadius(PassRefPtr<CSSPrimitiveValue> val) { m_secondRadius = val; }
 
     void addStop(const CSSGradientColorStop& stop) { m_stops.append(stop); }
 

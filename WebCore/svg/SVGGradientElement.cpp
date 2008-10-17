@@ -128,7 +128,7 @@ SVGResource* SVGGradientElement::canvasResource()
 Vector<SVGGradientStop> SVGGradientElement::buildStops() const
 {
     Vector<SVGGradientStop> stops;
-    RenderStyle* gradientStyle = 0;
+    RefPtr<RenderStyle> gradientStyle;
 
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         SVGElement* element = n->isSVGElement() ? static_cast<SVGElement*>(n) : 0;
@@ -151,20 +151,15 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
                 if (!gradientStyle)
                     gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
 
-                RenderStyle* stopStyle = stop->resolveStyle(gradientStyle);
+                RefPtr<RenderStyle> stopStyle = stop->resolveStyle(gradientStyle.get());
 
                 color = stopStyle->svgStyle()->stopColor();
                 opacity = stopStyle->svgStyle()->stopOpacity();
-
-                stopStyle->deref(document()->renderArena());
             }
 
             stops.append(makeGradientStop(stopOffset, makeRGBA(color.red(), color.green(), color.blue(), int(opacity * 255.))));
         }
     }
-
-    if (gradientStyle)
-        gradientStyle->deref(document()->renderArena());
 
     return stops;
 }

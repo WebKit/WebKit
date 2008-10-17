@@ -146,7 +146,7 @@ void RenderMedia::createControlsShadowRoot()
 void RenderMedia::createPanel()
 {
     ASSERT(!m_panel);
-    RenderStyle* style = getPseudoStyle(RenderStyle::MEDIA_CONTROLS_PANEL);
+    RenderStyle* style = getCachedPseudoStyle(RenderStyle::MEDIA_CONTROLS_PANEL);
     m_panel = new HTMLDivElement(document());
     RenderObject* renderer = m_panel->createRenderer(renderArena(), style);
     if (renderer) {
@@ -197,7 +197,7 @@ void RenderMedia::createTimeline()
 void RenderMedia::createTimeDisplay()
 {
     ASSERT(!m_timeDisplay);
-    RenderStyle* style = getPseudoStyle(RenderStyle::MEDIA_CONTROLS_TIME_DISPLAY);
+    RenderStyle* style = getCachedPseudoStyle(RenderStyle::MEDIA_CONTROLS_TIME_DISPLAY);
     m_timeDisplay = new HTMLDivElement(document());
     RenderObject* renderer = m_timeDisplay->createRenderer(renderArena(), style);
     if (renderer) {
@@ -340,11 +340,11 @@ void RenderMedia::changeOpacity(HTMLElement* e, float opacity)
 {
     if (!e || !e->renderer() || !e->renderer()->style())
         return;
-    RenderStyle* s = new (renderArena()) RenderStyle(*e->renderer()->style());
+    RefPtr<RenderStyle> s = RenderStyle::clone(e->renderer()->style());
     s->setOpacity(opacity);
     // z-index can't be auto if opacity is used
     s->setZIndex(0);
-    e->renderer()->setStyle(s);
+    e->renderer()->setStyle(s.release());
 }
     
 void RenderMedia::opacityAnimationTimerFired(Timer<RenderMedia>*)

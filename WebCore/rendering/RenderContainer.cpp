@@ -113,10 +113,10 @@ void RenderContainer::addChild(RenderObject* newChild, RenderObject* beforeChild
             table = static_cast<RenderTable*>(afterChild);
         else {
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
-            RenderStyle *newStyle = new (renderArena()) RenderStyle;
+            RefPtr<RenderStyle> newStyle = RenderStyle::create();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(TABLE);
-            table->setStyle(newStyle);
+            table->setStyle(newStyle.release());
             addChild(table, beforeChild);
         }
         table->addChild(newChild);
@@ -261,7 +261,7 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
     if (style()->styleType() == RenderStyle::BEFORE || style()->styleType() == RenderStyle::AFTER)
         return;
     
-    RenderStyle* pseudoElementStyle = styledObject->getPseudoStyle(type);
+    RenderStyle* pseudoElementStyle = styledObject->getCachedPseudoStyle(type);
     RenderObject* child = beforeAfterContainer(type);
 
     // Whether or not we currently have generated content attached.
@@ -324,9 +324,9 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
                     genChild->setStyle(pseudoElementStyle);
                 else if (genChild->isImage()) {
                     // Images get an empty style that inherits from the pseudo.
-                    RenderStyle* style = new (renderArena()) RenderStyle;
+                    RefPtr<RenderStyle> style = RenderStyle::create();
                     style->inheritFrom(pseudoElementStyle);
-                    genChild->setStyle(style);
+                    genChild->setStyle(style.release());
                 } else
                     // Must be a first-letter container. updateFirstLetter() will take care of it.
                     ASSERT(genChild->style()->styleType() == RenderStyle::FIRST_LETTER);
@@ -353,9 +353,9 @@ void RenderContainer::updateBeforeAfterContentForContainer(RenderStyle::PseudoId
                 break;
             case CONTENT_OBJECT: {
                 RenderImageGeneratedContent* image = new (renderArena()) RenderImageGeneratedContent(document()); // anonymous object
-                RenderStyle* style = new (renderArena()) RenderStyle;
+                RefPtr<RenderStyle> style = RenderStyle::create();
                 style->inheritFrom(pseudoElementStyle);
-                image->setStyle(style);
+                image->setStyle(style.release());
                 if (StyleImage* styleImage = content->m_content.m_image)
                     image->setStyleImage(styleImage);
                 renderer = image;

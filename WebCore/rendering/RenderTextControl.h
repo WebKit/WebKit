@@ -132,10 +132,10 @@ private:
     virtual HostWindow* hostWindow() const;
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
-    RenderStyle* createInnerBlockStyle(const RenderStyle* startStyle);
-    RenderStyle* createInnerTextStyle(const RenderStyle* startStyle);
-    RenderStyle* createCancelButtonStyle(const RenderStyle* startStyle);
-    RenderStyle* createResultsButtonStyle(const RenderStyle* startStyle);
+    PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle);
+    PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle);
+    PassRefPtr<RenderStyle> createCancelButtonStyle(const RenderStyle* startStyle);
+    PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle);
 
     void createSubtreeIfNeeded();
     void updateCancelButtonVisibility(RenderStyle*);
