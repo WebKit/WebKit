@@ -687,8 +687,8 @@ ExecState* JSDOMWindowBase::globalExec()
 {
     // We need to make sure that any script execution happening in this
     // frame does not destroy it
-    ASSERT(impl()->frame());
-    impl()->frame()->keepAlive();
+    if (Frame *frame = impl()->frame())
+        frame->keepAlive();
     return Base::globalExec();
 }
 

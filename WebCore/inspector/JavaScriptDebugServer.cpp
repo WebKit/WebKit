@@ -596,6 +596,8 @@ void JavaScriptDebugServer::didRemoveListener(Page* page)
     if (hasGlobalListeners() || (page && hasListenersInterestedInPage(page)))
         return;
 
+    m_recompileTimer.startOneShot(0);
+
     if (page)
         page->setDebugger(0);
     else
@@ -605,7 +607,6 @@ void JavaScriptDebugServer::didRemoveListener(Page* page)
 void JavaScriptDebugServer::didRemoveLastListener()
 {
     m_doneProcessingDebuggerEvents = true;
-    m_recompileTimer.startOneShot(0);
 }
 
 } // namespace WebCore
