@@ -408,7 +408,7 @@ public:
 
     virtual void willRemove();
     void createRendererIfNeeded();
-    PassRefPtr<RenderStyle> styleForRenderer(RenderObject* parent);
+    PassRefPtr<RenderStyle> styleForRenderer();
     virtual bool rendererIsNeeded(RenderStyle*);
 #if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(Node*) const { return true; }

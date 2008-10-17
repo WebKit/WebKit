@@ -99,9 +99,7 @@ bool SVGFESpecularLightingElement::build(FilterBuilder* builder)
     if(!input1)
         return false;
     
-    // FIXME: This style code is totally wrong and makes no sense.  It's not really getting a parent style.
-    RefPtr<RenderStyle> parentStyle = styleForRenderer(parent()->renderer());    
-    RefPtr<RenderStyle> filterStyle = resolveStyle(parentStyle.get());
+    RefPtr<RenderStyle> filterStyle = styleForRenderer();    
     
     Color color = filterStyle->svgStyle()->lightingColor();
     

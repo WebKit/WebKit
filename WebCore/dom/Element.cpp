@@ -609,11 +609,6 @@ const QualifiedName& Element::imageSourceAttributeName() const
     return srcAttr;
 }
 
-PassRefPtr<RenderStyle> Element::styleForRenderer(RenderObject* parentRenderer)
-{
-    return document()->styleSelector()->styleForElement(this);
-}
-
 RenderObject* Element::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (document()->documentElement() == this && style->display() == NONE) {

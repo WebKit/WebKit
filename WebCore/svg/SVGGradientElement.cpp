@@ -149,7 +149,7 @@ Vector<SVGGradientStop> SVGGradientElement::buildStops() const
                 // set display="none" - ie. <g display="none"><linearGradient><stop>..
                 // Unfortunately we have to manually rebuild the stop style. See pservers-grad-19-b.svg
                 if (!gradientStyle)
-                    gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer(parent()->renderer());
+                    gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer();
 
                 RefPtr<RenderStyle> stopStyle = stop->resolveStyle(gradientStyle.get());
 

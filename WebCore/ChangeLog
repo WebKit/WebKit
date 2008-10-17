@@ -1,5 +1,37 @@
 2008-10-16  David Hyatt  <hyatt@apple.com>
 
+        Simplify styleForRenderer to avoid confusion.  Callers in the SVG filter code thought "forRenderer" meant
+        they would be given a style that corresponded to the RenderObject* passed in.  This is not what the code
+        did though.  This patch removes the renderer argument and the Element subclass shadow implementation
+        so that confusion like this can't occur again.
+
+        Reviewed by Oliver Hunt
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        (WebCore::Node::styleForRenderer):
+        * dom/Node.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::attach):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::attach):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::canvasResource):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::buildStops):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::attachShadowTree):
+
+2008-10-16  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/attachment.cgi?bugid=21647
 
         Make RenderStyle inherit from RefCounted so that it works with RefPtr.  RenderStyle was being malloced

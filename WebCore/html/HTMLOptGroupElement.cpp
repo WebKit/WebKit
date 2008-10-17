@@ -133,7 +133,7 @@ bool HTMLOptGroupElement::checkDTD(const Node* newChild)
 void HTMLOptGroupElement::attach()
 {
     if (parentNode()->renderStyle())
-        setRenderStyle(styleForRenderer(0));
+        setRenderStyle(styleForRenderer());
     HTMLFormControlElement::attach();
 }
 

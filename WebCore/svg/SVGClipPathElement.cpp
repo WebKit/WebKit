@@ -98,7 +98,7 @@ SVGResource* SVGClipPathElement::canvasResource()
 
     bool bbox = clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
 
-    RefPtr<RenderStyle> clipPathStyle = styleForRenderer(parent()->renderer()); // FIXME: Manual style resolution is a hack
+    RefPtr<RenderStyle> clipPathStyle = styleForRenderer(); // FIXME: Manual style resolution is a hack
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
             SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(n);
