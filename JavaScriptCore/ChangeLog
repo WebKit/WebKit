@@ -1,5 +1,17 @@
 2008-10-17  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Remove some C style casts.
+
+        * masm/X86Assembler.h:
+        (JSC::JITCodeBuffer::putIntUnchecked):
+        (JSC::X86Assembler::link):
+        (JSC::X86Assembler::linkAbsoluteAddress):
+        (JSC::X86Assembler::getRelocatedAddress):
+
+2008-10-17  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Maciej Stachowiak.
 
         Remove some C style casts.

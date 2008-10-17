@@ -86,7 +86,7 @@ public:
     
     void putIntUnchecked(int value)
     {
-        *(int*)(&m_buffer[m_index]) = value;
+        *reinterpret_cast<int*>(&m_buffer[m_index]) = value;
         m_index += 4;
     }
 
@@ -1012,7 +1012,7 @@ public:
         ASSERT(to.m_offset != -1);
         ASSERT(from.m_offset != -1);
         
-        ((int*)(((ptrdiff_t)(m_buffer->start())) + from.m_offset))[-1] = to.m_offset - from.m_offset;
+        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(m_buffer->start()) + from.m_offset)[-1] = to.m_offset - from.m_offset;
     }
     
     static void linkAbsoluteAddress(void* code, JmpDst useOffset, JmpDst address)
@@ -1020,24 +1020,24 @@ public:
         ASSERT(useOffset.m_offset != -1);
         ASSERT(address.m_offset != -1);
         
-        ((int*)(((ptrdiff_t)code) + useOffset.m_offset))[-1] = ((ptrdiff_t)code) + address.m_offset;
+        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + useOffset.m_offset)[-1] = reinterpret_cast<ptrdiff_t>(code) + address.m_offset;
     }
     
     static void link(void* code, JmpSrc from, void* to)
     {
         ASSERT(from.m_offset != -1);
         
-        ((int*)((ptrdiff_t)code + from.m_offset))[-1] = (ptrdiff_t)to - ((ptrdiff_t)code + from.m_offset);
+        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + from.m_offset)[-1] = reinterpret_cast<ptrdiff_t>(to) - (reinterpret_cast<ptrdiff_t>(code) + from.m_offset);
     }
     
     static void* getRelocatedAddress(void* code, JmpSrc jump)
     {
-        return reinterpret_cast<void*>((ptrdiff_t)code + jump.m_offset);
+        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + jump.m_offset);
     }
     
     static void* getRelocatedAddress(void* code, JmpDst jump)
     {
-        return reinterpret_cast<void*>((ptrdiff_t)code + jump.m_offset);
+        return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(code) + jump.m_offset);
     }
     
     static int getDifferenceBetweenLabels(JmpDst src, JmpDst dst)
