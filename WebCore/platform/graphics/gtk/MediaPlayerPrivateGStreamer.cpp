@@ -57,7 +57,7 @@ gboolean mediaPlayerPrivateErrorCallback(GstBus* bus, GstMessage* message, gpoin
         GOwnPtr<GError> err;
         GOwnPtr<gchar> debug;
 
-        gst_message_parse_error(message, &err.rawPtr(), &debug.rawPtr());
+        gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         if (err->code == 3) {
             LOG_VERBOSE(Media, "File not found");
             MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);

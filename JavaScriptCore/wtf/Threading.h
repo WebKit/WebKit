@@ -62,6 +62,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+
 #if PLATFORM(GTK)
 #include <wtf/GOwnPtr.h>
 #endif

@@ -1,3 +1,25 @@
+2008-10-17  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Sam Weinig. Landed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21603
+        [GTK] Minor fixes to GOwnPtr
+
+        * wtf/GOwnPtr.cpp:
+        (WTF::GError):
+        (WTF::GList):
+        (WTF::GCond):
+        (WTF::GMutex):
+        (WTF::GPatternSpec):
+        (WTF::GDir):
+        * wtf/GOwnPtr.h:
+        (WTF::freeOwnedGPtr):
+        (WTF::GOwnPtr::~GOwnPtr):
+        (WTF::GOwnPtr::outPtr):
+        (WTF::GOwnPtr::set):
+        (WTF::GOwnPtr::clear):
+        * wtf/Threading.h:
+
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

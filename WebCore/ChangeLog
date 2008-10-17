@@ -1,3 +1,13 @@
+2008-10-17  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Sam Weinig. Landed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21603
+        [GTK] Minor fixes to GOwnPtr
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateErrorCallback):
+
 2008-10-17  Timothy Hatcher  <timothy@apple.com>
 
         Recompile the JavaScript functions when removing any listener, so functions that are

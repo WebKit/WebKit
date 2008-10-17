@@ -21,36 +21,36 @@
 
 namespace WTF {
 
-template <> void freeOwnedPtr<GError>(GError* ptr)
+template <> void freeOwnedGPtr<GError>(GError* ptr)
 {
     if (ptr)
         g_error_free(ptr);
 }
 
-template <> void freeOwnedPtr<GList>(GList* ptr)
+template <> void freeOwnedGPtr<GList>(GList* ptr)
 {
     g_list_free(ptr);
 }
 
-template <> void freeOwnedPtr<GCond>(GCond* ptr)
+template <> void freeOwnedGPtr<GCond>(GCond* ptr)
 {
     if (ptr)
         g_cond_free(ptr);
 }
 
-template <> void freeOwnedPtr<GMutex>(GMutex* ptr)
+template <> void freeOwnedGPtr<GMutex>(GMutex* ptr)
 {
     if (ptr)
         g_mutex_free(ptr);
 }
 
-template <> void freeOwnedPtr<GPatternSpec>(GPatternSpec* ptr)
+template <> void freeOwnedGPtr<GPatternSpec>(GPatternSpec* ptr)
 {
     if (ptr)
         g_pattern_spec_free(ptr);
 }
 
-template <> void freeOwnedPtr<GDir>(GDir* ptr)
+template <> void freeOwnedGPtr<GDir>(GDir* ptr)
 {
     if (ptr)
         g_dir_close(ptr);
