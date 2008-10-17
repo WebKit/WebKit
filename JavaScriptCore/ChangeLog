@@ -1,3 +1,14 @@
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich
+        
+        - don't bother to do arguments tearoff when it will have no effect
+
+        ~1% on v8 raytrace
+        
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitReturn):
+
 2008-10-17  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Sam Weinig. Landed by Jan Alonzo.
