@@ -85,7 +85,7 @@ bool SVGFEDiffuseLightingElement::build(FilterBuilder* builder)
         return false;
     
     RefPtr<RenderStyle> parentStyle = styleForRenderer(parent()->renderer());
-    RefPtr<RenderStyle> filterStyle = resolveStyle(parentStyle);
+    RefPtr<RenderStyle> filterStyle = resolveStyle(parentStyle.get());
     Color color = filterStyle->svgStyle()->lightingColor();
     
     parentStyle->deref(document()->renderArena());
