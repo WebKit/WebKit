@@ -65,6 +65,7 @@
 #include "StyleTransformData.h"
 #include "StyleVisualData.h"
 #include "TextDirection.h"
+#include "ThemeTypes.h"
 #include "TimingFunction.h"
 #include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
@@ -328,7 +329,7 @@ public:
         return background->m_background.hasImage();
     }
     bool hasFixedBackgroundImage() const { return background->m_background.hasFixedImage(); }
-    bool hasAppearance() const { return appearance() != NoAppearance; }
+    bool hasAppearance() const { return appearance() != NoControlPart; }
 
     bool visuallyOrdered() const { return inherited_flags._visuallyOrdered; }
     void setVisuallyOrdered(bool b) { inherited_flags._visuallyOrdered = b; }
@@ -572,7 +573,7 @@ public:
     float textStrokeWidth() const { return rareInheritedData->textStrokeWidth; }
     const Color& textFillColor() const { return rareInheritedData->textFillColor; }
     float opacity() const { return rareNonInheritedData->opacity; }
-    EAppearance appearance() const { return static_cast<EAppearance>(rareNonInheritedData->m_appearance); }
+    ControlPart appearance() const { return static_cast<ControlPart>(rareNonInheritedData->m_appearance); }
     EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->align); }
     EBoxDirection boxDirection() const { return static_cast<EBoxDirection>(inherited_flags._box_direction); }
     float boxFlex() { return rareNonInheritedData->flexibleBox->flex; }
@@ -864,7 +865,7 @@ public:
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w) }
     void setTextFillColor(const Color& c) { SET_VAR(rareInheritedData, textFillColor, c) }
     void setOpacity(float f) { SET_VAR(rareNonInheritedData, opacity, f); }
-    void setAppearance(EAppearance a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
+    void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
     void setBoxAlign(EBoxAlignment a) { SET_VAR(rareNonInheritedData.access()->flexibleBox, align, a); }
     void setBoxDirection(EBoxDirection d) { inherited_flags._box_direction = d; }
     void setBoxFlex(float f) { SET_VAR(rareNonInheritedData.access()->flexibleBox, flex, f); }
@@ -1090,7 +1091,7 @@ public:
     static const AtomicString& initialHighlight() { return nullAtom; }
     static EBorderFit initialBorderFit() { return BorderFitBorder; }
     static EResize initialResize() { return RESIZE_NONE; }
-    static EAppearance initialAppearance() { return NoAppearance; }
+    static ControlPart initialAppearance() { return NoControlPart; }
     static bool initialVisuallyOrdered() { return false; }
     static float initialTextStrokeWidth() { return 0; }
     static unsigned short initialColumnCount() { return 1; }

@@ -1,5 +1,99 @@
 2008-10-17  David Hyatt  <hyatt@apple.com>
 
+        Eliminate the EAppearance enum in favor of the new ControlPart enum.  Cut out the scrollbar
+        values from the enum since they are handled by ScrollbarTheme instead.
+
+        Reviewed by Tim Hatcher
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ControlPart):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * css/CSSValueKeywords.in:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::supportsFocus):
+        (WebCore::RenderThemeGtk::baselinePosition):
+        (WebCore::setToggleSize):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::adjustButtonStyle):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::baselinePosition):
+        (WebCore::RenderThemeQt::controlSupportsTints):
+        (WebCore::RenderThemeQt::adjustRepaintRect):
+        (WebCore::RenderThemeQt::isControlStyled):
+        (WebCore::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintTextField):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::RenderThemeQt::supportsFocus):
+        (WebCore::RenderThemeQt::applyTheme):
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::createThumbStyle):
+        (WebCore::RenderSlider::layout):
+        (WebCore::RenderSlider::setValueForPosition):
+        (WebCore::RenderSlider::setPositionFromValue):
+        (WebCore::RenderSlider::positionForOffset):
+        (WebCore::RenderSlider::currentPosition):
+        (WebCore::RenderSlider::setCurrentPosition):
+        (WebCore::RenderSlider::trackSize):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::isControlContainer):
+        (WebCore::RenderTheme::isControlStyled):
+        (WebCore::RenderTheme::supportsFocusRing):
+        (WebCore::RenderTheme::isDefault):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled):
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::baselinePosition):
+        (WebCore::RenderThemeMac::controlSupportsTints):
+        (WebCore::RenderThemeMac::adjustButtonStyle):
+        (WebCore::RenderThemeMac::setButtonCellState):
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeMac::popupInternalPaddingTop):
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::isControlStyled):
+        (WebCore::RenderThemeSafari::adjustRepaintRect):
+        (WebCore::RenderThemeSafari::baselinePosition):
+        (WebCore::RenderThemeSafari::controlSupportsTints):
+        (WebCore::RenderThemeSafari::adjustButtonStyle):
+        (WebCore::RenderThemeSafari::popupInternalPaddingLeft):
+        (WebCore::RenderThemeSafari::popupInternalPaddingRight):
+        (WebCore::RenderThemeSafari::popupInternalPaddingTop):
+        (WebCore::RenderThemeSafari::popupInternalPaddingBottom):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        (WebCore::RenderThemeSafari::adjustSliderThumbSize):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::supportsFocus):
+        (WebCore::RenderThemeWin::determineClassicState):
+        (WebCore::RenderThemeWin::getClassicThemeData):
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::drawControl):
+        (WebCore::RenderThemeWin::paintSliderTrack):
+        (WebCore::RenderThemeWin::adjustSliderThumbSize):
+        * rendering/RenderThemeWin.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasAppearance):
+        (WebCore::InheritedFlags::appearance):
+        (WebCore::InheritedFlags::setAppearance):
+        (WebCore::InheritedFlags::initialAppearance):
+        * rendering/style/RenderStyleConstants.h:
+
+2008-10-17  David Hyatt  <hyatt@apple.com>
+
         Beginning of the RenderTheme re-architecture (to share more code).  Add the new Theme API header
         file.  Add new USE(NEW_THEME) switch that is enabled on Mac.  The Mac theme will be converted first.
 

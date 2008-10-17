@@ -194,12 +194,12 @@ PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parent
         style->setTop(oldStyle->top());
     }
 
-    if (parentStyle->appearance() == SliderVerticalAppearance)
-       style->setAppearance(SliderThumbVerticalAppearance);
-    else if (parentStyle->appearance() == SliderHorizontalAppearance)
-       style->setAppearance(SliderThumbHorizontalAppearance);
-    else if (parentStyle->appearance() == MediaSliderAppearance)
-        style->setAppearance(MediaSliderThumbAppearance);
+    if (parentStyle->appearance() == SliderVerticalPart)
+       style->setAppearance(SliderThumbVerticalPart);
+    else if (parentStyle->appearance() == SliderHorizontalPart)
+       style->setAppearance(SliderThumbHorizontalPart);
+    else if (parentStyle->appearance() == MediaSliderPart)
+        style->setAppearance(MediaSliderThumbPart);
 
     return style.release();
 }
@@ -222,7 +222,7 @@ void RenderSlider::layout()
         if (m_thumb->renderer()->style()->hasAppearance())
             theme()->adjustSliderThumbSize(m_thumb->renderer());
 
-        if (style()->appearance() == SliderVerticalAppearance) {
+        if (style()->appearance() == SliderVerticalPart) {
             // FIXME: Handle percentage widths correctly. See http://bugs.webkit.org/show_bug.cgi?id=12104
             m_thumb->renderer()->style()->setLeft(Length(contentWidth() / 2 - m_thumb->renderer()->style()->width().value() / 2, Fixed));
         } else {
@@ -276,7 +276,7 @@ void RenderSlider::setValueForPosition(int position)
     
     // Calculate the new value based on the position
     double factor = (double)position / (double)trackSize();
-    if (style()->appearance() == SliderVerticalAppearance)
+    if (style()->appearance() == SliderVerticalPart)
         factor = 1.0 - factor;
     double val = minVal + factor * (maxVal - minVal);
             
@@ -320,7 +320,7 @@ double RenderSlider::setPositionFromValue(bool inLayout)
 
     // Calculate the new position based on the value
     double factor = (val - minVal) / (maxVal - minVal);
-    if (style()->appearance() == SliderVerticalAppearance)
+    if (style()->appearance() == SliderVerticalPart)
         factor = 1.0 - factor;
 
     setCurrentPosition((int)(factor * trackSize()));
@@ -337,7 +337,7 @@ int RenderSlider::positionForOffset(const IntPoint& p)
         return 0;
    
     int position;
-    if (style()->appearance() == SliderVerticalAppearance)
+    if (style()->appearance() == SliderVerticalPart)
         position = p.y() - m_thumb->renderer()->height() / 2;
     else
         position = p.x() - m_thumb->renderer()->width() / 2;
@@ -356,7 +356,7 @@ int RenderSlider::currentPosition()
     if (!m_thumb || !m_thumb->renderer())
         return 0;
 
-    if (style()->appearance() == SliderVerticalAppearance)
+    if (style()->appearance() == SliderVerticalPart)
         return m_thumb->renderer()->style()->top().value();
     return m_thumb->renderer()->style()->left().value();
 }
@@ -366,7 +366,7 @@ void RenderSlider::setCurrentPosition(int pos)
     if (!m_thumb || !m_thumb->renderer())
         return;
 
-    if (style()->appearance() == SliderVerticalAppearance)
+    if (style()->appearance() == SliderVerticalPart)
         m_thumb->renderer()->style()->setTop(Length(pos, Fixed));
     else
         m_thumb->renderer()->style()->setLeft(Length(pos, Fixed));
@@ -381,7 +381,7 @@ int RenderSlider::trackSize()
     if (!m_thumb || !m_thumb->renderer())
         return 0;
 
-    if (style()->appearance() == SliderVerticalAppearance)
+    if (style()->appearance() == SliderVerticalPart)
         return contentHeight() - m_thumb->renderer()->height();
     return contentWidth() - m_thumb->renderer()->width();
 }

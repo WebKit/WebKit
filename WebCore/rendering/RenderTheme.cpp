@@ -60,47 +60,47 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
         style->setDisplay(BLOCK);
 
     if (UAHasAppearance && theme()->isControlStyled(style, border, background, backgroundColor)) {
-        if (style->appearance() == MenulistAppearance)
-            style->setAppearance(MenulistButtonAppearance);
+        if (style->appearance() == MenulistPart)
+            style->setAppearance(MenulistButtonPart);
         else
-            style->setAppearance(NoAppearance);
+            style->setAppearance(NoControlPart);
     }
 
     // Call the appropriate style adjustment method based off the appearance value.
     switch (style->appearance()) {
-        case CheckboxAppearance:
+        case CheckboxPart:
             return adjustCheckboxStyle(selector, style, e);
-        case RadioAppearance:
+        case RadioPart:
             return adjustRadioStyle(selector, style, e);
-        case PushButtonAppearance:
-        case SquareButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance:
+        case PushButtonPart:
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
             return adjustButtonStyle(selector, style, e);
-        case TextFieldAppearance:
+        case TextFieldPart:
             return adjustTextFieldStyle(selector, style, e);
-        case TextAreaAppearance:
+        case TextAreaPart:
             return adjustTextAreaStyle(selector, style, e);
-        case MenulistAppearance:
+        case MenulistPart:
             return adjustMenuListStyle(selector, style, e);
-        case MenulistButtonAppearance:
+        case MenulistButtonPart:
             return adjustMenuListButtonStyle(selector, style, e);
-        case MediaSliderAppearance:
-        case SliderHorizontalAppearance:
-        case SliderVerticalAppearance:
+        case MediaSliderPart:
+        case SliderHorizontalPart:
+        case SliderVerticalPart:
             return adjustSliderTrackStyle(selector, style, e);
-        case SliderThumbHorizontalAppearance:
-        case SliderThumbVerticalAppearance:
+        case SliderThumbHorizontalPart:
+        case SliderThumbVerticalPart:
             return adjustSliderThumbStyle(selector, style, e);
-        case SearchFieldAppearance:
+        case SearchFieldPart:
             return adjustSearchFieldStyle(selector, style, e);
-        case SearchFieldCancelButtonAppearance:
+        case SearchFieldCancelButtonPart:
             return adjustSearchFieldCancelButtonStyle(selector, style, e);
-        case SearchFieldDecorationAppearance:
+        case SearchFieldDecorationPart:
             return adjustSearchFieldDecorationStyle(selector, style, e);
-        case SearchFieldResultsDecorationAppearance:
+        case SearchFieldResultsDecorationPart:
             return adjustSearchFieldResultsDecorationStyle(selector, style, e);
-        case SearchFieldResultsButtonAppearance:
+        case SearchFieldResultsButtonPart:
             return adjustSearchFieldResultsButtonStyle(selector, style, e);
         default:
             break;
@@ -128,56 +128,56 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
 
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
-        case CheckboxAppearance:
+        case CheckboxPart:
             return paintCheckbox(o, paintInfo, r);
-        case RadioAppearance:
+        case RadioPart:
             return paintRadio(o, paintInfo, r);
-        case PushButtonAppearance:
-        case SquareButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance:
+        case PushButtonPart:
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
             return paintButton(o, paintInfo, r);
-        case MenulistAppearance:
+        case MenulistPart:
             return paintMenuList(o, paintInfo, r);
-        case SliderHorizontalAppearance:
-        case SliderVerticalAppearance:
+        case SliderHorizontalPart:
+        case SliderVerticalPart:
             return paintSliderTrack(o, paintInfo, r);
-        case SliderThumbHorizontalAppearance:
-        case SliderThumbVerticalAppearance:
+        case SliderThumbHorizontalPart:
+        case SliderThumbVerticalPart:
             if (o->parent()->isSlider())
                 return paintSliderThumb(o, paintInfo, r);
             // We don't support drawing a slider thumb without a parent slider
             break;
-        case MediaFullscreenButtonAppearance:
+        case MediaFullscreenButtonPart:
             return paintMediaFullscreenButton(o, paintInfo, r);
-        case MediaPlayButtonAppearance:
+        case MediaPlayButtonPart:
             return paintMediaPlayButton(o, paintInfo, r);
-        case MediaMuteButtonAppearance:
+        case MediaMuteButtonPart:
             return paintMediaMuteButton(o, paintInfo, r);
-        case MediaSeekBackButtonAppearance:
+        case MediaSeekBackButtonPart:
             return paintMediaSeekBackButton(o, paintInfo, r);
-        case MediaSeekForwardButtonAppearance:
+        case MediaSeekForwardButtonPart:
             return paintMediaSeekForwardButton(o, paintInfo, r);
-        case MediaSliderAppearance:
+        case MediaSliderPart:
             return paintMediaSliderTrack(o, paintInfo, r);
-        case MediaSliderThumbAppearance:
+        case MediaSliderThumbPart:
             if (o->parent()->isSlider())
                 return paintMediaSliderThumb(o, paintInfo, r);
             break;
-        case MenulistButtonAppearance:
-        case TextFieldAppearance:
-        case TextAreaAppearance:
-        case ListboxAppearance:
+        case MenulistButtonPart:
+        case TextFieldPart:
+        case TextAreaPart:
+        case ListboxPart:
             return true;
-        case SearchFieldAppearance:
+        case SearchFieldPart:
             return paintSearchField(o, paintInfo, r);
-        case SearchFieldCancelButtonAppearance:
+        case SearchFieldCancelButtonPart:
             return paintSearchFieldCancelButton(o, paintInfo, r);
-        case SearchFieldDecorationAppearance:
+        case SearchFieldDecorationPart:
             return paintSearchFieldDecoration(o, paintInfo, r);
-        case SearchFieldResultsDecorationAppearance:
+        case SearchFieldResultsDecorationPart:
             return paintSearchFieldResultsDecoration(o, paintInfo, r);
-        case SearchFieldResultsButtonAppearance:
+        case SearchFieldResultsButtonPart:
             return paintSearchFieldResultsButton(o, paintInfo, r);
         default:
             break;
@@ -193,29 +193,29 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
 
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
-        case TextFieldAppearance:
+        case TextFieldPart:
             return paintTextField(o, paintInfo, r);
-        case ListboxAppearance:
-        case TextAreaAppearance:
+        case ListboxPart:
+        case TextAreaPart:
             return paintTextArea(o, paintInfo, r);
-        case MenulistButtonAppearance:
+        case MenulistButtonPart:
             return true;
-        case CheckboxAppearance:
-        case RadioAppearance:
-        case PushButtonAppearance:
-        case SquareButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance:
-        case MenulistAppearance:
-        case SliderHorizontalAppearance:
-        case SliderVerticalAppearance:
-        case SliderThumbHorizontalAppearance:
-        case SliderThumbVerticalAppearance:
-        case SearchFieldAppearance:
-        case SearchFieldCancelButtonAppearance:
-        case SearchFieldDecorationAppearance:
-        case SearchFieldResultsDecorationAppearance:
-        case SearchFieldResultsButtonAppearance:
+        case CheckboxPart:
+        case RadioPart:
+        case PushButtonPart:
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
+        case MenulistPart:
+        case SliderHorizontalPart:
+        case SliderVerticalPart:
+        case SliderThumbHorizontalPart:
+        case SliderThumbVerticalPart:
+        case SearchFieldPart:
+        case SearchFieldCancelButtonPart:
+        case SearchFieldDecorationPart:
+        case SearchFieldResultsDecorationPart:
+        case SearchFieldResultsButtonPart:
         default:
             break;
     }
@@ -230,27 +230,27 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
 
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
-        case MenulistButtonAppearance:
+        case MenulistButtonPart:
             return paintMenuListButton(o, paintInfo, r);
-        case TextFieldAppearance:
-        case TextAreaAppearance:
-        case ListboxAppearance:
-        case CheckboxAppearance:
-        case RadioAppearance:
-        case PushButtonAppearance:
-        case SquareButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance:
-        case MenulistAppearance:
-        case SliderHorizontalAppearance:
-        case SliderVerticalAppearance:
-        case SliderThumbHorizontalAppearance:
-        case SliderThumbVerticalAppearance:
-        case SearchFieldAppearance:
-        case SearchFieldCancelButtonAppearance:
-        case SearchFieldDecorationAppearance:
-        case SearchFieldResultsDecorationAppearance:
-        case SearchFieldResultsButtonAppearance:
+        case TextFieldPart:
+        case TextAreaPart:
+        case ListboxPart:
+        case CheckboxPart:
+        case RadioPart:
+        case PushButtonPart:
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
+        case MenulistPart:
+        case SliderHorizontalPart:
+        case SliderVerticalPart:
+        case SliderThumbHorizontalPart:
+        case SliderThumbVerticalPart:
+        case SearchFieldPart:
+        case SearchFieldCancelButtonPart:
+        case SearchFieldDecorationPart:
+        case SearchFieldResultsDecorationPart:
+        case SearchFieldResultsButtonPart:
         default:
             break;
     }
@@ -321,27 +321,27 @@ int RenderTheme::baselinePosition(const RenderObject* o) const
     return o->height() + o->marginTop();
 }
 
-bool RenderTheme::isControlContainer(EAppearance appearance) const
+bool RenderTheme::isControlContainer(ControlPart appearance) const
 {
     // There are more leaves than this, but we'll patch this function as we add support for
     // more controls.
-    return appearance != CheckboxAppearance && appearance != RadioAppearance;
+    return appearance != CheckboxPart && appearance != RadioPart;
 }
 
 bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& border, const FillLayer& background,
                                   const Color& backgroundColor) const
 {
     switch (style->appearance()) {
-        case PushButtonAppearance:
-        case SquareButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance:
-        case ListboxAppearance:
-        case MenulistAppearance:
+        case PushButtonPart:
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
+        case ListboxPart:
+        case MenulistPart:
         // FIXME: Uncomment this when making search fields style-able.
-        // case SearchFieldAppearance:
-        case TextFieldAppearance:
-        case TextAreaAppearance:
+        // case SearchFieldPart:
+        case TextFieldPart:
+        case TextAreaPart:
             // Test the style to see if the UA border and background match.
             return (style->border() != border ||
                     *style->backgroundLayers() != background ||
@@ -353,7 +353,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
 
 bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
 {
-    return (style->hasAppearance() && style->appearance() != TextFieldAppearance && style->appearance() != TextAreaAppearance && style->appearance() != MenulistButtonAppearance && style->appearance() != ListboxAppearance);
+    return (style->hasAppearance() && style->appearance() != TextFieldPart && style->appearance() != TextAreaPart && style->appearance() != MenulistButtonPart && style->appearance() != ListboxPart);
 }
 
 bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
@@ -454,7 +454,7 @@ bool RenderTheme::isDefault(const RenderObject* o) const
     if (!o->style())
         return false;
     
-    return o->style()->appearance() == DefaultButtonAppearance;
+    return o->style()->appearance() == DefaultButtonPart;
 }
 
 void RenderTheme::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const

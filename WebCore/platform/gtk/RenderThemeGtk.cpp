@@ -53,17 +53,17 @@ RenderThemeGtk::RenderThemeGtk()
     }
 }
 
-static bool supportsFocus(EAppearance appearance)
+static bool supportsFocus(ControlPart appearance)
 {
     switch (appearance) {
-        case PushButtonAppearance:
-        case ButtonAppearance:
-        case TextFieldAppearance:
-        case TextAreaAppearance:
-        case SearchFieldAppearance:
-        case MenulistAppearance:
-        case RadioAppearance:
-        case CheckboxAppearance:
+        case PushButtonPart:
+        case ButtonPart:
+        case TextFieldPart:
+        case TextAreaPart:
+        case SearchFieldPart:
+        case MenulistPart:
+        case RadioPart:
+        case CheckboxPart:
             return true;
         default:
             return false;
@@ -83,8 +83,8 @@ bool RenderThemeGtk::controlSupportsTints(const RenderObject* o) const
 int RenderThemeGtk::baselinePosition(const RenderObject* o) const
 {
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
-    if (o->style()->appearance() == CheckboxAppearance ||
-        o->style()->appearance() == RadioAppearance)
+    if (o->style()->appearance() == CheckboxPart ||
+        o->style()->appearance() == RadioPart)
         return o->marginTop() + o->height() - 2;
     return RenderTheme::baselinePosition(o);
 }
@@ -194,7 +194,7 @@ static void setButtonPadding(RenderStyle* style)
     style->setPaddingBottom(Length(padding / 2, Fixed));
 }
 
-static void setToggleSize(RenderStyle* style, EAppearance appearance)
+static void setToggleSize(RenderStyle* style, ControlPart appearance)
 {
     // The width and height are both specified, so we shouldn't change them.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
@@ -204,11 +204,11 @@ static void setToggleSize(RenderStyle* style, EAppearance appearance)
     gint indicator_size, indicator_spacing;
 
     switch (appearance) {
-        case CheckboxAppearance:
+        case CheckboxPart:
             if (moz_gtk_checkbox_get_metrics(&indicator_size, &indicator_spacing) != MOZ_GTK_SUCCESS)
                 return;
             break;
-        case RadioAppearance:
+        case RadioPart:
             if (moz_gtk_radio_get_metrics(&indicator_size, &indicator_spacing) != MOZ_GTK_SUCCESS)
                 return;
             break;
@@ -228,7 +228,7 @@ static void setToggleSize(RenderStyle* style, EAppearance appearance)
 
 void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
 {
-    setToggleSize(style, RadioAppearance);
+    setToggleSize(style, RadioPart);
 }
 
 bool RenderThemeGtk::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
@@ -238,7 +238,7 @@ bool RenderThemeGtk::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
 
 void RenderThemeGtk::setRadioSize(RenderStyle* style) const
 {
-    setToggleSize(style, RadioAppearance);
+    setToggleSize(style, RadioPart);
 }
 
 bool RenderThemeGtk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
@@ -249,7 +249,7 @@ bool RenderThemeGtk::paintRadio(RenderObject* o, const RenderObject::PaintInfo& 
 void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
 {
     // FIXME: Is this condition necessary?
-    if (style->appearance() == PushButtonAppearance) {
+    if (style->appearance() == PushButtonPart) {
         style->resetBorder();
         style->setHeight(Length(Auto));
         style->setWhiteSpace(PRE);

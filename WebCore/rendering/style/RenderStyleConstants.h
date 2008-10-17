@@ -155,23 +155,6 @@ enum EResize {
     RESIZE_NONE, RESIZE_BOTH, RESIZE_HORIZONTAL, RESIZE_VERTICAL
 };
 
-enum EAppearance {
-    NoAppearance, CheckboxAppearance, RadioAppearance, PushButtonAppearance, SquareButtonAppearance, ButtonAppearance,
-    ButtonBevelAppearance, DefaultButtonAppearance, ListboxAppearance, ListItemAppearance, 
-    MediaFullscreenButtonAppearance, MediaMuteButtonAppearance, MediaPlayButtonAppearance,
-    MediaSeekBackButtonAppearance, MediaSeekForwardButtonAppearance, MediaSliderAppearance, MediaSliderThumbAppearance,
-    MenulistAppearance, MenulistButtonAppearance, MenulistTextAppearance, MenulistTextFieldAppearance,
-    ScrollbarButtonUpAppearance, ScrollbarButtonDownAppearance, 
-    ScrollbarButtonLeftAppearance, ScrollbarButtonRightAppearance,
-    ScrollbarTrackHorizontalAppearance, ScrollbarTrackVerticalAppearance,
-    ScrollbarThumbHorizontalAppearance, ScrollbarThumbVerticalAppearance,
-    ScrollbarGripperHorizontalAppearance, ScrollbarGripperVerticalAppearance,
-    SliderHorizontalAppearance, SliderVerticalAppearance, SliderThumbHorizontalAppearance,
-    SliderThumbVerticalAppearance, CaretAppearance, SearchFieldAppearance, SearchFieldDecorationAppearance,
-    SearchFieldResultsDecorationAppearance, SearchFieldResultsButtonAppearance,
-    SearchFieldCancelButtonAppearance, TextFieldAppearance, TextAreaAppearance
-};
-
 enum EListStyleType {
      DISC, CIRCLE, SQUARE, LDECIMAL, DECIMAL_LEADING_ZERO,
      LOWER_ROMAN, UPPER_ROMAN, LOWER_GREEK,

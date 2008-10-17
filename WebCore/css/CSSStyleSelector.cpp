@@ -1452,7 +1452,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     }
 
     // Menulists should have visible overflow
-    if (style->appearance() == MenulistAppearance) {
+    if (style->appearance() == MenulistPart) {
         style->setOverflowX(OVISIBLE);
         style->setOverflowY(OVISIBLE);
     }

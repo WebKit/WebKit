@@ -161,148 +161,121 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAppearance e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     : m_type(CSS_IDENT)
 {
     switch (e) {
-        case NoAppearance:
+        case NoControlPart:
             m_value.ident = CSSValueNone;
             break;
-        case CheckboxAppearance:
+        case CheckboxPart:
             m_value.ident = CSSValueCheckbox;
             break;
-        case RadioAppearance:
+        case RadioPart:
             m_value.ident = CSSValueRadio;
             break;
-        case PushButtonAppearance:
+        case PushButtonPart:
             m_value.ident = CSSValuePushButton;
             break;
-        case SquareButtonAppearance:
+        case SquareButtonPart:
             m_value.ident = CSSValueSquareButton;
             break;
-        case ButtonAppearance:
+        case ButtonPart:
             m_value.ident = CSSValueButton;
             break;
-        case ButtonBevelAppearance:
+        case ButtonBevelPart:
             m_value.ident = CSSValueButtonBevel;
             break;
-        case DefaultButtonAppearance:
+        case DefaultButtonPart:
             m_value.ident = CSSValueDefaultButton;
             break;
-        case ListboxAppearance:
+        case ListboxPart:
             m_value.ident = CSSValueListbox;
             break;
-        case ListItemAppearance:
+        case ListItemPart:
             m_value.ident = CSSValueListitem;
             break;
-        case MediaFullscreenButtonAppearance:
+        case MediaFullscreenButtonPart:
             m_value.ident = CSSValueMediaFullscreenButton;
             break;
-        case MediaPlayButtonAppearance:
+        case MediaPlayButtonPart:
             m_value.ident = CSSValueMediaPlayButton;
             break;
-        case MediaMuteButtonAppearance:
+        case MediaMuteButtonPart:
             m_value.ident = CSSValueMediaMuteButton;
             break;
-        case MediaSeekBackButtonAppearance:
+        case MediaSeekBackButtonPart:
             m_value.ident = CSSValueMediaSeekBackButton;
             break;
-        case MediaSeekForwardButtonAppearance:
+        case MediaSeekForwardButtonPart:
             m_value.ident = CSSValueMediaSeekForwardButton;
             break;
-        case MediaSliderAppearance:
+        case MediaSliderPart:
             m_value.ident = CSSValueMediaSlider;
             break;
-        case MediaSliderThumbAppearance:
+        case MediaSliderThumbPart:
             m_value.ident = CSSValueMediaSliderthumb;
             break;
-        case MenulistAppearance:
+        case MenulistPart:
             m_value.ident = CSSValueMenulist;
             break;
-        case MenulistButtonAppearance:
+        case MenulistButtonPart:
             m_value.ident = CSSValueMenulistButton;
             break;
-        case MenulistTextAppearance:
+        case MenulistTextPart:
             m_value.ident = CSSValueMenulistText;
             break;
-        case MenulistTextFieldAppearance:
+        case MenulistTextFieldPart:
             m_value.ident = CSSValueMenulistTextfield;
             break;
-        case ScrollbarButtonUpAppearance:
-            m_value.ident = CSSValueScrollbarbuttonUp;
-            break;
-        case ScrollbarButtonDownAppearance:
-            m_value.ident = CSSValueScrollbarbuttonDown;
-            break;
-        case ScrollbarButtonLeftAppearance:
-            m_value.ident = CSSValueScrollbarbuttonLeft;
-            break;
-        case ScrollbarButtonRightAppearance:
-            m_value.ident = CSSValueScrollbarbuttonRight;
-            break;
-        case ScrollbarTrackHorizontalAppearance:
-            m_value.ident = CSSValueScrollbartrackHorizontal;
-            break;
-        case ScrollbarTrackVerticalAppearance:
-            m_value.ident = CSSValueScrollbartrackVertical;
-            break;
-        case ScrollbarThumbHorizontalAppearance:
-            m_value.ident = CSSValueScrollbarthumbHorizontal;
-            break;
-        case ScrollbarThumbVerticalAppearance:
-            m_value.ident = CSSValueScrollbarthumbVertical;
-            break;
-        case ScrollbarGripperHorizontalAppearance:
-            m_value.ident = CSSValueScrollbargripperHorizontal;
-            break;
-        case ScrollbarGripperVerticalAppearance:
-            m_value.ident = CSSValueScrollbargripperVertical;
-            break;
-        case SliderHorizontalAppearance:
+        case SliderHorizontalPart:
             m_value.ident = CSSValueSliderHorizontal;
             break;
-        case SliderVerticalAppearance:
+        case SliderVerticalPart:
             m_value.ident = CSSValueSliderVertical;
             break;
-        case SliderThumbHorizontalAppearance:
+        case SliderThumbHorizontalPart:
             m_value.ident = CSSValueSliderthumbHorizontal;
             break;
-        case SliderThumbVerticalAppearance:
+        case SliderThumbVerticalPart:
             m_value.ident = CSSValueSliderthumbVertical;
             break;
-        case CaretAppearance:
+        case CaretPart:
             m_value.ident = CSSValueCaret;
             break;
-        case SearchFieldAppearance:
+        case SearchFieldPart:
             m_value.ident = CSSValueSearchfield;
             break;
-        case SearchFieldDecorationAppearance:
+        case SearchFieldDecorationPart:
             m_value.ident = CSSValueSearchfieldDecoration;
             break;
-        case SearchFieldResultsDecorationAppearance:
+        case SearchFieldResultsDecorationPart:
             m_value.ident = CSSValueSearchfieldResultsDecoration;
             break;
-        case SearchFieldResultsButtonAppearance:
+        case SearchFieldResultsButtonPart:
             m_value.ident = CSSValueSearchfieldResultsButton;
             break;
-        case SearchFieldCancelButtonAppearance:
+        case SearchFieldCancelButtonPart:
             m_value.ident = CSSValueSearchfieldCancelButton;
             break;
-        case TextFieldAppearance:
+        case TextFieldPart:
             m_value.ident = CSSValueTextfield;
             break;
-        case TextAreaAppearance:
+        case TextAreaPart:
             m_value.ident = CSSValueTextarea;
+            break;
+        case CapsLockIndicatorPart:
+            m_value.ident = CSSValueCapsLockIndicator;
             break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EAppearance() const
+template<> inline CSSPrimitiveValue::operator ControlPart() const
 {
     if (m_value.ident == CSSValueNone)
-        return NoAppearance;
+        return NoControlPart;
     else
-        return EAppearance(m_value.ident - CSSValueCheckbox + 1);
+        return ControlPart(m_value.ident - CSSValueCheckbox + 1);
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillBox e)

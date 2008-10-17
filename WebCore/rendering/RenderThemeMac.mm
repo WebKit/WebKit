@@ -414,7 +414,7 @@ Color RenderThemeMac::systemColor(int cssValueId) const
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border,
                                      const FillLayer& background, const Color& backgroundColor) const
 {
-    if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance || style->appearance() == ListboxAppearance)
+    if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart || style->appearance() == ListboxPart)
         return style->border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
@@ -424,7 +424,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
     float zoomLevel = o->style()->effectiveZoom();
 
     switch (o->style()->appearance()) {
-        case CheckboxAppearance: {
+        case CheckboxPart: {
             // Since we query the prototype cell, we need to update its state to match.
             setCheckboxCellState(o, r);
 
@@ -436,7 +436,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
             r = inflateRect(r, size, checkboxMargins(), zoomLevel);
             break;
         }
-        case RadioAppearance: {
+        case RadioPart: {
             // Since we query the prototype cell, we need to update its state to match.
             setRadioCellState(o, r);
 
@@ -448,9 +448,9 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
             r = inflateRect(r, size, radioMargins(), zoomLevel);
             break;
         }
-        case PushButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance: {
+        case PushButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart: {
             // Since we query the prototype cell, we need to update its state to match.
             setButtonCellState(o, r);
 
@@ -464,7 +464,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
             }
             break;
         }
-        case MenulistAppearance: {
+        case MenulistPart: {
             setPopupButtonCellState(o, r);
             IntSize size = popupButtonSizes()[[popupButton() controlSize]];
             size.setHeight(size.height() * zoomLevel);
@@ -537,7 +537,7 @@ void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject* o)
 
 int RenderThemeMac::baselinePosition(const RenderObject* o) const
 {
-    if (o->style()->appearance() == CheckboxAppearance || o->style()->appearance() == RadioAppearance)
+    if (o->style()->appearance() == CheckboxPart || o->style()->appearance() == RadioPart)
         return o->marginTop() + o->height() - 2 * o->style()->effectiveZoom(); // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     return RenderTheme::baselinePosition(o);
 }
@@ -553,7 +553,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject* o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o->style()->appearance() == CheckboxAppearance)
+    if (o->style()->appearance() == CheckboxPart)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -818,7 +818,7 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
     // Determine our control size based off our font.
     NSControlSize controlSize = controlSizeForFont(style);
 
-    if (style->appearance() == PushButtonAppearance) {
+    if (style->appearance() == PushButtonPart) {
         // Ditch the border.
         style->resetBorder();
 
@@ -882,7 +882,7 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
     NSButtonCell* button = this->button();
 
     // Set the control size based off the rectangle we're painting into.
-    if (o->style()->appearance() == SquareButtonAppearance ||
+    if (o->style()->appearance() == SquareButtonPart ||
         r.height() > buttonSizes()[NSRegularControlSize].height() * o->style()->effectiveZoom()) {
         // Use the square button
         if ([button bezelStyle] != NSShadowlessSquareBezelStyle)
@@ -1268,18 +1268,18 @@ void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
 
 int RenderThemeMac::popupInternalPaddingLeft(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[leftPadding] * style->effectiveZoom();
-    if (style->appearance() == MenulistButtonAppearance)
+    if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingLeft * style->effectiveZoom();
     return 0;
 }
 
 int RenderThemeMac::popupInternalPaddingRight(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[rightPadding] * style->effectiveZoom();
-    if (style->appearance() == MenulistButtonAppearance) {
+    if (style->appearance() == MenulistButtonPart) {
         float fontScale = style->fontSize() / baseFontSize;
         float arrowWidth = baseArrowWidth * fontScale;
         return static_cast<int>(ceilf(arrowWidth + (arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator) * style->effectiveZoom()));
@@ -1289,18 +1289,18 @@ int RenderThemeMac::popupInternalPaddingRight(RenderStyle* style) const
 
 int RenderThemeMac::popupInternalPaddingTop(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[topPadding] * style->effectiveZoom();
-    if (style->appearance() == MenulistButtonAppearance)
+    if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingTop * style->effectiveZoom();
     return 0;
 }
 
 int RenderThemeMac::popupInternalPaddingBottom(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[bottomPadding] * style->effectiveZoom();
-    if (style->appearance() == MenulistButtonAppearance)
+    if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingBottom * style->effectiveZoom();
     return 0;
 }
@@ -1357,10 +1357,10 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
     float zoomLevel = o->style()->effectiveZoom();
     float zoomedTrackWidth = trackWidth * zoomLevel;
 
-    if (o->style()->appearance() ==  SliderHorizontalAppearance || o->style()->appearance() ==  MediaSliderAppearance) {
+    if (o->style()->appearance() ==  SliderHorizontalPart || o->style()->appearance() ==  MediaSliderPart) {
         bounds.setHeight(zoomedTrackWidth);
         bounds.setY(r.y() + r.height() / 2 - zoomedTrackWidth / 2);
-    } else if (o->style()->appearance() == SliderVerticalAppearance) {
+    } else if (o->style()->appearance() == SliderVerticalPart) {
         bounds.setWidth(zoomedTrackWidth);
         bounds.setX(r.x() + r.width() / 2 - zoomedTrackWidth / 2);
     }
@@ -1375,7 +1375,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const RenderObject::Paint
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (o->style()->appearance() == SliderVerticalAppearance)
+    if (o->style()->appearance() == SliderVerticalPart)
         mainShading.adoptCF(CGShadingCreateAxial(cspace.get(), CGPointMake(bounds.x(),  bounds.bottom()), CGPointMake(bounds.right(), bounds.bottom()), mainFunction.get(), false, false));
     else
         mainShading.adoptCF(CGShadingCreateAxial(cspace.get(), CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.bottom()), mainFunction.get(), false, false));
@@ -1401,7 +1401,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
 {
     ASSERT(o->parent()->isSlider());
 
-    NSSliderCell* sliderThumbCell = o->style()->appearance() == SliderThumbVerticalAppearance
+    NSSliderCell* sliderThumbCell = o->style()->appearance() == SliderThumbVerticalPart
         ? sliderThumbVertical()
         : sliderThumbHorizontal();
 
@@ -1413,14 +1413,14 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
-    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+    if (o->style()->appearance() == SliderThumbVerticalPart)
         oldPressed = m_isSliderThumbVerticalPressed;
     else
         oldPressed = m_isSliderThumbHorizontalPressed;
 
     bool pressed = static_cast<RenderSlider*>(o->parent())->inDragMode();
 
-    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+    if (o->style()->appearance() == SliderThumbVerticalPart)
         m_isSliderThumbVerticalPressed = pressed;
     else
         m_isSliderThumbHorizontalPressed = pressed;
@@ -1434,7 +1434,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
 
     FloatRect bounds = r;
     // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.
-    if (o->style()->appearance() == SliderThumbVerticalAppearance)
+    if (o->style()->appearance() == SliderThumbVerticalPart)
         bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o->style()->effectiveZoom());
 
     paintInfo.context->save();
@@ -1465,10 +1465,10 @@ const int mediaSliderThumbHeight = 14;
 void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 {
     float zoomLevel = o->style()->effectiveZoom();
-    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
+    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
         o->style()->setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
         o->style()->setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
-    } else if (o->style()->appearance() == MediaSliderThumbAppearance) {
+    } else if (o->style()->appearance() == MediaSliderThumbPart) {
         o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
         o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
     }

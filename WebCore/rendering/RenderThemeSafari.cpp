@@ -212,7 +212,7 @@ bool RenderThemeSafari::isControlStyled(const RenderStyle* style, const BorderDa
     if (!SafariThemeLibrary())
         return true;
 
-    if (style->appearance() == TextFieldAppearance || style->appearance() == TextAreaAppearance || style->appearance() == ListboxAppearance)
+    if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart || style->appearance() == ListboxPart)
         return style->border() != border;
     return RenderTheme::isControlStyled(style, border, background, backgroundColor);
 }
@@ -222,28 +222,28 @@ void RenderThemeSafari::adjustRepaintRect(const RenderObject* o, IntRect& r)
     NSControlSize controlSize = controlSizeForFont(o->style());
 
     switch (o->style()->appearance()) {
-        case CheckboxAppearance: {
+        case CheckboxPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
             r = inflateRect(r, checkboxSizes()[controlSize], checkboxMargins(controlSize));
             break;
         }
-        case RadioAppearance: {
+        case RadioPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
             r = inflateRect(r, radioSizes()[controlSize], radioMargins(controlSize));
             break;
         }
-        case PushButtonAppearance:
-        case DefaultButtonAppearance:
-        case ButtonAppearance: {
+        case PushButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
             if (r.height() <= buttonSizes()[NSRegularControlSize].height())
                 r = inflateRect(r, buttonSizes()[controlSize], buttonMargins(controlSize));
             break;
         }
-        case MenulistAppearance: {
+        case MenulistPart: {
             r = inflateRect(r, popupButtonSizes()[controlSize], popupButtonMargins(controlSize));
             break;
         }
@@ -272,7 +272,7 @@ IntRect RenderThemeSafari::inflateRect(const IntRect& r, const IntSize& size, co
 
 int RenderThemeSafari::baselinePosition(const RenderObject* o) const
 {
-    if (o->style()->appearance() == CheckboxAppearance || o->style()->appearance() == RadioAppearance)
+    if (o->style()->appearance() == CheckboxPart || o->style()->appearance() == RadioPart)
         return o->marginTop() + o->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     return RenderTheme::baselinePosition(o);
 }
@@ -283,7 +283,7 @@ bool RenderThemeSafari::controlSupportsTints(const RenderObject* o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o->style()->appearance() == CheckboxAppearance)
+    if (o->style()->appearance() == CheckboxPart)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -469,7 +469,7 @@ void RenderThemeSafari::adjustButtonStyle(CSSStyleSelector* selector, RenderStyl
     // Determine our control size based off our font.
     NSControlSize controlSize = controlSizeForFont(style);
 
-    if (style->appearance() == PushButtonAppearance) {
+    if (style->appearance() == PushButtonPart) {
         // Ditch the border.
         style->resetBorder();
 
@@ -841,18 +841,18 @@ void RenderThemeSafari::adjustMenuListStyle(CSSStyleSelector* selector, RenderSt
 
 int RenderThemeSafari::popupInternalPaddingLeft(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[leftPadding];
-    if (style->appearance() == MenulistButtonAppearance)
+    if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingLeft;
     return 0;
 }
 
 int RenderThemeSafari::popupInternalPaddingRight(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[rightPadding];
-    if (style->appearance() == MenulistButtonAppearance) {
+    if (style->appearance() == MenulistButtonPart) {
         float fontScale = style->fontSize() / baseFontSize;
         float arrowWidth = baseArrowWidth * fontScale;
         return static_cast<int>(ceilf(arrowWidth + arrowPaddingLeft + arrowPaddingRight + paddingBeforeSeparator));
@@ -862,18 +862,18 @@ int RenderThemeSafari::popupInternalPaddingRight(RenderStyle* style) const
 
 int RenderThemeSafari::popupInternalPaddingTop(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[topPadding];
-    if (style->appearance() == MenulistButtonAppearance)
+    if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingTop;
     return 0;
 }
 
 int RenderThemeSafari::popupInternalPaddingBottom(RenderStyle* style) const
 {
-    if (style->appearance() == MenulistAppearance)
+    if (style->appearance() == MenulistPart)
         return popupButtonPadding(controlSizeForFont(style))[bottomPadding];
-    if (style->appearance() == MenulistButtonAppearance)
+    if (style->appearance() == MenulistButtonPart)
         return styledPopupPaddingBottom;
     return 0;
 }
@@ -909,11 +909,11 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const RenderObject::Pa
 {
     IntRect bounds = r;
 
-    if (o->style()->appearance() ==  SliderHorizontalAppearance || 
-        o->style()->appearance() == MediaSliderAppearance) {
+    if (o->style()->appearance() ==  SliderHorizontalPart || 
+        o->style()->appearance() == MediaSliderPart) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
-    } else if (o->style()->appearance() == SliderVerticalAppearance) {
+    } else if (o->style()->appearance() == SliderVerticalPart) {
         bounds.setWidth(trackWidth);
         bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
     }
@@ -927,7 +927,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const RenderObject::Pa
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (o->style()->appearance() == SliderVerticalAppearance)
+    if (o->style()->appearance() == SliderVerticalPart)
         mainShading.adoptCF(CGShadingCreateAxial(cspace.get(), CGPointMake(bounds.x(),  bounds.bottom()), CGPointMake(bounds.right(), bounds.bottom()), mainFunction.get(), false, false));
     else
         mainShading.adoptCF(CGShadingCreateAxial(cspace.get(), CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.bottom()), mainFunction.get(), false, false));
@@ -972,10 +972,10 @@ const int mediaSliderThumbHeight = 14;
 
 void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
 {
-    if (o->style()->appearance() == SliderThumbHorizontalAppearance || o->style()->appearance() == SliderThumbVerticalAppearance) {
+    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
         o->style()->setWidth(Length(sliderThumbWidth, Fixed));
         o->style()->setHeight(Length(sliderThumbHeight, Fixed));
-    } else if (o->style()->appearance() == MediaSliderThumbAppearance) {
+    } else if (o->style()->appearance() == MediaSliderThumbPart) {
         o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
         o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
     }

@@ -71,7 +71,7 @@ public:
 
     // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
-    virtual bool isControlContainer(EAppearance) const;
+    bool isControlContainer(ControlPart) const;
 
     // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject*) const { return false; }

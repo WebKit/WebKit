@@ -124,7 +124,7 @@ private:
 #endif
 
 private:
-    bool supportsFocus(EAppearance) const;
+    bool supportsFocus(ControlPart) const;
 
     EAppearance applyTheme(QStyleOption&, RenderObject*) const;
 
