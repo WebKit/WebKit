@@ -44,8 +44,8 @@
 #define CTI_ARGS_exception 0x0F
 #define CTI_ARGS_profilerReference 0x10
 #define CTI_ARGS_globalData 0x11
-#define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
 #define ARG_callFrame ((CallFrame*)(ARGS)[CTI_ARGS_callFrame])
+#define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
 #define ARG_exception ((JSValue**)(ARGS)[CTI_ARGS_exception])
 #define ARG_profilerReference ((Profiler**)(ARGS)[CTI_ARGS_profilerReference])
 #define ARG_globalData ((JSGlobalData*)(ARGS)[CTI_ARGS_globalData])
@@ -253,9 +253,9 @@ namespace JSC {
         static const int repatchOffsetGetByIdBranchToSlowCase = 25;
         static const int repatchOffsetGetByIdPropertyMapOffset = 34;
 #if ENABLE(SAMPLING_TOOL)
-        static const int repatchOffsetGetByIdSlowCaseCall = 27 + ctiArgumentInitSize;
+        static const int repatchOffsetGetByIdSlowCaseCall = 27 + 4 + ctiArgumentInitSize;
 #else
-        static const int repatchOffsetGetByIdSlowCaseCall = 17 + ctiArgumentInitSize;
+        static const int repatchOffsetGetByIdSlowCaseCall = 17 + 4 + ctiArgumentInitSize;
 #endif
 
     public:
@@ -389,12 +389,12 @@ namespace JSC {
         void emitTagAsBoolImmediate(X86Assembler::RegisterID reg);
 
         X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, X86::RegisterID);
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, CTIHelper_j);
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, CTIHelper_p);
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, CTIHelper_v);
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, CTIHelper_s);
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, CTIHelper_b);
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, CTIHelper_2);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_j);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_p);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_v);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_s);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_b);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_2);
 
         void emitGetVariableObjectRegister(X86Assembler::RegisterID variableObject, int index, X86Assembler::RegisterID dst);
         void emitPutVariableObjectRegister(X86Assembler::RegisterID src, X86Assembler::RegisterID variableObject, int index);

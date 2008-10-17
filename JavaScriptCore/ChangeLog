@@ -1,3 +1,25 @@
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - Avoid restoring the caller's 'r' value in op_ret
+        https://bugs.webkit.org/show_bug.cgi?id=21319
+
+        This patch stops writing the call frame at call and return points;
+        instead it does so immediately before any CTI call.
+        
+        0.5% speedup or so on the v8 benchmark
+               
+        * VM/CTI.cpp:
+        (JSC::CTI::emitCTICall):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        * VM/CTI.h:
+
 2008-10-17  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.
