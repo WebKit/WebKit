@@ -499,6 +499,7 @@ SOURCES += \
     css/WebKitCSSKeyframeRule.cpp \
     css/WebKitCSSKeyframesRule.cpp \
     css/WebKitCSSTransformValue.cpp \
+    dom/ActiveDOMObject.cpp \
     dom/Attr.cpp \
     dom/Attribute.cpp \
     dom/BeforeTextInsertedEvent.cpp \

@@ -577,6 +577,8 @@ webcore_sources += \
 	WebCore/css/WebKitCSSKeyframesRule.h \
 	WebCore/css/WebKitCSSTransformValue.cpp \
 	WebCore/css/WebKitCSSTransformValue.h \
+	WebCore/dom/ActiveDOMObject.cpp \
+	WebCore/dom/ActiveDOMObject.h \
 	WebCore/dom/Attr.cpp \
 	WebCore/dom/Attr.h \
 	WebCore/dom/Attribute.cpp \

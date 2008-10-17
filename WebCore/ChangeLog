@@ -1,5 +1,15 @@
 2008-10-17  Alexey Proskuryakov  <ap@webkit.org>
 
+        Non-Mac build fix.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        Added ActiveDOMObject to the build.
+
+2008-10-17  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=21642

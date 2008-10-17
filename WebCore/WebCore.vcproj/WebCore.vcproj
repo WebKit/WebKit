@@ -10078,6 +10078,14 @@
 			Name="dom"
 			>
 			<File
+				RelativePath="..\dom\ActiveDOMObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ActiveDOMObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\AtomicStringList.h"
 				>
 			</File>
