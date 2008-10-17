@@ -131,6 +131,8 @@ interface IWebViewPrivate : IUnknown
     HRESULT setDefersCallbacks([in] BOOL defersCallbacks);
     HRESULT defersCallbacks([out, retval] BOOL* defersCallbacks);
 
+    HRESULT standardUserAgentWithApplicationName([in] BSTR applicationName, [retval][out] BSTR* groupName);
+
     HRESULT setCustomHTMLTokenizerTimeDelay([in] double timeDelay);
     HRESULT setCustomHTMLTokenizerChunkSize([in] int chunkSize);
 
