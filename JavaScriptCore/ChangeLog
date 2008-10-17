@@ -1,3 +1,11 @@
+2008-10-17  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make WREC require CTI because it won't actually compile otherwise.
+
+        * wtf/Platform.h:
+
 2008-10-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff Garen.
