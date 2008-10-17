@@ -57,6 +57,7 @@ SVGFilterEffect* SVGFEFloodElement::filterEffect(SVGResourceFilter* filter) cons
 
 bool SVGFEFloodElement::build(FilterBuilder* builder)
 {
+    // FIXME: This style code is totally wrong and makes no sense.  It's not really getting a parent style.
     RefPtr<RenderStyle> parentStyle = styleForRenderer(parent()->renderer());
     RefPtr<RenderStyle> filterStyle = resolveStyle(parentStyle.get());
 
