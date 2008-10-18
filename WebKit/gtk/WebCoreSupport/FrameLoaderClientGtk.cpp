@@ -231,6 +231,7 @@ void FrameLoaderClient::postProgressFinishedNotification()
 
 void FrameLoaderClient::frameLoaderDestroyed()
 {
+    g_object_unref(m_frame);
     m_frame = 0;
     delete this;
 }
@@ -465,9 +466,6 @@ void FrameLoaderClient::detachedFromParent3()
 
 void FrameLoaderClient::detachedFromParent4()
 {
-    ASSERT(m_frame);
-    g_object_unref(m_frame);
-    m_frame = 0;
 }
 
 void FrameLoaderClient::loadedFromCachedPage()

@@ -1,3 +1,14 @@
+2008-10-17  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
+
+        Reviewed by Mark Rowe. Landed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20403
+        [Gtk] Segfault after a table with an iframe is attempted to be added twice to DOM model with javascript
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::frameLoaderDestroyed):
+        (WebKit::FrameLoaderClient::detachedFromParent4):
+
 2008-10-06  David Hyatt  <hyatt@apple.com>
 
         Enable viewless Mac WebKit to paint some basic pages.
