@@ -1,5 +1,11 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_eval): Removed stray parentheses from my
+        last check-in.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - first step of https://bugs.webkit.org/show_bug.cgi?id=21732
