@@ -1,3 +1,14 @@
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Stephanie Lewis.
+        
+        - make run-webkit-tests --leaks default to 100 tests per run instead of 1000
+        
+        This should reduce or eliminate crashes on the buildbot due to
+        running out of memory while stack logging.
+
+        * Scripts/run-webkit-tests:
+
 2008-10-16  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Not reviewed.

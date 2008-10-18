@@ -118,7 +118,7 @@ my $report10Slowest = 0;
 my $resetResults = 0;
 my $shouldCheckLeaks = 0;
 my $showHelp = 0;
-my $testsPerDumpTool = 1000;
+my $testsPerDumpTool;
 my $testHTTP = 1;
 my $testMedia = 1;
 my $testResultsDirectory = "/tmp/layout-test-results";
@@ -271,6 +271,10 @@ $repaintTests = 1 if $repaintSweepHorizontally;
 
 $pixelTests = 1 if $repaintTests;
 $pixelTests = 1 if $threshold > 0;
+
+if (!$testsPerDumpTool) {
+    $testsPerDumpTool = $shouldCheckLeaks ? 100 : 1000;
+}
 
 $verbose = 1 if $testsPerDumpTool == 1;
 
