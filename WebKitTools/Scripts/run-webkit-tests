@@ -526,7 +526,11 @@ for my $test (@tests) {
                 print "running epilogue or prologue $logue\n";
             }
             print OUT "$logue\n";
-            # Discard the output.
+            # Throw away output from DumpRenderTree.
+            # Once for the test output and once for pixel results (empty)
+            while (<IN>) {
+                last if /#EOF/;
+            }
             while (<IN>) {
                 last if /#EOF/;
             }

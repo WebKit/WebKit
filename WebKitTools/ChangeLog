@@ -1,3 +1,11 @@
+2008-10-17  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix layout tests that use prologues and epilogues.
+
+        * Scripts/run-webkit-tests:
+
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.
