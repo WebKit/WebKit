@@ -4,7 +4,7 @@
 
         For the hot path of op_call, CTI now generates a check (initially for an impossible
         value), and the first time the call is executed we attempt to link the call directly
-        to the callee.  WWe can currently only do so if the arity of the caller and callee
+        to the callee.  We can currently only do so if the arity of the caller and callee
         match.  The (optimized) setup for the call on the hot path is linked directly to
         the ctiCode for the callee, without indirection.
         
