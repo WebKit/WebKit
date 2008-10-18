@@ -105,6 +105,9 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
 
 void Icon::paint(GraphicsContext* context, const IntRect& rect)
 {
+    if (context->paintingDisabled())
+        return;
+
     // TODO: Scale/clip the image if necessary.
     cairo_t* cr = context->platformContext();
     cairo_save(cr);
