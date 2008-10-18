@@ -1,3 +1,19 @@
+2008-10-17  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier
+        
+        Fix wx port's scrollbar and drawing handling after recent changes.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21720
+
+        * platform/ScrollView.h:
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformVisibleContentRect):
+        (WebCore::ScrollView::platformContentsSize):
+        (WebCore::ScrollView::platformSetContentsSize):
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::paint):
+
 2008-10-17  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. EAppearance -> ControlPart.

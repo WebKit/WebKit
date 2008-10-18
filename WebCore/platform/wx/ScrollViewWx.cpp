@@ -151,12 +151,17 @@ void ScrollView::platformRepaintContentRectangle(const IntRect& updateRect, bool
 
 IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
 {
-    // FIXME: Need to support includeScrollbars option.
-    int width;
-    platformWidget()->GetClientSize(NULL, &width);
-    int height;
-    platformWidget()->GetClientSize(NULL, &height);
-    ASSERT(width >= 0 && height >= 0);
+    wxWindow* win = platformWidget();
+    if (!win)
+        return IntRect();
+
+    int width, height;
+
+    if (includeScrollbars)
+        win->GetSize(&width, &height);
+    else
+        win->GetClientSize(&width, &height);
+        
     return IntRect(m_data->viewStart.x, m_data->viewStart.y, width, height);
 }
 
@@ -164,9 +169,10 @@ IntSize ScrollView::platformContentsSize() const
 {
     int width = 0;
     int height = 0;
-    platformWidget()->GetVirtualSize(&width, NULL);
-    platformWidget()->GetVirtualSize(&height, NULL);
-    ASSERT(width >= 0 && height >= 0);
+    if (platformWidget()) {
+        platformWidget()->GetVirtualSize(&width, &height);
+        ASSERT(width >= 0 && height >= 0);
+    }
     return IntSize(width, height);
 }
 
@@ -219,7 +225,7 @@ void ScrollView::platformSetContentsSize()
     if (!win)
         return;
 
-    win->SetVirtualSize(contentsWidth(), contentsHeight());
+    win->SetVirtualSize(m_contentsSize.width(), m_contentsSize.height());
     adjustScrollbars();
 }
 
@@ -342,6 +348,5 @@ bool ScrollView::platformIsOffscreen() const
 {
     return !platformWidget() || !platformWidget()->IsShownOnScreen();
 }
-
 
 }

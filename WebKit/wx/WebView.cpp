@@ -432,7 +432,7 @@ void wxWebView::OnPaint(wxPaintEvent& event)
                 if (frame->view()->needsLayout())
                     frame->view()->layout();
 
-                frame->view()->paint(gc, paintRect);
+                frame->view()->paintContents(gc, paintRect);
             }
             delete gc;
         }
@@ -445,6 +445,7 @@ void wxWebView::OnSize(wxSizeEvent& event)
         WebCore::Frame* frame = m_mainFrame->GetFrame();
         frame->sendResizeEvent();
         frame->view()->layout();
+        frame->view()->adjustScrollbars();
     }
       
     event.Skip();

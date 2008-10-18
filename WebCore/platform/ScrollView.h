@@ -296,9 +296,8 @@ public:
 #if PLATFORM(WX)
 public:
     virtual void setPlatformWidget(wxWindow*);
-
-private:
     void adjustScrollbars(int x = -1, int y = -1, bool refresh = true);
+private:
     class ScrollViewPrivate;
     ScrollViewPrivate* m_data;
 #endif
