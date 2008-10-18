@@ -49,7 +49,6 @@ JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode
     , m_body(body)
     , m_scopeChain(scopeChainNode)
 {
-    ASSERT(exec->globalData().parser->parse<FunctionBodyNode>(exec, 0, body->source()));
 }
 
 void JSFunction::mark()

@@ -1,5 +1,14 @@
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff Garen.
+        
+        - remove ASSERT that makes the leaks buildbot cry
+
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Cameron Zwarich
         
         - don't bother to do arguments tearoff when it will have no effect
