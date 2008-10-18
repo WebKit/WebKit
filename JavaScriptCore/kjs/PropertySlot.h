@@ -44,8 +44,8 @@ namespace JSC {
             clearValue();
         }
 
-        explicit PropertySlot(JSValue* base)
-            : m_slotBase(base)
+        explicit PropertySlot(const JSValue* base)
+            : m_slotBase(const_cast<JSValue*>(base))
             , m_offset(WTF::notFound)
         {
             clearValue();
@@ -176,14 +176,14 @@ namespace JSC {
         void clearBase()
         {
 #ifndef NDEBUG
-            m_slotBase = 0;
+            m_slotBase = noValue();
 #endif
         }
 
         void clearValue()
         {
 #ifndef NDEBUG
-            m_value = 0;
+            m_value = noValue();
 #endif
         }
 

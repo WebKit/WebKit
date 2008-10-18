@@ -30,8 +30,6 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
-
-    class JSValue;
     
     class ArgList : Noncopyable {
     private:

@@ -77,6 +77,8 @@ private:
 
     void init(ExecState*);
  
+    static JSCallbackObject* asCallbackObject(JSValue*);
+ 
     static JSValue* call(ExecState*, JSObject* functionObject, JSValue* thisValue, const ArgList&);
     static JSObject* construct(ExecState*, JSObject* constructor, const ArgList&);
    

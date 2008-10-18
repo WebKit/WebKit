@@ -51,9 +51,7 @@ InternalFunction::InternalFunction(JSGlobalData* globalData, PassRefPtr<Structur
 
 const UString& InternalFunction::name(JSGlobalData* globalData)
 {
-    JSValue* v = getDirect(globalData->propertyNames->name);
-    ASSERT(v->isString());
-    return static_cast<JSString*>(v)->value();
+    return asString(getDirect(globalData->propertyNames->name))->value();
 }
 
 } // namespace JSC

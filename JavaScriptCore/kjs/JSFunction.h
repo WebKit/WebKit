@@ -81,6 +81,14 @@ namespace JSC {
         ScopeChain m_scopeChain;
     };
 
+    JSFunction* asFunction(JSValue*);
+
+    inline JSFunction* asFunction(JSValue* value)
+    {
+        ASSERT(asObject(value)->inherits(&JSFunction::info));
+        return static_cast<JSFunction*>(asObject(value));
+    }
+
 } // namespace kJS
 
 #endif // JSFunction_h

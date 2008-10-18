@@ -73,27 +73,27 @@ bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propert
 
 JSValue* regExpObjectGlobal(ExecState*, const Identifier&, const PropertySlot& slot)
 {
-    return jsBoolean(static_cast<RegExpObject*>(slot.slotBase())->regExp()->global());
+    return jsBoolean(asRegExpObject(slot.slotBase())->regExp()->global());
 }
 
 JSValue* regExpObjectIgnoreCase(ExecState*, const Identifier&, const PropertySlot& slot)
 {
-    return jsBoolean(static_cast<RegExpObject*>(slot.slotBase())->regExp()->ignoreCase());
+    return jsBoolean(asRegExpObject(slot.slotBase())->regExp()->ignoreCase());
 }
  
 JSValue* regExpObjectMultiline(ExecState*, const Identifier&, const PropertySlot& slot)
 {            
-    return jsBoolean(static_cast<RegExpObject*>(slot.slotBase())->regExp()->multiline());
+    return jsBoolean(asRegExpObject(slot.slotBase())->regExp()->multiline());
 }
 
 JSValue* regExpObjectSource(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    return jsString(exec, static_cast<RegExpObject*>(slot.slotBase())->regExp()->pattern());
+    return jsString(exec, asRegExpObject(slot.slotBase())->regExp()->pattern());
 }
 
 JSValue* regExpObjectLastIndex(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    return jsNumber(exec, static_cast<RegExpObject*>(slot.slotBase())->lastIndex());
+    return jsNumber(exec, asRegExpObject(slot.slotBase())->lastIndex());
 }
 
 void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
@@ -103,7 +103,7 @@ void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue*
 
 void setRegExpObjectLastIndex(ExecState* exec, JSObject* baseObject, JSValue* value)
 {
-    static_cast<RegExpObject*>(baseObject)->setLastIndex(value->toInteger(exec));
+    asRegExpObject(baseObject)->setLastIndex(value->toInteger(exec));
 }
 
 bool RegExpObject::match(ExecState* exec, const ArgList& args)
@@ -157,7 +157,7 @@ JSValue* RegExpObject::exec(ExecState* exec, const ArgList& args)
 
 static JSValue* callRegExpObject(ExecState* exec, JSObject* function, JSValue*, const ArgList& args)
 {
-    return static_cast<RegExpObject*>(function)->exec(exec, args);
+    return asRegExpObject(function)->exec(exec, args);
 }
 
 CallType RegExpObject::getCallData(CallData& callData)

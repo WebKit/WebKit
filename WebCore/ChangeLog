@@ -1,5 +1,25 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        - first step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Update for change to make PreferredPrimitiveType no longer
+        a member of JSValue.
+
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::defaultValue): Removed JSValue:: prefix.
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::defaultValue): Ditto.
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::defaultValue): Ditto.
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::defaultValue): Ditto.
+        * bridge/runtime.h: Ditto. Also removed typedef.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * rendering/RenderThemeSafari.cpp:

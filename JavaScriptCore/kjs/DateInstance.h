@@ -52,6 +52,14 @@ namespace JSC {
         mutable Cache* m_cache;
     };
 
+    DateInstance* asDateInstance(JSValue*);
+
+    inline DateInstance* asDateInstance(JSValue* value)
+    {
+        ASSERT(asObject(value)->inherits(&DateInstance::info));
+        return static_cast<DateInstance*>(asObject(value));
+    }
+
 } // namespace JSC
 
 #endif // DateInstance_h

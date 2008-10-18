@@ -40,6 +40,13 @@
 namespace JSC {
 
 template <class Base>
+inline JSCallbackObject<Base>* JSCallbackObject<Base>::asCallbackObject(JSValue* value)
+{
+    ASSERT(asObject(value)->inherits(&info));
+    return static_cast<JSCallbackObject*>(asObject(value));
+}
+
+template <class Base>
 JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, PassRefPtr<StructureID> structure, JSClassRef jsClass, void* data)
     : Base(structure)
     , m_callbackObjectData(new JSCallbackObjectData(data, jsClass))
@@ -123,7 +130,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
                 // cache the value so we don't have to compute it again
                 // FIXME: This violates the PropertySlot design a little bit.
                 // We should either use this optimization everywhere, or nowhere.
-                slot.setCustom(reinterpret_cast<JSObject*>(toJS(value)), cachedValueGetter);
+                slot.setCustom(asObject(toJS(value)), cachedValueGetter);
                 return true;
             }
         }
@@ -318,7 +325,7 @@ JSValue* JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObject,
     }
     
     ASSERT_NOT_REACHED(); // getCallData should prevent us from reaching here
-    return 0;
+    return noValue();
 }
 
 template <class Base>
@@ -433,8 +440,7 @@ JSValue* JSCallbackObject<Base>::cachedValueGetter(ExecState*, const Identifier&
 template <class Base>
 JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    ASSERT(slot.slotBase()->isObject(&JSCallbackObject::info));
-    JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
+    JSCallbackObject* thisObj = asCallbackObject(slot.slotBase());
     
     JSObjectRef thisRef = toRef(thisObj);
     RefPtr<OpaqueJSString> propertyNameRef;
@@ -456,8 +462,7 @@ JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, const Identi
 template <class Base>
 JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    ASSERT(slot.slotBase()->isObject(&JSCallbackObject::info));
-    JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
+    JSCallbackObject* thisObj = asCallbackObject(slot.slotBase());
     
     // Check for cached or override property.
     PropertySlot slot2(thisObj);
@@ -482,8 +487,7 @@ JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, const Ide
 template <class Base>
 JSValue* JSCallbackObject<Base>::callbackGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    ASSERT(slot.slotBase()->isObject(&JSCallbackObject::info));
-    JSCallbackObject* thisObj = static_cast<JSCallbackObject*>(slot.slotBase());
+    JSCallbackObject* thisObj = asCallbackObject(slot.slotBase());
     
     JSObjectRef thisRef = toRef(thisObj);
     RefPtr<OpaqueJSString> propertyNameRef;

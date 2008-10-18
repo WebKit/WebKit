@@ -719,7 +719,7 @@ RegisterID* CodeGenerator::emitEqualityOp(OpcodeID opcode, RegisterID* dst, Regi
             && src1->isTemporary()
             && static_cast<unsigned>(src2->index()) < m_codeBlock->constantRegisters.size()
             && m_codeBlock->constantRegisters[src2->index()].jsValue(m_scopeChain->globalObject()->globalExec())->isString()) {
-            const UString& value = static_cast<JSString*>(m_codeBlock->constantRegisters[src2->index()].jsValue(m_scopeChain->globalObject()->globalExec()))->value();
+            const UString& value = asString(m_codeBlock->constantRegisters[src2->index()].jsValue(m_scopeChain->globalObject()->globalExec()))->value();
             if (value == "undefined") {
                 rewindUnaryOp();
                 emitOpcode(op_is_undefined);
@@ -783,7 +783,7 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double number)
     // Later we can do the extra work to handle that like the other cases.
     if (number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
         return emitLoad(dst, jsNumber(globalData(), number));
-    JSValue*& valueInMap = m_numberMap.add(number, 0).first->second;
+    JSValue*& valueInMap = m_numberMap.add(number, noValue()).first->second;
     if (!valueInMap)
         valueInMap = jsNumber(globalData(), number);
     return emitLoad(dst, valueInMap);
@@ -821,9 +821,9 @@ RegisterID* CodeGenerator::emitUnexpectedLoad(RegisterID* dst, double d)
     return dst;
 }
 
-bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, size_t& stackDepth, bool forWriting, JSValue*& globalObject)
+bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, size_t& stackDepth, bool forWriting, JSObject*& globalObject)
 {
-    // Cases where we cannot statically optimise the lookup
+    // Cases where we cannot statically optimize the lookup.
     if (property == propertyNames().arguments || !canOptimizeNonLocals()) {
         stackDepth = 0;
         index = missingSymbolMarker();
@@ -866,7 +866,7 @@ bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, s
             break;
     }
 
-    // Can't locate the property but we're able to avoid a few lookups
+    // Can't locate the property but we're able to avoid a few lookups.
     stackDepth = depth;
     index = missingSymbolMarker();
     JSObject* scope = *iter;
@@ -889,7 +889,7 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
 {
     size_t depth = 0;
     int index = 0;
-    JSValue* globalObject = 0;
+    JSObject* globalObject = 0;
     if (!findScopedProperty(property, index, depth, false, globalObject) && !globalObject) {
         // We can't optimise at all :-(
         emitOpcode(op_resolve);
@@ -907,7 +907,7 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
         m_codeBlock->structureIDInstructions.append(instructions().size());
         emitOpcode(op_resolve_global);
         instructions().append(dst->index());
-        instructions().append(static_cast<JSCell*>(globalObject));
+        instructions().append(globalObject);
         instructions().append(addConstant(property));
         instructions().append(0);
         instructions().append(0);
@@ -928,7 +928,7 @@ RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int i
     if (globalObject) {
         emitOpcode(op_get_global_var);
         instructions().append(dst->index());
-        instructions().append(static_cast<JSCell*>(globalObject));
+        instructions().append(asCell(globalObject));
         instructions().append(index);
         return dst;
     }
@@ -944,7 +944,7 @@ RegisterID* CodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID*
 {
     if (globalObject) {
         emitOpcode(op_put_global_var);
-        instructions().append(static_cast<JSCell*>(globalObject));
+        instructions().append(asCell(globalObject));
         instructions().append(index);
         instructions().append(value->index());
         return value;

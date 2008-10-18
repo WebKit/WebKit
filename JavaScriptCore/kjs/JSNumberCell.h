@@ -107,10 +107,18 @@ namespace JSC {
     extern const double NaN;
     extern const double Inf;
 
+    JSNumberCell* asNumberCell(JSValue*);
+
     JSValue* jsNumberCell(JSGlobalData*, double);
     JSValue* jsNaN(JSGlobalData*);
     JSValue* jsNumberCell(ExecState*, double);
     JSValue* jsNaN(ExecState*);
+
+    inline JSNumberCell* asNumberCell(JSValue* value)
+    {
+        ASSERT(asCell(value)->isNumber());
+        return static_cast<JSNumberCell*>(asCell(value));
+    }
 
     ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, double d)
     {
@@ -224,8 +232,8 @@ namespace JSC {
 
     inline double JSValue::uncheckedGetNumber() const
     {
-        ASSERT(JSImmediate::isImmediate(this) || asCell()->isNumber());
-        return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : static_cast<const JSNumberCell*>(this)->value();
+        ASSERT(JSImmediate::isImmediate(asValue()) || asCell()->isNumber());
+        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toDouble(asValue()) : asNumberCell(asValue())->value();
     }
 
     inline int32_t JSNumberCell::toInt32() const
@@ -246,7 +254,7 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue* JSValue::toJSNumber(ExecState* exec) const
     {
-        return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(exec, this->toNumber(exec));
+        return JSImmediate::isNumber(asValue()) ? asValue() : jsNumber(exec, this->toNumber(exec));
     }
 
 } // namespace JSC

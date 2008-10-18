@@ -120,8 +120,7 @@ public:
     
     virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
 
-    typedef JSValue::PreferredPrimitiveType PreferredPrimitiveType;
-    virtual JSValue* defaultValue(ExecState*, JSValue::PreferredPrimitiveType) const = 0;
+    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const = 0;
     
     virtual JSValue* valueOf(ExecState* exec) const { return jsString(exec, getClass()->name()); }
     

@@ -82,7 +82,15 @@ namespace JSC {
 
         JSActivationData* d() const { return static_cast<JSActivationData*>(JSVariableObject::d); }
     };
-    
+
+    JSActivation* asActivation(JSValue*);
+
+    inline JSActivation* asActivation(JSValue* value)
+    {
+        ASSERT(asObject(value)->inherits(&JSActivation::info));
+        return static_cast<JSActivation*>(asObject(value));
+    }
+
 } // namespace JSC
 
 #endif // JSActivation_h

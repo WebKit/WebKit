@@ -60,14 +60,14 @@ JSObject* DebuggerCallFrame::thisObject() const
     if (!m_callFrame->codeBlock())
         return 0;
 
-    // FIXME: Why is it safe to cast this to JSObject?
-    return static_cast<JSObject*>(m_callFrame->thisValue());
+    // FIXME: Why is it safe to assume this is an object?
+    return asObject(m_callFrame->thisValue());
 }
 
 JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception) const
 {
     if (!m_callFrame->codeBlock())
-        return 0;
+        return noValue();
 
     int errLine;
     UString errMsg;

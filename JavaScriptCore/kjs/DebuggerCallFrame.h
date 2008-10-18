@@ -37,6 +37,12 @@ namespace JSC {
     public:
         enum Type { ProgramType, FunctionType };
 
+        DebuggerCallFrame(CallFrame* callFrame)
+            : m_callFrame(callFrame)
+            , m_exception(0)
+        {
+        }
+
         DebuggerCallFrame(CallFrame* callFrame, JSValue* exception)
             : m_callFrame(callFrame)
             , m_exception(exception)

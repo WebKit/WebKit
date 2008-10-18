@@ -48,7 +48,7 @@ bool GetterSetter::getPrimitiveNumber(ExecState*, double& number, JSValue*& valu
 {
     ASSERT_NOT_REACHED();
     number = 0;
-    value = 0;
+    value = noValue();
     return true;
 }
 

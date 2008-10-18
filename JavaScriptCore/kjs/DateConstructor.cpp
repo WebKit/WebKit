@@ -74,7 +74,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         value = getCurrentUTCTime();
     else if (numArgs == 1) {
         if (args.at(exec, 0)->isObject(&DateInstance::info))
-            value = static_cast<DateInstance*>(args.at(exec, 0))->internalNumber();
+            value = asDateInstance(args.at(exec, 0))->internalNumber();
         else {
             JSValue* primitive = args.at(exec, 0)->toPrimitive(exec);
             if (primitive->isString())

@@ -65,6 +65,14 @@ namespace JSC {
         OwnPtr<RegExpObjectData> d;
     };
 
+    RegExpObject* asRegExpObject(JSValue*);
+
+    inline RegExpObject* asRegExpObject(JSValue* value)
+    {
+        ASSERT(asObject(value)->inherits(&RegExpObject::info));
+        return static_cast<RegExpObject*>(asObject(value));
+    }
+
 } // namespace JSC
 
 #endif // RegExpObject_h

@@ -228,7 +228,7 @@ namespace JSC {
         static JSValue* SFX_CALL cti_op_new_regexp(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_bitor(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_call_eval(CTI_ARGS);
-        static void* SFX_CALL cti_op_throw(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_throw(CTI_ARGS);
         static JSPropertyNameIterator* SFX_CALL cti_op_get_pnames(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_next_pname(CTI_ARGS);
         static void SFX_CALL cti_op_push_scope(CTI_ARGS);
@@ -259,7 +259,7 @@ namespace JSC {
         static void SFX_CALL cti_op_call_profiler(CTI_ARGS);
         static void SFX_CALL cti_op_ret_profiler(CTI_ARGS);
 
-        static void* SFX_CALL cti_vm_throw(CTI_ARGS);
+        static JSValue* SFX_CALL cti_vm_throw(CTI_ARGS);
         static void* SFX_CALL cti_vm_compile(CTI_ARGS);
         static void* SFX_CALL cti_vm_lazyLinkCall(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_push_activation(CTI_ARGS);
@@ -309,6 +309,8 @@ namespace JSC {
         void uncachePutByID(CodeBlock*, Instruction* vPC);
 
 #if ENABLE(CTI)
+        static void throwStackOverflowPreviousFrame(CallFrame*, JSGlobalData*, void*& returnAddress);
+
         void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
 

@@ -285,9 +285,9 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
 
 JSValue* JavaInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == JSValue::PreferString)
+    if (hint == PreferString)
         return stringValue(exec);
-    if (hint == JSValue::PreferNumber)
+    if (hint == PreferNumber)
         return numberValue(exec);
     JavaClass *aClass = static_cast<JavaClass*>(getClass());
     if (aClass->isStringClass())

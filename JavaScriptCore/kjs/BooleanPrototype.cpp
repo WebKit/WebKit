@@ -61,10 +61,10 @@ JSValue* booleanProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue
     if (!thisValue->isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
-    if (static_cast<BooleanObject*>(thisValue)->internalValue() == jsBoolean(false))
+    if (asBooleanObject(thisValue)->internalValue() == jsBoolean(false))
         return jsNontrivialString(exec, "false");
 
-    ASSERT(static_cast<BooleanObject*>(thisValue)->internalValue() == jsBoolean(true));
+    ASSERT(asBooleanObject(thisValue)->internalValue() == jsBoolean(true));
     return jsNontrivialString(exec, "true");
 }
 
@@ -76,7 +76,7 @@ JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject*, JSValue* thisValue,
     if (!thisValue->isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
-    return static_cast<BooleanObject*>(thisValue)->internalValue();
+    return asBooleanObject(thisValue)->internalValue();
 }
 
 } // namespace JSC

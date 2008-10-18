@@ -355,9 +355,9 @@ JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifie
 
 JSValue* ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == JSValue::PreferString)
+    if (hint == PreferString)
         return stringValue(exec);
-    if (hint == JSValue::PreferNumber)
+    if (hint == PreferNumber)
         return numberValue(exec);
     if ([_instance.get() isKindOfClass:[NSString class]])
         return stringValue(exec);

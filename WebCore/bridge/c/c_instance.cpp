@@ -138,9 +138,9 @@ JSValue* CInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 
 JSValue* CInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == JSValue::PreferString)
+    if (hint == PreferString)
         return stringValue(exec);
-    if (hint == JSValue::PreferNumber)
+    if (hint == PreferNumber)
         return numberValue(exec);
     return valueOf(exec);
 }

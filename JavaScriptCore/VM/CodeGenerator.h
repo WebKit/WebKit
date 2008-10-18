@@ -102,7 +102,7 @@ namespace JSC {
         //
         // NB: depth does _not_ include the local scope.  eg. a depth of 0 refers
         // to the scope containing this codeblock.
-        bool findScopedProperty(const Identifier&, int& index, size_t& depth, bool forWriting, JSValue*& globalObject);
+        bool findScopedProperty(const Identifier&, int& index, size_t& depth, bool forWriting, JSObject*& globalObject);
 
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
@@ -328,12 +328,13 @@ namespace JSC {
         void rewindUnaryOp();
 
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
+
         struct JSValueHashTraits : HashTraits<JSValue*> {
             static void constructDeletedValue(JSValue*& slot) { slot = JSImmediate::impossibleValue(); }
             static bool isDeletedValue(JSValue* value) { return value == JSImmediate::impossibleValue(); }
         };
 
-        typedef HashMap<JSValue*, unsigned, DefaultHash<JSValue*>::Hash, JSValueHashTraits> JSValueMap;
+        typedef HashMap<JSValue*, unsigned, PtrHash<JSValue*>, JSValueHashTraits> JSValueMap;
 
         struct IdentifierMapIndexHashTraits {
             typedef int TraitType;

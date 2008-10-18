@@ -84,19 +84,19 @@ JSValue* JSFunction::call(ExecState* exec, JSValue* thisValue, const ArgList& ar
 
 JSValue* JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
+    JSFunction* thisObj = asFunction(slot.slotBase());
     return exec->machine()->retrieveArguments(exec, thisObj);
 }
 
 JSValue* JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
+    JSFunction* thisObj = asFunction(slot.slotBase());
     return exec->machine()->retrieveCaller(exec, thisObj);
 }
 
 JSValue* JSFunction::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
+    JSFunction* thisObj = asFunction(slot.slotBase());
     return jsNumber(exec, thisObj->m_body->parameterCount());
 }
 
@@ -173,7 +173,7 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
     StructureID* structure;
     JSValue* prototype = get(exec, exec->propertyNames().prototype);
     if (prototype->isObject())
-        structure = static_cast<JSObject*>(prototype)->inheritorID();
+        structure = asObject(prototype)->inheritorID();
     else
         structure = exec->lexicalGlobalObject()->emptyObjectStructure();
     JSObject* thisObj = new (exec) JSObject(structure);
@@ -181,7 +181,7 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
     JSValue* result = exec->machine()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
     if (exec->hadException() || !result->isObject())
         return thisObj;
-    return static_cast<JSObject*>(result);
+    return asObject(result);
 }
 
 } // namespace JSC

@@ -177,13 +177,18 @@ ALWAYS_INLINE JSValue* CTI::getConstant(CallFrame* callFrame, int src)
     return m_codeBlock->constantRegisters[src - m_codeBlock->numVars].jsValue(callFrame);
 }
 
+inline uintptr_t CTI::asInteger(JSValue* value)
+{
+    return reinterpret_cast<uintptr_t>(value);
+}
+
 // get arg puts an arg from the SF register array into a h/w register
 ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst)
 {
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (isConstant(src)) {
         JSValue* js = getConstant(m_callFrame, src);
-        m_jit.movl_i32r(reinterpret_cast<unsigned>(js), dst);
+        m_jit.movl_i32r(asInteger(js), dst);
     } else
         m_jit.movl_mr(src * sizeof(Register), X86::edi, dst);
 }
@@ -193,7 +198,7 @@ ALWAYS_INLINE void CTI::emitGetPutArg(unsigned src, unsigned offset, X86Assemble
 {
     if (isConstant(src)) {
         JSValue* js = getConstant(m_callFrame, src);
-        m_jit.movl_i32m(reinterpret_cast<unsigned>(js), offset + sizeof(void*), X86::esp);
+        m_jit.movl_i32m(asInteger(js), offset + sizeof(void*), X86::esp);
     } else {
         m_jit.movl_mr(src * sizeof(Register), X86::edi, scratch);
         m_jit.movl_rm(scratch, offset + sizeof(void*), X86::esp);
@@ -215,9 +220,9 @@ ALWAYS_INLINE JSValue* CTI::getConstantImmediateNumericArg(unsigned src)
 {
     if (isConstant(src)) {
         JSValue* js = getConstant(m_callFrame, src);
-        return JSImmediate::isNumber(js) ? js : 0;
+        return JSImmediate::isNumber(js) ? js : noValue();
     }
-    return 0;
+    return noValue();
 }
 
 ALWAYS_INLINE void CTI::emitPutCTIParam(void* value, unsigned name)
@@ -253,7 +258,7 @@ ALWAYS_INLINE void CTI::emitPutResult(unsigned dst, X86Assembler::RegisterID fro
 
 ALWAYS_INLINE void CTI::emitInitRegister(unsigned dst)
 {
-    m_jit.movl_i32m(reinterpret_cast<unsigned>(jsUndefined()), dst * sizeof(Register), X86::edi);
+    m_jit.movl_i32m(asInteger(jsUndefined()), dst * sizeof(Register), X86::edi);
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
@@ -442,7 +447,7 @@ ALWAYS_INLINE void CTI::emitJumpSlowCaseIfNotImmNums(X86Assembler::RegisterID re
 ALWAYS_INLINE unsigned CTI::getDeTaggedConstantImmediate(JSValue* imm)
 {
     ASSERT(JSImmediate::isNumber(imm));
-    return reinterpret_cast<unsigned>(imm) & ~JSImmediate::TagBitTypeInteger;
+    return asInteger(imm) & ~JSImmediate::TagBitTypeInteger;
 }
 
 ALWAYS_INLINE void CTI::emitFastArithDeTagImmediate(X86Assembler::RegisterID reg)
@@ -533,7 +538,7 @@ void CTI::compileOpCallInitializeCallFrame(unsigned callee, unsigned argCount)
 {
     emitGetArg(callee, X86::ecx); // Load callee JSFunction into ecx
     m_jit.movl_rm(X86::eax, RegisterFile::CodeBlock * static_cast<int>(sizeof(Register)), X86::edx); // callee CodeBlock was returned in eax
-    m_jit.movl_i32m(reinterpret_cast<unsigned>(nullJSValue), RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edx);
+    m_jit.movl_i32m(asInteger(noValue()), RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edx);
     m_jit.movl_rm(X86::ecx, RegisterFile::Callee * static_cast<int>(sizeof(Register)), X86::edx);
 
     m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_scopeChain) + OBJECT_OFFSET(ScopeChain, m_node), X86::ecx, X86::ebx); // newScopeChain
@@ -572,7 +577,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structure
         int thisVal = instruction[3].u.operand;
         if (thisVal == missingThisObjectMarker()) {
             // FIXME: should this be loaded dynamically off m_callFrame?
-            m_jit.movl_i32m(reinterpret_cast<unsigned>(m_callFrame->globalThisValue()), firstArg * sizeof(Register), X86::edi);
+            m_jit.movl_i32m(asInteger(m_callFrame->globalThisValue()), firstArg * sizeof(Register), X86::edi);
         } else {
             emitGetArg(thisVal, X86::eax);
             emitPutResult(firstArg);
@@ -586,14 +591,14 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structure
         compileOpCallSetupArgs(instruction, false, true);
 
         emitCTICall(i, Machine::cti_op_call_eval);
-        m_jit.cmpl_i32r(reinterpret_cast<unsigned>(JSImmediate::impossibleValue()), X86::eax);
+        m_jit.cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::eax);
         wasEval = m_jit.emitUnlinkedJne();
     }
 
     // This plants a check for a cached JSFunction value, so we can plant a fast link to the callee.
     // This deliberately leaves the callee in ecx, used when setting up the stack frame below
     emitGetArg(callee, X86::ecx);
-    m_jit.cmpl_i32r(reinterpret_cast<unsigned>(JSImmediate::impossibleValue()), X86::ecx);
+    m_jit.cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::ecx);
     X86Assembler::JmpDst addressOfLinkedFunctionCheck = m_jit.label();
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
     ASSERT(X86Assembler::getDifferenceBetweenLabels(addressOfLinkedFunctionCheck, m_jit.label()) == repatchOffsetOpCallCall);
@@ -620,7 +625,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structure
 
     // Fast version of stack frame initialization, directly relative to edi.
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
-    m_jit.movl_i32m(reinterpret_cast<unsigned>(nullJSValue), (registerOffset + RegisterFile::OptionalCalleeArguments) * static_cast<int>(sizeof(Register)), X86::edi);
+    m_jit.movl_i32m(asInteger(noValue()), (registerOffset + RegisterFile::OptionalCalleeArguments) * static_cast<int>(sizeof(Register)), X86::edi);
     m_jit.movl_rm(X86::ecx, (registerOffset + RegisterFile::Callee) * static_cast<int>(sizeof(Register)), X86::edi);
     m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_scopeChain) + OBJECT_OFFSET(ScopeChain, m_node), X86::ecx, X86::edx); // newScopeChain
     m_jit.movl_i32m(argCount, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register)), X86::edi);
@@ -670,23 +675,23 @@ void CTI::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
     m_jit.testl_i32r(JSImmediate::TagMask, X86::edx);
     m_jit.setz_r(X86::ecx);
     m_jit.movzbl_rr(X86::ecx, X86::ecx); // ecx is now 1 if edx was nonimmediate
-    m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::edx);
+    m_jit.cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::edx);
     m_jit.sete_r(X86::edx);
     m_jit.movzbl_rr(X86::edx, X86::edx); // edx is now 1 if edx was the 0 immediate
     m_jit.orl_rr(X86::ecx, X86::edx);
 
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJnz(), i));
 
-    m_jit.movl_i32r(reinterpret_cast<uint32_t>(jsBoolean(negated)), X86::eax);
+    m_jit.movl_i32r(asInteger(jsBoolean(negated)), X86::eax);
 
     X86Assembler::JmpSrc firstWasNotImmediate = m_jit.emitUnlinkedJmp();
 
     m_jit.link(secondNotImmediate, m_jit.label());
     // check that eax is not the zero immediate (we know it must be immediate)
-    m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::eax);
+    m_jit.cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJe(), i));
 
-    m_jit.movl_i32r(reinterpret_cast<uint32_t>(jsBoolean(negated)), X86::eax);
+    m_jit.movl_i32r(asInteger(jsBoolean(negated)), X86::eax);
 
     m_jit.link(bothWereImmediates, m_jit.label());
     m_jit.link(firstWasNotImmediate, m_jit.label());
@@ -954,7 +959,7 @@ void CTI::privateCompileMainPass()
         case op_mov: {
             unsigned src = instruction[i + 2].u.operand;
             if (isConstant(src))
-                m_jit.movl_i32r(reinterpret_cast<unsigned>(getConstant(m_callFrame, src)), X86::edx);
+                m_jit.movl_i32r(asInteger(getConstant(m_callFrame, src)), X86::edx);
             else
                 emitGetArg(src, X86::edx);
             emitPutResult(instruction[i + 1].u.operand, X86::edx);
@@ -1037,7 +1042,7 @@ void CTI::privateCompileMainPass()
             if (src2imm) {
                 emitGetArg(instruction[i + 1].u.operand, X86::edx);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
-                m_jit.cmpl_i32r(reinterpret_cast<unsigned>(src2imm), X86::edx);
+                m_jit.cmpl_i32r(asInteger(src2imm), X86::edx);
                 m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJl(), i + 3 + target));
             } else {
                 emitGetArg(instruction[i + 1].u.operand, X86::eax);
@@ -1058,7 +1063,7 @@ void CTI::privateCompileMainPass()
             if (src2imm) {
                 emitGetArg(instruction[i + 1].u.operand, X86::edx);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
-                m_jit.cmpl_i32r(reinterpret_cast<unsigned>(src2imm), X86::edx);
+                m_jit.cmpl_i32r(asInteger(src2imm), X86::edx);
                 m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJle(), i + 3 + target));
             } else {
                 emitGetArg(instruction[i + 1].u.operand, X86::eax);
@@ -1170,7 +1175,7 @@ void CTI::privateCompileMainPass()
             emitGetArg(instruction[i + 4].u.operand, X86::edx); // reload proto
 
             // optimistically load true result
-            m_jit.movl_i32r(reinterpret_cast<int32_t>(jsBoolean(true)), X86::eax);
+            m_jit.movl_i32r(asInteger(jsBoolean(true)), X86::eax);
 
             X86Assembler::JmpDst loop = m_jit.label();
 
@@ -1181,11 +1186,11 @@ void CTI::privateCompileMainPass()
             m_jit.cmpl_rr(X86::ecx, X86::edx);
             X86Assembler::JmpSrc exit = m_jit.emitUnlinkedJe();
 
-            m_jit.cmpl_i32r(reinterpret_cast<int32_t>(jsNull()), X86::ecx);
+            m_jit.cmpl_i32r(asInteger(jsNull()), X86::ecx);
             X86Assembler::JmpSrc goToLoop = m_jit.emitUnlinkedJne();
             m_jit.link(goToLoop, loop);
 
-            m_jit.movl_i32r(reinterpret_cast<int32_t>(jsBoolean(false)), X86::eax);
+            m_jit.movl_i32r(asInteger(jsBoolean(false)), X86::eax);
 
             m_jit.link(exit, m_jit.label());
 
@@ -1249,7 +1254,7 @@ void CTI::privateCompileMainPass()
         }
         case op_get_global_var: {
             JSVariableObject* globalObject = static_cast<JSVariableObject*>(instruction[i + 2].u.jsCell);
-            m_jit.movl_i32r(reinterpret_cast<unsigned>(globalObject), X86::eax);
+            m_jit.movl_i32r(asInteger(globalObject), X86::eax);
             emitGetVariableObjectRegister(X86::eax, instruction[i + 3].u.operand, X86::eax);
             emitPutResult(instruction[i + 1].u.operand, X86::eax);
             i += 4;
@@ -1257,7 +1262,7 @@ void CTI::privateCompileMainPass()
         }
         case op_put_global_var: {
             JSVariableObject* globalObject = static_cast<JSVariableObject*>(instruction[i + 1].u.jsCell);
-            m_jit.movl_i32r(reinterpret_cast<unsigned>(globalObject), X86::eax);
+            m_jit.movl_i32r(asInteger(globalObject), X86::eax);
             emitGetArg(instruction[i + 3].u.operand, X86::edx);
             emitPutVariableObjectRegister(X86::edx, X86::eax, instruction[i + 2].u.operand);
             i += 4;
@@ -1443,14 +1448,14 @@ void CTI::privateCompileMainPass()
             unsigned target = instruction[i + 2].u.operand;
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
 
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
             X86Assembler::JmpSrc isZero = m_jit.emitUnlinkedJe();
             m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
             m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJne(), i + 2 + target));
 
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::trueImmediate()), X86::eax);
             m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJe(), i + 2 + target));
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::falseImmediate()), X86::eax);
             m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
 
             m_jit.link(isZero, m_jit.label());
@@ -1483,7 +1488,7 @@ void CTI::privateCompileMainPass()
         }
         case op_resolve_global: {
             // Fast case
-            unsigned globalObject = reinterpret_cast<unsigned>(instruction[i + 2].u.jsCell);
+            unsigned globalObject = asInteger(instruction[i + 2].u.jsCell);
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             void* structureIDAddr = reinterpret_cast<void*>(instruction + i + 4);
             void* offsetAddr = reinterpret_cast<void*>(instruction + i + 5);
@@ -1531,7 +1536,7 @@ void CTI::privateCompileMainPass()
             if (src2imm) {
                 emitGetArg(instruction[i + 1].u.operand, X86::edx);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
-                m_jit.cmpl_i32r(reinterpret_cast<unsigned>(src2imm), X86::edx);
+                m_jit.cmpl_i32r(asInteger(src2imm), X86::edx);
                 m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJge(), i + 3 + target));
             } else {
                 emitGetArg(instruction[i + 1].u.operand, X86::eax);
@@ -1558,14 +1563,14 @@ void CTI::privateCompileMainPass()
             unsigned target = instruction[i + 2].u.operand;
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
 
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
             m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJe(), i + 2 + target));
             m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
             X86Assembler::JmpSrc isNonZero = m_jit.emitUnlinkedJne();
 
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::falseImmediate()), X86::eax);
             m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJe(), i + 2 + target));
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::trueImmediate()), X86::eax);
             m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
 
             m_jit.link(isNonZero, m_jit.label());
@@ -1586,7 +1591,7 @@ void CTI::privateCompileMainPass()
         }
         case op_unexpected_load: {
             JSValue* v = m_codeBlock->unexpectedConstants[instruction[i + 2].u.operand];
-            m_jit.movl_i32r(reinterpret_cast<unsigned>(v), X86::eax);
+            m_jit.movl_i32r(asInteger(v), X86::eax);
             emitPutResult(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -1639,12 +1644,12 @@ void CTI::privateCompileMainPass()
             if (JSValue* value = getConstantImmediateNumericArg(src1)) {
                 emitGetArg(src2, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-                m_jit.andl_i32r(reinterpret_cast<unsigned>(value), X86::eax); // FIXME: make it more obvious this is relying on the format of JSImmediate
+                m_jit.andl_i32r(asInteger(value), X86::eax); // FIXME: make it more obvious this is relying on the format of JSImmediate
                 emitPutResult(dst);
             } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
                 emitGetArg(src1, X86::eax);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
-                m_jit.andl_i32r(reinterpret_cast<unsigned>(value), X86::eax);
+                m_jit.andl_i32r(asInteger(value), X86::eax);
                 emitPutResult(dst);
             } else {
                 emitGetArg(src1, X86::eax);
@@ -1712,14 +1717,14 @@ void CTI::privateCompileMainPass()
             unsigned target = instruction[i + 2].u.operand;
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
 
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::zeroImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
             X86Assembler::JmpSrc isZero = m_jit.emitUnlinkedJe();
             m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
             m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJne(), i + 2 + target));
 
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::trueImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::trueImmediate()), X86::eax);
             m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJe(), i + 2 + target));
-            m_jit.cmpl_i32r(reinterpret_cast<uint32_t>(JSImmediate::falseImmediate()), X86::eax);
+            m_jit.cmpl_i32r(asInteger(JSImmediate::falseImmediate()), X86::eax);
             m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
 
             m_jit.link(isZero, m_jit.label());
@@ -1983,7 +1988,7 @@ void CTI::privateCompileMainPass()
         case op_new_error: {
             JSValue* message = m_codeBlock->unexpectedConstants[instruction[i + 3].u.operand];
             emitPutArgConstant(instruction[i + 2].u.operand, 0);
-            emitPutArgConstant(reinterpret_cast<unsigned>(message), 4);
+            emitPutArgConstant(asInteger(message), 4);
             emitPutArgConstant(m_codeBlock->lineNumberForVPC(&instruction[i]), 8);
             emitCTICall(i, Machine::cti_op_new_error);
             emitPutResult(instruction[i + 1].u.operand);
@@ -2845,7 +2850,7 @@ void CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prot
 
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a StructureID that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
-    JSObject* protoObject = static_cast<JSObject*>(structureID->prototypeForLookup(m_callFrame));
+    JSObject* protoObject = asObject(structureID->prototypeForLookup(m_callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
     m_jit.movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
@@ -2888,7 +2893,7 @@ void CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prot
 #else
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a StructureID that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
-    JSObject* protoObject = static_cast<JSObject*>(structureID->prototypeForLookup(m_callFrame));
+    JSObject* protoObject = asObject(structureID->prototypeForLookup(m_callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
     m_jit.movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
@@ -2937,7 +2942,7 @@ void CTI::privateCompileGetByIdChain(StructureID* structureID, StructureIDChain*
     RefPtr<StructureID>* chainEntries = chain->head();
     JSObject* protoObject = 0;
     for (unsigned i = 0; i<count; ++i) {
-        protoObject = static_cast<JSObject*>(currStructureID->prototypeForLookup(m_callFrame));
+        protoObject = asObject(currStructureID->prototypeForLookup(m_callFrame));
         currStructureID = chainEntries[i].get();
 
         // Check the prototype object's StructureID had not changed.
@@ -3024,7 +3029,7 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
     // ecx = baseObject->m_structureID
     for (RefPtr<StructureID>* it = sIDC->head(); *it; ++it) {
         // null check the prototype
-        m_jit.cmpl_i32r(reinterpret_cast<intptr_t> (jsNull()), X86::ecx);
+        m_jit.cmpl_i32r(asInteger(jsNull()), X86::ecx);
         successCases.append(m_jit.emitUnlinkedJe());
 
         // Check the structure id

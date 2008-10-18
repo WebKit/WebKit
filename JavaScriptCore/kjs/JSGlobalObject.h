@@ -274,6 +274,14 @@ namespace JSC {
         void* operator new(size_t); // can only be allocated with JSGlobalData
     };
 
+    JSGlobalObject* asGlobalObject(JSValue*);
+
+    inline JSGlobalObject* asGlobalObject(JSValue* value)
+    {
+        ASSERT(asObject(value)->isGlobalObject());
+        return static_cast<JSGlobalObject*>(asObject(value));
+    }
+
     inline void JSGlobalObject::setRegisters(Register* registers, Register* registerArray, size_t count)
     {
         JSVariableObject::setRegisters(registers, registerArray);
@@ -314,9 +322,7 @@ namespace JSC {
 
     inline JSGlobalObject* ScopeChainNode::globalObject() const
     {
-        JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(bottom());
-        ASSERT(globalObject->isGlobalObject());
-        return globalObject;
+        return asGlobalObject(bottom());
     }
 
     inline JSValue* StructureID::prototypeForLookup(ExecState* exec)

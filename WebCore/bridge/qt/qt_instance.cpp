@@ -215,9 +215,9 @@ JSValue* QtInstance::invokeMethod(ExecState*, const MethodList&, const ArgList&)
 
 JSValue* QtInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == JSValue::PreferString)
+    if (hint == PreferString)
         return stringValue(exec);
-    if (hint == JSValue::PreferNumber)
+    if (hint == PreferNumber)
         return numberValue(exec);
     return valueOf(exec);
 }

@@ -28,9 +28,6 @@
 
 namespace JSC {
 
-  class ExecState;
-  class JSValue;
-
   // ECMA 11.9.3
   bool equal(ExecState*, JSValue*, JSValue*);
   bool equalSlowCase(ExecState*, JSValue*, JSValue*);
@@ -46,7 +43,7 @@ namespace JSC {
           bool s1 = v1->isString();
           bool s2 = v2->isString();
           if (s1 && s2)
-              return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
+              return asString(v1)->value() == asString(v2)->value();
 
           if (v1->isUndefinedOrNull()) {
               if (v2->isUndefinedOrNull())
@@ -117,18 +114,18 @@ namespace JSC {
           // The reason we can't just return false here is that 0 === -0,
           // and while the former is an immediate number, the latter is not.
           if (v1 == JSImmediate::zeroImmediate())
-              return static_cast<JSCell*>(v2)->isNumber() && static_cast<JSNumberCell*>(v2)->value() == 0;
-          return static_cast<JSCell*>(v1)->isNumber() && static_cast<JSNumberCell*>(v1)->value() == 0;
+              return asCell(v2)->isNumber() && asNumberCell(v2)->value() == 0;
+          return asCell(v1)->isNumber() && asNumberCell(v1)->value() == 0;
       }
       
-      if (static_cast<JSCell*>(v1)->isNumber()) {
-          return static_cast<JSCell*>(v2)->isNumber()
-              && static_cast<JSNumberCell*>(v1)->value() == static_cast<JSNumberCell*>(v2)->value();
+      if (asCell(v1)->isNumber()) {
+          return asCell(v2)->isNumber()
+              && asNumberCell(v1)->value() == asNumberCell(v2)->value();
       }
 
-      if (static_cast<JSCell*>(v1)->isString()) {
-          return static_cast<JSCell*>(v2)->isString()
-              && static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
+      if (asCell(v1)->isString()) {
+          return asCell(v2)->isString()
+              && asString(v1)->value() == asString(v2)->value();
       }
 
       return v1 == v2;

@@ -43,7 +43,7 @@ namespace JSC {
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
-        JSString* internalValue() const { return static_cast<JSString*>(JSWrapperObject::internalValue());}
+        JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
 
     protected:
         StringObject(PassRefPtr<StructureID>, JSString*);
@@ -53,6 +53,14 @@ namespace JSC {
         virtual UString toThisString(ExecState*) const;
         virtual JSString* toThisJSString(ExecState*);
   };
+
+    StringObject* asStringObject(JSValue*);
+
+    inline StringObject* asStringObject(JSValue* value)
+    {
+        ASSERT(asObject(value)->inherits(&StringObject::info));
+        return static_cast<StringObject*>(asObject(value));
+    }
 
 } // namespace JSC
 

@@ -183,7 +183,7 @@ void StructureID::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray&
     }
 
     if (m_prototype->isObject())
-        static_cast<JSObject*>(m_prototype)->getPropertyNames(exec, propertyNames);
+        asObject(m_prototype)->getPropertyNames(exec, propertyNames);
 
     if (shouldCache) {
         if (m_cachedPropertyNameArrayData)
@@ -334,7 +334,7 @@ StructureIDChain* StructureID::createCachedPrototypeChain()
     if (JSImmediate::isImmediate(prototype))
         return 0;
 
-    RefPtr<StructureIDChain> chain = StructureIDChain::create(static_cast<JSObject*>(prototype)->structureID());
+    RefPtr<StructureIDChain> chain = StructureIDChain::create(asObject(prototype)->structureID());
     setCachedPrototypeChain(chain.release());
     return cachedPrototypeChain();
 }
@@ -346,7 +346,7 @@ StructureIDChain::StructureIDChain(StructureID* structureID)
     StructureID* tmp = structureID;
     while (!tmp->storedPrototype()->isNull()) {
         ++size;
-        tmp = static_cast<JSCell*>(tmp->storedPrototype())->structureID();
+        tmp = asCell(tmp->storedPrototype())->structureID();
     }
     
     m_vector.set(new RefPtr<StructureID>[size + 1]);
@@ -354,7 +354,7 @@ StructureIDChain::StructureIDChain(StructureID* structureID)
     size_t i;
     for (i = 0; i < size - 1; ++i) {
         m_vector[i] = structureID;
-        structureID = static_cast<JSObject*>(structureID->storedPrototype())->structureID();
+        structureID = asObject(structureID->storedPrototype())->structureID();
     }
     m_vector[i] = structureID;
     m_vector[i + 1] = 0;

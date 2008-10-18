@@ -65,11 +65,11 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
 
     JSObject* thisObj = (!thisValue || thisValue->isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue->toObject(exec);
 
-    JSValue* exception = 0;
+    JSValue* exception = noValue();
     JSValue* result = exec->machine()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
 
     if (exception) {
-        if (exception->isObject() && static_cast<JSObject*>(exception)->isWatchdogException())
+        if (exception->isObject() && asObject(exception)->isWatchdogException())
             return Completion(Interrupted, result);
         return Completion(Throw, exception);
     }

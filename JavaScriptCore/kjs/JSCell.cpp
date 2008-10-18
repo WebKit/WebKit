@@ -212,7 +212,7 @@ const ClassInfo* JSCell::classInfo() const
 
 JSValue* JSCell::getJSNumber()
 {
-    return 0;
+    return noValue();
 }
 
 bool JSCell::isGetterSetter() const

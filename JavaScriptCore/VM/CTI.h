@@ -44,42 +44,43 @@
 #define CTI_ARGS_exception 0x0F
 #define CTI_ARGS_profilerReference 0x10
 #define CTI_ARGS_globalData 0x11
-#define ARG_callFrame ((CallFrame*)(ARGS)[CTI_ARGS_callFrame])
-#define ARG_registerFile ((RegisterFile*)(ARGS)[CTI_ARGS_registerFile])
-#define ARG_exception ((JSValue**)(ARGS)[CTI_ARGS_exception])
-#define ARG_profilerReference ((Profiler**)(ARGS)[CTI_ARGS_profilerReference])
-#define ARG_globalData ((JSGlobalData*)(ARGS)[CTI_ARGS_globalData])
 
-#define ARG_setCallFrame(newCallFrame) (*(CallFrame**)&(ARGS)[CTI_ARGS_callFrame] = (newCallFrame))
+#define ARG_callFrame static_cast<CallFrame*>(ARGS[CTI_ARGS_callFrame])
+#define ARG_registerFile static_cast<RegisterFile*>(ARGS[CTI_ARGS_registerFile])
+#define ARG_exception static_cast<JSValue**>(ARGS[CTI_ARGS_exception])
+#define ARG_profilerReference static_cast<Profiler**>(ARGS[CTI_ARGS_profilerReference])
+#define ARG_globalData static_cast<JSGlobalData*>(ARGS[CTI_ARGS_globalData])
 
-#define ARG_src1 ((JSValue*)((ARGS)[1]))
-#define ARG_src2 ((JSValue*)((ARGS)[2]))
-#define ARG_src3 ((JSValue*)((ARGS)[3]))
-#define ARG_src4 ((JSValue*)((ARGS)[4]))
-#define ARG_src5 ((JSValue*)((ARGS)[5]))
-#define ARG_id1 ((Identifier*)((ARGS)[1]))
-#define ARG_id2 ((Identifier*)((ARGS)[2]))
-#define ARG_id3 ((Identifier*)((ARGS)[3]))
-#define ARG_id4 ((Identifier*)((ARGS)[4]))
-#define ARG_int1 ((int)((ARGS)[1]))
-#define ARG_int2 ((int)((ARGS)[2]))
-#define ARG_int3 ((int)((ARGS)[3]))
-#define ARG_int4 ((int)((ARGS)[4]))
-#define ARG_int5 ((int)((ARGS)[5]))
-#define ARG_int6 ((int)((ARGS)[6]))
-#define ARG_func1 ((FuncDeclNode*)((ARGS)[1]))
-#define ARG_funcexp1 ((FuncExprNode*)((ARGS)[1]))
-#define ARG_registers1 ((Register*)((ARGS)[1]))
-#define ARG_regexp1 ((RegExp*)((ARGS)[1]))
-#define ARG_pni1 ((JSPropertyNameIterator*)((ARGS)[1]))
-#define ARG_instr1 ((Instruction*)((ARGS)[1]))
-#define ARG_instr2 ((Instruction*)((ARGS)[2]))
-#define ARG_instr3 ((Instruction*)((ARGS)[3]))
-#define ARG_instr4 ((Instruction*)((ARGS)[4]))
-#define ARG_instr5 ((Instruction*)((ARGS)[5]))
-#define ARG_instr6 ((Instruction*)((ARGS)[6]))
+#define ARG_setCallFrame(newCallFrame) (ARGS[CTI_ARGS_callFrame] = (newCallFrame))
 
-#define CTI_RETURN_ADDRESS_SLOT ((ARGS)[-1])
+#define ARG_src1 static_cast<JSValue*>(ARGS[1])
+#define ARG_src2 static_cast<JSValue*>(ARGS[2])
+#define ARG_src3 static_cast<JSValue*>(ARGS[3])
+#define ARG_src4 static_cast<JSValue*>(ARGS[4])
+#define ARG_src5 static_cast<JSValue*>(ARGS[5])
+#define ARG_id1 static_cast<Identifier*>(ARGS[1])
+#define ARG_id2 static_cast<Identifier*>(ARGS[2])
+#define ARG_id3 static_cast<Identifier*>(ARGS[3])
+#define ARG_id4 static_cast<Identifier*>(ARGS[4])
+#define ARG_int1 reinterpret_cast<intptr_t>(ARGS[1])
+#define ARG_int2 reinterpret_cast<intptr_t>(ARGS[2])
+#define ARG_int3 reinterpret_cast<intptr_t>(ARGS[3])
+#define ARG_int4 reinterpret_cast<intptr_t>(ARGS[4])
+#define ARG_int5 reinterpret_cast<intptr_t>(ARGS[5])
+#define ARG_int6 reinterpret_cast<intptr_t>(ARGS[6])
+#define ARG_func1 static_cast<FuncDeclNode*>(ARGS[1])
+#define ARG_funcexp1 static_cast<FuncExprNode*>(ARGS[1])
+#define ARG_registers1 static_cast<Register*>(ARGS[1])
+#define ARG_regexp1 static_cast<RegExp*>(ARGS[1])
+#define ARG_pni1 static_cast<JSPropertyNameIterator*>(ARGS[1])
+#define ARG_instr1 static_cast<Instruction*>(ARGS[1])
+#define ARG_instr2 static_cast<Instruction*>(ARGS[2])
+#define ARG_instr3 static_cast<Instruction*>(ARGS[3])
+#define ARG_instr4 static_cast<Instruction*>(ARGS[4])
+#define ARG_instr5 static_cast<Instruction*>(ARGS[5])
+#define ARG_instr6 static_cast<Instruction*>(ARGS[6])
+
+#define CTI_RETURN_ADDRESS_SLOT (ARGS[-1])
 
 namespace JSC {
 
@@ -93,6 +94,7 @@ namespace JSC {
     class SimpleJumpTable;
     class StringJumpTable;
     class StructureIDChain;
+
     struct Instruction;
     struct OperandTypes;
     struct StructureStubInfo;
@@ -335,7 +337,9 @@ namespace JSC {
 
     private:
         CTI(Machine*, CallFrame*, CodeBlock*);
-        
+
+        static uintptr_t asInteger(JSValue*);
+
         bool isConstant(int src);
         JSValue* getConstant(CallFrame*, int src);
 

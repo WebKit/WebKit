@@ -103,10 +103,18 @@ namespace JSC {
         ArrayStorage* m_storage;
     };
 
+    JSArray* asArray(JSValue*);
+
     JSArray* constructEmptyArray(ExecState*);
     JSArray* constructEmptyArray(ExecState*, unsigned initialLength);
     JSArray* constructArray(ExecState*, JSValue* singleItemValue);
     JSArray* constructArray(ExecState*, const ArgList& values);
+
+    inline JSArray* asArray(JSValue* value)
+    {
+        ASSERT(asObject(value)->inherits(&JSArray::info));
+        return static_cast<JSArray*>(asObject(value));
+    }
 
 } // namespace JSC
 

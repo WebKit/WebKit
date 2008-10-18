@@ -40,14 +40,11 @@ namespace JSC {
     class JSActivation;
     class JSFunction;
     class JSPropertyNameIterator;
-    class JSValue;
     class ScopeChainNode;
 
     struct Instruction;
 
     typedef ExecState CallFrame;
-
-    static JSValue* const nullJSValue = 0;
 
     class Register {
     public:
@@ -138,7 +135,7 @@ namespace JSC {
     {
 #ifndef NDEBUG
         SET_TYPE(EmptyType);
-        *this = nullJSValue;
+        *this = noValue();
 #endif
     }
 
@@ -147,7 +144,7 @@ namespace JSC {
         SET_TYPE(ValueType);
         u.value = v;
     }
-    
+
     // This function is scaffolding for legacy clients. It will eventually go away.
     ALWAYS_INLINE JSValue* Register::jsValue(CallFrame*) const
     {
