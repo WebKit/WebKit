@@ -4775,6 +4775,13 @@ void Machine::cti_op_create_arguments(CTI_ARGS)
     ARG_callFrame[RegisterFile::ArgumentsRegister] = arguments;
 }
 
+void Machine::cti_op_create_arguments_no_params(CTI_ARGS)
+{
+    Arguments* arguments = new (ARG_globalData) Arguments(ARG_callFrame, Arguments::ArgumentsNoParameters);
+    ARG_callFrame->setCalleeArguments(arguments);
+    ARG_callFrame[RegisterFile::ArgumentsRegister] = arguments;
+}
+
 void Machine::cti_op_tear_off_activation(CTI_ARGS)
 {
     CTI_STACK_HACK();

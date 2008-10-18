@@ -53,7 +53,12 @@ namespace JSC {
 
     class Arguments : public JSObject {
     public:
+        enum ArgumentsParameters {
+            ArgumentsNoParameters
+        };
+
         Arguments(CallFrame*);
+        Arguments(CallFrame*, enum ArgumentsParameters);
         virtual ~Arguments();
 
         static const ClassInfo info;
@@ -136,6 +141,33 @@ namespace JSC {
         d->extraArguments = extraArguments;
 
         d->callee = callee;
+        d->overrodeLength = false;
+        d->overrodeCallee = false;
+    }
+
+    inline Arguments::Arguments(CallFrame* callFrame, enum ArgumentsParameters)
+        : JSObject(callFrame->lexicalGlobalObject()->argumentsStructure())
+        , d(new ArgumentsData)
+    {
+        unsigned numArguments = callFrame->argumentCount() - 1;
+
+        d->numParameters = 0;
+        d->numArguments = numArguments;
+        d->activation = 0;
+
+        Register* extraArguments;
+        if (numArguments > sizeof(d->extraArgumentsFixedBuffer) / sizeof(Register))
+            extraArguments = new Register[numArguments];
+        else
+            extraArguments = d->extraArgumentsFixedBuffer;
+
+        Register* argv = callFrame->registers() - RegisterFile::CallFrameHeaderSize - numArguments - 1;
+        for (unsigned i = 0; i < numArguments; ++i)
+            extraArguments[i] = argv[i];
+
+        d->extraArguments = extraArguments;
+
+        d->callee = callFrame->callee();
         d->overrodeLength = false;
         d->overrodeCallee = false;
     }

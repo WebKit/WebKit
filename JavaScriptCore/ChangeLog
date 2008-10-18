@@ -1,3 +1,22 @@
+2008-10-18  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 21702: Special op_create_activation for the case where there are no named parameters
+        <https://bugs.webkit.org/show_bug.cgi?id=21702>
+
+        This is a 2.5% speedup on the V8 Raytrace benchmark and a 1.1% speedup
+        on the V8 Earley-Boyer benchmark.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_create_arguments_no_params):
+        * VM/Machine.h:
+        * kjs/Arguments.h:
+        (JSC::Arguments::):
+        (JSC::Arguments::Arguments):
+
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
