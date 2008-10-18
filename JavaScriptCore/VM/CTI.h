@@ -79,7 +79,7 @@
 #define ARG_instr5 ((Instruction*)((ARGS)[5]))
 #define ARG_instr6 ((Instruction*)((ARGS)[6]))
 
-#define CTI_RETURN_ADDRESS ((ARGS)[-1])
+#define CTI_RETURN_ADDRESS_SLOT ((ARGS)[-1])
 
 namespace JSC {
 
