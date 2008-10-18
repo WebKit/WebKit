@@ -1,3 +1,14 @@
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        - default to 1000 tests per dump tool instance again, now that CTI no longer causes
+        excess different stack logs.
+        
+        (Also fix a small bug in my last change.)
+
+        * Scripts/run-webkit-tests:
+
 2008-10-17  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe.
