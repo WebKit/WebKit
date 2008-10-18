@@ -4544,15 +4544,18 @@ JSValue* Machine::cti_op_new_func(CTI_ARGS)
     return ARG_func1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
 }
 
+void Machine::cti_op_call_profiler(CTI_ARGS)
+{
+    ASSERT(*ARG_profilerReference);
+    (*ARG_profilerReference)->willExecute(ARG_callFrame, static_cast<JSFunction*>(ARG_src1));
+}
+
 VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
 {
 #ifndef NDEBUG
     CallData callData;
     ASSERT(ARG_src1->getCallData(callData) == CallTypeJS);
 #endif
-
-    if (UNLIKELY(*ARG_profilerReference != 0))
-        (*ARG_profilerReference)->willExecute(ARG_callFrame, static_cast<JSFunction*>(ARG_src1));
 
     ScopeChainNode* callDataScopeChain = static_cast<JSFunction*>(ARG_src1)->m_scopeChain.node();
     CodeBlock* newCodeBlock = &static_cast<JSFunction*>(ARG_src1)->m_body->byteCode(callDataScopeChain);
@@ -4591,6 +4594,24 @@ VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
 
     VoidPtrPair pair = { newCodeBlock, CallFrame::create(r) };
     return pair;
+}
+
+void* Machine::cti_vm_lazyLinkCall(CTI_ARGS)
+{
+    Machine* machine = ARG_globalData->machine;
+    CallFrame* callFrame = CallFrame::create(ARG_callFrame);
+    CallFrame* callerCallFrame = callFrame->callerFrame();
+    CodeBlock* callerCodeBlock = callerCallFrame->codeBlock();
+
+    JSFunction* callee = static_cast<JSFunction*>(ARG_src1);
+    CodeBlock* codeBlock = &callee->m_body->byteCode(callee->m_scopeChain.node());
+    if (!codeBlock->ctiCode)
+        CTI::compile(machine, callFrame, codeBlock);
+
+    int argCount = ARG_int3;
+    CTI::linkCall(callerCodeBlock, callee, codeBlock, codeBlock->ctiCode, CTI_RETURN_ADDRESS, argCount);
+
+    return codeBlock->ctiCode;
 }
 
 void* Machine::cti_vm_compile(CTI_ARGS)
@@ -4715,23 +4736,35 @@ JSValue* Machine::cti_op_resolve(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
+JSValue* Machine::cti_op_construct_JSConstructFast(CTI_ARGS)
+{
+#ifndef NDEBUG
+    ConstructData constructData;
+    ASSERT(static_cast<JSFunction*>(ARG_src1)->getConstructData(constructData) == ConstructTypeJS);
+#endif
+
+    StructureID* structure;
+    if (ARG_src2->isObject())
+        structure = static_cast<JSObject*>(ARG_src2)->inheritorID();
+    else
+        structure = static_cast<JSFunction*>(ARG_src1)->m_scopeChain.node()->globalObject()->emptyObjectStructure();
+    return new (ARG_globalData) JSObject(structure);
+}
+
 VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
 {
     CallFrame* callFrame = ARG_callFrame;
 
     JSFunction* constructor = static_cast<JSFunction*>(ARG_src1);
-    JSValue* constrProtoVal = ARG_src2;
-    int firstArg = ARG_int3;
-    int registerOffset = ARG_int4;
-    int argCount = ARG_int5;
+    int registerOffset = ARG_int2;
+    int argCount = ARG_int3;
+    JSValue* constrProtoVal = ARG_src5;
+    int firstArg = ARG_int6;
 
 #ifndef NDEBUG
     ConstructData constructData;
-    ASSERT(ARG_src1->getConstructData(constructData) == ConstructTypeJS);
+    ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
 #endif
-
-    if (*ARG_profilerReference)
-        (*ARG_profilerReference)->willExecute(callFrame, constructor);
 
     ScopeChainNode* callDataScopeChain = constructor->m_scopeChain.node();
     FunctionBodyNode* functionBodyNode = constructor->m_body.get();
@@ -4783,8 +4816,8 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
 
     JSValue* constrVal = ARG_src1;
-    int firstArg = ARG_int3;
-    int argCount = ARG_int5;
+    int argCount = ARG_int3;
+    int firstArg = ARG_int6;
 
     ConstructData constructData;
     ConstructType constructType = constrVal->getConstructData(constructData);
@@ -4810,7 +4843,7 @@ JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
 
     ASSERT(constructType == ConstructTypeNone);
 
-    ARG_globalData->exception = createNotAConstructorError(callFrame, constrVal, ARG_instr6, callFrame->codeBlock());
+    ARG_globalData->exception = createNotAConstructorError(callFrame, constrVal, ARG_instr4, callFrame->codeBlock());
     VM_THROW_EXCEPTION();
 }
 

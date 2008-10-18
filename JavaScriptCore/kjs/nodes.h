@@ -2278,6 +2278,11 @@ namespace JSC {
             return *m_code;
         }
 
+        bool isGenerated() JSC_FAST_CALL
+        {
+            return m_code;
+        }
+
         void mark();
 
         void finishParsing(const SourceCode&, ParameterNode*);

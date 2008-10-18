@@ -1,3 +1,70 @@
+2008-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Optimize op_call by allowing call sites to be directly linked to callees.
+
+        For the hot path of op_call, CTI now generates a check (initially for an impossible
+        value), and the first time the call is executed we attempt to link the call directly
+        to the callee.  WWe can currently only do so if the arity of the caller and callee
+        match.  The (optimized) setup for the call on the hot path is linked directly to
+        the ctiCode for the callee, without indirection.
+        
+        Two forms of the slow case of the call are generated, the first will be executed the
+        first time the call is reached.  As well as this path attempting to link the call to
+        a callee, it also relinks the slow case to a second slow case, which will not continue
+        to attempt relinking the call.  (This policy could be changed in future, but for not
+        this is intended to prevent thrashing).
+
+        If a callee that the caller has been linked to is garbage collected, then the link
+        in the caller's JIt code will be reset back to a value that cannot match - to prevent
+        any false positive matches.
+
+        ~20% progression on deltablue & richards, >12% overall reduction in v8-tests
+        runtime, one or two percent progression on sunspider.
+
+        Reviewed by Oliver Hunt.
+
+        * VM/CTI.cpp:
+        (JSC::):
+        (JSC::CTI::emitNakedCall):
+        (JSC::unreachable):
+        (JSC::CTI::compileOpCallInitializeCallFrame):
+        (JSC::CTI::compileOpCallSetupArgs):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::unlinkCall):
+        (JSC::CTI::linkCall):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::unlinkCallers):
+        (JSC::CodeBlock::derefStructureIDs):
+        * VM/CodeBlock.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CodeBlock::addCaller):
+        (JSC::CodeBlock::removeCaller):
+        (JSC::CodeBlock::getStubInfo):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitConstruct):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_profiler):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_vm_lazyLinkCall):
+        (JSC::Machine::cti_op_construct_JSConstructFast):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        * VM/Machine.h:
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+        * kjs/JSFunction.h:
+        * kjs/nodes.h:
+        (JSC::FunctionBodyNode::):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::getDifferenceBetweenLabels):
+
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff Garen.

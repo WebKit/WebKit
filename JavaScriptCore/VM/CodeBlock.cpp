@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CodeBlock.h"
 
+#include "CTI.h"
 #include "JSValue.h"
 #include "Machine.h"
 #include "debugger.h"
@@ -931,12 +932,33 @@ CodeBlock::~CodeBlock()
         derefStructureIDs(&instructions[structureIDInstructions[i].opcodeIndex]);
         if (structureIDInstructions[i].stubRoutine)
             fastFree(structureIDInstructions[i].stubRoutine);
+        if (CallLinkInfo* callLinkInfo = structureIDInstructions[i].linkInfoPtr) {
+            callLinkInfo->callee->removeCaller(callLinkInfo);
+            delete callLinkInfo;
+        }
     }
-#if ENABLE(CTI)
+
+#if ENABLE(CTI) 
+    unlinkCallers();
+
     if (ctiCode)
         fastFree(ctiCode);
 #endif
 }
+
+#if ENABLE(CTI) 
+void CodeBlock::unlinkCallers()
+{
+    size_t size = linkedCallerList.size();
+    for (size_t i = 0; i < size; ++i) {
+        CallLinkInfo* currentCaller = linkedCallerList[i];
+        CTI::unlinkCall(currentCaller->callerStructureStubInfo);
+        currentCaller->callerStructureStubInfo->linkInfoPtr = 0;
+        delete currentCaller;
+    }
+    linkedCallerList.clear();
+}
+#endif
 
 void CodeBlock::derefStructureIDs(Instruction* vPC) const
 {
@@ -973,7 +995,8 @@ void CodeBlock::derefStructureIDs(Instruction* vPC) const
     }
     
     // These instructions don't ref their StructureIDs.
-    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id) || vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_get_array_length) || vPC[0].u.opcode == machine->getOpcode(op_get_string_length));
+    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id) || vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_get_array_length) || vPC[0].u.opcode == machine->getOpcode(op_get_string_length)
+        || vPC[0].u.opcode == machine->getOpcode(op_call_eval) || vPC[0].u.opcode == machine->getOpcode(op_call) || vPC[0].u.opcode == machine->getOpcode(op_construct));
 }
 
 void CodeBlock::refStructureIDs(Instruction* vPC) const

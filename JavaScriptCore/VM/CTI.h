@@ -66,6 +66,7 @@
 #define ARG_int3 ((int)((ARGS)[3]))
 #define ARG_int4 ((int)((ARGS)[4]))
 #define ARG_int5 ((int)((ARGS)[5]))
+#define ARG_int6 ((int)((ARGS)[6]))
 #define ARG_func1 ((FuncDeclNode*)((ARGS)[1]))
 #define ARG_funcexp1 ((FuncExprNode*)((ARGS)[1]))
 #define ARG_registers1 ((Register*)((ARGS)[1]))
@@ -94,6 +95,7 @@ namespace JSC {
     class StructureIDChain;
     struct Instruction;
     struct OperandTypes;
+    struct StructureStubInfo;
 
     typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
     typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(CTI_ARGS);
@@ -222,6 +224,8 @@ namespace JSC {
     struct StructureStubCompilationInfo {
         X86Assembler::JmpSrc callReturnLocation;
         X86Assembler::JmpDst hotPathBegin;
+        X86Assembler::JmpSrc hotPathOther;
+        X86Assembler::JmpDst coldPathOther;
     };
 
     extern "C" {
@@ -257,6 +261,7 @@ namespace JSC {
 #else
         static const int repatchOffsetGetByIdSlowCaseCall = 17 + 4 + ctiArgumentInitSize;
 #endif
+        static const int repatchOffsetOpCallCall = 6;
 
     public:
         static void compile(Machine* machine, CallFrame* callFrame, CodeBlock* codeBlock)
@@ -320,6 +325,9 @@ namespace JSC {
             return cti.privateCompilePatchGetArrayLength(returnAddress);
         }
 
+        static void linkCall(CodeBlock* callerCodeBlock, JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, void* returnAddress, int callerArgCount);
+        static void unlinkCall(StructureStubInfo*);
+
         inline static JSValue* execute(void* code, RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData, JSValue** exception)
         {
             return ctiTrampoline(code, registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData);
@@ -346,8 +354,9 @@ namespace JSC {
         void privateCompilePatchGetArrayLength(void* returnAddress);
 
         enum CompileOpCallType { OpCallNormal, OpCallEval, OpConstruct };
-        void compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type = OpCallNormal);
+        void compileOpCall(Instruction* instruction, unsigned i, unsigned structureIDInstructionIndex, CompileOpCallType type = OpCallNormal);
         void compileOpCallInitializeCallFrame(unsigned callee, unsigned argCount);
+        void compileOpCallSetupArgs(Instruction* instruction, bool isConstruct, bool isEval);
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStrictEqType type);
         void putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSource, X86::RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell,  X86::XMMRegisterID tempXmm, X86::RegisterID tempReg1, X86::RegisterID tempReg2);
@@ -388,7 +397,8 @@ namespace JSC {
 
         void emitTagAsBoolImmediate(X86Assembler::RegisterID reg);
 
-        X86Assembler::JmpSrc emitCall(unsigned opcodeIndex, X86::RegisterID);
+        X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, X86::RegisterID);
+        X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, void(*function)());
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_j);
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_p);
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_v);

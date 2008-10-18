@@ -188,11 +188,11 @@ namespace JSC {
         static void SFX_CALL cti_op_create_arguments(CTI_ARGS);
         static void SFX_CALL cti_op_tear_off_activation(CTI_ARGS);
         static void SFX_CALL cti_op_tear_off_arguments(CTI_ARGS);
-        static void SFX_CALL cti_op_ret_profiler(CTI_ARGS);
         static void SFX_CALL cti_op_ret_scopeChain(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_new_array(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_resolve(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_resolve_global(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_construct_JSConstructFast(CTI_ARGS);
         static VoidPtrPair SFX_CALL cti_op_construct_JSConstruct(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_construct_NotJSConstruct(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_get_by_val(CTI_ARGS);
@@ -255,8 +255,12 @@ namespace JSC {
         static JSValue* SFX_CALL cti_op_new_error(CTI_ARGS);
         static void SFX_CALL cti_op_debug(CTI_ARGS);
 
+        static void SFX_CALL cti_op_call_profiler(CTI_ARGS);
+        static void SFX_CALL cti_op_ret_profiler(CTI_ARGS);
+
         static void* SFX_CALL cti_vm_throw(CTI_ARGS);
         static void* SFX_CALL cti_vm_compile(CTI_ARGS);
+        static void* SFX_CALL cti_vm_lazyLinkCall(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_push_activation(CTI_ARGS);
         
 #endif // ENABLE(CTI)

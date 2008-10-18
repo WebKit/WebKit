@@ -1057,6 +1057,11 @@ public:
         return dst.m_offset - src.m_offset;
     }
     
+    static int getDifferenceBetweenLabels(JmpSrc src, JmpDst dst)
+    {
+        return dst.m_offset - src.m_offset;
+    }
+    
     static void repatchImmediate(intptr_t where, int32_t value)
     {
         reinterpret_cast<int32_t*>(where)[-1] = value;
