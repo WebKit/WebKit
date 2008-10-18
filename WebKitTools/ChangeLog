@@ -1,5 +1,14 @@
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Mark Rowe.
+        
+        - make sure MallocStackLogging is only on for tools we want to
+        leak check, not other random stuff as well.
+
+        * Scripts/run-webkit-tests:
+
+2008-10-17  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Stephanie Lewis.
         
         - make run-webkit-tests --leaks default to 100 tests per run instead of 1000
