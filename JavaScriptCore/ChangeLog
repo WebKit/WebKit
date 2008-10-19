@@ -1,8 +1,12 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        * kjs/interpreter.h: Fix include of JSImmediate.h.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         - fix non-all-in-one build
 
-        * kjs/interpreter.h: Add include of JSImmedate.h.
+        * kjs/interpreter.h: Add include of JSImmediate.h.
 
 2008-10-18  Darin Adler  <darin@apple.com>
 
