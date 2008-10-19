@@ -1,5 +1,11 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        - fix non-all-in-one build
+
+        * kjs/ConstructData.h: Add include of JSImmedate.h (for now).
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * VM/Machine.cpp:
