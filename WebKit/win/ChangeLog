@@ -1,5 +1,12 @@
 2008-10-18  Dan Bernstein  <mitz@apple.com>
 
+        - build fix
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::jsValueToString):
+
+2008-10-18  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - WebKit/win part of https://bugs.webkit.org/show_bug.cgi?id=21736

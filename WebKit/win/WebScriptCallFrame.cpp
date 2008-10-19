@@ -61,7 +61,7 @@ UString WebScriptCallFrame::jsValueToString(JSC::ExecState* state, JSValue* jsva
     else if (jsvalue->isBoolean())
         return jsvalue->getBoolean() ? "True" : "False";
     else if (jsvalue->isObject()) {
-        jsvalue = jsvalue->getObject()->defaultValue(state, JSValue::PreferString);
+        jsvalue = jsvalue->getObject()->defaultValue(state, PreferString);
         return jsvalue->getString();
     }
 
