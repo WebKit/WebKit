@@ -23,6 +23,7 @@
 #ifndef KJS_Interpreter_h
 #define KJS_Interpreter_h
 
+#include <wtf/JSImmediate.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -30,10 +31,8 @@ namespace JSC {
 
   class Completion;
   class ExecState;
-  class JSValue;
   class ScopeChain;
   class SourceCode;
-  class UString;
   
   class Interpreter {
   public:
@@ -57,11 +56,11 @@ namespace JSC {
      * If the supplied code is invalid, a SyntaxError will be thrown.
      *
      * @param code The code to evaluate
-     * @param thisV The value to pass in as the "this" value for the script
+     * @param thisValue The value to pass in as the "this" value for the script
      * execution. This should either be jsNull() or an Object.
      * @return A completion object representing the result of the execution.
      */
-    static Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValuePtr thisV = 0);
+    static Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValuePtr thisValue = noValue());
     
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
