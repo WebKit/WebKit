@@ -1,5 +1,12 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        - fix non-all-in-one build
+
+        * kjs/completion.h:
+        (JSC::Completion::Completion): Add include of JSValue.h.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - fix assertions I introduced with my casting changes

@@ -23,6 +23,8 @@
 #ifndef KJS_COMPLETION_H
 #define KJS_COMPLETION_H
 
+#include <kjs/JSValue.h>
+
 namespace JSC {
 
     class JSValue;
@@ -35,7 +37,7 @@ namespace JSC {
      */
     class Completion {
     public:
-        Completion(ComplType type = Normal, JSValuePtr value = 0)
+        Completion(ComplType type = Normal, JSValuePtr value = noValue())
             : m_type(type)
             , m_value(value)
         {
