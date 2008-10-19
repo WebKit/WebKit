@@ -628,15 +628,15 @@ Machine::Machine()
     // Bizarrely, calling fastMalloc here is faster than allocating space on the stack.
     void* storage = fastMalloc(sizeof(CollectorBlock));
 
-    JSArray* jsArray = new (storage) JSArray(JSArray::createStructureID(jsNull()));
+    JSCell* jsArray = new (storage) JSArray(JSArray::createStructureID(jsNull()));
     m_jsArrayVptr = jsArray->vptr();
     jsArray->~JSCell();
 
-    JSString* jsString = new (storage) JSString(JSString::VPtrStealingHack);
+    JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     m_jsStringVptr = jsString->vptr();
     jsString->~JSCell();
 
-    JSFunction* jsFunction = new (storage) JSFunction(JSFunction::createStructureID(jsNull()));
+    JSCell* jsFunction = new (storage) JSFunction(JSFunction::createStructureID(jsNull()));
     m_jsFunctionVptr = jsFunction->vptr();
     jsFunction->~JSCell();
     
