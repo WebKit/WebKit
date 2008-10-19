@@ -1131,7 +1131,7 @@ bool RenderThemeSafari::paintMediaFullscreenButton(RenderObject* o, const Render
 {
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
     ASSERT(SafariThemeLibrary());
-    paintThemePart(MediaFullscreenButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+    paintThemePart(SafariTheme::MediaFullscreenButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
     return false;
@@ -1150,7 +1150,7 @@ bool RenderThemeSafari::paintMediaMuteButton(RenderObject* o, const RenderObject
 
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
     ASSERT(SafariThemeLibrary());
-    paintThemePart(mediaElement->muted() ? MediaUnMuteButtonPart : MediaMuteButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+    paintThemePart(mediaElement->muted() ? SafariTheme::MediaUnMuteButtonPart : SafariTheme::MediaMuteButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
     return false;
@@ -1169,7 +1169,7 @@ bool RenderThemeSafari::paintMediaPlayButton(RenderObject* o, const RenderObject
 
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
     ASSERT(SafariThemeLibrary());
-    paintThemePart(mediaElement->canPlay() ? MediaPlayButtonPart : MediaPauseButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+    paintThemePart(mediaElement->canPlay() ? SafariTheme::MediaPlayButtonPart : SafariTheme::MediaPauseButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
     return false;
@@ -1179,7 +1179,7 @@ bool RenderThemeSafari::paintMediaSeekBackButton(RenderObject* o, const RenderOb
 {
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
     ASSERT(SafariThemeLibrary());
-    paintThemePart(MediaSeekBackButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+    paintThemePart(SafariTheme::MediaSeekBackButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
     return false;
@@ -1189,7 +1189,7 @@ bool RenderThemeSafari::paintMediaSeekForwardButton(RenderObject* o, const Rende
 {
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
     ASSERT(SafariThemeLibrary());
-    paintThemePart(MediaSeekForwardButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+    paintThemePart(SafariTheme::MediaSeekForwardButtonPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
     return false;
@@ -1223,7 +1223,7 @@ bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const RenderObjec
     ASSERT(SafariThemeLibrary());
 
 #if defined(SAFARI_THEME_VERSION) && SAFARI_THEME_VERSION >= 2
-    paintThemePart(MediaSliderThumbPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
+    paintThemePart(SafariTheme::MediaSliderThumbPart, paintInfo.context->platformContext(), r, NSRegularControlSize, determineState(o));
 #endif
 
     return false;

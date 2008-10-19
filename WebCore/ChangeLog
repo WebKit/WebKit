@@ -1,5 +1,19 @@
 2008-10-18  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        - Windows build fix
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMediaFullscreenButton):
+        (WebCore::RenderThemeSafari::paintMediaMuteButton):
+        (WebCore::RenderThemeSafari::paintMediaPlayButton):
+        (WebCore::RenderThemeSafari::paintMediaSeekBackButton):
+        (WebCore::RenderThemeSafari::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeSafari::paintMediaSliderThumb):
+
+2008-10-18  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - WebCore part of https://bugs.webkit.org/show_bug.cgi?id=21736
