@@ -56,7 +56,7 @@ JSValuePtr JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
     unsigned valuesIndex = index * numColumns;
     for (unsigned i = 0; i < numColumns; i++) {
         const SQLValue& value = m_impl->values()[valuesIndex + i];
-        JSValuePtr jsValue = 0;
+        JSValuePtr jsValue = noValue();
 
         switch (value.type()) {
             case SQLValue::StringValue:

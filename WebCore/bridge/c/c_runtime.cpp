@@ -75,7 +75,7 @@ JSValuePtr CField::valueFromInstance(ExecState* exec, const Instance* inst) cons
     return jsUndefined();
 }
 
-void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue *aValue) const
+void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValuePtr aValue) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();

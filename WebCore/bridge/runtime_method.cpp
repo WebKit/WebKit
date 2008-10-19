@@ -47,9 +47,9 @@ RuntimeMethod::RuntimeMethod(ExecState* exec, const Identifier& ident, Bindings:
 {
 }
 
-JSValue *RuntimeMethod::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr RuntimeMethod::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    RuntimeMethod *thisObj = static_cast<RuntimeMethod *>(slot.slotBase());
+    RuntimeMethod* thisObj = static_cast<RuntimeMethod*>(asObject(slot.slotBase()));
 
     // Ick!  There may be more than one method with this name.  Arbitrarily
     // just pick the first method.  The fundamental problem here is that 
@@ -80,13 +80,13 @@ static JSValuePtr callRuntimeMethod(ExecState* exec, JSObject* function, JSValue
     RuntimeObjectImp* imp;
 
     if (thisValue->isObject(&RuntimeObjectImp::s_info)) {
-        imp = static_cast<RuntimeObjectImp*>(thisValue);
+        imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
     } else {
         // If thisObj is the DOM object for a plugin, get the corresponding
         // runtime object from the DOM object.
         JSValuePtr value = thisValue->get(exec, Identifier(exec, "__apple_runtime_object"));
         if (value->isObject(&RuntimeObjectImp::s_info))    
-            imp = static_cast<RuntimeObjectImp*>(value);
+            imp = static_cast<RuntimeObjectImp*>(asObject(value));
         else
             return throwError(exec, TypeError);
     }

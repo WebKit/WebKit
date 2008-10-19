@@ -43,7 +43,7 @@ namespace JSC {
     
     inline JSWrapperObject::JSWrapperObject(PassRefPtr<StructureID> structure)
         : JSObject(structure)
-        , m_internalValue(0)
+        , m_internalValue(noValue())
     {
     }
     

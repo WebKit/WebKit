@@ -42,7 +42,7 @@ const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* document)
     : DOMObject(JSAudioConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
+    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
@@ -56,7 +56,7 @@ static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const Ar
         audio->setSrc(args.at(exec, 0)->toString(exec));
         audio->scheduleLoad();
     }
-    return static_cast<JSObject*>(toJS(exec, audio.release()));
+    return asObject(toJS(exec, audio.release()));
 }
 
 ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)

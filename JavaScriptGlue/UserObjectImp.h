@@ -47,9 +47,9 @@ public:
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
+    virtual JSValuePtr callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, JSValuePtr value, int attr = None);
 
     JSValuePtr toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
     virtual bool toBoolean(ExecState *exec) const;

@@ -378,7 +378,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     ExceptionCodeDescription description;
     getExceptionCodeDescription(ec, description);
 
-    JSValuePtr errorObject = 0;
+    JSValuePtr errorObject = noValue();
     switch (description.type) {
         case DOMExceptionType:
             errorObject = toJS(exec, DOMCoreException::create(description));

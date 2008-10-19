@@ -50,7 +50,7 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
 
 inline JSC::JSValuePtr toJS(JSValueRef v)
 {
-    return reinterpret_cast<JSC::JSValuePtr>(const_cast<OpaqueJSValue*>(v));
+    return reinterpret_cast<JSC::JSValue*>(const_cast<OpaqueJSValue*>(v));
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)

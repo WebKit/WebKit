@@ -200,7 +200,7 @@ static JSValuePtr setTimeoutOrInterval(ExecState* exec, JSDOMWindow* window, con
     JSValuePtr v = args.at(exec, 0);
     int delay = args.at(exec, 1)->toInt32(exec);
     if (v->isString())
-        return jsNumber(exec, window->installTimeout(static_cast<JSString*>(v)->value(), delay, timeout));
+        return jsNumber(exec, window->installTimeout(asString(v)->value(), delay, timeout));
     CallData callData;
     if (v->getCallData(callData) == CallTypeNone)
         return jsUndefined();
@@ -310,12 +310,15 @@ JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args
     return jsUndefined();
 }
 
-DOMWindow* toDOMWindow(JSValuePtr val)
+DOMWindow* toDOMWindow(JSValuePtr value)
 {
-    if (val->isObject(&JSDOMWindow::s_info))
-        return static_cast<JSDOMWindow*>(val)->impl();
-    if (val->isObject(&JSDOMWindowShell::s_info))
-        return static_cast<JSDOMWindowShell*>(val)->impl();
+    if (!value->isObject())
+        return 0;
+    JSObject* object = asObject(value);
+    if (object->inherits(&JSDOMWindow::s_info))
+        return static_cast<JSDOMWindow*>(object)->impl();
+    if (object->inherits(&JSDOMWindowShell::s_info))
+        return static_cast<JSDOMWindowShell*>(object)->impl();
     return 0;
 }
 

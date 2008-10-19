@@ -1,3 +1,211 @@
+2008-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Tweak a little more to get closer to where we can make JSValuePtr a class.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor): Use asObject.
+        (WebCore::constructAudio): Ditto.
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter): Ditto.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle): Use asString and asObject.
+        (WebCore::JSCanvasRenderingContext2D::setFillColor): Ditto.
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor): Ditto.
+        (WebCore::JSCanvasRenderingContext2D::drawImage): Ditto.
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect): Ditto.
+        (WebCore::JSCanvasRenderingContext2D::setShadow): Ditto.
+        (WebCore::JSCanvasRenderingContext2D::createPattern): Ditto.
+
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent): Use JSValuePtr.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException): Use noValue.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getDOMPrototype): Use asObject.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::showModalDialog): Use noValue.
+        (jsDOMWindowBaseEvent): Use asObject.
+        (jsDOMWindowBaseImage): Ditto.
+        (jsDOMWindowBaseMessageChannel): Ditto.
+        (jsDOMWindowBaseOption): Ditto.
+        (jsDOMWindowBaseXMLHttpRequest): Ditto.
+        (jsDOMWindowBaseAudio): Ditto.
+        (jsDOMWindowBaseXSLTProcessor): Ditto.
+        (WebCore::JSDOMWindowBase::childFrameGetter): Ditto.
+        (WebCore::JSDOMWindowBase::indexGetter): Ditto.
+        (WebCore::JSDOMWindowBase::namedItemGetter): Ditto.
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot): Ditto.
+        (WebCore::JSDOMWindowBase::findJSEventListener): Ditto.
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener): Ditto.
+        (WebCore::JSDOMWindowBase::findJSUnprotectedEventListener): Ditto.
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener): Ditto.
+        (windowProtoFuncOpen): Use noValue.
+        (WebCore::toJSDOMWindow): Use asObject.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::setTimeoutOrInterval): Use asString.
+        (WebCore::toDOMWindow): Use asObject.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent): Use noValue.
+        (WebCore::JSLazyEventListener::parseCode): Use asObject.
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::nameGetter): Use asObject.
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter): Ditto.
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::JSHTMLElement::pushEventHandlerScope): Ditto.
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter): Ditto.
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter): Ditto.
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor): Ditto.
+        (WebCore::constructHTMLOptionElement): Ditto.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::remove): Ditto.
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor): Ditto.
+        (WebCore::constructImage): Ditto.
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap): Ditto.
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap): Ditto.
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate): Use noValue.
+
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor): Use asObject.
+        (WebCore::JSMessageChannelConstructor::construct): Ditto.
+        * bindings/js/JSMimeTypeArrayCustom.cpp:
+        (WebCore::JSMimeTypeArray::nameGetter): Ditto.
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::nameGetter): Ditto.
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::lengthGetter): Ditto.
+        (WebCore::JSNamedNodesCollection::indexGetter): Ditto.
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::toNodeFilter): Ditto.
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeList::nameGetter): Ditto.
+        * bindings/js/JSPluginArrayCustom.cpp:
+        (WebCore::JSPluginArray::nameGetter): Ditto.
+        * bindings/js/JSPluginCustom.cpp:
+        (WebCore::JSPlugin::nameGetter): Ditto.
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectGetter): Ditto.
+        (WebCore::runtimeObjectPropertyGetter): Ditto.
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::asWrapper): Ditto.
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertySlot): Ditto.
+        (WebCore::JSQuarantinedObjectWrapper::construct): Ditto.
+        * bindings/js/JSRGBColor.cpp:
+        (jsRGBColorRed): Ditto.
+        (jsRGBColorGreen): Ditto.
+        (jsRGBColorBlue): Ditto.
+
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item): Use noValue.
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter): Use asObject.
+        (WebCore::JSStorage::deleteProperty): Ditto.
+        (WebCore::JSStorage::customPut): Ditto.
+        * bindings/js/JSStyleSheetListCustom.cpp:
+        (WebCore::JSStyleSheetList::nameGetter): Ditto.
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor): Ditto.
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::importStylesheet): Ditto.
+        (WebCore::JSXSLTProcessor::transformToFragment): Ditto.
+        (WebCore::JSXSLTProcessor::transformToDocument): Ditto.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Use noValue.
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]): Ditto.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]): Use JSValuePtr.
+        (-[WebScriptObject valueForKey:]): Ditto.
+        (-[WebScriptObject webScriptValueAtIndex:]): Ditto.
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        Use asObject and asString.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Use asObject.
+
+        * bridge/c/c_instance.h: Use JSValuePtr.
+        * bridge/c/c_runtime.cpp:
+        (JSC::Bindings::CField::setValueToInstance): Ditto.
+
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant): Use asObject.
+
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::booleanValue): Use JSValuePtr.
+        (JavaInstance::invokeMethod): Ditto. And noValue.
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::getSlot): Ditto.
+        (JavaJSObject::convertValueToJObject): Ditto.
+        * bridge/jni/jni_runtime.cpp:
+        (JavaField::dispatchValueFromInstance): Ditto.
+        (JavaField::valueFromInstance): Ditto.
+        (JavaField::dispatchSetValueToInstance): Ditto.
+        (JavaField::setValueToInstance): Ditto.
+        (JavaArray::setValueAt): Ditto.
+        (JavaArray::valueAt): Ditto.
+        * bridge/jni/jni_runtime.h: Ditto.
+
+        * bridge/jni/jni_utility.cpp:
+        (JSC::Bindings::convertArrayInstanceToJavaArray): Take a JSArray*
+        instead of a JSValue*.
+        (JSC::Bindings::convertValueToJValue): Use asObject and asArray.
+
+        * bridge/objc/objc_class.h: Use JSValuePtr.
+        * bridge/objc/objc_instance.h: Ditto.
+        * bridge/objc/objc_runtime.h: Ditto.
+
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject): Use asObject.
+
+        * bridge/objc/objc_utility.h: Use JSValuePtr.
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertValueToObjcValue): Use JSValuePtr and asObject.
+        (JSC::Bindings::convertObjcValueToValue): Use jsUndefined() instead of 0.
+
+        * bridge/runtime.cpp:
+        (JSC::Bindings::Instance::getValueOfField): Use JSValuePtr.
+        (JSC::Bindings::Instance::setValueOfField): Ditto.
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::lengthGetter): Use JSValuePtr and asObject.
+        (JSC::RuntimeArray::indexGetter): Ditto.
+        * bridge/runtime_array.h: Ditto.
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::lengthGetter): Ditto.
+        (JSC::callRuntimeMethod): Ditto.
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::fallbackObjectGetter): Ditto.
+        (JSC::RuntimeObjectImp::fieldGetter): Ditto.
+        (JSC::RuntimeObjectImp::methodGetter): Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeScript): Use noValue.
+
+        * page/Console.cpp:
+        (WebCore::Console::trace): Use asInternalFunction.
+
 2008-10-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Timothy Hatcher.

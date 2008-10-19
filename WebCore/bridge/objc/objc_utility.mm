@@ -126,7 +126,7 @@ bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSi
     [], other       exception
 
 */
-ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType type)
+ObjcValue convertValueToObjcValue(ExecState* exec, JSValuePtr value, ObjcValueType type)
 {
     ObjcValue result;
     double d = 0;
@@ -142,8 +142,8 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
             RootObject* originRootObject = findRootObject(originGlobalObject);
 
             JSGlobalObject* globalObject = 0;
-            if (value->isObject() && static_cast<JSObject*>(value)->isGlobalObject())
-                globalObject = static_cast<JSGlobalObject*>(value);
+            if (value->isObject() && asObject(value)->isGlobalObject())
+                globalObject = static_cast<JSGlobalObject*>(asObject(value));
 
             if (!globalObject)
                 globalObject = originGlobalObject;
@@ -285,7 +285,7 @@ JSValuePtr convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType 
             ASSERT(false);
     }
     
-    return 0;
+    return jsUndefined();
 }
 
 ObjcValueType objcValueTypeForType(const char *type)

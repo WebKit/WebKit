@@ -41,7 +41,7 @@ JSQuarantinedObjectWrapper* JSQuarantinedObjectWrapper::asWrapper(JSValuePtr val
     if (!value->isObject())
         return 0;
 
-    JSObject* object = static_cast<JSObject*>(value);
+    JSObject* object = asObject(value);
 
     if (!object->inherits(&JSQuarantinedObjectWrapper::s_info))
         return 0;
@@ -112,7 +112,7 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, const Ident
     bool result = m_unwrappedObject->getOwnPropertySlot(unwrappedExecState(), identifier, unwrappedSlot);
     if (result) {
         JSValuePtr unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
-        slot.setCustom(static_cast<JSObject*>(wrapOutgoingValue(unwrappedExecState(), unwrappedValue)), cachedValueGetter);
+        slot.setCustom(asObject(wrapOutgoingValue(unwrappedExecState(), unwrappedValue)), cachedValueGetter);
     }
 
     transferExceptionToExecState(exec);
@@ -131,7 +131,7 @@ bool JSQuarantinedObjectWrapper::getOwnPropertySlot(ExecState* exec, unsigned id
     bool result = m_unwrappedObject->getOwnPropertySlot(unwrappedExecState(), identifier, unwrappedSlot);
     if (result) {
         JSValuePtr unwrappedValue = unwrappedSlot.getValue(unwrappedExecState(), identifier);
-        slot.setCustom(static_cast<JSObject*>(wrapOutgoingValue(unwrappedExecState(), unwrappedValue)), cachedValueGetter);
+        slot.setCustom(asObject(wrapOutgoingValue(unwrappedExecState(), unwrappedValue)), cachedValueGetter);
     }
 
     transferExceptionToExecState(exec);
@@ -201,7 +201,7 @@ JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* const
 
     JSValuePtr resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
     ASSERT(resultValue->isObject());
-    JSObject* result = static_cast<JSObject*>(resultValue);
+    JSObject* result = asObject(resultValue);
 
     wrapper->transferExceptionToExecState(exec);
 

@@ -292,7 +292,7 @@ void Console::trace(ExecState* exec)
     ArgList args;
     while (!func->isNull()) {
         args.append(func);
-        func = exec->machine()->retrieveCaller(exec, static_cast<InternalFunction*>(func));
+        func = exec->machine()->retrieveCaller(exec, asInternalFunction(func));
     }
     
     page->inspectorController()->addMessageToConsole(JSMessageSource, TraceMessageLevel, exec, args, 0, String());

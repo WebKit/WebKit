@@ -71,7 +71,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     CallData callData;
     CallType callType = handleEventFunction->getCallData(callData);
     if (callType == CallTypeNone) {
-        handleEventFunction = 0;
+        handleEventFunction = noValue();
         callType = listener->getCallData(callData);
     }
 
@@ -299,7 +299,7 @@ void JSLazyEventListener::parseCode() const
 
         JSValuePtr thisObj = toJS(exec, m_originalNode);
         if (thisObj->isObject()) {
-            static_cast<JSEventTargetNode*>(thisObj)->pushEventHandlerScope(exec, scope);
+            static_cast<JSEventTargetNode*>(asObject(thisObj))->pushEventHandlerScope(exec, scope);
             listenerAsFunction->setScope(scope);
         }
     }

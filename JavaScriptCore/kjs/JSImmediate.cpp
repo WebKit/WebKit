@@ -36,9 +36,9 @@ JSObject* JSImmediate::toObject(JSValuePtr v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
-        return constructNumberFromImmediateNumber(exec, const_cast<JSValuePtr>(v));
+        return constructNumberFromImmediateNumber(exec, v);
     if (isBoolean(v))
-        return constructBooleanFromImmediateBoolean(exec, const_cast<JSValuePtr>(v));
+        return constructBooleanFromImmediateBoolean(exec, v);
     
     JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
     exec->setException(exception);

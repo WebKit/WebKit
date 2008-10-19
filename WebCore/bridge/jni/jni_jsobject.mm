@@ -397,7 +397,7 @@ jobject JavaJSObject::getSlot(jint index) const
     ExecState* exec = rootObject->globalObject()->globalExec();
 
     JSLock lock(false);
-    JSValue *result = _imp->get (exec, (unsigned)index);
+    JSValuePtr result = _imp->get(exec, index);
 
     return convertValueToJObject(result);
 }
@@ -485,7 +485,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
     return nativeHandle;
 }
 
-jobject JavaJSObject::convertValueToJObject (JSValue *value) const
+jobject JavaJSObject::convertValueToJObject(JSValuePtr value) const
 {
     JSLock lock(false);
     
@@ -527,14 +527,14 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
         jlong nativeHandle;
         
         if (value->isObject()) {
-            JSObject *imp = static_cast<JSObject*>(value);
+            JSObject* imp = asObject(value);
             
             // We either have a wrapper around a Java instance or a JavaScript
             // object.  If we have a wrapper around a Java instance, return that
             // instance, otherwise create a new Java JavaJSObject with the JSObject*
             // as it's nativeHandle.
             if (imp->classInfo() && strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
-                RuntimeObjectImp *runtimeImp = static_cast<RuntimeObjectImp*>(value);
+                RuntimeObjectImp* runtimeImp = static_cast<RuntimeObjectImp*>(imp);
                 JavaInstance *runtimeInstance = static_cast<JavaInstance *>(runtimeImp->getInternalInstance());
                 if (!runtimeInstance)
                     return 0;

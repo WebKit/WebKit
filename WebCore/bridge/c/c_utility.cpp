@@ -84,9 +84,9 @@ void convertValueToNPVariant(ExecState* exec, JSValuePtr value, NPVariant* resul
     } else if (value->isNull()) {
         NULL_TO_NPVARIANT(*result);
     } else if (value->isObject()) {
-        JSObject* object = static_cast<JSObject*>(value);
+        JSObject* object = asObject(value);
         if (object->classInfo() == &RuntimeObjectImp::s_info) {
-            RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(value);
+            RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(object);
             CInstance* instance = static_cast<CInstance*>(imp->getInternalInstance());
             if (instance) {
                 NPObject* obj = instance->getObject();

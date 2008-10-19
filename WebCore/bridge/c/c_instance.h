@@ -53,9 +53,9 @@ public:
     virtual JSValuePtr valueOf(ExecState*) const;
     virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
     
-    virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const ArgList &args);
+    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
     virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSValue *invokeDefaultMethod (ExecState *exec, const ArgList &args);
+    virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&);
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     JSValuePtr stringValue(ExecState*) const;

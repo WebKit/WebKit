@@ -34,7 +34,7 @@ const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 
 JSImageConstructor::JSImageConstructor(ExecState* exec, Document* document)
     : DOMObject(JSImageConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
+    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
 }
 
@@ -65,7 +65,7 @@ static JSObject* constructImage(ExecState* exec, JSObject* constructor, const Ar
         image->setWidth(width);
     if (heightSet)
         image->setHeight(height);
-    return static_cast<JSObject*>(toJS(exec, image.release()));
+    return asObject(toJS(exec, image.release()));
 }
 
 ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)

@@ -258,7 +258,7 @@ sub GenerateGetOwnPropertySlotBody
 
     if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection") {
         push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValuePtr proto = prototype();\n");
-        push(@getOwnPropertySlotImpl, "    if (proto->isObject() && static_cast<${namespaceMaybe}JSObject*>(proto)->hasProperty(exec, propertyName))\n");
+        push(@getOwnPropertySlotImpl, "    if (proto->isObject() && static_cast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
         push(@getOwnPropertySlotImpl, "        return false;\n\n");
     }
 
@@ -1004,21 +1004,21 @@ sub GenerateImplementation
                 if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                         !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} &&
                         !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurityOnGet"}) {
-                    push(@implContent, "    if (!static_cast<$className*>(slot.slotBase())->allowsAccessFrom(exec))\n");
+                    push(@implContent, "    if (!static_cast<$className*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))\n");
                     push(@implContent, "        return jsUndefined();\n");
                 }
 
                 if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomGetter"}) {
-                    push(@implContent, "    return static_cast<$className*>(slot.slotBase())->$implGetterFunctionName(exec);\n");
+                    push(@implContent, "    return static_cast<$className*>(asObject(slot.slotBase()))->$implGetterFunctionName(exec);\n");
                 } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
-                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
-                    push(@implContent, "    return checkNodeSecurity(exec, imp->$implGetterFunctionName()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())") . " : jsUndefined();\n");
+                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
+                    push(@implContent, "    return checkNodeSecurity(exec, imp->$implGetterFunctionName()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(asObject(slot.slotBase()))") . " : jsUndefined();\n");
                 } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
                     $implIncludes{"Document.h"} = 1;
                     $implIncludes{"JSDOMBinding.h"} = 1;
-                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
-                    push(@implContent, "    return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())") . " : jsUndefined();\n");
+                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
+                    push(@implContent, "    return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(asObject(slot.slotBase()))") . " : jsUndefined();\n");
                 } elsif ($type eq "EventListener") {
                     $implIncludes{"JSEventListener.h"} = 1;
                     $implIncludes{"EventListener.h"} = 1;
@@ -1028,7 +1028,7 @@ sub GenerateImplementation
                     } else {
                         $listenerType = "JSUnprotectedEventListener";
                     }
-                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
+                    push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                     push(@implContent, "    if (${listenerType}* listener = static_cast<${listenerType}*>(imp->$implGetterFunctionName())) {\n");
                     push(@implContent, "        if (JSObject* listenerObj = listener->listenerObj())\n");
                     push(@implContent, "            return listenerObj;\n");
@@ -1040,15 +1040,15 @@ sub GenerateImplementation
                     push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec);\n");
                 } elsif (!@{$attribute->getterExceptions}) {
                     if ($podType) {
-                        push(@implContent, "    $podType imp(*static_cast<$className*>(slot.slotBase())->impl());\n");
+                        push(@implContent, "    $podType imp(*static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                         if ($podType eq "float") { # Special case for JSSVGNumber
-                            push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp", "static_cast<$className*>(slot.slotBase())") . ";\n");
+                            push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp", "static_cast<$className*>(asObject(slot.slotBase()))") . ";\n");
                         } else {
-                            push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())") . ";\n");
+                            push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName()", "static_cast<$className*>(asObject(slot.slotBase()))") . ";\n");
                         }
                     } else {
-                        push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
-                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(slot.slotBase())");
+                        push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
+                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(asObject(slot.slotBase()))");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
                             push(@implContent, "    return toJS(exec, obj.get(), imp);\n");
@@ -1060,11 +1060,11 @@ sub GenerateImplementation
                     push(@implContent, "    ExceptionCode ec = 0;\n");
 
                     if ($podType) {
-                        push(@implContent, "    $podType imp(*static_cast<$className*>(slot.slotBase())->impl());\n");
-                        push(@implContent, "    JSC::JSValuePtr result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName(ec)", "static_cast<$className*>(slot.slotBase())") . ";\n");
+                        push(@implContent, "    $podType imp(*static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
+                        push(@implContent, "    JSC::JSValuePtr result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName(ec)", "static_cast<$className*>(asObject(slot.slotBase()))") . ";\n");
                     } else {
-                        push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(slot.slotBase())->impl());\n");
-                        push(@implContent, "    JSC::JSValuePtr result = " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName(ec)", "static_cast<$className*>(slot.slotBase())") . ";\n");
+                        push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
+                        push(@implContent, "    JSC::JSValuePtr result = " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName(ec)", "static_cast<$className*>(asObject(slot.slotBase()))") . ";\n");
                     }
 
                     push(@implContent, "    setDOMException(exec, ec);\n");
@@ -1079,7 +1079,7 @@ sub GenerateImplementation
 
                 push(@implContent, "JSValuePtr ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    return static_cast<$className*>(slot.slotBase())->getConstructor(exec);\n");
+                push(@implContent, "    return static_cast<$className*>(asObject(slot.slotBase()))->getConstructor(exec);\n");
                 push(@implContent, "}\n");
             }
         }
@@ -1247,7 +1247,7 @@ sub GenerateImplementation
             } else {
                 push(@implContent, "    if (!thisValue->isObject(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
-                push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisValue);\n");
+                push(@implContent, "    $className* castedThisObj = static_cast<$className*>(asObject(thisValue));\n");
             }
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
@@ -1359,9 +1359,9 @@ sub GenerateImplementation
     }
 
     if ($dataNode->extendedAttributes->{"HasIndexGetter"}) {
-        push(@implContent, "\nJSValue* ${className}::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)\n");
+        push(@implContent, "\nJSValuePtr ${className}::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}* thisObj = static_cast<$className*>(slot.slotBase());\n");
+        push(@implContent, "    ${className}* thisObj = static_cast<$className*>(asObject(slot.slotBase()));\n");
         if (IndexGetterReturnsStrings($implClassName)) {
             $implIncludes{"KURL.h"} = 1;
             push(@implContent, "    return jsStringOrNull(exec, thisObj->impl()->item(slot.index()));\n");
@@ -1397,14 +1397,14 @@ sub GenerateImplementation
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateNativeConverter"}) and !$dataNode->extendedAttributes->{"CustomNativeConverter"}) {
         if ($podType) {
-            push(@implContent, "$podType to${interfaceName}(JSC::JSValuePtr val)\n");
+            push(@implContent, "$podType to${interfaceName}(JSC::JSValuePtr value)\n");
         } else {
-            push(@implContent, "$implClassName* to${interfaceName}(JSC::JSValuePtr val)\n");
+            push(@implContent, "$implClassName* to${interfaceName}(JSC::JSValuePtr value)\n");
         }
 
         push(@implContent, "{\n");
 
-        push(@implContent, "    return val->isObject(&${className}::s_info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(val)->impl() : ");
+        push(@implContent, "    return value->isObject(&${className}::s_info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(asObject(value))->impl() : ");
         if ($podType and $podType ne "float") {
             push(@implContent, "$podType();\n}\n");
         } else {
@@ -1864,7 +1864,7 @@ EOF
 $implContent .= << "EOF";
     static JSObject* construct(ExecState* exec, JSObject*, const ArgList&)
     {
-        return static_cast<JSObject*>(toJS(exec, ${interfaceName}::create()));
+        return asObject(toJS(exec, ${interfaceName}::create()));
     }
     virtual ConstructType getConstructData(ConstructData& constructData)
     {

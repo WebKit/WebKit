@@ -77,7 +77,7 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
     ArgList args;
     args.append(toJS(exec, error));
 
-    JSValue *result;
+    JSValuePtr result;
     globalObject->startTimeoutCheck();
     result = call(exec, function, callType, callData, m_callback, args);
     globalObject->stopTimeoutCheck();

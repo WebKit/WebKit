@@ -3559,7 +3559,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return coreFrame->shouldClose();
 }
 
-static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
+static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValuePtr jsValue)
 {
     NSAppleEventDescriptor* aeDesc = 0;
     if (jsValue->isBoolean())
@@ -3601,7 +3601,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                 return aeDesc;
             }
         }
-        JSValue* primitive = object->toPrimitive(exec);
+        JSValuePtr primitive = object->toPrimitive(exec);
         if (exec->hadException()) {
             exec->clearException();
             return [NSAppleEventDescriptor nullDescriptor];
@@ -3621,7 +3621,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
         return nil;
     if (!coreFrame->document())
         return nil;
-    JSValue* result = coreFrame->loader()->executeScript(script, true);
+    JSValuePtr result = coreFrame->loader()->executeScript(script, true);
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock(false);

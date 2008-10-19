@@ -85,7 +85,7 @@ namespace WebCore {
     }
     template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec)
     {
-        return static_cast<JSC::JSObject*>(getDOMStructure<WrapperClass>(exec)->storedPrototype());
+        return static_cast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec)->storedPrototype()));
     }
     template<class ConstructorClass> inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec)
     {

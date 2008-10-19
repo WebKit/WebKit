@@ -80,8 +80,7 @@ WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
     : m_callingDelegate(false)
 {
     attach(globalObject);
-    DebuggerCallFrame globalCallFrame(globalObject->globalExec(), 0);
-    callEvent(globalCallFrame, 0, -1);
+    callEvent(globalObject->globalExec(), 0, -1);
 }
 
 // callbacks - relay to delegate

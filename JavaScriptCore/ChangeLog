@@ -1,5 +1,29 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Tweak a little more to get closer to where we can make JSValuePtr a class.
+
+        * API/APICast.h:
+        (toJS): Change back to JSValue* here, since we're converting the
+        pointer type.
+        * VM/CTI.cpp:
+        (JSC::CTI::unlinkCall): Call asPointer.
+        * VM/CTI.h: Cast to JSValue* here, since it's a pointer cast.
+        * kjs/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::DebuggerCallFrame): Call noValue.
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Call noValue.
+        * kjs/JSImmediate.cpp:
+        (JSC::JSImmediate::toObject): Remove unneeded const_cast.
+        * kjs/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject): Call noValue.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         - fix non-all-in-one build
 
         * kjs/completion.h:

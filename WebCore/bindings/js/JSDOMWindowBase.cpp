@@ -386,7 +386,7 @@ static JSValuePtr showModalDialog(ExecState* exec, Frame* frame, const String& u
 
     // Get the return value either just before clearing the dialog window's
     // properties (in JSDOMWindowBase::clear), or when on return from runModal.
-    JSValuePtr returnValue = 0;
+    JSValuePtr returnValue = noValue();
     dialogWindow->setReturnValueSlot(&returnValue);
     dialogFrame->page()->chrome()->runModal();
     dialogWindow->setReturnValueSlot(0);
@@ -422,49 +422,49 @@ JSValuePtr jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySl
 
 JSValuePtr jsDOMWindowBaseEvent(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->currentEvent())
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->currentEvent())
         return jsUndefined();
-    return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->currentEvent());
+    return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->currentEvent());
 }
 
 JSValuePtr jsDOMWindowBaseImage(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    return getDOMConstructor<JSImageConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
+    return getDOMConstructor<JSImageConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
 }
 
 JSValuePtr jsDOMWindowBaseMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
+    return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
 }
 
 JSValuePtr jsDOMWindowBaseOption(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    return getDOMConstructor<JSHTMLOptionElementConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
+    return getDOMConstructor<JSHTMLOptionElementConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
 }
 
 JSValuePtr jsDOMWindowBaseXMLHttpRequest(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
+    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
 }
 
 JSValuePtr jsDOMWindowBaseAudio(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
 #if ENABLE(VIDEO)
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
     if (!MediaPlayer::isAvailable())
         return jsUndefined();
-    return getDOMConstructor<JSAudioConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
+    return getDOMConstructor<JSAudioConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
 #else
     return jsUndefined();
 #endif
@@ -473,7 +473,7 @@ JSValuePtr jsDOMWindowBaseAudio(ExecState* exec, const Identifier&, const Proper
 JSValuePtr jsDOMWindowBaseXSLTProcessor(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
 #if ENABLE(XSLT)
-    if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
+    if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSXSLTProcessorConstructor>(exec);
 #else
@@ -485,17 +485,17 @@ namespace WebCore {
 
 JSValuePtr JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
+    return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
 }
 
 JSValuePtr JSDOMWindowBase::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(slot.index())->domWindow());
+    return toJS(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->impl()->frame()->tree()->child(slot.index())->domWindow());
 }
 
 JSValuePtr JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSDOMWindowBase* thisObj = static_cast<JSDOMWindowBase*>(slot.slotBase());
+    JSDOMWindowBase* thisObj = static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()));
     Document* doc = thisObj->impl()->frame()->document();
     ASSERT(thisObj->allowsAccessFrom(exec));
     ASSERT(doc);
@@ -548,7 +548,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     // precedence over the index and name getters.  
     JSValuePtr proto = prototype();
     if (proto->isObject()) {
-        if (static_cast<JSObject*>(proto)->getPropertySlot(exec, propertyName, slot)) {
+        if (asObject(proto)->getPropertySlot(exec, propertyName, slot)) {
             if (!allowsAccessFrom(exec))
                 slot.setUndefined();
             return true;
@@ -714,7 +714,7 @@ JSEventListener* JSDOMWindowBase::findJSEventListener(JSValuePtr val, bool attac
 {
     if (!val->isObject())
         return 0;
-    JSObject* object = static_cast<JSObject*>(val);
+    JSObject* object = asObject(val);
     ListenersMap& listeners = attachedToEventTargetNode ? d()->jsEventListenersAttachedToEventTargetNodes : d()->jsEventListeners;
     return listeners.get(object);
 }
@@ -728,7 +728,7 @@ PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecSta
         return 0;
 
     // The JSEventListener constructor adds it to our jsEventListeners map.
-    return JSEventListener::create(static_cast<JSObject*>(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
+    return JSEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
 }
 
 JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValuePtr val, bool attachedToEventTargetNode)
@@ -737,7 +737,7 @@ JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(Exec
         return 0;
 
     UnprotectedListenersMap& listeners = attachedToEventTargetNode ? d()->jsUnprotectedEventListenersAttachedToEventTargetNodes : d()->jsUnprotectedEventListeners;
-    return listeners.get(static_cast<JSObject*>(val));
+    return listeners.get(asObject(val));
 }
 
 PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValuePtr val, bool attachedToEventTargetNode)
@@ -749,7 +749,7 @@ PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotecte
         return 0;
 
     // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
-    return JSUnprotectedEventListener::create(static_cast<JSObject*>(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
+    return JSUnprotectedEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
 }
 
 void JSDOMWindowBase::clearHelperObjectProperties()
@@ -861,7 +861,7 @@ JSValuePtr windowProtoFuncOpen(ExecState* exec, JSObject*, JSValuePtr thisValue,
     windowFeatures.height = windowRect.height();
     windowFeatures.width = windowRect.width();
 
-    frame = createWindow(exec, frame, urlString, frameName, windowFeatures, 0);
+    frame = createWindow(exec, frame, urlString, frameName, windowFeatures, noValue());
 
     if (!frame)
         return jsUndefined();
@@ -1079,11 +1079,11 @@ JSDOMWindow* toJSDOMWindow(JSValuePtr value)
 {
     if (!value->isObject())
         return 0;
-    const ClassInfo* classInfo = static_cast<JSObject*>(value)->classInfo();
+    const ClassInfo* classInfo = asObject(value)->classInfo();
     if (classInfo == &JSDOMWindow::s_info)
-        return static_cast<JSDOMWindow*>(value);
+        return static_cast<JSDOMWindow*>(asObject(value));
     if (classInfo == &JSDOMWindowShell::s_info)
-        return static_cast<JSDOMWindowShell*>(value)->window();
+        return static_cast<JSDOMWindowShell*>(asObject(value))->window();
     return 0;
 }
 

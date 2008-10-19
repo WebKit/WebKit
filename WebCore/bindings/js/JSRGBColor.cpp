@@ -70,16 +70,16 @@ using namespace WebCore;
 
 JSValuePtr jsRGBColorRed(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(slot.slotBase())->impl() >> 16) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+    return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(asObject(slot.slotBase()))->impl() >> 16) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
 }
 
 JSValuePtr jsRGBColorGreen(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(slot.slotBase())->impl() >> 8) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+    return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(asObject(slot.slotBase()))->impl() >> 8) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
 }
 
 JSValuePtr jsRGBColorBlue(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    return toJS(exec, CSSPrimitiveValue::create(static_cast<JSRGBColor*>(slot.slotBase())->impl() & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+    return toJS(exec, CSSPrimitiveValue::create(static_cast<JSRGBColor*>(asObject(slot.slotBase()))->impl() & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
 }
 

@@ -51,12 +51,12 @@ public:
     virtual JSValuePtr valueOf(ExecState*) const;
     virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
     
-    virtual JSValue *invokeMethod(ExecState *exec, const MethodList &method, const ArgList &args);
+    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
     virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSValue *invokeDefaultMethod(ExecState *exec, const ArgList &args);
+    virtual JSValuePtr invokeDefaultMethod(ExecState*, const ArgList&);
 
     virtual bool supportsSetValueOfUndefinedField();
-    virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, JSValue *aValue);
+    virtual void setValueOfUndefinedField(ExecState*, const Identifier&, JSValuePtr);
     
     virtual JSValuePtr getValueOfUndefinedField(ExecState*, const Identifier& property) const;
 

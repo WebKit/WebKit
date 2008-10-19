@@ -60,7 +60,7 @@ extern const HashTable stringTable;
 
 JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
-    , exception(0)
+    , exception(noValue())
     , arrayTable(new HashTable(JSC::arrayTable))
     , dateTable(new HashTable(JSC::dateTable))
     , mathTable(new HashTable(JSC::mathTable))

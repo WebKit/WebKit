@@ -3098,7 +3098,7 @@ void CTI::unlinkCall(StructureStubInfo* structureStubInfo)
     // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
     // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
     // match).  Reset the check so it no longer matches.
-    reinterpret_cast<void**>(structureStubInfo->hotPathBegin)[-1] = JSImmediate::impossibleValue();
+    reinterpret_cast<void**>(structureStubInfo->hotPathBegin)[-1] = asPointer(JSImmediate::impossibleValue());
 }
 
 void CTI::linkCall(CodeBlock* callerCodeBlock, JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, void* returnAddress, int callerArgCount)

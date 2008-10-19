@@ -35,7 +35,7 @@ const ClassInfo JSHTMLOptionElementConstructor::s_info = { "OptionConstructor", 
 
 JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* document)
     : DOMObject(JSHTMLOptionElementConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(toJS(exec, document)))
+    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
 }
@@ -66,7 +66,7 @@ static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* construct
         return 0;
     }
 
-    return static_cast<JSObject*>(toJS(exec, element.release()));
+    return asObject(toJS(exec, element.release()));
 }
 
 ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData& constructData)

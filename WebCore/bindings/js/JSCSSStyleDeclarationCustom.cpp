@@ -129,7 +129,7 @@ bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*,
 // but you should also be able to enumerate them.
 JSValuePtr JSCSSStyleDeclaration::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    JSCSSStyleDeclaration* thisObj = static_cast<JSCSSStyleDeclaration*>(slot.slotBase());
+    JSCSSStyleDeclaration* thisObj = static_cast<JSCSSStyleDeclaration*>(asObject(slot.slotBase()));
 
     // Set up pixelOrPos boolean to handle the fact that
     // pixelTop returns "CSS Top" as number value in unit pixels

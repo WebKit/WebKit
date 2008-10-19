@@ -53,11 +53,11 @@
 
 #define ARG_setCallFrame(newCallFrame) (ARGS[CTI_ARGS_callFrame] = (newCallFrame))
 
-#define ARG_src1 static_cast<JSValuePtr>(ARGS[1])
-#define ARG_src2 static_cast<JSValuePtr>(ARGS[2])
-#define ARG_src3 static_cast<JSValuePtr>(ARGS[3])
-#define ARG_src4 static_cast<JSValuePtr>(ARGS[4])
-#define ARG_src5 static_cast<JSValuePtr>(ARGS[5])
+#define ARG_src1 static_cast<JSValue*>(ARGS[1])
+#define ARG_src2 static_cast<JSValue*>(ARGS[2])
+#define ARG_src3 static_cast<JSValue*>(ARGS[3])
+#define ARG_src4 static_cast<JSValue*>(ARGS[4])
+#define ARG_src5 static_cast<JSValue*>(ARGS[5])
 #define ARG_id1 static_cast<Identifier*>(ARGS[1])
 #define ARG_id2 static_cast<Identifier*>(ARGS[2])
 #define ARG_id3 static_cast<Identifier*>(ARGS[3])

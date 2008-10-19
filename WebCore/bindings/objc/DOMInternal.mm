@@ -117,7 +117,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     JSC::ExecState *exec = frame->script()->globalObject()->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    JSC::JSObject *scriptImp = static_cast<JSC::JSObject*>(WebCore::toJS(exec, nodeImpl));
+    JSC::JSObject *scriptImp = asObject(WebCore::toJS(exec, nodeImpl));
 
     JSC::Bindings::RootObject* rootObject = frame->script()->bindingRootObject();
 

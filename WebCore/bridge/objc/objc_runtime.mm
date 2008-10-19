@@ -231,7 +231,7 @@ static JSValuePtr callObjCFallbackObject(ExecState* exec, JSObject* function, JS
 
     JSValuePtr result = jsUndefined();
 
-    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisValue);
+    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(asObject(thisValue));
     Instance* instance = imp->getInternalInstance();
 
     if (!instance)
