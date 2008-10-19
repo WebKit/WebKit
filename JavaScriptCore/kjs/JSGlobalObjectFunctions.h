@@ -24,6 +24,8 @@
 #ifndef JSGlobalObjectFunctions_h
 #define JSGlobalObjectFunctions_h
 
+#include "JSImmediate.h" // temporary until JSValuePtr becomes a class we can forward-declare
+
 namespace JSC {
 
     class ArgList;
