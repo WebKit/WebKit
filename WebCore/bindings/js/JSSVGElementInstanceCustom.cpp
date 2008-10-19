@@ -36,7 +36,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue* JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -48,7 +48,7 @@ JSValue* JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& 
     return jsUndefined();
 }
 
-JSValue* JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)

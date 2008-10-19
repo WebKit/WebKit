@@ -37,7 +37,7 @@ namespace WebCore {
     class PluginData;
 
     // FIXME: Generated JSMimeTypeArray.cpp doesn't include JSMimeType.h for toJS
-    JSC::JSValue* toJS(JSC::ExecState*, MimeType*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, MimeType*);
 
     class MimeTypeArray : public RefCounted<MimeTypeArray> {
     public:

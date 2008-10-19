@@ -36,7 +36,7 @@ namespace WebCore {
     class String;
 
     // FIXME: Generated JSPlugin.cpp doesn't include JSMimeType.h for toJS
-    JSC::JSValue* toJS(JSC::ExecState*, MimeType*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, MimeType*);
 
     class PluginData;
 

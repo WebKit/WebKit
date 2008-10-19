@@ -30,12 +30,12 @@
 
 namespace JSC {
 
-JSValue* JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
+JSValuePtr JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     return const_cast<JSString*>(this);
 }
 
-bool JSString::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
+bool JSString::getPrimitiveNumber(ExecState*, double& number, JSValuePtr& value)
 {
     value = this;
     number = m_value.toDouble();
@@ -90,7 +90,7 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
         return true;
     slot.setBase(this);
     JSObject* object;
-    for (JSValue* prototype = exec->lexicalGlobalObject()->stringPrototype(); !prototype->isNull(); prototype = object->prototype()) {
+    for (JSValuePtr prototype = exec->lexicalGlobalObject()->stringPrototype(); !prototype->isNull(); prototype = object->prototype()) {
         object = asObject(prototype);
         if (object->getOwnPropertySlot(exec, propertyName, slot))
             return true;

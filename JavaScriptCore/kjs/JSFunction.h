@@ -48,11 +48,11 @@ namespace JSC {
         ~JSFunction();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
         JSObject* construct(ExecState*, const ArgList&);
-        JSValue* call(ExecState*, JSValue* thisValue, const ArgList&);
+        JSValuePtr call(ExecState*, JSValuePtr thisValue, const ArgList&);
 
         // Note: Returns a null identifier for any parameters that will never get set
         // due to a later parameter with the same name.
@@ -74,16 +74,16 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 
-        static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
-        static JSValue* callerGetter(ExecState*, const Identifier&, const PropertySlot&);
-        static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValuePtr argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValuePtr callerGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValuePtr lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
 
         ScopeChain m_scopeChain;
     };
 
-    JSFunction* asFunction(JSValue*);
+    JSFunction* asFunction(JSValuePtr);
 
-    inline JSFunction* asFunction(JSValue* value)
+    inline JSFunction* asFunction(JSValuePtr value)
     {
         ASSERT(asObject(value)->inherits(&JSFunction::info));
         return static_cast<JSFunction*>(asObject(value));

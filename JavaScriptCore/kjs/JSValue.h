@@ -95,15 +95,15 @@ namespace JSC {
         bool getTruncatedUInt32(uint32_t&) const;
         
         // Basic conversions.
-        JSValue* toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
-        bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
+        JSValuePtr toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
+        bool getPrimitiveNumber(ExecState*, double& number, JSValuePtr&);
 
         bool toBoolean(ExecState*) const;
 
         // toNumber conversion is expected to be side effect free if an exception has
         // been set in the ExecState already.
         double toNumber(ExecState*) const;
-        JSValue* toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
+        JSValuePtr toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
         UString toString(ExecState*) const;
         JSObject* toObject(ExecState*) const;
 
@@ -130,12 +130,12 @@ namespace JSC {
         static uint32_t toUInt32SlowCase(double, bool& ok);
 
         // Object operations, with the toObject operation included.
-        JSValue* get(ExecState*, const Identifier& propertyName) const;
-        JSValue* get(ExecState*, const Identifier& propertyName, PropertySlot&) const;
-        JSValue* get(ExecState*, unsigned propertyName) const;
-        JSValue* get(ExecState*, unsigned propertyName, PropertySlot&) const;
-        void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
-        void put(ExecState*, unsigned propertyName, JSValue*);
+        JSValuePtr get(ExecState*, const Identifier& propertyName) const;
+        JSValuePtr get(ExecState*, const Identifier& propertyName, PropertySlot&) const;
+        JSValuePtr get(ExecState*, unsigned propertyName) const;
+        JSValuePtr get(ExecState*, unsigned propertyName, PropertySlot&) const;
+        void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
+        void put(ExecState*, unsigned propertyName, JSValuePtr);
         bool deleteProperty(ExecState*, const Identifier& propertyName);
         bool deleteProperty(ExecState*, unsigned propertyName);
 
@@ -144,9 +144,9 @@ namespace JSC {
         UString toThisString(ExecState*) const;
         JSString* toThisJSString(ExecState*);
 
-        JSValue* getJSNumber(); // 0 if this is not a JSNumber or number object
+        JSValuePtr getJSNumber(); // 0 if this is not a JSNumber or number object
 
-        JSValue* asValue() const;
+        JSValuePtr asValue() const;
 
         JSCell* asCell() const;
 
@@ -165,9 +165,9 @@ namespace JSC {
     {
     }
 
-    inline JSValue* JSValue::asValue() const
+    inline JSValuePtr JSValue::asValue() const
     {
-        return const_cast<JSValue*>(this);
+        return const_cast<JSValuePtr>(this);
     }
 
     inline bool JSValue::isUndefined() const

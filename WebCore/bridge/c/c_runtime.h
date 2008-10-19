@@ -38,8 +38,8 @@ class CField : public Field {
 public:
     CField(NPIdentifier ident) : _fieldIdentifier(ident) { }
 
-    virtual JSValue* valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValue*) const;
+    virtual JSValuePtr valueFromInstance(ExecState*, const Instance*) const;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValuePtr) const;
     virtual const char* name() const;
 
 private:

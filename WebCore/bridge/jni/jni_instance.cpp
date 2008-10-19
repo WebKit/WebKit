@@ -80,7 +80,7 @@ Class *JavaInstance::getClass() const
     return _class;
 }
 
-JSValue* JavaInstance::stringValue(ExecState* exec) const
+JSValuePtr JavaInstance::stringValue(ExecState* exec) const
 {
     JSLock lock(false);
     
@@ -92,7 +92,7 @@ JSValue* JavaInstance::stringValue(ExecState* exec) const
     return jsString(exec, u);
 }
 
-JSValue* JavaInstance::numberValue(ExecState* exec) const
+JSValuePtr JavaInstance::numberValue(ExecState* exec) const
 {
     jdouble doubleValue = callJNIMethod<jdouble>(_instance->_instance, "doubleValue", "()D");
     return jsNumber(exec, doubleValue);
@@ -283,7 +283,7 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     return resultValue;
 }
 
-JSValue* JavaInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValuePtr JavaInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
     if (hint == PreferString)
         return stringValue(exec);
@@ -299,7 +299,7 @@ JSValue* JavaInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint
     return valueOf(exec);
 }
 
-JSValue* JavaInstance::valueOf(ExecState* exec) const 
+JSValuePtr JavaInstance::valueOf(ExecState* exec) const 
 {
     return stringValue(exec);
 }

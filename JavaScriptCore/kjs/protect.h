@@ -27,27 +27,27 @@
 
 namespace JSC {
 
-    inline void gcProtect(JSValue* val) 
+    inline void gcProtect(JSValuePtr val) 
     {
         Heap* heap = Heap::heap(val);
         if (heap)
             heap->protect(val);
     }
 
-    inline void gcUnprotect(JSValue* val)
+    inline void gcUnprotect(JSValuePtr val)
     {
         Heap* heap = Heap::heap(val);
         if (heap)
             heap->unprotect(val);
     }
 
-    inline void gcProtectNullTolerant(JSValue* val) 
+    inline void gcProtectNullTolerant(JSValuePtr val) 
     {
         if (val) 
             gcProtect(val);
     }
 
-    inline void gcUnprotectNullTolerant(JSValue* val) 
+    inline void gcUnprotectNullTolerant(JSValuePtr val) 
     {
         if (val) 
             gcUnprotect(val);

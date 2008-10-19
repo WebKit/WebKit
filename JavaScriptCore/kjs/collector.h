@@ -22,6 +22,7 @@
 #ifndef KJSCOLLECTOR_H_
 #define KJSCOLLECTOR_H_
 
+#include "JSImmediate.h"
 #include <string.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -90,10 +91,10 @@ namespace JSC {
         size_t size();
 
         void setGCProtectNeedsLocking();
-        void protect(JSValue*);
-        void unprotect(JSValue*);
+        void protect(JSValuePtr);
+        void unprotect(JSValuePtr);
 
-        static Heap* heap(const JSValue*); // 0 for immediate values
+        static Heap* heap(JSValuePtr); // 0 for immediate values
 
         size_t globalObjectCount();
         size_t protectedObjectCount();

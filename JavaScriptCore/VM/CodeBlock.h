@@ -169,7 +169,7 @@ namespace JSC {
 
     class EvalCodeCache {
     public:
-        PassRefPtr<EvalNode> get(ExecState* exec, const UString& evalSource, ScopeChainNode* scopeChain, JSValue*& exceptionValue)
+        PassRefPtr<EvalNode> get(ExecState* exec, const UString& evalSource, ScopeChainNode* scopeChain, JSValuePtr& exceptionValue)
         {
             RefPtr<EvalNode> evalNode;
 
@@ -303,7 +303,7 @@ namespace JSC {
         Vector<RefPtr<FuncDeclNode> > functions;
         Vector<RefPtr<FuncExprNode> > functionExpressions;
         Vector<Register> constantRegisters;
-        Vector<JSValue*> unexpectedConstants;
+        Vector<JSValuePtr> unexpectedConstants;
         Vector<RefPtr<RegExp> > regexps;
         Vector<HandlerInfo> exceptionHandlers;
         Vector<ExpressionRangeInfo> expressionInfo;

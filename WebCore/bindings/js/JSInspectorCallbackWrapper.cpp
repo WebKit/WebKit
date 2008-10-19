@@ -44,7 +44,7 @@ static WrapperMap& wrappers()
 
 const ClassInfo JSInspectorCallbackWrapper::s_info = { "JSInspectorCallbackWrapper", &JSQuarantinedObjectWrapper::s_info, 0, 0 };
 
-JSValue* JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValue* unwrappedValue)
+JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr unwrappedValue)
 {
     if (!unwrappedValue->isObject())
         return unwrappedValue;
@@ -57,7 +57,7 @@ JSValue* JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValue* unw
     if (JSInspectorCallbackWrapper* wrapper = wrappers().get(unwrappedObject))
         return wrapper;
 
-    JSValue* prototype = unwrappedObject->prototype();
+    JSValuePtr prototype = unwrappedObject->prototype();
     ASSERT(prototype->isNull() || prototype->isObject());
 
     if (prototype->isNull())
@@ -77,7 +77,7 @@ JSInspectorCallbackWrapper::~JSInspectorCallbackWrapper()
     wrappers().remove(unwrappedObject());
 }
 
-JSValue* JSInspectorCallbackWrapper::prepareIncomingValue(ExecState* unwrappedExec, JSValue* unwrappedValue) const
+JSValuePtr JSInspectorCallbackWrapper::prepareIncomingValue(ExecState* unwrappedExec, JSValuePtr unwrappedValue) const
 {
     if (JSQuarantinedObjectWrapper* wrapper = asWrapper(unwrappedValue)) {
         // The only time a wrapper should be passed into a JSInspectorCallbackWrapper is when a client-side storage callback

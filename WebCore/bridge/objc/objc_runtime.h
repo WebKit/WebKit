@@ -106,10 +106,10 @@ public:
 
 private:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
     virtual CallType getCallData(CallData&);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
 
     virtual bool toBoolean(ExecState*) const;
 

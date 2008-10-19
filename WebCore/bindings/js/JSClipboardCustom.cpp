@@ -48,7 +48,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-JSValue* JSClipboard::types(ExecState* exec) const
+JSValuePtr JSClipboard::types(ExecState* exec) const
 {
     Clipboard* clipboard = impl();
 
@@ -63,7 +63,7 @@ JSValue* JSClipboard::types(ExecState* exec) const
     return constructArray(exec, list);
 }
 
-JSValue* JSClipboard::clearData(ExecState* exec, const ArgList& args)
+JSValuePtr JSClipboard::clearData(ExecState* exec, const ArgList& args)
 {
     Clipboard* clipboard = impl();
 
@@ -81,7 +81,7 @@ JSValue* JSClipboard::clearData(ExecState* exec, const ArgList& args)
     return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
 }
 
-JSValue* JSClipboard::getData(ExecState* exec, const ArgList& args)
+JSValuePtr JSClipboard::getData(ExecState* exec, const ArgList& args)
 {
     // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments.
     if (args.size() != 1)
@@ -97,7 +97,7 @@ JSValue* JSClipboard::getData(ExecState* exec, const ArgList& args)
     return jsString(exec, result);
 }
 
-JSValue* JSClipboard::setData(ExecState* exec, const ArgList& args)
+JSValuePtr JSClipboard::setData(ExecState* exec, const ArgList& args)
 {
     Clipboard* clipboard = impl();
 
@@ -108,7 +108,7 @@ JSValue* JSClipboard::setData(ExecState* exec, const ArgList& args)
     return jsBoolean(clipboard->setData(args.at(exec, 0)->toString(exec), args.at(exec, 1)->toString(exec)));
 }
 
-JSValue* JSClipboard::setDragImage(ExecState* exec, const ArgList& args)
+JSValuePtr JSClipboard::setDragImage(ExecState* exec, const ArgList& args)
 {
     Clipboard* clipboard = impl();
 

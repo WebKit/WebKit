@@ -32,20 +32,20 @@
 
 namespace JSC {
 
-JSObject* JSImmediate::toObject(const JSValue* v, ExecState* exec)
+JSObject* JSImmediate::toObject(JSValuePtr v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
-        return constructNumberFromImmediateNumber(exec, const_cast<JSValue*>(v));
+        return constructNumberFromImmediateNumber(exec, const_cast<JSValuePtr>(v));
     if (isBoolean(v))
-        return constructBooleanFromImmediateBoolean(exec, const_cast<JSValue*>(v));
+        return constructBooleanFromImmediateBoolean(exec, const_cast<JSValuePtr>(v));
     
     JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
     exec->setException(exception);
     return new (exec) JSNotAnObject(exec, exception);
 }
 
-JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
+JSObject* JSImmediate::prototype(JSValuePtr v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))
@@ -58,7 +58,7 @@ JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
     return new (exec) JSNotAnObject(exec, exception);
 }
 
-UString JSImmediate::toString(const JSValue* v)
+UString JSImmediate::toString(JSValuePtr v)
 {
     ASSERT(isImmediate(v));
     if (isNumber(v))

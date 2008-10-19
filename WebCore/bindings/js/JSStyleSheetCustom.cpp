@@ -34,7 +34,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue* toJS(ExecState* exec, StyleSheet* styleSheet)
+JSValuePtr toJS(ExecState* exec, StyleSheet* styleSheet)
 {
     if (!styleSheet)
         return jsNull();

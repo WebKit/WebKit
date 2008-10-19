@@ -104,9 +104,7 @@
 #include "SVGViewSpec.h"
 #endif
 
-using JSC::UString;
-using JSC::JSLock;
-using JSC::JSValue;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -188,7 +186,7 @@ struct ScheduledRedirection {
 static double storedTimeOfLastCompletedLoad;
 static FrameLoader::LocalLoadPolicy localLoadPolicy = FrameLoader::AllowLocalLoadsForLocalOnly;
 
-static bool getString(JSValue* result, String& string)
+static bool getString(JSValuePtr result, String& string)
 {
     if (!result)
         return false;
@@ -757,7 +755,7 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
         return false;
 
     String script = decodeURLEscapeSequences(url.string().substring(strlen("javascript:")));
-    JSValue* result = executeScript(script, userGesture);
+    JSValuePtr result = executeScript(script, userGesture);
 
     String scriptResult;
     if (!getString(result, scriptResult))
@@ -779,12 +777,12 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
     return true;
 }
 
-JSValue* FrameLoader::executeScript(const String& script, bool forceUserGesture)
+JSValuePtr FrameLoader::executeScript(const String& script, bool forceUserGesture)
 {
     return executeScript(forceUserGesture ? String() : m_URL.string(), 1, script);
 }
 
-JSValue* FrameLoader::executeScript(const String& url, int baseLine, const String& script)
+JSValuePtr FrameLoader::executeScript(const String& url, int baseLine, const String& script)
 {
     if (!m_frame->script()->isEnabled() || m_frame->script()->isPaused())
         return 0;
@@ -792,7 +790,7 @@ JSValue* FrameLoader::executeScript(const String& url, int baseLine, const Strin
     bool wasRunningScript = m_isRunningScript;
     m_isRunningScript = true;
 
-    JSValue* result = m_frame->script()->evaluate(url, baseLine, script);
+    JSValuePtr result = m_frame->script()->evaluate(url, baseLine, script);
 
     if (!wasRunningScript) {
         m_isRunningScript = false;

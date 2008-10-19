@@ -33,9 +33,9 @@ namespace JSC {
         static const ClassInfo info;
     };
 
-    BooleanObject* asBooleanObject(JSValue*);
+    BooleanObject* asBooleanObject(JSValuePtr);
 
-    inline BooleanObject* asBooleanObject(JSValue* value)
+    inline BooleanObject* asBooleanObject(JSValuePtr value)
     {
         ASSERT(asObject(value)->inherits(&BooleanObject::info));
         return static_cast<BooleanObject*>(asObject(value));

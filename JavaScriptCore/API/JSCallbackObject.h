@@ -48,7 +48,7 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
-    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    static PassRefPtr<StructureID> createStructureID(JSValuePtr proto) 
     { 
         return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | OverridesHasInstance)); 
     }
@@ -59,12 +59,12 @@ private:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
     
-    virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
+    virtual void put(ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&);
 
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);
 
-    virtual bool hasInstance(ExecState* exec, JSValue* value, JSValue* proto);
+    virtual bool hasInstance(ExecState* exec, JSValuePtr value, JSValuePtr proto);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
@@ -77,15 +77,15 @@ private:
 
     void init(ExecState*);
  
-    static JSCallbackObject* asCallbackObject(JSValue*);
+    static JSCallbackObject* asCallbackObject(JSValuePtr);
  
-    static JSValue* call(ExecState*, JSObject* functionObject, JSValue* thisValue, const ArgList&);
+    static JSValuePtr call(ExecState*, JSObject* functionObject, JSValuePtr thisValue, const ArgList&);
     static JSObject* construct(ExecState*, JSObject* constructor, const ArgList&);
    
-    static JSValue* cachedValueGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* staticFunctionGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* callbackGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr cachedValueGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr staticFunctionGetter(ExecState*, const Identifier&, const PropertySlot&);
+    static JSValuePtr callbackGetter(ExecState*, const Identifier&, const PropertySlot&);
 
     struct JSCallbackObjectData {
         JSCallbackObjectData(void* privateData_, JSClassRef jsClass_)

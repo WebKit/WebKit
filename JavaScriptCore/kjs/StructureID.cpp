@@ -71,7 +71,7 @@ void StructureID::dumpStatistics()
 }
 #endif
 
-StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
+StructureID::StructureID(JSValuePtr prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
     , m_isDictionary(false)
     , m_hasGetterSetterProperties(false)
@@ -297,7 +297,7 @@ PassRefPtr<StructureID> StructureID::fromDictionaryTransition(StructureID* struc
     return structureID;
 }
 
-PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* structureID, JSValue* prototype)
+PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* structureID, JSValuePtr prototype)
 {
     RefPtr<StructureID> transition = create(prototype, structureID->typeInfo());
     transition->m_transitionCount = structureID->m_transitionCount + 1;
@@ -330,7 +330,7 @@ StructureIDChain* StructureID::createCachedPrototypeChain()
     ASSERT(typeInfo().type() == ObjectType);
     ASSERT(!m_cachedPrototypeChain);
 
-    JSValue* prototype = storedPrototype();
+    JSValuePtr prototype = storedPrototype();
     if (JSImmediate::isImmediate(prototype))
         return 0;
 

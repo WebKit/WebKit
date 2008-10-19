@@ -65,7 +65,7 @@ namespace JSC {
 
         Machine* machine;
 
-        JSValue* exception;
+        JSValuePtr exception;
 #if ENABLE(CTI)
         void* throwReturnAddress;
 #endif

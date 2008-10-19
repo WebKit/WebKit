@@ -66,14 +66,14 @@ using namespace WTF;
 
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
 
-static JSValue* functionPrint(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionDebug(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionGC(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionVersion(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionRun(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionLoad(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionReadline(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValuePtr functionPrint(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionDebug(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionGC(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionVersion(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionRun(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionLoad(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionReadline(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr functionQuit(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
 struct Options {
     Options()
@@ -177,7 +177,7 @@ GlobalObject::GlobalObject(JSGlobalData* globalData, const Vector<UString>& argu
     Interpreter::setShouldPrintExceptions(true);
 }
 
-JSValue* functionPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+JSValuePtr functionPrint(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
 {
     for (unsigned i = 0; i < args.size(); ++i) {
         if (i != 0)
@@ -191,27 +191,27 @@ JSValue* functionPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args
     return jsUndefined();
 }
 
-JSValue* functionDebug(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+JSValuePtr functionDebug(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
 {
     fprintf(stderr, "--> %s\n", args.at(exec, 0)->toString(exec).UTF8String().c_str());
     return jsUndefined();
 }
 
-JSValue* functionGC(ExecState* exec, JSObject*, JSValue*, const ArgList&)
+JSValuePtr functionGC(ExecState* exec, JSObject*, JSValuePtr, const ArgList&)
 {
     JSLock lock(false);
     exec->heap()->collect();
     return jsUndefined();
 }
 
-JSValue* functionVersion(ExecState*, JSObject*, JSValue*, const ArgList&)
+JSValuePtr functionVersion(ExecState*, JSObject*, JSValuePtr, const ArgList&)
 {
     // We need this function for compatibility with the Mozilla JS tests but for now
     // we don't actually do any version-specific handling
     return jsUndefined();
 }
 
-JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+JSValuePtr functionRun(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
 {
     StopWatch stopWatch;
     UString fileName = args.at(exec, 0)->toString(exec);
@@ -228,7 +228,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
     return jsNumber(globalObject->globalExec(), stopWatch.getElapsedMS());
 }
 
-JSValue* functionLoad(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+JSValuePtr functionLoad(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
 {
     UString fileName = args.at(exec, 0)->toString(exec);
     Vector<char> script;
@@ -241,7 +241,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* functionReadline(ExecState* exec, JSObject*, JSValue*, const ArgList&)
+JSValuePtr functionReadline(ExecState* exec, JSObject*, JSValuePtr, const ArgList&)
 {
     Vector<char, 256> line;
     int c;
@@ -255,7 +255,7 @@ JSValue* functionReadline(ExecState* exec, JSObject*, JSValue*, const ArgList&)
     return jsString(exec, line.data());
 }
 
-JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&)
+JSValuePtr functionQuit(ExecState*, JSObject*, JSValuePtr, const ArgList&)
 {
     exit(0);
 #if !COMPILER(MSVC)

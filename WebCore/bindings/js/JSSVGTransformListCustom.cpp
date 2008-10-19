@@ -33,7 +33,7 @@ namespace WebCore {
 typedef SVGPODListItem<SVGTransform> PODListItem;
 typedef SVGList<RefPtr<PODListItem> > SVGTransformListBase;
 
-static JSValue* finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
+static JSValuePtr finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
 {
     if (ec) {
         setDOMException(exec, ec);
@@ -42,7 +42,7 @@ static JSValue* finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* con
     return toJS(exec, JSSVGPODTypeWrapperCreatorForList<SVGTransform>::create(item.get(), list->associatedAttributeName()).get(), context);
 }
 
-static JSValue* finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
+static JSValuePtr finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
 {
     if (ec) {
         setDOMException(exec, ec);
@@ -53,7 +53,7 @@ static JSValue* finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* con
     return toJS(exec, JSSVGPODTypeWrapperCreatorForList<SVGTransform>::create(item.get(), attributeName).get(), context);
 }
 
-static JSValue* finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
+static JSValuePtr finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
 {
     if (ec) {
         setDOMException(exec, ec);
@@ -63,7 +63,7 @@ static JSValue* finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, S
     return toJS(exec, JSSVGStaticPODTypeWrapper<SVGTransform>::create(*item).get(), context);
 }
 
-JSValue* JSSVGTransformList::clear(ExecState* exec, const ArgList&)
+JSValuePtr JSSVGTransformList::clear(ExecState* exec, const ArgList&)
 {
     ExceptionCode ec = 0;
     impl()->clear(ec);
@@ -72,7 +72,7 @@ JSValue* JSSVGTransformList::clear(ExecState* exec, const ArgList&)
     return jsUndefined();
 }
 
-JSValue* JSSVGTransformList::initialize(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGTransformList::initialize(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     SVGTransformListBase* listImp = impl();
@@ -80,7 +80,7 @@ JSValue* JSSVGTransformList::initialize(ExecState* exec, const ArgList& args)
         listImp->initialize(PODListItem::copy(toSVGTransform(args.at(exec, 0))), ec));
 }
 
-JSValue* JSSVGTransformList::getItem(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGTransformList::getItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 0)->toUInt32(exec, indexOk);
@@ -95,7 +95,7 @@ JSValue* JSSVGTransformList::getItem(ExecState* exec, const ArgList& args)
         listImp->getItem(index, ec));
 }
 
-JSValue* JSSVGTransformList::insertItemBefore(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGTransformList::insertItemBefore(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 1)->toUInt32(exec, indexOk);
@@ -110,7 +110,7 @@ JSValue* JSSVGTransformList::insertItemBefore(ExecState* exec, const ArgList& ar
         listImp->insertItemBefore(PODListItem::copy(toSVGTransform(args.at(exec, 0))), index, ec));
 }
 
-JSValue* JSSVGTransformList::replaceItem(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGTransformList::replaceItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 1)->toUInt32(exec, indexOk);
@@ -125,7 +125,7 @@ JSValue* JSSVGTransformList::replaceItem(ExecState* exec, const ArgList& args)
         listImp->replaceItem(PODListItem::copy(toSVGTransform(args.at(exec, 0))), index, ec));
 }
 
-JSValue* JSSVGTransformList::removeItem(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGTransformList::removeItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 0)->toUInt32(exec, indexOk);
@@ -140,7 +140,7 @@ JSValue* JSSVGTransformList::removeItem(ExecState* exec, const ArgList& args)
         listImp->removeItem(index, ec));
 }
 
-JSValue* JSSVGTransformList::appendItem(ExecState* exec, const ArgList& args)
+JSValuePtr JSSVGTransformList::appendItem(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     SVGTransformListBase* listImp = impl();

@@ -228,7 +228,7 @@ namespace JSC {
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
-        RegisterID* emitLoad(RegisterID* dst, JSValue*);
+        RegisterID* emitLoad(RegisterID* dst, JSValuePtr);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, bool);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, double);
 
@@ -257,8 +257,8 @@ namespace JSC {
         RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base, OperandTypes()); }
 
         RegisterID* emitResolve(RegisterID* dst, const Identifier& property);
-        RegisterID* emitGetScopedVar(RegisterID* dst, size_t skip, int index, JSValue* globalObject);
-        RegisterID* emitPutScopedVar(size_t skip, int index, RegisterID* value, JSValue* globalObject);
+        RegisterID* emitGetScopedVar(RegisterID* dst, size_t skip, int index, JSValuePtr globalObject);
+        RegisterID* emitPutScopedVar(size_t skip, int index, RegisterID* value, JSValuePtr globalObject);
 
         RegisterID* emitResolveBase(RegisterID* dst, const Identifier& property);
         RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
@@ -296,7 +296,7 @@ namespace JSC {
 
         RegisterID* emitCatch(RegisterID*, LabelID* start, LabelID* end);
         void emitThrow(RegisterID* exc) { emitUnaryNoDstOp(op_throw, exc); }
-        RegisterID* emitNewError(RegisterID* dst, ErrorType type, JSValue* message);
+        RegisterID* emitNewError(RegisterID* dst, ErrorType type, JSValuePtr message);
         void emitPushNewScope(RegisterID* dst, Identifier& property, RegisterID* value);
 
         RegisterID* emitPushScope(RegisterID* scope);
@@ -329,12 +329,12 @@ namespace JSC {
 
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
-        struct JSValueHashTraits : HashTraits<JSValue*> {
-            static void constructDeletedValue(JSValue*& slot) { slot = JSImmediate::impossibleValue(); }
-            static bool isDeletedValue(JSValue* value) { return value == JSImmediate::impossibleValue(); }
+        struct JSValueHashTraits : HashTraits<JSValuePtr> {
+            static void constructDeletedValue(JSValuePtr& slot) { slot = JSImmediate::impossibleValue(); }
+            static bool isDeletedValue(JSValuePtr value) { return value == JSImmediate::impossibleValue(); }
         };
 
-        typedef HashMap<JSValue*, unsigned, PtrHash<JSValue*>, JSValueHashTraits> JSValueMap;
+        typedef HashMap<JSValuePtr, unsigned, PtrHash<JSValuePtr>, JSValueHashTraits> JSValueMap;
 
         struct IdentifierMapIndexHashTraits {
             typedef int TraitType;
@@ -346,7 +346,7 @@ namespace JSC {
         };
 
         typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
-        typedef HashMap<double, JSValue*> NumberMap;
+        typedef HashMap<double, JSValuePtr> NumberMap;
         typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
 
         RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
@@ -396,8 +396,8 @@ namespace JSC {
         unsigned addConstant(FuncDeclNode*);
         unsigned addConstant(FuncExprNode*);
         unsigned addConstant(const Identifier&);
-        RegisterID* addConstant(JSValue*);
-        unsigned addUnexpectedConstant(JSValue*);
+        RegisterID* addConstant(JSValuePtr);
+        unsigned addUnexpectedConstant(JSValuePtr);
         unsigned addRegExp(RegExp* r);
         StructureID* addStructureID();
 

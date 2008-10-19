@@ -50,8 +50,8 @@ namespace JSC {
     private:
         virtual bool isGetterSetter() const;
 
-        virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
+        virtual JSValuePtr toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValuePtr& value);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
@@ -61,9 +61,9 @@ namespace JSC {
         JSObject* m_setter;  
     };
 
-    GetterSetter* asGetterSetter(JSValue*);
+    GetterSetter* asGetterSetter(JSValuePtr);
 
-    inline GetterSetter* asGetterSetter(JSValue* value)
+    inline GetterSetter* asGetterSetter(JSValuePtr value)
     {
         ASSERT(asCell(value)->isGetterSetter());
         return static_cast<GetterSetter*>(asCell(value));

@@ -40,7 +40,7 @@ using namespace JSC;
 
 namespace WebCore {
     
-JSValue* JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
+JSValuePtr JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
 {
     String sqlStatement = args.at(exec, 0)->toString(exec);
     if (exec->hadException())
@@ -55,7 +55,7 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             return jsUndefined();
         }
 
-        JSValue* lengthValue = object->get(exec, exec->propertyNames().length);
+        JSValuePtr lengthValue = object->get(exec, exec->propertyNames().length);
         if (exec->hadException())
             return jsUndefined();
         unsigned length = lengthValue->toUInt32(exec);
@@ -63,7 +63,7 @@ JSValue* JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
             return jsUndefined();
         
         for (unsigned i = 0 ; i < length; ++i) {
-            JSValue* value = object->get(exec, i);
+            JSValuePtr value = object->get(exec, i);
             if (exec->hadException())
                 return jsUndefined();
             

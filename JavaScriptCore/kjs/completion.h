@@ -35,20 +35,20 @@ namespace JSC {
      */
     class Completion {
     public:
-        Completion(ComplType type = Normal, JSValue* value = 0)
+        Completion(ComplType type = Normal, JSValuePtr value = 0)
             : m_type(type)
             , m_value(value)
         {
         }
 
         ComplType complType() const { return m_type; }
-        JSValue* value() const { return m_value; }
-        void setValue(JSValue* v) { m_value = v; }
+        JSValuePtr value() const { return m_value; }
+        void setValue(JSValuePtr v) { m_value = v; }
         bool isValueCompletion() const { return !!m_value; }
 
     private:
         ComplType m_type;
-        JSValue* m_value;
+        JSValuePtr m_value;
     };
 
 } // namespace JSC

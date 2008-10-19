@@ -36,7 +36,7 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-        virtual void put(ExecState* exec, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+        virtual void put(ExecState* exec, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
@@ -54,9 +54,9 @@ namespace JSC {
         virtual JSString* toThisJSString(ExecState*);
   };
 
-    StringObject* asStringObject(JSValue*);
+    StringObject* asStringObject(JSValuePtr);
 
-    inline StringObject* asStringObject(JSValue* value)
+    inline StringObject* asStringObject(JSValuePtr value)
     {
         ASSERT(asObject(value)->inherits(&StringObject::info));
         return static_cast<StringObject*>(asObject(value));

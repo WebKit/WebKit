@@ -71,27 +71,27 @@
 
 using namespace JSC;
 
-static JSValue* windowProtoFuncOpen(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* windowProtoFuncShowModalDialog(ExecState*, JSObject*, JSValue*, const ArgList&);
-static JSValue* windowProtoFuncNotImplemented(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValuePtr windowProtoFuncOpen(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr windowProtoFuncShowModalDialog(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValuePtr windowProtoFuncNotImplemented(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
-static JSValue* jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&);
-static JSValue* jsDOMWindowBaseEvent(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValue*);
+static JSValuePtr jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&);
+static JSValuePtr jsDOMWindowBaseEvent(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValuePtr);
 
 // Constructors
-static JSValue* jsDOMWindowBaseAudio(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValue*);
-static JSValue* jsDOMWindowBaseImage(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseImage(ExecState*, JSObject*, JSValue*);
-static JSValue* jsDOMWindowBaseMessageChannel(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseMessageChannel(ExecState*, JSObject*, JSValue*);
-static JSValue* jsDOMWindowBaseOption(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseOption(ExecState*, JSObject*, JSValue*);
-static JSValue* jsDOMWindowBaseXMLHttpRequest(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValue*);
-static JSValue* jsDOMWindowBaseXSLTProcessor(ExecState*, const Identifier&, const PropertySlot&);
-static void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*);
+static JSValuePtr jsDOMWindowBaseAudio(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValuePtr);
+static JSValuePtr jsDOMWindowBaseImage(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseImage(ExecState*, JSObject*, JSValuePtr);
+static JSValuePtr jsDOMWindowBaseMessageChannel(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseMessageChannel(ExecState*, JSObject*, JSValuePtr);
+static JSValuePtr jsDOMWindowBaseOption(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseOption(ExecState*, JSObject*, JSValuePtr);
+static JSValuePtr jsDOMWindowBaseXMLHttpRequest(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValuePtr);
+static JSValuePtr jsDOMWindowBaseXSLTProcessor(ExecState*, const Identifier&, const PropertySlot&);
+static void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValuePtr);
 
 #include "JSDOMWindowBase.lut.h"
 
@@ -264,7 +264,7 @@ static HashMap<String, String> parseModalDialogFeatures(const String& featuresAr
 }
 
 static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& url,
-    const String& frameName, const WindowFeatures& windowFeatures, JSValue* dialogArgs)
+    const String& frameName, const WindowFeatures& windowFeatures, JSValuePtr dialogArgs)
 {
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     ASSERT(activeFrame);
@@ -325,7 +325,7 @@ static bool canShowModalDialogNow(const Frame* frame)
     return frame->page()->chrome()->canRunModalNow();
 }
 
-static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url, JSValue* dialogArgs, const String& featureArgs)
+static JSValuePtr showModalDialog(ExecState* exec, Frame* frame, const String& url, JSValuePtr dialogArgs, const String& featureArgs)
 {
     if (!canShowModalDialogNow(frame) || !allowPopUp(exec))
         return jsUndefined();
@@ -386,7 +386,7 @@ static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url
 
     // Get the return value either just before clearing the dialog window's
     // properties (in JSDOMWindowBase::clear), or when on return from runModal.
-    JSValue* returnValue = 0;
+    JSValuePtr returnValue = 0;
     dialogWindow->setReturnValueSlot(&returnValue);
     dialogFrame->page()->chrome()->runModal();
     dialogWindow->setReturnValueSlot(0);
@@ -415,12 +415,12 @@ static JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMWindowBase* 
 
 using namespace WebCore;
 
-JSValue* jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&)
+JSValuePtr jsDOMWindowBaseCrypto(ExecState*, const Identifier&, const PropertySlot&)
 {
     return jsUndefined(); // FIXME: implement this
 }
 
-JSValue* jsDOMWindowBaseEvent(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseEvent(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
         return jsUndefined();
@@ -429,35 +429,35 @@ JSValue* jsDOMWindowBaseEvent(ExecState* exec, const Identifier&, const Property
     return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->currentEvent());
 }
 
-JSValue* jsDOMWindowBaseImage(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseImage(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSImageConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
 }
 
-JSValue* jsDOMWindowBaseMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
 }
 
-JSValue* jsDOMWindowBaseOption(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseOption(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSHTMLOptionElementConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
 }
 
-JSValue* jsDOMWindowBaseXMLHttpRequest(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseXMLHttpRequest(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, static_cast<JSDOMWindowBase*>(slot.slotBase()));
 }
 
-JSValue* jsDOMWindowBaseAudio(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseAudio(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
 #if ENABLE(VIDEO)
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
@@ -470,7 +470,7 @@ JSValue* jsDOMWindowBaseAudio(ExecState* exec, const Identifier&, const Property
 #endif
 }
 
-JSValue* jsDOMWindowBaseXSLTProcessor(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr jsDOMWindowBaseXSLTProcessor(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
 #if ENABLE(XSLT)
     if (!static_cast<JSDOMWindowBase*>(slot.slotBase())->allowsAccessFrom(exec))
@@ -483,17 +483,17 @@ JSValue* jsDOMWindowBaseXSLTProcessor(ExecState* exec, const Identifier&, const 
 
 namespace WebCore {
 
-JSValue* JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValuePtr JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(AtomicString(propertyName))->domWindow());
 }
 
-JSValue* JSDOMWindowBase::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValuePtr JSDOMWindowBase::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return toJS(exec, static_cast<JSDOMWindowBase*>(slot.slotBase())->impl()->frame()->tree()->child(slot.index())->domWindow());
 }
 
-JSValue* JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValuePtr JSDOMWindowBase::namedItemGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSDOMWindowBase* thisObj = static_cast<JSDOMWindowBase*>(slot.slotBase());
     Document* doc = thisObj->impl()->frame()->document();
@@ -546,7 +546,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
 
     // Do prototype lookup early so that functions and attributes in the prototype can have
     // precedence over the index and name getters.  
-    JSValue* proto = prototype();
+    JSValuePtr proto = prototype();
     if (proto->isObject()) {
         if (static_cast<JSObject*>(proto)->getPropertySlot(exec, propertyName, slot)) {
             if (!allowsAccessFrom(exec))
@@ -584,7 +584,7 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
     return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
+void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
 {
     const HashEntry* entry = JSDOMWindowBaseTable.entry(exec, propertyName);
     if (entry) {
@@ -615,37 +615,37 @@ void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSVal
 
 } // namespace WebCore
 
-void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
 
-void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
 
-void setJSDOMWindowBaseImage(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseImage(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
 
-void setJSDOMWindowBaseMessageChannel(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseMessageChannel(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
 
-void setJSDOMWindowBaseOption(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseOption(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
 
-void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
 
-void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*)
+void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValuePtr)
 {
     ASSERT_NOT_REACHED();
 }
@@ -710,7 +710,7 @@ bool JSDOMWindowBase::shouldInterruptScript() const
     return page->chrome()->shouldInterruptJavaScript();
 }
 
-JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool attachedToEventTargetNode)
+JSEventListener* JSDOMWindowBase::findJSEventListener(JSValuePtr val, bool attachedToEventTargetNode)
 {
     if (!val->isObject())
         return 0;
@@ -719,7 +719,7 @@ JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool attache
     return listeners.get(object);
 }
 
-PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
+PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValuePtr val, bool attachedToEventTargetNode)
 {
     if (JSEventListener* listener = findJSEventListener(val, attachedToEventTargetNode))
         return listener;
@@ -731,7 +731,7 @@ PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecSta
     return JSEventListener::create(static_cast<JSObject*>(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
 }
 
-JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
+JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValuePtr val, bool attachedToEventTargetNode)
 {
     if (!val->isObject())
         return 0;
@@ -740,7 +740,7 @@ JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(Exec
     return listeners.get(static_cast<JSObject*>(val));
 }
 
-PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
+PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValuePtr val, bool attachedToEventTargetNode)
 {
     if (JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, attachedToEventTargetNode))
         return listener;
@@ -798,7 +798,7 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 
 using namespace WebCore;
 
-JSValue* windowProtoFuncOpen(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+JSValuePtr windowProtoFuncOpen(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     JSDOMWindow* window = toJSDOMWindow(thisValue);
     if (!window)
@@ -869,7 +869,7 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject*, JSValue* thisValue, con
     return toJS(exec, frame->domWindow()); // global object
 }
 
-JSValue* windowProtoFuncShowModalDialog(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+JSValuePtr windowProtoFuncShowModalDialog(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList& args)
 {
     JSDOMWindow* window = toJSDOMWindow(thisValue);
     if (!window)
@@ -884,7 +884,7 @@ JSValue* windowProtoFuncShowModalDialog(ExecState* exec, JSObject*, JSValue* thi
     return showModalDialog(exec, frame, valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0)), args.at(exec, 1), valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 2)));
 }
 
-JSValue* windowProtoFuncNotImplemented(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
+JSValuePtr windowProtoFuncNotImplemented(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)
 {
     if (!toJSDOMWindow(thisValue))
         return throwError(exec, TypeError);
@@ -893,7 +893,7 @@ JSValue* windowProtoFuncNotImplemented(ExecState* exec, JSObject*, JSValue* this
 
 namespace WebCore {
 
-void JSDOMWindowBase::setReturnValueSlot(JSValue** slot)
+void JSDOMWindowBase::setReturnValueSlot(JSValuePtr* slot)
 {
     d()->returnValueSlot = slot;
 }
@@ -936,7 +936,7 @@ int JSDOMWindowBase::installTimeout(const UString& handler, int t, bool singleSh
     return installTimeout(new ScheduledAction(handler), t, singleShot);
 }
 
-int JSDOMWindowBase::installTimeout(ExecState* exec, JSValue* func, const ArgList& args, int t, bool singleShot)
+int JSDOMWindowBase::installTimeout(ExecState* exec, JSValuePtr func, const ArgList& args, int t, bool singleShot)
 {
     return installTimeout(new ScheduledAction(exec, func, args), t, singleShot);
 }
@@ -1058,7 +1058,7 @@ void DOMWindowTimer::fired()
     timerNestingLevel = 0;
 }
 
-JSValue* toJS(ExecState*, DOMWindow* domWindow)
+JSValuePtr toJS(ExecState*, DOMWindow* domWindow)
 {
     if (!domWindow)
         return jsNull();
@@ -1075,7 +1075,7 @@ JSDOMWindow* toJSDOMWindow(Frame* frame)
     return frame->script()->windowShell()->window();
 }
 
-JSDOMWindow* toJSDOMWindow(JSValue* value)
+JSDOMWindow* toJSDOMWindow(JSValuePtr value)
 {
     if (!value->isObject())
         return 0;

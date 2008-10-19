@@ -51,7 +51,7 @@ public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
 
-    JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+    JSValuePtr toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
     virtual bool toBoolean(ExecState *exec) const;
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;
@@ -61,7 +61,7 @@ public:
     JSUserObject *GetJSUserObject() const;
 
 private:
-    static JSValue* userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
+    static JSValuePtr userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
 
     JSUserObject* fJSUserObject;
 };

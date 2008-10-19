@@ -29,6 +29,8 @@
 #ifndef ExceptionHelpers_h
 #define ExceptionHelpers_h
 
+#include "JSImmediate.h"
+
 namespace JSC {
 
     class CodeBlock;
@@ -41,13 +43,13 @@ namespace JSC {
     class JSValue;
     class Node;
 
-    JSValue* createInterruptedExecutionException(JSGlobalData*);
-    JSValue* createStackOverflowError(ExecState*);
-    JSValue* createUndefinedVariableError(ExecState*, const Identifier&, const Instruction*, CodeBlock*);
+    JSValuePtr createInterruptedExecutionException(JSGlobalData*);
+    JSValuePtr createStackOverflowError(ExecState*);
+    JSValuePtr createUndefinedVariableError(ExecState*, const Identifier&, const Instruction*, CodeBlock*);
     JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
-    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue*, const Instruction*, CodeBlock*);
-    JSObject* createNotAConstructorError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
-    JSValue* createNotAFunctionError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
+    JSObject* createInvalidParamError(ExecState*, const char* op, JSValuePtr, const Instruction*, CodeBlock*);
+    JSObject* createNotAConstructorError(ExecState*, JSValuePtr, const Instruction*, CodeBlock*);
+    JSValuePtr createNotAFunctionError(ExecState*, JSValuePtr, const Instruction*, CodeBlock*);
     JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, const Instruction*, CodeBlock*);
 
 } // namespace JSC

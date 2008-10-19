@@ -42,7 +42,7 @@ namespace JSC {
         {
         }
 
-        static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr proto) 
         { 
             return StructureID::create(proto, TypeInfo(ObjectType, MasqueradesAsUndefined)); 
         }

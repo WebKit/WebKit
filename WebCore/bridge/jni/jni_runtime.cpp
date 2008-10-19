@@ -70,7 +70,7 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     _field = new JObjectWrapper(aField);
 }
 
-JSValue* JavaArray::convertJObjectToArray(ExecState* exec, jobject anObject, const char* type, PassRefPtr<RootObject> rootObject)
+JSValuePtr JavaArray::convertJObjectToArray(ExecState* exec, jobject anObject, const char* type, PassRefPtr<RootObject> rootObject)
 {
     if (type[0] != '[')
         return jsUndefined();

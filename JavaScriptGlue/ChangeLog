@@ -1,3 +1,20 @@
+2008-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        - next step on https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Use JSValuePtr everywhere instead of JSValue*. In the future, we'll be
+        changing JSValuePtr to be a class, and then eventually renaming it
+        to JSValue once that's done.
+
+        * JSObject.cpp:
+        * JSValueWrapper.cpp:
+        * UserObjectImp.cpp:
+        * UserObjectImp.h:
+        Replace JSValue* with JSValuePtr.
+
 2008-10-13  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Mark Rowe.
