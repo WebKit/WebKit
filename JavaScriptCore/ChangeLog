@@ -1,5 +1,19 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        - fix assertions I introduced with my casting changes
+
+        These were showing up as failures in the JavaScriptCore tests.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_instanceof): Remove the bogus asCell casting that
+        was at the top of the function, and instead cast at the point of use.
+        (JSC::Machine::cti_op_construct_NotJSConstruct): Moved the cast to
+        object after checking the construct type.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         - fix non-all-in-one build
 
         * kjs/JSGlobalObjectFunctions.h: Add include of JSImmedate.h (for now).

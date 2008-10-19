@@ -4540,14 +4540,11 @@ JSValuePtr Machine::cti_op_instanceof(CTI_ARGS)
     JSValuePtr value = ARG_src1;
     JSValuePtr baseVal = ARG_src2;
     JSValuePtr proto = ARG_src3;
-    JSCell* valueCell = asCell(value);
-    JSCell* baseCell = asCell(baseVal);
-    JSCell* protoCell = asCell(proto);
 
     // at least one of these checks must have failed to get to the slow case
-    ASSERT(JSImmediate::isAnyImmediate(valueCell, baseCell, protoCell) 
-           || !valueCell->isObject() || !baseCell->isObject() || !protoCell->isObject() 
-           || (baseCell->structureID()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
+    ASSERT(JSImmediate::isAnyImmediate(value, baseVal, proto) 
+           || !value->isObject() || !baseVal->isObject() || !proto->isObject() 
+           || (asObject(baseVal)->structureID()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
 
     if (!baseVal->isObject()) {
         CallFrame* callFrame = ARG_callFrame;
@@ -4558,7 +4555,7 @@ JSValuePtr Machine::cti_op_instanceof(CTI_ARGS)
         VM_THROW_EXCEPTION();
     }
 
-    if (!baseCell->structureID()->typeInfo().implementsHasInstance())
+    if (!asObject(baseVal)->structureID()->typeInfo().implementsHasInstance())
         return jsBoolean(false);
 
     if (!proto->isObject()) {
@@ -4569,7 +4566,7 @@ JSValuePtr Machine::cti_op_instanceof(CTI_ARGS)
     if (!value->isObject())
         return jsBoolean(false);
 
-    JSValuePtr result = jsBoolean(asObject(baseCell)->hasInstance(callFrame, valueCell, protoCell));
+    JSValuePtr result = jsBoolean(asObject(baseVal)->hasInstance(callFrame, value, proto));
     VM_CHECK_EXCEPTION_AT_END();
 
     return result;
@@ -4930,9 +4927,9 @@ JSValuePtr Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
     ConstructData constructData;
     ConstructType constructType = constrVal->getConstructData(constructData);
 
-    JSObject* constructor = asObject(constrVal);
-
     if (constructType == ConstructTypeHost) {
+        JSObject* constructor = asObject(constrVal);
+
         if (*ARG_profilerReference)
             (*ARG_profilerReference)->willExecute(callFrame, constructor);
 
