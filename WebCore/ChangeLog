@@ -1,5 +1,20 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21645
+          REGRESSION (r37469-r37605): File Input not Uploaded in Multipart/Form-data Form
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        Fix loop that goes through the FormDataList to go two at a time in a clearer
+        way. My last patch screwed up the way it got form content from the items.
+        This "two at a time" a confusing way to do things, which explains why I got
+        it wrong last time through, but I decided to just fix it locally for now
+        rather than changing the design of FormDataList.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         - next step on https://bugs.webkit.org/show_bug.cgi?id=21732

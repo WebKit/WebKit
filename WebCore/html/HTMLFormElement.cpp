@@ -246,20 +246,22 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
         FormDataList list(encoding);
 
         if (!control->disabled() && control->appendFormData(list, m_multipart)) {
-            size_t ln = list.list().size();
-            for (size_t j = 0; j < ln; ++j) {
-                const FormDataList::Item& item = list.list()[j];
+            size_t formDataListSize = list.list().size();
+            ASSERT(formDataListSize % 2 == 0);
+            for (size_t j = 0; j < formDataListSize; j += 2) {
+                const FormDataList::Item& key = list.list()[j];
+                const FormDataList::Item& value = list.list()[j + 1];
                 if (!m_multipart) {
                     // Omit the name "isindex" if it's the first form data element.
                     // FIXME: Why is this a good rule? Is this obsolete now?
-                    if (encodedData.isEmpty() && item.data() == "isindex")
-                        appendEncodedString(encodedData, list.list()[++j].data());
+                    if (encodedData.isEmpty() && key.data() == "isindex")
+                        appendEncodedString(encodedData, value.data());
                     else {
                         if (!encodedData.isEmpty())
                             encodedData.append('&');
-                        appendEncodedString(encodedData, item.data());
+                        appendEncodedString(encodedData, key.data());
                         encodedData.append('=');
-                        appendEncodedString(encodedData, list.list()[++j].data());
+                        appendEncodedString(encodedData, value.data());
                     }
                 } else {
                     Vector<char> header;
@@ -267,15 +269,15 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     appendString(header, boundary);
                     appendString(header, "\r\n");
                     appendString(header, "Content-Disposition: form-data; name=\"");
-                    header.append(item.data().data(), item.data().length());
+                    header.append(key.data().data(), key.data().length());
                     header.append('"');
 
                     bool shouldGenerateFile = false;
                     // if the current type is FILE, then we also need to
                     // include the filename
-                    if (item.file()) {
-                        const String& path = item.file()->path();
-                        String filename = item.file()->fileName();
+                    if (value.file()) {
+                        const String& path = value.file()->path();
+                        String filename = value.file()->fileName();
 
                         // Let the application specify a filename if it's going to generate a replacement file for the upload.
                         if (!path.isEmpty()) {
@@ -312,11 +314,10 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
 
                     // append body
                     result->appendData(header.data(), header.size());
-                    const FormDataList::Item& item = list.list()[j + 1];
-                    if (size_t dataSize = item.data().length())
-                        result->appendData(item.data().data(), dataSize);
-                    else if (item.file() && !item.file()->path().isEmpty())
-                        result->appendFile(item.file()->path(), shouldGenerateFile);
+                    if (size_t dataSize = value.data().length())
+                        result->appendData(value.data().data(), dataSize);
+                    else if (value.file() && !value.file()->path().isEmpty())
+                        result->appendFile(value.file()->path(), shouldGenerateFile);
                     result->appendData("\r\n", 2);
 
                     ++j;
