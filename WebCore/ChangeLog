@@ -9,9 +9,9 @@
         (WebCore::HTMLFormElement::formData):
         Fix loop that goes through the FormDataList to go two at a time in a clearer
         way. My last patch screwed up the way it got form content from the items.
-        This "two at a time" a confusing way to do things, which explains why I got
-        it wrong last time through, but I decided to just fix it locally for now
-        rather than changing the design of FormDataList.
+        This "two at a time" approach is a confusing way to do things, which explains
+        why I got it wrong last time through, but I decided to just fix it locally for
+        now rather than changing the design of FormDataList.
 
 2008-10-18  Darin Adler  <darin@apple.com>
 
