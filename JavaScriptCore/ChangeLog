@@ -1,5 +1,11 @@
 2008-10-18  Darin Adler  <darin@apple.com>
 
+        - fix build
+
+        * kjs/interpreter.h: Include JSValue.h instead of JSImmediate.h.
+
+2008-10-18  Darin Adler  <darin@apple.com>
+
         * kjs/interpreter.h: Fix include of JSImmediate.h.
 
 2008-10-18  Darin Adler  <darin@apple.com>

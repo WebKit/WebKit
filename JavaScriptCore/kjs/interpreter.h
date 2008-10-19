@@ -23,7 +23,7 @@
 #ifndef KJS_Interpreter_h
 #define KJS_Interpreter_h
 
-#include <kjs/JSImmediate.h>
+#include <kjs/JSValue.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/unicode/Unicode.h>
 
