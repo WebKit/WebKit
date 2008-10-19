@@ -1,3 +1,14 @@
+2008-10-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - WebKit/mac part of https://bugs.webkit.org/show_bug.cgi?id=21736
+          Long-dead decoded image data make up for most of the object cache's memory use over time
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]): In the primary web browser model, set the
+        cache's dead decoded data deletion interval to 60 seconds.
+
 2008-10-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Honeycutt.

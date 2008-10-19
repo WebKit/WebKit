@@ -1,3 +1,29 @@
+2008-10-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - WebCore part of https://bugs.webkit.org/show_bug.cgi?id=21736
+          Long-dead decoded image data make up for most of the object cache's memory use over time
+
+        Add a cache setting for how long decoded image data should be allowed to
+        persist in memory after the image has died. By default, this is set to
+        0, which means "forever".
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::Cache): Initialize m_deadDecodedDataDeletionInterval.
+        * loader/Cache.h:
+        (WebCore::Cache::setDeadDecodedDataDeletionInterval): Added a setter.
+        (WebCore::Cache::deadDecodedDataDeletionInterval): Added a getter.
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage): Initialize the decoded data
+        deletion timer.
+        (WebCore::CachedImage::decodedDataDeletionTimerFired): Added. Destroys
+        the decoded image data.
+        (WebCore::CachedImage::addClient): Stop the timer if it is active.
+        (WebCore::CachedImage::allClientsRemoved): Start the decoded data
+        deletion timer.
+        * loader/CachedImage.h:
+
 2008-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

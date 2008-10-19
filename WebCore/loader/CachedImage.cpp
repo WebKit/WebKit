@@ -49,6 +49,7 @@ namespace WebCore {
 CachedImage::CachedImage(const String& url)
     : CachedResource(url, ImageResource)
     , m_image(0)
+    , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
 {
     m_status = Unknown;
 }
@@ -56,6 +57,7 @@ CachedImage::CachedImage(const String& url)
 CachedImage::CachedImage(Image* image)
     : CachedResource(String(), ImageResource)
     , m_image(image)
+    , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
 {
     m_status = Cached;
     m_loading = false;
@@ -64,7 +66,13 @@ CachedImage::CachedImage(Image* image)
 CachedImage::~CachedImage()
 {
 }
-    
+
+void CachedImage::decodedDataDeletionTimerFired(Timer<CachedImage>*)
+{
+    ASSERT(!hasClients());
+    destroyDecodedData();
+}
+
 void CachedImage::load(DocLoader* docLoader)
 {
     if (!docLoader || docLoader->autoLoadImages())
@@ -77,6 +85,9 @@ void CachedImage::addClient(CachedResourceClient* c)
 {
     CachedResource::addClient(c);
 
+    if (m_decodedDataDeletionTimer.isActive())
+        m_decodedDataDeletionTimer.stop();
+
     if (m_image && !m_image->rect().isEmpty())
         c->imageChanged(this);
 
@@ -88,6 +99,8 @@ void CachedImage::allClientsRemoved()
 {
     if (m_image && !m_errorOccurred)
         m_image->resetAnimation();
+    if (double interval = cache()->deadDecodedDataDeletionInterval())
+        m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
 static Image* brokenImage()

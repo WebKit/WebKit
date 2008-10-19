@@ -27,6 +27,7 @@
 #include "ImageObserver.h"
 #include "Image.h"
 #include "IntRect.h"
+#include "Timer.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -88,8 +89,10 @@ public:
 private:
     void createImage();
     void notifyObservers();
+    void decodedDataDeletionTimerFired(Timer<CachedImage>*);
 
     RefPtr<Image> m_image;
+    Timer<CachedImage> m_decodedDataDeletionTimer;
 };
 
 }
