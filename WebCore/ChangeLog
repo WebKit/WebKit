@@ -1,3 +1,19 @@
+2008-10-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Speculative fix for <rdar://problem/6242585> CrashTracer: [USER] 19 
+        crashes in Safari at com.apple.WebCore
+        WebCore::ScrollView::visibleContentRect const + 153
+
+        d->m_view can be null and is null-checked at other points in the 
+        code. The logs indicate that this crash occurs when closing a 
+        window containing a PDF, so in case where we crash, the PDF's view 
+        is probably already null. So the fix is to simply add a null-check.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionRect):
+
 2008-10-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

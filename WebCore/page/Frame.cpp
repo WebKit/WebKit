@@ -1116,11 +1116,12 @@ void Frame::setExcludeFromTextSearch(bool exclude)
 FloatRect Frame::selectionRect(bool clipToVisibleContent) const
 {
     RenderView* root = contentRenderer();
-    if (!root)
+    FrameView* view = d->m_view.get();
+    if (!root || !view)
         return IntRect();
     
     IntRect selectionRect = root->selectionRect(clipToVisibleContent);
-    return clipToVisibleContent ? intersection(selectionRect, d->m_view->visibleContentRect()) : selectionRect;
+    return clipToVisibleContent ? intersection(selectionRect, view->visibleContentRect()) : selectionRect;
 }
 
 void Frame::selectionTextRects(Vector<FloatRect>& rects, bool clipToVisibleContent) const
