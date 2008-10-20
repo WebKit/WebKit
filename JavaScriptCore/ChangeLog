@@ -2,6 +2,27 @@
 
         Reviewed by Cameron Zwarich.
 
+        - finish https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_profiler): Use asFunction.
+        (JSC::Machine::cti_vm_lazyLinkCall): Ditto.
+        (JSC::Machine::cti_op_construct_JSConstructFast): Use asObject.
+
+        * kjs/JSCell.h: Re-sort friend classes. Eliminate inheritance from
+        JSValue. Changed cast in asCell from static_cast to reinterpret_cast.
+        Removed JSValue::getNumber(double&) and one of JSValue::getObject
+        overloads.
+
+        * kjs/JSValue.h: Made the private constructor and destructor both
+        non-virtual and also remove the definitions. This class can never
+        be instantiated or derived.
+
+2008-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
         - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
           improve performance by eliminating JSValue as a base class for JSCell
 

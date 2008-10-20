@@ -4616,7 +4616,7 @@ void Machine::cti_op_call_profiler(CTI_ARGS)
     CTI_STACK_HACK();
 
     ASSERT(*ARG_profilerReference);
-    (*ARG_profilerReference)->willExecute(ARG_callFrame, static_cast<JSFunction*>(ARG_src1));
+    (*ARG_profilerReference)->willExecute(ARG_callFrame, asFunction(ARG_src1));
 }
 
 VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
@@ -4676,7 +4676,7 @@ void* Machine::cti_vm_lazyLinkCall(CTI_ARGS)
     CallFrame* callerCallFrame = callFrame->callerFrame();
     CodeBlock* callerCodeBlock = callerCallFrame->codeBlock();
 
-    JSFunction* callee = static_cast<JSFunction*>(ARG_src1);
+    JSFunction* callee = asFunction(ARG_src1);
     CodeBlock* codeBlock = &callee->m_body->byteCode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
         CTI::compile(machine, callFrame, codeBlock);
@@ -4841,14 +4841,14 @@ JSValuePtr Machine::cti_op_construct_JSConstructFast(CTI_ARGS)
 
 #ifndef NDEBUG
     ConstructData constructData;
-    ASSERT(static_cast<JSFunction*>(ARG_src1)->getConstructData(constructData) == ConstructTypeJS);
+    ASSERT(asFunction(ARG_src1)->getConstructData(constructData) == ConstructTypeJS);
 #endif
 
     StructureID* structure;
     if (ARG_src2->isObject())
-        structure = static_cast<JSObject*>(ARG_src2)->inheritorID();
+        structure = asObject(ARG_src2)->inheritorID();
     else
-        structure = static_cast<JSFunction*>(ARG_src1)->m_scopeChain.node()->globalObject()->emptyObjectStructure();
+        structure = asFunction(ARG_src1)->m_scopeChain.node()->globalObject()->emptyObjectStructure();
     return new (ARG_globalData) JSObject(structure);
 }
 
