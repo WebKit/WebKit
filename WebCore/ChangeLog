@@ -1,3 +1,17 @@
+2008-10-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21733
+
+        Make sure that the haveMetadata flag is set to true for generated images from image buffers, so that
+        no attempt is made to re-cache the frame from a non-existent image source.
+
+        Reviewed by Sam Weinig
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+
 2008-10-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
