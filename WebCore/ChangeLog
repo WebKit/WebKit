@@ -1,3 +1,17 @@
+2008-10-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Jon Honeycutt
+
+        Fix a crash in Accessibility where a table section was being 
+        referenced without first checking if it was null
+
+        https://bugs.webkit.org/show_bug.cgi?id=21721
+
+        Test: accessibility/table-nofirstbody.html
+
+        * page/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+
 2008-10-20  David Hyatt  <hyatt@apple.com>
 
         Avoid some stderr spew from CG by checking if we have a decoder yet in ImageSourceCG.

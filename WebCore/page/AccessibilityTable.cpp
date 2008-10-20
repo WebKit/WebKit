@@ -225,6 +225,11 @@ void AccessibilityTable::addChildren()
     if (!tableSection)
         tableSection = table->firstBody();
     
+    if (!tableSection)
+        return;
+    
+    RenderTableSection* initialTableSection = tableSection;
+    
     while (tableSection) {
         
         HashSet<AccessibilityObject*> appendedRows;
@@ -259,7 +264,7 @@ void AccessibilityTable::addChildren()
     }
     
     // make the columns based on the number of columns in the first body
-    unsigned length = table->firstBody()->numColumns();
+    unsigned length = initialTableSection->numColumns();
     for (unsigned i = 0; i < length; ++i) {
         AccessibilityTableColumn* column = static_cast<AccessibilityTableColumn*>(axCache->get(ColumnRole));
         column->setColumnIndex((int)i);

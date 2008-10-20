@@ -1,3 +1,13 @@
+2008-10-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add a test for table support in accessibilty
+        See https://bugs.webkit.org/show_bug.cgi?id=21721
+
+        * accessibility/table-nofirstbody-expected.txt: Added.
+        * accessibility/table-nofirstbody.html: Added.
+
 2008-10-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
