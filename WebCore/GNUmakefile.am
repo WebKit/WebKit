@@ -1250,6 +1250,8 @@ webcore_sources += \
 	WebCore/platform/KURL.h \
 	WebCore/platform/KURLHash.h \
 	WebCore/platform/Language.h \
+        WebCore/platform/Length.cpp \
+	WebCore/platform/Length.h \
 	WebCore/platform/LocalizedStrings.h \
 	WebCore/platform/Logging.cpp \
 	WebCore/platform/Logging.h \
@@ -1488,8 +1490,6 @@ webcore_sources += \
 	WebCore/rendering/InlineTextBox.h \
 	WebCore/rendering/LayoutState.cpp \
 	WebCore/rendering/LayoutState.h \
-	WebCore/rendering/Length.cpp \
-	WebCore/rendering/Length.h \
 	WebCore/rendering/ListMarkerBox.cpp \
 	WebCore/rendering/ListMarkerBox.h \
 	WebCore/rendering/MediaControlElements.h \

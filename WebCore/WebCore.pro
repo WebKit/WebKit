@@ -825,6 +825,7 @@ SOURCES += \
     platform/graphics/Pen.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/KURL.cpp \
+    platform/Length.cpp \
     platform/Logging.cpp \
     platform/MIMETypeRegistry.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
@@ -874,7 +875,6 @@ SOURCES += \
     rendering/InlineFlowBox.cpp \
     rendering/InlineTextBox.cpp \
     rendering/LayoutState.cpp \
-    rendering/Length.cpp \
     rendering/ListMarkerBox.cpp \
     rendering/RenderApplet.cpp \
     rendering/RenderArena.cpp \

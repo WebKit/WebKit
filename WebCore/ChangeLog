@@ -1,3 +1,17 @@
+2008-10-20  David Hyatt  <hyatt@apple.com>
+
+        Move Length to platform/.
+
+        Reviewed by Adam Roben
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * platform/Length.cpp: Copied from rendering/Length.cpp.
+        * platform/Length.h: Copied from rendering/Length.h.
+
 2008-10-20  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build
