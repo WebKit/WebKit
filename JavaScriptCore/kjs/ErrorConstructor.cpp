@@ -33,8 +33,8 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, PassRefPtr<StructureID> stru
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, errorPrototype->classInfo()->className))
 {
     // ECMA 15.11.3.1 Error.prototype
-    putDirect(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum);
 }
 
 // ECMA 15.9.3

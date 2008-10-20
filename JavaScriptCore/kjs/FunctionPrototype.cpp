@@ -36,17 +36,17 @@ static JSValuePtr functionProtoFuncToString(ExecState*, JSObject*, JSValuePtr, c
 static JSValuePtr functionProtoFuncApply(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 static JSValuePtr functionProtoFuncCall(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 
-FunctionPrototype::FunctionPrototype(ExecState* exec)
-    : InternalFunction(&exec->globalData())
+FunctionPrototype::FunctionPrototype(ExecState* exec, PassRefPtr<StructureID> structure)
+    : InternalFunction(&exec->globalData(), structure, exec->propertyNames().nullIdentifier)
 {
-    putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 }
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, StructureID* prototypeFunctionStructure)
 {
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
 static JSValuePtr callFunctionPrototype(ExecState*, JSObject*, JSValuePtr, const ArgList&)

@@ -27,8 +27,13 @@ namespace JSC {
 
     class FunctionPrototype : public InternalFunction {
     public:
-        FunctionPrototype(ExecState*);
+        FunctionPrototype(ExecState*, PassRefPtr<StructureID>);
         void addFunctionProperties(ExecState*, StructureID* prototypeFunctionStructure);
+
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr proto)
+        {
+            return StructureID::create(proto, TypeInfo(ObjectType));
+        }
 
     private:
         virtual CallType getCallData(CallData&);

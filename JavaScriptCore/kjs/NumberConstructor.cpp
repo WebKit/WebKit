@@ -57,10 +57,10 @@ NumberConstructor::NumberConstructor(ExecState* exec, PassRefPtr<StructureID> st
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
-    putDirect(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool NumberConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

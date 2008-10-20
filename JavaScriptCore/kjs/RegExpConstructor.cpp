@@ -108,10 +108,10 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, PassRefPtr<StructureID> st
     , d(new RegExpConstructorPrivate)
 {
     // ECMA 15.10.5.1 RegExp.prototype
-    putDirect(exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly | DontDelete | DontEnum);
 }
 
 /* 

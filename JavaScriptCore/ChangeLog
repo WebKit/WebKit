@@ -1,3 +1,62 @@
+2008-10-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21683
+        Don't create intermediate StructureIDs for builtin objects
+
+        Second stage in reduce number of StructureIDs created when initializing the
+        JSGlobalObject.
+
+        - Use putDirectWithoutTransition for the remaining singleton objects to reduce
+          the number of StructureIDs create for about:blank from 132 to 73.
+
+        * kjs/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        * kjs/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        * kjs/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * kjs/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * kjs/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        * kjs/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * kjs/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * kjs/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * kjs/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructureID):
+        * kjs/InternalFunction.cpp:
+        * kjs/InternalFunction.h:
+        (JSC::InternalFunction::InternalFunction):
+        * kjs/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * kjs/JSObject.h:
+        * kjs/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        * kjs/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        * kjs/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * kjs/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        * kjs/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        * kjs/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * kjs/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * kjs/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::dumpStatistics):
+        * kjs/StructureID.h:
+        (JSC::StructureID::setPrototypeWithoutTransition):
+
 2008-10-20  Alp Toker  <alp@nuanti.com>
 
         Fix autotools dist build target by listing recently added header

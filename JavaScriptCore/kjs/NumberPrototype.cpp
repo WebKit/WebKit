@@ -51,12 +51,12 @@ NumberPrototype::NumberPrototype(ExecState* exec, PassRefPtr<StructureID> struct
 
     // The constructor will be added later, after NumberConstructor has been constructed
 
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toString, numberProtoFuncToString), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toLocaleString, numberProtoFuncToLocaleString), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().valueOf, numberProtoFuncValueOf), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toFixed, numberProtoFuncToFixed), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toExponential, numberProtoFuncToExponential), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toPrecision, numberProtoFuncToPrecision), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toString, numberProtoFuncToString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toLocaleString, numberProtoFuncToLocaleString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().valueOf, numberProtoFuncValueOf), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toFixed, numberProtoFuncToFixed), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toExponential, numberProtoFuncToExponential), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().toPrecision, numberProtoFuncToPrecision), DontEnum);
 }
 
 // ------------------------------ Functions ---------------------------

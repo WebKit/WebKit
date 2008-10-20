@@ -200,31 +200,39 @@ void JSGlobalObject::reset(JSValuePtr prototype)
 
     // Prototypes
 
-    d()->functionPrototype = new (exec) FunctionPrototype(exec);
-    d()->functionStructure = JSFunction::createStructureID(d()->functionPrototype);
-    d()->callbackFunctionStructure = JSCallbackFunction::createStructureID(d()->functionPrototype);
+    d()->functionPrototype = new (exec) FunctionPrototype(exec, FunctionPrototype::createStructureID(jsNull())); // The real prototype will be set once ObjectPrototype is created.
     d()->prototypeFunctionStructure = PrototypeFunction::createStructureID(d()->functionPrototype);
     d()->functionPrototype->addFunctionProperties(exec, d()->prototypeFunctionStructure.get());
-
     d()->objectPrototype = new (exec) ObjectPrototype(exec, ObjectPrototype::createStructureID(jsNull()), d()->prototypeFunctionStructure.get());
+    d()->functionPrototype->structureID()->setPrototypeWithoutTransition(d()->objectPrototype);
+
     d()->emptyObjectStructure = d()->objectPrototype->inheritorID();
-    d()->functionPrototype->setPrototype(d()->objectPrototype);
+
+    d()->functionStructure = JSFunction::createStructureID(d()->functionPrototype);
+    d()->callbackFunctionStructure = JSCallbackFunction::createStructureID(d()->functionPrototype);
     d()->argumentsStructure = Arguments::createStructureID(d()->objectPrototype);
     d()->callbackConstructorStructure = JSCallbackConstructor::createStructureID(d()->objectPrototype);
     d()->callbackObjectStructure = JSCallbackObject<JSObject>::createStructureID(d()->objectPrototype);
+
     d()->arrayPrototype = new (exec) ArrayPrototype(ArrayPrototype::createStructureID(d()->objectPrototype));
     d()->arrayStructure = JSArray::createStructureID(d()->arrayPrototype);
     d()->regExpMatchesArrayStructure = RegExpMatchesArray::createStructureID(d()->arrayPrototype);
+
     d()->stringPrototype = new (exec) StringPrototype(exec, StringPrototype::createStructureID(d()->objectPrototype));
     d()->stringObjectStructure = StringObject::createStructureID(d()->stringPrototype);
+
     d()->booleanPrototype = new (exec) BooleanPrototype(exec, BooleanPrototype::createStructureID(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->booleanObjectStructure = BooleanObject::createStructureID(d()->booleanPrototype);
+
     d()->numberPrototype = new (exec) NumberPrototype(exec, NumberPrototype::createStructureID(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->numberObjectStructure = NumberObject::createStructureID(d()->numberPrototype);
+
     d()->datePrototype = new (exec) DatePrototype(exec, DatePrototype::createStructureID(d()->objectPrototype));
     d()->dateStructure = DateInstance::createStructureID(d()->datePrototype);
+
     d()->regExpPrototype = new (exec) RegExpPrototype(exec, RegExpPrototype::createStructureID(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->regExpStructure = RegExpObject::createStructureID(d()->regExpPrototype);
+
     ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, ErrorPrototype::createStructureID(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->errorStructure = ErrorInstance::createStructureID(errorPrototype);
 
@@ -260,18 +268,16 @@ void JSGlobalObject::reset(JSValuePtr prototype)
     d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, typeErrorPrototype);
     d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, URIErrorPrototype);
 
-    d()->functionPrototype->putDirect(exec->propertyNames().constructor, functionConstructor, DontEnum);
-
     d()->objectPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, objectConstructor, DontEnum);
+    d()->functionPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, functionConstructor, DontEnum);
+    d()->arrayPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, arrayConstructor, DontEnum);
+    d()->booleanPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, booleanConstructor, DontEnum);
+    d()->stringPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, stringConstructor, DontEnum);
+    d()->numberPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, numberConstructor, DontEnum);
+    d()->datePrototype->putDirectWithoutTransition(exec->propertyNames().constructor, dateConstructor, DontEnum);
+    d()->regExpPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum);
+    errorPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, d()->errorConstructor, DontEnum);
 
-    d()->functionPrototype->putDirect(exec->propertyNames().constructor, functionConstructor, DontEnum);
-    d()->arrayPrototype->putDirect(exec->propertyNames().constructor, arrayConstructor, DontEnum);
-    d()->booleanPrototype->putDirect(exec->propertyNames().constructor, booleanConstructor, DontEnum);
-    d()->stringPrototype->putDirect(exec->propertyNames().constructor, stringConstructor, DontEnum);
-    d()->numberPrototype->putDirect(exec->propertyNames().constructor, numberConstructor, DontEnum);
-    d()->datePrototype->putDirect(exec->propertyNames().constructor, dateConstructor, DontEnum);
-    d()->regExpPrototype->putDirect(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum);
-    errorPrototype->putDirect(exec->propertyNames().constructor, d()->errorConstructor, DontEnum);
     evalErrorPrototype->putDirect(exec->propertyNames().constructor, d()->evalErrorConstructor, DontEnum);
     rangeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->rangeErrorConstructor, DontEnum);
     referenceErrorPrototype->putDirect(exec->propertyNames().constructor, d()->referenceErrorConstructor, DontEnum);
@@ -283,21 +289,21 @@ void JSGlobalObject::reset(JSValuePtr prototype)
 
     // FIXME: These properties could be handled by a static hash table.
 
-    putDirect(Identifier(exec, "Object"), objectConstructor, DontEnum);
-    putDirect(Identifier(exec, "Function"), functionConstructor, DontEnum);
-    putDirect(Identifier(exec, "Array"), arrayConstructor, DontEnum);
-    putDirect(Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
-    putDirect(Identifier(exec, "String"), stringConstructor, DontEnum);
-    putDirect(Identifier(exec, "Number"), numberConstructor, DontEnum);
-    putDirect(Identifier(exec, "Date"), dateConstructor, DontEnum);
-    putDirect(Identifier(exec, "RegExp"), d()->regExpConstructor, DontEnum);
-    putDirect(Identifier(exec, "Error"), d()->errorConstructor, DontEnum);
-    putDirect(Identifier(exec, "EvalError"), d()->evalErrorConstructor);
-    putDirect(Identifier(exec, "RangeError"), d()->rangeErrorConstructor);
-    putDirect(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor);
-    putDirect(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor);
-    putDirect(Identifier(exec, "TypeError"), d()->typeErrorConstructor);
-    putDirect(Identifier(exec, "URIError"), d()->URIErrorConstructor);
+    putDirectWithoutTransition(Identifier(exec, "Object"), objectConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "Function"), functionConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "Array"), arrayConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "String"), stringConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "Number"), numberConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "Date"), dateConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "RegExp"), d()->regExpConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "Error"), d()->errorConstructor, DontEnum);
+    putDirectWithoutTransition(Identifier(exec, "EvalError"), d()->evalErrorConstructor);
+    putDirectWithoutTransition(Identifier(exec, "RangeError"), d()->rangeErrorConstructor);
+    putDirectWithoutTransition(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor);
+    putDirectWithoutTransition(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor);
+    putDirectWithoutTransition(Identifier(exec, "TypeError"), d()->typeErrorConstructor);
+    putDirectWithoutTransition(Identifier(exec, "URIError"), d()->URIErrorConstructor);
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
@@ -312,19 +318,19 @@ void JSGlobalObject::reset(JSValuePtr prototype)
     // Set global functions.
 
     d()->evalFunction = new (exec) GlobalEvalFunction(exec, GlobalEvalFunction::createStructureID(d()->functionPrototype), 1, exec->propertyNames().eval, globalFuncEval, this);
-    putDirectFunction(exec, d()->evalFunction, DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
+    putDirectFunctionWithoutTransition(exec, d()->evalFunction, DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
 #ifndef NDEBUG
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, d()->prototypeFunctionStructure.get(), 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
 #endif
 
     resetPrototype(prototype);

@@ -32,10 +32,10 @@ ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<StructureID> st
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1
-    putDirect(exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.2.2

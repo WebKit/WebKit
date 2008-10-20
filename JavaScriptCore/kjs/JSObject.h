@@ -157,8 +157,8 @@ namespace JSC {
         void putDirect(const Identifier& propertyName, JSValuePtr value, unsigned attr = 0);
         void putDirect(const Identifier& propertyName, JSValuePtr value, unsigned attr, bool checkReadOnly, PutPropertySlot& slot);
         void putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr = 0);
-        void putDirectWithoutTransition(const Identifier& propertyName, JSValuePtr value, unsigned attr);
-        void putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr);
+        void putDirectWithoutTransition(const Identifier& propertyName, JSValuePtr value, unsigned attr = 0);
+        void putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr = 0);
 
         // Fast access to known property offsets.
         JSValuePtr getDirectOffset(size_t offset) { return m_propertyStorage[offset]; }

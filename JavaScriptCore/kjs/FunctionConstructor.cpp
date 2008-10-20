@@ -37,10 +37,10 @@ ASSERT_CLASS_FITS_IN_CELL(FunctionConstructor);
 FunctionConstructor::FunctionConstructor(ExecState* exec, PassRefPtr<StructureID> structure, FunctionPrototype* functionPrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, functionPrototype->classInfo()->className))
 {
-    putDirect(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
 static JSObject* constructWithFunctionConstructor(ExecState* exec, JSObject*, const ArgList& args)

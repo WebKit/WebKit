@@ -57,17 +57,28 @@ static HashSet<StructureID*> liveStructureIDSet;
 
 void StructureID::dumpStatistics()
 {
+    unsigned numberLeaf = 0;
     unsigned numberUsingSingleSlot = 0;
+    unsigned numberSingletons = 0;
 
     HashSet<StructureID*>::const_iterator end = liveStructureIDSet.end();
     for (HashSet<StructureID*>::const_iterator it = liveStructureIDSet.begin(); it != end; ++it) {
         StructureID* structureID = *it;
-        if (structureID->m_usingSingleTransitionSlot)
-            ++numberUsingSingleSlot;
+        if (structureID->m_usingSingleTransitionSlot) {
+            if (!structureID->m_transitions.singleTransition)
+                ++numberLeaf;
+            else
+                ++numberUsingSingleSlot;
+
+           if (!structureID->m_previous && !structureID->m_transitions.singleTransition)
+                ++numberSingletons;
+        }
     }
 
     printf("Number of live StructureIDs: %d\n", liveStructureIDSet.size());
     printf("Number of StructureIDs using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
+    printf("Number of StructureIDs that are leaf nodes: %d\n", numberLeaf);
+    printf("Number of StructureIDs that singletons: %d\n", numberSingletons);
 }
 #endif
 

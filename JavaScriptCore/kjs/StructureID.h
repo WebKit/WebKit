@@ -104,7 +104,9 @@ namespace JSC {
                 m_prototype->mark();
         }
 
+        // These should be used with caution.  
         size_t addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes);
+        void setPrototypeWithoutTransition(JSValuePtr prototype) { m_prototype = prototype; }
 
         bool isDictionary() const { return m_isDictionary; }
 

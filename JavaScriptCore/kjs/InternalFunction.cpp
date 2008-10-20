@@ -37,12 +37,6 @@ const ClassInfo* InternalFunction::classInfo() const
     return &info;
 }
 
-InternalFunction::InternalFunction(JSGlobalData* globalData)
-    : JSObject(globalData->nullProtoStructureID)
-{
-    putDirect(globalData->propertyNames->name, jsString(globalData, globalData->propertyNames->nullIdentifier.ustring()), DontDelete | ReadOnly | DontEnum);
-}
-
 InternalFunction::InternalFunction(JSGlobalData* globalData, PassRefPtr<StructureID> structure, const Identifier& name)
     : JSObject(structure)
 {

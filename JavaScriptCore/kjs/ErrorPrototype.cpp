@@ -38,10 +38,10 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, PassRefPtr<StructureID> structur
 {
     // The constructor will be added later in ErrorConstructor's constructor
 
-    putDirect(exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
-    putDirect(exec->propertyNames().message, jsNontrivialString(exec, "Unknown error"), DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().message, jsNontrivialString(exec, "Unknown error"), DontEnum);
 
-    putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
 JSValuePtr errorProtoFuncToString(ExecState* exec, JSObject*, JSValuePtr thisValue, const ArgList&)

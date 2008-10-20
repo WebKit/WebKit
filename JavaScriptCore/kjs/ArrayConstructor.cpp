@@ -36,10 +36,10 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, PassRefPtr<StructureID> stru
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, arrayPrototype->classInfo()->className))
 {
     // ECMA 15.4.3.1 Array.prototype
-    putDirect(exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
 }
 
 static JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)

@@ -31,10 +31,10 @@ ASSERT_CLASS_FITS_IN_CELL(BooleanConstructor);
 BooleanConstructor::BooleanConstructor(ExecState* exec, PassRefPtr<StructureID> structure, BooleanPrototype* booleanPrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, booleanPrototype->classInfo()->className))
 {
-    putDirect(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
 // ECMA 15.6.2

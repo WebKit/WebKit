@@ -54,13 +54,13 @@ static JSValuePtr dateUTC(ExecState*, JSObject*, JSValuePtr, const ArgList&);
 DateConstructor::DateConstructor(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure, DatePrototype* datePrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, datePrototype->classInfo()->className))
 {
-      putDirect(exec->propertyNames().prototype, datePrototype, DontEnum|DontDelete|ReadOnly);
+      putDirectWithoutTransition(exec->propertyNames().prototype, datePrototype, DontEnum|DontDelete|ReadOnly);
 
-      putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().parse, dateParse), DontEnum);
-      putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
-      putDirectFunction(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().now, dateNow), DontEnum);
+      putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 1, exec->propertyNames().parse, dateParse), DontEnum);
+      putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
+      putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().now, dateNow), DontEnum);
 
-      putDirect(exec->propertyNames().length, jsNumber(exec, 7), ReadOnly | DontEnum | DontDelete);
+      putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 7), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.9.3
