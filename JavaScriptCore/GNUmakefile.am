@@ -117,6 +117,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/BooleanPrototype.h \
 	JavaScriptCore/kjs/CallData.h \
 	JavaScriptCore/kjs/ClassInfo.h \
+	JavaScriptCore/kjs/CollectorHeapIterator.h \
 	JavaScriptCore/kjs/CommonIdentifiers.h \
 	JavaScriptCore/kjs/ConstructData.h \
 	JavaScriptCore/kjs/DateConstructor.h \

@@ -1250,7 +1250,7 @@ webcore_sources += \
 	WebCore/platform/KURL.h \
 	WebCore/platform/KURLHash.h \
 	WebCore/platform/Language.h \
-        WebCore/platform/Length.cpp \
+	WebCore/platform/Length.cpp \
 	WebCore/platform/Length.h \
 	WebCore/platform/LocalizedStrings.h \
 	WebCore/platform/Logging.cpp \
@@ -1284,6 +1284,7 @@ webcore_sources += \
 	WebCore/platform/Sound.h \
 	WebCore/platform/StaticConstructors.h \
 	WebCore/platform/SystemTime.h \
+	WebCore/platform/ThemeTypes.h \
 	WebCore/platform/ThreadCheck.h \
 	WebCore/platform/Timer.cpp \
 	WebCore/platform/Timer.h \
@@ -2169,6 +2170,14 @@ webcore_sources += \
 	WebCore/xml/XSLTUnicodeSort.cpp \
 	WebCore/xml/XSLTUnicodeSort.h
 endif # END ENABLE_XSLT
+
+# ----
+# Web Workers support
+# Not yet enabled
+# ----
+webcore_sources += \
+	WebCore/bindings/js/JSDedicatedWorkerConstructor.h \
+	WebCore/dom/DedicatedWorker.h
 
 # ----
 # SVG Support
