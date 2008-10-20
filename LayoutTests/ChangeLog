@@ -1,3 +1,10 @@
+2008-10-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Add Worker to the results - although it is just a stub right now, it is present in the list
+        of window properties.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-10-17  Pamela Greene  <pam@chromium.org>
 
         Add a number of new tests.
