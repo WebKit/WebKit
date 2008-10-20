@@ -1,8 +1,6 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
-    Copyright (C) 2006 Apple Computer, Inc.
+    Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -186,69 +184,9 @@ struct Length {
         int toValue = isZero() ? 0 : value();
         return Length(int(fromValue + (toValue - fromValue) * progress), resultType);
     }
-    
+
 private:
     int m_value;
-};
-
-struct LengthBox {
-    LengthBox() { }
-    LengthBox(LengthType t)
-        : m_left(t)
-        , m_right(t)
-        , m_top(t)
-        , m_bottom(t)
-    { }
-
-    Length left() const { return m_left; }
-    Length right() const { return m_right; }
-    Length top() const { return m_top; }
-    Length bottom() const { return m_bottom; }
-
-    bool operator==(const LengthBox& o) const
-    {
-        return m_left == o.m_left && m_right == o.m_right && m_top == o.m_top && m_bottom == o.m_bottom;
-    }
-
-    bool operator!=(const LengthBox& o) const
-    {
-        return !(*this == o);
-    }
-
-    bool nonZero() const { return !(m_left.isZero() && m_right.isZero() && m_top.isZero() && m_bottom.isZero()); }
-    
-    Length m_left;
-    Length m_right;
-    Length m_top;
-    Length m_bottom;
-};
-
-struct LengthSize {
-public:
-    LengthSize()
-    {
-    }
-    
-    LengthSize(Length w, Length h)
-        : m_width(w)
-        , m_height(h)
-    {
-    }
-
-    bool operator==(const LengthSize& o) const
-    {
-        return m_width == o.m_width && m_height == o.m_height;
-    }
-
-    Length width() const { return m_width; }
-    Length height() const { return m_height; }
-    
-    void setWidth(Length w) { m_width = w; }
-    void setHeight(Length h) { m_height = h; }
-
-private:
-    Length m_width;
-    Length m_height;
 };
 
 Length* newCoordsArray(const String&, int& len);

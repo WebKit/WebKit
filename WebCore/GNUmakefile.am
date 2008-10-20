@@ -1252,6 +1252,8 @@ webcore_sources += \
 	WebCore/platform/Language.h \
 	WebCore/platform/Length.cpp \
 	WebCore/platform/Length.h \
+	WebCore/platform/LengthBox.h \
+	WebCore/platform/LengthSize.h \
 	WebCore/platform/LocalizedStrings.h \
 	WebCore/platform/Logging.cpp \
 	WebCore/platform/Logging.h \

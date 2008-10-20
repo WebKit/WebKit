@@ -3059,12 +3059,20 @@
 				RelativePath="..\platform\Language.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\platform\Length.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\Length.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\LengthBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\LengthSize.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,31 @@
+2008-10-20  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by David Hyatt.
+
+        Split LengthBox and LengthSize into their own files.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Length.h:
+        (WebCore::Length::blend):
+        * platform/LengthBox.h: Copied from platform/Length.h.
+        (WebCore::LengthBox::LengthBox):
+        (WebCore::LengthBox::nonZero):
+        * platform/LengthSize.h: Copied from platform/Length.h.
+        (WebCore::LengthSize::LengthSize):
+        (WebCore::LengthSize::setWidth):
+        (WebCore::LengthSize::setHeight):
+        (WebCore::LengthSize::height):
+        * platform/Theme.h:
+        * rendering/style/FillLayer.h:
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::NinePieceImage):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleDashboardRegion.h:
+        * rendering/style/StyleSurroundData.h:
+        * rendering/style/StyleVisualData.h:
+
 2008-10-20  Dan Bernstein  <mitz@apple.com>
 
         - Mac build fix

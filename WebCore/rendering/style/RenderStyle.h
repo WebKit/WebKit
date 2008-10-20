@@ -47,6 +47,8 @@
 #include "GraphicsTypes.h"
 #include "IntRect.h"
 #include "Length.h"
+#include "LengthBox.h"
+#include "LengthSize.h"
 #include "NinePieceImage.h"
 #include "OutlineValue.h"
 #include "Pair.h"

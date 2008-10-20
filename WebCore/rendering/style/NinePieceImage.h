@@ -24,7 +24,7 @@
 #ifndef NinePieceImage_h
 #define NinePieceImage_h
 
-#include "Length.h"
+#include "LengthBox.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -35,9 +35,20 @@ enum ENinePieceImageRule {
 
 class NinePieceImage {
 public:
-    NinePieceImage() :m_image(0), m_horizontalRule(StretchImageRule), m_verticalRule(StretchImageRule) {}
+    NinePieceImage()
+        : m_image(0)
+        , m_horizontalRule(StretchImageRule)
+        , m_verticalRule(StretchImageRule)
+    {
+    }
+
     NinePieceImage(StyleImage* image, LengthBox slices, ENinePieceImageRule h, ENinePieceImageRule v) 
-      :m_image(image), m_slices(slices), m_horizontalRule(h), m_verticalRule(v) {}
+      : m_image(image)
+      , m_slices(slices)
+      , m_horizontalRule(h)
+      , m_verticalRule(v)
+    {
+    }
 
     bool operator==(const NinePieceImage& o) const;
     bool operator!=(const NinePieceImage& o) const { return !(*this == o); }
@@ -54,5 +65,6 @@ public:
     unsigned m_verticalRule : 2; // ENinePieceImageRule
 };
 
-}
-#endif
+} // namespace WebCore
+
+#endif // NinePieceImage_h

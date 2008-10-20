@@ -29,7 +29,7 @@
 #include "Color.h"
 #include "Font.h"
 #include "IntRect.h"
-#include "Length.h"
+#include "LengthSize.h"
 #include "PlatformString.h"
 #include "ThemeTypes.h"
 

@@ -27,6 +27,7 @@
 
 #include "GraphicsTypes.h"
 #include "Length.h"
+#include "LengthSize.h"
 #include "RenderStyleConstants.h"
 #include "StyleImage.h"
 #include <wtf/RefPtr.h>

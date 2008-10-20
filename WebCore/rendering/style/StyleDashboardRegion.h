@@ -26,7 +26,7 @@
 #define StyleDashboardRegion_h
 #if ENABLE(DASHBOARD_SUPPORT)
 
-#include "Length.h"
+#include "LengthBox.h"
 #include "PlatformString.h"
 
 namespace WebCore {

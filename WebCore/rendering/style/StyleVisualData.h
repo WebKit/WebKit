@@ -25,7 +25,7 @@
 #ifndef StyleVisualData_h
 #define StyleVisualData_h
 
-#include "Length.h"
+#include "LengthBox.h"
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
