@@ -324,6 +324,8 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this.closeVisibleResource();
 
+        this.containerElement.scrollTop = 0;
+
         delete this.currentQuery;
         this.searchCanceled();
 
@@ -387,6 +389,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         delete resource._resourcesTreeElement;
         delete resource._resourcesView;
+
+        this._adjustScrollPosition();
     },
 
     addMessageToResource: function(resource, msg)
@@ -1059,11 +1063,19 @@ WebInspector.ResourcesPanel.prototype = {
             this.resourcesGraphsElement.addStyleClass("small");
             this.largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
             this.largerResourcesButton.removeStyleClass("toggled-on");
+            this._adjustScrollPosition();
         } else {
             this.resourcesGraphsElement.removeStyleClass("small");
             this.largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
             this.largerResourcesButton.addStyleClass("toggled-on");
         }
+    },
+
+    _adjustScrollPosition: function()
+    {
+        // Prevent the container from being scrolled off the end.
+        if ((this.containerElement.scrollTop + this.containerElement.offsetHeight) > this.sidebarElement.offsetHeight)
+            this.containerElement.scrollTop = (this.sidebarElement.offsetHeight - this.containerElement.offsetHeight);
     },
 
     _changeSortingFunction: function()

@@ -1,5 +1,25 @@
 2008-10-19  Timothy Hatcher  <timothy@apple.com>
 
+        Update the scroll position in the Resources panel when loading
+        a new page or toggling on small resource rows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20114
+
+        Reviewed by Darin Adler.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset): Scroll to the top,
+        since all the resource are being removed.
+        (WebInspector.ResourcesPanel.prototype.removeResource): Call
+        _adjustScrollPosition in case the view is shorter and needs scrolled.
+        (WebInspector.ResourcesPanel.prototype._toggleLargerResources): Ditto.
+        (WebInspector.ResourcesPanel.prototype._adjustScrollPosition): Check
+        the height of the sidebar against the scrollTop and height of the
+        resourcesContainerElement. If the sidebar is shorter, scroll up
+        so the last resource is at the bottom again.
+
+2008-10-19  Timothy Hatcher  <timothy@apple.com>
+
         Show per resource times and sizes when hovering over the bar graph for a resource.
 
         https://bugs.webkit.org/show_bug.cgi?id=14300
