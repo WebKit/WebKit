@@ -243,7 +243,10 @@ JSValuePtr ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodL
 } @catch(NSException* localException) {
 }
     moveGlobalExceptionToExecState(exec);
-    return result;
+
+    // Work around problem in some versions of GCC where result gets marked volatile and
+    // it can't handle copying from a volatile to non-volatile.
+    return const_cast<JSValuePtr&>(result);
 }
 
 JSValuePtr ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &args)
@@ -291,7 +294,10 @@ JSValuePtr ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &arg
 } @catch(NSException* localException) {
 }
     moveGlobalExceptionToExecState(exec);
-    return result;
+
+    // Work around problem in some versions of GCC where result gets marked volatile and
+    // it can't handle copying from a volatile to non-volatile.
+    return const_cast<JSValuePtr&>(result);
 }
 
 bool ObjcInstance::supportsSetValueOfUndefinedField()
@@ -350,7 +356,9 @@ JSValuePtr ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identif
         moveGlobalExceptionToExecState(exec);
     }
 
-    return result;
+    // Work around problem in some versions of GCC where result gets marked volatile and
+    // it can't handle copying from a volatile to non-volatile.
+    return const_cast<JSValuePtr&>(result);
 }
 
 JSValuePtr ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const

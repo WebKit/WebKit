@@ -126,7 +126,9 @@ JSValuePtr ObjcField::valueFromInstance(ExecState* exec, const Instance* instanc
         JSLock::unlock(false);
     }
 
-    return result;
+    // Work around problem in some versions of GCC where result gets marked volatile and
+    // it can't handle copying from a volatile to non-volatile.
+    return const_cast<JSValuePtr&>(result);
 }
 
 static id convertValueToObjcObject(ExecState* exec, JSValuePtr value)
