@@ -2,6 +2,14 @@
 
         - try to fix Qt build
 
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter): Add asObject calls.
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter): Ditto.
+
+2008-10-20  Darin Adler  <darin@apple.com>
+
+        - try to fix Qt build
+
         * bridge/qt/qt_instance.cpp:
         (JSC::Bindings::QtInstance::mark): Use JSValue* instead of JSValuePtr.
         (JSC::Bindings::QtField::valueFromInstance): Ditto.

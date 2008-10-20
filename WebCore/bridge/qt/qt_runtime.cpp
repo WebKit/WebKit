@@ -1348,7 +1348,7 @@ JSValuePtr QtRuntimeMetaMethod::lengthGetter(ExecState* exec, const Identifier&,
 
 JSValuePtr QtRuntimeMetaMethod::connectGetter(ExecState* exec, const Identifier& ident, const PropertySlot& slot)
 {
-    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(slot.slotBase());
+    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slot.slotBase()));
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_connect)
@@ -1358,7 +1358,7 @@ JSValuePtr QtRuntimeMetaMethod::connectGetter(ExecState* exec, const Identifier&
 
 JSValuePtr QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, const Identifier& ident, const PropertySlot& slot)
 {
-    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(slot.slotBase());
+    QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slot.slotBase()));
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_disconnect)
