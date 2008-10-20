@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -259,25 +260,51 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClient::repaint(const IntRect& windowRect, bool, bool immediate, bool repaintContentOnly)
+void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
-    if (!m_webView || repaintContentOnly)
+    if (!m_webView)
         return;
 
     GdkRectangle rect = windowRect;
     GdkWindow* window = GTK_WIDGET(m_webView)->window;
 
     if (window) {
-        // No double buffer.  Just always assume we need to invalidate.
-        gdk_window_invalidate_rect(window, &rect, true);
-        if (immediate)
-            gdk_window_process_updates(window, true);
+        if (contentChanged)
+            gdk_window_invalidate_rect(window, &rect, FALSE);
+        // We don't currently do immediate updates since they delay other UI elements.
+        //if (immediate)
+        //    gdk_window_process_updates(window, FALSE);
     }
 }
 
-void ChromeClient::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect& clipRect)
+void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    GdkWindow* window = GTK_WIDGET(m_webView)->window;
+    if (!window)
+        return;
+
+    GdkRectangle area = clipRect;
+    GdkRectangle moveRect;
+
+    GdkRectangle sourceRect = area;
+    sourceRect.x -= delta.width();
+    sourceRect.y -= delta.height();
+
+    GdkRegion* invalidRegion = gdk_region_rectangle(&area);
+
+    if (gdk_rectangle_intersect(&area, &sourceRect, &moveRect)) {
+        GdkRegion* moveRegion = gdk_region_rectangle(&moveRect);
+        gdk_window_move_region(window, moveRegion, delta.width(), delta.height());
+        gdk_region_offset(moveRegion, delta.width(), delta.height());
+        gdk_region_subtract(invalidRegion, moveRegion);
+        gdk_region_destroy(moveRegion);
+    }
+
+    gdk_window_invalidate_region(window, invalidRegion, FALSE);
+    gdk_region_destroy(invalidRegion);
 }
 
 IntRect ChromeClient::windowToScreen(const IntRect& rect) const
