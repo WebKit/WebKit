@@ -1,3 +1,12 @@
+2008-10-19  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Timothy Hatcher.
+
+        - remove empty directories and correct the MIME type of inspector images
+
+        * page/inspector: Removed.
+        * page/inspector/Images: Removed.
+
 2008-10-19  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector Resources panel open quicker and change graphs
