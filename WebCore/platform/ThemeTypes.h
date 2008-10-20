@@ -37,6 +37,7 @@ enum ControlState {
     ReadOnlyState = 1 << 5,
     DefaultState = 1 << 6,
     WindowInactiveState = 1 << 7,
+    IndeterminateState = 1 << 8,
     AllStates = 0xffffffff
 };
 
@@ -68,27 +69,6 @@ enum ThemeColor {
     InactiveCaptionTextColor, InfoBackgroundColor, InfoTextColor, MatchColor, MenuTextColor, ScrollbarColor, ThreeDDarkDhasowColor,
     ThreeDFaceColor, ThreeDHighlightColor, ThreeDLightShadowColor, ThreeDShadowCLor, WindowColor, WindowFrameColor, WindowTextColor,
     FocusRingColor
-};
-
-class ControlBox {
-public:
-    ControlBox(int t = 0, int r = 0, int b = 0, int l = 0)
-        : m_top(t)
-        , m_right(r)
-        , m_bottom(b)
-        , m_left(l)
-    { }
-
-    int top() const { return m_top; }
-    int right() const { return m_right; }
-    int bottom() const { return m_bottom; }
-    int left() const { return m_left; }
-  
-private:
-    int m_top;
-    int m_right;
-    int m_bottom;
-    int m_left;
 };
 
 }

@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include "SelectionController.h"
 #include "Settings.h"
 
@@ -51,6 +52,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
                               bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
 {
     // Force inline and table display styles to be inline-block (except for table- which is block)
+    ControlPart part = style->appearance();
     if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP ||
         style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_FOOTER_GROUP ||
         style->display() == TABLE_ROW || style->display() == TABLE_COLUMN_GROUP || style->display() == TABLE_COLUMN ||
@@ -60,18 +62,43 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
         style->setDisplay(BLOCK);
 
     if (UAHasAppearance && theme()->isControlStyled(style, border, background, backgroundColor)) {
-        if (style->appearance() == MenulistPart)
+        if (part == MenulistPart)
             style->setAppearance(MenulistButtonPart);
         else
             style->setAppearance(NoControlPart);
     }
 
+    if (!style->hasAppearance())
+        return;
+
+    // Never support box-shadow on native controls.
+    style->setBoxShadow(0);
+    
+#if USE(NEW_THEME)
+    if (part == CheckboxPart || part == RadioPart) {
+        if (!m_theme->controlSupportsBorder(part))
+            style->resetBorder();
+        if (!m_theme->controlSupportsPadding(part))
+            style->resetPadding();
+            
+        // The width and height here are affected by the zoom.
+        // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
+        LengthSize controlSize = m_theme->controlSize(part, style->font(), LengthSize(style->width(), style->height()), style->effectiveZoom());
+        if (controlSize.width() != style->width())
+            style->setWidth(controlSize.width());
+        if (controlSize.height() != style->height())
+            style->setHeight(controlSize.height());
+    }
+#endif
+
     // Call the appropriate style adjustment method based off the appearance value.
     switch (style->appearance()) {
+#if USE(NEW_THEME)
         case CheckboxPart:
             return adjustCheckboxStyle(selector, style, e);
         case RadioPart:
             return adjustRadioStyle(selector, style, e);
+#endif
         case PushButtonPart:
         case SquareButtonPart:
         case DefaultButtonPart:
@@ -126,12 +153,23 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
     if (paintInfo.context->paintingDisabled())
         return false;
 
+    ControlPart part = o->style()->appearance();
+
+#if USE(NEW_THEME)
+    if (part == CheckboxPart || part == RadioPart) {
+        m_theme->paint(part, controlStatesForRenderer(o), const_cast<GraphicsContext*>(paintInfo.context), r, o->style()->effectiveZoom(), o->view()->frameView());
+        return false;
+    }
+#endif
+
     // Call the appropriate paint method based off the appearance value.
-    switch (o->style()->appearance()) {
+    switch (part) {
+#if !USE(NEW_THEME)
         case CheckboxPart:
             return paintCheckbox(o, paintInfo, r);
         case RadioPart:
             return paintRadio(o, paintInfo, r);
+#endif
         case PushButtonPart:
         case SquareButtonPart:
         case DefaultButtonPart:
@@ -318,7 +356,11 @@ Color RenderTheme::inactiveListBoxSelectionForegroundColor() const
 
 int RenderTheme::baselinePosition(const RenderObject* o) const
 {
+#if USE(NEW_THEME)
+    return o->height() + o->marginTop() + m_theme->baselinePositionAdjustment(o->style()->appearance()) * o->style()->effectiveZoom();
+#else
     return o->height() + o->marginTop();
+#endif
 }
 
 bool RenderTheme::isControlContainer(ControlPart appearance) const
@@ -351,6 +393,13 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
     }
 }
 
+void RenderTheme::adjustRepaintRect(const RenderObject* o, IntRect& r)
+{
+#if USE(NEW_THEME)
+    m_theme->inflateControlPaintRect(o->style()->appearance(), controlStatesForRenderer(o), r, o->style()->effectiveZoom());
+#endif
+}
+
 bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
 {
     return (style->hasAppearance() && style->appearance() != TextFieldPart && style->appearance() != TextAreaPart && style->appearance() != MenulistButtonPart && style->appearance() != ListboxPart);
@@ -371,8 +420,30 @@ bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
     return true;
 }
 
-// FIXME: It would be nice to set this state on the RenderObjects instead of
-// having to dig up to the FocusController at paint time.
+ControlStates RenderTheme::controlStatesForRenderer(const RenderObject* o) const
+{
+    ControlStates result = 0;
+    if (isHovered(o))
+        result |= HoverState;
+    if (isPressed(o))
+        result |= PressedState;
+    if (isFocused(o) && o->style()->outlineStyleIsAuto())
+        result |= FocusState;
+    if (isEnabled(o))
+        result |= EnabledState;
+    if (isChecked(o))
+        result |= CheckedState;
+    if (isReadOnlyControl(o))
+        result |= ReadOnlyState;
+    if (isDefault(o))
+        result |= DefaultState;
+    if (!isActive(o))
+        result |= WindowInactiveState;
+    if (isIndeterminate(o))
+        result |= IndeterminateState;
+    return result;
+}
+
 bool RenderTheme::isActive(const RenderObject* o) const
 {
     Node* node = o->element();

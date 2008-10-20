@@ -857,7 +857,7 @@ static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer*
     // These are always percents or auto.
     if (shouldPaintBackgroundImage &&
         (!layer->xPosition().isZero() || !layer->yPosition().isZero() ||
-         layer->size().width.isPercent() || layer->size().height.isPercent()))
+         layer->size().width().isPercent() || layer->size().height().isPercent()))
         // The image will shift unpredictably if the size changes.
         return true;
 

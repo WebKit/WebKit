@@ -5129,8 +5129,8 @@ void CSSStyleSelector::mapFillSize(FillLayer* layer, CSSValue* value)
     else
         return;
     
-    b.width = firstLength;
-    b.height = secondLength;
+    b.setWidth(firstLength);
+    b.setHeight(secondLength);
     layer->setSize(b);
 }
 

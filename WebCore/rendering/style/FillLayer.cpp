@@ -116,7 +116,7 @@ bool FillLayer::operator==(const FillLayer& o) const
     return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
            m_attachment == o.m_attachment && m_clip == o.m_clip && 
            m_composite == o.m_composite && m_origin == o.m_origin && m_repeat == o.m_repeat &&
-           m_size.width == o.m_size.width && m_size.height == o.m_size.height && m_type == o.m_type &&
+           m_size == o.m_size && m_type == o.m_type &&
            ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 

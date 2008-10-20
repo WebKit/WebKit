@@ -1,3 +1,72 @@
+2008-10-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21751
+
+        Convert checkboxes and radio buttons on OS X over to the new Theme API.
+
+        Reviewed by Adam Roben
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapFillSize):
+        * platform/Length.h:
+        (WebCore::LengthSize::LengthSize):
+        (WebCore::LengthSize::operator==):
+        (WebCore::LengthSize::width):
+        (WebCore::LengthSize::height):
+        (WebCore::LengthSize::setWidth):
+        (WebCore::LengthSize::setHeight):
+        * platform/Theme.h:
+        (WebCore::Theme::controlSize):
+        (WebCore::Theme::controlSupportsBorder):
+        (WebCore::Theme::controlSupportsPadding):
+        (WebCore::Theme::paint):
+        (WebCore::Theme::inflateControlPaintRect):
+        * platform/ThemeTypes.h:
+        (WebCore::):
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::):
+        (WebCore::controlSizeForFont):
+        (WebCore::sizeFromFont):
+        (WebCore::setControlSize):
+        (WebCore::updateStates):
+        (WebCore::inflateRect):
+        (WebCore::checkboxSizes):
+        (WebCore::checkboxMargins):
+        (WebCore::checkboxSize):
+        (WebCore::checkbox):
+        (WebCore::paintCheckbox):
+        (WebCore::radioSizes):
+        (WebCore::radioMargins):
+        (WebCore::radioSize):
+        (WebCore::radio):
+        (WebCore::paintRadio):
+        (WebCore::ThemeMac::baselinePositionAdjustment):
+        (WebCore::ThemeMac::controlSize):
+        (WebCore::ThemeMac::controlSupportsBorder):
+        (WebCore::ThemeMac::controlSupportsPadding):
+        (WebCore::ThemeMac::inflateControlPaintRect):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateBackgroundSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::mustRepaintFillLayers):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::baselinePosition):
+        (WebCore::RenderTheme::adjustRepaintRect):
+        (WebCore::RenderTheme::controlStatesForRenderer):
+        (WebCore::RenderTheme::isFocused):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::operator==):
+
 2008-10-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

@@ -224,18 +224,31 @@ struct LengthBox {
 };
 
 struct LengthSize {
-    Length width;
-    Length height;
-
+public:
     LengthSize()
     {
     }
     
-    LengthSize(const Length& w, const Length& h)
-        : width(w)
-        , height(h)
+    LengthSize(Length w, Length h)
+        : m_width(w)
+        , m_height(h)
     {
     }
+
+    bool operator==(const LengthSize& o) const
+    {
+        return m_width == o.m_width && m_height == o.m_height;
+    }
+
+    Length width() const { return m_width; }
+    Length height() const { return m_height; }
+    
+    void setWidth(Length w) { m_width = w; }
+    void setHeight(Length h) { m_height = h; }
+
+private:
+    Length m_width;
+    Length m_height;
 };
 
 Length* newCoordsArray(const String&, int& len);

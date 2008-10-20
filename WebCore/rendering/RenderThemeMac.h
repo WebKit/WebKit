@@ -42,11 +42,6 @@ public:
     RenderThemeMac();
     virtual ~RenderThemeMac();
 
-    // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
-    // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
-    // controls that need to do this.
-    virtual int baselinePosition(const RenderObject*) const;
-
     // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject*) const;
 
@@ -82,12 +77,6 @@ public:
 
 protected:
     // Methods for each appearance value.
-    virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    virtual void setCheckboxSize(RenderStyle*) const;
-
-    virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    virtual void setRadioSize(RenderStyle*) const;
-
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void setButtonSize(RenderStyle*) const;
@@ -151,13 +140,6 @@ private:
     void updatePressedState(NSCell*, const RenderObject*);
 
     // Helpers for adjusting appearance and for painting
-    const IntSize* checkboxSizes() const;
-    const int* checkboxMargins() const;
-    void setCheckboxCellState(const RenderObject*, const IntRect&);
-
-    const IntSize* radioSizes() const;
-    const int* radioMargins() const;
-    void setRadioCellState(const RenderObject*, const IntRect&);
 
     void setButtonPaddingFromControlSize(RenderStyle*, NSControlSize) const;
     const IntSize* buttonSizes() const;
@@ -177,8 +159,6 @@ private:
     void setSearchCellState(RenderObject*, const IntRect&);
     void setSearchFieldSize(RenderStyle*) const;
     
-    NSButtonCell* checkbox() const;
-    NSButtonCell* radio() const;
     NSButtonCell* button() const;
     NSPopUpButtonCell* popupButton() const;
     NSSearchFieldCell* search() const;
@@ -187,8 +167,6 @@ private:
     NSSliderCell* sliderThumbVertical() const;
 
 private:
-    mutable RetainPtr<NSButtonCell> m_checkbox;
-    mutable RetainPtr<NSButtonCell> m_radio;
     mutable RetainPtr<NSButtonCell> m_button;
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
