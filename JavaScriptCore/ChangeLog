@@ -1,5 +1,15 @@
 2008-10-20  Alp Toker  <alp@nuanti.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        Typo fix in function name: mimimum -> minimum.
+
+        * kjs/DateMath.cpp:
+        (JSC::minimumYearForDST):
+        (JSC::equivalentYearForDST):
+
+2008-10-20  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Mark Rowe.
 
         Use pthread instead of GThread where possible in the GTK+ port. This

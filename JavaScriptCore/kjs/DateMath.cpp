@@ -425,7 +425,7 @@ static inline int maximumYearForDST()
     return 2037;
 }
 
-static inline int mimimumYearForDST()
+static inline int minimumYearForDST()
 {
     // Because of the 2038 issue (see maximumYearForDST) if the current year is
     // greater than the max year minus 27 (2010), we want to use the max year
@@ -449,7 +449,7 @@ int equivalentYearForDST(int year)
     // It is ok if the cached year is not the current year as long as the rules
     // for DST did not change between the two years; if they did the app would need
     // to be restarted.
-    static int minYear = mimimumYearForDST();
+    static int minYear = minimumYearForDST();
     int maxYear = maximumYearForDST();
 
     int difference;
