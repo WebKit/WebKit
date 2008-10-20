@@ -179,7 +179,7 @@ ALWAYS_INLINE JSValuePtr CTI::getConstant(CallFrame* callFrame, int src)
 
 inline uintptr_t CTI::asInteger(JSValuePtr value)
 {
-    return reinterpret_cast<uintptr_t>(value);
+    return reinterpret_cast<uintptr_t>(value.payload());
 }
 
 // get arg puts an arg from the SF register array into a h/w register

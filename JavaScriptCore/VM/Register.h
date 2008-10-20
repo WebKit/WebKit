@@ -50,6 +50,7 @@ namespace JSC {
     public:
         Register();
         Register(JSValuePtr);
+        Register(JSCell*);
 
         JSValuePtr jsValue(CallFrame*) const;
         JSValuePtr getJSValue() const;
@@ -89,7 +90,7 @@ namespace JSC {
         union {
             intptr_t i;
             void* v;
-            JSValuePtr value;
+            JSValue* value;
 
             JSActivation* activation;
             Arguments* arguments;
@@ -142,7 +143,13 @@ namespace JSC {
     ALWAYS_INLINE Register::Register(JSValuePtr v)
     {
         SET_TYPE(ValueType);
-        u.value = v;
+        u.value = v.payload();
+    }
+
+    ALWAYS_INLINE Register::Register(JSCell* v)
+    {
+        SET_TYPE(ValueType);
+        u.value = JSValuePtr(v).payload();
     }
 
     // This function is scaffolding for legacy clients. It will eventually go away.

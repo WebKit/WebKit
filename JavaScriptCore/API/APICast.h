@@ -70,12 +70,12 @@ inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
 
 inline JSValueRef toRef(JSC::JSValuePtr v)
 {
-    return reinterpret_cast<JSValueRef>(v);
+    return reinterpret_cast<JSValueRef>(v.payload());
 }
 
 inline JSValueRef* toRef(JSC::JSValuePtr* v)
 {
-    return reinterpret_cast<JSValueRef*>(const_cast<const JSC::JSValue**>(v));
+    return reinterpret_cast<JSValueRef*>(const_cast<const JSC::JSValue**>(v->payloadPtr()));
 }
 
 inline JSObjectRef toRef(JSC::JSObject* o)

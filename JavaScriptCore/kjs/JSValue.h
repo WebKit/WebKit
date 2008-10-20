@@ -150,6 +150,9 @@ namespace JSC {
         uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
     };
 
+    bool operator==(JSValuePtr, JSValuePtr);
+    bool operator!=(JSValuePtr, JSValuePtr);
+
     // These are identical logic to the JSValue functions above, and faster than jsNumber(number)->toInt32().
     int32_t toInt32(double);
     uint32_t toUInt32(double);
@@ -166,7 +169,7 @@ namespace JSC {
 
     inline JSValuePtr JSValue::asValue() const
     {
-        return const_cast<JSValuePtr>(this);
+        return const_cast<JSValue*>(this);
     }
 
     inline bool JSValue::isUndefined() const
@@ -258,6 +261,16 @@ namespace JSC {
             return i;
         }
         return toUInt32SlowCase(exec, ok);
+    }
+
+    inline bool operator==(JSValuePtr a, JSValuePtr b)
+    {
+        return a.payload() == b.payload();
+    }
+
+    inline bool operator!=(JSValuePtr a, JSValuePtr b)
+    {
+        return a.payload() != b.payload();
     }
 
 } // namespace JSC

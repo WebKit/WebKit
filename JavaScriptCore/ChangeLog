@@ -1,5 +1,56 @@
 2008-10-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Cameron Zwarich.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Change JSValuePtr from a typedef into a class. This allows us to support
+        conversion from JSCell* to JSValuePtr even if JSCell isn't derived from
+        JSValue.
+
+        * JavaScriptCore.exp: Updated symbols that involve JSValuePtr, since
+        it's now a distinct type.
+
+        * API/APICast.h:
+        (toRef): Extract the JSValuePtr payload explicitly since we can't just
+        cast any more.
+        * VM/CTI.cpp:
+        (JSC::CTI::asInteger): Ditto.
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::addConstant): Get at the payload directly.
+        (JSC::CodeGenerator::emitLoad): Added an overload of JSCell* because
+        otherwise classes derived from JSValue end up calling the bool
+        overload instead of JSValuePtr.
+        * VM/CodeGenerator.h: Ditto. Also update traits to use JSValue*
+        and the payload functions.
+
+        * VM/Register.h: Added a JSCell* overload and use of payload functions.
+
+        * kjs/JSCell.h:
+        (JSC::asCell): Use payload function.
+        (JSC::JSValue::asCell): Use JSValue* instead of JSValuePtr.
+        (JSC::JSValuePtr::JSValuePtr): Added. Constructor that takes JSCell*
+        and creates a JSValuePtr.
+
+        * kjs/JSImmediate.h: Added JSValuePtr class. Also updated makeValue
+        and makeInt to work with JSValue* and the payload function.
+
+        * kjs/JSValue.h: Added == and != operators for JSValuePtr. Put them
+        here because eventually all the JSValue functions should go here
+        except what's needed by JSImmediate. Also fix asValue to use
+        JSValue* instead of JSValuePtr.
+
+        * kjs/PropertySlot.h: Change constructor to take JSValuePtr.
+
+        * kjs/protect.h: Update gcProtect functions to work with JSCell*
+        as well as JSValuePtr. Also updated the ProtectedPtr<JSValuePtr>
+        specialization to work more directly. Also changed all the call
+        sites to use gcProtectNullTolerant.
+
+2008-10-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - next step of https://bugs.webkit.org/show_bug.cgi?id=21732

@@ -110,7 +110,7 @@ namespace JSC {
     inline JSCell* asCell(JSValuePtr value)
     {
         ASSERT(!JSImmediate::isImmediate(value));
-        return static_cast<JSCell*>(value);
+        return static_cast<JSCell*>(value.payload());
     }
 
     inline JSCell::JSCell(StructureID* structureID)
@@ -155,7 +155,7 @@ namespace JSC {
     ALWAYS_INLINE JSCell* JSValue::asCell() const
     {
         ASSERT(!JSImmediate::isImmediate(asValue()));
-        return reinterpret_cast<JSCell*>(const_cast<JSValuePtr>(this));
+        return reinterpret_cast<JSCell*>(const_cast<JSValue*>(this));
     }
 
     inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
@@ -165,6 +165,13 @@ namespace JSC {
 #else
         return globalData->heap.allocate(size);
 #endif
+    }
+
+    // --- JSValuePtr inlines ----------------------------
+
+    inline JSValuePtr::JSValuePtr(const JSCell* cell)
+        : m_payload(reinterpret_cast<JSValue*>(const_cast<JSCell*>(cell)))
+    {
     }
 
     // --- JSValue inlines ----------------------------

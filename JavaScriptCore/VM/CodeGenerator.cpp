@@ -619,7 +619,7 @@ unsigned CodeGenerator::addConstant(const Identifier& ident)
 
 RegisterID* CodeGenerator::addConstant(JSValuePtr v)
 {
-    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_nextConstant);
+    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v.payload(), m_nextConstant);
     if (result.second) {
         RegisterID& constant = m_calleeRegisters[m_nextConstant];
         
@@ -803,6 +803,12 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValuePtr v)
     if (dst)
         return emitMove(dst, constantID);
     return constantID;
+}
+
+RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSCell* cell)
+{
+    JSValuePtr value = cell;
+    return emitLoad(dst, value);
 }
 
 RegisterID* CodeGenerator::emitUnexpectedLoad(RegisterID* dst, bool b)
