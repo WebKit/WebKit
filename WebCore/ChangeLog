@@ -1,5 +1,30 @@
 2008-10-19  Timothy Hatcher  <timothy@apple.com>
 
+        Make the Web Inspector Resources panel open quicker and change graphs
+        faster. There was some accidental n^2 logic at fault when updating the
+        graph boundaries.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21742
+
+        Reviewed by Darin Adler.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.set calculator): Return early for
+        a null calculator. Remove the second argument passed to _refreshAllResources.
+        (WebInspector.ResourcesPanel.prototype.refresh): Call updateBoundaries on
+        the calculator for all the stale resources before calling refreshResource.
+        Pass true for the first argument of refreshResource to skip the boundary update.
+        (WebInspector.ResourcesPanel.prototype._updateGraphBoundariesIfNeeded): Remove
+        the second argument passed to _refreshAllResources.
+        (WebInspector.ResourcesPanel.prototype._refreshAllResourcesSoon): Remove the
+        skipSort argument since every passed true, and it would be bad to pass false.
+        (WebInspector.ResourcesPanel.prototype._refreshAllResources): Ditto. And if
+        skipBoundaryUpdate is false, call updateBoundaries on the calculator for all
+        the resources before calling refreshResource. Pass true for the first argument
+        of refreshResource to skip the boundary update.
+
+2008-10-19  Timothy Hatcher  <timothy@apple.com>
+
         Visually distinguish resources that loaded from the memory cache.
 
         https://bugs.webkit.org/show_bug.cgi?id=14279

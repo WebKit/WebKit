@@ -263,13 +263,13 @@ WebInspector.ResourcesPanel.prototype = {
 
     set calculator(x)
     {
-        if (this._calculator === x)
+        if (!x || this._calculator === x)
             return;
 
         this._calculator = x;
-        if (this._calculator)
-            this._calculator.reset();
-        this._refreshAllResources(false, true, true);
+        this._calculator.reset();
+
+        this._refreshAllResources(false, true);
         this._updateGraphDividersIfNeeded(true);
         this._updateSummaryGraph();
     },
@@ -310,8 +310,12 @@ WebInspector.ResourcesPanel.prototype = {
         this.needsRefresh = false;
 
         var staleResourcesLength = this._staleResources.length;
+
         for (var i = 0; i < staleResourcesLength; ++i)
-            this.refreshResource(this._staleResources[i], false, true, true);
+            this.calculator.updateBoundaries(this._staleResources[i]);
+
+        for (var i = 0; i < staleResourcesLength; ++i)
+            this.refreshResource(this._staleResources[i], true, true, true);
 
         this._staleResources = [];
 
@@ -442,8 +446,8 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         if (!skipBoundaryUpdate) {
-            if (this._updateGraphBoundriesIfNeeded(resource, immediate))
-                return; // _updateGraphBoundriesIfNeeded refreshes all resources if it returns true, so just return.
+            if (this._updateGraphBoundariesIfNeeded(resource, immediate))
+                return; // _updateGraphBoundariesIfNeeded refreshes all resources if it returns true, so just return.
         }
 
         if (!skipSort) {
@@ -643,16 +647,16 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    _updateGraphBoundriesIfNeeded: function(resource, immediate)
+    _updateGraphBoundariesIfNeeded: function(resource, immediate)
     {
-        var didChange = this.calculator.updateBoundries(resource);
+        var didChange = this.calculator.updateBoundaries(resource);
 
         if (didChange) {
             if (immediate) {
-                this._refreshAllResources(true, true, immediate);
+                this._refreshAllResources(true, immediate);
                 this._updateGraphDividersIfNeeded();
             } else {
-                this._refreshAllResourcesSoon(true, true, immediate);
+                this._refreshAllResourcesSoon(true, immediate);
                 this._updateGraphDividersSoonIfNeeded();
             }
         }
@@ -714,14 +718,14 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    _refreshAllResourcesSoon: function(skipBoundaryUpdate, skipSort, immediate)
+    _refreshAllResourcesSoon: function(skipBoundaryUpdate, immediate)
     {
         if ("_refreshAllResourcesTimeout" in this)
             return;
-        this._refreshAllResourcesTimeout = setTimeout(this._refreshAllResources.bind(this), 500, skipBoundaryUpdate, skipSort, immediate);
+        this._refreshAllResourcesTimeout = setTimeout(this._refreshAllResources.bind(this), 500, skipBoundaryUpdate, immediate);
     },
 
-    _refreshAllResources: function(skipBoundaryUpdate, skipSort, immediate)
+    _refreshAllResources: function(skipBoundaryUpdate, immediate)
     {
         if ("_refreshAllResourcesTimeout" in this) {
             clearTimeout(this._refreshAllResourcesTimeout);
@@ -729,8 +733,14 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         var resourcesLength = this._resources.length;
+
+        if (!skipBoundaryUpdate) {
+            for (var i = 0; i < resourcesLength; ++i)
+                this.calculator.updateBoundaries(this._resources[i]);
+        }
+
         for (var i = 0; i < resourcesLength; ++i)
-            this.refreshResource(this._resources[i], skipBoundaryUpdate, skipSort, immediate);
+            this.refreshResource(this._resources[i], true, true, immediate);
     },
 
     _fadeOutRect: function(ctx, x, y, w, h, a1, a2)
@@ -1203,7 +1213,7 @@ WebInspector.ResourceCalculator.prototype = {
         return this.maximumBoundary - this.minimumBoundary;
     },
 
-    updateBoundries: function(resource)
+    updateBoundaries: function(resource)
     {
         this.minimumBoundary = 0;
 
@@ -1345,7 +1355,7 @@ WebInspector.ResourceTimeCalculator.prototype = {
         return {left: leftLabel, right: rightLabel, tooltip: tooltip};
     },
 
-    updateBoundries: function(resource)
+    updateBoundaries: function(resource)
     {
         var didChange = false;
 
