@@ -2714,7 +2714,7 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
                         NEXT_OPCODE;
                     }
                     ++it;
-                    proto = asObject(asObject(proto)->structureID()->prototypeForLookup(callFrame));
+                    proto = asObject(proto)->structureID()->prototypeForLookup(callFrame);
                 }
 
                 baseObject->transitionTo(newStructureID);

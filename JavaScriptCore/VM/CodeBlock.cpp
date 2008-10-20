@@ -218,7 +218,7 @@ void CodeBlock::printStructureIDs(const Instruction* vPC) const
     }
 
     // These instructions doesn't ref StructureIDs.
-    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic));
+    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_call) || vPC[0].u.opcode == machine->getOpcode(op_call_eval) || vPC[0].u.opcode == machine->getOpcode(op_construct));
 }
 
 void CodeBlock::dump(ExecState* exec) const

@@ -1,3 +1,18 @@
+2008-10-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed some recent break-age in bytecode mode.
+
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::printStructureIDs): Fixed up an ASSERT caused by
+        Gavin's last checkin. This is a temporary fix so I can keep on moving.
+        I'll send email about what I think is an underlying problem soon.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute): Removed a redundant and sometimes
+        incorrect cast, which started ASSERTing after Darin's last checkin.
+
 2008-10-20  Darin Adler  <darin@apple.com>
 
         - another similar Windows build fix
