@@ -1,3 +1,70 @@
+2008-10-20  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Resource panel perform graph updates atomically, so when resources
+        are added the graph and summary graph update at the same time.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21755
+
+        Reviewed by Kevin McCullough.
+
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get startTime): Return -1 if the _startTime
+        property is undefined, null or 0. This allows callers to check for -1 and not
+        the other values when there is no startTime yet.
+        (WebInspector.Resource.prototype.get responseReceivedTime): Ditto.
+        (WebInspector.Resource.prototype.get endTime): Ditto.
+        (WebInspector.Resource.prototype.get duration): Remove an extra empty line.
+        (WebInspector.Resource.prototype.get latency): Ditto.
+        (WebInspector.Resource.prototype.get contentLength): Return 0 if the _duration
+        property is undefined or null. This allows callers to always assume a number.
+        (WebInspector.Resource.prototype.get expectedContentLength): Ditto.
+        (WebInspector.Resource.prototype.get errors): Simplify the case where there is
+        no _errors property yet.
+        (WebInspector.Resource.prototype.set errors): Remove the check if the new value
+        if the same as the previous value, since there is no work to guard.
+        (WebInspector.Resource.prototype.get warnings): Simplify the case where there is
+        no _warnings property yet.
+        (WebInspector.Resource.prototype.set warnings): Remove the check if the new value
+        if the same as the previous value, since there is no work to guard.
+        (WebInspector.Resource.CompareByResponseReceivedTime): Add cases for when the
+        responseReceivedTime is -1.
+        (WebInspector.Resource.CompareByEndTime): Add cases for when the endTime is -1.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.get searchableViews): If a resource does not
+        have a _resourcesTreeElement yet, exclude it from the searchable views.
+        (WebInspector.ResourcesPanel.prototype.set calculator): Set _staleResource to _resources
+        and call refresh to refresh the entire graph.
+        (WebInspector.ResourcesPanel.prototype.set needsRefresh): Set a timeout if the panel
+        is visible that calls refresh.
+        (WebInspector.ResourcesPanel.prototype.refresh): Create the resource tree element and
+        graph for a resource if it hasn't been created yet. If the boundaries changed during
+        the first stale resource pass, do a full pass of all resources when updating the graphs.
+        (WebInspector.ResourcesPanel.prototype.reset): Remove the legend items.
+        (WebInspector.ResourcesPanel.prototype.addResource): Don't create the tree element and
+        graph, these are now created during the first refresh.
+        (WebInspector.ResourcesPanel.prototype.removeResource): Null check _resourcesTreeElement.
+        (WebInspector.ResourcesPanel.prototype.addMessageToResource): Ditto.
+        (WebInspector.ResourcesPanel.prototype.clearMessages): Ditto.
+        (WebInspector.ResourcesPanel.prototype.refreshResource): Remove most of the work, just
+        add the resource to the _staleResources and set needsRefresh.
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded): Null check
+        _resourcesTreeElement.
+        (WebInspector.ResourcesPanel.prototype._sortResourcesIfNeeded): Remove code to clear
+        the timeout used by the deleted _sortResourcesSoonIfNeeded. Remove call to removeChild
+        since the insertBefore call will do it if needed.
+        (WebInspector.ResourcesPanel.prototype._updateGraphDividersIfNeeded): Remove code to
+        clear the timeout used by the deleted _updateGraphDividersSoonIfNeeded.
+        (WebInspector.ResourcesPanel.prototype._updateSummaryGraph): Remove code to clear the
+        timeout used by the deleted _updateSummaryGraphSoon. No need to remove the totalLegendLabel,
+        since all the legend items are removed in one pass right before.
+        (WebInspector.ResourcesPanel.prototype._changeSortingFunction): Set the sortingFunction
+        before the calculator so the correct sortingFunction is there when a refresh happens.
+        (WebInspector.ResourceTimeCalculator.prototype.computeBarGraphPercentages): Set start to 0
+        when the startTime is -1, since that looks best visually. Also set middle and end
+        to the start and middle (respectfully) when startAtZero. This looks best visually.
+        (WebInspector.ResourceGraph): Start the graph as hidden until the first refresh.
+        (WebInspector.ResourceGraph.prototype.refresh): Remove the hidden class.
+
 2008-10-20  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21733

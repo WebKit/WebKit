@@ -148,7 +148,7 @@ WebInspector.Resource.prototype = {
 
     get startTime()
     {
-        return this._startTime;
+        return this._startTime || -1;
     },
 
     set startTime(x)
@@ -164,7 +164,7 @@ WebInspector.Resource.prototype = {
 
     get responseReceivedTime()
     {
-        return this._responseReceivedTime;
+        return this._responseReceivedTime || -1;
     },
 
     set responseReceivedTime(x)
@@ -180,7 +180,7 @@ WebInspector.Resource.prototype = {
 
     get endTime()
     {
-        return this._endTime;
+        return this._endTime || -1;
     },
 
     set endTime(x)
@@ -198,7 +198,6 @@ WebInspector.Resource.prototype = {
     {
         if (this._endTime === -1 || this._startTime === -1)
             return -1;
-
         return this._endTime - this._startTime;
     },
 
@@ -206,13 +205,12 @@ WebInspector.Resource.prototype = {
     {
         if (this._responseReceivedTime === -1 || this._startTime === -1)
             return -1;
-
         return this._responseReceivedTime - this._startTime;
     },
 
     get contentLength()
     {
-        return this._contentLength;
+        return this._contentLength || 0;
     },
 
     set contentLength(x)
@@ -228,7 +226,7 @@ WebInspector.Resource.prototype = {
 
     get expectedContentLength()
     {
-        return this._expectedContentLength;
+        return this._expectedContentLength || 0;
     },
 
     set expectedContentLength(x)
@@ -455,31 +453,21 @@ WebInspector.Resource.prototype = {
 
     get errors()
     {
-        if (!("_errors" in this))
-            this._errors = 0;
-        return this._errors;
+        return this._errors || 0;
     },
 
     set errors(x)
     {
-        if (this._errors === x)
-            return;
-
         this._errors = x;
     },
 
     get warnings()
     {
-        if (!("_warnings" in this))
-            this._warnings = 0;
-        return this._warnings;
+        return this._warnings || 0;
     },
 
     set warnings(x)
     {
-        if (this._warnings === x)
-            return;
-
         this._warnings = x;
     },
 
@@ -585,6 +573,10 @@ WebInspector.Resource.CompareByStartTime = function(a, b)
 
 WebInspector.Resource.CompareByResponseReceivedTime = function(a, b)
 {
+    if (a.responseReceivedTime === -1 && b.responseReceivedTime !== -1)
+        return 1;
+    if (a.responseReceivedTime !== -1 && b.responseReceivedTime === -1)
+        return -1;
     if (a.responseReceivedTime < b.responseReceivedTime)
         return -1;
     if (a.responseReceivedTime > b.responseReceivedTime)
@@ -594,6 +586,10 @@ WebInspector.Resource.CompareByResponseReceivedTime = function(a, b)
 
 WebInspector.Resource.CompareByEndTime = function(a, b)
 {
+    if (a.endTime === -1 && b.endTime !== -1)
+        return 1;
+    if (a.endTime !== -1 && b.endTime === -1)
+        return -1;
     if (a.endTime < b.endTime)
         return -1;
     if (a.endTime > b.endTime)

@@ -157,6 +157,7 @@ WebInspector.ResourcesPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
+
         this._updateDividersLabelBarPosition();
         this._updateSidebarWidth();
         this.refreshIfNeeded();
@@ -200,6 +201,8 @@ WebInspector.ResourcesPanel.prototype = {
         var resourcesLength = this._resources.length;
         for (var i = 0; i < resourcesLength; ++i) {
             var resource = this._resources[i];
+            if (!resource._resourcesTreeElement)
+                continue;
             var resourceView = this.resourceViewForResource(resource);
             if (!resourceView.performSearch || resourceView === visibleView)
                 continue;
@@ -269,9 +272,8 @@ WebInspector.ResourcesPanel.prototype = {
         this._calculator = x;
         this._calculator.reset();
 
-        this._refreshAllResources(false, true);
-        this._updateGraphDividersIfNeeded(true);
-        this._updateSummaryGraph();
+        this._staleResources = this._resources;
+        this.refresh();
     },
 
     get sortingFunction()
@@ -285,24 +287,33 @@ WebInspector.ResourcesPanel.prototype = {
         this._sortResourcesIfNeeded();
     },
 
-    get needsRefresh() 
+    get needsRefresh()
     {
-        return this._needsRefresh; 
+        return this._needsRefresh;
     },
 
-    set needsRefresh(x) 
+    set needsRefresh(x)
     {
-        if (this._needsRefresh === x) 
-            return; 
-        this._needsRefresh = x; 
-        if (x && this.visible) 
-            this.refresh(); 
+        if (this._needsRefresh === x)
+            return;
+
+        this._needsRefresh = x;
+
+        if (x) {
+            if (this.visible && !("_refreshTimeout" in this))
+                this._refreshTimeout = setTimeout(this.refresh.bind(this), 500);
+        } else {
+            if ("_refreshTimeout" in this) {
+                clearTimeout(this._refreshTimeout);
+                delete this._refreshTimeout;
+            }
+        }
     },
 
-    refreshIfNeeded: function() 
+    refreshIfNeeded: function()
     {
-        if (this.needsRefresh) 
-            this.refresh(); 
+        if (this.needsRefresh)
+            this.refresh();
     },
 
     refresh: function()
@@ -310,12 +321,33 @@ WebInspector.ResourcesPanel.prototype = {
         this.needsRefresh = false;
 
         var staleResourcesLength = this._staleResources.length;
+        var boundariesChanged = false;
+
+        for (var i = 0; i < staleResourcesLength; ++i) {
+            var resource = this._staleResources[i];
+            if (!resource._resourcesTreeElement) {
+                // Create the resource tree element and graph.
+                resource._resourcesTreeElement = new WebInspector.ResourceSidebarTreeElement(resource);
+                resource._resourcesTreeElement._resourceGraph = new WebInspector.ResourceGraph(resource);
+
+                this.resourcesTreeElement.appendChild(resource._resourcesTreeElement);
+                this.resourcesGraphsElement.appendChild(resource._resourcesTreeElement._resourceGraph.graphElement);
+            }
+
+            resource._resourcesTreeElement.refresh();
+
+            if (this.calculator.updateBoundaries(resource))
+                boundariesChanged = true;
+        }
+
+        if (boundariesChanged) {
+            // The boundaries changed, so all resource graphs are stale.
+            this._staleResources = this._resources;
+            staleResourcesLength = this._staleResources.length;
+        }
 
         for (var i = 0; i < staleResourcesLength; ++i)
-            this.calculator.updateBoundaries(this._staleResources[i]);
-
-        for (var i = 0; i < staleResourcesLength; ++i)
-            this.refreshResource(this._staleResources[i], true, true, true);
+            this._staleResources[i]._resourcesTreeElement._resourceGraph.refresh(this.calculator);
 
         this._staleResources = [];
 
@@ -355,6 +387,7 @@ WebInspector.ResourcesPanel.prototype = {
         this.resourcesTreeElement.removeChildren();
         this.viewsContainerElement.removeChildren();
         this.resourcesGraphsElement.removeChildren();
+        this.legendElement.removeChildren();
 
         this._updateGraphDividersIfNeeded(true);
 
@@ -364,17 +397,6 @@ WebInspector.ResourcesPanel.prototype = {
     addResource: function(resource)
     {
         this._resources.push(resource);
-
-        var resourceTreeElement = new WebInspector.ResourceSidebarTreeElement(resource);
-        resource._resourcesTreeElement = resourceTreeElement;
-
-        var resourceGraph = new WebInspector.ResourceGraph(resource);
-        resource._resourcesTreeElement._resourceGraph = resourceGraph;
-
-        this.resourcesGraphsElement.appendChild(resourceGraph.graphElement);
-
-        this.resourcesTreeElement.appendChild(resourceTreeElement);
-
         this.refreshResource(resource);
     },
 
@@ -385,8 +407,10 @@ WebInspector.ResourcesPanel.prototype = {
 
         this._resources.remove(resource, true);
 
-        this.resourcesTreeElement.removeChild(resource._resourcesTreeElement);
-        this.resourcesGraphsElement.removeChild(resource._resourcesTreeElement._resourceGraph.graphElement);
+        if (resource._resourcesTreeElement) {
+            this.resourcesTreeElement.removeChild(resource._resourcesTreeElement);
+            this.resourcesGraphsElement.removeChild(resource._resourcesTreeElement._resourceGraph.graphElement);
+        }
 
         resource.warnings = 0;
         resource.errors = 0;
@@ -411,7 +435,7 @@ WebInspector.ResourcesPanel.prototype = {
             break;
         }
 
-        if (!this.currentQuery)
+        if (!this.currentQuery && resource._resourcesTreeElement)
             resource._resourcesTreeElement.updateErrorsAndWarnings();
 
         var view = this.resourceViewForResource(resource);
@@ -427,7 +451,7 @@ WebInspector.ResourcesPanel.prototype = {
             resource.warnings = 0;
             resource.errors = 0;
 
-            if (!this.currentQuery)
+            if (!this.currentQuery && resource._resourcesTreeElement)
                 resource._resourcesTreeElement.updateErrorsAndWarnings();
 
             var view = resource._resourcesView;
@@ -437,33 +461,10 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    refreshResource: function(resource, skipBoundaryUpdate, skipSort, immediate)
+    refreshResource: function(resource)
     {
-        if (!this.visible) {
-            this._staleResources.push(resource);
-            this.needsRefresh = true;
-            return;
-        }
-
-        if (!skipBoundaryUpdate) {
-            if (this._updateGraphBoundariesIfNeeded(resource, immediate))
-                return; // _updateGraphBoundariesIfNeeded refreshes all resources if it returns true, so just return.
-        }
-
-        if (!skipSort) {
-            if (immediate)
-                this._sortResourcesIfNeeded();
-            else
-                this._sortResourcesSoonIfNeeded();
-        }
-
-        this._updateSummaryGraphSoon();
-
-        if (!resource._resourcesTreeElement)
-            return;
-
-        resource._resourcesTreeElement.refresh();
-        resource._resourcesTreeElement._resourceGraph.refresh(this.calculator);
+        this._staleResources.push(resource);
+        this.needsRefresh = true;
     },
 
     recreateViewForResourceIfNeeded: function(resource)
@@ -478,7 +479,7 @@ WebInspector.ResourcesPanel.prototype = {
         resource.warnings = 0;
         resource.errors = 0;
 
-        if (!this.currentQuery)
+        if (!this.currentQuery && resource._resourcesTreeElement)
             resource._resourcesTreeElement.updateErrorsAndWarnings();
 
         var oldView = resource._resourcesView;
@@ -612,20 +613,8 @@ WebInspector.ResourcesPanel.prototype = {
         return legendElement;
     },
 
-    _sortResourcesSoonIfNeeded: function()
-    {
-        if ("_sortResourcesTimeout" in this)
-            return;
-        this._sortResourcesTimeout = setTimeout(this._sortResourcesIfNeeded.bind(this), 500);
-    },
-
     _sortResourcesIfNeeded: function()
     {
-        if ("_sortResourcesTimeout" in this) {
-            clearTimeout(this._sortResourcesTimeout);
-            delete this._sortResourcesTimeout;
-        }
-
         var sortedElements = [].concat(this.resourcesTreeElement.children);
         sortedElements.sort(this.sortingFunction);
 
@@ -642,42 +631,12 @@ WebInspector.ResourcesPanel.prototype = {
                 treeElement.select(true);
 
             var graphElement = treeElement._resourceGraph.graphElement;
-            this.resourcesGraphsElement.removeChild(graphElement);
             this.resourcesGraphsElement.insertBefore(graphElement, this.resourcesGraphsElement.children[i]);
         }
     },
 
-    _updateGraphBoundariesIfNeeded: function(resource, immediate)
-    {
-        var didChange = this.calculator.updateBoundaries(resource);
-
-        if (didChange) {
-            if (immediate) {
-                this._refreshAllResources(true, immediate);
-                this._updateGraphDividersIfNeeded();
-            } else {
-                this._refreshAllResourcesSoon(true, immediate);
-                this._updateGraphDividersSoonIfNeeded();
-            }
-        }
-
-        return didChange;
-    },
-
-    _updateGraphDividersSoonIfNeeded: function()
-    {
-        if ("_updateGraphDividersTimeout" in this)
-            return;
-        this._updateGraphDividersTimeout = setTimeout(this._updateGraphDividersIfNeeded.bind(this), 500);
-    },
-
     _updateGraphDividersIfNeeded: function(force)
     {
-        if ("_updateGraphDividersTimeout" in this) {
-            clearTimeout(this._updateGraphDividersTimeout);
-            delete this._updateGraphDividersTimeout;
-        }
-
         if (!this.visible) {
             this.needsRefresh = true;
             return;
@@ -716,31 +675,6 @@ WebInspector.ResourcesPanel.prototype = {
 
             this.dividersLabelBarElement.appendChild(divider);
         }
-    },
-
-    _refreshAllResourcesSoon: function(skipBoundaryUpdate, immediate)
-    {
-        if ("_refreshAllResourcesTimeout" in this)
-            return;
-        this._refreshAllResourcesTimeout = setTimeout(this._refreshAllResources.bind(this), 500, skipBoundaryUpdate, immediate);
-    },
-
-    _refreshAllResources: function(skipBoundaryUpdate, immediate)
-    {
-        if ("_refreshAllResourcesTimeout" in this) {
-            clearTimeout(this._refreshAllResourcesTimeout);
-            delete this._refreshAllResourcesTimeout;
-        }
-
-        var resourcesLength = this._resources.length;
-
-        if (!skipBoundaryUpdate) {
-            for (var i = 0; i < resourcesLength; ++i)
-                this.calculator.updateBoundaries(this._resources[i]);
-        }
-
-        for (var i = 0; i < resourcesLength; ++i)
-            this.refreshResource(this._resources[i], true, true, immediate);
     },
 
     _fadeOutRect: function(ctx, x, y, w, h, a1, a2)
@@ -980,20 +914,8 @@ WebInspector.ResourcesPanel.prototype = {
         this._fadeOutRect(ctx, x, y + h + 1, w, h, 0.5, 0.0);
     },
 
-    _updateSummaryGraphSoon: function()
-    {
-        if ("_updateSummaryGraphTimeout" in this)
-            return;
-        this._updateSummaryGraphTimeout = setTimeout(this._updateSummaryGraph.bind(this), (this._showingEmptySummaryGraph ? 0 : 500));
-    },
-
     _updateSummaryGraph: function()
     {
-        if ("_updateSummaryGraphTimeout" in this) {
-            clearTimeout(this._updateSummaryGraphTimeout);
-            delete this._updateSummaryGraphTimeout;
-        }
-
         var graphInfo = this.calculator.computeSummaryValues(this._resources);
 
         var categoryOrder = ["documents", "stylesheets", "images", "scripts", "xhr", "fonts", "other"];
@@ -1001,9 +923,6 @@ WebInspector.ResourcesPanel.prototype = {
         var fillSegments = [];
 
         this.legendElement.removeChildren();
-
-        if (this.totalLegendLabel)
-            this.totalLegendLabel.parentNode.removeChild(this.totalLegendLabel);
 
         for (var i = 0; i < categoryOrder.length; ++i) {
             var category = categoryOrder[i];
@@ -1091,8 +1010,8 @@ WebInspector.ResourcesPanel.prototype = {
     _changeSortingFunction: function()
     {
         var selectedOption = this.sortingSelectElement[this.sortingSelectElement.selectedIndex];
-        this.calculator = selectedOption.calculator;
         this.sortingFunction = selectedOption.sortingFunction;
+        this.calculator = selectedOption.calculator;
     },
 
     _createResourceView: function(resource)
@@ -1310,17 +1229,17 @@ WebInspector.ResourceTimeCalculator.prototype = {
         if (resource.startTime !== -1)
             var start = ((resource.startTime - this.minimumBoundary) / this.boundarySpan) * 100;
         else
-            var start = 100;
+            var start = 0;
 
         if (resource.responseReceivedTime !== -1)
             var middle = ((resource.responseReceivedTime - this.minimumBoundary) / this.boundarySpan) * 100;
         else
-            var middle = 100;
+            var middle = (this.startAtZero ? start : 100);
 
         if (resource.endTime !== -1)
             var end = ((resource.endTime - this.minimumBoundary) / this.boundarySpan) * 100;
         else
-            var end = 100;
+            var end = (this.startAtZero ? middle : 100);
 
         if (this.startAtZero) {
             end -= start;
@@ -1416,7 +1335,7 @@ WebInspector.ResourceTransferTimeCalculator.prototype = {
     _upperBound: function(resource)
     {
         return resource.endTime;
-    },
+    }
 }
 
 WebInspector.ResourceTransferTimeCalculator.prototype.__proto__ = WebInspector.ResourceTimeCalculator.prototype;
@@ -1435,7 +1354,7 @@ WebInspector.ResourceTransferDurationCalculator.prototype = {
     _upperBound: function(resource)
     {
         return resource.duration;
-    },
+    }
 }
 
 WebInspector.ResourceTransferDurationCalculator.prototype.__proto__ = WebInspector.ResourceTimeCalculator.prototype;
@@ -1628,7 +1547,7 @@ WebInspector.ResourceGraph = function(resource)
         this._graphElement.addStyleClass("resource-cached");
 
     this._barAreaElement = document.createElement("div");
-    this._barAreaElement.className = "resources-graph-bar-area";
+    this._barAreaElement.className = "resources-graph-bar-area hidden";
     this._graphElement.appendChild(this._barAreaElement);
 
     this._barLeftElement = document.createElement("div");
@@ -1702,6 +1621,8 @@ WebInspector.ResourceGraph.prototype = {
         var labels = calculator.computeBarGraphLabels(this.resource);
 
         this._percentages = percentages;
+
+        this._barAreaElement.removeStyleClass("hidden");
 
         if (!this._graphElement.hasStyleClass("resources-category-" + this.resource.category.name)) {
             this._graphElement.removeMatchingStyleClasses("resources-category-\\w+");
