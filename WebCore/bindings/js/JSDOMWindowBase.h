@@ -110,6 +110,8 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
         virtual JSC::ExecState* globalExec();
+        
+        virtual bool supportsProfiling() const;
 
         virtual bool shouldInterruptScript() const;
 

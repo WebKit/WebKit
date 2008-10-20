@@ -622,14 +622,6 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structure
 
     // The following is the fast case, only used whan a callee can be linked.
 
-    emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
-    m_jit.cmpl_i32m(0, X86::eax);
-    X86Assembler::JmpSrc noProfile = m_jit.emitUnlinkedJe();
-    emitPutArg(X86::ecx, 0);
-    emitCTICall(i, Machine::cti_op_call_profiler);
-    emitGetArg(callee, X86::ecx);
-    m_jit.link(noProfile, m_jit.label());
-
     // In the case of OpConstruct, call oout to a cti_ function to create the new object.
     if (type == OpConstruct) {
         emitPutArg(X86::ecx, 0);
@@ -1322,12 +1314,6 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_ret: {
-            // Check for a profiler - if there is one, jump to the hook below.
-            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
-            m_jit.cmpl_i32m(0, X86::eax);
-            X86Assembler::JmpSrc profile = m_jit.emitUnlinkedJne();
-            X86Assembler::JmpDst profiled = m_jit.label();
-
             // We could JIT generate the deref, only calling out to C when the refcount hits zero.
             if (m_codeBlock->needsFullScopeChain)
                 emitCTICall(i, Machine::cti_op_ret_scopeChain);
@@ -1344,11 +1330,6 @@ void CTI::privateCompileMainPass()
             // Return.
             m_jit.pushl_r(X86::edx);
             m_jit.ret();
-
-            // Profiling hook
-            m_jit.link(profile, m_jit.label());
-            emitCTICall(i, Machine::cti_op_ret_profiler);
-            m_jit.link(m_jit.emitUnlinkedJmp(), profiled);
 
             i += 2;
             break;
@@ -2120,6 +2101,28 @@ void CTI::privateCompileMainPass()
             i += 2;
             break;
         }
+        case op_profile_will_call: {
+            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
+            m_jit.cmpl_i32m(0, X86::eax);
+            X86Assembler::JmpSrc noProfiler = m_jit.emitUnlinkedJe();
+            emitGetPutArg(instruction[i + 1].u.operand, 0, X86::eax);
+            emitCTICall(i, Machine::cti_op_profile_will_call);
+            m_jit.link(noProfiler, m_jit.label());
+
+            i += 2;
+            break;
+        }
+        case op_profile_did_call: {
+            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
+            m_jit.cmpl_i32m(0, X86::eax);
+            X86Assembler::JmpSrc noProfiler = m_jit.emitUnlinkedJe();
+            emitGetPutArg(instruction[i + 1].u.operand, 0, X86::eax);
+            emitCTICall(i, Machine::cti_op_profile_did_call);
+            m_jit.link(noProfiler, m_jit.label());
+
+            i += 2;
+            break;
+        }
         case op_get_array_length:
         case op_get_by_id_chain:
         case op_get_by_id_generic:
@@ -2645,12 +2648,6 @@ void CTI::privateCompileSlowCases()
             X86Assembler::JmpSrc callLinkFailNotJSFunction = m_jit.emitUnlinkedJne();
 
             // This handles JSFunctions
-            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
-            m_jit.cmpl_i32m(0, X86::eax);
-            X86Assembler::JmpSrc noProfile1 = m_jit.emitUnlinkedJe();
-            emitCTICall(i, Machine::cti_op_call_profiler);
-            m_jit.link(noProfile1, m_jit.label());
-
             emitCTICall(i, (opcodeID == op_construct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction);
             // initialize the new call frame (pointed to by edx, after the last call), then set edi to point to it.
             compileOpCallInitializeCallFrame(callee, argCount);
@@ -2685,14 +2682,6 @@ void CTI::privateCompileSlowCases()
 
             // Next, handle JSFunctions...
             m_jit.link(isJSFunction, m_jit.label());
-
-            // Profiler check
-            emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
-            m_jit.cmpl_i32m(0, X86::eax);
-            X86Assembler::JmpSrc noProfile = m_jit.emitUnlinkedJe();
-            emitCTICall(i, Machine::cti_op_call_profiler);
-            m_jit.link(noProfile, m_jit.label());
-
             emitCTICall(i, (opcodeID == op_construct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction);
             // initialize the new call frame (pointed to by edx, after the last call).
             compileOpCallInitializeCallFrame(callee, argCount);

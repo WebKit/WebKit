@@ -1,3 +1,32 @@
+2008-10-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21735
+        Emit profiling instrumentation only if the Web Inspector's profiling
+        feature is enabled
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling):
+        * bindings/js/JSDOMWindowBase.h: Implemented the interface for specifying
+        whether a target global object has the Web Inspector's profiling feature
+        enabled.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::recompileAllJSFunctionsSoon):
+        (WebCore::JavaScriptDebugServer::didAddListener):
+        (WebCore::JavaScriptDebugServer::didRemoveListener):
+        * inspector/JavaScriptDebugServer.h: Exported an API for recompiling, 
+        used by the Settings object.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setDeveloperExtrasEnabled):
+        * page/Settings.h: Recompile when the developer menu is enabled/disabled
+        for the first time, to add/remove profiling hooks. In the future, with
+        better Web Inspector UI, we can do this on a page-by-page basis,
+        instead of a global basis.
+
 2008-10-20  David Hyatt  <hyatt@apple.com>
 
         Move Length to platform/.

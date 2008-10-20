@@ -410,6 +410,7 @@ namespace JSC {
         bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval; }
 
         bool m_shouldEmitDebugHooks;
+        bool m_shouldEmitProfileHooks;
 
         const ScopeChain* m_scopeChain;
         SymbolTable* m_symbolTable;

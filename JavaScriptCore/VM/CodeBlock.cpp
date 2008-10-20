@@ -911,13 +911,19 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] debug\t\t %s, %d, %d\n", location, debugHookName(debugHookID), firstLine, lastLine);
             break;
         }
+        case op_profile_will_call: {
+            int function = (++it)->u.operand;
+            printf("[%4d] profile_will_call %s\n", location, registerName(function).c_str());
+            break;
+        }
+        case op_profile_did_call: {
+            int function = (++it)->u.operand;
+            printf("[%4d] profile_did_call\t %s\n", location, registerName(function).c_str());
+            break;
+        }
         case op_end: {
             int r0 = (++it)->u.operand;
             printf("[%4d] end\t\t %s\n", location, registerName(r0).c_str());
-            break;
-        }
-        default: {
-            ASSERT_NOT_REACHED();
             break;
         }
     }

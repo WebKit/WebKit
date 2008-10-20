@@ -345,12 +345,12 @@
 
 // CTI only supports x86 at the moment, and has only been tested on Mac and Windows.
 #if !defined(ENABLE_CTI) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
-#define ENABLE_CTI 1
+#define ENABLE_CTI 0
 #endif
 
 // WREC only supports x86 at the moment, and has only been tested on Mac and Windows.
 #if !defined(ENABLE_WREC) && ENABLE(CTI) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
-#define ENABLE_WREC 1
+#define ENABLE_WREC 0
 #endif
 
 #if ENABLE(CTI) || ENABLE(WREC)

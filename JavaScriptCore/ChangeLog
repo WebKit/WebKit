@@ -1,3 +1,89 @@
+2008-10-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21735
+        Emit profiling instrumentation only if the Web Inspector's profiling
+        feature is enabled
+
+        22.2% speedup on empty function call benchmark.
+        2.9% speedup on v8 benchmark.
+        0.7% speedup on SunSpider.
+        
+        Lesser but similar speedups in bytecode.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases): Nixed JITed profiler hooks. Profiler
+        hooks now have their own opcodes. Added support for compiling profiler
+        hook opcodes.
+        
+        (JSC::CodeBlock::dump): Dump support for the new profiling opcodes.
+
+        * VM/CodeGenerator.h:
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitConstruct): Conditionally emit profiling hooks
+        around call and construct, at the call site. (It's easier to get things
+        right this way, if you have profiled code calling non-profiled code.
+        Also, you get a slightly more accurate profile, since you charge the full
+        cost of the call / construct operation to the callee.)
+        
+        Also, fixed a bug where construct would fetch the ".prototype" property
+        from the constructor before evaluating the arguments to the constructor,
+        incorrectly allowing an "invalid constructor" exception to short-circuit
+        argument evaluation. I encountered this bug when trying to make
+        constructor exceptions work with profiling.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::callEval): Removed obsolete profiler hooks.
+
+        (JSC::Machine::throwException): Added a check for an exception thrown
+        within a call instruction. We didn't need this before because the call
+        instruction would check for a valid call before involing the profiler.
+        (JSC::Machine::execute): Added a didExecute hook at the end of top-level
+        function invocation, since op_ret no longer does this for us.
+
+        (JSC::Machine::privateExecute): Removed obsolete profiler hooks. Added
+        profiler opcodes. Changed some ++vPC to vPC[x] notation, since the
+        latter is better for performance, and it makes reasoning about the
+        current opcode in exception handling much simpler.
+
+        (JSC::Machine::cti_op_call_NotJSFunction): Removed obsolete profiler
+        hooks.
+
+        (JSC::Machine::cti_op_create_arguments_no_params): Added missing
+        CTI_STACK_HACK that I noticed when adding CTI_STACK_HACK to the new
+        profiler opcode functions.
+
+        (JSC::Machine::cti_op_profile_will_call):
+        (JSC::Machine::cti_op_profile_did_call): The new profiler opcode
+        functions.
+
+        (JSC::Machine::cti_op_construct_NotJSConstruct): Removed obsolete profiler
+        hooks.
+
+        * VM/Machine.h:
+        (JSC::Machine::isCallOpcode): Helper for exception handling.
+
+        * VM/Opcode.h: Declare new opcodes.
+
+        * kjs/JSGlobalObject.h:
+        (JSC::JSGlobalObject::supportsProfiling): Added virtual interface that
+        allows WebCore to specify whether the target global object has the Web
+        Inspector's profiling feature enabled.
+
+        * profiler/Profiler.cpp:
+        (JSC::Profiler::willExecute):
+        (JSC::Profiler::didExecute):
+        (JSC::Profiler::createCallIdentifier):
+        * profiler/Profiler.h: Added support for invoking the profiler with
+        an arbitrary JSValue*, and not a known object. We didn't need this
+        before because the call instruction would check for a valid call before
+        involing the profiler.
+
 2008-10-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.
