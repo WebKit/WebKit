@@ -544,7 +544,7 @@ if test "$with_http_backend" = "curl"; then
    PKG_CHECK_MODULES([LIBCURL],
                      [libcurl >= $LIBCURL_REQUIRED_VERSION])
    if test "$os_win32" = "yes"; then
-      LIBCURL_LIBS="$LIBCURL_LIBS -lWs2_32"
+      LIBCURL_LIBS="$LIBCURL_LIBS -lws2_32"
    fi
    AC_SUBST([LIBCURL_CFLAGS])
    AC_SUBST([LIBCURL_LIBS])
