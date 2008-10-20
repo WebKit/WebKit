@@ -1,3 +1,13 @@
+2008-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - fix assertion seen when opening inspector
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::getOwnPropertySlot):
+        Removed unneeded asObject cast.
+
 2008-10-19  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Timothy Hatcher.
