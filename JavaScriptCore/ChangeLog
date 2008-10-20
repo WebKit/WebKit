@@ -1,5 +1,11 @@
 2008-10-20  Darin Adler  <darin@apple.com>
 
+        - another similar Windows build fix
+
+        * VM/CTI.cpp: Changed return type to JSObject* instead of JSValuePtr.
+
+2008-10-20  Darin Adler  <darin@apple.com>
+
         - try to fix Windows build
 
         * VM/CTI.cpp: Use JSValue* instead of JSValuePtr for ctiTrampoline.
