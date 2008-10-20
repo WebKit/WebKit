@@ -1,3 +1,28 @@
+2008-10-19  Timothy Hatcher  <timothy@apple.com>
+
+        Show per resource times and sizes when hovering over the bar graph for a resource.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14300
+        rdar://problem/5712802
+
+        Reviewed by Cameron Zwarich.
+
+        * English.lproj/localizedStrings.js: Add new strings.
+        * inspector/front-end/Images/graphLabelCalloutLeft.png: Added.
+        * inspector/front-end/Images/graphLabelCalloutRight.png: Added.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.refreshResource): Pass the calculator to the
+        ResourceGraph.refresh function.
+        (WebInspector.ResourceCalculator.prototype.computeBarGraphLabels): Default implementation
+        returns the formatted value.
+        (WebInspector.ResourceTimeCalculator.prototype.computeBarGraphLabels): Return discrete values
+        for the latency and download times. Also generate a custom tooltip.
+        (WebInspector.ResourceGraph): Add a mouseover event listener that calls refreshLabelPositions.
+        (WebInspector.ResourceGraph.prototype.refreshLabelPositions): Added. Updates the label positions
+        in case the bar has changed size.
+        (WebInspector.ResourceGraph.prototype.refresh): Set the label text and tooltips.
+        * inspector/front-end/inspector.css: New styles for the labels.
+
 2008-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

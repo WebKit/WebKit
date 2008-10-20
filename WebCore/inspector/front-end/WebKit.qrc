@@ -77,6 +77,8 @@
     <file>Images/glossyHeaderSelected.png</file>
     <file>Images/glossyHeaderSelectedPressed.png</file>
     <file>Images/goArrow.png</file>
+    <file>Images/graphLabelCalloutLeft.png</file>
+    <file>Images/graphLabelCalloutRight.png</file>
     <file>Images/largerResourcesButtons.png</file>
     <file>Images/nodeSearchButtons.png</file>
     <file>Images/paneBottomGrowActive.png</file>

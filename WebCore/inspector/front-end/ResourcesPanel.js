@@ -455,10 +455,7 @@ WebInspector.ResourcesPanel.prototype = {
             return;
 
         resource._resourcesTreeElement.refresh();
-
-        var percentages = this.calculator.computeBarGraphPercentages(resource);
-
-        resource._resourcesTreeElement._resourceGraph.refresh(percentages);
+        resource._resourcesTreeElement._resourceGraph.refresh(this.calculator);
     },
 
     recreateViewForResourceIfNeeded: function(resource)
@@ -1180,6 +1177,12 @@ WebInspector.ResourceCalculator.prototype = {
         return {start: 0, middle: 0, end: (this._value(resource) / this.boundarySpan) * 100};
     },
 
+    computeBarGraphLabels: function(resource)
+    {
+        const label = this.formatValue(this._value(resource));
+        return {left: label, right: label, tooltip: label};
+    },
+
     get boundarySpan()
     {
         return this.maximumBoundary - this.minimumBoundary;
@@ -1301,6 +1304,27 @@ WebInspector.ResourceTimeCalculator.prototype = {
         }
 
         return {start: start, middle: middle, end: end};
+    },
+
+    computeBarGraphLabels: function(resource)
+    {
+        var leftLabel = "";
+        if (resource.latency > 0)
+            leftLabel = this.formatValue(resource.latency);
+
+        var rightLabel = "";
+        if (resource.responseReceivedTime !== -1 && resource.endTime !== -1)
+            rightLabel = this.formatValue(resource.endTime - resource.responseReceivedTime);
+
+        if (leftLabel && rightLabel) {
+            var total = this.formatValue(resource.duration);
+            var tooltip = WebInspector.UIString("%s latency, %s download (%s total)", leftLabel, rightLabel, total);
+        } else if (leftLabel)
+            var tooltip = WebInspector.UIString("%s latency", leftLabel);
+        else if (rightLabel)
+            var tooltip = WebInspector.UIString("%s download", rightLabel);
+
+        return {left: leftLabel, right: rightLabel, tooltip: tooltip};
     },
 
     updateBoundries: function(resource)
@@ -1570,6 +1594,7 @@ WebInspector.ResourceGraph = function(resource)
 
     this._graphElement = document.createElement("div");
     this._graphElement.className = "resources-graph-side";
+    this._graphElement.addEventListener("mouseover", this.refreshLabelPositions.bind(this), false);
 
     this._barAreaElement = document.createElement("div");
     this._barAreaElement.className = "resources-graph-bar-area";
@@ -1583,6 +1608,14 @@ WebInspector.ResourceGraph = function(resource)
     this._barRightElement.className = "resources-graph-bar";
     this._barAreaElement.appendChild(this._barRightElement);
 
+    this._labelLeftElement = document.createElement("div");
+    this._labelLeftElement.className = "resources-graph-label waiting";
+    this._barAreaElement.appendChild(this._labelLeftElement);
+
+    this._labelRightElement = document.createElement("div");
+    this._labelRightElement.className = "resources-graph-label";
+    this._barAreaElement.appendChild(this._labelRightElement);
+
     this._graphElement.addStyleClass("resources-category-" + resource.category.name);
 }
 
@@ -1592,8 +1625,53 @@ WebInspector.ResourceGraph.prototype = {
         return this._graphElement;
     },
 
-    refresh: function(percentages)
+    refreshLabelPositions: function()
     {
+        this._labelLeftElement.style.removeProperty("left");
+        this._labelLeftElement.style.removeProperty("right");
+        this._labelLeftElement.removeStyleClass("before");
+        this._labelLeftElement.removeStyleClass("hidden");
+
+        this._labelRightElement.style.removeProperty("left");
+        this._labelRightElement.style.removeProperty("right");
+        this._labelRightElement.removeStyleClass("after");
+        this._labelRightElement.removeStyleClass("hidden");
+
+        const labelPadding = 10;
+        const rightBarWidth = (this._barRightElement.offsetWidth - labelPadding);
+        const leftBarWidth = ((this._barLeftElement.offsetWidth - this._barRightElement.offsetWidth) - labelPadding);
+
+        var labelBefore = (this._labelLeftElement.offsetWidth > leftBarWidth);
+        var labelAfter = (this._labelRightElement.offsetWidth > rightBarWidth);
+
+        if (labelBefore) {
+            if ((this._graphElement.offsetWidth * (this._percentages.start / 100)) < (this._labelLeftElement.offsetWidth + 10))
+                this._labelLeftElement.addStyleClass("hidden");
+            this._labelLeftElement.style.setProperty("right", (100 - this._percentages.start) + "%");
+            this._labelLeftElement.addStyleClass("before");
+        } else {
+            this._labelLeftElement.style.setProperty("left", this._percentages.start + "%");
+            this._labelLeftElement.style.setProperty("right", (100 - this._percentages.middle) + "%");
+        }
+
+        if (labelAfter) {
+            if ((this._graphElement.offsetWidth * ((100 - this._percentages.end) / 100)) < (this._labelRightElement.offsetWidth + 10))
+                this._labelRightElement.addStyleClass("hidden");
+            this._labelRightElement.style.setProperty("left", this._percentages.end + "%");
+            this._labelRightElement.addStyleClass("after");
+        } else {
+            this._labelRightElement.style.setProperty("left", this._percentages.middle + "%");
+            this._labelRightElement.style.setProperty("right", (100 - this._percentages.end) + "%");
+        }
+    },
+
+    refresh: function(calculator)
+    {
+        var percentages = calculator.computeBarGraphPercentages(this.resource);
+        var labels = calculator.computeBarGraphLabels(this.resource);
+
+        this._percentages = percentages;
+
         if (!this._graphElement.hasStyleClass("resources-category-" + this.resource.category.name)) {
             this._graphElement.removeMatchingStyleClasses("resources-category-\\w+");
             this._graphElement.addStyleClass("resources-category-" + this.resource.category.name);
@@ -1604,5 +1682,14 @@ WebInspector.ResourceGraph.prototype = {
 
         this._barRightElement.style.setProperty("left", percentages.middle + "%");
         this._barRightElement.style.setProperty("right", (100 - percentages.end) + "%");
+
+        this._labelLeftElement.textContent = labels.left;
+        this._labelRightElement.textContent = labels.right;
+
+        var tooltip = (labels.tooltip || "");
+        this._barLeftElement.title = tooltip;
+        this._labelLeftElement.title = tooltip;
+        this._labelRightElement.title = tooltip;
+        this._barRightElement.title = tooltip;
     }
 }

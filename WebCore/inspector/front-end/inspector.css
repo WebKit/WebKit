@@ -2118,10 +2118,6 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     margin-right: 3px;
 }
 
-.resources-summary-graph {
-    vertical-align: middle;
-}
-
 #resources-dividers {
     position: absolute;
     left: 0;
@@ -2164,12 +2160,68 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     white-space: nowrap;
 }
 
+.resources-graph-label {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto -7px;
+    height: 13px;
+    line-height: 13px;
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.75);
+    text-shadow: rgba(255, 255, 255, 0.65) 0 1px 0;
+    z-index: 150;
+    overflow: hidden;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0;
+    -webkit-transition: opacity 250ms ease-in-out;
+}
+
+.resources-graph-side:hover .resources-graph-label {
+    opacity: 1;
+}
+
+.resources-graph-label:empty {
+    display: none;
+}
+
+.resources-graph-label.waiting {
+    margin-right: 5px;
+}
+
+.resources-graph-label.before {
+    color: rgba(0, 0, 0, 0.7);
+    text-shadow: none;
+    text-align: right;
+    margin-right: 2px;
+}
+
+.resources-graph-label.before::after {
+    padding-left: 2px;
+    height: 6px;
+    content: url(Images/graphLabelCalloutLeft.png);
+}
+
+.resources-graph-label.after {
+    color: rgba(0, 0, 0, 0.7);
+    text-shadow: none;
+    text-align: left;
+    margin-left: 2px;
+}
+
+.resources-graph-label.after::before {
+    padding-right: 2px;
+    height: 6px;
+    content: url(Images/graphLabelCalloutRight.png);
+}
+
 .resources-graph-bar {
     position: absolute;
     top: 0;
     bottom: 0;
     margin: auto -7px;
-    border-width: 6px 7px 6px 7px;
+    border-width: 6px 7px;
     height: 13px;
     min-width: 14px;
     opacity: 0.65;
@@ -2437,7 +2489,6 @@ body.inactive .sidebar-tree-item.selected .status .bubble {
 
 .sidebar-tree.small .sidebar-tree-item, .sidebar-tree .children.small .sidebar-tree-item, .sidebar-tree-item.small, .small .resources-graph-side {
     height: 20px;
-    line-height: 18px;
 }
 
 .sidebar-tree.small .sidebar-tree-item .icon, .sidebar-tree .children.small .sidebar-tree-item .icon, .sidebar-tree-item.small .icon {
@@ -2512,17 +2563,16 @@ body.inactive .sidebar-tree-item.selected {
     right: 0;
     max-height: 100%;
     top: 112px;
-    z-index: -100;
 }
 
 .resources-graph-side {
     position: relative;
     height: 36px;
-    padding: 0 5px 0 5px;
+    padding: 0 5px;
     white-space: nowrap;
     margin-top: 1px;
-    line-height: 34px;
     border-top: 1px solid transparent;
+    overflow: hidden;
 }
 
 .resources-graph-bar-area {
