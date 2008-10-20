@@ -77,7 +77,7 @@ private:
     QObject* m_hashkey;
     mutable QHash<QByteArray, JSObject*> m_methods;
     mutable QHash<QString, QtField*> m_fields;
-    mutable QSet<JSValuePtr> m_children;
+    mutable QSet<JSValue*> m_children;
     mutable QtRuntimeMetaMethod* m_defaultMethod;
 };
 
