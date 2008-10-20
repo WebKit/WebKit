@@ -1,3 +1,9 @@
+2008-10-20  Alp Toker  <alp@nuanti.com>
+
+        Remove unused includes only. Partial GTK+/Win build fix.
+
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+
 2008-10-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.
