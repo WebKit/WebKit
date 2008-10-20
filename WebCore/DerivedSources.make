@@ -77,6 +77,7 @@ DOM_CLASSES = \
     DOMParser \
     DOMSelection \
     DOMWindow \
+    DedicatedWorker \
     Database \
     Document \
     DocumentFragment \
