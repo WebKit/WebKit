@@ -319,8 +319,6 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
                     else if (value.file() && !value.file()->path().isEmpty())
                         result->appendFile(value.file()->path(), shouldGenerateFile);
                     result->appendData("\r\n", 2);
-
-                    ++j;
                 }
             }
         }

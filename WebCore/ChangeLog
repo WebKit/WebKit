@@ -1,3 +1,10 @@
+2008-10-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::formData):
+        Removed stray increment that would screw up any form with multiple files in it.
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by David Hyatt.
