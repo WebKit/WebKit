@@ -5336,21 +5336,21 @@ void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
     LengthBox& l = image.m_slices;
     Rect* r = borderImage->m_imageSliceRect.get();
     if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.top = Length(r->top()->getDoubleValue(), Percent);
+        l.m_top = Length(r->top()->getDoubleValue(), Percent);
     else
-        l.top = Length(r->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        l.m_top = Length(r->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (r->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.bottom = Length(r->bottom()->getDoubleValue(), Percent);
+        l.m_bottom = Length(r->bottom()->getDoubleValue(), Percent);
     else
-        l.bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        l.m_bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (r->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.left = Length(r->left()->getDoubleValue(), Percent);
+        l.m_left = Length(r->left()->getDoubleValue(), Percent);
     else
-        l.left = Length(r->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        l.m_left = Length(r->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (r->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.right = Length(r->right()->getDoubleValue(), Percent);
+        l.m_right = Length(r->right()->getDoubleValue(), Percent);
     else
-        l.right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        l.m_right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     
     // Set the appropriate rules for stretch/round/repeat of the slices
     switch (borderImage->m_horizontalSizeRule) {

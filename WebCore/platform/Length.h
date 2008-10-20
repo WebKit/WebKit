@@ -194,25 +194,20 @@ private:
 struct LengthBox {
     LengthBox() { }
     LengthBox(LengthType t)
-        : left(t), right(t), top(t), bottom(t) { }
+        : m_left(t)
+        , m_right(t)
+        , m_top(t)
+        , m_bottom(t)
+    { }
 
-    Length left;
-    Length right;
-    Length top;
-    Length bottom;
-
-    LengthBox& operator=(const Length& len)
-    {
-        left = len;
-        right = len;
-        top = len;
-        bottom = len;
-        return *this;
-    }
+    Length left() const { return m_left; }
+    Length right() const { return m_right; }
+    Length top() const { return m_top; }
+    Length bottom() const { return m_bottom; }
 
     bool operator==(const LengthBox& o) const
     {
-        return left == o.left && right == o.right && top == o.top && bottom == o.bottom;
+        return m_left == o.m_left && m_right == o.m_right && m_top == o.m_top && m_bottom == o.m_bottom;
     }
 
     bool operator!=(const LengthBox& o) const
@@ -220,7 +215,12 @@ struct LengthBox {
         return !(*this == o);
     }
 
-    bool nonZero() const { return !(left.isZero() && right.isZero() && top.isZero() && bottom.isZero()); }
+    bool nonZero() const { return !(m_left.isZero() && m_right.isZero() && m_top.isZero() && m_bottom.isZero()); }
+    
+    Length m_left;
+    Length m_right;
+    Length m_top;
+    Length m_bottom;
 };
 
 struct LengthSize {

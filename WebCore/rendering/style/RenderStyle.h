@@ -344,10 +344,10 @@ public:
     EDisplay display() const { return static_cast<EDisplay>(noninherited_flags._effectiveDisplay); }
     EDisplay originalDisplay() const { return static_cast<EDisplay>(noninherited_flags._originalDisplay); }
 
-    Length left() const { return surround->offset.left; }
-    Length right() const { return surround->offset.right; }
-    Length top() const { return surround->offset.top; }
-    Length bottom() const { return surround->offset.bottom; }
+    Length left() const { return surround->offset.left(); }
+    Length right() const { return surround->offset.right(); }
+    Length top() const { return surround->offset.top(); }
+    Length bottom() const { return surround->offset.bottom(); }
 
     EPosition position() const { return static_cast<EPosition>(noninherited_flags._position); }
     EFloat floating() const { return static_cast<EFloat>(noninherited_flags._floating); }
@@ -409,10 +409,10 @@ public:
     EVerticalAlign verticalAlign() const { return static_cast<EVerticalAlign>(noninherited_flags._vertical_align); }
     Length verticalAlignLength() const { return box->vertical_align; }
 
-    Length clipLeft() const { return visual->clip.left; }
-    Length clipRight() const { return visual->clip.right; }
-    Length clipTop() const { return visual->clip.top; }
-    Length clipBottom() const { return visual->clip.bottom; }
+    Length clipLeft() const { return visual->clip.left(); }
+    Length clipRight() const { return visual->clip.right(); }
+    Length clipTop() const { return visual->clip.top(); }
+    Length clipBottom() const { return visual->clip.bottom(); }
     LengthBox clip() const { return visual->clip; }
     bool hasClip() const { return visual->hasClip; }
 
@@ -536,15 +536,15 @@ public:
     StyleImage* listStyleImage() const { return inherited->list_style_image.get(); }
     EListStylePosition listStylePosition() const { return static_cast<EListStylePosition>(inherited_flags._list_style_position); }
 
-    Length marginTop() const { return surround->margin.top; }
-    Length marginBottom() const { return surround->margin.bottom; }
-    Length marginLeft() const { return surround->margin.left; }
-    Length marginRight() const { return surround->margin.right; }
+    Length marginTop() const { return surround->margin.top(); }
+    Length marginBottom() const { return surround->margin.bottom(); }
+    Length marginLeft() const { return surround->margin.left(); }
+    Length marginRight() const { return surround->margin.right(); }
 
-    Length paddingTop() const { return surround->padding.top; }
-    Length paddingBottom() const { return surround->padding.bottom; }
-    Length paddingLeft() const { return surround->padding.left; }
-    Length paddingRight() const { return surround->padding.right; }
+    Length paddingTop() const { return surround->padding.top(); }
+    Length paddingBottom() const { return surround->padding.bottom(); }
+    Length paddingLeft() const { return surround->padding.left(); }
+    Length paddingRight() const { return surround->padding.right(); }
 
     ECursor cursor() const { return static_cast<ECursor>(inherited_flags._cursor_style); }
 
@@ -649,10 +649,10 @@ public:
     void setPosition(EPosition v) { noninherited_flags._position = v; }
     void setFloating(EFloat v) { noninherited_flags._floating = v; }
 
-    void setLeft(Length v) { SET_VAR(surround, offset.left, v) }
-    void setRight(Length v) { SET_VAR(surround, offset.right, v) }
-    void setTop(Length v) { SET_VAR(surround, offset.top, v) }
-    void setBottom(Length v) { SET_VAR(surround, offset.bottom, v) }
+    void setLeft(Length v) { SET_VAR(surround, offset.m_left, v) }
+    void setRight(Length v) { SET_VAR(surround, offset.m_right, v) }
+    void setTop(Length v) { SET_VAR(surround, offset.m_top, v) }
+    void setBottom(Length v) { SET_VAR(surround, offset.m_bottom, v) }
 
     void setWidth(Length v) { SET_VAR(box, width, v) }
     void setHeight(Length v) { SET_VAR(box, height, v) }
@@ -670,10 +670,10 @@ public:
     {
         StyleDashboardRegion region;
         region.label = label;
-        region.offset.top = t;
-        region.offset.right = r;
-        region.offset.bottom = b;
-        region.offset.left = l;
+        region.offset.m_top = t;
+        region.offset.m_right = r;
+        region.offset.m_bottom = b;
+        region.offset.m_left = l;
         region.type = type;
         if (!append)
             rareNonInheritedData.access()->m_dashboardRegions.clear();
@@ -741,11 +741,11 @@ public:
     void setVerticalAlignLength(Length l) { SET_VAR(box, vertical_align, l ) }
 
     void setHasClip(bool b = true) { SET_VAR(visual, hasClip, b) }
-    void setClipLeft(Length v) { SET_VAR(visual, clip.left, v) }
-    void setClipRight(Length v) { SET_VAR(visual, clip.right, v) }
-    void setClipTop(Length v) { SET_VAR(visual, clip.top, v) }
-    void setClipBottom(Length v) { SET_VAR(visual, clip.bottom, v) }
-    void setClip( Length top, Length right, Length bottom, Length left );
+    void setClipLeft(Length v) { SET_VAR(visual, clip.m_left, v) }
+    void setClipRight(Length v) { SET_VAR(visual, clip.m_right, v) }
+    void setClipTop(Length v) { SET_VAR(visual, clip.m_top, v) }
+    void setClipBottom(Length v) { SET_VAR(visual, clip.m_bottom, v) }
+    void setClip(Length top, Length right, Length bottom, Length left);
 
     void setUnicodeBidi( EUnicodeBidi b ) { noninherited_flags._unicodeBidi = b; }
 
@@ -819,16 +819,16 @@ public:
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)) }
-    void setMarginTop(Length v) { SET_VAR(surround, margin.top, v) }
-    void setMarginBottom(Length v) { SET_VAR(surround, margin.bottom, v) }
-    void setMarginLeft(Length v) { SET_VAR(surround, margin.left, v) }
-    void setMarginRight(Length v) { SET_VAR(surround, margin.right, v) }
+    void setMarginTop(Length v) { SET_VAR(surround, margin.m_top, v) }
+    void setMarginBottom(Length v) { SET_VAR(surround, margin.m_bottom, v) }
+    void setMarginLeft(Length v) { SET_VAR(surround, margin.m_left, v) }
+    void setMarginRight(Length v) { SET_VAR(surround, margin.m_right, v) }
 
     void resetPadding() { SET_VAR(surround, padding, LengthBox(Auto)) }
-    void setPaddingTop(Length v) { SET_VAR(surround, padding.top, v) }
-    void setPaddingBottom(Length v) { SET_VAR(surround, padding.bottom, v) }
-    void setPaddingLeft(Length v) { SET_VAR(surround, padding.left, v) }
-    void setPaddingRight(Length v) { SET_VAR(surround, padding.right, v) }
+    void setPaddingTop(Length v) { SET_VAR(surround, padding.m_top, v) }
+    void setPaddingBottom(Length v) { SET_VAR(surround, padding.m_bottom, v) }
+    void setPaddingLeft(Length v) { SET_VAR(surround, padding.m_left, v) }
+    void setPaddingRight(Length v) { SET_VAR(surround, padding.m_right, v) }
 
     void setCursor( ECursor c ) { inherited_flags._cursor_style = c; }
     void addCursor(CachedImage*, const IntPoint& = IntPoint());

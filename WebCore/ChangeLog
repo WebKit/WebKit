@@ -1,3 +1,65 @@
+2008-10-20  David Hyatt  <hyatt@apple.com>
+
+        Rename LengthBox's members to have m_ in front of them.
+
+        Reviewed by Sam Weinig
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImage):
+        (WebCore::getPositionOffsetValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        * platform/Length.h:
+        (WebCore::LengthBox::LengthBox):
+        (WebCore::LengthBox::left):
+        (WebCore::LengthBox::right):
+        (WebCore::LengthBox::top):
+        (WebCore::LengthBox::bottom):
+        (WebCore::LengthBox::operator==):
+        (WebCore::LengthBox::nonZero):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintNinePieceImage):
+        (WebCore::RenderObject::addDashboardRegions):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::positionedObjectMoved):
+        (WebCore::RenderStyle::setClip):
+        (WebCore::RenderStyle::noneDashboardRegions):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::left):
+        (WebCore::InheritedFlags::right):
+        (WebCore::InheritedFlags::top):
+        (WebCore::InheritedFlags::bottom):
+        (WebCore::InheritedFlags::clipLeft):
+        (WebCore::InheritedFlags::clipRight):
+        (WebCore::InheritedFlags::clipTop):
+        (WebCore::InheritedFlags::clipBottom):
+        (WebCore::InheritedFlags::marginTop):
+        (WebCore::InheritedFlags::marginBottom):
+        (WebCore::InheritedFlags::marginLeft):
+        (WebCore::InheritedFlags::marginRight):
+        (WebCore::InheritedFlags::paddingTop):
+        (WebCore::InheritedFlags::paddingBottom):
+        (WebCore::InheritedFlags::paddingLeft):
+        (WebCore::InheritedFlags::paddingRight):
+        (WebCore::InheritedFlags::setLeft):
+        (WebCore::InheritedFlags::setRight):
+        (WebCore::InheritedFlags::setTop):
+        (WebCore::InheritedFlags::setBottom):
+        (WebCore::InheritedFlags::setDashboardRegion):
+        (WebCore::InheritedFlags::setClipLeft):
+        (WebCore::InheritedFlags::setClipRight):
+        (WebCore::InheritedFlags::setClipTop):
+        (WebCore::InheritedFlags::setClipBottom):
+        (WebCore::InheritedFlags::setMarginTop):
+        (WebCore::InheritedFlags::setMarginBottom):
+        (WebCore::InheritedFlags::setMarginLeft):
+        (WebCore::InheritedFlags::setMarginRight):
+        (WebCore::InheritedFlags::setPaddingTop):
+        (WebCore::InheritedFlags::setPaddingBottom):
+        (WebCore::InheritedFlags::setPaddingLeft):
+        (WebCore::InheritedFlags::setPaddingRight):
+
 2008-10-20  Timothy Hatcher  <timothy@apple.com>
 
         Make the Resource panel perform graph updates atomically, so when resources

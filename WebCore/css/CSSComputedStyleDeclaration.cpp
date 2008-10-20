@@ -288,28 +288,28 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     
     // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
-    if (image.m_slices.top.isPercent())
-        top = CSSPrimitiveValue::create(image.m_slices.top.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (image.m_slices.top().isPercent())
+        top = CSSPrimitiveValue::create(image.m_slices.top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        top = CSSPrimitiveValue::create(image.m_slices.top.value(), CSSPrimitiveValue::CSS_NUMBER);
+        top = CSSPrimitiveValue::create(image.m_slices.top().value(), CSSPrimitiveValue::CSS_NUMBER);
         
     RefPtr<CSSPrimitiveValue> right;
-    if (image.m_slices.right.isPercent())
-        right = CSSPrimitiveValue::create(image.m_slices.right.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (image.m_slices.right().isPercent())
+        right = CSSPrimitiveValue::create(image.m_slices.right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        right = CSSPrimitiveValue::create(image.m_slices.right.value(), CSSPrimitiveValue::CSS_NUMBER);
+        right = CSSPrimitiveValue::create(image.m_slices.right().value(), CSSPrimitiveValue::CSS_NUMBER);
         
     RefPtr<CSSPrimitiveValue> bottom;
-    if (image.m_slices.bottom.isPercent())
-        bottom = CSSPrimitiveValue::create(image.m_slices.bottom.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (image.m_slices.bottom().isPercent())
+        bottom = CSSPrimitiveValue::create(image.m_slices.bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        bottom = CSSPrimitiveValue::create(image.m_slices.bottom.value(), CSSPrimitiveValue::CSS_NUMBER);
+        bottom = CSSPrimitiveValue::create(image.m_slices.bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
     
     RefPtr<CSSPrimitiveValue> left;
-    if (image.m_slices.left.isPercent())
-        left = CSSPrimitiveValue::create(image.m_slices.left.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+    if (image.m_slices.left().isPercent())
+        left = CSSPrimitiveValue::create(image.m_slices.left().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        left = CSSPrimitiveValue::create(image.m_slices.left.value(), CSSPrimitiveValue::CSS_NUMBER);
+        left = CSSPrimitiveValue::create(image.m_slices.left().value(), CSSPrimitiveValue::CSS_NUMBER);
 
     RefPtr<Rect> rect = Rect::create();
     rect->setTop(top);
@@ -362,7 +362,7 @@ static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, int prope
 
     if (style->position() == RelativePosition)
         // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
-        // In other words if left is auto and right is not auto, then left's computed value is negative right.
+        // In other words if left is auto and right is not auto, then left's computed value is negative right().
         // So we should get the opposite length unit and see if it is auto.
         return CSSPrimitiveValue::create(l);
 
@@ -987,10 +987,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 
                 region->m_label = styleRegion.label;
                 LengthBox offset = styleRegion.offset;
-                region->setTop(CSSPrimitiveValue::create(offset.top.value(), CSSPrimitiveValue::CSS_PX));
-                region->setRight(CSSPrimitiveValue::create(offset.right.value(), CSSPrimitiveValue::CSS_PX));
-                region->setBottom(CSSPrimitiveValue::create(offset.bottom.value(), CSSPrimitiveValue::CSS_PX));
-                region->setLeft(CSSPrimitiveValue::create(offset.left.value(), CSSPrimitiveValue::CSS_PX));
+                region->setTop(CSSPrimitiveValue::create(offset.top().value(), CSSPrimitiveValue::CSS_PX));
+                region->setRight(CSSPrimitiveValue::create(offset.right().value(), CSSPrimitiveValue::CSS_PX));
+                region->setBottom(CSSPrimitiveValue::create(offset.bottom().value(), CSSPrimitiveValue::CSS_PX));
+                region->setLeft(CSSPrimitiveValue::create(offset.left().value(), CSSPrimitiveValue::CSS_PX));
                 region->m_isRectangle = (styleRegion.type == StyleDashboardRegion::Rectangle);
                 region->m_isCircle = (styleRegion.type == StyleDashboardRegion::Circle);
 
@@ -1036,10 +1036,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         {
             if (style->hasClip()) {
                 RefPtr<Rect> rect = Rect::create();
-                rect->setTop(CSSPrimitiveValue::create(style->clip().top.value(), CSSPrimitiveValue::CSS_PX));
-                rect->setRight(CSSPrimitiveValue::create(style->clip().right.value(), CSSPrimitiveValue::CSS_PX));
-                rect->setBottom(CSSPrimitiveValue::create(style->clip().bottom.value(), CSSPrimitiveValue::CSS_PX));
-                rect->setLeft(CSSPrimitiveValue::create(style->clip().left.value(), CSSPrimitiveValue::CSS_PX));
+                rect->setTop(CSSPrimitiveValue::create(style->clip().top().value(), CSSPrimitiveValue::CSS_PX));
+                rect->setRight(CSSPrimitiveValue::create(style->clip().right().value(), CSSPrimitiveValue::CSS_PX));
+                rect->setBottom(CSSPrimitiveValue::create(style->clip().bottom().value(), CSSPrimitiveValue::CSS_PX));
+                rect->setLeft(CSSPrimitiveValue::create(style->clip().left().value(), CSSPrimitiveValue::CSS_PX));
                 return CSSPrimitiveValue::create(rect.release());
             }
             return 0;

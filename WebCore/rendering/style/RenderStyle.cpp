@@ -236,18 +236,18 @@ bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
 {
     // If any unit types are different, then we can't guarantee
     // that this was just a movement.
-    if (a.left.type() != b.left.type() ||
-        a.right.type() != b.right.type() ||
-        a.top.type() != b.top.type() ||
-        a.bottom.type() != b.bottom.type())
+    if (a.left().type() != b.left().type() ||
+        a.right().type() != b.right().type() ||
+        a.top().type() != b.top().type() ||
+        a.bottom().type() != b.bottom().type())
         return false;
 
     // Only one unit can be non-auto in the horizontal direction and
     // in the vertical direction.  Otherwise the adjustment of values
     // is changing the size of the box.
-    if (!a.left.isIntrinsicOrAuto() && !a.right.isIntrinsicOrAuto())
+    if (!a.left().isIntrinsicOrAuto() && !a.right().isIntrinsicOrAuto())
         return false;
-    if (!a.top.isIntrinsicOrAuto() && !a.bottom.isIntrinsicOrAuto())
+    if (!a.top().isIntrinsicOrAuto() && !a.bottom().isIntrinsicOrAuto())
         return false;
 
     // One of the units is fixed or percent in both directions and stayed
@@ -472,13 +472,13 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
     return Equal;
 }
 
-void RenderStyle::setClip( Length top, Length right, Length bottom, Length left )
+void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)
 {
     StyleVisualData *data = visual.access();
-    data->clip.top = top;
-    data->clip.right = right;
-    data->clip.bottom = bottom;
-    data->clip.left = left;
+    data->clip.m_top = top;
+    data->clip.m_right = right;
+    data->clip.m_bottom = bottom;
+    data->clip.m_left = left;
 }
 
 void RenderStyle::addCursor(CachedImage* image, const IntPoint& hotSpot)
@@ -732,10 +732,10 @@ const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
     if (!noneListInitialized) {
         StyleDashboardRegion region;
         region.label = "";
-        region.offset.top  = Length();
-        region.offset.right = Length();
-        region.offset.bottom = Length();
-        region.offset.left = Length();
+        region.offset.m_top  = Length();
+        region.offset.m_right = Length();
+        region.offset.m_bottom = Length();
+        region.offset.m_left = Length();
         region.type = StyleDashboardRegion::None;
         noneList.append(region);
         noneListInitialized = true;
