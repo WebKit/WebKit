@@ -24,8 +24,10 @@
 #if ENABLE(FTPDIR)
 #include "FTPDirectoryParser.h"
 
-// On Win, the threadsafe *_r functions need to be gotten from pthreads. 
-#if COMPILER(MSVC) && USE(PTHREADS)
+#if PLATFORM(QT)
+#include <QDateTime>
+// On Windows, use the threadsafe *_r functions provided by pthread.
+#elif PLATFORM(WIN_OS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
 #include <pthread.h>
 #endif
 
@@ -33,10 +35,6 @@
 #include <stdio.h>
 
 using namespace WTF;
-
-#if PLATFORM(QT)
-#include <QDateTime>
-#endif
 
 namespace WebCore {
 #if PLATFORM(QT) && defined(Q_WS_WIN32)

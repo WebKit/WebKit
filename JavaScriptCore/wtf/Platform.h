@@ -275,6 +275,12 @@
 #define WTF_USE_PTHREADS 1
 #endif
 
+#if PLATFORM(GTK)
+#if HAVE(PTHREAD_H)
+#define WTF_USE_PTHREADS 1
+#endif
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK)
 #define HAVE_ACCESSIBILITY 1
 #endif

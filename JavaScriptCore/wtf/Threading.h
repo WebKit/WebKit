@@ -63,10 +63,6 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(GTK)
-#include <wtf/GOwnPtr.h>
-#endif
-
 #if PLATFORM(WIN_OS)
 #include <windows.h>
 #elif PLATFORM(DARWIN)
@@ -81,9 +77,8 @@
 
 #if USE(PTHREADS)
 #include <pthread.h>
-#endif
-
-#if PLATFORM(GTK)
+#elif PLATFORM(GTK)
+#include <wtf/GOwnPtr.h>
 typedef struct _GMutex GMutex;
 typedef struct _GCond GCond;
 #endif
