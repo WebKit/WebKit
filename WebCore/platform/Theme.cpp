@@ -23,26 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ThemeMac_h
-#define ThemeMac_h
-
+#include "config.h"
 #include "Theme.h"
 
 namespace WebCore {
 
-class ThemeMac : public Theme {
-public:
-    ThemeMac() { }
-    virtual ~ThemeMac() { }
-    
-    virtual int baselinePositionAdjustment(ControlPart) const;
+bool Theme::controlSupportsBorder(ControlPart part) const
+{
+    switch (part) {
+        case PushButtonPart:
+        case MenulistPart:
+        case SearchFieldPart:
+        case CheckboxPart:
+        case RadioPart:
+            return false;
+        default:
+            return true;
+    }
+}
 
-    virtual LengthSize controlSize(ControlPart, const Font&, const LengthSize&, float zoomFactor) const;
-    
-    virtual void paint(ControlPart, ControlStates, GraphicsContext*, const IntRect&, float zoomFactor, ScrollView*) const;
-    virtual void inflateControlPaintRect(ControlPart, ControlStates, IntRect&, float zoomFactor) const;
-};
+bool Theme::controlSupportsPadding(ControlPart part) const
+{
+    switch (part) {
+        case MenulistPart:
+        case MenulistButtonPart:
+        case CheckboxPart:
+        case RadioPart:
+            return false;
+        default:
+            return true;
+    }
+}
 
-} // namespace WebCore
-
-#endif // ThemeMac_h
+}

@@ -1,5 +1,26 @@
 2008-10-20  David Hyatt  <hyatt@apple.com>
 
+        Clean up some USE(NEW_THEME) ifdefs (I botched one of them and have broken non-Mac platforms).  Also
+        refactor some of the code that I put in ThemeMac to be cross-platform, since it was in RenderTheme.cpp
+        originally.
+
+        ifdef some methods in RenderTheme.cpp also that are no longer needed with the new Theme.
+
+        Reviewed by Adam Roben
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Theme.cpp: Added.
+        (WebCore::Theme::controlSupportsBorder):
+        (WebCore::Theme::controlSupportsPadding):
+        * platform/Theme.h:
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/RenderTheme.h:
+
+2008-10-20  David Hyatt  <hyatt@apple.com>
+
         Rename LengthBox's members to have m_ in front of them.
 
         Reviewed by Sam Weinig

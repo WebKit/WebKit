@@ -4022,6 +4022,7 @@
 		BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE659E80EA92FFA007E4533 /* ThemeMac.mm */; };
 		BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE65BE80EACDF16007E4533 /* Length.cpp */; };
 		BCE65BEB0EACDF16007E4533 /* Length.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE65BE90EACDF16007E4533 /* Length.h */; };
+		BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE65D310EAD1211007E4533 /* Theme.cpp */; };
 		BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */; };
 		BCE99EC30DCA624100182683 /* JSXSLTProcessorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE99EC10DCA624100182683 /* JSXSLTProcessorConstructor.cpp */; };
 		BCE99EC40DCA624100182683 /* JSXSLTProcessorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE99EC20DCA624100182683 /* JSXSLTProcessorConstructor.h */; };
@@ -8593,6 +8594,7 @@
 		BCE659E80EA92FFA007E4533 /* ThemeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThemeMac.mm; sourceTree = "<group>"; };
 		BCE65BE80EACDF16007E4533 /* Length.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Length.cpp; sourceTree = "<group>"; };
 		BCE65BE90EACDF16007E4533 /* Length.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Length.h; sourceTree = "<group>"; };
+		BCE65D310EAD1211007E4533 /* Theme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Theme.cpp; sourceTree = "<group>"; };
 		BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHistoryCustom.cpp; sourceTree = "<group>"; };
 		BCE99EC10DCA624100182683 /* JSXSLTProcessorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessorConstructor.cpp; sourceTree = "<group>"; };
 		BCE99EC20DCA624100182683 /* JSXSLTProcessorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessorConstructor.h; sourceTree = "<group>"; };
@@ -13232,6 +13234,7 @@
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				9352071709BD3BA500F2038D /* StaticConstructors.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
+				BCE65D310EAD1211007E4533 /* Theme.cpp */,
 				BCE658FE0EA9248A007E4533 /* Theme.h */,
 				BCE659A80EA927B9007E4533 /* ThemeTypes.h */,
 				51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */,
@@ -17911,6 +17914,7 @@
 				BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
+				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -81,8 +81,8 @@ public:
     
     // The size here is in zoomed coordinates already.  If a new size is returned, it also needs to be in zoomed coordinates.
     virtual LengthSize controlSize(ControlPart, const Font&, const LengthSize& zoomedSize, float zoomFactor) const { return zoomedSize; }
-    virtual bool controlSupportsBorder(ControlPart) const { return true; }
-    virtual bool controlSupportsPadding(ControlPart) const { return true; }
+    virtual bool controlSupportsBorder(ControlPart) const;
+    virtual bool controlSupportsPadding(ControlPart) const;
     
     // Method for painting a control.  The rect is in zoomed coordinates.
     virtual void paint(ControlPart, ControlStates, GraphicsContext*, const IntRect& zoomedRect, float zoomFactor, ScrollView*) const { };

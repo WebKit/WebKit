@@ -311,33 +311,6 @@ LengthSize ThemeMac::controlSize(ControlPart part, const Font& font, const Lengt
     }
 }
 
-bool ThemeMac::controlSupportsBorder(ControlPart part) const
-{
-    switch (part) {
-        case PushButtonPart:
-        case MenulistPart:
-        case SearchFieldPart:
-        case CheckboxPart:
-        case RadioPart:
-            return false;
-        default:
-            return true;
-    }
-}
-
-bool ThemeMac::controlSupportsPadding(ControlPart part) const
-{
-    switch (part) {
-        case MenulistPart:
-        case MenulistButtonPart:
-        case CheckboxPart:
-        case RadioPart:
-            return false;
-        default:
-            return true;
-    }
-}
-
 void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, IntRect& zoomedRect, float zoomFactor) const
 {
     switch (part) {

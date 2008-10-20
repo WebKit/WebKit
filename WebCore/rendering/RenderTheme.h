@@ -139,6 +139,7 @@ public:
     virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return 0; };
 
 protected:
+#if !USE(NEW_THEME)
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
@@ -147,6 +148,7 @@ protected:
     virtual void adjustRadioStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setRadioSize(RenderStyle*) const { }
+#endif
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
