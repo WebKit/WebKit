@@ -2169,7 +2169,7 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     line-height: 13px;
     font-size: 9px;
     color: rgba(0, 0, 0, 0.75);
-    text-shadow: rgba(255, 255, 255, 0.65) 0 1px 0;
+    text-shadow: rgba(255, 255, 255, 0.25) 1px 0 0, rgba(255, 255, 255, 0.25) -1px 0 0, rgba(255, 255, 255, 0.333) 0 1px 0, rgba(255, 255, 255, 0.25) 0 -1px 0;
     z-index: 150;
     overflow: hidden;
     text-align: center;
@@ -2232,28 +2232,56 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     opacity: 0.35;
 }
 
+.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillGray.png) 6 7 6 7;
+}
+
 .resources-category-documents .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillBlue.png) 6 7 6 7;
+}
+
+.resources-category-documents.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillBlue.png) 6 7 6 7;
 }
 
 .resources-category-stylesheets .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillGreen.png) 6 7 6 7;
 }
 
+.resources-category-stylesheets.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillGreen.png) 6 7 6 7;
+}
+
 .resources-category-images .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillPurple.png) 6 7 6 7;
+}
+
+.resources-category-images.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillPurple.png) 6 7 6 7;
 }
 
 .resources-category-fonts .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillRed.png) 6 7 6 7;
 }
 
+.resources-category-fonts.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillRed.png) 6 7 6 7;
+}
+
 .resources-category-scripts .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillOrange.png) 6 7 6 7;
 }
 
+.resources-category-scripts.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillOrange.png) 6 7 6 7;
+}
+
 .resources-category-xhr .resources-graph-bar {
     -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
+}
+
+.resources-category-xhr.resource-cached .resources-graph-bar {
+    -webkit-border-image: url(Images/timelineHollowPillYellow.png) 6 7 6 7;
 }
 
 .tip-button {

@@ -1192,7 +1192,10 @@ WebInspector.ResourceCalculator.prototype = {
     computeBarGraphLabels: function(resource)
     {
         const label = this.formatValue(this._value(resource));
-        return {left: label, right: label, tooltip: label};
+        var tooltip = label;
+        if (resource.cached)
+            tooltip = WebInspector.UIString("%s (from cache)", tooltip);
+        return {left: label, right: label, tooltip: tooltip};
     },
 
     get boundarySpan()
@@ -1335,6 +1338,9 @@ WebInspector.ResourceTimeCalculator.prototype = {
             var tooltip = WebInspector.UIString("%s latency", leftLabel);
         else if (rightLabel)
             var tooltip = WebInspector.UIString("%s download", rightLabel);
+
+        if (resource.cached)
+            tooltip = WebInspector.UIString("%s (from cache)", tooltip);
 
         return {left: leftLabel, right: rightLabel, tooltip: tooltip};
     },
@@ -1607,6 +1613,9 @@ WebInspector.ResourceGraph = function(resource)
     this._graphElement = document.createElement("div");
     this._graphElement.className = "resources-graph-side";
     this._graphElement.addEventListener("mouseover", this.refreshLabelPositions.bind(this), false);
+
+    if (resource.cached)
+        this._graphElement.addStyleClass("resource-cached");
 
     this._barAreaElement = document.createElement("div");
     this._barAreaElement.className = "resources-graph-bar-area";

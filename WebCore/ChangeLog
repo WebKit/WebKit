@@ -1,5 +1,30 @@
 2008-10-19  Timothy Hatcher  <timothy@apple.com>
 
+        Visually distinguish resources that loaded from the memory cache.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14279
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/localizedStrings.js: New string.
+        * inspector/front-end/Images/timelineHollowPillBlue.png: Added.
+        * inspector/front-end/Images/timelineHollowPillGray.png: Added.
+        * inspector/front-end/Images/timelineHollowPillGreen.png: Added.
+        * inspector/front-end/Images/timelineHollowPillOrange.png: Added.
+        * inspector/front-end/Images/timelineHollowPillPurple.png: Added.
+        * inspector/front-end/Images/timelineHollowPillRed.png: Added.
+        * inspector/front-end/Images/timelineHollowPillYellow.png: Added.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceCalculator.prototype.computeBarGraphLabels):
+        Add the "(from cache)" suffix to the tooltip.
+        (WebInspector.ResourceTimeCalculator.prototype.computeBarGraphLabels):
+        Add the "(from cache)" suffix to the tooltip.
+        (WebInspector.ResourceGraph): Add the "resource-cached" class.
+        * inspector/front-end/inspector.css: New styles to make the timeline
+        bars use the hollow pill images.
+
+2008-10-19  Timothy Hatcher  <timothy@apple.com>
+
         Update the scroll position in the Resources panel when loading
         a new page or toggling on small resource rows.
 
