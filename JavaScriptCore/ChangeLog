@@ -1,3 +1,10 @@
+2008-10-20  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * VM/CTI.cpp: Use JSValue* instead of JSValuePtr for ctiTrampoline.
+        * VM/CTI.h: Ditto.
+
 2008-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.

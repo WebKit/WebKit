@@ -230,7 +230,7 @@ namespace JSC {
     };
 
     extern "C" {
-        JSValuePtr ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*);
+        JSValue* ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*);
         void ctiVMThrowTrampoline();
     };
 

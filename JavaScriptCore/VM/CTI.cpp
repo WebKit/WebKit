@@ -131,7 +131,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 
 extern "C" {
     
-    __declspec(naked) JSValuePtr ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*)
+    __declspec(naked) JSValue* ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValuePtr* exception, Profiler**, JSGlobalData*)
     {
         __asm {
             push esi;
