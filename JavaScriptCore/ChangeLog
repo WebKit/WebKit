@@ -1,5 +1,13 @@
 2008-10-20  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::tryCacheGetByID): Removed a redundant and sometimes
+        incorrect cast, which started ASSERTing after Darin's last checkin.
+
+2008-10-20  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Re-enable CTI, which I accidentally disabled while checking in fixes
