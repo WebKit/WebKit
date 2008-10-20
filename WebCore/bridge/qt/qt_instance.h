@@ -34,30 +34,29 @@ class QtClass;
 class QtField;
 class QtRuntimeMetaMethod;
 
-class QtInstance : public Instance
-{
+class QtInstance : public Instance {
 public:
-    ~QtInstance ();
+    ~QtInstance();
 
     virtual Class* getClass() const;
 
     virtual void begin();
     virtual void end();
 
-    virtual JSValue* valueOf(ExecState* exec) const;
-    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValuePtr valueOf(ExecState*) const;
+    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
 
     virtual void mark(); // This isn't inherited
 
-    virtual JSValue* invokeMethod (ExecState *exec, const MethodList &method, const ArgList &args);
+    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual BindingLanguage getBindingLanguage() const { return QtLanguage; }
 
-    JSValue* stringValue(ExecState* exec) const;
-    JSValue* numberValue(ExecState* exec) const;
-    JSValue* booleanValue() const;
+    JSValuePtr stringValue(ExecState* exec) const;
+    JSValuePtr numberValue(ExecState* exec) const;
+    JSValuePtr booleanValue() const;
 
     QObject* getObject() const { return m_object; }
 
@@ -76,9 +75,9 @@ private:
     mutable QtClass* m_class;
     QPointer<QObject> m_object;
     QObject* m_hashkey;
-    mutable QHash<QByteArray,JSValue*> m_methods;
-    mutable QHash<QString,QtField*> m_fields;
-    mutable QSet<JSValue*> m_children;
+    mutable QHash<QByteArray, JSObject*> m_methods;
+    mutable QHash<QString, QtField*> m_fields;
+    mutable QSet<JSValuePtr> m_children;
     mutable QtRuntimeMetaMethod* m_defaultMethod;
 };
 

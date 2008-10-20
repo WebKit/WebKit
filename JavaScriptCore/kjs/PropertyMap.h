@@ -35,7 +35,6 @@
 namespace JSC {
 
     class JSObject;
-    class JSValue;
     class PropertyNameArray;
 
     typedef JSValuePtr* PropertyStorage;

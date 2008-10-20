@@ -26,8 +26,9 @@
 #ifndef JSEventTarget_h
 #define JSEventTarget_h
 
+#include <kjs/JSValue.h>
+
 namespace JSC {
-    class JSValue;
     class ExecState;
 }
 
@@ -35,7 +36,7 @@ namespace WebCore {
 
     class EventTarget;
 
-    JSC::JSValue* toJS(JSC::ExecState*, EventTarget*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, EventTarget*);
 
 } // namespace WebCore
 

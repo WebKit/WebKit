@@ -47,10 +47,6 @@
 #include "CachedResourceClient.h"
 #endif
 
-namespace JSC {
-    class JSValue;
-}
-
 namespace WebCore {
 
     class Archive;

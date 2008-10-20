@@ -68,13 +68,30 @@ namespace JSC {
         operator T*() const { return m_ptr; }
         T* operator->() const { return m_ptr; }
         
-        bool operator!() const { return m_ptr == NULL; }
+        bool operator!() const { return !m_ptr; }
 
         ProtectedPtr& operator=(const ProtectedPtr&);
         ProtectedPtr& operator=(T*);
         
     private:
         T* m_ptr;
+    };
+
+    template <> class ProtectedPtr<JSValuePtr> {
+    public:
+        ProtectedPtr() { }
+        ProtectedPtr(JSValuePtr ptr) : m_ptr(ptr) { }
+
+        template <class U> ProtectedPtr(const ProtectedPtr<U>& ptr) : m_ptr(ptr) { }
+        
+        JSValuePtr get() const { return m_ptr; }
+        operator JSValuePtr() const { return m_ptr; }
+        JSValue* operator->() const { return m_ptr; }
+        
+        bool operator!() const { return !m_ptr; }
+        
+    private:
+        ProtectedPtr<JSValue> m_ptr;
     };
 
     template <class T> ProtectedPtr<T>::ProtectedPtr(T* ptr)

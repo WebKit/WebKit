@@ -63,17 +63,17 @@ const char* QtClass::name() const
 }
 
 // We use this to get at signals (so we can return a proper function object,
-// and not get wrapped in RuntimeMethod).  Also, use this for methods,
-// so we can cache the JSValue* and return the same JSValue for the same
-// identifier...
-JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifier &identifier)
+// and not get wrapped in RuntimeMethod). Also, use this for methods,
+// so we can cache the object and return the same object for the same
+// identifier.
+JSValuePtr QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifier& identifier)
 {
     QtInstance* qtinst = static_cast<QtInstance*>(inst);
 
     QByteArray name(identifier.ascii());
 
     // First see if we have a cache hit
-    JSValue* val = qtinst->m_methods.value(name);
+    JSObject* val = qtinst->m_methods.value(name);
     if (val)
         return val;
 
@@ -85,7 +85,7 @@ JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifi
     if (normal.contains('(') && (index = m_metaObject->indexOfMethod(normal)) != -1) {
         QMetaMethod m = m_metaObject->method(index);
         if (m.access() != QMetaMethod::Private) {
-            JSValue *val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
+            QtRuntimeMetaMethod* val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
             qtinst->m_methods.insert(name, val);
             return val;
         }
@@ -102,7 +102,7 @@ JSValue* QtClass::fallbackObject(ExecState *exec, Instance *inst, const Identifi
         signature.truncate(signature.indexOf('('));
 
         if (normal == signature) {
-            JSValue* val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
+            QtRuntimeMetaMethod* val = new (exec) QtRuntimeMetaMethod(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
             qtinst->m_methods.insert(name, val);
             return val;
         }

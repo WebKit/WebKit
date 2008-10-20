@@ -1,3 +1,15 @@
+2008-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Remove most uses of JSValue, which will be removed in a future patch.
+
+        * WebFrame.cpp:
+        (wxWebFrame::RunScript): Use JSValuePtr.
+
 2008-10-17  Kevin Watters  <kevinwatters@gmail.com>
         
         Reviewed by Kevin Ollivier

@@ -84,7 +84,6 @@ static inline HWND windowHandleForPlatformWidget(PlatformWidget widget)
 using JSC::ExecState;
 using JSC::JSLock;
 using JSC::JSObject;
-using JSC::JSValue;
 using JSC::UString;
 
 using std::min;

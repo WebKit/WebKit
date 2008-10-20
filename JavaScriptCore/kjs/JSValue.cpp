@@ -48,7 +48,7 @@ double JSValue::toIntegerPreserveNaN(ExecState* exec) const
     return trunc(toNumber(exec));
 }
 
-int32_t JSValue::toInt32SlowCase(double d, bool& ok)
+int32_t toInt32SlowCase(double d, bool& ok)
 {
     ok = true;
 
@@ -70,10 +70,10 @@ int32_t JSValue::toInt32SlowCase(double d, bool& ok)
 
 int32_t JSValue::toInt32SlowCase(ExecState* exec, bool& ok) const
 {
-    return JSValue::toInt32SlowCase(toNumber(exec), ok);
+    return JSC::toInt32SlowCase(toNumber(exec), ok);
 }
 
-uint32_t JSValue::toUInt32SlowCase(double d, bool& ok)
+uint32_t toUInt32SlowCase(double d, bool& ok)
 {
     ok = true;
 
@@ -93,7 +93,7 @@ uint32_t JSValue::toUInt32SlowCase(double d, bool& ok)
 
 uint32_t JSValue::toUInt32SlowCase(ExecState* exec, bool& ok) const
 {
-    return JSValue::toUInt32SlowCase(toNumber(exec), ok);
+    return JSC::toUInt32SlowCase(toNumber(exec), ok);
 }
 
 float JSValue::toFloat(ExecState* exec) const

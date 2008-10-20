@@ -30,10 +30,10 @@
 #define WebScriptCallFrame_h
 
 #include "WebKit.h"
+#include <kjs/JSValue.h>
 
 namespace JSC {
     class ExecState;
-    class JSValue;
     class UString;
 }
 
@@ -74,10 +74,10 @@ public:
         /* [out, retval] */ BSTR* value);
 
     // Helper and accessors
-    virtual JSC::JSValue* valueByEvaluatingJavaScriptFromString(BSTR script);
+    virtual JSC::JSValuePtr valueByEvaluatingJavaScriptFromString(BSTR script);
     virtual JSC::ExecState* state() const { return m_state; }
 
-    static JSC::UString jsValueToString(JSC::ExecState*, JSC::JSValue*);
+    static JSC::UString jsValueToString(JSC::ExecState*, JSC::JSValuePtr);
 
 private:
     ULONG m_refCount;

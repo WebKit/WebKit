@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
-#include "runtime_root.h"
+#import "runtime_root.h"
 
 @class WebUndefined;
 
@@ -35,7 +34,7 @@
 + (NSString *)webScriptNameForKey:(const char *)name;
 + (BOOL)isKeyExcludedFromWebScript:(const char *)name;
 
-+ (id)_convertValueToObjcValue:(JSC::JSValue *)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
++ (id)_convertValueToObjcValue:(JSC::JSValuePtr)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 - _initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
 - (JSC::JSObject *)_imp;
 @end

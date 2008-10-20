@@ -27,8 +27,6 @@
 
 namespace JSC {
 
-    class JSValue;
-
     enum ComplType { Normal, Break, Continue, ReturnValue, Throw, Interrupted };
 
     /*

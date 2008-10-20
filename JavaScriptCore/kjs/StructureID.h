@@ -42,7 +42,6 @@
 
 namespace JSC {
 
-    class JSValue;
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureIDChain;

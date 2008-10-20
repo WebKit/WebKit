@@ -157,7 +157,7 @@ static ALWAYS_INLINE bool fastToUInt32(JSValuePtr value, uint32_t& arg)
         if (JSImmediate::getTruncatedUInt32(value, arg))
             return true;
         bool scratch;
-        arg = JSValue::toUInt32SlowCase(JSImmediate::getTruncatedInt32(value), scratch);
+        arg = toUInt32SlowCase(JSImmediate::getTruncatedInt32(value), scratch);
         return true;
     } else if (!JSImmediate::isImmediate(value) && Heap::isNumber(asCell(value)))
         arg = asNumberCell(value)->toUInt32();

@@ -27,13 +27,12 @@
 #define _WEB_SCRIPT_OBJECT_PRIVATE_H_
 
 #import "WebScriptObject.h"
-
+#import <kjs/JSValue.h>
 #import <wtf/PassRefPtr.h>
 
 namespace JSC {
     
     class JSObject;
-    class JSValue;
     
     namespace Bindings {
         class RootObject;
@@ -47,7 +46,7 @@ namespace WebCore {
 }
 
 @interface WebScriptObject (Private)
-+ (id)_convertValueToObjcValue:(JSC::JSValue*)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
++ (id)_convertValueToObjcValue:(JSC::JSValuePtr)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 - (id)_init;
 - (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;

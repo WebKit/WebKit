@@ -38,7 +38,6 @@ namespace JSC {
     class ExecState;
     class JSGlobalObject;
     class JSObject;
-    class JSValue;
     class ArgList;
     class UString;
 }

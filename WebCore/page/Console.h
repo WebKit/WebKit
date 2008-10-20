@@ -37,7 +37,6 @@ namespace JSC {
     class ExecState;
     class ArgList;
     class Profile;
-    class JSValue;
 }
 
 namespace WebCore {

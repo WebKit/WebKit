@@ -37,7 +37,6 @@ namespace JSC {
     class ExecState;
     class FunctionBodyNode;
     class JSObject;
-    class JSValue;
     class ScopeChainNode;
 
     enum ConstructType {

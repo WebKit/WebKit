@@ -29,13 +29,13 @@
 #if ENABLE(XPATH)
 
 #include "XPathNSResolver.h"
+#include <kjs/JSValue.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
     class ExecState;
     class JSObject;
-    class JSValue;
 }
 
 namespace WebCore {
@@ -44,7 +44,7 @@ namespace WebCore {
 
     class JSCustomXPathNSResolver : public XPathNSResolver {
     public:
-        static PassRefPtr<JSCustomXPathNSResolver> create(JSC::ExecState*, JSC::JSValue*);
+        static PassRefPtr<JSCustomXPathNSResolver> create(JSC::ExecState*, JSC::JSValuePtr);
         
         virtual ~JSCustomXPathNSResolver();
 

@@ -1418,7 +1418,7 @@ static NumberNode* makeNumberNode(void* globalPtr, double d)
 static ExpressionNode* makeBitwiseNotNode(void* globalPtr, ExpressionNode* expr)
 {
     if (expr->isNumber())
-        return makeNumberNode(globalPtr, ~JSValue::toInt32(static_cast<NumberNode*>(expr)->value()));
+        return makeNumberNode(globalPtr, ~toInt32(static_cast<NumberNode*>(expr)->value()));
     return new BitwiseNotNode(GLOBAL_DATA, expr);
 }
 
@@ -1469,14 +1469,14 @@ static ExpressionNode* makeSubNode(void* globalPtr, ExpressionNode* expr1, Expre
 static ExpressionNode* makeLeftShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalPtr, JSValue::toInt32(static_cast<NumberNode*>(expr1)->value()) << (JSValue::toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+        return makeNumberNode(globalPtr, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
     return new LeftShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 
 static ExpressionNode* makeRightShiftNode(void* globalPtr, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return makeNumberNode(globalPtr, JSValue::toInt32(static_cast<NumberNode*>(expr1)->value()) >> (JSValue::toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+        return makeNumberNode(globalPtr, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
     return new RightShiftNode(GLOBAL_DATA, expr1, expr2, rightHasAssignments);
 }
 

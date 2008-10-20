@@ -1,3 +1,17 @@
+2008-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Remove most uses of JSValue, which will be removed in a future patch.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        Use JSValuePtr instead of JSValue.
+        * WebView/WebScriptDebugger.h: Removed declaration of JSValue.
+
 2008-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

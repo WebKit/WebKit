@@ -29,7 +29,6 @@
 #include <wtf/RefPtr.h>
 
 namespace JSC {
-    class JSValue;
     class ExecState;
 }
 

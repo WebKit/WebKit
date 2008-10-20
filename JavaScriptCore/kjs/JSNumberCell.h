@@ -241,7 +241,7 @@ namespace JSC {
         if (m_value >= -2147483648.0 && m_value < 2147483648.0)
             return static_cast<int32_t>(m_value);
         bool scratch;
-        return JSValue::toInt32SlowCase(m_value, scratch);
+        return JSC::toInt32SlowCase(m_value, scratch);
     }
 
     inline uint32_t JSNumberCell::toUInt32() const
@@ -249,7 +249,7 @@ namespace JSC {
         if (m_value >= 0.0 && m_value < 4294967296.0)
             return static_cast<uint32_t>(m_value);
         bool scratch;
-        return JSValue::toUInt32SlowCase(m_value, scratch);
+        return JSC::toUInt32SlowCase(m_value, scratch);
     }
 
     ALWAYS_INLINE JSValuePtr JSValue::toJSNumber(ExecState* exec) const

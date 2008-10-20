@@ -115,19 +115,12 @@ namespace JSC {
         uint32_t toUInt32(ExecState*) const;
         uint32_t toUInt32(ExecState*, bool& ok) const;
 
-        // These are identical logic to above, and faster than jsNumber(number)->toInt32(exec)
-        static int32_t toInt32(double);
-        static uint32_t toUInt32(double);
-
         // Floating point conversions.
         float toFloat(ExecState*) const;
 
         // Garbage collection.
         void mark();
         bool marked() const;
-
-        static int32_t toInt32SlowCase(double, bool& ok);
-        static uint32_t toUInt32SlowCase(double, bool& ok);
 
         // Object operations, with the toObject operation included.
         JSValuePtr get(ExecState*, const Identifier& propertyName) const;
@@ -156,6 +149,12 @@ namespace JSC {
         int32_t toInt32SlowCase(ExecState*, bool& ok) const;
         uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
     };
+
+    // These are identical logic to the JSValue functions above, and faster than jsNumber(number)->toInt32().
+    int32_t toInt32(double);
+    uint32_t toUInt32(double);
+    int32_t toInt32SlowCase(double, bool& ok);
+    uint32_t toUInt32SlowCase(double, bool& ok);
 
     inline JSValue::JSValue()
     {
@@ -223,7 +222,7 @@ namespace JSC {
         return toUInt32SlowCase(exec, ok);
     }
 
-    inline int32_t JSValue::toInt32(double val)
+    inline int32_t toInt32(double val)
     {
         if (!(val >= -2147483648.0 && val < 2147483648.0)) {
             bool ignored;
@@ -232,7 +231,7 @@ namespace JSC {
         return static_cast<int32_t>(val);
     }
 
-    inline uint32_t JSValue::toUInt32(double val)
+    inline uint32_t toUInt32(double val)
     {
         if (!(val >= 0.0 && val < 4294967296.0)) {
             bool ignored;

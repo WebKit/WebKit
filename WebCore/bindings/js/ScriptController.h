@@ -40,7 +40,6 @@ struct NPObject;
 
 namespace JSC {
     class JSGlobalObject;
-    class JSValue;
 
     namespace Bindings {
         class Instance;

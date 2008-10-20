@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
+#include <kjs/JSValue.h>
 
 namespace WebCore {
     class String;
@@ -38,7 +39,6 @@ namespace JSC {
 
 class ExecState;
 class Identifier;
-class JSValue;
 
 namespace Bindings {
 
@@ -57,8 +57,8 @@ enum NP_ValueType {
 };
 
 WebCore::String convertNPStringToUTF16(const NPString *string);
-void convertValueToNPVariant(ExecState*, JSValue*, NPVariant* result);
-JSValue* convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
+void convertValueToNPVariant(ExecState*, JSValuePtr, NPVariant* result);
+JSValuePtr convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
 Identifier identifierFromNPIdentifier(const NPUTF8* name);
 
 struct PrivateIdentifier {

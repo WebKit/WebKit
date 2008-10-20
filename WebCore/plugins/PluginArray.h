@@ -26,9 +26,8 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
-    class JSValue;
     class ExecState;
-};
+}
 
 namespace WebCore {
 

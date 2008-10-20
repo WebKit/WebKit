@@ -29,8 +29,8 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include <CoreFoundation/CoreFoundation.h>
-
 #include <JavaVM/jni.h>
+#include <kjs/JSValue.h>
 #include <wtf/RefPtr.h>
 
 #define jlong_to_ptr(a) ((void*)(uintptr_t)(a))
@@ -42,7 +42,6 @@ namespace JSC {
 class ArgList;
 class ExecState;
 class JSObject;
-class JSValue;
 
 namespace Bindings {
 
@@ -91,8 +90,8 @@ public:
     
     static jvalue invoke(JSObjectCallContext*);
 
-    jobject convertValueToJObject(JSValue*) const;
-    JSValue* convertJObjectToValue(ExecState*, jobject) const;
+    jobject convertValueToJObject(JSValuePtr) const;
+    JSValuePtr convertJObjectToValue(ExecState*, jobject) const;
     void getListFromJArray(ExecState*, jobjectArray, ArgList&) const;
     
     RootObject* rootObject() const;

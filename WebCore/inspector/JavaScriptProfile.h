@@ -26,17 +26,16 @@
 #ifndef JavaScriptProfile_h
 #define JavaScriptProfile_h
 
-#include <JavaScriptCore/JSBase.h>
+#include <kjs/JSValue.h>
 
 namespace JSC {
     class ExecState;
-    class JSValue;
     class Profile;
 }
 
 namespace WebCore {
 
-    JSC::JSValue* toJS(JSC::ExecState*, JSC::Profile*);
+    JSC::JSValuePtr toJS(JSC::ExecState*, JSC::Profile*);
 
 } // namespace WebCore
 

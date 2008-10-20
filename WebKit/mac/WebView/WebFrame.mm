@@ -86,7 +86,7 @@ using namespace HTMLNames;
 
 using JSC::JSGlobalObject;
 using JSC::JSLock;
-using JSC::JSValue;
+using JSC::JSValuePtr;
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -632,7 +632,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     ASSERT(_private->coreFrame->document());
     
-    JSValue* result = _private->coreFrame->loader()->executeScript(string, forceUserGesture);
+    JSValuePtr result = _private->coreFrame->loader()->executeScript(string, forceUserGesture);
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";

@@ -1,3 +1,72 @@
+2008-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - next step of https://bugs.webkit.org/show_bug.cgi?id=21732
+          improve performance by eliminating JSValue as a base class for JSCell
+
+        Remove most uses of JSValue, which will be removed in a future patch.
+
+        * bindings/js/JSCustomXPathNSResolver.h: Removed declaration of JSValue
+        and used JSValuePtr instead.
+        * bindings/js/JSEventTarget.h: Ditto.
+        * bindings/js/JSNodeFilterCondition.h: Ditto.
+        * bindings/js/ScheduledAction.h: Ditto.
+        * bindings/js/ScriptController.h: Ditto.
+        * bindings/objc/WebScriptObjectPrivate.h: Ditto.
+        * bridge/c/c_utility.h: Ditto.
+        * bridge/jni/jni_jsobject.h: Ditto.
+        * bridge/jni/jni_utility.h: Ditto.
+        * bridge/objc/WebScriptObject.h: Ditto.
+        * dom/Traversal.h: Ditto.
+        * inspector/InspectorController.cpp: Ditto.
+        * inspector/JavaScriptProfile.h: Ditto.
+        * inspector/JavaScriptProfileNode.h: Ditto.
+        * loader/FrameLoader.h: Ditto.
+        * page/Console.h: Ditto.
+        * plugins/MimeTypeArray.h: Ditto.
+        * plugins/Plugin.h: Ditto.
+        * plugins/PluginArray.h: Ditto.
+        * plugins/PluginView.cpp:
+        (WebCore::getString): Ditto.
+        (WebCore::PluginView::performRequest): Ditto.
+        * plugins/gtk/PluginViewGtk.cpp: Ditto.
+        * plugins/qt/PluginViewQt.cpp: Ditto.
+        * plugins/win/PluginViewWin.cpp: Ditto.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject): Use JSValuePtr and JSObject*
+        instead of JSValue*.
+        * bridge/qt/qt_class.h: Ditto.
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::mark): Ditto.
+        (JSC::Bindings::QtInstance::invokeMethod): Ditto.
+        (JSC::Bindings::QtInstance::defaultValue): Ditto.
+        (JSC::Bindings::QtInstance::stringValue): Ditto.
+        (JSC::Bindings::QtInstance::numberValue): Ditto.
+        (JSC::Bindings::QtInstance::booleanValue): Ditto.
+        (JSC::Bindings::QtInstance::valueOf): Ditto.
+        (JSC::Bindings::QtField::valueFromInstance): Ditto.
+        (JSC::Bindings::QtField::setValueToInstance): Ditto.
+        * bridge/qt/qt_instance.h: Ditto.
+        * bridge/qt/qt_runtime.cpp: Ditto.
+        (JSC::Bindings::valueRealType): Ditto.
+        (JSC::Bindings::convertValueToQVariant): Ditto.
+        (JSC::Bindings::convertQVariantToValue): Ditto.
+        (JSC::Bindings::findMethodIndex): Ditto.
+        (JSC::Bindings::QtRuntimeMetaMethod::call): Ditto.
+        (JSC::Bindings::QtRuntimeMetaMethod::lengthGetter): Ditto.
+        (JSC::Bindings::QtRuntimeMetaMethod::connectGetter): Ditto.
+        (JSC::Bindings::QtRuntimeMetaMethod::disconnectGetter): Ditto.
+        (JSC::Bindings::QtRuntimeConnectionMethod::call): Ditto.
+        (JSC::Bindings::QtRuntimeConnectionMethod::lengthGetter): Ditto.
+        (JSC::Bindings::QtArray::setValueAt): Ditto.
+        (JSC::Bindings::QtArray::valueAt): Ditto.
+        * bridge/qt/qt_runtime.h: Ditto.
+
+        * bridge/testqtbindings.cpp:
+        (main): Use JSValuePtr.
+
 2008-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
