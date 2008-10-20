@@ -45,7 +45,7 @@ public:
 
     virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
+    virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
     void removeAllEventListeners();
 
     void setEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
@@ -72,7 +72,7 @@ public:
     void dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source);
     bool dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime);
     bool dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime);
-    bool dispatchGenericEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent);
+    bool dispatchGenericEvent(PassRefPtr<Event>, ExceptionCode&);
 
     virtual void handleLocalEvents(Event*, bool useCapture);
 

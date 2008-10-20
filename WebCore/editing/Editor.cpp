@@ -586,7 +586,7 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
 
     ExceptionCode ec = 0;
     RefPtr<Event> evt = ClipboardEvent::create(eventType, true, true, clipboard);
-    EventTargetNodeCast(target)->dispatchEvent(evt, ec, true);
+    EventTargetNodeCast(target)->dispatchEvent(evt, ec);
     bool noDefaultProcessing = evt->defaultPrevented();
 
     // invalidate clipboard here for security
@@ -748,9 +748,9 @@ static void dispatchEditableContentChangedEvents(const EditCommand& command)
     Element* endRoot = command.endingRootEditableElement();
     ExceptionCode ec;
     if (startRoot)
-        startRoot->dispatchEvent(Event::create(webkitEditableContentChangedEvent, false, false), ec, true);
+        startRoot->dispatchEvent(Event::create(webkitEditableContentChangedEvent, false, false), ec);
     if (endRoot && endRoot != startRoot)
-        endRoot->dispatchEvent(Event::create(webkitEditableContentChangedEvent, false, false), ec, true);
+        endRoot->dispatchEvent(Event::create(webkitEditableContentChangedEvent, false, false), ec);
 }
 
 void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)

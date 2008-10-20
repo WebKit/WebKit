@@ -206,7 +206,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
             RefPtr<Event> event = Event::create(loadEvent, false, false);
             event->setTarget(currentTarget);
             ExceptionCode ignored = 0;
-            currentTarget->dispatchGenericEvent(event.release(), ignored, false);
+            currentTarget->dispatchGenericEvent(event.release(), ignored);
         }
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : 0;
     }

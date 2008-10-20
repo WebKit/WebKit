@@ -80,7 +80,7 @@ namespace WebCore {
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
+        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
         EventListenersMap& eventListeners() { return m_eventListeners; }
 
         using RefCounted<XMLHttpRequestUpload>::ref;

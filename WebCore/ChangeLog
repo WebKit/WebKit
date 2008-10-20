@@ -1,3 +1,84 @@
+2008-10-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21750
+        Eliminate the notion of "temporary events"
+
+        We mark some events as temporary when dispatching, for the sole reason of
+        manually calling forgetDOMObject when done dispatching.
+
+        There doesn't seem to be any reason to call it manually, as JSEvent destructor
+        will do this automatically right away.
+
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        Removed ScriptController::finishedWithEvent(), which was called after dispatching
+        a temporary event.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/EventTarget.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchEvent):
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        (WebCore::EventTargetNode::dispatchSubtreeModifiedEvent):
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        (WebCore::EventTargetNode::dispatchUIEvent):
+        (WebCore::EventTargetNode::dispatchKeyEvent):
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchWheelEvent):
+        (WebCore::EventTargetNode::dispatchWebKitAnimationEvent):
+        (WebCore::EventTargetNode::dispatchWebKitTransitionEvent):
+        (WebCore::EventTargetNode::dispatchEventForType):
+        (WebCore::EventTargetNode::dispatchProgressEvent):
+        (WebCore::EventTargetNode::dispatchStorageEvent):
+        * dom/EventTargetNode.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::dispatchCloseEvent):
+        (WebCore::MessagePort::dispatchEvent):
+        * dom/MessagePort.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::dispatchEditableContentChangedEvents):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::dispatchEvent):
+        (WebCore::DOMApplicationCache::callListener):
+        * loader/appcache/DOMApplicationCache.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::handleTextInputEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleEvent):
+        (WebCore::FrameView::updateOverflowStatus):
+        (WebCore::FrameView::dispatchScheduledEvents):
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::dispatchEvent):
+        * svg/SVGElementInstance.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchEvent):
+        (WebCore::XMLHttpRequest::dispatchReadyStateChangeEvent):
+        (WebCore::XMLHttpRequest::dispatchXMLHttpRequestProgressEvent):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::dispatchEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchXMLHttpRequestProgressEvent):
+        * xml/XMLHttpRequestUpload.h:
+        Don't pass the tempEvent boolean around.
+
 2008-10-20  Alp Toker  <alp@nuanti.com>
 
         Remove unused includes only. Partial GTK+/Win build fix.

@@ -83,7 +83,6 @@ public:
 #if ENABLE(SVG)
     PassRefPtr<EventListener> createSVGEventHandler(const String& functionName, const String& code, Node*);
 #endif
-    void finishedWithEvent(Event*);
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }

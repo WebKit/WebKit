@@ -77,7 +77,7 @@ namespace WebCore {
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
+        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
 
         typedef Vector<RefPtr<EventListener> > ListenerVector;
         typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;

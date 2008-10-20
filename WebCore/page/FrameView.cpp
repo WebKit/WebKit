@@ -58,7 +58,6 @@ double FrameView::sCurrentPaintTimeStamp = 0.0;
 struct ScheduledEvent {
     RefPtr<Event> m_event;
     RefPtr<EventTargetNode> m_eventTarget;
-    bool m_tempEvent;
 };
 
 class FrameViewPrivate {
@@ -882,18 +881,17 @@ void FrameView::setShouldUpdateWhileOffscreen(bool shouldUpdateWhileOffscreen)
     d->m_shouldUpdateWhileOffscreen = shouldUpdateWhileOffscreen;
 }
 
-void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNode> eventTarget, bool tempEvent)
+void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNode> eventTarget)
 {
     if (!d->m_enqueueEvents) {
         ExceptionCode ec = 0;
-        eventTarget->dispatchEvent(event, ec, tempEvent);
+        eventTarget->dispatchEvent(event, ec);
         return;
     }
 
     ScheduledEvent* scheduledEvent = new ScheduledEvent;
     scheduledEvent->m_event = event;
     scheduledEvent->m_eventTarget = eventTarget;
-    scheduledEvent->m_tempEvent = tempEvent;
     d->m_scheduledEvents.append(scheduledEvent);
 }
 
@@ -976,7 +974,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
         
         scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow),
-            EventTargetNodeCast(d->m_viewportRenderer->element()), true);
+            EventTargetNodeCast(d->m_viewportRenderer->element()));
     }
     
 }
@@ -997,8 +995,7 @@ void FrameView::dispatchScheduledEvents()
         
         // Only dispatch events to nodes that are in the document
         if (scheduledEvent->m_eventTarget->inDocument())
-            scheduledEvent->m_eventTarget->dispatchEvent(scheduledEvent->m_event,
-                ec, scheduledEvent->m_tempEvent);
+            scheduledEvent->m_eventTarget->dispatchEvent(scheduledEvent->m_event, ec);
         
         delete scheduledEvent;
     }

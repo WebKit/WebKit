@@ -140,7 +140,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     // Give the root a chance to change the text.
     RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
     ExceptionCode ec = 0;
-    editableRoot->dispatchEvent(evt, ec, true);
+    editableRoot->dispatchEvent(evt, ec);
     ASSERT(ec == 0);
     if (text != evt->text() || !editableRoot->isContentRichlyEditable()) {
         restoreTestRenderingNodesToFragment(holder.get());

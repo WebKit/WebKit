@@ -86,7 +86,7 @@ void XMLHttpRequestUpload::removeEventListener(const AtomicString& eventType, Ev
     }
 }
 
-bool XMLHttpRequestUpload::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec, bool /*tempEvent*/)
+bool XMLHttpRequestUpload::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec)
 {
     // FIXME: check for other error conditions enumerated in the spec.
     if (evt->type().isEmpty()) {
@@ -114,7 +114,7 @@ void XMLHttpRequestUpload::dispatchXMLHttpRequestProgressEvent(EventListener* li
     }
 
     ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec, false);
+    dispatchEvent(evt.release(), ec);
     ASSERT(!ec);
 }
 

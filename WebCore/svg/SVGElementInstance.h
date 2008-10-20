@@ -60,7 +60,7 @@ namespace WebCore {
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false);
+        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
 
         SVGElement* correspondingElement() const { return m_element.get(); }
         SVGUseElement* correspondingUseElement() const { return m_useElement; }

@@ -70,7 +70,7 @@ namespace WebCore {
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) = 0;
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) = 0;
-        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&, bool tempEvent = false) = 0;
+        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&) = 0;
 
         void ref() { refEventTarget(); }
         void deref() { derefEventTarget(); }

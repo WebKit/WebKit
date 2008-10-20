@@ -158,15 +158,6 @@ PassRefPtr<EventListener> ScriptController::createSVGEventHandler(const String& 
 }
 #endif
 
-void ScriptController::finishedWithEvent(Event* event)
-{
-    // This is called when the DOM implementation has finished with a particular event. This
-    // is the case in sitations where an event has been created just for temporary usage,
-    // e.g. an image load or mouse move. Once the event has been dispatched, it is forgotten
-    // by the DOM implementation and so does not need to be cached still by the interpreter
-    forgetDOMObject(*globalObject()->globalData(), event);
-}
-
 void ScriptController::initScript()
 {
     if (m_windowShell)
