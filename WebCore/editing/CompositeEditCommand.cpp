@@ -206,7 +206,7 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(Node* node)
     prune(parent);
 }
 
-bool hasARenderedDescendant(Node* node)
+static bool hasARenderedDescendant(Node* node)
 {
     Node* n = node->firstChild();
     while (n) {

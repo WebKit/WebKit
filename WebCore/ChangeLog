@@ -1,3 +1,12 @@
+2008-10-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - make hasARenderedDescendant() have internal linkage
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::hasARenderedDescendant):
+
 2008-10-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Jon Honeycutt
