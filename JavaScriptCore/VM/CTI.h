@@ -98,7 +98,8 @@ namespace JSC {
     struct OperandTypes;
     struct StructureStubInfo;
 
-    typedef JSValuePtr (SFX_CALL *CTIHelper_j)(CTI_ARGS);
+    typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
+    typedef JSObject* (SFX_CALL *CTIHelper_o)(CTI_ARGS);
     typedef JSPropertyNameIterator* (SFX_CALL *CTIHelper_p)(CTI_ARGS);
     typedef void (SFX_CALL *CTIHelper_v)(CTI_ARGS);
     typedef void* (SFX_CALL *CTIHelper_s)(CTI_ARGS);
@@ -116,42 +117,49 @@ namespace JSC {
 
         CallRecord(X86Assembler::JmpSrc f, CTIHelper_j t, unsigned i)
             : from(f)
-            , to((void*)t)
+            , to(reinterpret_cast<void*>(t))
+            , opcodeIndex(i)
+        {
+        }
+
+        CallRecord(X86Assembler::JmpSrc f, CTIHelper_o t, unsigned i)
+            : from(f)
+            , to(reinterpret_cast<void*>(t))
             , opcodeIndex(i)
         {
         }
 
         CallRecord(X86Assembler::JmpSrc f, CTIHelper_p t, unsigned i)
             : from(f)
-            , to((void*)t)
+            , to(reinterpret_cast<void*>(t))
             , opcodeIndex(i)
         {
         }
         
         CallRecord(X86Assembler::JmpSrc f, CTIHelper_v t, unsigned i)
             : from(f)
-            , to((void*)t)
+            , to(reinterpret_cast<void*>(t))
             , opcodeIndex(i)
         {
         }
         
         CallRecord(X86Assembler::JmpSrc f, CTIHelper_s t, unsigned i)
             : from(f)
-            , to((void*)t)
+            , to(reinterpret_cast<void*>(t))
             , opcodeIndex(i)
         {
         }
         
         CallRecord(X86Assembler::JmpSrc f, CTIHelper_b t, unsigned i)
             : from(f)
-            , to((void*)t)
+            , to(reinterpret_cast<void*>(t))
             , opcodeIndex(i)
         {
         }
 
         CallRecord(X86Assembler::JmpSrc f, CTIHelper_2 t, unsigned i)
             : from(f)
-            , to((void*)t)
+            , to(reinterpret_cast<void*>(t))
             , opcodeIndex(i)
         {
         }
@@ -403,6 +411,7 @@ namespace JSC {
         X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, X86::RegisterID);
         X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, void(*function)());
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_j);
+        X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_o);
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_p);
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_v);
         X86Assembler::JmpSrc emitCTICall(unsigned opcodeIndex, CTIHelper_s);

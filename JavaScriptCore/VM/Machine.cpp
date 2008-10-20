@@ -4247,7 +4247,7 @@ static NEVER_INLINE void setUpThrowTrampolineReturnAddress(JSGlobalData* globalD
 #define VM_THROW_EXCEPTION() \
     do { \
         VM_THROW_EXCEPTION_AT_END(); \
-        return noValue(); \
+        return 0; \
     } while (0)
 #define VM_THROW_EXCEPTION_2() \
     do { \
@@ -4276,7 +4276,7 @@ static NEVER_INLINE void setUpThrowTrampolineReturnAddress(JSGlobalData* globalD
         } \
     } while (0)
 
-JSValuePtr Machine::cti_op_convert_this(CTI_ARGS)
+JSObject* Machine::cti_op_convert_this(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4297,7 +4297,7 @@ void Machine::cti_op_end(CTI_ARGS)
     scopeChain->deref();
 }
 
-JSValuePtr Machine::cti_op_add(CTI_ARGS)
+JSValue* Machine::cti_op_add(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4309,7 +4309,7 @@ JSValuePtr Machine::cti_op_add(CTI_ARGS)
 
     bool rightIsNumber = fastIsNumber(v2, right);
     if (rightIsNumber && fastIsNumber(v1, left))
-        return jsNumber(ARG_globalData, left + right);
+        return jsNumber(ARG_globalData, left + right).payload();
     
     CallFrame* callFrame = ARG_callFrame;
 
@@ -4321,7 +4321,7 @@ JSValuePtr Machine::cti_op_add(CTI_ARGS)
             VM_THROW_EXCEPTION();
         }
 
-        return jsString(ARG_globalData, value.release());
+        return JSValuePtr(jsString(ARG_globalData, value.release())).payload();
     }
 
     if (rightIsNumber & leftIsString) {
@@ -4333,16 +4333,16 @@ JSValuePtr Machine::cti_op_add(CTI_ARGS)
             throwOutOfMemoryError(callFrame);
             VM_THROW_EXCEPTION();
         }
-        return jsString(ARG_globalData, value.release());
+        return JSValuePtr(jsString(ARG_globalData, value.release())).payload();
     }
 
     // All other cases are pretty uncommon
     JSValuePtr result = jsAddSlowCase(callFrame, v1, v2);
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_pre_inc(CTI_ARGS)
+JSValue* Machine::cti_op_pre_inc(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4351,7 +4351,7 @@ JSValuePtr Machine::cti_op_pre_inc(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, v->toNumber(callFrame) + 1);
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 void Machine::cti_timeout_check(CTI_ARGS)
@@ -4408,11 +4408,11 @@ int Machine::cti_op_loop_if_lesseq(CTI_ARGS)
     return result;
 }
 
-JSValuePtr Machine::cti_op_new_object(CTI_ARGS)
+JSObject* Machine::cti_op_new_object(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return constructEmptyObject(ARG_callFrame);;
+    return constructEmptyObject(ARG_callFrame);
 }
 
 void Machine::cti_op_put_by_id(CTI_ARGS)
@@ -4465,7 +4465,7 @@ void Machine::cti_op_put_by_id_fail(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-JSValuePtr Machine::cti_op_get_by_id(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4479,10 +4479,10 @@ JSValuePtr Machine::cti_op_get_by_id(CTI_ARGS)
     ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_second));
 
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_get_by_id_second(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id_second(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4496,10 +4496,10 @@ JSValuePtr Machine::cti_op_get_by_id_second(CTI_ARGS)
     ARG_globalData->machine->tryCTICacheGetByID(callFrame, callFrame->codeBlock(), CTI_RETURN_ADDRESS, baseValue, ident, slot);
 
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_get_by_id_generic(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id_generic(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4511,10 +4511,10 @@ JSValuePtr Machine::cti_op_get_by_id_generic(CTI_ARGS)
     JSValuePtr result = baseValue->get(callFrame, ident, slot);
 
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_get_by_id_fail(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_id_fail(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4529,10 +4529,10 @@ JSValuePtr Machine::cti_op_get_by_id_fail(CTI_ARGS)
     ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
 
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_instanceof(CTI_ARGS)
+JSValue* Machine::cti_op_instanceof(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4556,7 +4556,7 @@ JSValuePtr Machine::cti_op_instanceof(CTI_ARGS)
     }
 
     if (!asObject(baseVal)->structureID()->typeInfo().implementsHasInstance())
-        return jsBoolean(false);
+        return JSValuePtr(jsBoolean(false)).payload();
 
     if (!proto->isObject()) {
         throwError(callFrame, TypeError, "instanceof called on an object with an invalid prototype property.");
@@ -4564,15 +4564,15 @@ JSValuePtr Machine::cti_op_instanceof(CTI_ARGS)
     }
         
     if (!value->isObject())
-        return jsBoolean(false);
+        return JSValuePtr(jsBoolean(false)).payload();
 
     JSValuePtr result = jsBoolean(asObject(baseVal)->hasInstance(callFrame, value, proto));
     VM_CHECK_EXCEPTION_AT_END();
 
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_del_by_id(CTI_ARGS)
+JSValue* Machine::cti_op_del_by_id(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4583,10 +4583,10 @@ JSValuePtr Machine::cti_op_del_by_id(CTI_ARGS)
 
     JSValuePtr result = jsBoolean(baseObj->deleteProperty(callFrame, ident));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_mul(CTI_ARGS)
+JSValue* Machine::cti_op_mul(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4596,15 +4596,15 @@ JSValuePtr Machine::cti_op_mul(CTI_ARGS)
     double left;
     double right;
     if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
-        return jsNumber(ARG_globalData, left * right);
+        return jsNumber(ARG_globalData, left * right).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, src1->toNumber(callFrame) * src2->toNumber(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_new_func(CTI_ARGS)
+JSObject* Machine::cti_op_new_func(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4697,7 +4697,7 @@ void* Machine::cti_vm_compile(CTI_ARGS)
     return codeBlock->ctiCode;
 }
 
-JSValuePtr Machine::cti_op_push_activation(CTI_ARGS)
+JSObject* Machine::cti_op_push_activation(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4706,7 +4706,7 @@ JSValuePtr Machine::cti_op_push_activation(CTI_ARGS)
     return activation;
 }
 
-JSValuePtr Machine::cti_op_call_NotJSFunction(CTI_ARGS)
+JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4741,7 +4741,7 @@ JSValuePtr Machine::cti_op_call_NotJSFunction(CTI_ARGS)
         if (*ARG_profilerReference)
             (*ARG_profilerReference)->didExecute(previousCallFrame, asObject(funcVal));
 
-        return returnValue;
+        return returnValue.payload();
     }
 
     ASSERT(callType == CallTypeNone);
@@ -4798,7 +4798,7 @@ void Machine::cti_op_ret_scopeChain(CTI_ARGS)
     ARG_callFrame->scopeChain()->deref();
 }
 
-JSValuePtr Machine::cti_op_new_array(CTI_ARGS)
+JSObject* Machine::cti_op_new_array(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4806,7 +4806,7 @@ JSValuePtr Machine::cti_op_new_array(CTI_ARGS)
     return constructArray(ARG_callFrame, argList);
 }
 
-JSValuePtr Machine::cti_op_resolve(CTI_ARGS)
+JSValue* Machine::cti_op_resolve(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4824,7 +4824,7 @@ JSValuePtr Machine::cti_op_resolve(CTI_ARGS)
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValuePtr result = slot.getValue(callFrame, ident);
             VM_CHECK_EXCEPTION_AT_END();
-            return result;
+            return result.payload();
         }
     } while (++iter != end);
 
@@ -4835,7 +4835,7 @@ JSValuePtr Machine::cti_op_resolve(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValuePtr Machine::cti_op_construct_JSConstructFast(CTI_ARGS)
+JSObject* Machine::cti_op_construct_JSConstructFast(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4914,7 +4914,7 @@ VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     return pair;
 }
 
-JSValuePtr Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
+JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4943,7 +4943,7 @@ JSValuePtr Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
         if (*ARG_profilerReference)
             (*ARG_profilerReference)->didExecute(callFrame, constructor);
 
-        return returnValue;
+        return returnValue.payload();
     }
 
     ASSERT(constructType == ConstructTypeNone);
@@ -4952,7 +4952,7 @@ JSValuePtr Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValuePtr Machine::cti_op_get_by_val(CTI_ARGS)
+JSValue* Machine::cti_op_get_by_val(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4983,7 +4983,7 @@ JSValuePtr Machine::cti_op_get_by_val(CTI_ARGS)
     }
 
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 VoidPtrPair Machine::cti_op_resolve_func(CTI_ARGS)
@@ -5030,7 +5030,7 @@ VoidPtrPair Machine::cti_op_resolve_func(CTI_ARGS)
     VM_THROW_EXCEPTION_2();
 }
 
-JSValuePtr Machine::cti_op_sub(CTI_ARGS)
+JSValue* Machine::cti_op_sub(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5040,12 +5040,12 @@ JSValuePtr Machine::cti_op_sub(CTI_ARGS)
     double left;
     double right;
     if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
-        return jsNumber(ARG_globalData, left - right);
+        return jsNumber(ARG_globalData, left - right).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, src1->toNumber(callFrame) - src2->toNumber(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 void Machine::cti_op_put_by_val(CTI_ARGS)
@@ -5108,14 +5108,14 @@ void Machine::cti_op_put_by_val_array(CTI_ARGS)
     VM_CHECK_EXCEPTION_AT_END();
 }
 
-JSValuePtr Machine::cti_op_lesseq(CTI_ARGS)
+JSValue* Machine::cti_op_lesseq(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsBoolean(jsLessEq(callFrame, ARG_src1, ARG_src2));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 int Machine::cti_op_loop_if_true(CTI_ARGS)
@@ -5131,7 +5131,7 @@ int Machine::cti_op_loop_if_true(CTI_ARGS)
     return result;
 }
 
-JSValuePtr Machine::cti_op_negate(CTI_ARGS)
+JSValue* Machine::cti_op_negate(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5139,22 +5139,22 @@ JSValuePtr Machine::cti_op_negate(CTI_ARGS)
 
     double v;
     if (fastIsNumber(src, v))
-        return jsNumber(ARG_globalData, -v);
+        return jsNumber(ARG_globalData, -v).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, -src->toNumber(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_resolve_base(CTI_ARGS)
+JSValue* Machine::cti_op_resolve_base(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return inlineResolveBase(ARG_callFrame, *ARG_id1, ARG_callFrame->scopeChain());
+    return inlineResolveBase(ARG_callFrame, *ARG_id1, ARG_callFrame->scopeChain()).payload();
 }
 
-JSValuePtr Machine::cti_op_resolve_skip(CTI_ARGS)
+JSValue* Machine::cti_op_resolve_skip(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5177,7 +5177,7 @@ JSValuePtr Machine::cti_op_resolve_skip(CTI_ARGS)
         if (o->getPropertySlot(callFrame, ident, slot)) {
             JSValuePtr result = slot.getValue(callFrame, ident);
             VM_CHECK_EXCEPTION_AT_END();
-            return result;
+            return result.payload();
         }
     } while (++iter != end);
 
@@ -5188,7 +5188,7 @@ JSValuePtr Machine::cti_op_resolve_skip(CTI_ARGS)
     VM_THROW_EXCEPTION();
 }
 
-JSValuePtr Machine::cti_op_resolve_global(CTI_ARGS)
+JSValue* Machine::cti_op_resolve_global(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5207,18 +5207,18 @@ JSValuePtr Machine::cti_op_resolve_global(CTI_ARGS)
             globalObject->structureID()->ref();
             vPC[4] = globalObject->structureID();
             vPC[5] = slot.cachedOffset();
-            return result;
+            return result.payload();
         }
 
         VM_CHECK_EXCEPTION_AT_END();
-        return result;
+        return result.payload();
     }
     
     ARG_globalData->exception = createUndefinedVariableError(callFrame, ident, vPC, callFrame->codeBlock());
     VM_THROW_EXCEPTION();
 }
 
-JSValuePtr Machine::cti_op_div(CTI_ARGS)
+JSValue* Machine::cti_op_div(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5228,15 +5228,15 @@ JSValuePtr Machine::cti_op_div(CTI_ARGS)
     double left;
     double right;
     if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
-        return jsNumber(ARG_globalData, left / right);
+        return jsNumber(ARG_globalData, left / right).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, src1->toNumber(callFrame) / src2->toNumber(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_pre_dec(CTI_ARGS)
+JSValue* Machine::cti_op_pre_dec(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5245,7 +5245,7 @@ JSValuePtr Machine::cti_op_pre_dec(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, v->toNumber(callFrame) - 1);
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 int Machine::cti_op_jless(CTI_ARGS)
@@ -5261,7 +5261,7 @@ int Machine::cti_op_jless(CTI_ARGS)
     return result;
 }
 
-JSValuePtr Machine::cti_op_not(CTI_ARGS)
+JSValue* Machine::cti_op_not(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5271,7 +5271,7 @@ JSValuePtr Machine::cti_op_not(CTI_ARGS)
 
     JSValuePtr result = jsBoolean(!src->toBoolean(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 int SFX_CALL Machine::cti_op_jtrue(CTI_ARGS)
@@ -5302,7 +5302,7 @@ VoidPtrPair Machine::cti_op_post_inc(CTI_ARGS)
     return pair;
 }
 
-JSValuePtr Machine::cti_op_eq(CTI_ARGS)
+JSValue* Machine::cti_op_eq(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5314,10 +5314,10 @@ JSValuePtr Machine::cti_op_eq(CTI_ARGS)
     ASSERT(!JSImmediate::areBothImmediateNumbers(src1, src2));
     JSValuePtr result = jsBoolean(equalSlowCaseInline(callFrame, src1, src2));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_lshift(CTI_ARGS)
+JSValue* Machine::cti_op_lshift(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5327,17 +5327,17 @@ JSValuePtr Machine::cti_op_lshift(CTI_ARGS)
     int32_t left;
     uint32_t right;
     if (JSImmediate::areBothImmediateNumbers(val, shift))
-        return jsNumber(ARG_globalData, JSImmediate::getTruncatedInt32(val) << (JSImmediate::getTruncatedUInt32(shift) & 0x1f));
+        return jsNumber(ARG_globalData, JSImmediate::getTruncatedInt32(val) << (JSImmediate::getTruncatedUInt32(shift) & 0x1f)).payload();
     if (fastToInt32(val, left) && fastToUInt32(shift, right))
-        return jsNumber(ARG_globalData, left << (right & 0x1f));
+        return jsNumber(ARG_globalData, left << (right & 0x1f)).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, (val->toInt32(callFrame)) << (shift->toUInt32(callFrame) & 0x1f));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_bitand(CTI_ARGS)
+JSValue* Machine::cti_op_bitand(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5347,15 +5347,15 @@ JSValuePtr Machine::cti_op_bitand(CTI_ARGS)
     int32_t left;
     int32_t right;
     if (fastToInt32(src1, left) && fastToInt32(src2, right))
-        return jsNumber(ARG_globalData, left & right);
+        return jsNumber(ARG_globalData, left & right).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, src1->toInt32(callFrame) & src2->toInt32(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_rshift(CTI_ARGS)
+JSValue* Machine::cti_op_rshift(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5365,17 +5365,17 @@ JSValuePtr Machine::cti_op_rshift(CTI_ARGS)
     int32_t left;
     uint32_t right;
     if (JSImmediate::areBothImmediateNumbers(val, shift))
-        return JSImmediate::rightShiftImmediateNumbers(val, shift);
+        return JSImmediate::rightShiftImmediateNumbers(val, shift).payload();
     if (fastToInt32(val, left) && fastToUInt32(shift, right))
-        return jsNumber(ARG_globalData, left >> (right & 0x1f));
+        return jsNumber(ARG_globalData, left >> (right & 0x1f)).payload();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, (val->toInt32(callFrame)) >> (shift->toUInt32(callFrame) & 0x1f));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_bitnot(CTI_ARGS)
+JSValue* Machine::cti_op_bitnot(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5383,12 +5383,12 @@ JSValuePtr Machine::cti_op_bitnot(CTI_ARGS)
 
     int value;
     if (fastToInt32(src, value))
-        return jsNumber(ARG_globalData, ~value);
+        return jsNumber(ARG_globalData, ~value).payload();
             
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsNumber(ARG_globalData, ~src->toInt32(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 VoidPtrPair Machine::cti_op_resolve_with_base(CTI_ARGS)
@@ -5427,14 +5427,14 @@ VoidPtrPair Machine::cti_op_resolve_with_base(CTI_ARGS)
     VM_THROW_EXCEPTION_2();
 }
 
-JSValuePtr Machine::cti_op_new_func_exp(CTI_ARGS)
+JSObject* Machine::cti_op_new_func_exp(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
     return ARG_funcexp1->makeFunction(ARG_callFrame, ARG_callFrame->scopeChain());
 }
 
-JSValuePtr Machine::cti_op_mod(CTI_ARGS)
+JSValue* Machine::cti_op_mod(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5445,20 +5445,20 @@ JSValuePtr Machine::cti_op_mod(CTI_ARGS)
     double d = dividendValue->toNumber(callFrame);
     JSValuePtr result = jsNumber(ARG_globalData, fmod(d, divisorValue->toNumber(callFrame)));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_less(CTI_ARGS)
+JSValue* Machine::cti_op_less(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsBoolean(jsLess(callFrame, ARG_src1, ARG_src2));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_neq(CTI_ARGS)
+JSValue* Machine::cti_op_neq(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5470,7 +5470,7 @@ JSValuePtr Machine::cti_op_neq(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
     JSValuePtr result = jsBoolean(!equalSlowCaseInline(callFrame, src1, src2));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 VoidPtrPair Machine::cti_op_post_dec(CTI_ARGS)
@@ -5488,7 +5488,7 @@ VoidPtrPair Machine::cti_op_post_dec(CTI_ARGS)
     return pair;
 }
 
-JSValuePtr Machine::cti_op_urshift(CTI_ARGS)
+JSValue* Machine::cti_op_urshift(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5498,15 +5498,15 @@ JSValuePtr Machine::cti_op_urshift(CTI_ARGS)
     CallFrame* callFrame = ARG_callFrame;
 
     if (JSImmediate::areBothImmediateNumbers(val, shift) && !JSImmediate::isNegative(val))
-        return JSImmediate::rightShiftImmediateNumbers(val, shift);
+        return JSImmediate::rightShiftImmediateNumbers(val, shift).payload();
     else {
         JSValuePtr result = jsNumber(ARG_globalData, (val->toUInt32(callFrame)) >> (shift->toUInt32(callFrame) & 0x1f));
         VM_CHECK_EXCEPTION_AT_END();
-        return result;
+        return result.payload();
     }
 }
 
-JSValuePtr Machine::cti_op_bitxor(CTI_ARGS)
+JSValue* Machine::cti_op_bitxor(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5517,17 +5517,17 @@ JSValuePtr Machine::cti_op_bitxor(CTI_ARGS)
 
     JSValuePtr result = jsNumber(ARG_globalData, src1->toInt32(callFrame) ^ src2->toInt32(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_new_regexp(CTI_ARGS)
+JSObject* Machine::cti_op_new_regexp(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
     return new (ARG_globalData) RegExpObject(ARG_callFrame->lexicalGlobalObject()->regExpStructure(), ARG_regexp1);
 }
 
-JSValuePtr Machine::cti_op_bitor(CTI_ARGS)
+JSValue* Machine::cti_op_bitor(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5538,10 +5538,10 @@ JSValuePtr Machine::cti_op_bitor(CTI_ARGS)
 
     JSValuePtr result = jsNumber(ARG_globalData, src1->toInt32(callFrame) | src2->toInt32(callFrame));
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_call_eval(CTI_ARGS)
+JSValue* Machine::cti_op_call_eval(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5565,13 +5565,13 @@ JSValuePtr Machine::cti_op_call_eval(CTI_ARGS)
             ARG_globalData->exception = exceptionValue;
             VM_THROW_EXCEPTION_AT_END();
         }
-        return result;
+        return result.payload();
     }
 
-    return JSImmediate::impossibleValue();
+    return JSImmediate::impossibleValue().payload();
 }
 
-JSValuePtr Machine::cti_op_throw(CTI_ARGS)
+JSValue* Machine::cti_op_throw(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5588,14 +5588,14 @@ JSValuePtr Machine::cti_op_throw(CTI_ARGS)
 
     if (!handlerVPC) {
         *ARG_exception = exceptionValue;
-        return JSImmediate::nullImmediate();
+        return JSImmediate::nullImmediate().payload();
     }
 
     ARG_setCallFrame(callFrame);
     void* catchRoutine = callFrame->codeBlock()->nativeExceptionCodeForHandlerVPC(handlerVPC);
     ASSERT(catchRoutine);
     CTI_SET_RETURN_ADDRESS(catchRoutine);
-    return exceptionValue;
+    return exceptionValue.payload();
 }
 
 JSPropertyNameIterator* Machine::cti_op_get_pnames(CTI_ARGS)
@@ -5605,7 +5605,7 @@ JSPropertyNameIterator* Machine::cti_op_get_pnames(CTI_ARGS)
     return JSPropertyNameIterator::create(ARG_callFrame, ARG_src1);
 }
 
-JSValuePtr Machine::cti_op_next_pname(CTI_ARGS)
+JSValue* Machine::cti_op_next_pname(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5613,7 +5613,7 @@ JSValuePtr Machine::cti_op_next_pname(CTI_ARGS)
     JSValuePtr temp = it->next(ARG_callFrame);
     if (!temp)
         it->invalidate();
-    return temp;
+    return temp.payload();
 }
 
 void Machine::cti_op_push_scope(CTI_ARGS)
@@ -5632,57 +5632,57 @@ void Machine::cti_op_pop_scope(CTI_ARGS)
     ARG_callFrame->setScopeChain(ARG_callFrame->scopeChain()->pop());
 }
 
-JSValuePtr Machine::cti_op_typeof(CTI_ARGS)
+JSValue* Machine::cti_op_typeof(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return jsTypeStringForValue(ARG_callFrame, ARG_src1);
+    return jsTypeStringForValue(ARG_callFrame, ARG_src1).payload();
 }
 
-JSValuePtr Machine::cti_op_is_undefined(CTI_ARGS)
+JSValue* Machine::cti_op_is_undefined(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
     JSValuePtr v = ARG_src1;
-    return jsBoolean(JSImmediate::isImmediate(v) ? v->isUndefined() : v->asCell()->structureID()->typeInfo().masqueradesAsUndefined());
+    return jsBoolean(JSImmediate::isImmediate(v) ? v->isUndefined() : v->asCell()->structureID()->typeInfo().masqueradesAsUndefined()).payload();
 }
 
-JSValuePtr Machine::cti_op_is_boolean(CTI_ARGS)
+JSValue* Machine::cti_op_is_boolean(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return jsBoolean(ARG_src1->isBoolean());
+    return jsBoolean(ARG_src1->isBoolean()).payload();
 }
 
-JSValuePtr Machine::cti_op_is_number(CTI_ARGS)
+JSValue* Machine::cti_op_is_number(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return jsBoolean(ARG_src1->isNumber());
+    return jsBoolean(ARG_src1->isNumber()).payload();
 }
 
-JSValuePtr Machine::cti_op_is_string(CTI_ARGS)
+JSValue* Machine::cti_op_is_string(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return jsBoolean(ARG_globalData->machine->isJSString(ARG_src1));
+    return jsBoolean(ARG_globalData->machine->isJSString(ARG_src1)).payload();
 }
 
-JSValuePtr Machine::cti_op_is_object(CTI_ARGS)
+JSValue* Machine::cti_op_is_object(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return jsBoolean(jsIsObjectType(ARG_src1));
+    return jsBoolean(jsIsObjectType(ARG_src1)).payload();
 }
 
-JSValuePtr Machine::cti_op_is_function(CTI_ARGS)
+JSValue* Machine::cti_op_is_function(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
-    return jsBoolean(jsIsFunctionType(ARG_src1));
+    return jsBoolean(jsIsFunctionType(ARG_src1)).payload();
 }
 
-JSValuePtr Machine::cti_op_stricteq(CTI_ARGS)
+JSValue* Machine::cti_op_stricteq(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5693,10 +5693,10 @@ JSValuePtr Machine::cti_op_stricteq(CTI_ARGS)
     ASSERT(!JSImmediate::areBothImmediate(src1, src2));
     ASSERT(!(JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate())));
 
-    return jsBoolean(strictEqualSlowCaseInline(src1, src2));
+    return jsBoolean(strictEqualSlowCaseInline(src1, src2)).payload();
 }
 
-JSValuePtr Machine::cti_op_nstricteq(CTI_ARGS)
+JSValue* Machine::cti_op_nstricteq(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5707,10 +5707,10 @@ JSValuePtr Machine::cti_op_nstricteq(CTI_ARGS)
     ASSERT(!JSImmediate::areBothImmediate(src1, src2));
     ASSERT(!(JSImmediate::isEitherImmediate(src1, src2) & (src1 != JSImmediate::zeroImmediate()) & (src2 != JSImmediate::zeroImmediate())));
     
-    return jsBoolean(!strictEqualSlowCaseInline(src1, src2));
+    return jsBoolean(!strictEqualSlowCaseInline(src1, src2)).payload();
 }
 
-JSValuePtr Machine::cti_op_to_jsnumber(CTI_ARGS)
+JSValue* Machine::cti_op_to_jsnumber(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5719,10 +5719,10 @@ JSValuePtr Machine::cti_op_to_jsnumber(CTI_ARGS)
 
     JSValuePtr result = src->toJSNumber(callFrame);
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
-JSValuePtr Machine::cti_op_in(CTI_ARGS)
+JSValue* Machine::cti_op_in(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5743,14 +5743,14 @@ JSValuePtr Machine::cti_op_in(CTI_ARGS)
 
     uint32_t i;
     if (propName->getUInt32(i))
-        return jsBoolean(baseObj->hasProperty(callFrame, i));
+        return jsBoolean(baseObj->hasProperty(callFrame, i)).payload();
 
     Identifier property(callFrame, propName->toString(callFrame));
     VM_CHECK_EXCEPTION();
-    return jsBoolean(baseObj->hasProperty(callFrame, property));
+    return jsBoolean(baseObj->hasProperty(callFrame, property)).payload();
 }
 
-JSValuePtr Machine::cti_op_push_new_scope(CTI_ARGS)
+JSObject* Machine::cti_op_push_new_scope(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5840,7 +5840,7 @@ void* Machine::cti_op_switch_string(CTI_ARGS)
     return result;
 }
 
-JSValuePtr Machine::cti_op_del_by_val(CTI_ARGS)
+JSValue* Machine::cti_op_del_by_val(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5862,7 +5862,7 @@ JSValuePtr Machine::cti_op_del_by_val(CTI_ARGS)
     }
 
     VM_CHECK_EXCEPTION_AT_END();
-    return result;
+    return result.payload();
 }
 
 void Machine::cti_op_put_getter(CTI_ARGS)
@@ -5891,7 +5891,7 @@ void Machine::cti_op_put_setter(CTI_ARGS)
     baseObj->defineSetter(callFrame, ident, asObject(ARG_src3));
 }
 
-JSValuePtr Machine::cti_op_new_error(CTI_ARGS)
+JSObject* Machine::cti_op_new_error(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5917,7 +5917,7 @@ void Machine::cti_op_debug(CTI_ARGS)
     ARG_globalData->machine->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 }
 
-JSValuePtr Machine::cti_vm_throw(CTI_ARGS)
+JSValue* Machine::cti_vm_throw(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -5935,14 +5935,14 @@ JSValuePtr Machine::cti_vm_throw(CTI_ARGS)
 
     if (!handlerVPC) {
         *ARG_exception = exceptionValue;
-        return JSImmediate::nullImmediate();
+        return JSImmediate::nullImmediate().payload();
     }
 
     ARG_setCallFrame(callFrame);
     void* catchRoutine = callFrame->codeBlock()->nativeExceptionCodeForHandlerVPC(handlerVPC);
     ASSERT(catchRoutine);
     CTI_SET_RETURN_ADDRESS(catchRoutine);
-    return exceptionValue;
+    return exceptionValue.payload();
 }
 
 #undef CTI_RETURN_ADDRESS

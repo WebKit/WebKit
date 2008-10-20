@@ -1,3 +1,81 @@
+2008-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - get CTI working on Windows again
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitCTICall): Add an overload for functions that
+        return JSObject*.
+        * VM/CTI.h: Use JSValue* and JSObject* as return types for
+        cti_op functions. Apparently, MSVC doesn't handle returning
+        the JSValuePtr struct in a register. We'll have to look into
+        this more.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_convert_this):
+        (JSC::Machine::cti_op_add):
+        (JSC::Machine::cti_op_pre_inc):
+        (JSC::Machine::cti_op_new_object):
+        (JSC::Machine::cti_op_get_by_id):
+        (JSC::Machine::cti_op_get_by_id_second):
+        (JSC::Machine::cti_op_get_by_id_generic):
+        (JSC::Machine::cti_op_get_by_id_fail):
+        (JSC::Machine::cti_op_instanceof):
+        (JSC::Machine::cti_op_del_by_id):
+        (JSC::Machine::cti_op_mul):
+        (JSC::Machine::cti_op_new_func):
+        (JSC::Machine::cti_op_push_activation):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_new_array):
+        (JSC::Machine::cti_op_resolve):
+        (JSC::Machine::cti_op_construct_JSConstructFast):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_get_by_val):
+        (JSC::Machine::cti_op_sub):
+        (JSC::Machine::cti_op_lesseq):
+        (JSC::Machine::cti_op_negate):
+        (JSC::Machine::cti_op_resolve_base):
+        (JSC::Machine::cti_op_resolve_skip):
+        (JSC::Machine::cti_op_resolve_global):
+        (JSC::Machine::cti_op_div):
+        (JSC::Machine::cti_op_pre_dec):
+        (JSC::Machine::cti_op_not):
+        (JSC::Machine::cti_op_eq):
+        (JSC::Machine::cti_op_lshift):
+        (JSC::Machine::cti_op_bitand):
+        (JSC::Machine::cti_op_rshift):
+        (JSC::Machine::cti_op_bitnot):
+        (JSC::Machine::cti_op_new_func_exp):
+        (JSC::Machine::cti_op_mod):
+        (JSC::Machine::cti_op_less):
+        (JSC::Machine::cti_op_neq):
+        (JSC::Machine::cti_op_urshift):
+        (JSC::Machine::cti_op_bitxor):
+        (JSC::Machine::cti_op_new_regexp):
+        (JSC::Machine::cti_op_bitor):
+        (JSC::Machine::cti_op_call_eval):
+        (JSC::Machine::cti_op_throw):
+        (JSC::Machine::cti_op_next_pname):
+        (JSC::Machine::cti_op_typeof):
+        (JSC::Machine::cti_op_is_undefined):
+        (JSC::Machine::cti_op_is_boolean):
+        (JSC::Machine::cti_op_is_number):
+        (JSC::Machine::cti_op_is_string):
+        (JSC::Machine::cti_op_is_object):
+        (JSC::Machine::cti_op_is_function):
+        (JSC::Machine::cti_op_stricteq):
+        (JSC::Machine::cti_op_nstricteq):
+        (JSC::Machine::cti_op_to_jsnumber):
+        (JSC::Machine::cti_op_in):
+        (JSC::Machine::cti_op_push_new_scope):
+        (JSC::Machine::cti_op_del_by_val):
+        (JSC::Machine::cti_op_new_error):
+        (JSC::Machine::cti_vm_throw):
+        Change these functions to return pointer types, and never
+        JSValuePtr.
+        * VM/Machine.h: Ditto.
+
 2008-10-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

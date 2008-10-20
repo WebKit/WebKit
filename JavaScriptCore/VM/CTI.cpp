@@ -345,6 +345,22 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCTICall(unsigned opcodeIndex, CTIHel
     return call;
 }
 
+ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCTICall(unsigned opcodeIndex, CTIHelper_o helper)
+{
+#if ENABLE(SAMPLING_TOOL)
+    m_jit.movl_i32m(1, &inCalledCode);
+#endif
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc call = m_jit.emitCall();
+    m_calls.append(CallRecord(call, helper, opcodeIndex));
+#if ENABLE(SAMPLING_TOOL)
+    m_jit.movl_i32m(0, &inCalledCode);
+#endif
+
+    return call;
+}
+
 ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitCTICall(unsigned opcodeIndex, CTIHelper_p helper)
 {
 #if ENABLE(SAMPLING_TOOL)
