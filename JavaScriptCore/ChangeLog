@@ -2,6 +2,8 @@
 
         Rubber-stamped by Sam Weinig.
 
+        Add opcode documentation for undocumented opcodes.
+
         * VM/Machine.cpp:
         (JSC::Machine::privateExecute):
 
