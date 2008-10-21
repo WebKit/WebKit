@@ -3349,6 +3349,18 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
         goto vm_throw;
     }
     BEGIN_OPCODE(op_tear_off_activation) {
+        /* tear_off_activation activation(r)
+
+           Copy all locals and parameters to new memory allocated on
+           the heap, and make the passed activation use this memory
+           in the future when looking up entries in the symbol table.
+           If there is an 'arguments' object, then it will also use
+           this memory for storing the named parameters, but not any
+           extra arguments.
+
+           This opcode should only be used immediately before op_ret.
+        */
+
         int src = (++vPC)->u.operand;
         ASSERT(callFrame->codeBlock()->needsFullScopeChain);
 
@@ -3358,6 +3370,18 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_tear_off_arguments) {
+        /* tear_off_arguments
+
+           Copy all arguments to new memory allocated on the heap,
+           and make the 'arguments' object use this memory in the
+           future when looking up named parameters, but not any
+           extra arguments. If an activation object exists for the
+           current function context, then the tear_off_activation
+           opcode should be used instead.
+
+           This opcode should only be used immediately before op_ret.
+        */
+
         ASSERT(callFrame->codeBlock()->usesArguments && !callFrame->codeBlock()->needsFullScopeChain);
 
         callFrame->optionalCalleeArguments()->copyRegisters();
@@ -3447,6 +3471,17 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_convert_this) {
+        /* convert_this this(r)
+
+           Takes the value in the 'this' register, converts it to a
+           value that is suitable for use as the 'this' value, and
+           stores it in the 'this' register. This opcode is emitted
+           to avoid doing the conversion in the caller unnecessarily.
+
+           This opcode should only be used at the beginning of a code
+           block.
+        */
+
         int thisRegister = (++vPC)->u.operand;
         JSValuePtr thisVal = callFrame[thisRegister].getJSValue();
         if (thisVal->needsThisConversion())

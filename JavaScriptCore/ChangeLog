@@ -1,3 +1,10 @@
+2008-10-20  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+
 2008-10-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.
