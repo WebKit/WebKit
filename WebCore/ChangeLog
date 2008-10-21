@@ -1,3 +1,18 @@
+2008-10-20  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=21763
+        REGRESSION (r36108-r36113): Can't load picture content on wired.com galleries
+        <rdar://problem/6285025
+        
+        If we get 304 response we need to explicitly check if that completes the frame load.
+        
+        No test case, simulating the condition is pretty difficult.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didReceiveResponse):
+
 2008-10-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe.
