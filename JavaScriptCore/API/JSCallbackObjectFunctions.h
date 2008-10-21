@@ -57,8 +57,8 @@ JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, PassRefPtr<StructureID
 // Global object constructor.
 // FIXME: Move this into a separate JSGlobalCallbackObject class derived from this one.
 template <class Base>
-JSCallbackObject<Base>::JSCallbackObject(JSGlobalData* globalData, JSClassRef jsClass)
-    : Base(globalData)
+JSCallbackObject<Base>::JSCallbackObject(JSClassRef jsClass)
+    : Base()
     , m_callbackObjectData(new JSCallbackObjectData(0, jsClass))
 {
     ASSERT(Base::isGlobalObject());

@@ -37,7 +37,7 @@ template <class Base>
 class JSCallbackObject : public Base {
 public:
     JSCallbackObject(ExecState*, PassRefPtr<StructureID>, JSClassRef, void* data);
-    JSCallbackObject(JSGlobalData*, JSClassRef);
+    JSCallbackObject(JSClassRef);
     virtual ~JSCallbackObject();
 
     void setPrivate(void* data);

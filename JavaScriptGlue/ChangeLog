@@ -1,3 +1,20 @@
+2008-10-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21766
+        REGRESSION: 12 JSC tests fail
+
+        The JSGlobalObject constructor no longer takes a JSGlobalData
+        as an argument.
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        * JSRun.h:
+        (JSGlueGlobalObject::JSGlueGlobalObject):
+        * JSUtils.cpp:
+        (getThreadGlobalExecState):
+
 2008-10-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,3 +1,24 @@
+2008-10-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21766
+        REGRESSION: 12 JSC tests fail
+
+        The JSGlobalObject was mutating the shared nullProtoStructureID when
+        used in jsc.  Instead of using nullProtoStructureID, use a new StructureID.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::JSCallbackObject):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        * kjs/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * kjs/Shell.cpp:
+        (GlobalObject::GlobalObject):
+        (jscmain):
+
 2008-10-20  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -411,7 +411,7 @@ ExecState* getThreadGlobalExecState()
     JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(pthread_getspecific(globalObjectKey));
     if (!globalObject) {
         RefPtr<JSGlobalData> globalData = JSGlobalData::create();
-        globalObject = new (globalData.get()) JSGlueGlobalObject(globalData.get());
+        globalObject = new (globalData.get()) JSGlueGlobalObject;
         gcProtect(globalObject);
         pthread_setspecific(globalObjectKey, globalObject);
     }

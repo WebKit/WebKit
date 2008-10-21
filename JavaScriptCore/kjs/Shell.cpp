@@ -151,14 +151,14 @@ long StopWatch::getElapsedMS()
 
 class GlobalObject : public JSGlobalObject {
 public:
-    GlobalObject(JSGlobalData*, const Vector<UString>& arguments);
+    GlobalObject(const Vector<UString>& arguments);
     virtual UString className() const { return "global"; }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
-GlobalObject::GlobalObject(JSGlobalData* globalData, const Vector<UString>& arguments)
-    : JSGlobalObject(globalData)
+GlobalObject::GlobalObject(const Vector<UString>& arguments)
+    : JSGlobalObject()
 {
     putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), prototypeFunctionStructure(), 1, Identifier(globalExec(), "debug"), functionDebug));
     putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), prototypeFunctionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
@@ -463,7 +463,7 @@ int jscmain(int argc, char** argv, JSGlobalData* globalData)
     Options options;
     parseArguments(argc, argv, options);
 
-    GlobalObject* globalObject = new (globalData) GlobalObject(globalData, options.arguments);
+    GlobalObject* globalObject = new (globalData) GlobalObject(options.arguments);
     bool success = runWithScripts(globalObject, options.fileNames, options.prettyPrint, options.dump);
     if (options.interactive && success)
         runInteractive(globalObject);
