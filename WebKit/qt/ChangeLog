@@ -1,3 +1,21 @@
+2008-06-03  Siraj Razick  <siraj.razick@collabora.co.uk>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19374
+
+        Expose boundingBox value in QWebHitTestResult
+
+        Add API function QRect QWebHitResult::boundingBox() const
+
+        API docs by Ariya.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::boundingBox):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

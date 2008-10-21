@@ -67,6 +67,7 @@ public:
     bool isNull() const;
 
     QPoint pos() const;
+    QRect boundingBox() const;
     QString title() const;
 
     QString linkText() const;

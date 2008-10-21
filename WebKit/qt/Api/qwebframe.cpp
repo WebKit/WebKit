@@ -984,6 +984,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
     if (!hitTest.innerNode())
         return;
     pos = hitTest.point();
+    boundingBox = hitTest.boundingBox();
     title = hitTest.title();
     linkText = hitTest.textContent();
     linkUrl = hitTest.absoluteLinkURL();
@@ -1069,6 +1070,17 @@ QPoint QWebHitTestResult::pos() const
     if (!d)
         return QPoint();
     return d->pos;
+}
+
+/*!
+    \since 4.5
+    Returns the bounding box of the element.
+*/
+QRect QWebHitTestResult::boundingBox() const
+{
+    if (!d)
+        return QRect();
+    return d->boundingBox;
 }
 
 /*!
