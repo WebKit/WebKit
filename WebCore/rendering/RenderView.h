@@ -97,6 +97,8 @@ public:
     void addWidget(RenderObject*);
     void removeWidget(RenderObject*);
 
+    // layoutDelta is used transiently during layout to store how far an object has moved from its
+    // last layout location, in order to repaint correctly
     const IntSize& layoutDelta() const { return m_layoutDelta; }
     void addLayoutDelta(const IntSize& delta) { m_layoutDelta += delta; }
 

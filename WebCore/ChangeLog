@@ -1,3 +1,14 @@
+2008-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Add a comment explaining layoutDelta(), and an assertion
+        that checks that delta changes were correctly paired during layout.
+        
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+
 2008-10-20  Timothy Hatcher  <timothy@apple.com>
 
         Make auto-complete only suggest properties that are valid syntax

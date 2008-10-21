@@ -124,6 +124,7 @@ void RenderView::layout()
     setOverflowWidth(docWidth());
     setOverflowHeight(docHeight());
 
+    ASSERT(layoutDelta() == IntSize());
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == &state);
     m_layoutState = 0;
