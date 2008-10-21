@@ -44,6 +44,7 @@ namespace WebCore {
 std::auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
 {
     QPixmap px(size);
+    px.fill(QColor(Qt::transparent));
     return std::auto_ptr<ImageBuffer>(new ImageBuffer(px));
 }
 
