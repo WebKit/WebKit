@@ -1,3 +1,19 @@
+2008-10-20  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes the Profiles panel in the Web Inspector, which was broken by
+        the JSValue base-class changes. Also renames some functions and
+        variables in JavaScriptProfileNode.cpp that where title case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21764
+
+        Reviewed by Oliver Hunt.
+
+        * inspector/JavaScriptProfile.cpp:
+        (WebCore::toJS): Use a JSObject pointer instead of JSValuePtr so the
+        returned JSValuePtr will be treated as an object and not a value.
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::toJS): Ditto.
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
