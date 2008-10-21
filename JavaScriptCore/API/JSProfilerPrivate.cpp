@@ -28,7 +28,7 @@
 
 #include "APICast.h"
 #include "OpaqueJSString.h"
-#include <JavaScriptCore/Profiler.h>
+#include "Profiler.h"
 
 using namespace JSC;
 
