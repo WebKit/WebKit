@@ -306,8 +306,8 @@ void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, boo
             rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
             if (!windowRect.isEmpty())
                 view->update(windowRect);
-        } else
-            emit m_webPage->repaintRequested(windowRect);
+        }
+        emit m_webPage->repaintRequested(windowRect);
     }
 
     // FIXME: There is no "immediate" support for window painting.  This should be done always whenever the flag
