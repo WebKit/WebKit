@@ -268,7 +268,11 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
 
 void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !PLATFORM(CF)
     ASSERT(shouldLoadAsEmptyDocument(r.url()) || !defersLoading());
+#endif
 
     if (m_loadingMultipartContent) {
         frameLoader()->setupForReplaceByMIMEType(r.mimeType());
@@ -296,7 +300,12 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 {
     ASSERT(data);
     ASSERT(length != 0);
+
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !PLATFORM(CF)
     ASSERT(!defersLoading());
+#endif
  
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
@@ -307,8 +316,12 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 
 void MainResourceLoader::didFinishLoading()
 {
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !PLATFORM(CF)
     ASSERT(shouldLoadAsEmptyDocument(frameLoader()->activeDocumentLoader()->url()) || !defersLoading());
-
+#endif
+    
     // The additional processing can do anything including possibly removing the last
     // reference to this object.
     RefPtr<MainResourceLoader> protect(this);
@@ -332,8 +345,12 @@ void MainResourceLoader::didFinishLoading()
 
 void MainResourceLoader::didFail(const ResourceError& error)
 {
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !PLATFORM(CF)
     ASSERT(!defersLoading());
-
+#endif
+    
     receivedError(error);
 }
 

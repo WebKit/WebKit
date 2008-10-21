@@ -1,3 +1,17 @@
+2008-10-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Work around <rdar://problem/6301728>.
+        
+        Don't assert that loads are deferred when we're using CFNetwork on Mac or Windows.
+        
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+
 2008-10-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele Peterson.
