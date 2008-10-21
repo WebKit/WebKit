@@ -1,5 +1,21 @@
 2008-10-20  Timothy Hatcher  <timothy@apple.com>
 
+        Make auto-complete only suggest properties that are valid syntax
+        when using dot-notation. Also when completing numeric properties,
+        the quotes are omitted inside the brackets.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21760
+        https://bugs.webkit.org/show_bug.cgi?id=21761
+
+        Reviewed by Oliver Hunt.
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype.completions): Skip properties that
+        are not valid identifies when using dot-notation. And omit the quotes
+        when completing numbers in bracket-notation.
+
+2008-10-20  Timothy Hatcher  <timothy@apple.com>
+
         Fixes the Profiles panel in the Web Inspector, which was broken by
         the JSValue base-class changes. Also renames some functions and
         variables in JavaScriptProfileNode.cpp that where title case.

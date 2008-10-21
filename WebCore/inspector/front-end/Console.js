@@ -284,12 +284,21 @@ WebInspector.Console.prototype = {
         var properties = Object.sortedProperties(result);
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
-            if (bracketNotation)
-                property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + quoteUsed + "]";
+
+            if (dotNotation && !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(property))
+                continue;
+
+            if (bracketNotation) {
+                if (!/^[0-9]+$/.test(property))
+                    property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + quoteUsed;
+                property += "]";
+            }
+
             if (property.length < prefix.length)
                 continue;
             if (property.indexOf(prefix) !== 0)
                 continue;
+
             results.push(property);
             if (bestMatchOnly)
                 break;
