@@ -581,7 +581,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfFalse(RegisterID* cond, LabelID* ta
 
         if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
             rewindUnaryOp();
-            emitOpcode(target->isForwardLabel() ? op_jtrue : op_loop_if_true);
+            emitOpcode(op_jtrue);
             instructions().append(srcIndex);
             instructions().append(target->offsetFrom(instructions().size()));
             return target;

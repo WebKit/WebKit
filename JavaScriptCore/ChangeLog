@@ -1,5 +1,16 @@
 2008-10-20  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Remove an untaken branch in CodeGenerator::emitJumpIfFalse(). This
+        function is never called with a backwards target LabelID, and there is
+        even an assertion to this effect at the top of the function body.
+
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitJumpIfFalse):
+
+2008-10-20  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Add opcode documentation for undocumented opcodes.
