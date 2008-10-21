@@ -1,3 +1,22 @@
+2008-10-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        - convert post-increment to pre-increment in a couple more places for speed
+
+        Speeds up V8 benchmarks a little on most computers. (But, strangely, slows
+        them down a little on my computer.)
+
+        * kjs/nodes.cpp:
+        (JSC::statementListEmitCode): Removed default argument, since we always want
+        to specify this explicitly.
+        (JSC::ForNode::emitCode): Tolerate ignoredResult() as the dst -- means the
+        same thing as 0.
+        (JSC::ReturnNode::emitCode): Ditto.
+        (JSC::ThrowNode::emitCode): Ditto.
+        (JSC::FunctionBodyNode::emitCode): Pass ignoredResult() so that we know we
+        don't have to compute the result of function statements.
+
 2008-10-21  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej Stachowiak.
