@@ -267,11 +267,6 @@ void FrameLoaderClientQt::detachedFromParent3()
 {
 }
 
-
-void FrameLoaderClientQt::detachedFromParent4()
-{
-}
-
 void FrameLoaderClientQt::dispatchDidHandleOnloadEvents()
 {
     // don't need this one

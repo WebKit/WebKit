@@ -87,10 +87,8 @@ namespace WebCore {
 
         virtual void willCloseDocument();
 
-        virtual void detachedFromParent1();
         virtual void detachedFromParent2();
         virtual void detachedFromParent3();
-        virtual void detachedFromParent4();
 
         virtual void loadedFromCachedPage();
 

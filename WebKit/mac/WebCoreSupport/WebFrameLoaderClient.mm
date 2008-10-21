@@ -216,10 +216,6 @@ void WebFrameLoaderClient::detachedFromParent3()
     m_webFrame->_private->webFrameView = nil;
 }
 
-void WebFrameLoaderClient::detachedFromParent4()
-{
-}
-
 void WebFrameLoaderClient::download(ResourceHandle* handle, const ResourceRequest& request, const ResourceRequest& initialRequest, const ResourceResponse& response)
 {
     id proxy = handle->releaseProxy();

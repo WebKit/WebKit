@@ -1203,11 +1203,6 @@ void WebFrame::detachedFromParent3()
     notImplemented();
 }
 
-void WebFrame::detachedFromParent4()
-{
-    notImplemented();
-}
-
 void WebFrame::cancelPolicyCheck()
 {
     if (d->m_policyListener) {

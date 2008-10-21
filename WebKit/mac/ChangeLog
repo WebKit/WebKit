@@ -1,3 +1,12 @@
+2008-10-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove FrameLoaderClient::detachedFromParent4.  It is no longer used by any port.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2008-10-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.

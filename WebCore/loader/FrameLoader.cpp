@@ -3398,7 +3398,6 @@ void FrameLoader::detachFromParent()
         m_frame->setView(0);
         m_frame->pageDestroyed();
     }
-    m_client->detachedFromParent4();
 }
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainResource, bool alwaysFromRequest)

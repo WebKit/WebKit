@@ -216,12 +216,6 @@ void FrameLoaderClientWx::willCloseDocument()
 }
 
 
-void FrameLoaderClientWx::detachedFromParent1()
-{
-    notImplemented();
-}
-
-
 void FrameLoaderClientWx::detachedFromParent2()
 {
     notImplemented();
@@ -229,12 +223,6 @@ void FrameLoaderClientWx::detachedFromParent2()
 
 
 void FrameLoaderClientWx::detachedFromParent3()
-{
-    notImplemented();
-}
-
-
-void FrameLoaderClientWx::detachedFromParent4()
 {
     notImplemented();
 }

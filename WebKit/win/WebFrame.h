@@ -238,7 +238,6 @@ public:
     virtual void setCopiesOnScroll();
     virtual void detachedFromParent2();
     virtual void detachedFromParent3();
-    virtual void detachedFromParent4();
     virtual void cancelPolicyCheck();
     virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);

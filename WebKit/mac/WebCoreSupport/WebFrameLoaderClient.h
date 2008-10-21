@@ -70,7 +70,6 @@ private:
 
     virtual void detachedFromParent2();
     virtual void detachedFromParent3();
-    virtual void detachedFromParent4();
 
     virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
