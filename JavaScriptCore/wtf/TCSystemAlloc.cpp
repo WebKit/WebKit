@@ -224,7 +224,7 @@ static void* TryVirtualAlloc(size_t size, size_t *actual_size, size_t alignment)
   }
   void* result = VirtualAlloc(NULL, size + extra,
                               MEM_RESERVE | MEM_COMMIT | MEM_TOP_DOWN, 
-                              PAGE_READWRITE);
+                              PAGE_EXECUTE_READWRITE);
 
   if (result == NULL) {
     VirtualAlloc_failure = true;

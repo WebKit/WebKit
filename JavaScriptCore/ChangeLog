@@ -1,3 +1,17 @@
+2008-10-21  Oliver Hunt <oliver@apple.com>
+
+        RS=Maciej Stachowiak.
+
+        Force FastMalloc to make all allocated pages executable in
+        a vague hope this will allow the Win2k3 bot to be able to
+        run tests.
+
+        Filed Bug 21783: Need more granular control over allocation of executable memory
+        to cover a more granular version of this patch.
+
+        * wtf/TCSystemAlloc.cpp:
+        (TryVirtualAlloc):
+
 2008-10-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
