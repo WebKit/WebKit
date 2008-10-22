@@ -281,6 +281,11 @@ void markCrossHeapDependentObjectsForDocument(JSGlobalData& globalData, Document
             if (!wrapper || wrapper->marked())
                 continue;
 
+            // Don't use cross-heap model of marking on same-heap pairs. Otherwise, they will never be destroyed, because a port will mark its entangled one,
+            // and it will never get a chance to be marked as inaccessible. So, the port will keep getting marked in this function.
+            if ((port->document() && entangledPort->document()) || (port->workerContext() == entangledPort->workerContext()))
+                continue;
+
             // If the wrapper hasn't been marked during the mark phase of GC, then the port shouldn't protect its entangled one.
             // It's important not to call this when there is no wrapper. E.g., if GC is triggered after a MessageChannel is created, but before its ports are used from JS,
             // irreversibly telling the object that its (not yet existing) wrapper is inaccessible would be wrong. Similarly, ports posted via postMessage() may not

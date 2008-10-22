@@ -1,3 +1,14 @@
+2008-10-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21769
+        MessagePort should be GC protected if there are messages to be delivered
+
+        * wtf/MessageQueue.h:
+        (WTF::::isEmpty): Added. Also added a warning for methods that return a snapshot of queue
+        state, thus likely to cause race conditions.
+
 2008-10-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.

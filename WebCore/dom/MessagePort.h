@@ -44,6 +44,7 @@ namespace WebCore {
     class Event;
     class Frame;
     class String;
+    class WorkerContext;
 
     class MessagePort : public ThreadSafeShared<MessagePort>, public EventTarget {
     public:
@@ -67,6 +68,7 @@ namespace WebCore {
 
         void contextDestroyed();
         Document* document() { return m_document; }
+        WorkerContext* workerContext() { return 0; } // Not implemented yet.
 
         virtual MessagePort* toMessagePort() { return this; }
 
@@ -86,7 +88,7 @@ namespace WebCore {
         using ThreadSafeShared<MessagePort>::ref;
         using ThreadSafeShared<MessagePort>::deref;
 
-        bool hasPendingActivity() { return m_pendingActivity; }
+        bool hasPendingActivity();
 
         void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onMessageListener = eventListener; }
         EventListener* onmessage() const { return m_onMessageListener.get(); }
@@ -107,9 +109,6 @@ namespace WebCore {
 
         void dispatchCloseEvent();
 
-        void setPendingActivity();
-        void unsetPendingActivity();
-
         MessagePort* m_entangledPort;
         MessageQueue<RefPtr<Event> > m_messageQueue;
         bool m_queueIsOpen;
@@ -121,7 +120,7 @@ namespace WebCore {
 
         EventListenersMap m_eventListeners;
 
-        unsigned m_pendingActivity;
+        bool m_pendingCloseEvent;
         bool m_jsWrapperIsInaccessible;
     };
 

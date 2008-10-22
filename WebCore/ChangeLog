@@ -1,3 +1,29 @@
+2008-10-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/events/message-channel-gc-3.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=21769
+        MessagePort should be GC protected if there are messages to be delivered
+
+        * dom/MessagePort.h: Removed pending activity count. Now we track if a close event is
+        pending, and check if the queue is non-empty.
+        (WebCore::MessagePort::workerContext): Added a stub implementation for a cross-heap GC bug
+        fix (below).
+
+        * dom/MessagePort.cpp:
+        (WebCore::CloseMessagePortTimer::fired):
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::queueCloseEvent):
+        (WebCore::MessagePort::dispatchCloseEvent):
+        (WebCore::MessagePort::hasPendingActivity):
+        Track message and close event activity separately.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markCrossHeapDependentObjectsForDocument): Fixed a bug in cross-heap GC that was
+        causing same-heap ports to never be deleted.
+
 2008-10-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
