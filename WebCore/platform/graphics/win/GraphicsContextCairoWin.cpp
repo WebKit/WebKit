@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-GraphicsContext::GraphicsContext(HDC dc)
+GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
 {

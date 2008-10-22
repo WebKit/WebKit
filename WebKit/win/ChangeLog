@@ -1,3 +1,15 @@
+2008-10-22  Brent Fulgham  <bfulgham@gmail.com>
+
+        Correct build regressions in Cairo port for Windows.
+        http://bugs.webkit.org/show_bug.cgi?id=21724
+
+        Reviewed by Adam Roben.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Don't try to call
+        setShouldPaintNativeControls when SafariTheme support is disabled, as
+        that function doesn't exist in that case.
+
 2008-10-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben
