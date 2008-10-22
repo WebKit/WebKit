@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test Changing Name of A Keyframes Rule Using CSSOM</title>
+  <style type="text/css" media="screen">
+    #box {
+        position: relative;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        -webkit-animation-duration: 0.5s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-name: "bar";
+    }
+    @-webkit-keyframes "foo" {
+        from { left: 100px; }
+        40%  { left: 200px; }
+        60%  { left: 200px; }
+        to   { left: 300px; }
+    }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    result = "PASS";
+    const defaultTolerance = 10;
+    
+    function isEqual(actual, desired, tolerance)
+    {
+        if (tolerance == undefined || tolerance == 0)
+            tolerance = defaultTolerance;
+        var diff = Math.abs(actual - desired);
+        return diff < tolerance;
+    }
+    
+    function snapshot(expected)
+    {
+        if (result != "PASS")
+            return;
+        
+        var prop = parseInt(window.getComputedStyle(document.getElementById('box')).left);
+        if (!isEqual(prop, expected))
+            result = "FAIL('left' property was:"+prop+", expected:"+expected+")";
+    }
+    
+    function findKeyframesRule(rule)
+    {
+        var ss = document.styleSheets;
+        for (var i = 0; i < ss.length; ++i) {
+            for (var j = 0; j < ss[i].cssRules.length; ++j) {
+                if (ss[i].cssRules[j].type == window.CSSRule.WEBKIT_KEYFRAMES_RULE && ss[i].cssRules[j].name == rule)
+                    return ss[i].cssRules[j];
+            }
+        }
+        
+        return null;
+    }
+        
+    function change()
+    {
+        // change keyframes name
+        var keyframes = findKeyframesRule("foo");
+        keyframes.name = "anim";
+        document.getElementById('box').style.webkitAnimationName = "anim";
+    }
+    
+    function start()
+    {
+        document.removeEventListener('webkitAnimationStart', start, false);
+        setTimeout("snapshot(200)", 250);
+        window.setTimeout(function() {
+            document.getElementById('result').innerHTML = result;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 300);
+    }
+    
+    document.addEventListener('webkitAnimationStart', start, false);
+    setTimeout("snapshot(0)", 100);
+    setTimeout("change()", 200);
+    
+  </script>
+</head>
+<body>
+This test starts by making sure the animation is not running, because the animation-name and the
+name of they @keyframes rule do not match. Then it changes the name of the @keyframes rule so they 
+match and makes sure the animation is now running.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

@@ -57,8 +57,15 @@ public:
     virtual unsigned short type() const { return WEBKIT_KEYFRAMES_RULE; }
 
     String name() const;
-    void setName(const String&, ExceptionCode&);    
-    void setName(String);    
+    void setName(const String&);
+    
+    // This version of setName does not call styleSheetChanged to avoid
+    // unnecessary work. It assumes callers will either make that call
+    // themselves, or know that it will get called later.
+    void setNameInternal(const String& name)
+    {   
+        m_name = name;
+    }
 
     CSSRuleList* cssRules() { return m_lstCSSRules.get(); }
 
@@ -80,7 +87,7 @@ private:
     int findRuleIndex(const String& key) const;
     
     RefPtr<CSSRuleList> m_lstCSSRules;
-    String m_name;
+    AtomicString m_name;
 };
 
 } // namespace WebCore

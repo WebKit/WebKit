@@ -54,14 +54,13 @@ String WebKitCSSKeyframesRule::name() const
     return m_name;
 }
 
-void WebKitCSSKeyframesRule::setName(const String& name, ExceptionCode& /*ec*/)
+void WebKitCSSKeyframesRule::setName(const String& name)
 {
     m_name = name;
-}
-
-void WebKitCSSKeyframesRule::setName(String name)
-{
-    m_name = name;
+    
+    // Since the name is used in the keyframe map list in CSSStyleSelector, we need
+    // to recompute the style sheet to get the updated name.
+    stylesheet()->styleSheetChanged();
 }
 
 unsigned WebKitCSSKeyframesRule::length() const

@@ -685,7 +685,7 @@ medium:
 keyframes:
     WEBKIT_KEYFRAMES_SYM maybe_space keyframe_name maybe_space '{' maybe_space keyframes_rule '}' {
         $$ = $7;
-        $7->setName($3);
+        $7->setNameInternal($3);
     }
     ;
   

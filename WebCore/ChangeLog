@@ -1,3 +1,22 @@
+2008-10-22  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Make sure that the AtomicString that identifies a set of animation keyframes
+        stays live by keeping a copy in the WebKitCSSKeyframesRule.
+        
+        Also call styleSheetChanged() when the keyframes name changes, but
+        add an internal method that doesn't call styleSheetChanged() for use
+        during normal stylesheet parsing.
+        
+        Test: animations/change-keyframes-name.html
+
+        * css/CSSGrammar.y:
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::setName):
+        * css/WebKitCSSKeyframesRule.h:
+        (WebCore::WebKitCSSKeyframesRule::setNameInternal):
+
 2008-10-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.
