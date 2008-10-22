@@ -3032,6 +3032,42 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
         ++vPC;
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_jeq_null) {
+        /* jeq_null src(r) target(offset)
+
+           Jumps to offset target from the current instruction, if and
+           only if register src is null.
+        */
+        int src = (++vPC)->u.operand;
+        int target = (++vPC)->u.operand;
+        JSValuePtr srcValue = callFrame[src].jsValue(callFrame);
+
+        if (srcValue->isUndefinedOrNull() || (!JSImmediate::isImmediate(srcValue) && srcValue->asCell()->structureID()->typeInfo().masqueradesAsUndefined())) {
+            vPC += target;
+            NEXT_OPCODE;
+        }
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_jneq_null) {
+        /* jneq_null src(r) target(offset)
+
+           Jumps to offset target from the current instruction, if and
+           only if register src is not null.
+        */
+        int src = (++vPC)->u.operand;
+        int target = (++vPC)->u.operand;
+        JSValuePtr srcValue = callFrame[src].jsValue(callFrame);
+
+        if (!srcValue->isUndefinedOrNull() || (!JSImmediate::isImmediate(srcValue) && !srcValue->asCell()->structureID()->typeInfo().masqueradesAsUndefined())) {
+            vPC += target;
+            NEXT_OPCODE;
+        }
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_loop_if_less) {
         /* loop_if_less src1(r) src2(r) target(offset)
 

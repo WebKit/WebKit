@@ -737,6 +737,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printConditionalJump(begin, it, location, "jfalse");
             break;
         }
+        case op_jeq_null: {
+            printConditionalJump(begin, it, location, "jeq_null");
+            break;
+        }
+        case op_jneq_null: {
+            printConditionalJump(begin, it, location, "jneq_null");
+            break;
+        }
         case op_jnless: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

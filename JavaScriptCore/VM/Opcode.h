@@ -123,6 +123,8 @@ namespace JSC {
         macro(op_jmp) \
         macro(op_jtrue) \
         macro(op_jfalse) \
+        macro(op_jeq_null) \
+        macro(op_jneq_null) \
         macro(op_jnless) \
         macro(op_jmp_scopes) \
         macro(op_loop) \

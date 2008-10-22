@@ -546,6 +546,32 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
             instructions().append(target->offsetFrom(instructions().size()));
             return target;
         }
+    } else if (m_lastOpcodeID == op_eq_null && target->isForwardLabel()) {
+        int dstIndex;
+        int srcIndex;
+
+        retrieveLastUnaryOp(dstIndex, srcIndex);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindUnaryOp();
+            emitOpcode(op_jeq_null);
+            instructions().append(srcIndex);
+            instructions().append(target->offsetFrom(instructions().size()));
+            return target;
+        }
+    } else if (m_lastOpcodeID == op_neq_null && target->isForwardLabel()) {
+        int dstIndex;
+        int srcIndex;
+
+        retrieveLastUnaryOp(dstIndex, srcIndex);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindUnaryOp();
+            emitOpcode(op_jneq_null);
+            instructions().append(srcIndex);
+            instructions().append(target->offsetFrom(instructions().size()));
+            return target;
+        }
     }
 
     emitOpcode(target->isForwardLabel() ? op_jtrue : op_loop_if_true);
@@ -585,7 +611,33 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfFalse(RegisterID* cond, LabelID* ta
             instructions().append(srcIndex);
             instructions().append(target->offsetFrom(instructions().size()));
             return target;
-        }        
+        }
+    } else if (m_lastOpcodeID == op_eq_null) {
+        int dstIndex;
+        int srcIndex;
+
+        retrieveLastUnaryOp(dstIndex, srcIndex);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindUnaryOp();
+            emitOpcode(op_jneq_null);
+            instructions().append(srcIndex);
+            instructions().append(target->offsetFrom(instructions().size()));
+            return target;
+        }
+    } else if (m_lastOpcodeID == op_neq_null) {
+        int dstIndex;
+        int srcIndex;
+
+        retrieveLastUnaryOp(dstIndex, srcIndex);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindUnaryOp();
+            emitOpcode(op_jeq_null);
+            instructions().append(srcIndex);
+            instructions().append(target->offsetFrom(instructions().size()));
+            return target;
+        }
     }
 
     emitOpcode(op_jfalse);
