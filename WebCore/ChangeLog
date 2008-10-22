@@ -1,3 +1,54 @@
+2008-10-22  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21775
+
+        Convert buttons over to use the new Theme API on OS X.
+
+        Reviewed by Adam Roben
+
+        * platform/LengthBox.h:
+        (WebCore::LengthBox::LengthBox):
+        * platform/Theme.cpp:
+        (WebCore::Theme::controlBorder):
+        (WebCore::Theme::controlPadding):
+        * platform/Theme.h:
+        (WebCore::Theme::controlFont):
+        (WebCore::Theme::controlSize):
+        (WebCore::Theme::minControlSize):
+        (WebCore::Theme::controlRequiresPreWhiteSpace):
+        * platform/mac/ThemeMac.h:
+        (WebCore::ThemeMac::controlRequiresPreWhiteSpace):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::checkboxSize):
+        (WebCore::radioSize):
+        (WebCore::buttonSizes):
+        (WebCore::buttonMargins):
+        (WebCore::button):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::controlFont):
+        (WebCore::ThemeMac::controlSize):
+        (WebCore::ThemeMac::minControlSize):
+        (WebCore::ThemeMac::controlBorder):
+        (WebCore::ThemeMac::controlPadding):
+        (WebCore::ThemeMac::inflateControlPaintRect):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::controlStatesForRenderer):
+        (WebCore::RenderTheme::isDefault):
+        (WebCore::RenderTheme::adjustRadioStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::setRadioSize):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::menuListButtonSizes):
+        (WebCore::RenderThemeMac::adjustMenuListStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::paddingBox):
+        (WebCore::InheritedFlags::setPaddingBox):
+
 2008-10-22  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt

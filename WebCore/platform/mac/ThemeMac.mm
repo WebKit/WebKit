@@ -27,9 +27,13 @@
 #import "ThemeMac.h"
 
 #import "GraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
+#import "WebCoreSystemInterface.h"
 
 using namespace std;
+
+// FIXME: Default buttons really should be more like push buttons and not like buttons.
 
 namespace WebCore {
 
@@ -157,7 +161,7 @@ static const int* checkboxMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize checkboxSize(ControlPart part, const Font& font, const LengthSize& zoomedSize, float zoomFactor)
+static LengthSize checkboxSize(const Font& font, const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
@@ -234,7 +238,7 @@ static const int* radioMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize radioSize(ControlPart part, const Font& font, const LengthSize& zoomedSize, float zoomFactor)
+static LengthSize radioSize(const Font& font, const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
@@ -290,6 +294,104 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
     context->restore();
 }
 
+// Buttons
+
+// Buttons really only constrain height. They respect width.
+static const IntSize* buttonSizes()
+{
+    static const IntSize sizes[3] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15) };
+    return sizes;
+}
+
+static const int* buttonMargins(NSControlSize controlSize)
+{
+    static const int margins[3][4] =
+    {
+        { 4, 6, 7, 6 },
+        { 4, 5, 6, 5 },
+        { 0, 1, 1, 1 },
+    };
+    return margins[controlSize];
+}
+
+static NSButtonCell* button(ControlPart part, ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+{
+    static NSButtonCell *buttonCell;
+    static bool defaultButton;
+    if (!buttonCell) {
+        buttonCell = [[NSButtonCell alloc] init];
+        [buttonCell setTitle:nil];
+        [buttonCell setButtonType:NSMomentaryPushInButton];
+    }
+
+    // Set the control size based off the rectangle we're painting into.
+    if (part == SquareButtonPart || zoomedRect.height() > buttonSizes()[NSRegularControlSize].height() * zoomFactor) {
+        // Use the square button
+        if ([buttonCell bezelStyle] != NSShadowlessSquareBezelStyle)
+            [buttonCell setBezelStyle:NSShadowlessSquareBezelStyle];
+    } else if ([buttonCell bezelStyle] != NSRoundedBezelStyle)
+        [buttonCell setBezelStyle:NSRoundedBezelStyle];
+
+    setControlSize(buttonCell, buttonSizes(), zoomedRect.size(), zoomFactor);
+
+    if (defaultButton != (states & DefaultState)) {
+        defaultButton = !defaultButton;
+        [buttonCell setKeyEquivalent:(defaultButton ? @"\r" : @"")];
+    }
+
+    // Update the various states we respond to.
+    updateStates(buttonCell, states);
+    
+    return buttonCell;
+}
+
+static void paintButton(ControlPart part, ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
+{
+    // Determine the width and height needed for the control and prepare the cell for painting.
+    NSButtonCell *buttonCell = button(part, states, zoomedRect, zoomFactor);
+    LocalCurrentGraphicsContext localContext(context);
+
+    NSControlSize controlSize = [buttonCell controlSize];
+    IntSize zoomedSize = buttonSizes()[controlSize];
+    zoomedSize.setWidth(zoomedRect.width()); // Buttons don't ever constrain width, so the zoomed width can just be honored.
+    zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
+    IntRect inflatedRect = zoomedRect;
+    if ([buttonCell bezelStyle] == NSRoundedBezelStyle) {
+        // Center the button within the available space.
+        if (inflatedRect.height() > zoomedSize.height()) {
+            inflatedRect.setY(inflatedRect.y() + (inflatedRect.height() - zoomedSize.height()) / 2);
+            inflatedRect.setHeight(zoomedSize.height());
+        }
+
+        // Now inflate it to account for the shadow.
+        inflatedRect = inflateRect(inflatedRect, zoomedSize, buttonMargins(controlSize), zoomFactor);
+
+        if (zoomFactor != 1.0f) {
+            inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
+            inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
+            context->translate(inflatedRect.x(), inflatedRect.y());
+            context->scale(FloatSize(zoomFactor, zoomFactor));
+            context->translate(-inflatedRect.x(), -inflatedRect.y());
+        }
+    } 
+
+    NSView *view = scrollView->documentView();
+    NSWindow *window = [view window];
+    NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
+
+    if ((states & DefaultState) && [window isKeyWindow]) {
+        [window setDefaultButtonCell:buttonCell];
+        wkAdvanceDefaultButtonPulseAnimation(buttonCell);
+    } else if ([previousDefaultButtonCell isEqual:buttonCell])
+        [window setDefaultButtonCell:nil];
+
+    [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
+    [buttonCell setControlView:nil];
+
+    if (![previousDefaultButtonCell isEqual:buttonCell])
+        [window setDefaultButtonCell:previousDefaultButtonCell];
+}
+
 // Theme overrides
 
 int ThemeMac::baselinePositionAdjustment(ControlPart part) const
@@ -299,15 +401,78 @@ int ThemeMac::baselinePositionAdjustment(ControlPart part) const
     return Theme::baselinePositionAdjustment(part);
 }
 
+FontDescription ThemeMac::controlFont(ControlPart part, const Font& font, float zoomFactor) const
+{
+    switch (part) {
+        case PushButtonPart: {
+            FontDescription fontDescription;
+            fontDescription.setIsAbsoluteSize(true);
+            fontDescription.setGenericFamily(FontDescription::SerifFamily);
+
+            NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
+            fontDescription.firstFamily().setFamily([nsFont familyName]);
+            fontDescription.setComputedSize([nsFont pointSize] * zoomFactor);
+            fontDescription.setSpecifiedSize([nsFont pointSize] * zoomFactor);
+            return fontDescription;
+        }
+        default:
+            return Theme::controlFont(part, font, zoomFactor);
+    }
+}
+
 LengthSize ThemeMac::controlSize(ControlPart part, const Font& font, const LengthSize& zoomedSize, float zoomFactor) const
 {
     switch (part) {
         case CheckboxPart:
-            return checkboxSize(part, font, zoomedSize, zoomFactor);
+            return checkboxSize(font, zoomedSize, zoomFactor);
         case RadioPart:
-            return radioSize(part, font, zoomedSize, zoomFactor);
+            return radioSize(font, zoomedSize, zoomFactor);
+        case PushButtonPart:
+            // Height is reset to auto so that specified heights can be ignored.
+            return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, buttonSizes());
         default:
             return zoomedSize;
+    }
+}
+
+LengthSize ThemeMac::minimumControlSize(ControlPart part, const Font& font, float zoomFactor) const
+{
+    switch (part) {
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
+            return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
+        default:
+            return Theme::minimumControlSize(part, font, zoomFactor);
+    }
+}
+
+LengthBox ThemeMac::controlBorder(ControlPart part, const Font& font, const LengthBox& zoomedBox, float zoomFactor) const
+{
+    switch (part) {
+        case SquareButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
+            return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());
+        default:
+            return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
+    }
+}
+
+LengthBox ThemeMac::controlPadding(ControlPart part, const Font& font, const LengthBox& zoomedBox, float zoomFactor) const
+{
+    switch (part) {
+        case PushButtonPart: {
+            // Just use 8px.  AppKit wants to use 11px for mini buttons, but that padding is just too large
+            // for real-world Web sites (creating a huge necessary minimum width for buttons whose space is
+            // by definition constrained, since we select mini only for small cramped environments.
+            // This also guarantees the HTML <button> will match our rendering by default, since we're using a consistent
+            // padding.
+            const int padding = 8 * zoomFactor;
+            return LengthBox(0, padding, 0, padding);
+        }
+        default:
+            return Theme::controlPadding(part, font, zoomedBox, zoomFactor);
     }
 }
 
@@ -317,7 +482,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, I
         case CheckboxPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
-            NSCell* cell = checkbox(states, zoomedRect, zoomFactor);
+            NSCell *cell = checkbox(states, zoomedRect, zoomFactor);
             NSControlSize controlSize = [cell controlSize];
             IntSize zoomedSize = checkboxSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
@@ -328,12 +493,27 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, I
         case RadioPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the radio button
             // shadow".  We don't consider this part of the bounds of the control in WebKit.
-            NSCell* cell = radio(states, zoomedRect, zoomFactor);
+            NSCell *cell = radio(states, zoomedRect, zoomFactor);
             NSControlSize controlSize = [cell controlSize];
             IntSize zoomedSize = radioSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
             zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
             zoomedRect = inflateRect(zoomedRect, zoomedSize, radioMargins(controlSize), zoomFactor);
+            break;
+        }
+        case PushButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart: {
+            NSButtonCell *cell = button(part, states, zoomedRect, zoomFactor);
+            NSControlSize controlSize = [cell controlSize];
+
+            // We inflate the rect as needed to account for the Aqua button's shadow.
+            if ([cell bezelStyle] == NSRoundedBezelStyle) {
+                IntSize zoomedSize = buttonSizes()[controlSize];
+                zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
+                zoomedSize.setWidth(zoomedRect.width()); // Buttons don't ever constrain width, so the zoomed width can just be honored.
+                zoomedRect = inflateRect(zoomedRect, zoomedSize, buttonMargins(controlSize), zoomFactor);
+            }
             break;
         }
         default:
@@ -349,6 +529,12 @@ void ThemeMac::paint(ControlPart part, ControlStates states, GraphicsContext* co
             break;
         case RadioPart:
             paintRadio(states, context, zoomedRect, zoomFactor, scrollView);
+            break;
+        case PushButtonPart:
+        case DefaultButtonPart:
+        case ButtonPart:
+        case SquareButtonPart:
+            paintButton(part, states, context, zoomedRect, zoomFactor, scrollView);
             break;
         default:
             break;

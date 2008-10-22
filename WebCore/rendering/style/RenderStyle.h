@@ -543,6 +543,7 @@ public:
     Length marginLeft() const { return surround->margin.left(); }
     Length marginRight() const { return surround->margin.right(); }
 
+    LengthBox paddingBox() const { return surround->padding; }
     Length paddingTop() const { return surround->padding.top(); }
     Length paddingBottom() const { return surround->padding.bottom(); }
     Length paddingLeft() const { return surround->padding.left(); }
@@ -827,6 +828,7 @@ public:
     void setMarginRight(Length v) { SET_VAR(surround, margin.m_right, v) }
 
     void resetPadding() { SET_VAR(surround, padding, LengthBox(Auto)) }
+    void setPaddingBox(const LengthBox& b) { SET_VAR(surround, padding, b) }
     void setPaddingTop(Length v) { SET_VAR(surround, padding.m_top, v) }
     void setPaddingBottom(Length v) { SET_VAR(surround, padding.m_bottom, v) }
     void setPaddingLeft(Length v) { SET_VAR(surround, padding.m_left, v) }

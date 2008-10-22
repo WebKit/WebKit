@@ -38,6 +38,22 @@ struct LengthBox {
     {
     }
 
+    LengthBox(int v)
+        : m_left(Length(v, Fixed))
+        , m_right(Length(v, Fixed))
+        , m_top(Length(v, Fixed))
+        , m_bottom(Length(v, Fixed))
+    {
+    }
+    
+    LengthBox(int t, int r, int b, int l)
+        : m_left(Length(l, Fixed))
+        , m_right(Length(r, Fixed))
+        , m_top(Length(t, Fixed))
+        , m_bottom(Length(b, Fixed))
+    {
+    }
+
     Length left() const { return m_left; }
     Length right() const { return m_right; }
     Length top() const { return m_top; }

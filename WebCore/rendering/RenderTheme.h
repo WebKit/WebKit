@@ -148,11 +148,11 @@ protected:
     virtual void adjustRadioStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setRadioSize(RenderStyle*) const { }
-#endif
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
     virtual void setButtonSize(RenderStyle*) const { }
+#endif
 
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return true; }
