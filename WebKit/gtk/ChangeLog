@@ -1,5 +1,12 @@
 2008-10-22  Alp Toker  <alp@nuanti.com>
 
+        Build fix for older GTK+ versions where GTK_TYPE_TARGET_LIST isn't
+        defined.
+
+        * webkit/webkitwebview.cpp:
+
+2008-10-22  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Adam Roben.
 
         Avoid critical warnings on older GTK+ versions (2.8) by not checking
