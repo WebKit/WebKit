@@ -1,3 +1,33 @@
+2008-10-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt and Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19225
+        Bug 19225: JSProfiler: Create automated profiler tests
+        - This change exports profiles on the console object so that they can be
+        iterated over via JavaScript, and thus can be used in automated tests.
+
+        * bindings/js/JSConsoleCustom.cpp: Get the profiles and return an array
+        that JS can use.
+        (WebCore::JSConsole::profiles):
+        * inspector/InspectorController.h: Use the new typedef.
+        (WebCore::InspectorController::profiles):
+        * page/Console.cpp: Keep our own array of profile objects.
+        (WebCore::Console::profileEnd):
+        * page/Console.h: Ditto.
+        (WebCore::Console::profiles):
+        * page/Console.idl: Expose the profiles to JS.
+
+2008-10-22  Kevin McCullough  <kmccullough@apple.com>
+
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * inspector/InspectorController.h: Ditto.
+        (WebCore::InspectorController::profiles):
+        * page/Console.cpp: Return the profiles.
+        (WebCore::Console::profiles):
+        * page/Console.h: Ditto.
+        * page/Console.idl: Ditto.
+
 2008-10-22  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21775

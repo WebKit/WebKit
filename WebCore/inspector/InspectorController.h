@@ -114,7 +114,7 @@ public:
     void addProfile(PassRefPtr<JSC::Profile>, unsigned lineNumber, const JSC::UString& sourceURL);
     void addProfileMessageToConsole(PassRefPtr<JSC::Profile> prpProfile, unsigned lineNumber, const JSC::UString& sourceURL);
     void addScriptProfile(JSC::Profile* profile);
-    const Vector<RefPtr<JSC::Profile> >& profiles() const { return m_profiles; }
+    const ProfilesArray& profiles() const { return m_profiles; }
 
     void attachWindow();
     void detachWindow();
@@ -237,7 +237,7 @@ private:
     HashSet<String> m_knownResources;
     FrameResourcesMap m_frameResources;
     Vector<ConsoleMessage*> m_consoleMessages;
-    Vector<RefPtr<JSC::Profile> > m_profiles;
+    ProfilesArray m_profiles;
     HashMap<String, double> m_times;
     HashMap<String, unsigned> m_counts;
 #if ENABLE(DATABASE)

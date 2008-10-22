@@ -29,6 +29,8 @@
 module window {
 
     interface Console {
+        readonly attribute [CustomGetter] Array profiles;        
+    
         [Custom] void debug();
         [Custom] void error();
         [Custom] void info();
