@@ -1,3 +1,9 @@
+2008-10-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Exclude strings marked with UNLOCALIZED_STRING or UNLOCALIZED_LPCTSTR.
+
+        * Scripts/extract-localizable-strings:
+
 2008-10-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.
