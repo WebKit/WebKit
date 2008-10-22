@@ -287,12 +287,8 @@ void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
                         m_direction = ArabicNumber;
                         appendRun();
                     } else if (m_status.lastStrong != LeftToRight) {
-                        if (context()->dir() == RightToLeft)
-                            m_direction = RightToLeft;
-                        else {
-                            appendRun();
-                            m_direction = LeftToRight;
-                        }
+                        appendRun();
+                        m_direction = LeftToRight;
                     }
                 } else if (m_status.eor == EuropeanNumber || m_status.eor == ArabicNumber || m_status.lastStrong == LeftToRight) {
                     appendRun();
