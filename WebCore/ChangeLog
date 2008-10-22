@@ -1,3 +1,20 @@
+2008-10-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        <rdar://6261773> - autocomplete="off" doesn't work on Windows
+
+        Visual Studio makes a poor decision regarding the combination of enums and bitfields, such that a 
+        statement like "m_autocomplete = Off" followed by "return m_autocomplete == Off" would return "false" 
+        instead of the much more correct "true."
+        
+        In the past we have worked around this by declaring the bitfield member as an unsigned instead 
+        of the enum type.
+
+        For more discussion, see http://trac.webkit.org/changeset/25329
+
+        * html/HTMLInputElement.h:  Work around insane Visual Studio enum issue  *sigh*
+
 2008-10-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt and Tim Hatcher.
