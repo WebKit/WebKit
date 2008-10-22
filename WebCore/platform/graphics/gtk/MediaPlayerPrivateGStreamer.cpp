@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #include "ScrollView.h"
 #include "Widget.h"
+#include <wtf/GOwnPtr.h>
 
 #include <gdk/gdkx.h>
 #include <gst/base/gstbasesrc.h>
