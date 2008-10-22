@@ -1,3 +1,16 @@
+2008-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+        
+        Moved tests from css3 to animations/transforms directories.
+
+        * animations/change-keyframes-expected.txt: Renamed from LayoutTests/css3/change-keyframes-expected.txt.
+        * animations/change-keyframes.html: Renamed from LayoutTests/css3/change-keyframes.html.
+        * animations/keyframes-rule-expected.txt: Renamed from LayoutTests/css3/keyframes-rule-expected.txt.
+        * animations/keyframes-rule.html: Renamed from LayoutTests/css3/keyframes-rule.html.
+        * transforms/transform-value-types-expected.txt: Renamed from LayoutTests/css3/transform-value-types-expected.txt.
+        * transforms/transform-value-types.html: Renamed from LayoutTests/css3/transform-value-types.html.
+
 2008-10-22  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt
