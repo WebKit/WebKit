@@ -1,3 +1,15 @@
+2008-10-22  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        For public API, use the term boundingRect instead of boundingBox.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::boundingRect):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
 2008-06-03  Siraj Razick  <siraj.razick@collabora.co.uk>
 
         Reviewed by Simon Hausmann.

@@ -100,7 +100,7 @@ public:
     QWebHitTestResultPrivate(const WebCore::HitTestResult &hitTest);
 
     QPoint pos;
-    QRect boundingBox;
+    QRect boundingRect;
     QString title;
     QString linkText;
     QUrl linkUrl;
