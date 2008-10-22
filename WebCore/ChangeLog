@@ -1,3 +1,32 @@
+2008-10-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21791
+        WebCore JS bindings should be able to use non-static hash tables for properties
+
+        Add a map for HashTables to WebCore JS client data.
+
+        This makes property access noticeably slower, so it is an opt-in. For classes that need to be
+        supported in workers in forseeable future this is not critical.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::DOMObjectHashTableMap::get):
+        (WebCore::DOMObjectHashTableMap::mapFor):
+        (WebCore::getHashTableForGlobalData):
+        (WebCore::DOMObjectWrapperMap::mapFor):
+        WebCore client data is now a class that contains both a DOM wrapper map and a property hash
+        table one.
+
+        * bindings/js/JSDOMBinding.h: Added getHashTableForGlobalData() to query the hash table map.
+
+        * bindings/scripts/CodeGeneratorJS.pm: If the class has a NoStaticTables attribute, use
+        JSDOMBinding map to access its property hash tables.
+
+        * dom/MessageChannel.idl:
+        * dom/MessagePort.idl:
+        Added NoStaticTables attribute.
+
 2008-10-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Timothy Hatcher.
