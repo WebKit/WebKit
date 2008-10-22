@@ -1,5 +1,16 @@
 2008-10-22  Brent Fulgham  <bfulgham@gmail.com>
 
+        Bring Windows Cairo Port's font handling in line with CG.
+        http://bugs.webkit.org/show_bug.cgi?id=21812.
+
+        Reviewed by Adam Roben.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont): Remove unnecessary special-case for Cairo
+        TrueType font search. It should match CG in all font selections.
+
+2008-10-22  Brent Fulgham  <bfulgham@gmail.com>
+
         http://bugs.webkit.org/show_bug.cgi?id=21812.
         Bring Windows Cairo Port's font handling in line with CG.
 
