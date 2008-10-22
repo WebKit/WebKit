@@ -1,3 +1,14 @@
+2008-10-22  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Should not define PLATFORM(WIN,MAC,GTK) when PLATFORM(CHROMIUM) is defined
+        https://bugs.webkit.org/show_bug.cgi?id=21757
+
+        PLATFORM(CHROMIUM) implies HAVE_ACCESSIBILITY
+
+        * wtf/Platform.h:
+
 2008-10-22  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Alexey Proskuryakov.
