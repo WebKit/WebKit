@@ -458,7 +458,7 @@ void RenderFrameSet::layout()
     if (doFullRepaint)
         oldBounds = absoluteClippedOverflowRect();
 
-    if (!parent()->isFrameSet()) {
+    if (!parent()->isFrameSet() && !document()->printing()) {
         m_width = view()->viewWidth();
         m_height = view()->viewHeight();
     }

@@ -1,3 +1,20 @@
+2008-10-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20352 
+        REGRESSION(r31030-31055): Choosing "Print window" from frame set 
+        prints blank page
+        and corresponding: <rdar://problem/6142398>
+
+        viewHeight() and viewWidth() only return valuable information if we 
+        are not printing. Everywhere else in the code, we make sure we are 
+        not printing before we call these functions. Adding a check for 
+        printing here fixes this bug, and framesets print again.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+
 2008-10-21  Yael Aharon <yael.aharon@nokia.com>
 
         Reviewed by Simon.
