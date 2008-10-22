@@ -1,3 +1,7 @@
+2008-10-22  Darin Adler  <darin@apple.com>
+
+        * Scripts/do-webcore-rename: More renaming plans.
+
 2008-10-21  Steve Falkenburg  <sfalken@apple.com>
 
         Exclude strings marked with UNLOCALIZED_STRING or UNLOCALIZED_LPCTSTR.
