@@ -1,3 +1,12 @@
+2008-10-22  Alp Toker  <alp@nuanti.com>
+
+        Fix build for Cairo 1.2.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozWidget):
+
 2008-10-22  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
