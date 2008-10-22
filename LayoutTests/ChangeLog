@@ -1,3 +1,13 @@
+2008-10-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        <rdar://6261773> - autocomplete="off" doesn't work on Windows
+
+        Remove a skipped test that can now pass with proper DRT support
+        
+        * platform/win/Skipped: Remove security/autocomplete-cleared-on-back.html
+
 2008-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

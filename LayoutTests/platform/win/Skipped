@@ -412,9 +412,6 @@ accessibility
 # No support for print-to-pdf in Windows DRT
 printing
 
-# Need Windows DRT support for "elementDoesAutoCompleteForElementWithId()"
-security/set-form-autocomplete-attribute.html
-
 # No upload progress events on windows
 http/tests/xmlhttprequest/upload-onload-event.html
 http/tests/xmlhttprequest/upload-onloadstart-event.html

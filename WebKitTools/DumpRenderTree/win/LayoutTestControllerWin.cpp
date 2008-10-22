@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -390,7 +390,7 @@ static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
     DWORD rootPathSize = _countof(rootPath);
     DWORD keyType;
     DWORD result = ::SHGetValueW(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\/"), TEXT("native"), &keyType, &rootPath, &rootPathSize);
-    
+
     if (result != ERROR_SUCCESS || keyType != REG_SZ)
         return false;
 
@@ -548,9 +548,28 @@ int LayoutTestController::windowCount()
 
 bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id)
 {
-    // FIXME: Implement this almost exactly like the Mac version
+    COMPtr<IDOMDocument> document;
+    if (FAILED(frame->DOMDocument(&document)))
+        return false;
 
-    return false;
+    wstring idWstring = jsStringRefToWString(id);
+    BSTR idBSTR = SysAllocStringLen((OLECHAR*)idWstring.c_str(), idWstring.length());
+    COMPtr<IDOMElement> element;
+    HRESULT result = document->getElementById(idBSTR, &element);
+    SysFreeString(idBSTR);
+
+    if (FAILED(result))
+        return false;
+
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return false;
+
+    BOOL autoCompletes;
+    if (FAILED(framePrivate->elementDoesAutoComplete(element.get(), &autoCompletes)))
+        return false;
+
+    return autoCompletes;
 }
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
@@ -578,8 +597,8 @@ void LayoutTestController::clearAllDatabases()
 {
     printf("ERROR: LayoutTestController::clearAllDatabases() not implemented\n");
 }
- 
+
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
-{    
+{
     printf("ERROR: LayoutTestController::setDatabaseQuota() not implemented\n");
 }

@@ -154,7 +154,7 @@ HRESULT STDMETHODCALLTYPE WebHTMLRepresentation::elementDoesAutoComplete(
         /* [in] */ IDOMElement* element,
         /* [retval][out] */ BOOL* result)
 {
-    bool doesAutoComplete;
+    BOOL doesAutoComplete;
     HRESULT hr = m_frame->elementDoesAutoComplete(element, &doesAutoComplete);
     *result = doesAutoComplete ? TRUE : FALSE;
     return hr;

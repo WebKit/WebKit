@@ -1,3 +1,13 @@
+2008-10-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+        
+        <rdar://6261773> - autocomplete="off" doesn't work on Windows
+
+        Implement LayoutTestController::elementDoesAutoCompleteForElementWithId() on Windows
+        
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+
 2008-10-22  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: More renaming plans.

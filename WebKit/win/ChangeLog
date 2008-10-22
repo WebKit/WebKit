@@ -1,3 +1,18 @@
+2008-10-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+        
+        Move elementDoesAutoComplete() to IWebFramePrivate so it is exposed for DRT to use
+
+        * Interfaces/IWebFramePrivate.idl:
+        
+        * WebFrame.cpp:
+        (WebFrame::elementDoesAutoComplete):
+        * WebFrame.h:
+        
+        * WebHTMLRepresentation.cpp:
+        (WebHTMLRepresentation::elementDoesAutoComplete):
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
