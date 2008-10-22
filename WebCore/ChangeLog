@@ -18,16 +18,6 @@
         (WebCore::Console::profiles):
         * page/Console.idl: Expose the profiles to JS.
 
-2008-10-22  Kevin McCullough  <kmccullough@apple.com>
-
-        (WebCore::InspectorController::windowScriptObjectAvailable):
-        * inspector/InspectorController.h: Ditto.
-        (WebCore::InspectorController::profiles):
-        * page/Console.cpp: Return the profiles.
-        (WebCore::Console::profiles):
-        * page/Console.h: Ditto.
-        * page/Console.idl: Ditto.
-
 2008-10-22  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21775
