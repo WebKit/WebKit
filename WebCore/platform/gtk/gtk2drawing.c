@@ -23,6 +23,7 @@
  *  Brian Ryner <bryner@brianryner.com>  (Original Author)
  *  Pierre Chanial <p_ch@verizon.net>
  *  Michael Ventnor <m.ventnor@gmail.com>
+ *  Alp Toker <alp@nuanti.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -100,6 +101,7 @@ static GtkWidget* gScrolledWindowWidget;
 
 static style_prop_t style_prop_func;
 static gboolean have_arrow_scaling;
+static gboolean have_2_10;
 static gboolean is_initialized;
 
 /* Because we have such an unconventional way of drawing widgets, signal to the GTK theme engine
@@ -876,6 +878,9 @@ moz_gtk_init()
     have_arrow_scaling = (gtk_major_version > 2 ||
                           (gtk_major_version == 2 && gtk_minor_version >= 12));
 
+    have_2_10 = (gtk_major_version > 2 ||
+                 (gtk_major_version == 2 && gtk_minor_version >= 10));
+
     /* Add style property to GtkEntry.
      * Adding the style property to the normal GtkEntry class means that it
      * will work without issues inside GtkComboBox and for Spinbuttons. */
@@ -946,9 +951,10 @@ gint
 moz_gtk_button_get_inner_border(GtkWidget* widget, GtkBorder* inner_border)
 {
     static const GtkBorder default_inner_border = { 1, 1, 1, 1 };
-    GtkBorder *tmp_border;
+    GtkBorder *tmp_border = NULL;
 
-    gtk_widget_style_get (widget, "inner-border", &tmp_border, NULL);
+    if (have_2_10)
+        gtk_widget_style_get (widget, "inner-border", &tmp_border, NULL);
 
     if (tmp_border) {
         *inner_border = *tmp_border;
@@ -1733,8 +1739,8 @@ moz_gtk_combo_box_paint(GdkDrawable* drawable, GdkRectangle* rect,
                         gboolean ishtml, GtkTextDirection direction)
 {
     GdkRectangle arrow_rect, real_arrow_rect;
-    gint arrow_size, separator_width;
-    gboolean wide_separators;
+    gint arrow_size, separator_width = 0;
+    gboolean wide_separators = FALSE;
     GtkStateType state_type = ConvertGtkState(state);
     GtkShadowType shadow_type = state->active ? GTK_SHADOW_IN : GTK_SHADOW_OUT;
     GtkStyle* style;
@@ -1777,10 +1783,11 @@ moz_gtk_combo_box_paint(GdkDrawable* drawable, GdkRectangle* rect,
     style = gComboBoxSeparatorWidget->style;
     TSOffsetStyleGCs(style, rect->x, rect->y);
 
-    gtk_widget_style_get(gComboBoxSeparatorWidget,
-                         "wide-separators", &wide_separators,
-                         "separator-width", &separator_width,
-                         NULL);
+    if (have_2_10)
+        gtk_widget_style_get(gComboBoxSeparatorWidget,
+                             "wide-separators", &wide_separators,
+                             "separator-width", &separator_width,
+                             NULL);
 
     if (wide_separators) {
         if (direction == GTK_TEXT_DIR_LTR)
@@ -2005,9 +2012,9 @@ moz_gtk_toolbar_separator_paint(GdkDrawable* drawable, GdkRectangle* rect,
                                 GtkTextDirection direction)
 {
     GtkStyle* style;
-    gint     separator_width;
+    gint     separator_width = 0;
     gint     paint_width;
-    gboolean wide_separators;
+    gboolean wide_separators = FALSE;
     
     /* Defined as constants in GTK+ 2.10.14 */
     const double start_fraction = 0.2;
@@ -2018,10 +2025,11 @@ moz_gtk_toolbar_separator_paint(GdkDrawable* drawable, GdkRectangle* rect,
 
     style = gToolbarSeparatorWidget->style;
 
-    gtk_widget_style_get(gToolbarWidget,
-                         "wide-separators", &wide_separators,
-                         "separator-width", &separator_width,
-                         NULL);
+    if (have_2_10)
+        gtk_widget_style_get(gToolbarWidget,
+                             "wide-separators", &wide_separators,
+                             "separator-width", &separator_width,
+                             NULL);
 
     TSOffsetStyleGCs(style, rect->x, rect->y);
 
@@ -2412,9 +2420,9 @@ moz_gtk_menu_separator_paint(GdkDrawable* drawable, GdkRectangle* rect,
                              GdkRectangle* cliprect, GtkTextDirection direction)
 {
     GtkStyle* style;
-    gboolean wide_separators;
-    gint separator_height;
-    guint horizontal_padding;
+    gboolean wide_separators = FALSE;
+    gint separator_height = 0;
+    guint horizontal_padding = 0;
     gint paint_height;
 
     ensure_menu_separator_widget();
@@ -2422,9 +2430,13 @@ moz_gtk_menu_separator_paint(GdkDrawable* drawable, GdkRectangle* rect,
 
     style = gMenuSeparatorWidget->style;
 
+    if (have_2_10)
+        gtk_widget_style_get(gMenuSeparatorWidget,
+                             "wide-separators",    &wide_separators,
+                             "separator-height",   &separator_height,
+                             NULL);
+
     gtk_widget_style_get(gMenuSeparatorWidget,
-                         "wide-separators",    &wide_separators,
-                         "separator-height",   &separator_height,
                          "horizontal-padding", &horizontal_padding,
                          NULL);
 
@@ -2672,7 +2684,7 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
             /* We need to account for the arrow on the dropdown, so text
              * doesn't come too close to the arrow, or in some cases spill
              * into the arrow. */
-            gboolean ignored_interior_focus, wide_separators;
+            gboolean ignored_interior_focus, wide_separators = FALSE;
             gint focus_width, focus_pad, separator_width;
             GtkRequisition arrow_req;
 
@@ -2695,10 +2707,11 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
             /* If there is no separator, don't try to count its width. */
             separator_width = 0;
             if (gComboBoxSeparatorWidget) {
-                gtk_widget_style_get(gComboBoxSeparatorWidget,
-                                     "wide-separators", &wide_separators,
-                                     "separator-width", &separator_width,
-                                     NULL);
+                if (have_2_10)
+                    gtk_widget_style_get(gComboBoxSeparatorWidget,
+                                         "wide-separators", &wide_separators,
+                                         "separator-width", &separator_width,
+                                         NULL);
 
                 if (!wide_separators)
                     separator_width =
@@ -2879,12 +2892,13 @@ moz_gtk_get_combo_box_entry_button_size(gint* width, gint* height)
 gint
 moz_gtk_get_tab_scroll_arrow_size(gint* width, gint* height)
 {
-    gint arrow_size;
+    gint arrow_size = 16;
 
     ensure_tab_widget();
-    gtk_widget_style_get(gTabWidget,
-                         "scroll-arrow-hlength", &arrow_size,
-                         NULL);
+    if (have_2_10)
+        gtk_widget_style_get(gTabWidget,
+                             "scroll-arrow-hlength", &arrow_size,
+                             NULL);
 
     *height = *width = arrow_size;
 
@@ -2907,18 +2921,22 @@ moz_gtk_get_downarrow_size(gint* width, gint* height)
 gint
 moz_gtk_get_toolbar_separator_width(gint* size)
 {
-    gboolean wide_separators;
-    gint separator_width;
+    gboolean wide_separators = FALSE;
+    gint separator_width = 0;
     GtkStyle* style;
 
     ensure_toolbar_widget();
 
     style = gToolbarWidget->style;
 
+    if (have_2_10)
+        gtk_widget_style_get(gToolbarWidget,
+                             "wide-separators",  &wide_separators,
+                             "separator-width", &separator_width,
+                             NULL);
+
     gtk_widget_style_get(gToolbarWidget,
                          "space-size", size,
-                         "wide-separators",  &wide_separators,
-                         "separator-width", &separator_width,
                          NULL);
 
     /* Just in case... */
@@ -2952,15 +2970,16 @@ moz_gtk_get_treeview_expander_size(gint* size)
 gint
 moz_gtk_get_menu_separator_height(gint *size)
 {
-    gboolean wide_separators;
-    gint     separator_height;
+    gboolean wide_separators = FALSE;
+    gint     separator_height = 0;
 
     ensure_menu_separator_widget();
 
-    gtk_widget_style_get(gMenuSeparatorWidget,
-                          "wide-separators",  &wide_separators,
-                          "separator-height", &separator_height,
-                          NULL);
+    if (have_2_10)
+        gtk_widget_style_get(gMenuSeparatorWidget,
+                              "wide-separators",  &wide_separators,
+                              "separator-height", &separator_height,
+                              NULL);
 
     if (wide_separators)
         *size = separator_height + gMenuSeparatorWidget->style->ythickness;

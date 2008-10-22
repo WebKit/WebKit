@@ -1,4 +1,6 @@
 /*
+ *  Copyright (C) 2008 Nuanti Ltd.
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
@@ -43,16 +45,15 @@ void ContextMenuClient::contextMenuDestroyed()
 
 static GtkWidget* inputMethodsMenuItem (WebKitWebView* webView)
 {
-    GtkWidget* widget = GTK_WIDGET (webView);
-    GdkScreen* screen = widget && gtk_widget_has_screen(widget) ? gtk_widget_get_screen(widget) : gdk_screen_get_default();
-    if (!screen)
-        return 0;
+    if (gtk_major_version > 2 || (gtk_major_version == 2 && gtk_minor_version >= 10)) {
+        GtkSettings* settings = webView ? gtk_widget_get_settings(GTK_WIDGET(webView)) : gtk_settings_get_default();
 
-    GtkSettings* settings = gtk_settings_get_for_screen(screen);
-    gboolean showMenu;
-    g_object_get(G_OBJECT(settings), "gtk-show-input-method-menu", &showMenu, NULL);
-    if (!showMenu)
-        return 0;
+        gboolean showMenu = TRUE;
+        if (settings)
+            g_object_get(settings, "gtk-show-input-method-menu", &showMenu, NULL);
+        if (!showMenu)
+            return 0;
+    }
 
     GtkWidget* menuitem = gtk_image_menu_item_new_with_mnemonic(
         _("Input _Methods"));
@@ -92,16 +93,15 @@ static void insertControlCharacter(GtkWidget* widget)
 
 static GtkWidget* unicodeMenuItem(WebKitWebView* webView)
 {
-    GtkWidget* widget = GTK_WIDGET (webView);
-    GdkScreen* screen = widget && gtk_widget_has_screen(widget) ? gtk_widget_get_screen(widget) : gdk_screen_get_default();
-    if (!screen)
-        return 0;
+    if (gtk_major_version > 2 || (gtk_major_version == 2 && gtk_minor_version >= 10)) {
+        GtkSettings* settings = webView ? gtk_widget_get_settings(GTK_WIDGET(webView)) : gtk_settings_get_default();
 
-    GtkSettings* settings = gtk_settings_get_for_screen(screen);
-    gboolean showMenu;
-    g_object_get(G_OBJECT(settings), "gtk-show-unicode-menu", &showMenu, NULL);
-    if (!showMenu)
-        return 0;
+        gboolean showMenu = TRUE;
+        if (settings)
+            g_object_get(settings, "gtk-show-unicode-menu", &showMenu, NULL);
+        if (!showMenu)
+            return 0;
+    }
 
     GtkWidget* menuitem = gtk_image_menu_item_new_with_mnemonic(
         _("_Insert Unicode Control Character"));

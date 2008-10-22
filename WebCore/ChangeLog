@@ -1,5 +1,29 @@
 2008-10-22  Alp Toker  <alp@nuanti.com>
 
+        Reviewed by Adam Roben.
+
+        Fix crashes on older GTK+ versions (2.8). gtk_widget_style_get()
+        doesn't initialize values if the requested property doesn't exist, so
+        initialize the values to the documented defaults before calling it
+        where necessary. Additionally, avoid critical warnings by not calling
+        gtk_widget_style_get() when we know the property isn't available.
+
+        Note that this is an imported source file which doesn't follow the
+        WebKit coding style.
+
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_init):
+        (moz_gtk_button_get_inner_border):
+        (moz_gtk_combo_box_paint):
+        (moz_gtk_toolbar_separator_paint):
+        (moz_gtk_menu_separator_paint):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_get_tab_scroll_arrow_size):
+        (moz_gtk_get_toolbar_separator_width):
+        (moz_gtk_get_menu_separator_height):
+
+2008-10-22  Alp Toker  <alp@nuanti.com>
+
         Fix build for Cairo 1.2.
 
         * platform/graphics/cairo/GraphicsContextCairo.cpp:

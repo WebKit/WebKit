@@ -1,3 +1,14 @@
+2008-10-22  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Adam Roben.
+
+        Avoid critical warnings on older GTK+ versions (2.8) by not checking
+        for GTK+ setting properties when we know they don't exist.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::inputMethodsMenuItem):
+        (WebKit::unicodeMenuItem):
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
