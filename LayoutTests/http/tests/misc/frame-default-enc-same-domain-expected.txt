@@ -1,2 +1,2 @@
-ALERT: x-mac-cyrillic
+ALERT: windows-1256
 
