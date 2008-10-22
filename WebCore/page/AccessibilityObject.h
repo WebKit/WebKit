@@ -40,6 +40,8 @@
 #elif PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"
 #include "COMPtr.h"
+#elif PLATFORM(CHROMIUM)
+#include "AccessibilityObjectWrapper.h"
 #endif
 
 typedef struct _NSRange NSRange;
@@ -407,6 +409,8 @@ protected:
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(GTK)
     AtkObject* m_wrapper;
+#elif PLATFORM(CHROMIUM)
+    RefPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif
 };
 
