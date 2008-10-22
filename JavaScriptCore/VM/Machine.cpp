@@ -1580,7 +1580,7 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_eq_null) {
-        /* neq dst(r) src(r)
+        /* eq_null dst(r) src(r)
 
            Checks whether register src is null, as with the ECMAScript '!='
            operator, and puts the result as a boolean in register dst.
@@ -1620,7 +1620,7 @@ JSValuePtr Machine::privateExecute(ExecutionFlag flag, RegisterFile* registerFil
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_neq_null) {
-        /* neq dst(r) src(r)
+        /* neq_null dst(r) src(r)
 
            Checks whether register src is not null, as with the ECMAScript '!='
            operator, and puts the result as a boolean in register dst.
