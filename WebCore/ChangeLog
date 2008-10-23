@@ -1,3 +1,40 @@
+2008-10-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig with no hesitation.
+
+        - fix the HTML/CSS case of https://bugs.webkit.org/show_bug.cgi?id=19839
+          <rdar://problem/6304805> A PDF,RLE sequence that should be a no-op affects bidi reordering
+
+        Test: fast/text/bidi-embedding-pop-and-push-same.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiResolver::embed): Changed to only add the embedding
+        operation to a vector of pending operations.
+
+        (WebCore::BidiResolver::lowerExplicitEmbeddingLevel): Added. Moved the
+        code that used to be in the PDF case of embed() here, except the part
+        that sets the context.
+
+        (WebCore::BidiResolver::raiseExplicitEmbeddingLevel): Added. Moved the
+        code that used to be in the non-PDF case of embed() here, except the
+        part the sets the context.
+
+        (WebCore::BidiResolver::commitExplicitEmbedding): Added. Processes the
+        explicit embedding operations in the vector by creating an updated
+        context and determining the old and new embedding levels. If the levels
+        are not the same, calls {lower,raise}ExplicitEmbeddingLevel(). Always
+        sets the context to the new one.
+
+        (WebCore::BidiResolver::createBidiRunsForLine): Added calls to
+        commitExplicitEmbedding() after calling embed() and after calling
+        increment().
+
+        * rendering/bidi.cpp:
+        (WebCore::bidiFirst): Added calls to commitExplicitEmbedding() because
+        this function increments the resolver.
+
+        (WebCore::RenderBlock::skipLeadingWhitespace): Ditto.
+
 2008-10-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Not reviewed.

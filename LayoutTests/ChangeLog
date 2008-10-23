@@ -1,3 +1,15 @@
+2008-10-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig with no hesitation.
+
+        - test for the HTML/CSS case of https://bugs.webkit.org/show_bug.cgi?id=19839
+          <rdar://problem/6304805> A PDF,RLE sequence that should be a no-op affects bidi reordering
+
+        * fast/text/bidi-embedding-pop-and-push-same.html: Added.
+        * platform/mac/fast/text/bidi-embedding-pop-and-push-same-expected.checksum: Added.
+        * platform/mac/fast/text/bidi-embedding-pop-and-push-same-expected.png: Added.
+        * platform/mac/fast/text/bidi-embedding-pop-and-push-same-expected.txt: Added.
+
 2008-10-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcher.
