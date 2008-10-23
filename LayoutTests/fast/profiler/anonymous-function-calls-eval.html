@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Anonymous function calles eval");
+function startTest()
+{
+    var variableThatPointsToAnAnonymousFunction = function() {
+        eval("insertNewText()");
+    }
+
+    variableThatPointsToAnAnonymousFunction();
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls an anonymous function which calls eval().
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  Beneath onload and startTest it should show an (anonymous function)
+which has a (program) child.
+<div id="output"></div>
+</body>
+</html>

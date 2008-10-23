@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Built-in function calls a user defined function");
+function testStart()
+{
+    var myArray = new Array (0, 1, 2);
+    myArray.map(arrayOperatorFunction);
+    endTest();
+}
+</script>
+</head>
+
+<body onload="testStart()">
+This page uses a built-in function to call a user defined function.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  In the profile map() should have arrayOperatorFunction() as a child.
+</body>
+</html>

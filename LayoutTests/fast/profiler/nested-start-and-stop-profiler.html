@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+console.profile("Start the profiler the first time.");
+function startTest()
+{
+    console.profile("Start the profiler the second time.");
+    console.profile("Start the profiler the third time.");
+    endTest();
+    endTest();
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls console.profile() three times then console.profileEnd()
+three times.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  In the profiler there should be three profiles.
+</body>
+</html>

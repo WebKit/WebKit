@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+console.profile("A simple profile test where an event happens.");
+function startTest()
+{
+    console.profileEnd();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript has an onload event.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  There should be only one onload node.
+<div id="output"></div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+var j = 0;
+function test(len) {
+    for (var i = 0; i < len; ++i)
+        ++j;
+    test2(2000 - len);
+}
+
+function test2(len) {
+    for (var i = 0; i < len; ++i)
+        --j;
+}
+
+console.profile("Test");
+test(100);
+console.profileEnd("Test");
+
+console.profile("Test");
+test(1000);
+console.profileEnd("Test");
+</script>
+</head>
+
+<body>
+This page has multiple profiles with the same name.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  It should not crash or hang and there should be multiple runs of the
+same named profile.
+<div id="output"></div>
+</body>
+</html>

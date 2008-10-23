@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+console.profile("Two Execution Contexts");
+function testStart()
+{
+    intermediaryFunction();
+}
+
+function intermediaryFunction()
+{
+    testEnd();
+}
+</script>
+</head>
+
+<body onload="testStart()">
+This page has two script tags with some simple JavaScript.
+<br>
+<br>
+To use this test, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be two (program) elements.
+</body>
+<script>
+function testEnd() {
+    console.profileEnd();
+}
+</script>
+</html>
