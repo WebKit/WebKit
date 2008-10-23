@@ -1,3 +1,14 @@
+2008-10-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix. Not reviewed.
+
+        Add DNSCurl and DNSSoup to the Gtk build
+
+        * GNUmakefile.am:
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/network/soup/DNSSoup.cpp: Copied from WebCore/platform/network/curl/DNSCurl.cpp.
+        (WebCore::prefetchDNS):
+
 2008-10-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.
