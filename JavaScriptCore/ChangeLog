@@ -1,3 +1,14 @@
+2008-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 21831: Fix create_hash_table for Perl 5.10
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21831>
+
+        Reviewed by Sam Weinig.
+
+        * kjs/create_hash_table: Escaped square brackets so that Perl 5.10
+        doesn't try to use @nameEntries.
+
 2008-10-23  Darin Adler  <darin@apple.com>
 
         - roll out https://bugs.webkit.org/show_bug.cgi?id=21732

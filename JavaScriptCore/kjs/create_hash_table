@@ -215,7 +215,7 @@ sub output() {
         print "\nnamespace JSC {\n";
     }
     my $count = scalar @keys + 1;
-    print "\nstatic const struct HashTableValue ${nameEntries}[$count] = {\n";
+    print "\nstatic const struct HashTableValue ${nameEntries}\[$count\] = {\n";
     my $i = 0;
     foreach my $key (@keys) {
         my $firstValue = "";
