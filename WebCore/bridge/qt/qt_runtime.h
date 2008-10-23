@@ -138,8 +138,7 @@ class QtRuntimeConnectionMethodData : public QtRuntimeMethodData {
 };
 
 // Common base class (doesn't really do anything interesting)
-class QtRuntimeMethod : public InternalFunction
-{
+class QtRuntimeMethod : public InternalFunction {
 public:
     virtual ~QtRuntimeMethod();
 
@@ -148,6 +147,11 @@ public:
     static FunctionPrototype* createPrototype(ExecState* exec)
     {
         return exec->lexicalGlobalObject()->functionPrototype();
+    }
+
+    static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+    {
+        return StructureID::create(proto, TypeInfo(ObjectType));
     }
 
 protected:

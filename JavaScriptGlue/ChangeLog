@@ -1,3 +1,36 @@
+2008-10-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21294
+          Bug 21294: Devirtualize getOwnPropertySlot()
+
+        * JSRun.cpp:
+        (JSGlueGlobalObject::JSGlueGlobalObject): Moved constructor here.
+        Set up flags in its new location in global object data, and set up
+        a structure for UserObjectImp too.
+        (JSRun::JSRun): Added code to give the JSGlueGlobalObject its own unique
+        structure, rather than using the default one from JSGlobalObject.
+
+        * JSRun.h: Made JSGlueGlobalObject take a structure ID. Also moved
+        the data into a separate data object. And added userObjectStructure,
+        a Structure to be used by UserObjectImp.
+
+        * JSUtils.cpp: Removed unused sharedGlobalData global.
+        (JSObjectKJSValue): Pass Structure in when creating UserObjectImp.
+        (unprotectGlobalObject): Use JSGlueGLobalObject type specifically.
+        (initializeGlobalObjectKey): Removed code to set up unused sharedGlobalData.
+        (getThreadGlobalObject): Added. Shared by JSObjectKJSValue and
+        getThreadGlobalExecState. Also now passes in a structure ID when creating
+        the global object.
+        (getThreadGlobalExecState): Changed to call getThreadGlobalObject.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::UserObjectImp): Changed to take a structure.
+        * UserObjectImp.h:
+        (UserObjectImp::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

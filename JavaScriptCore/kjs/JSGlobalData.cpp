@@ -34,6 +34,7 @@
 #include "JSActivation.h"
 #include "JSClassRef.h"
 #include "JSLock.h"
+#include "JSNotAnObject.h"
 #include "JSStaticScopeObject.h"
 #include "Machine.h"
 #include "Parser.h"
@@ -68,10 +69,12 @@ JSGlobalData::JSGlobalData(bool isShared)
     , regExpTable(new HashTable(JSC::regExpTable))
     , regExpConstructorTable(new HashTable(JSC::regExpConstructorTable))
     , stringTable(new HashTable(JSC::stringTable))
-    , nullProtoStructureID(JSObject::createStructureID(jsNull()))
     , activationStructureID(JSActivation::createStructureID(jsNull()))
+    , interruptedExecutionErrorStructure(JSObject::createStructureID(jsNull()))
     , staticScopeStructureID(JSStaticScopeObject::createStructureID(jsNull()))
     , stringStructureID(JSString::createStructureID(jsNull()))
+    , notAnObjectErrorStubStructure(JSNotAnObjectErrorStub::createStructureID(jsNull()))
+    , notAnObjectStructure(JSNotAnObject::createStructureID(jsNull()))
     , numberStructureID(JSNumberCell::createStructureID(jsNull()))
     , identifierTable(createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))

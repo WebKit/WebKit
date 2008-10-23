@@ -40,7 +40,7 @@ namespace JSC {
 
         static PassRefPtr<StructureID> createStructureID(JSValuePtr proto) 
         { 
-            return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+            return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | HasStandardGetOwnPropertySlot)); 
         }
 
     protected:

@@ -60,6 +60,11 @@ namespace WebCore {
 
         void* operator new(size_t);
 
+        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr prototype) 
+        {
+            return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType)); 
+        }
+
     private:
         virtual void mark();
         virtual JSC::UString className() const;

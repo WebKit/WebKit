@@ -34,16 +34,18 @@
 
 class JSGlueGlobalObject : public JSGlobalObject {
     public:
-        JSGlueGlobalObject(JSFlags flags = kJSFlagNone)
-            : JSGlobalObject()
-            , fJSFlags(flags)
-        {
-        }
+        JSGlueGlobalObject(PassRefPtr<StructureID>, JSFlags = kJSFlagNone);
 
-        JSFlags Flags() const { return fJSFlags; }
+        JSFlags Flags() const { return d()->flags; }
+        StructureID* userObjectStructure() const { return d()->userObjectStructure.get(); }
 
     private:
-        JSFlags fJSFlags;
+        struct Data : JSGlobalObjectData {
+            RefPtr<StructureID> userObjectStructure;
+            JSFlags flags;
+        };
+
+        Data* d() const { return static_cast<Data*>(JSGlobalObject::d()); }
 };
 
 class JSRun : public JSBase {

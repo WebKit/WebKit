@@ -31,10 +31,15 @@ namespace JSC {
     public:
         NumberConstructor(ExecState*, PassRefPtr<StructureID>, NumberPrototype*);
 
-        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValuePtr getValueProperty(ExecState*, int token) const;
 
         static const ClassInfo info;
+
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr proto) 
+        { 
+            return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+        }
 
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 

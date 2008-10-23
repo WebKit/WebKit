@@ -482,11 +482,19 @@ sub GenerateHeader
 
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr proto)\n" .
-             "    {\n" .
-             "        return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
-             "    }\n\n");
+        push(@headerContent,
+            "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr prototype)\n" .
+            "    {\n" .
+            "        return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
+            "    }\n\n");
+    } elsif ($hasGetter) {
+        push(@headerContent,
+            "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr prototype)\n" .
+            "    {\n" .
+            "        return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
+            "    }\n\n");
     }
+
     # Custom mark function
     push(@headerContent, "    virtual void mark();\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
 
@@ -660,6 +668,11 @@ sub GenerateHeader
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
+        push(@headerContent,
+            "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr prototype)\n" .
+            "    {\n" .
+            "        return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
+            "    }\n");
     }
     push(@headerContent, "    ${className}Prototype(PassRefPtr<JSC::StructureID> structure) : JSC::JSObject(structure) { }\n");
 
@@ -674,7 +687,7 @@ sub GenerateHeader
     }
 
     if ($numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"}) {
-        push(@headerContent,"// Attibutes\n\n");
+        push(@headerContent,"// Attributes\n\n");
         foreach my $attribute (@{$dataNode->attributes}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
             push(@headerContent, "JSC::JSValuePtr ${getter}(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");

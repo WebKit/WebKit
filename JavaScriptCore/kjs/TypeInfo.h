@@ -31,11 +31,12 @@
 
 namespace JSC {
 
-    // WebCore uses this to make document.all and style.filter undetectable.
+    // WebCore uses MasqueradesAsUndefined to make document.all and style.filter undetectable.
     static const unsigned MasqueradesAsUndefined = 1;
     static const unsigned ImplementsHasInstance = 1 << 1;
     static const unsigned OverridesHasInstance = 1 << 2;
     static const unsigned NeedsThisConversion = 1 << 3;
+    static const unsigned HasStandardGetOwnPropertySlot = 1 << 4;
 
     class TypeInfo {
         friend class CTI;
@@ -48,8 +49,10 @@ namespace JSC {
         bool implementsHasInstance() const { return m_flags & ImplementsHasInstance; }
         bool overridesHasInstance() const { return m_flags & OverridesHasInstance; }
         bool needsThisConversion() const { return m_flags & NeedsThisConversion; }
+        bool hasStandardGetOwnPropertySlot() const { return m_flags & HasStandardGetOwnPropertySlot; }
 
         unsigned flags() const { return m_flags; }
+
     private:
         JSType m_type;
         unsigned m_flags;

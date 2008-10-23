@@ -36,13 +36,16 @@ namespace JSC {
     class JSNotAnObjectErrorStub : public JSObject {
     public:
         JSNotAnObjectErrorStub(ExecState* exec, bool isNull)
-            : JSObject(exec->globalData().nullProtoStructureID)
+            : JSObject(exec->globalData().notAnObjectErrorStubStructure)
             , m_isNull(isNull)
         {
         }
+
         bool isNull() const { return m_isNull; }
-        bool isNotAnObjectErrorStub() const { return true; }
+
     private:
+        virtual bool isNotAnObjectErrorStub() const { return true; }
+
         bool m_isNull;
     };
     
@@ -52,9 +55,14 @@ namespace JSC {
     class JSNotAnObject : public JSObject {
     public:
         JSNotAnObject(ExecState* exec, JSNotAnObjectErrorStub* exception)
-            : JSObject(exec->globalData().nullProtoStructureID)
+            : JSObject(exec->globalData().notAnObjectStructure)
             , m_exception(exception)
         {
+        }
+
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        {
+            return StructureID::create(prototype, TypeInfo(ObjectType));
         }
 
      private:

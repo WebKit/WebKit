@@ -99,7 +99,8 @@ namespace JSC {
         void* vptr() { return *reinterpret_cast<void**>(this); }
 
     private:
-        // Base implementation, but for non-object classes implements getPropertySlot.
+        // Base implementation; for non-object classes implements getPropertySlot.
+        bool fastGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         

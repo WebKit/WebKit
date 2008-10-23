@@ -1,3 +1,40 @@
+2008-10-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21294
+          Bug 21294: Devirtualize getOwnPropertySlot()
+
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap): Change to use a unique structure
+        for this class rather than sharing nullProtoStructureID, which no longer exists.
+
+        * bindings/js/JSNamedNodesCollection.h:
+        (WebCore::JSNamedNodesCollection::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+        * bindings/js/JSRGBColor.h:
+        (WebCore::JSRGBColor::createStructureID): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added createStructureID functions for the wrappers,
+        constructors, and prototypes in any case where they override getOwnPropertySlot, without
+        HasStandardGetOwnPropertySlot.
+
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructureID): Added. Returns a structure
+        without HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createStructureID): Ditto.
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructureID): Ditto.
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructureID): Ditto.
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createStructureID): Ditto.
+
 2008-10-22  Brent Fulgham  <bfulgham@gmail.com>
 
         Bring Windows Cairo Port's font handling in line with CG.

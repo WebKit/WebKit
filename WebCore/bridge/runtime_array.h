@@ -56,6 +56,11 @@ public:
         return exec->lexicalGlobalObject()->arrayPrototype();
     }
 
+    static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+    {
+        return StructureID::create(prototype, TypeInfo(ObjectType));
+    }
+
 private:
     static JSValuePtr lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValuePtr indexGetter(ExecState*, const Identifier&, const PropertySlot&);

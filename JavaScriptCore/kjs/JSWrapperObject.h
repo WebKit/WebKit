@@ -29,9 +29,10 @@ namespace JSC {
     // This class is used as a base for classes such as String,
     // Number, Boolean and Date which are wrappers for primitive types.
     class JSWrapperObject : public JSObject {
-    public:
+    protected:
         explicit JSWrapperObject(PassRefPtr<StructureID>);
-        
+
+    public:
         JSValuePtr internalValue() const { return m_internalValue; }
         void setInternalValue(JSValuePtr);
         

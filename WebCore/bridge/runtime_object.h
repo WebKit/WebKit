@@ -54,6 +54,11 @@ public:
         return exec->lexicalGlobalObject()->objectPrototype();
     }
 
+    static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+    {
+        return StructureID::create(prototype, TypeInfo(ObjectType));
+    }
+
 protected:
     RuntimeObjectImp(ExecState*, PassRefPtr<StructureID>, PassRefPtr<Bindings::Instance>);
 

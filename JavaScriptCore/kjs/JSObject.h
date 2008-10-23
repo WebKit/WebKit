@@ -55,6 +55,7 @@ namespace JSC {
     class JSObject : public JSCell {
         friend class BatchedTransitionOptimizer;
         friend class CTI;
+        friend class JSCell;
 
     public:
         explicit JSObject(PassRefPtr<StructureID>);
@@ -183,12 +184,17 @@ namespace JSC {
         static const size_t inlineStorageCapacity = 2;
         static const size_t nonInlineBaseStorageCapacity = 16;
 
-        static PassRefPtr<StructureID> createStructureID(JSValuePtr proto) { return StructureID::create(proto, TypeInfo(ObjectType)); }
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        {
+            return StructureID::create(prototype, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot));
+        }
 
     protected:
         bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
 
     private:
+        bool inlineGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         StructureID* createInheritorID();
 
@@ -266,62 +272,25 @@ inline bool JSValue::isObject(const ClassInfo* classInfo) const
     return !JSImmediate::isImmediate(asValue()) && asCell()->isObject(classInfo);
 }
 
-inline JSValuePtr JSObject::get(ExecState* exec, const Identifier& propertyName) const
+ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    PropertySlot slot(this);
-    if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
-        return slot.getValue(exec, propertyName);
-    
-    return jsUndefined();
-}
-
-inline JSValuePtr JSObject::get(ExecState* exec, unsigned propertyName) const
-{
-    PropertySlot slot(this);
-    if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
-        return slot.getValue(exec, propertyName);
-
-    return jsUndefined();
-}
-
-// It may seem crazy to inline a function this large but it makes a big difference
-// since this is function very hot in variable lookup
-inline bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    JSObject* object = this;
-    while (true) {
-        if (object->getOwnPropertySlot(exec, propertyName, slot))
-            return true;
-
-        JSValuePtr prototype = object->prototype();
-        if (!prototype->isObject())
-            return false;
-
-        object = asObject(prototype);
+    if (JSValuePtr* location = getDirectLocation(propertyName)) {
+        if (m_structureID->hasGetterSetterProperties() && location[0]->isGetterSetter())
+            fillGetterPropertySlot(slot, location);
+        else
+            slot.setValueSlot(this, location, offsetForLocation(location));
+        return true;
     }
-}
 
-inline bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    JSObject* object = this;
-
-    while (true) {
-        if (object->getOwnPropertySlot(exec, propertyName, slot))
-            return true;
-
-        JSValuePtr prototype = object->prototype();
-        if (!prototype->isObject())
-            break;
-
-        object = asObject(prototype);
+    // non-standard Netscape extension
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        slot.setValue(prototype());
+        return true;
     }
 
     return false;
 }
 
-// It may seem crazy to inline a function this large, especially a virtual function,
-// but it makes a big difference to property lookup that derived classes can inline their
-// base class call to this.
 ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
 {
     unsigned attributes;
@@ -351,21 +320,60 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
 // base class call to this.
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (JSValuePtr* location = getDirectLocation(propertyName)) {
-        if (m_structureID->hasGetterSetterProperties() && location[0]->isGetterSetter())
-            fillGetterPropertySlot(slot, location);
-        else
-            slot.setValueSlot(this, location, offsetForLocation(location));
-        return true;
-    }
+    return inlineGetOwnPropertySlot(exec, propertyName, slot);
+}
 
-    // non-standard Netscape extension
-    if (propertyName == exec->propertyNames().underscoreProto) {
-        slot.setValue(prototype());
-        return true;
-    }
+ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    if (structureID()->typeInfo().hasStandardGetOwnPropertySlot())
+        return asObject(this)->inlineGetOwnPropertySlot(exec, propertyName, slot);
+    return getOwnPropertySlot(exec, propertyName, slot);
+}
 
-    return false;
+// It may seem crazy to inline a function this large but it makes a big difference
+// since this is function very hot in variable lookup
+inline bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSObject* object = this;
+    while (true) {
+        if (object->fastGetOwnPropertySlot(exec, propertyName, slot))
+            return true;
+        JSValuePtr prototype = object->prototype();
+        if (!prototype->isObject())
+            return false;
+        object = asObject(prototype);
+    }
+}
+
+inline bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    JSObject* object = this;
+    while (true) {
+        if (object->getOwnPropertySlot(exec, propertyName, slot))
+            return true;
+        JSValuePtr prototype = object->prototype();
+        if (!prototype->isObject())
+            return false;
+        object = asObject(prototype);
+    }
+}
+
+inline JSValuePtr JSObject::get(ExecState* exec, const Identifier& propertyName) const
+{
+    PropertySlot slot(this);
+    if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
+        return slot.getValue(exec, propertyName);
+    
+    return jsUndefined();
+}
+
+inline JSValuePtr JSObject::get(ExecState* exec, unsigned propertyName) const
+{
+    PropertySlot slot(this);
+    if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
+        return slot.getValue(exec, propertyName);
+
+    return jsUndefined();
 }
 
 inline void JSObject::putDirect(const Identifier& propertyName, JSValuePtr value, unsigned attr)
@@ -461,7 +469,7 @@ inline JSValuePtr JSValue::get(ExecState* exec, const Identifier& propertyName, 
     }
     JSCell* cell = asCell();
     while (true) {
-        if (cell->getOwnPropertySlot(exec, propertyName, slot))
+        if (cell->fastGetOwnPropertySlot(exec, propertyName, slot))
             return slot.getValue(exec, propertyName);
         ASSERT(cell->isObject());
         JSValuePtr prototype = static_cast<JSObject*>(cell)->prototype();

@@ -34,6 +34,11 @@ namespace JSC {
     public:
         RegExpConstructor(ExecState*, PassRefPtr<StructureID>, RegExpPrototype*);
 
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        {
+            return StructureID::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance));
+        }
+
         virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
 

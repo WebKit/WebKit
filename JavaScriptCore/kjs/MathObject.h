@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,6 +33,11 @@ namespace JSC {
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
+
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        {
+            return StructureID::create(prototype, TypeInfo(ObjectType));
+        }
     };
 
 } // namespace JSC

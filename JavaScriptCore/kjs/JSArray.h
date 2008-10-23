@@ -76,6 +76,11 @@ namespace JSC {
 
         void fillArgList(ExecState*, ArgList&);
 
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        {
+            return StructureID::create(prototype, TypeInfo(ObjectType));
+        }
+
     protected:
         virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);

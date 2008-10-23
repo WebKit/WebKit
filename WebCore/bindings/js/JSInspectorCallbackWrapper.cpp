@@ -44,6 +44,14 @@ static WrapperMap& wrappers()
 
 const ClassInfo JSInspectorCallbackWrapper::s_info = { "JSInspectorCallbackWrapper", &JSQuarantinedObjectWrapper::s_info, 0, 0 };
 
+static StructureID* leakInspectorCallbackWrapperStructure()
+{
+    StructureID::startIgnoringLeaks();
+    StructureID* structure = JSInspectorCallbackWrapper::createStructureID(jsNull()).releaseRef();
+    StructureID::stopIgnoringLeaks();
+    return structure;
+}
+
 JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr unwrappedValue)
 {
     if (!unwrappedValue->isObject())
@@ -60,8 +68,10 @@ JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr
     JSValuePtr prototype = unwrappedObject->prototype();
     ASSERT(prototype->isNull() || prototype->isObject());
 
-    if (prototype->isNull())
-        return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, unwrappedExec->globalData().nullProtoStructureID);
+    if (prototype->isNull()) {
+        static StructureID* structure = leakInspectorCallbackWrapperStructure();
+        return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, structure);
+    }
     return new (unwrappedExec) JSInspectorCallbackWrapper(unwrappedExec, unwrappedObject, asObject(wrap(unwrappedExec, prototype))->inheritorID());
 }
 

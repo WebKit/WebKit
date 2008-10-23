@@ -68,6 +68,11 @@ namespace JSC {
         // FIXME: This should be private
         RefPtr<FunctionBodyNode> m_body;
 
+        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype) 
+        { 
+            return StructureID::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance)); 
+        }
+
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
 

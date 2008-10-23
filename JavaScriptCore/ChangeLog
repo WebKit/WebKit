@@ -1,3 +1,110 @@
+2008-10-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21294
+          Bug 21294: Devirtualize getOwnPropertySlot()
+
+        A bit over 3% faster on V8 tests.
+
+        * JavascriptCore.exp: Export leak-related functions..
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructureID): Set HasStandardGetOwnPropertySlot
+        since this class doesn't override getPropertySlot.
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructureID): Ditto.
+
+        * VM/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError): Use a structure
+        that's created just for this class instead of trying to share a single "null
+        prototype" structure.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_create_arguments_no_params): Rename
+        Arguments::ArgumentsNoParameters to Arguments::NoParameters.
+        
+        * kjs/Arguments.h: Rename the enum from Arguments::ArgumentsParameters to
+        Arguments::NoParametersType and the value from Arguments::ArgumentsNoParameters
+        to Arguments::NoParameters.
+        (JSC::Arguments::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+        (JSC::Arguments::Arguments): Added an assertion that there are no parameters.
+
+        * kjs/DatePrototype.h:
+        (JSC::DatePrototype::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
+        * kjs/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructureID): Set HasStandardGetOwnPropertySlot
+        since this class doesn't override getPropertySlot.
+        * kjs/InternalFunction.h:
+        (JSC::InternalFunction::createStructureID): Ditto.
+
+        * kjs/JSArray.h:
+        (JSC::JSArray::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
+        * kjs/JSCell.h: Added declaration of fastGetOwnPropertySlot; a non-virtual
+        version that uses the structure bit to decide whether to call the virtual
+        version.
+
+        * kjs/JSFunction.h:
+        (JSC::JSFunction::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Initialize new structures; removed
+        nullProtoStructureID.
+        * kjs/JSGlobalData.h: Added new structures. Removed nullProtoStructureID.
+
+        * kjs/JSGlobalObject.h:
+        (JSC::JSGlobalObject::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
+        * kjs/JSNotAnObject.h:
+        (JSC::JSNotAnObjectErrorStub::JSNotAnObjectErrorStub): Use a structure
+        that's created just for this class instead of trying to share a single "null
+        prototype" structure.
+        (JSC::JSNotAnObjectErrorStub::isNotAnObjectErrorStub): Marked this function
+        virtual for clarity and made it private since no one should call it if they
+        already have a pointer to this specific type.
+        (JSC::JSNotAnObject::JSNotAnObject): Use a structure that's created just
+        for this class instead of trying to share a single "null prototype" structure.
+        (JSC::JSNotAnObject::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+
+        * kjs/JSObject.h:
+        (JSC::JSObject::createStructureID): Added HasStandardGetOwnPropertySlot.
+        (JSC::JSObject::inlineGetOwnPropertySlot): Added. Used so we can share code
+        between getOwnPropertySlot and fastGetOwnPropertySlot.
+        (JSC::JSObject::getOwnPropertySlot): Moved so that functions are above the
+        functions that call them. Moved the guts of this function into
+        inlineGetOwnPropertySlot.
+        (JSC::JSCell::fastGetOwnPropertySlot): Added. Checks the
+        HasStandardGetOwnPropertySlot bit and if it's set, calls
+        inlineGetOwnPropertySlot, otherwise calls getOwnPropertySlot.
+        (JSC::JSObject::getPropertySlot): Changed to call fastGetOwnPropertySlot.
+        (JSC::JSValue::get): Changed to call fastGetOwnPropertySlot.
+
+        * kjs/JSWrapperObject.h: Made constructor protected to emphasize that
+        this class is only a base class and never instantiated.
+
+        * kjs/MathObject.h:
+        (JSC::MathObject::createStructureID): Added. Returns a structure without
+        HasStandardGetOwnPropertySlot since this class overrides getOwnPropertySlot.
+        * kjs/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructureID): Ditto.
+        * kjs/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructureID): Ditto.
+        * kjs/RegExpObject.h:
+        (JSC::RegExpObject::createStructureID): Ditto.
+        * kjs/StringObject.h:
+        (JSC::StringObject::createStructureID): Ditto.
+
+        * kjs/TypeInfo.h: Added HasStandardGetOwnPropertySlot flag and
+        hasStandardGetOwnPropertySlot accessor function.
+
 2008-10-22  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

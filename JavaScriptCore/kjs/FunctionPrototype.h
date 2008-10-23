@@ -32,7 +32,7 @@ namespace JSC {
 
         static PassRefPtr<StructureID> createStructureID(JSValuePtr proto)
         {
-            return StructureID::create(proto, TypeInfo(ObjectType));
+            return StructureID::create(proto, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot));
         }
 
     private:
