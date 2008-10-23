@@ -1,3 +1,13 @@
+2008-10-22  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by andersca.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19974
+        getElementsByClassName not live enough
+
+        * fast/dom/getElementsByClassName/015-expected.txt: Added.
+        * fast/dom/getElementsByClassName/015.html: Added.
+
 2008-10-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben

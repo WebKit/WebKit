@@ -1,3 +1,15 @@
+2008-10-22  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by andersca.
+               
+        https://bugs.webkit.org/show_bug.cgi?id=19974
+        getElementsByClassName not live enough
+
+        Test: fast/dom/getElementsByClassName/015.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged): call dispatchSubtreeModifiedEvent()
+
 2008-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
