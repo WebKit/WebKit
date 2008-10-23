@@ -1,3 +1,60 @@
+2008-10-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21817
+        Bug 21817: Manual profiler tests should be made into layout tests
+
+        -Moving the tests before diffing so that it's clear what changed.
+
+        * platform/mac/Skipped: Skipping until the new files are in place.
+        * platform/win/Skipped:
+        * fast/profiler: Added.
+        * fast/profiler/anonymous-event-handler.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-anonymous-event-handler.html.
+        * fast/profiler/anonymous-function-called-from-different-contexts.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-anonymous-function-called-from-different-contexts.html.
+        * fast/profiler/anonymous-function-calls-built-in-functions.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-anonymous-function-calls-built-in-functions.html.
+        * fast/profiler/anonymous-function-calls-eval.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-anonymous-function-calls-eval.html.
+        * fast/profiler/apply.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-apply.html.
+        * fast/profiler/built-in-function-calls-anonymous.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-built-in-function-calls-anonymous.html.
+        * fast/profiler/built-in-function-calls-user-defined-function.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-built-in-function-calls-user-defined-function.html.
+        * fast/profiler/call-nodelist-as-function.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-call-nodelist-as-function.html.
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-calling-the-function-that-started-the-profiler-from-another-scope.html.
+        * fast/profiler/compare-multiple-profiles.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-compare-multiple-profiles.html.
+        * fast/profiler/constructor.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-constructor.html.
+        * fast/profiler/dead-time.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-dead-time.html.
+        * fast/profiler/deep-recursion.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-deep-recursion.html.
+        * fast/profiler/document-dot-write.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-document-dot-write.html.
+        * fast/profiler/event-handler.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-event-handler.html.
+        * fast/profiler/execution-context-and-eval-on-same-line.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-execution-context-and-eval-on-same-line.html.
+        * fast/profiler/heavy-view.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-heavy-view.html.
+        * fast/profiler/inline-event-handler.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-inline-event-handler.html.
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-multiple-and-different-scoped-anonymous-function-calls.html.
+        * fast/profiler/multiple-and-different-scoped-function-calls.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-multiple-and-different-scoped-function-calls.html.
+        * fast/profiler/multiple-frames.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-multiple-frames.html.
+        * fast/profiler/multiple-windows.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-multiple-windows.html.
+        * fast/profiler/nested-anonymous-functon.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-nested-anonymous-functon.html.
+        * fast/profiler/nested-start-and-stop-profiler.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-nested-start-and-stop-profiler.html.
+        * fast/profiler/no-execution-context.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-no-execution-context.html.
+        * fast/profiler/one-execution-context.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-one-execution-context.html.
+        * fast/profiler/profile-calls-in-included-file.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-profile-calls-in-included-file.html.
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html.
+        * fast/profiler/profiling-from-a-nested-location.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-profiling-from-a-nested-location.html.
+        * fast/profiler/resources: Added.
+        * fast/profiler/resources/other-frame.html: Copied from ../WebCore/manual-tests/inspector/resources/other-frame.html.
+        * fast/profiler/resources/other-window.html: Copied from ../WebCore/manual-tests/inspector/resources/other-window.html.
+        * fast/profiler/resources/profiler-test-JS-resources.js: Copied from ../WebCore/manual-tests/inspector/resources/profiler-test-JS-resources.js.
+        * fast/profiler/simple-event-call.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-simple-event-call.html.
+        * fast/profiler/simple-no-level-change.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-simple-no-level-change.html.
+        * fast/profiler/start-and-stop-profiler-multiple-times.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-start-and-stop-profiler-multiple-times.html.
+        * fast/profiler/start-and-stop-profiling-in-the-same-function.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-start-and-stop-profiling-in-the-same-function.html.
+        * fast/profiler/start-but-dont-stop-profiling.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-start-but-dont-stop-profiling.html.
+        * fast/profiler/stop-profiling-after-setTimeout.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-stop-profiling-after-setTimeout.html.
+        * fast/profiler/stop-then-function-call.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-stop-then-function-call.html.
+        * fast/profiler/throw-exception-from-eval.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-throw-exception-from-eval.html.
+        * fast/profiler/two-execution-contexts.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-two-execution-contexts.html.
+        * fast/profiler/user-defined-function-calls-built-in-functions.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-user-defined-function-calls-built-in-functions.html.
+        * fast/profiler/window-dot-eval.html: Copied from ../WebCore/manual-tests/inspector/profiler-test-window-dot-eval.html.
+
 2008-10-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -1,3 +1,56 @@
+2008-10-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21817
+        Bug 21817: Manual profiler tests should be made into layout tests
+
+        -Moving the tests before diffing so that it's clear what changed.
+
+        * manual-tests/inspector/profiler-test-anonymous-event-handler.html: Removed.
+        * manual-tests/inspector/profiler-test-anonymous-function-called-from-different-contexts.html: Removed.
+        * manual-tests/inspector/profiler-test-anonymous-function-calls-built-in-functions.html: Removed.
+        * manual-tests/inspector/profiler-test-anonymous-function-calls-eval.html: Removed.
+        * manual-tests/inspector/profiler-test-apply.html: Removed.
+        * manual-tests/inspector/profiler-test-built-in-function-calls-anonymous.html: Removed.
+        * manual-tests/inspector/profiler-test-built-in-function-calls-user-defined-function.html: Removed.
+        * manual-tests/inspector/profiler-test-call-nodelist-as-function.html: Removed.
+        * manual-tests/inspector/profiler-test-calling-the-function-that-started-the-profiler-from-another-scope.html: Removed.
+        * manual-tests/inspector/profiler-test-compare-multiple-profiles.html: Removed.
+        * manual-tests/inspector/profiler-test-constructor.html: Removed.
+        * manual-tests/inspector/profiler-test-dead-time.html: Removed.
+        * manual-tests/inspector/profiler-test-deep-recursion.html: Removed.
+        * manual-tests/inspector/profiler-test-document-dot-write.html: Removed.
+        * manual-tests/inspector/profiler-test-event-handler.html: Removed.
+        * manual-tests/inspector/profiler-test-execution-context-and-eval-on-same-line.html: Removed.
+        * manual-tests/inspector/profiler-test-heavy-view.html: Removed.
+        * manual-tests/inspector/profiler-test-inline-event-handler.html: Removed.
+        * manual-tests/inspector/profiler-test-multiple-and-different-scoped-anonymous-function-calls.html: Removed.
+        * manual-tests/inspector/profiler-test-multiple-and-different-scoped-function-calls.html: Removed.
+        * manual-tests/inspector/profiler-test-multiple-frames.html: Removed.
+        * manual-tests/inspector/profiler-test-multiple-windows.html: Removed.
+        * manual-tests/inspector/profiler-test-nested-anonymous-functon.html: Removed.
+        * manual-tests/inspector/profiler-test-nested-start-and-stop-profiler.html: Removed.
+        * manual-tests/inspector/profiler-test-no-execution-context.html: Removed.
+        * manual-tests/inspector/profiler-test-one-execution-context.html: Removed.
+        * manual-tests/inspector/profiler-test-profile-calls-in-included-file.html: Removed.
+        * manual-tests/inspector/profiler-test-profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html: Removed.
+        * manual-tests/inspector/profiler-test-profiling-from-a-nested-location.html: Removed.
+        * manual-tests/inspector/profiler-test-simple-event-call.html: Removed.
+        * manual-tests/inspector/profiler-test-simple-no-level-change.html: Removed.
+        * manual-tests/inspector/profiler-test-start-and-stop-profiler-multiple-times.html: Removed.
+        * manual-tests/inspector/profiler-test-start-and-stop-profiling-in-the-same-function.html: Removed.
+        * manual-tests/inspector/profiler-test-start-but-dont-stop-profiling.html: Removed.
+        * manual-tests/inspector/profiler-test-stop-profiling-after-setTimeout.html: Removed.
+        * manual-tests/inspector/profiler-test-stop-then-function-call.html: Removed.
+        * manual-tests/inspector/profiler-test-throw-exception-from-eval.html: Removed.
+        * manual-tests/inspector/profiler-test-two-execution-contexts.html: Removed.
+        * manual-tests/inspector/profiler-test-user-defined-function-calls-built-in-functions.html: Removed.
+        * manual-tests/inspector/profiler-test-window-dot-eval.html: Removed.
+        * manual-tests/inspector/resources/other-frame.html: Removed.
+        * manual-tests/inspector/resources/other-window.html: Removed.
+        * manual-tests/inspector/resources/profiler-test-JS-resources.js: Removed.
+
 2008-10-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
