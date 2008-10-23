@@ -1,3 +1,33 @@
+2008-10-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Really "fix" CTI mode on windows 2k3.
+
+        This adds new methods fastMallocExecutable and fastFreeExecutable
+        to wrap allocation for cti code.  This still just makes fastMalloc
+        return executable memory all the time, which will be fixed in a
+        later patch.
+
+        However in windows debug builds all executable allocations will be
+        allocated on separate executable pages, which should resolve any
+        remaining 2k3 issues.  Conveniently the 2k3 bot will now also fail
+        if there are any fastFree vs. fastFreeExecutable errors.
+
+        * ChangeLog:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * kjs/regexp.cpp:
+        (JSC::RegExp::~RegExp):
+        * masm/X86Assembler.h:
+        (JSC::JITCodeBuffer::copy):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocExecutable):
+        (WTF::fastFreeExecutable):
+        (WTF::TCMallocStats::fastMallocExecutable):
+        (WTF::TCMallocStats::fastFreeExecutable):
+        * wtf/FastMalloc.h:
+
 2008-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

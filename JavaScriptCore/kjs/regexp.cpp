@@ -105,7 +105,7 @@ RegExp::~RegExp()
     jsRegExpFree(m_regExp);
 #if ENABLE(WREC)
     if (m_wrecFunction)
-        fastFree(m_wrecFunction);
+        WTF::fastFreeExecutable(m_wrecFunction);
 #endif
 }
 

@@ -945,7 +945,7 @@ CodeBlock::~CodeBlock()
     for (size_t i = 0; i < size; ++i) {
         derefStructureIDs(&instructions[structureIDInstructions[i].opcodeIndex]);
         if (structureIDInstructions[i].stubRoutine)
-            fastFree(structureIDInstructions[i].stubRoutine);
+            WTF::fastFreeExecutable(structureIDInstructions[i].stubRoutine);
         if (CallLinkInfo* callLinkInfo = structureIDInstructions[i].linkInfoPtr) {
             callLinkInfo->callee->removeCaller(callLinkInfo);
             delete callLinkInfo;
@@ -956,7 +956,7 @@ CodeBlock::~CodeBlock()
     unlinkCallers();
 
     if (ctiCode)
-        fastFree(ctiCode);
+        WTF::fastFreeExecutable(ctiCode);
 #endif
 }
 
