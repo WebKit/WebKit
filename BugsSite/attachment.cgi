@@ -1120,9 +1120,10 @@ sub edit
   my ($attach_id) = validateID();
 
   # Retrieve the attachment from the database.
-  SendSQL("SELECT description, mimetype, filename, bug_id, ispatch, isobsolete, isprivate, LENGTH(thedata)
+  SendSQL("SELECT description, mimetype, filename, bug_id, ispatch, isobsolete, isprivate, thedata
            FROM attachments WHERE attach_id = $attach_id");
-  my ($description, $contenttype, $filename, $bugid, $ispatch, $isobsolete, $isprivate, $datasize) = FetchSQLData();
+  my ($description, $contenttype, $filename, $bugid, $ispatch, $isobsolete, $isprivate, $thedata) = FetchSQLData();
+  my $datasize = length($thedata);
 
   my $isviewable = isViewable($contenttype);
 
@@ -1162,6 +1163,12 @@ sub edit
   $vars->{'isviewable'} = $isviewable; 
   $vars->{'attachments'} = \@bugattachments; 
   $vars->{'GetBugLink'} = \&GetBugLink;
+
+  if ($ispatch) {
+      my $quotedpatch = $thedata;
+      $quotedpatch =~ s/^/> /mg;
+      $vars->{'quotedpatch'} = $quotedpatch;
+  }
 
   # Determine if PatchReader is installed
   eval {

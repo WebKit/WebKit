@@ -1,3 +1,24 @@
+2008-10-23  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 21401: Comments field on "Review Patch" page should be
+        initially filled with quoted patch
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21401>
+
+        Reviewed by Dave Hyatt.
+
+        * attachment.cgi:
+        (edit): Retrieve the attachment data from the database instead of just
+        its length. When the attachment is a patch, create a quotedpatch
+        template variable that contains the patch data with each line
+        prepended with "> ".
+        * template/en/custom/attachment/reviewform.html.tmpl:
+          - Changed the comments field to have a monospace font
+          - Added an "Enter comments below:" caption above the comments field
+            to make it clearer that this is where comments should go, now that
+            the comments field is not initially empty
+          - Fill the comments field with the quoted patch
+
 2008-10-14  Adam Roben  <aroben@apple.com>
 
         Fix Bug 21602: Bugzilla times out trying to display formatted diff for

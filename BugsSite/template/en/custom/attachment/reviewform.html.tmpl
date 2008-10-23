@@ -25,7 +25,7 @@
 <link href="skins/custom/global.css" rel="stylesheet" type="text/css">
 <style>
 * { font-size: small; }
-#comment { width: 100%; height: 100%; }
+#comment { width: 100%; height: 100%; font-family: monospace; }
 #form-controls { height: 40px; }
 #form-controls td { width: 25%; text-align: center; }
 </style>
@@ -89,7 +89,8 @@ Back to <a href="show_bug.cgi?id=[% bugid %]" target="_top">[% terms.Bug %] #[% 
 </tr>
 <tr>
 <td colspan="4">
-<textarea id=comment name="comment" wrap="soft"></textarea><br>
+Enter comments below:<br>
+<textarea id=comment name="comment" wrap="soft">[% quotedpatch FILTER html %]</textarea><br>
 </tr>
 </table>
 
