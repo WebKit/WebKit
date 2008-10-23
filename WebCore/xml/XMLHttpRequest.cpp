@@ -543,7 +543,7 @@ void XMLHttpRequest::makeSimpleCrossSiteAccessRequest(ExceptionCode& ec)
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
-    request.setHTTPOrigin(document()->securityOrigin()->toHTTPOrigin());
+    request.setHTTPOrigin(document()->securityOrigin()->toString());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -574,7 +574,7 @@ static bool canSkipPrelight(PreflightResultCache::iterator cacheIt, bool include
 
 void XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight(ExceptionCode& ec)
 {
-    String origin = document()->securityOrigin()->toHTTPOrigin();
+    String origin = document()->securityOrigin()->toString();
     KURL url = m_url;
     url.setUser(String());
     url.setPass(String());
@@ -662,7 +662,7 @@ void XMLHttpRequest::handleAsynchronousPreflightResult()
     ResourceRequest request(url);
     request.setHTTPMethod(m_method);
     request.setAllowHTTPCookies(m_includeCredentials);
-    request.setHTTPOrigin(document()->securityOrigin()->toHTTPOrigin());
+    request.setHTTPOrigin(document()->securityOrigin()->toString());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -1186,7 +1186,7 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
     if (!parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta))
         expiryDelta = 5;
 
-    appendPreflightResultCacheEntry(document()->securityOrigin()->toHTTPOrigin(), m_url, expiryDelta, m_includeCredentials, methods.release(), headers.release());
+    appendPreflightResultCacheEntry(document()->securityOrigin()->toString(), m_url, expiryDelta, m_includeCredentials, methods.release(), headers.release());
 }
 
 void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)

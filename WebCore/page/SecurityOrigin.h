@@ -103,13 +103,8 @@ namespace WebCore {
         // representation of a SecurityOrigin is similar to a URL, except it
         // lacks a path component.  The string representation does not encode
         // the value of the SecurityOrigin's domain property.  The empty
-        // SecurityOrigin is represented with the null string.
+        // SecurityOrigin is represented with the string "null".
         String toString() const;
-
-        // Convert this SecurityOrigin into a string for use in the HTTP Origin
-        // header. This is similar to toString(), except that the empty
-        // SecurityOrigin is represented as the string "null".
-        String toHTTPOrigin() const;
 
         // Serialize the security origin for storage in the database. This format is
         // deprecated and should be used only for compatibility with old databases;

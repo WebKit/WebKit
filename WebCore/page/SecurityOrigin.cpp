@@ -198,10 +198,10 @@ bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
 String SecurityOrigin::toString() const
 {
     if (isEmpty())
-        return String();
+        return "null";
 
     if (m_noAccess)
-        return String();
+        return "null";
 
     if (m_protocol == "file")
         return String("file://");
@@ -218,15 +218,6 @@ String SecurityOrigin::toString() const
     }
 
     return String::adopt(result);
-}
-
-String SecurityOrigin::toHTTPOrigin() const
-{
-    String origin = toString();
-    if (origin.isEmpty())
-        return "null";
-
-    return origin;
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)

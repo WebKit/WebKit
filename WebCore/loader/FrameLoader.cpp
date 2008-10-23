@@ -1790,9 +1790,9 @@ String FrameLoader::outgoingReferrer() const
 String FrameLoader::outgoingOrigin() const
 {
     if (m_frame->document())
-        return m_frame->document()->securityOrigin()->toHTTPOrigin();
+        return m_frame->document()->securityOrigin()->toString();
 
-    return SecurityOrigin::createEmpty()->toHTTPOrigin();
+    return SecurityOrigin::createEmpty()->toString();
 }
 
 Frame* FrameLoader::opener()
@@ -2138,7 +2138,7 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     if (!referrer.isEmpty()) {
         request.setHTTPReferrer(referrer);
         RefPtr<SecurityOrigin> referrerOrigin = SecurityOrigin::createFromString(referrer);
-        addHTTPOriginIfNeeded(request, referrerOrigin->toHTTPOrigin());
+        addHTTPOriginIfNeeded(request, referrerOrigin->toString());
     }
     addExtraFieldsToRequest(request, true, event || isFormSubmission);
     if (newLoadType == FrameLoadTypeReload)
@@ -3444,7 +3444,7 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
     if (origin.isEmpty()) {
         // If we don't know what origin header to attach, we attach the value
         // for an empty origin.
-        origin = SecurityOrigin::createEmpty()->toHTTPOrigin();
+        origin = SecurityOrigin::createEmpty()->toString();
     }
 
     request.setHTTPOrigin(origin);
@@ -4356,7 +4356,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 request.setHTTPBody(formData);
                 request.setHTTPContentType(item->formContentType());
                 RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->formReferrer());
-                addHTTPOriginIfNeeded(request, securityOrigin->toHTTPOrigin());
+                addHTTPOriginIfNeeded(request, securityOrigin->toString());
         
                 // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
                 // We want to know this before talking to the policy delegate, since it affects whether 

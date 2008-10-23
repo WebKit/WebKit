@@ -1,3 +1,31 @@
+2008-10-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21787
+
+        Update postMessage to send origin = "null" for non-serializable
+        origins to match latest spec.  Merge SecurityOrigin::toString and
+        SecurityOrigin::toHTTPOrigin because they are now the same.
+
+        Test: http/tests/security/postMessage/data-url-sends-null-origin.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::outgoingOrigin):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::addHTTPOriginIfNeeded):
+        (WebCore::FrameLoader::loadItem):
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toString):
+        * page/SecurityOrigin.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+
 2008-10-22  David Kilzer  <ddkilzer@apple.com>
 
         Bug 21781: WebCore::Settings should have a maximum decoded image size setting
