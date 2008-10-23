@@ -1,6 +1,18 @@
+2008-10-22  Mike Pinkerton  <pinkerton@chromium.org>
+
+        Reviewed by Dan Bernstein.
+        Landed and tweaked a bit by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21809
+
+        Remove PLATFORM(MAC) wrapping USE(ATSUI). It's redundant and inhibits 
+        its use for PLATFORM(CHROMIUM) in the future.
+
+        * platform/graphics/SimpleFontData.h:
+
 2008-10-22  David Smith  <catfish.man@gmail.com>
 
-        Reviewed by andersca.
+        Reviewed by Anders Carlsson.
                
         https://bugs.webkit.org/show_bug.cgi?id=19974
         getElementsByClassName not live enough
