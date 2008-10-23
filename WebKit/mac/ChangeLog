@@ -1,3 +1,10 @@
+2008-10-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * Misc/WebKitErrors.m:
+        (-[NSError _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType:]):
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

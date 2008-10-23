@@ -108,7 +108,11 @@ static NSMutableDictionary *descriptions = nil;
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     if (contentURL) {
         [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSErrorFailingURLStringKey];
+#else
+        [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];
+#endif
     }
     if (pluginPageURL) {
         [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];
