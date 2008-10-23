@@ -1,3 +1,11 @@
+2008-10-22  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Kevin McCullough.
+
+        Check in changed test results for r37792.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-10-22  David Smith  <catfish.man@gmail.com>
 
         Reviewed by andersca.
