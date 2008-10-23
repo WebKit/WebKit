@@ -696,32 +696,44 @@ QWebView *QWebView::createWindow(QWebPage::WebWindowType type)
 */
 void QWebView::mouseMoveEvent(QMouseEvent* ev)
 {
-    if (d->page)
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
         d->page->event(ev);
+        ev->setAccepted(accepted);
+    }
 }
 
 /*! \reimp
 */
 void QWebView::mousePressEvent(QMouseEvent* ev)
 {
-    if (d->page)
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
         d->page->event(ev);
+        ev->setAccepted(accepted);
+    }
 }
 
 /*! \reimp
 */
 void QWebView::mouseDoubleClickEvent(QMouseEvent* ev)
 {
-    if (d->page)
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
         d->page->event(ev);
+        ev->setAccepted(accepted);
+    }
 }
 
 /*! \reimp
 */
 void QWebView::mouseReleaseEvent(QMouseEvent* ev)
 {
-    if (d->page)
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
         d->page->event(ev);
+        ev->setAccepted(accepted);
+    }
 }
 
 #ifndef QT_NO_CONTEXTMENU
@@ -729,8 +741,11 @@ void QWebView::mouseReleaseEvent(QMouseEvent* ev)
 */
 void QWebView::contextMenuEvent(QContextMenuEvent* ev)
 {
-    if (d->page)
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
         d->page->event(ev);
+        ev->setAccepted(accepted);
+    }
 }
 #endif // QT_NO_CONTEXTMENU
 
@@ -739,11 +754,11 @@ void QWebView::contextMenuEvent(QContextMenuEvent* ev)
 */
 void QWebView::wheelEvent(QWheelEvent* ev)
 {
-    if (d->page)
+    if (d->page) {
+        const bool accepted = ev->isAccepted();
         d->page->event(ev);
-
-    if (!ev->isAccepted())
-        return QWidget::wheelEvent(ev);
+        ev->setAccepted(accepted);
+    }
 }
 #endif // QT_NO_WHEELEVENT
 

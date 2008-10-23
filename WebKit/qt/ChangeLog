@@ -1,3 +1,26 @@
+2008-10-23  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne.
+
+        Fix handling of mouse events when embedding QWebView into the
+        QGraphicsView.
+
+        QWebPage accepts or ignores events to indicate whether the web page
+        handled the event. However for QWebView to behave like a good widget
+        it should always accept the mouse events to indicate that it handled
+        them and that they should not be subject to event propagation.
+
+        The graphics view relies on acceptance of the initial mouse click to
+        make the embedded widget the focus item.
+
+        * Api/qwebview.cpp:
+        (QWebView::mouseMoveEvent):
+        (QWebView::mousePressEvent):
+        (QWebView::mouseDoubleClickEvent):
+        (QWebView::mouseReleaseEvent):
+        (QWebView::contextMenuEvent):
+        (QWebView::wheelEvent):
+
 2008-10-22  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
