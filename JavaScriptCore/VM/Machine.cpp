@@ -4741,16 +4741,13 @@ void* Machine::cti_vm_lazyLinkCall(CTI_ARGS)
 
     Machine* machine = ARG_globalData->machine;
     CallFrame* callFrame = CallFrame::create(ARG_callFrame);
-    CallFrame* callerCallFrame = callFrame->callerFrame();
-    CodeBlock* callerCodeBlock = callerCallFrame->codeBlock();
 
     JSFunction* callee = asFunction(ARG_src1);
     CodeBlock* codeBlock = &callee->m_body->byteCode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
         CTI::compile(machine, callFrame, codeBlock);
 
-    int argCount = ARG_int3;
-    CTI::linkCall(callerCodeBlock, callee, codeBlock, codeBlock->ctiCode, CTI_RETURN_ADDRESS, argCount);
+    CTI::linkCall(callee, codeBlock, codeBlock->ctiCode, ARG_linkInfo2, ARG_int3);
 
     return codeBlock->ctiCode;
 }

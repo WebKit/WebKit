@@ -79,6 +79,7 @@
 #define ARG_instr4 static_cast<Instruction*>(ARGS[4])
 #define ARG_instr5 static_cast<Instruction*>(ARGS[5])
 #define ARG_instr6 static_cast<Instruction*>(ARGS[6])
+#define ARG_linkInfo2 static_cast<CallLinkInfo*>(ARGS[2])
 
 #define CTI_RETURN_ADDRESS_SLOT (ARGS[-1])
 
@@ -94,9 +95,9 @@ namespace JSC {
     class StringJumpTable;
     class StructureIDChain;
 
+    struct CallLinkInfo;
     struct Instruction;
     struct OperandTypes;
-    struct StructureStubInfo;
 
     typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
     typedef JSObject* (SFX_CALL *CTIHelper_o)(CTI_ARGS);
@@ -334,8 +335,8 @@ namespace JSC {
             return cti.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkCall(CodeBlock* callerCodeBlock, JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, void* returnAddress, int callerArgCount);
-        static void unlinkCall(StructureStubInfo*);
+        static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount);
+        static void unlinkCall(CallLinkInfo*);
 
         inline static JSValuePtr execute(void* code, RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData, JSValuePtr* exception)
         {
@@ -433,7 +434,8 @@ namespace JSC {
 
         Vector<CallRecord> m_calls;
         Vector<X86Assembler::JmpDst> m_labels;
-        Vector<StructureStubCompilationInfo> m_structureStubCompilationInfo;
+        Vector<StructureStubCompilationInfo> m_propertyAccessCompilationInfo;
+        Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
         Vector<JmpTable> m_jmpTable;
 
         struct JSRInfo {

@@ -78,17 +78,12 @@ namespace JSC {
 #endif
     };
 
-    struct CallLinkInfo;
-
     struct StructureStubInfo {
         StructureStubInfo(unsigned opcodeIndex)
             : opcodeIndex(opcodeIndex)
             , stubRoutine(0)
             , callReturnLocation(0)
             , hotPathBegin(0)
-            , hotPathOther(0)
-            , coldPathOther(0)
-            , linkInfoPtr(0)
         {
         }
     
@@ -96,22 +91,70 @@ namespace JSC {
         void* stubRoutine;
         void* callReturnLocation;
         void* hotPathBegin;
-        void* hotPathOther;
-        void* coldPathOther;
-        CallLinkInfo* linkInfoPtr;
     };
 
     struct CallLinkInfo {
-        CodeBlock* callee;
-        StructureStubInfo* callerStructureStubInfo;
-        unsigned position;
-
-        CallLinkInfo(CodeBlock* c, StructureStubInfo* css)
+        CallLinkInfo()
+            : callReturnLocation(0)
+            , hotPathBegin(0)
+            , hotPathOther(0)
+            , coldPathOther(0)
+            , callee(0)
         {
-            callee = c;
-            callerStructureStubInfo = css;
         }
+    
+        unsigned opcodeIndex;
+        void* callReturnLocation;
+        void* hotPathBegin;
+        void* hotPathOther;
+        void* coldPathOther;
+        CodeBlock* callee;
+        unsigned position;
+        
+        void setUnlinked() { callee = 0; }
+        bool isLinked() { return callee; }
     };
+
+    inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
+    {
+        return structureStubInfo->callReturnLocation;
+    }
+
+    // Binary chop algorithm, calls valueAtPosition on pre-sorted elements in array,
+    // compares result with key (KeyTypes should be comparable with '--', '<', '>').
+    // Optimized for cases where the array contains the key, checked by assertions.
+    template<typename ArrayType, typename KeyType, KeyType(*valueAtPosition)(ArrayType*)>
+    inline ArrayType* binaryChop(ArrayType* array, size_t size, KeyType key)
+    {
+        // The array must contain at least one element (pre-condition, array does conatin key).
+        // If the array only contains one element, no need to do the comparison.
+        while (size > 1) {
+            // Pick an element to check, half way through the array, and read the value.
+            int pos = (size - 1) >> 1;
+            KeyType val = valueAtPosition(&array[pos]);
+            
+            // If the key matches, success!
+            if (val == key)
+                return &array[pos];
+            // The item we are looking for is smaller than the item being check; reduce the value of 'size',
+            // chopping off the right hand half of the array.
+            else if (key < val)
+                size = pos;
+            // Discard all values in the left hand half of the array, up to and including the item at pos.
+            else {
+                size -= (pos + 1);
+                array += (pos + 1);
+            }
+
+            // 'size' should never reach zero.
+            ASSERT(size);
+        }
+        
+        // If we reach this point we've chopped down to one element, no need to check it matches
+        ASSERT(size == 1);
+        ASSERT(key == valueAtPosition(&array[0]));
+        return &array[0];
+    }
 
     struct StringJumpTable {
         typedef HashMap<RefPtr<UString::Rep>, OffsetLocation> StringOffsetTable;
@@ -227,12 +270,11 @@ namespace JSC {
         void unlinkCallers();
 #endif
 
-        void addCaller(StructureStubInfo* caller)
+        void addCaller(CallLinkInfo* caller)
         {
-            CallLinkInfo* callLinkInfo = new CallLinkInfo(this, caller);
-            caller->linkInfoPtr = callLinkInfo;
-            callLinkInfo->position = linkedCallerList.size();
-            linkedCallerList.append(callLinkInfo);
+            caller->callee = this;
+            caller->position = linkedCallerList.size();
+            linkedCallerList.append(caller);
         }
 
         void removeCaller(CallLinkInfo* caller)
@@ -263,12 +305,7 @@ namespace JSC {
 
         StructureStubInfo& getStubInfo(void* returnAddress)
         {
-            // FIXME: would a binary chop be faster here?
-            for (unsigned i = 0; ; ++i) {
-                ASSERT(i < structureIDInstructions.size());
-                if (structureIDInstructions[i].callReturnLocation == returnAddress)
-                    return structureIDInstructions[i];
-            }
+            return *(binaryChop<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(propertyAccessInstructions.begin(), propertyAccessInstructions.size(), returnAddress));
         }
 
         ScopeNode* ownerNode;
@@ -295,7 +332,9 @@ namespace JSC {
         unsigned sourceOffset;
 
         Vector<Instruction> instructions;
-        Vector<StructureStubInfo> structureIDInstructions;
+        Vector<unsigned> globalResolveInstructions;
+        Vector<StructureStubInfo> propertyAccessInstructions;
+        Vector<CallLinkInfo> callLinkInfos;
         Vector<CallLinkInfo*> linkedCallerList;
 
         // Constant pool

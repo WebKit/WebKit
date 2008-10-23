@@ -1,3 +1,50 @@
+2008-10-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix hideous pathological case performance when looking up repatch info, bug #21727.
+
+        When repatching JIT code to optimize we look up records providing information about
+        the generated code (also used to track recsources used in linking to be later released). 
+        The lookup was being performed using a linear scan of all such records.
+
+        (1) Split up the different types of reptach information.  This means we can search them
+            separately, and in some cases should reduce their size.
+        (2) In the case of property accesses, search with a binary chop over the data.
+        (3) In the case of calls, pass a pointer to the repatch info into the relink function.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::unlinkCall):
+        (JSC::CTI::linkCall):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::unlinkCallers):
+        (JSC::CodeBlock::derefStructureIDs):
+        * VM/CodeBlock.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::setUnlinked):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::getStructureStubInfoReturnLocation):
+        (JSC::binaryChop):
+        (JSC::CodeBlock::addCaller):
+        (JSC::CodeBlock::getStubInfo):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitResolve):
+        (JSC::CodeGenerator::emitGetById):
+        (JSC::CodeGenerator::emitPutById):
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitConstruct):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_vm_lazyLinkCall):
+
 2008-10-23  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Roben.

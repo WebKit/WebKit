@@ -513,7 +513,8 @@ CTI::CTI(Machine* machine, CallFrame* callFrame, CodeBlock* codeBlock)
     , m_callFrame(callFrame)
     , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->instructions.size() : 0)
-    , m_structureStubCompilationInfo(codeBlock ? codeBlock->structureIDInstructions.size() : 0)
+    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->propertyAccessInstructions.size() : 0)
+    , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->callLinkInfos.size() : 0)
 {
 }
 
@@ -576,7 +577,7 @@ void CTI::compileOpCallSetupArgs(Instruction* instruction, bool isConstruct, boo
         emitGetPutArg(instruction[3].u.operand, 16, X86::eax);
 }
 
-void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structureIDInstructionIndex, CompileOpCallType type)
+void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned callLinkInfoIndex, CompileOpCallType type)
 {
     int dst = instruction[1].u.operand;
     int callee = instruction[2].u.operand;
@@ -614,7 +615,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structure
     X86Assembler::JmpDst addressOfLinkedFunctionCheck = m_jit.label();
     m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
     ASSERT(X86Assembler::getDifferenceBetweenLabels(addressOfLinkedFunctionCheck, m_jit.label()) == repatchOffsetOpCallCall);
-    m_structureStubCompilationInfo[structureIDInstructionIndex].hotPathBegin = addressOfLinkedFunctionCheck;
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
 
     // The following is the fast case, only used whan a callee can be linked.
 
@@ -638,7 +639,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, unsigned structure
     m_jit.addl_i32r(registerOffset * sizeof(Register), X86::edi);
 
     // Call to the callee
-    m_structureStubCompilationInfo[structureIDInstructionIndex].hotPathOther = emitNakedCall(i, unreachable);
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall(i, unreachable);
     
     if (type == OpCallEval)
         m_jit.link(wasEval, m_jit.label());
@@ -949,7 +950,8 @@ void CTI::privateCompileMainPass()
     Instruction* instruction = m_codeBlock->instructions.begin();
     unsigned instructionCount = m_codeBlock->instructions.size();
 
-    unsigned structureIDInstructionIndex = 0;
+    unsigned propertyAccessInstructionIndex = 0;
+    unsigned callLinkInfoIndex = 0;
 
     for (unsigned i = 0; i < instructionCount; ) {
         m_labels[i] = m_jit.label();
@@ -1094,10 +1096,10 @@ void CTI::privateCompileMainPass()
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
             emitGetArg(instruction[i + 3].u.operand, X86::edx);
 
-            ASSERT(m_codeBlock->structureIDInstructions[structureIDInstructionIndex].opcodeIndex == i);
+            ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].opcodeIndex == i);
             X86Assembler::JmpDst hotPathBegin = m_jit.label();
-            m_structureStubCompilationInfo[structureIDInstructionIndex].hotPathBegin = hotPathBegin;
-            ++structureIDInstructionIndex;
+            m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
+            ++propertyAccessInstructionIndex;
 
             // Jump to a slow case if either the base object is an immediate, or if the StructureID does not match.
             emitJumpSlowCaseIfNotJSCell(X86::eax, i);
@@ -1122,11 +1124,11 @@ void CTI::privateCompileMainPass()
 
             emitGetArg(instruction[i + 2].u.operand, X86::eax);
 
-            ASSERT(m_codeBlock->structureIDInstructions[structureIDInstructionIndex].opcodeIndex == i);
+            ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].opcodeIndex == i);
 
             X86Assembler::JmpDst hotPathBegin = m_jit.label();
-            m_structureStubCompilationInfo[structureIDInstructionIndex].hotPathBegin = hotPathBegin;
-            ++structureIDInstructionIndex;
+            m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
+            ++propertyAccessInstructionIndex;
 
             emitJumpSlowCaseIfNotJSCell(X86::eax, i);
             m_jit.cmpl_i32m(repatchGetByIdDefaultStructureID, OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
@@ -1252,7 +1254,7 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_call: {
-            compileOpCall(instruction + i, i, structureIDInstructionIndex++);
+            compileOpCall(instruction + i, i, callLinkInfoIndex++);
             i += 7;
             break;
         }
@@ -1348,7 +1350,7 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_construct: {
-            compileOpCall(instruction + i, i, structureIDInstructionIndex++, OpConstruct);
+            compileOpCall(instruction + i, i, callLinkInfoIndex++, OpConstruct);
             i += 7;
             break;
         }
@@ -1490,8 +1492,7 @@ void CTI::privateCompileMainPass()
             m_jit.movl_i32r(globalObject, X86::eax);
             m_jit.movl_mr(structureIDAddr, X86::edx);
             m_jit.cmpl_rm(X86::edx, OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
-            X86Assembler::JmpSrc slowCase = m_jit.emitUnlinkedJne(); // StructureIDs don't match
-            m_slowCases.append(SlowCaseEntry(slowCase, i));
+            X86Assembler::JmpSrc noMatch = m_jit.emitUnlinkedJne(); // StructureIDs don't match
 
             // Load cached property
             m_jit.movl_mr(OBJECT_OFFSET(JSGlobalObject, m_propertyStorage), X86::eax, X86::eax);
@@ -1501,7 +1502,7 @@ void CTI::privateCompileMainPass()
             X86Assembler::JmpSrc end = m_jit.emitUnlinkedJmp();
 
             // Slow case
-            m_jit.link(slowCase, m_jit.label());
+            m_jit.link(noMatch, m_jit.label());
             emitPutArgConstant(globalObject, 0);
             emitPutArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 8);
@@ -1509,7 +1510,6 @@ void CTI::privateCompileMainPass()
             emitPutResult(instruction[i + 1].u.operand);
             m_jit.link(end, m_jit.label());
             i += 6;
-            ++structureIDInstructionIndex;
             break;
         }
         CTI_COMPILE_BINARY_OP(op_div)
@@ -1841,7 +1841,7 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_call_eval: {
-            compileOpCall(instruction + i, i, structureIDInstructionIndex++, OpCallEval);
+            compileOpCall(instruction + i, i, callLinkInfoIndex++, OpCallEval);
             i += 7;
             break;
         }
@@ -2192,7 +2192,8 @@ void CTI::privateCompileMainPass()
         }
     }
 
-    ASSERT(structureIDInstructionIndex == m_codeBlock->structureIDInstructions.size());
+    ASSERT(propertyAccessInstructionIndex == m_codeBlock->propertyAccessInstructions.size());
+    ASSERT(callLinkInfoIndex == m_codeBlock->callLinkInfos.size());
 }
 
 
@@ -2217,7 +2218,8 @@ void CTI::privateCompileLinkPass()
     
 void CTI::privateCompileSlowCases()
 {
-    unsigned structureIDInstructionIndex = 0;
+    unsigned propertyAccessInstructionIndex = 0;
+    unsigned callLinkInfoIndex = 0;
 
     Instruction* instruction = m_codeBlock->instructions.begin();
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end(); ++iter) {
@@ -2361,9 +2363,9 @@ void CTI::privateCompileSlowCases()
             X86Assembler::JmpSrc call = emitCTICall(i, Machine::cti_op_put_by_id);
 
             // Track the location of the call; this will be used to recover repatch information.
-            ASSERT(m_codeBlock->structureIDInstructions[structureIDInstructionIndex].opcodeIndex == i);
-            m_structureStubCompilationInfo[structureIDInstructionIndex].callReturnLocation = call;
-            ++structureIDInstructionIndex;
+            ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].opcodeIndex == i);
+            m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
+            ++propertyAccessInstructionIndex;
 
             i += 8;
             break;
@@ -2389,16 +2391,11 @@ void CTI::privateCompileSlowCases()
             emitPutResult(instruction[i + 1].u.operand);
 
             // Track the location of the call; this will be used to recover repatch information.
-            ASSERT(m_codeBlock->structureIDInstructions[structureIDInstructionIndex].opcodeIndex == i);
-            m_structureStubCompilationInfo[structureIDInstructionIndex].callReturnLocation = call;
-            ++structureIDInstructionIndex;
+            ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].opcodeIndex == i);
+            m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
+            ++propertyAccessInstructionIndex;
 
             i += 8;
-            break;
-        }
-        case op_resolve_global: {
-            ++structureIDInstructionIndex;
-            i += 6;
             break;
         }
         case op_loop_if_lesseq: {
@@ -2710,13 +2707,15 @@ void CTI::privateCompileSlowCases()
             m_jit.movl_rr(X86::edx, X86::edi);
 
             // Try to link & repatch this call.
-            m_structureStubCompilationInfo[structureIDInstructionIndex].callReturnLocation =
+            CallLinkInfo* info = &(m_codeBlock->callLinkInfos[callLinkInfoIndex]);
+            emitPutArgConstant(reinterpret_cast<unsigned>(info), 4);
+            m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation =
                 emitCTICall(i, Machine::cti_vm_lazyLinkCall);
             emitNakedCall(i, X86::eax);
             X86Assembler::JmpSrc storeResultForFirstRun = m_jit.emitUnlinkedJmp();
 
             // This is the address for the cold path *after* the first run (which tries to link the call).
-            m_structureStubCompilationInfo[structureIDInstructionIndex].coldPathOther = m_jit.label();
+            m_callStructureStubCompilationInfo[callLinkInfoIndex].coldPathOther = m_jit.label();
 
             // The arguments have been set up on the hot path for op_call_eval
             if (opcodeID != op_call_eval)
@@ -2763,7 +2762,7 @@ void CTI::privateCompileSlowCases()
             m_jit.link(storeResultForFirstRun, storeResult);
             emitPutResult(dst);
 
-            ++structureIDInstructionIndex;
+            ++callLinkInfoIndex;
             i += 7;
             break;
         }
@@ -2787,7 +2786,8 @@ void CTI::privateCompileSlowCases()
         m_jit.link(m_jit.emitUnlinkedJmp(), m_labels[i]);
     }
 
-    ASSERT(structureIDInstructionIndex == m_codeBlock->structureIDInstructions.size());
+    ASSERT(propertyAccessInstructionIndex == m_codeBlock->propertyAccessInstructions.size());
+    ASSERT(callLinkInfoIndex == m_codeBlock->callLinkInfos.size());
 }
 
 void CTI::privateCompile()
@@ -2866,12 +2866,17 @@ void CTI::privateCompile()
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
         X86Assembler::linkAbsoluteAddress(code, iter->addrPosition, iter->target);
 
-    for (unsigned i = 0; i < m_codeBlock->structureIDInstructions.size(); ++i) {
-        StructureStubInfo& info = m_codeBlock->structureIDInstructions[i];
-        info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_structureStubCompilationInfo[i].callReturnLocation);
-        info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_structureStubCompilationInfo[i].hotPathBegin);
-        info.hotPathOther = X86Assembler::getRelocatedAddress(code, m_structureStubCompilationInfo[i].hotPathOther);
-        info.coldPathOther = X86Assembler::getRelocatedAddress(code, m_structureStubCompilationInfo[i].coldPathOther);
+    for (unsigned i = 0; i < m_codeBlock->propertyAccessInstructions.size(); ++i) {
+        StructureStubInfo& info = m_codeBlock->propertyAccessInstructions[i];
+        info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].callReturnLocation);
+        info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_propertyAccessCompilationInfo[i].hotPathBegin);
+    }
+    for (unsigned i = 0; i < m_codeBlock->callLinkInfos.size(); ++i) {
+        CallLinkInfo& info = m_codeBlock->callLinkInfos[i];
+        info.callReturnLocation = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].callReturnLocation);
+        info.hotPathBegin = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].hotPathBegin);
+        info.hotPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].hotPathOther);
+        info.coldPathOther = X86Assembler::getRelocatedAddress(code, m_callStructureStubCompilationInfo[i].coldPathOther);
     }
 
     m_codeBlock->ctiCode = code;
@@ -3154,31 +3159,29 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
     ctiRepatchCallByReturnAddress(returnAddress, code);
 }
 
-void CTI::unlinkCall(StructureStubInfo* structureStubInfo)
+void CTI::unlinkCall(CallLinkInfo* callLinkInfo)
 {
     // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
     // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
     // match).  Reset the check so it no longer matches.
-    reinterpret_cast<void**>(structureStubInfo->hotPathBegin)[-1] = asPointer(JSImmediate::impossibleValue());
+    reinterpret_cast<void**>(callLinkInfo->hotPathBegin)[-1] = asPointer(JSImmediate::impossibleValue());
 }
 
-void CTI::linkCall(CodeBlock* callerCodeBlock, JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, void* returnAddress, int callerArgCount)
+void CTI::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, void* ctiCode, CallLinkInfo* callLinkInfo, int callerArgCount)
 {
-    StructureStubInfo& stubInfo = callerCodeBlock->getStubInfo(returnAddress);
-
     // Currently we only link calls with the exact number of arguments.
     if (callerArgCount == calleeCodeBlock->numParameters) {
-        ASSERT(!stubInfo.linkInfoPtr);
+        ASSERT(!callLinkInfo->isLinked());
     
-        calleeCodeBlock->addCaller(&stubInfo);
+        calleeCodeBlock->addCaller(callLinkInfo);
     
-        reinterpret_cast<void**>(stubInfo.hotPathBegin)[-1] = callee;
-        ctiRepatchCallByReturnAddress(stubInfo.hotPathOther, ctiCode);
+        reinterpret_cast<void**>(callLinkInfo->hotPathBegin)[-1] = callee;
+        ctiRepatchCallByReturnAddress(callLinkInfo->hotPathOther, ctiCode);
     }
 
     // repatch the instruction that jumps out to the cold path, so that we only try to link once.
-    void* repatchCheck = reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(stubInfo.hotPathBegin) + repatchOffsetOpCallCall);
-    ctiRepatchCallByReturnAddress(repatchCheck, stubInfo.coldPathOther);
+    void* repatchCheck = reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(callLinkInfo->hotPathBegin) + repatchOffsetOpCallCall);
+    ctiRepatchCallByReturnAddress(repatchCheck, callLinkInfo->coldPathOther);
 }
 
 void* CTI::privateCompileArrayLengthTrampoline()

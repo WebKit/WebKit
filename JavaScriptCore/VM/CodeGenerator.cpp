@@ -965,7 +965,7 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
     }
 
     if (globalObject) {
-        m_codeBlock->structureIDInstructions.append(instructions().size());
+        m_codeBlock->globalResolveInstructions.append(instructions().size());
         emitOpcode(op_resolve_global);
         instructions().append(dst->index());
         instructions().append(globalObject);
@@ -1045,7 +1045,7 @@ RegisterID* CodeGenerator::emitResolveFunction(RegisterID* baseDst, RegisterID* 
 
 RegisterID* CodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
-    m_codeBlock->structureIDInstructions.append(instructions().size());
+    m_codeBlock->propertyAccessInstructions.append(instructions().size());
 
     emitOpcode(op_get_by_id);
     instructions().append(dst->index());
@@ -1060,7 +1060,7 @@ RegisterID* CodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const 
 
 RegisterID* CodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-    m_codeBlock->structureIDInstructions.append(instructions().size());
+    m_codeBlock->propertyAccessInstructions.append(instructions().size());
 
     emitOpcode(op_put_by_id);
     instructions().append(base->index());
@@ -1219,7 +1219,7 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
     }
 
     emitExpressionInfo(divot, startOffset, endOffset);
-    m_codeBlock->structureIDInstructions.append(instructions().size());
+    m_codeBlock->callLinkInfos.append(CallLinkInfo());
     emitOpcode(opcodeID);
     instructions().append(dst->index());
     instructions().append(func->index());
@@ -1283,7 +1283,7 @@ RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, Argu
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, startOffset, endOffset);
-    m_codeBlock->structureIDInstructions.append(instructions().size());
+    m_codeBlock->callLinkInfos.append(CallLinkInfo());
     emitOpcode(op_construct);
     instructions().append(dst->index());
     instructions().append(func->index());
