@@ -48,14 +48,11 @@
 #include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
-#include "JavaScriptCallFrame.h"
 #include "JSDOMWindow.h"
 #include "JSInspectedObjectWrapper.h"
 #include "JSInspectorCallbackWrapper.h"
-#include "JSJavaScriptCallFrame.h"
 #include "JSNode.h"
 #include "JSRange.h"
-#include "JavaScriptDebugServer.h"
 #include "JavaScriptProfile.h"
 #include "Page.h"
 #include "Range.h"
@@ -81,6 +78,12 @@
 #if ENABLE(DATABASE)
 #include "Database.h"
 #include "JSDatabase.h"
+#endif
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "JavaScriptCallFrame.h"
+#include "JavaScriptDebugServer.h"
+#include "JSJavaScriptCallFrame.h"
 #endif
 
 using namespace JSC;
@@ -431,6 +434,7 @@ SIMPLE_INSPECTOR_CALLBACK(loaded, scriptObjectReady);
 SIMPLE_INSPECTOR_CALLBACK(unloading, close);
 SIMPLE_INSPECTOR_CALLBACK(attach, attachWindow);
 SIMPLE_INSPECTOR_CALLBACK(detach, detachWindow);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 SIMPLE_INSPECTOR_CALLBACK(startDebugging, startDebugging);
 SIMPLE_INSPECTOR_CALLBACK(stopDebugging, stopDebugging);
 SIMPLE_INSPECTOR_CALLBACK(pauseInDebugger, pauseInDebugger);
@@ -438,6 +442,7 @@ SIMPLE_INSPECTOR_CALLBACK(resumeDebugger, resumeDebugger);
 SIMPLE_INSPECTOR_CALLBACK(stepOverStatementInDebugger, stepOverStatementInDebugger);
 SIMPLE_INSPECTOR_CALLBACK(stepIntoStatementInDebugger, stepIntoStatementInDebugger);
 SIMPLE_INSPECTOR_CALLBACK(stepOutOfFunctionInDebugger, stepOutOfFunctionInDebugger);
+#endif
 SIMPLE_INSPECTOR_CALLBACK(closeWindow, closeWindow);
 SIMPLE_INSPECTOR_CALLBACK(clearMessages, clearConsoleMessages);
 SIMPLE_INSPECTOR_CALLBACK(startProfiling, startUserInitiatedProfiling);
@@ -452,8 +457,10 @@ static JSValueRef jsFunction(JSContextRef ctx, JSObjectRef, JSObjectRef thisObje
     return JSValueMakeUndefined(ctx); \
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 BOOL_INSPECTOR_CALLBACK(debuggerAttached, debuggerAttached);
 BOOL_INSPECTOR_CALLBACK(pauseOnExceptions, pauseOnExceptions);
+#endif
 BOOL_INSPECTOR_CALLBACK(isWindowVisible, windowVisible);
 BOOL_INSPECTOR_CALLBACK(searchingForNode, searchingForNodeInPage);
 
@@ -828,6 +835,7 @@ static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObj
     return toRef(JSInspectorCallbackWrapper::wrap(toJS(ctx), toJS(arguments[0])));
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 static JSValueRef currentCallFrame(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
 {
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
@@ -901,6 +909,7 @@ static JSValueRef removeBreakpoint(JSContextRef ctx, JSObjectRef /*function*/, J
 
     return JSValueMakeUndefined(ctx);
 }
+#endif
 
 static JSValueRef profiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* exception)
 {
@@ -954,8 +963,10 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_controllerScriptObject(0)
     , m_scriptContext(0)
     , m_windowVisible(false)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAttached(false)
     , m_attachDebuggerWhenShown(false)
+#endif
     , m_recordingUserInitiatedProfile(false)
     , m_showAfterVisible(ElementsPanel)
     , m_nextIdentifier(-2)
@@ -1114,12 +1125,16 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         populateScriptObjects();
         if (m_nodeToFocus)
             focusNode();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_attachDebuggerWhenShown)
             startDebugging();
+#endif
         if (m_showAfterVisible != CurrentPanel)
             showPanel(m_showAfterVisible);
     } else {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         stopDebugging();
+#endif
         resetScriptObjects();
     }
 
@@ -1322,6 +1337,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "windowUnloading", WebCore::unloading, kJSPropertyAttributeNone },
         { "attach", WebCore::attach, kJSPropertyAttributeNone },
         { "detach", WebCore::detach, kJSPropertyAttributeNone },
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         { "startDebugging", WebCore::startDebugging, kJSPropertyAttributeNone },
         { "stopDebugging", WebCore::stopDebugging, kJSPropertyAttributeNone },
         { "pauseInDebugger", WebCore::pauseInDebugger, kJSPropertyAttributeNone },
@@ -1329,6 +1345,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "stepOverStatementInDebugger", WebCore::stepOverStatementInDebugger, kJSPropertyAttributeNone },
         { "stepIntoStatementInDebugger", WebCore::stepIntoStatementInDebugger, kJSPropertyAttributeNone },
         { "stepOutOfFunctionInDebugger", WebCore::stepOutOfFunctionInDebugger, kJSPropertyAttributeNone },
+#endif
         { "closeWindow", WebCore::closeWindow, kJSPropertyAttributeNone },
         { "clearMessages", WebCore::clearMessages, kJSPropertyAttributeNone },
         { "startProfiling", WebCore::startProfiling, kJSPropertyAttributeNone },
@@ -1336,8 +1353,10 @@ void InspectorController::windowScriptObjectAvailable()
         { "toggleNodeSearch", WebCore::toggleNodeSearch, kJSPropertyAttributeNone },
 
         // BOOL_INSPECTOR_CALLBACK
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         { "debuggerAttached", WebCore::debuggerAttached, kJSPropertyAttributeNone },
         { "pauseOnExceptions", WebCore::pauseOnExceptions, kJSPropertyAttributeNone },
+#endif
         { "isWindowVisible", WebCore::isWindowVisible, kJSPropertyAttributeNone },
         { "searchingForNode", WebCore::searchingForNode, kJSPropertyAttributeNone },
 
@@ -1356,10 +1375,12 @@ void InspectorController::windowScriptObjectAvailable()
         { "moveByUnrestricted", WebCore::moveByUnrestricted, kJSPropertyAttributeNone },
         { "setAttachedWindowHeight", WebCore::setAttachedWindowHeight, kJSPropertyAttributeNone },
         { "wrapCallback", WebCore::wrapCallback, kJSPropertyAttributeNone },
+#if ENABLE(JAVASCRIPT_DEBUGGER)
         { "currentCallFrame", WebCore::currentCallFrame, kJSPropertyAttributeNone },
         { "setPauseOnExceptions", WebCore::setPauseOnExceptions, kJSPropertyAttributeNone },
         { "addBreakpoint", WebCore::addBreakpoint, kJSPropertyAttributeNone },
         { "removeBreakpoint", WebCore::removeBreakpoint, kJSPropertyAttributeNone },
+#endif
         { "profiles", WebCore::profiles, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
@@ -1477,7 +1498,9 @@ void InspectorController::close()
         return;
 
     stopUserInitiatedProfiling();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     stopDebugging();
+#endif
     closeWindow();
 
     if (m_scriptContext && m_scriptObject)
@@ -2313,6 +2336,7 @@ void InspectorController::moveWindowBy(float x, float y) const
     m_page->chrome()->setWindowRect(frameRect);
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::startDebugging()
 {
     if (!enabled())
@@ -2407,6 +2431,7 @@ void InspectorController::removeBreakpoint(intptr_t sourceID, unsigned lineNumbe
 {
     JavaScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
 }
+#endif
 
 static void drawOutlinedRect(GraphicsContext& context, const IntRect& rect, const Color& fillColor)
 {
@@ -2574,6 +2599,7 @@ bool InspectorController::handleException(JSContextRef context, JSValueRef excep
     return true;
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 // JavaScriptDebugListener functions
 
 void InspectorController::didParseSource(ExecState* exec, const SourceCode& source)
@@ -2606,5 +2632,6 @@ void InspectorController::didPause()
     JSValueRef exception = 0;
     callFunction(m_scriptContext, m_scriptObject, "pausedScript", 0, 0, exception);
 }
+#endif
 
 } // namespace WebCore

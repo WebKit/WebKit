@@ -37,7 +37,6 @@
 #include "FrameView.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
-#include "JavaScriptDebugServer.h"
 #include "Logging.h"
 #include "NetworkStateNotifier.h"
 #include "Navigator.h"
@@ -60,6 +59,10 @@
 #include "LocalStorage.h"
 #include "SessionStorage.h"
 #include "StorageArea.h"
+#endif
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "JavaScriptDebugServer.h"
 #endif
 
 namespace WebCore {
@@ -135,7 +138,9 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     ASSERT(!allPages->contains(this));
     allPages->add(this);
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     JavaScriptDebugServer::shared().pageCreated(this);
+#endif
 
 #ifndef NDEBUG
     pageCounter.increment();

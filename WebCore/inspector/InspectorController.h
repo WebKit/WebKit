@@ -29,7 +29,9 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "JavaScriptDebugListener.h"
+#endif
 
 #include "Console.h"
 #include "PlatformString.h"
@@ -63,7 +65,11 @@ struct InspectorDatabaseResource;
 struct InspectorResource;
 class ResourceRequest;
 
-class InspectorController : JavaScriptDebugListener {
+class InspectorController
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+                          : JavaScriptDebugListener
+#endif
+                                                    {
 public:
     typedef HashMap<long long, RefPtr<InspectorResource> > ResourcesMap;
     typedef HashMap<RefPtr<Frame>, ResourcesMap*> FrameResourcesMap;
@@ -160,6 +166,7 @@ public:
     void moveWindowBy(float x, float y) const;
     void closeWindow();
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     void startDebugging();
     void stopDebugging();
     bool debuggerAttached() const { return m_debuggerAttached; }
@@ -178,6 +185,7 @@ public:
     void stepOverStatementInDebugger();
     void stepIntoStatementInDebugger();
     void stepOutOfFunctionInDebugger();
+#endif
 
     void drawNodeHighlight(GraphicsContext&) const;
     
@@ -224,9 +232,11 @@ private:
 
     void showWindow();
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     virtual void didParseSource(JSC::ExecState*, const JSC::SourceCode&);
     virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceCode&, int errorLine, const JSC::UString& errorMessage);
     virtual void didPause();
+#endif
 
     Page* m_inspectedPage;
     InspectorClient* m_client;
@@ -247,8 +257,10 @@ private:
     JSObjectRef m_controllerScriptObject;
     JSContextRef m_scriptContext;
     bool m_windowVisible;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     bool m_debuggerAttached;
     bool m_attachDebuggerWhenShown;
+#endif
     bool m_recordingUserInitiatedProfile;
     SpecialPanels m_showAfterVisible;
     long long m_nextIdentifier;

@@ -1,3 +1,19 @@
+2008-10-23  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21833
+        Place JavaScript Debugger hooks under #if ENABLE(JAVASCRIPT_DEBUGGER).
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::close):
+        * inspector/InspectorController.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
 2008-10-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcher.
