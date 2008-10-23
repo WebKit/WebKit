@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class ShadowData;
+struct ShadowData;
 
 // This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
 // By grouping them together, we save space, and only allocate this object when someone

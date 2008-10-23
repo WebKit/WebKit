@@ -38,13 +38,13 @@ namespace WebCore {
 
 class AnimationList;
 class CSSStyleSelector;
-class ContentData;
-class ShadowData;
 class StyleFlexibleBoxData;
 class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
 class StyleTransformData;
+struct ContentData;
+struct ShadowData;
 
 #if ENABLE(DASHBOARD_SUPPORT)
 class StyleDashboardRegion;
