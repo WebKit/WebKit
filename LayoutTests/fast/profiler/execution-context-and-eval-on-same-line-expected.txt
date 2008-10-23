@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 59: Two Execution Contexts on the same line
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) execution-context-and-eval-on-same-line.html 8
+CONSOLE MESSAGE: line 75:   (program) execution-context-and-eval-on-same-line.html 4
+CONSOLE MESSAGE: line 75:   (program) execution-context-and-eval-on-same-line.html 15
+CONSOLE MESSAGE: line 75:    eval  0
+CONSOLE MESSAGE: line 75:     (program)  1
+CONSOLE MESSAGE: line 75:   onload execution-context-and-eval-on-same-line.html 18
+CONSOLE MESSAGE: line 75:    testStart execution-context-and-eval-on-same-line.html 10
+CONSOLE MESSAGE: line 75:     evalFunction  1
+CONSOLE MESSAGE: line 75:      insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:       createElement  0
+CONSOLE MESSAGE: line 75:       createTextNode  0
+CONSOLE MESSAGE: line 75:       appendChild  0
+CONSOLE MESSAGE: line 75:       getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has a call to eval and a script tag on the same line. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be multiple (program) elements and one that represents the eval().
+This is inserted Text

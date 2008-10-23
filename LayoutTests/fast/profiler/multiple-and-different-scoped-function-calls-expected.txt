@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: line 59: Multiple and different scoped calls to the same function
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) multiple-and-different-scoped-function-calls.html 8
+CONSOLE MESSAGE: line 75:   (program) multiple-and-different-scoped-function-calls.html 4
+CONSOLE MESSAGE: line 75:   onload multiple-and-different-scoped-function-calls.html 20
+CONSOLE MESSAGE: line 75:    startTest multiple-and-different-scoped-function-calls.html 10
+CONSOLE MESSAGE: line 75:     insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:      createElement  0
+CONSOLE MESSAGE: line 75:      createTextNode  0
+CONSOLE MESSAGE: line 75:      appendChild  0
+CONSOLE MESSAGE: line 75:      getElementById  0
+CONSOLE MESSAGE: line 75:     intermediaryFunction profiler-test-JS-resources.js 32
+CONSOLE MESSAGE: line 75:      (anonymous function) profiler-test-JS-resources.js 29
+CONSOLE MESSAGE: line 75:       insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:        createElement  0
+CONSOLE MESSAGE: line 75:        createTextNode  0
+CONSOLE MESSAGE: line 75:        appendChild  0
+CONSOLE MESSAGE: line 75:        getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page's JavaScript calls the same function from multiple and differently scoped locations. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be two calls to insertNewText under startTest() and one under an (anonymous function) under intermediaryFunction().
+This is inserted Text
+
+This is inserted Text
+
+This is inserted Text

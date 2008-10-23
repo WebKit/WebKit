@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 59: Test
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) compare-multiple-profiles.html 20
+CONSOLE MESSAGE: line 75:   test compare-multiple-profiles.html 9
+CONSOLE MESSAGE: line 75:    test2 compare-multiple-profiles.html 15
+CONSOLE MESSAGE: line 75:  (idle)  0
+CONSOLE MESSAGE: line 59: Test
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) compare-multiple-profiles.html 24
+CONSOLE MESSAGE: line 75:   test compare-multiple-profiles.html 9
+CONSOLE MESSAGE: line 75:    test2 compare-multiple-profiles.html 15
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has multiple profiles with the same name. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. It should not crash or hang and there should be multiple runs of the same named profile.
+

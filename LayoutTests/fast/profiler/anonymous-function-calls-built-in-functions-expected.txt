@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 59: Anonymous function calls built-in functions
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) anonymous-function-calls-built-in-functions.html 8
+CONSOLE MESSAGE: line 75:   (program) anonymous-function-calls-built-in-functions.html 4
+CONSOLE MESSAGE: line 75:   onload anonymous-function-calls-built-in-functions.html 17
+CONSOLE MESSAGE: line 75:    startTest anonymous-function-calls-built-in-functions.html 10
+CONSOLE MESSAGE: line 75:     (anonymous function) profiler-test-JS-resources.js 29
+CONSOLE MESSAGE: line 75:      insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:       createElement  0
+CONSOLE MESSAGE: line 75:       createTextNode  0
+CONSOLE MESSAGE: line 75:       appendChild  0
+CONSOLE MESSAGE: line 75:       getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has an anonymous JavaScript function that calls built-in functions. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. Beneath onload and startTest it should show three children, an anonymous function, script context, and the endTest call.
+This is inserted Text

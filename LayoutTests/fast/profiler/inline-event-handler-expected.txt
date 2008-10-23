@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 59: Inline event handler
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) inline-event-handler.html 8
+CONSOLE MESSAGE: line 75:   (program) inline-event-handler.html 4
+CONSOLE MESSAGE: line 75:   onload inline-event-handler.html 21
+CONSOLE MESSAGE: line 75:    testStart inline-event-handler.html 10
+CONSOLE MESSAGE: line 75:     getElementById  0
+CONSOLE MESSAGE: line 75:     click  0
+CONSOLE MESSAGE: line 75:      onclick inline-event-handler.html 28
+CONSOLE MESSAGE: line 75:       eventListener inline-event-handler.html 14
+CONSOLE MESSAGE: line 75:        (anonymous function) profiler-test-JS-resources.js 29
+CONSOLE MESSAGE: line 75:         insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:          createElement  0
+CONSOLE MESSAGE: line 75:          createTextNode  0
+CONSOLE MESSAGE: line 75:          appendChild  0
+CONSOLE MESSAGE: line 75:          getElementById  0
+CONSOLE MESSAGE: line 75:        endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has an inline event handler. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile onclick() should be a sibling to onload() and onclick() should have eventListener() as a child. 
+This is inserted Text

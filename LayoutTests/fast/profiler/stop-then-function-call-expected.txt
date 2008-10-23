@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 59: Test
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) stop-then-function-call.html 19
+CONSOLE MESSAGE: line 75:   test stop-then-function-call.html 9
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has an anonymous JavaScript function that calls built-in functions. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. There should be two nodes in the profile, a "(program)" node with one child that is "test".

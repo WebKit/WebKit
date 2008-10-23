@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 59: Built-in function calls an anonymous function
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) built-in-function-calls-anonymous.html 8
+CONSOLE MESSAGE: line 75:   (program) built-in-function-calls-anonymous.html 4
+CONSOLE MESSAGE: line 75:   onload built-in-function-calls-anonymous.html 22
+CONSOLE MESSAGE: line 75:    testStart built-in-function-calls-anonymous.html 10
+CONSOLE MESSAGE: line 75:     Array  0
+CONSOLE MESSAGE: line 75:     map  0
+CONSOLE MESSAGE: line 75:      (anonymous function) built-in-function-calls-anonymous.html 11
+CONSOLE MESSAGE: line 75:       arrayOperatorFunction profiler-test-JS-resources.js 25
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page uses a built-in function to call an anonymous function. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile map() should be the sibling of an (anonymous function) which has arrayOperatorFunction() as a child.

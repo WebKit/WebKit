@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 59: Profile call in included file
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  startProfile profiler-test-JS-resources.js 42
+CONSOLE MESSAGE: line 75:  endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page calls the profiler from the included file. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. If there is a profile that is sufficient for this test.
+

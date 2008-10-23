@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 59: Profiling From A Nested Location But Stop Profiling Outside The Nesting
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  functionWichStartsAndStopsTheProfiler profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html 15
+CONSOLE MESSAGE: line 75:  endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page's JavaScript starts profiling from within a nested location but stops the profiler from a different level of nesting. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to functionWichStartsAndStopsTheProfiler().
+

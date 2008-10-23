@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: line 59: Many Calls In The Same Scope
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) many-calls-in-the-same-scope.html 8
+CONSOLE MESSAGE: line 75:   (program) many-calls-in-the-same-scope.html 4
+CONSOLE MESSAGE: line 75:   onload many-calls-in-the-same-scope.html 35
+CONSOLE MESSAGE: line 75:    startTest many-calls-in-the-same-scope.html 10
+CONSOLE MESSAGE: line 75:     insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:      createElement  0
+CONSOLE MESSAGE: line 75:      createTextNode  0
+CONSOLE MESSAGE: line 75:      appendChild  0
+CONSOLE MESSAGE: line 75:      getElementById  0
+CONSOLE MESSAGE: line 75:     insertGivenText profiler-test-JS-resources.js 9
+CONSOLE MESSAGE: line 75:      createElement  0
+CONSOLE MESSAGE: line 75:      createTextNode  0
+CONSOLE MESSAGE: line 75:      appendChild  0
+CONSOLE MESSAGE: line 75:      getElementById  0
+CONSOLE MESSAGE: line 75:     arrayOperatorFunction profiler-test-JS-resources.js 25
+CONSOLE MESSAGE: line 75:     intermediaryFunction profiler-test-JS-resources.js 32
+CONSOLE MESSAGE: line 75:      (anonymous function) profiler-test-JS-resources.js 29
+CONSOLE MESSAGE: line 75:       insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:        createElement  0
+CONSOLE MESSAGE: line 75:        createTextNode  0
+CONSOLE MESSAGE: line 75:        appendChild  0
+CONSOLE MESSAGE: line 75:        getElementById  0
+CONSOLE MESSAGE: line 75:     (anonymous function) profiler-test-JS-resources.js 29
+CONSOLE MESSAGE: line 75:      insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:       createElement  0
+CONSOLE MESSAGE: line 75:       createTextNode  0
+CONSOLE MESSAGE: line 75:       appendChild  0
+CONSOLE MESSAGE: line 75:       getElementById  0
+CONSOLE MESSAGE: line 75:     end many-calls-in-the-same-scope.html 23
+CONSOLE MESSAGE: line 75:     endT many-calls-in-the-same-scope.html 28
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page's JavaScript has many function calls in the same scope. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile many functions should be the children of startTest. Use the sorting capabilites to make sure the similarly named functions are sorted correctly.
+This is inserted Text
+
+This was a triumph.
+
+This is inserted Text
+
+This is inserted Text

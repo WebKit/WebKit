@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 59: User defined function calles built-in functions
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) user-defined-function-calls-built-in-functions.html 8
+CONSOLE MESSAGE: line 75:   (program) user-defined-function-calls-built-in-functions.html 4
+CONSOLE MESSAGE: line 75:   onload user-defined-function-calls-built-in-functions.html 22
+CONSOLE MESSAGE: line 75:    startTest user-defined-function-calls-built-in-functions.html 10
+CONSOLE MESSAGE: line 75:     createElement  0
+CONSOLE MESSAGE: line 75:     createTextNode  0
+CONSOLE MESSAGE: line 75:     appendChild  0
+CONSOLE MESSAGE: line 75:     getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has JavaScript that calls built-in functions. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be calls to createElement() createTextNode() appendChild() and testEnd(), among others.
+This is inserted Text

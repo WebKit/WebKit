@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 0: I threw up
+CONSOLE MESSAGE: line 59: Throw within an eval.
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) throw-exception-from-eval.html 8
+CONSOLE MESSAGE: line 75:   (program) throw-exception-from-eval.html 15
+CONSOLE MESSAGE: line 75:    (program) throw-exception-from-eval.html 4
+CONSOLE MESSAGE: line 75:    (program) throw-exception-from-eval.html 15
+CONSOLE MESSAGE: line 75:     eval  0
+CONSOLE MESSAGE: line 75:      (program)  1
+CONSOLE MESSAGE: line 75:       (program)  1
+CONSOLE MESSAGE: line 75:   onload throw-exception-from-eval.html 18
+CONSOLE MESSAGE: line 75:    testStart throw-exception-from-eval.html 10
+CONSOLE MESSAGE: line 75:     insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:      createElement  0
+CONSOLE MESSAGE: line 75:      createTextNode  0
+CONSOLE MESSAGE: line 75:      appendChild  0
+CONSOLE MESSAGE: line 75:      getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page throws an exception from within eval(). 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. The profiler should not crash and still show the stack under insertnewText().
+This is inserted Text

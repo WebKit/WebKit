@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 59: Anonymous event handler
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) anonymous-event-handler.html 8
+CONSOLE MESSAGE: line 75:   (program) anonymous-event-handler.html 4
+CONSOLE MESSAGE: line 75:   onload anonymous-event-handler.html 23
+CONSOLE MESSAGE: line 75:    testStart anonymous-event-handler.html 10
+CONSOLE MESSAGE: line 75:     getElementById  0
+CONSOLE MESSAGE: line 75:     click  0
+CONSOLE MESSAGE: line 75:      (anonymous function) anonymous-event-handler.html 12
+CONSOLE MESSAGE: line 75:       insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:        createElement  0
+CONSOLE MESSAGE: line 75:        createTextNode  0
+CONSOLE MESSAGE: line 75:        appendChild  0
+CONSOLE MESSAGE: line 75:        getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page has an anonymous event handler. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. It should show the anonymous function at the same level as the onload handler. 
+This is inserted Text

@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 59: Stop profiling from a timeout
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  onload stop-profiling-after-setTimeout.html 19
+CONSOLE MESSAGE: line 75:   startTest stop-profiling-after-setTimeout.html 11
+CONSOLE MESSAGE: line 75:    setTimeout  0
+CONSOLE MESSAGE: line 75:  (program) stop-profiling-after-setTimeout.html 1
+CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page's JavaScript stops profiling from a timeout. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile endProfile() should not be a child of (program).
+

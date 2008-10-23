@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 59: Nested anonymous functions called
+CONSOLE MESSAGE: line 75: Thread_1  0
+CONSOLE MESSAGE: line 75:  (program) nested-anonymous-functon.html 8
+CONSOLE MESSAGE: line 75:   (program) nested-anonymous-functon.html 4
+CONSOLE MESSAGE: line 75:   onload nested-anonymous-functon.html 21
+CONSOLE MESSAGE: line 75:    startTest nested-anonymous-functon.html 10
+CONSOLE MESSAGE: line 75:     (anonymous function) nested-anonymous-functon.html 11
+CONSOLE MESSAGE: line 75:      (anonymous function) profiler-test-JS-resources.js 29
+CONSOLE MESSAGE: line 75:       insertNewText profiler-test-JS-resources.js 17
+CONSOLE MESSAGE: line 75:        createElement  0
+CONSOLE MESSAGE: line 75:        createTextNode  0
+CONSOLE MESSAGE: line 75:        appendChild  0
+CONSOLE MESSAGE: line 75:        getElementById  0
+CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
+CONSOLE MESSAGE: line 75:  (idle)  0
+This page's JavaScript calls an anonymous which calls a nested anonymous function. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be an (anonymous function) with a child (anonymous function).
+This is inserted Text
