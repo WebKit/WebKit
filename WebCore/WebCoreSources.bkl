@@ -50,6 +50,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDatabaseCustom.cpp
         bindings/js/JSDOMApplicationCacheCustom.cpp
+        bindings/js/JSDOMGlobalObject.cpp
         bindings/js/JSDOMWindowBase.cpp
         bindings/js/JSDOMWindowCustom.cpp
         bindings/js/JSDOMWindowShell.cpp

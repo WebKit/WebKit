@@ -331,6 +331,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomXPathNSResolver.h \
 	WebCore/bindings/js/JSDOMBinding.cpp \
 	WebCore/bindings/js/JSDOMBinding.h \
+	WebCore/bindings/js/JSDOMGlobalObject.cpp \
+	WebCore/bindings/js/JSDOMGlobalObject.h \
 	WebCore/bindings/js/JSDOMWindowBase.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.h \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \

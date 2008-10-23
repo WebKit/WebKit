@@ -1,3 +1,33 @@
+2008-10-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21825
+        JSDOMBinding should not blindly cast the global object to JSDOMWindow
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMGlobalObject.h:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added JSDOMGlobalObject, a base class to be used by both Window and worker contexts.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMStructure):
+        (WebCore::cacheDOMStructure):
+        (WebCore::getCachedDOMConstructor):
+        (WebCore::cacheDOMConstructor):
+        Cast to JSDOMGlobalObject, as DOM objects live in DOM global objects.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::mark):
+        Moved constructor and structure tracking to JSDOMGlobalObject.
+
 2008-10-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

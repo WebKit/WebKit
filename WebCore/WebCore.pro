@@ -373,6 +373,7 @@ SOURCES += \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDocumentFragmentCustom.cpp \
+    bindings/js/JSDOMGlobalObject.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSDOMWindowShell.cpp \

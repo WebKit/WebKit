@@ -13273,6 +13273,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDOMGlobalObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMGlobalObject.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDOMWindowBase.cpp"
 					>
 				</File>
