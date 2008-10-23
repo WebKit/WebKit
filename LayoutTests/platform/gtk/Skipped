@@ -8,3 +8,6 @@ http/tests/appcache
 # Missing AccessibilityController implementation
 accessibility
 printing
+
+# https://bugs.webkit.org/show_bug.cgi?id=21817: Manual profiler tests should be made into layout tests - skipping these until they are ready.
+fast/profiler

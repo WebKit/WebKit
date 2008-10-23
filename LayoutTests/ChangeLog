@@ -1,3 +1,12 @@
+2008-10-23  Darin Adler  <darin@apple.com>
+
+        - try to get buildbot green again
+
+        * platform/gtk/Skipped: Added fast/profiler.
+        * platform/mac/Skipped: Fixed typo: fast/profiler, not fast/profile.
+        * platform/qt/Skipped: Added fast/profiler.
+        * platform/win/Skipped: Fixed typo: fast/profiler, not fast/profile.
+
 2008-10-23  Kevin McCullough  <kmccullough@apple.com>
 
         Forgot to actually check these files in from last time :(
