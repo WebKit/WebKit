@@ -1,5 +1,6 @@
 <body>
 <p>Test cross-frame MessagePort communication.</p>
+<p>Should be a series of SUCCESS messages, followed with DONE.</p>
 <pre id=log></pre>
 <script>
 function log(message)
@@ -25,9 +26,9 @@ function test()
             log("Simple exchange: SUCCESS");
         else
             log("Simple exchange: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+        test2();
     };
     mainPort.start();
-    setTimeout(test2, 50);
 }
 
 function test2()
@@ -39,9 +40,9 @@ function test2()
             log("Posted port: SUCCESS");
         else
             log("Posted port: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+        test3();
     };
     channel.port1.start();
-    setTimeout(test3, 50);
 }
 
 function test3()
@@ -52,9 +53,9 @@ function test3()
             log("Conversation: SUCCESS");
         else
             log("Conversation: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+        test4();
     };
     port.start();
-    setTimeout(test4, 50);
 }
 
 function test4()
@@ -64,6 +65,8 @@ function test4()
     mainPort.close();
 
     log("A closed port is inactive: " + (mainPort.active ? "FAIL" : "SUCCESS"));
+
+    log("DONE");
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();
