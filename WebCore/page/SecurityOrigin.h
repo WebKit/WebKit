@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007,2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@ namespace WebCore {
         // function does not check whether newDomain is a suffix of the current
         // domain.  The caller is responsible for validating newDomain.
         void setDomainFromDOM(const String& newDomain);
+        bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
         String protocol() const { return m_protocol; }
         String host() const { return m_host; }
