@@ -1,6 +1,10 @@
 <html>
 <head>
+<script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("Two Execution Contexts");
 function testStart()
 {
@@ -24,6 +28,7 @@ the profile.  In the profile there should be two (program) elements.
 <script>
 function testEnd() {
     console.profileEnd();
+    printProfilesDataWithoutTime();
 }
 </script>
 </html>

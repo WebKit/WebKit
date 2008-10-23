@@ -2,10 +2,14 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("Start the profiler but don't stop it.");
 function startTest()
 {
     anonymousFunction();
+    printProfilesDataWithoutTime();
 }
 </script>
 </head>

@@ -2,6 +2,11 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
 console.profile("Dead time in profile.");
 function startTest()
 {

@@ -2,6 +2,9 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("Heavy View Test");
 
 function a()
@@ -12,6 +15,7 @@ function a()
     d();
     g();
     console.profileEnd();
+    printHeavyProfilesDataWithoutTime();
 }
 
 function b()

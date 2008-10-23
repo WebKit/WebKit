@@ -2,6 +2,9 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("Call Document.write()");
 document.write("<div>This was a triumph.<// div>");
 endTest();

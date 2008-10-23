@@ -2,21 +2,15 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 
 function startTest()
 {
-    startProfiling();
-}
-
-function startProfiling()
-{
     console.profile("Stop profiling from a timeout");    
-    setTimeout("endProfile()", 20);
-}
-
-function endProfile()
-{
-    console.profileEnd("Stop profiling from a timeout");
+    setTimeout("endTest()", 20);
 }
 
 </script>

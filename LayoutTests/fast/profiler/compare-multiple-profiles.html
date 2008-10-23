@@ -2,6 +2,9 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 var j = 0;
 function test(len) {
     for (var i = 0; i < len; ++i)
@@ -21,6 +24,8 @@ console.profileEnd("Test");
 console.profile("Test");
 test(1000);
 console.profileEnd("Test");
+
+printProfilesDataWithoutTime();
 </script>
 </head>
 

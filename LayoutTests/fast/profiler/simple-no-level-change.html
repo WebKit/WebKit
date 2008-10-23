@@ -1,6 +1,10 @@
 <html>
 <head>
+<script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 function startTest()
 {
     functionWichStartsAndStopsTheProfiler();
@@ -16,6 +20,7 @@ function functionWichStartsAndStopsTheProfiler()
     document.getElementById("output");
 
     console.profileEnd();
+    printProfilesDataWithoutTime();
 }
 
 </script>

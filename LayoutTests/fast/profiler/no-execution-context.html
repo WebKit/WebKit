@@ -1,7 +1,12 @@
 <html>
 <head>
 </head>
-<body>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<body onload="printProfilesDataWithoutTime()">
 This page has a no script tag and so has no execution context or profiling information.
 <br>
 <br>

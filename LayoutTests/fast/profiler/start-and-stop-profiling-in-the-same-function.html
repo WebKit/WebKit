@@ -2,6 +2,8 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 
 function startTest()
 {
@@ -16,6 +18,7 @@ function functionWichStartsAndStopsTheProfiler()
         var b = i + 2;
 
     console.profileEnd("Profiling From A Nested Location");
+    printProfilesDataWithoutTime();
 }
 
 </script>

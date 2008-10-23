@@ -2,9 +2,13 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 function testStart()
 {
     startProfile("Profile call in included file");
+    endTest();
 }
 </script>
 </head>

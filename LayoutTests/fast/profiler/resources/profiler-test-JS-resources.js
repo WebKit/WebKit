@@ -1,5 +1,9 @@
 function endTest() {
     console.profileEnd();
+    printProfilesDataWithoutTime();
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 function insertGivenText(text) {
@@ -38,3 +42,40 @@ function startProfile(title)
 {
     console.profile(title);
 }
+
+function printHeavyProfilesDataWithoutTime()
+{
+    var profiles = console.profiles;
+    for (var i = 0; i < profiles.length; ++i) {
+        console.log(profiles[i].title);
+        printProfileNodeWithoutTime(profiles[i].heavyProfile.head, 0);
+    }
+}
+
+function printProfilesDataWithoutTime()
+{
+    var profiles = console.profiles;
+    for (var i = 0; i < profiles.length; ++i) {
+        console.log(profiles[i].title);
+        printProfileNodeWithoutTime(profiles[i].treeProfile.head, 0);
+    }
+}
+
+function printProfileNodeWithoutTime(node, indentLevel)
+{
+    if (!node.visible)
+        return;
+
+    var space = "";
+    for (var i = 0; i < indentLevel; ++i)
+        space += " "
+
+    ++indentLevel;
+
+    console.log(space + node.functionName + " " + node.url + " " + node.lineNumber);
+
+    var children = node.children;
+    for (var i = 0; i < children.length; ++i)
+        printProfileNodeWithoutTime(children[i], indentLevel);
+}
+

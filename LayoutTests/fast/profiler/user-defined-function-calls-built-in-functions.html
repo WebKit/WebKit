@@ -1,6 +1,10 @@
 <html>
 <head>
+<script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("User defined function calles built-in functions");
 function startTest()
 {
@@ -10,11 +14,7 @@ function startTest()
     var output = document.getElementById("output");
     output.appendChild(newP);
     
-    testEnd();
-}
-
-function testEnd() {
-    console.profileEnd();
+    endTest();
 }
 </script>
 </head>

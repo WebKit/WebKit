@@ -1,12 +1,16 @@
 <html>
 <head>
+<script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("Test deep recursion.");
 function startTest()
 {
     recurse (0);
 
-    console.profileEnd();
+    endTest();
 }
 
 function recurse(depth) {

@@ -1,10 +1,14 @@
 <html>
 <head>
+<script src="resources/profiler-test-JS-resources.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 console.profile("A simple profile test where an event happens.");
 function startTest()
 {
-    console.profileEnd();
+    endTest();
 }
 </script>
 </head>
