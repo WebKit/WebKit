@@ -29,8 +29,10 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "DocLoader.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "Request.h"
+#include "Settings.h"
 #include "SystemTime.h"
 #include <wtf/Vector.h>
 
@@ -238,6 +240,15 @@ inline void CachedImage::createImage()
     m_image = BitmapImage::create(this);
 }
 
+size_t CachedImage::maximumDecodedImageSize()
+{
+    Frame* frame = m_request ? m_request->docLoader()->frame() : 0;
+    if (!frame)
+        return 0;
+    Settings* settings = frame->settings();
+    return settings ? settings->maximumDecodedImageSize() : 0;
+}
+
 void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     m_data = data;
@@ -256,8 +267,10 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     // network causes observers to repaint, which will force that chunk
     // to decode.
     if (sizeAvailable || allDataReceived) {
-        if (m_image->isNull()) {
-            // FIXME: I'm not convinced this case can even be hit.
+        size_t maxDecodedImageSize = maximumDecodedImageSize();
+        IntSize s = imageSize(1.0f);
+        size_t estimatedDecodedImageSize = s.width() * s.height() * 4; // no overflow check
+        if (m_image->isNull() || (maxDecodedImageSize > 0 && estimatedDecodedImageSize > maxDecodedImageSize)) {
             error();
             if (inCache())
                 cache()->remove(this);

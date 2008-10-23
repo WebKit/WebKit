@@ -32,6 +32,7 @@
 #include "JavaScriptDebugServer.h"
 #include "Page.h"
 #include "PageCache.h"
+#include <limits>
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
@@ -86,6 +87,7 @@ Settings::Settings(Page* page)
     , m_shouldPaintCustomScrollbars(false)
     , m_zoomsTextOnly(false)
     , m_enforceCSSMIMETypeInStrictMode(true)
+    , m_maximumDecodedImageSize(std::numeric_limits<size_t>::max())
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

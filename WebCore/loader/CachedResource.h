@@ -168,7 +168,7 @@ protected:
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
-    
+
     HashCountedSet<CachedResourceClient*> m_clients;
 
     String m_url;

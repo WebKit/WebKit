@@ -174,7 +174,10 @@ namespace WebCore {
         
         void setEnforceCSSMIMETypeInStrictMode(bool);
         bool enforceCSSMIMETypeInStrictMode() { return m_enforceCSSMIMETypeInStrictMode; }
- 
+
+        void setMaximumDecodedImageSize(size_t size) { m_maximumDecodedImageSize = size; }
+        size_t maximumDecodedImageSize() const { return m_maximumDecodedImageSize; }
+
 #if USE(SAFARI_THEME)
         // Windows debugging pref (global) for switching between the Aqua look and a native windows look.
         static void setShouldPaintNativeControls(bool);
@@ -229,6 +232,7 @@ namespace WebCore {
         bool m_shouldPaintCustomScrollbars : 1;
         bool m_zoomsTextOnly : 1;
         bool m_enforceCSSMIMETypeInStrictMode : 1;
+        size_t m_maximumDecodedImageSize;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
