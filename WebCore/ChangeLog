@@ -1,3 +1,12 @@
+2008-10-23  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        * platform/network/curl/ResourceRequest.h:  A better implementation
+          of CFURLRequest, rather than void*.  This gives better compatibility 
+          with the WebKit.idl interface.
+        (WebCore::ResourceRequest::cfURLRequest):
+
 2008-10-23  Mike Pinkerton  <pinkerton@chromium.org>
 
         Reviewed by Eric Seidel.

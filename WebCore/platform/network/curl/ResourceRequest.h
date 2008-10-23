@@ -29,7 +29,7 @@
 
 #include "ResourceRequestBase.h"
 
-typedef const void* CFURLRequestRef;
+typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
 
