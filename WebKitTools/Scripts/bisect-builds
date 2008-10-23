@@ -42,7 +42,7 @@ use strict;
 use File::Basename;
 use File::Path;
 use File::Spec;
-use File::Temp;
+use File::Temp qw(tempfile);
 use Getopt::Long;
 use Time::HiRes qw(usleep);
 
@@ -204,13 +204,12 @@ sub createTempFile($)
 
     return undef if !$url;
 
-    my $fh = new File::Temp(
+    my ($fh, $tempFile) = tempfile(
+        basename($0) . "-XXXXXXXX",
         DIR => ($ENV{'TMPDIR'} || "/tmp"),
         SUFFIX => ".html",
-        TEMPLATE => basename($0) . "-XXXXXXXX",
         UNLINK => 0,
     );
-    my $tempFile = $fh->filename();
     print $fh "<meta http-equiv=\"refresh\" content=\"0; $url\">\n";
     close($fh);
 

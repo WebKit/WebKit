@@ -31,7 +31,7 @@
 use strict;
 
 use File::Basename;
-use File::Temp;
+use File::Temp qw(tempfile);
 use Getopt::Long;
 
 sub sortByFileName($$);
@@ -64,12 +64,11 @@ for my $projectFile (@ARGV) {
         next;
     }
 
-    my $OUT = new File::Temp(
+    my ($OUT, $tempFileName) = tempfile(
+        basename($projectFile) . "-XXXXXXXX",
         DIR => dirname($projectFile),
-        TEMPLATE => basename($projectFile) . "-XXXXXXXX",
         UNLINK => 0,
     );
-    my $tempFileName = $OUT->filename();
 
     # Clean up temp file in case of die()
     $SIG{__DIE__} = sub {

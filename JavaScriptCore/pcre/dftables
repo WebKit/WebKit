@@ -46,7 +46,7 @@ use strict;
 
 use File::Basename;
 use File::Spec;
-use File::Temp;
+use File::Temp qw(tempfile);
 use Getopt::Long;
 
 sub readHeaderValues();
@@ -242,13 +242,12 @@ sub readHeaderValues()
 
     my $headerPath = File::Spec->catfile(dirname($0), "pcre_internal.h");
  
-    my $fh = new File::Temp(
+    my ($fh, $tempFile) = tempfile(
+        basename($0) . "-XXXXXXXX",
         DIR => ($ENV{'TMPDIR'} || "/tmp"),
         SUFFIX => ".in",
-        TEMPLATE => basename($0) . "-XXXXXXXX",
         UNLINK => 0,
     );
-    my $tempFile = $fh->filename();
 
     print $fh "#define DFTABLES\n\n";
 

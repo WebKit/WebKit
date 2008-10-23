@@ -1,3 +1,15 @@
+2008-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 21832: Fix scripts using 'new File::Temp' for Perl 5.10
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21832>
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/bisect-builds: Use imported tempfile() from File::Temp
+        instead of 'new File::Temp' to make the script work with Perl 5.10.
+        * Scripts/sort-Xcode-project-file: Ditto.
+
 2008-10-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben
