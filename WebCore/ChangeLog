@@ -1,3 +1,13 @@
+2008-10-23  Mike Pinkerton  <pinkerton@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        PLATFORM(CHROMIUM) uses CG the same way PLATFORM(MAC) does so fix
+        ifdefs to reflect that.
+
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        * platform/graphics/cg/ImageCG.cpp:
+
 2008-10-23  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Roben.

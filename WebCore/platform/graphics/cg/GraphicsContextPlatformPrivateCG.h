@@ -45,7 +45,7 @@ public:
         CGContextRelease(m_cgContext);
     }
 
-#if PLATFORM(MAC)
+#if PLATFORM(DARWIN)
     // These methods do nothing on Mac.
     void save() {}
     void restore() {}
@@ -71,9 +71,7 @@ public:
     void concatCTM(const AffineTransform&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
-#endif
 
-#if PLATFORM(WIN)
     HDC m_hdc;
     unsigned m_transparencyCount;
 #endif
