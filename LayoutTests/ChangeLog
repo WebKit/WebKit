@@ -1,5 +1,15 @@
 2008-10-23  Kevin McCullough  <kmccullough@apple.com>
 
+        Forgot to remove the tests from the skipped lists, this should have been
+        apart of the last checkin.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2008-10-23  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim Hatcher.
 
         https://bugs.webkit.org/show_bug.cgi?id=21817
