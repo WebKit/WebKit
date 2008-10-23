@@ -51,6 +51,15 @@
         * Api/qwebframe.h:
         * Api/qwebframe_p.h:
 
+2008-10-21  Yael Aharon <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        emit repaintRequested unconditionally when repaint is requested.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::repaint):
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

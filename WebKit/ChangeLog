@@ -1,12 +1,3 @@
-2008-10-21  Yael  <yael.aharon@nokia.com>
-
-        Reviewed by Simon Hausmann.
-
-        emit repaintRequested unconditionally when repaint is requested.
-
-        * WebCoreSupport/ChromeClientQt.cpp:
-        (WebCore::ChromeClientQt::repaint):
-
 2008-10-15  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Brady Eidson.
