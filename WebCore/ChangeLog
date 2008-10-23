@@ -1,3 +1,12 @@
+2008-10-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Un-break the Darwin build.
+
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        * platform/graphics/cg/ImageCG.cpp:
+
 2008-10-23  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Eric Seidel.
