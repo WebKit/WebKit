@@ -35,10 +35,6 @@
 #include "wrec/WREC.h"
 #include "ResultType.h"
 
-#if PLATFORM(MAC)
-#include <sys/sysctl.h>
-#endif
-
 using namespace std;
 
 namespace JSC {
@@ -179,7 +175,7 @@ ALWAYS_INLINE JSValuePtr CTI::getConstant(CallFrame* callFrame, int src)
 
 inline uintptr_t CTI::asInteger(JSValuePtr value)
 {
-    return reinterpret_cast<uintptr_t>(value.payload());
+    return reinterpret_cast<uintptr_t>(value);
 }
 
 // get arg puts an arg from the SF register array into a h/w register

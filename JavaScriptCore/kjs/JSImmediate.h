@@ -39,29 +39,10 @@ namespace JSC {
     class JSValue;
     class UString;
 
-    class JSValuePtr {
-    public:
-        JSValuePtr() { } // uninitialized (not zero)
-        JSValuePtr(const JSValue* payload) : m_payload(const_cast<JSValue*>(payload)) { }
-        JSValuePtr(const JSCell*);
-
-        JSValue* payload() const { return m_payload; }
-        JSValue** payloadPtr() { return &m_payload; }
-
-        bool operator!() const { return !payload(); }
-    
-        // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef JSValue* JSValuePtr::*UnspecifiedBoolType;
-        operator UnspecifiedBoolType() const { return payload() ? &JSValuePtr::m_payload : 0; }
-
-        JSValue* operator->() const { return payload(); }
-
-    private:
-        JSValue* m_payload;
-    };
+    typedef JSValue* JSValuePtr;
 
     inline JSValuePtr noValue() { return static_cast<JSValue*>(0); }
-    inline void* asPointer(JSValuePtr value) { return value.payload(); }
+    inline void* asPointer(JSValuePtr value) { return value; }
 
     /*
      * A JSValuePtr is either a pointer to a cell (a heap-allocated object) or an immediate (a type-tagged 
@@ -321,7 +302,7 @@ namespace JSC {
         
         static ALWAYS_INLINE uintptr_t rawValue(JSValuePtr v)
         {
-            return reinterpret_cast<uintptr_t>(v.payload());
+            return reinterpret_cast<uintptr_t>(v);
         }
 
         static double nonInlineNaN();

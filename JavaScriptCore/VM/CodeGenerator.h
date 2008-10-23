@@ -331,8 +331,8 @@ namespace JSC {
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
         struct JSValueHashTraits : HashTraits<JSValue*> {
-            static void constructDeletedValue(JSValue*& slot) { slot = JSImmediate::impossibleValue().payload(); }
-            static bool isDeletedValue(JSValue* value) { return value == JSImmediate::impossibleValue().payload(); }
+            static void constructDeletedValue(JSValue*& slot) { slot = JSImmediate::impossibleValue(); }
+            static bool isDeletedValue(JSValue* value) { return value == JSImmediate::impossibleValue(); }
         };
 
         typedef HashMap<JSValue*, unsigned, PtrHash<JSValue*>, JSValueHashTraits> JSValueMap;

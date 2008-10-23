@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-    class JSCell : Noncopyable {
+    class JSCell : public JSValue {
         friend class CTI;
         friend class GetterSetter;
         friend class Heap;
@@ -112,7 +112,7 @@ namespace JSC {
     inline JSCell* asCell(JSValuePtr value)
     {
         ASSERT(!JSImmediate::isImmediate(value));
-        return reinterpret_cast<JSCell*>(value.payload());
+        return static_cast<JSCell*>(value);
     }
 
     inline JSCell::JSCell(StructureID* structureID)
@@ -167,13 +167,6 @@ namespace JSC {
 #else
         return globalData->heap.allocate(size);
 #endif
-    }
-
-    // --- JSValuePtr inlines ----------------------------
-
-    inline JSValuePtr::JSValuePtr(const JSCell* cell)
-        : m_payload(reinterpret_cast<JSValue*>(const_cast<JSCell*>(cell)))
-    {
     }
 
     // --- JSValue inlines ----------------------------

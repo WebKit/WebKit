@@ -1,3 +1,98 @@
+2008-10-23  Darin Adler  <darin@apple.com>
+
+        - roll out https://bugs.webkit.org/show_bug.cgi?id=21732
+          to remove the JSValuePtr class, to fix two problems
+
+            1) slowness under MSVC, since it doesn't handle a
+               class with a single pointer in it as efficiently
+               as a pointer
+
+            2) uninitialized pointers in Vector
+
+        * JavaScriptCore.exp: Updated.
+
+        * API/APICast.h:
+        (toRef):
+        * VM/CTI.cpp:
+        (JSC::CTI::asInteger):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::addConstant):
+        * VM/CodeGenerator.h:
+        (JSC::CodeGenerator::JSValueHashTraits::constructDeletedValue):
+        (JSC::CodeGenerator::JSValueHashTraits::isDeletedValue):
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_add):
+        (JSC::Machine::cti_op_pre_inc):
+        (JSC::Machine::cti_op_get_by_id):
+        (JSC::Machine::cti_op_get_by_id_second):
+        (JSC::Machine::cti_op_get_by_id_generic):
+        (JSC::Machine::cti_op_get_by_id_fail):
+        (JSC::Machine::cti_op_instanceof):
+        (JSC::Machine::cti_op_del_by_id):
+        (JSC::Machine::cti_op_mul):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_resolve):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_get_by_val):
+        (JSC::Machine::cti_op_sub):
+        (JSC::Machine::cti_op_lesseq):
+        (JSC::Machine::cti_op_negate):
+        (JSC::Machine::cti_op_resolve_base):
+        (JSC::Machine::cti_op_resolve_skip):
+        (JSC::Machine::cti_op_resolve_global):
+        (JSC::Machine::cti_op_div):
+        (JSC::Machine::cti_op_pre_dec):
+        (JSC::Machine::cti_op_not):
+        (JSC::Machine::cti_op_eq):
+        (JSC::Machine::cti_op_lshift):
+        (JSC::Machine::cti_op_bitand):
+        (JSC::Machine::cti_op_rshift):
+        (JSC::Machine::cti_op_bitnot):
+        (JSC::Machine::cti_op_mod):
+        (JSC::Machine::cti_op_less):
+        (JSC::Machine::cti_op_neq):
+        (JSC::Machine::cti_op_urshift):
+        (JSC::Machine::cti_op_bitxor):
+        (JSC::Machine::cti_op_bitor):
+        (JSC::Machine::cti_op_call_eval):
+        (JSC::Machine::cti_op_throw):
+        (JSC::Machine::cti_op_next_pname):
+        (JSC::Machine::cti_op_typeof):
+        (JSC::Machine::cti_op_is_undefined):
+        (JSC::Machine::cti_op_is_boolean):
+        (JSC::Machine::cti_op_is_number):
+        (JSC::Machine::cti_op_is_string):
+        (JSC::Machine::cti_op_is_object):
+        (JSC::Machine::cti_op_is_function):
+        (JSC::Machine::cti_op_stricteq):
+        (JSC::Machine::cti_op_nstricteq):
+        (JSC::Machine::cti_op_to_jsnumber):
+        (JSC::Machine::cti_op_in):
+        (JSC::Machine::cti_op_del_by_val):
+        (JSC::Machine::cti_vm_throw):
+        Removed calls to payload functions.
+
+        * VM/Register.h:
+        (JSC::Register::Register): Removed overload for JSCell and call
+        to payload function.
+
+        * kjs/JSCell.h: Changed JSCell to derive from JSValue again.
+        Removed JSValuePtr constructor.
+        (JSC::asCell): Changed cast from reinterpret_cast to static_cast.
+
+        * kjs/JSImmediate.h: Removed JSValuePtr class. Added typedef back.
+
+        * kjs/JSValue.h:
+        (JSC::JSValue::JSValue): Added empty protected inline constructor back.
+        (JSC::JSValue::~JSValue): Same for destructor.
+        Removed == and != operator for JSValuePtr.
+
+        * kjs/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot): Chnaged argument to const JSValue*
+        and added a const_cast.
+
+        * kjs/protect.h: Removed overloads and specialization for JSValuePtr.
+
 2008-10-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

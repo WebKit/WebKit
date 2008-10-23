@@ -1,3 +1,11 @@
+2008-10-23  Darin Adler  <darin@apple.com>
+
+        - roll out https://bugs.webkit.org/show_bug.cgi?id=21732
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::GetValue): Added missing call to .get().
+        * JSValueWrapper.h: ProtectedPtr<JSValue> instead of ProtectedPtr<JSValuePtr>.
+
 2008-10-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -674,7 +674,7 @@ unsigned CodeGenerator::addConstant(const Identifier& ident)
 
 RegisterID* CodeGenerator::addConstant(JSValuePtr v)
 {
-    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v.payload(), m_nextConstant);
+    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_nextConstant);
     if (result.second) {
         RegisterID& constant = m_calleeRegisters[m_nextConstant];
         

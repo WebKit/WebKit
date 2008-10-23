@@ -46,9 +46,9 @@ namespace JSC {
     enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
 
     class JSValue : Noncopyable {
-    private:
-        JSValue();
-        ~JSValue();
+    protected:
+        JSValue() { }
+        virtual ~JSValue() { }
 
     public:
         // Querying the type.
@@ -135,9 +135,6 @@ namespace JSC {
         int32_t toInt32SlowCase(ExecState*, bool& ok) const;
         uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
     };
-
-    bool operator==(JSValuePtr, JSValuePtr);
-    bool operator!=(JSValuePtr, JSValuePtr);
 
     // These are identical logic to the JSValue functions above, and faster than jsNumber(number)->toInt32().
     int32_t toInt32(double);
@@ -239,16 +236,6 @@ namespace JSC {
             return i;
         }
         return toUInt32SlowCase(exec, ok);
-    }
-
-    inline bool operator==(JSValuePtr a, JSValuePtr b)
-    {
-        return a.payload() == b.payload();
-    }
-
-    inline bool operator!=(JSValuePtr a, JSValuePtr b)
-    {
-        return a.payload() != b.payload();
     }
 
 } // namespace JSC

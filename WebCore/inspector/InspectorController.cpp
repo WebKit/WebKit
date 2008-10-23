@@ -203,7 +203,7 @@ struct ConsoleMessage {
     MessageSource source;
     MessageLevel level;
     String message;
-    Vector<ProtectedPtr<JSValuePtr> > wrappedArguments;
+    Vector<ProtectedPtr<JSValue> > wrappedArguments;
     unsigned line;
     String url;
     unsigned groupLevel;

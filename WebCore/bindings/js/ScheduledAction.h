@@ -43,8 +43,8 @@ namespace WebCore {
         void execute(JSDOMWindowShell*);
 
     private:
-        JSC::ProtectedPtr<JSC::JSValuePtr> m_function;
-        Vector<JSC::ProtectedPtr<JSC::JSValuePtr> > m_args;
+        JSC::ProtectedPtr<JSC::JSValue> m_function;
+        Vector<JSC::ProtectedPtr<JSC::JSValue> > m_args;
         String m_code;
     };
 
