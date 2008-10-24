@@ -1,0 +1,13 @@
+2008-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Implement new InspectorClient methods to work with Settings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21856
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Added.
+        (createKeyForPreferences): Helper to make the preference key.
+        (WebInspectorClient::populateSetting): Read the preference value from CFPreferences.
+        (WebInspectorClient::storeSetting): Write the setting value to  CFPreferences.
+        (WebInspectorClient::removeSetting): Remove the preference from CFPreferences.

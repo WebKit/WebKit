@@ -1,3 +1,14 @@
+2008-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Implement new InspectorClient methods to work with Settings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21856
+
+        Reviewed by Adam Roben.
+
+        * WebKit.vcproj/WebKit.vcproj: Add the new InspectorClientCF.cpp file.
+        * WebCoreSupport/WebInspectorClient.h: Add the new methods.
+
 2008-10-24  Darin Adler  <darin@apple.com>
 
         - finish rolling out https://bugs.webkit.org/show_bug.cgi?id=21732

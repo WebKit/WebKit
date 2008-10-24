@@ -29,6 +29,7 @@
 		1C68F670095B5FC100C2984E /* WebNodeHighlight.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C68F664095B5FC100C2984E /* WebNodeHighlight.m */; };
 		1C68F671095B5FC100C2984E /* WebNodeHighlightView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C68F665095B5FC100C2984E /* WebNodeHighlightView.h */; };
 		1C68F672095B5FC100C2984E /* WebNodeHighlightView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C68F666095B5FC100C2984E /* WebNodeHighlightView.m */; };
+		1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C7B0C650EB2464D00A28502 /* WebInspectorClientCF.cpp */; };
 		1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CA57D620AED6A470009BDD0 /* WebGraphicsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA57D600AED6A470009BDD0 /* WebGraphicsExtras.h */; };
 		1CA57D630AED6A470009BDD0 /* WebGraphicsExtras.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CA57D610AED6A470009BDD0 /* WebGraphicsExtras.c */; };
@@ -321,6 +322,7 @@
 		1C68F665095B5FC100C2984E /* WebNodeHighlightView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNodeHighlightView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F666095B5FC100C2984E /* WebNodeHighlightView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebNodeHighlightView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C6CB03E0AA6391D00D23BFD /* MigrateHeaders.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MigrateHeaders.make; path = mac/MigrateHeaders.make; sourceTree = "<group>"; };
+		1C7B0C650EB2464D00A28502 /* WebInspectorClientCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebInspectorClientCF.cpp; path = cf/WebCoreSupport/WebInspectorClientCF.cpp; sourceTree = SOURCE_ROOT; };
 		1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegatePrivate.h; sourceTree = "<group>"; };
 		1C904FD20BA9DD0F0081E9D0 /* WebKit.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKit.xcconfig; sourceTree = "<group>"; };
 		1C904FD30BA9DD0F0081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -1033,6 +1035,7 @@
 				51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */,
 				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
 				06693DDA0BFBA85200216072 /* WebInspectorClient.h */,
+				1C7B0C650EB2464D00A28502 /* WebInspectorClientCF.cpp */,
 				06693DDB0BFBA85200216072 /* WebInspectorClient.mm */,
 				9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */,
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
@@ -1591,6 +1594,7 @@
 				1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */,
 				1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */,
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,
+				1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -65,6 +65,10 @@ namespace WebCore {
         virtual void hideHighlight();
         virtual void inspectedURLChanged(const String& newURL);
 
+        virtual void populateSetting(const String& key, InspectorController::Setting&);
+        virtual void storeSetting(const String& key, const InspectorController::Setting&);
+        virtual void removeSetting(const String& key);
+
     private:
         void updateWindowTitle();
         QWebPage* m_inspectedWebPage;

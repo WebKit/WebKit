@@ -2063,6 +2063,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\cf\WebCoreSupport\WebInspectorClientCF.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\WebCoreSupport\WebInspectorDelegate.cpp"
 				>
 			</File>

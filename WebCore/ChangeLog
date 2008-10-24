@@ -1,3 +1,51 @@
+2008-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Add a mechanism to ask the InspectorClient for key/value setting pairs.
+        These settings can be strings, numbers, booleans or string vectors. The
+        settings are also bridged to and from JavaScript.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21856
+
+        Reviewed by Darin Adler.
+
+        * WebCore.base.exp: Expose the String CFStringRef constructor.
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::populateSetting): Added, pure virtual.
+        (WebCore::InspectorClient::storeSetting): Ditto.
+        (WebCore::InspectorClient::removeSetting): Ditto.
+        * inspector/InspectorController.cpp:
+        (WebCore::setting): Calls InspectorController::setting and wraps the result in script types.
+        (WebCore::setSetting): Calls InspectorController::setSetting after converting from script types.
+        (WebCore::InspectorController::InspectorController): Increment a global static
+        to track the number of live InspectorControllers.
+        (WebCore::InspectorController::~InspectorController): Decrement the global static
+        that tracks the number of live InspectorControllers. Delete the setting cache if there
+        are no more live controllers.
+        (WebCore::InspectorController::setting): Check the cache and return the setting from there,
+        otherwise make a new Setting and ask the client to populate it.
+        (WebCore::InspectorController::setSetting): Change the cache and ask the client to store it.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Add setting and setSetting
+        to the InspectorController script class.
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::Setting::Setting):
+        (WebCore::InspectorController::Setting::operator=):
+        (WebCore::InspectorController::Setting::type): Return m_type.
+        (WebCore::InspectorController::Setting::string): Return m_string. Assert the type is correct.
+        (WebCore::InspectorController::Setting::stringVector): Return m_stringVector.
+        Assert the type is correct.
+        (WebCore::InspectorController::Setting::doubleValue): Return m_simpleContent.m_double.
+        Assert the type is correct.
+        (WebCore::InspectorController::Setting::integerValue): Return m_simpleContent.m_integer.
+        Assert the type is correct.
+        (WebCore::InspectorController::Setting::booleanValue): Return m_simpleContent.m_boolean.
+        Assert the type is correct.
+        (WebCore::InspectorController::Setting::set): Overloaded for each data type, sets the right
+        field and the type.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyInspectorClient::populateSetting): Added, empty method.
+        (WebCore::EmptyInspectorClient::storeSetting): Ditto.
+        (WebCore::EmptyInspectorClient::removeSetting): Ditto.
+
 2008-10-24  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.

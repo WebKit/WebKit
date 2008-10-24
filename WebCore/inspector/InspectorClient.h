@@ -26,6 +26,8 @@
 #ifndef InspectorClient_h
 #define InspectorClient_h
 
+#include "InspectorController.h"
+
 namespace WebCore {
 
 class Node;
@@ -54,6 +56,10 @@ public:
     virtual void hideHighlight() = 0;
 
     virtual void inspectedURLChanged(const String& newURL) = 0;
+
+    virtual void populateSetting(const String& key, InspectorController::Setting&) = 0;
+    virtual void storeSetting(const String& key, const InspectorController::Setting&) = 0;
+    virtual void removeSetting(const String& key) = 0;
 };
 
 } // namespace WebCore

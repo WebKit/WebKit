@@ -186,6 +186,21 @@ void InspectorClientQt::updateWindowTitle()
     m_webPage->view()->setWindowTitle(caption.arg(m_inspectedURL));
 }
 
+void InspectorClientQt::populateSetting(const String& key, InspectorController::Setting& setting)
+{
+    notImplemented();
+}
+
+void InspectorClientQt::storeSetting(const String& key, const InspectorController::Setting& setting)
+{
+    notImplemented();
+}
+
+void InspectorClientQt::removeSetting(const String& key)
+{
+    notImplemented();
+}
+
 }
 
 #include "InspectorClientQt.moc"

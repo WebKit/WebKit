@@ -85,6 +85,43 @@ public:
         ScriptsPanel
     } SpecialPanels;
 
+    struct Setting {
+        enum Type {
+            NoType, StringType, StringVectorType, DoubleType, IntegerType, BooleanType
+        };
+
+        Setting()
+            : m_type(NoType)
+        {
+        }
+
+        Type type() const { return m_type; }
+
+        String string() const { ASSERT(m_type == StringType); return m_string; }
+        const Vector<String>& stringVector() const { ASSERT(m_type == StringVectorType); return m_stringVector; }
+        double doubleValue() const { ASSERT(m_type == DoubleType); return m_simpleContent.m_double; }
+        long integerValue() const { ASSERT(m_type == IntegerType); return m_simpleContent.m_integer; }
+        bool booleanValue() const { ASSERT(m_type == BooleanType); return m_simpleContent.m_boolean; }
+
+        void set(const String& value) { m_type = StringType; m_string = value; }
+        void set(const Vector<String>& value) { m_type = StringVectorType; m_stringVector = value; }
+        void set(double value) { m_type = DoubleType; m_simpleContent.m_double = value; }
+        void set(long value) { m_type = IntegerType; m_simpleContent.m_integer = value; }
+        void set(bool value) { m_type = BooleanType; m_simpleContent.m_boolean = value; }
+
+    private:
+        Type m_type;
+
+        String m_string;
+        Vector<String> m_stringVector;
+
+        union {
+            double m_double;
+            long m_integer;
+            bool m_boolean;
+        } m_simpleContent;
+    };
+
     InspectorController(Page*, InspectorClient*);
     ~InspectorController();
 
@@ -94,6 +131,9 @@ public:
     bool enabled() const;
 
     Page* inspectedPage() const { return m_inspectedPage; }
+
+    const Setting& setting(const String& key) const;
+    void setSetting(const String& key, const Setting&);
 
     String localizedStringsURL();
 

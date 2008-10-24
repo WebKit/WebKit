@@ -1,3 +1,17 @@
+2008-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Stub out new InspectorClient methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21856
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::populateSetting): Not implemented.
+        (WebCore::InspectorClientQt::storeSetting): Ditto.
+        (WebCore::InspectorClientQt::removeSetting): Ditto.
+        * WebCoreSupport/InspectorClientQt.h:
+
 2008-10-24  Darin Adler  <darin@apple.com>
 
         - finish rolling out https://bugs.webkit.org/show_bug.cgi?id=21732
