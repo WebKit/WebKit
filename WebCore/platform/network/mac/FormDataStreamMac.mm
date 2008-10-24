@@ -83,7 +83,6 @@ void disassociateStreamWithResourceHandle(NSInputStream *stream)
     if (!stream)
         return;
 
-    ASSERT(getStreamResourceHandleMap().contains((CFReadStreamRef)stream));
     getStreamResourceHandleMap().remove((CFReadStreamRef)stream);
 }
 

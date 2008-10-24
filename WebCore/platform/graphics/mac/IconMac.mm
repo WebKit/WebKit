@@ -53,6 +53,18 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     return adoptRef(new Icon(image));
 }
 
+PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+{
+    if (filenames.isEmpty())
+        return 0;
+
+    NSImage* image = [NSImage imageNamed:NSImageNameMultipleDocuments];
+    if (!image)
+        return 0;
+
+    return adoptRef(new Icon(image));
+}
+
 void Icon::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (context->paintingDisabled())

@@ -1,3 +1,75 @@
+2008-10-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebCore part of fix for <rdar://problem/5839256> FILE CONTROL: multi-file upload.
+
+        This change adds support for multiple file selection in an <input type="file"> control when the "multiple" attribute is used.
+        This is consistent with the direction HTML5 will be going in the future.
+
+        The initial implementation here will show "n files" as the text next to the control when multiple files are selected.  You can view
+        the individual files in a tooltip for now.  Improvements to this control will come later.  
+
+        Web developers will be able to access the FileList from the HTMLInputElement element, where they can get a base name and a size for each file.  
+        These FileList Files can also be sent in an XMLHTTPRequest.
+
+        * manual-tests/post-multi-file-upload.html: Added.
+        * manual-tests/resources/multiFileResources: Added.
+        * manual-tests/resources/multiFileResources/post-echo-and-notify-done.cgi: Added.
+        * manual-tests/resources/multiFileResources/testFile1.html: Added.
+        * manual-tests/resources/multiFileResources/testFile2.html: Added.
+        * manual-tests/resources/multiFileResources/testFile3.html: Added.
+
+        * WebCore.base.exp: Added support to export the new "chooseFilenames" method to be used in WebKit.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Add support for the multiple attribute.
+        (WebCore::HTMLInputElement::value): Added comments.  The HTML5 spec says that value shouldn't apply for the file upload control,
+        but we don't want to break the behavior for existing websites that may rely on this.
+        (WebCore::HTMLInputElement::setValue): ditto.
+        (WebCore::HTMLInputElement::setValueFromRenderer): This is no longer used for file upload controls. setFileListFromRenderer is used instead.
+        (WebCore::HTMLInputElement::setFileListFromRenderer): Added. 
+        * html/HTMLInputElement.h:
+
+        * page/Chrome.cpp: (WebCore::Chrome::setToolTip): Show a tooltip with the file name list for the multi-file upload control.
+
+        * page/DragController.cpp: (WebCore::DragController::concludeDrag): Updated to support multiple files.
+
+        * platform/FileChooser.cpp: Add support for maintaining a list of file paths that can be retrieved by the renderer.
+        (WebCore::FileChooser::FileChooser):
+        (WebCore::FileChooser::create):
+        (WebCore::FileChooser::clear):
+        (WebCore::FileChooser::chooseFile):
+        (WebCore::FileChooser::chooseFiles):
+        (WebCore::FileChooser::chooseIcon):
+        * platform/FileChooser.h:
+        (WebCore::FileChooser::filePaths):
+        (WebCore::FileChooser::allowsMultipleFiles):
+
+        * platform/graphics/Icon.h:
+        * platform/graphics/mac/IconMac.mm: (WebCore::Icon::newIconForFiles): Returns a generic icon for multiple files.
+        * platform/graphics/gtk/IconGtk.cpp: (WebCore::Icon::newIconForFiles): stubbed out.
+        * platform/graphics/qt/IconQt.cpp: (WebCore::Icon::newIconForFiles): ditto.
+        * platform/graphics/win/IconWin.cpp: (WebCore::Icon::newIconForFiles): ditto.
+
+        * platform/gtk/FileChooserGtk.cpp: (WebCore::FileChooser::basenameForWidth):  Updated to deal with new filenames vector.
+        * platform/mac/FileChooserMac.mm: (WebCore::FileChooser::basenameForWidth): ditto.
+        * platform/qt/FileChooserQt.cpp:
+        (WebCore::FileChooser::openFileChooser):
+        (WebCore::FileChooser::basenameForWidth):
+        * platform/win/FileChooserWin.cpp: (WebCore::FileChooser::basenameForWidth):
+
+        * platform/network/mac/FormDataStreamMac.mm: (WebCore::disassociateStreamWithResourceHandle):
+        Removed unnecessary assertion.  This can get hit when connectionDidFinishLoading and cancel
+        both get called for the same ResourceHandle.  This getting called twice has no negative effect.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::valueChanged):  Calls setFileListFromRenderer.
+        (WebCore::RenderFileUploadControl::allowsMultipleFiles):  Added.
+        (WebCore::RenderFileUploadControl::updateFromElement):  Uses the new filenames call from FileChooser.
+        (WebCore::RenderFileUploadControl::receiveDroppedFiles):  Updated to support multiple files.
+        * rendering/RenderFileUploadControl.h:
+
 2008-10-23  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Hyatt.

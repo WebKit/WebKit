@@ -47,10 +47,12 @@ public:
 
     void valueChanged();
     
-    void receiveDroppedFile(const String&);
+    void receiveDroppedFiles(const Vector<String>&);
 
     String buttonValue();
     String fileTextValue();
+    
+    bool allowsMultipleFiles();
 
 protected:
     virtual void styleDidChange(RenderStyle::Diff, const RenderStyle* oldStyle);

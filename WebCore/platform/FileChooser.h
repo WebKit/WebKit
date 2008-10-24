@@ -31,6 +31,7 @@
 #define FileChooser_h
 
 #include "PlatformString.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ class FileChooserClient {
 public:
     virtual ~FileChooserClient() { }
     virtual void valueChanged() = 0;
+    virtual bool allowsMultipleFiles() = 0;
 };
 
 class FileChooser : public RefCounted<FileChooser> {
@@ -59,21 +61,25 @@ public:
     // the Chrome class instead.
     void openFileChooser(Document*);
 
-    const String& filename() const { return m_filename; }
+    const Vector<String>& filenames() const { return m_filenames; }
     String basenameForWidth(const Font&, int width) const;
 
     Icon* icon() const { return m_icon.get(); }
 
     void clear(); // for use by client; does not call valueChanged
 
-    void chooseFile(const String& filename);
+    void chooseFile(const String& path);
+    void chooseFiles(const Vector<String>& paths);
+    
+    bool allowsMultipleFiles() const { return m_client ? m_client->allowsMultipleFiles() : false; }
 
 private:
-    FileChooser(FileChooserClient*, const String& initialFilename);
+    FileChooser(FileChooserClient*, const String& initialfilename);
     static PassRefPtr<Icon> chooseIcon(const String& filename);
+    static PassRefPtr<Icon> chooseIcon(Vector<String> filenames);
 
     FileChooserClient* m_client;
-    String m_filename;
+    Vector<String> m_filenames;
     RefPtr<Icon> m_icon;
 };
 

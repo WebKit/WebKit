@@ -698,9 +698,10 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
                attr->name() == incrementalAttr ||
                attr->name() == minAttr ||
                attr->name() == maxAttr ||
-               attr->name() == precisionAttr) {
+               attr->name() == multipleAttr ||
+               attr->name() == precisionAttr)
         setChanged();
-    } else
+    else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }
 
@@ -950,6 +951,8 @@ void HTMLInputElement::copyNonAttributeProperties(const Element *source)
 
 String HTMLInputElement::value() const
 {
+    // The HTML5 spec (as of the 10/24/08 working draft) says that the value attribute isn't applicable to the file upload control
+    // but we don't want to break existing websites, who may be relying on being able to get the file name as a value.
     if (inputType() == FILE) {
         if (!m_fileList->isEmpty())
             return m_fileList->item(0)->fileName();
@@ -999,6 +1002,8 @@ String HTMLInputElement::valueWithDefault() const
 void HTMLInputElement::setValue(const String& value)
 {
     // For security reasons, we don't allow setting the filename, but we do allow clearing it.
+    // The HTML5 spec (as of the 10/24/08 working draft) says that the value attribute isn't applicable to the file upload control
+    // but we don't want to break existing websites, who may be relying on this method to clear things.
     if (inputType() == FILE && !value.isEmpty())
         return;
 
@@ -1036,26 +1041,34 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // Renderer and our event handler are responsible for constraining values.
     ASSERT(value == constrainValue(value) || constrainValue(value).isEmpty());
 
+    // File upload controls will always use setFileListFromRenderer.
+    ASSERT (inputType() != FILE);
+
     if (isTextField())
         updatePlaceholderVisibility();
     
-    if (inputType() == FILE) {
-        m_fileList->clear();
-        m_fileList->append(File::create(value));
-    } else {
-        // Workaround for bug where trailing \n is included in the result of textContent.
-        // The assert macro above may also be simplified to:  value == constrainValue(value)
-        // http://bugs.webkit.org/show_bug.cgi?id=9661
-        if (value == "\n")
-            m_value = "";
-        else
-            m_value = value;
-    }
+    // Workaround for bug where trailing \n is included in the result of textContent.
+    // The assert macro above may also be simplified to:  value == constrainValue(value)
+    // http://bugs.webkit.org/show_bug.cgi?id=9661
+    if (value == "\n")
+        m_value = "";
+    else
+        m_value = value;
 
     setValueMatchesRenderer();
 
     // Fire the "input" DOM event.
     dispatchEventForType(inputEvent, true, false);
+}
+
+void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
+{
+    m_fileList->clear();
+    int size = paths.size();
+    for (int i = 0; i < size; i++)
+        m_fileList->append(File::create(paths[i]));
+
+    setValueMatchesRenderer();
 }
 
 bool HTMLInputElement::storesValueSeparateFromAttribute() const

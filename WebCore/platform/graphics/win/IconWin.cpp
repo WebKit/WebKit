@@ -50,6 +50,12 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     return adoptRef(new Icon(sfi.hIcon));
 }
 
+PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+{
+    //FIXME: Implement this
+    return 0;
+}
+
 void Icon::paint(GraphicsContext* context, const IntRect& r)
 {
     if (context->paintingDisabled())

@@ -24,6 +24,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -51,6 +52,8 @@ class String;
 class Icon : public RefCounted<Icon> {
 public:
     static PassRefPtr<Icon> newIconForFile(const String& filename);
+    static PassRefPtr<Icon> newIconForFiles(const Vector<String>& filenames);
+
     ~Icon();
 
     void paint(GraphicsContext*, const IntRect&);

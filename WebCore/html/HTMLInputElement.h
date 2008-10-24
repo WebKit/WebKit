@@ -108,6 +108,7 @@ public:
     String valueWithDefault() const;
 
     void setValueFromRenderer(const String&);
+    void setFileListFromRenderer(const Vector<String>&);
 
     virtual bool saveState(String& value) const;
     virtual void restoreState(const String&);

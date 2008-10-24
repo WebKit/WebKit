@@ -80,13 +80,14 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         return String();
 
     String string;
-    if (m_filename.isEmpty())
+    if (m_filenames.isEmpty())
         string = fileButtonNoFileSelectedLabel();
-    else {
-        String tmpFilename = m_filename;
+    else if (m_filenames.size() == 1) {
+        String tmpFilename = m_filenames[0];
         LPTSTR basename = PathFindFileName(tmpFilename.charactersWithNullTermination());
         string = String(basename);
-    }
+    } else
+        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font, false);
 
     return StringTruncator::centerTruncate(string, width, font, false);
 }

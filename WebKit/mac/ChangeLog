@@ -1,3 +1,14 @@
+2008-10-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit part of fix for <rdar://problem/5839256> FILE CONTROL: multi-file upload.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::runOpenPanel):
+        (-[WebOpenPanelResultListener chooseFilenames:]):
+        * WebView/WebUIDelegate.h:
+
 2008-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Implement new InspectorClient methods to work with Settings.

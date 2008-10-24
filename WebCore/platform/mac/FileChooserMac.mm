@@ -58,10 +58,12 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
         return String();
 
     String strToTruncate;
-    if (m_filename.isEmpty())
+    if (m_filenames.isEmpty())
         strToTruncate = fileButtonNoFileSelectedLabel();
+    else if (m_filenames.size() == 1)
+        strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(m_filenames[0])];
     else
-        strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:m_filename];
+        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font, false);
 
     return StringTruncator::centerTruncate(strToTruncate, width, font, false);
 }

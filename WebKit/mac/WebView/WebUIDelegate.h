@@ -129,6 +129,13 @@ typedef enum {
 - (void)chooseFilename:(NSString *)fileName;
 
 /*!
+    @method chooseFilenames:
+    @abstract Call this method to return an array of filenames from the file open panel.
+    @param fileNames
+*/
+- (void)chooseFilenames:(NSArray *)fileNames AVAILABLE_AFTER_WEBKIT_VERSION_3_1;
+
+/*!
     @method cancel
     @abstract Call this method to indicate that the file open panel was cancelled.
 */
@@ -402,6 +409,17 @@ typedef enum {
     value so that it can be handled with a sheet.
 */
 - (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
+
+/*!
+    @method webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles
+    @abstract Display a file open panel for a file input control that may allow multiple files to be selected.
+    @param sender The WebView sending the delegate method.
+    @param resultListener The object to call back with the results.
+    @param allowMultipleFiles YES if the open panel should allow myltiple files to be selected, NO if not.
+    @discussion This method is passed a callback object instead of giving a return
+    value so that it can be handled with a sheet.
+*/
+- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_AFTER_WEBKIT_VERSION_3_1);
 
 /*!
     @method webView:mouseDidMoveOverElement:modifierFlags:

@@ -84,12 +84,13 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
 
     String string = fileButtonNoFileSelectedLabel();
 
-    if (!m_filename.isEmpty()) {
-        gchar* systemFilename = filenameFromString(m_filename);
+    if (m_filenames.size() == 1) {
+        gchar* systemFilename = filenameFromString(m_filenames[0]);
         gchar* systemBasename = g_path_get_basename(systemFilename);
         g_free(systemFilename);
         stringByAdoptingFileSystemRepresentation(systemBasename, string);
-    }
+    } else if (m_filenames.size() > 1)
+        return StringTruncator::rightTruncate(String::number(m_filenames.size()) + " files", width, font, false);
 
     return StringTruncator::centerTruncate(string, width, font, false);
 }

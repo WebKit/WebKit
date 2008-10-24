@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
+#include "FileList.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
@@ -86,12 +87,18 @@ void RenderFileUploadControl::valueChanged()
     RefPtr<FileChooser> fileChooser = m_fileChooser;
 
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
-    inputElement->setValueFromRenderer(fileChooser->filename());
+    inputElement->setFileListFromRenderer(fileChooser->filenames());
     inputElement->onChange();
  
     // only repaint if it doesn't seem we have been destroyed
     if (!fileChooser->disconnected())
         repaint();
+}
+
+bool RenderFileUploadControl::allowsMultipleFiles()
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    return !input->getAttribute(multipleAttr).isNull();
 }
 
 void RenderFileUploadControl::click()
@@ -102,7 +109,8 @@ void RenderFileUploadControl::click()
 void RenderFileUploadControl::updateFromElement()
 {
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
-
+    ASSERT(inputElement->inputType() == HTMLInputElement::FILE);
+    
     if (!m_button) {
         m_button = new HTMLFileUploadInnerButtonElement(document(), inputElement);
         m_button->setInputType("button");
@@ -120,9 +128,11 @@ void RenderFileUploadControl::updateFromElement()
 
     m_button->setDisabled(!theme()->isEnabled(this));
 
-    // This only supports clearing out the filename, but that's OK because for
+    // This only supports clearing out the files, but that's OK because for
     // security reasons that's the only change the DOM is allowed to make.
-    if (inputElement->value().isEmpty() && !m_fileChooser->filename().isEmpty()) {
+    FileList* files = inputElement->files();
+    ASSERT(files);
+    if (files && files->isEmpty() && !m_fileChooser->filenames().isEmpty()) {
         m_fileChooser->clear();
         repaint();
     }
@@ -251,9 +261,12 @@ void RenderFileUploadControl::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
-void RenderFileUploadControl::receiveDroppedFile(const String& filename)
+void RenderFileUploadControl::receiveDroppedFiles(const Vector<String>& paths)
 {
-    m_fileChooser->chooseFile(filename);
+    if (allowsMultipleFiles())
+        m_fileChooser->chooseFiles(paths);
+    else
+        m_fileChooser->chooseFile(paths[0]);
 }
 
 String RenderFileUploadControl::buttonValue()

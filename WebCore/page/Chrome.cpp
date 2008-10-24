@@ -24,6 +24,7 @@
 #include "ChromeClient.h"
 #include "DNS.h"
 #include "Document.h"
+#include "FileList.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -350,10 +351,32 @@ void Chrome::setToolTip(const HitTestResult& result)
             toolTip = result.absoluteLinkURL().string();
     }
 
-    // Lastly we'll consider a tooltip for element with "title" attribute
+    // Next we'll consider a tooltip for element with "title" attribute
     if (toolTip.isEmpty())
         toolTip = result.title();
 
+    // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames
+    if (toolTip.isEmpty()) {
+        if (Node* node = result.innerNonSharedNode()) {
+            if (node->hasTagName(inputTag)) {
+                HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+                if (input->inputType() == HTMLInputElement::FILE) {
+                    FileList* files = input->files();
+                    unsigned listSize = files->length();
+                    if (files && listSize > 1) {
+                        Vector<UChar> names;
+                        for (size_t i = 0; i < listSize; ++i) {
+                            append(names, files->item(i)->fileName());
+                            if (i != listSize - 1)
+                                names.append('\n');
+                        }
+                        toolTip = String::adopt(names);
+                    }
+                }
+            }
+        }
+    }
+    
     m_client->setToolTip(toolTip);
 }
 

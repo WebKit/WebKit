@@ -380,8 +380,7 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
         if (!renderer)
             return false;
         
-        // Only take the first filename as <input type="file" /> can only accept one
-        renderer->receiveDroppedFile(filenames[0]);
+        renderer->receiveDroppedFiles(filenames);
         return true;
     }
 

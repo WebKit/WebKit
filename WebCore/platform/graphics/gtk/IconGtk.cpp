@@ -103,6 +103,12 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     return icon.release();
 }
 
+PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+{
+    //FIXME: Implement this
+    return 0;
+}
+
 void Icon::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (context->paintingDisabled())

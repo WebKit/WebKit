@@ -58,6 +58,7 @@
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/Vector.h>
 
 @interface NSView (WebNSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
@@ -546,8 +547,13 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
 void WebChromeClient::runOpenPanel(PassRefPtr<FileChooser> chooser)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    BOOL allowMultipleFiles = chooser->allowsMultipleFiles();
     WebOpenPanelResultListener *listener = [[WebOpenPanelResultListener alloc] initWithChooser:chooser];
-    CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener);
+    id delegate = [m_webView UIDelegate];
+    if ([delegate respondsToSelector:@selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:)])
+        CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:), listener, allowMultipleFiles);
+    else
+        CallUIDelegate(m_webView, @selector(webView:runOpenPanelForFileButtonWithResultListener:), listener);
     [listener release];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
@@ -654,6 +660,20 @@ void WebChromeClient::enableSuddenTermination()
     if (!_chooser)
         return;
     _chooser->chooseFile(filename);
+    _chooser->deref();
+    _chooser = 0;
+}
+
+- (void)chooseFilenames:(NSArray *)filenames
+{
+    ASSERT(_chooser);
+    if (!_chooser)
+        return;
+    int count = [filenames count]; 
+    Vector<String> names(count);
+    for (int i = 0; i < count; i++)
+        names[i] = [filenames objectAtIndex:i];
+    _chooser->chooseFiles(names);
     _chooser->deref();
     _chooser = 0;
 }
