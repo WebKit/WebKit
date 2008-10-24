@@ -57,12 +57,16 @@ PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
         return 0;
-
+#ifdef BUILDING_ON_TIGER
+    // FIXME: find a better image to use on Tiger.
+    return newIconForFile(filenames[0]);
+#else
     NSImage* image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)
         return 0;
 
     return adoptRef(new Icon(image));
+#endif
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& rect)

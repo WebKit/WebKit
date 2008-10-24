@@ -1,3 +1,10 @@
+2008-10-24  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        * platform/FileChooser.h: (WebCore::FileChooserClient::~FileChooserClient):
+        * platform/graphics/mac/IconMac.mm: (WebCore::Icon::newIconForFiles):
+
 2008-10-24  Greg Bolsinga  <bolsinga@apple.com>
 
         Fix GTK build break.

@@ -41,9 +41,9 @@ class Icon;
 
 class FileChooserClient {
 public:
-    virtual ~FileChooserClient() { }
     virtual void valueChanged() = 0;
     virtual bool allowsMultipleFiles() = 0;
+    virtual ~FileChooserClient() { }
 };
 
 class FileChooser : public RefCounted<FileChooser> {
