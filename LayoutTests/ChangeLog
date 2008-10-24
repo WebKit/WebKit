@@ -1,3 +1,19 @@
+2008-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Generate missing constructors and add test to prevent missing ones in the future
+        https://bugs.webkit.org/show_bug.cgi?id=21846
+        
+        fast/dom/wrapper-classes-expected.txt results were incorrectly platform-specific
+        that test used to be platform-dependent, but isn't anymore
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/js/global-constructors.html: Added.
+        * fast/js/resources/global-constructors.js: Added.
+        * platform/mac/fast/dom/wrapper-classes-expected.txt: Removed.
+
 2008-10-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

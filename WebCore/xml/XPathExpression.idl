@@ -21,7 +21,10 @@
 module xpath {
 
 
-    interface [Conditional=XPATH] XPathExpression {
+    interface [
+        Conditional=XPATH,
+        GenerateConstructor
+    ] XPathExpression {
         [OldStyleObjC] XPathResult evaluate(in Node contextNode, 
                                             in unsigned short type, 
                                             in XPathResult inResult)

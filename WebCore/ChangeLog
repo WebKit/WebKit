@@ -1,3 +1,18 @@
+2008-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Generate missing constructors and add test to prevent missing ones in the future
+        https://bugs.webkit.org/show_bug.cgi?id=21846
+
+        Test: fast/js/global-constructors.html
+
+        * css/CSSStyleSheet.idl:
+        * css/RGBColor.idl:
+        * dom/NodeIterator.idl:
+        * dom/TreeWalker.idl:
+        * xml/XPathExpression.idl:
+
 2008-10-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

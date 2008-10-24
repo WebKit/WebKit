@@ -21,7 +21,10 @@
 module traversal {
 
     // Introduced in DOM Level 2:
-    interface [CustomMarkFunction] NodeIterator {
+    interface [
+        CustomMarkFunction,
+        GenerateConstructor
+    ] NodeIterator {
         readonly attribute Node root;
         readonly attribute unsigned long whatToShow;
         readonly attribute NodeFilter filter;
