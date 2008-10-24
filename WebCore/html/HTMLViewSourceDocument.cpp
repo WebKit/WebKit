@@ -129,7 +129,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
             for (unsigned i = 0; i < size; i++) {
                 if (guide->at(i) == 'a' || guide->at(i) == 'x' || guide->at(i) == 'v') {
                     // Add in the string.
-                    addText(String((UChar*)(guide->data()) + begin, i - begin), classNameStr);
+                    addText(String(static_cast<UChar*>(guide->data()) + begin, i - begin), classNameStr);
                      
                     begin = i + 1;
 
@@ -164,7 +164,7 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
             
             // Add in any string that might be left.
             if (begin < size)
-                addText(String((UChar*)(guide->data()) + begin, size - begin), classNameStr);
+                addText(String(static_cast<UChar*>(guide->data()) + begin, size - begin), classNameStr);
 
             // Add in the end tag.
             addText(">", classNameStr);
