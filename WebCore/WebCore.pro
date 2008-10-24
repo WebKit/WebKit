@@ -343,10 +343,14 @@ IDL_BINDINGS += \
     page/Console.idl \
     page/DOMSelection.idl \
     page/DOMWindow.idl \
+    page/Geolocation.idl \
+    page/Geoposition.idl \
     page/History.idl \
     page/Location.idl \
-    page/Screen.idl \
     page/Navigator.idl \
+    page/PositionError.idl \
+    page/PositionOptions.idl \
+    page/Screen.idl \
     plugins/Plugin.idl \
     plugins/MimeType.idl \
     plugins/PluginArray.idl \

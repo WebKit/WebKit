@@ -1,3 +1,11 @@
+2008-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix for Qt.
+
+        Reviewed by Greg.
+
+        * WebCore.pro: Added missing *.idl files.
+
 2008-10-24  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.
