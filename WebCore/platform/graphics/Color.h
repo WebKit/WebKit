@@ -142,7 +142,6 @@ inline bool operator!=(const Color& a, const Color& b)
 }
 
 Color focusRingColor();
-void setFocusRingColorChangeFunction(void (*)());
 
 #if PLATFORM(CG)
 CGColorRef cgColor(const Color&);

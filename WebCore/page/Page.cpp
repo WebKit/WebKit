@@ -130,7 +130,6 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
-        setFocusRingColorChangeFunction(setNeedsReapplyStyles);
         
         networkStateNotifier().setNetworkStateChangedFunction(networkStateChanged);
     }

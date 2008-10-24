@@ -39,8 +39,6 @@ namespace WebCore {
 // NSColor calls don't throw, so no need to block Cocoa exceptions in this file
 
 static RGBA32 oldAquaFocusRingColor = 0xFF7DADD9;
-static bool tintIsKnown;
-static void (*tintChangeFunction)();
 static RGBA32 systemFocusRingColor;
 static bool useOldAquaFocusRingColor;
 
@@ -126,29 +124,17 @@ CGColorRef cgColor(const Color& c)
     return CGColorFromNSColor(nsColor(c));
 }
 
-static void observeTint()
-{
-    ASSERT(!tintIsKnown);
-    [[NSNotificationCenter defaultCenter] addObserver:[WebCoreControlTintObserver class]
-                                             selector:@selector(controlTintDidChange)
-                                                 name:NSControlTintDidChangeNotification
-                                               object:NSApp];
-    [WebCoreControlTintObserver controlTintDidChange];
-    tintIsKnown = true;
-}
-
-void setFocusRingColorChangeFunction(void (*function)())
-{
-    ASSERT(!tintChangeFunction);
-    tintChangeFunction = function;
-    if (!tintIsKnown)
-        observeTint();
-}
-
 Color focusRingColor()
 {
-    if (!tintIsKnown)
-        observeTint();
+    static bool tintIsKnown = false;
+    if (!tintIsKnown) {
+        [[NSNotificationCenter defaultCenter] addObserver:[WebCoreControlTintObserver class]
+                                                 selector:@selector(controlTintDidChange)
+                                                     name:NSControlTintDidChangeNotification
+                                                   object:NSApp];
+        [WebCoreControlTintObserver controlTintDidChange];
+        tintIsKnown = true;
+    }
     
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor;
