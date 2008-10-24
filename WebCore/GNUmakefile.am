@@ -1828,7 +1828,7 @@ webcore_cppflags += \
 webcore_sources += \
 	WebCore/platform/network/soup/AuthenticationChallenge.h \
 	WebCore/platform/network/soup/CookieJarSoup.cpp \
-	WebCore/platform/network/curl/DNSSoup.cpp \
+	WebCore/platform/network/soup/DNSSoup.cpp \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
