@@ -107,8 +107,8 @@ my $filter;
 my $indexPath;
 my $patch;
 while (<>) {
-    s/\r//g;
-    chomp;
+    s/([\n\r]+)$//mg;
+    my $eol = $1;
     if (!defined($indexPath) && m#^diff --git a/#) {
         $filter = \&gitdiff2svndiff;
     }
@@ -140,7 +140,7 @@ while (<>) {
         }
     }
     $patch .= $_;
-    $patch .= "\n";
+    $patch .= $eol;
 }
 
 if ($patch && !$copiedFromPath) {
