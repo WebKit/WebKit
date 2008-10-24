@@ -1,5 +1,17 @@
 2008-10-24  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Remove ScopeChainNode::bottom() and inline it into its only caller,
+        ScopeChainnode::globalObject().
+
+        * kjs/JSGlobalObject.h:
+        (JSC::ScopeChainNode::globalObject):
+        * kjs/ScopeChain.h:
+        (JSC::ScopeChain::bottom):
+
+2008-10-24  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Bug 21862: Create JSFunction prototype property lazily
