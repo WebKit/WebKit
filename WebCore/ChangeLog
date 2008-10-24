@@ -1,3 +1,16 @@
+2008-10-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21836
+        REGRESSION: Sign-in on Fancast.com causes crash in Webkit nightly
+
+        Test: http/tests/xmlhttprequest/detaching-frame.html
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::dropProtection): Null check the window -
+        even though XHR needs a context (AKA frame) to be serviced, the frame may be disconnected
+        when dispatching the same callback that results in this function being called.
+
 2008-10-24  David Kilzer  <ddkilzer@apple.com>
 
         Gtk build fix.

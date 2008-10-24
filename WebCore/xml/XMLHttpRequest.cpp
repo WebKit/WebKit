@@ -828,10 +828,10 @@ void XMLHttpRequest::dropProtection()
     // can't be recouped until the load is done, so only
     // report the extra cost at that point.
 
-    JSDOMWindow* window = toJSDOMWindow(document()->frame());
-    JSC::JSValue* wrapper = getCachedDOMObjectWrapper(*window->globalData(), this);
-    if (wrapper)
-        JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
+    if (JSDOMWindow* window = toJSDOMWindow(document()->frame())) {
+        if (JSC::JSValue* wrapper = getCachedDOMObjectWrapper(*window->globalData(), this))
+            JSC::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
+    }
 
     unsetPendingActivity(this);
 }
