@@ -680,6 +680,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSGeolocation.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSGeoposition.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEvent.h"
 				>
 			</File>
@@ -1037,6 +1045,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSNotation.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPositionError.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSPositionOptions.h"
 				>
 			</File>
 			<File
@@ -2260,6 +2276,38 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\Geolocation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\Geolocation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\Geoposition.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\Geoposition.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\History.cpp"
 				>
 				<FileConfiguration
@@ -2385,6 +2433,22 @@
 			</File>
 			<File
 				RelativePath="..\page\Plugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PositionCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PositionError.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PositionErrorCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PositionOptions.h"
 				>
 			</File>
 			<File
@@ -3037,6 +3101,14 @@
 			</File>
 			<File
 				RelativePath="..\platform\FloatConversion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\GeolocationService.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\GeolocationService.h"
 				>
 			</File>
 			<File
@@ -13201,6 +13273,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSCustomPositionCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSCustomPositionErrorCallback.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSCustomSQLStatementCallback.cpp"
 					>
 				</File>
@@ -13334,6 +13414,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSEventTargetNodeCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSGeolocationCustom.cpp"
 					>
 				</File>
 				<File

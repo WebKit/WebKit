@@ -4238,6 +4238,29 @@
 		F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */; };
 		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };
 		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
+		FE80D7A70E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */; };
+		FE80D7A80E9C1ED2000D6F75 /* JSCustomPositionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */; };
+		FE80D7A90E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */; };
+		FE80D7AA0E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7A50E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h */; };
+		FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */; };
+		FE80D7C50E9C1F25000D6F75 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */; };
+		FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7B80E9C1F25000D6F75 /* Geolocation.h */; settings = {ATTRIBUTES = (); }; };
+		FE80D7C80E9C1F25000D6F75 /* Geoposition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */; };
+		FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */; };
+		FE80D7CB0E9C1F25000D6F75 /* PositionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */; };
+		FE80D7CD0E9C1F25000D6F75 /* PositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7BF0E9C1F25000D6F75 /* PositionError.h */; };
+		FE80D7CF0E9C1F25000D6F75 /* PositionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */; };
+		FE80D7D10E9C1F25000D6F75 /* PositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */; };
+		FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */; };
+		FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA600E9C4703000D6F75 /* JSGeolocation.h */; };
+		FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */; };
+		FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA620E9C4703000D6F75 /* JSGeoposition.h */; };
+		FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */; };
+		FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */; };
+		FE80DA730E9C472F000D6F75 /* JSPositionOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE80DA6F0E9C472F000D6F75 /* JSPositionOptions.cpp */; };
+		FE80DA740E9C472F000D6F75 /* JSPositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA700E9C472F000D6F75 /* JSPositionOptions.h */; };
+		FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */; };
+		FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAB90110EA51B9C006348C3 /* GeolocationService.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -8871,6 +8894,35 @@
 		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
+		FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomPositionCallback.cpp; sourceTree = "<group>"; };
+		FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomPositionCallback.h; sourceTree = "<group>"; };
+		FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomPositionErrorCallback.cpp; sourceTree = "<group>"; };
+		FE80D7A50E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomPositionErrorCallback.h; sourceTree = "<group>"; };
+		FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeolocationCustom.cpp; sourceTree = "<group>"; };
+		FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geolocation.cpp; sourceTree = "<group>"; };
+		FE80D7B80E9C1F25000D6F75 /* Geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geolocation.h; sourceTree = "<group>"; };
+		FE80D7B90E9C1F25000D6F75 /* Geolocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Geolocation.idl; sourceTree = "<group>"; };
+		FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geoposition.cpp; sourceTree = "<group>"; };
+		FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geoposition.h; sourceTree = "<group>"; };
+		FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Geoposition.idl; sourceTree = "<group>"; };
+		FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionCallback.h; sourceTree = "<group>"; };
+		FE80D7BE0E9C1F25000D6F75 /* PositionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionCallback.idl; sourceTree = "<group>"; };
+		FE80D7BF0E9C1F25000D6F75 /* PositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionError.h; sourceTree = "<group>"; };
+		FE80D7C00E9C1F25000D6F75 /* PositionError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionError.idl; sourceTree = "<group>"; };
+		FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionErrorCallback.h; sourceTree = "<group>"; };
+		FE80D7C20E9C1F25000D6F75 /* PositionErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionErrorCallback.idl; sourceTree = "<group>"; };
+		FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionOptions.h; sourceTree = "<group>"; };
+		FE80D7C40E9C1F25000D6F75 /* PositionOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionOptions.idl; sourceTree = "<group>"; };
+		FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeolocation.cpp; sourceTree = "<group>"; };
+		FE80DA600E9C4703000D6F75 /* JSGeolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeolocation.h; sourceTree = "<group>"; };
+		FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeoposition.cpp; sourceTree = "<group>"; };
+		FE80DA620E9C4703000D6F75 /* JSGeoposition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeoposition.h; sourceTree = "<group>"; };
+		FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionError.cpp; sourceTree = "<group>"; };
+		FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionError.h; sourceTree = "<group>"; };
+		FE80DA6F0E9C472F000D6F75 /* JSPositionOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionOptions.cpp; sourceTree = "<group>"; };
+		FE80DA700E9C472F000D6F75 /* JSPositionOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPositionOptions.h; sourceTree = "<group>"; };
+		FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationService.cpp; sourceTree = "<group>"; };
+		FEAB90110EA51B9C006348C3 /* GeolocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationService.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -9623,6 +9675,12 @@
 				65A21483097A3F5300B9050A /* FrameTree.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
+				FE80D7B70E9C1F25000D6F75 /* Geolocation.cpp */,
+				FE80D7B80E9C1F25000D6F75 /* Geolocation.h */,
+				FE80D7B90E9C1F25000D6F75 /* Geolocation.idl */,
+				FE80D7BA0E9C1F25000D6F75 /* Geoposition.cpp */,
+				FE80D7BB0E9C1F25000D6F75 /* Geoposition.h */,
+				FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
 				BC94D1510C275C8B006BC617 /* History.h */,
 				BC94D1520C275C8B006BC617 /* History.idl */,
@@ -9638,6 +9696,14 @@
 				65A21467097A329100B9050A /* Page.h */,
 				9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */,
 				9302B0BE0D79F82C00C7EE83 /* PageGroup.h */,
+				FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */,
+				FE80D7BE0E9C1F25000D6F75 /* PositionCallback.idl */,
+				FE80D7BF0E9C1F25000D6F75 /* PositionError.h */,
+				FE80D7C00E9C1F25000D6F75 /* PositionError.idl */,
+				FE80D7C10E9C1F25000D6F75 /* PositionErrorCallback.h */,
+				FE80D7C20E9C1F25000D6F75 /* PositionErrorCallback.idl */,
+				FE80D7C30E9C1F25000D6F75 /* PositionOptions.h */,
+				FE80D7C40E9C1F25000D6F75 /* PositionOptions.idl */,
 				BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */,
 				BCEC01BB0C274DAC009F4EC9 /* Screen.h */,
 				BCEC01BC0C274DAC009F4EC9 /* Screen.idl */,
@@ -11801,6 +11867,10 @@
 				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
 				93F9B7720BA5FDDC00854064 /* JSEntityReference.cpp */,
 				93F9B7730BA5FDDC00854064 /* JSEntityReference.h */,
+				FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */,
+				FE80DA600E9C4703000D6F75 /* JSGeolocation.h */,
+				FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */,
+				FE80DA620E9C4703000D6F75 /* JSGeoposition.h */,
 				BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */,
 				BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */,
 				14DC0D3509FED073007B0235 /* JSNode.cpp */,
@@ -11809,6 +11879,10 @@
 				BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
 				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
+				FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */,
+				FE80DA6E0E9C472F000D6F75 /* JSPositionError.h */,
+				FE80DA6F0E9C472F000D6F75 /* JSPositionOptions.cpp */,
+				FE80DA700E9C472F000D6F75 /* JSPositionOptions.h */,
 				65DF31EB09D1CC60000BE325 /* JSProcessingInstruction.cpp */,
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */,
@@ -12875,6 +12949,10 @@
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
+				FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */,
+				FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */,
+				FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */,
+				FE80D7A50E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h */,
 				51EC925B0CE90DD400F90308 /* JSCustomSQLStatementCallback.cpp */,
 				51EC925C0CE90DD400F90308 /* JSCustomSQLStatementCallback.h */,
 				51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */,
@@ -12897,6 +12975,7 @@
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
 				BC3B7B200E91AAF400D54065 /* JSEventTargetNodeCustom.cpp */,
+				FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
@@ -13207,6 +13286,8 @@
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
+				FEAB90100EA51B9C006348C3 /* GeolocationService.cpp */,
+				FEAB90110EA51B9C006348C3 /* GeolocationService.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
@@ -16041,6 +16122,18 @@
 				1C81BA0C0E97348300266E07 /* JavaScriptDebugListener.h in Headers */,
 				1C81BA0E0E97348300266E07 /* JavaScriptDebugServer.h in Headers */,
 				BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */,
+				FE80D7A80E9C1ED2000D6F75 /* JSCustomPositionCallback.h in Headers */,
+				FE80D7AA0E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h in Headers */,
+				FE80D7C60E9C1F25000D6F75 /* Geolocation.h in Headers */,
+				FE80D7C90E9C1F25000D6F75 /* Geoposition.h in Headers */,
+				FE80D7CB0E9C1F25000D6F75 /* PositionCallback.h in Headers */,
+				FE80D7CD0E9C1F25000D6F75 /* PositionError.h in Headers */,
+				FE80D7CF0E9C1F25000D6F75 /* PositionErrorCallback.h in Headers */,
+				FE80D7D10E9C1F25000D6F75 /* PositionOptions.h in Headers */,
+				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
+				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
+				FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */,
+				FE80DA740E9C472F000D6F75 /* JSPositionOptions.h in Headers */,
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
 				BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */,
 				BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */,
@@ -16052,6 +16145,7 @@
 				BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */,
 				BCE659E60EA92FB2007E4533 /* ThemeMac.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
+				FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */,
 				BCE65BEB0EACDF16007E4533 /* Length.h in Headers */,
 				BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */,
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
@@ -17920,6 +18014,15 @@
 				1C81BA020E9733CB00266E07 /* JavaScriptProfile.cpp in Sources */,
 				1C81BA090E97348300266E07 /* JavaScriptCallFrame.cpp in Sources */,
 				1C81BA0D0E97348300266E07 /* JavaScriptDebugServer.cpp in Sources */,
+				FE80D7A70E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp in Sources */,
+				FE80D7A90E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp in Sources */,
+				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
+				FE80D7C50E9C1F25000D6F75 /* Geolocation.cpp in Sources */,
+				FE80D7C80E9C1F25000D6F75 /* Geoposition.cpp in Sources */,
+				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
+				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,
+				FE80DA710E9C472F000D6F75 /* JSPositionError.cpp in Sources */,
+				FE80DA730E9C472F000D6F75 /* JSPositionOptions.cpp in Sources */,
 				BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */,
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
 				BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */,
@@ -17928,6 +18031,7 @@
 				939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */,
 				BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
+				FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
 				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,

@@ -1,0 +1,16 @@
+<body></body>
+<script src=geolocation-test.js></script>
+<script>
+test("navigator.geolocation === undefined");
+test("navigator.geolocation == null");
+var hasGeolocationProperty = false;
+for (var property in navigator) {
+    hasGeolocationProperty = (property == "geolocation");
+    if (hasGeolocationProperty)
+        break;
+}
+test("hasGeolocationProperty == false");
+test("'geolocation' in navigator == false");
+test("navigator.hasOwnProperty('geolocation') == false");
+endTest();
+</script>

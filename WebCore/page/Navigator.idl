@@ -19,7 +19,9 @@
 
 module window {
 
-    interface Navigator {
+    interface [
+        CustomMarkFunction
+    ] Navigator {
         readonly attribute DOMString appCodeName;
         readonly attribute DOMString appName;
         readonly attribute [CustomGetter] DOMString appVersion;
@@ -36,6 +38,9 @@ module window {
         boolean javaEnabled();
         
         readonly attribute boolean onLine;
+#if ENABLE_GEOLOCATION
+        readonly attribute Geolocation geolocation;
+#endif
     };
 
 }

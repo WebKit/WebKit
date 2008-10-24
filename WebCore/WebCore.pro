@@ -777,6 +777,8 @@ SOURCES += \
     page/Frame.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \
+    page/Geolocation.cpp \
+    page/Geoposition.cpp \
     page/History.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
@@ -804,6 +806,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
+    platform/GeolocationService.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFamily.cpp \
     platform/graphics/AffineTransform.cpp \
@@ -1199,7 +1202,10 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         bindings/js/JSCustomSQLTransactionErrorCallback.cpp \
         bindings/js/JSDatabaseCustom.cpp \
         bindings/js/JSSQLResultSetRowListCustom.cpp \
-        bindings/js/JSSQLTransactionCustom.cpp
+        bindings/js/JSSQLTransactionCustom.cpp \
+        bindings/js/JSGeolocationCustom.cpp \
+        bindings/js/JSCustomPositionCallback.cpp \
+        bindings/js/JSCustomPositionErrorCallback.cpp
 
     IDL_BINDINGS += \
         storage/Database.idl \

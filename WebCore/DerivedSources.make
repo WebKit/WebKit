@@ -93,6 +93,8 @@ DOM_CLASSES = \
     EventTargetNode \
     File \
     FileList \
+    Geolocation \
+    Geoposition \
     HTMLAnchorElement \
     HTMLAppletElement \
     HTMLAreaElement \
@@ -180,6 +182,10 @@ DOM_CLASSES = \
     OverflowEvent \
     Plugin \
     PluginArray \
+    PositionCallback \
+    PositionError \
+    PositionErrorCallback \
+    PositionOptions \
     ProcessingInstruction \
     ProgressEvent \
     RGBColor \
