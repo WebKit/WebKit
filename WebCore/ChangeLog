@@ -1,3 +1,10 @@
+2008-10-24  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtField::valueFromInstance):
+
 2008-10-24  David Kilzer  <ddkilzer@apple.com>
 
         Rolled out r37840 and r37841.
