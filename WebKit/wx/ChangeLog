@@ -1,3 +1,15 @@
+2008-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix.
+
+        Reviewed by Greg Bolsinga.
+
+        * WebKitSupport/InspectorClientWx.cpp:
+        (WebCore::InspectorClientWx::populateSetting): Changed
+        InspectorClient:: to InspectorClientWx::.
+        (WebCore::InspectorClientWx::storeSetting): Ditto.
+        (WebCore::InspectorClientWx::removeSetting): Ditto.
+
 2008-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Stub out new InspectorClient methods.
