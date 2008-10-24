@@ -1871,12 +1871,7 @@ Identifier* FunctionBodyNode::copyParameters()
 
 JSFunction* FuncDeclNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
 {
-    JSFunction* func = new (exec) JSFunction(exec, m_ident, m_body.get(), scopeChain);
-
-    JSObject* proto = constructEmptyObject(exec);
-    proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
-    func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
-    return func;
+    return new (exec) JSFunction(exec, m_ident, m_body.get(), scopeChain);
 }
 
 RegisterID* FuncDeclNode::emitCode(CodeGenerator&, RegisterID* dst)
@@ -1894,9 +1889,6 @@ RegisterID* FuncExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 JSFunction* FuncExprNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
 {
     JSFunction* func = new (exec) JSFunction(exec, m_ident, m_body.get(), scopeChain);
-    JSObject* proto = constructEmptyObject(exec);
-    proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
-    func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
 
     /* 
         The Identifier in a FunctionExpression can be referenced from inside

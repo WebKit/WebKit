@@ -102,6 +102,19 @@ JSValue* JSFunction::lengthGetter(ExecState* exec, const Identifier&, const Prop
 
 bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    if (propertyName == exec->propertyNames().prototype) {
+        JSValue** location = getDirectLocation(propertyName);
+
+        if (!location) {
+            JSObject* prototype = new (exec) JSObject(m_scopeChain.globalObject()->emptyObjectStructure());
+            prototype->putDirect(exec->propertyNames().constructor, this, DontEnum);
+            putDirect(exec->propertyNames().prototype, prototype, DontDelete);
+            location = getDirectLocation(propertyName);
+        }
+
+        slot.setValueSlot(this, location, offsetForLocation(location));
+    }
+
     if (propertyName == exec->propertyNames().arguments) {
         slot.setCustom(this, argumentsGetter);
         return true;

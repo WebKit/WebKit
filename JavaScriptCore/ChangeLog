@@ -1,3 +1,19 @@
+2008-10-24  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21862: Create JSFunction prototype property lazily
+        <https://bugs.webkit.org/show_bug.cgi?id=21862>
+
+        This is a 1.5% speedup on SunSpider and a 1.4% speedup on the V8
+        benchmark suite, including a 3.8% speedup on Earley-Boyer.
+
+        * kjs/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * kjs/nodes.cpp:
+        (JSC::FuncDeclNode::makeFunction):
+        (JSC::FuncExprNode::makeFunction):
+
 2008-10-24  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.
