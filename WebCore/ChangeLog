@@ -1,3 +1,120 @@
+2008-10-24  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21475
+        
+        Provide support for the Geolocation API
+        
+        http://dev.w3.org/geo/api/spec-source.html
+
+        Test: geolocation/geolocation-not-implemented.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am: Added Geolocation support
+        * WebCore.pro: Added Geolocation support
+        * WebCore.vcproj/WebCore.vcproj: Added Geolocation support
+        * WebCore.xcodeproj/project.pbxproj: Added Geolocation support
+        * WebCoreSources.bkl: Added Geolocation support
+        * bindings/js/JSCustomPositionCallback.cpp: Added.
+        (WebCore::JSCustomPositionCallback::JSCustomPositionCallback):
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionCallback.h: Added.
+        (WebCore::JSCustomPositionCallback::create):
+        * bindings/js/JSCustomPositionErrorCallback.cpp: Added.
+        (WebCore::JSCustomPositionErrorCallback::JSCustomPositionErrorCallback):
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.h: Added.
+        (WebCore::JSCustomPositionErrorCallback::create):
+        * bindings/js/JSDOMBinding.cpp: move markDOMObjectWrapper here from JSDOMWindowCustom
+        (WebCore::markDOMObjectWrapper):
+        * bindings/js/JSDOMBinding.h: move markDOMObjectWrapper here from JSDOMWindowCustom
+        * bindings/js/JSDOMWindowCustom.cpp: move markDOMObjectWrapper to JSDOMBinding
+        * bindings/js/JSGeolocationCustom.cpp: Added.
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/js/JSNavigatorCustom.cpp: handle marking Geolocation
+        (WebCore::JSNavigator::mark):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::setUsingGeolocation):
+        (WebCore::Document::usingGeolocation):
+        * loader/FrameLoader.cpp: don't add to back forward cache if using Geolocation
+        (WebCore::FrameLoader::canCachePage):
+        * page/Geolocation.cpp: Added.
+        (WebCore::Geolocation::GeoNotifier::GeoNotifier):
+        (WebCore::Geolocation::GeoNotifier::timerFired):
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::disconnectFrame):
+        (WebCore::Geolocation::getCurrentPosition):
+        (WebCore::Geolocation::watchPosition):
+        (WebCore::Geolocation::clearWatch):
+        (WebCore::Geolocation::stopUpdatingIfEmpty):
+        (WebCore::Geolocation::sendErrorToOneShots):
+        (WebCore::Geolocation::sendErrorToWatchers):
+        (WebCore::Geolocation::sendPositionToOneShots):
+        (WebCore::Geolocation::sendPositionToWatchers):
+        (WebCore::Geolocation::handleError):
+        (WebCore::Geolocation::geolocationServicePositionChanged):
+        (WebCore::Geolocation::geolocationServiceErrorOccurred):
+        * page/Geolocation.h: Added.
+        (WebCore::Geolocation::create):
+        (WebCore::Geolocation::~Geolocation):
+        (WebCore::Geolocation::lastPosition):
+        (WebCore::Geolocation::GeoNotifier::create):
+        * page/Geolocation.idl: Added.
+        * page/Geoposition.cpp: Added.
+        (WebCore::Geoposition::toString):
+        * page/Geoposition.h: Added.
+        (WebCore::Geoposition::create):
+        (WebCore::Geoposition::latitude):
+        (WebCore::Geoposition::longitude):
+        (WebCore::Geoposition::altitude):
+        (WebCore::Geoposition::accuracy):
+        (WebCore::Geoposition::altitudeAccuracy):
+        (WebCore::Geoposition::heading):
+        (WebCore::Geoposition::velocity):
+        (WebCore::Geoposition::timestamp):
+        (WebCore::Geoposition::Geoposition):
+        * page/Geoposition.idl: Added.
+        * page/Navigator.cpp:
+        (WebCore::Navigator::disconnectFrame): disconnect Geolocation
+        (WebCore::Navigator::geolocation): accessor for Geolocation
+        * page/Navigator.h:
+        (WebCore::Navigator::optionalGeolocation): accessor for Geolocation
+        * page/Navigator.idl: accessor for Geolocation
+        * page/PositionCallback.h: Added.
+        (WebCore::PositionCallback::~PositionCallback):
+        * page/PositionCallback.idl: Added.
+        * page/PositionError.h: Added.
+        (WebCore::PositionError::):
+        (WebCore::PositionError::create):
+        (WebCore::PositionError::code):
+        (WebCore::PositionError::message):
+        (WebCore::PositionError::PositionError):
+        * page/PositionError.idl: Added.
+        * page/PositionErrorCallback.h: Added.
+        (WebCore::PositionErrorCallback::~PositionErrorCallback):
+        * page/PositionErrorCallback.idl: Added.
+        * page/PositionOptions.h: Added.
+        (WebCore::PositionOptions::create):
+        (WebCore::PositionOptions::enableHighAccuracy):
+        (WebCore::PositionOptions::setEnableHighAccuracy):
+        (WebCore::PositionOptions::timeout):
+        (WebCore::PositionOptions::setTimeout):
+        (WebCore::PositionOptions::PositionOptions):
+        * page/PositionOptions.idl: Added.
+        * platform/GeolocationService.cpp: Added.
+        (WebCore::GeolocationService::GeolocationService):
+        (WebCore::GeolocationService::positionChanged):
+        (WebCore::GeolocationService::errorOccurred):
+        * platform/GeolocationService.h: Added.
+        (WebCore::GeolocationServiceClient::~GeolocationServiceClient):
+        (WebCore::GeolocationServiceClient::geolocationServicePositionChanged):
+        (WebCore::GeolocationServiceClient::geolocationServiceErrorOccurred):
+        (WebCore::GeolocationService::~GeolocationService):
+
 2008-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

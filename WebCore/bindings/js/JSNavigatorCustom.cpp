@@ -113,4 +113,13 @@ JSValue* JSNavigator::appVersion(ExecState* exec) const
     return jsString(exec, imp->appVersion());
 }
 
+void JSNavigator::mark()
+{
+    Base::mark();
+
+    JSGlobalData& globalData = *Heap::heap(this)->globalData();
+
+    markDOMObjectWrapper(globalData, impl()->optionalGeolocation());
+}
+
 }

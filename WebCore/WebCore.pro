@@ -369,6 +369,8 @@ SOURCES += \
     bindings/js/JSCSSRuleCustom.cpp \
     bindings/js/JSCSSStyleDeclarationCustom.cpp \
     bindings/js/JSCSSValueCustom.cpp \
+    bindings/js/JSCustomPositionCallback.cpp \
+    bindings/js/JSCustomPositionErrorCallback.cpp \
     bindings/js/JSCustomVoidCallback.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
@@ -381,6 +383,7 @@ SOURCES += \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventTarget.cpp \
     bindings/js/JSEventTargetNodeCustom.cpp \
+    bindings/js/JSGeolocationCustom.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
     bindings/js/JSJavaScriptCallFrameCustom.cpp \
@@ -777,6 +780,8 @@ SOURCES += \
     page/Frame.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \
+    page/Geolocation.cpp \
+    page/Geoposition.cpp \
     page/History.cpp \
     page/Location.cpp \
     page/MouseEventWithHitTestResults.cpp \
@@ -804,6 +809,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
+    platform/GeolocationService.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFamily.cpp \
     platform/graphics/AffineTransform.cpp \

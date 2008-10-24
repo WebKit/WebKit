@@ -353,6 +353,16 @@ void updateDOMNodeDocument(Node* node, Document* oldDocument, Document* newDocum
     addWrapper(wrapper);
 }
 
+void markDOMObjectWrapper(JSGlobalData& globalData, void* object)
+{
+    if (!object)
+        return;
+    DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, object);
+    if (!wrapper || wrapper->marked())
+        return;
+    wrapper->mark();
+}
+
 JSValue* jsStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())
