@@ -1,3 +1,9 @@
+2008-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt to fix GTK build.
+
+        * GNUmakefile.am: Added new *.idl files that were missing.
+
 2008-10-23  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.

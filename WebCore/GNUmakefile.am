@@ -209,9 +209,15 @@ IDL_BINDINGS += \
 	WebCore/page/Console.idl \
 	WebCore/page/DOMSelection.idl \
 	WebCore/page/DOMWindow.idl \
+	WebCore/page/Geolocation.idl \
+	WebCore/page/Geoposition.idl \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
+	WebCore/page/PositionCallback.idl \
+	WebCore/page/PositionError.idl \
+	WebCore/page/PositionErrorCallback.idl \
+	WebCore/page/PositionOptions.idl \
 	WebCore/page/Screen.idl \
 	WebCore/plugins/MimeType.idl \
 	WebCore/plugins/MimeTypeArray.idl \
