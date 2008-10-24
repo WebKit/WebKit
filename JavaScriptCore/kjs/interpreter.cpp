@@ -52,7 +52,7 @@ Completion Interpreter::checkSyntax(ExecState* exec, const SourceCode& source)
     return Completion(Normal);
 }
 
-Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& source, JSValuePtr thisValue)
+Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& source, JSValue* thisValue)
 {
     JSLock lock(exec);
     
@@ -65,8 +65,8 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
 
     JSObject* thisObj = (!thisValue || thisValue->isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue->toObject(exec);
 
-    JSValuePtr exception = noValue();
-    JSValuePtr result = exec->machine()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
+    JSValue* exception = noValue();
+    JSValue* result = exec->machine()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
 
     if (exception) {
         if (exception->isObject() && asObject(exception)->isWatchdogException())

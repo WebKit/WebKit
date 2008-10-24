@@ -162,8 +162,8 @@ namespace JSC {
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        virtual void put(ExecState*, const Identifier&, JSValuePtr, PutPropertySlot&);
-        virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValuePtr value, unsigned attributes);
+        virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
+        virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
 
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
@@ -246,19 +246,19 @@ namespace JSC {
         void copyGlobalsFrom(RegisterFile&);
         void copyGlobalsTo(RegisterFile&);
         
-        void resetPrototype(JSValuePtr prototype);
+        void resetPrototype(JSValue* prototype);
 
         JSGlobalData* globalData() { return d()->globalData.get(); }
         JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 
-        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
         {
             return StructureID::create(prototype, TypeInfo(ObjectType));
         }
 
     protected:
         struct GlobalPropertyInfo {
-            GlobalPropertyInfo(const Identifier& i, JSValuePtr v, unsigned a)
+            GlobalPropertyInfo(const Identifier& i, JSValue* v, unsigned a)
                 : identifier(i)
                 , value(v)
                 , attributes(a)
@@ -266,7 +266,7 @@ namespace JSC {
             }
 
             const Identifier identifier;
-            JSValuePtr value;
+            JSValue* value;
             unsigned attributes;
         };
         void addStaticGlobals(GlobalPropertyInfo*, int count);
@@ -274,16 +274,16 @@ namespace JSC {
     private:
         // FIXME: Fold reset into init.
         void init(JSObject* thisValue);
-        void reset(JSValuePtr prototype);
+        void reset(JSValue* prototype);
 
         void setRegisters(Register* registers, Register* registerArray, size_t count);
 
         void* operator new(size_t); // can only be allocated with JSGlobalData
     };
 
-    JSGlobalObject* asGlobalObject(JSValuePtr);
+    JSGlobalObject* asGlobalObject(JSValue*);
 
-    inline JSGlobalObject* asGlobalObject(JSValuePtr value)
+    inline JSGlobalObject* asGlobalObject(JSValue* value)
     {
         ASSERT(asObject(value)->isGlobalObject());
         return static_cast<JSGlobalObject*>(asObject(value));
@@ -332,7 +332,7 @@ namespace JSC {
         return asGlobalObject(bottom());
     }
 
-    inline JSValuePtr StructureID::prototypeForLookup(ExecState* exec)
+    inline JSValue* StructureID::prototypeForLookup(ExecState* exec)
     {
         if (typeInfo().type() == ObjectType)
             return m_prototype;

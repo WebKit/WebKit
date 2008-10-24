@@ -60,15 +60,15 @@ namespace JSC {
         {
         }
 
-        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
         {
             return StructureID::create(prototype, TypeInfo(ObjectType));
         }
 
      private:
         // JSValue methods
-        virtual JSValuePtr toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValuePtr&);
+        virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
@@ -81,8 +81,8 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-        virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
-        virtual void put(ExecState*, unsigned propertyName, JSValuePtr);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+        virtual void put(ExecState*, unsigned propertyName, JSValue*);
 
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);

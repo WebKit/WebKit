@@ -93,7 +93,7 @@ namespace WebCore {
         void group(JSC::ExecState*, const JSC::ArgList&);
         void groupEnd();
 
-        void reportException(JSC::ExecState*, JSC::JSValuePtr);
+        void reportException(JSC::ExecState*, JSC::JSValue*);
         void reportCurrentException(JSC::ExecState*);
 
         const ProfilesArray& profiles() const { return m_profiles; }

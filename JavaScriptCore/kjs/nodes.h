@@ -301,7 +301,7 @@ namespace JSC {
 
     class ImmediateNumberNode : public NumberNode {
     public:
-        ImmediateNumberNode(JSGlobalData* globalData, JSValuePtr v, double d) JSC_FAST_CALL
+        ImmediateNumberNode(JSGlobalData* globalData, JSValue* v, double d) JSC_FAST_CALL
             : NumberNode(globalData, d)
             , m_value(v)
         {
@@ -311,7 +311,7 @@ namespace JSC {
         virtual void setValue(double d) JSC_FAST_CALL { m_double = d; m_value = JSImmediate::from(d); ASSERT(m_value); }
 
     private:
-        JSValuePtr m_value; // This is never a JSCell, only JSImmediate, thus no ProtectedPtr
+        JSValue* m_value; // This is never a JSCell, only JSImmediate, thus no ProtectedPtr
     };
 
     class StringNode : public ExpressionNode {

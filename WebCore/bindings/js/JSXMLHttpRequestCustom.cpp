@@ -89,7 +89,7 @@ void JSXMLHttpRequest::mark()
 }
 
 // Custom functions
-JSValuePtr JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -121,7 +121,7 @@ JSValuePtr JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -132,13 +132,13 @@ JSValuePtr JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& ar
     return jsUndefined();
 }
 
-JSValuePtr JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     if (args.isEmpty())
         impl()->send(ec);
     else {
-        JSValuePtr val = args.at(exec, 0);
+        JSValue* val = args.at(exec, 0);
         if (val->isUndefinedOrNull())
             impl()->send(ec);
         else if (val->isObject(&JSDocument::s_info))
@@ -152,7 +152,7 @@ JSValuePtr JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     int signedLineNumber;
     intptr_t sourceID;
     UString sourceURL;
-    JSValuePtr function;
+    JSValue* function;
     exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
     impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
     impl()->setLastSendURL(sourceURL);
@@ -161,18 +161,18 @@ JSValuePtr JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSXMLHttpRequest::getResponseHeader(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::getResponseHeader(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     ExceptionCode ec = 0;
-    JSValuePtr header = jsStringOrNull(exec, impl()->getResponseHeader(args.at(exec, 0)->toString(exec), ec));
+    JSValue* header = jsStringOrNull(exec, impl()->getResponseHeader(args.at(exec, 0)->toString(exec), ec));
     setDOMException(exec, ec);
     return header;
 }
 
-JSValuePtr JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -181,7 +181,7 @@ JSValuePtr JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& ar
     return jsUndefined();
 }
 
-JSValuePtr JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -193,7 +193,7 @@ JSValuePtr JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& ar
     return jsUndefined();
 }
 
-JSValuePtr JSXMLHttpRequest::removeEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequest::removeEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)

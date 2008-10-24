@@ -37,7 +37,7 @@ namespace JSC {
     class JSObject;
     class PropertyNameArray;
 
-    typedef JSValuePtr* PropertyStorage;
+    typedef JSValue** PropertyStorage;
 
     struct PropertyMapEntry {
         UString::Rep* key;

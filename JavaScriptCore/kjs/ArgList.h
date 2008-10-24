@@ -85,7 +85,7 @@ namespace JSC {
         size_t size() const { return m_size; }
         bool isEmpty() const { return !m_size; }
 
-        JSValuePtr at(ExecState* exec, size_t i) const
+        JSValue* at(ExecState* exec, size_t i) const
         {
             if (i < m_size)
                 return m_buffer[i].jsValue(exec);
@@ -99,7 +99,7 @@ namespace JSC {
             m_size = 0;
         }
 
-        void append(JSValuePtr v)
+        void append(JSValue* v)
         {
             ASSERT(!m_isReadOnly);
             
@@ -125,7 +125,7 @@ namespace JSC {
         static void markLists(ListSet&);
 
     private:
-        void slowAppend(JSValuePtr);
+        void slowAppend(JSValue*);
         
         Register* m_buffer;
         size_t m_size;

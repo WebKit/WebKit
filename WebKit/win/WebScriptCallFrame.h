@@ -74,10 +74,10 @@ public:
         /* [out, retval] */ BSTR* value);
 
     // Helper and accessors
-    virtual JSC::JSValuePtr valueByEvaluatingJavaScriptFromString(BSTR script);
+    virtual JSC::JSValue* valueByEvaluatingJavaScriptFromString(BSTR script);
     virtual JSC::ExecState* state() const { return m_state; }
 
-    static JSC::UString jsValueToString(JSC::ExecState*, JSC::JSValuePtr);
+    static JSC::UString jsValueToString(JSC::ExecState*, JSC::JSValue*);
 
 private:
     ULONG m_refCount;

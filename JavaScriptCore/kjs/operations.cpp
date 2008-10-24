@@ -36,7 +36,7 @@
 namespace JSC {
 
 // ECMA 11.9.3
-bool equal(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
+bool equal(ExecState* exec, JSValue* v1, JSValue* v2)
 {
     if (JSImmediate::areBothImmediateNumbers(v1, v2))
         return v1 == v2;
@@ -44,12 +44,12 @@ bool equal(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
     return equalSlowCaseInline(exec, v1, v2);
 }
 
-bool equalSlowCase(ExecState* exec, JSValuePtr v1, JSValuePtr v2)
+bool equalSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
 {
     return equalSlowCaseInline(exec, v1, v2);
 }
 
-bool strictEqual(JSValuePtr v1, JSValuePtr v2)
+bool strictEqual(JSValue* v1, JSValue* v2)
 {
     if (JSImmediate::areBothImmediate(v1, v2))
         return v1 == v2;
@@ -60,12 +60,12 @@ bool strictEqual(JSValuePtr v1, JSValuePtr v2)
     return strictEqualSlowCaseInline(v1, v2);
 }
 
-bool strictEqualSlowCase(JSValuePtr v1, JSValuePtr v2)
+bool strictEqualSlowCase(JSValue* v1, JSValue* v2)
 {
     return strictEqualSlowCaseInline(v1, v2);
 }
 
-NEVER_INLINE JSValuePtr throwOutOfMemoryError(ExecState* exec)
+NEVER_INLINE JSValue* throwOutOfMemoryError(ExecState* exec)
 {
     JSObject* error = Error::create(exec, GeneralError, "Out of memory");
     exec->setException(error);

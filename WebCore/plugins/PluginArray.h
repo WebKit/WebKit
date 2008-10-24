@@ -36,7 +36,7 @@ namespace WebCore {
     class PluginData;
 
     // FIXME: Generated JSPluginArray.cpp doesn't include JSPlugin.h for toJS
-    JSC::JSValuePtr toJS(JSC::ExecState*, Plugin*);
+    JSC::JSValue* toJS(JSC::ExecState*, Plugin*);
 
     class PluginArray : public RefCounted<PluginArray> {
     public:

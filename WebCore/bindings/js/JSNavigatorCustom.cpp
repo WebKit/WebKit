@@ -71,7 +71,7 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
     if (!thisObject)
         return false;
     static const Identifier& isSafariFunctionName = *new Identifier(exec, "isSafari");
-    JSValuePtr isSafariFunction = thisObject->getDirect(isSafariFunctionName);
+    JSValue* isSafariFunction = thisObject->getDirect(isSafariFunctionName);
     if (isSafariFunction != callingFunction)
         return false;
 
@@ -101,7 +101,7 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
 
 #endif
 
-JSValuePtr JSNavigator::appVersion(ExecState* exec) const
+JSValue* JSNavigator::appVersion(ExecState* exec) const
 {
     Navigator* imp = static_cast<Navigator*>(impl());
     Frame* frame = imp->frame();

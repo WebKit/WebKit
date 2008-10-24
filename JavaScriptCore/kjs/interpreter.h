@@ -60,7 +60,7 @@ namespace JSC {
      * execution. This should either be jsNull() or an Object.
      * @return A completion object representing the result of the execution.
      */
-    static Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValuePtr thisValue = noValue());
+    static Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue* thisValue = noValue());
     
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);

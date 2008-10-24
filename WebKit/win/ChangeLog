@@ -1,3 +1,17 @@
+2008-10-24  Darin Adler  <darin@apple.com>
+
+        - finish rolling out https://bugs.webkit.org/show_bug.cgi?id=21732
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::jsValueToString):
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString):
+        (WebScriptCallFrame::valueForVariable):
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString):
+        * WebScriptCallFrame.h:
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+        Use JSValue* instead of JSValuePtr.
+
 2008-10-22  Brent Fulgham  <bfulgham@gmail.com>
 
         Correct build regressions in Cairo port for Windows.

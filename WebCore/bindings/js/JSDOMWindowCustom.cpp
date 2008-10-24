@@ -118,7 +118,7 @@ void JSDOMWindow::defineSetter(ExecState* exec, const Identifier& propertyName, 
     Base::defineSetter(exec, propertyName, setterFunction);
 }
 
-JSValuePtr JSDOMWindow::lookupGetter(ExecState* exec, const Identifier& propertyName)
+JSValue* JSDOMWindow::lookupGetter(ExecState* exec, const Identifier& propertyName)
 {
     // Only allow looking-up getters by frames in the same origin.
     if (!allowsAccessFrom(exec))
@@ -126,7 +126,7 @@ JSValuePtr JSDOMWindow::lookupGetter(ExecState* exec, const Identifier& property
     return Base::lookupGetter(exec, propertyName);
 }
 
-JSValuePtr JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& propertyName)
+JSValue* JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& propertyName)
 {
     // Only allow looking-up setters by frames in the same origin.
     if (!allowsAccessFrom(exec))
@@ -134,7 +134,7 @@ JSValuePtr JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& property
     return Base::lookupSetter(exec, propertyName);
 }
 
-void JSDOMWindow::setLocation(ExecState* exec, JSValuePtr value)
+void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
 {
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!activeFrame)
@@ -162,7 +162,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValuePtr value)
     }
 }
 
-JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 {
     DOMWindow* window = impl();
 
@@ -185,9 +185,9 @@ JSValuePtr JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-static JSValuePtr setTimeoutOrInterval(ExecState* exec, JSDOMWindow* window, const ArgList& args, bool timeout)
+static JSValue* setTimeoutOrInterval(ExecState* exec, JSDOMWindow* window, const ArgList& args, bool timeout)
 {
-    JSValuePtr v = args.at(exec, 0);
+    JSValue* v = args.at(exec, 0);
     int delay = args.at(exec, 1)->toInt32(exec);
     if (v->isString())
         return jsNumber(exec, window->installTimeout(asString(v)->value(), delay, timeout));
@@ -199,34 +199,34 @@ static JSValuePtr setTimeoutOrInterval(ExecState* exec, JSDOMWindow* window, con
     return jsNumber(exec, window->installTimeout(exec, v, argsTail, delay, timeout));
 }
 
-JSValuePtr JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::setTimeout(ExecState* exec, const ArgList& args)
 {
     return setTimeoutOrInterval(exec, this, args, true);
 }
 
-JSValuePtr JSDOMWindow::clearTimeout(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::clearTimeout(ExecState* exec, const ArgList& args)
 {
     removeTimeout(args.at(exec, 0)->toInt32(exec));
     return jsUndefined();
 }
 
-JSValuePtr JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
 {
     return setTimeoutOrInterval(exec, this, args, false);
 }
 
-JSValuePtr JSDOMWindow::clearInterval(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::clearInterval(ExecState* exec, const ArgList& args)
 {
     removeTimeout(args.at(exec, 0)->toInt32(exec));
     return jsUndefined();
 }
 
-JSValuePtr JSDOMWindow::atob(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::atob(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    JSValuePtr v = args.at(exec, 0);
+    JSValue* v = args.at(exec, 0);
     if (v->isNull())
         return jsEmptyString(exec);
 
@@ -247,12 +247,12 @@ JSValuePtr JSDOMWindow::atob(ExecState* exec, const ArgList& args)
     return jsString(exec, String(out.data(), out.size()));
 }
 
-JSValuePtr JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    JSValuePtr v = args.at(exec, 0);
+    JSValue* v = args.at(exec, 0);
     if (v->isNull())
         return jsEmptyString(exec);
 
@@ -272,7 +272,7 @@ JSValuePtr JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
     return jsString(exec, String(out.data(), out.size()));
 }
 
-JSValuePtr JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -286,7 +286,7 @@ JSValuePtr JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -300,7 +300,7 @@ JSValuePtr JSDOMWindow::removeEventListener(ExecState* exec, const ArgList& args
     return jsUndefined();
 }
 
-DOMWindow* toDOMWindow(JSValuePtr value)
+DOMWindow* toDOMWindow(JSValue* value)
 {
     if (!value->isObject())
         return 0;
@@ -312,22 +312,22 @@ DOMWindow* toDOMWindow(JSValuePtr value)
     return 0;
 }
 
-JSValuePtr nonCachingStaticCloseFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticCloseFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionClose);
 }
 
-JSValuePtr nonCachingStaticBlurFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticBlurFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionBlur);
 }
 
-JSValuePtr nonCachingStaticFocusFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticFocusFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsDOMWindowPrototypeFunctionFocus);
 }
 
-JSValuePtr nonCachingStaticPostMessageFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticPostMessageFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 2, propertyName, jsDOMWindowPrototypeFunctionPostMessage);
 }

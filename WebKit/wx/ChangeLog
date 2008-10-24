@@ -1,3 +1,9 @@
+2008-10-24  Darin Adler  <darin@apple.com>
+
+        - finish rolling out https://bugs.webkit.org/show_bug.cgi?id=21732
+
+        * WebFrame.cpp: (wxWebFrame::RunScript): Use JSValue* instead of JSValuePtr.
+
 2008-10-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

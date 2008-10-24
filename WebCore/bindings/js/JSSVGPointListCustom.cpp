@@ -33,7 +33,7 @@ namespace WebCore {
 typedef SVGPODListItem<FloatPoint> PODListItem;
 typedef SVGList<RefPtr<PODListItem> > SVGPointListBase;
 
-static JSValuePtr finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGPointList* list, PassRefPtr<PODListItem > item)
+static JSValue* finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGPointList* list, PassRefPtr<PODListItem > item)
 {
     if (ec) {
         setDOMException(exec, ec);
@@ -42,7 +42,7 @@ static JSValuePtr finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* c
     return toJS(exec, JSSVGPODTypeWrapperCreatorForList<FloatPoint>::create(item.get(), list->associatedAttributeName()).get(), context);
 }
 
-static JSValuePtr finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGPointList* list, PassRefPtr<PODListItem > item)
+static JSValue* finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGPointList* list, PassRefPtr<PODListItem > item)
 {
     if (ec) {
         setDOMException(exec, ec);
@@ -53,7 +53,7 @@ static JSValuePtr finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* c
     return toJS(exec, JSSVGPODTypeWrapperCreatorForList<FloatPoint>::create(item.get(), attributeName).get(), context);
 }
 
-static JSValuePtr finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGPointList* list, PassRefPtr<PODListItem> item)
+static JSValue* finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGPointList* list, PassRefPtr<PODListItem> item)
 {
     if (ec) {
         setDOMException(exec, ec);
@@ -63,7 +63,7 @@ static JSValuePtr finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec,
     return toJS(exec, JSSVGStaticPODTypeWrapper<FloatPoint>::create(*item).get(), context);
 }
 
-JSValuePtr JSSVGPointList::clear(ExecState* exec, const ArgList&)
+JSValue* JSSVGPointList::clear(ExecState* exec, const ArgList&)
 {
     ExceptionCode ec = 0;
     impl()->clear(ec);
@@ -72,7 +72,7 @@ JSValuePtr JSSVGPointList::clear(ExecState* exec, const ArgList&)
     return jsUndefined();
 }
 
-JSValuePtr JSSVGPointList::initialize(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPointList::initialize(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     SVGPointListBase* listImp = impl();
@@ -80,7 +80,7 @@ JSValuePtr JSSVGPointList::initialize(ExecState* exec, const ArgList& args)
         listImp->initialize(PODListItem::copy(toSVGPoint(args.at(exec, 0))), ec));
 }
 
-JSValuePtr JSSVGPointList::getItem(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPointList::getItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 0)->toUInt32(exec, indexOk);
@@ -95,7 +95,7 @@ JSValuePtr JSSVGPointList::getItem(ExecState* exec, const ArgList& args)
         listImp->getItem(index, ec));
 }
 
-JSValuePtr JSSVGPointList::insertItemBefore(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPointList::insertItemBefore(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 1)->toUInt32(exec, indexOk);
@@ -110,7 +110,7 @@ JSValuePtr JSSVGPointList::insertItemBefore(ExecState* exec, const ArgList& args
         listImp->insertItemBefore(PODListItem::copy(toSVGPoint(args.at(exec, 0))), index, ec));
 }
 
-JSValuePtr JSSVGPointList::replaceItem(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPointList::replaceItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 1)->toInt32(exec, indexOk);
@@ -125,7 +125,7 @@ JSValuePtr JSSVGPointList::replaceItem(ExecState* exec, const ArgList& args)
         listImp->replaceItem(PODListItem::copy(toSVGPoint(args.at(exec, 0))), index, ec));
 }
 
-JSValuePtr JSSVGPointList::removeItem(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPointList::removeItem(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     unsigned index = args.at(exec, 0)->toInt32(exec, indexOk);
@@ -140,7 +140,7 @@ JSValuePtr JSSVGPointList::removeItem(ExecState* exec, const ArgList& args)
         listImp->removeItem(index, ec));
 }
 
-JSValuePtr JSSVGPointList::appendItem(ExecState* exec, const ArgList& args)
+JSValue* JSSVGPointList::appendItem(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     SVGPointListBase* listImp = impl();

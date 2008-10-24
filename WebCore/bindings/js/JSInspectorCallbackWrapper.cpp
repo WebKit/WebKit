@@ -52,7 +52,7 @@ static StructureID* leakInspectorCallbackWrapperStructure()
     return structure;
 }
 
-JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr unwrappedValue)
+JSValue* JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValue* unwrappedValue)
 {
     if (!unwrappedValue->isObject())
         return unwrappedValue;
@@ -65,7 +65,7 @@ JSValuePtr JSInspectorCallbackWrapper::wrap(ExecState* unwrappedExec, JSValuePtr
     if (JSInspectorCallbackWrapper* wrapper = wrappers().get(unwrappedObject))
         return wrapper;
 
-    JSValuePtr prototype = unwrappedObject->prototype();
+    JSValue* prototype = unwrappedObject->prototype();
     ASSERT(prototype->isNull() || prototype->isObject());
 
     if (prototype->isNull()) {
@@ -87,7 +87,7 @@ JSInspectorCallbackWrapper::~JSInspectorCallbackWrapper()
     wrappers().remove(unwrappedObject());
 }
 
-JSValuePtr JSInspectorCallbackWrapper::prepareIncomingValue(ExecState* unwrappedExec, JSValuePtr unwrappedValue) const
+JSValue* JSInspectorCallbackWrapper::prepareIncomingValue(ExecState* unwrappedExec, JSValue* unwrappedValue) const
 {
     if (JSQuarantinedObjectWrapper* wrapper = asWrapper(unwrappedValue)) {
         // The only time a wrapper should be passed into a JSInspectorCallbackWrapper is when a client-side storage callback

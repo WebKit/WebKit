@@ -48,7 +48,7 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
     return reinterpret_cast<JSC::ExecState*>(c);
 }
 
-inline JSC::JSValuePtr toJS(JSValueRef v)
+inline JSC::JSValue* toJS(JSValueRef v)
 {
     return reinterpret_cast<JSC::JSValue*>(const_cast<OpaqueJSValue*>(v));
 }
@@ -68,12 +68,12 @@ inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
     return reinterpret_cast<JSC::JSGlobalData*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
-inline JSValueRef toRef(JSC::JSValuePtr v)
+inline JSValueRef toRef(JSC::JSValue* v)
 {
     return reinterpret_cast<JSValueRef>(v);
 }
 
-inline JSValueRef* toRef(JSC::JSValuePtr* v)
+inline JSValueRef* toRef(JSC::JSValue** v)
 {
     return reinterpret_cast<JSValueRef*>(const_cast<const JSC::JSValue**>(v));
 }

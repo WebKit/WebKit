@@ -1,3 +1,18 @@
+2008-10-24  Darin Adler  <darin@apple.com>
+
+        - finish rolling out https://bugs.webkit.org/show_bug.cgi?id=21732
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame _convertValueToObjcValue:]):
+        (-[WebScriptCallFrame exception]):
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+        Use JSValue* instead of JSValuePtr.
+
 2008-10-23  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

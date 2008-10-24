@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-JSObject* construct(ExecState* exec, JSValuePtr object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
 {
     if (constructType == ConstructTypeHost)
         return constructData.native.function(exec, asObject(object), args);

@@ -36,7 +36,7 @@ namespace WebCore {
 
 typedef Vector<RefPtr<JSC::Profile> > ProfilesArray;
 
-JSValuePtr JSConsole::profiles(ExecState* exec) const
+JSValue* JSConsole::profiles(ExecState* exec) const
 {
     const ProfilesArray& profiles = impl()->profiles();
     ArgList list;
@@ -48,55 +48,55 @@ JSValuePtr JSConsole::profiles(ExecState* exec) const
     return constructArray(exec, list);
 }
 
-JSValuePtr JSConsole::debug(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::debug(ExecState* exec, const ArgList& arguments)
 {
     impl()->debug(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::error(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::error(ExecState* exec, const ArgList& arguments)
 {
     impl()->error(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::info(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::info(ExecState* exec, const ArgList& arguments)
 {
     impl()->info(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::log(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::log(ExecState* exec, const ArgList& arguments)
 {
     impl()->log(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::warn(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::warn(ExecState* exec, const ArgList& arguments)
 {
     impl()->warn(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::dir(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::dir(ExecState* exec, const ArgList& arguments)
 {
     impl()->dir(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::dirxml(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::dirxml(ExecState* exec, const ArgList& arguments)
 {
     impl()->dirxml(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::trace(ExecState* exec, const ArgList&)
+JSValue* JSConsole::trace(ExecState* exec, const ArgList&)
 {
     impl()->trace(exec);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::assertCondition(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::assertCondition(ExecState* exec, const ArgList& arguments)
 {
     ArgList messageParameters;
     arguments.getSlice(1, messageParameters);
@@ -105,31 +105,31 @@ JSValuePtr JSConsole::assertCondition(ExecState* exec, const ArgList& arguments)
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::count(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::count(ExecState* exec, const ArgList& arguments)
 {
     impl()->count(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::timeEnd(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::timeEnd(ExecState* exec, const ArgList& arguments)
 {
     impl()->timeEnd(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::profile(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::profile(ExecState* exec, const ArgList& arguments)
 {
     impl()->profile(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::profileEnd(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::profileEnd(ExecState* exec, const ArgList& arguments)
 {
     impl()->profileEnd(exec, arguments);
     return jsUndefined();
 }
 
-JSValuePtr JSConsole::group(ExecState* exec, const ArgList& arguments)
+JSValue* JSConsole::group(ExecState* exec, const ArgList& arguments)
 {
     impl()->group(exec, arguments);
     return jsUndefined();

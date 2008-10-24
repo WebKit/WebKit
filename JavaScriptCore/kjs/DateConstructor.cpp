@@ -47,9 +47,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
 
-static JSValuePtr dateParse(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-static JSValuePtr dateNow(ExecState*, JSObject*, JSValuePtr, const ArgList&);
-static JSValuePtr dateUTC(ExecState*, JSObject*, JSValuePtr, const ArgList&);
+static JSValue* dateParse(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* dateNow(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* dateUTC(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 DateConstructor::DateConstructor(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure, DatePrototype* datePrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, datePrototype->classInfo()->className))
@@ -76,7 +76,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         if (args.at(exec, 0)->isObject(&DateInstance::info))
             value = asDateInstance(args.at(exec, 0))->internalNumber();
         else {
-            JSValuePtr primitive = args.at(exec, 0)->toPrimitive(exec);
+            JSValue* primitive = args.at(exec, 0)->toPrimitive(exec);
             if (primitive->isString())
                 value = parseDate(primitive->getString());
             else
@@ -123,7 +123,7 @@ ConstructType DateConstructor::getConstructData(ConstructData& constructData)
 }
 
 // ECMA 15.9.2
-static JSValuePtr callDate(ExecState* exec, JSObject*, JSValuePtr, const ArgList&)
+static JSValue* callDate(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
     time_t localTime = time(0);
     tm localTM;
@@ -138,17 +138,17 @@ CallType DateConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-static JSValuePtr dateParse(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
+static JSValue* dateParse(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     return jsNumber(exec, parseDate(args.at(exec, 0)->toString(exec)));
 }
 
-static JSValuePtr dateNow(ExecState* exec, JSObject*, JSValuePtr, const ArgList&)
+static JSValue* dateNow(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
     return jsNumber(exec, getCurrentUTCTime());
 }
 
-static JSValuePtr dateUTC(ExecState* exec, JSObject*, JSValuePtr, const ArgList& args)
+static JSValue* dateUTC(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     int n = args.size();
     if (isnan(args.at(exec, 0)->toNumber(exec))

@@ -35,10 +35,10 @@ inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
     return static_cast<const JSDOMWindow*>(globalObject);
 }
 
-JSC::JSValuePtr nonCachingStaticCloseFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-JSC::JSValuePtr nonCachingStaticBlurFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-JSC::JSValuePtr nonCachingStaticFocusFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-JSC::JSValuePtr nonCachingStaticPostMessageFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticCloseFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticBlurFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticFocusFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+JSC::JSValue* nonCachingStaticPostMessageFunctionGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
 ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
 {
@@ -123,7 +123,7 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
     return false;
 }
 
-inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValuePtr value, JSC::PutPropertySlot& slot)
+inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
 {
     if (!impl()->frame())
         return true;

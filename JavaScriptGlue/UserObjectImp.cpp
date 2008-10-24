@@ -56,9 +56,9 @@ CallType UserObjectImp::getCallData(CallData& callData)
     return fJSUserObject ? fJSUserObject->getCallData(callData) : CallTypeNone;
 }
 
-JSValuePtr UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args)
+JSValue* UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args)
 {
-    JSValuePtr result = jsUndefined();
+    JSValue* result = jsUndefined();
     JSUserObject* jsThisObj = KJSValueToJSObject(thisObj, exec);
     if (jsThisObj) {
         CFIndex argCount = args.size();
@@ -112,7 +112,7 @@ void UserObjectImp::getPropertyNames(ExecState *exec, PropertyNameArray& propert
     JSObject::getPropertyNames(exec, propertyNames);
 }
 
-JSValuePtr  UserObjectImp::userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot& slot)
+JSValue*  UserObjectImp::userObjectGetter(ExecState*, const Identifier& propertyName, const PropertySlot& slot)
 {
     UserObjectImp *thisObj = static_cast<UserObjectImp *>(asObject(slot.slotBase()));
     // getOwnPropertySlot should have guarded against a null fJSUserObject.
@@ -121,7 +121,7 @@ JSValuePtr  UserObjectImp::userObjectGetter(ExecState*, const Identifier& proper
     CFStringRef cfPropName = IdentifierToCFString(propertyName);
     JSUserObject *jsResult = thisObj->fJSUserObject->CopyProperty(cfPropName);
     ReleaseCFType(cfPropName);
-    JSValuePtr result = JSObjectKJSValue(jsResult);
+    JSValue* result = JSObjectKJSValue(jsResult);
     jsResult->Release();
 
     return result;
@@ -140,7 +140,7 @@ bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& proper
         jsResult->Release();
         return true;
     } else {
-        JSValuePtr kjsValue = toPrimitive(exec);
+        JSValue* kjsValue = toPrimitive(exec);
         if (!kjsValue->isUndefinedOrNull()) {
             JSObject *kjsObject = kjsValue->toObject(exec);
             if (kjsObject->getPropertySlot(exec, propertyName, slot))
@@ -150,7 +150,7 @@ bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& proper
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void UserObjectImp::put(ExecState *exec, const Identifier &propertyName, JSValuePtr value, int attr)
+void UserObjectImp::put(ExecState *exec, const Identifier &propertyName, JSValue* value, int attr)
 {
     if (!fJSUserObject)
         return;
@@ -169,9 +169,9 @@ JSUserObject* UserObjectImp::GetJSUserObject() const
     return fJSUserObject;
 }
 
-JSValuePtr UserObjectImp::toPrimitive(ExecState *exec, JSType) const
+JSValue* UserObjectImp::toPrimitive(ExecState *exec, JSType) const
 {
-    JSValuePtr result = jsUndefined();
+    JSValue* result = jsUndefined();
     JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);
     CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
     if (cfValue) {

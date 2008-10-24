@@ -49,28 +49,28 @@ namespace JSC {
             gcUnprotect(val);
     }
     
-    inline void gcProtect(JSValuePtr value)
+    inline void gcProtect(JSValue* value)
     {
         if (JSImmediate::isImmediate(value))
             return;
         gcProtect(asCell(value));
     }
 
-    inline void gcUnprotect(JSValuePtr value)
+    inline void gcUnprotect(JSValue* value)
     {
         if (JSImmediate::isImmediate(value))
             return;
         gcUnprotect(asCell(value));
     }
 
-    inline void gcProtectNullTolerant(JSValuePtr value)
+    inline void gcProtectNullTolerant(JSValue* value)
     {
         if (!value || JSImmediate::isImmediate(value))
             return;
         gcProtect(asCell(value));
     }
 
-    inline void gcUnprotectNullTolerant(JSValuePtr value)
+    inline void gcUnprotectNullTolerant(JSValue* value)
     {
         if (!value || JSImmediate::isImmediate(value))
             return;

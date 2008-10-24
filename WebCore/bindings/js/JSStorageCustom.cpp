@@ -41,7 +41,7 @@ bool JSStorage::canGetItemsForName(ExecState*, Storage* impl, const Identifier& 
     return impl->contains(propertyName);
 }
 
-JSValuePtr JSStorage::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSStorage::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSStorage* thisObj = static_cast<JSStorage*>(asObject(slot.slotBase()));
     return jsStringOrNull(exec, thisObj->impl()->getItem(propertyName));
@@ -56,7 +56,7 @@ bool JSStorage::deleteProperty(ExecState* exec, const Identifier& propertyName)
     if (getStaticValueSlot<JSStorage, Base>(exec, s_info.propHashTable(exec), this, propertyName, slot))
         return false;
         
-    JSValuePtr prototype = this->prototype();
+    JSValue* prototype = this->prototype();
     if (prototype->isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
 
@@ -74,7 +74,7 @@ bool JSStorage::customGetPropertyNames(ExecState* exec, PropertyNameArray& prope
     return false;
 }
 
-bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot&)
+bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot&)
 {
     // Only perform the custom put if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
@@ -83,7 +83,7 @@ bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSVal
     if (getStaticValueSlot<JSStorage, Base>(exec, s_info.propHashTable(exec), this, propertyName, slot))
         return false;
         
-    JSValuePtr prototype = this->prototype();
+    JSValue* prototype = this->prototype();
     if (prototype->isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
     

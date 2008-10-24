@@ -37,17 +37,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr nonCachingStaticBackFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticBackFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsHistoryPrototypeFunctionBack);
 }
 
-JSValuePtr nonCachingStaticForwardFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticForwardFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsHistoryPrototypeFunctionForward);
 }
 
-JSValuePtr nonCachingStaticGoFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticGoFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 1, propertyName, jsHistoryPrototypeFunctionGo);
 }
@@ -92,7 +92,7 @@ bool JSHistory::customGetOwnPropertySlot(ExecState* exec, const Identifier& prop
     return true;
 }
 
-bool JSHistory::customPut(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot&)
+bool JSHistory::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot&)
 {
     // Only allow putting by frames in the same origin.
     if (!allowsAccessFromFrame(exec, impl()->frame()))

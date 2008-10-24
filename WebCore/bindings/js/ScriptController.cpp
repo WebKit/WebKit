@@ -88,7 +88,7 @@ ScriptController::~ScriptController()
     disconnectPlatformScriptObjects();
 }
 
-JSValuePtr ScriptController::evaluate(const String& sourceURL, int baseLine, const String& str) 
+JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const String& str) 
 {
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occured or the type couldn't be converted.
@@ -290,7 +290,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
     // Create a JSObject bound to this element
     JSLock lock(false);
     ExecState* exec = globalObject()->globalExec();
-    JSValuePtr jsElementValue = toJS(exec, plugin);
+    JSValue* jsElementValue = toJS(exec, plugin);
     if (!jsElementValue || !jsElementValue->isObject())
         return _NPN_CreateNoScriptObject();
 

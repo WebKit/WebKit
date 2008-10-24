@@ -172,7 +172,7 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
 {
     wxString returnValue = wxEmptyString;
     if (m_impl->frame) {
-        JSC::JSValuePtr result = m_impl->frame->loader()->executeScript(javascript, true);
+        JSC::JSValue* result = m_impl->frame->loader()->executeScript(javascript, true);
         if (result)
             returnValue = wxString(result->toString(m_impl->frame->script()->globalObject()->globalExec()).UTF8String().c_str(), wxConvUTF8);        
     }

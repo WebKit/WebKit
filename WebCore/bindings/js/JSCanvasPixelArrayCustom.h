@@ -31,7 +31,7 @@ using namespace JSC;
 
 namespace WebCore {
     
-    inline JSValuePtr JSCanvasPixelArray::getByIndex(ExecState* exec, unsigned index)
+    inline JSValue* JSCanvasPixelArray::getByIndex(ExecState* exec, unsigned index)
     {
         unsigned char result;
         if (!impl()->get(index, result))
@@ -39,7 +39,7 @@ namespace WebCore {
         return JSImmediate::from(result);
     }
     
-    inline void JSCanvasPixelArray::indexSetter(ExecState* exec, unsigned index, JSValuePtr value)
+    inline void JSCanvasPixelArray::indexSetter(ExecState* exec, unsigned index, JSValue* value)
     {
         double pixelValue = value->toNumber(exec);
         if (exec->hadException())

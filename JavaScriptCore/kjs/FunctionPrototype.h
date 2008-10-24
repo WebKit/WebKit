@@ -30,7 +30,7 @@ namespace JSC {
         FunctionPrototype(ExecState*, PassRefPtr<StructureID>);
         void addFunctionProperties(ExecState*, StructureID* prototypeFunctionStructure);
 
-        static PassRefPtr<StructureID> createStructureID(JSValuePtr proto)
+        static PassRefPtr<StructureID> createStructureID(JSValue* proto)
         {
             return StructureID::create(proto, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot));
         }

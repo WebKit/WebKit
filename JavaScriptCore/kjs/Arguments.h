@@ -73,7 +73,7 @@ namespace JSC {
             d->registers = &activation->registerAt(0);
         }
 
-        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype) 
+        static PassRefPtr<StructureID> createStructureID(JSValue* prototype) 
         { 
             return StructureID::create(prototype, TypeInfo(ObjectType)); 
         }
@@ -82,8 +82,8 @@ namespace JSC {
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
-        virtual void put(ExecState*, unsigned propertyName, JSValuePtr, PutPropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
+        virtual void put(ExecState*, unsigned propertyName, JSValue*, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
@@ -94,9 +94,9 @@ namespace JSC {
         OwnPtr<ArgumentsData> d;
     };
 
-    Arguments* asArguments(JSValuePtr);
+    Arguments* asArguments(JSValue*);
 
-    inline Arguments* asArguments(JSValuePtr value)
+    inline Arguments* asArguments(JSValue* value)
     {
         ASSERT(asObject(value)->inherits(&Arguments::info));
         return static_cast<Arguments*>(asObject(value));

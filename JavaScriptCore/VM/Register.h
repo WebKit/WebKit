@@ -49,10 +49,10 @@ namespace JSC {
     class Register {
     public:
         Register();
-        Register(JSValuePtr);
+        Register(JSValue*);
 
-        JSValuePtr jsValue(CallFrame*) const;
-        JSValuePtr getJSValue() const;
+        JSValue* jsValue(CallFrame*) const;
+        JSValue* getJSValue() const;
 
         bool marked() const;
         void mark();
@@ -139,22 +139,22 @@ namespace JSC {
 #endif
     }
 
-    ALWAYS_INLINE Register::Register(JSValuePtr v)
+    ALWAYS_INLINE Register::Register(JSValue* v)
     {
         SET_TYPE(ValueType);
         u.value = v;
     }
 
     // This function is scaffolding for legacy clients. It will eventually go away.
-    ALWAYS_INLINE JSValuePtr Register::jsValue(CallFrame*) const
+    ALWAYS_INLINE JSValue* Register::jsValue(CallFrame*) const
     {
-        // Once registers hold doubles, this function will allocate a JSValuePtr
+        // Once registers hold doubles, this function will allocate a JSValue*
         // if the register doesn't hold one already. 
         ASSERT_TYPE(ValueType);
         return u.value;
     }
     
-    ALWAYS_INLINE JSValuePtr Register::getJSValue() const
+    ALWAYS_INLINE JSValue* Register::getJSValue() const
     {
         ASSERT_TYPE(JSValueType);
         return u.value;

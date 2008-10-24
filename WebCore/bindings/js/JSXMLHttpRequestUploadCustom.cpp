@@ -77,7 +77,7 @@ void JSXMLHttpRequestUpload::mark()
     }
 }
 
-JSValuePtr JSXMLHttpRequestUpload::addEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequestUpload::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -89,7 +89,7 @@ JSValuePtr JSXMLHttpRequestUpload::addEventListener(ExecState* exec, const ArgLi
     return jsUndefined();
 }
 
-JSValuePtr JSXMLHttpRequestUpload::removeEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSXMLHttpRequestUpload::removeEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)

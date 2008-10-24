@@ -51,7 +51,7 @@ bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, cons
     return atomicPropertyName && (document->hasNamedItem(atomicPropertyName) || document->hasExtraNamedItem(atomicPropertyName));
 }
 
-JSValuePtr JSHTMLDocument::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* JSHTMLDocument::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLDocument* thisObj = static_cast<JSHTMLDocument*>(asObject(slot.slotBase()));
     HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
@@ -78,16 +78,16 @@ JSValuePtr JSHTMLDocument::nameGetter(ExecState* exec, const Identifier& propert
 
 // Custom attributes
 
-JSValuePtr JSHTMLDocument::all(ExecState* exec) const
+JSValue* JSHTMLDocument::all(ExecState* exec) const
 {
     // If "all" has been overwritten, return the overwritten value
-    if (JSValuePtr v = getDirect(Identifier(exec, "all")))
+    if (JSValue* v = getDirect(Identifier(exec, "all")))
         return v;
 
     return toJS(exec, static_cast<HTMLDocument*>(impl())->all().get());
 }
 
-void JSHTMLDocument::setAll(ExecState* exec, JSValuePtr value)
+void JSHTMLDocument::setAll(ExecState* exec, JSValue* value)
 {
     // Add "all" to the property map.
     putDirect(Identifier(exec, "all"), value);
@@ -95,7 +95,7 @@ void JSHTMLDocument::setAll(ExecState* exec, JSValuePtr value)
 
 // Custom functions
 
-JSValuePtr JSHTMLDocument::open(ExecState* exec, const ArgList& args)
+JSValue* JSHTMLDocument::open(ExecState* exec, const ArgList& args)
 {
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (args.size() > 2) {
@@ -103,7 +103,7 @@ JSValuePtr JSHTMLDocument::open(ExecState* exec, const ArgList& args)
         if (frame) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame);
             if (wrapper) {
-                JSValuePtr function = wrapper->get(exec, Identifier(exec, "open"));
+                JSValue* function = wrapper->get(exec, Identifier(exec, "open"));
                 CallData callData;
                 CallType callType = function->getCallData(callData);
                 if (callType == CallTypeNone)
@@ -138,14 +138,14 @@ static String writeHelper(ExecState* exec, const ArgList& args)
     return String::adopt(result);
 }
 
-JSValuePtr JSHTMLDocument::write(ExecState* exec, const ArgList& args)
+JSValue* JSHTMLDocument::write(ExecState* exec, const ArgList& args)
 {
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
     static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args), activeDocument);
     return jsUndefined();
 }
 
-JSValuePtr JSHTMLDocument::writeln(ExecState* exec, const ArgList& args)
+JSValue* JSHTMLDocument::writeln(ExecState* exec, const ArgList& args)
 {
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
     static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args) + "\n", activeDocument);

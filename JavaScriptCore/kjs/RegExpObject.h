@@ -37,16 +37,16 @@ namespace JSC {
         void setLastIndex(double lastIndex) { d->lastIndex = lastIndex; }
         double lastIndex() const { return d->lastIndex; }
 
-        JSValuePtr test(ExecState*, const ArgList&);
-        JSValuePtr exec(ExecState*, const ArgList&);
+        JSValue* test(ExecState*, const ArgList&);
+        JSValue* exec(ExecState*, const ArgList&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValuePtr, PutPropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
-        static PassRefPtr<StructureID> createStructureID(JSValuePtr prototype)
+        static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
         {
             return StructureID::create(prototype, TypeInfo(ObjectType));
         }
@@ -70,9 +70,9 @@ namespace JSC {
         OwnPtr<RegExpObjectData> d;
     };
 
-    RegExpObject* asRegExpObject(JSValuePtr);
+    RegExpObject* asRegExpObject(JSValue*);
 
-    inline RegExpObject* asRegExpObject(JSValuePtr value)
+    inline RegExpObject* asRegExpObject(JSValue* value)
     {
         ASSERT(asObject(value)->inherits(&RegExpObject::info));
         return static_cast<RegExpObject*>(asObject(value));

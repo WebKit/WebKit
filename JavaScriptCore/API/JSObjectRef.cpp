@@ -103,7 +103,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
     exec->globalData().heap.registerThread();
     JSLock lock(exec);
 
-    JSValuePtr jsPrototype = jsClass 
+    JSValue* jsPrototype = jsClass 
         ? jsClass->prototype(exec)
         : exec->lexicalGlobalObject()->objectPrototype();
     
@@ -233,7 +233,7 @@ JSValueRef JSObjectGetPrototype(JSContextRef, JSObjectRef object)
 void JSObjectSetPrototype(JSContextRef, JSObjectRef object, JSValueRef value)
 {
     JSObject* jsObject = toJS(object);
-    JSValuePtr jsValue = toJS(value);
+    JSValue* jsValue = toJS(value);
 
     jsObject->setPrototype(jsValue->isObject() ? jsValue : jsNull());
 }
@@ -257,7 +257,7 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 
     JSObject* jsObject = toJS(object);
 
-    JSValuePtr jsValue = jsObject->get(exec, propertyName->identifier(&exec->globalData()));
+    JSValue* jsValue = jsObject->get(exec, propertyName->identifier(&exec->globalData()));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -274,7 +274,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
     JSObject* jsObject = toJS(object);
     Identifier name(propertyName->identifier(&exec->globalData()));
-    JSValuePtr jsValue = toJS(value);
+    JSValue* jsValue = toJS(value);
 
     if (attributes && !jsObject->hasProperty(exec, name))
         jsObject->putWithAttributes(exec, name, jsValue, attributes);
@@ -298,7 +298,7 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 
     JSObject* jsObject = toJS(object);
 
-    JSValuePtr jsValue = jsObject->get(exec, propertyIndex);
+    JSValue* jsValue = jsObject->get(exec, propertyIndex);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
@@ -315,7 +315,7 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
     JSLock lock(exec);
 
     JSObject* jsObject = toJS(object);
-    JSValuePtr jsValue = toJS(value);
+    JSValue* jsValue = toJS(value);
     
     jsObject->put(exec, propertyIndex, jsValue);
     if (exec->hadException()) {

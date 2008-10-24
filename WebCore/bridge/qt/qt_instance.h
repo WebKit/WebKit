@@ -43,20 +43,20 @@ public:
     virtual void begin();
     virtual void end();
 
-    virtual JSValuePtr valueOf(ExecState*) const;
-    virtual JSValuePtr defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValue* valueOf(ExecState*) const;
+    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
 
     virtual void mark(); // This isn't inherited
 
-    virtual JSValuePtr invokeMethod(ExecState*, const MethodList&, const ArgList&);
+    virtual JSValue* invokeMethod(ExecState*, const MethodList&, const ArgList&);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual BindingLanguage getBindingLanguage() const { return QtLanguage; }
 
-    JSValuePtr stringValue(ExecState* exec) const;
-    JSValuePtr numberValue(ExecState* exec) const;
-    JSValuePtr booleanValue() const;
+    JSValue* stringValue(ExecState* exec) const;
+    JSValue* numberValue(ExecState* exec) const;
+    JSValue* booleanValue() const;
 
     QObject* getObject() const { return m_object; }
 

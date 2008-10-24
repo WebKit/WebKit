@@ -65,7 +65,7 @@ void JSMessagePort::mark()
     }
 }
 
-JSValuePtr JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
+JSValue* JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
 {
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
     const UString& message = args.at(exec, 0)->toString(exec);
@@ -73,7 +73,7 @@ JSValuePtr JSMessagePort::startConversation(ExecState* exec, const ArgList& args
     return toJS(exec, impl()->startConversation(window->document(), message).get());
 }
 
-JSValuePtr JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -85,7 +85,7 @@ JSValuePtr JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
+JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -98,7 +98,7 @@ JSValuePtr JSMessagePort::removeEventListener(ExecState* exec, const ArgList& ar
     
 }
 
-void JSMessagePort::setOnmessage(ExecState* exec, JSValuePtr value)
+void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -106,7 +106,7 @@ void JSMessagePort::setOnmessage(ExecState* exec, JSValuePtr value)
     impl()->setOnmessage(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value));
 }
 
-JSValuePtr JSMessagePort::onmessage(ExecState*) const
+JSValue* JSMessagePort::onmessage(ExecState*) const
 {
     if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onmessage()))
         if (JSObject* listenerObj = listener->listenerObj())
@@ -114,7 +114,7 @@ JSValuePtr JSMessagePort::onmessage(ExecState*) const
     return jsNull();
 }
 
-void JSMessagePort::setOnclose(ExecState* exec, JSValuePtr value)
+void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->associatedFrame();
     if (!frame)
@@ -122,7 +122,7 @@ void JSMessagePort::setOnclose(ExecState* exec, JSValuePtr value)
     impl()->setOnclose(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value));
 }
 
-JSValuePtr JSMessagePort::onclose(ExecState*) const
+JSValue* JSMessagePort::onclose(ExecState*) const
 {
     if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onclose()))
         if (JSObject* listenerObj = listener->listenerObj())

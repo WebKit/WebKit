@@ -40,7 +40,7 @@ namespace WebCore {
         {
         }
 
-        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr proto) 
+        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* proto) 
         { 
             return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::MasqueradesAsUndefined)); 
         }

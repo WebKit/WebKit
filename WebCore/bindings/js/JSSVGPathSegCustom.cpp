@@ -59,7 +59,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr toJS(ExecState* exec, SVGPathSeg* object, SVGElement* context)
+JSValue* toJS(ExecState* exec, SVGPathSeg* object, SVGElement* context)
 {
     if (!object)
         return jsNull();

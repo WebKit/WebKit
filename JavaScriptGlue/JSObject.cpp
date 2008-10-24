@@ -73,7 +73,7 @@ void JSUserObject::SetProperty(CFStringRef propertyName, JSUserObject* value)
 
 }
 
-static JSValuePtr  nativeCallFunction(ExecState* exec, JSObject* functionObject, JSValuePtr  thisValue, const ArgList& args)
+static JSValue*  nativeCallFunction(ExecState* exec, JSObject* functionObject, JSValue*  thisValue, const ArgList& args)
 {
     return static_cast<UserObjectImp*>(functionObject)->callAsFunction(exec, asObject(thisValue), args);
 }

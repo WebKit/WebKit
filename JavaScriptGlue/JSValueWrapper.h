@@ -35,12 +35,12 @@
 
 class JSValueWrapper {
 public:
-    JSValueWrapper(JSValuePtr);
+    JSValueWrapper(JSValue*);
     virtual ~JSValueWrapper();
 
     static void GetJSObectCallBacks(JSObjectCallBacks& callBacks);
 
-    JSValuePtr GetValue();
+    JSValue* GetValue();
 
 private:
     ProtectedPtr<JSValue> fValue;

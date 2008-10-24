@@ -72,7 +72,7 @@ void JSObject::mark()
 
     unsigned storageSize = m_structureID->propertyMap().storageSize();
     for (unsigned i = 0; i < storageSize; ++i) {
-        JSValuePtr v = m_propertyStorage[i];
+        JSValue* v = m_propertyStorage[i];
         if (!v->marked())
             v->mark();
     }
@@ -99,7 +99,7 @@ static void throwSetterError(ExecState* exec)
 }
 
 // ECMA 8.6.2.2
-void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
@@ -124,7 +124,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValuePtr v
     }
     
     // Check if there are any setters or getters in the prototype chain
-    JSValuePtr prototype;
+    JSValue* prototype;
     for (JSObject* obj = this; !obj->structureID()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype->isNull()) {
@@ -138,7 +138,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValuePtr v
         return;
 
     for (JSObject* obj = this; ; obj = asObject(prototype)) {
-        if (JSValuePtr gs = obj->getDirect(propertyName)) {
+        if (JSValue* gs = obj->getDirect(propertyName)) {
             if (gs->isGetterSetter()) {
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
@@ -168,18 +168,18 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValuePtr v
     return;
 }
 
-void JSObject::put(ExecState* exec, unsigned propertyName, JSValuePtr value)
+void JSObject::put(ExecState* exec, unsigned propertyName, JSValue* value)
 {
     PutPropertySlot slot;
     put(exec, Identifier::from(exec, propertyName), value, slot);
 }
 
-void JSObject::putWithAttributes(ExecState*, const Identifier& propertyName, JSValuePtr value, unsigned attributes)
+void JSObject::putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
     putDirect(propertyName, value, attributes);
 }
 
-void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValuePtr value, unsigned attributes)
+void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue* value, unsigned attributes)
 {
     putWithAttributes(exec, Identifier::from(exec, propertyName), value, attributes);
 }
@@ -227,9 +227,9 @@ bool JSObject::deleteProperty(ExecState* exec, unsigned propertyName)
     return deleteProperty(exec, Identifier::from(exec, propertyName));
 }
 
-static ALWAYS_INLINE JSValuePtr callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)
+static ALWAYS_INLINE JSValue* callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)
 {
-    JSValuePtr function = object->get(exec, propertyName);
+    JSValue* function = object->get(exec, propertyName);
     CallData callData;
     CallType callType = function->getCallData(callData);
     if (callType == CallTypeNone)
@@ -240,7 +240,7 @@ static ALWAYS_INLINE JSValuePtr callDefaultValueFunction(ExecState* exec, const 
     if (exec->hadException())
         return exec->exception();
 
-    JSValuePtr result = call(exec, function, callType, callData, const_cast<JSObject*>(object), exec->emptyList());
+    JSValue* result = call(exec, function, callType, callData, const_cast<JSObject*>(object), exec->emptyList());
     ASSERT(!result->isGetterSetter());
     if (exec->hadException())
         return exec->exception();
@@ -249,7 +249,7 @@ static ALWAYS_INLINE JSValuePtr callDefaultValueFunction(ExecState* exec, const 
     return result;
 }
 
-bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValuePtr& result)
+bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& result)
 {
     result = defaultValue(exec, PreferNumber);
     number = result->toNumber(exec);
@@ -257,18 +257,18 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValuePtr& r
 }
 
 // ECMA 8.6.2.6
-JSValuePtr JSObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue* JSObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
     // Must call toString first for Date objects.
     if ((hint == PreferString) || (hint != PreferNumber && prototype() == exec->lexicalGlobalObject()->datePrototype())) {
-        if (JSValuePtr value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
             return value;
-        if (JSValuePtr value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
             return value;
     } else {
-        if (JSValuePtr value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
             return value;
-        if (JSValuePtr value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
             return value;
     }
 
@@ -290,7 +290,7 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifi
 
 void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
 {
-    JSValuePtr object = getDirect(propertyName);
+    JSValue* object = getDirect(propertyName);
     if (object && object->isGetterSetter()) {
         ASSERT(m_structureID->hasGetterSetterProperties());
         asGetterSetter(object)->setGetter(getterFunction);
@@ -317,7 +317,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
 
 void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
 {
-    JSValuePtr object = getDirect(propertyName);
+    JSValue* object = getDirect(propertyName);
     if (object && object->isGetterSetter()) {
         ASSERT(m_structureID->hasGetterSetterProperties());
         asGetterSetter(object)->setSetter(setterFunction);
@@ -342,11 +342,11 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
     getterSetter->setSetter(setterFunction);
 }
 
-JSValuePtr JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
+JSValue* JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
 {
     JSObject* object = this;
     while (true) {
-        JSValuePtr value = object->getDirect(propertyName);
+        JSValue* value = object->getDirect(propertyName);
         if (value) {
             if (!value->isGetterSetter())
                 return jsUndefined();
@@ -362,11 +362,11 @@ JSValuePtr JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
     }
 }
 
-JSValuePtr JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
+JSValue* JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
 {
     JSObject* object = this;
     while (true) {
-        JSValuePtr value = object->getDirect(propertyName);
+        JSValue* value = object->getDirect(propertyName);
         if (value) {
             if (!value->isGetterSetter())
                 return jsUndefined();
@@ -382,7 +382,7 @@ JSValuePtr JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
     }
 }
 
-bool JSObject::hasInstance(ExecState* exec, JSValuePtr value, JSValuePtr proto)
+bool JSObject::hasInstance(ExecState* exec, JSValue* value, JSValue* proto)
 {
     if (!proto->isObject()) {
         throwError(exec, TypeError, "instanceof called on an object with an invalid prototype property.");
@@ -435,7 +435,7 @@ bool JSObject::toBoolean(ExecState*) const
 
 double JSObject::toNumber(ExecState* exec) const
 {
-    JSValuePtr primitive = toPrimitive(exec, PreferNumber);
+    JSValue* primitive = toPrimitive(exec, PreferNumber);
     if (exec->hadException()) // should be picked up soon in nodes.cpp
         return 0.0;
     return primitive->toNumber(exec);
@@ -443,7 +443,7 @@ double JSObject::toNumber(ExecState* exec) const
 
 UString JSObject::toString(ExecState* exec) const
 {
-    JSValuePtr primitive = toPrimitive(exec, PreferString);
+    JSValue* primitive = toPrimitive(exec, PreferString);
     if (exec->hadException())
         return "";
     return primitive->toString(exec);
@@ -493,7 +493,7 @@ void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, InternalFunct
     putDirectWithoutTransition(Identifier(exec, function->name(&exec->globalData())), function, attr);
 }
 
-NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValuePtr* location)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)
 {
     if (JSObject* getterFunction = asGetterSetter(*location)->getter())
         slot.setGetterSlot(getterFunction);

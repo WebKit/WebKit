@@ -30,18 +30,18 @@ namespace WebCore {
 
     class JSNodeFilterCondition : public NodeFilterCondition {
     public:
-        static PassRefPtr<JSNodeFilterCondition> create(JSC::JSValuePtr filter)
+        static PassRefPtr<JSNodeFilterCondition> create(JSC::JSValue* filter)
         {
             return adoptRef(new JSNodeFilterCondition(filter));
         }
 
     private:
-        JSNodeFilterCondition(JSC::JSValuePtr filter);
+        JSNodeFilterCondition(JSC::JSValue* filter);
 
         virtual short acceptNode(JSC::ExecState*, Node*) const;
         virtual void mark();
 
-        JSC::JSValuePtr m_filter;
+        JSC::JSValue* m_filter;
     };
 
 } // namespace WebCore

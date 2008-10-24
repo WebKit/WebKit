@@ -38,7 +38,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSHTMLIFrameElement::setSrc(ExecState* exec, JSValuePtr value)
+void JSHTMLIFrameElement::setSrc(ExecState* exec, JSValue* value)
 {
     HTMLIFrameElement* imp = static_cast<HTMLIFrameElement*>(impl());
 

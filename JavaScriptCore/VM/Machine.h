@@ -124,13 +124,13 @@ namespace JSC {
 
         bool isOpcode(Opcode opcode);
         
-        JSValuePtr execute(ProgramNode*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValuePtr* exception);
-        JSValuePtr execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValuePtr* exception);
-        JSValuePtr execute(EvalNode* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValuePtr* exception);
+        JSValue* execute(ProgramNode*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue** exception);
+        JSValue* execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue** exception);
+        JSValue* execute(EvalNode* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue** exception);
 
-        JSValuePtr retrieveArguments(CallFrame*, JSFunction*) const;
-        JSValuePtr retrieveCaller(CallFrame*, InternalFunction*) const;
-        void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValuePtr& function) const;
+        JSValue* retrieveArguments(CallFrame*, JSFunction*) const;
+        JSValue* retrieveCaller(CallFrame*, InternalFunction*) const;
+        void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue*& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
@@ -268,43 +268,43 @@ namespace JSC {
         // Default number of ticks before a timeout check should be done.
         static const int initialTickCountThreshold = 1024;
 
-        bool isJSArray(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
-        bool isJSString(JSValuePtr v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
+        bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
+        bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        NEVER_INLINE JSValuePtr callEval(CallFrame*, JSObject* thisObject, ScopeChainNode*, RegisterFile*, int argv, int argc, JSValuePtr& exceptionValue);
-        JSValuePtr execute(EvalNode*, CallFrame*, JSObject* thisObject, int registerOffset, ScopeChainNode*, JSValuePtr* exception);
+        NEVER_INLINE JSValue* callEval(CallFrame*, JSObject* thisObject, ScopeChainNode*, RegisterFile*, int argv, int argc, JSValue*& exceptionValue);
+        JSValue* execute(EvalNode*, CallFrame*, JSObject* thisObject, int registerOffset, ScopeChainNode*, JSValue** exception);
 
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
 
-        NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
-        NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
-        NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
+        NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue*& exceptionValue);
+        NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValue*& exceptionValue);
+        NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValue*& exceptionValue);
         NEVER_INLINE void resolveBase(CallFrame*, Instruction* vPC);
-        NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
+        NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValue*& exceptionValue);
         NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
 
-        NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValuePtr, const Instruction*&, CodeBlock*&);
-        NEVER_INLINE Instruction* throwException(CallFrame*&, JSValuePtr&, const Instruction*, bool);
-        NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValuePtr& exceptionValue);
+        NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue*, const Instruction*&, CodeBlock*&);
+        NEVER_INLINE Instruction* throwException(CallFrame*&, JSValue*&, const Instruction*, bool);
+        NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValue*& exceptionValue);
 
         static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);
 
         static CallFrame* findFunctionCallFrame(CallFrame*, InternalFunction*);
 
-        JSValuePtr privateExecute(ExecutionFlag, RegisterFile*, CallFrame*, JSValuePtr* exception);
+        JSValue* privateExecute(ExecutionFlag, RegisterFile*, CallFrame*, JSValue** exception);
 
         void dumpCallFrame(const RegisterFile*, CallFrame*);
         void dumpRegisters(const RegisterFile*, CallFrame*);
 
-        JSValuePtr checkTimeout(JSGlobalObject*);
+        JSValue* checkTimeout(JSGlobalObject*);
         void resetTimeoutCheck();
 
-        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValuePtr baseValue, const Identifier& propertyName, const PropertySlot&);
+        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
-        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValuePtr baseValue, const PutPropertySlot&);
+        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue* baseValue, const PutPropertySlot&);
         void uncachePutByID(CodeBlock*, Instruction* vPC);
         
         bool isCallOpcode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
@@ -312,8 +312,8 @@ namespace JSC {
 #if ENABLE(CTI)
         static void throwStackOverflowPreviousFrame(CallFrame*, JSGlobalData*, void*& returnAddress);
 
-        void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValuePtr baseValue, const Identifier& propertyName, const PropertySlot&);
-        void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValuePtr baseValue, const PutPropertySlot&);
+        void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
+        void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
 
         void* getCTIArrayLengthTrampoline(CallFrame*, CodeBlock*);
         void* getCTIStringLengthTrampoline(CallFrame*, CodeBlock*);

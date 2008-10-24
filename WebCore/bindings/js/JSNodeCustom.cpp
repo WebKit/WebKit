@@ -66,7 +66,7 @@ namespace WebCore {
 
 typedef int ExpectionCode;
 
-JSValuePtr JSNode::insertBefore(ExecState* exec, const ArgList& args)
+JSValue* JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->insertBefore(toNode(args.at(exec, 0)), toNode(args.at(exec, 1)), ec, true);
@@ -76,7 +76,7 @@ JSValuePtr JSNode::insertBefore(ExecState* exec, const ArgList& args)
     return jsNull();
 }
 
-JSValuePtr JSNode::replaceChild(ExecState* exec, const ArgList& args)
+JSValue* JSNode::replaceChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->replaceChild(toNode(args.at(exec, 0)), toNode(args.at(exec, 1)), ec, true);
@@ -86,7 +86,7 @@ JSValuePtr JSNode::replaceChild(ExecState* exec, const ArgList& args)
     return jsNull();
 }
 
-JSValuePtr JSNode::removeChild(ExecState* exec, const ArgList& args)
+JSValue* JSNode::removeChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->removeChild(toNode(args.at(exec, 0)), ec);
@@ -96,7 +96,7 @@ JSValuePtr JSNode::removeChild(ExecState* exec, const ArgList& args)
     return jsNull();
 }
 
-JSValuePtr JSNode::appendChild(ExecState* exec, const ArgList& args)
+JSValue* JSNode::appendChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->appendChild(toNode(args.at(exec, 0)), ec, true);
@@ -161,7 +161,7 @@ void JSNode::mark()
     ASSERT(marked());
 }
 
-static ALWAYS_INLINE JSValuePtr createWrapper(ExecState* exec, Node* node)
+static ALWAYS_INLINE JSValue* createWrapper(ExecState* exec, Node* node)
 {
     ASSERT(node);
     ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
@@ -218,7 +218,7 @@ static ALWAYS_INLINE JSValuePtr createWrapper(ExecState* exec, Node* node)
     return wrapper;    
 }
     
-JSValuePtr toJSNewlyCreated(ExecState* exec, Node* node)
+JSValue* toJSNewlyCreated(ExecState* exec, Node* node)
 {
     if (!node)
         return jsNull();
@@ -226,7 +226,7 @@ JSValuePtr toJSNewlyCreated(ExecState* exec, Node* node)
     return createWrapper(exec, node);
 }
     
-JSValuePtr toJS(ExecState* exec, Node* node)
+JSValue* toJS(ExecState* exec, Node* node)
 {
     if (!node)
         return jsNull();

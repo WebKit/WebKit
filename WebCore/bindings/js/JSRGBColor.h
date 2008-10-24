@@ -43,7 +43,7 @@ namespace WebCore {
             return exec->lexicalGlobalObject()->objectPrototype();
         }
 
-        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValuePtr prototype)
+        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* prototype)
         {
             return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType));
         }
@@ -52,7 +52,7 @@ namespace WebCore {
         unsigned m_color;
     };
 
-    JSC::JSValuePtr getJSRGBColor(JSC::ExecState*, unsigned color);
+    JSC::JSValue* getJSRGBColor(JSC::ExecState*, unsigned color);
 
 } // namespace WebCore
 

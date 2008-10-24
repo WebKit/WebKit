@@ -672,7 +672,7 @@ unsigned CodeGenerator::addConstant(const Identifier& ident)
     return result.first->second;
 }
 
-RegisterID* CodeGenerator::addConstant(JSValuePtr v)
+RegisterID* CodeGenerator::addConstant(JSValue* v)
 {
     pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_nextConstant);
     if (result.second) {
@@ -687,7 +687,7 @@ RegisterID* CodeGenerator::addConstant(JSValuePtr v)
     return &registerFor(result.first->second);
 }
 
-unsigned CodeGenerator::addUnexpectedConstant(JSValuePtr v)
+unsigned CodeGenerator::addUnexpectedConstant(JSValue* v)
 {
     int index = m_codeBlock->unexpectedConstants.size();
     m_codeBlock->unexpectedConstants.append(v);
@@ -838,7 +838,7 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double number)
     // Later we can do the extra work to handle that like the other cases.
     if (number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
         return emitLoad(dst, jsNumber(globalData(), number));
-    JSValuePtr& valueInMap = m_numberMap.add(number, noValue()).first->second;
+    JSValue*& valueInMap = m_numberMap.add(number, noValue()).first->second;
     if (!valueInMap)
         valueInMap = jsNumber(globalData(), number);
     return emitLoad(dst, valueInMap);
@@ -852,7 +852,7 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifie
     return emitLoad(dst, valueInMap);
 }
 
-RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValuePtr v)
+RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValue* v)
 {
     RegisterID* constantID = addConstant(v);
     if (dst)
@@ -862,7 +862,7 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValuePtr v)
 
 RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSCell* cell)
 {
-    JSValuePtr value = cell;
+    JSValue* value = cell;
     return emitLoad(dst, value);
 }
 
@@ -984,7 +984,7 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
     return dst;
 }
 
-RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValuePtr globalObject)
+RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValue* globalObject)
 {
     if (globalObject) {
         emitOpcode(op_get_global_var);
@@ -1001,7 +1001,7 @@ RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int i
     return dst;
 }
 
-RegisterID* CodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID* value, JSValuePtr globalObject)
+RegisterID* CodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID* value, JSValue* globalObject)
 {
     if (globalObject) {
         emitOpcode(op_put_global_var);
@@ -1496,7 +1496,7 @@ RegisterID* CodeGenerator::emitCatch(RegisterID* targetRegister, LabelID* start,
     return targetRegister;
 }
 
-RegisterID* CodeGenerator::emitNewError(RegisterID* dst, ErrorType type, JSValuePtr message)
+RegisterID* CodeGenerator::emitNewError(RegisterID* dst, ErrorType type, JSValue* message)
 {
     emitOpcode(op_new_error);
     instructions().append(dst->index());

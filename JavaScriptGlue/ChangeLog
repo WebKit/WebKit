@@ -1,3 +1,32 @@
+2008-10-24  Darin Adler  <darin@apple.com>
+
+        - finish rolling out https://bugs.webkit.org/show_bug.cgi?id=21732
+
+        * JSObject.cpp:
+        (nativeCallFunction):
+        * JSUtils.cpp:
+        (KJSValueToJSObject):
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        (KJSValueToCFType):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSValueWrapper):
+        (JSValueWrapper::GetValue):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        * JSValueWrapper.h:
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+        (UserObjectImp::userObjectGetter):
+        (UserObjectImp::getOwnPropertySlot):
+        (UserObjectImp::put):
+        (UserObjectImp::toPrimitive):
+        * UserObjectImp.h:
+        (UserObjectImp::createStructureID):
+        Use JSValue* instead of JSValuePtr.
+
 2008-10-23  Darin Adler  <darin@apple.com>
 
         - roll out https://bugs.webkit.org/show_bug.cgi?id=21732

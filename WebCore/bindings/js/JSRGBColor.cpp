@@ -28,9 +28,9 @@
 
 using namespace JSC;
 
-static JSValuePtr jsRGBColorRed(ExecState*, const Identifier&, const PropertySlot&);
-static JSValuePtr jsRGBColorGreen(ExecState*, const Identifier&, const PropertySlot&);
-static JSValuePtr jsRGBColorBlue(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue* jsRGBColorRed(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue* jsRGBColorGreen(ExecState*, const Identifier&, const PropertySlot&);
+static JSValue* jsRGBColorBlue(ExecState*, const Identifier&, const PropertySlot&);
 
 /*
 @begin JSRGBColorTable
@@ -59,7 +59,7 @@ bool JSRGBColor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return getStaticValueSlot<JSRGBColor, DOMObject>(exec, &JSRGBColorTable, this, propertyName, slot);
 }
 
-JSValuePtr getJSRGBColor(ExecState* exec, unsigned color)
+JSValue* getJSRGBColor(ExecState* exec, unsigned color)
 {
     return new (exec) JSRGBColor(exec, color);
 }
@@ -68,17 +68,17 @@ JSValuePtr getJSRGBColor(ExecState* exec, unsigned color)
 
 using namespace WebCore;
 
-JSValuePtr jsRGBColorRed(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue* jsRGBColorRed(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(asObject(slot.slotBase()))->impl() >> 16) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
 }
 
-JSValuePtr jsRGBColorGreen(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue* jsRGBColorGreen(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return toJS(exec, CSSPrimitiveValue::create((static_cast<JSRGBColor*>(asObject(slot.slotBase()))->impl() >> 8) & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
 }
 
-JSValuePtr jsRGBColorBlue(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue* jsRGBColorBlue(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return toJS(exec, CSSPrimitiveValue::create(static_cast<JSRGBColor*>(asObject(slot.slotBase()))->impl() & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
 }

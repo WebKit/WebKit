@@ -288,7 +288,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSValuePtr function = [self _imp]->get(exec, Identifier(exec, String(name)));
+    JSValue* function = [self _imp]->get(exec, Identifier(exec, String(name)));
     CallData callData;
     CallType callType = function->getCallData(callData);
     if (callType == CallTypeNone)
@@ -301,7 +301,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return nil;
 
     [self _rootObject]->globalObject()->startTimeoutCheck();
-    JSValuePtr result = call(exec, function, callType, callData, [self _imp], argList);
+    JSValue* result = call(exec, function, callType, callData, [self _imp], argList);
     [self _rootObject]->globalObject()->stopTimeoutCheck();
 
     if (exec->hadException()) {
@@ -326,7 +326,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSValuePtr result;
+    JSValue* result;
     JSLock lock(false);
     
     [self _rootObject]->globalObject()->startTimeoutCheck();
@@ -390,7 +390,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // leaving the lock permanently held
         JSLock lock(false);
         
-        JSValuePtr result = [self _imp]->get(exec, Identifier(exec, String(key)));
+        JSValue* result = [self _imp]->get(exec, Identifier(exec, String(key)));
         
         if (exec->hadException()) {
             addExceptionToConsole(exec);
@@ -456,7 +456,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock(false);
-    JSValuePtr result = [self _imp]->get(exec, index);
+    JSValue* result = [self _imp]->get(exec, index);
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -505,7 +505,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     return toRef([self _imp]);
 }
 
-+ (id)_convertValueToObjcValue:(JSValuePtr)value originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
++ (id)_convertValueToObjcValue:(JSValue*)value originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
 {
     if (value->isObject()) {
         JSObject* object = asObject(value);
@@ -513,7 +513,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         JSLock lock(false);
         
         if (object->classInfo() != &RuntimeObjectImp::s_info) {
-            JSValuePtr runtimeObject = object->get(exec, Identifier(exec, "__apple_runtime_object"));
+            JSValue* runtimeObject = object->get(exec, Identifier(exec, "__apple_runtime_object"));
             if (runtimeObject && runtimeObject->isObject())
                 object = asObject(runtimeObject);
         }

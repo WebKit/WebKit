@@ -37,17 +37,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValuePtr nonCachingStaticReplaceFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticReplaceFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 1, propertyName, jsLocationPrototypeFunctionReplace);
 }
 
-JSValuePtr nonCachingStaticReloadFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticReloadFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, jsLocationPrototypeFunctionReload);
 }
 
-JSValuePtr nonCachingStaticAssignFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* nonCachingStaticAssignFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     return new (exec) PrototypeFunction(exec, 1, propertyName, jsLocationPrototypeFunctionAssign);
 }
@@ -93,7 +93,7 @@ bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& pro
     return true;
 }
 
-bool JSLocation::customPut(ExecState* exec, const Identifier& propertyName, JSValuePtr value, PutPropertySlot& slot)
+bool JSLocation::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -142,7 +142,7 @@ static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bo
     }
 }
 
-void JSLocation::setHref(ExecState* exec, JSValuePtr value)
+void JSLocation::setHref(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -157,7 +157,7 @@ void JSLocation::setHref(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setProtocol(ExecState* exec, JSValuePtr value)
+void JSLocation::setProtocol(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -168,7 +168,7 @@ void JSLocation::setProtocol(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setHost(ExecState* exec, JSValuePtr value)
+void JSLocation::setHost(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -179,7 +179,7 @@ void JSLocation::setHost(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setHostname(ExecState* exec, JSValuePtr value)
+void JSLocation::setHostname(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -190,7 +190,7 @@ void JSLocation::setHostname(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setPort(ExecState* exec, JSValuePtr value)
+void JSLocation::setPort(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -206,7 +206,7 @@ void JSLocation::setPort(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setPathname(ExecState* exec, JSValuePtr value)
+void JSLocation::setPathname(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -217,7 +217,7 @@ void JSLocation::setPathname(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setSearch(ExecState* exec, JSValuePtr value)
+void JSLocation::setSearch(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -228,7 +228,7 @@ void JSLocation::setSearch(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-void JSLocation::setHash(ExecState* exec, JSValuePtr value)
+void JSLocation::setHash(ExecState* exec, JSValue* value)
 {
     Frame* frame = impl()->frame();
     ASSERT(frame);
@@ -245,7 +245,7 @@ void JSLocation::setHash(ExecState* exec, JSValuePtr value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-JSValuePtr JSLocation::replace(ExecState* exec, const ArgList& args)
+JSValue* JSLocation::replace(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -261,7 +261,7 @@ JSValuePtr JSLocation::replace(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSLocation::reload(ExecState* exec, const ArgList& args)
+JSValue* JSLocation::reload(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -278,7 +278,7 @@ JSValuePtr JSLocation::reload(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSLocation::assign(ExecState* exec, const ArgList& args)
+JSValue* JSLocation::assign(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -295,7 +295,7 @@ JSValuePtr JSLocation::assign(ExecState* exec, const ArgList& args)
     return jsUndefined();
 }
 
-JSValuePtr JSLocation::toString(ExecState* exec, const ArgList&)
+JSValue* JSLocation::toString(ExecState* exec, const ArgList&)
 {
     Frame* frame = impl()->frame();
     if (!frame)
