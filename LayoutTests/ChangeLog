@@ -1,3 +1,11 @@
+2008-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        Rolled out r37840.
+
+        * geolocation/geolocation-not-implemented-expected.txt: Removed.
+        * geolocation/geolocation-not-implemented.html: Removed.
+        * geolocation/geolocation-test.js: Removed.
+
 2008-10-23  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.

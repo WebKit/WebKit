@@ -27,7 +27,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "Geolocation.h"
 #include "Language.h"
 #include "MimeTypeArray.h"
 #include "NetworkStateNotifier.h"
@@ -87,10 +86,6 @@ void Navigator::disconnectFrame()
     if (m_mimeTypes) {
         m_mimeTypes->disconnectFrame();
         m_mimeTypes = 0;
-    }
-    if (m_geolocation) {
-        m_geolocation->disconnectFrame();
-        m_geolocation = 0;
     }
     m_frame = 0;
 }
@@ -202,11 +197,4 @@ bool Navigator::onLine() const
     return networkStateNotifier().onLine();
 }
 
-Geolocation* Navigator::geolocation() const
-{
-    if (!m_geolocation)
-        m_geolocation = Geolocation::create(m_frame);
-    return m_geolocation.get();
-}
-    
 } // namespace WebCore

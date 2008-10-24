@@ -1915,7 +1915,6 @@ bool FrameLoader::canCachePage()
 #if ENABLE(DATABASE)
         && !m_frame->document()->hasOpenDatabases()
 #endif
-        && !m_frame->document()->usingGeolocation()
         && m_frame->page()
         && m_frame->page()->backForwardList()->enabled()
         && m_frame->page()->backForwardList()->capacity() > 0

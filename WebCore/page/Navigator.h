@@ -27,7 +27,6 @@
 namespace WebCore {
 
     class Frame;
-    class Geolocation;
     class MimeTypeArray;
     class PluginData;
     class PluginArray;
@@ -57,16 +56,11 @@ namespace WebCore {
         bool javaEnabled() const;
 
         bool onLine() const;
-        Geolocation* geolocation() const;
-        // This is used for GC marking.
-        Geolocation* optionalGeolocation() const { return m_geolocation.get(); }
-
     private:
         Navigator(Frame*);
         Frame* m_frame;
         mutable RefPtr<PluginArray> m_plugins;
         mutable RefPtr<MimeTypeArray> m_mimeTypes;
-        mutable RefPtr<Geolocation> m_geolocation;
     };
 
 }

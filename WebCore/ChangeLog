@@ -1,3 +1,49 @@
+2008-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        Rolled out r37840 and r37841.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSCustomPositionCallback.cpp: Removed.
+        * bindings/js/JSCustomPositionCallback.h: Removed.
+        * bindings/js/JSCustomPositionErrorCallback.cpp: Removed.
+        * bindings/js/JSCustomPositionErrorCallback.h: Removed.
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::markDOMObjectWrapper):
+        * bindings/js/JSGeolocationCustom.cpp: Removed.
+        * bindings/js/JSNavigatorCustom.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePage):
+        * page/Geolocation.cpp: Removed.
+        * page/Geolocation.h: Removed.
+        * page/Geolocation.idl: Removed.
+        * page/Geoposition.cpp: Removed.
+        * page/Geoposition.h: Removed.
+        * page/Geoposition.idl: Removed.
+        * page/Navigator.cpp:
+        (WebCore::Navigator::disconnectFrame):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * page/PositionCallback.h: Removed.
+        * page/PositionCallback.idl: Removed.
+        * page/PositionError.h: Removed.
+        * page/PositionError.idl: Removed.
+        * page/PositionErrorCallback.h: Removed.
+        * page/PositionErrorCallback.idl: Removed.
+        * page/PositionOptions.h: Removed.
+        * page/PositionOptions.idl: Removed.
+        * platform/GeolocationService.cpp: Removed.
+        * platform/GeolocationService.h: Removed.
+
 2008-10-23  David Kilzer  <ddkilzer@apple.com>
 
         Attempt to fix GTK build.

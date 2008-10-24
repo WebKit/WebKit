@@ -69,7 +69,6 @@ namespace WebCore {
     void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
     void markDOMNodesForDocument(Document*);
     void markActiveObjectsForDocument(JSC::JSGlobalData&, Document*);
-    void markDOMObjectWrapper(JSC::JSGlobalData& globalData, void* object);
     void markCrossHeapDependentObjectsForDocument(JSC::JSGlobalData&, Document*);
 
     JSC::StructureID* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);

@@ -1,7 +1,0 @@
-TEST(navigator.geolocation === undefined) OK
-TEST(navigator.geolocation == null) OK
-TEST(hasGeolocationProperty == false) OK
-TEST('geolocation' in navigator == false) OK
-TEST(navigator.hasOwnProperty('geolocation') == false) OK
-END OF TEST
-

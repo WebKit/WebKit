@@ -41,6 +41,16 @@ using namespace JSC;
 
 namespace WebCore {
 
+static void markDOMObjectWrapper(JSGlobalData& globalData, void* object)
+{
+    if (!object)
+        return;
+    DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, object);
+    if (!wrapper || wrapper->marked())
+        return;
+    wrapper->mark();
+}
+
 void JSDOMWindow::mark()
 {
     Base::mark();

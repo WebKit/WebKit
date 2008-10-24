@@ -42,8 +42,6 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSCSSRuleCustom.cpp
         bindings/js/JSCSSStyleDeclarationCustom.cpp
         bindings/js/JSCSSValueCustom.cpp
-        bindings/js/JSCustomPositionCallback.cpp
-        bindings/js/JSCustomPositionErrorCallback.cpp
         bindings/js/JSCustomSQLStatementCallback.cpp
         bindings/js/JSCustomSQLStatementErrorCallback.cpp
         bindings/js/JSCustomSQLTransactionCallback.cpp
@@ -62,7 +60,6 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSEventCustom.cpp
         bindings/js/JSEventTarget.cpp
         bindings/js/JSEventTargetNodeCustom.cpp
-        bindings/js/JSGeolocationCustom.cpp
         bindings/js/JSHTMLAllCollection.cpp
         bindings/js/JSHistoryCustom.cpp
         bindings/js/JSHTMLAppletElementCustom.cpp
@@ -242,8 +239,6 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSEventTargetNode.cpp
         DerivedSources/WebCore/JSFile.cpp
         DerivedSources/WebCore/JSFileList.cpp
-        DerivedSources/WebCore/JSGeolocation.cpp
-        DerivedSources/WebCore/JSGeoposition.cpp
         DerivedSources/WebCore/JSHTMLAnchorElement.cpp
         DerivedSources/WebCore/JSHTMLAppletElement.cpp
         DerivedSources/WebCore/JSHTMLAreaElement.cpp
@@ -328,8 +323,6 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSOverflowEvent.cpp
         DerivedSources/WebCore/JSPlugin.cpp
         DerivedSources/WebCore/JSPluginArray.cpp
-        DerivedSources/WebCore/JSPositionError.cpp
-        DerivedSources/WebCore/JSPositionOptions.cpp
         DerivedSources/WebCore/JSProcessingInstruction.cpp
         DerivedSources/WebCore/JSProgressEvent.cpp
         DerivedSources/WebCore/JSRange.cpp
@@ -677,8 +670,6 @@ This file contains the list of files needed to build WebCore.
         page/Frame.cpp
         page/FrameTree.cpp
         page/FrameView.cpp
-        page/Geolocation.cpp
-        page/Geoposition.cpp
         page/History.cpp
         page/Location.cpp
         page/MouseEventWithHitTestResults.cpp
@@ -702,7 +693,6 @@ This file contains the list of files needed to build WebCore.
         platform/DeprecatedValueListImpl.cpp
         platform/DragImage.cpp
         platform/FileChooser.cpp
-        platform/GeolocationService.cpp
         platform/graphics/Font.cpp
         platform/graphics/FontCache.cpp
         platform/graphics/FontData.cpp
