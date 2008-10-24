@@ -23,6 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: On Windows, we require all WebKit source files to include config.h
+// before including any other files. Failing to include config.h will leave
+// WTF_PLATFORM_CF undefined, causing build failures in this file. But Mac
+// doesn't have a config.h for WebKit, so we can't include the Windows one
+// here. For now we can just define WTF_PLATFORM_CF manually, but we need a
+// better long-term solution.
+#ifndef WTF_PLATFORM_CF
+#define WTF_PLATFORM_CF 1
+#endif
+
 #include "WebInspectorClient.h"
 
 #include <CoreFoundation/CoreFoundation.h>

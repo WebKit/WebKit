@@ -1,3 +1,11 @@
+2008-10-24  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Define WTF_PLATFORM_CF
+        manually. Normally this gets defined on Windows by including config.h,
+        but Mac has no config.h for WebKit, so we can't do that here.
+
 2008-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Implement new InspectorClient methods to work with Settings.
