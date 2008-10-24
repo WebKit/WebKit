@@ -1,5 +1,11 @@
 2008-10-24  Anders Carlsson  <andersca@apple.com>
 
+        Fix Tiger build.
+        
+        * WebView/WebUIDelegate.h:
+
+2008-10-24  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/5440917> Support NPN_Construct
