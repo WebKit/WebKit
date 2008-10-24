@@ -1,5 +1,14 @@
 2008-10-23  Kevin McCullough  <kmccullough@apple.com>
 
+        Rubber stamped by Mark Rowe.
+
+        -Skipping the profiler tests until we know why they fail on tiger:
+        <rdar://problem/6316530> Profiler tests fail on tiger
+
+        * platform/mac-tiger/Skipped:
+
+2008-10-23  Kevin McCullough  <kmccullough@apple.com>
+
         Forgot to remove the tests from the skipped lists, this should have been
         apart of the last checkin.
 
