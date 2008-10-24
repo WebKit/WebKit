@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebInspectorClient.h"
+#include "WebInspectorClient.h"
 
 #include <CoreFoundation/CoreFoundation.h>
 
