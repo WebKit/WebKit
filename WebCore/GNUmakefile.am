@@ -1400,6 +1400,7 @@ webcore_sources += \
 	WebCore/platform/network/ResourceResponseBase.h \
 	WebCore/platform/text/AtomicString.cpp \
 	WebCore/platform/text/AtomicString.h \
+	WebCore/platform/text/AtomicStringHash.h \
 	WebCore/platform/text/AtomicStringImpl.h \
 	WebCore/platform/text/Base64.cpp \
 	WebCore/platform/text/Base64.h \

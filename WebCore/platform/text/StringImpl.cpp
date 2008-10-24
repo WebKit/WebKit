@@ -60,6 +60,10 @@ StringImpl::StringImpl()
     , m_inTable(false)
     , m_hasTerminatingNullCharacter(false)
 {
+    // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
+    // with impunity. The empty string is special because it is never entered into
+    // AtomicString's HashKey, but still needs to compare correctly.
+    hash();
 }
 
 // This is one of the most common constructors, but it's also used for the copy()

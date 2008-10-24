@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+struct AtomicStringHash;
+
 class AtomicString {
 public:
     static void init();
@@ -41,6 +43,10 @@ public:
     AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     AtomicString(const String& s) : m_string(add(s.impl())) { }
+
+    // Hash table deleted values, which are only constructed and never copied or destroyed.
+    AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
+    bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
 #if USE(JSC)
     static AtomicStringImpl* find(const JSC::Identifier&);
@@ -137,5 +143,16 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
 #endif
 
 } // namespace WebCore
+
+
+namespace WTF {
+
+    // AtomicStringHash is the default hash for AtomicString
+    template<typename T> struct DefaultHash;
+    template<> struct DefaultHash<WebCore::AtomicString> {
+        typedef WebCore::AtomicStringHash Hash;
+    };
+
+} // namespace WTF
 
 #endif // AtomicString_h

@@ -44,6 +44,7 @@
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
+		0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC705200EB1815600B90AD8 /* AtomicStringHash.h */; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
@@ -4716,6 +4717,7 @@
 		0A4844980CA44CB200B7BD48 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
+		0FC705200EB1815600B90AD8 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringHash.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
 		1403B99509EB13AF00797C7F /* DOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindow.h; sourceTree = "<group>"; };
@@ -12660,6 +12662,7 @@
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
 				B2C3D9ED0D006C1D00EF6F26 /* AtomicString.cpp */,
 				B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */,
+				0FC705200EB1815600B90AD8 /* AtomicStringHash.h */,
 				B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */,
 				B2C3D9F00D006C1D00EF6F26 /* Base64.cpp */,
 				B2C3D9F10D006C1D00EF6F26 /* Base64.h */,
@@ -16056,6 +16059,7 @@
 				BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */,
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
 				E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */,
+				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

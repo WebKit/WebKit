@@ -6049,6 +6049,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\AtomicStringHash.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\AtomicStringImpl.h"
 					>
 				</File>
