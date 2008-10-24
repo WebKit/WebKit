@@ -1,3 +1,18 @@
+2008-10-23  Kalle Vahlman  <kalle.vahlman@movial.com>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21824
+        [GTK] FileSystem abstraction uses features from Glib 2.16
+
+        Wrap g_uri_unescape_string() to fix building with pre-2.16 Glib
+
+        * platform/gtk/guriescape.c:
+        (unescape_character):
+        (_webcore_g_uri_unescape_segment):
+        (_webcore_g_uri_unescape_string):
+        * platform/gtk/guriescape.h:
+
 2008-10-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Fix Gtk build typo introduced in http://trac.webkit.org/changeset/37826.

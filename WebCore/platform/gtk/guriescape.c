@@ -20,11 +20,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
 #include "guriescape.h"
 
 #include <string.h>
 
-#if !PLATFORM(WIN_OS) && !GLIB_CHECK_VERSION(2, 16, 0)
+#if !PLATFORM(WIN_OS) && !GLIB_CHECK_VERSION(2,16,0)
 
 /* is_valid, gunichar_ok and g_string_append_uri_escaped were copied for glib/gstring.c
  * in the glib package.
@@ -106,9 +107,10 @@ _webcore_g_string_append_uri_escaped (GString *string,
   return string;
 }
 
-/* g_uri_escape_string was copied for glib/gurifuncs.c in the glib package ans
- * renamed to _webkit_g_uri_escape_string to avoid exporting a symbol with the
- * "g_" prefix.
+/* g_uri_escape_string, unescape_character, g_uri_unescape_segment and
+ * g_uri_unescape_string were copied for glib/gurifuncs.c in the glib package
+ * and prefixed with _webcore (if necessary) to avoid exporting a symbol with
+ * the "g_" prefix.
  *
  * Original copyright:
  *   Copyright (C) 2006-2007 Red Hat, Inc.
@@ -132,4 +134,86 @@ _webcore_g_uri_escape_string (const char *unescaped,
   
   return g_string_free (s, FALSE);
 }
-#endif // #if !PLATFORM(WIN_OS) && !GTK_CHECK_VERSION(2, 16, 0)
+
+static int
+unescape_character (const char *scanner)
+{
+  int first_digit;
+  int second_digit;
+  
+  first_digit = g_ascii_xdigit_value (*scanner++);
+  if (first_digit < 0)
+    return -1;
+
+  second_digit = g_ascii_xdigit_value (*scanner++);
+  if (second_digit < 0)
+    return -1;
+
+  return (first_digit << 4) | second_digit;
+}
+
+
+
+static char *
+_webcore_g_uri_unescape_segment (const char *escaped_string,
+      const char *escaped_string_end,
+      const char *illegal_characters)
+{
+  const char *in;
+  char *out, *result;
+  gint character;
+  
+  if (escaped_string == NULL)
+    return NULL;
+  
+  if (escaped_string_end == NULL)
+    escaped_string_end = escaped_string + strlen (escaped_string);
+  
+  result = g_malloc (escaped_string_end - escaped_string + 1);
+  
+  out = result;
+  for (in = escaped_string; in < escaped_string_end; in++)
+    {
+      character = *in;
+      
+      if (*in == '%')
+  {
+    in++;
+    
+    if (escaped_string_end - in < 2)
+      {
+        /* Invalid escaped char (to short) */
+        g_free (result);
+        return NULL;
+      }
+    
+    character = unescape_character (in);
+    
+    /* Check for an illegal character. We consider '\0' illegal here. */
+    if (character <= 0 ||
+        (illegal_characters != NULL &&
+         strchr (illegal_characters, (char)character) != NULL))
+      {
+        g_free (result);
+        return NULL;
+      }
+    
+    in++; /* The other char will be eaten in the loop header */
+  }
+      *out++ = (char)character;
+    }
+  
+  *out = '\0';
+  
+  return result;
+}
+
+
+char *
+_webcore_g_uri_unescape_string (const char *escaped_string,
+           const char *illegal_characters)
+{
+  return _webcore_g_uri_unescape_segment (escaped_string, NULL, illegal_characters);
+}
+
+#endif /* #if !PLATFORM(WIN_OS) && !GTK_CHECK_VERSION(2,16,0) */

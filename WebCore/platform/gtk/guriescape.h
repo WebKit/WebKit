@@ -25,16 +25,20 @@
 
 G_BEGIN_DECLS
 
-#if !PLATFORM(WIN_OS) && !GLIB_CHECK_VERSION(2, 16, 0)
+#if !PLATFORM(WIN_OS) && !GLIB_CHECK_VERSION(2,16,0)
 
 #define g_uri_escape_string _webcore_g_uri_escape_string
+#define g_uri_unescape_string _webcore_g_uri_unescape_string
 
 char    *_webcore_g_uri_escape_string   (const char *unescaped,
                                          const char *reserved_chars_allowed,
                                          gboolean    allow_utf8);
 
+char    *_webcore_g_uri_unescape_string (const char *escaped_string,
+                                         const char *illegal_characters);
+
 #endif
 
 G_END_DECLS
 
-#endif // guriescape_h
+#endif /* guriescape_h */
