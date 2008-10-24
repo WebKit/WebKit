@@ -46,6 +46,8 @@ public:
 
     QIcon icon() const;
 
+    bool isValid() const;
+
 private:
     QWebHistoryItem(QWebHistoryItemPrivate *priv);
     friend class QWebHistory;

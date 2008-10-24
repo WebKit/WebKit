@@ -294,6 +294,9 @@ void tst_QWebPage::modified()
     QVERIFY(m_page->history()->canGoBack());
     QVERIFY(!m_page->history()->canGoForward());
     QCOMPARE(m_page->history()->count(), 2);
+    QVERIFY(m_page->history()->backItem().isValid());
+    QVERIFY(!m_page->history()->forwardItem().isValid());
+
     m_page->history()->back();
     QVERIFY(::waitForSignal(m_view, SIGNAL(loadFinished(bool))));
 

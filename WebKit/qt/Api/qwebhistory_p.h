@@ -28,14 +28,15 @@ class QWebHistoryItemPrivate : public QSharedData
 public:
     QWebHistoryItemPrivate(WebCore::HistoryItem *i)
     {
-        i->ref();
+        if (i)
+            i->ref();
         item = i;
     }
     ~QWebHistoryItemPrivate()
     {
-        item->deref();
+        if (item)
+            item->deref();
     }
-    
     WebCore::HistoryItem *item;
 };
 

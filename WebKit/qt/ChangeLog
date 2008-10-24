@@ -1,3 +1,23 @@
+2008-10-23  Yael Aharon <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Invalid history entries could cause a crash in QT Webkit
+
+        * Api/qwebhistory.cpp:
+        (QWebHistoryItem::originalUrl):
+        (QWebHistoryItem::url):
+        (QWebHistoryItem::title):
+        (QWebHistoryItem::lastVisited):
+        (QWebHistoryItem::icon):
+        (QWebHistoryItem::isValid):
+        * Api/qwebhistory.h:
+        * Api/qwebhistory_p.h:
+        (QWebHistoryItemPrivate::QWebHistoryItemPrivate):
+        (QWebHistoryItemPrivate::~QWebHistoryItemPrivate):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::modified):
+
 2008-10-22  Yael Aharon <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
