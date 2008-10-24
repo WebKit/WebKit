@@ -144,6 +144,12 @@
         case DOM_VARIABLES_RULE:
             wrapperClass = [DOMCSSVariablesRule class];
             break;
+        case DOM_WEBKIT_KEYFRAMES_RULE:
+            wrapperClass = [DOMWebKitCSSKeyframesRule class];
+            break;
+        case DOM_WEBKIT_KEYFRAME_RULE:
+            wrapperClass = [DOMWebKitCSSKeyframeRule class];
+            break;
     }
     return [[[wrapperClass alloc] _initWithCSSRule:impl] autorelease];
 }
