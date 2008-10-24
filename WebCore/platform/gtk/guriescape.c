@@ -216,4 +216,4 @@ _webcore_g_uri_unescape_string (const char *escaped_string,
   return _webcore_g_uri_unescape_segment (escaped_string, NULL, illegal_characters);
 }
 
-#endif /* #if !PLATFORM(WIN_OS) && !GTK_CHECK_VERSION(2,16,0) */
+#endif /* #if !PLATFORM(WIN_OS) && !GLIB_CHECK_VERSION(2,16,0) */
