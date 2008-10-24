@@ -214,9 +214,7 @@ IDL_BINDINGS += \
 	WebCore/page/History.idl \
 	WebCore/page/Location.idl \
 	WebCore/page/Navigator.idl \
-	WebCore/page/PositionCallback.idl \
 	WebCore/page/PositionError.idl \
-	WebCore/page/PositionErrorCallback.idl \
 	WebCore/page/PositionOptions.idl \
 	WebCore/page/Screen.idl \
 	WebCore/plugins/MimeType.idl \
