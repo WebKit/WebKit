@@ -36,6 +36,14 @@
 
 2008-10-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Sam Weinig
+
+        Add to the comment some new CSSRule types that are not yet tested.
+        
+        * fast/dom/wrapper-classes.html:
+
+2008-10-24  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler
 
         https://bugs.webkit.org/show_bug.cgi?id=21858
