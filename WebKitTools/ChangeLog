@@ -1,5 +1,12 @@
 2008-10-24  Anders Carlsson  <andersca@apple.com>
 
+        Try fixing the 64-bit build.
+        
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
+        (testGetProperty):
+
+2008-10-24  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
         
         <rdar://problem/5440917> Support NPN_Construct
