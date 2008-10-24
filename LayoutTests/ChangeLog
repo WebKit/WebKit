@@ -1,3 +1,15 @@
+2008-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=21851
+          <rdar://problem/6304151> REGRESSION (r36513): Crash when removing a widget with percent height
+
+        * fast/replaced/percent-height-in-anonymous-block-widget.html: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-widget-expected.checksum: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-widget-expected.png: Added.
+        * platform/mac/fast/replaced/percent-height-in-anonymous-block-widget-expected.txt: Added.
+
 2008-10-24  David Kilzer  <ddkilzer@apple.com>
 
         Rolled out r37840.

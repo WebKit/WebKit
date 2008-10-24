@@ -1,3 +1,16 @@
+2008-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=21851
+          <rdar://problem/6304151> REGRESSION (r36513): Crash when removing a widget with percent height
+
+        Test: fast/replaced/percent-height-in-anonymous-block-widget.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy): Copied code added to
+        RenderBox::destroy() in r36513 into this function.
+
 2008-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Add a mechanism to ask the InspectorClient for key/value setting pairs.
