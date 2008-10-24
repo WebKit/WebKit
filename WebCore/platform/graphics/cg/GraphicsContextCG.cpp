@@ -987,8 +987,7 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
         // Fall through to InterpolationHigh if kCGInterpolationMedium is not available
         case InterpolationMedium:
 #if HAVE(CG_INTERPOLATION_MEDIUM)
-            // FIXME: <rdar://problem/6164952> Use constant kCGInterpolationMedium when everyone has a version of CG that defines it.
-            quality = static_cast<CGInterpolationQuality>(4); 
+            quality = kCGInterpolationMedium;
             break;
 #endif
         case InterpolationHigh:
@@ -1011,13 +1010,12 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
             return InterpolationNone;
         case kCGInterpolationLow:
             return InterpolationLow;
-        case kCGInterpolationHigh:
-            return InterpolationHigh;
 #if HAVE(CG_INTERPOLATION_MEDIUM)
-        // FIXME: <rdar://problem/6164952> Use constant kCGInterpolationMedium when everyone has a version of CG that defines it.
-        default:
+        case kCGInterpolationMedium:
             return InterpolationMedium;
 #endif
+        case kCGInterpolationHigh:
+            return InterpolationHigh;
     }
     return InterpolationDefault;
 }

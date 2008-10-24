@@ -1,3 +1,13 @@
+2008-10-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6164952> Use constant kCGInterpolationMedium in GraphicsContextCG.cpp rather than hard-coded values.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality):
+
 2008-10-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
