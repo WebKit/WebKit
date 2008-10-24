@@ -124,7 +124,6 @@ void GraphicsContext::setMiterLimit(float) { notImplemented(); }
 void GraphicsContext::setAlpha(float) { notImplemented(); }
 
 Color WebCore::focusRingColor() { return 0xFF0000FF; }
-void WebCore::setFocusRingColorChangeFunction(void (*)()) { }
 
 void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect) { notImplemented(); } 
 
