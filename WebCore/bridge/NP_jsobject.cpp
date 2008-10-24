@@ -72,8 +72,8 @@ static void jsDeallocate(NPObject* npObj)
     free(obj);
 }
 
-static NPClass javascriptClass = { 1, jsAllocate, jsDeallocate, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static NPClass javascriptClass = { 1, jsAllocate, jsDeallocate, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static NPClass noScriptClass = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 NPClass* NPScriptObjectClass = &javascriptClass;
 static NPClass* NPNoScriptObjectClass = &noScriptClass;
@@ -410,6 +410,46 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
     
     if (NP_CLASS_STRUCT_VERSION_HAS_ENUM(o->_class) && o->_class->enumerate)
         return o->_class->enumerate(o, identifier, count);
+    
+    return false;
+}
+
+bool _NPN_Construct(NPP npp, NPObject* o, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o);
+        
+        VOID_TO_NPVARIANT(*result);
+        
+        // Lookup the constructor object.
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+        
+        ExecState* exec = rootObject->globalObject()->globalExec();
+        JSLock lock(false);
+        
+        // Call the constructor object.
+        JSValue* constructor = obj->imp;
+        ConstructData constructData;
+        ConstructType constructType = constructor->getConstructData(constructData);
+        if (constructType == ConstructTypeNone)
+            return false;
+        
+        ArgList argList;
+        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        rootObject->globalObject()->startTimeoutCheck();
+        JSValue* resultV = construct(exec, constructor, constructType, constructData, argList);
+        rootObject->globalObject()->stopTimeoutCheck();
+        
+        // Convert and return the result.
+        convertValueToNPVariant(exec, resultV, result);
+        exec->clearException();
+        return true;
+    }
+    
+    if (NP_CLASS_STRUCT_VERSION_HAS_CTOR(o->_class) && o->_class->construct)
+        return o->_class->construct(o, args, argCount, result);
     
     return false;
 }

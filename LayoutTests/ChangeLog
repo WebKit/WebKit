@@ -1,3 +1,14 @@
+2008-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5440917> Support NPN_Construct
+        
+        Add testcase.
+        
+        * plugins/netscape-construct-expected.txt: Added.
+        * plugins/netscape-construct.html: Added.
+
 2008-10-24  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Sam Weinig.

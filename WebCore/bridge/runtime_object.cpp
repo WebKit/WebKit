@@ -221,6 +221,25 @@ CallType RuntimeObjectImp::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
+JSObject* callRuntimeConstructor(ExecState* exec, JSObject* constructor, const ArgList& args)
+{
+    RefPtr<Instance> instance(static_cast<RuntimeObjectImp*>(constructor)->getInternalInstance());
+    instance->begin();
+    JSValue* result = instance->invokeConstruct(exec, args);
+    instance->end();
+    
+    ASSERT(result);
+    return result->isObject() ? static_cast<JSObject*>(result) : constructor;
+}
+
+ConstructType RuntimeObjectImp::getConstructData(ConstructData& constructData)
+{
+    if (!instance || !instance->supportsConstruct())
+        return ConstructTypeNone;
+    constructData.native.function = callRuntimeConstructor;
+    return ConstructTypeHost;
+}
+
 void RuntimeObjectImp::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     if (!instance) {

@@ -40,6 +40,8 @@ public:
     virtual bool deleteProperty(ExecState* , const Identifier& propertyName);
     virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
     virtual CallType getCallData(CallData&);
+    virtual ConstructType getConstructData(ConstructData&);
+    
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual void invalidate();

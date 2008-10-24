@@ -1,3 +1,50 @@
+2008-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5440917> Support NPN_Construct
+                
+        * WebCore.NPAPI.exp:
+        Export _NPN_Construct.
+        
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Construct):
+        Implement this.
+        
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::supportsConstruct):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        Have this call the appropriate NPClass method.
+        
+        * bridge/npruntime.h:
+        Add NPN_Construct.
+
+        * bridge/npruntime_impl.h:
+        Add _NPN_Construct.
+        
+        * bridge/runtime.h:
+        (JSC::Bindings::Instance::supportsConstruct):
+        (JSC::Bindings::Instance::invokeConstruct):
+        New methods.
+        
+        * bridge/runtime_object.cpp:
+        (JSC::callRuntimeConstructor):
+        Call the native instance.
+        
+        (JSC::RuntimeObjectImp::getConstructData):
+        Implement this.
+        
+        * bridge/runtime_object.h:
+        Add new method declarations.
+        
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::load):
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::load):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load):
+        Initialize m_pluginFuncs.construct.
+
 2008-10-24  Adele Peterson  <adele@apple.com>
 
         Build fix.

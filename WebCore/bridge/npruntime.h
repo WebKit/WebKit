@@ -247,6 +247,7 @@ typedef bool (*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPVar
 typedef bool (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *value);
 typedef bool (*NPRemovePropertyFunctionPtr)(NPObject *npobj, NPIdentifier name);
 typedef bool (*NPEnumerationFunctionPtr)(NPObject *npobj, NPIdentifier **value, uint32_t *count);
+typedef bool (*NPConstructFunctionPtr)(NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result);
 
 /*
     NPObjects returned by create have a reference count of one.  It is the caller's responsibility
@@ -283,12 +284,17 @@ struct NPClass
     NPSetPropertyFunctionPtr setProperty;
     NPRemovePropertyFunctionPtr removeProperty;
     NPEnumerationFunctionPtr enumerate;
+    NPConstructFunctionPtr construct;
 };
 
-#define NP_CLASS_STRUCT_VERSION      2
-#define NP_CLASS_STRUCT_VERSION_ENUM 2                           
+#define NP_CLASS_STRUCT_VERSION      3
+#define NP_CLASS_STRUCT_VERSION_ENUM 2
+#define NP_CLASS_STRUCT_VERSION_CTOR 3
+
 #define NP_CLASS_STRUCT_VERSION_HAS_ENUM(npclass)   \
     ((npclass)->structVersion >= NP_CLASS_STRUCT_VERSION_ENUM)
+#define NP_CLASS_STRUCT_VERSION_HAS_CTOR(npclass)   \
+    ((npclass)->structVersion >= NP_CLASS_STRUCT_VERSION_CTOR)
 
 struct NPObject {
     NPClass *_class;

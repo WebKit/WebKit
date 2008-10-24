@@ -28,8 +28,10 @@
 
 static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count);
 static bool testHasProperty(NPObject *obj, NPIdentifier name);
+static bool testGetProperty(NPObject*, NPIdentifier name, NPVariant*);
 static NPObject *testAllocate(NPP npp, NPClass *theClass);
 static void testDeallocate(NPObject *obj);
+static bool testConstruct(NPObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result);
 
 static NPClass testClass = { 
     NP_CLASS_STRUCT_VERSION,
@@ -40,10 +42,11 @@ static NPClass testClass = {
     0,
     0,
     testHasProperty,
+    testGetProperty,
     0,
     0,
-    0,
-    testEnumerate
+    testEnumerate,
+    testConstruct
 };
 
 NPClass *getTestClass(void)
@@ -53,12 +56,16 @@ NPClass *getTestClass(void)
 
 static bool identifiersInitialized = false;
 
-#define NUM_TEST_IDENTIFIERS 2
+#define ID_OBJECT_POINTER 2
+
+#define NUM_ENUMERATABLE_TEST_IDENTIFIERS 2
+#define NUM_TEST_IDENTIFIERS 3
 
 static NPIdentifier testIdentifiers[NUM_TEST_IDENTIFIERS];
 static const NPUTF8 *testIdentifierNames[NUM_TEST_IDENTIFIERS] = {
     "foo",
-    "bar"
+    "bar",
+    "objectPointer",
 };
 
 static void initializeIdentifiers(void)
@@ -68,7 +75,7 @@ static void initializeIdentifiers(void)
 
 static NPObject *testAllocate(NPP npp, NPClass *theClass)
 {
-    NPObject *newInstance = (NPObject*)malloc(sizeof(NPObject));
+    NPObject *newInstance = static_cast<NPObject*>(malloc(sizeof(NPObject)));
     
     if (!identifiersInitialized) {
         identifiersInitialized = true;
@@ -93,14 +100,33 @@ static bool testHasProperty(NPObject *obj, NPIdentifier name)
     return false;
 }
 
+static bool testGetProperty(NPObject* npobj, NPIdentifier name, NPVariant* result)
+{
+    if (name == testIdentifiers[ID_OBJECT_POINTER]) {
+        INT32_TO_NPVARIANT(reinterpret_cast<int32_t>(npobj), *result);
+        return true;
+    }
+    
+    return false;
+}
+
 
 static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count)
 {
     *count = NUM_TEST_IDENTIFIERS;
     
-    *value = (NPIdentifier*)browser->memalloc(NUM_TEST_IDENTIFIERS * sizeof(NPIdentifier));
-    memcpy(*value, testIdentifiers, sizeof(NPIdentifier) * NUM_TEST_IDENTIFIERS);
+    *value = (NPIdentifier*)browser->memalloc(NUM_ENUMERATABLE_TEST_IDENTIFIERS * sizeof(NPIdentifier));
+    memcpy(*value, testIdentifiers, sizeof(NPIdentifier) * NUM_ENUMERATABLE_TEST_IDENTIFIERS);
     
+    return true;
+}
+
+static bool testConstruct(NPObject* npobj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    browser->retainobject(npobj);
+    
+    // Just return the same object.
+    OBJECT_TO_NPVARIANT(npobj, *result);
     return true;
 }
 

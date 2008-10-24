@@ -1,3 +1,14 @@
+2008-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5440917> Support NPN_Construct
+        
+        Set construct.
+        
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+
 2008-10-24  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Tim Hatcher.

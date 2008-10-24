@@ -55,6 +55,7 @@ extern bool _NPN_HasProperty(NPP, NPObject*, NPIdentifier);
 extern bool _NPN_HasMethod(NPP, NPObject*, NPIdentifier);
 extern void _NPN_SetException(NPObject*, const NPUTF8*);
 extern bool _NPN_Enumerate(NPP, NPObject*, NPIdentifier**, uint32_t* count);
+extern bool _NPN_Construct(NPP, NPObject*, const NPVariant* args, uint32_t argCount, NPVariant *result);
 
 #ifdef __cplusplus
 }  /* end extern "C" */

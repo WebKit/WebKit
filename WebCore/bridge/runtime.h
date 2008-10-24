@@ -118,6 +118,9 @@ public:
     virtual bool supportsInvokeDefaultMethod() const { return false; }
     virtual JSValue* invokeDefaultMethod(ExecState*, const ArgList&) { return jsUndefined(); }
     
+    virtual bool supportsConstruct() const { return false; }
+    virtual JSValue* invokeConstruct(ExecState*, const ArgList&) { return 0; }
+    
     virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
 
     virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const = 0;

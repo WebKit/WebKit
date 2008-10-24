@@ -447,6 +447,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.removeproperty = (NPN_RemovePropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_RemoveProperty);
         browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_SetException);
         browserFuncs.enumerate = (NPN_EnumerateProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Enumerate);
+        browserFuncs.construct = (NPN_ConstructProcPtr)tVectorForFunctionPointer((FunctionPointer)_NPN_Construct);
         
         [self _applyDjVuWorkaround];
         
@@ -553,7 +554,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.removeproperty = _NPN_RemoveProperty;
         browserFuncs.setexception = _NPN_SetException;
         browserFuncs.enumerate = _NPN_Enumerate;
-
+        browserFuncs.construct = _NPN_Construct;
+        
         [self _applyDjVuWorkaround];
 
 #if !LOG_DISABLED

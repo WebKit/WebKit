@@ -324,6 +324,7 @@ bool PluginPackage::load()
     m_browserFuncs.hasmethod = _NPN_HasMethod;
     m_browserFuncs.setexception = _NPN_SetException;
     m_browserFuncs.enumerate = _NPN_Enumerate;
+    m_browserFuncs.construct = _NPN_Construct;
 
     npErr = NP_Initialize(&m_browserFuncs);
     LOG_NPERROR(npErr);
