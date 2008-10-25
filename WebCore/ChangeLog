@@ -1,3 +1,15 @@
+2008-10-25  Jade Han  <jade.han@nokia.com>
+
+        Reviewed by Anders.
+
+        Enable custom properties for Qt runtime objects in QtWebKit
+
+        https://bugs.webkit.org/show_bug.cgi?id=21813
+
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::getOwnPropertySlot):
+        (JSC::RuntimeObjectImp::put):
+
 2008-10-24  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.

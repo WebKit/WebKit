@@ -780,10 +780,17 @@ void tst_QWebFrame::getSetStaticProperty()
     QCOMPARE(evalJS("delete myObject.variantProperty"), sFalse);
     QCOMPARE(evalJS("myObject.variantProperty").toDouble(), 42.0);
 
+    // custom property
+    QCOMPARE(evalJS("myObject.customProperty"), sUndefined);
+    QCOMPARE(evalJS("myObject.customProperty = 123;"
+                    "myObject.customProperty == 123"), sTrue);
+    QVariant v = m_page->mainFrame()->evaluateJavaScript("myObject.customProperty");
+    QCOMPARE(v.type(), QVariant::Double);
+    QCOMPARE(v.toInt(), 123);
+
     // non-scriptable property
     QCOMPARE(m_myObject->hiddenProperty(), 456.0);
     QCOMPARE(evalJS("myObject.hiddenProperty"), sUndefined);
-    QEXPECT_FAIL("", "undefined properties not supported", Continue);
     QCOMPARE(evalJS("myObject.hiddenProperty = 123;"
                     "myObject.hiddenProperty == 123"), sTrue);
     QCOMPARE(m_myObject->hiddenProperty(), 456.0);
