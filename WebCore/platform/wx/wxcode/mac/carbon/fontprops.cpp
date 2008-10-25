@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __WXMAC__
 #include <ApplicationServices/ApplicationServices.h>
-#endif
 
 #include <wx/defs.h>
 #include <wx/gdicmn.h>
@@ -39,23 +37,38 @@ wxFontProperties::wxFontProperties(wxFont* font):
 m_ascent(0), m_descent(0), m_lineGap(0), m_lineSpacing(0), m_xHeight(0)
 {
     ATSFontRef fontRef;
+    CGFontRef cgFont;
     
     fontRef = FMGetATSFontRefFromFont(font->MacGetATSUFontID());
-    if (fontRef){
-        ATSFontMetrics vMetrics;
-        OSStatus err;
+    
+    if (fontRef)
+        cgFont = CGFontCreateWithPlatformFont((void*)&fontRef);
         
-        int height = font->GetPointSize(); //.GetHeight();
-        err = ATSFontGetHorizontalMetrics(fontRef, 0, &vMetrics);
-        if (err != noErr)
-            fprintf(stderr, "Error number is %d\n", err);
-        m_ascent = lroundf(vMetrics.ascent * height);
-        m_descent = lroundf(vMetrics.descent * height);
-        m_lineGap = lroundf(vMetrics.leading * height);
+    if (cgFont) {
+        int iAscent;
+        int iDescent;
+        int iLineGap;
+        float unitsPerEm;
+#ifdef BUILDING_ON_TIGER
+        wkGetFontMetrics(cgFont, &iAscent, &iDescent, &iLineGap, &unitsPerEm);
+#else
+        iAscent = CGFontGetAscent(cgFont);
+        iDescent = CGFontGetDescent(cgFont);
+        iLineGap = CGFontGetLeading(cgFont);
+        unitsPerEm = CGFontGetUnitsPerEm(cgFont);
+#endif
+        float pointSize = font->GetPointSize();
+        float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
+        float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+        float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
+
+        m_ascent = lroundf(fAscent);
+        m_descent = lroundf(fDescent);
+        m_lineGap = lroundf(fLineGap);
         wxCoord xHeight = 0;
         GetTextExtent(*font, wxT("x"), NULL, &xHeight, NULL, NULL);
         m_xHeight = lroundf(xHeight);
-        m_lineSpacing = m_ascent - m_descent + m_lineGap;
+        m_lineSpacing = m_ascent + m_descent + m_lineGap;
 
     }
 

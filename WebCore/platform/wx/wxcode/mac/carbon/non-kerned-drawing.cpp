@@ -57,11 +57,10 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
         offset += glyphBuffer.advanceAt(from + i);
     }
     
-    // the y point is actually the bottom point of the text, turn it into the top
-    float height = font->ascent() - font->descent();
-    wxCoord ypoint = (wxCoord) (point.y() - height);
-     
-    dc->DrawText(text, (wxCoord)point.x(), ypoint);
+    // NOTE: The wx API actually adds the ascent to the y value internally,
+    // so we have to subtract it from the y point here so that the ascent
+    // isn't added twice. 
+    dc->DrawText(text, (wxCoord)point.x(), int(point.y() - font->ascent()));
 }
 
 }

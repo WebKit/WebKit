@@ -1,3 +1,18 @@
+2008-10-24  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Use the CGFont metrics APIs for more accurate measurements, and tweak the y
+        value the text is drawn at (it was a couple pixels off before because wx
+        internally adds to the y value.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21853
+
+        * platform/wx/wxcode/mac/carbon/fontprops.cpp:
+        (wxFontProperties::wxFontProperties):
+        * platform/wx/wxcode/mac/carbon/non-kerned-drawing.cpp:
+        (WebCore::drawTextWithSpacing):
+
 2008-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.
