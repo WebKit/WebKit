@@ -1,5 +1,11 @@
 2008-10-24  Sam Weinig  <sam@webkit.org>
 
+        Yet another windows build fix.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+
+2008-10-24  Sam Weinig  <sam@webkit.org>
+
         Another windows build fix.
 
         * WebCoreSupport/WebChromeClient.cpp:

@@ -39,6 +39,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/Page.h>
 #include <WebCore/WindowFeatures.h>
 #pragma warning(pop)
