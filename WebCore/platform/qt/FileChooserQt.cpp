@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FileChooser.h"
 
+#include "Font.h"
 #include <QFontMetrics>
 
 namespace WebCore {
