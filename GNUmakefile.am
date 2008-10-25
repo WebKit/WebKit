@@ -79,7 +79,7 @@ no_undefined = -no-undefined
 endif
 
 if OS_GNU
-version_script = Wl,--version-script,$(srcdir)/symbols.filter
+version_script = -Wl,--version-script,$(srcdir)/symbols.filter
 endif
 
 # Shared libraries
