@@ -4,6 +4,16 @@
         
         Try to fix Windows build.
 
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute): Provide a dummy value to the
+        HostCallRecord in CTI non-sampling builds, to silence compiler warning.
+
+2008-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try to fix Windows build.
+
         * VM/SamplingTool.h:
         (JSC::SamplingTool::encodeSample): Explicitly cast bool to int, to
         silence compiler warning.
