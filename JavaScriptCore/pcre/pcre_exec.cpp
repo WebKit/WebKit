@@ -1955,7 +1955,7 @@ int jsRegExpExecute(const JSRegExp* re,
                     int offsetCount)
 {
     ASSERT(re);
-    ASSERT(subject);
+    ASSERT(subject || !length);
     ASSERT(offsetCount >= 0);
     ASSERT(offsets || offsetCount == 0);
 

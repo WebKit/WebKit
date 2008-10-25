@@ -1,3 +1,15 @@
+2008-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+        
+        Get rid of a bonus ASSERT when using a null string as a regexp.
+        Specifically calling: RegularExpression::match() with String::empty()
+        will hit this ASSERT.
+        Chromium hits this, but I don't know of any way to make a layout test.
+
+        * pcre/pcre_exec.cpp:
+        (jsRegExpExecute):
+
 2008-10-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Suggested and rubber-stamped by Geoff Garen.
