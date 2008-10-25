@@ -1,5 +1,12 @@
 2008-10-24  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+
+2008-10-24  Sam Weinig  <sam@webkit.org>
+
         Fix Qt build.
 
         * platform/qt/FileChooserQt.cpp:

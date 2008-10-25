@@ -20,6 +20,7 @@
 #ifndef Chrome_h
 #define Chrome_h
 
+#include "FileChooser.h"
 #include "FocusDirection.h"
 #include "HostWindow.h"
 #include <wtf/Forward.h>
@@ -35,7 +36,6 @@ namespace WebCore {
 
     class ChromeClient;
     class ContextMenu;
-    class FileChooser;
     class FloatRect;
     class Frame;
     class HitTestResult;
