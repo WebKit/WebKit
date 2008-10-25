@@ -1,3 +1,14 @@
+2008-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try to fix Mac debug build on the buildbot.
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooserClient::~FileChooserClient):
+        * platform/FileChooser.h: Moved destructor to .cpp file, to avoid a
+        weak exported symbol.
+
 2008-10-25  Jade Han  <jade.han@nokia.com>
 
         Reviewed by Anders.

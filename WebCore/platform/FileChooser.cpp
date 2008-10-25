@@ -33,6 +33,10 @@
 
 namespace WebCore {
     
+FileChooserClient::~FileChooserClient()
+{
+}
+
 inline FileChooser::FileChooser(FileChooserClient* client, const String& filename)
     : m_client(client)
     , m_icon(chooseIcon(filename))

@@ -42,7 +42,7 @@ class FileChooserClient {
 public:
     virtual void valueChanged() = 0;
     virtual bool allowsMultipleFiles() = 0;
-    virtual ~FileChooserClient() { }
+    virtual ~FileChooserClient();
 };
 
 class FileChooser : public RefCounted<FileChooser> {
