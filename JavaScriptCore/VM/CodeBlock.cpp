@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-#if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
+#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
 static UString escapeQuotes(const UString& str)
 {
@@ -946,7 +946,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
     }
 }
 
-#endif // !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
+#endif // !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
 CodeBlock::~CodeBlock()
 {
@@ -1110,12 +1110,11 @@ void* CodeBlock::nativeExceptionCodeForHandlerVPC(const Instruction* handlerVPC)
 
 int CodeBlock::lineNumberForVPC(const Instruction* vPC)
 {
-    ASSERT(lineInfo.size());    
     unsigned instructionOffset = vPC - instructions.begin();
     ASSERT(instructionOffset < instructions.size());
 
     if (!lineInfo.size())
-        return 1; // Empty function
+        return ownerNode->source().firstLine(); // Empty function
 
     int low = 0;
     int high = lineInfo.size();
@@ -1126,6 +1125,9 @@ int CodeBlock::lineNumberForVPC(const Instruction* vPC)
         else
             high = mid;
     }
+    
+    if (!low)
+        return ownerNode->source().firstLine();
     return lineInfo[low - 1].lineNumber;
 }
 

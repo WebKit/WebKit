@@ -41,18 +41,19 @@ namespace JSC {
 
 void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
 {
-    m_totalCount++;
-
     if (!m_vpcCounts) {
         m_size = codeBlock->instructions.size();
         m_vpcCounts = static_cast<int*>(calloc(m_size, sizeof(int)));
         m_codeBlock = codeBlock;
     }
 
-    unsigned codeOffset = static_cast<unsigned>(reinterpret_cast<ptrdiff_t>(vPC) - reinterpret_cast<ptrdiff_t>(codeBlock->instructions.begin())) / sizeof(Instruction*);
-    // This could occur if codeBlock & vPC are not consistent - e.g. sample mid op_call/op_ret.
-    if (codeOffset < m_size)
+    unsigned codeOffset = vPC - codeBlock->instructions.begin();
+    // Since we don't read and write codeBlock and vPC atomically, this check
+    // can fail if we sample mid op_call / op_ret.
+    if (codeOffset < m_size) {
         m_vpcCounts[codeOffset]++;
+        m_totalCount++;
+    }
 }
 
 #if PLATFORM(WIN_OS)
@@ -79,34 +80,32 @@ static inline unsigned hertz2us(unsigned hertz)
     return 1000000 / hertz;
 }
 
-#if ENABLE(SAMPLING_TOOL)
-unsigned totalOpcodeIDCount = 0;
-unsigned opcodeIDCountInCalledCode[numOpcodeIDs] = {0};
-unsigned opcodeIDCountInJITCode[numOpcodeIDs] = {0};
-#endif
-
 void SamplingTool::run()
 {
     while (m_running) {
         sleepForMicroseconds(hertz2us(m_hertz));
 
-        m_totalSamples++;
-#if ENABLE(SAMPLING_TOOL)
-        if (currentOpcodeID != static_cast<OpcodeID>(-1)) {
-            ++totalOpcodeIDCount;
-            if (inCalledCode)
-                opcodeIDCountInCalledCode[currentOpcodeID]++;
-            else
-                opcodeIDCountInJITCode[currentOpcodeID]++;
-        }
-#endif        
-        CodeBlock* codeBlock = m_recordedCodeBlock;
-        Instruction* vPC = m_recordedVPC;
+        Sample sample(m_sample, m_codeBlock);
+        ++m_sampleCount;
 
-        if (codeBlock && vPC) {
-            if (ScopeSampleRecord* record = m_scopeSampleMap->get(codeBlock->ownerNode))
-                record->sample(codeBlock, vPC);
+        if (sample.isNull())
+            continue;
+
+        if (!sample.inHostFunction()) {
+            unsigned opcodeID = m_machine->getOpcodeID(sample.vPC()[0].u.opcode);
+
+            ++m_opcodeSampleCount;
+            ++m_opcodeSamples[opcodeID];
+
+            if (sample.inCTIFunction())
+                m_opcodeSamplesInCTIFunctions[opcodeID]++;
         }
+
+#if ENABLE(CODEBLOCK_SAMPLING)
+        ScopeSampleRecord* record = m_scopeSampleMap->get(sample.codeBlock()->ownerNode);
+        ASSERT(record);
+        record->sample(sample.codeBlock(), sample.vPC());
+#endif
     }
 }
 
@@ -137,12 +136,12 @@ void SamplingTool::stop()
     waitForThreadCompletion(m_samplingThread, 0);
 }
 
-#if ENABLE(SAMPLING_TOOL)
+#if ENABLE(OPCODE_SAMPLING)
 
 struct OpcodeSampleInfo {
     OpcodeID opcode;
     long long count;
-    long long countInCalledCode;
+    long long countInCTIFunctions;
 };
 
 struct LineCountInfo {
@@ -177,40 +176,79 @@ static int compareScopeSampleRecords(const void* left, const void* right)
 void SamplingTool::dump(ExecState* exec)
 {
     // Tidies up SunSpider output by removing short scripts - such a small number of samples would likely not be useful anyhow.
-    if (m_totalSamples < 10)
+    if (m_sampleCount < 10)
         return;
     
-    // (1) Calculate 'totalCodeBlockSamples', build and sort 'codeBlockSamples' array.
+    // (1) Build and sort 'opcodeSampleInfo' array.
+
+    OpcodeSampleInfo opcodeSampleInfo[numOpcodeIDs];
+    for (int i = 0; i < numOpcodeIDs; ++i) {
+        opcodeSampleInfo[i].opcode = static_cast<OpcodeID>(i);
+        opcodeSampleInfo[i].count = m_opcodeSamples[i];
+        opcodeSampleInfo[i].countInCTIFunctions = m_opcodeSamplesInCTIFunctions[i];
+    }
+
+    qsort(opcodeSampleInfo, numOpcodeIDs, sizeof(OpcodeSampleInfo), compareOpcodeIndicesSampling);
+
+    // (2) Print Opcode sampling results.
+
+    printf("\nOpcode samples [*]\n");
+    printf("                             sample   %% of       %% of     |   cti     cti %%\n");
+    printf("opcode                       count     VM        total    |  count   of self\n");
+    printf("-------------------------------------------------------   |  ----------------\n");
+
+    for (int i = 0; i < numOpcodeIDs; ++i) {
+        long long count = opcodeSampleInfo[i].count;
+        if (!count)
+            continue;
+
+        OpcodeID opcode = opcodeSampleInfo[i].opcode;
+        
+        const char* opcodeName = opcodeNames[opcode];
+        const char* opcodePadding = padOpcodeName(opcode, 28);
+        double percentOfVM = (static_cast<double>(count) * 100) / m_opcodeSampleCount;
+        double percentOfTotal = (static_cast<double>(count) * 100) / m_sampleCount;
+        long long countInCTIFunctions = opcodeSampleInfo[i].countInCTIFunctions;
+        double percentInCTIFunctions = (static_cast<double>(countInCTIFunctions) * 100) / count;
+        fprintf(stdout, "%s:%s%-6lld %.3f%%\t%.3f%%\t  |   %-6lld %.3f%%\n", opcodeName, opcodePadding, count, percentOfVM, percentOfTotal, countInCTIFunctions, percentInCTIFunctions);
+    }
+    
+    printf("\n[*] Samples inside host code are not charged to any Opcode.\n\n");
+    printf("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_opcodeSampleCount) * 100) / m_sampleCount);
+    printf("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_opcodeSampleCount) * 100) / m_sampleCount);
+    printf("\tsample count:\tsamples inside this opcode\n");
+    printf("\t%% of VM:\tsample count / all opcode samples\n");
+    printf("\t%% of total:\tsample count / all samples\n");
+    printf("\t--------------\n");
+    printf("\tcti count:\tsamples inside a CTI function called by this opcode\n");
+    printf("\tcti %% of self:\tcti count / sample count\n");
+    
+    // (3) Calculate 'codeBlockSampleCount', build and sort 'codeBlockSamples' array.
 
     int scopeCount = m_scopeSampleMap->size();
-    long long totalCodeBlockSamples = 0;
+    long long codeBlockSampleCount = 0;
     Vector<ScopeSampleRecord*> codeBlockSamples(scopeCount);
     ScopeSampleRecordMap::iterator iter = m_scopeSampleMap->begin();
     for (int i = 0; i < scopeCount; ++i, ++iter) {
         codeBlockSamples[i] = iter->second;
-        totalCodeBlockSamples += codeBlockSamples[i]->m_totalCount;
+        codeBlockSampleCount += codeBlockSamples[i]->m_totalCount;
     }
 
     qsort(codeBlockSamples.begin(), scopeCount, sizeof(ScopeSampleRecord*), compareScopeSampleRecords);
 
-    // (2) Print data from 'codeBlockSamples' array, calculate 'totalOpcodeSamples', populate 'opcodeSampleCounts' array.
+    // (4) Print data from 'codeBlockSamples' array.
 
-    long long totalOpcodeSamples = 0;
-    long long opcodeSampleCounts[numOpcodeIDs] = { 0 };
-
-    printf("\nBlock sampling results\n\n"); 
-    printf("Total blocks sampled (total samples): %lld (%lld)\n\n", totalCodeBlockSamples, m_totalSamples);
+    printf("\nCodeBlock samples [*]\n\n"); 
 
     for (int i = 0; i < scopeCount; ++i) {
         ScopeSampleRecord* record = codeBlockSamples[i];
         CodeBlock* codeBlock = record->m_codeBlock;
 
-        double totalPercent = (record->m_totalCount * 100.0)/m_totalSamples;
-        double blockPercent = (record->m_totalCount * 100.0)/totalCodeBlockSamples;
+        double blockPercent = (record->m_totalCount * 100.0) / codeBlockSampleCount;
 
-        if ((blockPercent >= 1) && codeBlock) {
+        if (blockPercent >= 1) {
             Instruction* code = codeBlock->instructions.begin();
-            printf("#%d: %s:%d: sampled %d times - %.3f%% (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForVPC(code), record->m_totalCount, blockPercent, totalPercent);
+            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForVPC(code), record->m_totalCount, codeBlockSampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
@@ -239,42 +277,11 @@ void SamplingTool::dump(ExecState* exec)
                 printf("\n");
             }
         }
-        
-        if (record->m_vpcCounts && codeBlock) {
-            Instruction* instructions = codeBlock->instructions.begin();
-            for (unsigned op = 0; op < record->m_size; ++op) {
-                Opcode opcode = instructions[op].u.opcode;
-                if (exec->machine()->isOpcode(opcode)) {
-                    totalOpcodeSamples += record->m_vpcCounts[op];
-                    opcodeSampleCounts[exec->machine()->getOpcodeID(opcode)] += record->m_vpcCounts[op];
-                }
-            }
-        }
-    }
-    printf("\n");
-
-    // (3) Build and sort 'opcodeSampleInfo' array.
-
-    OpcodeSampleInfo opcodeSampleInfo[numOpcodeIDs];
-    for (int i = 0; i < numOpcodeIDs; ++i) {
-        opcodeSampleInfo[i].opcode = static_cast<OpcodeID>(i);
-        opcodeSampleInfo[i].count = opcodeIDCountInJITCode[i] + opcodeIDCountInCalledCode[i];
-        opcodeSampleInfo[i].countInCalledCode = opcodeIDCountInCalledCode[i];
     }
 
-    qsort(opcodeSampleInfo, numOpcodeIDs, sizeof(OpcodeSampleInfo), compareOpcodeIndicesSampling);
-
-    // (4) Print Opcode sampling results.
-
-    printf("\nOpcode sampling results\n\n"); 
-
-    for (int i = 0; i < numOpcodeIDs; ++i) {
-        OpcodeID opcode = opcodeSampleInfo[i].opcode;
-        long long count = opcodeSampleInfo[i].count;
-        long long countInCalledCode = opcodeSampleInfo[i].countInCalledCode;
-        fprintf(stdout, "%s:%s%6lld\t%6lld\t%.3f%%\t%.3f%%\t(%.3f%%)\n", opcodeNames[opcode], padOpcodeName(opcode, 20), count, countInCalledCode, (static_cast<double>(count) * 100) / totalOpcodeIDCount, (static_cast<double>(count) * 100) / m_totalSamples, (static_cast<double>(countInCalledCode) * 100) / m_totalSamples);    
-    }
-    printf("\n");
+    printf("\n[*] Samples inside host code are charged to the calling Opcode.\n");
+    printf("    Samples that fall on a call / return boundary are discarded.\n\n");
+    printf("\tSamples discarded:\t\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - codeBlockSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - codeBlockSampleCount) * 100) / m_sampleCount);
 }
 
 #else

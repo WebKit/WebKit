@@ -23,8 +23,8 @@
 #ifndef Parser_h
 #define Parser_h
 
-#include "debugger.h"
 #include "SourceProvider.h"
+#include "debugger.h"
 #include "nodes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

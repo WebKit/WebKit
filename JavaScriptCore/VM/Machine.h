@@ -157,7 +157,8 @@ namespace JSC {
             m_timeoutCheckCount = 0;
         }
 
-        SamplingTool* m_sampler;
+        void setSampler(SamplingTool* sampler) { m_sampler = sampler; }
+        SamplingTool* sampler() { return m_sampler; }
 
 #if ENABLE(CTI)
 
@@ -318,11 +319,16 @@ namespace JSC {
         void* getCTIArrayLengthTrampoline(CallFrame*, CodeBlock*);
         void* getCTIStringLengthTrampoline(CallFrame*, CodeBlock*);
 
+        JITCodeBuffer* jitCodeBuffer() const { return m_jitCodeBuffer.get(); }
+#endif
+
+        SamplingTool* m_sampler;
+
+#if ENABLE(CTI)
         void* m_ctiArrayLengthTrampoline;
         void* m_ctiStringLengthTrampoline;
 
         OwnPtr<JITCodeBuffer> m_jitCodeBuffer;
-        JITCodeBuffer* jitCodeBuffer() const { return m_jitCodeBuffer.get(); }
 #endif
 
         int m_reentryDepth;

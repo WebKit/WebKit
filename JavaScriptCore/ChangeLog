@@ -1,3 +1,87 @@
+2008-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig, with Gavin Barraclough's help.
+        
+        Fixed Sampling Tool:
+            - Made CodeBlock sampling work with CTI
+            - Improved accuracy by unifying most sampling data into a single
+              32bit word, which can be written / read atomically.
+            - Split out three different #ifdefs for modularity: OPCODE_SAMPLING;
+              CODEBLOCK_SAMPLING; OPCODE_STATS.
+            - Improved reporting clarity
+            - Refactored for code clarity
+
+        * JavaScriptCore.exp: Exported another symbol.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitCTICall):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        * VM/CTI.h: Updated CTI codegen to use the unified SamplingTool interface
+        for encoding samples. (This required passing the current vPC to a lot
+        more functions, since the unified interface samples the current vPC.)
+        Added hooks for writing the current CodeBlock* on function entry and
+        after a function call, for the sake of the CodeBlock sampler. Removed
+        obsolete hook for clearing the current sample inside op_end. Also removed
+        the custom enum used to differentiate flavors of op_call, since the
+        OpcodeID enum works just as well. (This was important in an earlier
+        version of the patch, but now it's just cleanup.)
+
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::lineNumberForVPC):
+        * VM/CodeBlock.h: Upated for refactored #ifdefs. Changed lineNumberForVPC
+        to be robust against vPCs not recorded for exception handling, since
+        the Sampler may ask for an arbitrary vPC.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::execute):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        * VM/Machine.h:
+        (JSC::Machine::setSampler):
+        (JSC::Machine::sampler):
+        (JSC::Machine::jitCodeBuffer): Upated for refactored #ifdefs. Changed
+        Machine to use SamplingTool helper objects to record movement in and
+        out of host code. This makes samples a bit more precise.
+        
+        * VM/Opcode.cpp:
+        (JSC::OpcodeStats::~OpcodeStats):
+        * VM/Opcode.h: Upated for refactored #ifdefs. Added a little more padding,
+        to accomodate our more verbose opcode names.
+
+        * VM/SamplingTool.cpp:
+        (JSC::ScopeSampleRecord::sample): Only count a sample toward our total
+        if we actually record it. This solves cases where a CodeBlock will
+        claim to have been sampled many times, with reported samples that don't
+        match.
+
+        (JSC::SamplingTool::run): Read the current sample into a Sample helper
+        object, to ensure that the data doesn't change while we're analyzing it,
+        and to help decode the data. Only access the CodeBlock sampling hash
+        table if CodeBlock sampling has been enabled, so non-CodeBlock sampling
+        runs can operate with even less overhead.
+
+        (JSC::SamplingTool::dump): I reorganized this code a lot to print the
+        most important info at the top, print as a table, annotate and document
+        the stuff I didn't understand when I started, etc.
+
+        * VM/SamplingTool.h: New helper classes, described above.
+
+        * kjs/Parser.h:
+        * kjs/Shell.cpp:
+        (runWithScripts):
+        * kjs/nodes.cpp:
+        (JSC::ScopeNode::ScopeNode): Updated for new sampling APIs.
+
+        * wtf/Platform.h: Moved sampling #defines here, since our custom is to
+        put ENABLE #defines into Platform.h. Made explicit the fact that
+        CODEBLOCK_SAMPLING depends on OPCODE_SAMPLING.
+
 2008-10-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         JSC Build fix, not reviewed.

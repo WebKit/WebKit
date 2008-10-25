@@ -37,8 +37,6 @@
 
 namespace JSC {
 
-#define DUMP_OPCODE_STATS 0
-
     #define FOR_EACH_OPCODE_ID(macro) \
         macro(op_enter) \
         macro(op_enter_with_activation) \
@@ -182,7 +180,7 @@ namespace JSC {
     typedef OpcodeID Opcode;
 #endif
 
-#if ENABLE(SAMPLING_TOOL) || DUMP_OPCODE_STATS
+#if ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
 
 #define PADDING_STRING "                                "
 #define PADDING_STRING_LENGTH static_cast<unsigned>(strlen(PADDING_STRING))
@@ -201,7 +199,7 @@ namespace JSC {
 
 #endif
 
-#if DUMP_OPCODE_STATS
+#if ENABLE(OPCODE_STATS)
 
     struct OpcodeStats {
         OpcodeStats();

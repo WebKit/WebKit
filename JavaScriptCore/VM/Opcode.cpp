@@ -34,7 +34,7 @@ using namespace std;
 
 namespace JSC {
 
-#if ENABLE(SAMPLING_TOOL) || DUMP_OPCODE_STATS
+#if ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
 
 const char* const opcodeNames[] = {
 #define OPCODE_NAME_ENTRY(opcode) #opcode,
@@ -44,7 +44,7 @@ const char* const opcodeNames[] = {
 
 #endif
 
-#if DUMP_OPCODE_STATS
+#if ENABLE(OPCODE_STATS)
 
 long long OpcodeStats::opcodeCounts[numOpcodeIDs];
 long long OpcodeStats::opcodePairCounts[numOpcodeIDs][numOpcodeIDs];
@@ -121,7 +121,7 @@ OpcodeStats::~OpcodeStats()
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
-        printf("%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 24), opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
+        printf("%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
     }
     
     printf("\n");
@@ -134,7 +134,7 @@ OpcodeStats::~OpcodeStats()
         if (!count)
             break;
         
-        printf("%s%s %s:%s %lld %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 24), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 24), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
+        printf("%s%s %s:%s %lld %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
     }
     
     printf("\n");
@@ -146,7 +146,7 @@ OpcodeStats::~OpcodeStats()
         double opcodeProportion = ((double) opcodeCount) / ((double) totalInstructions);
         if (opcodeProportion < 0.0001)
             break;
-        printf("\n%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 24), opcodeCount, opcodeProportion * 100.0);
+        printf("\n%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCount, opcodeProportion * 100.0);
 
         for (int j = 0; j < numOpcodeIDs * numOpcodeIDs; ++j) {
             pair<int, int> indexPair = sortedPairIndices[j];
@@ -159,7 +159,7 @@ OpcodeStats::~OpcodeStats()
             if (indexPair.first != index && indexPair.second != index)
                 continue;
 
-            printf("    %s%s %s:%s %lld - %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 24), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 24), pairCount, pairProportion * 100.0);
+            printf("    %s%s %s:%s %lld - %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), pairCount, pairProportion * 100.0);
         }
         
     }

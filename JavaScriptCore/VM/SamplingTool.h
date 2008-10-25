@@ -33,20 +33,16 @@
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
 
-#include <nodes.h>
-#include <Opcode.h>
+#include "nodes.h"
+#include "Opcode.h"
 
 namespace JSC {
 
-    class ExecState;
-    class ScopeNode;
     class CodeBlock;
+    class ExecState;
+    class Machine;
+    class ScopeNode;
     struct Instruction;
-
-#if ENABLE(SAMPLING_TOOL)
-    extern OpcodeID currentOpcodeID;
-    extern unsigned inCalledCode;
-#endif
 
     struct ScopeSampleRecord {
         RefPtr<ScopeNode> m_scope;
@@ -70,20 +66,74 @@ namespace JSC {
                 free(m_vpcCounts);
         }
         
-        void sample(CodeBlock* codeBlock, Instruction* vPC);
+        void sample(CodeBlock*, Instruction*);
     };
 
     typedef WTF::HashMap<ScopeNode*, ScopeSampleRecord*> ScopeSampleRecordMap;
 
     class SamplingTool {
     public:
-        SamplingTool()
-            : m_running(false)
-            , m_recordedCodeBlock(0)
-            , m_recordedVPC(0)
-            , m_totalSamples(0)
+        friend class CallRecord;
+        friend class HostCallRecord;
+        
+#if ENABLE(OPCODE_SAMPLING)
+        class CallRecord : Noncopyable {
+        public:
+            CallRecord(SamplingTool* samplingTool)
+                : m_samplingTool(samplingTool)
+                , m_savedSample(samplingTool->m_sample)
+                , m_savedCodeBlock(samplingTool->m_codeBlock)
+            {
+            }
+
+            ~CallRecord()
+            {
+                m_samplingTool->m_sample = m_savedSample;
+                m_samplingTool->m_codeBlock = m_savedCodeBlock;
+            }
+
+        private:
+            SamplingTool* m_samplingTool;
+            intptr_t m_savedSample;
+            CodeBlock* m_savedCodeBlock;
+        };
+        
+        class HostCallRecord : public CallRecord {
+        public:
+            HostCallRecord(SamplingTool* samplingTool)
+                : CallRecord(samplingTool)
+            {
+                samplingTool->m_sample |= 0x1;
+            }
+        };
+#else
+        class CallRecord : Noncopyable {
+        public:
+            CallRecord(SamplingTool*)
+            {
+            }
+        };
+
+        class HostCallRecord : public CallRecord {
+        public:
+            HostCallRecord(SamplingTool* samplingTool)
+                : CallRecord(samplingTool)
+            {
+            }
+        };
+#endif        
+
+        SamplingTool(Machine* machine)
+            : m_machine(machine)
+            , m_running(false)
+            , m_codeBlock(0)
+            , m_sample(0)
+            , m_sampleCount(0)
+            , m_opcodeSampleCount(0)
             , m_scopeSampleMap(new ScopeSampleRecordMap())
         {
+            memset(m_opcodeSamples, 0, sizeof(m_opcodeSamples));
+            memset(m_opcodeSamplesInCTIFunctions, 0, sizeof(m_opcodeSamplesInCTIFunctions));
         }
 
         ~SamplingTool()
@@ -97,33 +147,46 @@ namespace JSC {
 
         void notifyOfScope(ScopeNode* scope);
 
-        void sample(CodeBlock* recordedCodeBlock, Instruction* recordedVPC)
+        void sample(CodeBlock* codeBlock, Instruction* vPC)
         {
-            m_recordedCodeBlock = recordedCodeBlock;
-            m_recordedVPC = recordedVPC;
+            ASSERT(!(reinterpret_cast<intptr_t>(vPC) & 0x3));
+            m_codeBlock = codeBlock;
+            m_sample = reinterpret_cast<intptr_t>(vPC);
         }
 
-        void privateExecuteReturned()
+        CodeBlock** codeBlockSlot() { return &m_codeBlock; }
+        intptr_t* sampleSlot() { return &m_sample; }
+
+        unsigned encodeSample(Instruction* vPC, bool inCTIFunction = false, bool inHostFunction = false)
         {
-            m_recordedCodeBlock = 0;
-            m_recordedVPC = 0;
-#if ENABLE(SAMPLING_TOOL)
-            currentOpcodeID = static_cast<OpcodeID>(-1);
-#endif
-        }
-        
-        void callingHostFunction()
-        {
-            m_recordedCodeBlock = 0;
-            m_recordedVPC = 0;
-#if ENABLE(SAMPLING_TOOL)
-            currentOpcodeID = static_cast<OpcodeID>(-1);
-#endif
+            ASSERT(!(reinterpret_cast<intptr_t>(vPC) & 0x3));
+            return reinterpret_cast<intptr_t>(vPC) | (inCTIFunction << 1) | inHostFunction;
         }
 
     private:
+        class Sample {
+        public:
+            Sample(volatile intptr_t sample, CodeBlock* volatile codeBlock)
+                : m_sample(sample)
+                , m_codeBlock(codeBlock)
+            {
+            }
+            
+            bool isNull() { return !m_sample || !m_codeBlock; }
+            CodeBlock* codeBlock() { return m_codeBlock; }
+            Instruction* vPC() { return reinterpret_cast<Instruction*>(m_sample & ~0x3); }
+            bool inHostFunction() { return m_sample & 0x1; }
+            bool inCTIFunction() { return m_sample & 0x2; }
+
+        private:
+            intptr_t m_sample;
+            CodeBlock* m_codeBlock;
+        };
+        
         static void* threadStartFunc(void*);
         void run();
+        
+        Machine* m_machine;
         
         // Sampling thread state.
         bool m_running;
@@ -131,28 +194,16 @@ namespace JSC {
         ThreadIdentifier m_samplingThread;
 
         // State tracked by the main thread, used by the sampling thread.
-        CodeBlock* m_recordedCodeBlock;
-        Instruction* m_recordedVPC;
+        CodeBlock* m_codeBlock;
+        intptr_t m_sample;
 
         // Gathered sample data.
-        long long m_totalSamples;
+        long long m_sampleCount;
+        long long m_opcodeSampleCount;
+        unsigned m_opcodeSamples[numOpcodeIDs];
+        unsigned m_opcodeSamplesInCTIFunctions[numOpcodeIDs];
         OwnPtr<ScopeSampleRecordMap> m_scopeSampleMap;
     };
-
-// SCOPENODE_ / MACHINE_ macros for use from within member methods on ScopeNode / Machine respectively.
-#if ENABLE(SAMPLING_TOOL)
-#define SCOPENODE_SAMPLING_notifyOfScope(sampler) sampler->notifyOfScope(this)
-#define MACHINE_SAMPLING_sample(codeBlock, vPC) m_sampler->sample(codeBlock, vPC)
-#define MACHINE_SAMPLING_privateExecuteReturned() m_sampler->privateExecuteReturned()
-#define MACHINE_SAMPLING_callingHostFunction() m_sampler->callingHostFunction()
-#define CTI_MACHINE_SAMPLING_callingHostFunction() ARG_globalData->machine->m_sampler->callingHostFunction()
-#else
-#define SCOPENODE_SAMPLING_notifyOfScope(sampler)
-#define MACHINE_SAMPLING_sample(codeBlock, vPC)
-#define MACHINE_SAMPLING_privateExecuteReturned()
-#define MACHINE_SAMPLING_callingHostFunction()
-#define CTI_MACHINE_SAMPLING_callingHostFunction()
-#endif
 
 } // namespace JSC
 
