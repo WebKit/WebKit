@@ -22,6 +22,7 @@
 #include "ChromeClientGtk.h"
 
 #include "FileSystem.h"
+#include "FileChooser.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "PlatformString.h"
@@ -36,9 +37,14 @@
 #include "DatabaseTracker.h"
 #endif
 
+#include <glib.h>
+#include <glib/gi18n.h>
+#include <gtk/gtk.h>
+
 using namespace WebCore;
 
 namespace WebKit {
+
 ChromeClient::ChromeClient(WebKitWebView* webView)
     : m_webView(webView)
 {

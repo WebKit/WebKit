@@ -1,5 +1,11 @@
 2008-10-24  Sam Weinig  <sam@webkit.org>
 
+        Fix the Gtk build.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+
+2008-10-24  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Fix https://bugs.webkit.org/show_bug.cgi?id=21759
