@@ -35,6 +35,7 @@
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/ContextMenu.h>
+#include <WebCore/FileChooser.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
