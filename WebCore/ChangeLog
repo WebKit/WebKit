@@ -1,3 +1,10 @@
+2008-10-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix - add newIconForFiles stub.
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (Icon::newIconForFiles):
+
 2008-10-24  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
