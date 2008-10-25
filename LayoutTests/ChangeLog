@@ -1,6 +1,14 @@
 2008-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam Weinig.
+        
+        Add missing results.
+
+        * fast/js/global-constructors-expected.txt: Added.
+
+2008-10-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam Weinig.
 
         Generate missing constructors and add test to prevent missing ones in the future
         https://bugs.webkit.org/show_bug.cgi?id=21846
