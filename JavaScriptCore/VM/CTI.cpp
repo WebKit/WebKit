@@ -35,6 +35,10 @@
 #include "wrec/WREC.h"
 #include "ResultType.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 using namespace std;
 
 namespace JSC {

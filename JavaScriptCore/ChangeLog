@@ -1,3 +1,9 @@
+2008-10-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        JSC Build fix, not reviewed.
+
+        * VM/CTI.cpp: add missing include stdio.h for debug builds
+
 2008-10-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
