@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ChromeClientQt.h"
 
+#include "FileChooser.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
