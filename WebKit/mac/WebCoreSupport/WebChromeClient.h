@@ -111,7 +111,7 @@ public:
     virtual void dashboardRegionsChanged();
 #endif
 
-    virtual void runOpenPanel(PassRefPtr<WebCore::FileChooser>);
+    virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
 
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WebCore::AtomicString& type,
         const WebCore::FloatRect& lineRect);

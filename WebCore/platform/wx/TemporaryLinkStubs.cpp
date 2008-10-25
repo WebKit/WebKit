@@ -129,7 +129,6 @@ void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const Affine
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme() { notImplemented(); static ScrollbarTheme theme; return &theme; }
 
-void FileChooser::openFileChooser(Document*) { notImplemented(); }
 String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
 
 Icon::~Icon() { }

@@ -35,13 +35,14 @@ namespace WebCore {
 
     class ChromeClient;
     class ContextMenu;
+    class FileChooser;
     class FloatRect;
     class Frame;
     class HitTestResult;
     class IntRect;
     class Page;
     class String;
-    
+
     struct FrameLoadRequest;
     struct WindowFeatures;
     
@@ -100,7 +101,7 @@ namespace WebCore {
 
         void runJavaScriptAlert(Frame*, const String&);
         bool runJavaScriptConfirm(Frame*, const String&);
-        bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);                
+        bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
         void setStatusbarText(Frame*, const String&);
         bool shouldInterruptJavaScript();
 
@@ -114,6 +115,8 @@ namespace WebCore {
 
         void enableSuddenTermination();
         void disableSuddenTermination();
+
+        void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
 
 #if PLATFORM(MAC)
         void focusNSView(NSView*);

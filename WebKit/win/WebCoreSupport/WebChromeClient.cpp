@@ -621,6 +621,39 @@ bool WebChromeClient::paintCustomScrollCorner(GraphicsContext* context, const Fl
     return SUCCEEDED(hr);
 }
 
+void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
+{
+    // FIXME: Support multiple files.
+
+    RefPtr<FileChooser> fileChooser = prpFileChooser;
+
+    HWND viewWindow;
+    if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
+        return;
+
+    TCHAR fileBuf[MAX_PATH];
+    OPENFILENAME ofn;
+
+    memset(&ofn, 0, sizeof(ofn));
+
+    // Need to zero out the first char of fileBuf so GetOpenFileName doesn't think it's an initialization string
+    fileBuf[0] = '\0';
+
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = viewWindow;
+    String allFiles = allFilesText();
+    allFiles.append(TEXT("\0*.*\0\0"), 6);
+    ofn.lpstrFilter = allFiles.charactersWithNullTermination();
+    ofn.lpstrFile = fileBuf;
+    ofn.nMaxFile = sizeof(fileBuf);
+    String dialogTitle = uploadFileText();
+    ofn.lpstrTitle = dialogTitle.charactersWithNullTermination();
+    ofn.Flags = OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+
+    if (GetOpenFileName(&ofn))
+        fileChooser->chooseFile(String(fileBuf));
+}
+
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
 {
     COMPtr<IWebUIDelegate> delegate;

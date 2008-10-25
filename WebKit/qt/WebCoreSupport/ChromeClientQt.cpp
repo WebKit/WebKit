@@ -381,6 +381,15 @@ void ChromeClientQt::exceededDatabaseQuota(Frame*, const String&)
     notImplemented();
 }
 
+void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
+{
+    // FIXME: Support multiple files.
+
+    RefPtr<FileChooser> fileChooser = prpFileChooser;
+    QString suggestedFile = fileChooser->filenames()[0];
+    QString file = m_webPage->chooseFile(QWebFramePrivate::kit(frame), suggestedFile);
+    if (!file.isEmpty())
+        fileChooser->chooseFile(file);
 }
 
-
+}

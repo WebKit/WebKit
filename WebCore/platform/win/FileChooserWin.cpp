@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,53 +26,13 @@
 #include "config.h"
 #include "FileChooser.h"
 
-#include "Document.h"
-#include "FrameView.h"
-#include "HostWindow.h"
-#include "Icon.h"
 #include "LocalizedStrings.h"
-#include "RenderObject.h"
-#include "RenderThemeWin.h"
-#include "RenderView.h"
 #include "StringTruncator.h"
 #include <shlwapi.h>
 #include <tchar.h>
 #include <windows.h>
 
 namespace WebCore {
-
-void FileChooser::openFileChooser(Document* document)
-{
-    FrameView* view = document->view();
-    if (!view)
-        return;
-
-    TCHAR fileBuf[MAX_PATH];
-    OPENFILENAME ofn;
-
-    memset(&ofn, 0, sizeof(ofn));
-    
-    // Need to zero out the first char of fileBuf so GetOpenFileName doesn't think it's an initialization string
-    fileBuf[0] = '\0';
-
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = view->hostWindow()->platformWindow();
-    String allFiles = allFilesText();
-    allFiles.append(TEXT("\0*.*\0\0"), 6);
-    ofn.lpstrFilter = allFiles.charactersWithNullTermination();
-    ofn.lpstrFile = fileBuf;
-    ofn.nMaxFile = sizeof(fileBuf);
-    String dialogTitle = uploadFileText();
-    ofn.lpstrTitle = dialogTitle.charactersWithNullTermination();
-    ofn.Flags = OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-
-    // We need this protector because otherwise we can be deleted if the file upload control is detached while
-    // we're within the GetOpenFileName call.
-    RefPtr<FileChooser> protector(this);
-
-    if (GetOpenFileName(&ofn))
-        chooseFile(String(fileBuf));
-}
 
 String FileChooser::basenameForWidth(const Font& font, int width) const
 {
@@ -92,4 +52,4 @@ String FileChooser::basenameForWidth(const Font& font, int width) const
     return StringTruncator::centerTruncate(string, width, font, false);
 }
 
-}
+} // namespace WebCore

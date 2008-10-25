@@ -24,6 +24,7 @@
 #include "ChromeClient.h"
 #include "DNS.h"
 #include "Document.h"
+#include "FileChooser.h"
 #include "FileList.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -395,6 +396,10 @@ void Chrome::enableSuddenTermination()
     m_client->enableSuddenTermination();
 }
 
+void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
+{
+    m_client->runOpenPanel(frame, fileChooser);
+}
 // --------
 
 #if ENABLE(DASHBOARD_SUPPORT)

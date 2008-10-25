@@ -28,6 +28,7 @@
 #include "HTMLNames.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
+#include "Page.h"
 #include "RenderButton.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -103,7 +104,13 @@ bool RenderFileUploadControl::allowsMultipleFiles()
 
 void RenderFileUploadControl::click()
 {
-     m_fileChooser->openFileChooser(node()->document());
+    Frame* frame = node()->document()->frame();
+    if (!frame)
+        return;
+    Page* page = frame->page();
+    if (!page)
+        return;
+    page->chrome()->runOpenPanel(frame, m_fileChooser);
 }
 
 void RenderFileUploadControl::updateFromElement()

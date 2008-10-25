@@ -111,6 +111,8 @@ public:
 
     virtual void exceededDatabaseQuota(Frame*, const String&);
 
+    virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>)
+
 private:
     wxWebView* m_webView;
 };

@@ -98,6 +98,8 @@ namespace WebKit {
 
         virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String&);
 
+        virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
+
     private:
         WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;

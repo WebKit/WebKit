@@ -22,7 +22,6 @@
 
 #import "BlockExceptions.h"
 #import "ChromeClient.h"
-#import "FileChooser.h"
 
 namespace WebCore {
 
@@ -47,10 +46,6 @@ void Chrome::focusNSView(NSView* view)
         client()->makeFirstResponder(firstResponder);
 
     END_BLOCK_OBJC_EXCEPTIONS;
-}
-
-void ChromeClient::runOpenPanel(PassRefPtr<FileChooser>)
-{
 }
 
 } // namespace WebCore

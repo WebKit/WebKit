@@ -1,3 +1,27 @@
+2008-10-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=21759
+        Layering violation: FileChooser should not depend on Document/Frame/Page
+
+        Move file choosing into WebKit ChromeClient.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::runOpenPanel):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runOpenPanel):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/mac/ChromeMac.mm:
+        * platform/FileChooser.h:
+        * platform/mac/FileChooserMac.mm:
+        * platform/qt/FileChooserQt.cpp:
+        * platform/win/FileChooserWin.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::click):
+
 2008-10-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix - add newIconForFiles stub.

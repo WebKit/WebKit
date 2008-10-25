@@ -544,7 +544,7 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::runOpenPanel(PassRefPtr<FileChooser> chooser)
+void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     BOOL allowMultipleFiles = chooser->allowsMultipleFiles();

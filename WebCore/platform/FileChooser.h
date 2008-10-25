@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-class Document;
 class Font;
 class Icon;
 
@@ -53,13 +52,6 @@ public:
 
     void disconnectClient() { m_client = 0; }
     bool disconnected() { return !m_client; }
-
-    // FIXME: It's a layering violation that we pass a Document in here.
-    // The platform directory is underneath the DOM, so it can't use the DOM.
-    // Because of UI delegates, it's not clear that the FileChooser class
-    // belongs in the platform layer at all. It might need to go alongside
-    // the Chrome class instead.
-    void openFileChooser(Document*);
 
     const Vector<String>& filenames() const { return m_filenames; }
     String basenameForWidth(const Font&, int width) const;
@@ -83,6 +75,6 @@ private:
     RefPtr<Icon> m_icon;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // FileChooser_h

@@ -30,28 +30,12 @@
 #import "config.h"
 #import "FileChooser.h"
 
-#import "ChromeClient.h"
-#import "Document.h"
-#import "Frame.h"
-#import "Icon.h"
 #import "LocalizedStrings.h"
-#import "Page.h"
 #import "SimpleFontData.h"
 #import "StringTruncator.h"
 
 namespace WebCore {
     
-void FileChooser::openFileChooser(Document* document)
-{
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-    Page* page = frame->page();
-    if (!page)
-        return;
-    page->chrome()->client()->runOpenPanel(this);
-}
-
 String FileChooser::basenameForWidth(const Font& font, int width) const
 {
     if (width <= 0)

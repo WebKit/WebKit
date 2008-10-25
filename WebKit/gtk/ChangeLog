@@ -1,3 +1,14 @@
+2008-10-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=21759
+        Layering violation: FileChooser should not depend on Document/Frame/Page
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::runOpenPanel):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2008-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Stub out new InspectorClient methods.
