@@ -1,3 +1,18 @@
+2008-10-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added a mutex around the SamplingTool's ScopeNode* map, to solve a crash
+        when sampling the v8 tests.
+
+        * VM/SamplingTool.cpp:
+        (JSC::SamplingTool::run):
+        (JSC::SamplingTool::notifyOfScope):
+        * VM/SamplingTool.h: Since new ScopeNodes can be created after
+        the SamplingTools has begun sampling, reads and writes to / from the
+        map need to be synchronized. Shark says this doesn't measurably increase
+        sampling overhead.
+
 2008-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

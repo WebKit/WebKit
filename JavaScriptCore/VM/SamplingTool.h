@@ -202,6 +202,8 @@ namespace JSC {
         long long m_opcodeSampleCount;
         unsigned m_opcodeSamples[numOpcodeIDs];
         unsigned m_opcodeSamplesInCTIFunctions[numOpcodeIDs];
+        
+        Mutex m_scopeSampleMapMutex;
         OwnPtr<ScopeSampleRecordMap> m_scopeSampleMap;
     };
 
