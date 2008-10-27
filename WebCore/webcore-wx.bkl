@@ -132,7 +132,6 @@ wxWebCore port Bakefile project file.
 
     <lib id="wx-webcore-static" template="webcore-wx,wx-lib">
         <libname>webcore-wx</libname>
-        <dirname>$(WKOUTPUTDIR)</dirname>
         <if cond="PLATFORM_WIN32=='1'">
             <define>WXUSINGDLL=1</define>
     </if>

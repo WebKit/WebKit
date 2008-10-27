@@ -85,6 +85,7 @@ and WebCore. Include this file to use these settings.
         <if cond="FORMAT in ['msvc', 'msvs2005prj']">
             <!-- MSVC chokes on #import, so don't use ForwardingHeaders... -->
             <include>$(WK_ROOT)/JavaScriptCore/os-win32</include><!-- stdint.h is here -->
+            <include>$(WKOUTPUTDIR)</include>
         </if>
     </template>
 
@@ -100,7 +101,8 @@ and WebCore. Include this file to use these settings.
             <define>HAVE_FLOAT_H=1</define>
             <define>HAVE_FUNC__FINITE=1</define>
         </if>
-    
+
+        <include>$(WKOUTPUTDIR)</include>
         <include>$(WK_ROOT)/WebCore</include>
         <include>$(WK_ROOT)/WebCore/DerivedSources/WebCore</include>
         <include>$(WK_ROOT)/WebCore/bindings/js</include>

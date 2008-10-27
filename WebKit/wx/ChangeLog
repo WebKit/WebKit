@@ -1,3 +1,9 @@
+2008-10-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix on Linux/GTK. Enable support for #include <JavaScriptCore/XYZ.h> style includes.
+
+        * presets/wxwebkit.bkl:
+
 2008-10-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.

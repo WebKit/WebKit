@@ -284,6 +284,10 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
     WINDEPS="$WINDEPS $WXWIN/lib/vc_dll/wxmsw28u${WX_EXT}_core_vc.dll $WXWIN/lib/vc_dll/wxbase28u${WX_EXT}_vc.dll"
     
     do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+
+    mkdir -p $WEBKITOUTPUTDIR/JavaScriptCore
+    cp -p $WK_ROOT/JavaScriptCore/API/*.h $WEBKITOUTPUTDIR/JavaScriptCore/
+
     do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
     do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
     do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
