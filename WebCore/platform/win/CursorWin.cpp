@@ -402,4 +402,14 @@ const Cursor& zoomOutCursor()
     return c;
 }
 
+const Cursor& grabCursor()
+{
+    return pointerCursor();
+}
+
+const Cursor& grabbingCursor()
+{
+    return pointerCursor();
+}
+
 }

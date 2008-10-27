@@ -268,7 +268,7 @@ const Cursor& verticalTextCursor()
 
 const Cursor& cellCursor()
 {
-    // TODO: Find a suitable cursor
+    notImplemented();
     return pointerCursor();
 }
 
@@ -280,7 +280,7 @@ const Cursor& contextMenuCursor()
 
 const Cursor& noDropCursor()
 {
-    // TODO: Find a suitable cursor
+    notImplemented();
     return pointerCursor();
 }
 
@@ -292,7 +292,7 @@ const Cursor& copyCursor()
 
 const Cursor& progressCursor()
 {
-    // TODO: Find a suitable cursor
+    notImplemented();
     return pointerCursor();
 }
 
@@ -304,13 +304,13 @@ const Cursor& aliasCursor()
 
 const Cursor& noneCursor()
 {
-    // TODO: Find a suitable cursor
+    notImplemented();
     return pointerCursor();
 }
 
 const Cursor& notAllowedCursor()
 {
-    // TODO: Find a suitable cursor
+    notImplemented();
     return pointerCursor();
 }
 
@@ -324,6 +324,18 @@ const Cursor& zoomOutCursor()
 {
     static Cursor c = customCursorNew(CustomCursorZoomOut);
     return c;
+}
+
+const Cursor& grabCursor()
+{
+    notImplemented();
+    return pointerCursor();
+}
+
+const Cursor& grabbingCursor()
+{
+    notImplemented();
+    return pointerCursor();
 }
 
 }

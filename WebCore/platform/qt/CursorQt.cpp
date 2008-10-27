@@ -355,6 +355,18 @@ const Cursor& zoomOutCursor()
     return Cursors::self()->ZoomOutCursor;
 }
 
+const Cursor& grabCursor()
+{
+    notImplemented();
+    return Cursors::self()->PointerCursor;
+}
+
+const Cursor& grabbingCursor()
+{
+    notImplemented();
+    return Cursors::self()->PointerCursor;
+}
+
 }
 
 // vim: ts=4 sw=4 et

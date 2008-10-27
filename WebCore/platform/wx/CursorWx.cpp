@@ -286,4 +286,16 @@ const Cursor& zoomOutCursor()
     return zoomInCursor();
 }
 
+const Cursor& grabCursor()
+{
+    // TODO: Determine if we can find a better cursor for this.
+    return pointerCursor();
+}
+
+const Cursor& grabbingCursor()
+{
+    // TODO: Determine if we can find a better cursor for this.
+    return pointerCursor();
+}
+
 }

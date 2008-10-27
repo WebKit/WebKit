@@ -1,3 +1,54 @@
+2008-10-27  Michael Knaup  <michael.knaup@mac.com>
+
+        Reviewed and tweaked by Darin Adler.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=8988
+
+        Bug 8988: Add support for Mozilla CSS custom cursors.
+        Added -webkit-grab and -webkit-grabbing cursor suppport
+        for the Mac, dummy implementations for other platforms.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Updated since the
+        -webkit-grabbing cursor is now the last one.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added
+        CURSOR_WEBKIT_GRAB and CURSOR_WEBKIT_GRABBING.
+
+        * css/CSSValueKeywords.in: Added -webkit-grab and
+        -webkit-grabbing.
+
+        * manual-tests/cursor.html: Added -webkit-zoom-in,
+        webkit-zoom-out, -webkit-grab, and -webkit-grabbing.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor): Added
+        CURSOR_WEBKIT_GRAB and CURSOR_WEBKIT_GRABBING.
+
+        * platform/Cursor.h: Added grabCursor and grabbingCursor.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::grabCursor): Added.
+        (WebCore::grabbingCursor): Added.
+        * platform/mac/CursorMac.mm:
+        (WebCore::grabCursor): Added.
+        (WebCore::grabbingCursor): Added.
+        * platform/qt/CursorQt.cpp:
+        (WebCore::grabCursor): Added.
+        (WebCore::grabbingCursor): Added.
+        * platform/win/CursorWin.cpp:
+        (WebCore::grabCursor): Added.
+        (WebCore::grabbingCursor): Added.
+        * platform/wx/CursorWx.cpp:
+        (WebCore::grabCursor): Added.
+        (WebCore::grabbingCursor): Added.
+
+        * rendering/style/RenderStyleConstants.h:
+        Added CURSOR_WEBKIT_GRAB and CURSOR_WEBKIT_GRABBING.
+        Also broke ECursor out into a single constant per line.
+        Also added a couple of comments.
+
 2008-10-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

@@ -809,7 +809,9 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyCursor: {
         // [<uri>,]*  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize | 
-        // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help ] ] | inherit
+        // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help |
+        // vertical-text | cell | context-menu | alias | copy | no-drop | not-allowed | -webkit-zoom-in
+        // -webkit-zoom-in | -webkit-zoom-out | all-scroll | -webkit-grab | -webkit-grabbing ] ] | inherit
         RefPtr<CSSValueList> list;
         while (value && value->unit == CSSPrimitiveValue::CSS_URI) {
             if (!list)
@@ -842,7 +844,7 @@ bool CSSParser::parseValue(int propId, bool important)
                     return false;
             } else if (!m_strict && value->id == CSSValueHand) // MSIE 5 compatibility :/
                 list->append(CSSPrimitiveValue::createIdentifier(CSSValuePointer));
-            else if (value && ((value->id >= CSSValueAuto && value->id <= CSSValueAllScroll) || value->id == CSSValueCopy || value->id == CSSValueNone))
+            else if (value && ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone))
                 list->append(CSSPrimitiveValue::createIdentifier(value->id));
             m_valueList->next();
             parsedValue = list.release();
@@ -852,7 +854,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (!m_strict && value->id == CSSValueHand) { // MSIE 5 compatibility :/
             id = CSSValuePointer;
             valid_primitive = true;
-        } else if ((value->id >= CSSValueAuto && value->id <= CSSValueAllScroll) || value->id == CSSValueCopy || value->id == CSSValueNone)
+        } else if ((value->id >= CSSValueAuto && value->id <= CSSValueWebkitGrabbing) || value->id == CSSValueCopy || value->id == CSSValueNone)
             valid_primitive = true;
         break;
     }
