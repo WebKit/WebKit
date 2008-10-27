@@ -1,3 +1,10 @@
+2008-10-27  Antti Koivisto  <antti@apple.com>
+
+        Add some svg files.
+
+        * blog-files/cubes-7.svg: Added.
+        * blog-files/number-morph.svg: Added.
+
 2008-10-07  Darin Adler  <darin@apple.com>
 
         * coding/RefPtr.html: Second draft.
