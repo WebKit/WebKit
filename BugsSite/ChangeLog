@@ -1,3 +1,8 @@
+2008-10-27  Darin Adler  <darin@apple.com>
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Leave out the
+        comment if it's untouched.
+
 2008-10-23  Adam Roben  <aroben@apple.com>
 
         Fix Bug 21401: Comments field on "Review Patch" page should be

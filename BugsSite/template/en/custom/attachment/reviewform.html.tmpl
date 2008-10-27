@@ -46,10 +46,18 @@
       top.document.getElementById('viewFrame').src = src;
       document.getElementById('viewPrettyPatchButton').innerHTML = buttonText;
     }
+    function omitUntouchedComment()
+    {
+        // If someone just left the entire comment alone, then upload the form
+        // with no comment at all.
+        var textarea = document.getElementById("comment");
+        if (textarea.defaultValue === textarea.value)
+            textarea.value = "";
+    }
   //-->
 </script>
 
-<form method="post" action="attachment.cgi" target="_top">
+<form method="post" action="attachment.cgi" target="_top" onsubmit="omitUntouchedComment(); return true;">
   <input type="hidden" name="id" value="[% attachid %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="contenttypemethod" value="manual">
