@@ -1,3 +1,13 @@
+2008-10-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Fix non-Mac builds.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+        Renamed JSHTMLOptionElementConstructor to JSOptionConstructor.
+
 2008-10-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

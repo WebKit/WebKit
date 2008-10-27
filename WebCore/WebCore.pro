@@ -402,7 +402,6 @@ SOURCES += \
     bindings/js/JSHTMLIFrameElementCustom.cpp \
     bindings/js/JSHTMLInputElementCustom.cpp \
     bindings/js/JSHTMLObjectElementCustom.cpp \
-    bindings/js/JSHTMLOptionElementConstructor.cpp \
     bindings/js/JSHTMLOptionsCollectionCustom.cpp \
     bindings/js/JSHTMLSelectElementCustom.cpp \
     bindings/js/JSImageConstructor.cpp \
@@ -418,6 +417,7 @@ SOURCES += \
     bindings/js/JSNodeFilterCustom.cpp \
     bindings/js/JSNodeIteratorCustom.cpp \
     bindings/js/JSNodeListCustom.cpp \
+    bindings/js/JSOptionConstructor.cpp \
     bindings/js/JSQuarantinedObjectWrapper.cpp \
     bindings/js/JSRGBColor.cpp \
     bindings/js/JSStyleSheetCustom.cpp \

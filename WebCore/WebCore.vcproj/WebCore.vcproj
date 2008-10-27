@@ -13485,14 +13485,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSHTMLOptionElementConstructor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSHTMLOptionElementConstructor.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSHTMLOptionsCollectionCustom.cpp"
 					>
 				</File>
@@ -13598,6 +13590,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSNodeListCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSOptionConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSOptionConstructor.h"
 					>
 				</File>
 				<File

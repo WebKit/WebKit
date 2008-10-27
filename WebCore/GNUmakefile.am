@@ -375,8 +375,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLInputElementCustom.h \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.h \
-	WebCore/bindings/js/JSHTMLOptionElementConstructor.cpp \
-	WebCore/bindings/js/JSHTMLOptionElementConstructor.h \
 	WebCore/bindings/js/JSHTMLOptionsCollectionCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.h \
@@ -407,6 +405,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSNodeFilterCustom.cpp \
 	WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	WebCore/bindings/js/JSNodeListCustom.cpp \
+	WebCore/bindings/js/JSOptionConstructor.cpp \
+	WebCore/bindings/js/JSOptionConstructor.h \
 	WebCore/bindings/js/JSPluginArrayCustom.cpp \
 	WebCore/bindings/js/JSPluginCustom.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
