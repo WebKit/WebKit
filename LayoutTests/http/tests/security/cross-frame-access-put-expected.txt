@@ -423,7 +423,7 @@ ALERT: PASS: window.HTMLMetaElement should be '[object HTMLMetaElementConstructo
 ALERT: PASS: window.HTMLModElement should be '[object HTMLModElementConstructor]' and is.
 ALERT: PASS: window.HTMLOListElement should be '[object HTMLOListElementConstructor]' and is.
 ALERT: PASS: window.HTMLOptGroupElement should be '[object HTMLOptGroupElementConstructor]' and is.
-ALERT: PASS: window.HTMLOptionElement should be '[object HTMLElementConstructor]' and is.
+ALERT: PASS: window.HTMLOptionElement should be '[object HTMLOptionElementConstructor]' and is.
 ALERT: PASS: window.HTMLParagraphElement should be '[object HTMLParagraphElementConstructor]' and is.
 ALERT: PASS: window.HTMLParamElement should be '[object HTMLParamElementConstructor]' and is.
 ALERT: PASS: window.HTMLPreElement should be '[object HTMLPreElementConstructor]' and is.

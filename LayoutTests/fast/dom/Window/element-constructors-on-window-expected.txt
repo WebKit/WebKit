@@ -72,7 +72,7 @@ HTMLOListElement: [object HTMLOListElementConstructor]
 
 HTMLOptGroupElement: [object HTMLOptGroupElementConstructor]
 
-HTMLOptionElement: [object HTMLElementConstructor]
+HTMLOptionElement: [object HTMLOptionElementConstructor]
 
 HTMLParagraphElement: [object HTMLParagraphElementConstructor]
 

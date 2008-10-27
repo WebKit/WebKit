@@ -21,6 +21,7 @@
 module html {
 
     interface [
+        GenerateConstructor,
         GenerateNativeConverter,
         InterfaceUUID=74a7b64a-cf18-4da9-b3aa-e1f4d245d607,
         ImplementationUUID=166915d5-2c93-404b-b076-af3fa5ccbd83

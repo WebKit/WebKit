@@ -364,7 +364,7 @@ PASS tagJSWrapperPrototypeClass('optgroup') is 'HTMLOptGroupElementPrototype'
 PASS tagJSWrapperConstructorClass('optgroup') is 'HTMLOptGroupElementConstructor'
 PASS tagJSWrapperClass('option') is 'HTMLOptionElement'
 PASS tagJSWrapperPrototypeClass('option') is 'HTMLOptionElementPrototype'
-FAIL tagJSWrapperConstructorClass('option') should be HTMLOptionElementConstructor. Was HTMLElementConstructor.
+PASS tagJSWrapperConstructorClass('option') is 'HTMLOptionElementConstructor'
 PASS tagJSWrapperClass('p') is 'HTMLParagraphElement'
 PASS tagJSWrapperPrototypeClass('p') is 'HTMLParagraphElementPrototype'
 PASS tagJSWrapperConstructorClass('p') is 'HTMLParagraphElementConstructor'

@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "JSHTMLOptionElementConstructor.h"
+#include "JSOptionConstructor.h"
 
 #include "Document.h"
 #include "HTMLOptionElement.h"
@@ -29,12 +29,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSHTMLOptionElementConstructor)
+ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor)
 
-const ClassInfo JSHTMLOptionElementConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
+const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 
-JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, Document* document)
-    : DOMObject(JSHTMLOptionElementConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
+JSOptionConstructor::JSOptionConstructor(ExecState* exec, Document* document)
+    : DOMObject(JSOptionConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
     , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
@@ -42,7 +42,7 @@ JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, 
 
 static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    Document* document = static_cast<JSHTMLOptionElementConstructor*>(constructor)->document();
+    Document* document = static_cast<JSOptionConstructor*>(constructor)->document();
 
     ExceptionCode ec = 0;
 
@@ -69,13 +69,13 @@ static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* construct
     return asObject(toJS(exec, element.release()));
 }
 
-ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData& constructData)
+ConstructType JSOptionConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructHTMLOptionElement;
     return ConstructTypeHost;
 }
 
-void JSHTMLOptionElementConstructor::mark()
+void JSOptionConstructor::mark()
 {
     DOMObject::mark();
     if (!m_document->marked())

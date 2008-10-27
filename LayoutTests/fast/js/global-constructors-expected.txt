@@ -83,7 +83,7 @@ PASS HTMLModElement.toString() is '[object HTMLModElementConstructor]'
 PASS HTMLOListElement.toString() is '[object HTMLOListElementConstructor]'
 PASS HTMLObjectElement.toString() is '[object HTMLObjectElementConstructor]'
 PASS HTMLOptGroupElement.toString() is '[object HTMLOptGroupElementConstructor]'
-FAIL HTMLOptionElement.toString() should be [object HTMLOptionElementConstructor]. Was [object HTMLElementConstructor].
+PASS HTMLOptionElement.toString() is '[object HTMLOptionElementConstructor]'
 PASS HTMLParagraphElement.toString() is '[object HTMLParagraphElementConstructor]'
 PASS HTMLParamElement.toString() is '[object HTMLParamElementConstructor]'
 PASS HTMLPreElement.toString() is '[object HTMLPreElementConstructor]'

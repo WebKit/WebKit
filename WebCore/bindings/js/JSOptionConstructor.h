@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef JSHTMLOptionElementConstructor_h
-#define JSHTMLOptionElementConstructor_h
+#ifndef JSOptionConstructor_h
+#define JSOptionConstructor_h
 
 #include "JSDOMBinding.h"
 #include "JSDocument.h"
@@ -26,9 +26,9 @@
 
 namespace WebCore {
 
-    class JSHTMLOptionElementConstructor : public DOMObject {
+    class JSOptionConstructor : public DOMObject {
     public:
-        JSHTMLOptionElementConstructor(JSC::ExecState*, Document*);
+        JSOptionConstructor(JSC::ExecState*, Document*);
         Document* document() const { return m_document->impl(); }
 
         static const JSC::ClassInfo s_info;
@@ -43,4 +43,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // JSHTMLOptionElementConstructor_h
+#endif // JSOptionConstructor_h

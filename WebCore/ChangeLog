@@ -1,3 +1,27 @@
+2008-10-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21886
+        window.HTMLOptionElement == "[object HTMLElementConstructor]" instead of HTMLOptionElementConstructor
+
+        Test: fast/dom/HTMLOptionElement/option-prototype.html
+
+        We now have separate objects for window.Option and window.HTMLOptionElement - the latter
+        "constructor" cannot be used to construct anything. This matches Firefox behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (jsDOMWindowBaseOption):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp: Removed.
+        * bindings/js/JSHTMLOptionElementConstructor.h: Removed.
+        * bindings/js/JSOptionConstructor.cpp: Copied from WebCore/bindings/js/JSHTMLOptionElementConstructor.cpp.
+        * bindings/js/JSOptionConstructor.h: Copied from WebCore/bindings/js/JSHTMLOptionElementConstructor.h.
+        * html/HTMLOptionElement.idl:
+        Renamed JSHTMLOptionElementConstructor to JSOptionConstructor.
+
+        * html/HTMLOptionElement.idl: Generate a constructor.
+
 2008-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
