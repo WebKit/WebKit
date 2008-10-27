@@ -1,3 +1,16 @@
+2008-10-27  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Update the active state as well as the focused state as both need to be true
+        for the caret to be drawn.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21900
+
+        * WebView.cpp:
+        (wxWebView::OnSetFocus):
+        (wxWebView::OnKillFocus):
+
 2008-10-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix on Linux/GTK. Enable support for #include <JavaScriptCore/XYZ.h> style includes.

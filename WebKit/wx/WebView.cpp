@@ -564,8 +564,10 @@ void wxWebView::OnSetFocus(wxFocusEvent& event)
     if (m_mainFrame)
         frame = m_mainFrame->GetFrame();
         
-    if (frame)
+    if (frame) {
+        m_impl->page->focusController()->setActive(true);
         frame->selection()->setFocused(true);
+    }
 
     event.Skip();
 }
@@ -576,9 +578,10 @@ void wxWebView::OnKillFocus(wxFocusEvent& event)
     if (m_mainFrame)
         frame = m_mainFrame->GetFrame();
         
-    if (frame)
+    if (frame) {
+        m_impl->page->focusController()->setActive(false);
         frame->selection()->setFocused(false);
-
+    }
     event.Skip();
 }
 
