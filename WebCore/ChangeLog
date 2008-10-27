@@ -1,3 +1,16 @@
+2008-10-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Infinite recursion crash in WebCore::RenderSVGRoot::absoluteClippedOverflowRect on a <stop> element outside of a gradient block
+        https://bugs.webkit.org/show_bug.cgi?id=20400
+
+        Test: svg/custom/stop-crash.svg
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderSVGGradientStop.h:
+        (WebCore::RenderSVGGradientStop::absoluteClippedOverflowRect):
+
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
