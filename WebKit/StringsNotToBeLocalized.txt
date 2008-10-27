@@ -375,6 +375,7 @@
 "\"@?"
 "\"\\"
 "\0"
+"\0*.*\0\0"
 "\\"
 "\\StringFileInfo\\%04x%04x\\ProductVersion"
 "\\StringFileInfo\\040904b0\\ProductVersion"

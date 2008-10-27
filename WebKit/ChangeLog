@@ -1,3 +1,7 @@
+2008-10-27  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2008-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Implement new InspectorClient methods to work with Settings.
