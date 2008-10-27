@@ -25,6 +25,7 @@
 #include "AtomicString.h"
 #include "FloatRect.h"
 #include "SVGLength.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
    

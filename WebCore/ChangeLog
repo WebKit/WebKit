@@ -1,3 +1,9 @@
+2008-10-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        * svg/SVGAnimatedTemplate.h: needed a HashMap define
+
 2008-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dave Hyatt.
