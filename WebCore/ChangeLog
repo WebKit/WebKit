@@ -1,5 +1,14 @@
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        No need to call release if the connection is null.
+        
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         <rdar://problem/6322650> Crash in fast/loader/simultaneous-reloads-assert.html

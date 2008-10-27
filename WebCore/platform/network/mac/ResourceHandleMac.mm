@@ -197,10 +197,12 @@ bool ResourceHandle::start(Frame* frame)
 #ifndef NDEBUG
     isInitializingConnection = NO;
 #endif
+    
     d->m_connection = connection;
-    [connection release];
 
     if (d->m_connection) {
+        [connection release];
+
         if (d->m_defersLoading)
             wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), YES);
 
