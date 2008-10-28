@@ -1,3 +1,20 @@
+2008-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=21919
+        Sampler reports bogus time in op_enter during 3d-raytrace.js
+        
+        Fixed a bug where we would pass the incorrect Instruction* during some
+        parts of CTI codegen.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/SamplingTool.cpp:
+        (JSC::SamplingTool::run):
+        * wtf/Platform.h:
+
 2008-10-28  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Dan Bernstein.
