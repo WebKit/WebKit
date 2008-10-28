@@ -224,10 +224,10 @@ HRESULT STDMETHODCALLTYPE WebInspector::toggleProfilingJavaScript()
 
 HRESULT STDMETHODCALLTYPE WebInspector::isJavaScriptProfilingEnabled(BOOL* isProfilingEnabled)
 {
-    if (!isProfiling)
+    if (!isProfilingEnabled)
         return E_POINTER;
 
-    *isProfiling = FALSE;
+    *isProfilingEnabled = FALSE;
 
     if (!m_webView)
         return S_OK;
