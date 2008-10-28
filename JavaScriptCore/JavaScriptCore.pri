@@ -49,7 +49,7 @@ SOURCES += \
     API/OpaqueJSString.cpp \
     kjs/InitializeThreading.cpp \
     kjs/JSGlobalData.cpp \
-    kjs/JSGlobalObject.cpp \
+    runtime/JSGlobalObject.cpp \
     kjs/JSStaticScopeObject.cpp \
     runtime/JSVariableObject.cpp \
     kjs/JSActivation.cpp \
