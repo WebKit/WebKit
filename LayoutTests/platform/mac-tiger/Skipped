@@ -16,6 +16,3 @@ http/tests/misc/acid3.html
 # <rdar://problem/5960969> LayoutTests that send an OPTIONS request don't work on Tiger due to Apache 1.3
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
-
-# <rdar://problem/6316530> Profiler tests fail on tiger
-fast/profiler

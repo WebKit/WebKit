@@ -1,5 +1,16 @@
 2008-10-28  Timothy Hatcher  <timothy@apple.com>
 
+        Remove fast/profiler from the skipped list for Tiger since the fix
+        for <rdar://problem/6211578> should make things work.
+
+        <rdar://problem/6316530> Profiler tests fail on Tiger
+
+        Reviewed by Kevin McCullough.
+
+        * platform/mac-tiger/Skipped:
+
+2008-10-28  Timothy Hatcher  <timothy@apple.com>
+
         Update profiler tests to opt-in to profiling and clean up the output.
 
         https://bugs.webkit.org/show_bug.cgi?id=21927
