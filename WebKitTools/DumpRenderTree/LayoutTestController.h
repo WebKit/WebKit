@@ -31,10 +31,11 @@
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <wtf/RefCounted.h>
+#include <string>
 
 class LayoutTestController : public RefCounted<LayoutTestController> {
 public:
-    LayoutTestController(bool testRepaintDefault, bool testRepaintSweepHorizontallyDefault);
+    LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash);
     ~LayoutTestController();
 
     void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
@@ -130,6 +131,9 @@ public:
     bool stopProvisionalFrameLoads() const { return m_stopProvisionalFrameLoads; }
     void setStopProvisionalFrameLoads(bool stopProvisionalFrameLoads) { m_stopProvisionalFrameLoads = stopProvisionalFrameLoads; }
 
+    bool testOnscreen() const { return m_testOnscreen; }
+    void setTestOnscreen(bool testOnscreen) { m_testOnscreen = testOnscreen; }
+
     bool testRepaint() const { return m_testRepaint; }
     void setTestRepaint(bool testRepaint) { m_testRepaint = testRepaint; }
 
@@ -144,7 +148,10 @@ public:
 
     bool globalFlag() const { return m_globalFlag; }
     void setGlobalFlag(bool globalFlag) { m_globalFlag = globalFlag; }
-
+    
+    const std::string& testPathOrURL() const { return m_testPathOrURL; }
+    const std::string& expectedPixelHash() const { return m_expectedPixelHash; }
+    
 private:
     bool m_dumpAsText;
     bool m_dumpAsPDF;
@@ -165,6 +172,7 @@ private:
     bool m_canOpenWindows;
     bool m_closeRemainingWindowsWhenComplete;
     bool m_stopProvisionalFrameLoads;
+    bool m_testOnscreen;
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
@@ -172,6 +180,9 @@ private:
 
     bool m_globalFlag;
 
+    std::string m_testPathOrURL;
+    std::string m_expectedPixelHash;    // empty string if no hash
+    
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();
     static JSStaticFunction* staticFunctions();

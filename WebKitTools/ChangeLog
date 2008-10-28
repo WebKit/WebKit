@@ -1,3 +1,87 @@
+2008-10-28  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Primary changes in DumpRenderTree:
+        - Ensure font smoothing is disabled (this is also called LCD anti-aliasing and
+        is different from regular font CG anti-aliasing) as font-smoothing settings
+        depends on the display and can also be changed by the user
+        - Use a new cleared buffer for each test instead of the reusing same one to
+        avoid potential result corruption across tests
+        - Can now receive the expected pixel hash as a suffix to the test path or
+        url as "path'hash"
+        - Make sure hash is computed in a endian-independent way
+        - Improve the code that sets/restores the screen color profile
+        - Make the code more cross-platformy with std::string goodness
+        - Added an "on-screen" mode where the snapshot will take into account surfaces
+        on the window (like OpenGL content): this uses the new CG APIs on 10.5 or
+        reading from the display framebuffer on 10.4. This mode is not active by
+        default for performance reason, but must be explicitly activated from the test
+        file using the new "testOnscreen()" JS API.
+
+        Primary changes in ImageDiff:
+        - Provide a new comparison algorithm that is more tolerant to "acceptable"
+        failures (i.e. very small differences in font rendering, which --threshold is
+        not really good at handling)
+        - Generate normalized intensity-only diff images
+
+        Primary changes in run-webkit-tests:
+        - Take advantage of hashes for pixel tests which makes them much faster by
+        minimizing image comparisons
+        - Removed repaint options as these should be set from within test files using
+        JS API
+        - Replaced "threshold" option in  by "tolerance" expressed in percents
+        - Added more logging when in "verbose" mode
+
+        https://bugs.webkit.org/show_bug.cgi?id=21322
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ForwardingHeaders/wtf/PassRefPtr.h: Copied from JavaScriptGlue/ForwardingHeaders/wtf/PassRefPtr.h.
+        * DumpRenderTree/ForwardingHeaders/wtf/RefPtr.h: Copied from JavaScriptGlue/ForwardingHeaders/wtf/RefPtr.h.
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (testOnscreenCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::testOnscreen):
+        (LayoutTestController::setTestOnscreen):
+        (LayoutTestController::testPathOrURL):
+        (LayoutTestController::expectedPixelHash):
+        * DumpRenderTree/PixelDumpSupport.h:
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        (strtof):
+        (releaseMallocBuffer):
+        (createDifferenceImage):
+        (imageHasAlpha):
+        (main):
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (computeMD5HashStringForBitmapContext):
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        * DumpRenderTree/cg/PixelDumpSupportCG.h:
+        (BitmapContext::createByAdoptingBitmapAndContext):
+        (BitmapContext::~BitmapContext):
+        (BitmapContext::cgContext):
+        (BitmapContext::BitmapContext):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldIgnoreWebCoreNodeLeaks):
+        (setDefaultsToConsistentValuesForTesting):
+        (crashHandler):
+        (initializeGlobalsFromCommandLineOptions):
+        (prepareConsistentTestingEnvironment):
+        (dumpRenderTree):
+        (sizeWebViewForCurrentTest):
+        (dump):
+        (runTest):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (restoreMainDisplayColorProfile):
+        (setupMainDisplayColorProfile):
+        (createBitmapContextFromWebView):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (getBitmapContextFromWebView):
+        * Scripts/run-webkit-tests:
+
 2008-10-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix on Linux/GTK. Enable support for #include <JavaScriptCore/XYZ.h> style includes.

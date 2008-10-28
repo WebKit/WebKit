@@ -75,10 +75,12 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/OwnPtr.h>
 
+using namespace std;
+
 @interface DumpRenderTreeEvent : NSEvent
 @end
 
-static void runTest(const char *pathOrURL);
+static void runTest(const string& testPathOrURL);
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -111,14 +113,10 @@ static ResourceLoadDelegate *resourceLoadDelegate;
 PolicyDelegate *policyDelegate;
 
 static int dumpPixels;
-static int dumpAllPixels;
 static int threaded;
-static int testRepaintDefault;
-static int repaintSweepHorizontallyDefault;
 static int dumpTree = YES;
 static int forceComplexText;
 static BOOL printSeparators;
-static NSString *currentTest = nil;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 static WebHistoryItem *prevTestBFItem = nil;  // current b/f item at the end of the previous test
@@ -181,21 +179,21 @@ void setPersistentUserStyleSheetLocation(CFStringRef url)
     persistentUserStyleSheetLocation = url;
 }
 
-static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
+static bool shouldIgnoreWebCoreNodeLeaks(const string& URLString)
 {
-    static CFStringRef const ignoreSet[] = {
+    static char* const ignoreSet[] = {
         // Keeping this infrastructure around in case we ever need it again.
     };
-    static const int ignoreSetCount = sizeof(ignoreSet) / sizeof(CFStringRef);
+    static const int ignoreSetCount = sizeof(ignoreSet) / sizeof(char*);
     
     for (int i = 0; i < ignoreSetCount; i++) {
-        CFStringRef ignoreString = ignoreSet[i];
-        CFRange range = CFRangeMake(0, CFStringGetLength(URLString));
-        CFOptionFlags flags = kCFCompareAnchored | kCFCompareBackwards | kCFCompareCaseInsensitive;
-        if (CFStringFindWithOptions(URLString, ignoreString, range, flags, NULL))
-            return YES;
+        // FIXME: ignore case
+        string curIgnore(ignoreSet[i]);
+        // Match at the end of the URLString
+        if (!URLString.compare(URLString.length() - curIgnore.length(), curIgnore.length(), curIgnore))
+            return true;
     }
-    return NO;
+    return false;
 }
 
 static void activateFonts()
@@ -307,13 +305,13 @@ void testStringByEvaluatingJavaScriptFromString()
 static void setDefaultsToConsistentValuesForTesting()
 {
     // Give some clear to undocumented defaults values
-    static const int MediumFontSmoothing = 2;
+    static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
     [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"]; // smallest font size to CG should perform antialiasing on
-    [defaults setInteger:MediumFontSmoothing forKey:@"AppleFontSmoothing"];
+    [defaults setInteger:NoFontSmoothing forKey:@"AppleFontSmoothing"];
     [defaults setInteger:BlueTintedAppearance forKey:@"AppleAquaColorVariant"];
     [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
     [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
@@ -350,7 +348,7 @@ static void crashHandler(int sig)
     char *signalName = strsignal(sig);
     write(STDERR_FILENO, signalName, strlen(signalName));
     write(STDERR_FILENO, "\n", 1);
-    restoreColorSpace(0);
+    restoreMainDisplayColorProfile(0);
     exit(128 + sig);
 }
 
@@ -399,11 +397,8 @@ static void releaseGlobalControllers()
 static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[])
 {
     struct option options[] = {
-        {"dump-all-pixels", no_argument, &dumpAllPixels, YES},
-        {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, YES},
         {"notree", no_argument, &dumpTree, NO},
         {"pixel-tests", no_argument, &dumpPixels, YES},
-        {"repaint", no_argument, &testRepaintDefault, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
         {"complex-text", no_argument, &forceComplexText, YES},
@@ -460,7 +455,7 @@ static void prepareConsistentTestingEnvironment()
     activateFonts();
     
     if (dumpPixels)
-        initializeColorSpaceAndScreeBufferForPixelTests();
+        setupMainDisplayColorProfile();
     allocateGlobalControllers();
     
     makeLargeMallocFailSilently();
@@ -526,7 +521,7 @@ void dumpRenderTree(int argc, const char *argv[])
     }
 
     if (dumpPixels)
-        restoreColorSpace(0);
+        restoreMainDisplayColorProfile(0);
 }
 
 int main(int argc, const char *argv[])
@@ -821,7 +816,7 @@ static void dumpBackForwardListForWebView(WebView *view)
 static void sizeWebViewForCurrentTest()
 {
     // W3C SVG tests expect to be 480x360
-    bool isSVGW3CTest = ([currentTest rangeOfString:@"svg/W3C-SVG-1.1"].length);
+    bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
     if (isSVGW3CTest)
         [[mainFrame webView] setFrameSize:NSMakeSize(480, 360)];
     else
@@ -915,8 +910,8 @@ void dump()
         }            
     }
     
-    if (dumpAllPixels || (dumpPixels && !dumpAsText))
-        dumpWebViewAsPixelsAndCompareWithExpected([currentTest UTF8String], dumpAllPixels);
+    if (dumpPixels && !dumpAsText)
+        dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
     
     puts("#EOF");   // terminate the (possibly empty) pixels block
 
@@ -929,16 +924,6 @@ void dump()
 static bool shouldLogFrameLoadDelegates(const char *pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
-}
-
-static CFURLRef createCFURLFromPathOrURL(CFStringRef pathOrURLString)
-{
-    CFURLRef URL;
-    if (CFStringHasPrefix(pathOrURLString, CFSTR("http://")) || CFStringHasPrefix(pathOrURLString, CFSTR("https://")))
-        URL = CFURLCreateWithString(NULL, pathOrURLString, NULL);
-    else
-        URL = CFURLCreateWithFileSystemPath(NULL, pathOrURLString, kCFURLPOSIXPathStyle, FALSE);
-    return URL;
 }
 
 static void resetWebViewToConsistentStateBeforeTesting()
@@ -969,30 +954,47 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [WebView _setUsesTestModeFocusRingColor:YES];
 }
 
-static void runTest(const char *pathOrURL)
+static void runTest(const string& testPathOrURL)
 {
-    CFStringRef pathOrURLString = CFStringCreateWithCString(NULL, pathOrURL, kCFStringEncodingUTF8);
+    ASSERT(!testPathOrURL.empty());
+    
+    // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
+    string pathOrURL(testPathOrURL);
+    string expectedPixelHash;
+    
+    size_t separatorPos = pathOrURL.find("'");
+    if (separatorPos != string::npos) {
+        pathOrURL = string(testPathOrURL, 0, separatorPos);
+        expectedPixelHash = string(testPathOrURL, separatorPos + 1);
+    }
+
+    NSString *pathOrURLString = [NSString stringWithUTF8String:pathOrURL.c_str()];
     if (!pathOrURLString) {
-        fprintf(stderr, "Failed to parse filename as UTF-8: %s\n", pathOrURL);
+        fprintf(stderr, "Failed to parse \"%s\" as UTF-8\n", pathOrURL.c_str());
         return;
     }
 
-    CFURLRef URL = createCFURLFromPathOrURL(pathOrURLString);
-    if (!URL) {
-        CFRelease(pathOrURLString);
-        fprintf(stderr, "Can't turn %s into a CFURL\n", pathOrURL);
+    NSURL *url;
+    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"])
+        url = [NSURL URLWithString:pathOrURLString];
+    else
+        url = [NSURL fileURLWithPath:pathOrURLString];
+    if (!url) {
+        fprintf(stderr, "Failed to parse \"%s\" as a URL\n", pathOrURL.c_str());
         return;
     }
 
+    const string testURL([[url absoluteString] UTF8String]);
+    
     resetWebViewToConsistentStateBeforeTesting();
 
-    gLayoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
+    gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
     topLoadingFrame = nil;
     done = NO;
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);
-    if (shouldLogFrameLoadDelegates(pathOrURL))
+    if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
     if ([WebHistory optionalSharedHistory])
@@ -1000,22 +1002,18 @@ static void runTest(const char *pathOrURL)
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
 
-    if (currentTest != nil)
-        CFRelease(currentTest);
-    currentTest = (NSString *)pathOrURLString;
     [prevTestBFItem release];
     prevTestBFItem = [[[[mainFrame webView] backForwardList] currentItem] retain];
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 
-    BOOL _shouldIgnoreWebCoreNodeLeaks = shouldIgnoreWebCoreNodeLeaks(CFURLGetString(URL));
-    if (_shouldIgnoreWebCoreNodeLeaks)
+    bool ignoreWebCoreNodeLeaks = shouldIgnoreWebCoreNodeLeaks(testURL);
+    if (ignoreWebCoreNodeLeaks)
         [WebCoreStatistics startIgnoringWebCoreNodeLeaks];
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [mainFrame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
-    CFRelease(URL);
+    [mainFrame loadRequest:[NSURLRequest requestWithURL:url]];
     [pool release];
     while (!done) {
         pool = [[NSAutoreleasePool alloc] init];
@@ -1058,7 +1056,7 @@ static void runTest(const char *pathOrURL)
     gLayoutTestController->deref();
     gLayoutTestController = 0;
 
-    if (_shouldIgnoreWebCoreNodeLeaks)
+    if (ignoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];
 }
 

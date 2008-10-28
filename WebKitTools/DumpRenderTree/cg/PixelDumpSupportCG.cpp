@@ -34,7 +34,10 @@
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 #include <ImageIO/CGImageDestination.h>
+#include <algorithm>
+#include <ctype.h>
 #include <wtf/Assertions.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StringExtras.h>
 
@@ -63,66 +66,69 @@ static void printPNG(CGImageRef image)
     fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
 }
 
-static void getMD5HashStringForBitmap(CGContextRef bitmap, char string[33])
+static void computeMD5HashStringForBitmapContext(CGContextRef bitmapContext, char hashString[33])
 {
+    ASSERT(CGBitmapContextGetBitsPerPixel(bitmapContext) == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
+    size_t pixelsHigh = CGBitmapContextGetHeight(bitmapContext);
+    size_t pixelsWide = CGBitmapContextGetWidth(bitmapContext);
+    size_t bytesPerRow = CGBitmapContextGetBytesPerRow(bitmapContext);
+
+    // We need to swap the bytes to ensure consistent hashes independently of endianness
     MD5_CTX md5Context;
-    unsigned char hash[16];
-
-    size_t bitsPerPixel = CGBitmapContextGetBitsPerPixel(bitmap);
-    ASSERT(bitsPerPixel == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
-    size_t bytesPerPixel = bitsPerPixel / 8;
-    size_t pixelsHigh = CGBitmapContextGetHeight(bitmap);
-    size_t pixelsWide = CGBitmapContextGetWidth(bitmap);
-    size_t bytesPerRow = CGBitmapContextGetBytesPerRow(bitmap);
-    ASSERT(bytesPerRow >= (pixelsWide * bytesPerPixel));
-
     MD5_Init(&md5Context);
-    unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmap));
-    for (unsigned row = 0; row < pixelsHigh; row++) {
-        MD5_Update(&md5Context, bitmapData, static_cast<unsigned>(pixelsWide * bytesPerPixel));
-        bitmapData += bytesPerRow;
+    unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
+#if PLATFORM(MAC)
+    if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
+        for (unsigned row = 0; row < pixelsHigh; row++) {
+            uint32_t buffer[pixelsWide];
+            for (unsigned column = 0; column < pixelsWide; column++)
+                buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
+            MD5_Update(&md5Context, buffer, 4 * pixelsWide);
+            bitmapData += bytesPerRow;
+        }
+    } else
+#endif
+    {
+        for (unsigned row = 0; row < pixelsHigh; row++) {
+            MD5_Update(&md5Context, bitmapData, 4 * pixelsWide);
+            bitmapData += bytesPerRow;
+        }
     }
+    unsigned char hash[16];
     MD5_Final(hash, &md5Context);
 
-    string[0] = '\0';
+    hashString[0] = '\0';
     for (int i = 0; i < 16; i++)
-        snprintf(string, 33, "%s%02x", string, hash[i]);
+        snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
-void drawSelectionRect(CGContextRef context, const CGRect& rect)
+void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
 {
-    CGContextSaveGState(context);
-    CGContextSetRGBStrokeColor(context, 1.0, 0.0, 0.0, 1.0);
-    CGContextStrokeRect(context, rect);
-    CGContextRestoreGState(context);
-}
-
-void dumpWebViewAsPixelsAndCompareWithExpected(const char* /*currentTest*/, bool /*forceAllTestsToDumpPixels*/)
-{
-    RetainPtr<CGContextRef> context = getBitmapContextFromWebView();
-
+    RefPtr<BitmapContext> context;
+    
 #if PLATFORM(MAC)
-    if (gLayoutTestController->testRepaint())
-        repaintWebView(context.get(), gLayoutTestController->testRepaintSweepHorizontally());
-    else 
-        paintWebView(context.get());
-
-    if (gLayoutTestController->dumpSelectionRect())
-        drawSelectionRect(context.get(), getSelectionRect());
+    context = createBitmapContextFromWebView(gLayoutTestController->testOnscreen(), gLayoutTestController->testRepaint(), gLayoutTestController->testRepaintSweepHorizontally(), gLayoutTestController->dumpSelectionRect());
 #endif
-
-    // Compute the actual hash to compare to the expected image's hash.
+    ASSERT(context);
+    
+    // Compute the hash of the bitmap context pixels
     char actualHash[33];
-    getMD5HashStringForBitmap(context.get(), actualHash);
+    computeMD5HashStringForBitmapContext(context->cgContext(), actualHash);
     printf("\nActualHash: %s\n", actualHash);
-
-    // FIXME: We should compare the actualHash to the expected hash here and
-    // only set dumpImage to true if they don't match, but DRT doesn't have
-    // enough information currently to find the expected checksum file.
+    
+    // Check the computed hash against the expected one and dump image on mismatch
     bool dumpImage = true;
-
+    if (expectedHash.length() > 0) {
+        ASSERT(expectedHash.length() == 32);
+        
+        printf("\nExpectedHash: %s\n", expectedHash.c_str());
+        
+        if (expectedHash == actualHash)     // FIXME: do case insensitive compare
+            dumpImage = false;
+    }
+    
     if (dumpImage) {
-        RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context.get()));
+        RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context->cgContext()));
         printPNG(image.get());
     }
 }

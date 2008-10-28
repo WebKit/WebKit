@@ -29,12 +29,18 @@
 #ifndef PixelDumpSupport_h
 #define PixelDumpSupport_h
 
-void dumpWebViewAsPixelsAndCompareWithExpected(const char* currentTest, bool forceAllTestsToDumpPixels);
+#include <string>
+
+void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash);
+
+#if PLATFORM(MAC)
 
 // Can be used as a signal handler
-void restoreColorSpace(int ignored);
+void restoreMainDisplayColorProfile(int ignored);
 
-// May change your color space, requiring a call to restoreColorSpace
-void initializeColorSpaceAndScreeBufferForPixelTests();
+// May change your color space, requiring a call to restoreMainDisplayColorProfile
+void setupMainDisplayColorProfile();
+
+#endif
 
 #endif // PixelDumpSupport_h

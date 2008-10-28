@@ -38,25 +38,26 @@
 #include "UIDelegate.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
-#include <WebCore/COMPtr.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <CFNetwork/CFURLCachePriv.h>
-#include <JavaScriptCore/JavaScriptCore.h>
-#include <math.h>
-#include <pthread.h>
-#include <string>
-#include <tchar.h>
-#include <WebKit/ForEachCoClass.h>
-#include <WebKit/WebKit.h>
+
 #include <fcntl.h>
 #include <io.h>
-#include <windows.h>
-#include <stdio.h>
+#include <math.h>
+#include <pthread.h>
 #include <shlwapi.h>
+#include <stdio.h>
+#include <string.h>
+#include <tchar.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <windows.h>
+#include <CFNetwork/CFURLCachePriv.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <JavaScriptCore/JavaScriptCore.h>
+#include <WebCore/COMPtr.h>
+#include <WebKit/ForEachCoClass.h>
+#include <WebKit/WebKit.h>
 
-using std::wstring;
+using namespace std;
 
 #ifndef NDEBUG
 const LPWSTR TestPluginDir = L"TestNetscapePlugin_Debug";
@@ -77,8 +78,6 @@ static bool leakChecking = false;
 static bool threaded = false;
 static bool forceComplexText = false;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
-
-static const char* currentTest;
 
 volatile bool done;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
@@ -562,7 +561,7 @@ void dump()
             wstring result = dumpFramesAsText(frame);
             resultString = SysAllocStringLen(result.data(), result.size());
         } else {
-            bool isSVGW3CTest = strstr(currentTest, "svg\\W3C-SVG-1.1");
+            bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg\\W3C-SVG-1.1") != string::npos);
             unsigned width;
             unsigned height;
             if (isSVGW3CTest) {
@@ -608,7 +607,7 @@ void dump()
 
     if (dumpPixels) {
         if (!gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive())
-            dumpWebViewAsPixelsAndCompareWithExpected(currentTest, dumpAllPixels);
+            dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
     }
 
     printf("#EOF\n");   // terminate the (possibly empty) pixels block
@@ -675,13 +674,23 @@ static void resetWebViewToConsistentStateBeforeTesting()
     webViewPrivate->clearMainFrameName();
 }
 
-static void runTest(const char* pathOrURL)
+static void runTest(const string& testPathOrURL)
 {
     static BSTR methodBStr = SysAllocString(TEXT("GET"));
 
+    // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
+    string pathOrURL(testPathOrURL);
+    string expectedPixelHash;
+    
+    size_t separatorPos = pathOrURL.find("'");
+    if (separatorPos != string::npos) {
+        pathOrURL = string(testPathOrURL, 0, separatorPos);
+        expectedPixelHash = string(testPathOrURL, separatorPos + 1);
+    }
+    
     BSTR urlBStr;
  
-    CFStringRef str = CFStringCreateWithCString(0, pathOrURL, kCFStringEncodingWindowsLatin1);
+    CFStringRef str = CFStringCreateWithCString(0, pathOrURL.c_str(), kCFStringEncodingWindowsLatin1);
     CFURLRef url = CFURLCreateWithString(0, str, 0);
 
     if (!url)
@@ -700,13 +709,11 @@ static void runTest(const char* pathOrURL)
 
     CFRelease(url);
 
-    currentTest = pathOrURL;
-
-    ::gLayoutTestController = new LayoutTestController(false, false);
+    ::gLayoutTestController = new LayoutTestController(pathOrURL, expectedPixelHash);
     done = false;
     topLoadingFrame = 0;
 
-    if (shouldLogFrameLoadDelegates(pathOrURL))
+    if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
     COMPtr<IWebHistory> history(Create, CLSID_WebHistory);

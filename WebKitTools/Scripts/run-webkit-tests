@@ -112,8 +112,6 @@ my $launchSafari = 1;
 my $platform;
 my $pixelTests = '';
 my $quiet = '';
-my $repaintSweepHorizontally = '';
-my $repaintTests = '';
 my $report10Slowest = 0;
 my $resetResults = 0;
 my $shouldCheckLeaks = 0;
@@ -123,7 +121,7 @@ my $testHTTP = 1;
 my $testMedia = 1;
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $threaded = 0;
-my $threshold = 0;
+my $tolerance = 0;
 my $treatSkipped = "default";
 my $verbose = 0;
 my $useValgrind = 0;
@@ -180,17 +178,16 @@ Usage: $programName [options] [testdir|testpath ...]
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
   --help                          Show this help message
-  -h|--horizontal-sweep           Change repaint to sweep horizontally instead of vertically (implies --repaint-tests)
   --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
   -i|--ignore-tests               Comma-separated list of directories or tests to ignore
   --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
   -p|--pixel-tests                Enable pixel tests
+  --tolerance t                   Ignore image differences less than this percentage (implies --pixel-tests)
   --platform                      Override the detected platform to use for tests and results (default: $platform)
   --port                          Web server port to use with http tests
   -q|--quiet                      Less verbose output
-  -r|--repaint-tests              Run repaint tests (implies --pixel-tests)
   --reset-results                 Reset ALL results (including pixel tests if --pixel-tests is set)
   -o|--results-directory          Output results directory (default: $testResultsDirectory)
   --random                        Run the tests in a random order
@@ -206,7 +203,6 @@ Usage: $programName [options] [testdir|testpath ...]
   --strict                        Do a comparison with the output on Mac (Qt only)
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
   -t|--threaded                   Run a concurrent JavaScript thead with each test
-  --threshold t                   Ignore pixel value deviations less than or equal to t
   --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
@@ -221,7 +217,6 @@ my $getOptionsResult = GetOptions(
     'c|configuration=s' => \$configuration,
     'guard-malloc|g' => \$guardMalloc,
     'help' => \$showHelp,
-    'horizontal-sweep|h' => \$repaintSweepHorizontally,
     'http!' => \$testHTTP,
     'ignore-tests|i=s' => \$ignoreTests,
     'launch-safari!' => \$launchSafari,
@@ -230,7 +225,6 @@ my $getOptionsResult = GetOptions(
     'platform=s' => \$platform,
     'port=i' => \$httpdPort,
     'quiet|q' => \$quiet,
-    'repaint-tests|r' => \$repaintTests,
     'reset-results' => \$resetResults,
     'new-test-results!' => \$generateNewResults,
     'results-directory|o=s' => \$testResultsDirectory,
@@ -239,7 +233,7 @@ my $getOptionsResult = GetOptions(
     'skipped=s' => \&validateSkippedArg,
     'slowest' => \$report10Slowest,
     'threaded|t' => \$threaded,
-    'threshold=i' => \$threshold,
+    'tolerance=f' => \$tolerance,
     'verbose|v' => \$verbose,
     'valgrind' => \$useValgrind,
     'sample-on-timeout!' => \$runSample,
@@ -267,10 +261,7 @@ setConfiguration($configuration);
 
 my $configurationOption = "--" . lc($configuration);
 
-$repaintTests = 1 if $repaintSweepHorizontally;
-
-$pixelTests = 1 if $repaintTests;
-$pixelTests = 1 if $threshold > 0;
+$pixelTests = 1 if $tolerance > 0;
 
 $testsPerDumpTool = 1000 if !$testsPerDumpTool;
 
@@ -291,7 +282,7 @@ setRun64Bit($run64Bit);
 
 chdirWebKit();
 
-if(!defined($root)){
+if (!defined($root)) {
     # Push the parameters to build-dumprendertree as an array
     my @args;
     push(@args, $configurationOption);
@@ -454,19 +445,15 @@ my %durations;
 my $count = 0;
 my $leaksOutputFileNumber = 1;
 my $totalLeaks = 0;
-my $dumpAllPixels = $pixelTests && $resetResults;
 
 my @toolArgs = ();
-push @toolArgs, "--dump-all-pixels" if $dumpAllPixels;
 push @toolArgs, "--pixel-tests" if $pixelTests;
-push @toolArgs, "--repaint" if $repaintTests;
-push @toolArgs, "--horizontal-sweep" if $repaintSweepHorizontally;
 push @toolArgs, "--threaded" if $threaded;
 push @toolArgs, "--complex-text" if $complexText;
 push @toolArgs, "-";
 
 my @diffToolArgs = ();
-push @diffToolArgs, "--threshold", $threshold;
+push @diffToolArgs, "--tolerance", $tolerance;
 
 $| = 1;
 
@@ -553,6 +540,20 @@ for my $test (@tests) {
 
     my $startTime = time if $report10Slowest;
 
+    # Try to read expected hash file for pixel tests
+    my $suffixExpectedHash = "";
+    if ($pixelTests && !$resetResults) {
+        my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
+        if (open EXPECTEDHASH, "$expectedPixelDir/$base-$expectedTag.checksum") {
+            my $expectedHash = <EXPECTEDHASH>;
+            chomp($expectedHash);
+            close EXPECTEDHASH;
+            
+            # Format expected hash into a suffix string that is appended to the path / URL passed to DRT
+            $suffixExpectedHash = "'$expectedHash";
+        }
+    }
+
     if ($test !~ /^http\//) {
         my $testPath = "$testDirectory/$test";
         if (isCygwin()) {
@@ -560,17 +561,17 @@ for my $test (@tests) {
         } else {
             $testPath = canonpath($testPath);
         }
-        print OUT "$testPath\n";
+        print OUT "$testPath$suffixExpectedHash\n";
     } else {
         openHTTPDIfNeeded();
         if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/media\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
-            print OUT "http://127.0.0.1:$httpdPort/$path\n";
+            print OUT "http://127.0.0.1:$httpdPort/$path$suffixExpectedHash\n";
         } elsif ($test =~ /^http\/tests\/ssl\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
-            print OUT "https://127.0.0.1:$httpdSSLPort/$path\n";
+            print OUT "https://127.0.0.1:$httpdSSLPort/$path$suffixExpectedHash\n";
         } else {
             my $testPath = "$testDirectory/$test";
             if (isCygwin()) {
@@ -578,7 +579,7 @@ for my $test (@tests) {
             } else {
                 $testPath = canonpath($testPath);
             }
-            print OUT "$testPath\n";
+            print OUT "$testPath$suffixExpectedHash\n";
         }
     }
 
@@ -641,7 +642,6 @@ for my $test (@tests) {
     my $diffPercentage = "";
     my $diffResult = "passed";
 
-    # Look for the pixel block, and do an image diff if we find one
     my $actualHash = "";
     my $expectedHash = "";
     my $actualPNGSize = 0;
@@ -650,7 +650,7 @@ for my $test (@tests) {
         last if /#EOF/;
         if (/ActualHash: ([a-f0-9]{32})/) {
             $actualHash = $1;
-        } elsif (/BaselineHash: ([a-f0-9]{32})/) {
+        } elsif (/ExpectedHash: ([a-f0-9]{32})/) {
             $expectedHash = $1;
         } elsif (/Content-Length: (\d+)\s*/) {
             $actualPNGSize = $1;
@@ -658,42 +658,58 @@ for my $test (@tests) {
         }
     }
 
-    # If we got some PNG data, diff with expected
+    if ($verbose && $pixelTests && !$resetResults && $actualPNGSize) {
+        if ($actualHash eq "" && $expectedHash eq "") {
+            printFailureMessageForTest($test, "WARNING: actual & expected pixel hashes are missing!");
+        } elsif ($actualHash eq "") {
+            printFailureMessageForTest($test, "WARNING: actual pixel hash is missing!");
+        } elsif ($expectedHash eq "") {
+            printFailureMessageForTest($test, "WARNING: expected pixel hash is missing!");
+        }
+    }
+
     if ($actualPNGSize > 0) {
-        my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
+        my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
 
-        if ($expectedHash ne $actualHash && -f "$expectedPixelDir/$base-$expectedTag.png") {
-            my $expectedPNGSize = -s "$expectedPixelDir/$base-$expectedTag.png";
-            my $expectedPNG = "";
-            open EXPECTEDPNG, "$expectedPixelDir/$base-$expectedTag.png";
-            read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
+        if (!$resetResults && ($expectedHash ne $actualHash || ($actualHash eq "" && $expectedHash eq ""))) {
+            if (-f "$expectedPixelDir/$base-$expectedTag.png") {
+                my $expectedPNGSize = -s "$expectedPixelDir/$base-$expectedTag.png";
+                my $expectedPNG = "";
+                open EXPECTEDPNG, "$expectedPixelDir/$base-$expectedTag.png";
+                read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
-            print DIFFOUT "Content-Length: $actualPNGSize\n";
-            print DIFFOUT $actualPNG;
+                print DIFFOUT "Content-Length: $actualPNGSize\n";
+                print DIFFOUT $actualPNG;
 
-            print DIFFOUT "Content-Length: $expectedPNGSize\n";
-            print DIFFOUT $expectedPNG;
+                print DIFFOUT "Content-Length: $expectedPNGSize\n";
+                print DIFFOUT $expectedPNG;
 
-            while (<DIFFIN>) {
-                last if /^error/ || /^diff:/;
-                if (/Content-Length: (\d+)\s*/) {
-                    read(DIFFIN, $diffPNG, $1);
+                while (<DIFFIN>) {
+                    last if /^error/ || /^diff:/;
+                    if (/Content-Length: (\d+)\s*/) {
+                        read(DIFFIN, $diffPNG, $1);
+                    }
                 }
-            }
 
-            if (/^diff: (.+)% (passed|failed)/) {
-                $diffPercentage = $1;
-                $imageDifferences{$base} = $diffPercentage;
-                $diffResult = $2;
+                if (/^diff: (.+)% (passed|failed)/) {
+                    $diffPercentage = $1;
+                    $imageDifferences{$base} = $diffPercentage;
+                    $diffResult = $2;
+                }
+                
+                if ($diffPercentage == 0) {
+                    printFailureMessageForTest($test, "pixel hash failed (but pixel test still passes)");
+                }
+            } elsif ($verbose) {
+                printFailureMessageForTest($test, "WARNING: expected image is missing!");
             }
         }
 
-        if ($actualPNGSize && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.png")) {
+        if ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.png") {
             mkpath catfile($expectedPixelDir, dirname($base)) if $testDirectory ne $expectedPixelDir;
             writeToFile("$expectedPixelDir/$base-$expectedTag.png", $actualPNG);
         }
 
-        # update the expected hash if the image diff said that there was no difference
         if ($actualHash ne "" && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.checksum")) {
             writeToFile("$expectedPixelDir/$base-$expectedTag.checksum", $actualHash);
         }
@@ -741,7 +757,7 @@ for my $test (@tests) {
           system "diff -u \"/tmp/expected.txt\" \"/tmp/actual.txt\" > \"/tmp/simplified.diff\"";
 
           $diffResult = "failed";
-          if($verbose) {
+          if ($verbose) {
             print "\n";
             system "cat /tmp/simplified.diff";
             print "failed!!!!!";
@@ -817,7 +833,7 @@ for my $test (@tests) {
             writeToFile("$testResultsDirectory/$base-$actualTag.png", $actualPNG);
             writeToFile("$testResultsDirectory/$base-$diffsTag.png", $diffPNG);
 
-            my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
+            my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
             copy("$expectedPixelDir/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
 
             open DIFFHTML, ">$testResultsDirectory/$base-$diffsTag.html" or die;

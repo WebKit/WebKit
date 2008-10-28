@@ -34,153 +34,221 @@
 
 #include "LayoutTestController.h"
 #include <CoreGraphics/CGBitmapContext.h>
+#ifndef BUILDING_ON_LEOPARD
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/CGLMacro.h>
+#endif
 #include <wtf/Assertions.h>
-#include <wtf/RetainPtr.h>
+#include <wtf/RefPtr.h>
 
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebKit.h>
 
-static unsigned char* screenCaptureBuffer;
+// To ensure pixel tests consistency, we need to always render in the same colorspace.
+// Unfortunately, because of AppKit / WebKit constraints, we can't render directly in the colorspace of our choice.
+// This implies we have to temporarily change the profile of the main display to the colorspace we want to render into.
+// We also need to make sure the CGBitmapContext we return is in that same colorspace.
 
-static bool changedColorProfile = false;
-static CMProfileLocation currentColorProfileLocation;
-static CGColorSpaceRef sharedColorSpace;
+#define PROFILE_PATH "/System/Library/ColorSync/Profiles/Generic RGB Profile.icc" // FIXME: Should we be using "/System/Library/ColorSync/Profiles/sRGB Profile.icc"?
 
-void restoreColorSpace(int ignored)
+static CMProfileLocation sInitialProfileLocation; // The locType field is initialized to 0 which is the same as cmNoProfileBase
+
+void restoreMainDisplayColorProfile(int ignored)
 {
     // This is used as a signal handler, and thus the calls into ColorSync are unsafe
     // But we might as well try to restore the user's color profile, we're going down anyway...
-    if (changedColorProfile) {
-        CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
-        int error = CMSetDeviceProfile(cmDisplayDeviceClass, cmDefaultDeviceID, &scope, cmDefaultProfileID, &currentColorProfileLocation);
+    if (sInitialProfileLocation.locType != cmNoProfileBase) {
+        const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
+        int error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &sInitialProfileLocation);
         if (error)
-            fprintf(stderr, "Failed to retore previous color profile!  You may need to open System Preferences : Displays : Color and manually restore your color settings.  (Error: %i)", error);
-        changedColorProfile = false;
+            fprintf(stderr, "Failed to restore initial color profile for main display! Open System Preferences > Displays > Color and manually re-select the profile.  (Error: %i)", error);
+        sInitialProfileLocation.locType = cmNoProfileBase;
     }
 }
 
-static void failedGettingCurrentProfile(int error)
+void setupMainDisplayColorProfile()
 {
-    fprintf(stderr, "Failed to get current color profile.  I will not be able to restore your current profile, thus I'm not changing it.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
-}
-
-static void setDefaultColorProfileToRGB()
-{
-    CMProfileRef genericProfile = (CMProfileRef)[[NSColorSpace genericRGBColorSpace] colorSyncProfile];
-    CMProfileLocation genericProfileLocation;
-    UInt32 locationSize = sizeof(genericProfileLocation);
-    int error = NCMGetProfileLocation(genericProfile, &genericProfileLocation, &locationSize);
+    const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
+    int error;
+    
+    CMProfileRef profile = 0;
+    error = CMGetProfileByAVID((CMDisplayIDType)kCGDirectMainDisplay, &profile);
+    if (!error) {
+        UInt32 size = sizeof(CMProfileLocation);
+        error = NCMGetProfileLocation(profile, &sInitialProfileLocation, &size);
+        CMCloseProfile(profile);
+    }
     if (error) {
-        failedGettingCurrentProfile(error);
+        fprintf(stderr, "Failed to retrieve current color profile for main display, thus it won't be changed.  Many pixel tests may fail as a result.  (Error: %i)", error);
+        sInitialProfileLocation.locType = cmNoProfileBase;
         return;
     }
+    
+    CMProfileLocation location;
+    location.locType = cmFileBasedProfile;
+    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:PROFILE_PATH]];
+    FSRef fsRef;
+    if (url && CFURLGetFSRef((CFURLRef)url, &fsRef)) {
+        error = FSGetCatalogInfo(&fsRef, 0, 0, 0, &location.u.fileLoc.spec, 0);
+        if (error == noErr)
+        error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
+    }
+    else
+        error = -1;
 
-    CMProfileLocation previousProfileLocation;
-    error = CMGetDeviceProfile(cmDisplayDeviceClass, cmDefaultDeviceID, cmDefaultProfileID, &previousProfileLocation);
     if (error) {
-        failedGettingCurrentProfile(error);
+        fprintf(stderr, "Failed to set color profile for main display!  Many pixel tests may fail as a result.  (Error: %i)", error);
+        sInitialProfileLocation.locType = cmNoProfileBase;
         return;
     }
-
-    CMProfileRef previousProfile;
-    error = CMOpenProfile(&previousProfile, &previousProfileLocation);
-    if (error) {
-        failedGettingCurrentProfile(error);
-        return;
-    }
-
-    CFStringRef previousProfileName;
-    CFStringRef genericProfileName;
-    char previousProfileNameString[1024];
-    char genericProfileNameString[1024];
-    CMCopyProfileDescriptionString(previousProfile, &previousProfileName);
-    CMCopyProfileDescriptionString(genericProfile, &genericProfileName);
-    CFStringGetCString(previousProfileName, previousProfileNameString, sizeof(previousProfileNameString), kCFStringEncodingUTF8);
-    CFStringGetCString(genericProfileName, genericProfileNameString, sizeof(previousProfileNameString), kCFStringEncodingUTF8);
-    CFRelease(previousProfileName);
-    CFRelease(genericProfileName);
-
-    CMCloseProfile(previousProfile);
-
-    fprintf(stderr, "\n\nWARNING: Temporarily changing your system color profile from \"%s\" to \"%s\".\n", previousProfileNameString, genericProfileNameString);
+    
+    // Other signals are handled in installSignalHandlers() which also calls restoreMainDisplayColorProfile()
+    signal(SIGINT, restoreMainDisplayColorProfile);
+    signal(SIGHUP, restoreMainDisplayColorProfile);
+    signal(SIGTERM, restoreMainDisplayColorProfile);
+    
+    fprintf(stderr, "\n\nWARNING: Temporarily changing the main display color profile to \"%s\": the colors on your screen will change for the duration of the testing.\n", PROFILE_PATH);
     fprintf(stderr, "This allows the WebKit pixel-based regression tests to have consistent color values across all machines.\n");
-    fprintf(stderr, "The colors on your screen will change for the duration of the testing.\n\n");
-
-    CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
-    if ((error = CMSetDeviceProfile(cmDisplayDeviceClass, cmDefaultDeviceID, &scope, cmDefaultProfileID, &genericProfileLocation))) {
-        fprintf(stderr, "Failed to set color profile to \"%s\"! Many pixel tests will fail as a result.  (Error: %i)",
-            genericProfileNameString, error);
-    } else {
-        currentColorProfileLocation = previousProfileLocation;
-        changedColorProfile = true;
-        signal(SIGINT, restoreColorSpace);
-        signal(SIGHUP, restoreColorSpace);
-        signal(SIGTERM, restoreColorSpace);
-    }
 }
 
-void initializeColorSpaceAndScreeBufferForPixelTests()
+PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
-    setDefaultColorProfileToRGB();
-    screenCaptureBuffer = (unsigned char *)malloc(maxViewHeight * maxViewWidth * 4);
-    sharedColorSpace = CGColorSpaceCreateDeviceRGB();
-}
-
-// Declared in PixelDumpSupportCG.h
-
-RetainPtr<CGContextRef> getBitmapContextFromWebView()
-{
-    NSSize webViewSize = [[mainFrame webView] frame].size;
-    return RetainPtr<CGContextRef>(AdoptCF, CGBitmapContextCreate(screenCaptureBuffer, static_cast<size_t>(webViewSize.width), static_cast<size_t>(webViewSize.height), 8, static_cast<size_t>(webViewSize.width) * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast));
-}
-
-void paintWebView(CGContextRef context)
-{
-    RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
-
-    NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO];
-    [NSGraphicsContext setCurrentContext:nsContext];
-
     WebView* view = [mainFrame webView];
-    [view displayIfNeeded];
-    [view lockFocus];
-    NSBitmapImageRep *imageRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]];
-    [view unlockFocus];
-    [imageRep draw];
-    [imageRep release];
-
-    [NSGraphicsContext setCurrentContext:savedContext.get()];
-}
-
-void repaintWebView(CGContextRef context, bool horizontal)
-{
-    RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
-
-    NSGraphicsContext* nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO];
-    [NSGraphicsContext setCurrentContext:nsContext];
-
-    WebView *view = [mainFrame webView];
     NSSize webViewSize = [view frame].size;
+    size_t pixelsWide = static_cast<size_t>(webViewSize.width);
+    size_t pixelsHigh = static_cast<size_t>(webViewSize.height);
+    size_t rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
 
-    if (horizontal) {
-        for (NSRect column = NSMakeRect(0, 0, 1, webViewSize.height); column.origin.x < webViewSize.width; column.origin.x++)
-            [view displayRectIgnoringOpacity:column inContext:nsContext];
+    void *buffer = calloc(pixelsHigh, rowBytes);
+    if (!buffer)
+        return 0;
+    
+    static CGColorSpaceRef colorSpace = 0;
+    if (!colorSpace) {
+        CMProfileLocation location;
+        location.locType = cmFileBasedProfile;
+        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:PROFILE_PATH]];
+        FSRef fsRef;
+        if (url && CFURLGetFSRef((CFURLRef)url, &fsRef)) {
+            if (FSGetCatalogInfo(&fsRef, 0, 0, 0, &location.u.fileLoc.spec, 0) == noErr) {
+                CMProfileRef profile;
+                if (CMOpenProfile(&profile, &location) == noErr) {
+                    colorSpace = CGColorSpaceCreateWithPlatformColorSpace(profile);
+                    CMCloseProfile(profile);
+                }
+            }
+        }
+    }
+    
+    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host); // Use ARGB8 on PPC or BGRA8 on X86 to improve CG performance
+    if (!context) {
+        free(buffer);
+        return 0;
+    }
+
+    // The BitmapContext keeps the CGContextRef and the pixel buffer alive
+    RefPtr<BitmapContext> bitmapContext = BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
+    
+    NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO];
+    ASSERT(nsContext);
+    
+    if (incrementalRepaint) {
+        if (sweepHorizontally) {
+            for (NSRect column = NSMakeRect(0, 0, 1, webViewSize.height); column.origin.x < webViewSize.width; column.origin.x++)
+                [view displayRectIgnoringOpacity:column inContext:nsContext];
+        } else {
+            for (NSRect line = NSMakeRect(0, 0, webViewSize.width, 1); line.origin.y < webViewSize.height; line.origin.y++)
+                [view displayRectIgnoringOpacity:line inContext:nsContext];
+        }
     } else {
-        for (NSRect line = NSMakeRect(0, 0, webViewSize.width, 1); line.origin.y < webViewSize.height; line.origin.y++)
-            [view displayRectIgnoringOpacity:line inContext:nsContext];
+        if (onscreen) {
+#ifdef BUILDING_ON_LEOPARD
+            // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
+            // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor
+            
+            CGImageRef image = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [[view window] windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque);
+            CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
+            CGImageRelease(image);
+#else
+            // On 10.4 and earlier, we have to move the window temporarily "onscreen" and read directly from the display framebuffer using OpenGL
+            // In this code path, we need to ensure the window is above any other window or captured result will be corrupted
+            
+            NSWindow *window = [view window];
+            int oldLevel = [window level];
+            NSRect oldFrame = [window frame];
+            
+            NSRect newFrame = [[[NSScreen screens] objectAtIndex:0] frame];
+            newFrame = NSMakeRect(newFrame.origin.x + (newFrame.size.width - oldFrame.size.width) / 2, newFrame.origin.y + (newFrame.size.height - oldFrame.size.height) / 2, oldFrame.size.width, oldFrame.size.height);
+            [window setLevel:NSScreenSaverWindowLevel];
+            [window setFrame:newFrame display:NO animate:NO];
+            
+            CGRect rect = CGRectMake(newFrame.origin.x, newFrame.origin.y, webViewSize.width, webViewSize.height);
+            CGDirectDisplayID displayID;
+            CGDisplayCount count;
+            if (CGGetDisplaysWithRect(rect, 1, &displayID, &count) == kCGErrorSuccess) {
+                CGRect bounds = CGDisplayBounds(displayID);
+                rect.origin.x -= bounds.origin.x;
+                rect.origin.y -= bounds.origin.y;
+                
+                CGLPixelFormatAttribute attributes[] = {kCGLPFAAccelerated, kCGLPFANoRecovery, kCGLPFAFullScreen, kCGLPFADisplayMask, (CGLPixelFormatAttribute)CGDisplayIDToOpenGLDisplayMask(displayID), (CGLPixelFormatAttribute)0};
+                CGLPixelFormatObj pixelFormat;
+                GLint num;
+                if (CGLChoosePixelFormat(attributes, &pixelFormat, &num) == kCGLNoError) {
+                    CGLContextObj cgl_ctx;
+                    if (CGLCreateContext(pixelFormat, 0, &cgl_ctx) == kCGLNoError) {
+                        if (CGLSetFullScreen(cgl_ctx) == kCGLNoError) {
+                            void *flipBuffer = calloc(pixelsHigh, rowBytes);
+                            if (flipBuffer) {
+                                glPixelStorei(GL_PACK_ROW_LENGTH, rowBytes / 4);
+                                glPixelStorei(GL_PACK_ALIGNMENT, 4);
+#if __BIG_ENDIAN__
+                                glReadPixels(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, flipBuffer);
+#else
+                                glReadPixels(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, flipBuffer);
+#endif
+                                if (!glGetError()) {
+                                    for(size_t i = 0; i < pixelsHigh; ++i)
+                                    bcopy((char*)flipBuffer + rowBytes * i, (char*)buffer + rowBytes * (pixelsHigh - i - 1), pixelsWide * 4);
+                                }
+                                
+                                free(flipBuffer);
+                            }
+                        }
+                        CGLDestroyContext(cgl_ctx);
+                    }
+                    CGLDestroyPixelFormat(pixelFormat);
+                }
+            }
+            
+            [window setFrame:oldFrame display:NO animate:NO];
+            [window setLevel:oldLevel];
+#endif
+        } else {
+            // Grab directly the contents of the window backing buffer (this ignores any surfaces on the window)
+            // FIXME: This path is suboptimal: data is read from window backing store, converted to RGB8 then drawn again into an RGBA8 bitmap
+            
+            [view displayIfNeeded];
+            [view lockFocus];
+            NSBitmapImageRep *imageRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]] autorelease];
+            [view unlockFocus];
+
+            RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
+            [NSGraphicsContext setCurrentContext:nsContext];
+            [imageRep draw];
+            [NSGraphicsContext setCurrentContext:savedContext.get()];
+        }
     }
 
-    [NSGraphicsContext setCurrentContext:savedContext.get()];
-}
-
-CGRect getSelectionRect()
-{
-    NSView *documentView = [[mainFrame frameView] documentView];
-    if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
+    if (drawSelectionRect) {
+        NSView *documentView = [[mainFrame frameView] documentView];
+        ASSERT([documentView conformsToProtocol:@protocol(WebDocumentSelection)]);
         NSRect rect = [documentView convertRect:[(id <WebDocumentSelection>)documentView selectionRect] fromView:nil];
-        return CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+        CGContextSaveGState(context);
+        CGContextSetLineWidth(context, 1.0);
+        CGContextSetRGBStrokeColor(context, 1.0, 0.0, 0.0, 1.0);
+        CGContextStrokeRect(context, CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
+        CGContextRestoreGState(context);
     }
-
-    ASSERT_NOT_REACHED();
-    return CGRectZero;
+    
+    return bitmapContext.release();
 }
