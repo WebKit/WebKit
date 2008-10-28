@@ -443,6 +443,7 @@ DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 #
 # Files that will be distributed
 EXTRA_DIST = \
+	WebKit/LICENSE \
 	$(javascriptcore_dist) \
 	$(webcore_dist) \
 	symbols.filter

@@ -1,3 +1,11 @@
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
+        Include copyright license files in the autotools dist target.
+
+        Change suggested by Mike Hommey.
+
+        * GNUmakefile.am:
+
 2008-10-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix: add '-' to Wl which was missed in r36845

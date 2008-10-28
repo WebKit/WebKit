@@ -1803,17 +1803,6 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	WebCore/platform/image-decoders/xbm/XBMImageDecoder.cpp \
 	WebCore/platform/image-decoders/xbm/XBMImageDecoder.h \
-	WebCore/platform/image-decoders/zlib/crc32.h \
-	WebCore/platform/image-decoders/zlib/deflate.h \
-	WebCore/platform/image-decoders/zlib/inffast.h \
-	WebCore/platform/image-decoders/zlib/inffixed.h \
-	WebCore/platform/image-decoders/zlib/inflate.h \
-	WebCore/platform/image-decoders/zlib/inftrees.h \
-	WebCore/platform/image-decoders/zlib/mozzconf.h \
-	WebCore/platform/image-decoders/zlib/trees.h \
-	WebCore/platform/image-decoders/zlib/zconf.h \
-	WebCore/platform/image-decoders/zlib/zlib.h \
-	WebCore/platform/image-decoders/zlib/zutil.h \
 	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
 # ----
@@ -3010,6 +2999,10 @@ noinst_HEADERS += \
 	$(IDL_BINDINGS)
 
 webcore_dist += \
+	WebCore/LICENSE-APPLE \
+	WebCore/LICENSE-LGPL-2 \
+	WebCore/LICENSE-LGPL-2.1 \
+	WebCore/icu/LICENSE \
 	WebCore/bindings/scripts/CodeGenerator.pm \
 	WebCore/bindings/scripts/IDLParser.pm \
 	WebCore/bindings/scripts/IDLStructure.pm \

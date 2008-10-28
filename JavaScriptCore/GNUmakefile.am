@@ -462,6 +462,7 @@ Programs_jsc_LDADD = \
 javascriptcore_dist += \
 	$(CREATE_HASH_TABLE) \
 	JavaScriptCore/AUTHORS \
+	JavaScriptCore/COPYING.LIB \
 	JavaScriptCore/ChangeLog \
 	JavaScriptCore/THANKS \
 	JavaScriptCore/icu/LICENSE \
