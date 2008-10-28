@@ -35,7 +35,6 @@
 #include "nodes.h"
 #include "operations.h"
 #include <math.h>
-#include <profiler/Profiler.h>
 #include <wtf/Assertions.h>
 
 #define JSOBJECT_MARK_TRACING 0

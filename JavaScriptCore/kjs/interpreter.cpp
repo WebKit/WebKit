@@ -30,7 +30,6 @@
 #include "Parser.h"
 #include "completion.h"
 #include "debugger.h"
-#include <profiler/Profiler.h>
 #include <stdio.h>
 
 #if !PLATFORM(WIN_OS)

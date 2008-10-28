@@ -1,3 +1,13 @@
+2008-10-28  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -Removed unused includes.
+        Apparent .4% speedup in Sunspider
+
+        * kjs/JSObject.cpp:
+        * kjs/interpreter.cpp:
+
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
         Include copyright license files in the autotools dist target.
