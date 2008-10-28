@@ -211,21 +211,6 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
     [super finalize];
 }
 
-- (NPP)plugin
-{
-    return _impl->m_plugin;
-}
-
-- (void)setRequestURL:(NSURL *)theRequestURL
-{
-    _impl->m_requestURL = theRequestURL;
-}
-
-- (void)setPlugin:(NPP)thePlugin
-{
-    _impl->setPlugin(thePlugin);
-}
-
 void WebNetscapePluginStream::setPlugin(NPP plugin)
 {
     if (plugin) {
@@ -309,21 +294,21 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
     }
 }
 
-- (void)start
+void WebNetscapePluginStream::start()
 {
-    ASSERT(_impl->m_request);
-    ASSERT(!_impl->m_frameLoader);
+    ASSERT(m_request);
+    ASSERT(!m_frameLoader);
     
-    _impl->m_loader->documentLoader()->addPlugInStreamLoader(_impl->m_loader);
-    _impl->m_loader->load(_impl->m_request);    
+    m_loader->documentLoader()->addPlugInStreamLoader(m_loader);
+    m_loader->load(m_request);    
 }
 
-- (void)stop
+void WebNetscapePluginStream::stop()
 {
-    ASSERT(!_impl->m_frameLoader);
+    ASSERT(!m_frameLoader);
     
-    if (!_impl->m_loader->isDone())
-        [self cancelLoadAndDestroyStreamWithError:_impl->m_loader->cancelledError()];    
+    if (!m_loader->isDone())
+        cancelLoadAndDestroyStreamWithError(m_loader->cancelledError());
 }
 
 void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
@@ -382,9 +367,14 @@ void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, co
     startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);    
 }
 
+void WebNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)
+{
+    didReceiveResponse(0, response);
+}
+
 - (void)startStreamWithResponse:(NSURLResponse *)r
 {
-    _impl->didReceiveResponse(0, r);
+    _impl->startStreamWithResponse(r);
 }
 
 bool WebNetscapePluginStream::wantsAllStreams() const
@@ -689,6 +679,11 @@ void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const 
 - (void)receivedData:(NSData *)data
 {
     _impl->didReceiveData(0, (const char*)[data bytes], [data length]);
+}
+
+- (WebNetscapePluginStream *)impl
+{
+    return _impl.get();
 }
 
 @end

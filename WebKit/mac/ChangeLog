@@ -1,3 +1,34 @@
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Convert more code over to C++.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::plugin):
+        (WebNetscapePluginStream::setRequestURL):
+        Convert to C++.
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::start):
+        (WebNetscapePluginStream::stop):
+        Ditto.
+        
+        (WebNetscapePluginStream::startStreamWithResponse):
+        Ditto.
+        
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]):
+        Call the C++ version.
+        
+        (-[WebBaseNetscapePluginStream impl]):
+        New accessor for the C++ class.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginView:receivedData:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+        Call the C++ methods.
+
 2008-10-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

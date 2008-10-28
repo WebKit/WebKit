@@ -1769,16 +1769,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     if (![self isStarted])
         return;
+
+    WebNetscapePluginStream *manualStream = [_manualStream impl];
     
-    if ([_manualStream plugin] == NULL) {
-        [_manualStream setRequestURL:[[[self dataSource] request] URL]];
-        [_manualStream setPlugin:[self plugin]];
-        ASSERT([_manualStream plugin]);
-        [_manualStream startStreamWithResponse:[[self dataSource] response]];
+    if (!manualStream->plugin()) {
+
+        manualStream->setRequestURL([[[self dataSource] request] URL]);
+        manualStream->setPlugin([self plugin]);
+        ASSERT(manualStream->plugin());
+        
+        manualStream->startStreamWithResponse([[self dataSource] response]);
     }
-    
-    if ([_manualStream plugin])
-        [_manualStream receivedData:data];
+
+    if (manualStream->plugin())
+        manualStream->didReceiveData(0, static_cast<const char *>([data bytes]), [data length]);
 }
 
 - (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error
@@ -2193,7 +2197,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_INVALID_URL;
 
         [streams addObject:stream];
-        [stream start];
+        [stream impl]->start();
         [stream release];
     }
     
@@ -2346,7 +2350,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     
     WebBaseNetscapePluginStream *browserStream = static_cast<WebBaseNetscapePluginStream *>(stream->ndata);
-    [browserStream cancelLoadAndDestroyStreamWithError:[browserStream errorForReason:reason]];
+    [browserStream cancelLoadAndDestroyStreamWithError:[browserStream impl]->errorForReason(reason)];
     
     return NPERR_NO_ERROR;
 }
