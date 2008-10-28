@@ -196,7 +196,7 @@ WebNetscapePluginStream::~WebNetscapePluginStream()
 {
     ASSERT(!m_plugin);
     ASSERT(m_isTerminated);
-    ASSERT(m_stream.ndata == nil);
+    ASSERT(!m_stream.ndata);
     
     // The stream file should have been deleted, and the path freed, in -_destroyStream
     ASSERT(!m_path);
@@ -241,7 +241,7 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
         m_plugin = 0;
         m_pluginFuncs = 0;
         
-        [view disconnectStream:m_pluginStream];
+        [view disconnectStream:this];
         m_pluginView = 0;
     }        
 }
@@ -256,7 +256,7 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
     free((void *)m_stream.url);
     m_stream.url = strdup([m_responseURL.get() _web_URLCString]);
 
-    m_stream.ndata = m_pluginStream;
+    m_stream.ndata = this;
     m_stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
     m_stream.lastmodified = (uint32)[lastModifiedDate timeIntervalSince1970];
     m_stream.notifyData = m_notifyData;
@@ -412,14 +412,14 @@ void WebNetscapePluginStream::destroyStream()
     if (m_isTerminated)
         return;
 
-    RetainPtr<WebBaseNetscapePluginStream> protect(m_pluginStream);
+    RefPtr<WebNetscapePluginStream> protect(this);
 
     ASSERT(m_reason != WEB_REASON_NONE);
     ASSERT([m_deliveryData.get() length] == 0);
     
     m_deliverDataTimer.stop();
 
-    if (m_stream.ndata != nil) {
+    if (m_stream.ndata) {
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
             ASSERT(m_fileDescriptor == -1);
             ASSERT(m_path);
@@ -463,7 +463,7 @@ void WebNetscapePluginStream::destroyStream()
         m_headers = NULL;
         m_stream.headers = NULL;
 
-        m_stream.ndata = nil;
+        m_stream.ndata = 0;
 
         if (m_isTerminated)
             return;
@@ -493,7 +493,7 @@ void WebNetscapePluginStream::destroyStreamWithReason(NPReason reason)
         return;
     }
     destroyStream();
-    ASSERT(m_stream.ndata == nil);
+    ASSERT(!m_stream.ndata);
 }
 
 void WebNetscapePluginStream::cancelLoadWithError(NSError *error)
@@ -525,7 +525,7 @@ void WebNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, cons
 
 void WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError(NSError *error)
 {
-    RetainPtr<WebBaseNetscapePluginStream> protect(m_pluginStream);
+    RefPtr<WebNetscapePluginStream> protect(this);
     cancelLoadWithError(error);
     destroyStreamWithError(error);
     setPlugin(0);
@@ -536,7 +536,7 @@ void WebNetscapePluginStream::deliverData()
     if (!m_stream.ndata || [m_deliveryData.get() length] == 0)
         return;
 
-    RetainPtr<WebBaseNetscapePluginStream> protect(m_pluginStream);
+    RefPtr<WebNetscapePluginStream> protect(this);
 
     int32 totalBytes = [m_deliveryData.get() length];
     int32 totalBytesDelivered = 0;

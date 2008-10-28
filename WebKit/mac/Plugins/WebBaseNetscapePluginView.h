@@ -33,16 +33,17 @@
 #import <WebKit/npapi.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 
 @class DOMElement;
 @class WebDataSource;
 @class WebFrame;
 @class WebNetscapePluginPackage;
 @class WebNetscapePluginNullEventSender;
-@class WebBaseNetscapePluginStream;
 @class WebView;
 
 class PluginTimer;
+class WebNetscapePluginStream;
 class WebNetscapePluginEventHandler;
 
 typedef union PluginPort {
@@ -62,7 +63,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     WebFrame *_webFrame;
     
     BOOL _loadManually;
-    WebBaseNetscapePluginStream *_manualStream;
+    RefPtr<WebNetscapePluginStream> _manualStream;
     unsigned _dataLengthReceived;
     NSError *_error;
     
@@ -109,7 +110,8 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     NSString *MIMEType;
     NSURL *baseURL;
     NSTrackingRectTag trackingTag;
-    NSMutableArray *streams;
+    
+    HashSet<RefPtr<WebNetscapePluginStream> > streams;
     NSMutableDictionary *pendingFrameLoads;
     
     NPPluginTextInputFuncs *textInputFuncs;
@@ -164,7 +166,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 - (void)setMode:(int)theMode;
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)viewDidMoveToHostWindow;
-- (void)disconnectStream:(WebBaseNetscapePluginStream*)stream;
+- (void)disconnectStream:(WebNetscapePluginStream*)stream;
 
 // Returns the NPObject that represents the plugin interface.
 // The return value is expected to be retained.

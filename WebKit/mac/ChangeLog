@@ -1,6 +1,32 @@
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Mitz Pettel.
+        Reviewed by Dan Bernstein.
+        
+        Use the C++ stream object in WebBaseNetscapePluginView. Use a HashSet of RefPtrs to keep track of the streams.
+        
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::~WebNetscapePluginStream):
+        (WebNetscapePluginStream::setPlugin):
+        (WebNetscapePluginStream::startStream):
+        (WebNetscapePluginStream::destroyStream):
+        (WebNetscapePluginStream::destroyStreamWithReason):
+        (WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError):
+        (WebNetscapePluginStream::deliverData):
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView stop]):
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+        (-[WebBaseNetscapePluginView disconnectStream:]):
+        (-[WebBaseNetscapePluginView dealloc]):
+        (-[WebBaseNetscapePluginView pluginView:receivedResponse:]):
+        (-[WebBaseNetscapePluginView pluginView:receivedData:]):
+        (-[WebBaseNetscapePluginView pluginView:receivedError:]):
+        (-[WebBaseNetscapePluginView pluginViewFinishedLoading:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
         
         Move code from dealloc and finalize to the WebNetscapePluginStream destructor.
         
