@@ -2020,20 +2020,16 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
         
-        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequest:[NSURLRequest requestWithURL:URL]
-                                                                                            plugin:plugin
-                                                                                        notifyData:[JSPluginRequest notifyData]
-                                                                                  sendNotification:[JSPluginRequest sendNotification]];
+        RefPtr<WebNetscapePluginStream> stream = WebNetscapePluginStream::create(0, [NSURLRequest requestWithURL:URL], plugin, [JSPluginRequest sendNotification], [JSPluginRequest notifyData]);
         
         RetainPtr<NSURLResponse> response(AdoptNS, [[NSURLResponse alloc] initWithURL:URL 
                                                                              MIMEType:@"text/plain" 
                                                                 expectedContentLength:[JSData length]
                                                                      textEncodingName:nil]);
         
-        [stream impl]->startStreamWithResponse(response.get());
-        [stream impl]->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
-        [stream impl]->didFinishLoading(0);
-        [stream release];
+        stream->startStreamWithResponse(response.get());
+        stream->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
+        stream->didFinishLoading(0);
     }
 }
 
@@ -2339,8 +2335,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
     
-    WebBaseNetscapePluginStream *browserStream = static_cast<WebBaseNetscapePluginStream *>(stream->ndata);
-    [browserStream impl]->cancelLoadAndDestroyStreamWithError([browserStream impl]->errorForReason(reason));
+    WebNetscapePluginStream* browserStream = static_cast<WebNetscapePluginStream*>(stream->ndata);
+    browserStream->cancelLoadAndDestroyStreamWithError(browserStream->errorForReason(reason));
     
     return NPERR_NO_ERROR;
 }

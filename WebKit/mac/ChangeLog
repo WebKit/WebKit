@@ -1,5 +1,15 @@
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Use the C++ stream object for JS requests as well.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
         
         Use the C++ stream object in WebBaseNetscapePluginView. Use a HashSet of RefPtrs to keep track of the streams.
