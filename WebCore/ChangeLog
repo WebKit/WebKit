@@ -1,3 +1,13 @@
+2008-10-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Clear the window shell when destroying a page to allow documents
+        which have no way of being reached anymore, to be torn down.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::pageDestroyed):
+
 2008-10-27  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
