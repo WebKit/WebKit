@@ -1,5 +1,18 @@
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Change the Obj-C init methods to simply call WebNetscapePluginStream::create.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        (WebNetscapePluginStream::create):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithFrameLoader:]):
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         Convert more code over to C++.

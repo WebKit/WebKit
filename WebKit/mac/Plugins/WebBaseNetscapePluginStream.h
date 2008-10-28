@@ -53,10 +53,15 @@ class WebNetscapePluginStream : public RefCounted<WebNetscapePluginStream>
                               , private WebCore::NetscapePlugInStreamLoaderClient
 {
 public:
-    static PassRefPtr<WebNetscapePluginStream> create(WebBaseNetscapePluginStream *stream)
+    static PassRefPtr<WebNetscapePluginStream> create(WebBaseNetscapePluginStream *stream, NSURLRequest *request, NPP plugin, bool sendNotification, void* notifyData)
     {
-        return adoptRef(new WebNetscapePluginStream(stream));
+        return adoptRef(new WebNetscapePluginStream(stream, request, plugin, sendNotification, notifyData));
     }
+    static PassRefPtr<WebNetscapePluginStream> create(WebBaseNetscapePluginStream *stream, WebCore::FrameLoader* frameLoader)
+    {
+        return adoptRef(new WebNetscapePluginStream(stream, frameLoader));
+    }
+
     virtual ~WebNetscapePluginStream() { }
 
     NPP plugin() const { return m_plugin; }
@@ -128,27 +133,8 @@ public:
     WebBaseNetscapePluginStream *m_pluginStream;
     
 private:
-    WebNetscapePluginStream(WebBaseNetscapePluginStream *stream)
-        : m_plugin(0)
-        , m_transferMode(0)
-        , m_offset(0)
-        , m_fileDescriptor(-1)
-        , m_sendNotification(false)
-        , m_notifyData(0)
-        , m_headers(0)
-        , m_reason(NPRES_BASE)
-        , m_isTerminated(false)
-        , m_newStreamSuccessful(false)
-        , m_frameLoader(0)
-        , m_loader(0)
-        , m_client(0)
-        , m_request(0)
-        , m_pluginFuncs(0)
-        , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
-        , m_pluginStream(stream)
-    {
-        memset(&m_stream, 0, sizeof(NPStream));
-    }
+    WebNetscapePluginStream(WebBaseNetscapePluginStream *, WebCore::FrameLoader*);
+    WebNetscapePluginStream(WebBaseNetscapePluginStream *, NSURLRequest *, NPP, bool sendNotification, void* notifyData);
 };
 
 @interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
