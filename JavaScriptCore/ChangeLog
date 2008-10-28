@@ -1,5 +1,13 @@
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Create a runtime directory in JavaScriptCore and begin moving files to

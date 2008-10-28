@@ -865,7 +865,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringPrototype.cpp"
+				RelativePath="..\..\runtime\StringPrototype.cpp"
 				>
 			</File>
 			<File
