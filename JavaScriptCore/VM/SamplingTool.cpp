@@ -41,18 +41,20 @@ namespace JSC {
 
 void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
 {
-    if (!m_vpcCounts) {
+    if (!m_samples) {
         m_size = codeBlock->instructions.size();
-        m_vpcCounts = static_cast<int*>(calloc(m_size, sizeof(int)));
+        m_samples = static_cast<int*>(calloc(m_size, sizeof(int)));
         m_codeBlock = codeBlock;
     }
 
-    unsigned codeOffset = vPC - codeBlock->instructions.begin();
+    ++m_sampleCount;
+
+    unsigned offest = vPC - codeBlock->instructions.begin();
     // Since we don't read and write codeBlock and vPC atomically, this check
     // can fail if we sample mid op_call / op_ret.
-    if (codeOffset < m_size) {
-        m_vpcCounts[codeOffset]++;
-        m_totalCount++;
+    if (offest < m_size) {
+        m_samples[offest]++;
+        m_opcodeSampleCount++;
     }
 }
 
@@ -172,7 +174,7 @@ static int compareScopeSampleRecords(const void* left, const void* right)
     const ScopeSampleRecord* const leftValue = *static_cast<const ScopeSampleRecord* const *>(left);
     const ScopeSampleRecord* const rightValue = *static_cast<const ScopeSampleRecord* const *>(right);
 
-    return (leftValue->m_totalCount < rightValue->m_totalCount) ? 1 : (leftValue->m_totalCount > rightValue->m_totalCount) ? -1 : 0;
+    return (leftValue->m_sampleCount < rightValue->m_sampleCount) ? 1 : (leftValue->m_sampleCount > rightValue->m_sampleCount) ? -1 : 0;
 }
 
 void SamplingTool::dump(ExecState* exec)
@@ -225,37 +227,36 @@ void SamplingTool::dump(ExecState* exec)
     printf("\tcti count:\tsamples inside a CTI function called by this opcode\n");
     printf("\tcti %% of self:\tcti count / sample count\n");
     
-    // (3) Calculate 'codeBlockSampleCount', build and sort 'codeBlockSamples' array.
+    // (3) Build and sort 'codeBlockSamples' array.
 
     int scopeCount = m_scopeSampleMap->size();
-    long long codeBlockSampleCount = 0;
     Vector<ScopeSampleRecord*> codeBlockSamples(scopeCount);
     ScopeSampleRecordMap::iterator iter = m_scopeSampleMap->begin();
-    for (int i = 0; i < scopeCount; ++i, ++iter) {
+    for (int i = 0; i < scopeCount; ++i, ++iter)
         codeBlockSamples[i] = iter->second;
-        codeBlockSampleCount += codeBlockSamples[i]->m_totalCount;
-    }
 
     qsort(codeBlockSamples.begin(), scopeCount, sizeof(ScopeSampleRecord*), compareScopeSampleRecords);
 
     // (4) Print data from 'codeBlockSamples' array.
 
-    printf("\nCodeBlock samples [*]\n\n"); 
+    printf("\nCodeBlock samples\n\n"); 
 
     for (int i = 0; i < scopeCount; ++i) {
         ScopeSampleRecord* record = codeBlockSamples[i];
         CodeBlock* codeBlock = record->m_codeBlock;
 
-        double blockPercent = (record->m_totalCount * 100.0) / codeBlockSampleCount;
+        double blockPercent = (record->m_sampleCount * 100.0) / m_sampleCount;
 
         if (blockPercent >= 1) {
             Instruction* code = codeBlock->instructions.begin();
-            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForVPC(code), record->m_totalCount, codeBlockSampleCount, blockPercent);
+            printf("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_scope->sourceURL().UTF8String().c_str(), codeBlock->lineNumberForVPC(code), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
+
+                printf("    Opcode and line number samples [*]\n\n");
                 for (unsigned op = 0; op < record->m_size; ++op) {
-                    int count = record->m_vpcCounts[op];
+                    int count = record->m_samples[op];
                     if (count) {
                         printf("    [% 4d] has sample count: % 4d\n", op, count);
                         unsigned line = codeBlock->lineNumberForVPC(code+op);
@@ -263,6 +264,7 @@ void SamplingTool::dump(ExecState* exec)
                     }
                 }
                 printf("\n");
+
                 int linesCount = lineCounts.size();
                 Vector<LineCountInfo> lineCountInfo(linesCount);
                 int lineno = 0;
@@ -277,13 +279,12 @@ void SamplingTool::dump(ExecState* exec)
                     printf("    Line #%d has sample count %d.\n", lineCountInfo[lineno].line, lineCountInfo[lineno].count);
                 }
                 printf("\n");
+                printf("    [*] Samples inside host code are charged to the calling Opcode.\n");
+                printf("        Samples on a call / return boundary are not charged to a specific opcode or line.\n\n");
+                printf("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_opcodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_opcodeSampleCount) * 100) / record->m_sampleCount);
             }
         }
     }
-
-    printf("\n[*] Samples inside host code are charged to the calling Opcode.\n");
-    printf("    Samples that fall on a call / return boundary are discarded.\n\n");
-    printf("\tSamples discarded:\t\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - codeBlockSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - codeBlockSampleCount) * 100) / m_sampleCount);
 }
 
 #else

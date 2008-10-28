@@ -1,5 +1,25 @@
 2008-10-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+        
+        Stop discarding CodeBlock samples that can't be charged to a specific
+        opcode. Instead, charge the relevant CodeBlock, and provide a footnote
+        explaining the situation.
+        
+        This will help us tell which CodeBlocks are hot, even if we can't
+        identify specific lines of code within the CodeBlocks.
+
+        * VM/SamplingTool.cpp:
+        (JSC::ScopeSampleRecord::sample):
+        (JSC::compareScopeSampleRecords):
+        (JSC::SamplingTool::dump):
+
+        * VM/SamplingTool.h:
+        (JSC::ScopeSampleRecord::ScopeSampleRecord):
+        (JSC::ScopeSampleRecord::~ScopeSampleRecord):
+
+2008-10-27  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Added a mutex around the SamplingTool's ScopeNode* map, to solve a crash

@@ -45,28 +45,30 @@ namespace JSC {
     struct Instruction;
 
     struct ScopeSampleRecord {
-        RefPtr<ScopeNode> m_scope;
-        CodeBlock* m_codeBlock;
-        int m_totalCount;
-        int* m_vpcCounts;
-        unsigned m_size;
-        
         ScopeSampleRecord(ScopeNode* scope)
             : m_scope(scope)
             , m_codeBlock(0)
-            , m_totalCount(0)
-            , m_vpcCounts(0)
+            , m_sampleCount(0)
+            , m_opcodeSampleCount(0)
+            , m_samples(0)
             , m_size(0)
         {
         }
         
         ~ScopeSampleRecord()
         {
-            if (m_vpcCounts)
-                free(m_vpcCounts);
+            if (m_samples)
+                free(m_samples);
         }
         
         void sample(CodeBlock*, Instruction*);
+
+        RefPtr<ScopeNode> m_scope;
+        CodeBlock* m_codeBlock;
+        int m_sampleCount;
+        int m_opcodeSampleCount;
+        int* m_samples;
+        unsigned m_size;
     };
 
     typedef WTF::HashMap<ScopeNode*, ScopeSampleRecord*> ScopeSampleRecordMap;
