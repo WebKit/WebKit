@@ -70,7 +70,7 @@ using namespace WebCore;
 - (BOOL)isDebuggingJavaScript
 {
     if (Page* page = core(_webView))
-        return page->inspectorController()->debuggerAttached();
+        return page->inspectorController()->debuggerEnabled();
     return NO;
 }
 
@@ -88,13 +88,13 @@ using namespace WebCore;
     if (!page)
         return;
     page->inspectorController()->showPanel(InspectorController::ScriptsPanel);
-    page->inspectorController()->startDebugging();
+    page->inspectorController()->enableDebugger();
 }
 
 - (void)stopDebuggingJavaScript:(id)sender
 {
     if (Page* page = core(_webView))
-        page->inspectorController()->stopDebugging();
+        page->inspectorController()->disableDebugger();
 }
 
 - (BOOL)isProfilingJavaScript

@@ -1,3 +1,18 @@
+2008-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Rename a few methods related to attaching and detaching the debugger.
+
+        * Rename attachDebugger to enableDebugger.
+        * Rename detachDebugger to disableDebugger.
+        * Rename the debuggerAttached getter to debuggerEnabled.
+
+        Reviewed by Darin Adler.
+
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector isDebuggingJavaScript]):
+        (-[WebInspector startDebuggingJavaScript:]):
+        (-[WebInspector stopDebuggingJavaScript:]):
+
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

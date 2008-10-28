@@ -159,7 +159,7 @@ HRESULT STDMETHODCALLTYPE WebInspector::isDebuggingJavaScript(BOOL* isDebugging)
     if (!page)
         return S_OK;
 
-    *isDebugging = page->inspectorController()->debuggerAttached();
+    *isDebugging = page->inspectorController()->debuggerEnabled();
     return S_OK;
 }
 
@@ -174,11 +174,11 @@ HRESULT STDMETHODCALLTYPE WebInspector::toggleDebuggingJavaScript()
 
     InspectorController* inspector = page->inspectorController();
 
-    if (inspector->debuggerAttached())
-        inspector->stopDebugging();
+    if (inspector->debuggerEnabled())
+        inspector->disableDebugger();
     else {
         inspector->showPanel(InspectorController::ScriptsPanel);
-        inspector->startDebugging();
+        inspector->enableDebugger();
     }
 
     return S_OK;

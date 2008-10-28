@@ -1,5 +1,61 @@
 2008-10-28  Timothy Hatcher  <timothy@apple.com>
 
+        Rename a few methods related to attaching and detaching the debugger. Also
+        adds stub methods for enabling and disabling the profiler.
+
+        * Rename attachDebugger to enableDebugger.
+        * Rename detachDebugger to disableDebugger.
+        * Rename the debuggerAttached getter to debuggerEnabled.
+        * Rename the debuggerAttached callback to debuggerWasEnabled.
+        * Rename the debuggerDetached callback to debuggerWasDisabled.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.base.exp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::pauseInDebugger):
+        (WebCore::InspectorController::resumeDebugger):
+        (WebCore::InspectorController::stepOverStatementInDebugger):
+        (WebCore::InspectorController::stepIntoStatementInDebugger):
+        (WebCore::InspectorController::stepOutOfFunctionInDebugger):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::profilerEnabled):
+        (WebCore::InspectorController::debuggerEnabled):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype.removeBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        * inspector/front-end/Object.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems):
+        (WebInspector.ScriptsPanel.prototype.debuggerWasEnabled):
+        (WebInspector.ScriptsPanel.prototype.debuggerWasDetached):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype.canShowResource):
+        (WebInspector.ScriptsPanel.prototype._updatePauseOnExceptionsButton):
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+        * inspector/front-end/View.js:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.addResource):
+        (WebInspector.debuggerWasEnabled):
+        (WebInspector.debuggerWasDisabled):
+
+2008-10-28  Timothy Hatcher  <timothy@apple.com>
+
         Fix an exception when searching the Resources panel while there
         and resources queued to be added to the list.
 

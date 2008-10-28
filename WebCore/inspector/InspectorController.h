@@ -149,6 +149,10 @@ public:
     void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling();
 
+    void enableProfiler();
+    void disableProfiler();
+    bool profilerEnabled() const { return m_profilerEnabled; }
+
     bool windowVisible();
     void setWindowVisible(bool visible = true, bool attached = false);
 
@@ -207,9 +211,9 @@ public:
     void closeWindow();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    void startDebugging();
-    void stopDebugging();
-    bool debuggerAttached() const { return m_debuggerAttached; }
+    void enableDebugger();
+    void disableDebugger();
+    bool debuggerEnabled() const { return m_debuggerEnabled; }
 
     JavaScriptCallFrame* currentCallFrame() const;
 
@@ -298,9 +302,10 @@ private:
     JSContextRef m_scriptContext;
     bool m_windowVisible;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    bool m_debuggerAttached;
+    bool m_debuggerEnabled;
     bool m_attachDebuggerWhenShown;
 #endif
+    bool m_profilerEnabled;
     bool m_recordingUserInitiatedProfile;
     SpecialPanels m_showAfterVisible;
     long long m_nextIdentifier;

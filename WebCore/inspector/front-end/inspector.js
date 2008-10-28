@@ -793,14 +793,14 @@ WebInspector.addDatabase = function(database)
     this.panels.databases.addDatabase(database);
 }
 
-WebInspector.debuggerAttached = function()
+WebInspector.debuggerWasEnabled = function()
 {
-    this.panels.scripts.debuggerAttached();
+    this.panels.scripts.debuggerWasEnabled();
 }
 
-WebInspector.debuggerDetached = function()
+WebInspector.debuggerWasDisabled = function()
 {
-    this.panels.scripts.debuggerDetached();
+    this.panels.scripts.debuggerWasDisabled();
 }
 
 WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine)

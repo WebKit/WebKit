@@ -45,7 +45,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         // FIXME: add to the breakpoints UI.
 
-        if (!InspectorController.debuggerAttached() || !breakpoint.sourceID)
+        if (!InspectorController.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
         if (breakpoint.enabled)
@@ -60,7 +60,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         // FIXME: remove from the breakpoints UI.
 
-        if (!InspectorController.debuggerAttached() || !breakpoint.sourceID)
+        if (!InspectorController.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
         InspectorController.removeBreakpoint(breakpoint.sourceID, breakpoint.line);
@@ -72,7 +72,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         // FIXME: change the breakpoint checkbox state in the UI.
 
-        if (!InspectorController.debuggerAttached() || !breakpoint.sourceID)
+        if (!InspectorController.debuggerEnabled() || !breakpoint.sourceID)
             return;
 
         if (breakpoint.enabled)
