@@ -1,3 +1,26 @@
+2008-10-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21893
+        Character set is incorrect for external scripts in XHTML pages
+
+        <rdar://problem/6317451> Incorrect encoding for text in a popup at http://xpoint.ru/
+
+        Test: fast/encoding/external-script-charset.xhtml
+
+        Expose scriptCharset() function on all ScriptElements, and call it from XML tokenizer.
+
+        * dom/ScriptElement.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parseEndElement):
+        * html/HTMLScriptElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::scriptCharset):
+        * svg/SVGScriptElement.h:
+
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
         Include copyright license files in the autotools dist target and

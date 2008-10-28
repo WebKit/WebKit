@@ -1,3 +1,21 @@
+2008-10-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21893
+        Character set is incorrect for external scripts in XHTML pages
+
+        <rdar://problem/6317451> Incorrect encoding for text in a popup at http://xpoint.ru/
+
+        * fast/encoding/external-script-charset-expected.txt: Added.
+        * fast/encoding/external-script-charset.js: Added.
+        * fast/encoding/external-script-charset.xhtml: Added.
+        
+        * platform/mac/svg/carto.net/combobox-expected.checksum:
+        * platform/mac/svg/carto.net/combobox-expected.png:
+        * platform/mac/svg/carto.net/combobox-expected.txt:
+        Updated incorrect results.
+
 2008-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dave Hyatt.

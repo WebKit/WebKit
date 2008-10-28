@@ -1,0 +1,3 @@
+Test that external scripts in XHTML documents inherit document charset.
+
+PASS

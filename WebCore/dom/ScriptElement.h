@@ -45,6 +45,9 @@ public:
     virtual void dispatchLoadEvent() = 0;
     virtual void dispatchErrorEvent() = 0;
 
+    // A charset for loading the script (may be overridden by HTTP headers or a BOM).
+    virtual String scriptCharset() const = 0;
+
 protected:
     // Helper functions used by our parent classes.
     static void insertedIntoDocument(ScriptElementData&, const String& sourceUrl);

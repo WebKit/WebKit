@@ -139,6 +139,11 @@ void SVGScriptElement::setType(const String& type)
     m_type = type;
 }
 
+String SVGScriptElement::scriptCharset() const
+{
+    return m_data.scriptCharset();
+}
+
 void SVGScriptElement::getSubresourceAttributeStrings(Vector<String>& urls) const
 {
     urls.append(href());
