@@ -1,3 +1,39 @@
+2008-10-28  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Ensure all baseline images are in the right location and delete the ones that aren't needed.
+
+        * editing/inserting/5607069-1-expected.checksum: Removed.
+        * editing/inserting/5607069-1-expected.png: Removed.
+        * editing/pasteboard/paste-text-013-expected.png: Removed.
+        * fast/css/invalid-percentage-property-expected.checksum: Removed.
+        * fast/css/invalid-percentage-property-expected.png: Removed.
+        * fast/css/text-align-expected.checksum: Removed.
+        * fast/css/text-align-expected.png: Removed.
+        * fast/selectors/lang-inheritance-expected.checksum: Removed.
+        * fast/selectors/lang-inheritance-expected.png: Removed.
+        * fast/selectors/lang-inheritance2-expected.checksum: Removed.
+        * fast/selectors/lang-inheritance2-expected.png: Removed.
+        * fast/selectors/lang-vs-xml-lang-expected.checksum: Removed.
+        * fast/selectors/lang-vs-xml-lang-expected.png: Removed.
+        * fast/selectors/lang-vs-xml-lang-xhtml-expected.checksum: Removed.
+        * fast/selectors/lang-vs-xml-lang-xhtml-expected.png: Removed.
+        * platform/mac/fast/css/invalid-percentage-property-expected.checksum: Copied from LayoutTests/fast/css/invalid-percentage-property-expected.checksum.
+        * platform/mac/fast/css/invalid-percentage-property-expected.png: Copied from LayoutTests/fast/css/invalid-percentage-property-expected.png.
+        * platform/mac/fast/css/text-align-expected.checksum: Copied from LayoutTests/fast/css/text-align-expected.checksum.
+        * platform/mac/fast/css/text-align-expected.png: Copied from LayoutTests/fast/css/text-align-expected.png.
+        * platform/mac/fast/selectors/lang-inheritance-expected.checksum: Copied from LayoutTests/fast/selectors/lang-inheritance-expected.checksum.
+        * platform/mac/fast/selectors/lang-inheritance-expected.png: Copied from LayoutTests/fast/selectors/lang-inheritance-expected.png.
+        * platform/mac/fast/selectors/lang-inheritance2-expected.checksum: Copied from LayoutTests/fast/selectors/lang-inheritance2-expected.checksum.
+        * platform/mac/fast/selectors/lang-inheritance2-expected.png: Copied from LayoutTests/fast/selectors/lang-inheritance2-expected.png.
+        * platform/mac/fast/selectors/lang-vs-xml-lang-expected.checksum: Copied from LayoutTests/fast/selectors/lang-vs-xml-lang-expected.checksum.
+        * platform/mac/fast/selectors/lang-vs-xml-lang-expected.png: Copied from LayoutTests/fast/selectors/lang-vs-xml-lang-expected.png.
+        * platform/mac/fast/selectors/lang-vs-xml-lang-xhtml-expected.checksum: Copied from LayoutTests/fast/selectors/lang-vs-xml-lang-xhtml-expected.checksum.
+        * platform/mac/fast/selectors/lang-vs-xml-lang-xhtml-expected.png: Copied from LayoutTests/fast/selectors/lang-vs-xml-lang-xhtml-expected.png.
+
 2008-10-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
