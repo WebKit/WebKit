@@ -44,34 +44,31 @@ using namespace std;
 
 namespace WebCore {
 
-auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool)
+ImageBufferData::ImageBufferData(const IntSize& size)
+    : m_surface(0)
 {
-    cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                                          size.width(), size.height());
-    if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS)
-        return auto_ptr<ImageBuffer>();
-
-    return auto_ptr<ImageBuffer>(new ImageBuffer(surface));
 }
 
-ImageBuffer::ImageBuffer(cairo_surface_t* surface)
-    : m_surface(surface)
+ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
+    : m_data(size)
+    , m_size(size)
 {
-    int width = cairo_image_surface_get_width(m_surface);
-    int height = cairo_image_surface_get_height(m_surface);
-    m_size = IntSize(width, height);
-    cairo_t* cr = cairo_create(m_surface);
-    m_context.set(new GraphicsContext(cr));
+    success = false;  // Make early return mean error.
+    m_data.m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+                                                  size.width(),
+                                                  size.height());
+    if (cairo_surface_status(m_data.m_surface) != CAIRO_STATUS_SUCCESS)
+        return;  // create will notice we didn't set m_initialized and fail.
 
-    /*
-     * The context is now owned by the GraphicsContext
-     */
-    cairo_destroy(cr);
+    cairo_t* cr = cairo_create(m_data.m_surface);
+    m_context.set(new GraphicsContext(cr));
+    cairo_destroy(cr);  // The context is now owned by the GraphicsContext.
+    success = true;
 }
 
 ImageBuffer::~ImageBuffer()
 {
-    cairo_surface_destroy(m_surface);
+    cairo_surface_destroy(m_data.m_surface);
 }
 
 GraphicsContext* ImageBuffer::context() const
@@ -86,20 +83,17 @@ Image* ImageBuffer::image() const
         // GraphicsContext must be done.
         ASSERT(context());
         // BitmapImage will release the passed in surface on destruction
-        m_image = BitmapImage::create(cairo_surface_reference(m_surface));
+        m_image = BitmapImage::create(cairo_surface_reference(m_data.m_surface));
     }
     return m_image.get();
 }
 
 PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 {
-    if (!m_surface)
-        return 0;
-
-    ASSERT(cairo_surface_get_type(m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+    ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
     PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
-    unsigned char* dataSrc = cairo_image_surface_get_data(m_surface);
+    unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface);
     unsigned char* dataDst = result->data()->data().data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > m_size.width() || (rect.y() + rect.height()) > m_size.height())
@@ -127,7 +121,7 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
         endy = m_size.height();
     int numRows = endy - originy;
 
-    int stride = cairo_image_surface_get_stride(m_surface);
+    int stride = cairo_image_surface_get_stride(m_data.m_surface);
     unsigned destBytesPerRow = 4 * rect.width();
 
     unsigned char* destRows = dataDst + desty * destBytesPerRow + destx * 4;
@@ -152,12 +146,9 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 
 void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (!m_surface)
-        return;
+    ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    ASSERT(cairo_surface_get_type(m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
-
-    unsigned char* dataDst = cairo_image_surface_get_data(m_surface);
+    unsigned char* dataDst = cairo_image_surface_get_data(m_data.m_surface);
 
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -186,7 +177,7 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * source->width();
-    int stride = cairo_image_surface_get_stride(m_surface);
+    int stride = cairo_image_surface_get_stride(m_data.m_surface);
 
     unsigned char* srcRows = source->data()->data().data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {

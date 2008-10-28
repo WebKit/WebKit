@@ -43,50 +43,47 @@ using namespace std;
 
 namespace WebCore {
 
-auto_ptr<ImageBuffer> ImageBuffer::create(const IntSize& size, bool grayScale)
+ImageBufferData::ImageBufferData(const IntSize&)
+    : m_data(0)
 {
+}
+
+ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
+    : m_data(size)
+    , m_size(size)
+{
+    success = false;  // Make early return mean failure.
+    unsigned bytesPerRow;
     if (size.width() < 0 || size.height() < 0)
-        return auto_ptr<ImageBuffer>();
-    unsigned int bytesPerRow = size.width();
+        return;
+    bytesPerRow = size.width();
     if (!grayScale) {
         // Protect against overflow
         if (bytesPerRow > 0x3FFFFFFF)
-            return auto_ptr<ImageBuffer>();
+            return;
         bytesPerRow *= 4;
     }
 
-    void* imageBuffer = tryFastCalloc(size.height(), bytesPerRow);
-    if (!imageBuffer)
-        return auto_ptr<ImageBuffer>();
+    m_data.m_data = tryFastCalloc(size.height(), bytesPerRow);
+    ASSERT((reinterpret_cast<size_t>(m_data.m_data) & 2) == 0);
 
     CGColorSpaceRef colorSpace = grayScale ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-    CGContextRef cgContext = CGBitmapContextCreate(imageBuffer, size.width(), size.height(), 8, bytesPerRow,
+    CGContextRef cgContext = CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow,
         colorSpace, grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast);
     CGColorSpaceRelease(colorSpace);
-    if (!cgContext) {
-        fastFree(imageBuffer);
-        return auto_ptr<ImageBuffer>();
-    }
+    if (!cgContext)
+        return;
 
-    auto_ptr<GraphicsContext> context(new GraphicsContext(cgContext));
-    context->scale(FloatSize(1, -1));
-    context->translate(0, -size.height());
+    m_context.set(new GraphicsContext(cgContext));
+    m_context->scale(FloatSize(1, -1));
+    m_context->translate(0, -size.height());
     CGContextRelease(cgContext);
-    return auto_ptr<ImageBuffer>(new ImageBuffer(imageBuffer, size, context));
-}
-
-
-ImageBuffer::ImageBuffer(void* imageData, const IntSize& size, auto_ptr<GraphicsContext> context)
-    : m_data(imageData)
-    , m_size(size)
-    , m_context(context.release())
-{
-    ASSERT((reinterpret_cast<size_t>(imageData) & 2) == 0);
+    success = true;
 }
 
 ImageBuffer::~ImageBuffer()
 {
-    fastFree(m_data);
+    fastFree(m_data.m_data);
 }
 
 GraphicsContext* ImageBuffer::context() const
@@ -109,9 +106,6 @@ Image* ImageBuffer::image() const
 
 PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
 {
-    if (!m_data)
-        return 0;
-
     PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
     unsigned char* data = result->data()->data().data();
 
@@ -143,7 +137,8 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
     unsigned srcBytesPerRow = 4 * m_size.width();
     unsigned destBytesPerRow = 4 * rect.width();
 
-    unsigned char* srcRows = reinterpret_cast<unsigned char*>(m_data) + originy * srcBytesPerRow + originx * 4;
+    // ::create ensures that all ImageBuffers have valid data, so we don't need to check it here.
+    unsigned char* srcRows = reinterpret_cast<unsigned char*>(m_data.m_data) + originy * srcBytesPerRow + originx * 4;
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
         for (int x = 0; x < numColumns; x++) {
@@ -194,7 +189,7 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
     unsigned destBytesPerRow = 4 * m_size.width();
 
     unsigned char* srcRows = source->data()->data().data() + originy * srcBytesPerRow + originx * 4;
-    unsigned char* destRows = reinterpret_cast<unsigned char*>(m_data) + desty * destBytesPerRow + destx * 4;
+    unsigned char* destRows = reinterpret_cast<unsigned char*>(m_data.m_data) + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;

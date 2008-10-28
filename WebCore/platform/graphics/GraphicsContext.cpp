@@ -492,7 +492,7 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
 }
 #endif
 
-#if !PLATFORM(QT) && !PLATFORM(CAIRO)
+#if !PLATFORM(QT) && !PLATFORM(CAIRO) && !PLATFORM(SKIA)
 void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
 {
 }

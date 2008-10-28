@@ -1,3 +1,43 @@
+2008-10-28  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21816
+
+        Remove platform ifdefs in ImageBuffer.h by moving platform specific code
+        into a new PlatformImageBuffer class. Move the static create function
+        into the header because it can be cross-platform. Initialization now
+        happens in the cunstructor which sets a flag that create uses to know
+        whether it should return null or not. I also made passing of IntSize
+        more consistent (always by reference).
+
+        This change also changes the ifdefs in GraphicsContext to allow Skia
+        ports to implement text drawing modes.
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::size):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::image):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        * platform/graphics/cairo/ImageBufferData.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        * platform/graphics/cg/ImageBufferData.h:
+        * platform/graphics/qt/ImageBufferData.h:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::~ImageBuffer):
+
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

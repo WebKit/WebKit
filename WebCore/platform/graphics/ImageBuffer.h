@@ -29,13 +29,10 @@
 
 #include "Image.h"
 #include "IntSize.h"
+#include "ImageBufferData.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <memory>
-
-#if PLATFORM(SKIA)
-class SkBitmap;
-#endif
 
 namespace WebCore {
 
@@ -47,10 +44,19 @@ namespace WebCore {
 
     class ImageBuffer : Noncopyable {
     public:
-        static std::auto_ptr<ImageBuffer> create(const IntSize&, bool grayScale);
+        // Will return a null pointer on allocation failure.
+        static std::auto_ptr<ImageBuffer> create(const IntSize& size, bool grayScale)
+        {
+            bool success;
+            std::auto_ptr<ImageBuffer> buf(new ImageBuffer(size, grayScale, success));
+            if (success)
+                return buf;
+            return std::auto_ptr<ImageBuffer>();
+        }
+
         ~ImageBuffer();
 
-        IntSize size() const { return m_size; }
+        const IntSize& size() const { return m_size; }
         GraphicsContext* context() const;
 
         Image* image() const;
@@ -63,24 +69,15 @@ namespace WebCore {
         String toDataURL(const String& mimeType) const;
 
     private:
-        void* m_data;
-        IntSize m_size;
+        ImageBufferData m_data;
 
+        IntSize m_size;
         OwnPtr<GraphicsContext> m_context;
         mutable RefPtr<Image> m_image;
-    
-#if PLATFORM(CG)
-        ImageBuffer(void* imageData, const IntSize&, std::auto_ptr<GraphicsContext>);
-#elif PLATFORM(QT)
-        ImageBuffer(const QPixmap&);
-        mutable QPixmap m_pixmap;
-        mutable QPainter* m_painter;
-#elif PLATFORM(CAIRO)
-        ImageBuffer(cairo_surface_t*);
-        mutable cairo_surface_t* m_surface;
-#elif PLATFORM(SKIA)
-        ImageBuffer(const IntSize&);
-#endif
+
+        // This constructor will place its succes into the given out-variable
+        // so that create() knows when it should return failure.
+        ImageBuffer(const IntSize&, bool grayScale, bool& success);
     };
 
 } // namespace WebCore
