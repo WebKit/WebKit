@@ -232,38 +232,38 @@ IDL_BINDINGS += \
 webcore_sources += \
 	WebCore/ForwardingHeaders/kjs/Activation.h \
 	WebCore/ForwardingHeaders/kjs/ArgList.h \
-	WebCore/ForwardingHeaders/kjs/ArrayPrototype.h \
-	WebCore/ForwardingHeaders/kjs/BooleanObject.h \
-	WebCore/ForwardingHeaders/kjs/CallData.h \
-	WebCore/ForwardingHeaders/kjs/ConstructData.h \
-	WebCore/ForwardingHeaders/kjs/DateInstance.h \
+	WebCore/ForwardingHeaders/runtime/ArrayPrototype.h \
+	WebCore/ForwardingHeaders/runtime/BooleanObject.h \
+	WebCore/ForwardingHeaders/runtime/CallData.h \
+	WebCore/ForwardingHeaders/runtime/ConstructData.h \
+	WebCore/ForwardingHeaders/runtime/DateInstance.h \
 	WebCore/ForwardingHeaders/kjs/DebuggerCallFrame.h \
-	WebCore/ForwardingHeaders/kjs/Error.h \
+	WebCore/ForwardingHeaders/runtime/Error.h \
 	WebCore/ForwardingHeaders/kjs/ExecState.h \
 	WebCore/ForwardingHeaders/kjs/FunctionCallProfile.h \
-	WebCore/ForwardingHeaders/kjs/FunctionConstructor.h \
-	WebCore/ForwardingHeaders/kjs/FunctionPrototype.h \
+	WebCore/ForwardingHeaders/runtime/FunctionConstructor.h \
+	WebCore/ForwardingHeaders/runtime/FunctionPrototype.h \
 	WebCore/ForwardingHeaders/kjs/InitializeThreading.h \
-	WebCore/ForwardingHeaders/kjs/InternalFunction.h \
-	WebCore/ForwardingHeaders/kjs/JSArray.h \
-	WebCore/ForwardingHeaders/kjs/JSFunction.h \
+	WebCore/ForwardingHeaders/runtime/InternalFunction.h \
+	WebCore/ForwardingHeaders/runtime/JSArray.h \
+	WebCore/ForwardingHeaders/runtime/JSFunction.h \
 	WebCore/ForwardingHeaders/kjs/JSGlobalData.h \
-	WebCore/ForwardingHeaders/kjs/JSGlobalObject.h \
-	WebCore/ForwardingHeaders/kjs/JSNumberCell.h \
-	WebCore/ForwardingHeaders/kjs/JSObject.h \
-	WebCore/ForwardingHeaders/kjs/JSString.h \
-	WebCore/ForwardingHeaders/kjs/JSValue.h \
-	WebCore/ForwardingHeaders/kjs/ObjectPrototype.h \
-	WebCore/ForwardingHeaders/kjs/PropertyMap.h \
+	WebCore/ForwardingHeaders/runtime/JSGlobalObject.h \
+	WebCore/ForwardingHeaders/runtime/JSNumberCell.h \
+	WebCore/ForwardingHeaders/runtime/JSObject.h \
+	WebCore/ForwardingHeaders/runtime/JSString.h \
+	WebCore/ForwardingHeaders/runtime/JSValue.h \
+	WebCore/ForwardingHeaders/runtime/ObjectPrototype.h \
+	WebCore/ForwardingHeaders/runtime/PropertyMap.h \
 	WebCore/ForwardingHeaders/kjs/PropertyNameArray.h \
-	WebCore/ForwardingHeaders/kjs/PrototypeFunction.h \
+	WebCore/ForwardingHeaders/runtime/PrototypeFunction.h \
 	WebCore/ForwardingHeaders/kjs/Register.h \
 	WebCore/ForwardingHeaders/kjs/RegisterID.h \
 	WebCore/ForwardingHeaders/kjs/SavedBuiltins.h \
 	WebCore/ForwardingHeaders/kjs/SourceProvider.h \
-	WebCore/ForwardingHeaders/kjs/StringObject.h \
-	WebCore/ForwardingHeaders/kjs/StringObjectThatMasqueradesAsUndefined.h \
-	WebCore/ForwardingHeaders/kjs/StringPrototype.h \
+	WebCore/ForwardingHeaders/runtime/StringObject.h \
+	WebCore/ForwardingHeaders/runtime/StringObjectThatMasqueradesAsUndefined.h \
+	WebCore/ForwardingHeaders/runtime/StringPrototype.h \
 	WebCore/ForwardingHeaders/kjs/SymbolTable.h \
 	WebCore/ForwardingHeaders/kjs/collector.h \
 	WebCore/ForwardingHeaders/kjs/completion.h \
