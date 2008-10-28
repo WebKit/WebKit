@@ -1,3 +1,13 @@
+2008-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig. 
+
+        Specify which Localizable.strings to update since we don't always want to update the file in the same
+        directory where we're searching for the strings to localize.
+        
+        * Scripts/extract-localizable-strings:
+        * Scripts/update-webkit-localizable-strings:
+
 2008-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Add support for enabling the profiler, so the profiling tests can continue

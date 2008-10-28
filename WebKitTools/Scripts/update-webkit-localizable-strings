@@ -35,6 +35,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my @directoriesToScan = ("WebKit/mac", "WebKit/win");
+my $fileToUpdate = "WebKit/English.lproj/Localizable.strings";
 my $exceptionsFile = "WebKit/StringsNotToBeLocalized.txt";
 
 @ARGV == 0 or die "Usage: " . basename($0) . "\n";
@@ -42,4 +43,4 @@ my $exceptionsFile = "WebKit/StringsNotToBeLocalized.txt";
 chdirWebKit();
 
 system "sort -u $exceptionsFile -o $exceptionsFile";
-exec "extract-localizable-strings", $exceptionsFile, @directoriesToScan;
+exec "extract-localizable-strings", $exceptionsFile, $fileToUpdate, @directoriesToScan;

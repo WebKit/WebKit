@@ -44,13 +44,15 @@
 
 use strict;
 
-my $stringsFile = "English.lproj/Localizable.strings";
 my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL_ERROR => 1, FATAL => 1, LOG => 1, LOG_WARNING => 1, UI_STRING_LOCALIZE_LATER => 1, LPCTSTR_UI_STRING_LOCALIZE_LATER => 1, UNLOCALIZED_STRING => 1, UNLOCALIZED_LPCTSTR => 1, dprintf => 1, NSException => 1, NSLog => 1, printf => 1 );
 
 @ARGV >= 1 or die "Usage: extract-localizable-strings <exceptions file> [ directory... ]\nDid you mean to run extract-webkit-localizable-strings instead?\n";
 
 my $exceptionsFile = shift @ARGV;
 -f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n";
+
+my $fileToUpdate = shift @ARGV;
+-f $fileToUpdate or die "Couldn't find file to update $fileToUpdate\n";
 
 my @directories = ();
 my @directoriesToSkip = ();
@@ -325,7 +327,7 @@ print "$NSLocalizeCount uses of NSLocalize\n" if $NSLocalizeCount;
 print scalar(@unusedExceptions), " unused exceptions\n" if @unusedExceptions;
 
 if ($sawError) {
-    print "\nErrors encountered. Exiting without writing a $stringsFile file.\n";
+    print "\nErrors encountered. Exiting without writing to $fileToUpdate.\n";
     exit 1;
 }
 
@@ -338,22 +340,12 @@ for my $key (sort keys %commentByKey) {
 # Write out the strings file in UTF-16 with a BOM.
 utf8::decode($localizedStrings) if $^V ge chr(5).chr(8);
 my $output = pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
-foreach my $directory (@directories) {
-    if (-e "$directory/mac/$stringsFile") {
-        open STRINGS, ">", "$directory/mac/$stringsFile" or die;
-        print STRINGS $output;
-        close STRINGS;
-    }
 
-    if (-e "$directory/win/$stringsFile") {
-        open STRINGS, ">", "$directory/win/$stringsFile" or die;
-        print STRINGS $output;
-        close STRINGS;
-    }
-
-    if (-e "$directory/$stringsFile") {
-        open STRINGS, ">", "$directory/$stringsFile" or die;
-        print STRINGS $output;
-        close STRINGS;
-    }
+if (-e "$fileToUpdate") {
+    open STRINGS, ">", "$fileToUpdate" or die;
+    print STRINGS $output;
+    close STRINGS;
+} else {
+    print "$fileToUpdate does not exist\n";
+    exit 1;
 }

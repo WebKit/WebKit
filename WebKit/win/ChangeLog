@@ -1,3 +1,11 @@
+2008-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig. 
+
+        * English.lproj: Removed.
+        * English.lproj/Localizable.strings: Removed.
+        * WebKit.vcproj/WebKit.vcproj: Updated to use Localizable.strings in the top directory, to share with the Mac.
+
 2008-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Add IWebInspector methods to enable the profiler.
