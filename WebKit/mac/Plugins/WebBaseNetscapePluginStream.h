@@ -59,8 +59,7 @@ public:
     {
         return adoptRef(new WebNetscapePluginStream(stream, frameLoader));
     }
-
-    virtual ~WebNetscapePluginStream() { }
+    virtual ~WebNetscapePluginStream();
 
     NPP plugin() const { return m_plugin; }
     void setPlugin(NPP);

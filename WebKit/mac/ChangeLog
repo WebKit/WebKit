@@ -1,5 +1,17 @@
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz Pettel.
+        
+        Move code from dealloc and finalize to the WebNetscapePluginStream destructor.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::~WebNetscapePluginStream):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Get rid of WebNetscapePlugInStreamLoaderClient, the plug-in stream is its own client.

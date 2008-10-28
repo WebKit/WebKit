@@ -192,25 +192,28 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     return self;
 }
 
+WebNetscapePluginStream::~WebNetscapePluginStream()
+{
+    ASSERT(!m_plugin);
+    ASSERT(m_isTerminated);
+    ASSERT(m_stream.ndata == nil);
+    
+    // The stream file should have been deleted, and the path freed, in -_destroyStream
+    ASSERT(!m_path);
+    ASSERT(m_fileDescriptor == -1);
+    
+    if (m_loader)
+        m_loader->deref();
+    [m_request release];
+    
+    free((void *)m_stream.url);
+    free(m_headers);
+    
+    streams().remove(&m_stream);
+}
+
 - (void)dealloc
 {
-    ASSERT(!_impl->m_plugin);
-    ASSERT(_impl->m_isTerminated);
-    ASSERT(_impl->m_stream.ndata == nil);
-
-    // The stream file should have been deleted, and the path freed, in -_destroyStream
-    ASSERT(!_impl->m_path);
-    ASSERT(_impl->m_fileDescriptor == -1);
-
-    if (_impl->m_loader)
-        _impl->m_loader->deref();
-    [_impl->m_request release];
-        
-    free((void *)_impl->m_stream.url);
-    free(_impl->m_headers);
-
-    streams().remove(&_impl->m_stream);
-
     ASSERT(_impl);
     
     [super dealloc];
@@ -219,21 +222,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
-    ASSERT(_impl->m_isTerminated);
-    ASSERT(_impl->m_stream.ndata == nil);
-
-    // The stream file should have been deleted, and the path freed, in -_destroyStream
-    ASSERT(!_impl->m_path);
-    ASSERT(_impl->m_fileDescriptor == -1);
-
-    if (_impl->m_loader)
-        _impl->m_loader->deref();
-    
-    free((void *)_impl->m_stream.url);
-    free(_impl->m_headers);
-
-    streams().remove(&_impl->m_stream);
-
     ASSERT(_impl);
         
     [super finalize];
