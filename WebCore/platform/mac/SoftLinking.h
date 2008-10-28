@@ -98,3 +98,22 @@
         get##name = name##Function; \
         return pointer##name; \
     }
+
+#define SOFT_LINK_CONSTANT(framework, name, type) \
+    static type init##name(); \
+    static type (*get##name)() = init##name; \
+    static type constant##name; \
+    \
+    static type name##Function() \
+    { \
+        return constant##name; \
+    }\
+    \
+    static type init##name() \
+    { \
+        void* constant = dlsym(framework##Library(), #name); \
+        ASSERT(constant); \
+        constant##name = *static_cast<type*>(constant); \
+        get##name = name##Function; \
+        return constant##name; \
+    }
