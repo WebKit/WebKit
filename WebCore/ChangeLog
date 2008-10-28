@@ -1,3 +1,15 @@
+2008-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an exception when searching the Resources panel while there
+        and resources queued to be added to the list.
+
+        Reviewed by Kevin McCullough.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.searchCanceled): Null check
+        the _resourcesTreeElement property.
+        (WebInspector.ResourcesPanel.prototype.performSearch): Ditto.
+
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fix for older versions of Pango where PANGO_VERSION_CHECK

@@ -238,7 +238,8 @@ WebInspector.ResourcesPanel.prototype = {
 
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];
-            resource._resourcesTreeElement.updateErrorsAndWarnings();
+            if (resource._resourcesTreeElement)
+                resource._resourcesTreeElement.updateErrorsAndWarnings();
         }
     },
 
@@ -246,7 +247,8 @@ WebInspector.ResourcesPanel.prototype = {
     {
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];
-            resource._resourcesTreeElement.resetBubble();
+            if (resource._resourcesTreeElement)
+                resource._resourcesTreeElement.resetBubble();
         }
 
         WebInspector.Panel.prototype.performSearch.call(this, query);
