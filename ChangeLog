@@ -1,3 +1,16 @@
+2008-10-28  Mike Hommey  <glandium@debian.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21885
+        [GTK] libwebkit doesn't link against libpangoft2
+
+        Add pkg-config check for pangoft2 which provides
+        pango_fc_font_description_from_pattern() used in the FreeType font
+        backend.
+
+        * configure.ac:
+
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
         Include copyright license files in the autotools dist target.

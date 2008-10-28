@@ -566,6 +566,7 @@ if test "$with_font_backend" = "freetype"; then
    else
    PKG_CHECK_MODULES([FREETYPE],
                      [cairo-ft
+                     pangoft2
                      fontconfig >= $FONTCONFIG_REQUIRED_VERSION
                      freetype2 >= $FREETYPE2_REQUIRED_VERSION])
    fi
