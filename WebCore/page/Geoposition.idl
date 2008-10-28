@@ -31,8 +31,8 @@ module core {
         readonly attribute double altitude;
         readonly attribute double accuracy;
         readonly attribute double altitudeAccuracy;
-        readonly attribute double heading
-        readonly attribute double velocity
+        readonly attribute double heading;
+        readonly attribute double velocity;
         readonly attribute DOMTimeStamp timestamp;
 
 #if defined(LANGUAGE_JAVASCRIPT)
