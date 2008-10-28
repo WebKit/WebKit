@@ -1,3 +1,11 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Another Qt build fix.
+
+        * WebCore.pro:
+
 2008-10-28  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by David Kilzer.
