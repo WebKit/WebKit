@@ -15,11 +15,11 @@ win32-g++: LIBS += -lwinmm
 include(pcre/pcre.pri)
 
 LUT_FILES += \
-    kjs/DatePrototype.cpp \
-    kjs/NumberConstructor.cpp \
-    kjs/StringPrototype.cpp \
-    kjs/ArrayPrototype.cpp \
-    kjs/MathObject.cpp \
+    runtime/DatePrototype.cpp \
+    runtime/NumberConstructor.cpp \
+    runtime/StringPrototype.cpp \
+    runtime/ArrayPrototype.cpp \
+    runtime/MathObject.cpp \
     kjs/RegExpConstructor.cpp \
     kjs/RegExpObject.cpp
 
@@ -51,9 +51,9 @@ SOURCES += \
     kjs/JSGlobalData.cpp \
     kjs/JSGlobalObject.cpp \
     kjs/JSStaticScopeObject.cpp \
-    kjs/JSVariableObject.cpp \
+    runtime/JSVariableObject.cpp \
     kjs/JSActivation.cpp \
-    kjs/JSNotAnObject.cpp \
+    runtime/JSNotAnObject.cpp \
     VM/CodeBlock.cpp \
     VM/CodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
@@ -68,74 +68,74 @@ SOURCES += \
 SOURCES += \
     kjs/ArgList.cpp \
     kjs/Arguments.cpp \
-    kjs/ArrayConstructor.cpp \
-    kjs/ArrayPrototype.cpp \
-    kjs/BooleanConstructor.cpp \
-    kjs/BooleanObject.cpp \
-    kjs/BooleanPrototype.cpp \
-    kjs/CallData.cpp \
+    runtime/ArrayConstructor.cpp \
+    runtime/ArrayPrototype.cpp \
+    runtime/BooleanConstructor.cpp \
+    runtime/BooleanObject.cpp \
+    runtime/BooleanPrototype.cpp \
+    runtime/CallData.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
-    kjs/ConstructData.cpp \
-    kjs/DateConstructor.cpp \
-    kjs/DateInstance.cpp \
-    kjs/DateMath.cpp \
-    kjs/DatePrototype.cpp \
+    runtime/ConstructData.cpp \
+    runtime/DateConstructor.cpp \
+    runtime/DateInstance.cpp \
+    runtime/DateMath.cpp \
+    runtime/DatePrototype.cpp \
     kjs/debugger.cpp \
     kjs/DebuggerCallFrame.cpp \
     kjs/dtoa.cpp \
-    kjs/Error.cpp \
-    kjs/ErrorConstructor.cpp \
-    kjs/ErrorInstance.cpp \
-    kjs/ErrorPrototype.cpp \
+    runtime/Error.cpp \
+    runtime/ErrorConstructor.cpp \
+    runtime/ErrorInstance.cpp \
+    runtime/ErrorPrototype.cpp \
     kjs/ExecState.cpp \
-    kjs/FunctionConstructor.cpp \
-    kjs/FunctionPrototype.cpp \
+    runtime/FunctionConstructor.cpp \
+    runtime/FunctionPrototype.cpp \
     kjs/GetterSetter.cpp \
-    kjs/GlobalEvalFunction.cpp \
+    runtime/GlobalEvalFunction.cpp \
     kjs/identifier.cpp \
-    kjs/InternalFunction.cpp \
+    runtime/InternalFunction.cpp \
     kjs/interpreter.cpp \
-    kjs/JSArray.cpp \
-    kjs/JSCell.cpp \
-    kjs/JSFunction.cpp \
-    kjs/JSGlobalObjectFunctions.cpp \
-    kjs/JSImmediate.cpp \
+    runtime/JSArray.cpp \
+    runtime/JSCell.cpp \
+    runtime/JSFunction.cpp \
+    runtime/JSGlobalObjectFunctions.cpp \
+    runtime/JSImmediate.cpp \
     kjs/JSLock.cpp \
-    kjs/JSNumberCell.cpp \
-    kjs/JSObject.cpp \
-    kjs/JSString.cpp \
-    kjs/JSValue.cpp \
-    kjs/JSWrapperObject.cpp \
+    runtime/JSNumberCell.cpp \
+    runtime/JSObject.cpp \
+    runtime/JSString.cpp \
+    runtime/JSValue.cpp \
+    runtime/JSWrapperObject.cpp \
     kjs/LabelStack.cpp \
     kjs/lexer.cpp \
     kjs/lookup.cpp \
-    kjs/MathObject.cpp \
-    kjs/NativeErrorConstructor.cpp \
-    kjs/NativeErrorPrototype.cpp \
+    runtime/MathObject.cpp \
+    runtime/NativeErrorConstructor.cpp \
+    runtime/NativeErrorPrototype.cpp \
     kjs/nodes.cpp \
     kjs/nodes2string.cpp \
-    kjs/NumberConstructor.cpp \
-    kjs/NumberObject.cpp \
-    kjs/NumberPrototype.cpp \
-    kjs/ObjectConstructor.cpp \
-    kjs/ObjectPrototype.cpp \
+    runtime/NumberConstructor.cpp \
+    runtime/NumberObject.cpp \
+    runtime/NumberPrototype.cpp \
+    runtime/ObjectConstructor.cpp \
+    runtime/ObjectPrototype.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
-    kjs/PropertyMap.cpp \
+    runtime/PropertyMap.cpp \
     kjs/PropertyNameArray.cpp \
-    kjs/PropertySlot.cpp \
-    kjs/PrototypeFunction.cpp \
+    runtime/PropertySlot.cpp \
+    runtime/PrototypeFunction.cpp \
     kjs/regexp.cpp \
     kjs/RegExpConstructor.cpp \
     kjs/RegExpObject.cpp \
     kjs/RegExpPrototype.cpp \
     kjs/ScopeChain.cpp \
-    kjs/SmallStrings.cpp \
-    kjs/StringConstructor.cpp \
-    kjs/StringObject.cpp \
-    kjs/StringPrototype.cpp \
-    kjs/StructureID.cpp \
+    runtime/SmallStrings.cpp \
+    runtime/StringConstructor.cpp \
+    runtime/StringObject.cpp \
+    runtime/StringPrototype.cpp \
+    runtime/StructureID.cpp \
     kjs/ustring.cpp \
     profiler/HeavyProfile.cpp \
     profiler/Profile.cpp \

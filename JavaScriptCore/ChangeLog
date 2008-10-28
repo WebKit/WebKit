@@ -2,6 +2,14 @@
 
         Not reviewed.
 
+        Fix the Qt build.
+
+        * JavaScriptCore.pri:
+
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
         Fix the Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
