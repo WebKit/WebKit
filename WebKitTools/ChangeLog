@@ -1,3 +1,15 @@
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix GTK DRT hang when running the tests.
+
+        Update output from the DRT tool to print an additional '#EOF' to match
+        breaking changes that were made in r37434.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+
 2008-10-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam Weinig. 
