@@ -2,12 +2,15 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("User defined function calles built-in functions");
 function startTest()
 {
+    console.profile("User defined function calles built-in functions");
+
     var newP = document.createElement("p");
     var textNode =document.createTextNode("This is inserted Text");
     newP.appendChild(textNode);

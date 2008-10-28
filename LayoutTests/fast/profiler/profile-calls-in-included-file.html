@@ -2,10 +2,12 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-function testStart()
+function startTest()
 {
     startProfile("Profile call in included file");
     endTest();
@@ -13,7 +15,7 @@ function testStart()
 </script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page calls the profiler from the included file.
 <br>
 <br>

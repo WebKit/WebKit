@@ -47,6 +47,9 @@
 - (void)startDebuggingJavaScript:(id)sender;
 - (void)stopDebuggingJavaScript:(id)sender;
 
+- (BOOL)isJavaScriptProfilingEnabled;
+- (void)setJavaScriptProfilingEnabled:(BOOL)enabled;
+
 - (BOOL)isProfilingJavaScript;
 - (void)toggleProfilingJavaScript:(id)sender;
 - (void)startProfilingJavaScript:(id)sender;

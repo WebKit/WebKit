@@ -2,17 +2,21 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Nested anonymous functions called");
 function startTest()
 {
+    console.profile("Nested anonymous functions called");
+
     var AnonymousFunctionWichCallsAnAnonymousFunction = function() {
         anonymousFunction();
     }
 
     AnonymousFunctionWichCallsAnAnonymousFunction();
+
     endTest();
 }
 </script>

@@ -62,6 +62,7 @@
 #import <WebKit/WebHTMLRepresentationInternal.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebInspector.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -943,13 +944,16 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
     [preferences setFullDocumentTeardownEnabled:YES];
-    
+    [preferences setDeveloperExtrasEnabled:NO];
+
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
         [preferences setUserStyleSheetEnabled:YES];
     } else
         [preferences setUserStyleSheetEnabled:NO];
+
     [[mainFrame webView] setSmartInsertDeleteEnabled:YES];
+    [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:NO];
 
     [WebView _setUsesTestModeFocusRingColor:YES];
 }

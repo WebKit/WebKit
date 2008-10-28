@@ -36,7 +36,10 @@
 #include "Console.h"
 #include "PlatformString.h"
 #include "StringHash.h"
+#include "Timer.h"
+
 #include <JavaScriptCore/JSContextRef.h>
+
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -146,12 +149,13 @@ public:
     void close();
 
     bool isRecordingUserInitiatedProfile() const { return m_recordingUserInitiatedProfile; }
-    void startUserInitiatedProfiling();
+    void startUserInitiatedProfilingSoon();
+    void startUserInitiatedProfiling(Timer<InspectorController>* = 0);
     void stopUserInitiatedProfiling();
 
-    void enableProfiler();
+    void enableProfiler(bool skipRecompile = false);
     void disableProfiler();
-    bool profilerEnabled() const { return m_profilerEnabled; }
+    bool profilerEnabled() const { return enabled() && m_profilerEnabled; }
 
     bool windowVisible();
     void setWindowVisible(bool visible = true, bool attached = false);
@@ -315,6 +319,7 @@ private:
     int m_currentUserInitiatedProfileNumber;
     unsigned m_nextUserInitiatedProfileNumber;
     ConsoleMessage* m_previousMessage;
+    Timer<InspectorController> m_startProfiling;
 };
 
 } // namespace WebCore

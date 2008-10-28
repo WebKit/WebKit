@@ -1,77 +1,120 @@
-CONSOLE MESSAGE: line 59: Start the profiler the third time.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  startTest nested-start-and-stop-profiler.html 10
-CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
-CONSOLE MESSAGE: line 59: Start the profiler the third time.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  startTest nested-start-and-stop-profiler.html 10
-CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
-CONSOLE MESSAGE: line 59: Start the profiler the second time.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  startTest nested-start-and-stop-profiler.html 10
-CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:    profileEnd  0
-CONSOLE MESSAGE: line 75:    printProfilesDataWithoutTime profiler-test-JS-resources.js 56
-CONSOLE MESSAGE: line 75:     log  0
-CONSOLE MESSAGE: line 75:     printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:      log  0
-CONSOLE MESSAGE: line 75:      printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:       log  0
-CONSOLE MESSAGE: line 75:       printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:        log  0
-CONSOLE MESSAGE: line 75:    notifyDone  0
-CONSOLE MESSAGE: line 75:  (idle)  0
-CONSOLE MESSAGE: line 59: Start the profiler the third time.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  startTest nested-start-and-stop-profiler.html 10
-CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
-CONSOLE MESSAGE: line 59: Start the profiler the second time.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  startTest nested-start-and-stop-profiler.html 10
-CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:    profileEnd  0
-CONSOLE MESSAGE: line 75:    printProfilesDataWithoutTime profiler-test-JS-resources.js 56
-CONSOLE MESSAGE: line 75:     log  0
-CONSOLE MESSAGE: line 75:     printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:      log  0
-CONSOLE MESSAGE: line 75:      printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:       log  0
-CONSOLE MESSAGE: line 75:       printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:        log  0
-CONSOLE MESSAGE: line 75:    notifyDone  0
-CONSOLE MESSAGE: line 75:  (idle)  0
-CONSOLE MESSAGE: line 59: Start the profiler the first time.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) nested-start-and-stop-profiler.html 8
-CONSOLE MESSAGE: line 75:   (program) nested-start-and-stop-profiler.html 4
-CONSOLE MESSAGE: line 75:   onload nested-start-and-stop-profiler.html 20
-CONSOLE MESSAGE: line 75:    startTest nested-start-and-stop-profiler.html 10
-CONSOLE MESSAGE: line 75:     profile  0
-CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:      profileEnd  0
-CONSOLE MESSAGE: line 75:      printProfilesDataWithoutTime profiler-test-JS-resources.js 56
-CONSOLE MESSAGE: line 75:       log  0
-CONSOLE MESSAGE: line 75:       printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:        log  0
-CONSOLE MESSAGE: line 75:        printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:         log  0
-CONSOLE MESSAGE: line 75:         printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:          log  0
-CONSOLE MESSAGE: line 75:          printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:           log  0
-CONSOLE MESSAGE: line 75:           printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:            log  0
-CONSOLE MESSAGE: line 75:            printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:             log  0
-CONSOLE MESSAGE: line 75:             printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:              log  0
-CONSOLE MESSAGE: line 75:              printProfileNodeWithoutTime profiler-test-JS-resources.js 65
-CONSOLE MESSAGE: line 75:               log  0
-CONSOLE MESSAGE: line 75:      notifyDone  0
-CONSOLE MESSAGE: line 75:  (idle)  0
 This page's JavaScript calls console.profile() three times then console.profileEnd() three times. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profiler there should be three profiles.
+
+Profile title: Start the profiler the third time.
+Thread_1 (no file) (line 0)
+   startTest nested-start-and-stop-profiler.html (line 11)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
+
+Profile title: Start the profiler the third time.
+Thread_1 (no file) (line 0)
+   startTest nested-start-and-stop-profiler.html (line 11)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
+Profile title: Start the profiler the second time.
+Thread_1 (no file) (line 0)
+   startTest nested-start-and-stop-profiler.html (line 11)
+      endTest profiler-test-JS-resources.js (line 1)
+         profileEnd (no file) (line 0)
+         printProfilesDataWithoutTime profiler-test-JS-resources.js (line 62)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+               replace (no file) (line 0)
+               createTextNode (no file) (line 0)
+               appendChild (no file) (line 0)
+               printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                  replace (no file) (line 0)
+                  createTextNode (no file) (line 0)
+                  appendChild (no file) (line 0)
+                  printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                     replace (no file) (line 0)
+                     createTextNode (no file) (line 0)
+                     appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+         notifyDone (no file) (line 0)
+   (idle) (no file) (line 0)
+
+
+Profile title: Start the profiler the third time.
+Thread_1 (no file) (line 0)
+   startTest nested-start-and-stop-profiler.html (line 11)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
+Profile title: Start the profiler the second time.
+Thread_1 (no file) (line 0)
+   startTest nested-start-and-stop-profiler.html (line 11)
+      endTest profiler-test-JS-resources.js (line 1)
+         profileEnd (no file) (line 0)
+         printProfilesDataWithoutTime profiler-test-JS-resources.js (line 62)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+               replace (no file) (line 0)
+               createTextNode (no file) (line 0)
+               appendChild (no file) (line 0)
+               printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                  replace (no file) (line 0)
+                  createTextNode (no file) (line 0)
+                  appendChild (no file) (line 0)
+                  printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                     replace (no file) (line 0)
+                     createTextNode (no file) (line 0)
+                     appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+         notifyDone (no file) (line 0)
+   (idle) (no file) (line 0)
+
+Profile title: Start the profiler the first time.
+Thread_1 (no file) (line 0)
+   startTest nested-start-and-stop-profiler.html (line 11)
+      endTest profiler-test-JS-resources.js (line 1)
+         profileEnd (no file) (line 0)
+         printProfilesDataWithoutTime profiler-test-JS-resources.js (line 62)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+               replace (no file) (line 0)
+               createTextNode (no file) (line 0)
+               appendChild (no file) (line 0)
+               printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                  replace (no file) (line 0)
+                  createTextNode (no file) (line 0)
+                  appendChild (no file) (line 0)
+                  printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                     replace (no file) (line 0)
+                     createTextNode (no file) (line 0)
+                     appendChild (no file) (line 0)
+                     printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                        replace (no file) (line 0)
+                        createTextNode (no file) (line 0)
+                        appendChild (no file) (line 0)
+                        printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                           replace (no file) (line 0)
+                           createTextNode (no file) (line 0)
+                           appendChild (no file) (line 0)
+                           printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                              replace (no file) (line 0)
+                              createTextNode (no file) (line 0)
+                              appendChild (no file) (line 0)
+                              printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                                 replace (no file) (line 0)
+                                 createTextNode (no file) (line 0)
+                                 appendChild (no file) (line 0)
+                                 printProfileNodeWithoutTime profiler-test-JS-resources.js (line 77)
+                                    replace (no file) (line 0)
+                                    createTextNode (no file) (line 0)
+                                    appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+         notifyDone (no file) (line 0)
+   (idle) (no file) (line 0)
+
+

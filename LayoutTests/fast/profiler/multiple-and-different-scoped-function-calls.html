@@ -2,16 +2,20 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Multiple and different scoped calls to the same function");
 function startTest()
 {
+    console.profile("Multiple and different scoped calls to the same function");
+
     insertNewText();
     insertNewText();
 
     intermediaryFunction();
+
     endTest();
 }
 </script>

@@ -16553,6 +16553,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\PanelEnablerView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Placard.js"
 					>
 				</File>

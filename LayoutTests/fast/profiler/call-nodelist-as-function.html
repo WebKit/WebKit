@@ -2,12 +2,15 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Call NodeList as function");
-function testStart()
+function startTest()
 {
+    console.profile("Call NodeList as function");
+
     var brs = document.getElementsByTagName("br");
     var br0 = brs(0);
 
@@ -17,7 +20,7 @@ function testStart()
 </script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page calls a NodeList as a function (e.g., <code>list(0)</code>).
 <br>
 <br>

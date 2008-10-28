@@ -803,6 +803,16 @@ WebInspector.debuggerWasDisabled = function()
     this.panels.scripts.debuggerWasDisabled();
 }
 
+WebInspector.profilerWasEnabled = function()
+{
+    this.panels.profiles.profilerWasEnabled();
+}
+
+WebInspector.profilerWasDisabled = function()
+{
+    this.panels.profiles.profilerWasDisabled();
+}
+
 WebInspector.parsedScriptSource = function(sourceID, sourceURL, source, startingLine)
 {
     this.panels.scripts.addScript(sourceID, sourceURL, source, startingLine);

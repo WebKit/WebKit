@@ -655,13 +655,19 @@ static void resetWebViewToConsistentStateBeforeTesting()
             preferences->setUserStyleSheetEnabled(FALSE);
 
         COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
-        if (prefsPrivate)
+        if (prefsPrivate) {
             prefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
+            prefsPrivate->setDeveloperExtrasEnabled(FALSE);
+        }
     }
 
     COMPtr<IWebViewEditing> viewEditing;
     if (SUCCEEDED(webView->QueryInterface(&viewEditing)))
         viewEditing->setSmartInsertDeleteEnabled(TRUE);
+
+    COMPtr<IWebInspector> inspector;
+    if (SUCCEEDED(webView->inspector(&inspector)))
+        inspector->setJavaScriptProfilingEnabled(FALSE);
 
     COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
     if (!webViewPrivate)

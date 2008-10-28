@@ -1,5 +1,91 @@
 2008-10-28  Timothy Hatcher  <timothy@apple.com>
 
+        Make the Profiles panel in the Web Inspector have an enable screen.
+        Profiling now needs to be enabled before console.profile() works.
+
+        <rdar://problem/6211578> Make the JavaScript profiler opt-in, so it does
+        not slow down JavaScript all the time
+
+        Reviewed by Darin Adler and Kevin McCullough.
+
+        * English.lproj/localizedStrings.js: New strings.
+        * WebCore.base.exp: New and changed exports.
+        * WebCore.vcproj/WebCore.vcproj: Add the PanelEnablerView.js file.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling): Call InspectorController:profilerEnabled.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController): Initialize the m_startProfiling
+        Timer to call InspectorController::startUserInitiatedProfiling.
+        (WebCore::InspectorController::startUserInitiatedProfilingSoon): Start a one-shot timer
+        that calls InspectorController::startUserInitiatedProfiling.
+        (WebCore::InspectorController::startUserInitiatedProfiling): Recompile all JavaScript
+        and enable the profiler if the profiler was not enabled.
+        (WebCore::InspectorController::stopUserInitiatedProfiling): Rearrange code for readability.
+        (WebCore::InspectorController::enableProfiler): Recompile all the JavaScript functions
+        if the skipRecompile argument is false. Call the profilerWasEnabled script function.
+        (WebCore::InspectorController::disableProfiler): Recompile all the JavaScript functions.
+        Call the profilerWasEnabled script function.
+        (WebCore::InspectorController::disableDebugger): Set m_attachDebuggerWhenShown to false,
+        so it won't be started later.
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::profilerEnabled): Return enabled() && m_profilerEnabled.
+        * inspector/front-end/Images/debuggingButtons.png: Remove.
+        * inspector/front-end/Images/enableButtons.png: Added.
+        * inspector/front-end/Images/profilesSilhouette.png: Added.
+        * inspector/front-end/Images/scriptsSilhouette.png: Added.
+        * inspector/front-end/PanelEnablerView.js: Added.
+        (WebInspector.PanelEnablerView):
+        (WebInspector.PanelEnablerView.prototype._enableButtonCicked): Fire the "enable clicked"
+        event so listeners can do their thing.
+        (WebInspector.PanelEnablerView.prototype._windowResized): Test if the icon should be hidden.
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel): Create the PanelEnablerView and the strings needed for it.
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems): Include the enableToggleButton.
+        (WebInspector.ProfilesPanel.prototype.profilerWasEnabled): Call reset and populateInterface.
+        (WebInspector.ProfilesPanel.prototype.profilerWasDisabled): Call reset.
+        (WebInspector.ProfilesPanel.prototype.reset): Call _updateInterface.
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile): Moved in the code, no changes.
+        (WebInspector.ProfilesPanel.prototype._updateInterface): Update the toggle button and
+        show/hide other buttons. Also show/hide the PanelEnablerView.
+        (WebInspector.ProfilesPanel.prototype._enableProfiling): Call _toggleProfiling if not enabled.
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling): Call InspectorController's
+        disableProfiler or enableProfiler.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): Replace the overlay element with a PanelEnablerView. Replace the
+        debuggingButton with the enableToggleButton.
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems): Replace the debuggingButton with
+        the enableToggleButton.
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons): Hide/show the pauseOnExceptionButton
+        when needed. Replace the overlay element with a PanelEnablerView. Replace the debuggingButton
+        with the enableToggleButton.
+        (WebInspector.ScriptsPanel.prototype._enableDebugging): Call _toggleDebugging when not enabled.
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging): Remove the call to _clearInterface,
+        since reset is called from debuggerWasEnabled and debuggerWasDisabled.
+        * inspector/front-end/View.js: Inherit from WebInspector.Object.
+        * inspector/front-end/WebKit.qrc: Add the PanelEnablerView.js file.
+        * inspector/front-end/inspector.css: New styles for the PanelEnablerView.
+        * inspector/front-end/inspector.html: Add the PanelEnablerView.js file.
+        * inspector/front-end/inspector.js:
+        (WebInspector.profilerWasEnabled): Added. Calls the ProfilesPanel.
+        (WebInspector.profilerWasDisabled): Ditto.
+        * page/Console.cpp:
+        (WebCore::Console::error): Remove null check for m_frame, since m_frame isn't used.
+        (WebCore::Console::info): Ditto.
+        (WebCore::Console::log): Ditto.
+        (WebCore::Console::assertCondition): Ditto.
+        (WebCore::Console::dirxml): Remove null check for m_frame and use this->page().
+        (WebCore::Console::count): Ditto.
+        (WebCore::Console::profile): Return early if InspectorController::profilerEnabled is false.
+        (WebCore::Console::profileEnd): Ditto.
+        (WebCore::Console::warn): Remove null check for m_frame, since m_frame isn't used.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Remove initialization of m_didInitializeDeveloperExtrasEnabled.
+        (WebCore::Settings::setDeveloperExtrasEnabled): Remove code that recompiled functions.
+        Now just sets the member boolean.
+        * page/Settings.h: Remove m_didInitializeDeveloperExtrasEnabled.
+
+2008-10-28  Timothy Hatcher  <timothy@apple.com>
+
         Rename a few methods related to attaching and detaching the debugger. Also
         adds stub methods for enabling and disabling the profiler.
 

@@ -1,15 +1,14 @@
-CONSOLE MESSAGE: line 59: Using the call() method
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) call.html 8
-CONSOLE MESSAGE: line 75:   (program) call.html 4
-CONSOLE MESSAGE: line 75:   onload call.html 29
-CONSOLE MESSAGE: line 75:    startTest call.html 10
-CONSOLE MESSAGE: line 75:     fakeObject call.html 16
-CONSOLE MESSAGE: line 75:      call  0
-CONSOLE MESSAGE: line 75:       fakeInteriorFunction call.html 22
-CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
 This page's JavaScript has a call to call() in it. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to fakeObject() with call() as its child and a fakeInteriorFunction() as call()'s child.
+
+Profile title: Using the call() method
+Thread_1 (no file) (line 0)
+   startTest call.html (line 11)
+      fakeObject call.html (line 20)
+         call (no file) (line 0)
+            fakeInteriorFunction call.html (line 26)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
 

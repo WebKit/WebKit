@@ -2,25 +2,28 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Anonymous event handler");
-function testStart()
+function startTest()
 {
+    console.profile("Anonymous event handler");
+
     var buttonWithAnonymousHandler = document.getElementById("buttonWithAnAnonymousEventHandler")
     buttonWithAnonymousHandler.onclick = function () {
         insertNewText();
     }
+
     buttonWithAnonymousHandler.click();
 
     endTest();
 }
-
 </script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page has an anonymous event handler.
 <br>
 <br>

@@ -1,23 +1,19 @@
-CONSOLE MESSAGE: line 59: Other window executing JavaScript
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) multiple-frames.html 8
-CONSOLE MESSAGE: line 75:   (program) multiple-frames.html 4
-CONSOLE MESSAGE: line 75:   (program) other-frame.html 3
-CONSOLE MESSAGE: line 75:   onload multiple-frames.html 24
-CONSOLE MESSAGE: line 75:    testStart multiple-frames.html 10
-CONSOLE MESSAGE: line 75:     getElementById  0
-CONSOLE MESSAGE: line 75:     functionInOtherFrame other-frame.html 4
-CONSOLE MESSAGE: line 75:      functionInParentFrame multiple-frames.html 18
-CONSOLE MESSAGE: line 75:     insertGivenText profiler-test-JS-resources.js 9
-CONSOLE MESSAGE: line 75:      createElement  0
-CONSOLE MESSAGE: line 75:      createTextNode  0
-CONSOLE MESSAGE: line 75:      appendChild  0
-CONSOLE MESSAGE: line 75:      getElementById  0
-CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
 This test has JS executing in another window. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to functionInOtherFrame().
-Pi
+
+Profile title: Other window executing JavaScript
+Thread_1 (no file) (line 0)
+   startTest multiple-frames.html (line 11)
+      getElementById (no file) (line 0)
+      functionInOtherFrame other-frame.html (line 4)
+         functionInParentFrame multiple-frames.html (line 21)
+      insertGivenText profiler-test-JS-resources.js (line 9)
+         createElement (no file) (line 0)
+         createTextNode (no file) (line 0)
+         appendChild (no file) (line 0)
+         getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
 
 

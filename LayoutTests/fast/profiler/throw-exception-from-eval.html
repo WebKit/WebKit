@@ -2,20 +2,26 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Throw within an eval.");
-function testStart()
+function startTest()
 {
+    console.profile("Throw within an eval.");
+
     insertNewText();
+
     endTest();
 }
 </script>
-<script> eval("throw('I threw up');");</script>
+<script>
+eval("throw('Test exception.');");
+</script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page throws an exception from within eval().
 <br>
 <br>

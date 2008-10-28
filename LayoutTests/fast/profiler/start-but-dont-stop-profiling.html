@@ -2,12 +2,14 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Start the profiler but don't stop it.");
 function startTest()
 {
+    console.profile("Start the profiler but don't stop it.");
     anonymousFunction();
     printProfilesDataWithoutTime();
 }
@@ -22,7 +24,7 @@ To run this test manually, load it in the browser then load the WebInspector and
 the profile.  You should see the profile running (when that feature is implemented 6060556).
 Then navigate to another page and check the WebInspector again. Safari should not
 have crashed and the Inspector should not show a profile (unless we allow cross-load
-profiling in the future 5951478 5954912).
+profiling in the future 5951478 &amp; 5954912).
 <div id="output"></div>
 </body>
 </html>

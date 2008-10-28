@@ -221,3 +221,38 @@ HRESULT STDMETHODCALLTYPE WebInspector::toggleProfilingJavaScript()
 
     return S_OK;
 }
+
+HRESULT STDMETHODCALLTYPE WebInspector::isJavaScriptProfilingEnabled(BOOL* isProfilingEnabled)
+{
+    if (!isProfiling)
+        return E_POINTER;
+
+    *isProfiling = FALSE;
+
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    *isProfilingEnabled = page->inspectorController()->profilerEnabled();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebInspector::setJavaScriptProfilingEnabled(BOOL enabled)
+{
+    if (!m_webView)
+        return S_OK;
+
+    Page* page = m_webView->page();
+    if (!page)
+        return S_OK;
+
+    if (enabled)
+        page->inspectorController()->enableProfiler();
+    else
+        page->inspectorController()->disableProfiler();
+
+    return S_OK;
+}

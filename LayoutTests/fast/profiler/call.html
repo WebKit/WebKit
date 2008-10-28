@@ -2,13 +2,17 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Using the call() method");
 function startTest()
 {
+    console.profile("Using the call() method");
+
     var myObject = new fakeObject(1, 2);
+
     endTest();
 }
 
@@ -22,7 +26,6 @@ function fakeInteriorFunction(y)
 {
     this.y = y;
 }
-
 </script>
 </head>
 

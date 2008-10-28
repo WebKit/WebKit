@@ -1,25 +1,25 @@
 function endTest() {
     console.profileEnd();
     printProfilesDataWithoutTime();
-    
+
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
 
 function insertGivenText(text) {
-    var newP = document.createElement("p");
-    var textNode =document.createTextNode(text);
-    newP.appendChild(textNode);
-    var output = document.getElementById("output");
-    output.appendChild(newP);
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode(text));
+    paragraph.style.display = "none"; // Hidden since this isn't important in the test results.
+
+    document.getElementById("output").appendChild(paragraph);
 }
 
 function insertNewText() {
-    var newP = document.createElement("p");
-    var textNode =document.createTextNode("This is inserted Text");
-    newP.appendChild(textNode);
-    var output = document.getElementById("output");
-    output.appendChild(newP);
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode("This is inserted Text"));
+    paragraph.style.display = "none"; // Hidden since this isn't important in the test results.
+
+    document.getElementById("output").appendChild(paragraph);
 }
 
 function arrayOperatorFunction(arrayElement) {
@@ -45,37 +45,53 @@ function startProfile(title)
 
 function printHeavyProfilesDataWithoutTime()
 {
+    var preElement = document.createElement("pre");
+    preElement.appendChild(document.createTextNode("\n"));
+
     var profiles = console.profiles;
     for (var i = 0; i < profiles.length; ++i) {
-        console.log(profiles[i].title);
-        printProfileNodeWithoutTime(profiles[i].heavyProfile.head, 0);
+        preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
+        printProfileNodeWithoutTime(preElement, profiles[i].heavyProfile.head, 0);
+        preElement.appendChild(document.createTextNode("\n"));
     }
+
+    document.getElementById("output").appendChild(preElement);
 }
 
 function printProfilesDataWithoutTime()
 {
+    var preElement = document.createElement("pre");
+    preElement.appendChild(document.createTextNode("\n"));
+
     var profiles = console.profiles;
     for (var i = 0; i < profiles.length; ++i) {
-        console.log(profiles[i].title);
-        printProfileNodeWithoutTime(profiles[i].treeProfile.head, 0);
+        preElement.appendChild(document.createTextNode("Profile title: " + profiles[i].title + "\n"));
+        printProfileNodeWithoutTime(preElement, profiles[i].treeProfile.head, 0);
+        preElement.appendChild(document.createTextNode("\n"));
     }
+
+    document.getElementById("output").appendChild(preElement);
 }
 
-function printProfileNodeWithoutTime(node, indentLevel)
+function printProfileNodeWithoutTime(preElement, node, indentLevel)
 {
     if (!node.visible)
         return;
 
     var space = "";
     for (var i = 0; i < indentLevel; ++i)
-        space += " "
+        space += "   "
 
     ++indentLevel;
 
-    console.log(space + node.functionName + " " + node.url + " " + node.lineNumber);
+    var strippedURL = node.url.replace(/.*\//, "");
+    if (!strippedURL)
+        strippedURL = "(no file)";
+
+    var line = space + node.functionName + " " + strippedURL + " (line " + node.lineNumber + ")\n";
+    preElement.appendChild(document.createTextNode(line));
 
     var children = node.children;
     for (var i = 0; i < children.length; ++i)
-        printProfileNodeWithoutTime(children[i], indentLevel);
+        printProfileNodeWithoutTime(preElement, children[i], indentLevel);
 }
-

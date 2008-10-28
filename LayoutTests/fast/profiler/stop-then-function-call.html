@@ -2,8 +2,10 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
 var j = 0;
 function test(len) {
@@ -16,20 +18,26 @@ function test2(len) {
         --j;
 }
 
-console.profile("Test");
-test(1000);
-console.profileEnd("Test");
-test2(1000);
+function startTest()
+{
+    var script = "console.profile('Test');\n";
+    script += "test(1000);\n";
+    script += "console.profileEnd('Test');\n";
+    script += "test2(1000);\n";
 
-printProfilesDataWithoutTime();
+    eval(script);
+
+    printProfilesDataWithoutTime();
+}
 </script>
 </head>
 
-<body>
+<body onload="startTest()">
 This page has an anonymous JavaScript function that calls built-in functions.
 <br>
 <br>
 To run this test manually, load it in the browser then load the WebInspector and look at
 the profile. There should be two nodes in the profile, a "(program)" node with one child that is "test".
+<div id="output"></div>
 </body>
 </html>

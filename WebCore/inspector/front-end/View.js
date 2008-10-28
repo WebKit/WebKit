@@ -70,3 +70,5 @@ WebInspector.View.prototype = {
             this.element.parentNode.removeChild(this.element);
     }
 }
+
+WebInspector.View.prototype.__proto__ = WebInspector.Object.prototype;

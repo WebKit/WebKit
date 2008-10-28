@@ -2,12 +2,15 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Many Calls In The Same Scope");
 function startTest()
 {
+    console.profile("Many Calls In The Same Scope");
+
     insertNewText();
     insertGivenText("This was a triumph.");
     arrayOperatorFunction(7);
@@ -16,6 +19,7 @@ function startTest()
     end()
     endT();
     endT();
+
     endTest();
 }
 

@@ -140,23 +140,21 @@ WebInspector.ScriptsPanel = function()
 
     this.sidebarPanes.scopechain.expanded = true;
 
-    this.attachOverlayElement = document.createElement("div");
-    this.attachOverlayElement.id = "scripts-attach-overlay";
+    var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
+    var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
+    var panelEnablerButton = WebInspector.UIString("Enable Debugging");
 
-    var attachButton = document.createElement("button");
-    attachButton.textContent = WebInspector.UIString("Start Debugging");
-    attachButton.addEventListener("click", this._toggleDebugging.bind(this), false);
-    this.attachOverlayElement.appendChild(attachButton);
+    this.panelEnablerView = new WebInspector.PanelEnablerView("scripts", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
+    this.panelEnablerView.addEventListener("enable clicked", this._enableDebugging, this);
 
-    this.element.appendChild(this.attachOverlayElement);
+    this.element.appendChild(this.panelEnablerView.element);
     this.element.appendChild(this.viewsContainerElement);
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
-    this.debuggingButton = document.createElement("button");
-    this.debuggingButton.id = "scripts-debugging-status-bar-item";
-    this.debuggingButton.className = "status-bar-item";
-    this.debuggingButton.addEventListener("click", this._toggleDebugging.bind(this), false);
+    this.enableToggleButton = document.createElement("button");
+    this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
+    this.enableToggleButton.addEventListener("click", this._toggleDebugging.bind(this), false);
 
     this.pauseOnExceptionButton = document.createElement("button");
     this.pauseOnExceptionButton.id = "scripts-pause-on-exceptions-status-bar-item";
@@ -178,7 +176,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.debuggingButton, this.pauseOnExceptionButton];
+        return [this.enableToggleButton, this.pauseOnExceptionButton];
     },
 
     get paused()
@@ -654,18 +652,15 @@ WebInspector.ScriptsPanel.prototype = {
     _updateDebuggerButtons: function()
     {
         if (InspectorController.debuggerEnabled()) {
-            this.debuggingButton.title = WebInspector.UIString("Stop debugging.");
-            this.debuggingButton.addStyleClass("toggled-on");
-            this.pauseButton.disabled = false;
-
-            if (this.attachOverlayElement.parentNode)
-                this.attachOverlayElement.parentNode.removeChild(this.attachOverlayElement);
+            this.enableToggleButton.title = WebInspector.UIString("Debugging enabled. Click to disable.");
+            this.enableToggleButton.addStyleClass("toggled-on");
+            this.pauseOnExceptionButton.removeStyleClass("hidden");
+            this.panelEnablerView.visible = false;
         } else {
-            this.debuggingButton.title = WebInspector.UIString("Start debugging.");
-            this.debuggingButton.removeStyleClass("toggled-on");
-            this.pauseButton.disabled = true;
-
-            this.element.appendChild(this.attachOverlayElement);
+            this.enableToggleButton.title = WebInspector.UIString("Debugging disabled. Click to enable.");
+            this.enableToggleButton.removeStyleClass("toggled-on");
+            this.pauseOnExceptionButton.addStyleClass("hidden");
+            this.panelEnablerView.visible = true;
         }
 
         this._updatePauseOnExceptionsButton();
@@ -733,6 +728,13 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateBackAndForwardButtons();
     },
 
+    _enableDebugging: function()
+    {
+        if (InspectorController.debuggerEnabled())
+            return;
+        this._toggleDebugging();
+    },
+
     _toggleDebugging: function()
     {
         this._paused = false;
@@ -743,8 +745,6 @@ WebInspector.ScriptsPanel.prototype = {
             InspectorController.disableDebugger();
         else
             InspectorController.enableDebugger();
-
-        this._clearInterface();
     },
 
     _togglePauseOnExceptions: function()

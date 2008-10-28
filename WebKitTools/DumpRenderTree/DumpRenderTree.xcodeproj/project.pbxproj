@@ -169,7 +169,7 @@
 		BC9D90220C97472E0099A4A3 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WorkQueueItem.h; sourceTree = "<group>"; };
 		BCA18B210C9B014B00114369 /* GCControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = GCControllerMac.mm; path = mac/GCControllerMac.mm; sourceTree = "<group>"; };
-		BCA18B220C9B014B00114369 /* LayoutTestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestControllerMac.mm; path = mac/LayoutTestControllerMac.mm; sourceTree = "<group>"; };
+		BCA18B220C9B014B00114369 /* LayoutTestControllerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestControllerMac.mm; path = mac/LayoutTestControllerMac.mm; sourceTree = "<group>"; };
 		BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkQueueItemMac.mm; path = mac/WorkQueueItemMac.mm; sourceTree = "<group>"; };
 		BCA18B2F0C9B01B400114369 /* ObjCController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ObjCController.h; path = mac/ObjCController.h; sourceTree = "<group>"; };
 		BCA18B300C9B01B400114369 /* ObjCController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCController.m; path = mac/ObjCController.m; sourceTree = "<group>"; };
@@ -324,6 +324,7 @@
 			);
 			name = Controllers;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		1422A2750AF6F4BD00E1A883 /* Delegates */ = {
 			isa = PBXGroup;

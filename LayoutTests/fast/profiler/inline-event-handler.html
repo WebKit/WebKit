@@ -2,12 +2,15 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Inline event handler");
-function testStart()
+function startTest()
 {    
+    console.profile("Inline event handler");
+
     document.getElementById("eventListenerSetInline").click();
 }
 
@@ -18,7 +21,7 @@ function eventListener() {
 </script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page has an inline event handler.
 <br>
 <br>

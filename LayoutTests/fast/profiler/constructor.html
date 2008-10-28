@@ -2,13 +2,17 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Using a constructor.");
 function startTest()
 {
+    console.profile("Using a constructor.");
+
     var myObject = new fakeObject(1, 2);
+
     endTest();
 }
 
@@ -27,5 +31,6 @@ This page's JavaScript has a call to new() in it.
 To run this test manually, load it in the browser then load the WebInspector and look at
 the profile.  In the profile there should be a call to fakeObject() and Array()
 in it.
+<div id="output"></div>
 </body>
 </html>

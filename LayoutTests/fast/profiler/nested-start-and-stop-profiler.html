@@ -2,12 +2,14 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Start the profiler the first time.");
 function startTest()
 {
+    console.profile("Start the profiler the first time.");
     console.profile("Start the profiler the second time.");
     console.profile("Start the profiler the third time.");
     endTest();
@@ -24,5 +26,6 @@ three times.
 <br>
 To run this test manually, load it in the browser then load the WebInspector and look at
 the profile.  In the profiler there should be three profiles.
+<div id="output"></div>
 </body>
 </html>

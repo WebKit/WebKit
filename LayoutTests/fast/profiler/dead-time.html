@@ -5,11 +5,12 @@
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
 }
 
-console.profile("Dead time in profile.");
 function startTest()
 {
+    console.profile("Dead time in profile.");
     setTimeout("endTest()", 1234);
 }
 

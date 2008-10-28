@@ -2,16 +2,18 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
 function startTest()
 {
-    functionWichStartsAndStopsTheProfiler();
+    functionWichStartsTheProfiler();
     endTest();
 }
 
-function functionWichStartsAndStopsTheProfiler()
+function functionWichStartsTheProfiler()
 {
     console.profile("Profiling From A Nested Location But Stop Profiling Outside The Nesting");
 

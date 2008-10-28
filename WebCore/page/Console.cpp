@@ -181,9 +181,6 @@ void Console::error(ExecState* exec, const ArgList& args)
     if (args.isEmpty())
         return;
 
-    if (!m_frame)
-        return;
-
     Page* page = this->page();
     if (!page)
         return;
@@ -205,9 +202,6 @@ void Console::info(ExecState* exec, const ArgList& args)
     if (args.isEmpty())
         return;
 
-    if (!m_frame)
-        return;
-
     Page* page = this->page();
     if (!page)
         return;
@@ -227,9 +221,6 @@ void Console::info(ExecState* exec, const ArgList& args)
 void Console::log(ExecState* exec, const ArgList& args)
 {
     if (args.isEmpty())
-        return;
-
-    if (!m_frame)
         return;
 
     Page* page = this->page();
@@ -265,10 +256,7 @@ void Console::dirxml(ExecState* exec, const ArgList& args)
     if (args.isEmpty())
         return;
 
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -302,9 +290,6 @@ void Console::assertCondition(bool condition, ExecState* exec, const ArgList& ar
     if (condition)
         return;
 
-    if (!m_frame)
-        return;
-
     Page* page = this->page();
     if (!page)
         return;
@@ -323,10 +308,7 @@ void Console::assertCondition(bool condition, ExecState* exec, const ArgList& ar
 
 void Console::count(ExecState* exec, const ArgList& args)
 {
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -343,12 +325,27 @@ void Console::count(ExecState* exec, const ArgList& args)
 
 void Console::profile(ExecState* exec, const ArgList& args)
 {
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    // FIXME: log a console message when profiling is disabled.
+    if (!page->inspectorController()->profilerEnabled())
+        return;
+
     UString title = args.at(exec, 0)->toString(exec);
     Profiler::profiler()->startProfiling(exec, title);
 }
 
 void Console::profileEnd(ExecState* exec, const ArgList& args)
 {
+    Page* page = this->page();
+    if (!page)
+        return;
+
+    if (!page->inspectorController()->profilerEnabled())
+        return;
+
     UString title;
     if (args.size() >= 1)
         title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
@@ -428,9 +425,6 @@ void Console::warn(ExecState* exec, const ArgList& args)
     if (args.isEmpty())
         return;
 
-    if (!m_frame)
-        return;
-
     Page* page = this->page();
     if (!page)
         return;
@@ -469,7 +463,6 @@ Page* Console::page() const
 {
     if (!m_frame)
         return 0;
-
     return m_frame->page();
 }
 

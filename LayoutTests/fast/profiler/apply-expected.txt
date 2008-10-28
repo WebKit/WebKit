@@ -1,15 +1,14 @@
-CONSOLE MESSAGE: line 59: Using the apply() method
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) apply.html 8
-CONSOLE MESSAGE: line 75:   (program) apply.html 4
-CONSOLE MESSAGE: line 75:   onload apply.html 29
-CONSOLE MESSAGE: line 75:    startTest apply.html 10
-CONSOLE MESSAGE: line 75:     fakeObject apply.html 16
-CONSOLE MESSAGE: line 75:      apply  0
-CONSOLE MESSAGE: line 75:       fakeInteriorFunction apply.html 22
-CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
 This page's JavaScript has a call to apply() in it. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to fakeInteriorFunction() and a call to apply().
+
+Profile title: Using the apply() method
+Thread_1 (no file) (line 0)
+   startTest apply.html (line 11)
+      fakeObject apply.html (line 18)
+         apply (no file) (line 0)
+            fakeInteriorFunction apply.html (line 24)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
 

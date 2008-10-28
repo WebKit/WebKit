@@ -1,65 +1,51 @@
-CONSOLE MESSAGE: line 50: Heavy View Test
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) heavy-view.html 4
-CONSOLE MESSAGE: line 75:   (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  foo heavy-view.html 49
-CONSOLE MESSAGE: line 75:   c heavy-view.html 28
-CONSOLE MESSAGE: line 75:    foo heavy-view.html 49
-CONSOLE MESSAGE: line 75:     b heavy-view.html 22
-CONSOLE MESSAGE: line 75:      a heavy-view.html 11
-CONSOLE MESSAGE: line 75:       onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:        (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:   b heavy-view.html 22
-CONSOLE MESSAGE: line 75:    a heavy-view.html 11
-CONSOLE MESSAGE: line 75:     onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:      (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:    g heavy-view.html 43
-CONSOLE MESSAGE: line 75:     a heavy-view.html 11
-CONSOLE MESSAGE: line 75:      onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:       (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:   a heavy-view.html 11
-CONSOLE MESSAGE: line 75:    onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:     (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:   e heavy-view.html 38
-CONSOLE MESSAGE: line 75:    d heavy-view.html 33
-CONSOLE MESSAGE: line 75:     a heavy-view.html 11
-CONSOLE MESSAGE: line 75:      onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:       (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  c heavy-view.html 28
-CONSOLE MESSAGE: line 75:   foo heavy-view.html 49
-CONSOLE MESSAGE: line 75:    b heavy-view.html 22
-CONSOLE MESSAGE: line 75:     a heavy-view.html 11
-CONSOLE MESSAGE: line 75:      onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:       (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  b heavy-view.html 22
-CONSOLE MESSAGE: line 75:   a heavy-view.html 11
-CONSOLE MESSAGE: line 75:    onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:     (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:   g heavy-view.html 43
-CONSOLE MESSAGE: line 75:    a heavy-view.html 11
-CONSOLE MESSAGE: line 75:     onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:      (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  e heavy-view.html 38
-CONSOLE MESSAGE: line 75:   d heavy-view.html 33
-CONSOLE MESSAGE: line 75:    a heavy-view.html 11
-CONSOLE MESSAGE: line 75:     onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:      (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  d heavy-view.html 33
-CONSOLE MESSAGE: line 75:   a heavy-view.html 11
-CONSOLE MESSAGE: line 75:    onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:     (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  g heavy-view.html 43
-CONSOLE MESSAGE: line 75:   a heavy-view.html 11
-CONSOLE MESSAGE: line 75:    onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:     (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  a heavy-view.html 11
-CONSOLE MESSAGE: line 75:   onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:    (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  onload heavy-view.html 59
-CONSOLE MESSAGE: line 75:   (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  (program) heavy-view.html 8
-CONSOLE MESSAGE: line 75:  (idle)  0
 This page has several functions calling each other in a way that exposes interesting edge cases related to the Heavy view in the profiler. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile in Heavy view.
+
+Profile title: Heavy View Test
+Thread_1 (no file) (line 0)
+   foo heavy-view.html (line 57)
+      c heavy-view.html (line 36)
+         foo heavy-view.html (line 57)
+            b heavy-view.html (line 30)
+               a heavy-view.html (line 21)
+                  startTest heavy-view.html (line 11)
+      b heavy-view.html (line 30)
+         a heavy-view.html (line 21)
+            startTest heavy-view.html (line 11)
+         g heavy-view.html (line 51)
+            a heavy-view.html (line 21)
+               startTest heavy-view.html (line 11)
+      a heavy-view.html (line 21)
+         startTest heavy-view.html (line 11)
+      e heavy-view.html (line 46)
+         d heavy-view.html (line 41)
+            a heavy-view.html (line 21)
+               startTest heavy-view.html (line 11)
+   c heavy-view.html (line 36)
+      foo heavy-view.html (line 57)
+         b heavy-view.html (line 30)
+            a heavy-view.html (line 21)
+               startTest heavy-view.html (line 11)
+   b heavy-view.html (line 30)
+      a heavy-view.html (line 21)
+         startTest heavy-view.html (line 11)
+      g heavy-view.html (line 51)
+         a heavy-view.html (line 21)
+            startTest heavy-view.html (line 11)
+   e heavy-view.html (line 46)
+      d heavy-view.html (line 41)
+         a heavy-view.html (line 21)
+            startTest heavy-view.html (line 11)
+   d heavy-view.html (line 41)
+      a heavy-view.html (line 21)
+         startTest heavy-view.html (line 11)
+   g heavy-view.html (line 51)
+      a heavy-view.html (line 21)
+         startTest heavy-view.html (line 11)
+   a heavy-view.html (line 21)
+      startTest heavy-view.html (line 11)
+   startTest heavy-view.html (line 11)
+   (idle) (no file) (line 0)
+
 

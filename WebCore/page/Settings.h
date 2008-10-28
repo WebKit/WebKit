@@ -221,7 +221,6 @@ namespace WebCore {
         bool m_showsURLsInToolTips : 1;
         bool m_forceFTPDirectoryListings : 1;
         bool m_developerExtrasEnabled : 1;
-        bool m_didInitializeDeveloperExtrasEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;
         bool m_needsSiteSpecificQuirks : 1;
         unsigned m_fontRenderingMode : 1;

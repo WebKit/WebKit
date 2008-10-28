@@ -2,20 +2,26 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Call window.eval()");
-function testStart()
+function startTest()
 {
+    console.profile("Call window.eval()");
+
     evalFunction();
+
     endTest();
 }
 </script>
-<script> window.eval("function evalFunction() { insertNewText(); }");</script>
+<script>
+window.eval("function evalFunction() { insertNewText(); }");
+</script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page has a call to window.eval().
 <br>
 <br>

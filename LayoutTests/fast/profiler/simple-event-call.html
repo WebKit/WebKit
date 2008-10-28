@@ -2,12 +2,15 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("A simple profile test where an event happens.");
 function startTest()
 {
+    console.profile("A simple profile test where an event happens.");
+    // FIXME: this is not testing what it says it is.
     endTest();
 }
 </script>

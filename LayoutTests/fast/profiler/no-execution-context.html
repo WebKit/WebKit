@@ -1,16 +1,20 @@
 <html>
 <head>
-</head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 </script>
+</head>
+
 <body onload="printProfilesDataWithoutTime()">
-This page has a no script tag and so has no execution context or profiling information.
+This page has a no profiling information.
 <br>
 <br>
 To run this test manually, load it in the browser then load the WebInspector and look at
 the profile.  You should not see any profile date in the WebInspector.
+<div id="output"></div>
 </body>
 </html>

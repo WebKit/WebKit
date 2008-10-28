@@ -57,6 +57,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isProfilingJavaScript(BOOL* isProfiling);
     virtual HRESULT STDMETHODCALLTYPE toggleProfilingJavaScript();
 
+    virtual HRESULT STDMETHODCALLTYPE isJavaScriptProfilingEnabled(BOOL* isProfilingEnabled);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptProfilingEnabled(BOOL);
+
 private:
     WebInspector(WebView*);
     ~WebInspector();

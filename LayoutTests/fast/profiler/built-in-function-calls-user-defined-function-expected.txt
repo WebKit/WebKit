@@ -1,14 +1,14 @@
-CONSOLE MESSAGE: line 59: Built-in function calls a user defined function
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) built-in-function-calls-user-defined-function.html 8
-CONSOLE MESSAGE: line 75:   (program) built-in-function-calls-user-defined-function.html 4
-CONSOLE MESSAGE: line 75:   onload built-in-function-calls-user-defined-function.html 18
-CONSOLE MESSAGE: line 75:    testStart built-in-function-calls-user-defined-function.html 10
-CONSOLE MESSAGE: line 75:     Array  0
-CONSOLE MESSAGE: line 75:     map  0
-CONSOLE MESSAGE: line 75:      arrayOperatorFunction profiler-test-JS-resources.js 25
-CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
 This page uses a built-in function to call a user defined function. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile map() should have arrayOperatorFunction() as a child.
+
+Profile title: Built-in function calls a user defined function
+Thread_1 (no file) (line 0)
+   startTest built-in-function-calls-user-defined-function.html (line 11)
+      Array (no file) (line 0)
+      map (no file) (line 0)
+         arrayOperatorFunction profiler-test-JS-resources.js (line 25)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
+

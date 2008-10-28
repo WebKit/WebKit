@@ -2,10 +2,20 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Heavy View Test");
+function startTest()
+{
+    console.profile("Heavy View Test");
+
+    a();
+
+    console.profileEnd();
+    printHeavyProfilesDataWithoutTime();
+}
 
 function a()
 {
@@ -14,8 +24,6 @@ function a()
     d();
     d();
     g();
-    console.profileEnd();
-    printHeavyProfilesDataWithoutTime();
 }
 
 function b()
@@ -56,7 +64,7 @@ function foo()
 </script>
 </head>
 
-<body onload="a()">
+<body onload="startTest()">
 This page has several functions calling each other in a way that exposes interesting
 edge cases related to the Heavy view in the profiler.
 <br>

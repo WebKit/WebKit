@@ -1,10 +1,9 @@
-CONSOLE MESSAGE: line 59: Call Document.write()
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) document-dot-write.html 8
-CONSOLE MESSAGE: line 75:   write  0
-CONSOLE MESSAGE: line 75:   endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
-This was a triumph. This page calls document.write(). 
 
-To run this test manually, load it in the browser then load the WebInspector and look at the profile. If there is a profile it should show write().
+Profile title: Call Document.write()
+Thread_1 (no file) (line 0)
+   startTest document-dot-write.html (line 11)
+      write (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
 

@@ -44,6 +44,7 @@
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
+#import <WebKit/WebInspector.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -252,6 +253,12 @@ void LayoutTestController::setWindowIsKey(bool windowIsKey)
 void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 {
     [[mainFrame webView] setSmartInsertDeleteEnabled:flag];
+}
+
+void LayoutTestController::setJavaScriptProfilingEnabled(bool profilingEnabled)
+{
+    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:profilingEnabled];
+    [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:profilingEnabled];
 }
 
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;

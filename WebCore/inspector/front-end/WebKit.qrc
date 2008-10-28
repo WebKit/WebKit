@@ -20,6 +20,7 @@
     <file>Object.js</file>
     <file>ObjectPropertiesSection.js</file>
     <file>Panel.js</file>
+    <file>PanelEnablerView.js</file>
     <file>Placard.js</file>
     <file>ProfilesPanel.js</file>
     <file>ProfileView.js</file>

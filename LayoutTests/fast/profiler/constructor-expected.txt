@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 59: Using a constructor.
-CONSOLE MESSAGE: line 75: Thread_1  0
-CONSOLE MESSAGE: line 75:  (program) constructor.html 8
-CONSOLE MESSAGE: line 75:   (program) constructor.html 4
-CONSOLE MESSAGE: line 75:   onload constructor.html 23
-CONSOLE MESSAGE: line 75:    startTest constructor.html 10
-CONSOLE MESSAGE: line 75:     fakeObject constructor.html 16
-CONSOLE MESSAGE: line 75:      Array  0
-CONSOLE MESSAGE: line 75:     endTest profiler-test-JS-resources.js 1
-CONSOLE MESSAGE: line 75:  (idle)  0
 This page's JavaScript has a call to new() in it. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to fakeObject() and Array() in it.
+
+Profile title: Using a constructor.
+Thread_1 (no file) (line 0)
+   startTest constructor.html (line 11)
+      fakeObject constructor.html (line 20)
+         Array (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+   (idle) (no file) (line 0)
+
+

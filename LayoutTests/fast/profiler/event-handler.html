@@ -2,14 +2,17 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Event handler");
-function testStart()
+function startTest()
 {    
+    console.profile("Event handler");
+
     var myButton = document.getElementById("buttonWithAnEventListener");
-    myButton.addEventListener('click', insertNewText, false);
+    myButton.addEventListener("click", insertNewText, false);
     myButton.click();
 
     endTest();
@@ -17,7 +20,7 @@ function testStart()
 </script>
 </head>
 
-<body onload="testStart()">
+<body onload="startTest()">
 This page has an event handler.
 <br>
 <br>

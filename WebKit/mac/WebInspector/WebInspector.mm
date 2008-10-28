@@ -127,6 +127,25 @@ using namespace WebCore;
     page->inspectorController()->showPanel(InspectorController::ProfilesPanel);
 }
 
+- (BOOL)isJavaScriptProfilingEnabled
+{
+    if (Page* page = core(_webView))
+        return page->inspectorController()->profilerEnabled();
+    return NO;
+}
+
+- (void)setJavaScriptProfilingEnabled:(BOOL)enabled
+{
+    Page* page = core(_webView);
+    if (!page)
+        return;
+
+    if (enabled)
+        page->inspectorController()->enableProfiler();
+    else
+        page->inspectorController()->disableProfiler();
+}
+
 - (void)close:(id)sender 
 {
     if (Page* page = core(_webView))

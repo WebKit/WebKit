@@ -2,21 +2,27 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
 
-console.profile("Call Document.write()");
-document.write("<div>This was a triumph.<// div>");
-endTest();
+function startTest()
+{
+    console.profile("Call Document.write()");
+
+    document.write("<div id=\"output\"></div>");
+
+    endTest();
+}
 </script>
 </head>
 
-<body>
+<body onload="startTest()">
 This page calls document.write().
 <br>
 <br>
 To run this test manually, load it in the browser then load the WebInspector and look at
 the profile.  If there is a profile it should show write().
-<div id="output"></div>
 </body>
 </html>

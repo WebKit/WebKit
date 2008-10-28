@@ -1,3 +1,20 @@
+2008-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Add WebInspector methods to enable the profiler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21927
+
+        <rdar://problem/6211578> Make the JavaScript profiler opt-in, so it does
+        not slow down JavaScript all the time
+
+        Reviewed by Darin Adler and Kevin McCullough.
+
+        * WebInspector/WebInspector.h:
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector isJavaScriptProfilingEnabled]): Added. Calls InspectorController::profilerEnabled.
+        (-[WebInspector setJavaScriptProfilingEnabled:]): Added. Call InspectorController's disableProfiler
+        or enableProfiler methods.
+
 2008-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Rename a few methods related to attaching and detaching the debugger.
