@@ -33,6 +33,10 @@
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
 
+#if !defined(PANGO_VERSION_CHECK)
+#define PANGO_VERSION_CHECK(major,minor,micro) 0
+#endif
+
 // Use cairo-ft i a recent enough Pango version isn't available
 #if !PANGO_VERSION_CHECK(1,18,0)
 #include <cairo-ft.h>

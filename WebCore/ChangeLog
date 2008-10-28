@@ -1,3 +1,12 @@
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fix for older versions of Pango where PANGO_VERSION_CHECK
+        isn't defined.
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::getDefaultPangoLayout):
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+
 2008-10-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

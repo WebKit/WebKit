@@ -48,6 +48,7 @@
 #if !defined(PANGO_VERSION_CHECK)
 // PANGO_VERSION_CHECK() and pango_layout_get_line_readonly() appeared in 1.5.2
 #define pango_layout_get_line_readonly pango_layout_get_line
+#define PANGO_VERSION_CHECK(major,minor,micro) 0
 #endif
 
 namespace WebCore {
@@ -278,9 +279,10 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
 static PangoLayout* getDefaultPangoLayout(const TextRun& run)
 {
     static PangoFontMap* map = pango_cairo_font_map_get_default();
-#if PANGO_VERSION_CHECK(1,21,5)   // deprecated in 1.21
+#if PANGO_VERSION_CHECK(1,21,5)
     static PangoContext* pangoContext = pango_font_map_create_context(map);
 #else
+    // Deprecated in Pango 1.21.
     static PangoContext* pangoContext = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(map));
 #endif
     PangoLayout* layout = pango_layout_new(pangoContext);
