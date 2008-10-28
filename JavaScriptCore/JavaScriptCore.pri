@@ -2,7 +2,7 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
                $$PWD/ForwardingHeaders
 DEFINES += BUILDING_QT__
 

@@ -2,6 +2,14 @@
 
         Not reviewed.
 
+        More Qt build fixes.
+
+        * JavaScriptCore.pri:
+
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
         Fix the Qt build, hopefully for real this time.
 
         * JavaScriptCore.pri:
