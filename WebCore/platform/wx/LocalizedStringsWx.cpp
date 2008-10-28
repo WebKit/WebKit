@@ -261,6 +261,12 @@ String contextMenuItemTagInspectElement()
     return String("Inspect Element");
 }
 
+String multipleFileUploadText(unsigned numberOfFiles)
+{
+    // FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+    return String::number(numberOfFiles) + String(" files");
+}
+
 String unknownFileSizeText() 
 {
     return String("Unknown");

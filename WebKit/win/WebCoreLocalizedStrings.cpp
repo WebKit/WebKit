@@ -103,3 +103,11 @@ String WebCore::imageTitle(const String& filename, const IntSize& size)
 
     return result.get();
 }
+
+String multipleFileUploadText(unsigned numberOfFiles)
+{
+    static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"));
+    RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormat(0, 0, format.get(), numberOfFiles));
+
+    return result.get();
+}

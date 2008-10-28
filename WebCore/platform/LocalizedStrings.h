@@ -109,6 +109,7 @@ namespace WebCore {
     String AXUncheckedCheckBoxActionVerb();
     String AXLinkActionVerb();
 
+    String multipleFileUploadText(unsigned numberOfFiles);
     String unknownFileSizeText();
 
 #if PLATFORM(WIN)

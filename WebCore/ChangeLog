@@ -1,3 +1,19 @@
+2008-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21880
+        "files" string for multifile uploads needs to be localized
+
+        * page/mac/WebCoreViewFactory.h:
+        * platform/LocalizedStrings.h:
+        * platform/gtk/FileChooserGtk.cpp: (WebCore::FileChooser::basenameForWidth):
+        * platform/gtk/LocalizedStringsGtk.cpp: (WebCore::multipleFileUploadText):
+        * platform/mac/FileChooserMac.mm: (WebCore::FileChooser::basenameForWidth):
+        * platform/mac/LocalizedStringsMac.mm: (WebCore::multipleFileUploadText):
+        * platform/qt/Localizations.cpp: (WebCore::multipleFileUploadText):
+        * platform/wx/LocalizedStringsWx.cpp: (WebCore::multipleFileUploadText):
+
 2008-10-28  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Adler.

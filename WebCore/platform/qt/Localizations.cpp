@@ -333,6 +333,11 @@ String AXLinkActionVerb()
     return String();
 }
 
+String multipleFileUploadText(unsigned)
+{
+    return String();
+}
+
 String unknownFileSizeText()
 {
     return QCoreApplication::translate("QWebPage", "Unknown", "Unknown filesize FTP directory listing item");

@@ -1,5 +1,14 @@
 2008-10-28  Adele Peterson  <adele@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21880
+        "files" string for multifile uploads needs to be localized
+
+        * English.lproj/Localizable.strings: Updated with new string.
+
+2008-10-28  Adele Peterson  <adele@apple.com>
+
         Reviewed by Sam Weinig. 
 
         * English.lproj/Localizable.strings:

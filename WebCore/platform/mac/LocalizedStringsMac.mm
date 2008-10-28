@@ -561,6 +561,14 @@ String AXLinkActionVerb()
     return String();
 }
 
+String multipleFileUploadText(unsigned numberOfFiles)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] multipleFileUploadTextForNumberOfFiles:numberOfFiles];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 String unknownFileSizeText()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

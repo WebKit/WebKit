@@ -326,6 +326,12 @@ String AXLinkActionVerb()
     return String::fromUTF8(_("jump"));
 }
 
+String multipleFileUploadText(unsigned numberOfFiles)
+{
+    // FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+    return String::number(numberOfFiles) + String::fromUTF8(_(" files"));
+}
+
 String unknownFileSizeText()
 {
     return String::fromUTF8(_("Unknown"));
