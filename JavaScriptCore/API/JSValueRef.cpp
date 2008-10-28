@@ -30,12 +30,12 @@
 #include "APICast.h"
 #include "JSCallbackObject.h"
 
-#include <kjs/JSGlobalObject.h>
-#include <kjs/JSString.h>
+#include <runtime/JSGlobalObject.h>
+#include <runtime/JSString.h>
 #include <kjs/operations.h>
 #include <kjs/protect.h>
 #include <kjs/ustring.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 
 #include <wtf/Assertions.h>
 

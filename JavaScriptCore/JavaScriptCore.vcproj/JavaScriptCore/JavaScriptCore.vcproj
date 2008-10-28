@@ -285,55 +285,55 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ArrayConstructor.cpp"
+				RelativePath="..\..\runtime\ArrayConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ArrayConstructor.h"
+				RelativePath="..\..\runtime\ArrayConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ArrayPrototype.cpp"
+				RelativePath="..\..\runtime\ArrayPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ArrayPrototype.h"
+				RelativePath="..\..\runtime\ArrayPrototype.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\BooleanConstructor.cpp"
+				RelativePath="..\..\runtime\BooleanConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\BooleanConstructor.h"
+				RelativePath="..\..\runtime\BooleanConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\BooleanObject.cpp"
+				RelativePath="..\..\runtime\BooleanObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\BooleanObject.h"
+				RelativePath="..\..\runtime\BooleanObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\BooleanPrototype.cpp"
+				RelativePath="..\..\runtime\BooleanPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\BooleanPrototype.h"
+				RelativePath="..\..\runtime\BooleanPrototype.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\CallData.cpp"
+				RelativePath="..\..\runtime\CallData.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\CallData.h"
+				RelativePath="..\..\runtime\CallData.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ClassInfo.h"
+				RelativePath="..\..\runtime\ClassInfo.h"
 				>
 			</File>
 			<File
@@ -365,43 +365,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ConstructData.cpp"
+				RelativePath="..\..\runtime\ConstructData.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ConstructData.h"
+				RelativePath="..\..\runtime\ConstructData.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateConstructor.cpp"
+				RelativePath="..\..\runtime\DateConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateConstructor.h"
+				RelativePath="..\..\runtime\DateConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateInstance.cpp"
+				RelativePath="..\..\runtime\DateInstance.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateInstance.h"
+				RelativePath="..\..\runtime\DateInstance.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateMath.cpp"
+				RelativePath="..\..\runtime\DateMath.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateMath.h"
+				RelativePath="..\..\runtime\DateMath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DatePrototype.cpp"
+				RelativePath="..\..\runtime\DatePrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DatePrototype.h"
+				RelativePath="..\..\runtime\DatePrototype.h"
 				>
 			</File>
 			<File
@@ -413,35 +413,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\Error.cpp"
+				RelativePath="..\..\runtime\Error.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\Error.h"
+				RelativePath="..\..\runtime\Error.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ErrorConstructor.cpp"
+				RelativePath="..\..\runtime\ErrorConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ErrorConstructor.h"
+				RelativePath="..\..\runtime\ErrorConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ErrorInstance.cpp"
+				RelativePath="..\..\runtime\ErrorInstance.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ErrorInstance.h"
+				RelativePath="..\..\runtime\ErrorInstance.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ErrorPrototype.cpp"
+				RelativePath="..\..\runtime\ErrorPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ErrorPrototype.h"
+				RelativePath="..\..\runtime\ErrorPrototype.h"
 				>
 			</File>
 			<File
@@ -453,19 +453,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\FunctionConstructor.cpp"
+				RelativePath="..\..\runtime\FunctionConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\FunctionConstructor.h"
+				RelativePath="..\..\runtime\FunctionConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\FunctionPrototype.cpp"
+				RelativePath="..\..\runtime\FunctionPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\FunctionPrototype.h"
+				RelativePath="..\..\runtime\FunctionPrototype.h"
 				>
 			</File>
 			<File
@@ -477,11 +477,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\GlobalEvalFunction.cpp"
+				RelativePath="..\..\runtime\GlobalEvalFunction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\GlobalEvalFunction.h"
+				RelativePath="..\..\runtime\GlobalEvalFunction.h"
 				>
 			</File>
 			<File
@@ -501,11 +501,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\InternalFunction.cpp"
+				RelativePath="..\..\runtime\InternalFunction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\InternalFunction.h"
+				RelativePath="..\..\runtime\InternalFunction.h"
 				>
 			</File>
 			<File
@@ -525,27 +525,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSArray.cpp"
+				RelativePath="..\..\runtime\JSArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSArray.h"
+				RelativePath="..\..\runtime\JSArray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSCell.cpp"
+				RelativePath="..\..\runtime\JSCell.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSCell.h"
+				RelativePath="..\..\runtime\JSCell.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSFunction.cpp"
+				RelativePath="..\..\runtime\JSFunction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSFunction.h"
+				RelativePath="..\..\runtime\JSFunction.h"
 				>
 			</File>
 			<File
@@ -557,27 +557,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSGlobalObject.cpp"
+				RelativePath="..\..\runtime\JSGlobalObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSGlobalObject.h"
+				RelativePath="..\..\runtime\JSGlobalObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSGlobalObjectFunctions.cpp"
+				RelativePath="..\..\runtime\JSGlobalObjectFunctions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSGlobalObjectFunctions.h"
+				RelativePath="..\..\runtime\JSGlobalObjectFunctions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSImmediate.cpp"
+				RelativePath="..\..\runtime\JSImmediate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSImmediate.h"
+				RelativePath="..\..\runtime\JSImmediate.h"
 				>
 			</File>
 			<File
@@ -589,27 +589,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSNotAnObject.cpp"
+				RelativePath="..\..\runtime\JSNotAnObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSNotAnObject.h"
+				RelativePath="..\..\runtime\JSNotAnObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSNumberCell.cpp"
+				RelativePath="..\..\runtime\JSNumberCell.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSNumberCell.h"
+				RelativePath="..\..\runtime\JSNumberCell.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSObject.cpp"
+				RelativePath="..\..\runtime\JSObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSObject.h"
+				RelativePath="..\..\runtime\JSObject.h"
 				>
 			</File>
 			<File
@@ -621,11 +621,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSString.cpp"
+				RelativePath="..\..\runtime\JSString.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSString.h"
+				RelativePath="..\..\runtime\JSString.h"
 				>
 			</File>
 			<File
@@ -633,27 +633,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSValue.cpp"
+				RelativePath="..\..\runtime\JSValue.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSValue.h"
+				RelativePath="..\..\runtime\JSValue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSVariableObject.cpp"
+				RelativePath="..\..\runtime\JSVariableObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSVariableObject.h"
+				RelativePath="..\..\runtime\JSVariableObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSWrapperObject.cpp"
+				RelativePath="..\..\runtime\JSWrapperObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSWrapperObject.h"
+				RelativePath="..\..\runtime\JSWrapperObject.h"
 				>
 			</File>
 			<File
@@ -673,27 +673,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\MathObject.cpp"
+				RelativePath="..\..\runtime\MathObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\MathObject.h"
+				RelativePath="..\..\runtime\MathObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NativeErrorConstructor.cpp"
+				RelativePath="..\..\runtime\NativeErrorConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NativeErrorConstructor.h"
+				RelativePath="..\..\runtime\NativeErrorConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NativeErrorPrototype.cpp"
+				RelativePath="..\..\runtime\NativeErrorPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NativeErrorPrototype.h"
+				RelativePath="..\..\runtime\NativeErrorPrototype.h"
 				>
 			</File>
 			<File
@@ -701,43 +701,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NumberConstructor.cpp"
+				RelativePath="..\..\runtime\NumberConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NumberConstructor.h"
+				RelativePath="..\..\runtime\NumberConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NumberObject.cpp"
+				RelativePath="..\..\runtime\NumberObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NumberObject.h"
+				RelativePath="..\..\runtime\NumberObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NumberPrototype.cpp"
+				RelativePath="..\..\runtime\NumberPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NumberPrototype.h"
+				RelativePath="..\..\runtime\NumberPrototype.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ObjectConstructor.cpp"
+				RelativePath="..\..\runtime\ObjectConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ObjectConstructor.h"
+				RelativePath="..\..\runtime\ObjectConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ObjectPrototype.cpp"
+				RelativePath="..\..\runtime\ObjectPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ObjectPrototype.h"
+				RelativePath="..\..\runtime\ObjectPrototype.h"
 				>
 			</File>
 			<File
@@ -749,11 +749,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertyMap.cpp"
+				RelativePath="..\..\runtime\PropertyMap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertyMap.h"
+				RelativePath="..\..\runtime\PropertyMap.h"
 				>
 			</File>
 			<File
@@ -765,11 +765,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertySlot.cpp"
+				RelativePath="..\..\runtime\PropertySlot.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertySlot.h"
+				RelativePath="..\..\runtime\PropertySlot.h"
 				>
 			</File>
 			<File
@@ -777,11 +777,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PrototypeFunction.cpp"
+				RelativePath="..\..\runtime\PrototypeFunction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PrototypeFunction.h"
+				RelativePath="..\..\runtime\PrototypeFunction.h"
 				>
 			</File>
 			<File
@@ -829,11 +829,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\SmallStrings.cpp"
+				RelativePath="..\..\runtime\SmallStrings.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\SmallStrings.h"
+				RelativePath="..\..\runtime\SmallStrings.h"
 				>
 			</File>
 			<File
@@ -845,23 +845,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringConstructor.cpp"
+				RelativePath="..\..\runtime\StringConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringConstructor.h"
+				RelativePath="..\..\runtime\StringConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringObject.cpp"
+				RelativePath="..\..\runtime\StringObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringObject.h"
+				RelativePath="..\..\runtime\StringObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringObjectThatMasqueradesAsUndefined.h"
+				RelativePath="..\..\runtime\StringObjectThatMasqueradesAsUndefined.h"
 				>
 			</File>
 			<File
@@ -869,15 +869,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StringPrototype.h"
+				RelativePath="..\..\runtime\StringPrototype.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StructureID.cpp"
+				RelativePath="..\..\runtime\StructureID.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\StructureID.h"
+				RelativePath="..\..\runtime\StructureID.h"
 				>
 			</File>
 			<File

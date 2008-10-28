@@ -34,9 +34,9 @@
 #include <kjs/ExecState.h>
 #include <kjs/InitializeThreading.h>
 #include <kjs/interpreter.h>
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 
 using namespace JSC;
 

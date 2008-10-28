@@ -28,7 +28,7 @@
 
 #include "JSObjectRef.h"
 
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 #include <kjs/protect.h>
 #include <kjs/ustring.h>
 #include <wtf/HashMap.h>

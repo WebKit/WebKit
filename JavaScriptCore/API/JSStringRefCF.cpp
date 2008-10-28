@@ -30,7 +30,7 @@
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
 #include <kjs/ustring.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <wtf/OwnArrayPtr.h>
 
 JSStringRef JSStringCreateWithCFString(CFStringRef string)

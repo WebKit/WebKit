@@ -27,7 +27,7 @@
 #define JSCallbackConstructor_h
 
 #include "JSObjectRef.h"
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 
 namespace JSC {
 

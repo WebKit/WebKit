@@ -27,9 +27,9 @@
 #include "JSCallbackConstructor.h"
 
 #include "APICast.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
-#include <kjs/ObjectPrototype.h>
+#include <runtime/ObjectPrototype.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

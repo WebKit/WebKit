@@ -4,6 +4,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/VM \
 	-I$(srcdir)/JavaScriptCore/pcre \
 	-I$(srcdir)/JavaScriptCore/profiler \
+	-I$(srcdir)/JavaScriptCore/runtime \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
 	-I$(top_builddir)/JavaScriptCore/pcre \
 	-I$(top_builddir)/JavaScriptCore/kjs
@@ -22,13 +23,13 @@ javascriptcore_h_api += \
 
 javascriptcore_built_nosources += \
 	DerivedSources/lexer.lut.h \
-	JavaScriptCore/kjs/ArrayPrototype.lut.h \
-	JavaScriptCore/kjs/DatePrototype.lut.h \
-	JavaScriptCore/kjs/MathObject.lut.h \
-	JavaScriptCore/kjs/NumberConstructor.lut.h \
+	JavaScriptCore/runtime/ArrayPrototype.lut.h \
+	JavaScriptCore/runtime/DatePrototype.lut.h \
+	JavaScriptCore/runtime/MathObject.lut.h \
+	JavaScriptCore/runtime/NumberConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpObject.lut.h \
-	JavaScriptCore/kjs/StringPrototype.lut.h \
+	JavaScriptCore/runtime/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c
 
 javascriptcore_sources += \
@@ -109,72 +110,72 @@ javascriptcore_sources += \
 	JavaScriptCore/icu/unicode/uversion.h \
 	JavaScriptCore/kjs/ArgList.h \
 	JavaScriptCore/kjs/Arguments.h \
-	JavaScriptCore/kjs/ArrayConstructor.h \
-	JavaScriptCore/kjs/ArrayPrototype.h \
+	JavaScriptCore/runtime/ArrayConstructor.h \
+	JavaScriptCore/runtime/ArrayPrototype.h \
 	JavaScriptCore/kjs/BatchedTransitionOptimizer.h \
-	JavaScriptCore/kjs/BooleanConstructor.h \
-	JavaScriptCore/kjs/BooleanObject.h \
-	JavaScriptCore/kjs/BooleanPrototype.h \
-	JavaScriptCore/kjs/CallData.h \
-	JavaScriptCore/kjs/ClassInfo.h \
+	JavaScriptCore/runtime/BooleanConstructor.h \
+	JavaScriptCore/runtime/BooleanObject.h \
+	JavaScriptCore/runtime/BooleanPrototype.h \
+	JavaScriptCore/runtime/CallData.h \
+	JavaScriptCore/runtime/ClassInfo.h \
 	JavaScriptCore/kjs/CollectorHeapIterator.h \
 	JavaScriptCore/kjs/CommonIdentifiers.h \
-	JavaScriptCore/kjs/ConstructData.h \
-	JavaScriptCore/kjs/DateConstructor.h \
-	JavaScriptCore/kjs/DateInstance.h \
-	JavaScriptCore/kjs/DateMath.h \
-	JavaScriptCore/kjs/DatePrototype.h \
+	JavaScriptCore/runtime/ConstructData.h \
+	JavaScriptCore/runtime/DateConstructor.h \
+	JavaScriptCore/runtime/DateInstance.h \
+	JavaScriptCore/runtime/DateMath.h \
+	JavaScriptCore/runtime/DatePrototype.h \
 	JavaScriptCore/kjs/DebuggerCallFrame.cpp \
 	JavaScriptCore/kjs/DebuggerCallFrame.h \
 	JavaScriptCore/kjs/Error.h \
-	JavaScriptCore/kjs/ErrorConstructor.h \
-	JavaScriptCore/kjs/ErrorInstance.h \
-	JavaScriptCore/kjs/ErrorPrototype.h \
+	JavaScriptCore/runtime/ErrorConstructor.h \
+	JavaScriptCore/runtime/ErrorInstance.h \
+	JavaScriptCore/runtime/ErrorPrototype.h \
 	JavaScriptCore/kjs/ExecState.cpp \
 	JavaScriptCore/kjs/ExecState.h \
-	JavaScriptCore/kjs/FunctionConstructor.h \
-	JavaScriptCore/kjs/FunctionPrototype.h \
+	JavaScriptCore/runtime/FunctionConstructor.h \
+	JavaScriptCore/runtime/FunctionPrototype.h \
 	JavaScriptCore/kjs/GetterSetter.h \
-	JavaScriptCore/kjs/GlobalEvalFunction.h \
+	JavaScriptCore/runtime/GlobalEvalFunction.h \
 	JavaScriptCore/kjs/InitializeThreading.cpp \
 	JavaScriptCore/kjs/InitializeThreading.h \
-	JavaScriptCore/kjs/InternalFunction.h \
+	JavaScriptCore/runtime/InternalFunction.h \
 	JavaScriptCore/kjs/JSActivation.cpp \
 	JavaScriptCore/kjs/JSActivation.h \
-	JavaScriptCore/kjs/JSArray.h \
-	JavaScriptCore/kjs/JSCell.h \
-	JavaScriptCore/kjs/JSFunction.h \
+	JavaScriptCore/runtime/JSArray.h \
+	JavaScriptCore/runtime/JSCell.h \
+	JavaScriptCore/runtime/JSFunction.h \
 	JavaScriptCore/kjs/JSGlobalData.cpp \
 	JavaScriptCore/kjs/JSGlobalData.h \
-	JavaScriptCore/kjs/JSGlobalObject.h \
-	JavaScriptCore/kjs/JSGlobalObjectFunctions.h \
-	JavaScriptCore/kjs/JSImmediate.h \
-	JavaScriptCore/kjs/JSNotAnObject.cpp \
-	JavaScriptCore/kjs/JSNotAnObject.h \
-	JavaScriptCore/kjs/JSNumberCell.h \
-	JavaScriptCore/kjs/JSObject.h \
+	JavaScriptCore/runtime/JSGlobalObject.h \
+	JavaScriptCore/runtime/JSGlobalObjectFunctions.h \
+	JavaScriptCore/runtime/JSImmediate.h \
+	JavaScriptCore/runtime/JSNotAnObject.cpp \
+	JavaScriptCore/runtime/JSNotAnObject.h \
+	JavaScriptCore/runtime/JSNumberCell.h \
+	JavaScriptCore/runtime/JSObject.h \
 	JavaScriptCore/kjs/JSStaticScopeObject.h \
-	JavaScriptCore/kjs/JSString.h \
+	JavaScriptCore/runtime/JSString.h \
 	JavaScriptCore/kjs/JSType.h \
-	JavaScriptCore/kjs/JSValue.h \
-	JavaScriptCore/kjs/JSVariableObject.h \
+	JavaScriptCore/runtime/JSValue.h \
+	JavaScriptCore/runtime/JSVariableObject.h \
 	JavaScriptCore/kjs/JSWrapperObject.h \
 	JavaScriptCore/kjs/LabelStack.h \
-	JavaScriptCore/kjs/MathObject.h \
-	JavaScriptCore/kjs/NativeErrorConstructor.h \
-	JavaScriptCore/kjs/NativeErrorPrototype.h \
+	JavaScriptCore/runtime/MathObject.h \
+	JavaScriptCore/runtime/NativeErrorConstructor.h \
+	JavaScriptCore/runtime/NativeErrorPrototype.h \
 	JavaScriptCore/kjs/NodeInfo.h \
-	JavaScriptCore/kjs/NumberConstructor.h \
-	JavaScriptCore/kjs/NumberObject.h \
-	JavaScriptCore/kjs/NumberPrototype.h \
-	JavaScriptCore/kjs/ObjectConstructor.h \
-	JavaScriptCore/kjs/ObjectPrototype.h \
+	JavaScriptCore/runtime/NumberConstructor.h \
+	JavaScriptCore/runtime/NumberObject.h \
+	JavaScriptCore/runtime/NumberPrototype.h \
+	JavaScriptCore/runtime/ObjectConstructor.h \
+	JavaScriptCore/runtime/ObjectPrototype.h \
 	JavaScriptCore/kjs/Parser.h \
-	JavaScriptCore/kjs/PropertyMap.h \
+	JavaScriptCore/runtime/PropertyMap.h \
 	JavaScriptCore/kjs/PropertyNameArray.h \
-	JavaScriptCore/kjs/PropertySlot.h \
-	JavaScriptCore/kjs/PrototypeFunction.h \
-	JavaScriptCore/kjs/PutPropertySlot.h \
+	JavaScriptCore/runtime/PropertySlot.h \
+	JavaScriptCore/runtime/PrototypeFunction.h \
+	JavaScriptCore/runtime/PutPropertySlot.h \
 	JavaScriptCore/kjs/RegExpConstructor.h \
 	JavaScriptCore/kjs/RegExpMatchesArray.h \
 	JavaScriptCore/kjs/RegExpObject.h \
@@ -182,16 +183,16 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/ResultType.h \
 	JavaScriptCore/kjs/ScopeChain.h \
 	JavaScriptCore/kjs/ScopeChainMark.h \
-	JavaScriptCore/kjs/SmallStrings.cpp \
-	JavaScriptCore/kjs/SmallStrings.h \
+	JavaScriptCore/runtime/SmallStrings.cpp \
+	JavaScriptCore/runtime/SmallStrings.h \
 	JavaScriptCore/kjs/SourceProvider.h \
 	JavaScriptCore/kjs/SourceRange.h \
-	JavaScriptCore/kjs/StringConstructor.h \
-	JavaScriptCore/kjs/StringObject.h \
-	JavaScriptCore/kjs/StringObjectThatMasqueradesAsUndefined.h \
-	JavaScriptCore/kjs/StringPrototype.h \
-	JavaScriptCore/kjs/StructureID.cpp \
-	JavaScriptCore/kjs/StructureID.h \
+	JavaScriptCore/runtime/StringConstructor.h \
+	JavaScriptCore/runtime/StringObject.h \
+	JavaScriptCore/runtime/StringObjectThatMasqueradesAsUndefined.h \
+	JavaScriptCore/runtime/StringPrototype.h \
+	JavaScriptCore/runtime/StructureID.cpp \
+	JavaScriptCore/runtime/StructureID.h \
 	JavaScriptCore/kjs/SymbolTable.h \
 	JavaScriptCore/kjs/Tracing.h \
 	JavaScriptCore/kjs/TypeInfo.h \
@@ -309,63 +310,63 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/RegisterFile.cpp \
 	JavaScriptCore/kjs/ArgList.cpp \
 	JavaScriptCore/kjs/Arguments.cpp \
-	JavaScriptCore/kjs/ArrayConstructor.cpp \
-	JavaScriptCore/kjs/ArrayPrototype.cpp \
-	JavaScriptCore/kjs/BooleanConstructor.cpp \
-	JavaScriptCore/kjs/BooleanObject.cpp \
-	JavaScriptCore/kjs/BooleanPrototype.cpp \
-	JavaScriptCore/kjs/CallData.cpp \
+	JavaScriptCore/runtime/ArrayConstructor.cpp \
+	JavaScriptCore/runtime/ArrayPrototype.cpp \
+	JavaScriptCore/runtime/BooleanConstructor.cpp \
+	JavaScriptCore/runtime/BooleanObject.cpp \
+	JavaScriptCore/runtime/BooleanPrototype.cpp \
+	JavaScriptCore/runtime/CallData.cpp \
 	JavaScriptCore/kjs/CommonIdentifiers.cpp \
 	JavaScriptCore/kjs/ConstructData.cpp \
-	JavaScriptCore/kjs/DateConstructor.cpp \
-	JavaScriptCore/kjs/DateInstance.cpp \
-	JavaScriptCore/kjs/DateMath.cpp \
-	JavaScriptCore/kjs/DatePrototype.cpp \
-	JavaScriptCore/kjs/Error.cpp \
-	JavaScriptCore/kjs/ErrorConstructor.cpp \
-	JavaScriptCore/kjs/ErrorInstance.cpp \
-	JavaScriptCore/kjs/ErrorPrototype.cpp \
-	JavaScriptCore/kjs/FunctionConstructor.cpp \
-	JavaScriptCore/kjs/FunctionPrototype.cpp \
+	JavaScriptCore/runtime/DateConstructor.cpp \
+	JavaScriptCore/runtime/DateInstance.cpp \
+	JavaScriptCore/runtime/DateMath.cpp \
+	JavaScriptCore/runtime/DatePrototype.cpp \
+	JavaScriptCore/runtime/Error.cpp \
+	JavaScriptCore/runtime/ErrorConstructor.cpp \
+	JavaScriptCore/runtime/ErrorInstance.cpp \
+	JavaScriptCore/runtime/ErrorPrototype.cpp \
+	JavaScriptCore/runtime/FunctionConstructor.cpp \
+	JavaScriptCore/runtime/FunctionPrototype.cpp \
 	JavaScriptCore/kjs/GetterSetter.cpp \
-	JavaScriptCore/kjs/GlobalEvalFunction.cpp \
-	JavaScriptCore/kjs/InternalFunction.cpp \
-	JavaScriptCore/kjs/JSArray.cpp \
-	JavaScriptCore/kjs/JSCell.cpp \
-	JavaScriptCore/kjs/JSFunction.cpp \
-	JavaScriptCore/kjs/JSGlobalObject.cpp \
-	JavaScriptCore/kjs/JSGlobalObjectFunctions.cpp \
-	JavaScriptCore/kjs/JSImmediate.cpp \
+	JavaScriptCore/runtime/GlobalEvalFunction.cpp \
+	JavaScriptCore/runtime/InternalFunction.cpp \
+	JavaScriptCore/runtime/JSArray.cpp \
+	JavaScriptCore/runtime/JSCell.cpp \
+	JavaScriptCore/runtime/JSFunction.cpp \
+	JavaScriptCore/runtime/JSGlobalObject.cpp \
+	JavaScriptCore/runtime/JSGlobalObjectFunctions.cpp \
+	JavaScriptCore/runtime/JSImmediate.cpp \
 	JavaScriptCore/kjs/JSLock.cpp \
 	JavaScriptCore/kjs/JSLock.h \
-	JavaScriptCore/kjs/JSNumberCell.cpp \
-	JavaScriptCore/kjs/JSObject.cpp \
+	JavaScriptCore/runtime/JSNumberCell.cpp \
+	JavaScriptCore/runtime/JSObject.cpp \
 	JavaScriptCore/kjs/JSStaticScopeObject.cpp \
-	JavaScriptCore/kjs/JSString.cpp \
-	JavaScriptCore/kjs/JSValue.cpp \
-	JavaScriptCore/kjs/JSVariableObject.cpp \
-	JavaScriptCore/kjs/JSWrapperObject.cpp \
+	JavaScriptCore/runtime/JSString.cpp \
+	JavaScriptCore/runtime/JSValue.cpp \
+	JavaScriptCore/runtime/JSVariableObject.cpp \
+	JavaScriptCore/runtime/JSWrapperObject.cpp \
 	JavaScriptCore/kjs/LabelStack.cpp \
-	JavaScriptCore/kjs/MathObject.cpp \
-	JavaScriptCore/kjs/NativeErrorConstructor.cpp \
-	JavaScriptCore/kjs/NativeErrorPrototype.cpp \
-	JavaScriptCore/kjs/NumberConstructor.cpp \
-	JavaScriptCore/kjs/NumberObject.cpp \
-	JavaScriptCore/kjs/NumberPrototype.cpp \
-	JavaScriptCore/kjs/ObjectConstructor.cpp \
-	JavaScriptCore/kjs/ObjectPrototype.cpp \
+	JavaScriptCore/runtime/MathObject.cpp \
+	JavaScriptCore/runtime/NativeErrorConstructor.cpp \
+	JavaScriptCore/runtime/NativeErrorPrototype.cpp \
+	JavaScriptCore/runtime/NumberConstructor.cpp \
+	JavaScriptCore/runtime/NumberObject.cpp \
+	JavaScriptCore/runtime/NumberPrototype.cpp \
+	JavaScriptCore/runtime/ObjectConstructor.cpp \
+	JavaScriptCore/runtime/ObjectPrototype.cpp \
 	JavaScriptCore/kjs/Parser.cpp \
-	JavaScriptCore/kjs/PropertyMap.cpp \
+	JavaScriptCore/runtime/PropertyMap.cpp \
 	JavaScriptCore/kjs/PropertyNameArray.cpp \
-	JavaScriptCore/kjs/PropertySlot.cpp \
-	JavaScriptCore/kjs/PrototypeFunction.cpp \
+	JavaScriptCore/runtime/PropertySlot.cpp \
+	JavaScriptCore/runtime/PrototypeFunction.cpp \
 	JavaScriptCore/kjs/RegExpConstructor.cpp \
 	JavaScriptCore/kjs/RegExpObject.cpp \
 	JavaScriptCore/kjs/RegExpPrototype.cpp \
 	JavaScriptCore/kjs/ScopeChain.cpp \
-	JavaScriptCore/kjs/StringConstructor.cpp \
-	JavaScriptCore/kjs/StringObject.cpp \
-	JavaScriptCore/kjs/StringPrototype.cpp \
+	JavaScriptCore/runtime/StringConstructor.cpp \
+	JavaScriptCore/runtime/StringObject.cpp \
+	JavaScriptCore/runtime/StringPrototype.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
@@ -476,13 +477,13 @@ javascriptcore_dist += \
 
 # Clean rules for JavaScriptCore
 CLEANFILES += \
-	JavaScriptCore/kjs/ArrayPrototype.lut.h \
-	JavaScriptCore/kjs/DatePrototype.lut.h \
-	JavaScriptCore/kjs/MathObject.lut.h \
-	JavaScriptCore/kjs/NumberConstructor.lut.h \
+	JavaScriptCore/runtime/ArrayPrototype.lut.h \
+	JavaScriptCore/runtime/DatePrototype.lut.h \
+	JavaScriptCore/runtime/MathObject.lut.h \
+	JavaScriptCore/runtime/NumberConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpObject.lut.h \
-	JavaScriptCore/kjs/StringPrototype.lut.h \
+	JavaScriptCore/runtime/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c \
 	Programs/jsc \
 	Programs/minidom

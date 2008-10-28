@@ -1,3 +1,227 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Create a runtime directory in JavaScriptCore and begin moving files to
+        it. This is the first step towards removing the kjs directory and
+        placing files in more meaningful subdirectories of JavaScriptCore.
+
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        * API/JSClassRef.cpp:
+        * API/JSClassRef.h:
+        * API/JSStringRefCF.cpp:
+        * API/JSValueRef.cpp:
+        * API/OpaqueJSString.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArrayConstructor.cpp: Removed.
+        * kjs/ArrayConstructor.h: Removed.
+        * kjs/ArrayPrototype.cpp: Removed.
+        * kjs/ArrayPrototype.h: Removed.
+        * kjs/BooleanConstructor.cpp: Removed.
+        * kjs/BooleanConstructor.h: Removed.
+        * kjs/BooleanObject.cpp: Removed.
+        * kjs/BooleanObject.h: Removed.
+        * kjs/BooleanPrototype.cpp: Removed.
+        * kjs/BooleanPrototype.h: Removed.
+        * kjs/CallData.cpp: Removed.
+        * kjs/CallData.h: Removed.
+        * kjs/ClassInfo.h: Removed.
+        * kjs/ConstructData.cpp: Removed.
+        * kjs/ConstructData.h: Removed.
+        * kjs/DateConstructor.cpp: Removed.
+        * kjs/DateConstructor.h: Removed.
+        * kjs/DateInstance.cpp: Removed.
+        * kjs/DateInstance.h: Removed.
+        * kjs/DateMath.cpp: Removed.
+        * kjs/DateMath.h: Removed.
+        * kjs/DatePrototype.cpp: Removed.
+        * kjs/DatePrototype.h: Removed.
+        * kjs/Error.cpp: Removed.
+        * kjs/Error.h: Removed.
+        * kjs/ErrorConstructor.cpp: Removed.
+        * kjs/ErrorConstructor.h: Removed.
+        * kjs/ErrorInstance.cpp: Removed.
+        * kjs/ErrorInstance.h: Removed.
+        * kjs/ErrorPrototype.cpp: Removed.
+        * kjs/ErrorPrototype.h: Removed.
+        * kjs/FunctionConstructor.cpp: Removed.
+        * kjs/FunctionConstructor.h: Removed.
+        * kjs/FunctionPrototype.cpp: Removed.
+        * kjs/FunctionPrototype.h: Removed.
+        * kjs/GlobalEvalFunction.cpp: Removed.
+        * kjs/GlobalEvalFunction.h: Removed.
+        * kjs/InternalFunction.cpp: Removed.
+        * kjs/InternalFunction.h: Removed.
+        * kjs/JSArray.cpp: Removed.
+        * kjs/JSArray.h: Removed.
+        * kjs/JSCell.cpp: Removed.
+        * kjs/JSCell.h: Removed.
+        * kjs/JSFunction.cpp: Removed.
+        * kjs/JSFunction.h: Removed.
+        * kjs/JSGlobalObject.cpp: Removed.
+        * kjs/JSGlobalObject.h: Removed.
+        * kjs/JSGlobalObjectFunctions.cpp: Removed.
+        * kjs/JSGlobalObjectFunctions.h: Removed.
+        * kjs/JSImmediate.cpp: Removed.
+        * kjs/JSImmediate.h: Removed.
+        * kjs/JSNotAnObject.cpp: Removed.
+        * kjs/JSNotAnObject.h: Removed.
+        * kjs/JSNumberCell.cpp: Removed.
+        * kjs/JSNumberCell.h: Removed.
+        * kjs/JSObject.cpp: Removed.
+        * kjs/JSObject.h: Removed.
+        * kjs/JSString.cpp: Removed.
+        * kjs/JSString.h: Removed.
+        * kjs/JSValue.cpp: Removed.
+        * kjs/JSValue.h: Removed.
+        * kjs/JSVariableObject.cpp: Removed.
+        * kjs/JSVariableObject.h: Removed.
+        * kjs/JSWrapperObject.cpp: Removed.
+        * kjs/JSWrapperObject.h: Removed.
+        * kjs/MathObject.cpp: Removed.
+        * kjs/MathObject.h: Removed.
+        * kjs/NativeErrorConstructor.cpp: Removed.
+        * kjs/NativeErrorConstructor.h: Removed.
+        * kjs/NativeErrorPrototype.cpp: Removed.
+        * kjs/NativeErrorPrototype.h: Removed.
+        * kjs/NumberConstructor.cpp: Removed.
+        * kjs/NumberConstructor.h: Removed.
+        * kjs/NumberObject.cpp: Removed.
+        * kjs/NumberObject.h: Removed.
+        * kjs/NumberPrototype.cpp: Removed.
+        * kjs/NumberPrototype.h: Removed.
+        * kjs/ObjectConstructor.cpp: Removed.
+        * kjs/ObjectConstructor.h: Removed.
+        * kjs/ObjectPrototype.cpp: Removed.
+        * kjs/ObjectPrototype.h: Removed.
+        * kjs/PropertyMap.cpp: Removed.
+        * kjs/PropertyMap.h: Removed.
+        * kjs/PropertySlot.cpp: Removed.
+        * kjs/PropertySlot.h: Removed.
+        * kjs/PrototypeFunction.cpp: Removed.
+        * kjs/PrototypeFunction.h: Removed.
+        * kjs/PutPropertySlot.h: Removed.
+        * kjs/SmallStrings.cpp: Removed.
+        * kjs/SmallStrings.h: Removed.
+        * kjs/StringConstructor.cpp: Removed.
+        * kjs/StringConstructor.h: Removed.
+        * kjs/StringObject.cpp: Removed.
+        * kjs/StringObject.h: Removed.
+        * kjs/StringObjectThatMasqueradesAsUndefined.h: Removed.
+        * kjs/StringPrototype.cpp: Removed.
+        * kjs/StringPrototype.h: Removed.
+        * kjs/StructureID.cpp: Removed.
+        * kjs/StructureID.h: Removed.
+        * kjs/completion.h:
+        * kjs/interpreter.h:
+        * runtime: Added.
+        * runtime/ArrayConstructor.cpp: Copied from kjs/ArrayConstructor.cpp.
+        * runtime/ArrayConstructor.h: Copied from kjs/ArrayConstructor.h.
+        * runtime/ArrayPrototype.cpp: Copied from kjs/ArrayPrototype.cpp.
+        * runtime/ArrayPrototype.h: Copied from kjs/ArrayPrototype.h.
+        * runtime/BooleanConstructor.cpp: Copied from kjs/BooleanConstructor.cpp.
+        * runtime/BooleanConstructor.h: Copied from kjs/BooleanConstructor.h.
+        * runtime/BooleanObject.cpp: Copied from kjs/BooleanObject.cpp.
+        * runtime/BooleanObject.h: Copied from kjs/BooleanObject.h.
+        * runtime/BooleanPrototype.cpp: Copied from kjs/BooleanPrototype.cpp.
+        * runtime/BooleanPrototype.h: Copied from kjs/BooleanPrototype.h.
+        * runtime/CallData.cpp: Copied from kjs/CallData.cpp.
+        * runtime/CallData.h: Copied from kjs/CallData.h.
+        * runtime/ClassInfo.h: Copied from kjs/ClassInfo.h.
+        * runtime/ConstructData.cpp: Copied from kjs/ConstructData.cpp.
+        * runtime/ConstructData.h: Copied from kjs/ConstructData.h.
+        * runtime/DateConstructor.cpp: Copied from kjs/DateConstructor.cpp.
+        * runtime/DateConstructor.h: Copied from kjs/DateConstructor.h.
+        * runtime/DateInstance.cpp: Copied from kjs/DateInstance.cpp.
+        * runtime/DateInstance.h: Copied from kjs/DateInstance.h.
+        * runtime/DateMath.cpp: Copied from kjs/DateMath.cpp.
+        * runtime/DateMath.h: Copied from kjs/DateMath.h.
+        * runtime/DatePrototype.cpp: Copied from kjs/DatePrototype.cpp.
+        * runtime/DatePrototype.h: Copied from kjs/DatePrototype.h.
+        * runtime/Error.cpp: Copied from kjs/Error.cpp.
+        * runtime/Error.h: Copied from kjs/Error.h.
+        * runtime/ErrorConstructor.cpp: Copied from kjs/ErrorConstructor.cpp.
+        * runtime/ErrorConstructor.h: Copied from kjs/ErrorConstructor.h.
+        * runtime/ErrorInstance.cpp: Copied from kjs/ErrorInstance.cpp.
+        * runtime/ErrorInstance.h: Copied from kjs/ErrorInstance.h.
+        * runtime/ErrorPrototype.cpp: Copied from kjs/ErrorPrototype.cpp.
+        * runtime/ErrorPrototype.h: Copied from kjs/ErrorPrototype.h.
+        * runtime/FunctionConstructor.cpp: Copied from kjs/FunctionConstructor.cpp.
+        * runtime/FunctionConstructor.h: Copied from kjs/FunctionConstructor.h.
+        * runtime/FunctionPrototype.cpp: Copied from kjs/FunctionPrototype.cpp.
+        * runtime/FunctionPrototype.h: Copied from kjs/FunctionPrototype.h.
+        * runtime/GlobalEvalFunction.cpp: Copied from kjs/GlobalEvalFunction.cpp.
+        * runtime/GlobalEvalFunction.h: Copied from kjs/GlobalEvalFunction.h.
+        * runtime/InternalFunction.cpp: Copied from kjs/InternalFunction.cpp.
+        * runtime/InternalFunction.h: Copied from kjs/InternalFunction.h.
+        * runtime/JSArray.cpp: Copied from kjs/JSArray.cpp.
+        * runtime/JSArray.h: Copied from kjs/JSArray.h.
+        * runtime/JSCell.cpp: Copied from kjs/JSCell.cpp.
+        * runtime/JSCell.h: Copied from kjs/JSCell.h.
+        * runtime/JSFunction.cpp: Copied from kjs/JSFunction.cpp.
+        * runtime/JSFunction.h: Copied from kjs/JSFunction.h.
+        * runtime/JSGlobalObject.cpp: Copied from kjs/JSGlobalObject.cpp.
+        * runtime/JSGlobalObject.h: Copied from kjs/JSGlobalObject.h.
+        * runtime/JSGlobalObjectFunctions.cpp: Copied from kjs/JSGlobalObjectFunctions.cpp.
+        * runtime/JSGlobalObjectFunctions.h: Copied from kjs/JSGlobalObjectFunctions.h.
+        * runtime/JSImmediate.cpp: Copied from kjs/JSImmediate.cpp.
+        * runtime/JSImmediate.h: Copied from kjs/JSImmediate.h.
+        * runtime/JSNotAnObject.cpp: Copied from kjs/JSNotAnObject.cpp.
+        * runtime/JSNotAnObject.h: Copied from kjs/JSNotAnObject.h.
+        * runtime/JSNumberCell.cpp: Copied from kjs/JSNumberCell.cpp.
+        * runtime/JSNumberCell.h: Copied from kjs/JSNumberCell.h.
+        * runtime/JSObject.cpp: Copied from kjs/JSObject.cpp.
+        * runtime/JSObject.h: Copied from kjs/JSObject.h.
+        * runtime/JSString.cpp: Copied from kjs/JSString.cpp.
+        * runtime/JSString.h: Copied from kjs/JSString.h.
+        * runtime/JSValue.cpp: Copied from kjs/JSValue.cpp.
+        * runtime/JSValue.h: Copied from kjs/JSValue.h.
+        * runtime/JSVariableObject.cpp: Copied from kjs/JSVariableObject.cpp.
+        * runtime/JSVariableObject.h: Copied from kjs/JSVariableObject.h.
+        * runtime/JSWrapperObject.cpp: Copied from kjs/JSWrapperObject.cpp.
+        * runtime/JSWrapperObject.h: Copied from kjs/JSWrapperObject.h.
+        * runtime/MathObject.cpp: Copied from kjs/MathObject.cpp.
+        * runtime/MathObject.h: Copied from kjs/MathObject.h.
+        * runtime/NativeErrorConstructor.cpp: Copied from kjs/NativeErrorConstructor.cpp.
+        * runtime/NativeErrorConstructor.h: Copied from kjs/NativeErrorConstructor.h.
+        * runtime/NativeErrorPrototype.cpp: Copied from kjs/NativeErrorPrototype.cpp.
+        * runtime/NativeErrorPrototype.h: Copied from kjs/NativeErrorPrototype.h.
+        * runtime/NumberConstructor.cpp: Copied from kjs/NumberConstructor.cpp.
+        * runtime/NumberConstructor.h: Copied from kjs/NumberConstructor.h.
+        * runtime/NumberObject.cpp: Copied from kjs/NumberObject.cpp.
+        * runtime/NumberObject.h: Copied from kjs/NumberObject.h.
+        * runtime/NumberPrototype.cpp: Copied from kjs/NumberPrototype.cpp.
+        * runtime/NumberPrototype.h: Copied from kjs/NumberPrototype.h.
+        * runtime/ObjectConstructor.cpp: Copied from kjs/ObjectConstructor.cpp.
+        * runtime/ObjectConstructor.h: Copied from kjs/ObjectConstructor.h.
+        * runtime/ObjectPrototype.cpp: Copied from kjs/ObjectPrototype.cpp.
+        * runtime/ObjectPrototype.h: Copied from kjs/ObjectPrototype.h.
+        * runtime/PropertyMap.cpp: Copied from kjs/PropertyMap.cpp.
+        * runtime/PropertyMap.h: Copied from kjs/PropertyMap.h.
+        * runtime/PropertySlot.cpp: Copied from kjs/PropertySlot.cpp.
+        * runtime/PropertySlot.h: Copied from kjs/PropertySlot.h.
+        * runtime/PrototypeFunction.cpp: Copied from kjs/PrototypeFunction.cpp.
+        * runtime/PrototypeFunction.h: Copied from kjs/PrototypeFunction.h.
+        * runtime/PutPropertySlot.h: Copied from kjs/PutPropertySlot.h.
+        * runtime/SmallStrings.cpp: Copied from kjs/SmallStrings.cpp.
+        * runtime/SmallStrings.h: Copied from kjs/SmallStrings.h.
+        * runtime/StringConstructor.cpp: Copied from kjs/StringConstructor.cpp.
+        * runtime/StringConstructor.h: Copied from kjs/StringConstructor.h.
+        * runtime/StringObject.cpp: Copied from kjs/StringObject.cpp.
+        * runtime/StringObject.h: Copied from kjs/StringObject.h.
+        * runtime/StringObjectThatMasqueradesAsUndefined.h: Copied from kjs/StringObjectThatMasqueradesAsUndefined.h.
+        * runtime/StringPrototype.cpp: Copied from kjs/StringPrototype.cpp.
+        * runtime/StringPrototype.h: Copied from kjs/StringPrototype.h.
+        * runtime/StructureID.cpp: Copied from kjs/StructureID.cpp.
+        * runtime/StructureID.h: Copied from kjs/StructureID.h.
+
 2008-10-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

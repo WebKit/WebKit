@@ -29,6 +29,7 @@ VPATH = \
     $(JavaScriptCore)/VM \
     $(JavaScriptCore)/pcre \
     $(JavaScriptCore)/docs \
+    $(JavaScriptCore)/runtime \
 #
 
 .PHONY : all

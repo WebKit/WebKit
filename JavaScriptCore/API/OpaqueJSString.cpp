@@ -27,7 +27,7 @@
 #include "OpaqueJSString.h"
 
 #include <kjs/ExecState.h>
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/identifier.h>
 
 using namespace JSC;

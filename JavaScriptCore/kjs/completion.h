@@ -23,7 +23,7 @@
 #ifndef KJS_COMPLETION_H
 #define KJS_COMPLETION_H
 
-#include <kjs/JSValue.h>
+#include "JSValue.h"
 
 namespace JSC {
 
