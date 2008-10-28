@@ -134,7 +134,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     , m_newStreamSuccessful(false)
     , m_frameLoader(frameLoader)
     , m_loader(0)
-    , m_client(0)
     , m_request(0)
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
@@ -157,7 +156,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     , m_newStreamSuccessful(false)
     , m_frameLoader(0)
     , m_loader(0)
-    , m_client(0)
     , m_request([request mutableCopy])
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
@@ -180,8 +178,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     if (core([view webFrame])->loader()->shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
         [(NSMutableURLRequest *)m_request _web_setHTTPReferrer:nil];
     
-    m_client = new WebNetscapePlugInStreamLoaderClient(stream);
-    m_loader = NetscapePlugInStreamLoader::create(core([view webFrame]), m_client).releaseRef();
+    m_loader = NetscapePlugInStreamLoader::create(core([view webFrame]), this).releaseRef();
     m_loader->setShouldBufferData(false);
 }
 
@@ -207,7 +204,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
 
     if (_impl->m_loader)
         _impl->m_loader->deref();
-    delete _impl->m_client;
     [_impl->m_request release];
         
     free((void *)_impl->m_stream.url);
@@ -232,7 +228,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
 
     if (_impl->m_loader)
         _impl->m_loader->deref();
-    delete _impl->m_client;
     
     free((void *)_impl->m_stream.url);
     free(_impl->m_headers);
@@ -405,11 +400,6 @@ void WebNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)
     didReceiveResponse(0, response);
 }
 
-- (void)startStreamWithResponse:(NSURLResponse *)r
-{
-    _impl->startStreamWithResponse(r);
-}
-
 bool WebNetscapePluginStream::wantsAllStreams() const
 {
     if (!m_pluginFuncs->getvalue)
@@ -427,11 +417,6 @@ bool WebNetscapePluginStream::wantsAllStreams() const
         return false;
     
     return value;
-}
-
-- (BOOL)wantsAllStreams
-{
-    return _impl->wantsAllStreams();
 }
 
 void WebNetscapePluginStream::destroyStream()
@@ -540,11 +525,6 @@ void WebNetscapePluginStream::cancelLoadWithError(NSError *error)
         m_loader->cancel(error);
 }
 
-- (void)cancelLoadWithError:(NSError *)error
-{
-    _impl->cancelLoadWithError(error);
-}
-
 void WebNetscapePluginStream::destroyStreamWithError(NSError *error)
 {
     destroyStreamWithReason(reasonForError(error));
@@ -555,11 +535,6 @@ void WebNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, cons
     destroyStreamWithError(error);
 }
 
-- (void)destroyStreamWithError:(NSError *)error
-{
-    _impl->didFail(0, error);
-}
-
 void WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError(NSError *error)
 {
     RetainPtr<WebBaseNetscapePluginStream> protect(m_pluginStream);
@@ -567,11 +542,6 @@ void WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError(NSError *error
     destroyStreamWithError(error);
     setPlugin(0);
 }    
-
-- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error
-{
-    return _impl->cancelLoadAndDestroyStreamWithError(error);
-}
 
 void WebNetscapePluginStream::deliverData()
 {
@@ -686,11 +656,6 @@ void WebNetscapePluginStream::didFinishLoading(NetscapePlugInStreamLoader*)
     destroyStreamWithReason(NPRES_DONE);
 }
 
-- (void)finishedLoading
-{
-    _impl->didFinishLoading(0);
-}
-
 void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
 {
     NSData *data = [[NSData alloc] initWithBytesNoCopy:(void*)bytes length:length freeWhenDone:NO];
@@ -707,11 +672,6 @@ void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const 
         deliverDataToFile(data);
     
     [data release];
-}
-
-- (void)receivedData:(NSData *)data
-{
-    _impl->didReceiveData(0, (const char*)[data bytes], [data length]);
 }
 
 - (WebNetscapePluginStream *)impl

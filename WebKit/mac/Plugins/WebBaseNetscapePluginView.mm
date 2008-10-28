@@ -1796,8 +1796,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (![self isStarted]) {
         return;
     }
-    
-    [_manualStream destroyStreamWithError:error];
+
+    [_manualStream impl]->destroyStreamWithError(error);
 }
 
 - (void)pluginViewFinishedLoading:(NSView *)pluginView 
@@ -1806,7 +1806,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(_manualStream);
     
     if ([self isStarted])
-        [_manualStream finishedLoading];
+        [_manualStream impl]->didFinishLoading(0);
 }
 
 #pragma mark NSTextInput implementation
@@ -2022,21 +2022,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     } else if ([result length] > 0) {
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
+        
         WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequest:[NSURLRequest requestWithURL:URL]
                                                                                             plugin:plugin
                                                                                         notifyData:[JSPluginRequest notifyData]
                                                                                   sendNotification:[JSPluginRequest sendNotification]];
         
-        NSURLResponse *response = [[NSURLResponse alloc] initWithURL:URL 
-                                                            MIMEType:@"text/plain" 
-                                               expectedContentLength:[JSData length]
-                                                    textEncodingName:nil];
+        RetainPtr<NSURLResponse> response(AdoptNS, [[NSURLResponse alloc] initWithURL:URL 
+                                                                             MIMEType:@"text/plain" 
+                                                                expectedContentLength:[JSData length]
+                                                                     textEncodingName:nil]);
         
-        [stream startStreamWithResponse:response];
-        [response release];
-        
-        [stream receivedData:JSData];
-        [stream finishedLoading];
+        [stream impl]->startStreamWithResponse(response.get());
+        [stream impl]->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
+        [stream impl]->didFinishLoading(0);
         [stream release];
     }
 }
@@ -2350,7 +2349,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     
     WebBaseNetscapePluginStream *browserStream = static_cast<WebBaseNetscapePluginStream *>(stream->ndata);
-    [browserStream cancelLoadAndDestroyStreamWithError:[browserStream impl]->errorForReason(reason)];
+    [browserStream impl]->cancelLoadAndDestroyStreamWithError([browserStream impl]->errorForReason(reason));
     
     return NPERR_NO_ERROR;
 }

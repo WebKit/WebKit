@@ -43,8 +43,6 @@ namespace WebCore {
     class NetscapePlugInStreamLoader;
 }
 
-class WebNetscapePlugInStreamLoaderClient;
-
 @class WebBaseNetscapePluginView;
 @class NSURLResponse;
 @class WebBaseNetscapePluginStream;
@@ -122,7 +120,6 @@ public:
     
     WebCore::FrameLoader* m_frameLoader;
     WebCore::NetscapePlugInStreamLoader* m_loader;
-    WebNetscapePlugInStreamLoaderClient* m_client;
     NSURLRequest *m_request;
     NPPluginFuncs *m_pluginFuncs;
 
@@ -137,7 +134,7 @@ private:
     WebNetscapePluginStream(WebBaseNetscapePluginStream *, NSURLRequest *, NPP, bool sendNotification, void* notifyData);
 };
 
-@interface WebBaseNetscapePluginStream : NSObject<WebPlugInStreamLoaderDelegate>
+@interface WebBaseNetscapePluginStream : NSObject
 {     
     RefPtr<WebNetscapePluginStream> _impl;
 }

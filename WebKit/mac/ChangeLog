@@ -1,5 +1,22 @@
 2008-10-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Get rid of WebNetscapePlugInStreamLoaderClient, the plug-in stream is its own client.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginView:receivedError:]):
+        (-[WebBaseNetscapePluginView pluginViewFinishedLoading:]):
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebBaseNetscapePluginView destroyStream:reason:]):
+
+2008-10-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Change the Obj-C init methods to simply call WebNetscapePluginStream::create.
