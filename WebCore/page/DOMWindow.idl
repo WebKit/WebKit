@@ -343,6 +343,8 @@ module window {
         attribute MessageEventConstructor MessageEvent;
         attribute EventExceptionConstructor EventException;
 
+        attribute MessagePortConstructor MessagePort;
+
         attribute ClipboardConstructor Clipboard;
 
         attribute FileConstructor File;

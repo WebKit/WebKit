@@ -1,5 +1,17 @@
 2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21922
+        Expose MessagePort global constructor
+
+        Covered by existing dumper tests.
+
+        * dom/MessagePort.idl:
+        * page/DOMWindow.idl:
+
+2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=21924
