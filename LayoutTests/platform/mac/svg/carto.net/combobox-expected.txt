@@ -93,9 +93,9 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,-10) size 31x13
               chunk 1 text run 1 at (53.00,340.50) startOffset 0 endOffset 7 width 31.00: "Buttwil"
           RenderPath {rect} at (284.84,268.49) size 94.88x62.00 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,344.00 L182.50,344.00 L182.50,360.00 L51.50,360.00"]
-          RenderSVGText {text} at (53,356) size 46x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,-10) size 46x13
-              chunk 1 text run 1 at (53.00,356.50) startOffset 0 endOffset 8 width 46.00: "B\x{C3}\x{B6}bikon"
+          RenderSVGText {text} at (53,356) size 39x13 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,-10) size 39x13
+              chunk 1 text run 1 at (53.00,356.50) startOffset 0 endOffset 7 width 39.00: "B\x{F6}bikon"
         RenderPath {rect} at (283.30,169.94) size 154.23x161.66 [stroke={[type=SOLID] [color=#696969]}] [data="M50.00,200.00 L184.00,200.00 L184.00,360.00 L50.00,360.00"]
         RenderPath {rect} at (380.21,233.11) size 61.89x93.92 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M184.00,216.00 L200.00,216.00 L200.00,344.00 L184.00,344.00"]
         RenderPath {rect} at (430.21,222.28) size 18.14x18.14 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M184.00,200.00 L200.00,200.00 L200.00,216.00 L184.00,216.00"]
@@ -189,9 +189,9 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,-10) size 43x13
             chunk 1 text run 1 at (53.00,62.50) startOffset 0 endOffset 7 width 43.00: "Orangen"
         RenderPath {rect} at (40.23,51.56) size 117.97x12.50 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M51.50,66.00 L202.50,66.00 L202.50,82.00 L51.50,82.00"]
-        RenderSVGText {text} at (53,78) size 28x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,-10) size 28x13
-            chunk 1 text run 1 at (53.00,78.50) startOffset 0 endOffset 6 width 28.00: "\x{C3}\x{201E}pfel"
+        RenderSVGText {text} at (53,78) size 24x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-10) size 24x13
+            chunk 1 text run 1 at (53.00,78.50) startOffset 0 endOffset 5 width 24.00: "\x{C4}pfel"
         RenderPath {rect} at (40.23,64.06) size 117.97x12.50 [fill={[type=SOLID] [color=#696969] [opacity=0.30]}] [data="M51.50,82.00 L202.50,82.00 L202.50,98.00 L51.50,98.00"]
         RenderSVGText {text} at (53,94) size 43x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 43x13
