@@ -1,3 +1,17 @@
+2008-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Emit the WillExecuteStatement debugger hook before the "else" body
+        when there is no block for the "else" body. This allows breakpoints
+        on those statements in the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21944
+
+        Reviewed by Maciej Stachowiak.
+
+        * kjs/nodes.cpp:
+        (JSC::IfElseNode::emitCode): Emit the WillExecuteStatement
+        debugger hook before the else node if isn't a block.
+
 2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Build fix.

@@ -1,3 +1,14 @@
+2008-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Add a manual test that checks breakpoints on a blockless body of
+        an "else" statement.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21944
+
+        Reviewed by Maciej Stachowiak.
+
+        * manual-tests/inspector/debugger-pause-on-else-statements.html: Added.
+
 2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
