@@ -1,3 +1,13 @@
+2008-10-29  Mike Hommey  <glandium@debian.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21884
+        Test presence and link against libpng.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-10-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

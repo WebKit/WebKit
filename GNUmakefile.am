@@ -211,6 +211,7 @@ libWebCore_la_LIBADD = \
 	$(LIBXSLT_LIBS) \
 	$(HILDON_LIBS) \
 	$(JPEG_LIBS) \
+	$(PNG_LIBS) \
 	-lpthread
 
 # WebKit

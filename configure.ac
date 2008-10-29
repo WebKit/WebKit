@@ -180,6 +180,36 @@ if test "$PKG_CONFIG" = "no"; then
    AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed in your PATH])
 fi
 
+# Check for libpng the way Gtk+ does it
+AC_MSG_CHECKING(for libpng12)
+if $PKG_CONFIG --exists libpng12 ; then
+    AC_MSG_RESULT(yes)
+    PNG_LIBS=`$PKG_CONFIG --libs libpng12`
+else
+  AC_MSG_RESULT(no)
+  AC_CHECK_LIB(png, png_read_info,
+    [AC_CHECK_HEADER(png.h,
+      png_ok=yes,
+      png_ok=no)],
+    AC_MSG_ERROR([PNG library (libpng) not found]), -lz -lm)
+  if test "$png_ok" = yes; then
+    AC_MSG_CHECKING([for png_structp in png.h])
+    AC_TRY_COMPILE([#include <png.h>],
+      [png_structp pp; png_infop info; png_colorp cmap; png_create_read_struct;],
+      png_ok=yes,
+      png_ok=no)
+    AC_MSG_RESULT($png_ok)
+    if test "$png_ok" = yes; then
+      PNG_LIBS='-lpng -lz'
+    else
+      AC_MSG_ERROR([PNG library (libpng) not found])
+    fi
+  else
+   AC_MSG_ERROR([PNG library (libpng) not found])
+  fi
+fi
+AC_SUBST([PNG_LIBS])
+
 # determine the Unicode backend
 AC_MSG_CHECKING([the Unicode backend to use])
 AC_ARG_WITH(unicode_backend,
