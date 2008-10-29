@@ -35,7 +35,7 @@
 #include "JSEventListener.h"
 #include "XMLHttpRequest.h"
 #include "XMLHttpRequestUpload.h"
-#include <kjs/Error.h>
+#include <runtime/Error.h>
 
 using namespace JSC;
 

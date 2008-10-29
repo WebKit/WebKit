@@ -35,8 +35,8 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"
-#include <kjs/Error.h>
-#include <kjs/JSGlobalObject.h>
+#include <runtime/Error.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
 #include <kjs/PropertyNameArray.h>
 #include <kjs/SourceRange.h>

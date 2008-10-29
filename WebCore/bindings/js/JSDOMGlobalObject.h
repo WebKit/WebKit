@@ -27,7 +27,7 @@
 #ifndef JSDOMGlobalObject_h
 #define JSDOMGlobalObject_h
 
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 
 namespace WebCore {
 

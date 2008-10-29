@@ -34,8 +34,8 @@
 #import "WebViewInternal.h"
 #import <kjs/DebuggerCallFrame.h>
 #import <kjs/ExecState.h>
-#import <kjs/JSGlobalObject.h>
-#import <kjs/JSFunction.h>
+#import <runtime/JSGlobalObject.h>
+#import <runtime/JSFunction.h>
 #import <kjs/JSLock.h>
 #import <kjs/interpreter.h>
 #import <WebCore/Frame.h>

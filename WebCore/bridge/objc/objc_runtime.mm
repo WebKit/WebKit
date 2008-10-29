@@ -31,10 +31,10 @@
 #include "objc_instance.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include <kjs/Error.h>
-#include <kjs/JSGlobalObject.h>
+#include <runtime/Error.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
-#include <kjs/ObjectPrototype.h>
+#include <runtime/ObjectPrototype.h>
 #include <wtf/RetainPtr.h>
 
 using namespace WebCore;

@@ -21,7 +21,7 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
-#include <kjs/JSFunction.h>
+#include <runtime/JSFunction.h>
 #include <kjs/interpreter.h>
 #include <kjs/lookup.h>
 #include <wtf/Noncopyable.h>

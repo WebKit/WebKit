@@ -33,7 +33,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <kjs/Error.h>
+#include <runtime/Error.h>
 #include <kjs/JSLock.h>
 
 #ifdef NDEBUG

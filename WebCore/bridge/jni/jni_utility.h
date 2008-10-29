@@ -28,7 +28,7 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <JavaVM/jni.h>
 
 // The order of these items can not be modified as they are tightly

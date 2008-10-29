@@ -30,7 +30,7 @@
 #define WebScriptCallFrame_h
 
 #include "WebKit.h"
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 
 namespace JSC {
     class ExecState;

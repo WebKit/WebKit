@@ -46,7 +46,7 @@
 #include "RangeException.h"
 #include "ScriptController.h"
 #include "XMLHttpRequestException.h"
-#include <kjs/PrototypeFunction.h>
+#include <runtime/PrototypeFunction.h>
 
 #if ENABLE(SVG)
 #include "JSSVGException.h"

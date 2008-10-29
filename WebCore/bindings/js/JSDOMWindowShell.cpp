@@ -33,7 +33,7 @@
 #include "JSDOMWindow.h"
 #include "DOMWindow.h"
 #include "ScriptController.h"
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 
 using namespace JSC;
 

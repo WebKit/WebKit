@@ -31,7 +31,7 @@
 #import "WebFrameInternal.h"
 #import "WebViewInternal.h"
 #import "WebScriptDebugDelegate.h"
-#import <kjs/JSGlobalObject.h>
+#import <runtime/JSGlobalObject.h>
 #import <kjs/DebuggerCallFrame.h>
 #import <WebCore/DOMWindow.h>
 #import <WebCore/Frame.h>

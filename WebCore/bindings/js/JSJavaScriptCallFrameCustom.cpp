@@ -27,7 +27,7 @@
 #include "JSJavaScriptCallFrame.h"
 
 #include "JavaScriptCallFrame.h"
-#include <kjs/ArrayPrototype.h>
+#include <runtime/ArrayPrototype.h>
 
 using namespace JSC;
 

@@ -34,7 +34,7 @@
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <kjs/ArgList.h>
-#include <kjs/Error.h>
+#include <runtime/Error.h>
 #include <kjs/JSLock.h>
 
 #ifdef NDEBUG

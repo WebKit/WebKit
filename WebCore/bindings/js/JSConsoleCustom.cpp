@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSConsole.h"
 #include "JavaScriptProfile.h"
-#include <kjs/JSArray.h>
+#include <runtime/JSArray.h>
 
 #include "Console.h"
 

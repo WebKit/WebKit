@@ -29,7 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "npruntime_internal.h"
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 
 namespace WebCore {
     class String;

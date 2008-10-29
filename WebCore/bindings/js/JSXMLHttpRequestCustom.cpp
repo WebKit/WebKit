@@ -42,7 +42,7 @@
 #include "JSEventListener.h"
 #include "JSFile.h"
 #include "XMLHttpRequest.h"
-#include <kjs/Error.h>
+#include <runtime/Error.h>
 #include <VM/Machine.h>
 
 using namespace JSC;

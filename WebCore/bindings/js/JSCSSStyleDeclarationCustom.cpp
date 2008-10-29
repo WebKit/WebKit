@@ -31,8 +31,8 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSValue.h"
 #include "PlatformString.h"
-#include <kjs/StringObjectThatMasqueradesAsUndefined.h>
-#include <kjs/StringPrototype.h>
+#include <runtime/StringObjectThatMasqueradesAsUndefined.h>
+#include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 
 using namespace JSC;

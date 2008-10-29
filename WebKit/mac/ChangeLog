@@ -1,3 +1,23 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Move ForwardingHeaders to their correct location after the creation of
+        the runtime directory in JavaScriptCore.
+
+        * ForwardingHeaders/kjs/JSFunction.h: Removed.
+        * ForwardingHeaders/kjs/JSObject.h: Removed.
+        * ForwardingHeaders/kjs/JSString.h: Removed.
+        * ForwardingHeaders/kjs/JSValue.h: Removed.
+        * ForwardingHeaders/runtime: Added.
+        * ForwardingHeaders/runtime/JSFunction.h: Copied from ForwardingHeaders/kjs/JSFunction.h.
+        * ForwardingHeaders/runtime/JSObject.h: Copied from ForwardingHeaders/kjs/JSObject.h.
+        * ForwardingHeaders/runtime/JSString.h: Copied from ForwardingHeaders/kjs/JSString.h.
+        * ForwardingHeaders/runtime/JSValue.h: Copied from ForwardingHeaders/kjs/JSValue.h.
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebScriptDebugger.mm:
+        * WebView/WebView.mm:
+
 2008-10-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by John Sullivan.

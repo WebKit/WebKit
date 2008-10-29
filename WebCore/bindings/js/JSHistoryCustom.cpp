@@ -31,7 +31,7 @@
 
 #include "Frame.h"
 #include "History.h"
-#include <kjs/PrototypeFunction.h>
+#include <runtime/PrototypeFunction.h>
 
 using namespace JSC;
 

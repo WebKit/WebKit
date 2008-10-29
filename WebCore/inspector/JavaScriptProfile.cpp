@@ -32,8 +32,8 @@
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
-#include <kjs/JSObject.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSObject.h>
+#include <runtime/JSValue.h>
 
 using namespace JSC;
 

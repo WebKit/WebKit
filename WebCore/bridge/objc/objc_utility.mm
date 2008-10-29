@@ -30,7 +30,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "WebScriptObject.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
 #include <wtf/Assertions.h>
 

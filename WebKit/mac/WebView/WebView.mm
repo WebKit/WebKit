@@ -125,8 +125,8 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import <kjs/ArrayPrototype.h>
-#import <kjs/DateInstance.h>
+#import <runtime/ArrayPrototype.h>
+#import <runtime/DateInstance.h>
 #import <kjs/InitializeThreading.h>
 #import <kjs/JSLock.h>
 #import <mach-o/dyld.h>

@@ -26,7 +26,7 @@
 #ifndef JSQuarantinedObjectWrapper_h
 #define JSQuarantinedObjectWrapper_h
 
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 
 namespace WebCore {
 

@@ -27,7 +27,7 @@
 #define JSCustomPositionErrorCallback_h
 
 #include "PositionErrorCallback.h"
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 #include <kjs/protect.h>
 #include <wtf/Forward.h>
 

@@ -55,7 +55,7 @@
 #include "runtime.h"
 #include "runtime_root.h"
 #include <kjs/JSLock.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 
 #include <gdkconfig.h>
 #include <gtk/gtk.h>

@@ -26,7 +26,7 @@
 #ifndef JavaScriptProfile_h
 #define JavaScriptProfile_h
 
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 
 namespace JSC {
     class ExecState;

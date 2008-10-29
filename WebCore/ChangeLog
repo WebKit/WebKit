@@ -1,3 +1,125 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Move ForwardingHeaders to their correct location after the creation of
+        the runtime directory in JavaScriptCore.
+
+        * ForwardingHeaders/kjs/ArrayPrototype.h: Removed.
+        * ForwardingHeaders/kjs/BooleanObject.h: Removed.
+        * ForwardingHeaders/kjs/CallData.h: Removed.
+        * ForwardingHeaders/kjs/ConstructData.h: Removed.
+        * ForwardingHeaders/kjs/DateInstance.h: Removed.
+        * ForwardingHeaders/kjs/Error.h: Removed.
+        * ForwardingHeaders/kjs/FunctionConstructor.h: Removed.
+        * ForwardingHeaders/kjs/FunctionPrototype.h: Removed.
+        * ForwardingHeaders/kjs/InternalFunction.h: Removed.
+        * ForwardingHeaders/kjs/JSArray.h: Removed.
+        * ForwardingHeaders/kjs/JSFunction.h: Removed.
+        * ForwardingHeaders/kjs/JSGlobalObject.h: Removed.
+        * ForwardingHeaders/kjs/JSNumberCell.h: Removed.
+        * ForwardingHeaders/kjs/JSObject.h: Removed.
+        * ForwardingHeaders/kjs/JSString.h: Removed.
+        * ForwardingHeaders/kjs/JSValue.h: Removed.
+        * ForwardingHeaders/kjs/ObjectPrototype.h: Removed.
+        * ForwardingHeaders/kjs/PropertyMap.h: Removed.
+        * ForwardingHeaders/kjs/PrototypeFunction.h: Removed.
+        * ForwardingHeaders/kjs/StringObject.h: Removed.
+        * ForwardingHeaders/kjs/StringObjectThatMasqueradesAsUndefined.h: Removed.
+        * ForwardingHeaders/kjs/StringPrototype.h: Removed.
+        * ForwardingHeaders/kjs/StructureID.h: Removed.
+        * ForwardingHeaders/runtime: Added.
+        * ForwardingHeaders/runtime/ArrayPrototype.h: Copied from ForwardingHeaders/kjs/ArrayPrototype.h.
+        * ForwardingHeaders/runtime/BooleanObject.h: Copied from ForwardingHeaders/kjs/BooleanObject.h.
+        * ForwardingHeaders/runtime/CallData.h: Copied from ForwardingHeaders/kjs/CallData.h.
+        * ForwardingHeaders/runtime/ConstructData.h: Copied from ForwardingHeaders/kjs/ConstructData.h.
+        * ForwardingHeaders/runtime/DateInstance.h: Copied from ForwardingHeaders/kjs/DateInstance.h.
+        * ForwardingHeaders/runtime/Error.h: Copied from ForwardingHeaders/kjs/Error.h.
+        * ForwardingHeaders/runtime/FunctionConstructor.h: Copied from ForwardingHeaders/kjs/FunctionConstructor.h.
+        * ForwardingHeaders/runtime/FunctionPrototype.h: Copied from ForwardingHeaders/kjs/FunctionPrototype.h.
+        * ForwardingHeaders/runtime/InternalFunction.h: Copied from ForwardingHeaders/kjs/InternalFunction.h.
+        * ForwardingHeaders/runtime/JSArray.h: Copied from ForwardingHeaders/kjs/JSArray.h.
+        * ForwardingHeaders/runtime/JSFunction.h: Copied from ForwardingHeaders/kjs/JSFunction.h.
+        * ForwardingHeaders/runtime/JSGlobalObject.h: Copied from ForwardingHeaders/kjs/JSGlobalObject.h.
+        * ForwardingHeaders/runtime/JSNumberCell.h: Copied from ForwardingHeaders/kjs/JSNumberCell.h.
+        * ForwardingHeaders/runtime/JSObject.h: Copied from ForwardingHeaders/kjs/JSObject.h.
+        * ForwardingHeaders/runtime/JSString.h: Copied from ForwardingHeaders/kjs/JSString.h.
+        * ForwardingHeaders/runtime/JSValue.h: Copied from ForwardingHeaders/kjs/JSValue.h.
+        * ForwardingHeaders/runtime/ObjectPrototype.h: Copied from ForwardingHeaders/kjs/ObjectPrototype.h.
+        * ForwardingHeaders/runtime/PropertyMap.h: Copied from ForwardingHeaders/kjs/PropertyMap.h.
+        * ForwardingHeaders/runtime/PrototypeFunction.h: Copied from ForwardingHeaders/kjs/PrototypeFunction.h.
+        * ForwardingHeaders/runtime/StringObject.h: Copied from ForwardingHeaders/kjs/StringObject.h.
+        * ForwardingHeaders/runtime/StringObjectThatMasqueradesAsUndefined.h: Copied from ForwardingHeaders/kjs/StringObjectThatMasqueradesAsUndefined.h.
+        * ForwardingHeaders/runtime/StringPrototype.h: Copied from ForwardingHeaders/kjs/StringPrototype.h.
+        * ForwardingHeaders/runtime/StructureID.h: Copied from ForwardingHeaders/kjs/StructureID.h.
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * bindings/js/JSClipboardCustom.cpp:
+        * bindings/js/JSConsoleCustom.cpp:
+        * bindings/js/JSCustomPositionCallback.h:
+        * bindings/js/JSCustomPositionErrorCallback.h:
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDatabaseCustom.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSEventTarget.h:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        * bindings/js/JSLocationCustom.cpp:
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/c/c_utility.cpp:
+        * bridge/c/c_utility.h:
+        * bridge/jni/jni_instance.cpp:
+        * bridge/jni/jni_jsobject.h:
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/jni/jni_runtime.cpp:
+        * bridge/jni/jni_utility.cpp:
+        * bridge/jni/jni_utility.h:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        * bridge/runtime.h:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        * bridge/runtime_object.h:
+        * bridge/runtime_root.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/JavaScriptProfile.cpp:
+        * inspector/JavaScriptProfile.h:
+        * inspector/JavaScriptProfileNode.cpp:
+        * inspector/JavaScriptProfileNode.h:
+        * loader/FrameLoader.cpp:
+        * page/Console.cpp:
+        * plugins/PluginView.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
 2008-10-28  Adele Peterson  <adele@apple.com>
 
         Windows build fix.  This removes Cairo include directories from non-Cairbo build configurations.

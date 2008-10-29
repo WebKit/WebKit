@@ -33,7 +33,7 @@
 #include "JSDOMWindow.h"
 #include "NP_jsobject.h"
 #include "c_instance.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
 #include "PlatformString.h"
 #include "npruntime_impl.h"

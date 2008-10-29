@@ -38,7 +38,7 @@
 #include "runtime.h"
 #include "runtime_root.h"
 #include <kjs/JSLock.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 

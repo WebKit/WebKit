@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSQuarantinedObjectWrapper.h"
 
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 
 using namespace JSC;
 

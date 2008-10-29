@@ -63,7 +63,7 @@
 #include "Settings.h"
 #include "runtime.h"
 #include <kjs/JSLock.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <wtf/ASCIICType.h>
 
 #if PLATFORM(QT)

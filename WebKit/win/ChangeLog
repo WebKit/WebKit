@@ -1,3 +1,12 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Move ForwardingHeaders to their correct location after the creation of
+        the runtime directory in JavaScriptCore.
+
+        * WebScriptCallFrame.h:
+
 2008-10-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by John Sullivan.

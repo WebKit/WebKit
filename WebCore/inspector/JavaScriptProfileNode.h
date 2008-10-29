@@ -26,7 +26,7 @@
 #ifndef JavaScriptProfileNode_h
 #define JavaScriptProfileNode_h
 
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <JavaScriptCore/JSBase.h>
 
 namespace JSC {

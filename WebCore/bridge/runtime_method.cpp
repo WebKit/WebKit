@@ -28,8 +28,8 @@
 
 #include "JSDOMBinding.h"
 #include "runtime_object.h"
-#include <kjs/Error.h>
-#include <kjs/FunctionPrototype.h>
+#include <runtime/Error.h>
+#include <runtime/FunctionPrototype.h>
 
 using namespace WebCore;
 

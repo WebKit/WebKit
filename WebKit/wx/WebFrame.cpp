@@ -43,7 +43,7 @@
 
 #include "ScriptController.h"
 #include "JSDOMBinding.h"
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <kjs/ustring.h>
 
 #include "wx/wxprec.h"

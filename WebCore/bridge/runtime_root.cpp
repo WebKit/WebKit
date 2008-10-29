@@ -27,7 +27,7 @@
 
 #include "runtime.h"
 #include "runtime_object.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 

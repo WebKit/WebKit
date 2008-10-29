@@ -41,7 +41,7 @@
 #include "PlatformString.h"
 #include <kjs/ArgList.h>
 #include <kjs/interpreter.h>
-#include <kjs/JSObject.h>
+#include <runtime/JSObject.h>
 #include <VM/Machine.h>
 #include <profiler/Profiler.h>
 #include <stdio.h>

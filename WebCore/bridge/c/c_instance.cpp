@@ -37,7 +37,7 @@
 #include <kjs/ArgList.h>
 #include <kjs/ExecState.h>
 #include <kjs/JSLock.h>
-#include <kjs/JSNumberCell.h>
+#include <runtime/JSNumberCell.h>
 #include <kjs/PropertyNameArray.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>

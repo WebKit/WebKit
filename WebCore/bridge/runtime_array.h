@@ -27,7 +27,7 @@
 #define RUNTIME_ARRAY_H_
 
 #include "runtime.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 
 namespace JSC {
     

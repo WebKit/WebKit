@@ -36,7 +36,7 @@
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <kjs/ExecState.h>
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
 #include <kjs/completion.h>
 #include <kjs/interpreter.h>

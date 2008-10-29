@@ -31,7 +31,7 @@
 #include "jni_runtime.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include <kjs/JSArray.h>
+#include <runtime/JSArray.h>
 #include <kjs/JSLock.h>
 #include <dlfcn.h>
 

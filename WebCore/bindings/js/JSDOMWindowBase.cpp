@@ -63,7 +63,7 @@
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "htmlediting.h"
-#include <kjs/Error.h>
+#include <runtime/Error.h>
 #include <kjs/JSLock.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>

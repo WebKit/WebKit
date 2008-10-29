@@ -28,7 +28,7 @@
 
 #include "objc_header.h"
 #include "runtime.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 #include <wtf/RetainPtr.h>
 
 namespace JSC {

@@ -34,8 +34,8 @@
 #include "MessagePort.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#include <kjs/JSObject.h>
-#include <kjs/PrototypeFunction.h>
+#include <runtime/JSObject.h>
+#include <runtime/PrototypeFunction.h>
 
 using namespace JSC;
 

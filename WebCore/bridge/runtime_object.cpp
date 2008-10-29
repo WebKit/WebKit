@@ -29,8 +29,8 @@
 #include "JSDOMBinding.h"
 #include "runtime_method.h"
 #include "runtime_root.h"
-#include <kjs/Error.h>
-#include <kjs/ObjectPrototype.h>
+#include <runtime/Error.h>
+#include <runtime/ObjectPrototype.h>
 
 using namespace WebCore;
 

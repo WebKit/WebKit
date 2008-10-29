@@ -26,8 +26,8 @@
 #include "config.h"
 #include "runtime_array.h"
 
-#include <kjs/ArrayPrototype.h>
-#include <kjs/Error.h>
+#include <runtime/ArrayPrototype.h>
+#include <runtime/Error.h>
 #include "JSDOMBinding.h"
 
 using namespace WebCore;

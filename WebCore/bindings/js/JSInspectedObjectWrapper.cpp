@@ -27,7 +27,7 @@
 #include "JSInspectedObjectWrapper.h"
 
 #include "JSInspectorCallbackWrapper.h"
-#include <kjs/JSGlobalObject.h>
+#include <runtime/JSGlobalObject.h>
 
 using namespace JSC;
 

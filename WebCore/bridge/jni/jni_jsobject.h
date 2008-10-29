@@ -30,7 +30,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <JavaVM/jni.h>
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <wtf/RefPtr.h>
 
 #define jlong_to_ptr(a) ((void*)(uintptr_t)(a))

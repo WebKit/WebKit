@@ -29,7 +29,7 @@
 #if ENABLE(XPATH)
 
 #include "XPathNSResolver.h"
-#include <kjs/JSValue.h>
+#include <runtime/JSValue.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 

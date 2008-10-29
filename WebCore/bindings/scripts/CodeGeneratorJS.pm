@@ -383,15 +383,15 @@ sub GenerateHeader
         push(@headerContentHeader, "#include \"$parentClassName.h\"\n");
     } else {
         push(@headerContentHeader, "#include \"JSDOMBinding.h\"\n");
-        push(@headerContentHeader, "#include <kjs/JSGlobalObject.h>\n");
-        push(@headerContentHeader, "#include <kjs/ObjectPrototype.h>\n");
+        push(@headerContentHeader, "#include <runtime/JSGlobalObject.h>\n");
+        push(@headerContentHeader, "#include <runtime/ObjectPrototype.h>\n");
     }
     if ($interfaceName eq "Node") {
         push(@headerContentHeader, "#include \"EventTargetNode.h\"\n");
     }
 
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
-        push(@headerContentHeader, "#include <kjs/CallData.h>\n");
+        push(@headerContentHeader, "#include <runtime/CallData.h>\n");
     }
 
     if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
@@ -1857,7 +1857,7 @@ sub WriteData
         print $IMPL "\n";
 
         foreach my $implKJSInclude (sort keys(%implKJSInclude)) {
-            print $IMPL "#include <kjs/$implKJSInclude>\n";
+            print $IMPL "#include <runtime/$implKJSInclude>\n";
         }
 
         print $IMPL @implContent;

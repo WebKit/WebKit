@@ -41,7 +41,7 @@
 #import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>
 #import <kjs/ExecState.h>
-#import <kjs/JSGlobalObject.h>
+#import <runtime/JSGlobalObject.h>
 #import <kjs/JSLock.h>
 #import <kjs/completion.h>
 #import <kjs/interpreter.h>
