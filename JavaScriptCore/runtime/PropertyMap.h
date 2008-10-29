@@ -103,6 +103,11 @@ namespace JSC {
         bool isEmpty() { return !m_table; }
         unsigned storageSize() const { return m_table ? m_table->keyCount + m_deletedOffsets.size() : 0; }
 
+        size_t propertyMapSize() const
+        {
+            return sizeof(PropertyMap) + (m_table ? PropertyMapHashTable::allocationSize(m_table->size) : 0);
+        }
+
         static const unsigned emptyEntryIndex = 0;
 
     private:

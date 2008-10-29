@@ -60,6 +60,7 @@ void StructureID::dumpStatistics()
     unsigned numberLeaf = 0;
     unsigned numberUsingSingleSlot = 0;
     unsigned numberSingletons = 0;
+    unsigned totalPropertyMapsSize = 0;
 
     HashSet<StructureID*>::const_iterator end = liveStructureIDSet.end();
     for (HashSet<StructureID*>::const_iterator it = liveStructureIDSet.begin(); it != end; ++it) {
@@ -73,27 +74,34 @@ void StructureID::dumpStatistics()
            if (!structureID->m_previous && !structureID->m_transitions.singleTransition)
                 ++numberSingletons;
         }
+
+        totalPropertyMapsSize += structureID->propertyMap().propertyMapSize();
     }
 
     printf("Number of live StructureIDs: %d\n", liveStructureIDSet.size());
     printf("Number of StructureIDs using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
     printf("Number of StructureIDs that are leaf nodes: %d\n", numberLeaf);
     printf("Number of StructureIDs that singletons: %d\n", numberSingletons);
+
+    printf("Size of a single StructureIDs: %d\n", static_cast<unsigned>(sizeof(StructureID)));
+    printf("Size of sum of all property maps: %d\n", totalPropertyMapsSize);
+    printf("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyMapsSize) / static_cast<double>(liveStructureIDSet.size()));
 }
 #endif
 
 StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)
-    , m_isDictionary(false)
-    , m_hasGetterSetterProperties(false)
     , m_prototype(prototype)
     , m_cachedPrototypeChain(0)
     , m_previous(0)
     , m_nameInPrevious(0)
     , m_transitionCount(0)
-    , m_usingSingleTransitionSlot(true)
     , m_propertyStorageCapacity(JSObject::inlineStorageCapacity)
     , m_cachedTransistionOffset(WTF::notFound)
+    , m_isDictionary(false)
+    , m_hasGetterSetterProperties(false)
+    , m_usingSingleTransitionSlot(true)
+    , m_attributesInPrevious(0)
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());

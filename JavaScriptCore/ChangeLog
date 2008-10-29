@@ -1,3 +1,17 @@
+2008-10-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21958
+        Pack bits in StructureID to reduce the size of each StructureID by 2 words.
+
+        * runtime/PropertyMap.h:
+        (JSC::PropertyMap::propertyMapSize):
+        * runtime/StructureID.cpp:
+        (JSC::StructureID::dumpStatistics): Add additional size statistics when dumping.
+        (JSC::StructureID::StructureID):
+        * runtime/StructureID.h:
+
 2008-10-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after addition of runtime and ImageBuffer changes.
