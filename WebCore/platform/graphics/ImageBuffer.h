@@ -47,7 +47,7 @@ namespace WebCore {
         // Will return a null pointer on allocation failure.
         static std::auto_ptr<ImageBuffer> create(const IntSize& size, bool grayScale)
         {
-            bool success;
+            bool success = false;
             std::auto_ptr<ImageBuffer> buf(new ImageBuffer(size, grayScale, success));
             if (success)
                 return buf;
