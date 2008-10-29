@@ -1,3 +1,11 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Roll out a mistaken attempt at fixing the GTK build in r37947.
+
+        * GNUmakefile.am:
+
 2008-10-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by John Sullivan.
