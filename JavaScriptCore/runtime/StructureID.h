@@ -30,6 +30,7 @@
 #include "JSType.h"
 #include "JSValue.h"
 #include "PropertyMap.h"
+#include "StructureIDTransitionTable.h"
 #include "TypeInfo.h"
 #include "ustring.h"
 #include <wtf/HashFunctions.h>
@@ -45,35 +46,6 @@ namespace JSC {
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureIDChain;
-
-    struct TransitionTableHash {
-        typedef std::pair<RefPtr<UString::Rep>, unsigned> TransitionTableKey;
-        static unsigned hash(const TransitionTableKey& p)
-        {
-            return p.first->computedHash();
-        }
-
-        static bool equal(const TransitionTableKey& a, const TransitionTableKey& b)
-        {
-            return a == b;
-        }
-
-        static const bool safeToCompareToEmptyOrDeleted = true;
-    };
-
-    struct TransitionTableHashTraits {
-        typedef WTF::HashTraits<RefPtr<UString::Rep> > FirstTraits;
-        typedef WTF::GenericHashTraits<unsigned> SecondTraits;
-        typedef std::pair<FirstTraits::TraitType, SecondTraits::TraitType> TraitType;
-
-        static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
-        static TraitType emptyValue() { return std::make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
-
-        static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
-
-        static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
-        static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
-    };
 
     class StructureID : public RefCounted<StructureID> {
     public:
@@ -140,9 +112,6 @@ namespace JSC {
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
 
     private:
-        typedef std::pair<RefPtr<UString::Rep>, unsigned> TransitionTableKey;
-        typedef HashMap<TransitionTableKey, StructureID*, TransitionTableHash, TransitionTableHashTraits> TransitionTable;
-
         StructureID(JSValue* prototype, const TypeInfo&);
         
         static const size_t s_maxTransitionLength = 64;
@@ -158,7 +127,7 @@ namespace JSC {
         size_t m_transitionCount;
         union {
             StructureID* singleTransition;
-            TransitionTable* table;
+            StructureIDTransitionTable* table;
         } m_transitions;
 
         RefPtr<PropertyNameArrayData> m_cachedPropertyNameArrayData;

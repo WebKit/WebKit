@@ -230,6 +230,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StringPrototype.h \
 	JavaScriptCore/runtime/StructureID.cpp \
 	JavaScriptCore/runtime/StructureID.h \
+	JavaScriptCore/runtime/StructureIDTransitionTable.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
 	JavaScriptCore/wrec/WREC.cpp \

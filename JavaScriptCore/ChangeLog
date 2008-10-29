@@ -1,5 +1,22 @@
 2008-10-29  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        Rename and move the StructureID transition table to its own file.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/StructureID.cpp:
+        (JSC::StructureID::addPropertyTransition):
+        * runtime/StructureID.h:
+        (JSC::StructureID::):
+        * runtime/StructureIDTransitionTable.h: Copied from runtime/StructureID.h.
+        (JSC::StructureIDTransitionTableHash::hash):
+        (JSC::StructureIDTransitionTableHash::equal):
+
+2008-10-29  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Cameron Zwarich.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=21958

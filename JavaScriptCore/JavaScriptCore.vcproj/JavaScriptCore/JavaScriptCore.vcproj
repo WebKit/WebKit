@@ -881,6 +881,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\StructureIDTransitionTable.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\SymbolTable.h"
 				>
 			</File>
