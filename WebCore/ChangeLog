@@ -1,5 +1,18 @@
 2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21921
+        MessagePort messages are dispatched to documents that are not fully active
+
+        Covered by corrected fast/events/message-port-inactive-document.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent): Don't dispatch messages to contexts
+        that are not fully active.
+
+2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=21922

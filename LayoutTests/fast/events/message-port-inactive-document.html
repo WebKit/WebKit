@@ -22,12 +22,12 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-var document;
+var otherDocument;
 var mainPort;
 
 function test()
 {
-    document = window.frames[0].document;
+    otherDocument = window.frames[0].document;
     var channel = new MessageChannel;
     window.frames[0].postMessage("msg", channel.port2, "*");
     mainPort = channel.port1;

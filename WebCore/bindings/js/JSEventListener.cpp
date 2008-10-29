@@ -61,6 +61,10 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     Frame* frame = window->impl()->frame();
     if (!frame)
         return;
+    // The window must still be active in its frame. See <https://bugs.webkit.org/show_bug.cgi?id=21921>.
+    // FIXME: A better fix for this may be to change DMOWindow::frame() to not return a frame the detached window used to be in.
+    if (frame->domWindow() != window->impl())
+        return;
     ScriptController* script = frame->script();
     if (!script->isEnabled() || script->isPaused())
         return;
