@@ -1,3 +1,16 @@
+2008-10-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=21952
+        
+        Address an outstanding FIXME by removing unused SPI
+
+        * History/WebHistory.mm:
+        (-[WebHistory _addItemForURL:title:]): Fold addItem: into this method
+
+        * History/WebHistoryPrivate.h: Removed unused/unneccessary SPI
+
 2008-10-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

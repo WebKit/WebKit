@@ -81,7 +81,6 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 - (BOOL)containsURL:(NSURL *)URL;
-- (BOOL)containsItemForURLString:(NSString *)URLString;
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURLString:(NSString *)URLString;
 
@@ -396,11 +395,6 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 - (WebHistoryItem *)itemForURLString:(NSString *)URLString
 {
     return [_entriesByURL objectForKey:URLString];
-}
-
-- (BOOL)containsItemForURLString:(NSString *)URLString
-{
-    return [self itemForURLString:URLString] != nil;
 }
 
 - (BOOL)containsURL:(NSURL *)URL
@@ -779,46 +773,6 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 @implementation WebHistory (WebPrivate)
 
-- (void)addItem:(WebHistoryItem *)entry
-{
-    LOG(History, "adding %@", entry);
-    [_historyPrivate addItem:entry];
-    [self _sendNotification:WebHistoryItemsAddedNotification
-                    entries:[NSArray arrayWithObject:entry]];
-}
-
-- (WebHistoryItem *)addItemForURL:(NSURL *)URL
-{
-    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:nil];
-    [entry _setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
-    [self addItem:entry];
-    [entry release];
-    return entry;
-}
-
-- (NSCalendarDate *)ageLimitDate
-{
-    return [_historyPrivate ageLimitDate];
-}
-
-- (BOOL)containsItemForURLString:(NSString *)URLString
-{
-    return [_historyPrivate containsItemForURLString:URLString];
-}
-
-- (void)removeItem:(WebHistoryItem *)entry
-{
-    if ([_historyPrivate removeItem:entry]) {
-        [self _sendNotification:WebHistoryItemsRemovedNotification
-                        entries:[NSArray arrayWithObject:entry]];
-    }
-}
-
-- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)entry
-{
-    [_historyPrivate setLastVisitedTimeInterval:time forItem:entry];
-}
-
 - (WebHistoryItem *)_itemForURLString:(NSString *)URLString
 {
     return [_historyPrivate itemForURLString:URLString];
@@ -832,7 +786,12 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 {
     WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:title];
     [entry _setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
-    [self addItem:entry];
+
+    LOG(History, "adding %@", entry);
+    [_historyPrivate addItem:entry];
+    [self _sendNotification:WebHistoryItemsAddedNotification
+                    entries:[NSArray arrayWithObject:entry]];
+                    
     [entry release];
 }
 
