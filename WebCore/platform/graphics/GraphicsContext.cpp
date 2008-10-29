@@ -484,7 +484,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
     generator.fill(this, rect);
 }
 
-#if !PLATFORM(CG)
+#if !PLATFORM(CG) && !PLATFORM(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.
 void GraphicsContext::setPlatformTextDrawingMode(int mode)

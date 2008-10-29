@@ -1,3 +1,12 @@
+2008-10-29  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Adler
+        https://bugs.webkit.org/attachment.cgi?id=24745
+
+        Allow Skia implementations to get text style changed notifications.
+
+        * platform/graphics/GraphicsContext.cpp:
+
 2008-10-29  Timothy Hatcher  <timothy@apple.com>
 
         Add a manual test that checks breakpoints on a blockless body of
