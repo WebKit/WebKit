@@ -1,3 +1,12 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Attempt to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+
 2008-10-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,12 @@
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Attempt to fix the Windows build by generating Forwardingheaders for the
+        runtime directory in JavaScriptCore.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-10-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
