@@ -20,8 +20,8 @@
 #include "config.h"
 #include "JSXMLHttpRequestConstructor.h"
 
-#include "Document.h"
 #include "JSXMLHttpRequest.h"
+#include "ScriptExecutionContext.h"
 #include "XMLHttpRequest.h"
 
 using namespace JSC;
@@ -32,10 +32,12 @@ ASSERT_CLASS_FITS_IN_CELL(JSXMLHttpRequestConstructor)
 
 const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstructor", 0, 0, 0 };
 
-JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Document* document)
+JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSXMLHttpRequestConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
+    ASSERT(context->isDocument());
+    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
+
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
 }
 

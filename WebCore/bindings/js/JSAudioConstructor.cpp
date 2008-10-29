@@ -29,9 +29,9 @@
 
 #include "JSAudioConstructor.h"
 
-#include "Document.h"
 #include "HTMLAudioElement.h"
 #include "JSHTMLAudioElement.h"
+#include "ScriptExecutionContext.h"
 #include "Text.h"
 
 using namespace JSC;
@@ -40,10 +40,12 @@ namespace WebCore {
 
 const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
 
-JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* document)
+JSAudioConstructor::JSAudioConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSAudioConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
+    ASSERT(context->isDocument());
+    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
+
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 

@@ -27,28 +27,27 @@
 #define JSMessageChannelConstructor_h
 
 #include "JSDOMBinding.h"
-#include "JSDocument.h"
 
 namespace WebCore {
 
-    class Frame;
-
     class JSMessageChannelConstructor : public DOMObject {
     public:
-        JSMessageChannelConstructor(JSC::ExecState*, Document*);
+        JSMessageChannelConstructor(JSC::ExecState*, ScriptExecutionContext*);
         virtual ~JSMessageChannelConstructor();
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
 
-        Document* document() const { return m_document->impl(); }
+        ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
         virtual bool implementsHasInstance() const { return true; }
         static JSC::JSObject* construct(JSC::ExecState*, JSC::JSObject*, const JSC::ArgList&);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
         virtual void mark();
+
     private:
-        JSDocument* m_document;
+        ScriptExecutionContext* m_scriptExecutionContext;
+        JSC::JSValue* m_contextWrapper;
     };
 
 } // namespace WebCore

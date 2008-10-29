@@ -32,6 +32,7 @@
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "KURL.h"
+#include "ScriptExecutionContext.h"
 #include "StringHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -48,7 +49,6 @@
 
 namespace WebCore {
 
-    class ActiveDOMObject;
     class AXObjectCache;
     class Attr;
     class Attribute;
@@ -86,7 +86,6 @@ namespace WebCore {
     class ImageLoader;
     class IntPoint;
     class JSNode;
-    class MessagePort;
     class MouseEventWithHitTestResults;
     class NodeFilter;
     class NodeIterator;
@@ -168,7 +167,7 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
     static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
 };
 
-class Document : public ContainerNode {
+class Document : public ContainerNode, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame)
     {
@@ -180,6 +179,10 @@ public:
     }
     virtual ~Document();
 
+    virtual bool isDocument() const { return true; }
+
+    using ContainerNode::ref;
+    using ContainerNode::deref;
     virtual void removedLastRef();
 
     // Nodes belonging to this document hold "self-only" references -
@@ -765,19 +768,6 @@ public:
     CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
 
-    // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
-    void stopActiveDOMObjects();
-    void createdActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
-    void destroyedActiveDOMObject(ActiveDOMObject*);
-    const HashMap<ActiveDOMObject*, void*>& activeDOMObjects() const { return m_activeDOMObjects; }
-
-    // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch, and for cross-heap GC support.
-    void processMessagePortMessagesSoon();
-    void dispatchMessagePortEvents();
-    void createdMessagePort(MessagePort*);
-    void destroyedMessagePort(MessagePort*);
-    const HashSet<MessagePort*>& messagePorts() const { return m_messagePorts; }
-
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void initDNSPrefetch();
     void parseDNSPrefetchControlHeader(const String&);
@@ -786,6 +776,9 @@ protected:
     Document(Frame*, bool isXHTML);
 
 private:
+    virtual void refScriptExecutionContext() { ref(); }
+    virtual void derefScriptExecutionContext() { deref(); }
+
     CSSStyleSelector* m_styleSelector;
     bool m_didCalculateStyleSelector;
 
@@ -935,11 +928,6 @@ private:
 
     String m_contentLanguage;
 
-    bool m_firedMessagePortTimer;
-    HashSet<MessagePort*> m_messagePorts;
-
-    HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
-
 public:
     bool inPageCache();
     void setInPageCache(bool flag);
@@ -1084,7 +1072,6 @@ private:
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;
 #endif
-
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

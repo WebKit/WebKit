@@ -20,9 +20,9 @@
 #include "config.h"
 #include "JSOptionConstructor.h"
 
-#include "Document.h"
 #include "HTMLOptionElement.h"
 #include "JSHTMLOptionElement.h"
+#include "ScriptExecutionContext.h"
 #include "Text.h"
 
 using namespace JSC;
@@ -33,10 +33,12 @@ ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor)
 
 const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", 0, 0, 0 };
 
-JSOptionConstructor::JSOptionConstructor(ExecState* exec, Document* document)
+JSOptionConstructor::JSOptionConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSOptionConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
+    ASSERT(context->isDocument());
+    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
+
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
 }
 

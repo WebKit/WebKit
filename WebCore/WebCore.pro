@@ -563,6 +563,7 @@ SOURCES += \
     dom/Range.cpp \
     dom/RegisteredEventListener.cpp \
     dom/ScriptElement.cpp \
+    dom/ScriptExecutionContext.cpp \
     dom/SelectorNodeList.cpp \
     dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \

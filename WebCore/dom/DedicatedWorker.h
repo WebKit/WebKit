@@ -42,6 +42,7 @@ namespace WebCore {
     class CachedResource;
     class CachedScript;
     class Document;
+    class ScriptExecutionContext;
     class MessagePort;
     class String;
 
@@ -52,7 +53,9 @@ namespace WebCore {
         static PassRefPtr<DedicatedWorker> create(const String& url, Document* document, ExceptionCode& ec) { return adoptRef(new DedicatedWorker(url, document, ec)); }
         ~DedicatedWorker();
 
-        PassRefPtr<MessagePort> startConversation(Document*, const String& message);
+        Document* document() const;
+
+        PassRefPtr<MessagePort> startConversation(ScriptExecutionContext*, const String& message);
         void close();
         void postMessage(const String& message, MessagePort* port = 0);
 

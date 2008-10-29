@@ -1,3 +1,130 @@
+2008-10-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21923
+        Create an abstraction for script execution context
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        Added ScriptExecutionContext.{h,cpp}.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        Pass ScriptExecutionContext instead of Document to make getDOMConstructor() happy.
+        Since these objects can only work within documents now, it is immediately converted back
+        to Document.
+
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor):
+        (WebCore::JSMessageChannelConstructor::construct):
+        * bindings/js/JSMessageChannelConstructor.h:
+        (WebCore::JSMessageChannelConstructor::scriptExecutionContext):
+        MessageChannel needs to be supported in workers right away, so the constructor operates with
+        it directly.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        (WebCore::ActiveDOMObject::contextDestroyed):
+        * dom/ActiveDOMObject.h:
+        (WebCore::ActiveDOMObject::scriptExecutionContext):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markActiveObjectsForContext):
+        (WebCore::markCrossHeapDependentObjectsForContext):
+        Use ScriptExecutionContext instead of Document, now that ActiveDOMObject and MessagePort
+        tracking is handled by ScriptExecutionContext.
+
+        * bindings/js/JSDOMBinding.h: (WebCore::getDOMPrototype): Moved to JSDOMGlobalObject.
+
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor): Moved to this file, as constructors live in JSDOMGlobalObject.
+        Also, the two-argument version that used to be in JSDOMWindowBase.cpp need to be accessible
+        to worker context implementation.
+        (WebCore::scriptExecutionContext): Added a pure virtual method to access
+        ScriptExecutionContext, implemented by subclasses.
+
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowBase.cpp: (WebCore::JSDOMWindowBase::scriptExecutionContext):
+        Implement by returning the associated document. Note that this method currently gives bogus
+        results after navigation - DOMWindow Frame reference is not zeroed out, so we get a document
+        that is currently in the frame, not the one associated with this window.
+
+        * bindings/js/JSDedicatedWorkerConstructor.cpp: Removed unnecessary include of DOMWindow.h.
+
+        * bindings/js/JSDocumentCustom.cpp: (WebCore::JSDocument::mark):
+        Call markActiveObjectsForContext() by its new name.
+
+        * dom/DedicatedWorker.cpp:
+        (WebCore::DedicatedWorker::DedicatedWorker):
+        (WebCore::DedicatedWorker::document):
+        * dom/DedicatedWorker.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::document):
+        * xml/XMLHttpRequest.h:
+        Added a document() function that upcasts ScriptExecutionContext, as these objects only work
+        within documents currently (at least for XMLHttpRequest, this will change soon though).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        Moved active object and MessagePort tracking up to ScriptExecutionContext, to share code
+        with workers.
+        
+        * dom/Document.h:
+        (WebCore::Document::isDocument):
+        (WebCore::Document::refScriptExecutionContext):
+        (WebCore::Document::derefScriptExecutionContext):
+        Inherit from ScriptExecutionContext.
+
+        * dom/MessageChannel.cpp:
+        (WebCore::MessageChannel::MessageChannel):
+        * dom/MessageChannel.h:
+        (WebCore::MessageChannel::create):
+        Use ScriptExecutionContext instead of Document.
+
+        * dom/MessagePort.cpp:
+        (WebCore::CloseMessagePortTimer::CloseMessagePortTimer): Make m_port a RefPtr, because
+        MessagePort doesn't ref() itself when posting this event any more (this is a fix for an
+        unrelated issue that was causing random crashes in layout tests).
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::~MessagePort):
+        (WebCore::MessagePort::associatedFrame):
+        (WebCore::MessagePort::clone):
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::startConversation):
+        (WebCore::MessagePort::start):
+        (WebCore::MessagePort::contextDestroyed):
+        (WebCore::MessagePort::dispatchMessages):
+        * dom/MessagePort.h:
+        (WebCore::MessagePort::create):
+        (WebCore::MessagePort::scriptExecutionContext):
+        Use ScriptExecutionContext instead of Document. This is a step toward making MessagePort
+        work in worker contexts - we need to also make some its method thread safe for cross-thread
+        messaging, and make event dispatching thread safe.
+
+        * dom/ScriptExecutionContext.cpp: Added.
+        * dom/ScriptExecutionContext.h: Added.
+        ActiveDOMObject and MessagePort tracking is moved from Document.
+        It is debatable whether ScriptExecutionContext should be a parent of Document or DOMWindow,
+        but as I'm just moving Document code, and it is Document that is the main context object
+        in our implementation currently.
+        Changing ScriptExecutionContext to be a parent of DOMWindow causes a number of bugs that
+        seem non-trivial to fix, and isn't really a part of this task.
+
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
         List newly-added ImageBufferData.h in build system.

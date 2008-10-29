@@ -627,6 +627,8 @@ webcore_sources += \
 	WebCore/dom/RegisteredEventListener.h \
 	WebCore/dom/ScriptElement.cpp \
 	WebCore/dom/ScriptElement.h \
+	WebCore/dom/ScriptExecutionContext.cpp \
+	WebCore/dom/ScriptExecutionContext.h \
 	WebCore/dom/SelectorNodeList.cpp \
 	WebCore/dom/SelectorNodeList.h \
 	WebCore/dom/StaticNodeList.cpp \

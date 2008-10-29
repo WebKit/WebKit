@@ -428,6 +428,7 @@ This file contains the list of files needed to build WebCore.
         dom/Range.cpp
         dom/RegisteredEventListener.cpp
         dom/ScriptElement.cpp
+        dom/ScriptExecutionContext.cpp
         dom/SelectorNodeList.cpp
         dom/StaticNodeList.cpp
         dom/StyleElement.cpp

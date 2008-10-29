@@ -4142,6 +4142,8 @@
 		E10B9B6D0B747599003ED890 /* NativeXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */; };
 		E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */; };
 		E10B9CCD0B747A44003ED890 /* DOMCustomXPathNSResolver.mm in Sources */ = {isa = PBXBuildFile; fileRef = E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */; };
+		E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
@@ -8752,6 +8754,8 @@
 		E10B9B6B0B747599003ED890 /* NativeXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeXPathNSResolver.cpp; sourceTree = "<group>"; };
 		E10B9CCA0B747A44003ED890 /* DOMCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCustomXPathNSResolver.h; sourceTree = "<group>"; };
 		E10B9CCB0B747A44003ED890 /* DOMCustomXPathNSResolver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCustomXPathNSResolver.mm; sourceTree = "<group>"; };
+		E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutionContext.h; sourceTree = "<group>"; };
+		E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptExecutionContext.cpp; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
@@ -13978,6 +13982,8 @@
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
 				08A484750E5272C500C3FE76 /* ScriptElement.cpp */,
 				08A484760E5272C500C3FE76 /* ScriptElement.h */,
+				E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */,
+				E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */,
 				BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */,
 				BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */,
 				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
@@ -16154,6 +16160,7 @@
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
 				E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */,
 				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
+				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18039,6 +18046,7 @@
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
 				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,
+				E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,9 +20,9 @@
 #include "config.h"
 #include "JSImageConstructor.h"
 
-#include "Document.h"
 #include "HTMLImageElement.h"
 #include "JSNode.h"
+#include "ScriptExecutionContext.h"
 
 using namespace JSC;
 
@@ -32,10 +32,11 @@ ASSERT_CLASS_FITS_IN_CELL(JSImageConstructor)
 
 const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", 0, 0, 0 };
 
-JSImageConstructor::JSImageConstructor(ExecState* exec, Document* document)
+JSImageConstructor::JSImageConstructor(ExecState* exec, ScriptExecutionContext* context)
     : DOMObject(JSImageConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
-    , m_document(static_cast<JSDocument*>(asObject(toJS(exec, document))))
 {
+    ASSERT(context->isDocument());
+    m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));
 }
 
 static JSObject* constructImage(ExecState* exec, JSObject* constructor, const ArgList& args)

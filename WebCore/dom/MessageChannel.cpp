@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-MessageChannel::MessageChannel(Document* document)
-    : m_port1(MessagePort::create(document))
-    , m_port2(MessagePort::create(document))
+MessageChannel::MessageChannel(ScriptExecutionContext* context)
+    : m_port1(MessagePort::create(context))
+    , m_port2(MessagePort::create(context))
 {
     MessagePort::entangle(m_port1.get(), m_port2.get());
 }

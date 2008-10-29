@@ -114,6 +114,8 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
+    Document* document() const;
+
     virtual void willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse);
     virtual void didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);

@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+    class ScriptExecutionContext;
+
     typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::StructureID> > JSDOMStructureMap;
     typedef HashMap<const JSC::ClassInfo*, JSC::JSObject*> JSDOMConstructorMap;
 
@@ -45,13 +47,37 @@ namespace WebCore {
         JSDOMGlobalObject(PassRefPtr<JSC::StructureID>, JSDOMGlobalObjectData*, JSC::JSObject* thisValue);
 
     public:
-        JSDOMGlobalObjectData* d() const { return static_cast<JSDOMGlobalObjectData*>(JSC::JSVariableObject::d); }
-
         JSDOMStructureMap& structures() { return d()->structures; }
         JSDOMConstructorMap& constructors() const { return d()->constructors; }
 
+        virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
+
         virtual void mark();
+
+    private:
+        JSDOMGlobalObjectData* d() const { return static_cast<JSDOMGlobalObjectData*>(JSC::JSVariableObject::d); }
     };
+
+    template<class ConstructorClass>
+    inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec)
+    {
+        if (JSC::JSObject* constructor = getCachedDOMConstructor(exec, &ConstructorClass::s_info))
+            return constructor;
+        JSC::JSObject* constructor = new (exec) ConstructorClass(exec);
+        cacheDOMConstructor(exec, &ConstructorClass::s_info, constructor);
+        return constructor;
+    }
+
+    template<class ConstructorClass>
+    inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, JSDOMGlobalObject* globalObject)
+    {
+        if (JSC::JSObject* constructor = globalObject->constructors().get(&ConstructorClass::s_info))
+            return constructor;
+        JSC::JSObject* constructor = new (exec) ConstructorClass(exec, globalObject->scriptExecutionContext());
+        ASSERT(!globalObject->constructors().contains(&ConstructorClass::s_info));
+        globalObject->constructors().set(&ConstructorClass::s_info, constructor);
+        return constructor;
+    }
 
 } // namespace WebCore
 

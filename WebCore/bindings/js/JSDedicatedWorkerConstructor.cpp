@@ -29,7 +29,6 @@
 
 #include "JSDedicatedWorkerConstructor.h"
 
-#include "DOMWindow.h"
 #include "DedicatedWorker.h"
 #include "Document.h"
 #include "ExceptionCode.h"

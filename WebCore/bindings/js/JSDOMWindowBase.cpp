@@ -223,6 +223,11 @@ JSDOMWindowBase::~JSDOMWindowBase()
         i1->second->clearWindow();
 }
 
+ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
+{
+    return d()->impl->document();
+}
+
 static bool allowPopUp(ExecState* exec)
 {
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
@@ -402,17 +407,6 @@ static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url
     return returnValue ? returnValue : jsUndefined();
 }
 
-template<class ConstructorClass>
-static JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMWindowBase* window)
-{
-    if (JSObject* constructor = window->constructors().get(&ConstructorClass::s_info))
-        return constructor;
-    JSObject* constructor = new (exec) ConstructorClass(exec, window->impl()->document());
-    ASSERT(!window->constructors().contains(&ConstructorClass::s_info));
-    window->constructors().set(&ConstructorClass::s_info, constructor);
-    return constructor;
-}
-
 } // namespace WebCore
 
 using namespace WebCore;
@@ -526,7 +520,7 @@ void JSDOMWindowBase::markCrossHeapDependentObjects()
     if (!document)
         return;
 
-    markCrossHeapDependentObjectsForDocument(*globalData(), document);
+    markCrossHeapDependentObjectsForContext(*globalData(), document);
 }
 
 bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

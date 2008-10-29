@@ -21,9 +21,10 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
-#include <runtime/JSFunction.h>
+#include "JSDOMGlobalObject.h"
 #include <kjs/interpreter.h>
 #include <kjs/lookup.h>
+#include <runtime/JSFunction.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -68,9 +69,9 @@ namespace WebCore {
     void forgetAllDOMNodesForDocument(Document*);
     void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
     void markDOMNodesForDocument(Document*);
-    void markActiveObjectsForDocument(JSC::JSGlobalData&, Document*);
+    void markActiveObjectsForContext(JSC::JSGlobalData&, ScriptExecutionContext*);
     void markDOMObjectWrapper(JSC::JSGlobalData& globalData, void* object);
-    void markCrossHeapDependentObjectsForDocument(JSC::JSGlobalData&, Document*);
+    void markCrossHeapDependentObjectsForContext(JSC::JSGlobalData&, ScriptExecutionContext*);
 
     JSC::StructureID* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
     JSC::StructureID* cacheDOMStructure(JSC::ExecState*, PassRefPtr<JSC::StructureID>, const JSC::ClassInfo*);
@@ -88,15 +89,6 @@ namespace WebCore {
     {
         return static_cast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec)->storedPrototype()));
     }
-    template<class ConstructorClass> inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec)
-    {
-        if (JSC::JSObject* constructor = getCachedDOMConstructor(exec, &ConstructorClass::s_info))
-            return constructor;
-        JSC::JSObject* constructor = new (exec) ConstructorClass(exec);
-        cacheDOMConstructor(exec, &ConstructorClass::s_info, constructor);
-        return constructor;
-    }
-
     #define CREATE_DOM_OBJECT_WRAPPER(exec, className, object) createDOMObjectWrapper<JS##className>(exec, static_cast<className*>(object))
     template<class WrapperClass, class DOMClass> inline DOMObject* createDOMObjectWrapper(JSC::ExecState* exec, DOMClass* object)
     {

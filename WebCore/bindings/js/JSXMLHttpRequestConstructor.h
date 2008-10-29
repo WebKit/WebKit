@@ -25,11 +25,9 @@
 
 namespace WebCore {
 
-class Document;
-
 class JSXMLHttpRequestConstructor : public DOMObject {
 public:
-    JSXMLHttpRequestConstructor(JSC::ExecState*, Document*);
+    JSXMLHttpRequestConstructor(JSC::ExecState*, ScriptExecutionContext*);
     Document* document() const { return m_document->impl(); }
     static const JSC::ClassInfo s_info;
 
