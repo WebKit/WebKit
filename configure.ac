@@ -340,6 +340,16 @@ AC_ARG_ENABLE(debug,
               [],[enable_debug="no"])
 AC_MSG_RESULT([$enable_debug])
 
+# check whether to enable optimized builds
+AC_MSG_CHECKING([whether to enable optimized builds])
+AC_ARG_ENABLE(optimizations,
+              AC_HELP_STRING([--enable-optimizations],
+                             [turn on optimize builds (GCC only)
+                             [default=yes]]),
+              [enable_optimizations=$enableval],
+              [if test "$enable_debug" = "yes"; then enable_optimizations="no"; else enable_optimizations="yes"; fi])
+AC_MSG_RESULT([$enable_optimizations])
+
 # check whether to enable dashboard support
 AC_MSG_CHECKING([whether to enable Dashboard support])
 AC_ARG_ENABLE(dashboard_support,
@@ -539,6 +549,15 @@ else
    AC_DEFINE([NDEBUG], [1], [Define to disable debugging features])
 fi
 
+# Add the appropriate 'O' level for optimized builds
+if test "$enable_optimizations" = "yes"; then
+   CXXFLAGS="$CXXFLAGS -O2"
+   CFLAGS="$CFLAGS -O2"
+else
+   CXXFLAGS="$CXXFLAGS -O0"
+   CFLAGS="$CFLAGS -O0"
+fi
+
 # check if curl is available
 if test "$with_http_backend" = "curl"; then
    PKG_CHECK_MODULES([LIBCURL],
@@ -672,6 +691,7 @@ WebKit was configured with the following options:
 
 Build configuration:
  Enable debugging (slow)                                  : $enable_debug
+ Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
  Unicode backend                                          : $unicode_backend
  HTTP backend                                             : $with_http_backend

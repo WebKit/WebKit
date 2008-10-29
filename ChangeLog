@@ -1,3 +1,15 @@
+2008-10-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Add --enable-optimizations to enable optimized builds. The default
+        is to enable it for release builds, and disabled for debug builds.
+        This option will allow builders to have a debug as well as
+        optimized builds.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-10-28  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Alp Toker.

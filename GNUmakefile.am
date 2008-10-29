@@ -168,7 +168,6 @@ libWebCore_la_CXXFLAGS = \
 
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
-	-O2 \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \
