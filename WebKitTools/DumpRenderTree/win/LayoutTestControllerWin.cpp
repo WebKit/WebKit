@@ -523,6 +523,14 @@ void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
 {
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
     COMPtr<IWebPreferences> preferences;
     if (FAILED(webView->preferences(&preferences)))
         return;
@@ -532,7 +540,7 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
         return;
 
     COMPtr<IWebInspector> inspector;
-    if (FAILED(webView->inspector(&inspector)))
+    if (FAILED(viewPrivate->inspector(&inspector)))
         return;
 
     prefsPrivate->setDeveloperExtrasEnabled(flag);
