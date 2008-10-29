@@ -1,6 +1,12 @@
 2008-10-28  Adele Peterson  <adele@apple.com>
 
-        Build fix.
+        Windows build fix.  This removes Cairo include directories from non-Cairbo build configurations.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-10-28  Adele Peterson  <adele@apple.com>
+
+        Windows build fix.
 
         * platform/graphics/ImageBuffer.h:
         (WebCore::ImageBuffer::create):
