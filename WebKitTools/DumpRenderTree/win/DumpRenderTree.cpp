@@ -665,13 +665,13 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (SUCCEEDED(webView->QueryInterface(&viewEditing)))
         viewEditing->setSmartInsertDeleteEnabled(TRUE);
 
-    COMPtr<IWebInspector> inspector;
-    if (SUCCEEDED(webView->inspector(&inspector)))
-        inspector->setJavaScriptProfilingEnabled(FALSE);
-
     COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
     if (!webViewPrivate)
         return;
+
+    COMPtr<IWebInspector> inspector;
+    if (SUCCEEDED(webViewPrivate->inspector(&inspector)))
+        inspector->setJavaScriptProfilingEnabled(FALSE);
 
     HWND viewWindow;
     if (SUCCEEDED(webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))) && viewWindow)
