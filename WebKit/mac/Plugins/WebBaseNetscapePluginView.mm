@@ -1756,7 +1756,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(_loadManually);
     ASSERT(!_manualStream);
 
-    _manualStream = WebNetscapePluginStream::create(0, core([self webFrame])->loader());
+    _manualStream = WebNetscapePluginStream::create(core([self webFrame])->loader());
 }
 
 - (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data
@@ -2020,7 +2020,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
         NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
         
-        RefPtr<WebNetscapePluginStream> stream = WebNetscapePluginStream::create(0, [NSURLRequest requestWithURL:URL], plugin, [JSPluginRequest sendNotification], [JSPluginRequest notifyData]);
+        RefPtr<WebNetscapePluginStream> stream = WebNetscapePluginStream::create([NSURLRequest requestWithURL:URL], plugin, [JSPluginRequest sendNotification], [JSPluginRequest notifyData]);
         
         RetainPtr<NSURLResponse> response(AdoptNS, [[NSURLResponse alloc] initWithURL:URL 
                                                                              MIMEType:@"text/plain" 
@@ -2181,7 +2181,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
     } else {
-        RefPtr<WebNetscapePluginStream> stream = WebNetscapePluginStream::create(0, request, plugin, sendNotification, notifyData);
+        RefPtr<WebNetscapePluginStream> stream = WebNetscapePluginStream::create(request, plugin, sendNotification, notifyData);
 
         streams.add(stream.get());
         stream->start();

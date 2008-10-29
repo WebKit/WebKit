@@ -60,15 +60,6 @@ static StreamMap& streams()
     return staticStreams;
 }
 
-@implementation WebBaseNetscapePluginStream
-
-#ifndef BUILDING_ON_TIGER
-+ (void)initialize
-{
-    WebCoreObjCFinalizeOnMainThread(self);
-}
-#endif
-
 NPP WebNetscapePluginStream::ownerForStream(NPStream *stream)
 {
     return streams().get(stream);
@@ -107,21 +98,7 @@ NSError *WebNetscapePluginStream::errorForReason(NPReason reason) const
     return pluginCancelledConnectionError();
 }
 
-- (NSError *)errorForReason:(NPReason)theReason
-{
-    return _impl->errorForReason(theReason);
-}
-
-- (id)initWithFrameLoader:(FrameLoader *)frameLoader
-{
-    [super init];
-    
-    _impl = WebNetscapePluginStream::create(self, frameLoader);
-    
-    return self;
-}
-
-WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *stream, WebCore::FrameLoader* frameLoader)
+WebNetscapePluginStream::WebNetscapePluginStream(FrameLoader* frameLoader)
     : m_plugin(0)
     , m_transferMode(0)
     , m_offset(0)
@@ -137,12 +114,11 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     , m_request(0)
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
-    , m_pluginStream(stream)
 {
     memset(&m_stream, 0, sizeof(NPStream));
 }
 
-WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *stream, NSURLRequest *request, NPP plugin, bool sendNotification, void* notifyData)
+WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plugin, bool sendNotification, void* notifyData)
     : m_requestURL([request URL])
     , m_plugin(0)
     , m_transferMode(0)
@@ -159,7 +135,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     , m_request([request mutableCopy])
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
-    , m_pluginStream(stream)
 {
     memset(&m_stream, 0, sizeof(NPStream));
 
@@ -182,16 +157,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(WebBaseNetscapePluginStream *st
     m_loader->setShouldBufferData(false);
 }
 
-- (id)initWithRequest:(NSURLRequest *)theRequest
-               plugin:(NPP)thePlugin
-           notifyData:(void *)theNotifyData 
-     sendNotification:(BOOL)flag
-{   
-    _impl = WebNetscapePluginStream::create(self, theRequest, thePlugin, flag, theNotifyData);
-    
-    return self;
-}
-
 WebNetscapePluginStream::~WebNetscapePluginStream()
 {
     ASSERT(!m_plugin);
@@ -210,21 +175,6 @@ WebNetscapePluginStream::~WebNetscapePluginStream()
     free(m_headers);
     
     streams().remove(&m_stream);
-}
-
-- (void)dealloc
-{
-    ASSERT(_impl);
-    
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT_MAIN_THREAD();
-    ASSERT(_impl);
-        
-    [super finalize];
 }
 
 void WebNetscapePluginStream::setPlugin(NPP plugin)
@@ -661,13 +611,6 @@ void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const 
     
     [data release];
 }
-
-- (WebNetscapePluginStream *)impl
-{
-    return _impl.get();
-}
-
-@end
 
 static NSString *CarbonPathFromPOSIXPath(NSString *posixPath)
 {
