@@ -31,7 +31,7 @@
 @class DOMElement;
 
 @interface WebKitPluginContainerView : NSView
-{   
+{
     DOMElement *_element;
 }
 

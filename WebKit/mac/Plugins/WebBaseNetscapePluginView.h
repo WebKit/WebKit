@@ -55,6 +55,11 @@ typedef union PluginPort {
 
 typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 
+// Because the Adobe 7.x Acrobat plug-in has a hard coded check for a view named 
+// "WebNetscapePluginDocumentView", this class must retain the old name in order 
+// for the plug-in to function correctly. (rdar://problem/4699455)
+#define WebBaseNetscapePluginView WebNetscapePluginDocumentView
+
 @interface WebBaseNetscapePluginView : NSView <WebPluginManualLoader, NSTextInput>
 {
     WebNetscapePluginPackage *pluginPackage;

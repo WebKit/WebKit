@@ -2,6 +2,30 @@
 
         Reviewed by Sam Weinig.
 
+        Remove WebNetscapePluginEmbeddedView, it adds nothing extra now. 
+        
+        Remove WebNetscapePlugInStreamLoaderClient since WebNetscapePluginStream is the client now.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebKitPluginContainerView.h:
+        * Plugins/WebNetscapePluginEmbeddedView.h: Removed.
+        * Plugins/WebNetscapePluginEmbeddedView.mm: Removed.
+        * Plugins/WebNetscapePluginEventHandler.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (NetscapePluginWidget::NetscapePluginWidget):
+        (NetscapePluginWidget::handleEvent):
+        (WebFrameLoaderClient::createPlugin):
+        * WebCoreSupport/WebNetscapePlugInStreamLoaderClient.h: Removed.
+        * WebCoreSupport/WebNetscapePlugInStreamLoaderClient.mm: Removed.
+        * WebView/WebHTMLView.mm:
+        (-[NSArray _web_makePluginViewsPerformSelector:withObject:]):
+
+2008-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove the WebBaseNetscapePluginStream Objective-C object.
         
         * Plugins/WebBaseNetscapePluginStream.h:

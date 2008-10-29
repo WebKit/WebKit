@@ -26,6 +26,8 @@
 #ifndef WebNetscapePluginEventHandler_h
 #define WebNetscapePluginEventHandler_h
 
+#import "WebBaseNetscapePluginView.h"
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 @class NSEvent;

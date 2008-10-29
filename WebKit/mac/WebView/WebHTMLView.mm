@@ -61,7 +61,6 @@
 #import "WebNSPrintOperationExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebNetscapePluginEmbeddedView.h"
 #import "WebPluginController.h"
 #import "WebPreferences.h"
 #import "WebPreferencesPrivate.h"
@@ -4543,9 +4542,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NSEnumerator *enumerator = [self objectEnumerator];
-    WebNetscapePluginEmbeddedView *view;
+    WebBaseNetscapePluginView *view;
     while ((view = [enumerator nextObject]) != nil)
-        if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]])
+        if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
             [view performSelector:selector withObject:object];
 #endif
 }
