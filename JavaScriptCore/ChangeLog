@@ -1,3 +1,12 @@
+2008-10-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed CodeBlock dumping to accurately report constant register indices.
+
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

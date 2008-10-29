@@ -250,10 +250,12 @@ void CodeBlock::dump(ExecState* exec) const
 
     if (constantRegisters.size()) {
         printf("\nConstants:\n");
+        unsigned registerIndex = numVars;
         size_t i = 0;
         do {
-            printf("   r%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, constantRegisters[i].jsValue(exec)).ascii());
+            printf("   r%u = %s\n", registerIndex, valueToSourceString(exec, constantRegisters[i].jsValue(exec)).ascii());
             ++i;
+            ++registerIndex;
         } while (i < constantRegisters.size());
     }
 
