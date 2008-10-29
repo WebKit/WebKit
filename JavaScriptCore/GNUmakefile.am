@@ -119,15 +119,13 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/CallData.h \
 	JavaScriptCore/runtime/ClassInfo.h \
 	JavaScriptCore/kjs/CollectorHeapIterator.h \
-	JavaScriptCore/kjs/CommonIdentifiers.h \
-	JavaScriptCore/runtime/ConstructData.h \
 	JavaScriptCore/runtime/DateConstructor.h \
 	JavaScriptCore/runtime/DateInstance.h \
 	JavaScriptCore/runtime/DateMath.h \
 	JavaScriptCore/runtime/DatePrototype.h \
 	JavaScriptCore/kjs/DebuggerCallFrame.cpp \
 	JavaScriptCore/kjs/DebuggerCallFrame.h \
-	JavaScriptCore/kjs/Error.h \
+	JavaScriptCore/runtime/Error.h \
 	JavaScriptCore/runtime/ErrorConstructor.h \
 	JavaScriptCore/runtime/ErrorInstance.h \
 	JavaScriptCore/runtime/ErrorPrototype.h \
@@ -135,7 +133,6 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/ExecState.h \
 	JavaScriptCore/runtime/FunctionConstructor.h \
 	JavaScriptCore/runtime/FunctionPrototype.h \
-	JavaScriptCore/kjs/GetterSetter.h \
 	JavaScriptCore/runtime/GlobalEvalFunction.h \
 	JavaScriptCore/kjs/InitializeThreading.cpp \
 	JavaScriptCore/kjs/InitializeThreading.h \
@@ -159,8 +156,6 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSType.h \
 	JavaScriptCore/runtime/JSValue.h \
 	JavaScriptCore/runtime/JSVariableObject.h \
-	JavaScriptCore/kjs/JSWrapperObject.h \
-	JavaScriptCore/kjs/LabelStack.h \
 	JavaScriptCore/runtime/MathObject.h \
 	JavaScriptCore/runtime/NativeErrorConstructor.h \
 	JavaScriptCore/runtime/NativeErrorPrototype.h \
@@ -317,7 +312,9 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/BooleanPrototype.cpp \
 	JavaScriptCore/runtime/CallData.cpp \
 	JavaScriptCore/kjs/CommonIdentifiers.cpp \
-	JavaScriptCore/kjs/ConstructData.cpp \
+	JavaScriptCore/kjs/CommonIdentifiers.h \
+	JavaScriptCore/runtime/ConstructData.cpp \
+	JavaScriptCore/runtime/ConstructData.h \
 	JavaScriptCore/runtime/DateConstructor.cpp \
 	JavaScriptCore/runtime/DateInstance.cpp \
 	JavaScriptCore/runtime/DateMath.cpp \
@@ -329,6 +326,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/FunctionConstructor.cpp \
 	JavaScriptCore/runtime/FunctionPrototype.cpp \
 	JavaScriptCore/kjs/GetterSetter.cpp \
+	JavaScriptCore/kjs/GetterSetter.h \
 	JavaScriptCore/runtime/GlobalEvalFunction.cpp \
 	JavaScriptCore/runtime/InternalFunction.cpp \
 	JavaScriptCore/runtime/JSArray.cpp \
@@ -346,7 +344,9 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSValue.cpp \
 	JavaScriptCore/runtime/JSVariableObject.cpp \
 	JavaScriptCore/runtime/JSWrapperObject.cpp \
+	JavaScriptCore/runtime/JSWrapperObject.h \
 	JavaScriptCore/kjs/LabelStack.cpp \
+	JavaScriptCore/kjs/LabelStack.h \
 	JavaScriptCore/runtime/MathObject.cpp \
 	JavaScriptCore/runtime/NativeErrorConstructor.cpp \
 	JavaScriptCore/runtime/NativeErrorPrototype.cpp \
@@ -402,7 +402,7 @@ DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/kjs/grammar.y
 DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/keywords.table
 	$(PERL) $^ > $@
 
-JavaScriptCore/kjs/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/%.cpp
+JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
 	$^ -i > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables

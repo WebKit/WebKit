@@ -1,3 +1,11 @@
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Build fix attempt after kjs -> runtime rename.
+
+        * GNUmakefile.am:
+
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.
