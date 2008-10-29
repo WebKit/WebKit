@@ -161,6 +161,13 @@ class DOMObjectHashTableMap {
 public:
     static DOMObjectHashTableMap& mapFor(JSGlobalData&);
 
+    ~DOMObjectHashTableMap()
+    {
+        HashMap<const JSC::HashTable*, JSC::HashTable>::iterator mapEnd = m_map.end();
+        for (HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.begin(); iter != m_map.end(); ++iter)
+            iter->second.deleteTable();
+    }
+
     const JSC::HashTable* get(const JSC::HashTable* staticTable)
     {
         HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(staticTable);
