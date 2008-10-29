@@ -41,6 +41,7 @@ JavaScriptCore Bakefile project file.
             $(JSCORE_SOURCES_KJS)
             $(JSCORE_SOURCES_PCRE)
             $(JSCORE_PROFILER_SOURCES)
+            $(JSCORE_RUNTIME_SOURCES)
             $(JSCORE_VM_SOURCES)
             $(JSCORE_WTF_SOURCES)
         </sources>
@@ -56,6 +57,7 @@ JavaScriptCore Bakefile project file.
         <include>$(SRCDIR)/kjs</include>
         <include>$(SRCDIR)/pcre</include>
         <include>$(SRCDIR)/profiler</include>
+        <include>$(SRCDIR)/runtime</include>
         <include>$(SRCDIR)/VM</include>
         <include>$(SRCDIR)/wtf</include>
         <include>$(SRCDIR)/wtf/unicode</include>
@@ -88,6 +90,7 @@ JavaScriptCore Bakefile project file.
         <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
         <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
         <include>$(WK_ROOT)/JavaScriptCore/profiler</include>
+        <include>$(WK_ROOT)/JavaScriptCore/runtime</include>
         <include>$(WK_ROOT)/JavaScriptCore/VM</include>
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
         <dirname>$(WKOUTPUTDIR)</dirname>

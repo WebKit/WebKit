@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
+ * Copyright (C) 2008 Kevin Ollivier. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,60 +20,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ImageBuffer.h"
+#ifndef ImageBufferData_h
+#define ImageBufferData_h
 
-#include "GraphicsContext.h"
-#include "ImageData.h"
-#include "NotImplemented.h"
+
+#include "OwnPtr.h"
 
 namespace WebCore {
 
-ImageBufferData::ImageBufferData(const IntSize&)
-{
-}
+class IntSize;
 
-ImageBuffer::ImageBuffer(const IntSize&, bool grayScale, bool& success) : 
-    m_data(IntSize())
-{
-    notImplemented();
-    success = false;
-}
+class ImageBufferData {
+public:
+    ImageBufferData(const IntSize&);
+};
 
-ImageBuffer::~ImageBuffer()
-{
-}
+}  // namespace WebCore
 
-GraphicsContext* ImageBuffer::context() const
-{
-    notImplemented();
-    return 0;
-}
-
-PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect&) const
-{
-    notImplemented();
-    return 0;
-}
-
-void ImageBuffer::putImageData(ImageData*, const IntRect&, const IntPoint&)
-{
-    notImplemented();
-}
-
-String ImageBuffer::toDataURL(const String&) const
-{
-    notImplemented();
-    return String();
-}
-
-Image* ImageBuffer::image() const
-{
-    notImplemented();
-    return 0;
-}
-
-} // namespace WebCore
+#endif  // ImageBufferData_h

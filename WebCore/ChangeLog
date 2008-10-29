@@ -1,3 +1,14 @@
+2008-10-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after addition of runtime and ImageBuffer changes.
+        
+        * platform/graphics/wx/ImageBufferData.h: Added.
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        * webcore-base.bkl:
+
 2008-10-29  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Adler

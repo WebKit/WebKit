@@ -1,3 +1,10 @@
+2008-10-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after addition of runtime and ImageBuffer changes.
+
+        * JavaScriptCoreSources.bkl:
+        * jscore.bkl:
+
 2008-10-29  Timothy Hatcher  <timothy@apple.com>
 
         Emit the WillExecuteStatement debugger hook before the "else" body
