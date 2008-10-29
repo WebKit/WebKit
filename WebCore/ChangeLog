@@ -1,3 +1,17 @@
+2008-10-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Some preparation for:
+        <rdar://problem/6104369> Hitting return at the end of a quoted line creates an extraneous quoted line
+        
+        Added an early return to avoid a level of if-nesting.  No other changes.  We probably don't
+        need to rebalance whitespace before the early return but for now don't risk any change in behavior
+        I'll revisit that later.
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+
 2008-10-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after addition of runtime and ImageBuffer changes.
