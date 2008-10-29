@@ -244,7 +244,7 @@ static void runTest(const char* pathOrURL)
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");
 
-    delete gLayoutTestController;
+    gLayoutTestController->deref();
     gLayoutTestController = 0;
 }
 

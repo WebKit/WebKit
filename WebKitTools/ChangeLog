@@ -2,6 +2,20 @@
 
         Reviewed by Mark Rowe.
 
+        Fix recently introduced double-free crashes in GTK DRT.
+
+        LayoutTestController was made ref-counted in r36606 and Mac/Win DRT
+        were updated to call ->deref() but GTK DRT was still deleting
+        gLayoutTestController manually. This patch updates GTK to match the
+        other ports and resolves the memory allocation issues.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Mark Rowe.
+
         Fix GTK DRT hang when running the tests.
 
         Update output from the DRT tool to print an additional '#EOF' to match
