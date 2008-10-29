@@ -1,3 +1,12 @@
+2008-10-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Export atomicallyInitializedStaticMutex.
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.

@@ -108,6 +108,7 @@ EXPORTS
         ??0ThreadCondition@WTF@@QAE@XZ
         ??1Mutex@WTF@@QAE@XZ
         ??1ThreadCondition@WTF@@QAE@XZ
+        ?atomicallyInitializedStaticMutex@WTF@@3PAVMutex@1@A
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
