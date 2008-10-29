@@ -37,6 +37,7 @@
 #include "Settings.h"
 #include "Page.h"
 #include "Frame.h"
+#include "InspectorClientGtk.h"
 #include "FrameLoaderClient.h"
 
 #include <glib.h>
@@ -67,6 +68,7 @@ extern "C" {
     struct _WebKitWebViewPrivate {
         WebCore::Page* corePage;
         WebKitWebSettings* webSettings;
+        WebKitWebInspector* webInspector;
 
         WebKitWebFrame* mainFrame;
         WebCore::String applicationNameForUserAgent;
@@ -109,6 +111,15 @@ extern "C" {
 
     WebKitWebHistoryItem*
     webkit_web_history_item_new_with_core_item(WebCore::HistoryItem*);
+
+    void
+    webkit_web_inspector_set_inspector_client(WebKitWebInspector*, WebKit::InspectorClient*);
+
+    void
+    webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKitWebView *web_view);
+
+    void
+    webkit_web_inspector_set_inspected_uri(WebKitWebInspector* web_inspector, const gchar* inspected_uri);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
 

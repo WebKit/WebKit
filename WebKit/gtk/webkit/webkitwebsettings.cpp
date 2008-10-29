@@ -48,6 +48,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean resizable_text_areas;
     gchar* user_stylesheet_uri;
     gfloat zoom_step;
+    gboolean enable_developer_extras;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -73,7 +74,8 @@ enum {
     PROP_ENABLE_PLUGINS,
     PROP_RESIZABLE_TEXT_AREAS,
     PROP_USER_STYLESHEET_URI,
-    PROP_ZOOM_STEP
+    PROP_ZOOM_STEP,
+    PROP_ENABLE_DEVELOPER_EXTRAS
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -268,6 +270,25 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     0.0f, G_MAXFLOAT, 0.1f,
                                     flags));
 
+    /**
+    * WebKitWebSettings:enable-developer-extras:
+    *
+    * Whether developer extensions should be enabled. This enables,
+    * for now, the Web Inspector, which can be controlled using the
+    * #WebKitWebInspector instance held by the #WebKitWebView this
+    * setting is enabled for.
+    *
+    * Since: 1.0.2
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_DEVELOPER_EXTRAS,
+                                    g_param_spec_boolean(
+                                    "enable-developer-extras",
+                                    "Enable Developer Extras",
+                                    "Enables special extensions that help developers",
+                                    FALSE,
+                                    flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -364,6 +385,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ZOOM_STEP:
         priv->zoom_step = g_value_get_float(value);
         break;
+    case PROP_ENABLE_DEVELOPER_EXTRAS:
+        priv->enable_developer_extras = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -433,6 +457,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ZOOM_STEP:
         g_value_set_float(value, priv->zoom_step);
         break;
+    case PROP_ENABLE_DEVELOPER_EXTRAS:
+        g_value_set_boolean(value, priv->enable_developer_extras);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -483,6 +510,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "resizable-text-areas", priv->resizable_text_areas,
                  "user-stylesheet-uri", priv->user_stylesheet_uri,
                  "zoom-step", priv->zoom_step,
+                 "enable-developer-extras", priv->enable_developer_extras,
                  NULL));
 
     return copy;

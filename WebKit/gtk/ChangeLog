@@ -1,3 +1,44 @@
+2008-10-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed and slightly changed by Holger Freyther.
+
+        Implemented a new WebKitWebInspector class to provide a GObject
+        API for the Web Inspector. Also implemented InspectorClient.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::notifyWebViewDestroyed):
+        (WebKit::InspectorClient::InspectorClient):
+        (WebKit::InspectorClient::inspectorDestroyed):
+        (WebKit::InspectorClient::webViewDestroyed):
+        (WebKit::InspectorClient::createPage):
+        (WebKit::InspectorClient::showWindow):
+        (WebKit::InspectorClient::closeWindow):
+        (WebKit::InspectorClient::attachWindow):
+        (WebKit::InspectorClient::detachWindow):
+        (WebKit::InspectorClient::inspectedURLChanged):
+        * WebCoreSupport/InspectorClientGtk.h:
+        * webkit/webkit.h:
+        * webkit/webkit-marshal.list:
+        * webkit/webkitdefines.h:
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebinspector.cpp: Added.
+        (_WebKitWebInspectorPrivate::webkit_inspect_web_view_request_handled):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_class_init):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_init):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_finalize):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_set_property):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_get_property):
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_set_web_view):
+        * webkit/webkitwebinspector.h: Added.
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_set_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_get_property):
+        (_WebKitWebSettingsPrivate::webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-10-27  Michael Tross  <michael@tross.org>
 
         Reviewed by Alp Toker. Landed by Jan Alonzo.

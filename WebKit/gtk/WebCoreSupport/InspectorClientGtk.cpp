@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2008 Gustavo Noronha Silva
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
@@ -17,6 +19,11 @@
 #include "config.h"
 #include "InspectorClientGtk.h"
 
+#include "webkitwebview.h"
+#include "webkitwebinspector.h"
+#include "webkitprivate.h"
+#include "CString.h"
+#include "InspectorController.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 
@@ -24,15 +31,71 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static void notifyWebViewDestroyed(WebKitWebView* webView, InspectorClient* inspectorClient)
+{
+    inspectorClient->webViewDestroyed();
+}
+
+InspectorClient::InspectorClient(WebKitWebView* webView)
+    : m_webView(0)
+    , m_inspectedWebView(webView)
+    , m_webInspector(0)
+{}
+
 void InspectorClient::inspectorDestroyed()
 {
+    if (m_webView) {
+        gboolean handled = FALSE;
+        g_signal_emit_by_name(m_webInspector, "destroy", &handled);
+
+        /* we can now dispose our own reference */
+        g_object_unref(m_webInspector);
+    }
+
     delete this;
+}
+
+void InspectorClient::webViewDestroyed()
+{
+    m_webView = 0;
+    core(m_inspectedWebView)->inspectorController()->pageDestroyed();
+
+    // createPage will be called again, if the user chooses to inspect
+    // something else, and the inspector will be referenced again,
+    // there.
+    g_object_unref(m_webInspector);
 }
 
 Page* InspectorClient::createPage()
 {
-    notImplemented();
-    return 0;
+    if (m_webView)
+      return core(m_webView);
+
+    // This g_object_get will ref the inspector. We're not doing an
+    // unref if this method succeeds because the inspector object must
+    // be alive even after the inspected WebView is destroyed - the
+    // close-window and destroy signals still need to be
+    // emitted.
+    WebKitWebInspector* webInspector;
+    g_object_get(G_OBJECT(m_inspectedWebView), "web-inspector", &webInspector, NULL);
+    m_webInspector = webInspector;
+
+    g_signal_emit_by_name(m_webInspector, "inspect-web-view", m_inspectedWebView, &m_webView);
+
+    if (!m_webView) {
+        g_object_unref(m_webInspector);
+        return 0;
+    }
+
+    webkit_web_inspector_set_web_view(m_webInspector, m_webView);
+
+    g_signal_connect(G_OBJECT(m_webView), "destroy",
+                     G_CALLBACK(notifyWebViewDestroyed), (gpointer)this);
+
+    webkit_web_view_open(m_webView, "file://"DATA_DIR"/webkit-1.0/webinspector/inspector.html");
+    gtk_widget_show(GTK_WIDGET(m_webView));
+
+    return core(m_webView);
 }
 
 String InspectorClient::localizedStringsURL()
@@ -43,22 +106,42 @@ String InspectorClient::localizedStringsURL()
 
 void InspectorClient::showWindow()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    gboolean handled = FALSE;
+    g_signal_emit_by_name(m_webInspector, "show-window", &handled);
+
+    core(m_inspectedWebView)->inspectorController()->setWindowVisible(true);
 }
 
 void InspectorClient::closeWindow()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    gboolean handled = FALSE;
+    g_signal_emit_by_name(m_webInspector, "close-window", &handled);
+
+    core(m_inspectedWebView)->inspectorController()->setWindowVisible(false);
 }
 
 void InspectorClient::attachWindow()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    gboolean handled = FALSE;
+    g_signal_emit_by_name(m_webInspector, "attach-window", &handled);
 }
 
 void InspectorClient::detachWindow()
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    gboolean handled = FALSE;
+    g_signal_emit_by_name(m_webInspector, "dettach-window", &handled);
 }
 
 void InspectorClient::setAttachedWindowHeight(unsigned height)
@@ -76,9 +159,12 @@ void InspectorClient::hideHighlight()
     notImplemented();
 }
 
-void InspectorClient::inspectedURLChanged(const String&)
+void InspectorClient::inspectedURLChanged(const String& newURL)
 {
-    notImplemented();
+    if (!m_webView)
+        return;
+
+    webkit_web_inspector_set_inspected_uri(m_webInspector, newURL.utf8().data());
 }
 
 void InspectorClient::populateSetting(const String& key, InspectorController::Setting& setting)

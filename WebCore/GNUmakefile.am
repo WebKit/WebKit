@@ -2954,6 +2954,17 @@ webcore_dist += \
 	WebCore/xml/xmlattrs.in \
 	WebCore/xml/XPathGrammar.y
 
+# Installing web inspector files
+webcore_cppflags += -DDATA_DIR=\"${datadir}\"
+
+webinspectordir = ${datadir}/webkit-1.0/webinspector
+dist_webinspector_DATA = \
+	$(shell ls $(WebCore)/inspector/front-end/*.{js,html,css})
+
+webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
+dist_webinspectorimages_DATA = \
+	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
+
 # Clean rules for WebCore
 
 CLEANFILES += \

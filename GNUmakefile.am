@@ -309,6 +309,7 @@ webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.h \
 	WebKit/gtk/webkit/webkitwebframe.h \
 	WebKit/gtk/webkit/webkitwebhistoryitem.h \
+	WebKit/gtk/webkit/webkitwebinspector.h \
 	WebKit/gtk/webkit/webkitwebsettings.h \
 	WebKit/gtk/webkit/webkitwebview.h
 
@@ -340,6 +341,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
 	WebKit/gtk/webkit/webkitwebframe.cpp \
 	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
+	WebKit/gtk/webkit/webkitwebinspector.cpp \
 	WebKit/gtk/webkit/webkitwebsettings.cpp \
 	WebKit/gtk/webkit/webkitwebview.cpp
 

@@ -1,3 +1,10 @@
+2008-10-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        Added all the files that need to be installed for the Inspector to
+        work.
+
 2008-10-29  Mike Hommey  <glandium@debian.org>
 
         Reviewed by Holger Freyther.
