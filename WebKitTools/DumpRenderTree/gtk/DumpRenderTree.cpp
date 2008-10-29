@@ -45,6 +45,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace std;
+
 extern "C" {
 // This API is not yet public.
 extern GSList* webkit_web_frame_get_children(WebKitWebFrame* frame);
@@ -54,11 +56,8 @@ extern gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame);
 
 volatile bool done;
 static bool printSeparators;
-static int testRepaintDefault;
-static int repaintSweepHorizontallyDefault;
 static int dumpPixels;
 static int dumpTree = 1;
-static gchar* currentTest;
 
 LayoutTestController* gLayoutTestController = 0;
 static WebKitWebView* webView;
@@ -148,7 +147,7 @@ void dump()
         if (gLayoutTestController->dumpAsText())
             result = dumpFramesAsText(mainFrame);
         else {
-            bool isSVGW3CTest = (g_strrstr(currentTest, "svg/W3C-SVG-1.1"));
+            bool isSVGW3CTest = (gLayoutTestController->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
             GtkAllocation size;
             size.width = isSVGW3CTest ? 480 : maxViewWidth;
             size.height = isSVGW3CTest ? 360 : maxViewHeight;
@@ -218,28 +217,40 @@ static void setDefaultsToConsistentStateValuesForTesting()
                  NULL);
 }
 
-static void runTest(const char* pathOrURL)
+static void runTest(const string& testPathOrURL)
 {
-    gchar* url = autocorrectURL(pathOrURL);
+    ASSERT(!testPathOrURL.empty());
 
-    gLayoutTestController = new LayoutTestController(testRepaintDefault, repaintSweepHorizontallyDefault);
+    // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
+    string pathOrURL(testPathOrURL);
+    string expectedPixelHash;
 
-    done = false;
+    size_t separatorPos = pathOrURL.find("'");
+    if (separatorPos != string::npos) {
+        pathOrURL = string(testPathOrURL, 0, separatorPos);
+        expectedPixelHash = string(testPathOrURL, separatorPos + 1);
+    }
+
+    gchar* url = autocorrectURL(pathOrURL.c_str());
+    const string testURL(url);
+
+    gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
     topLoadingFrame = 0;
+    done = false;
 
-    if (shouldLogFrameLoadDelegates(pathOrURL))
+    if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
-
-    g_free(currentTest);
-    currentTest = url;
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 
     webkit_web_view_open(webView, url);
 
+    g_free(url);
+    url = NULL;
+
     while (!done)
-        g_main_context_iteration(NULL, true);
+        g_main_context_iteration(NULL, TRUE);
 
     // A blank load seems to be necessary to reset state after certain tests.
     webkit_web_view_open(webView, "about:blank");
@@ -337,10 +348,8 @@ int main(int argc, char* argv[])
     gtk_init(&argc, &argv);
 
     struct option options[] = {
-        {"horizontal-sweep", no_argument, &repaintSweepHorizontallyDefault, true},
         {"notree", no_argument, &dumpTree, false},
         {"pixel-tests", no_argument, &dumpPixels, true},
-        {"repaint", no_argument, &testRepaintDefault, true},
         {"tree", no_argument, &dumpTree, true},
         {NULL, 0, NULL, 0}
     };

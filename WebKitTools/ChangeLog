@@ -1,5 +1,14 @@
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
+        Fix GTK DRT following build breakage in r37928.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+        (main):
+
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Mark Rowe.
 
         Fix recently introduced double-free crashes in GTK DRT.
