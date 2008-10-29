@@ -2212,6 +2212,7 @@ WEBCORE_COMMAND(deleteToEndOfParagraph)
 WEBCORE_COMMAND(deleteToMark)
 WEBCORE_COMMAND(deleteWordBackward)
 WEBCORE_COMMAND(deleteWordForward)
+WEBCORE_COMMAND(ignoreSpelling)
 WEBCORE_COMMAND(indent)
 WEBCORE_COMMAND(insertBacktab)
 WEBCORE_COMMAND(insertLineBreak)
@@ -4297,24 +4298,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     COMMAND_PROLOGUE
 
     [self _changeSpellingToWord:[[sender selectedCell] stringValue]];
-}
-
-- (void)ignoreSpelling:(id)sender
-{
-    COMMAND_PROLOGUE
-
-    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    if (!checker) {
-        LOG_ERROR("No NSSpellChecker");
-        return;
-    }
-    
-    NSString *stringToIgnore = [sender stringValue];
-    unsigned int length = [stringToIgnore length];
-    if (stringToIgnore && length > 0) {
-        [checker ignoreWord:stringToIgnore inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]];
-        // FIXME: Need to clear misspelling marker if the currently selected word is the one we are to ignore?
-    }
 }
 
 - (void)performFindPanelAction:(id)sender

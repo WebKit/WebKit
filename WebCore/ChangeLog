@@ -1,3 +1,18 @@
+2008-10-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5188560> REGRESSION: Spell checker doesn't clear spelling/grammar marker after error is marked as Ignored
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::ignoreSpelling): Remove misspelling markers from the word.
+        (WebCore::Editor::learnSpelling): Added a FIXME about <rdar://problem/5396072>, which 
+        will probably require a change more complicated than just marking the learned word as 
+        misspelled.  I'll address it with a separate patch.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeIgnoreSpelling): Added.
+        (WebCore::CommandEntry::): Added an entry for IgnoreSpelling.
+
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.

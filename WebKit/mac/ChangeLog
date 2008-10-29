@@ -1,3 +1,12 @@
+2008-10-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5188560> REGRESSION: Spell checker doesn't clear spelling/grammar marker after error is marked as Ignored
+
+        * WebView/WebHTMLView.mm: IgnoreSpelling is now a WebCore command.  That command handles
+        calling back into WebKit to perform the cross platform work that was removed in this change.
+
 2008-10-28  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.

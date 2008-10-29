@@ -1220,6 +1220,10 @@ void Editor::ignoreSpelling()
 {
     if (!client())
         return;
+        
+    RefPtr<Range> selectedRange = frame()->selection()->toRange();
+    if (selectedRange)
+        frame()->document()->removeMarkers(selectedRange.get(), DocumentMarker::Spelling);
 
     String text = frame()->selectedText();
     ASSERT(text.length() != 0);
@@ -1230,6 +1234,9 @@ void Editor::learnSpelling()
 {
     if (!client())
         return;
+        
+    // FIXME: We don't call this on the Mac, and it should remove misppelling markers around the 
+    // learned word, see <rdar://problem/5396072>.
 
     String text = frame()->selectedText();
     ASSERT(text.length() != 0);

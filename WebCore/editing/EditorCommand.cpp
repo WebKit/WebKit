@@ -416,6 +416,12 @@ static bool executeForwardDelete(Frame* frame, Event*, EditorCommandSource sourc
     return false;
 }
 
+static bool executeIgnoreSpelling(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->editor()->ignoreSpelling();
+    return true;
+}
+
 static bool executeIndent(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     applyCommand(IndentOutdentCommand::create(frame->document(), IndentOutdentCommand::Indent));
@@ -1182,6 +1188,7 @@ static const CommandMap& createCommandMap()
         { "FormatBlock", { executeFormatBlock, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ForwardDelete", { executeForwardDelete, supported, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "HiliteColor", { executeBackColor, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "IgnoreSpelling", { executeIgnoreSpelling, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Indent", { executeIndent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertBacktab", { executeInsertBacktab, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, isTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "InsertHorizontalRule", { executeInsertHorizontalRule, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
