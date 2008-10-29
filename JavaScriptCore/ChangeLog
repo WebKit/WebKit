@@ -1,5 +1,14 @@
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
+        Fix builddir != srcdir builds after kjs -> runtime breakage. Sources
+        may now be generated in both kjs/ and runtime/.
+
+        Also sort the sources list for readability.
+
+        * GNUmakefile.am:
+
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Cameron Zwarich.
 
         Build fix attempt after kjs -> runtime rename.

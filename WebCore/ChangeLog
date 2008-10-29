@@ -1,5 +1,11 @@
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
+        List newly-added ImageBufferData.h in build system.
+
+        * GNUmakefile.am:
+
+2008-10-28  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Cameron Zwarich.
 
         De-list unused WebCore ForwardingHeaders to fix the dist target.
