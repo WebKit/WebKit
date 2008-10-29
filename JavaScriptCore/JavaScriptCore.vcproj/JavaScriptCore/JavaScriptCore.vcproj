@@ -227,7 +227,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../kjs/;../../runtime/;../../runtime/;../../VM/;../../wtf/;../../profiler;../../masm/;../../wrec/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../kjs/;../../runtime/;../../VM/;../../wtf/;../../profiler;../../masm/;../../wrec/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="__STD_C"
 				ForcedIncludeFiles=""
 			/>

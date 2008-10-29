@@ -2,6 +2,14 @@
 
         Not reviewed.
 
+        Remove a duplicate includes directory.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2008-10-28  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
         Attempt to fix the Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
