@@ -761,6 +761,10 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
 
     WebKitWebView* containingWindow = getViewFromFrame(m_frame);
     bool isMainFrame = frame == page->mainFrame();
+
+    if (isMainFrame && frame->view())
+        frame->view()->setParentVisible(false);
+
     frame->setView(0);
 
     FrameView* frameView;
@@ -776,6 +780,9 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     frame->setView(frameView);
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
     frameView->deref();
+
+    if (isMainFrame)
+        frameView->setParentVisible(true);
 
     if (frame->ownerRenderer())
         frame->ownerRenderer()->setWidget(frameView);
