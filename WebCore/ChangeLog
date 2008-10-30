@@ -1,17 +1,3 @@
-2008-10-30  Justin Garcia  <justin.garcia@apple.com>
-
-        Reviewed by Darin Adler.
-
-        More preparation for:
-        <rdar://problem/6104369> Hitting return at the end of a quoted line creates an extraneous quoted line
-
-        * editing/BreakBlockquoteCommand.cpp:
-        (WebCore::BreakBlockquoteCommand::doApply): Added comments.  Don't need to use newStartNode.  If the 
-        startNode needs to change, change it.  Afterwords, check to make sure that it hasn't left topBlockquote.  
-        This is slightly stricter than before, where we just made sure that it still had a topBlockquote.  This 
-        doesn't really fix a bug, since we can't really get into a situation where we move to a different 
-        topBlockquote, but it simplifies the code.
-
 2008-10-30  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
@@ -27,6 +13,20 @@
         (WebCore::ImageBuffer::context):
         (WebCore::ImageBuffer::image):
         (WebCore::ImageBuffer::toDataURL):
+
+2008-10-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More preparation for:
+        <rdar://problem/6104369> Hitting return at the end of a quoted line creates an extraneous quoted line
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Added comments.  Don't need to use newStartNode.  If the 
+        startNode needs to change, change it.  Afterwords, check to make sure that it hasn't left topBlockquote.  
+        This is slightly stricter than before, where we just made sure that it still had a topBlockquote.  This 
+        doesn't really fix a bug, since we can't really get into a situation where we move to a different 
+        topBlockquote, but it simplifies the code.
 
 2008-10-30  Dirk Schulze  <vbs85@gmx.de>
 
