@@ -85,7 +85,7 @@ namespace JSC {
 
     typedef union
     {
-        struct { void* first; void* second; };
+        struct { void* first; void* second; } s;
         VoidPtrPair i;
     } VoidPtrPairValue;
 #endif
