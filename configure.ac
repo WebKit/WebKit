@@ -543,8 +543,8 @@ AC_MSG_RESULT([$enable_fast_malloc])
 AC_MSG_CHECKING([whether to enable JIT compilation])
 AC_ARG_ENABLE([jit],
               AC_HELP_STRING([--enable-jit],
-                             [Enable JIT compilation default=no]),
-              [],[enable_jit="no"])
+                             [Enable JIT compilation default=yes]),
+              [],[enable_jit="yes"])
 if test "$enable_jit" = "yes"; then
     case "$target_cpu" in
         i*86)

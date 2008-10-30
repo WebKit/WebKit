@@ -1,5 +1,15 @@
 2008-10-30  Alp Toker  <alp@nuanti.com>
 
+        Rubber-stamped by Oliver Hunt.
+
+        autotools build system change to enable JIT features by default. Can
+        be disabled with --disable-jit (and is disabled automatically on
+        unsupported platforms).
+
+        * configure.ac:
+
+2008-10-30  Alp Toker  <alp@nuanti.com>
+
         Bump WebKit GTK+ version to 1.0.3.
 
         * configure.ac:
