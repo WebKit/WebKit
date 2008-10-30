@@ -57,9 +57,10 @@ void BreakBlockquoteCommand::doApply()
         affinity = endingSelection().affinity();
     }
     
+    // startNode is the first node that we need to move to the new blockquote.
+    Node* startNode = pos.node();
     // Find the top-most blockquote from the start.
-    Node *startNode = pos.node();
-    Node *topBlockquote = 0;
+    Node* topBlockquote = 0;
     for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(node))
             topBlockquote = node;
@@ -77,35 +78,26 @@ void BreakBlockquoteCommand::doApply()
         return;
     }
         
-    Node *newStartNode = 0;
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {
         Text *textNode = static_cast<Text *>(startNode);
         if ((unsigned)pos.offset() >= textNode->length()) {
-            newStartNode = startNode->traverseNextNode();
-            ASSERT(newStartNode);
+            startNode = startNode->traverseNextNode();
+            ASSERT(startNode);
         } else if (pos.offset() > 0)
             splitTextNode(textNode, pos.offset());
     } else if (startNode->hasTagName(brTag)) {
-        newStartNode = startNode->traverseNextNode();
-        ASSERT(newStartNode);
+        startNode = startNode->traverseNextNode();
+        ASSERT(startNode);
     } else if (pos.offset() > 0) {
-        newStartNode = startNode->traverseNextNode();
-        ASSERT(newStartNode);
+        startNode = startNode->traverseNextNode();
+        ASSERT(startNode);
     }
     
-    // If a new start node was determined, find a new top block quote.
-    if (newStartNode) {
-        startNode = newStartNode;
-        topBlockquote = 0;
-        for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
-            if (isMailBlockquote(node))
-                topBlockquote = node;
-        }
-        if (!topBlockquote || !topBlockquote->parentNode()) {
-            setEndingSelection(Selection(VisiblePosition(Position(startNode, 0))));
-            return;
-        }
+    // If there's nothing inside topBlockquote to move, we're finished.
+    if (!startNode->isDescendantOf(topBlockquote)) {
+        setEndingSelection(Selection(VisiblePosition(Position(startNode, 0))));
+        return;
     }
     
     // Build up list of ancestors in between the start node and the top blockquote.
