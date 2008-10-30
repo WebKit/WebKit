@@ -109,8 +109,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(FrameLoader* frameLoader)
     , m_isTerminated(false)
     , m_newStreamSuccessful(false)
     , m_frameLoader(frameLoader)
-    , m_loader(0)
-    , m_request(0)
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
 {
@@ -130,8 +128,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     , m_isTerminated(false)
     , m_newStreamSuccessful(false)
     , m_frameLoader(0)
-    , m_loader(0)
-    , m_request([request mutableCopy])
+    , m_request(AdoptNS, [request mutableCopy])
     , m_pluginFuncs(0)
     , m_deliverDataTimer(this, &WebNetscapePluginStream::deliverDataTimerFired)
 {
@@ -150,9 +147,9 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
     streams().add(&m_stream, plugin);
         
     if (core([view webFrame])->loader()->shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
-        [(NSMutableURLRequest *)m_request _web_setHTTPReferrer:nil];
+        [m_request.get() _web_setHTTPReferrer:nil];
     
-    m_loader = NetscapePlugInStreamLoader::create(core([view webFrame]), this).releaseRef();
+    m_loader = NetscapePlugInStreamLoader::create(core([view webFrame]), this);
     m_loader->setShouldBufferData(false);
 }
 
@@ -165,10 +162,6 @@ WebNetscapePluginStream::~WebNetscapePluginStream()
     // The stream file should have been deleted, and the path freed, in -_destroyStream
     ASSERT(!m_path);
     ASSERT(m_fileDescriptor == -1);
-    
-    if (m_loader)
-        m_loader->deref();
-    [m_request release];
     
     free((void *)m_stream.url);
     free(m_headers);
@@ -264,8 +257,8 @@ void WebNetscapePluginStream::start()
     ASSERT(m_request);
     ASSERT(!m_frameLoader);
     
-    m_loader->documentLoader()->addPlugInStreamLoader(m_loader);
-    m_loader->load(m_request);    
+    m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
+    m_loader->load(m_request.get());
 }
 
 void WebNetscapePluginStream::stop()

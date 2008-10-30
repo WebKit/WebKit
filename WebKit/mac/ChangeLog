@@ -1,5 +1,15 @@
 2008-10-29  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        (WebNetscapePluginStream::~WebNetscapePluginStream):
+        (WebNetscapePluginStream::start):
+
+2008-10-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove an unused forward class declaration.

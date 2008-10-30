@@ -119,8 +119,8 @@ private:
     bool m_newStreamSuccessful;
     
     WebCore::FrameLoader* m_frameLoader;
-    WebCore::NetscapePlugInStreamLoader* m_loader;
-    NSURLRequest *m_request;
+    RefPtr<WebCore::NetscapePlugInStreamLoader> m_loader;
+    RetainPtr<NSMutableURLRequest> m_request;
     NPPluginFuncs *m_pluginFuncs;
 
     void deliverDataTimerFired(WebCore::Timer<WebNetscapePluginStream>* timer);
