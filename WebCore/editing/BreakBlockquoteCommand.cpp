@@ -44,18 +44,17 @@ BreakBlockquoteCommand::BreakBlockquoteCommand(Document *document)
 
 void BreakBlockquoteCommand::doApply()
 {
-    Selection selection = endingSelection();
-    if (selection.isNone())
+    if (endingSelection().isNone())
         return;
     
     // Delete the current selection.
-    Position pos = selection.start();
-    EAffinity affinity = selection.affinity();
-    if (selection.isRange()) {
+    if (endingSelection().isRange())
         deleteSelection(false, false);
-        pos = endingSelection().start().upstream();
-        affinity = endingSelection().affinity();
-    }
+    
+    VisiblePosition visiblePos = endingSelection().visibleStart();
+    // pos is a position equivalent to the caret.  We use downstream() so that pos will 
+    // be in the first node that we need to move (there are a few exceptions to this, see below).
+    Position pos = endingSelection().start().downstream();
     
     // startNode is the first node that we need to move to the new blockquote.
     Node* startNode = pos.node();
@@ -72,7 +71,7 @@ void BreakBlockquoteCommand::doApply()
     RefPtr<Element> breakNode = createBreakElement(document());
     insertNodeAfter(breakNode.get(), topBlockquote);
     
-    if (isLastVisiblePositionInNode(VisiblePosition(pos, affinity), topBlockquote)) {
+    if (isLastVisiblePositionInNode(visiblePos, topBlockquote)) {
         setEndingSelection(Selection(Position(breakNode.get(), 0), DOWNSTREAM));
         rebalanceWhitespace();   
         return;

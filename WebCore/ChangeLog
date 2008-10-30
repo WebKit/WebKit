@@ -1,3 +1,21 @@
+2008-10-30  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/6104369> Hitting return at the end of a quoted line creates an extraneous quoted line
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): 
+        Don't store the endingSelection() in selection, just call endingSelection() in the few places it's 
+        needed.  This function is cheap since it just returns a reference to a Selection instead of creating one.
+        Don't store an affinity.  In the one place that it was used, isLastVisiblePositionInNode(VisiblePosition(pos, affinity), topBlockquote),
+        we now use visiblePos (in order to avoid VisiblePosition creation).
+        Set pos after we delete the current selection (if there is one), and be consistent about what we set 
+        pos to.  Before, we upstream()ed it if there was a selection to delete and left it alone otherwise.  In fact...
+        ...we need to use downstream() for pos so that when a caret is at the boundary between two nodes, pos is 
+        in the first node that we want to move.  This fixes the bug, since it lets code that checks for the case 
+        where the caret is between text and a br work correctly.
+
 2008-10-30  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
