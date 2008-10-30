@@ -103,7 +103,7 @@ void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
     Frame* frame = impl()->associatedFrame();
     if (!frame)
         return;
-    impl()->setOnmessage(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value));
+    impl()->setOnmessage(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
 }
 
 JSValue* JSMessagePort::onmessage(ExecState*) const
@@ -119,7 +119,7 @@ void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
     Frame* frame = impl()->associatedFrame();
     if (!frame)
         return;
-    impl()->setOnclose(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value));
+    impl()->setOnclose(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
 }
 
 JSValue* JSMessagePort::onclose(ExecState*) const

@@ -555,9 +555,9 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
         else
             document()->unregisterForDocumentActivationCallbacks(this);
     } else if (attr->name() == onsubmitAttr)
-        setEventListenerForTypeAndAttribute(submitEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(submitEvent, attr);
     else if (attr->name() == onresetAttr)
-        setEventListenerForTypeAndAttribute(resetEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(resetEvent, attr);
     else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {

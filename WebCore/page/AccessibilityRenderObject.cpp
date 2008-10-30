@@ -505,7 +505,7 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
     
     // FIXME: Do the continuation search like anchorElement does
     for (EventTargetNode* elt = static_cast<EventTargetNode*>(node); elt; elt = static_cast<EventTargetNode*>(elt->parentNode())) {
-        if (elt->eventListenerForType(clickEvent) || elt->eventListenerForType(mousedownEvent) || elt->eventListenerForType(mouseupEvent))
+        if (elt->inlineEventListenerForType(clickEvent) || elt->inlineEventListenerForType(mousedownEvent) || elt->inlineEventListenerForType(mouseupEvent))
             return static_cast<Element*>(elt);
     }
     

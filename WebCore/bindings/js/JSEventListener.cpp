@@ -110,7 +110,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval->toString(exec));
-            if (m_isAttachedToEventTargetNode) {
+            if (m_isInline) {
                 bool retvalbool;
                 if (retval->getBoolean(retvalbool) && !retvalbool)
                     event->preventDefault();
@@ -122,21 +122,21 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     }
 }
 
-bool JSAbstractEventListener::isAttachedToEventTargetNode() const
+bool JSAbstractEventListener::isInline() const
 {
-    return m_isAttachedToEventTargetNode;
+    return m_isInline;
 }
 
 // -------------------------------------------------------------------------
 
-JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOMWindow* window, bool isAttachedToEventTargetNode)
-    : JSAbstractEventListener(isAttachedToEventTargetNode)
+JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOMWindow* window, bool isInline)
+    : JSAbstractEventListener(isInline)
     , m_listener(listener)
     , m_window(window)
 {
     if (m_listener) {
-        JSDOMWindow::UnprotectedListenersMap& listeners = isAttachedToEventTargetNode
-            ? window->jsUnprotectedEventListenersAttachedToEventTargetNodes() : window->jsUnprotectedEventListeners();
+        JSDOMWindow::UnprotectedListenersMap& listeners = isInline
+            ? window->jsUnprotectedInlineEventListeners() : window->jsUnprotectedEventListeners();
         listeners.set(m_listener, this);
     }
 }
@@ -144,8 +144,8 @@ JSUnprotectedEventListener::JSUnprotectedEventListener(JSObject* listener, JSDOM
 JSUnprotectedEventListener::~JSUnprotectedEventListener()
 {
     if (m_listener && m_window) {
-        JSDOMWindow::UnprotectedListenersMap& listeners = isAttachedToEventTargetNode()
-            ? m_window->jsUnprotectedEventListenersAttachedToEventTargetNodes() : m_window->jsUnprotectedEventListeners();
+        JSDOMWindow::UnprotectedListenersMap& listeners = isInline()
+            ? m_window->jsUnprotectedInlineEventListeners() : m_window->jsUnprotectedEventListeners();
         listeners.remove(m_listener);
     }
 }
@@ -177,14 +177,14 @@ static WTF::RefCountedLeakCounter eventListenerCounter("EventListener");
 
 // -------------------------------------------------------------------------
 
-JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* window, bool isAttachedToEventTargetNode)
-    : JSAbstractEventListener(isAttachedToEventTargetNode)
+JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* window, bool isInline)
+    : JSAbstractEventListener(isInline)
     , m_listener(listener)
     , m_window(window)
 {
     if (m_listener) {
-        JSDOMWindow::ListenersMap& listeners = isAttachedToEventTargetNode
-            ? m_window->jsEventListenersAttachedToEventTargetNodes() : m_window->jsEventListeners();
+        JSDOMWindow::ListenersMap& listeners = isInline
+            ? m_window->jsInlineEventListeners() : m_window->jsEventListeners();
         listeners.set(m_listener, this);
     }
 #ifndef NDEBUG
@@ -195,8 +195,8 @@ JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* window, bool i
 JSEventListener::~JSEventListener()
 {
     if (m_listener && m_window) {
-        JSDOMWindow::ListenersMap& listeners = isAttachedToEventTargetNode()
-            ? m_window->jsEventListenersAttachedToEventTargetNodes() : m_window->jsEventListeners();
+        JSDOMWindow::ListenersMap& listeners = isInline()
+            ? m_window->jsInlineEventListeners() : m_window->jsEventListeners();
         listeners.remove(m_listener);
     }
 #ifndef NDEBUG
@@ -313,8 +313,8 @@ void JSLazyEventListener::parseCode() const
     m_code = String();
 
     if (m_listener) {
-        JSDOMWindow::ListenersMap& listeners = isAttachedToEventTargetNode()
-            ? window()->jsEventListenersAttachedToEventTargetNodes() : window()->jsEventListeners();
+        ASSERT(isInline());
+        JSDOMWindow::ListenersMap& listeners = window()->jsInlineEventListeners();
         listeners.set(m_listener, const_cast<JSLazyEventListener*>(this));
     }
 }

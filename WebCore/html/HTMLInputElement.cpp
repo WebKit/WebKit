@@ -668,20 +668,20 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (respectHeightAndWidthAttrs())
             addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setEventListenerForTypeAndAttribute(focusEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setEventListenerForTypeAndAttribute(blurEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(blurEvent, attr);
     } else if (attr->name() == onselectAttr) {
-        setEventListenerForTypeAndAttribute(selectEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(selectEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setEventListenerForTypeAndAttribute(changeEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(changeEvent, attr);
     } else if (attr->name() == oninputAttr) {
-        setEventListenerForTypeAndAttribute(inputEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(inputEvent, attr);
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setEventListenerForTypeAndAttribute(searchEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(searchEvent, attr);
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
         m_maxResults = !attr->isNull() ? min(attr->value().toInt(), maxSavedResults) : -1;

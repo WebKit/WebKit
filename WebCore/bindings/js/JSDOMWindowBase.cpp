@@ -207,8 +207,8 @@ JSDOMWindowBase::~JSDOMWindowBase()
     for (; i2 != e2; ++i2)
         i2->second->clearWindow();
 
-    i2 = d()->jsEventListenersAttachedToEventTargetNodes.begin();
-    e2 = d()->jsEventListenersAttachedToEventTargetNodes.end();
+    i2 = d()->jsInlineEventListeners.begin();
+    e2 = d()->jsInlineEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindow();
 
@@ -217,8 +217,8 @@ JSDOMWindowBase::~JSDOMWindowBase()
     for (; i1 != e1; ++i1)
         i1->second->clearWindow();
 
-    i1 = d()->jsUnprotectedEventListenersAttachedToEventTargetNodes.begin();
-    e1 = d()->jsUnprotectedEventListenersAttachedToEventTargetNodes.end();
+    i1 = d()->jsUnprotectedInlineEventListeners.begin();
+    e1 = d()->jsUnprotectedInlineEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindow();
 }
@@ -736,46 +736,46 @@ bool JSDOMWindowBase::shouldInterruptScript() const
     return page->chrome()->shouldInterruptJavaScript();
 }
 
-JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool attachedToEventTargetNode)
+JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool isInline)
 {
     if (!val->isObject())
         return 0;
     JSObject* object = asObject(val);
-    ListenersMap& listeners = attachedToEventTargetNode ? d()->jsEventListenersAttachedToEventTargetNodes : d()->jsEventListeners;
+    ListenersMap& listeners = isInline ? d()->jsInlineEventListeners : d()->jsEventListeners;
     return listeners.get(object);
 }
 
-PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
+PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool isInline)
 {
-    if (JSEventListener* listener = findJSEventListener(val, attachedToEventTargetNode))
+    if (JSEventListener* listener = findJSEventListener(val, isInline))
         return listener;
 
     if (!val->isObject())
         return 0;
 
     // The JSEventListener constructor adds it to our jsEventListeners map.
-    return JSEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
+    return JSEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), isInline).get();
 }
 
-JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
+JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool isInline)
 {
     if (!val->isObject())
         return 0;
 
-    UnprotectedListenersMap& listeners = attachedToEventTargetNode ? d()->jsUnprotectedEventListenersAttachedToEventTargetNodes : d()->jsUnprotectedEventListeners;
+    UnprotectedListenersMap& listeners = isInline ? d()->jsUnprotectedInlineEventListeners : d()->jsUnprotectedEventListeners;
     return listeners.get(asObject(val));
 }
 
-PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool attachedToEventTargetNode)
+PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool isInline)
 {
-    if (JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, attachedToEventTargetNode))
+    if (JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, isInline))
         return listener;
 
     if (!val->isObject())
         return 0;
 
     // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
-    return JSUnprotectedEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), attachedToEventTargetNode).get();
+    return JSUnprotectedEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), isInline).get();
 }
 
 void JSDOMWindowBase::clearHelperObjectProperties()
@@ -1062,9 +1062,9 @@ JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListeners()
     return d()->jsEventListeners;
 }
 
-JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListenersAttachedToEventTargetNodes()
+JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsInlineEventListeners()
 {
-    return d()->jsEventListenersAttachedToEventTargetNodes;
+    return d()->jsInlineEventListeners;
 }
 
 JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventListeners()
@@ -1072,9 +1072,9 @@ JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventLis
     return d()->jsUnprotectedEventListeners;
 }
 
-JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventListenersAttachedToEventTargetNodes()
+JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedInlineEventListeners()
 {
-    return d()->jsUnprotectedEventListenersAttachedToEventTargetNodes;
+    return d()->jsUnprotectedInlineEventListeners;
 }
 
 void DOMWindowTimer::fired()

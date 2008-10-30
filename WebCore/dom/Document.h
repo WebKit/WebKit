@@ -559,11 +559,11 @@ public:
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
     void handleWindowEvent(Event*, bool useCapture);
-    void setWindowEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
-    EventListener* windowEventListenerForType(const AtomicString& eventType);
-    void removeWindowEventListenerForType(const AtomicString& eventType);
+    void setWindowInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
+    EventListener* windowInlineEventListenerForType(const AtomicString& eventType);
+    void removeWindowInlineEventListenerForType(const AtomicString& eventType);
 
-    void setWindowEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
+    void setWindowInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
 
     void addWindowEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     void removeWindowEventListener(const AtomicString& eventType, EventListener*, bool useCapture);

@@ -131,24 +131,24 @@ void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
         if (attached())
             document()->recalcStyle(Force);
     } else if (attr->name() == onloadAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(loadEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(loadEvent, attr);
     else if (attr->name() == onbeforeunloadAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(beforeunloadEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(beforeunloadEvent, attr);
     else if (attr->name() == onunloadAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(unloadEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(unloadEvent, attr);
     else if (attr->name() == onblurAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(blurEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(blurEvent, attr);
     else if (attr->name() == onfocusAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(focusEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(focusEvent, attr);
     else if (attr->name() == onresizeAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(resizeEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(resizeEvent, attr);
     else if (attr->name() == onscrollAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(scrollEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(scrollEvent, attr);
     else if (attr->name() == onstorageAttr) {
         // The HTML5 spec currently specifies that storage events are fired only at the body element of
         // an HTMLDocument, which is why the onstorage attribute differs from the ones before it.
         // The spec might change on this, and then so should we!
-        setEventListenerForTypeAndAttribute(storageEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(storageEvent, attr);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

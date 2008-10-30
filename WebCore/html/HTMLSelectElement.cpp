@@ -374,11 +374,11 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute *attr)
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=12072
     } else if (attr->name() == onfocusAttr) {
-        setEventListenerForTypeAndAttribute(focusEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setEventListenerForTypeAndAttribute(blurEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(blurEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setEventListenerForTypeAndAttribute(changeEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(changeEvent, attr);
     } else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }

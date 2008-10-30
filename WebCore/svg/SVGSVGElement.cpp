@@ -220,13 +220,13 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
 
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onunloadAttr)
-            document()->setWindowEventListenerForTypeAndAttribute(unloadEvent, attr);
+            document()->setWindowInlineEventListenerForTypeAndAttribute(unloadEvent, attr);
         else if (attr->name() == onresizeAttr)
-            document()->setWindowEventListenerForTypeAndAttribute(resizeEvent, attr);
+            document()->setWindowInlineEventListenerForTypeAndAttribute(resizeEvent, attr);
         else if (attr->name() == onscrollAttr)
-            document()->setWindowEventListenerForTypeAndAttribute(scrollEvent, attr);
+            document()->setWindowInlineEventListenerForTypeAndAttribute(scrollEvent, attr);
         else if (attr->name() == SVGNames::onzoomAttr)
-            document()->setWindowEventListenerForTypeAndAttribute(zoomEvent, attr);
+            document()->setWindowInlineEventListenerForTypeAndAttribute(zoomEvent, attr);
         else
             setListener = false;
  
@@ -235,9 +235,9 @@ void SVGSVGElement::parseMappedAttribute(MappedAttribute* attr)
     }
 
     if (attr->name() == onabortAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(abortEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(abortEvent, attr);
     else if (attr->name() == onerrorAttr)
-        document()->setWindowEventListenerForTypeAndAttribute(errorEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(errorEvent, attr);
     else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)

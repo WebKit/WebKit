@@ -48,11 +48,11 @@ public:
     virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
     void removeAllEventListeners();
 
-    void setEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
-    void setEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
-    void removeEventListenerForType(const AtomicString& eventType);
+    void setInlineEventListenerForType(const AtomicString& eventType, PassRefPtr<EventListener>);
+    void setInlineEventListenerForTypeAndAttribute(const AtomicString& eventType, Attribute*);
+    void removeInlineEventListenerForType(const AtomicString& eventType);
     bool dispatchEventForType(const AtomicString& eventType, bool canBubble, bool cancelable);
-    EventListener* eventListenerForType(const AtomicString& eventType) const;
+    EventListener* inlineEventListenerForType(const AtomicString& eventType) const;
 
     bool dispatchSubtreeModifiedEvent();
     void dispatchWindowEvent(PassRefPtr<Event>);

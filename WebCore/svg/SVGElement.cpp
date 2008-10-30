@@ -143,25 +143,25 @@ void SVGElement::parseMappedAttribute(MappedAttribute* attr)
 {
     // standard events
     if (attr->name() == onloadAttr)
-        setEventListenerForTypeAndAttribute(loadEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(loadEvent, attr);
     else if (attr->name() == onclickAttr)
-        setEventListenerForTypeAndAttribute(clickEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(clickEvent, attr);
     else if (attr->name() == onmousedownAttr)
-        setEventListenerForTypeAndAttribute(mousedownEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(mousedownEvent, attr);
     else if (attr->name() == onmousemoveAttr)
-        setEventListenerForTypeAndAttribute(mousemoveEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(mousemoveEvent, attr);
     else if (attr->name() == onmouseoutAttr)
-        setEventListenerForTypeAndAttribute(mouseoutEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(mouseoutEvent, attr);
     else if (attr->name() == onmouseoverAttr)
-        setEventListenerForTypeAndAttribute(mouseoverEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(mouseoverEvent, attr);
     else if (attr->name() == onmouseupAttr)
-        setEventListenerForTypeAndAttribute(mouseupEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(mouseupEvent, attr);
     else if (attr->name() == SVGNames::onfocusinAttr)
-        setEventListenerForTypeAndAttribute(DOMFocusInEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(DOMFocusInEvent, attr);
     else if (attr->name() == SVGNames::onfocusoutAttr)
-        setEventListenerForTypeAndAttribute(DOMFocusOutEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(DOMFocusOutEvent, attr);
     else if (attr->name() == SVGNames::onactivateAttr)
-        setEventListenerForTypeAndAttribute(DOMActivateEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(DOMActivateEvent, attr);
     else
         StyledElement::parseMappedAttribute(attr);
 }

@@ -142,7 +142,7 @@ void ScriptController::clearWindowShell()
     gcController().garbageCollectSoon();
 }
 
-PassRefPtr<EventListener> ScriptController::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
+PassRefPtr<EventListener> ScriptController::createInlineEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock(false);

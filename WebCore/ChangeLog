@@ -1,3 +1,122 @@
+2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Rename "attachedToEventTargetNode" to "isInline".
+
+        Inline (onXXX) attributes are used not just with event target nodes, but also with Window,
+        XMLHttpRequest, MessagePort et al.
+
+        Also renamed createHTMLEventHandler() (which was a leftover from earlier isHTMLEvent ->
+        attachedToEventTargetNode rename made for SVG) to createInlineEventListener().
+        And also renamed EventTargetNode, Document and Window "eventListenerForType" methods to
+        "inlineEventListenerForType", as they work with inline listeners.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::setOnmessage):
+        (WebCore::JSMessagePort::setOnclose):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        Pass a correct value for this argument - callers used to be confused, because they didn't
+        consider themselves event target nodes. This doesn't affect behavior however, as the only
+        difference between inline and non-inline event handlers is that the former treat
+        "return false" as "event.preventDefault()", which is not important to any of these objects.
+
+        * bindings/js/JSEventListener.cpp: (WebCore::JSLazyEventListener::parseCode):
+        Assert that isInline is true instead of checking its value, as the constructor of this class
+        always sets it to true.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::findJSEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener):
+        (WebCore::JSDOMWindowBase::findJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::jsInlineEventListeners):
+        (WebCore::JSDOMWindowBase::jsUnprotectedInlineEventListeners):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSAbstractEventListener::isInline):
+        (WebCore::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (WebCore::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSAbstractEventListener::JSAbstractEventListener):
+        (WebCore::JSUnprotectedEventListener::create):
+        (WebCore::JSEventListener::create):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createInlineEventHandler):
+        * bindings/js/ScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setWindowInlineEventListenerForType):
+        (WebCore::Document::windowInlineEventListenerForType):
+        (WebCore::Document::removeWindowInlineEventListenerForType):
+        (WebCore::Document::createEventListener):
+        (WebCore::Document::setWindowInlineEventListenerForTypeAndAttribute):
+        * dom/Document.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::isInline):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::removeInlineEventListenerForType):
+        (WebCore::EventTargetNode::setInlineEventListenerForType):
+        (WebCore::EventTargetNode::setInlineEventListenerForTypeAndAttribute):
+        (WebCore::EventTargetNode::inlineEventListenerForType):
+        (WebCore::EventTargetNode::on*): (many methods)
+        (WebCore::EventTargetNode::setOn*): (many methods)
+        * dom/EventTargetNode.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setInlineEventListenerForType):
+        (WebCore::DOMWindow::inlineEventListenerForType):
+        (WebCore::DOMWindow::on*): (many methods)
+        (WebCore::DOMWindow::setOn*): (many methods)
+        * page/DOMWindow.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseMappedAttribute):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::on*): (many methods)
+        (WebCore::SVGElementInstance::setOn*): (many methods)
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        Rename things, as described above.
+
 2008-10-29  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed and slightly changed by Holger Freyther.
