@@ -1,3 +1,28 @@
+2008-10-30  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21571
+        VoidPtrPair breaks CTI on Linux
+
+        The VoidPtrPair return change made in r37457 does not work on Linux
+        since POD structs aren't passed in registers.
+
+        This patch uses a union to vectorize VoidPtrPair to a uint64_t and
+        matches Darwin/MSVC fixing CTI/WREC on Linux.
+
+        Alexey reports no measurable change in Mac performance with this fix.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_resolve_func):
+        (JSC::Machine::cti_op_post_inc):
+        (JSC::Machine::cti_op_resolve_with_base):
+        (JSC::Machine::cti_op_post_dec):
+        * VM/Machine.h:
+        (JSC::):
+
 2008-10-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
