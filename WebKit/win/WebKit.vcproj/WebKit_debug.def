@@ -127,6 +127,7 @@ EXPORTS
         WTFLog
         WTFReportArgumentAssertionFailure
         WTFReportAssertionFailure
+        WTFReportAssertionFailureWithMessage
         WTFReportError
 
         ; These functions are deprecated

@@ -1,3 +1,11 @@
+2008-10-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - export WTFReportAssertionFailureWithMessage()
+
+        * WebKit.vcproj/WebKit_debug.def:
+
 2008-10-29  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6326563> Crash on launch
