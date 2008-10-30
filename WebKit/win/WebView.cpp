@@ -105,7 +105,6 @@
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashSet.h>
 #include <dimm.h>
 #include <oleacc.h>
@@ -367,12 +366,15 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
-    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory());
+#ifdef CFURLCacheCopySharedURLCachePresent
+    RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
+#else
+    RetainPtr<CFURLCacheRef> cfurlCache = CFURLCacheSharedURLCache();
+#endif
+
+    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, _CFURLCacheCopyCacheDirectory(cfurlCache.get()));
     if (!cfurlCacheDirectory)
         cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
-
-
-    CFURLCacheRef cfurlSharedCache = CFURLCacheSharedURLCache();
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
     // count doesn't align exactly to a megabyte boundary.
@@ -413,7 +415,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         cfurlCacheMemoryCapacity = 0;
 
         // Foundation disk cache capacity (in bytes)
-        cfurlCacheDiskCapacity = CFURLCacheDiskCapacity(cfurlSharedCache);
+        cfurlCacheDiskCapacity = CFURLCacheDiskCapacity(cfurlCache.get());
 
         break;
     }
@@ -532,17 +534,17 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     }
     default:
         ASSERT_NOT_REACHED();
-    };
+    }
 
     // Don't shrink a big disk cache, since that would cause churn.
-    cfurlCacheDiskCapacity = max(cfurlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlSharedCache));
+    cfurlCacheDiskCapacity = max(cfurlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlCache.get()));
 
     cache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     cache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     pageCache()->setCapacity(pageCacheCapacity);
 
-    CFURLCacheSetMemoryCapacity(cfurlSharedCache, cfurlCacheMemoryCapacity);
-    CFURLCacheSetDiskCapacity(cfurlSharedCache, cfurlCacheDiskCapacity);
+    CFURLCacheSetMemoryCapacity(cfurlCache.get(), cfurlCacheMemoryCapacity);
+    CFURLCacheSetDiskCapacity(cfurlCache.get(), cfurlCacheDiskCapacity);
 
     s_didSetCacheModel = true;
     s_cacheModel = cacheModel;
