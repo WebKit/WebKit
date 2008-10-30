@@ -53,6 +53,11 @@ namespace JSC {
             return (m_type & TypeReusable);
         }
         
+        bool isReusableNumber()
+        {
+            return isReusable() && definitelyIsNumber();
+        }
+
         bool definitelyIsNumber()
         {
             return ((m_type & ~TypeReusable) == TypeMaybeNumber);
@@ -68,6 +73,11 @@ namespace JSC {
             return !isNotNumber();
         }
         
+        int toInt()
+        {
+            return static_cast<int>(m_type);
+        }
+
         static ResultType nullType()
         {
             return ResultType(TypeMaybeNull);

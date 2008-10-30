@@ -715,7 +715,7 @@ RegisterID* PrefixErrorNode::emitCode(CodeGenerator& generator, RegisterID*)
 RegisterID* UnaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RegisterID* src = generator.emitNode(m_expr.get());
-    return generator.emitUnaryOp(opcode(), generator.finalDestination(dst), src);
+    return generator.emitUnaryOp(opcode(), generator.finalDestination(dst), src, m_expr->resultDescriptor());
 }
 
 // ------------------------------ Binary Operation Nodes -----------------------------------
@@ -726,7 +726,7 @@ RegisterID* BinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     if (opcode == op_neq) {
         if (m_expr1->isNull() || m_expr2->isNull()) {
             RefPtr<RegisterID> src = generator.emitNode(dst, m_expr1->isNull() ? m_expr2.get() : m_expr1.get());
-            return generator.emitUnaryOp(op_neq_null, generator.finalDestination(dst, src.get()), src.get());
+            return generator.emitUnaryOp(op_neq_null, generator.finalDestination(dst, src.get()), src.get(), ResultType::unknown());
         }
     }
 
@@ -739,7 +739,7 @@ RegisterID* EqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (m_expr1->isNull() || m_expr2->isNull()) {
         RefPtr<RegisterID> src = generator.emitNode(dst, m_expr1->isNull() ? m_expr2.get() : m_expr1.get());
-        return generator.emitUnaryOp(op_eq_null, generator.finalDestination(dst, src.get()), src.get());
+        return generator.emitUnaryOp(op_eq_null, generator.finalDestination(dst, src.get()), src.get(), ResultType::unknown());
     }
 
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));

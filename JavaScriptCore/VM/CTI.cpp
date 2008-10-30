@@ -311,6 +311,20 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 
 #endif
 
+extern "C" {
+    static JSValue* FASTCALL allocateNumber(JSGlobalData* globalData) {
+        JSValue* result = new (globalData) JSNumberCell(globalData);
+        ASSERT(result);
+        return result;
+    }
+}
+
+ALWAYS_INLINE void CTI::emitAllocateNumber(JSGlobalData* globalData, unsigned opcodeIndex)
+{
+    m_jit.movl_i32r(reinterpret_cast<intptr_t>(globalData), X86::ecx);
+    emitNakedFastCall(opcodeIndex, (void*)allocateNumber);
+}
+
 ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitNakedCall(unsigned opcodeIndex, X86::RegisterID r)
 {
     X86Assembler::JmpSrc call = m_jit.emitCall(r);
@@ -320,6 +334,13 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitNakedCall(unsigned opcodeIndex, X86:
 }
 
 ALWAYS_INLINE  X86Assembler::JmpSrc CTI::emitNakedCall(unsigned opcodeIndex, void(*function)())
+{
+    X86Assembler::JmpSrc call = m_jit.emitCall();
+    m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), opcodeIndex));
+    return call;
+}
+
+ALWAYS_INLINE  X86Assembler::JmpSrc CTI::emitNakedFastCall(unsigned opcodeIndex, void* function)
 {
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), opcodeIndex));
@@ -514,6 +535,14 @@ ALWAYS_INLINE void CTI::emitFastArithIntToImmNoCheck(X86Assembler::RegisterID re
 {
     m_jit.addl_rr(reg, reg);
     emitFastArithReTagImmediate(reg);
+}
+
+ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitArithIntToImmWithJump(X86Assembler::RegisterID reg)
+{
+    m_jit.addl_rr(reg, reg);
+    X86Assembler::JmpSrc jmp = m_jit.emitUnlinkedJo();
+    emitFastArithReTagImmediate(reg);
+    return jmp;
 }
 
 ALWAYS_INLINE void CTI::emitTagAsBoolImmediate(X86Assembler::RegisterID reg)
@@ -1480,10 +1509,51 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_negate: {
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCTICall(instruction + i, i, Machine::cti_op_negate);
+            emitGetArg(instruction[i + 2].u.operand, X86::eax);
+            m_jit.testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
+            X86Assembler::JmpSrc notImmediate = m_jit.emitUnlinkedJe();
+
+            m_jit.cmpl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
+            X86Assembler::JmpSrc zeroImmediate = m_jit.emitUnlinkedJe();
+            emitFastArithImmToInt(X86::eax);
+            m_jit.negl_r(X86::eax); // This can't overflow as we only have a 31bit int at this point
+            X86Assembler::JmpSrc overflow = emitArithIntToImmWithJump(X86::eax);
             emitPutResult(instruction[i + 1].u.operand);
-            i += 3;
+            X86Assembler::JmpSrc immediateNegateSuccess = m_jit.emitUnlinkedJmp();
+
+            if (!isSSE2Present()) {
+                m_jit.link(zeroImmediate, m_jit.label());
+                m_jit.link(overflow, m_jit.label());
+                m_jit.link(notImmediate, m_jit.label());
+                emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+                emitCTICall(instruction + i, i, Machine::cti_op_negate);
+                emitPutResult(instruction[i + 1].u.operand);
+            } else {
+                // Slow case immediates
+                m_slowCases.append(SlowCaseEntry(zeroImmediate, i));
+                m_slowCases.append(SlowCaseEntry(overflow, i));
+                m_jit.link(notImmediate, m_jit.label());
+                ResultType resultType(instruction[i + 3].u.resultType);
+                if (!resultType.definitelyIsNumber()) {
+                    emitJumpSlowCaseIfNotJSCell(X86::eax, i);
+                    StructureID* numberStructureID = m_callFrame->globalData().numberStructureID.get();
+                    m_jit.cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+                    m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJne(), i));
+                }
+                m_jit.movsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
+                // We need 3 copies of the sign bit mask so we can assure alignment and pad for the 128bit load
+                static double doubleSignBit[] = { -0.0, -0.0, -0.0 };
+                m_jit.xorpd_mr((void*)((((uintptr_t)doubleSignBit)+15)&~15), X86::xmm0);
+                X86Assembler::JmpSrc wasCell;
+                if (!resultType.isReusableNumber())
+                    emitAllocateNumber(&m_callFrame->globalData(), i);
+
+                putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::eax, instruction[i + 1].u.operand, &wasCell,
+                                                           X86::xmm1, X86::ecx, X86::edx);
+                m_jit.link(wasCell, m_jit.label());
+            }
+            m_jit.link(immediateNegateSuccess, m_jit.label());
+            i += 4;
             break;
         }
         case op_resolve_skip: {
@@ -2315,6 +2385,14 @@ void CTI::privateCompileSlowCases()
         case op_sub: {
             compileBinaryArithOpSlowCase(instruction + i, op_sub, iter, instruction[i + 1].u.operand, instruction[i + 2].u.operand, instruction[i + 3].u.operand, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
             i += 5;
+            break;
+        }
+        case op_negate: {
+            m_jit.link(iter->from, m_jit.label());
+            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
+            emitCTICall(instruction + i, i, Machine::cti_op_negate);
+            emitPutResult(instruction[i + 1].u.operand);
+            i += 4;
             break;
         }
         case op_rshift: {

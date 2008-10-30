@@ -84,6 +84,11 @@ namespace JSC {
 
         static PassRefPtr<StructureID> createStructureID(JSValue* proto) { return StructureID::create(proto, TypeInfo(NumberType, NeedsThisConversion)); }
 
+        JSNumberCell(JSGlobalData* globalData)
+        : JSCell(globalData->numberStructureID.get())
+        {
+        }
+
     private:
         JSNumberCell(JSGlobalData* globalData, double value)
             : JSCell(globalData->numberStructureID.get())

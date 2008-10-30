@@ -1,3 +1,51 @@
+2008-10-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Initial work to reduce cost of JSNumberCell allocation
+
+        This does the initial work needed to bring more of number
+        allocation into CTI code directly, rather than just falling
+        back onto the slow paths if we can't guarantee that a number
+        cell can be reused.
+
+        Initial implementation only used by op_negate to make sure
+        it all works.  In a negate heavy (though not dominated) test
+        it results in a 10% win in the non-reusable cell case.
+
+        * VM/CTI.cpp:
+        (JSC::):
+        (JSC::CTI::emitAllocateNumber):
+        (JSC::CTI::emitNakedFastCall):
+        (JSC::CTI::emitArithIntToImmWithJump):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitUnaryOp):
+        * VM/CodeGenerator.h:
+        (JSC::CodeGenerator::emitToJSNumber):
+        (JSC::CodeGenerator::emitTypeOf):
+        (JSC::CodeGenerator::emitGetPropertyNames):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        * VM/Machine.h:
+        * kjs/ResultType.h:
+        (JSC::ResultType::isReusableNumber):
+        (JSC::ResultType::toInt):
+        * kjs/nodes.cpp:
+        (JSC::UnaryOpNode::emitCode):
+        (JSC::BinaryOpNode::emitCode):
+        (JSC::EqualNode::emitCode):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::negl_r):
+        (JSC::X86Assembler::xorpd_mr):
+        * runtime/JSNumberCell.h:
+        (JSC::JSNumberCell::JSNumberCell):
+
 2008-10-29  Steve Falkenburg  <sfalken@apple.com>
 
         <rdar://problem/6326563> Crash on launch

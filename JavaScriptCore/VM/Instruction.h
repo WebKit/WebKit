@@ -30,6 +30,7 @@
 #define Instruction_h
 
 #include "Opcode.h"
+#include "ResultType.h"
 #include <wtf/VectorTraits.h>
 
 namespace JSC {
@@ -58,6 +59,7 @@ namespace JSC {
             StructureID* structureID;
             StructureIDChain* structureIDChain;
             JSCell* jsCell;
+            ResultType::Type resultType;
         } u;
     };
 

@@ -228,6 +228,7 @@ public:
         OP2_CVTSI2SD_VsdEd  = 0x2A,
         OP2_CVTTSD2SI_GdWsd = 0x2C,
         OP2_UCOMISD_VsdWsd  = 0x2E,
+        OP2_XORPD_VsdWsd    = 0x57,
         OP2_ADDSD_VsdWsd    = 0x58,
         OP2_MULSD_VsdWsd    = 0x59,
         OP2_SUBSD_VsdWsd    = 0x5C,
@@ -263,6 +264,7 @@ public:
         GROUP2_OP_SAR = 7,
 
         GROUP3_OP_TEST = 0,
+        GROUP3_OP_NEG  = 3,
         GROUP3_OP_IDIV = 7,
 
         GROUP5_OP_CALLN = 2,
@@ -605,6 +607,12 @@ public:
         emitModRm_opr(GROUP3_OP_IDIV, dst);
     }
 
+    void negl_r(RegisterID dst)
+    {
+        m_buffer->putByte(OP_GROUP3_Ev);
+        emitModRm_opr(GROUP3_OP_NEG, dst);
+    }
+
     void cdq()
     {
         m_buffer->putByte(OP_CDQ);
@@ -739,6 +747,14 @@ public:
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_MOVSD_VsdWsd);
         emitModRm_rm((RegisterID)dst, base, offset);
+    }
+
+    void xorpd_mr(void* addr, XMMRegisterID dst)
+    {
+        m_buffer->putByte(PRE_SSE_66);
+        m_buffer->putByte(OP_2BYTE_ESCAPE);
+        m_buffer->putByte(OP2_XORPD_VsdWsd);
+        emitModRm_rm((RegisterID)dst, addr);
     }
 
     void movsd_rm(XMMRegisterID src, int offset, RegisterID base)
