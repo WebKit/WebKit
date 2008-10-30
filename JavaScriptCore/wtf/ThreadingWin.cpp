@@ -107,7 +107,17 @@ static void setThreadName(DWORD dwThreadID, LPCSTR szThreadName)
     }
 }
 
-Mutex* atomicallyInitializedStaticMutex;
+static Mutex* atomicallyInitializedStaticMutex;
+
+void lockAtomicallyInitializedStaticMutex()
+{
+    atomicallyInitializedStaticMutex->lock();
+}
+
+void unlockAtomicallyInitializedStaticMutex()
+{
+    atomicallyInitializedStaticMutex->unlock();
+}
 
 static ThreadIdentifier mainThreadIdentifier;
 

@@ -108,7 +108,6 @@ EXPORTS
         ??0ThreadCondition@WTF@@QAE@XZ
         ??1Mutex@WTF@@QAE@XZ
         ??1ThreadCondition@WTF@@QAE@XZ
-        ?atomicallyInitializedStaticMutex@WTF@@3PAVMutex@1@A
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
@@ -118,9 +117,11 @@ EXPORTS
         ?initializeThreading@WTF@@YAXXZ
         ?isMainThread@WTF@@YA_NXZ
         ?lock@Mutex@WTF@@QAEXXZ
+        ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ        
         ?signal@ThreadCondition@WTF@@QAEXXZ
         ?tryLock@Mutex@WTF@@QAE_NXZ
         ?unlock@Mutex@WTF@@QAEXXZ
+        ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
         WTFLog
