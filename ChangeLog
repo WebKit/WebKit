@@ -1,5 +1,16 @@
 2008-10-30  Alp Toker  <alp@nuanti.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=19395
+        doltlibtool bug with bash 3.0
+
+        autotools dolt build fix for bash version 3.0 and older. Remove
+        concatenation syntax from doltlibtool to support the older versions
+        which don't have '+='.
+
+        * acinclude.m4:
+
+2008-10-30  Alp Toker  <alp@nuanti.com>
+
         Rubber-stamped by Oliver Hunt.
 
         autotools build system change to enable JIT features by default. Can
