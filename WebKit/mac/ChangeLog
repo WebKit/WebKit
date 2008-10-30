@@ -2,6 +2,14 @@
 
         Reviewed by Sam Weinig.
 
+        Remove an unused forward class declaration.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+
+2008-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove WebBaseNetscapePluginViewInternal.h and WebBaseNetscapePluginViewPrivate.h.
 
         * Plugins/WebBaseNetscapePluginView.h:

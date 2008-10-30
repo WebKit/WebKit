@@ -39,7 +39,6 @@
 @class WebDataSource;
 @class WebFrame;
 @class WebNetscapePluginPackage;
-@class WebNetscapePluginNullEventSender;
 @class WebView;
 
 class PluginTimer;
