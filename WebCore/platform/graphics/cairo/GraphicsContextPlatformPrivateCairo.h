@@ -45,7 +45,6 @@ class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate()
         : cr(0)
-        , globalAlpha(1.0f)
 #if PLATFORM(GTK)
         , expose(0)
 #elif PLATFORM(WIN)
@@ -88,7 +87,6 @@ public:
 #endif
 
     cairo_t* cr;
-    float globalAlpha;
     Vector<float> layers;
 
 #if PLATFORM(GTK)

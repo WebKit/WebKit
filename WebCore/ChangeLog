@@ -1,3 +1,23 @@
+2008-10-30  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21883
+        [CAIRO] globalAlpha has to be stored and restored
+
+        Cairo's globalAlpha has to be stored and reloaded on calling
+        save() and restore(). We use the power of GraphicsContextState for this.
+
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::getAlpha):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+
 2008-10-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
