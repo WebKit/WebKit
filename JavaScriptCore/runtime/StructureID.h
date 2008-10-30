@@ -96,14 +96,17 @@ namespace JSC {
         void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureIDChain* cachedPrototypeChain() const { return m_cachedPrototypeChain.get(); }
 
-        const PropertyMap& propertyMap() const { return m_propertyMap; }
-        PropertyMap& propertyMap() { return m_propertyMap; }
-
         void setCachedTransistionOffset(size_t offset) { m_cachedTransistionOffset = offset; }
         size_t cachedTransistionOffset() const { return m_cachedTransistionOffset; }
 
         void growPropertyStorageCapacity();
         size_t propertyStorageCapacity() const { return m_propertyStorageCapacity; }
+        size_t propertyStorageSize() const { return m_propertyMap.storageSize(); }
+
+        size_t get(const Identifier& propertyName) const { return m_propertyMap.get(propertyName); }
+        size_t get(const Identifier& propertyName, unsigned& attributes) const { return m_propertyMap.get(propertyName, attributes); }
+        size_t put(const Identifier& propertyName, unsigned attributes) { return m_propertyMap.put(propertyName, attributes); }
+        size_t remove(const Identifier& propertyName) { return m_propertyMap.remove(propertyName); }
 
         void getEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
         void clearEnumerationCache();
@@ -111,9 +114,11 @@ namespace JSC {
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
 
+        bool isEmpty() const { return m_propertyMap.isEmpty(); }
+
     private:
         StructureID(JSValue* prototype, const TypeInfo&);
-        
+
         static const size_t s_maxTransitionLength = 64;
 
         TypeInfo m_typeInfo;

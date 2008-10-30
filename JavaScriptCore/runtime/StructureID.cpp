@@ -75,7 +75,7 @@ void StructureID::dumpStatistics()
                 ++numberSingletons;
         }
 
-        totalPropertyMapsSize += structureID->propertyMap().propertyMapSize();
+        totalPropertyMapsSize += structureID->m_propertyMap.propertyMapSize();
     }
 
     printf("Number of live StructureIDs: %d\n", liveStructureIDSet.size());

@@ -1,5 +1,38 @@
 2008-10-29  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Remove direct use of PropertyMap.
+
+        * JavaScriptCore.exp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::mark):
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::getPropertyAttributes):
+        (JSC::JSObject::removeDirect):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::hasCustomProperties):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::putDirect):
+        * runtime/PropertyMap.cpp:
+        (JSC::PropertyMap::get):
+        * runtime/PropertyMap.h:
+        (JSC::PropertyMap::isEmpty):
+        (JSC::PropertyMap::get):
+        * runtime/StructureID.cpp:
+        (JSC::StructureID::dumpStatistics):
+        * runtime/StructureID.h:
+        (JSC::StructureID::propertyStorageSize):
+        (JSC::StructureID::get):
+        (JSC::StructureID::put):
+        (JSC::StructureID::remove):
+        (JSC::StructureID::isEmpty):
+
+2008-10-29  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Rename and move the StructureID transition table to its own file.

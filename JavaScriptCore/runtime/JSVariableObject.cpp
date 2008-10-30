@@ -30,7 +30,6 @@
 #include "JSVariableObject.h"
 
 #include "PropertyNameArray.h"
-#include "PropertyMap.h"
 
 namespace JSC {
 

@@ -28,7 +28,6 @@
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
 #include "JSNumberCell.h"
-#include "PropertyMap.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
 #include "ScopeChain.h"
@@ -51,6 +50,8 @@ namespace JSC {
         DontDelete   = 1 << 3,  // property can't be deleted
         Function     = 1 << 4,  // property is a function - only used by static hashtables
     };
+
+    typedef JSValue** PropertyStorage;
 
     class JSObject : public JSCell {
         friend class BatchedTransitionOptimizer;
@@ -123,19 +124,19 @@ namespace JSC {
         // This get function only looks at the property map.
         JSValue* getDirect(const Identifier& propertyName) const
         {
-            size_t offset = m_structureID->propertyMap().get(propertyName);
+            size_t offset = m_structureID->get(propertyName);
             return offset != WTF::notFound ? m_propertyStorage[offset] : noValue();
         }
 
         JSValue** getDirectLocation(const Identifier& propertyName)
         {
-            size_t offset = m_structureID->propertyMap().get(propertyName);
+            size_t offset = m_structureID->get(propertyName);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
         JSValue** getDirectLocation(const Identifier& propertyName, unsigned& attributes)
         {
-            size_t offset = m_structureID->propertyMap().get(propertyName, attributes);
+            size_t offset = m_structureID->get(propertyName, attributes);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
@@ -152,7 +153,7 @@ namespace JSC {
         void transitionTo(StructureID*);
 
         void removeDirect(const Identifier& propertyName);
-        bool hasCustomProperties() { return !m_structureID->propertyMap().isEmpty(); }
+        bool hasCustomProperties() { return !m_structureID->isEmpty(); }
         bool hasGetterSetterProperties() { return m_structureID->hasGetterSetterProperties(); }
 
         void putDirect(const Identifier& propertyName, JSValue* value, unsigned attr = 0);
@@ -220,7 +221,7 @@ inline JSObject::JSObject(PassRefPtr<StructureID> structureID)
 {
     ASSERT(m_structureID);
     ASSERT(m_structureID->propertyStorageCapacity() == inlineStorageCapacity);
-    ASSERT(m_structureID->propertyMap().isEmpty());
+    ASSERT(m_structureID->isEmpty());
     ASSERT(prototype()->isNull() || Heap::heap(this) == Heap::heap(prototype()));
 }
 
@@ -388,7 +389,7 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
 
     if (m_structureID->isDictionary()) {
         unsigned currentAttributes;
-        size_t offset = m_structureID->propertyMap().get(propertyName, currentAttributes);
+        size_t offset = m_structureID->get(propertyName, currentAttributes);
         if (offset != WTF::notFound) {
             if (checkReadOnly && currentAttributes & ReadOnly)
                 return;
@@ -398,8 +399,8 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
         }
 
         size_t currentCapacity = m_structureID->propertyStorageCapacity();
-        offset = m_structureID->propertyMap().put(propertyName, attributes);
-        if (m_structureID->propertyMap().storageSize() > m_structureID->propertyStorageCapacity()) {
+        offset = m_structureID->put(propertyName, attributes);
+        if (m_structureID->propertyStorageSize() > m_structureID->propertyStorageCapacity()) {
             m_structureID->growPropertyStorageCapacity();
             allocatePropertyStorage(currentCapacity, m_structureID->propertyStorageCapacity());
         }
@@ -411,7 +412,7 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
     }
 
     unsigned currentAttributes;
-    size_t offset = m_structureID->propertyMap().get(propertyName, currentAttributes);
+    size_t offset = m_structureID->get(propertyName, currentAttributes);
     if (offset != WTF::notFound) {
         if (checkReadOnly && currentAttributes & ReadOnly)
             return;
