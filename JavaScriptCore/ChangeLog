@@ -1,5 +1,20 @@
 2008-10-30  Alp Toker  <alp@nuanti.com>
 
+        Build fix attempt for older gcc on the trunk-mac-intel build bot
+        (error: initializer for scalar variable requires one element).
+
+        Modify the initializer syntax slightly with an additional comma.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_resolve_func):
+        (JSC::Machine::cti_op_post_inc):
+        (JSC::Machine::cti_op_resolve_with_base):
+        (JSC::Machine::cti_op_post_dec):
+
+2008-10-30  Alp Toker  <alp@nuanti.com>
+
         Reviewed by Alexey Proskuryakov.
 
         https://bugs.webkit.org/show_bug.cgi?id=21571
