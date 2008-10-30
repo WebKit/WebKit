@@ -27,7 +27,7 @@
 
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
-#import "WebBaseNetscapePluginViewInternal.h"
+#import "WebBaseNetscapePluginView.h"
 
 WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa(WebBaseNetscapePluginView* pluginView)
     : WebNetscapePluginEventHandler(pluginView)

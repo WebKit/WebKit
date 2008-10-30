@@ -28,7 +28,7 @@
 #import "WebNetscapePluginEventHandler.h"
 
 #import <wtf/Assertions.h>
-#import "WebBaseNetscapePluginViewInternal.h"
+#import "WebBaseNetscapePluginView.h"
 #import "WebNetscapePluginEventHandlerCarbon.h"
 #import "WebNetscapePluginEventHandlerCocoa.h"
 

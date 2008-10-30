@@ -30,8 +30,8 @@
 #import <WebKit/npapi.h>
 #import <WebKit/nptextinput.h>
 
-#import <WebKit/WebBaseNetscapePluginViewPrivate.h>
-#import <WebKit/WebKitLogging.h>
+#import "WebBaseNetscapePluginView.h"
+#import "WebKitLogging.h"
 #import <WebCore/PluginMainThreadScheduler.h>
 
 using namespace WebCore;

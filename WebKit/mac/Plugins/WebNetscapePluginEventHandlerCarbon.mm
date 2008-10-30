@@ -27,7 +27,7 @@
 
 #import "WebNetscapePluginEventHandlerCarbon.h"
 
-#import "WebBaseNetscapePluginViewInternal.h"
+#import "WebBaseNetscapePluginView.h"
 #import "WebKitLogging.h"
 #import "WebKitSystemInterface.h"
 

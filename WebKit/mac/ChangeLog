@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        Remove WebBaseNetscapePluginViewInternal.h and WebBaseNetscapePluginViewPrivate.h.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginViewInternal.h: Removed.
+        * Plugins/WebBaseNetscapePluginViewPrivate.h: Removed.
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        * Plugins/npapi.mm:
+        * WebView/WebHTMLView.mm:
+
+2008-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove WebNetscapePluginEmbeddedView, it adds nothing extra now. 
         
         Remove WebNetscapePlugInStreamLoaderClient since WebNetscapePluginStream is the client now.

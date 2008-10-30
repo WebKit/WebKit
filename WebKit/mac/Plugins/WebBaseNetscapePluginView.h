@@ -193,5 +193,31 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 - (void)handleMouseMoved:(NSEvent *)event;
 
 @end
+
+@interface WebBaseNetscapePluginView (WebInternal)
+- (BOOL)sendEvent:(void*)event isDrawRect:(BOOL)eventIsDrawRect;
+- (NPEventModel)eventModel;
+
+- (NPError)loadRequest:(NSURLRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
+- (NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData;
+- (NPError)getURL:(const char *)URL target:(const char *)target;
+- (NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData;
+- (NPError)postURL:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file;
+- (NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream;
+- (NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer;
+- (NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason;
+- (void)status:(const char *)message;
+- (const char *)userAgent;
+- (void)invalidateRect:(NPRect *)invalidRect;
+- (void)invalidateRegion:(NPRegion)invalidateRegion;
+- (void)forceRedraw;
+- (NPError)getVariable:(NPNVariable)variable value:(void *)value;
+- (NPError)setVariable:(NPPVariable)variable value:(void *)value;
+- (uint32)scheduleTimerWithInterval:(uint32)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32 timerID))timerFunc;
+- (void)unscheduleTimer:(uint32)timerID;
+- (NPError)popUpContextMenu:(NPMenu *)menu;
+
+@end
+
 #endif
 
