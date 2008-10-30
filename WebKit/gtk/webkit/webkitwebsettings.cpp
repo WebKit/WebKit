@@ -278,7 +278,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     * #WebKitWebInspector instance held by the #WebKitWebView this
     * setting is enabled for.
     *
-    * Since: 1.0.2
+    * Since: 1.0.3
     */
     g_object_class_install_property(gobject_class,
                                     PROP_ENABLE_DEVELOPER_EXTRAS,

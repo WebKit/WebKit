@@ -97,7 +97,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * #WebKitWebView instance you create; the widget to which you add
      * it will do that.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     webkit_web_inspector_signals[INSPECT_WEB_VIEW] = g_signal_new("inspect-web-view",
             G_TYPE_FROM_CLASS(klass),
@@ -118,7 +118,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * that the window must have been created already by handling
      * ::inspect-web-view.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     webkit_web_inspector_signals[SHOW_WINDOW] = g_signal_new("show-window",
             G_TYPE_FROM_CLASS(klass),
@@ -137,7 +137,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Emitted when the inspector should appear at the same window as
      * the #WebKitWebView being inspected.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     webkit_web_inspector_signals[ATTACH_WINDOW] = g_signal_new("attach-window",
             G_TYPE_FROM_CLASS(klass),
@@ -155,7 +155,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      *
      * Emitted when the inspector should appear in a separate window.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     webkit_web_inspector_signals[DETTACH_WINDOW] = g_signal_new("dettach-window",
             G_TYPE_FROM_CLASS(klass),
@@ -182,7 +182,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * ::inspect-web-view will be emmited again, when the user
      * inspects an element.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     webkit_web_inspector_signals[CLOSE_WINDOW] = g_signal_new("close-window",
             G_TYPE_FROM_CLASS(klass),
@@ -201,7 +201,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * references on the inspector at this time. The inspected
      * #WebKitWebView may no longer exist when this signal is emitted.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     webkit_web_inspector_signals[FINISHED] = g_signal_new("finished",
             G_TYPE_FROM_CLASS(klass),
@@ -221,7 +221,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      *
      * The Web View that renders the Web Inspector itself.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     g_object_class_install_property(gobject_class, PROP_WEB_VIEW,
                                     g_param_spec_object("web-view",
@@ -235,7 +235,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      *
      * The URI that is currently being inspected.
      *
-     * Since: 1.0.2
+     * Since: 1.0.3
      */
     g_object_class_install_property(gobject_class, PROP_INSPECTED_URI,
                                     g_param_spec_string("inspected-uri",
@@ -320,7 +320,7 @@ void webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKit
  * Returns: the #WebKitWebView instance that is used to render the
  * inspector or %NULL if it is not yet created.
  *
- * Since: 1.0.2
+ * Since: 1.0.3
  **/
 WebKitWebView* webkit_web_inspector_get_web_view(WebKitWebInspector *web_inspector)
 {
@@ -348,7 +348,7 @@ void webkit_web_inspector_set_inspected_uri(WebKitWebInspector* web_inspector, c
  * Returns: a pointer to the URI as an internally allocated string; it
  * should not be freed, modified or stored.
  *
- * Since: 1.0.2
+ * Since: 1.0.3
  **/
 const gchar* webkit_web_inspector_get_inspected_uri(WebKitWebInspector *web_inspector)
 {

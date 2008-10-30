@@ -2,7 +2,7 @@ AC_PREREQ(2.59)
 
 m4_define([webkit_major_version], [1])
 m4_define([webkit_minor_version], [0])
-m4_define([webkit_micro_version], [2])
+m4_define([webkit_micro_version], [3])
 
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
