@@ -4349,7 +4349,7 @@ static NEVER_INLINE void setUpThrowTrampolineReturnAddress(JSGlobalData* globalD
 #define VM_THROW_EXCEPTION_2() \
     do { \
         VM_THROW_EXCEPTION_AT_END(); \
-        VoidPtrPairValue pair = {{ 0, 0 }, }; \
+        VoidPtrPairValue pair = {{ 0, 0 }}; \
         return pair.i; \
     } while (0)
 #define VM_THROW_EXCEPTION_AT_END() \
@@ -4724,7 +4724,7 @@ VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
     int argCount = ARG_int3;
 
     if (LIKELY(argCount == newCodeBlock->numParameters)) {
-        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(callFrame->registers() + registerOffset) }, };
+        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(callFrame->registers() + registerOffset) }};
         return pair.i;
     }
 
@@ -4736,7 +4736,7 @@ VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
         for (size_t i = 0; i < numParameters; ++i)
             argv[i + argCount] = argv[i];
 
-        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }, };
+        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }};
         return pair.i;
     }
 
@@ -4752,7 +4752,7 @@ VoidPtrPair Machine::cti_op_call_JSFunction(CTI_ARGS)
     for (size_t i = 0; i < omittedArgCount; ++i)
         argv[i] = jsUndefined();
 
-    VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }, };
+    VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }};
     return pair.i;
 }
 
@@ -4974,7 +4974,7 @@ VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     callFrame[firstArg] = newObject; // "this" value
 
     if (LIKELY(argCount == newCodeBlock->numParameters)) {
-        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(callFrame->registers() + registerOffset) }, };
+        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(callFrame->registers() + registerOffset) }};
         return pair.i;
     }
 
@@ -4986,7 +4986,7 @@ VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
         for (size_t i = 0; i < numParameters; ++i)
             argv[i + argCount] = argv[i];
 
-        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }, };
+        VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }};
         return pair.i;
     }
 
@@ -5002,7 +5002,7 @@ VoidPtrPair Machine::cti_op_construct_JSConstruct(CTI_ARGS)
     for (size_t i = 0; i < omittedArgCount; ++i)
         argv[i] = jsUndefined();
 
-    VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }, };
+    VoidPtrPairValue pair = {{ newCodeBlock, CallFrame::create(r) }};
     return pair.i;
 }
 
@@ -5103,7 +5103,7 @@ VoidPtrPair Machine::cti_op_resolve_func(CTI_ARGS)
             JSValue* result = slot.getValue(callFrame, ident);
             VM_CHECK_EXCEPTION_AT_END();
 
-            VoidPtrPairValue pair = {{ thisObj, asPointer(result) }, };
+            VoidPtrPairValue pair = {{ thisObj, asPointer(result) }};
             return pair.i;
         }
         ++iter;
@@ -5384,7 +5384,7 @@ VoidPtrPair Machine::cti_op_post_inc(CTI_ARGS)
     JSValue* number = v->toJSNumber(callFrame);
     VM_CHECK_EXCEPTION_AT_END();
 
-    VoidPtrPairValue pair = {{ asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1)) }, };
+    VoidPtrPairValue pair = {{ asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() + 1)) }};
     return pair.i;
 }
 
@@ -5500,7 +5500,7 @@ VoidPtrPair Machine::cti_op_resolve_with_base(CTI_ARGS)
             JSValue* result = slot.getValue(callFrame, ident);
             VM_CHECK_EXCEPTION_AT_END();
 
-            VoidPtrPairValue pair = {{ base, asPointer(result) }, };
+            VoidPtrPairValue pair = {{ base, asPointer(result) }};
             return pair.i;
         }
         ++iter;
@@ -5570,7 +5570,7 @@ VoidPtrPair Machine::cti_op_post_dec(CTI_ARGS)
     JSValue* number = v->toJSNumber(callFrame);
     VM_CHECK_EXCEPTION_AT_END();
 
-    VoidPtrPairValue pair = {{ asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1)) }, };
+    VoidPtrPairValue pair = {{ asPointer(number), asPointer(jsNumber(ARG_globalData, number->uncheckedGetNumber() - 1)) }};
     return pair.i;
 }
 
