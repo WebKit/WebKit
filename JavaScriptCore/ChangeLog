@@ -1,5 +1,19 @@
 2008-10-30  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 21987: CTI::putDoubleResultToJSNumberCellOrJSImmediate() hardcodes its result register
+        <https://bugs.webkit.org/show_bug.cgi?id=21987>
+
+        CTI::putDoubleResultToJSNumberCellOrJSImmediate() hardcodes its result
+        register as ecx, but it should be tempReg1, which is ecx at all of its
+        callsites.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::putDoubleResultToJSNumberCellOrJSImmediate):
+
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 21985: Opcodes should use eax as their destination register whenever possible

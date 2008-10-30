@@ -795,7 +795,7 @@ void CTI::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSourc
     m_jit.link(m_jit.emitUnlinkedJe(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
     // Yes it really really really is representable as a JSImmediate.
     emitFastArithIntToImmNoCheck(tempReg1);
-    emitPutResult(dst, X86::ecx);
+    emitPutResult(dst, tempReg1);
 }
 
 void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes types, unsigned i)
