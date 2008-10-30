@@ -1011,10 +1011,10 @@ void CTI::privateCompileMainPass()
         case op_mov: {
             unsigned src = instruction[i + 2].u.operand;
             if (isConstant(src))
-                m_jit.movl_i32r(asInteger(getConstant(m_callFrame, src)), X86::edx);
+                m_jit.movl_i32r(asInteger(getConstant(m_callFrame, src)), X86::eax);
             else
-                emitGetArg(src, X86::edx);
-            emitPutResult(instruction[i + 1].u.operand, X86::edx);
+                emitGetArg(src, X86::eax);
+            emitPutResult(instruction[i + 1].u.operand);
             i += 3;
             break;
         }
@@ -1071,7 +1071,7 @@ void CTI::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             m_jit.addl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
             m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-            emitPutResult(srcDst, X86::eax);
+            emitPutResult(srcDst);
             i += 2;
             break;
         }
@@ -1305,7 +1305,7 @@ void CTI::privateCompileMainPass()
             JSVariableObject* globalObject = static_cast<JSVariableObject*>(instruction[i + 2].u.jsCell);
             m_jit.movl_i32r(asInteger(globalObject), X86::eax);
             emitGetVariableObjectRegister(X86::eax, instruction[i + 3].u.operand, X86::eax);
-            emitPutResult(instruction[i + 1].u.operand, X86::eax);
+            emitPutResult(instruction[i + 1].u.operand);
             i += 4;
             break;
         }
@@ -1407,8 +1407,8 @@ void CTI::privateCompileMainPass()
             X86Assembler::JmpSrc isObject = m_jit.emitUnlinkedJe();
 
             m_jit.link(isImmediate, m_jit.label());
-            emitGetArg(instruction[i + 2].u.operand, X86::ecx);
-            emitPutResult(instruction[i + 1].u.operand, X86::ecx);
+            emitGetArg(instruction[i + 2].u.operand, X86::eax);
+            emitPutResult(instruction[i + 1].u.operand);
             m_jit.link(isObject, m_jit.label());
 
             i += 3;
@@ -1603,7 +1603,7 @@ void CTI::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             m_jit.subl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
             m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-            emitPutResult(srcDst, X86::eax);
+            emitPutResult(srcDst);
             i += 2;
             break;
         }
