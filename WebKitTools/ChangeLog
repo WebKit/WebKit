@@ -1,3 +1,13 @@
+2008-10-30  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed 64 bit build failure.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (setupMainDisplayColorProfile):
+        (createBitmapContextFromWebView):
+
 2008-10-28  Alp Toker  <alp@nuanti.com>
 
         Fix GTK DRT following build breakage in r37928.

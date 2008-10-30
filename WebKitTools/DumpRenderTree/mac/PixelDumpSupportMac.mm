@@ -49,7 +49,7 @@
 // This implies we have to temporarily change the profile of the main display to the colorspace we want to render into.
 // We also need to make sure the CGBitmapContext we return is in that same colorspace.
 
-#define PROFILE_PATH "/System/Library/ColorSync/Profiles/Generic RGB Profile.icc" // FIXME: Should we be using "/System/Library/ColorSync/Profiles/sRGB Profile.icc"?
+#define PROFILE_PATH "/System/Library/ColorSync/Profiles/Generic RGB Profile.icc" // FIXME: This cannot be more than CS_MAX_PATH (256 characters)
 
 static CMProfileLocation sInitialProfileLocation; // The locType field is initialized to 0 which is the same as cmNoProfileBase
 
@@ -85,17 +85,9 @@ void setupMainDisplayColorProfile()
     }
     
     CMProfileLocation location;
-    location.locType = cmFileBasedProfile;
-    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:PROFILE_PATH]];
-    FSRef fsRef;
-    if (url && CFURLGetFSRef((CFURLRef)url, &fsRef)) {
-        error = FSGetCatalogInfo(&fsRef, 0, 0, 0, &location.u.fileLoc.spec, 0);
-        if (error == noErr)
-        error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
-    }
-    else
-        error = -1;
-
+    location.locType = cmPathBasedProfile;
+    strcpy(location.u.pathLoc.path, PROFILE_PATH);
+    error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
     if (error) {
         fprintf(stderr, "Failed to set color profile for main display!  Many pixel tests may fail as a result.  (Error: %i)", error);
         sInitialProfileLocation.locType = cmNoProfileBase;
@@ -126,17 +118,12 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     static CGColorSpaceRef colorSpace = 0;
     if (!colorSpace) {
         CMProfileLocation location;
-        location.locType = cmFileBasedProfile;
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:PROFILE_PATH]];
-        FSRef fsRef;
-        if (url && CFURLGetFSRef((CFURLRef)url, &fsRef)) {
-            if (FSGetCatalogInfo(&fsRef, 0, 0, 0, &location.u.fileLoc.spec, 0) == noErr) {
-                CMProfileRef profile;
-                if (CMOpenProfile(&profile, &location) == noErr) {
-                    colorSpace = CGColorSpaceCreateWithPlatformColorSpace(profile);
-                    CMCloseProfile(profile);
-                }
-            }
+        location.locType = cmPathBasedProfile;
+        strcpy(location.u.pathLoc.path, PROFILE_PATH);
+        CMProfileRef profile;
+        if (CMOpenProfile(&profile, &location) == noErr) {
+            colorSpace = CGColorSpaceCreateWithPlatformColorSpace(profile);
+            CMCloseProfile(profile);
         }
     }
     
