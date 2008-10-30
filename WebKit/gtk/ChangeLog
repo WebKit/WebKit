@@ -1,5 +1,16 @@
 2008-10-30  Alp Toker  <alp@nuanti.com>
 
+        Rubber-stamped by Holger Freyther.
+
+        Fix typo in recently added web inspector signal. dettach -> detach.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::detachWindow):
+        * webkit/webkitwebinspector.cpp:
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_class_init):
+
+2008-10-30  Alp Toker  <alp@nuanti.com>
+
         Fix version comments for the web inspector added in r37982. Available
         since 1.0.3, not 1.0.2.
 

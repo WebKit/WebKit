@@ -141,7 +141,7 @@ void InspectorClient::detachWindow()
         return;
 
     gboolean handled = FALSE;
-    g_signal_emit_by_name(m_webInspector, "dettach-window", &handled);
+    g_signal_emit_by_name(m_webInspector, "detach-window", &handled);
 }
 
 void InspectorClient::setAttachedWindowHeight(unsigned height)
