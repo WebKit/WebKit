@@ -1,3 +1,47 @@
+2008-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - fix storage leak seen on buildbot
+
+        Some other cleanup too. The storage leak was caused by the fact
+        that HashTraits<CallIdentifier>::needsDestruction was false, so
+        the call identifier objects didn't get deleted.
+
+        * profiler/CallIdentifier.h:
+        
+        Added a default constructor to create empty call identifiers.
+
+        Changed the normal constructor to use const UString&
+        to avoid extra copying and reference count thrash.
+        
+        Removed the explicit copy constructor definition, since it's what
+        the compiler will automatically generate. (Rule of thumb: Either
+        you need both a custom copy constructor and a custom assignment
+        operator, or neither.)
+
+        Moved the CallIdentifier hash function out of the WTF namespace;
+        there's no reason to put it there.
+
+        Changed the CallIdentifier hash function to be a struct rather than
+        a specialization of the IntHash struct template. Having it be
+        a specialization made no sense, since CallIdentifier is not an integer,
+        and did no good.
+
+        Removed explicit definition of emptyValueIsZero in the hash traits,
+        since inheriting from GenericHashTraits already makes that false.
+
+        Removed explicit definition of emptyValue, instead relying on the
+        default constructor and GenericHashTraits.
+
+        Removed explicit definition of needsDestruction, because we want it
+        to have its default value: true, not false. This fixes the leak!
+
+        Changed constructDeletedValue and isDeletedValue to use a line number
+        of numeric_limits<unsigned>::max() to indicate a value is deleted.
+        Previously this used empty strings for the empty value and null strings
+        for the deleted value, but it's more efficient to use null for both.
+
 2008-10-31  Timothy Hatcher  <timothy@apple.com>
 
         Fixes console warnings about not having an autorelease pool.

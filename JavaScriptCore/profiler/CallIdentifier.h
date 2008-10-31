@@ -35,18 +35,16 @@ namespace JSC {
         UString m_name;
         UString m_url;
         unsigned m_lineNumber;
-        
-        CallIdentifier(UString name, UString url, int lineNumber)
-            : m_name(name)
-            , m_url(url)
-            , m_lineNumber(lineNumber)
+
+        CallIdentifier()
+            : m_lineNumber(0)
         {
         }
 
-        CallIdentifier(const CallIdentifier& ci)
-            : m_name(ci.m_name)
-            , m_url(ci.m_url)
-            , m_lineNumber(ci.m_lineNumber)
+        CallIdentifier(const UString& name, const UString& url, int lineNumber)
+            : m_name(name)
+            , m_url(url)
+            , m_lineNumber(lineNumber)
         {
         }
 
@@ -59,32 +57,38 @@ namespace JSC {
 #endif
     };
 
-} // namespace JSC
-
-namespace WTF {
-    template<> struct IntHash<JSC::CallIdentifier> {
-        static unsigned hash(const JSC::CallIdentifier& key)
+    struct CallIdentifierHash {
+        static unsigned hash(const CallIdentifier& key)
         {
             unsigned hashCodes[3] = {
                 key.m_name.rep()->hash(),
                 key.m_url.rep()->hash(),
                 key.m_lineNumber
             };
-            return JSC::UString::Rep::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
+            return UString::Rep::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
         }
 
-        static bool equal(const JSC::CallIdentifier& a, const JSC::CallIdentifier& b) { return a == b; }
+        static bool equal(const CallIdentifier& a, const CallIdentifier& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
-    template<> struct DefaultHash<JSC::CallIdentifier> { typedef IntHash<JSC::CallIdentifier> Hash; };
+
+} // namespace JSC
+
+namespace WTF {
+
+    template<> struct DefaultHash<JSC::CallIdentifier> { typedef JSC::CallIdentifierHash Hash; };
 
     template<> struct HashTraits<JSC::CallIdentifier> : GenericHashTraits<JSC::CallIdentifier> {
-        static const bool emptyValueIsZero = false;
-        static JSC::CallIdentifier emptyValue() { return JSC::CallIdentifier("", "", 0); }
-        static const bool needsDestruction = false;
-        static void constructDeletedValue(JSC::CallIdentifier& slot) { new (&slot) JSC::CallIdentifier(JSC::UString(), JSC::UString(), 0); }
-        static bool isDeletedValue(const JSC::CallIdentifier& value) { return value.m_name.isNull() && value.m_url.isNull() && value.m_lineNumber == 0; }
+        static void constructDeletedValue(JSC::CallIdentifier& slot)
+        {
+            new (&slot) JSC::CallIdentifier(JSC::UString(), JSC::UString(), std::numeric_limits<unsigned>::max());
+        }
+        static bool isDeletedValue(const JSC::CallIdentifier& value)
+        {
+            return value.m_name.isNull() && value.m_url.isNull() && value.m_lineNumber == std::numeric_limits<unsigned>::max();
+        }
     };
+
 } // namespace WTF
 
 #endif  // CallIdentifier_h
