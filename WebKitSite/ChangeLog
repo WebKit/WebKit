@@ -1,3 +1,11 @@
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update the link to Mac Subversion binaries.
+
+        * building/tools.html:
+
 2008-10-27  Antti Koivisto  <antti@apple.com>
 
         Add a file.
