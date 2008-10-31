@@ -785,27 +785,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\RegExpConstructor.cpp"
+				RelativePath="..\..\runtime\RegExpConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\RegExpConstructor.h"
+				RelativePath="..\..\runtime\RegExpConstructor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\RegExpObject.cpp"
+				RelativePath="..\..\runtime\RegExpObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\RegExpObject.h"
+				RelativePath="..\..\runtime\RegExpObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\RegExpPrototype.cpp"
+				RelativePath="..\..\runtime\RegExpPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\RegExpPrototype.h"
+				RelativePath="..\..\runtime\RegExpPrototype.h"
 				>
 			</File>
 			<File

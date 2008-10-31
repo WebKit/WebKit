@@ -1,5 +1,13 @@
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Remove the call to Interpreter::setShouldPrintExceptions() from the
