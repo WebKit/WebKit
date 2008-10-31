@@ -1,3 +1,16 @@
+2008-10-31  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes console warnings about not having an autorelease pool.
+        Also fixes the build for Snow Leopard, by including individual
+        Foundation headers instead of Foundation.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21995
+
+        Reviewed by Oliver Hunt.
+
+        * profiler/ProfilerServer.mm:
+        (-[ProfilerServer init]): Create a NSAutoreleasePool and drain it.
+
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

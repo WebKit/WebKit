@@ -29,7 +29,12 @@
 #import "JSProfilerPrivate.h"
 #import "JSRetainPtr.h"
 
-#import <Foundation/Foundation.h>
+#import <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSProcessInfo.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSUserDefaults.h>
 
 @interface ProfilerServer : NSObject {
 @private
@@ -56,6 +61,8 @@
     if (!(self = [super init]))
         return nil;
 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults boolForKey:@"EnableJSProfiling"])
         [self startProfiling];
@@ -70,6 +77,8 @@
 
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(startProfiling) name:[_serverName stringByAppendingString:@"-Start"] object:nil];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(stopProfiling) name:[_serverName stringByAppendingString:@"-Stop"] object:nil];
+
+    [pool drain];
 
     return self;
 }
