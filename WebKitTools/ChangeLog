@@ -1,3 +1,11 @@
+2008-10-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Jon Homeycutt.
+
+        Explicitly default to building for only the native architecture in debug and release builds.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+
 2008-10-30  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.
