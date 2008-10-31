@@ -50,6 +50,9 @@ public:
     virtual bool startUpdating(PositionOptions*) { return false; }
     virtual void stopUpdating() {}
     
+    virtual void suspend() { }
+    virtual void resume() { }
+    
     virtual Geoposition* lastPosition() const { return 0; }
     virtual PositionError* lastError() const { return 0; }
 

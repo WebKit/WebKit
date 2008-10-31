@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig
 
+        https://bugs.webkit.org/show_bug.cgi?id=21967
+        
+        For some platforms the GeolocationService must be suspended and resumed.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::clearWatch): now uses Geolocation::hasListeners()
+        (WebCore::Geolocation::suspend): calls GeolocationService::suspend() if there are listeners
+        (WebCore::Geolocation::resume): calls GeolocationService::resume() if there are listeners
+        (WebCore::Geolocation::geolocationServicePositionChanged): now uses Geolocation::hasListeners()
+        * page/Geolocation.h:
+        (WebCore::Geolocation::hasListeners): Indicates of the Geolocation has interested GeolocationService listeners
+        * platform/GeolocationService.h:
+        (WebCore::GeolocationService::suspend): empty implementation
+        (WebCore::GeolocationService::resume): empty implementation
+
+2008-10-30  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Sam Weinig
+
         https://bugs.webkit.org/show_bug.cgi?id=21966
         
         The Geolocation spec was updated on 10/27/2008. This brings WebCore up to date.

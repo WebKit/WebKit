@@ -58,6 +58,9 @@ public:
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PositionOptions*);
     void clearWatch(int watchId);
 
+    void suspend();
+    void resume();
+
 private:
     Geolocation(Frame*);
 
@@ -75,7 +78,7 @@ private:
         GeoNotifier(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PositionOptions*);
     };
     
-    void stopUpdatingIfEmpty();
+    bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
 
     void sendErrorToOneShots(PositionError*);
     void sendErrorToWatchers(PositionError*);
