@@ -1,3 +1,13 @@
+2008-10-30  Zoltan Horvath  <Horvath.Zoltan.6@stud.u-szeged.hu>
+
+        Fix a bug where when V8's or UBENCH's test suite list file is missing
+        the error message is suggesting that SunSpider's list file is missing.
+
+        Reviewed by Sam Weinig.
+
+        * sunspider:
+        (loadTestsList): Fix the error message to use the right list name.
+
 2008-10-07  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=18989

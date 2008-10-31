@@ -119,7 +119,7 @@ sub loadTestsList()
     $testlist = "LIST-UBENCH" if ($ubench);
     $testlist = "LIST-V8" if ($v8suite);
 
-    open TESTLIST, "<", "tests/${testlist}" or die "Can't find ./tests/LIST";
+    open TESTLIST, "<", "tests/${testlist}" or die "Can't find ./tests/${testlist}";
     while (<TESTLIST>) {
         chomp;
         next unless !$testsPattern || /$testsPattern/;
