@@ -1,3 +1,12 @@
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Change the JavaScriptCore Xcode project to use relative paths for the
+        PCRE source files.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-10-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich and Geoffrey Garen.

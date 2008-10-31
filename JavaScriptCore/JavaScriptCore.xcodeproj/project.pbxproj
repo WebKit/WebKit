@@ -475,7 +475,7 @@
 		652246A40C8D7A0E007BDAF7 /* HashIterators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashIterators.h; sourceTree = "<group>"; };
 		65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNameArray.cpp; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
-		6541720F039E08B90058BFEB /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = pcre/pcre.h; sourceTree = "<group>"; tabWidth = 8; };
+		6541720F039E08B90058BFEB /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = pcre.h; sourceTree = "<group>"; tabWidth = 8; };
 		6541BD6E08E80A17002CBEE7 /* TCPageMap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TCPageMap.h; sourceTree = "<group>"; tabWidth = 8; };
 		6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TCSpinLock.h; sourceTree = "<group>"; tabWidth = 8; };
 		6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCSystemAlloc.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -531,9 +531,9 @@
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
 		9303F5690991190000AD71B8 /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
 		9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtr.h; sourceTree = "<group>"; };
-		930754BF08B0F68000AB3056 /* pcre_compile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_compile.cpp; path = pcre/pcre_compile.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		930754CE08B0F74500AB3056 /* pcre_tables.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_tables.cpp; path = pcre/pcre_tables.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		930754E908B0F78500AB3056 /* pcre_exec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_exec.cpp; path = pcre/pcre_exec.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		930754BF08B0F68000AB3056 /* pcre_compile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_compile.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		930754CE08B0F74500AB3056 /* pcre_tables.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_tables.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		930754E908B0F78500AB3056 /* pcre_exec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_exec.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		9322A00306C341D3009067BB /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		932F5BD80822A1C700736975 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		932F5BD90822A1C700736975 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -545,7 +545,7 @@
 		933A349D038AE80F008635CE /* identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		935AF46909E9D9DB00ACD1D8 /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
 		935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedParam.h; sourceTree = "<group>"; };
-		937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_ucp_searchfuncs.cpp; path = pcre/pcre_ucp_searchfuncs.cpp; sourceTree = "<group>"; };
+		937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_ucp_searchfuncs.cpp; sourceTree = "<group>"; };
 		9374D3A7038D9D74008635CE /* ScopeChain.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChain.h; sourceTree = "<group>"; tabWidth = 8; };
 		9374D3A8038D9D74008635CE /* ScopeChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopeChain.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		937B63CC09E766D200A671DD /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
@@ -556,9 +556,9 @@
 		93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArray.cpp; sourceTree = "<group>"; };
 		93B6A0DE0AA64DA40076DE27 /* GetPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GetPtr.h; sourceTree = "<group>"; };
 		93CEDDFB0EA91EE600258EBE /* RegExpMatchesArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpMatchesArray.h; sourceTree = "<group>"; };
-		93E26BD308B1514100F85226 /* pcre_xclass.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_xclass.cpp; path = pcre/pcre_xclass.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		93E26BE508B1517100F85226 /* pcre_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = pcre_internal.h; path = pcre/pcre_internal.h; sourceTree = "<group>"; tabWidth = 8; };
-		93E26BFC08B151D400F85226 /* ucpinternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = ucpinternal.h; path = pcre/ucpinternal.h; sourceTree = "<group>"; tabWidth = 8; };
+		93E26BD308B1514100F85226 /* pcre_xclass.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_xclass.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		93E26BE508B1517100F85226 /* pcre_internal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = pcre_internal.h; sourceTree = "<group>"; tabWidth = 8; };
+		93E26BFC08B151D400F85226 /* ucpinternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ucpinternal.h; sourceTree = "<group>"; tabWidth = 8; };
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = kjs/Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = kjs/Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
@@ -1155,7 +1155,7 @@
 				93E26BD308B1514100F85226 /* pcre_xclass.cpp */,
 				93E26BFC08B151D400F85226 /* ucpinternal.h */,
 			);
-			name = pcre;
+			path = pcre;
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
