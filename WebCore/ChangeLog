@@ -1,3 +1,9 @@
+2008-10-31  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * platform/win/WCDataObject.cpp: Added missing include of "config.h".
+
 2008-10-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
