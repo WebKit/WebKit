@@ -29,7 +29,7 @@
 #include "Machine.h"
 #include "Parser.h"
 #include "completion.h"
-#include "debugger.h"
+#include "Debugger.h"
 #include <stdio.h>
 
 #if !PLATFORM(WIN_OS)

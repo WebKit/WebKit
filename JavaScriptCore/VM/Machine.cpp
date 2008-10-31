@@ -51,7 +51,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "collector.h"
-#include "debugger.h"
+#include "Debugger.h"
 #include "operations.h"
 #include "SamplingTool.h"
 #include <stdio.h>

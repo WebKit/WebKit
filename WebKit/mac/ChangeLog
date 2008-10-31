@@ -1,3 +1,17 @@
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Create a debugger directory in JavaScriptCore and move the relevant
+        files to it.
+
+        * ForwardingHeaders/debugger: Added.
+        * ForwardingHeaders/debugger/DebuggerCallFrame.h: Copied from ForwardingHeaders/kjs/DebuggerCallFrame.h.
+        * ForwardingHeaders/kjs/DebuggerCallFrame.h: Removed.
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+
 2008-10-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

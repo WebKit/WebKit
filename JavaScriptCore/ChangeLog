@@ -1,3 +1,34 @@
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Create a debugger directory in JavaScriptCore and move the relevant
+        files to it.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CodeBlock.cpp:
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        * debugger: Added.
+        * debugger/Debugger.cpp: Copied from kjs/debugger.cpp.
+        * debugger/Debugger.h: Copied from kjs/debugger.h.
+        * debugger/DebuggerCallFrame.cpp: Copied from kjs/DebuggerCallFrame.cpp.
+        * debugger/DebuggerCallFrame.h: Copied from kjs/DebuggerCallFrame.h.
+        * kjs/AllInOneFile.cpp:
+        * kjs/DebuggerCallFrame.cpp: Removed.
+        * kjs/DebuggerCallFrame.h: Removed.
+        * kjs/Parser.cpp:
+        * kjs/Parser.h:
+        * kjs/debugger.cpp: Removed.
+        * kjs/debugger.h: Removed.
+        * kjs/interpreter.cpp:
+        * kjs/nodes.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/JSGlobalObject.cpp:
+
 2008-10-30  Benjamin K. Stuhl  <bks24@cornell.edu>
 
         gcc 4.3.3/linux-x86 generates "suggest parentheses around && within ||"

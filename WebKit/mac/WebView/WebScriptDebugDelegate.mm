@@ -32,7 +32,7 @@
 #import "WebFrameInternal.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
-#import <kjs/DebuggerCallFrame.h>
+#import <debugger/DebuggerCallFrame.h>
 #import <kjs/ExecState.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSFunction.h>

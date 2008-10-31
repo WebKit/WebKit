@@ -66,7 +66,7 @@
 #include "ScopeChainMark.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
-#include "debugger.h"
+#include "Debugger.h"
 
 namespace JSC {
 

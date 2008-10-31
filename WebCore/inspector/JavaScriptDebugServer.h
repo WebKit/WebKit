@@ -30,7 +30,7 @@
 #define JavaScriptDebugServer_h
 
 #include "Timer.h"
-#include <kjs/debugger.h>
+#include <debugger/Debugger.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>

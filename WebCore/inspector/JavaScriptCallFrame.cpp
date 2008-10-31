@@ -27,7 +27,7 @@
 #include "JavaScriptCallFrame.h"
 
 #include "PlatformString.h"
-#include <kjs/DebuggerCallFrame.h>
+#include <debugger/DebuggerCallFrame.h>
 #include <runtime/JSGlobalObject.h>
 #include <kjs/interpreter.h>
 #include <kjs/JSLock.h>

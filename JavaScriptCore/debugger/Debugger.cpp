@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "debugger.h"
+#include "Debugger.h"
 
 #include "JSGlobalObject.h"
 

@@ -45,7 +45,7 @@
 #include "Widget.h"
 #include "ScriptController.h"
 #include <kjs/CollectorHeapIterator.h>
-#include <kjs/DebuggerCallFrame.h>
+#include <debugger/DebuggerCallFrame.h>
 #include <kjs/JSLock.h>
 #include <kjs/Parser.h>
 #include <wtf/MainThread.h>

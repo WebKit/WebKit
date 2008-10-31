@@ -37,7 +37,7 @@
 #include "runtime/JSGlobalObjectFunctions.cpp"
 #include "runtime/PrototypeFunction.cpp"
 #include "runtime/GlobalEvalFunction.cpp"
-#include "debugger.cpp"
+#include "debugger/Debugger.cpp"
 #include "runtime/JSArray.cpp"
 #include "runtime/ArrayConstructor.cpp"
 #include "runtime/ArrayPrototype.cpp"

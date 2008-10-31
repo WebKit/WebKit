@@ -29,7 +29,7 @@
 #include <kjs/ExecState.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <kjs/DebuggerCallFrame.h>
+#include <debugger/DebuggerCallFrame.h>
 
 namespace WebCore {
 

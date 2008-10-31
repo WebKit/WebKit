@@ -34,7 +34,7 @@
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
-#include "debugger.h"
+#include "Debugger.h"
 #include "lexer.h"
 #include "operations.h"
 #include <math.h>

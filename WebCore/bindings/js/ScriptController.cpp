@@ -42,7 +42,7 @@
 #include "StringSourceProvider.h"
 
 #include <kjs/completion.h>
-#include <kjs/debugger.h>
+#include <debugger/Debugger.h>
 #include <kjs/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

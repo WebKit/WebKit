@@ -24,7 +24,7 @@
 #define Parser_h
 
 #include "SourceProvider.h"
-#include "debugger.h"
+#include "Debugger.h"
 #include "nodes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

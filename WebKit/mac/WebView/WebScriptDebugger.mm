@@ -32,7 +32,7 @@
 #import "WebViewInternal.h"
 #import "WebScriptDebugDelegate.h"
 #import <runtime/JSGlobalObject.h>
-#import <kjs/DebuggerCallFrame.h>
+#import <debugger/DebuggerCallFrame.h>
 #import <WebCore/DOMWindow.h>
 #import <WebCore/Frame.h>
 #import <WebCore/JSDOMWindow.h>

@@ -1326,19 +1326,19 @@
 			Name="Debugger"
 			>
 			<File
-				RelativePath="..\..\kjs\debugger.cpp"
+				RelativePath="..\..\debugger\Debugger.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\debugger.h"
+				RelativePath="..\..\debugger\Debugger.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DebuggerCallFrame.cpp"
+				RelativePath="..\..\debugger\DebuggerCallFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DebuggerCallFrame.h"
+				RelativePath="..\..\debugger\DebuggerCallFrame.h"
 				>
 			</File>
 		</Filter>

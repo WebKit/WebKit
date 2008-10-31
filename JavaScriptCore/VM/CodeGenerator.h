@@ -38,7 +38,7 @@
 #include "RegisterID.h"
 #include "SegmentedVector.h"
 #include "SymbolTable.h"
-#include "debugger.h"
+#include "Debugger.h"
 #include "nodes.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>

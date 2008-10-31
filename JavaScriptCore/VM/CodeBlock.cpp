@@ -33,7 +33,7 @@
 #include "CTI.h"
 #include "JSValue.h"
 #include "Machine.h"
-#include "debugger.h"
+#include "Debugger.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 

@@ -1,3 +1,22 @@
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Create a debugger directory in JavaScriptCore and move the relevant
+        files to it.
+
+        * ForwardingHeaders/debugger: Added.
+        * ForwardingHeaders/debugger/Debugger.h: Copied from ForwardingHeaders/kjs/debugger.h.
+        * ForwardingHeaders/debugger/DebuggerCallFrame.h: Copied from ForwardingHeaders/kjs/DebuggerCallFrame.h.
+        * ForwardingHeaders/kjs/DebuggerCallFrame.h: Removed.
+        * ForwardingHeaders/kjs/debugger.h: Removed.
+        * WebCore.pro:
+        * bindings/js/ScriptController.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/JavaScriptCallFrame.h:
+        * inspector/JavaScriptDebugServer.cpp:
+        * inspector/JavaScriptDebugServer.h:
+
 2008-10-30  Tony Chang <tony@chromium.org>
 
         Fix 2 Windows theme bugs:
