@@ -2,6 +2,12 @@
 
         Build fix.
 
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+
+2008-10-31  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
 
 2008-10-31  Darin Adler  <darin@apple.com>
