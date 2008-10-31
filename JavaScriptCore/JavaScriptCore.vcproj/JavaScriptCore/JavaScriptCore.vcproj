@@ -877,6 +877,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\StructureIDChain.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\StructureIDChain.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\StructureIDTransitionTable.h"
 				>
 			</File>

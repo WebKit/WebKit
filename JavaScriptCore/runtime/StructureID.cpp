@@ -28,6 +28,7 @@
 
 #include "JSObject.h"
 #include "PropertyNameArray.h"
+#include "StructureIDChain.h"
 #include "identifier.h"
 #include "lookup.h"
 #include <wtf/RefCountedLeakCounter.h>
@@ -891,45 +892,5 @@ void StructureID::checkConsistency()
 }
 
 #endif // DO_PROPERTYMAP_CONSTENCY_CHECK
-
-// StructureIDChain
-
-StructureIDChain::StructureIDChain(StructureID* structureID)
-{
-    size_t size = 1;
-
-    StructureID* tmp = structureID;
-    while (!tmp->storedPrototype()->isNull()) {
-        ++size;
-        tmp = asCell(tmp->storedPrototype())->structureID();
-    }
-    
-    m_vector.set(new RefPtr<StructureID>[size + 1]);
-
-    size_t i;
-    for (i = 0; i < size - 1; ++i) {
-        m_vector[i] = structureID;
-        structureID = asObject(structureID->storedPrototype())->structureID();
-    }
-    m_vector[i] = structureID;
-    m_vector[i + 1] = 0;
-}
-
-bool structureIDChainsAreEqual(StructureIDChain* chainA, StructureIDChain* chainB)
-{
-    if (!chainA || !chainB)
-        return false;
-
-    RefPtr<StructureID>* a = chainA->head();
-    RefPtr<StructureID>* b = chainB->head();
-    while (1) {
-        if (*a != *b)
-            return false;
-        if (!*a)
-            return true;
-        a++;
-        b++;
-    }
-}
 
 } // namespace JSC

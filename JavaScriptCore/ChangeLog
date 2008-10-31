@@ -1,3 +1,20 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22005: Move StructureIDChain into its own file
+        <https://bugs.webkit.org/show_bug.cgi?id=22005>
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * runtime/StructureID.cpp:
+        * runtime/StructureID.h:
+        * runtime/StructureIDChain.cpp: Copied from runtime/StructureID.cpp.
+        * runtime/StructureIDChain.h: Copied from runtime/StructureID.h.
+
 2008-10-31  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

@@ -231,6 +231,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StringPrototype.h \
 	JavaScriptCore/runtime/StructureID.cpp \
 	JavaScriptCore/runtime/StructureID.h \
+	JavaScriptCore/runtime/StructureIDChain.cpp \
+	JavaScriptCore/runtime/StructureIDChain.h \
 	JavaScriptCore/runtime/StructureIDTransitionTable.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \

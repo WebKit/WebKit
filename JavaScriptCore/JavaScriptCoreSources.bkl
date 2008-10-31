@@ -140,6 +140,7 @@ Source files for JSCore.
         runtime/StringObject.cpp
         runtime/StringPrototype.cpp
         runtime/StructureID.cpp
+        runtime/StructureIDChain.cpp
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">
         VM/CodeBlock.cpp

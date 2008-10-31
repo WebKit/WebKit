@@ -82,6 +82,8 @@
 		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-format-attribute"; }; };
 		7E2ADD8E0E79AAD500D50C51 /* CharacterClassConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */; };
 		7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */; };
+		7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureIDChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E4EE70F0EBB7A5B005934AA /* StructureIDChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */; };
 		8613F45A0E3A433E00C948FD /* SamplingTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8613F4580E3A433E00C948FD /* SamplingTool.cpp */; };
 		8613F45B0E3A433E00C948FD /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 8613F4590E3A433E00C948FD /* SamplingTool.h */; };
 		8683B02E0E636482004C19EE /* CTI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8683B02B0E636482004C19EE /* CTI.cpp */; };
@@ -522,6 +524,8 @@
 		7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterClassConstructor.h; sourceTree = "<group>"; };
 		7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CharacterClassConstructor.cpp; sourceTree = "<group>"; };
 		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
+		7E4EE7080EBB7963005934AA /* StructureIDChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDChain.h; sourceTree = "<group>"; };
+		7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDChain.cpp; sourceTree = "<group>"; };
 		8613F4580E3A433E00C948FD /* SamplingTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SamplingTool.cpp; path = VM/SamplingTool.cpp; sourceTree = "<group>"; };
 		8613F4590E3A433E00C948FD /* SamplingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SamplingTool.h; path = VM/SamplingTool.h; sourceTree = "<group>"; };
 		8683B02B0E636482004C19EE /* CTI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTI.cpp; path = VM/CTI.cpp; sourceTree = "<group>"; };
@@ -1265,6 +1269,8 @@
 				BC18C3C60E16EE3300B34460 /* StringPrototype.h */,
 				BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */,
 				BCDE3AB10E6C82CF001453A7 /* StructureID.h */,
+				7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */,
+				7E4EE7080EBB7963005934AA /* StructureIDChain.h */,
 				BC9041470EB9250900FE26FA /* StructureIDTransitionTable.h */,
 			);
 			path = runtime;
@@ -1557,6 +1563,7 @@
 				BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
+				7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1876,6 +1883,7 @@
 				BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */,
 				7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */,
 				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
+				7E4EE70F0EBB7A5B005934AA /* StructureIDChain.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

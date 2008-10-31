@@ -135,6 +135,7 @@ SOURCES += \
     runtime/StringObject.cpp \
     runtime/StringPrototype.cpp \
     runtime/StructureID.cpp \
+    runtime/StructureIDChain.cpp \
     kjs/ustring.cpp \
     profiler/HeavyProfile.cpp \
     profiler/Profile.cpp \
