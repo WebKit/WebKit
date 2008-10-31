@@ -41,15 +41,16 @@ Source files for JSCore.
         API/JSValueRef.cpp
         API/OpaqueJSString.cpp
     </set>
-    
+    <set append="1" var="JSCORE_DEBUGGER_SOURCES">
+        debugger/Debugger.cpp
+        debugger/DebuggerCallFrame.cpp
+    </set>
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
         kjs/ArgList.cpp
         kjs/Arguments.cpp
         kjs/collector.cpp
         kjs/CommonIdentifiers.cpp
-        kjs/debugger.cpp
-        kjs/DebuggerCallFrame.cpp
         kjs/dtoa.cpp
         kjs/ExecState.cpp
         kjs/GetterSetter.cpp
@@ -74,7 +75,6 @@ Source files for JSCore.
         kjs/RegExpPrototype.cpp
         kjs/ScopeChain.cpp
         kjs/ustring.cpp
-
     </set>
     <set append="1" var="JSCORE_SOURCES_PCRE">
         pcre/pcre_compile.cpp

@@ -1,5 +1,14 @@
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Speculative wxWindows build fix.
+
+        * JavaScriptCoreSources.bkl:
+        * jscore.bkl:
+
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Maciej Stachowiak.
 
         Move VM/JSPropertyNameIterator.cpp and VM/JSPropertyNameIterator.h to

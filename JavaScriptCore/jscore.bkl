@@ -38,6 +38,7 @@ JavaScriptCore Bakefile project file.
     <template id="jscore_base" template="icu,pthreads,wxwk_build_settings">
         <sources>
             $(JSCORE_SOURCES_API)
+            $(JSCORE_DEBUGGER_SOURCES)
             $(JSCORE_SOURCES_KJS)
             $(JSCORE_SOURCES_PCRE)
             $(JSCORE_PROFILER_SOURCES)
