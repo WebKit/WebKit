@@ -673,6 +673,19 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		1A9C78030EBBC455008599D4 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */,
+				1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */,
+				1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */,
+				1AEA66D70DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm */,
+				1AEA6A4E0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h */,
+				1AEA6A4F0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm */,
+			);
+			name = Events;
+			sourceTree = "<group>";
+		};
 		1C68F63F095B5F9C00C2984E /* WebInspector */ = {
 			isa = PBXGroup;
 			children = (
@@ -863,6 +876,7 @@
 		848DFF410365F6FB00CA2ACA /* Netscape Plug-ins */ = {
 			isa = PBXGroup;
 			children = (
+				1A9C78030EBBC455008599D4 /* Events */,
 				F5F717230288493C018635CA /* npapi.mm */,
 				1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */,
 				F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */,
@@ -871,12 +885,6 @@
 				F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.mm */,
 				BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */,
 				BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */,
-				1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */,
-				1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */,
-				1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */,
-				1AEA66D70DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm */,
-				1AEA6A4E0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h */,
-				1AEA6A4F0DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm */,
 				F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */,
 				F5F7171F0288493C018635CA /* WebNetscapePluginPackage.m */,
 				226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */,

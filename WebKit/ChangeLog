@@ -1,3 +1,11 @@
+2008-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Move WebNetscapePluginEventHandler classes to a subgroup of Netscape Plug-Ins.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-10-29  Matt Lilek  <webkit@mattlilek.com>
 
         Not reviewed, build fix.
