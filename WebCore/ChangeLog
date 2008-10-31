@@ -1,3 +1,14 @@
+2008-10-31  Timothy Hatcher  <timothy@apple.com>
+
+        Add manual tests that check breakpoints on a blockless body of "for" loops.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22004
+
+        Reviewed by Darin Adler.
+
+        * manual-tests/inspector/debugger-pause-on-for-in-statements.html: Added.
+        * manual-tests/inspector/debugger-pause-on-for-statements.html: Added.
+
 2008-10-31  Darin Adler  <darin@apple.com>
 
         - fix build

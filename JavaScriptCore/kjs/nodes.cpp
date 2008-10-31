@@ -1247,6 +1247,8 @@ RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
     generator.emitLabel(topOfLoop.get());
     generator.pushJumpContext(&m_labelStack, continueTarget.get(), breakTarget.get(), true);
+    if (!m_statement->isBlock())
+        generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());
     RefPtr<RegisterID> result = generator.emitNode(dst, m_statement.get());
     generator.popJumpContext();
     generator.emitLabel(continueTarget.get());
@@ -1260,9 +1262,6 @@ RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     } else {
         generator.emitJump(topOfLoop.get());
     }
-
-    if (!m_statement->isBlock())
-        generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());
 
     generator.emitLabel(breakTarget.get());
     
@@ -1305,6 +1304,8 @@ RegisterID* ForInNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     RefPtr<LabelID> continueTarget = generator.newLabel(); 
     RefPtr<LabelID> breakTarget = generator.newLabel(); 
 
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
+
     if (m_init)
         generator.emitNode(ignoredResult(), m_init.get());
     RegisterID* forInBase = generator.emitNode(m_expr.get());
@@ -1343,15 +1344,12 @@ RegisterID* ForInNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         generator.emitExpressionInfo(assignNode->divot(), assignNode->startOffset(), assignNode->endOffset());
         generator.emitPutByVal(base.get(), subscript, propertyName);
     }   
-    
+
     generator.pushJumpContext(&m_labelStack, continueTarget.get(), breakTarget.get(), true);
-    generator.emitNode(dst, m_statement.get());
-    generator.popJumpContext();
-
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
-
     if (!m_statement->isBlock())
         generator.emitDebugHook(WillExecuteStatement, m_statement->firstLine(), m_statement->lastLine());
+    generator.emitNode(dst, m_statement.get());
+    generator.popJumpContext();
 
     generator.emitLabel(continueTarget.get());
     generator.emitNextPropertyName(propertyName, iter.get(), loopStart.get());

@@ -44,6 +44,23 @@
 
 2008-10-31  Timothy Hatcher  <timothy@apple.com>
 
+        Emit the WillExecuteStatement debugger hook before the for loop body
+        when the statement node for the body isn't a block. This allows
+        breakpoints on those statements in the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22004
+
+        Reviewed by Darin Adler.
+
+        * kjs/nodes.cpp:
+        (JSC::ForNode::emitCode): Emit the WillExecuteStatement
+        debugger hook before the statement node if isn't a block.
+        Also emit the WillExecuteStatement debugger hook for the
+        loop as the first op-code.
+        (JSC::ForInNode::emitCode): Ditto.
+
+2008-10-31  Timothy Hatcher  <timothy@apple.com>
+
         Fixes console warnings about not having an autorelease pool.
         Also fixes the build for Snow Leopard, by including individual
         Foundation headers instead of Foundation.h.
