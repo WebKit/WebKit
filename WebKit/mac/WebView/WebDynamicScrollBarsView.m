@@ -29,6 +29,7 @@
 #import "WebDynamicScrollBarsViewInternal.h"
 
 #import "WebDocument.h"
+#import "WebFrameView.h"
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -291,6 +292,15 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
     }
 
     [super scrollWheel:event];
+}
+
+- (BOOL)accessibilityIsIgnored 
+{
+    id docView = [self documentView];
+    if ([docView isKindOfClass:[WebFrameView class]] && ![(WebFrameView *)docView allowsScrolling])
+        return YES;
+    
+    return [super accessibilityIsIgnored];
 }
 
 @end

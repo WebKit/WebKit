@@ -1,3 +1,14 @@
+2008-10-31  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/4361197> Screen Reader's Item Chooser shows scroll area for WebKit Application window
+
+        If a WebFrameView does not allow scrolling, its scrollbars should not appear in the accessibility hierarchy.
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView accessibilityIsIgnored]):
+
 2008-10-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Homeycutt.
