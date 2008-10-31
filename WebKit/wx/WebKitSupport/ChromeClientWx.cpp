@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "ChromeClientWx.h"
+#include "FileChooser.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "NotImplemented.h"

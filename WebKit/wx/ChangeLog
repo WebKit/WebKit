@@ -1,3 +1,9 @@
+2008-10-31  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW build fix. Missing header.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+
 2008-10-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after addition of runtime and ImageBuffer changes.
