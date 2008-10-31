@@ -105,6 +105,7 @@
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h> 
 #include <wtf/HashSet.h>
 #include <dimm.h>
 #include <oleacc.h>
@@ -372,7 +373,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     RetainPtr<CFURLCacheRef> cfurlCache = CFURLCacheSharedURLCache();
 #endif
 
-    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, _CFURLCacheCopyCacheDirectory(cfurlCache.get()));
+    RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory());
     if (!cfurlCacheDirectory)
         cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
 

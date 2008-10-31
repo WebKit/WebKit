@@ -1,3 +1,11 @@
+2008-10-31  Darin Adler  <darin@apple.com>
+
+        - try to fix build
+
+        * WebView.cpp:
+        (WebView::setCacheModel): Roll out the part of my last change
+        that involved no longer using wkCopyFoundationCacheDirectory.
+
 2008-10-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
