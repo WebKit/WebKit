@@ -1,3 +1,9 @@
+2008-10-31  Darin Adler  <darin@apple.com>
+
+        Requested by Mark Rowe.
+
+        * Scripts/check-for-global-initializers: s/Web Kit/WebKit/.
+
 2008-10-31  David Kilzer  <ddkilzer@apple.com>
 
         Bug 21997: prepare-ChangeLog should filter out ChangeLog files
