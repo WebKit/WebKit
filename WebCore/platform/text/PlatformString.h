@@ -31,6 +31,10 @@
 
 #if USE(JSC)
 #include <kjs/identifier.h>
+#else
+// kjs/identifier.h includes HashMap.h. We explicitly include it in the case of
+// non-JSC builds to keep things consistent.
+#include <wtf/HashMap.h>
 #endif
 
 #if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
