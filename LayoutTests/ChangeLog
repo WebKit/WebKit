@@ -1,5 +1,12 @@
 2008-10-30  Justin Garcia  <justin.garcia@apple.com>
 
+        Added another layout test for previous check-in.
+
+        * editing/inserting/6104369-2-expected.txt: Added.
+        * editing/inserting/6104369-2.html: Added.
+
+2008-10-30  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Beth Dakin.
         
         <rdar://problem/6104369> Hitting return at the end of a quoted line creates an extraneous quoted line

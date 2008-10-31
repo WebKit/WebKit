@@ -1,0 +1,24 @@
+<style>
+blockquote {
+    color: blue;
+    border-left: 1px solid blue;
+    padding-left: 2px;
+    margin: 0px;
+}
+</style>
+<body>
+<div>This tests for a bug where hitting return at the end of a paragraph inside a blockquote would create an extraneous empty quoted paragraph.  You should see "line one" (quoted), "" (unquoted), and "line two" (quoted) below.</div>
+<div id="div" contentEditable="true"><blockquote type="cite"><pre id="pre">line one
+line two</pre></blockquote></div>
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+text = document.getElementById("pre").firstChild;
+window.getSelection().setPosition(text, 8);
+document.execCommand("InsertNewlineInQuotedContent");
+if (window.layoutTestController) {
+    div = document.getElementById("div");
+    div.innerText = div.innerHTML;
+}
+</script>
+</body>
