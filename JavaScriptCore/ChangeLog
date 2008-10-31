@@ -1,5 +1,22 @@
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
+        Rubber-stamped by Maciej Stachowiak.
+
+        Move VM/JSPropertyNameIterator.cpp and VM/JSPropertyNameIterator.h to
+        the runtime directory.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/JSPropertyNameIterator.cpp: Removed.
+        * VM/JSPropertyNameIterator.h: Removed.
+        * runtime/JSPropertyNameIterator.cpp: Copied from VM/JSPropertyNameIterator.cpp.
+        * runtime/JSPropertyNameIterator.h: Copied from VM/JSPropertyNameIterator.h.
+
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
         Not reviewed.
 
         Speculative wxWindows build fix.

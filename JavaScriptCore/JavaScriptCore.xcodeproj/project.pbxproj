@@ -586,8 +586,8 @@
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExceptionHelpers.h; path = VM/ExceptionHelpers.h; sourceTree = "<group>"; };
 		A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExceptionHelpers.cpp; path = VM/ExceptionHelpers.cpp; sourceTree = "<group>"; };
-		A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSPropertyNameIterator.h; path = VM/JSPropertyNameIterator.h; sourceTree = "<group>"; };
-		A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSPropertyNameIterator.cpp; path = VM/JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
+		A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
+		A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
 		A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegmentedVector.h; path = VM/SegmentedVector.h; sourceTree = "<group>"; };
 		A7E42C180E3938830065A544 /* JSStaticScopeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStaticScopeObject.h; sourceTree = "<group>"; };
 		A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStaticScopeObject.cpp; sourceTree = "<group>"; };
@@ -961,8 +961,6 @@
 				A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */,
 				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
 				149B1AA10D86ED7C009CB8C7 /* Instruction.h */,
-				A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */,
-				A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */,
 				149B15E70D81F986009CB8C7 /* Machine.cpp */,
 				149B15E60D81F986009CB8C7 /* Machine.h */,
 				149B15E50D81F986009CB8C7 /* Opcode.cpp */,
@@ -1224,6 +1222,8 @@
 				BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
+				A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */,
+				A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */,
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
 				F692A8620255597D01FF60F7 /* JSString.h */,
 				F692A8870255597D01FF60F7 /* JSValue.cpp */,

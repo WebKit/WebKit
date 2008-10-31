@@ -120,6 +120,7 @@ Source files for JSCore.
         runtime/JSNotAnObject.cpp
         runtime/JSNumberCell.cpp
         runtime/JSObject.cpp
+        runtime/JSPropertyNameIterator.cpp
         runtime/JSString.cpp
         runtime/JSValue.cpp
         runtime/JSVariableObject.cpp
@@ -144,7 +145,6 @@ Source files for JSCore.
         VM/CodeBlock.cpp
         VM/CodeGenerator.cpp
         VM/ExceptionHelpers.cpp
-        VM/JSPropertyNameIterator.cpp
         VM/Machine.cpp
         VM/Opcode.cpp
         VM/SamplingTool.cpp

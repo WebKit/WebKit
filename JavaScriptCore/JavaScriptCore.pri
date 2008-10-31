@@ -57,7 +57,7 @@ SOURCES += \
     VM/CodeBlock.cpp \
     VM/CodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
-    VM/JSPropertyNameIterator.cpp \
+    runtime/JSPropertyNameIterator.cpp \
     VM/Machine.cpp \
     VM/Opcode.cpp \
     VM/SamplingTool.cpp \
