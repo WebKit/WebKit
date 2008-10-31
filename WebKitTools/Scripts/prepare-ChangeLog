@@ -1252,8 +1252,10 @@ sub generateFileList(\@\@\%)
         } elsif (isConflictStatus($status)) {
             push @{$conflictFiles}, $file;
         }
-        my $description = statusDescription($status, $original);
-        $functionLists->{$file} = $description if defined $description;
+        if (basename($file) ne "ChangeLog") {
+            my $description = statusDescription($status, $original);
+            $functionLists->{$file} = $description if defined $description;
+        }
     }
     close STAT;
 }
