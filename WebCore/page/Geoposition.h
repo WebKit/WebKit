@@ -36,7 +36,7 @@ typedef int ExceptionCode;
 
 class Geoposition : public RefCounted<Geoposition> {
 public:
-    static PassRefPtr<Geoposition> create(double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy, double heading, double velocity, DOMTimeStamp timestamp) { return adoptRef(new Geoposition(latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, velocity, timestamp)); }
+    static PassRefPtr<Geoposition> create(double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy, double heading, double speed, DOMTimeStamp timestamp) { return adoptRef(new Geoposition(latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, speed, timestamp)); }
     
     double latitude() const { return m_latitude; }
     double longitude() const { return m_longitude; }
@@ -44,20 +44,20 @@ public:
     double accuracy() const { return m_accuracy; }
     double altitudeAccuracy() const { return m_altitudeAccuracy; }
     double heading() const { return m_heading; }
-    double velocity() const { return m_velocity; }
+    double speed() const { return m_speed; }
     DOMTimeStamp timestamp() const { return m_timestamp; }
 
     String toString() const;
 
 private:
-    Geoposition(double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy, double heading, double velocity, DOMTimeStamp timestamp)
+    Geoposition(double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy, double heading, double speed, DOMTimeStamp timestamp)
         : m_latitude(latitude)
         , m_longitude(longitude)
         , m_altitude(altitude)
         , m_accuracy(accuracy)
         , m_altitudeAccuracy(altitudeAccuracy)
         , m_heading(heading)
-        , m_velocity(velocity)
+        , m_speed(speed)
         , m_timestamp(timestamp)
     {
     }
@@ -68,7 +68,7 @@ private:
     double m_accuracy;
     double m_altitudeAccuracy;
     double m_heading;
-    double m_velocity;
+    double m_speed;
     DOMTimeStamp m_timestamp;
 };
     

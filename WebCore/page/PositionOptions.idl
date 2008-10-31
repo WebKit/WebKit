@@ -29,7 +29,7 @@ module core {
         GenerateConstructor
     ] PositionOptions {
         attribute boolean enableHighAccuracy;
-        attribute long timeout;
+        attribute unsigned long timeout;
     };
 
 }

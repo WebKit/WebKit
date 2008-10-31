@@ -37,7 +37,7 @@ Geolocation::GeoNotifier::GeoNotifier(PassRefPtr<PositionCallback> successCallba
     , m_errorCallback(errorCallback)
     , m_timer(this, &Geolocation::GeoNotifier::timerFired)
 {
-    if (m_errorCallback && options && options->timeout() != -1)
+    if (m_errorCallback && options)
         m_timer.startOneShot(options->timeout() / 1000.0);
 }
 

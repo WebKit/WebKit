@@ -1,3 +1,28 @@
+2008-10-30  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=21966
+        
+        The Geolocation spec was updated on 10/27/2008. This brings WebCore up to date.
+        http://dev.w3.org/geo/api/spec-source.html
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::GeoNotifier::GeoNotifier): PositionOptions' timeout now unsigned
+        * page/Geoposition.cpp: velocity is now called speed
+        (WebCore::Geoposition::toString):
+        * page/Geoposition.h: velocity is now called speed
+        (WebCore::Geoposition::create):
+        (WebCore::Geoposition::speed):
+        (WebCore::Geoposition::Geoposition):
+        * page/Geoposition.idl: velocity is now called speed
+        * page/PositionOptions.h: timeout is now unsigned
+        (WebCore::PositionOptions::create):
+        (WebCore::PositionOptions::timeout):
+        (WebCore::PositionOptions::setTimeout):
+        (WebCore::PositionOptions::PositionOptions):
+        * page/PositionOptions.idl: timeout is now unsigned long
+
 2008-10-30  Justin Garcia  <justin.garcia@apple.com>
 
         Also handle preserved newlines.

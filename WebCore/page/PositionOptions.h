@@ -33,22 +33,22 @@ namespace WebCore {
     
 class PositionOptions : public RefCounted<PositionOptions> {
 public:
-    static PassRefPtr<PositionOptions> create(bool highAccuracy, int timeout) { return adoptRef(new PositionOptions(highAccuracy, timeout)); }
+    static PassRefPtr<PositionOptions> create(bool highAccuracy, unsigned timeout) { return adoptRef(new PositionOptions(highAccuracy, timeout)); }
 
     bool enableHighAccuracy() const { return m_highAccuracy; }
     void setEnableHighAccuracy(bool enable) { m_highAccuracy = enable; }
-    int timeout() const { return m_timeout; }
-    void setTimeout(int t) { m_timeout = t; }
+    unsigned timeout() const { return m_timeout; }
+    void setTimeout(unsigned t) { m_timeout = t; }
     
 private:
-    PositionOptions(bool highAccuracy, int timeout)
+    PositionOptions(bool highAccuracy, unsigned timeout)
         : m_highAccuracy(highAccuracy)
         , m_timeout(timeout)
     {
     }
     
     bool m_highAccuracy;
-    int m_timeout;
+    unsigned m_timeout;
 };
     
 } // namespace WebCore
