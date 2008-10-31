@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+    class Event;
+    class JSEventListener;
+    class JSUnprotectedEventListener;
     class ScriptExecutionContext;
 
     typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::StructureID> > JSDOMStructureMap;
@@ -39,12 +42,10 @@ namespace WebCore {
     class JSDOMGlobalObject : public JSC::JSGlobalObject {
         typedef JSC::JSGlobalObject Base;
     protected:
-        struct JSDOMGlobalObjectData : public JSC::JSGlobalObject::JSGlobalObjectData {
-            JSDOMStructureMap structures;
-            JSDOMConstructorMap constructors;
-        };
+        struct JSDOMGlobalObjectData;
 
         JSDOMGlobalObject(PassRefPtr<JSC::StructureID>, JSDOMGlobalObjectData*, JSC::JSObject* thisValue);
+        virtual ~JSDOMGlobalObject();
 
     public:
         JSDOMStructureMap& structures() { return d()->structures; }
@@ -52,7 +53,45 @@ namespace WebCore {
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
+        // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
+        JSEventListener* findJSEventListener(JSC::JSValue*, bool isInline = false);
+
+        // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
+        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
+
+        // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
+        JSUnprotectedEventListener* findJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
+
+        // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
+        PassRefPtr<JSUnprotectedEventListener> findOrCreateJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
+
+        typedef HashMap<JSC::JSObject*, JSEventListener*> ListenersMap;
+        typedef HashMap<JSC::JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;
+
+        ListenersMap& jsEventListeners();
+        ListenersMap& jsInlineEventListeners();
+        UnprotectedListenersMap& jsUnprotectedEventListeners();
+        UnprotectedListenersMap& jsUnprotectedInlineEventListeners();
+
+        void setCurrentEvent(Event*);
+        Event* currentEvent();
+
         virtual void mark();
+
+    protected:
+        struct JSDOMGlobalObjectData : public JSC::JSGlobalObject::JSGlobalObjectData {
+            JSDOMGlobalObjectData();
+
+            JSDOMStructureMap structures;
+            JSDOMConstructorMap constructors;
+
+            JSDOMGlobalObject::ListenersMap jsEventListeners;
+            JSDOMGlobalObject::ListenersMap jsInlineEventListeners;
+            JSDOMGlobalObject::UnprotectedListenersMap jsUnprotectedEventListeners;
+            JSDOMGlobalObject::UnprotectedListenersMap jsUnprotectedInlineEventListeners;
+
+            Event* evt;
+        };
 
     private:
         JSDOMGlobalObjectData* d() const { return static_cast<JSDOMGlobalObjectData*>(JSC::JSVariableObject::d); }
@@ -78,6 +117,8 @@ namespace WebCore {
         globalObject->constructors().set(&ConstructorClass::s_info, constructor);
         return constructor;
     }
+
+    JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext*);
 
 } // namespace WebCore
 

@@ -76,33 +76,10 @@ namespace WebCore {
 
         void timerFired(DOMWindowTimer*);
 
-        // Finds a wrapper of a JS EventListener, returns 0 if no existing one.
-        JSEventListener* findJSEventListener(JSC::JSValue*, bool isInline = false);
-
-        // Finds or creates a wrapper of a JS EventListener. JS EventListener object is GC-protected.
-        PassRefPtr<JSEventListener> findOrCreateJSEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
-
-        // Finds a wrapper of a GC-unprotected JS EventListener, returns 0 if no existing one.
-        JSUnprotectedEventListener* findJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
-
-        // Finds or creates a wrapper of a JS EventListener. JS EventListener object is *NOT* GC-protected.
-        PassRefPtr<JSUnprotectedEventListener> findOrCreateJSUnprotectedEventListener(JSC::ExecState*, JSC::JSValue*, bool isInline = false);
-
         void clear();
-
-        void setCurrentEvent(Event*);
-        Event* currentEvent();
 
         // Set a place to put a dialog return value when the window is cleared.
         void setReturnValueSlot(JSC::JSValue** slot);
-
-        typedef HashMap<JSC::JSObject*, JSEventListener*> ListenersMap;
-        typedef HashMap<JSC::JSObject*, JSUnprotectedEventListener*> UnprotectedListenersMap;
-
-        ListenersMap& jsEventListeners();
-        ListenersMap& jsInlineEventListeners();
-        UnprotectedListenersMap& jsUnprotectedEventListeners();
-        UnprotectedListenersMap& jsUnprotectedInlineEventListeners();
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;
@@ -135,11 +112,6 @@ namespace WebCore {
 
             RefPtr<DOMWindow> impl;
 
-            JSDOMWindowBase::ListenersMap jsEventListeners;
-            JSDOMWindowBase::ListenersMap jsInlineEventListeners;
-            JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedEventListeners;
-            JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedInlineEventListeners;
-            Event* evt;
             JSC::JSValue** returnValueSlot;
             JSDOMWindowShell* shell;
 

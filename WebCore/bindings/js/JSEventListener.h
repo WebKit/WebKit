@@ -27,7 +27,7 @@
 namespace WebCore {
 
     class Event;
-    class JSDOMWindow;
+    class JSDOMGlobalObject;
     class Node;
 
     class JSAbstractEventListener : public EventListener {
@@ -35,7 +35,7 @@ namespace WebCore {
         virtual void handleEvent(Event*, bool isWindowEvent);
         virtual bool isInline() const;
         virtual JSC::JSObject* listenerObj() const = 0;
-        virtual JSDOMWindow* window() const = 0;
+        virtual JSDOMGlobalObject* globalObject() const = 0;
 
     protected:
         JSAbstractEventListener(bool isInline)
@@ -49,43 +49,43 @@ namespace WebCore {
 
     class JSUnprotectedEventListener : public JSAbstractEventListener {
     public:
-        static PassRefPtr<JSUnprotectedEventListener> create(JSC::JSObject* listener, JSDOMWindow* window, bool isInline)
+        static PassRefPtr<JSUnprotectedEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
         {
-            return adoptRef(new JSUnprotectedEventListener(listener, window, isInline));
+            return adoptRef(new JSUnprotectedEventListener(listener, globalObject, isInline));
         }
         virtual ~JSUnprotectedEventListener();
 
         virtual JSC::JSObject* listenerObj() const;
-        virtual JSDOMWindow* window() const;
-        void clearWindow();
+        virtual JSDOMGlobalObject* globalObject() const;
+        void clearGlobalObject();
         void mark();
 
     private:
-        JSUnprotectedEventListener(JSC::JSObject* listener, JSDOMWindow*, bool isInline);
+        JSUnprotectedEventListener(JSC::JSObject* listener, JSDOMGlobalObject*, bool isInline);
 
         JSC::JSObject* m_listener;
-        JSDOMWindow* m_window;
+        JSDOMGlobalObject* m_globalObject;
     };
 
     class JSEventListener : public JSAbstractEventListener {
     public:
-        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMWindow* window, bool isInline)
+        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSDOMGlobalObject* globalObject, bool isInline)
         {
-            return adoptRef(new JSEventListener(listener, window, isInline));
+            return adoptRef(new JSEventListener(listener, globalObject, isInline));
         }
         virtual ~JSEventListener();
 
         virtual JSC::JSObject* listenerObj() const;
-        virtual JSDOMWindow* window() const;
-        void clearWindow();
+        virtual JSDOMGlobalObject* globalObject() const;
+        void clearGlobalObject();
 
     protected:
-        JSEventListener(JSC::JSObject* listener, JSDOMWindow*, bool isInline);
+        JSEventListener(JSC::JSObject* listener, JSDOMGlobalObject*, bool isInline);
 
         mutable JSC::ProtectedPtr<JSC::JSObject> m_listener;
 
     private:
-        JSC::ProtectedPtr<JSDOMWindow> m_window;
+        JSC::ProtectedPtr<JSDOMGlobalObject> m_globalObject;
     };
 
     class JSLazyEventListener : public JSEventListener {
@@ -99,14 +99,14 @@ namespace WebCore {
 
         virtual bool wasCreatedFromMarkup() const { return true; }
 
-        static PassRefPtr<JSLazyEventListener> create(LazyEventListenerType type, const String& functionName, const String& code, JSDOMWindow* window, Node* node, int lineNumber)
+        static PassRefPtr<JSLazyEventListener> create(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject* globalObject, Node* node, int lineNumber)
         {
-            return adoptRef(new JSLazyEventListener(type, functionName, code, window, node, lineNumber));
+            return adoptRef(new JSLazyEventListener(type, functionName, code, globalObject, node, lineNumber));
         }
         virtual JSC::JSObject* listenerObj() const;
 
     protected:
-        JSLazyEventListener(LazyEventListenerType type, const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
+        JSLazyEventListener(LazyEventListenerType type, const String& functionName, const String& code, JSDOMGlobalObject*, Node*, int lineNumber);
 
     private:
         void parseCode() const;

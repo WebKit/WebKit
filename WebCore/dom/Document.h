@@ -779,6 +779,8 @@ private:
     virtual void refScriptExecutionContext() { ref(); }
     virtual void derefScriptExecutionContext() { deref(); }
 
+    virtual const KURL& virtualURL() const; // Same as url(), but needed for ScriptExecutionContext to implement it without a performance loss for direct calls.
+
     CSSStyleSelector* m_styleSelector;
     bool m_didCalculateStyleSelector;
 

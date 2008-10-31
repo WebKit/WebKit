@@ -29,7 +29,7 @@
 #include "AtomicString.h"
 #include "Event.h"
 #include "Frame.h"
-#include "JSDOMWindowCustom.h"
+#include "JSDOMGlobalObject.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "MessagePort.h"
@@ -67,18 +67,18 @@ void JSMessagePort::mark()
 
 JSValue* JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
 {
-    DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     const UString& message = args.at(exec, 0)->toString(exec);
 
-    return toJS(exec, impl()->startConversation(window->document(), message).get());
+    return toJS(exec, impl()->startConversation(globalObject->scriptExecutionContext(), message).get());
 }
 
 JSValue* JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
 {
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
         return jsUndefined();
-    RefPtr<JSUnprotectedEventListener> listener = toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
+    RefPtr<JSUnprotectedEventListener> listener = globalObject->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
@@ -87,10 +87,10 @@ JSValue* JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)
 
 JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args)
 {
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
         return jsUndefined();
-    JSUnprotectedEventListener* listener = toJSDOMWindow(frame)->findJSUnprotectedEventListener(exec, args.at(exec, 1));
+    JSUnprotectedEventListener* listener = globalObject->findJSUnprotectedEventListener(exec, args.at(exec, 1));
     if (!listener)
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
@@ -100,10 +100,10 @@ JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args
 
 void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
 {
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
         return;
-    impl()->setOnmessage(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
+    impl()->setOnmessage(globalObject->findOrCreateJSUnprotectedEventListener(exec, value, true));
 }
 
 JSValue* JSMessagePort::onmessage(ExecState*) const
@@ -116,10 +116,10 @@ JSValue* JSMessagePort::onmessage(ExecState*) const
 
 void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
 {
-    Frame* frame = impl()->associatedFrame();
-    if (!frame)
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
+    if (!globalObject)
         return;
-    impl()->setOnclose(toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, value, true));
+    impl()->setOnclose(globalObject->findOrCreateJSUnprotectedEventListener(exec, value, true));
 }
 
 JSValue* JSMessagePort::onclose(ExecState*) const

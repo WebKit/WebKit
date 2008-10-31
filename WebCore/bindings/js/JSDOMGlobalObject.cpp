@@ -27,13 +27,46 @@
 #include "config.h"
 #include "JSDOMGlobalObject.h"
 
+#include "Document.h"
+#include "JSDOMWindow.h"
+#include "JSEventListener.h"
+
 using namespace JSC;
 
 namespace WebCore {
 
+JSDOMGlobalObject::JSDOMGlobalObjectData::JSDOMGlobalObjectData()
+    : evt(0)
+{
+}
+
 JSDOMGlobalObject::JSDOMGlobalObject(PassRefPtr<StructureID> structure, JSDOMGlobalObject::JSDOMGlobalObjectData* data, JSObject* thisValue)
     : JSGlobalObject(structure, data, thisValue)
 {
+}
+
+JSDOMGlobalObject::~JSDOMGlobalObject()
+{
+    // Clear any backpointers to the window
+    ListenersMap::iterator i1 = d()->jsEventListeners.begin();
+    ListenersMap::iterator e1 = d()->jsEventListeners.end();
+    for (; i1 != e1; ++i1)
+        i1->second->clearGlobalObject();
+
+    i1 = d()->jsInlineEventListeners.begin();
+    e1 = d()->jsInlineEventListeners.end();
+    for (; i1 != e1; ++i1)
+        i1->second->clearGlobalObject();
+
+    UnprotectedListenersMap::iterator i2 = d()->jsUnprotectedEventListeners.begin();
+    UnprotectedListenersMap::iterator e2 = d()->jsUnprotectedEventListeners.end();
+    for (; i2 != e2; ++i2)
+        i2->second->clearGlobalObject();
+
+    i2 = d()->jsUnprotectedInlineEventListeners.begin();
+    e2 = d()->jsUnprotectedInlineEventListeners.end();
+    for (; i2 != e2; ++i2)
+        i2->second->clearGlobalObject();
 }
 
 void JSDOMGlobalObject::mark()
@@ -49,6 +82,87 @@ void JSDOMGlobalObject::mark()
         if (!it2->second->marked())
             it2->second->mark();
     }
+}
+
+JSEventListener* JSDOMGlobalObject::findJSEventListener(JSValue* val, bool isInline)
+{
+    if (!val->isObject())
+        return 0;
+    JSObject* object = asObject(val);
+    ListenersMap& listeners = isInline ? d()->jsInlineEventListeners : d()->jsEventListeners;
+    return listeners.get(object);
+}
+
+PassRefPtr<JSEventListener> JSDOMGlobalObject::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool isInline)
+{
+    if (JSEventListener* listener = findJSEventListener(val, isInline))
+        return listener;
+
+    if (!val->isObject())
+        return 0;
+
+    // The JSEventListener constructor adds it to our jsEventListeners map.
+    return JSEventListener::create(asObject(val), this, isInline).get();
+}
+
+JSUnprotectedEventListener* JSDOMGlobalObject::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool isInline)
+{
+    if (!val->isObject())
+        return 0;
+
+    UnprotectedListenersMap& listeners = isInline ? d()->jsUnprotectedInlineEventListeners : d()->jsUnprotectedEventListeners;
+    return listeners.get(asObject(val));
+}
+
+PassRefPtr<JSUnprotectedEventListener> JSDOMGlobalObject::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool isInline)
+{
+    if (JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, isInline))
+        return listener;
+
+    if (!val->isObject())
+        return 0;
+
+    // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
+    return JSUnprotectedEventListener::create(asObject(val), this, isInline).get();
+}
+
+JSDOMGlobalObject::ListenersMap& JSDOMGlobalObject::jsEventListeners()
+{
+    return d()->jsEventListeners;
+}
+
+JSDOMGlobalObject::ListenersMap& JSDOMGlobalObject::jsInlineEventListeners()
+{
+    return d()->jsInlineEventListeners;
+}
+
+JSDOMGlobalObject::UnprotectedListenersMap& JSDOMGlobalObject::jsUnprotectedEventListeners()
+{
+    return d()->jsUnprotectedEventListeners;
+}
+
+JSDOMGlobalObject::UnprotectedListenersMap& JSDOMGlobalObject::jsUnprotectedInlineEventListeners()
+{
+    return d()->jsUnprotectedInlineEventListeners;
+}
+
+void JSDOMGlobalObject::setCurrentEvent(Event* evt)
+{
+    d()->evt = evt;
+}
+
+Event* JSDOMGlobalObject::currentEvent()
+{
+    return d()->evt;
+}
+
+JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext)
+{
+    if (scriptExecutionContext->isDocument())
+        return toJSDOMWindow(static_cast<Document*>(scriptExecutionContext)->frame());
+
+    // Not implemented yet.
+    return 0;
 }
 
 } // namespace WebCore

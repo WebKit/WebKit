@@ -167,7 +167,6 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 
 
 JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
     : impl(window)
-    , evt(0)
     , returnValueSlot(0)
     , shell(shell)
 {
@@ -200,27 +199,6 @@ JSDOMWindowBase::~JSDOMWindowBase()
         d()->impl->frame()->script()->clearFormerWindow(asJSDOMWindow(this));
 
     clearAllTimeouts();
-
-    // Clear any backpointers to the window
-    ListenersMap::iterator i2 = d()->jsEventListeners.begin();
-    ListenersMap::iterator e2 = d()->jsEventListeners.end();
-    for (; i2 != e2; ++i2)
-        i2->second->clearWindow();
-
-    i2 = d()->jsInlineEventListeners.begin();
-    e2 = d()->jsInlineEventListeners.end();
-    for (; i2 != e2; ++i2)
-        i2->second->clearWindow();
-
-    UnprotectedListenersMap::iterator i1 = d()->jsUnprotectedEventListeners.begin();
-    UnprotectedListenersMap::iterator e1 = d()->jsUnprotectedEventListeners.end();
-    for (; i1 != e1; ++i1)
-        i1->second->clearWindow();
-
-    i1 = d()->jsUnprotectedInlineEventListeners.begin();
-    e1 = d()->jsUnprotectedInlineEventListeners.end();
-    for (; i1 != e1; ++i1)
-        i1->second->clearWindow();
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
@@ -736,51 +714,9 @@ bool JSDOMWindowBase::shouldInterruptScript() const
     return page->chrome()->shouldInterruptJavaScript();
 }
 
-JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool isInline)
-{
-    if (!val->isObject())
-        return 0;
-    JSObject* object = asObject(val);
-    ListenersMap& listeners = isInline ? d()->jsInlineEventListeners : d()->jsEventListeners;
-    return listeners.get(object);
-}
-
-PassRefPtr<JSEventListener> JSDOMWindowBase::findOrCreateJSEventListener(ExecState* exec, JSValue* val, bool isInline)
-{
-    if (JSEventListener* listener = findJSEventListener(val, isInline))
-        return listener;
-
-    if (!val->isObject())
-        return 0;
-
-    // The JSEventListener constructor adds it to our jsEventListeners map.
-    return JSEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), isInline).get();
-}
-
-JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool isInline)
-{
-    if (!val->isObject())
-        return 0;
-
-    UnprotectedListenersMap& listeners = isInline ? d()->jsUnprotectedInlineEventListeners : d()->jsUnprotectedEventListeners;
-    return listeners.get(asObject(val));
-}
-
-PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotectedEventListener(ExecState* exec, JSValue* val, bool isInline)
-{
-    if (JSUnprotectedEventListener* listener = findJSUnprotectedEventListener(exec, val, isInline))
-        return listener;
-
-    if (!val->isObject())
-        return 0;
-
-    // The JSUnprotectedEventListener constructor adds it to our jsUnprotectedEventListeners map.
-    return JSUnprotectedEventListener::create(asObject(val), static_cast<JSDOMWindow*>(this), isInline).get();
-}
-
 void JSDOMWindowBase::clearHelperObjectProperties()
 {
-    d()->evt = 0;
+    setCurrentEvent(0);
 }
 
 void JSDOMWindowBase::clear()
@@ -792,16 +728,6 @@ void JSDOMWindowBase::clear()
 
     clearAllTimeouts();
     clearHelperObjectProperties();
-}
-
-void JSDOMWindowBase::setCurrentEvent(Event* evt)
-{
-    d()->evt = evt;
-}
-
-Event* JSDOMWindowBase::currentEvent()
-{
-    return d()->evt;
 }
 
 JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
@@ -1055,26 +981,6 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
 void JSDOMWindowBase::disconnectFrame()
 {
     clearAllTimeouts();
-}
-
-JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListeners()
-{
-    return d()->jsEventListeners;
-}
-
-JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsInlineEventListeners()
-{
-    return d()->jsInlineEventListeners;
-}
-
-JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventListeners()
-{
-    return d()->jsUnprotectedEventListeners;
-}
-
-JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedInlineEventListeners()
-{
-    return d()->jsUnprotectedInlineEventListeners;
 }
 
 void DOMWindowTimer::fired()
