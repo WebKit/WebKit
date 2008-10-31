@@ -749,11 +749,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\PropertyMap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\PropertyMap.h"
+				RelativePath="..\..\runtime\PropertyMapHashTable.h"
 				>
 			</File>
 			<File

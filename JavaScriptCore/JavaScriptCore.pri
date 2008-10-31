@@ -122,7 +122,6 @@ SOURCES += \
     runtime/ObjectPrototype.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
-    runtime/PropertyMap.cpp \
     kjs/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/PrototypeFunction.cpp \

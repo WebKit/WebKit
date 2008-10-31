@@ -399,15 +399,13 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
         }
 
         size_t currentCapacity = m_structureID->propertyStorageCapacity();
-        offset = m_structureID->put(propertyName, attributes);
-        if (m_structureID->propertyStorageSize() > m_structureID->propertyStorageCapacity()) {
-            m_structureID->growPropertyStorageCapacity();
+        offset = m_structureID->addPropertyWithoutTransition(propertyName, attributes);
+        if (currentCapacity != m_structureID->propertyStorageCapacity())
             allocatePropertyStorage(currentCapacity, m_structureID->propertyStorageCapacity());
-        }
 
+        ASSERT(offset < m_structureID->propertyStorageCapacity());
         m_propertyStorage[offset] = value;
         slot.setNewProperty(this, offset);
-        m_structureID->clearEnumerationCache();
         return;
     }
 

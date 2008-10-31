@@ -29,7 +29,7 @@ namespace JSC {
     class ExecState;
 
     class Identifier {
-        friend class PropertyMap;
+        friend class StructureID;
     public:
         Identifier() { }
 

@@ -467,16 +467,13 @@ void JSObject::removeDirect(const Identifier& propertyName)
 {
     size_t offset;
     if (m_structureID->isDictionary()) {
-        offset = m_structureID->remove(propertyName);
-        if (offset != WTF::notFound) {
+        offset = m_structureID->removePropertyWithoutTransition(propertyName);
+        if (offset != WTF::notFound)
             m_propertyStorage[offset] = jsUndefined();
-            m_structureID->clearEnumerationCache();
-        }
         return;
     }
 
-    RefPtr<StructureID> structureID = StructureID::toDictionaryTransition(m_structureID);
-    offset = structureID->remove(propertyName);
+    RefPtr<StructureID> structureID = StructureID::removePropertyTransition(m_structureID, propertyName, offset);
     if (offset != WTF::notFound)
         m_propertyStorage[offset] = jsUndefined();
     setStructureID(structureID.release());

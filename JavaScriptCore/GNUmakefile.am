@@ -218,7 +218,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/NumberPrototype.h \
 	JavaScriptCore/runtime/ObjectConstructor.h \
 	JavaScriptCore/runtime/ObjectPrototype.h \
-	JavaScriptCore/runtime/PropertyMap.h \
+	JavaScriptCore/runtime/PropertyMapHashTable.h \
 	JavaScriptCore/runtime/PropertySlot.h \
 	JavaScriptCore/runtime/PrototypeFunction.h \
 	JavaScriptCore/runtime/PutPropertySlot.h \
@@ -375,7 +375,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/NumberPrototype.cpp \
 	JavaScriptCore/runtime/ObjectConstructor.cpp \
 	JavaScriptCore/runtime/ObjectPrototype.cpp \
-	JavaScriptCore/runtime/PropertyMap.cpp \
 	JavaScriptCore/runtime/PropertySlot.cpp \
 	JavaScriptCore/runtime/PrototypeFunction.cpp \
 	JavaScriptCore/runtime/StringConstructor.cpp \

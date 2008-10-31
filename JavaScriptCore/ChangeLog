@@ -1,3 +1,62 @@
+2008-10-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich and Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21989
+        Merge PropertyMap and StructureID
+
+        - Move PropertyMap code into StructureID in preparation for lazily
+          creating the map on gets.
+        - Make remove with transition explicit by adding removePropertyTransition.
+        - Make the put/remove without transition explicit.
+        - Make cache invalidation part of put/remove without transition.
+
+        1% speedup on SunSpider; 0.5% speedup on v8 suite.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/identifier.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::removeDirect):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect):
+        * runtime/PropertyMap.cpp: Removed.
+        * runtime/PropertyMap.h: Removed.
+        * runtime/PropertyMapHashTable.h: Copied from runtime/PropertyMap.h.
+        * runtime/StructureID.cpp:
+        (JSC::StructureID::dumpStatistics):
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::~StructureID):
+        (JSC::StructureID::getEnumerablePropertyNames):
+        (JSC::StructureID::addPropertyTransition):
+        (JSC::StructureID::removePropertyTransition):
+        (JSC::StructureID::toDictionaryTransition):
+        (JSC::StructureID::changePrototypeTransition):
+        (JSC::StructureID::getterSetterTransition):
+        (JSC::StructureID::addPropertyWithoutTransition):
+        (JSC::StructureID::removePropertyWithoutTransition):
+        (JSC::PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger):
+        (JSC::StructureID::checkConsistency):
+        (JSC::StructureID::copyPropertyTable):
+        (JSC::StructureID::get):
+        (JSC::StructureID::put):
+        (JSC::StructureID::remove):
+        (JSC::StructureID::insertIntoPropertyMapHashTable):
+        (JSC::StructureID::expandPropertyMapHashTable):
+        (JSC::StructureID::createPropertyMapHashTable):
+        (JSC::StructureID::rehashPropertyMapHashTable):
+        (JSC::comparePropertyMapEntryIndices):
+        (JSC::StructureID::getEnumerablePropertyNamesInternal):
+        * runtime/StructureID.h:
+        (JSC::StructureID::propertyStorageSize):
+        (JSC::StructureID::isEmpty):
+        (JSC::StructureID::get):
+
 2008-10-30  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.

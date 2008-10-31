@@ -231,7 +231,6 @@
 		BC18C4500E16F5CD00B34460 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95742F640DD11F5A000917FB /* Profile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB83550DA43B4400BC83F3 /* ProfileNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4530E16F5CD00B34460 /* PropertyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A87A0255597D01FF60F7 /* PropertyMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 65400C100A69BAF200509887 /* PropertyNameArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4550E16F5CD00B34460 /* PropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* PropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4560E16F5CD00B34460 /* protect.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C02FBB0637462A003E7EE6 /* protect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -283,6 +282,7 @@
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureIDTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
 		BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */; };
@@ -656,6 +656,7 @@
 		BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCell.cpp; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
 		BC9041470EB9250900FE26FA /* StructureIDTransitionTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTransitionTable.h; sourceTree = "<group>"; };
+		BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyMapHashTable.h; sourceTree = "<group>"; };
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
 		BCA62DFE0E2826230004F30D /* CallData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallData.cpp; sourceTree = "<group>"; };
 		BCA62DFF0E2826310004F30D /* ConstructData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstructData.cpp; sourceTree = "<group>"; };
@@ -728,8 +729,6 @@
 		F692A8710255597D01FF60F7 /* NumberObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = NumberObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8770255597D01FF60F7 /* operations.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = operations.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8780255597D01FF60F7 /* operations.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = operations.h; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8790255597D01FF60F7 /* PropertyMap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyMap.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		F692A87A0255597D01FF60F7 /* PropertyMap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PropertyMap.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A87B0255597D01FF60F7 /* RegExpObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpObject.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A87C0255597D01FF60F7 /* RegExpObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A87D0255597D01FF60F7 /* regexp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = regexp.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -1245,8 +1244,7 @@
 				BC2680C70E16D4E900A06E92 /* ObjectConstructor.h */,
 				BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */,
 				BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */,
-				F692A8790255597D01FF60F7 /* PropertyMap.cpp */,
-				F692A87A0255597D01FF60F7 /* PropertyMap.h */,
+				BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */,
 				65621E6B089E859700760F35 /* PropertySlot.cpp */,
 				65621E6C089E859700760F35 /* PropertySlot.h */,
 				BC257DF10E1F53740016B6C9 /* PrototypeFunction.cpp */,
@@ -1462,7 +1460,6 @@
 				BC18C4500E16F5CD00B34460 /* Profile.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
 				BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */,
-				BC18C4530E16F5CD00B34460 /* PropertyMap.h in Headers */,
 				BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */,
 				BC18C4550E16F5CD00B34460 /* PropertySlot.h in Headers */,
 				BC18C4560E16F5CD00B34460 /* protect.h in Headers */,
@@ -1551,6 +1548,7 @@
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */,
+				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
