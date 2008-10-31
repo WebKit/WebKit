@@ -132,7 +132,6 @@ Source files for JSCore.
         runtime/NumberPrototype.cpp
         runtime/ObjectConstructor.cpp
         runtime/ObjectPrototype.cpp
-        runtime/PropertyMap.cpp
         runtime/PropertySlot.cpp
         runtime/PrototypeFunction.cpp
         runtime/SmallStrings.cpp

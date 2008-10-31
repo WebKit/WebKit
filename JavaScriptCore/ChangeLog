@@ -1,3 +1,9 @@
+2008-10-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after PropertyMap and StructureID merge.
+
+        * JavaScriptCoreSources.bkl:
+
 2008-10-30  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.
