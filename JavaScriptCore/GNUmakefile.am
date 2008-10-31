@@ -29,8 +29,8 @@ javascriptcore_built_nosources += \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
 	JavaScriptCore/runtime/MathObject.lut.h \
 	JavaScriptCore/runtime/NumberConstructor.lut.h \
-	JavaScriptCore/kjs/RegExpConstructor.lut.h \
-	JavaScriptCore/kjs/RegExpObject.lut.h \
+	JavaScriptCore/runtime/RegExpConstructor.lut.h \
+	JavaScriptCore/runtime/RegExpObject.lut.h \
 	JavaScriptCore/runtime/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c
 
@@ -129,10 +129,10 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/NodeInfo.h \
 	JavaScriptCore/kjs/Parser.h \
 	JavaScriptCore/kjs/PropertyNameArray.h \
-	JavaScriptCore/kjs/RegExpConstructor.h \
-	JavaScriptCore/kjs/RegExpMatchesArray.h \
-	JavaScriptCore/kjs/RegExpObject.h \
-	JavaScriptCore/kjs/RegExpPrototype.h \
+	JavaScriptCore/runtime/RegExpConstructor.h \
+	JavaScriptCore/runtime/RegExpMatchesArray.h \
+	JavaScriptCore/runtime/RegExpObject.h \
+	JavaScriptCore/runtime/RegExpPrototype.h \
 	JavaScriptCore/kjs/ResultType.h \
 	JavaScriptCore/kjs/ScopeChain.h \
 	JavaScriptCore/kjs/ScopeChainMark.h \
@@ -320,9 +320,9 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/LabelScope.h \
 	JavaScriptCore/kjs/Parser.cpp \
 	JavaScriptCore/kjs/PropertyNameArray.cpp \
-	JavaScriptCore/kjs/RegExpConstructor.cpp \
-	JavaScriptCore/kjs/RegExpObject.cpp \
-	JavaScriptCore/kjs/RegExpPrototype.cpp \
+	JavaScriptCore/runtime/RegExpConstructor.cpp \
+	JavaScriptCore/runtime/RegExpObject.cpp \
+	JavaScriptCore/runtime/RegExpPrototype.cpp \
 	JavaScriptCore/kjs/ScopeChain.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/debugger/Debugger.cpp \
@@ -484,8 +484,8 @@ CLEANFILES += \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
 	JavaScriptCore/runtime/MathObject.lut.h \
 	JavaScriptCore/runtime/NumberConstructor.lut.h \
-	JavaScriptCore/kjs/RegExpConstructor.lut.h \
-	JavaScriptCore/kjs/RegExpObject.lut.h \
+	JavaScriptCore/runtime/RegExpConstructor.lut.h \
+	JavaScriptCore/runtime/RegExpObject.lut.h \
 	JavaScriptCore/runtime/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c \
 	Programs/jsc \

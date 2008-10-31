@@ -1,3 +1,30 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Move more files from the kjs subdirectory of JavaScriptCore to the
+        runtime subdirectory.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/RegExpConstructor.cpp: Removed.
+        * kjs/RegExpConstructor.h: Removed.
+        * kjs/RegExpMatchesArray.h: Removed.
+        * kjs/RegExpObject.cpp: Removed.
+        * kjs/RegExpObject.h: Removed.
+        * kjs/RegExpPrototype.cpp: Removed.
+        * kjs/RegExpPrototype.h: Removed.
+        * runtime/RegExpConstructor.cpp: Copied from kjs/RegExpConstructor.cpp.
+        * runtime/RegExpConstructor.h: Copied from kjs/RegExpConstructor.h.
+        * runtime/RegExpMatchesArray.h: Copied from kjs/RegExpMatchesArray.h.
+        * runtime/RegExpObject.cpp: Copied from kjs/RegExpObject.cpp.
+        * runtime/RegExpObject.h: Copied from kjs/RegExpObject.h.
+        * runtime/RegExpPrototype.cpp: Copied from kjs/RegExpPrototype.cpp.
+        * runtime/RegExpPrototype.h: Copied from kjs/RegExpPrototype.h.
+
 2008-10-31  Mark Rowe  <mrowe@apple.com>
 
         Revert an incorrect portion of r38034.
