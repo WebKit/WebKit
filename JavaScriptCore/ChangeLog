@@ -1,3 +1,14 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Remove the call to Interpreter::setShouldPrintExceptions() from the
+        GlobalObject constructor in the shell. The shouldPrintExceptions()
+        information is not used anywhere in JavaScriptCore, only in WebCore.
+
+        * kjs/Shell.cpp:
+        (GlobalObject::GlobalObject):
+
 2008-10-31  Kevin Ollivier  <kevino@theolliviers.com>
 
         wxMSW build fix.

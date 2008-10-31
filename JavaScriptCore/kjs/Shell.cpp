@@ -173,8 +173,6 @@ GlobalObject::GlobalObject(const Vector<UString>& arguments)
     for (size_t i = 0; i < arguments.size(); ++i)
         array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
     putDirect(Identifier(globalExec(), "arguments"), array);
-
-    Interpreter::setShouldPrintExceptions(true);
 }
 
 JSValue* functionPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
