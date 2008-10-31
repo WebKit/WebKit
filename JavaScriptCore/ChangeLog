@@ -1,3 +1,11 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Speculative wxWindows build fix.
+
+        * jscore.bkl:
+
 2008-10-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Homeycutt.
