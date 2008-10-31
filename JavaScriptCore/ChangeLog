@@ -1,3 +1,12 @@
+2008-10-31  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 64-bit build.
+
+        Disable strict aliasing in ProfilerServer.mm as it leads to the compiler being unhappy
+        with the common Obj-C idiom self = [super init];
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Alexey Proskuryakov.
