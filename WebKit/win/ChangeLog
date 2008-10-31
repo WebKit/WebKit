@@ -1,3 +1,13 @@
+2008-10-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit Windows part of fix for <rdar://problem/5839256> FILE CONTROL: multi-file upload.
+        https://bugs.webkit.org/show_bug.cgi?id=22008
+        
+        * WebCoreSupport/WebChromeClient.cpp: (WebChromeClient::runOpenPanel): 
+        Add support for mulitple file selection.
+
 2008-10-31  Darin Adler  <darin@apple.com>
 
         - try to fix build

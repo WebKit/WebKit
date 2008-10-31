@@ -80,14 +80,14 @@ void FileChooser::chooseFiles(const Vector<String>& filenames)
 
 PassRefPtr<Icon> FileChooser::chooseIcon(const String& filename)
 {
-    return Icon::newIconForFile(filename);
+    return Icon::createIconForFile(filename);
 }
 
 PassRefPtr<Icon> FileChooser::chooseIcon(Vector<String> filenames)
 {
     if (filenames.size() == 1)
-        return Icon::newIconForFile(filenames[0]);
-    return Icon::newIconForFiles(filenames);
+        return Icon::createIconForFile(filenames[0]);
+    return Icon::createIconForFiles(filenames);
 }
 
 }

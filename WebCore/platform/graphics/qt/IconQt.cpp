@@ -41,14 +41,14 @@ Icon::~Icon()
 {
 }
     
-PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
+PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
 {
     RefPtr<Icon> i = adoptRef(new Icon);
     i->m_icon = QIcon(filename);
     return i.release();
 }
 
-PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     //FIXME: Implement this
     return 0;

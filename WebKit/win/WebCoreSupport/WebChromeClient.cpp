@@ -48,6 +48,11 @@
 
 using namespace WebCore;
 
+// When you call GetOpenFileName, if the size of the buffer is too small,
+// MSDN says that the first two bytes of the buffer contain the required size for the file selection, in bytes or characters
+// So we can assume the required size can't be more than the maximum value for a short.
+static const size_t maxFilePathsListSize = USHRT_MAX;
+
 WebChromeClient::WebChromeClient(WebView* webView)
     : m_webView(webView)
 {
@@ -625,15 +630,15 @@ bool WebChromeClient::paintCustomScrollCorner(GraphicsContext* context, const Fl
 
 void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 {
-    // FIXME: Support multiple files.
-
     RefPtr<FileChooser> fileChooser = prpFileChooser;
 
     HWND viewWindow;
     if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
         return;
 
-    TCHAR fileBuf[MAX_PATH];
+    bool multiFile = fileChooser->allowsMultipleFiles();
+    Vector<TCHAR> fileBuf(multiFile ? maxFilePathsListSize : MAX_PATH);
+
     OPENFILENAME ofn;
 
     memset(&ofn, 0, sizeof(ofn));
@@ -646,14 +651,39 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     String allFiles = allFilesText();
     allFiles.append(TEXT("\0*.*\0\0"), 6);
     ofn.lpstrFilter = allFiles.charactersWithNullTermination();
-    ofn.lpstrFile = fileBuf;
-    ofn.nMaxFile = sizeof(fileBuf);
+    ofn.lpstrFile = fileBuf.data();
+    ofn.nMaxFile = fileBuf.size();
     String dialogTitle = uploadFileText();
     ofn.lpstrTitle = dialogTitle.charactersWithNullTermination();
-    ofn.Flags = OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+    ofn.Flags = OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_EXPLORER;
+    if (multiFile)
+        ofn.Flags = ofn.Flags | OFN_ALLOWMULTISELECT;
 
-    if (GetOpenFileName(&ofn))
-        fileChooser->chooseFile(String(fileBuf));
+    if (GetOpenFileName(&ofn)) {
+        TCHAR* files = fileBuf.data();
+        Vector<String> fileList;
+        String file(files);
+        if (multiFile) {
+            while (!file.isEmpty()) {
+                // When using the OFN_EXPLORER flag, the file list is null delimited.
+                // When you create a String from a ptr to this list, it will use strlen to look for the null character.
+                // Then we find the next file path string by using the length of the string we just created.
+                TCHAR* nextFilePtr = files + file.length() + 1;
+                String nextFile(nextFilePtr);
+                // If multiple files are selected, there will be a directory name first, which we don't want to add to the vector.
+                // We know a single file was selected if there is only one filename in the list.  
+                // In that case, we don't want to skip adding the first (and only) name.
+                if (files != fileBuf.data() || nextFile.isEmpty())
+                    fileList.append(file);
+                files = nextFilePtr;
+                file = nextFile;
+            }
+        } else
+            fileList.append(file);
+        ASSERT(fileList.size());
+        fileChooser->chooseFiles(fileList);
+    }
+    // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
 }
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()

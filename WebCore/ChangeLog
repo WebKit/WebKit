@@ -1,3 +1,32 @@
+2008-10-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore Windows part of fix for <rdar://problem/5839256> FILE CONTROL: multi-file upload.
+        https://bugs.webkit.org/show_bug.cgi?id=22008
+
+        * platform/FileChooser.cpp: (WebCore::FileChooser::chooseIcon): 
+        Rename newIconForFile and newIconForFiles to createIconForFile and createIconForFiles.
+        * platform/graphics/Icon.h: ditto.
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::createIconForFile): ditto.
+        (WebCore::Icon::createIconForFiles): ditto.
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::createIconForFile): ditto.
+        (WebCore::Icon::createIconForFiles): ditto.
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::createIconForFile): ditto.
+        (WebCore::Icon::createIconForFiles): ditto.
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (Icon::createIconForFile): ditto.
+        (Icon::createIconForFiles): ditto.
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFile): ditto.
+        (WebCore::Icon::createIconForFiles): Add creation of an icon for multiple files.
+
+        * rendering/RenderThemeWin.cpp: (WebCore::RenderThemeWin::paintSearchFieldResultsDecoration):        
+        Improve icon creation code to match new code in Icon::createIconForFiles
+        
 2008-10-31  Timothy Hatcher  <timothy@apple.com>
 
         Add manual tests that check breakpoints on a blockless body of "for" loops.

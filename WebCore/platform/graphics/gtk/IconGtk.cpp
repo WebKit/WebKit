@@ -88,7 +88,7 @@ static String lookupIconName(String MIMEType)
     return GTK_STOCK_FILE;
 }
 
-PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
+PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
 {
     if (!g_path_skip_root(filename.utf8().data()))
         return 0;
@@ -103,7 +103,7 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     return icon.release();
 }
 
-PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     //FIXME: Implement this
     return 0;

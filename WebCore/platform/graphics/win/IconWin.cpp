@@ -23,9 +23,12 @@
 
 #include "GraphicsContext.h"
 #include "PlatformString.h"
+#include <tchar.h>
 #include <windows.h>
 
 namespace WebCore {
+
+static const int shell32MultipleFileIconIndex = 54;
 
 Icon::Icon(HICON icon)
     : m_hIcon(icon)
@@ -38,7 +41,7 @@ Icon::~Icon()
     DestroyIcon(m_hIcon);
 }
 
-PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
+PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
 {
     SHFILEINFO sfi;
     memset(&sfi, 0, sizeof(sfi));
@@ -50,10 +53,20 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     return adoptRef(new Icon(sfi.hIcon));
 }
 
-PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
 {
-    //FIXME: Implement this
-    return 0;
+    TCHAR buffer[MAX_PATH];    
+    UINT length = ::GetSystemDirectory(buffer, ARRAYSIZE(buffer));
+    if (!length)
+        return 0;
+    
+    if (_tcscat_s(buffer, TEXT("\\shell32.dll")))
+        return 0;
+
+    HICON hIcon;
+    if (!::ExtractIconEx(buffer, shell32MultipleFileIconIndex, 0, &hIcon, 1))
+        return 0;
+    return adoptRef(new Icon(hIcon));
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& r)

@@ -132,8 +132,8 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme() { notImplemented(); static Scrollb
 String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
 
 Icon::~Icon() { }
-PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return 0; }
-PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames) { notImplemented(); return 0; }
+PassRefPtr<Icon> Icon::createIconForFile(const String& filename) { notImplemented(); return 0; }
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames) { notImplemented(); return 0; }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 
 ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result) { notImplemented(); }

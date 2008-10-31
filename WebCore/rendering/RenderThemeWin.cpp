@@ -84,6 +84,8 @@
 // This is the fixed width IE and Firefox use for buttons on dropdown menus
 static const int dropDownButtonWidth = 17;
 
+static const int shell32MagnifierIconIndex = 22;
+
 SOFT_LINK_LIBRARY(uxtheme)
 SOFT_LINK(uxtheme, OpenThemeData, HANDLE, WINAPI, (HWND hwnd, LPCWSTR pszClassList), (hwnd, pszClassList))
 SOFT_LINK(uxtheme, CloseThemeData, HRESULT, WINAPI, (HANDLE hTheme), (hTheme))
@@ -730,18 +732,19 @@ bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const Re
 {
     IntRect bounds = r;
     bounds.setWidth(bounds.height());
-    LPCTSTR shell32 = _T("\\shell32.dll");
-    int shell32Length = _tcslen(shell32);
+
     TCHAR buffer[MAX_PATH];
-    UINT length = ::GetSystemDirectory(buffer, MAX_PATH);
+    UINT length = ::GetSystemDirectory(buffer, ARRAYSIZE(buffer));
     if (!length)
-        return false;
-    _tcsncpy_s(buffer + length, MAX_PATH - length, shell32, shell32Length);
-    buffer[length + shell32Length] = 0;
+        return 0;
+    
+    if (_tcscat_s(buffer, TEXT("\\shell32.dll")))
+        return 0;
+
     HICON hIcon;
-    const int shell32MagnifierIndex = 22;
-    if (!::ExtractIconEx(buffer, shell32MagnifierIndex, 0, &hIcon, 1))
-        return false;
+    if (!::ExtractIconEx(buffer, shell32MagnifierIconIndex, 0, &hIcon, 1))
+        return 0;
+
     RefPtr<Icon> icon = Icon::create(hIcon);
     icon->paint(paintInfo.context, bounds);
     return false;

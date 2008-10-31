@@ -39,7 +39,7 @@ Icon::~Icon()
 {
 }
 
-PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
+PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
 {
     // Don't pass relative filenames -- we don't want a result that depends on the current directory.
     // Need 0U here to disambiguate String::operator[] from operator(NSString*, int)[]
@@ -53,13 +53,13 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     return adoptRef(new Icon(image));
 }
 
-PassRefPtr<Icon> Icon::newIconForFiles(const Vector<String>& filenames)
+PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 {
     if (filenames.isEmpty())
         return 0;
 #ifdef BUILDING_ON_TIGER
     // FIXME: find a better image to use on Tiger.
-    return newIconForFile(filenames[0]);
+    return createIconForFile(filenames[0]);
 #else
     NSImage* image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)
