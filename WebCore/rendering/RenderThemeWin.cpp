@@ -340,14 +340,15 @@ unsigned RenderThemeWin::determineClassicState(RenderObject* o)
 unsigned RenderThemeWin::determineState(RenderObject* o)
 {
     unsigned result = TS_NORMAL;
+    ControlPart appearance = o->style()->appearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
-    else if (isReadOnlyControl(o))
+    else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance))
         result = TFS_READONLY; // Readonly is supported on textfields.
-    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
-        result = TS_FOCUSED;
-    else if (isPressed(o))
+    else if (isPressed(o)) // Active overrides hover and focused.
         result = TS_ACTIVE;
+    else if (supportsFocus(appearance) && isFocused(o))
+        result = TS_FOCUSED;
     else if (isHovered(o))
         result = TS_HOVER;
     if (isChecked(o))
@@ -374,10 +375,10 @@ unsigned RenderThemeWin::determineButtonState(RenderObject* o)
     unsigned result = PBS_NORMAL;
     if (!isEnabled(o))
         result = PBS_DISABLED;
-    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
-        result = PBS_DEFAULTED;
     else if (isPressed(o))
         result = PBS_PRESSED;
+    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
+        result = PBS_DEFAULTED;
     else if (isHovered(o))
         result = PBS_HOT;
     else if (isDefault(o))
