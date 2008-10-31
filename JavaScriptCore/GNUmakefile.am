@@ -317,8 +317,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSLock.cpp \
 	JavaScriptCore/kjs/JSLock.h \
 	JavaScriptCore/kjs/JSStaticScopeObject.cpp \
-	JavaScriptCore/kjs/LabelStack.cpp \
-	JavaScriptCore/kjs/LabelStack.h \
+	JavaScriptCore/kjs/LabelScope.h \
 	JavaScriptCore/kjs/Parser.cpp \
 	JavaScriptCore/kjs/PropertyNameArray.cpp \
 	JavaScriptCore/kjs/RegExpConstructor.cpp \

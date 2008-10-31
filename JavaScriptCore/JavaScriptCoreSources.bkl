@@ -61,7 +61,6 @@ Source files for JSCore.
         kjs/JSGlobalData.cpp
         kjs/JSLock.cpp
         kjs/JSStaticScopeObject.cpp
-        kjs/LabelStack.cpp
         kjs/lexer.cpp
         kjs/lookup.cpp
         kjs/nodes.cpp

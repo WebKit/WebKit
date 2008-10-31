@@ -120,6 +120,7 @@
 		95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95988BA90E477BEC00D28D4D /* JSProfilerPrivate.cpp */; };
 		95FDFA140E22998F0006FB00 /* HeavyProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */; };
 		95FDFA160E2299980006FB00 /* HeavyProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95FDFA150E2299980006FB00 /* HeavyProfile.h */; };
+		960097A60EBABB58007A7297 /* LabelScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 960097A50EBABB58007A7297 /* LabelScope.h */; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
@@ -203,7 +204,6 @@
 		BC18C42D0E16F5CD00B34460 /* JSVariableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F252560D08DD8D004ECFFF /* JSVariableObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C42F0E16F5CD00B34460 /* LabelID.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B20D70D8A0891009CB8C7 /* LabelID.h */; };
-		BC18C4300E16F5CD00B34460 /* LabelStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B813A80CD1D01900DF59D6 /* LabelStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4310E16F5CD00B34460 /* lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8660255597D01FF60F7 /* lexer.h */; };
 		BC18C4340E16F5CD00B34460 /* ListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EB7450B708F540063461B /* ListHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4350E16F5CD00B34460 /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1626095D16BB00666D0D /* ListRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -497,7 +497,6 @@
 		6592C316098B7DE10003D4F6 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		6592C317098B7DE10003D4F6 /* VectorTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VectorTraits.h; sourceTree = "<group>"; };
 		65B174BE09D1000200820339 /* chartables.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 30; path = chartables.c; sourceTree = "<group>"; };
-		65B813A80CD1D01900DF59D6 /* LabelStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelStack.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C647B3093EF8D60022C380 /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
@@ -586,6 +585,7 @@
 		95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CallIdentifier.h; path = profiler/CallIdentifier.h; sourceTree = "<group>"; };
 		95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeavyProfile.cpp; path = profiler/HeavyProfile.cpp; sourceTree = "<group>"; };
 		95FDFA150E2299980006FB00 /* HeavyProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeavyProfile.h; path = profiler/HeavyProfile.h; sourceTree = "<group>"; };
+		960097A50EBABB58007A7297 /* LabelScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LabelScope.h; path = kjs/LabelScope.h; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExceptionHelpers.h; path = VM/ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -608,7 +608,6 @@
 		BC02E98A0E183E38000F9297 /* ErrorInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorInstance.cpp; sourceTree = "<group>"; };
 		BC02E98B0E183E38000F9297 /* ErrorInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorInstance.h; sourceTree = "<group>"; };
 		BC02E9B60E1842FA000F9297 /* JSString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSString.cpp; sourceTree = "<group>"; };
-		BC02E9B70E1844CF000F9297 /* LabelStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelStack.cpp; sourceTree = "<group>"; };
 		BC02E9B80E184545000F9297 /* GetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetter.cpp; sourceTree = "<group>"; };
 		BC02E9B90E184580000F9297 /* JSNumberCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNumberCell.cpp; sourceTree = "<group>"; };
 		BC1166000E1997B1008066DD /* DateInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateInstance.cpp; sourceTree = "<group>"; };
@@ -937,6 +936,7 @@
 		149B15DF0D81F887009CB8C7 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				960097A50EBABB58007A7297 /* LabelScope.h */,
 				149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */,
 				149B15E80D81F986009CB8C7 /* CodeGenerator.h */,
 				149B20D70D8A0891009CB8C7 /* LabelID.h */,
@@ -1112,8 +1112,6 @@
 				A7E42C180E3938830065A544 /* JSStaticScopeObject.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
 				93F1981A08245AAE001E9ABC /* keywords.table */,
-				BC02E9B70E1844CF000F9297 /* LabelStack.cpp */,
-				65B813A80CD1D01900DF59D6 /* LabelStack.h */,
 				F692A8680255597D01FF60F7 /* lookup.cpp */,
 				F692A8690255597D01FF60F7 /* lookup.h */,
 				F692A8770255597D01FF60F7 /* operations.cpp */,
@@ -1441,7 +1439,6 @@
 				BC18C42D0E16F5CD00B34460 /* JSVariableObject.h in Headers */,
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
 				BC18C42F0E16F5CD00B34460 /* LabelID.h in Headers */,
-				BC18C4300E16F5CD00B34460 /* LabelStack.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* lexer.h in Headers */,
 				BC18C4340E16F5CD00B34460 /* ListHashSet.h in Headers */,
 				BC18C4350E16F5CD00B34460 /* ListRefPtr.h in Headers */,
@@ -1561,6 +1558,7 @@
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */,
+				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */,

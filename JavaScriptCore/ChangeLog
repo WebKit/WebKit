@@ -1,3 +1,71 @@
+2008-10-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed a small bit of https://bugs.webkit.org/show_bug.cgi?id=21962
+        AST uses way too much memory
+        
+        Removed a word from StatementNode by nixing LabelStack and turning it
+        into a compile-time data structure managed by CodeGenerator.
+        
+        v8 tests and SunSpider, run by Gavin, report no change.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.order:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/AllInOneFile.cpp:
+        * JavaScriptCoreSources.bkl: I sure hope this builds!
+        
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::newLabelScope):
+        (JSC::CodeGenerator::breakTarget):
+        (JSC::CodeGenerator::continueTarget):
+        * VM/CodeGenerator.h: Nixed the JumpContext system because it depended
+        on a LabelStack in the AST, and it was a little cumbersome on the client
+        side. Replaced with LabelScope, which tracks all break / continue
+        information in the CodeGenerator, just like we track LabelIDs and other
+        stacks of compile-time data.
+
+        * kjs/LabelScope.h: Added.
+        (JSC::LabelScope::):
+        (JSC::LabelScope::LabelScope):
+        (JSC::LabelScope::ref):
+        (JSC::LabelScope::deref):
+        (JSC::LabelScope::refCount):
+        (JSC::LabelScope::breakTarget):
+        (JSC::LabelScope::continueTarget):
+        (JSC::LabelScope::type):
+        (JSC::LabelScope::name):
+        (JSC::LabelScope::scopeDepth): Simple abstraction for holding everything
+        you might want to know about a break-able / continue-able scope.
+
+        * kjs/LabelStack.cpp: Removed.
+        * kjs/LabelStack.h: Removed.
+
+        * kjs/grammar.y: No need to push labels at parse time -- we don't store
+        LabelStacks in the AST anymore.
+
+        * kjs/nodes.cpp:
+        (JSC::DoWhileNode::emitCode):
+        (JSC::WhileNode::emitCode):
+        (JSC::ForNode::emitCode):
+        (JSC::ForInNode::emitCode):
+        (JSC::ContinueNode::emitCode):
+        (JSC::BreakNode::emitCode):
+        (JSC::SwitchNode::emitCode):
+        (JSC::LabelNode::emitCode):
+        * kjs/nodes.h:
+        (JSC::StatementNode::):
+        (JSC::LabelNode::): Use LabelScope where we used to use JumpContext.
+        Simplified a bunch of code. Touched up label-related error messages a
+        bit.
+
+        * kjs/nodes2string.cpp:
+        (JSC::LabelNode::streamTo): Updated for rename.
+
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.

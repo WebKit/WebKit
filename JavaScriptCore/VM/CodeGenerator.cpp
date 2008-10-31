@@ -204,7 +204,6 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_codeType(GlobalCode)
-    , m_continueDepth(0)
     , m_nextGlobal(-1)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
@@ -282,7 +281,6 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_codeType(FunctionCode)
-    , m_continueDepth(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 {
@@ -353,7 +351,6 @@ CodeGenerator::CodeGenerator(EvalNode* evalNode, const Debugger* debugger, const
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_codeType(EvalCode)
-    , m_continueDepth(0)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 {
@@ -449,6 +446,18 @@ RegisterID* CodeGenerator::highestUsedRegister()
     while (m_calleeRegisters.size() < count)
         newRegister();
     return &m_calleeRegisters.last();
+}
+
+PassRefPtr<LabelScope> CodeGenerator::newLabelScope(LabelScope::Type type, const Identifier* name)
+{
+    // Reclaim free label scopes.
+    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
+        m_labelScopes.removeLast();
+
+    // Allocate new label scope.
+    LabelScope scope(type, name, scopeDepth(), newLabel(), type == LabelScope::Loop ? newLabel() : 0); // Only loops have continue targets.
+    m_labelScopes.append(scope);
+    return &m_labelScopes.last();
 }
 
 PassRefPtr<LabelID> CodeGenerator::newLabel()
@@ -1356,62 +1365,70 @@ void CodeGenerator::popFinallyContext()
     m_finallyDepth--;
 }
 
-void CodeGenerator::pushJumpContext(LabelStack* labels, LabelID* continueTarget, LabelID* breakTarget, bool isValidUnlabeledBreakTarget)
+LabelScope* CodeGenerator::breakTarget(const Identifier& name)
 {
-    JumpContext context = { labels, continueTarget, breakTarget, scopeDepth(), isValidUnlabeledBreakTarget };
-    m_jumpContextStack.append(context);
-    if (continueTarget)
-        m_continueDepth++;
-}
+    // Reclaim free label scopes.
+    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
+        m_labelScopes.removeLast();
 
-void CodeGenerator::popJumpContext()
-{
-    ASSERT(m_jumpContextStack.size());
-    if (m_jumpContextStack.last().continueTarget)
-        m_continueDepth--;
-    m_jumpContextStack.removeLast();
-}
-
-JumpContext* CodeGenerator::jumpContextForContinue(const Identifier& label)
-{
-    if(!m_jumpContextStack.size())
+    if (!m_labelScopes.size())
         return 0;
 
-    if (label.isEmpty()) {
-        for (int i = m_jumpContextStack.size() - 1; i >= 0; i--) {
-            JumpContext* scope = &m_jumpContextStack[i];
-            if (scope->continueTarget)
+    // We special-case the following, which is a syntax error in Firefox:
+    // label:
+    //     break;
+    if (name.isEmpty()) {
+        for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
+            LabelScope* scope = &m_labelScopes[i];
+            if (scope->type() != LabelScope::NamedLabel) {
+                ASSERT(scope->breakTarget());
                 return scope;
+            }
         }
         return 0;
     }
 
-    for (int i = m_jumpContextStack.size() - 1; i >= 0; i--) {
-        JumpContext* scope = &m_jumpContextStack[i];
-        if (scope->labels->contains(label))
+    for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
+        LabelScope* scope = &m_labelScopes[i];
+        if (scope->name() && *scope->name() == name) {
+            ASSERT(scope->breakTarget());
             return scope;
+        }
     }
     return 0;
 }
 
-JumpContext* CodeGenerator::jumpContextForBreak(const Identifier& label)
+LabelScope* CodeGenerator::continueTarget(const Identifier& name)
 {
-    if(!m_jumpContextStack.size())
+    // Reclaim free label scopes.
+    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
+        m_labelScopes.removeLast();
+
+    if (!m_labelScopes.size())
         return 0;
 
-    if (label.isEmpty()) {
-        for (int i = m_jumpContextStack.size() - 1; i >= 0; i--) {
-            JumpContext* scope = &m_jumpContextStack[i];
-            if (scope->isValidUnlabeledBreakTarget)
+    if (name.isEmpty()) {
+        for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
+            LabelScope* scope = &m_labelScopes[i];
+            if (scope->type() == LabelScope::Loop) {
+                ASSERT(scope->continueTarget());
                 return scope;
+            }
         }
         return 0;
     }
 
-    for (int i = m_jumpContextStack.size() - 1; i >= 0; i--) {
-        JumpContext* scope = &m_jumpContextStack[i];
-        if (scope->labels->contains(label))
-            return scope;
+    // Continue to the loop nested nearest to the label scope that matches
+    // 'name'.
+    LabelScope* result = 0;
+    for (int i = m_labelScopes.size() - 1; i >= 0; --i) {
+        LabelScope* scope = &m_labelScopes[i];
+        if (scope->type() == LabelScope::Loop) {
+            ASSERT(scope->continueTarget());
+            result = scope;
+        }
+        if (scope->name() && *scope->name() == name)
+            return result; // may be 0
     }
     return 0;
 }

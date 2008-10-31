@@ -34,6 +34,7 @@
 #include "HashTraits.h"
 #include "Instruction.h"
 #include "LabelID.h"
+#include "LabelScope.h"
 #include "Machine.h"
 #include "RegisterID.h"
 #include "SegmentedVector.h"
@@ -48,15 +49,6 @@ namespace JSC {
     class Identifier;
     class ScopeChain;
     class ScopeNode;
-
-    // JumpContexts are used to track entry and exit points for javascript loops and switch statements
-    struct JumpContext {
-        LabelStack* labels;
-        LabelID* continueTarget;
-        LabelID* breakTarget;
-        int scopeDepth;
-        bool isValidUnlabeledBreakTarget;
-    };
 
     struct FinallyContext {
         LabelID* finallyAddr;
@@ -157,6 +149,7 @@ namespace JSC {
             return dst == ignoredResult() ? 0 : (dst && dst != src) ? emitMove(dst, src) : src;
         }
 
+        PassRefPtr<LabelScope> newLabelScope(LabelScope::Type, const Identifier* = 0);
         PassRefPtr<LabelID> newLabel();
 
         // The emitNode functions are just syntactic sugar for calling
@@ -309,12 +302,9 @@ namespace JSC {
 
         void pushFinallyContext(LabelID* target, RegisterID* returnAddrDst);
         void popFinallyContext();
-        bool inContinueContext() { return m_continueDepth > 0; };
-        bool inJumpContext() { return m_jumpContextStack.size() > 0; };
-        void pushJumpContext(LabelStack*, LabelID* continueTarget, LabelID* breakTarget, bool isValidUnlabeledBreakTarget);
-        void popJumpContext();
-        JumpContext* jumpContextForContinue(const Identifier&);
-        JumpContext* jumpContextForBreak(const Identifier&);
+
+        LabelScope* breakTarget(const Identifier&);
+        LabelScope* continueTarget(const Identifier&);
 
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(uint32_t clauseCount, RefPtr<LabelID>*, ExpressionNode**, LabelID* defaultLabel, int32_t min, int32_t range);
@@ -425,14 +415,13 @@ namespace JSC {
         SegmentedVector<RegisterID, 512> m_calleeRegisters;
         SegmentedVector<RegisterID, 512> m_parameters;
         SegmentedVector<RegisterID, 512> m_globals;
-        SegmentedVector<LabelID, 512> m_labels;
+        SegmentedVector<LabelScope, 256> m_labelScopes;
+        SegmentedVector<LabelID, 256> m_labels;
         RefPtr<RegisterID> m_lastConstant;
         int m_finallyDepth;
         int m_dynamicScopeDepth;
         CodeType m_codeType;
 
-        Vector<JumpContext> m_jumpContextStack;
-        int m_continueDepth;
         Vector<ControlFlowContext> m_scopeContextStack;
         Vector<SwitchInfo> m_switchContextStack;
 

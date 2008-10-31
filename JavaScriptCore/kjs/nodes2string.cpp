@@ -899,7 +899,7 @@ void SwitchNode::streamTo(SourceStream& s) const
 
 void LabelNode::streamTo(SourceStream& s) const
 {
-    s << Endl << m_label << ":" << Indent << m_statement << Unindent;
+    s << Endl << m_name << ":" << Indent << m_statement << Unindent;
 }
 
 void ThrowNode::streamTo(SourceStream& s) const

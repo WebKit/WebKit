@@ -657,11 +657,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\LabelStack.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\LabelStack.h"
+				RelativePath="..\..\kjs\LabelScope.h"
 				>
 			</File>
 			<File

@@ -61,7 +61,6 @@
 #include "runtime/JSString.cpp"
 #include "runtime/JSNumberCell.cpp"
 #include "GetterSetter.cpp"
-#include "LabelStack.cpp"
 #include "runtime/InternalFunction.cpp"
 #include "interpreter.cpp"
 #include "runtime/JSImmediate.cpp"

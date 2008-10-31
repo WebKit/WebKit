@@ -107,7 +107,6 @@ SOURCES += \
     runtime/JSString.cpp \
     runtime/JSValue.cpp \
     runtime/JSWrapperObject.cpp \
-    kjs/LabelStack.cpp \
     kjs/lexer.cpp \
     kjs/lookup.cpp \
     runtime/MathObject.cpp \
