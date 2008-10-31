@@ -1,3 +1,11 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        * Scripts/do-webcore-rename:
+
+        Add some renames to contemplate for the future.
+
 2008-10-31  Darin Adler  <darin@apple.com>
 
         Requested by Mark Rowe.
