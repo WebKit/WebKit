@@ -76,7 +76,6 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 - (BOOL)removeItem:(WebHistoryItem *)entry;
 - (BOOL)removeItems:(NSArray *)entries;
 - (BOOL)removeAllItems;
-- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)item;
 
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
@@ -281,24 +280,6 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
     [self addItemToDateCaches:entry];
     [_entriesByURL setObject:entry forKey:URLString];
-}
-
-- (void)setLastVisitedTimeInterval:(NSTimeInterval)time forItem:(WebHistoryItem *)entry
-{
-#if ASSERT_DISABLED
-    [self removeItemFromDateCaches:entry];
-#else
-    BOOL entryWasPresent = [self removeItemFromDateCaches:entry];
-    ASSERT(entryWasPresent);
-#endif
-    
-    [entry _setLastVisitedTimeInterval:time];
-    [self addItemToDateCaches:entry];
-
-    // Don't send notification until entry is back in the right place in the date caches,
-    // since observers might fetch history by date when they receive the notification.
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:WebHistoryItemChangedNotification object:entry userInfo:nil];
 }
 
 - (BOOL)removeItem:(WebHistoryItem *)entry

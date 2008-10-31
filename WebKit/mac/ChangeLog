@@ -1,3 +1,12 @@
+2008-10-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        [WebHistory setLastVisitedTimeInterval:forItem] was internal to WebHistory.mm and 
+        completely unused.  Nuke it!
+
+        * History/WebHistory.mm:
+
 2008-10-31  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
