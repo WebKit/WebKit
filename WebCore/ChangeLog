@@ -1,3 +1,17 @@
+2008-10-30  Benjamin K. Stuhl  <bks24@cornell.edu>
+
+        gcc 4.3.3/linux-x86 generates "suggest parentheses around && within ||"
+        warnings; add some parentheses to disambiguate things. No functional
+        changes, so no tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21973
+        Add parentheses to clean up some gcc warnings
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsZeroWidthSpace):
+
 2008-10-30  Aaron Boodman  <aa@chromium.org>
 
         Added an explicit dependency on HashMap.h. It was getting pulled in via

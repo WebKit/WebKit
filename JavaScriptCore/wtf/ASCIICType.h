@@ -51,12 +51,12 @@ namespace WTF {
 #endif
     inline bool isASCIIAlpha(int c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
 
-    inline bool isASCIIAlphanumeric(char c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
-    inline bool isASCIIAlphanumeric(unsigned short c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+    inline bool isASCIIAlphanumeric(char c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'z'); }
+    inline bool isASCIIAlphanumeric(unsigned short c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'z'); }
 #if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    inline bool isASCIIAlphanumeric(wchar_t c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+    inline bool isASCIIAlphanumeric(wchar_t c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'z'); }
 #endif
-    inline bool isASCIIAlphanumeric(int c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
+    inline bool isASCIIAlphanumeric(int c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'z'); }
 
     inline bool isASCIIDigit(char c) { return (c >= '0') & (c <= '9'); }
     inline bool isASCIIDigit(unsigned short c) { return (c >= '0') & (c <= '9'); }
@@ -65,12 +65,12 @@ namespace WTF {
 #endif
     inline bool isASCIIDigit(int c) { return (c >= '0') & (c <= '9'); }
 
-    inline bool isASCIIHexDigit(char c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
-    inline bool isASCIIHexDigit(unsigned short c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
+    inline bool isASCIIHexDigit(char c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f'); }
+    inline bool isASCIIHexDigit(unsigned short c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f'); }
 #if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
-    inline bool isASCIIHexDigit(wchar_t c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
+    inline bool isASCIIHexDigit(wchar_t c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f'); }
 #endif
-    inline bool isASCIIHexDigit(int c) { return c >= '0' && c <= '9' || (c | 0x20) >= 'a' && (c | 0x20) <= 'f'; }
+    inline bool isASCIIHexDigit(int c) { return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f'); }
 
     inline bool isASCIIOctalDigit(char c) { return (c >= '0') & (c <= '7'); }
     inline bool isASCIIOctalDigit(unsigned short c) { return (c >= '0') & (c <= '7'); }
