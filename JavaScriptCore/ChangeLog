@@ -1,5 +1,11 @@
 2008-10-31  Mark Rowe  <mrowe@apple.com>
 
+        Revert an incorrect portion of r38034.
+
+        * profiler/ProfilerServer.mm:
+
+2008-10-31  Mark Rowe  <mrowe@apple.com>
+
         Fix the 64-bit build.
 
         Disable strict aliasing in ProfilerServer.mm as it leads to the compiler being unhappy
