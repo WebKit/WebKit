@@ -4943,6 +4943,27 @@ HRESULT STDMETHODCALLTYPE WebView::transparent(BOOL* transparent)
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::setCookieEnabled(BOOL enable)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    m_page->setCookieEnabled(enable);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::cookieEnabled(BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+
+    if (!m_page)
+        return E_FAIL;
+
+    *enabled = m_page->cookieEnabled();
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::setDefersCallbacks(BOOL defersCallbacks)
 {
     if (!m_page)

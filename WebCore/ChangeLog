@@ -1,3 +1,20 @@
+2008-10-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebCore part of <rdar://problem/6334641> Add WebView SPI for disabling document.cookie
+
+        * dom/Document.cpp:
+        (WebCore::Document::cookie): Added checking if cookies are disabled.
+        (WebCore::Document::setCookie): Ditto.
+        * page/Navigator.cpp:
+        (WebCore::Navigator::cookieEnabled): Ditto.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_cookieEnabled to true.
+        * page/Page.h:
+        (WebCore::Page::cookieEnabled): Added.
+        (WebCore::Page::setCookieEnabled): Added.
+
 2008-10-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

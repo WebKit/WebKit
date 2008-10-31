@@ -696,6 +696,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE alwaysUsesComplexTextCodePath(
         /* [out, retval] */ BOOL* complex);
 
+    virtual HRESULT STDMETHODCALLTYPE setCookieEnabled(
+        /* [in] */ BOOL enable);
+
+    virtual HRESULT STDMETHODCALLTYPE cookieEnabled(
+        /* [out, retval] */ BOOL* enabled);
+
     // WebView
     WebCore::Page* page();
     bool handleMouseEvent(UINT, WPARAM, LPARAM);

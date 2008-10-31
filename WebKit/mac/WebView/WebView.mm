@@ -1867,6 +1867,19 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     return NO;
 }
 
+- (BOOL)_cookieEnabled
+{
+    if (_private->page)
+        return _private->page->cookieEnabled();
+    return YES;
+}
+
+- (void)_setCookieEnabled:(BOOL)enable
+{
+    if (_private->page)
+        _private->page->setCookieEnabled(enable);
+}
+
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
 {
     if (!_private->pluginDatabase)

@@ -31,6 +31,7 @@
 #include "Language.h"
 #include "MimeTypeArray.h"
 #include "NetworkStateNotifier.h"
+#include "Page.h"
 #include "PlatformString.h"
 #include "PluginArray.h"
 #include "PluginData.h"
@@ -187,6 +188,9 @@ String Navigator::vendorSub() const
 
 bool Navigator::cookieEnabled() const
 {
+    if (m_frame->page() && !m_frame->page()->cookieEnabled())
+        return false;
+
     return cookiesEnabled(m_frame->document());
 }
 

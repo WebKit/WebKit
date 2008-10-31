@@ -118,6 +118,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_tabKeyCyclesThroughElements(true)
     , m_defersLoading(false)
     , m_inLowQualityInterpolationMode(false)
+    , m_cookieEnabled(true)
     , m_parentInspectorController(0)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)

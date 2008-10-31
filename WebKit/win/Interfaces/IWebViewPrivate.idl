@@ -143,4 +143,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setAlwaysUsesComplexTextCodePath([in] BOOL complex);
     HRESULT alwaysUsesComplexTextCodePath([out, retval] BOOL* complex);
+
+    HRESULT setCookieEnabled([in] BOOL enable);
+    HRESULT cookieEnabled([out, retval] BOOL* enabled);
 }

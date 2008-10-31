@@ -1,3 +1,14 @@
+2008-10-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKit/mac part of <rdar://problem/6334641> Add WebView SPI for disabling document.cookie
+
+        * WebView/WebView.mm:
+        (-[WebView _cookieEnabled]):
+        (-[WebView _setCookieEnabled:]):
+        * WebView/WebViewPrivate.h:
+
 2008-10-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler
