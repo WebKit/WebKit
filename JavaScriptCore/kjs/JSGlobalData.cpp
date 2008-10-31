@@ -47,6 +47,10 @@
 #include <wtf/Threading.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "ProfilerServer.h"
+#endif
+
 using namespace WTF;
 
 namespace JSC {
@@ -89,6 +93,9 @@ JSGlobalData::JSGlobalData(bool isShared)
     , clientData(0)
     , heap(this)
 {
+#if PLATFORM(MAC)
+    startProfilerServerIfNeeded();
+#endif
 }
 
 JSGlobalData::~JSGlobalData()

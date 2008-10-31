@@ -1,3 +1,24 @@
+2008-10-30  Kevin Lindeman  <klindeman@apple.com>
+
+        Adds ProfilerServer, which is a distributed notification listener
+        that allows starting and stopping the profiler remotely for use
+        in conjunction with the profiler's DTace probes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21719
+
+        Reviewed by Timothy Hatcher.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Calls startProfilerServerIfNeeded.
+        * profiler/ProfilerServer.h: Added.
+        * profiler/ProfilerServer.mm: Added.
+        (+[ProfilerServer sharedProfileServer]):
+        (-[ProfilerServer init]):
+        (-[ProfilerServer startProfiling]):
+        (-[ProfilerServer stopProfiling]):
+        (JSC::startProfilerServerIfNeeded):
+
 2008-10-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after PropertyMap and StructureID merge.

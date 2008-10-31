@@ -70,6 +70,8 @@
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
 		14E0FF120DBAAED00007C0AB /* Machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B15E70D81F986009CB8C7 /* Machine.cpp */; settings = {COMPILER_FLAGS = "-fno-tree-pre"; }; };
 		14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; };
+		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
 		5D53726F0E1C54880021E549 /* Tracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D53726E0E1C54880021E549 /* Tracing.h */; };
 		5D5D8AB60E0D0A7200F9C692 /* jsc in Copy Into Framework */ = {isa = PBXBuildFile; fileRef = 932F5BE10822A1C700736975 /* jsc */; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
@@ -451,6 +453,8 @@
 		14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObject.cpp; sourceTree = "<group>"; };
 		14F252560D08DD8D004ECFFF /* JSVariableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVariableObject.h; sourceTree = "<group>"; };
 		14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorHeapIterator.h; sourceTree = "<group>"; };
+		1C61516A0EBAC7A00031376F /* ProfilerServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProfilerServer.mm; path = profiler/ProfilerServer.mm; sourceTree = "<group>"; };
+		1C61516B0EBAC7A00031376F /* ProfilerServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerServer.h; path = profiler/ProfilerServer.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -1309,11 +1313,14 @@
 				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
 				95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */,
 				95AB832F0DA42CAD00BC83F3 /* Profiler.h */,
+				1C61516A0EBAC7A00031376F /* ProfilerServer.mm */,
+				1C61516B0EBAC7A00031376F /* ProfilerServer.h */,
 				95CD41B10E1BF6560085358E /* TreeProfile.cpp */,
 				95CD41B20E1BF6560085358E /* TreeProfile.h */,
 			);
 			name = profiler;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		E195678D09E7CF1200B89D13 /* unicode */ = {
 			isa = PBXGroup;
@@ -1549,6 +1556,7 @@
 				14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
+				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1867,6 +1875,7 @@
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */,
 				7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */,
+				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
