@@ -1,3 +1,11 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change a header guard to match our coding style.
+
+        * kjs/InitializeThreading.h:
+
 2008-10-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
