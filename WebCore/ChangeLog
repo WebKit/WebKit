@@ -1,5 +1,16 @@
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
+        Rubber-stamped by Geoff Garen.
+
+        Rename SourceRange.h to SourceCode.h.
+
+        * ForwardingHeaders/kjs/SourceCode.h: Copied from ForwardingHeaders/kjs/SourceRange.h.
+        * ForwardingHeaders/kjs/SourceRange.h: Removed.
+        * bindings/js/StringSourceProvider.h:
+        * bridge/NP_jsobject.cpp:
+
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 22019: Move JSC::Interpreter::shouldPrintExceptions() to WebCore::Console

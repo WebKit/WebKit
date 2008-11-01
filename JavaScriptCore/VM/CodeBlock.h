@@ -34,7 +34,7 @@
 #include "JSGlobalObject.h"
 #include "nodes.h"
 #include "Parser.h"
-#include "SourceRange.h"
+#include "SourceCode.h"
 #include "ustring.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

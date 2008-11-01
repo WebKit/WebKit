@@ -26,7 +26,7 @@
 #include "lookup.h"
 #include "ustring.h"
 #include <wtf/Vector.h>
-#include "SourceRange.h"
+#include "SourceCode.h"
 
 namespace JSC {
 

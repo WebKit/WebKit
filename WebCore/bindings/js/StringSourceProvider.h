@@ -29,7 +29,7 @@
 #ifndef StringSourceProvider_h
 #define StringSourceProvider_h
 
-#include <kjs/SourceRange.h>
+#include <kjs/SourceCode.h>
 
 namespace WebCore {
 

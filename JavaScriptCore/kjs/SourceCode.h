@@ -29,8 +29,6 @@
 #ifndef SourceCode_h
 #define SourceCode_h
 
-// FIXME: Rename this file to "SourceCode.h"
-
 #include "SourceProvider.h"
 #include <wtf/RefPtr.h>
 

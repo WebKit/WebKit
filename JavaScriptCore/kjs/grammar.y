@@ -57,7 +57,7 @@ static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 #define LEXER (GLOBAL_DATA->lexer)
 
 #define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon(*LEXER, yychar)) YYABORT; } while (0)
-#define SET_EXCEPTION_LOCATION(node, start, divot, end) node->setExceptionSourceRange((divot), (divot) - (start), (end) - (divot))
+#define SET_EXCEPTION_LOCATION(node, start, divot, end) node->setExceptionSourceCode((divot), (divot) - (start), (end) - (divot))
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace JSC;

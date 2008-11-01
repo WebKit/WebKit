@@ -30,7 +30,7 @@
 #include "APICast.h"
 #include "completion.h"
 #include "OpaqueJSString.h"
-#include "SourceRange.h"
+#include "SourceCode.h"
 #include <kjs/ExecState.h>
 #include <kjs/InitializeThreading.h>
 #include <kjs/interpreter.h>

@@ -1,5 +1,25 @@
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
+        Rubber-stamped by Geoff Garen.
+
+        Rename SourceRange.h to SourceCode.h.
+
+        * API/JSBase.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CodeBlock.h:
+        * kjs/SourceCode.h: Copied from kjs/SourceRange.h.
+        * kjs/SourceRange.h: Removed.
+        * kjs/grammar.y:
+        * kjs/lexer.h:
+        * kjs/nodes.cpp:
+        (JSC::ForInNode::ForInNode):
+        * kjs/nodes.h:
+        (JSC::ThrowableExpressionData::setExceptionSourceCode):
+
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 22019: Move JSC::Interpreter::shouldPrintExceptions() to WebCore::Console

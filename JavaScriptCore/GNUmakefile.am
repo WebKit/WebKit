@@ -137,7 +137,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/ScopeChain.h \
 	JavaScriptCore/kjs/ScopeChainMark.h \
 	JavaScriptCore/kjs/SourceProvider.h \
-	JavaScriptCore/kjs/SourceRange.h \
+	JavaScriptCore/kjs/SourceCode.h \
 	JavaScriptCore/kjs/SymbolTable.h \
 	JavaScriptCore/kjs/Tracing.h \
 	JavaScriptCore/kjs/TypeInfo.h \

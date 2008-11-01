@@ -39,7 +39,7 @@
 #include <runtime/JSGlobalObject.h>
 #include <kjs/JSLock.h>
 #include <kjs/PropertyNameArray.h>
-#include <kjs/SourceRange.h>
+#include <kjs/SourceCode.h>
 #include <kjs/completion.h>
 #include <kjs/interpreter.h>
 
