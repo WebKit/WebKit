@@ -75,16 +75,4 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
     return Completion(Normal, result);
 }
 
-static bool printExceptions = false;
-
-bool Interpreter::shouldPrintExceptions()
-{
-    return printExceptions;
-}
-
-void Interpreter::setShouldPrintExceptions(bool print)
-{
-    printExceptions = print;
-}
-
 } // namespace JSC

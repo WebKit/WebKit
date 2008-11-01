@@ -1,3 +1,17 @@
+2008-10-31  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22019: Move JSC::Interpreter::shouldPrintExceptions() to WebCore::Console
+        <https://bugs.webkit.org/show_bug.cgi?id=22019>
+
+        * WebCore.base.exp:
+        * page/Console.cpp:
+        (WebCore::printToStandardOut):
+        (WebCore::Console::shouldPrintExceptions):
+        (WebCore::Console::setShouldPrintExceptions):
+        * page/Console.h:
+
 2008-10-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

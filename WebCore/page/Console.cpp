@@ -118,7 +118,7 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
 
 static void printToStandardOut(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber)
 {
-    if (!Interpreter::shouldPrintExceptions())
+    if (!Console::shouldPrintExceptions())
         return;
 
     printSourceURLAndLine(sourceURL, lineNumber);
@@ -129,7 +129,7 @@ static void printToStandardOut(MessageSource source, MessageLevel level, const S
 
 static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgList& args, const KURL& url)
 {
-    if (!Interpreter::shouldPrintExceptions())
+    if (!Console::shouldPrintExceptions())
         return;
 
     printSourceURLAndLine(url.prettyURL(), 0);
@@ -457,6 +457,18 @@ void Console::reportCurrentException(ExecState* exec)
     JSValue* exception = exec->exception();
     exec->clearException();
     reportException(exec, exception);
+}
+
+static bool printExceptions = false;
+
+bool Console::shouldPrintExceptions()
+{
+    return printExceptions;
+}
+
+void Console::setShouldPrintExceptions(bool print)
+{
+    printExceptions = print;
 }
 
 Page* Console::page() const

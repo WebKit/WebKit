@@ -30,8 +30,8 @@
 
 #import "WebCache.h"
 #import "WebFrameInternal.h"
-#import <kjs/interpreter.h>
 #import <kjs/JSLock.h>
+#import <WebCore/Console.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
@@ -143,13 +143,13 @@ using namespace WebCore;
 + (BOOL)shouldPrintExceptions
 {
     JSLock lock(false);
-    return Interpreter::shouldPrintExceptions();
+    return Console::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
     JSLock lock(false);
-    Interpreter::setShouldPrintExceptions(print);
+    Console::setShouldPrintExceptions(print);
 }
 
 + (void)emptyCache

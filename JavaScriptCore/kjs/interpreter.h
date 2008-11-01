@@ -61,9 +61,6 @@ namespace JSC {
      * @return A completion object representing the result of the execution.
      */
     static Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue* thisValue = noValue());
-    
-    static bool shouldPrintExceptions();
-    static void setShouldPrintExceptions(bool);
   };
 
 } // namespace JSC
