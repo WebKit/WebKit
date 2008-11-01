@@ -27,6 +27,7 @@
 #ifndef MessagePort_h
 #define MessagePort_h
 
+#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 
@@ -79,7 +80,7 @@ namespace WebCore {
         virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
 
         typedef Vector<RefPtr<EventListener> > ListenerVector;
-        typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;
+        typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
         EventListenersMap& eventListeners() { return m_eventListeners; }
 
         using ThreadSafeShared<MessagePort>::ref;

@@ -183,11 +183,11 @@ ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 
 void DOMApplicationCache::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end()) {
         ListenerVector listeners;
         listeners.append(eventListener);
-        m_eventListeners.add(eventType.impl(), listeners);
+        m_eventListeners.add(eventType, listeners);
     } else {
         ListenerVector& listeners = iter->second;
         for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
@@ -196,13 +196,13 @@ void DOMApplicationCache::addEventListener(const AtomicString& eventType, PassRe
         }
         
         listeners.append(eventListener);
-        m_eventListeners.add(eventType.impl(), listeners);
+        m_eventListeners.add(eventType, listeners);
     }    
 }
 
 void DOMApplicationCache::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
 {
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())
         return;
     
@@ -222,7 +222,7 @@ bool DOMApplicationCache::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& 
         return true;
     }
     
-    ListenerVector listenersCopy = m_eventListeners.get(event->type().impl());
+    ListenerVector listenersCopy = m_eventListeners.get(event->type());
     for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
         event->setTarget(this);
         event->setCurrentTarget(this);

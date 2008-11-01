@@ -28,12 +28,12 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
-#include <wtf/RefCounted.h>
+#include "AtomicStringHash.h"
 #include "EventTarget.h"
-
 #include "EventListener.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -72,7 +72,7 @@ public:
     virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
     
     typedef Vector<RefPtr<EventListener> > ListenerVector;
-    typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;
+    typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
     EventListenersMap& eventListeners() { return m_eventListeners; }
 
     using RefCounted<DOMApplicationCache>::ref;

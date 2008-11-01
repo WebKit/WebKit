@@ -21,6 +21,7 @@
 #define XMLHttpRequest_h
 
 #include "ActiveDOMObject.h"
+#include "AtomicStringHash.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "FormData.h"
@@ -97,7 +98,7 @@ public:
     EventListener* onprogress() const { return m_onProgressListener.get(); }
 
     typedef Vector<RefPtr<EventListener> > ListenerVector;
-    typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;
+    typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
 
     // useCapture is not used, even for add/remove pairing (for Firefox compatibility).
     virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

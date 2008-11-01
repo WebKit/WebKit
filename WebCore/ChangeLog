@@ -1,3 +1,34 @@
+2008-11-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22001
+        AtomicStringImpl* keys of event listener maps can outlive their strings
+
+        Test: fast/events/destroyed-atomic-string.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::addEventListener):
+        (WebCore::MessagePort::removeEventListener):
+        (WebCore::MessagePort::dispatchEvent):
+        * dom/MessagePort.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::addEventListener):
+        (WebCore::DOMApplicationCache::removeEventListener):
+        (WebCore::DOMApplicationCache::dispatchEvent):
+        * loader/appcache/DOMApplicationCache.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::addEventListener):
+        (WebCore::XMLHttpRequest::removeEventListener):
+        (WebCore::XMLHttpRequest::dispatchEvent):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::addEventListener):
+        (WebCore::XMLHttpRequestUpload::removeEventListener):
+        (WebCore::XMLHttpRequestUpload::dispatchEvent):
+        * xml/XMLHttpRequestUpload.h:
+        Changed EventListenersMap to use AtomicString as key (instead of AtomicStringImpl*).
+
 2008-10-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

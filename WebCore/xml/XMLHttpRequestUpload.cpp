@@ -54,11 +54,11 @@ ScriptExecutionContext* XMLHttpRequestUpload::scriptExecutionContext() const
 
 void XMLHttpRequestUpload::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end()) {
         ListenerVector listeners;
         listeners.append(eventListener);
-        m_eventListeners.add(eventType.impl(), listeners);
+        m_eventListeners.add(eventType, listeners);
     } else {
         ListenerVector& listeners = iter->second;
         for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
@@ -67,13 +67,13 @@ void XMLHttpRequestUpload::addEventListener(const AtomicString& eventType, PassR
         }
         
         listeners.append(eventListener);
-        m_eventListeners.add(eventType.impl(), listeners);
+        m_eventListeners.add(eventType, listeners);
     }
 }
 
 void XMLHttpRequestUpload::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool)
 {
-    EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())
         return;
 
@@ -94,7 +94,7 @@ bool XMLHttpRequestUpload::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& e
         return true;
     }
 
-    ListenerVector listenersCopy = m_eventListeners.get(evt->type().impl());
+    ListenerVector listenersCopy = m_eventListeners.get(evt->type());
     for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
         evt->setTarget(this);
         evt->setCurrentTarget(this);

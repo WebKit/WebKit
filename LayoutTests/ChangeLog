@@ -1,3 +1,13 @@
+2008-11-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22001
+        AtomicStringImpl* keys of event listener maps can outlive their strings
+
+        * fast/events/destroyed-atomic-string-expected.txt: Added.
+        * fast/events/destroyed-atomic-string.html: Added.
+
 2008-10-30  Justin Garcia  <justin.garcia@apple.com>
 
         Added another layout test for previous check-in.
