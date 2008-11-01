@@ -81,13 +81,6 @@ MessagePort::~MessagePort()
         m_scriptExecutionContext->destroyedMessagePort(this);
 }
 
-Frame* MessagePort::associatedFrame() const
-{
-    if (!m_scriptExecutionContext || !m_scriptExecutionContext->isDocument())
-        return 0;
-    return static_cast<Document*>(m_scriptExecutionContext)->frame();
-}
-
 PassRefPtr<MessagePort> MessagePort::clone(ScriptExecutionContext* newOwner, ExceptionCode& ec)
 {
     if (!m_entangledPort) {

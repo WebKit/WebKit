@@ -95,39 +95,6 @@ JSValue* JSMessagePort::removeEventListener(ExecState* exec, const ArgList& args
         return jsUndefined();
     impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
     return jsUndefined();
-    
-}
-
-void JSMessagePort::setOnmessage(ExecState* exec, JSValue* value)
-{
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
-    if (!globalObject)
-        return;
-    impl()->setOnmessage(globalObject->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSMessagePort::onmessage(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onmessage()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSMessagePort::setOnclose(ExecState* exec, JSValue* value)
-{
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(impl()->scriptExecutionContext());
-    if (!globalObject)
-        return;
-    impl()->setOnclose(globalObject->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSMessagePort::onclose(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onclose()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
 }
 
 } // namespace WebCore

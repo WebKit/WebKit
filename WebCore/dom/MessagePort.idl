@@ -42,8 +42,8 @@ module events {
         void close();
 
         // event handler attributes
-        attribute [Custom] EventListener onmessage;
-        attribute [Custom] EventListener onclose;
+        attribute EventListener onmessage;
+        attribute EventListener onclose;
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type, 

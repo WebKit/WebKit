@@ -195,13 +195,6 @@ Document* XMLHttpRequest::document() const
     return static_cast<Document*>(scriptExecutionContext());
 }
 
-Frame* XMLHttpRequest::associatedFrame() const
-{
-    if (!document())
-        return 0;
-    return document()->frame();
-}
-
 XMLHttpRequest::State XMLHttpRequest::readyState() const
 {
     return m_state;
@@ -1316,6 +1309,11 @@ void XMLHttpRequest::contextDestroyed()
 {
     ActiveDOMObject::contextDestroyed();
     internalAbort();
+}
+
+ScriptExecutionContext* XMLHttpRequest::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore 

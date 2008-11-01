@@ -1211,16 +1211,15 @@ sub GenerateImplementation
                                 $listenerType = "JSUnprotectedEventListener";
                             }
                             if ($interfaceName eq "DOMWindow") {
-                                push(@implContent, "    JSDOMWindow* window = static_cast<JSDOMWindow*>(thisObject);\n");
+                                push(@implContent, "    JSDOMGlobalObject* globalObject = static_cast<JSDOMWindow*>(thisObject);\n");
                             } else {
                                 $implIncludes{"Frame.h"} = 1;
-                                $implIncludes{"JSDOMWindow.h"} = 1;
-                                push(@implContent, "    Frame* frame = imp->associatedFrame();\n");
-                                push(@implContent, "    if (!frame)\n");
+                                $implIncludes{"JSDOMGlobalObject.h"} = 1;
+                                push(@implContent, "    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(imp->scriptExecutionContext());\n");
+                                push(@implContent, "    if (!globalObject)\n");
                                 push(@implContent, "        return;\n");
-                                push(@implContent, "    JSDOMWindow* window = toJSDOMWindow(frame);\n");
                             }
-                            push(@implContent, "    imp->set$implSetterFunctionName(window->findOrCreate${listenerType}(exec, value, true));\n");
+                            push(@implContent, "    imp->set$implSetterFunctionName(globalObject->findOrCreate${listenerType}(exec, value, true));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

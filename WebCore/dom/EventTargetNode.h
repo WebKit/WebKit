@@ -41,7 +41,7 @@ public:
     virtual bool isEventTargetNode() const { return true; }
     virtual EventTargetNode* toNode() { return this; }
 
-    Frame* associatedFrame() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
     virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);

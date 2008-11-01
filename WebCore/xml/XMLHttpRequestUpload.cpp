@@ -44,12 +44,12 @@ XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
 {
 }
 
-Frame* XMLHttpRequestUpload::associatedFrame() const
+ScriptExecutionContext* XMLHttpRequestUpload::scriptExecutionContext() const
 {
     XMLHttpRequest* xmlHttpRequest = associatedXMLHttpRequest();
     if (!xmlHttpRequest)
         return 0;
-    return xmlHttpRequest->associatedFrame();
+    return xmlHttpRequest->scriptExecutionContext();
 }
 
 void XMLHttpRequestUpload::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)

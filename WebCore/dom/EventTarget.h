@@ -41,9 +41,9 @@ namespace WebCore {
     class Event;
     class EventListener;
     class EventTargetNode;
-    class Frame;
     class MessagePort;
     class RegisteredEventListener;
+    class ScriptExecutionContext;
     class SVGElementInstance;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;
@@ -66,7 +66,7 @@ namespace WebCore {
         virtual SVGElementInstance* toSVGElementInstance();
 #endif
 
-        virtual Frame* associatedFrame() const = 0;
+        virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) = 0;
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) = 0;

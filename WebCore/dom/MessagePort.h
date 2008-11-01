@@ -67,11 +67,9 @@ namespace WebCore {
         void unentangle();
 
         void contextDestroyed();
-        ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext; }
+        virtual ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
         virtual MessagePort* toMessagePort() { return this; }
-
-        virtual Frame* associatedFrame() const;
 
         void queueCloseEvent();
         void dispatchMessages();

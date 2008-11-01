@@ -130,10 +130,10 @@ void SVGElementInstance::setNeedsUpdate(bool value)
         correspondingUseElement()->setChanged();
 }
 
-Frame* SVGElementInstance::associatedFrame() const
+ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const
 {
     if (SVGElement* element = correspondingElement())
-        return element->associatedFrame();
+        return element->scriptExecutionContext();
     return 0;
 }
 

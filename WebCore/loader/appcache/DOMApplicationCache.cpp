@@ -175,7 +175,12 @@ void DOMApplicationCache::remove(const KURL& url, ExceptionCode& ec)
     
     cache->removeDynamicEntry(url);
 }
-    
+
+ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
+{
+    return m_frame->document();
+}
+
 void DOMApplicationCache::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());

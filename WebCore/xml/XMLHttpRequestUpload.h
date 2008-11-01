@@ -37,7 +37,7 @@
 namespace WebCore {
 
     class AtomicStringImpl;
-    class Frame;
+    class ScriptExecutionContext;
     class XMLHttpRequest;
 
     class XMLHttpRequestUpload : public RefCounted<XMLHttpRequestUpload>, public EventTarget {
@@ -52,7 +52,7 @@ namespace WebCore {
         XMLHttpRequest* associatedXMLHttpRequest() const { return m_xmlHttpRequest; }
         void disconnectXMLHttpRequest() { m_xmlHttpRequest = 0; }
 
-        Frame* associatedFrame() const;
+        ScriptExecutionContext* scriptExecutionContext() const;
 
         void dispatchAbortEvent();
         void dispatchErrorEvent();

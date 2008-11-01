@@ -1,3 +1,56 @@
+2008-10-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21998
+        Use JSDOMGlobalObject in EventListener-related bindings
+
+        * dom/MessagePort.idl: Auto-generate bindings for onclose and onmessage.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Use JSDOMGlobalObject instead of JSDOMWindow in JS
+        bindings for inline event handlers.
+
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        * bindings/js/JSEventTargetNodeCustom.cpp:
+        (WebCore::JSEventTargetNode::addEventListener):
+        (WebCore::JSEventTargetNode::removeEventListener):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::removeEventListener):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::addEventListener):
+        (WebCore::JSSVGElementInstance::removeEventListener):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        Use ScriptExecutionContext and JSDOMGlobalObject in bindings.
+
+        * dom/EventTarget.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::scriptExecutionContext):
+        * dom/EventTargetNode.h:
+        * dom/MessagePort.cpp:
+        * dom/MessagePort.h:
+        (WebCore::MessagePort::scriptExecutionContext):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::scriptExecutionContext):
+        * loader/appcache/DOMApplicationCache.h:
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::scriptExecutionContext):
+        * svg/SVGElementInstance.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::scriptExecutionContext):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::scriptExecutionContext):
+        * xml/XMLHttpRequestUpload.h:
+        Remove associatedFrame() method, and provide scriptExecutionContext() where it wasn't
+        available yet.
+
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Geoff Garen.
