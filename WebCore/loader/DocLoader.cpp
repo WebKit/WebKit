@@ -144,10 +144,8 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 }
 #endif
 
-CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, bool isPreload)
+bool DocLoader::canRequest(CachedResource::Type type, const KURL& url)
 {
-    KURL fullURL = m_doc->completeURL(url);
-
     // Some types of resources can be loaded only from the same origin.  Other
     // types of resources, like Images, Scripts, and CSS, can be loaded from
     // any URL.
@@ -166,9 +164,9 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
     case CachedResource::XBL:
 #endif
 #if ENABLE(XSLT) || ENABLE(XBL)
-        if (!m_doc->securityOrigin()->canRequest(fullURL)) {
-            printAccessDeniedMessage(fullURL);
-            return 0;
+        if (!m_doc->securityOrigin()->canRequest(url)) {
+            printAccessDeniedMessage(url);
+            return false;
         }
         break;
 #endif
@@ -176,6 +174,15 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
         ASSERT_NOT_REACHED();
         break;
     }
+    return true;
+}
+
+CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, bool isPreload)
+{
+    KURL fullURL = m_doc->completeURL(url);
+
+    if (!canRequest(type, fullURL))
+        return 0;
 
     if (cache()->disabled()) {
         HashMap<String, CachedResource*>::iterator it = m_docResources.find(fullURL.string());
@@ -193,6 +200,11 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
 
     CachedResource* resource = cache()->requestResource(this, type, fullURL, charset, isPreload);
     if (resource) {
+        // Check final URL of resource to catch redirects.
+        // See <https://bugs.webkit.org/show_bug.cgi?id=21963>.
+        if (!canRequest(type, KURL(resource->url())))
+            return 0;
+
         m_docResources.set(resource->url(), resource);
         checkCacheObjectStatus(resource);
     }

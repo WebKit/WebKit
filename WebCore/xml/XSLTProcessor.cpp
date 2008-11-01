@@ -126,10 +126,15 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
             Vector<char> data;
 
-            if (globalDocLoader->frame() && globalDocLoader->doc()->securityOrigin()->canRequest(url))
+            bool requestAllowed = globalDocLoader->frame() && globalDocLoader->doc()->securityOrigin()->canRequest(url);
+            if (requestAllowed) {
                 globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
-            else
+                requestAllowed = globalDocLoader->doc()->securityOrigin()->canRequest(response.url());
+            }
+            if (!requestAllowed) {
+                data.clear();
                 globalDocLoader->printAccessDeniedMessage(url);
+            }
 
             Console* console = 0;
             if (Frame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame())

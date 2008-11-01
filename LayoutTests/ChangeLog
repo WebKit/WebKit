@@ -1,3 +1,19 @@
+2008-11-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Test that we properly block non-same-origin redirects for these
+        esoteric loads.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21963
+
+        * http/tests/security/resources/xsl-using-document-redirect.xsl: Added.
+        * http/tests/security/resources/xsl-using-external-entity-redirect.xsl: Added.
+        * http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt: Copied from LayoutTests/http/tests/security/xss-DENIED-xsl-document-expected.txt.
+        * http/tests/security/xss-DENIED-xsl-document-redirect.xml: Added.
+        * http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt: Copied from LayoutTests/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt.
+        * http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml: Added.
+
 2008-11-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
