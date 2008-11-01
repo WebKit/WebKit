@@ -1,3 +1,13 @@
+2008-10-31  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=22018
+        enable-developer-extras doesn't toggle WebInspector
+
+        * webkit/webkitwebview.cpp:
+        Add missing 'if' in notification for 'enable-developer-extras'.
+
 2008-10-30  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Dave Hyatt.
