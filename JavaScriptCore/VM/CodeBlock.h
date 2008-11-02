@@ -245,7 +245,7 @@ namespace JSC {
     };
 
     struct CodeBlock {
-        CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> source, unsigned sourceOffset)
+        CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
             : ownerNode(ownerNode)
             , globalData(0)
 #if ENABLE(CTI)
@@ -258,7 +258,7 @@ namespace JSC {
             , needsFullScopeChain(ownerNode->needsActivation())
             , usesEval(ownerNode->usesEval())
             , codeType(codeType)
-            , source(source)
+            , source(sourceProvider)
             , sourceOffset(sourceOffset)
         {
             ASSERT(source);
@@ -371,8 +371,8 @@ namespace JSC {
     // responsible for marking it.
 
     struct ProgramCodeBlock : public CodeBlock {
-        ProgramCodeBlock(ScopeNode* ownerNode, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> source)
-            : CodeBlock(ownerNode, codeType, source, 0)
+        ProgramCodeBlock(ScopeNode* ownerNode, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
+            : CodeBlock(ownerNode, codeType, sourceProvider, 0)
             , globalObject(globalObject)
         {
             globalObject->codeBlocks().add(this);
@@ -388,8 +388,8 @@ namespace JSC {
     };
 
     struct EvalCodeBlock : public ProgramCodeBlock {
-        EvalCodeBlock(ScopeNode* ownerNode, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> source)
-            : ProgramCodeBlock(ownerNode, EvalCode, globalObject, source)
+        EvalCodeBlock(ScopeNode* ownerNode, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
+            : ProgramCodeBlock(ownerNode, EvalCode, globalObject, sourceProvider)
         {
         }
     };

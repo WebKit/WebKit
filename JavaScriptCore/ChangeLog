@@ -1,3 +1,17 @@
+2008-11-02  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 22042: REGRESSION(r38066): ASSERTION FAILED: source in CodeBlock
+        <https://bugs.webkit.org/show_bug.cgi?id=22042>
+
+        Rename parameter name to avoid ASSERT.
+
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+
 2008-11-02  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
