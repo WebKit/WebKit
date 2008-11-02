@@ -88,9 +88,9 @@ private:
     static JSValue* callbackGetter(ExecState*, const Identifier&, const PropertySlot&);
 
     struct JSCallbackObjectData {
-        JSCallbackObjectData(void* privateData_, JSClassRef jsClass_)
-            : privateData(privateData_)
-            , jsClass(jsClass_)
+        JSCallbackObjectData(void* privateData, JSClassRef jsClass)
+            : privateData(privateData)
+            , jsClass(jsClass)
         {
             JSClassRetain(jsClass);
         }

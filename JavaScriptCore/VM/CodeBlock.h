@@ -245,8 +245,8 @@ namespace JSC {
     };
 
     struct CodeBlock {
-        CodeBlock(ScopeNode* ownerNode_, CodeType codeType_, PassRefPtr<SourceProvider> source_, unsigned sourceOffset_)
-            : ownerNode(ownerNode_)
+        CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> source, unsigned sourceOffset)
+            : ownerNode(ownerNode)
             , globalData(0)
 #if ENABLE(CTI)
             , ctiCode(0)
@@ -255,11 +255,11 @@ namespace JSC {
             , numConstants(0)
             , numVars(0)
             , numParameters(0)
-            , needsFullScopeChain(ownerNode_->needsActivation())
-            , usesEval(ownerNode_->usesEval())
-            , codeType(codeType_)
-            , source(source_)
-            , sourceOffset(sourceOffset_)
+            , needsFullScopeChain(ownerNode->needsActivation())
+            , usesEval(ownerNode->usesEval())
+            , codeType(codeType)
+            , source(source)
+            , sourceOffset(sourceOffset)
         {
             ASSERT(source);
         }
@@ -371,9 +371,9 @@ namespace JSC {
     // responsible for marking it.
 
     struct ProgramCodeBlock : public CodeBlock {
-        ProgramCodeBlock(ScopeNode* ownerNode_, CodeType codeType_, JSGlobalObject* globalObject_, PassRefPtr<SourceProvider> source_)
-            : CodeBlock(ownerNode_, codeType_, source_, 0)
-            , globalObject(globalObject_)
+        ProgramCodeBlock(ScopeNode* ownerNode, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> source)
+            : CodeBlock(ownerNode, codeType, source, 0)
+            , globalObject(globalObject)
         {
             globalObject->codeBlocks().add(this);
         }
@@ -388,8 +388,8 @@ namespace JSC {
     };
 
     struct EvalCodeBlock : public ProgramCodeBlock {
-        EvalCodeBlock(ScopeNode* ownerNode_, JSGlobalObject* globalObject_, PassRefPtr<SourceProvider> source_)
-            : ProgramCodeBlock(ownerNode_, EvalCode, globalObject_, source_)
+        EvalCodeBlock(ScopeNode* ownerNode, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> source)
+            : ProgramCodeBlock(ownerNode, EvalCode, globalObject, source)
         {
         }
     };

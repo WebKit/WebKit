@@ -1,3 +1,19 @@
+2008-11-02  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 22035: Remove the '_' suffix on constructor parameter names for structs
+        <https://bugs.webkit.org/show_bug.cgi?id=22035>
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::JSCallbackObjectData::JSCallbackObjectData):
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        * wrec/WREC.h:
+        (JSC::Quantifier::Quantifier):
+
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Geoff Garen.

@@ -60,10 +60,10 @@ namespace JSC {
         {
         }
 
-        Quantifier(Type type_, unsigned min_ = 0, unsigned max_ = noMaxSpecified)
-            : type(type_)
-            , min(min_)
-            , max(max_)
+        Quantifier(Type type, unsigned min = 0, unsigned max = noMaxSpecified)
+            : type(type)
+            , min(min)
+            , max(max)
         {
         }
 
