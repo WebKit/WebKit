@@ -1,3 +1,13 @@
+2008-11-02  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Holger Freyther
+
+        https://bugs.webkit.org/show_bug.cgi?id=22009
+        HTML5 Video with GStreamer pulls gnome-vfs without using it.
+
+        * configure.ac:
+        Remove gnome-vfs from configure.ac, it's unused.
+
 2008-10-30  Alp Toker  <alp@nuanti.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=19395

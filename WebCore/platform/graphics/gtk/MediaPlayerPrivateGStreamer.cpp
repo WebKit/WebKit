@@ -43,7 +43,6 @@
 #include <gst/interfaces/mixer.h>
 #include <gst/interfaces/xoverlay.h>
 #include <gst/video/video.h>
-#include <libgnomevfs/gnome-vfs.h>
 #include <limits>
 #include <math.h>
 
