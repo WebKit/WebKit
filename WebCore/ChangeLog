@@ -1,3 +1,17 @@
+2008-11-03  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22041
+        Fix CURL crashes on the test suite
+
+        Do not send "no data" to WebCore in parseDataUrl().
+
+        Fixes assert on fast/tokenizer/image-empty-crash.html
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl):
+
 2008-11-02  Xan Lopez  <xan@gnome.org>
 
         Reviewed by Holger Freyther.
