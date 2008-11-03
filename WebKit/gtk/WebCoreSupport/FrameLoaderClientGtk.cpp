@@ -787,8 +787,8 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     if (frame->ownerRenderer())
         frame->ownerRenderer()->setWidget(frameView);
 
-    if (!frame->ownerElement())
-        return;
+    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
+        frame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
 }
 
 }

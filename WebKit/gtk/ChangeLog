@@ -1,5 +1,18 @@
 2008-11-03  Alp Toker  <alp@nuanti.com>
 
+        Reviewed by Holger Freyther.
+
+        Redundant scrollbars appear in frames where they shouldn't be visible
+        eg. embedded Google adverts.
+
+        Call setCanHaveScrollbars() when necessary. The Mac and Win ports
+        already have this but it was missing in FrameLoaderClientGtk.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+
+2008-11-03  Alp Toker  <alp@nuanti.com>
+
         Rubber-stamped by Holger Freyther.
 
         Sync WebKit GTK+ default UA version string to 528.5+. (We're still
