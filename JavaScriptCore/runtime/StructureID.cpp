@@ -38,6 +38,8 @@
 #include <wtf/Threading.h>
 #endif
 
+#define DUMP_STRUCTURE_ID_STATISTICS 0
+
 #ifndef NDEBUG
 #define DO_PROPERTYMAP_CONSTENCY_CHECK 0
 #else
@@ -70,9 +72,11 @@ static HashSet<StructureID*> ignoreSet;
 
 #if DUMP_STRUCTURE_ID_STATISTICS
 static HashSet<StructureID*> liveStructureIDSet;
+#endif
 
 void StructureID::dumpStatistics()
 {
+#if DUMP_STRUCTURE_ID_STATISTICS
     unsigned numberLeaf = 0;
     unsigned numberUsingSingleSlot = 0;
     unsigned numberSingletons = 0;
@@ -92,7 +96,7 @@ void StructureID::dumpStatistics()
         }
 
         if (structureID->m_propertyTable)
-            totalPropertyMapsSize += PropertyMapHashTable::allocationSize(m_propertyTable->size);;
+            totalPropertyMapsSize += PropertyMapHashTable::allocationSize(structureID->m_propertyTable->size);
     }
 
     printf("Number of live StructureIDs: %d\n", liveStructureIDSet.size());
@@ -103,8 +107,10 @@ void StructureID::dumpStatistics()
     printf("Size of a single StructureIDs: %d\n", static_cast<unsigned>(sizeof(StructureID)));
     printf("Size of sum of all property maps: %d\n", totalPropertyMapsSize);
     printf("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyMapsSize) / static_cast<double>(liveStructureIDSet.size()));
-}
+#else
+    printf("Dumping StructureID statistics is not enabled.\n");
 #endif
+}
 
 StructureID::StructureID(JSValue* prototype, const TypeInfo& typeInfo)
     : m_typeInfo(typeInfo)

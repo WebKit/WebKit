@@ -40,8 +40,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#define DUMP_STRUCTURE_ID_STATISTICS 0
-
 #ifndef NDEBUG
 #define DUMP_PROPERTYMAP_STATS 0
 #else
@@ -64,9 +62,7 @@ namespace JSC {
         static void startIgnoringLeaks();
         static void stopIgnoringLeaks();
 
-#if DUMP_STRUCTURE_ID_STATISTICS
         static void dumpStatistics();
-#endif
 
         static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
         static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& propertyName, unsigned attributes, size_t& offset);
