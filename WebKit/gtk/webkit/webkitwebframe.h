@@ -58,8 +58,10 @@ struct _WebKitWebFrameClass {
 WEBKIT_API GType
 webkit_web_frame_get_type           (void);
 
+#ifndef WEBKIT_DISABLE_DEPRECATED
 WEBKIT_API WebKitWebFrame *
 webkit_web_frame_new                (WebKitWebView        *web_view);
+#endif
 
 WEBKIT_API WebKitWebView *
 webkit_web_frame_get_web_view       (WebKitWebFrame       *frame);

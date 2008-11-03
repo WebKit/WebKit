@@ -211,6 +211,9 @@ static void webkit_web_frame_init(WebKitWebFrame* frame)
  * Creates a new #WebKitWebFrame initialized with a controlling #WebKitWebView.
  *
  * Returns: a new #WebKitWebFrame
+ *
+ * Deprecated: 1.0.2: #WebKitWebFrame can only be used to inspect existing
+ * frames.
  **/
 WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
 {

@@ -2,6 +2,22 @@
 
         Reviewed by Holger Freyther.
 
+        Deprecate flawed webkit_web_frame_new() function. This would never
+        have worked properly when used outside WebCore since Frame::create()
+        can only be called without an owner element once in the lifetime of a
+        Page and would result in assertions, leaks and an unusable WebView
+        instance.
+
+        Frame creation may be exposed in API some time later via the DOM
+        binding but probably not in the WebKit GTK+ core API.
+
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebframe.h:
+
+2008-11-03  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Holger Freyther.
+
         Redundant scrollbars appear in frames where they shouldn't be visible
         eg. embedded Google adverts.
 
