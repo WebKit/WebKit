@@ -288,6 +288,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
+    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
     ASSERT([self currentWindow] != nil);
 
 #ifndef NP_NO_QUICKDRAW
@@ -545,7 +546,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
             break;
         }
-
+        
         default:
             ASSERT_NOT_REACHED();
             portState = NULL;
@@ -562,6 +563,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)restorePortState:(PortState)portState
 {
+    if (drawingModel == NPDrawingModelCoreAnimation)
+        return;
+
     ASSERT([self currentWindow]);
     ASSERT(portState);
     
@@ -597,7 +601,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             ASSERT(((PortState_CG *)portState)->context == nPort.cgPort.context);
             CGContextRestoreGState(nPort.cgPort.context);
             break;
-                
+
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -637,15 +641,18 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT((drawingModel != NPDrawingModelCoreGraphics) || !eventIsDrawRect || [NSView focusView] == self);
     
     PortState portState;
-    if ((drawingModel != NPDrawingModelCoreGraphics) || eventIsDrawRect) {
-        // In CoreGraphics mode, the port state only needs to be saved/set when redrawing the plug-in view.  The plug-in is not
-        // allowed to draw at any other time.
-        portState = [self saveAndSetNewPortStateForUpdate:eventIsDrawRect];
-        
-        // We may have changed the window, so inform the plug-in.
-        [self setWindowIfNecessary];
-    } else
+    
+    if (drawingModel == NPDrawingModelCoreAnimation) {
         portState = NULL;
+    } else {
+        if ((drawingModel == NPDrawingModelQuickDraw) || eventIsDrawRect) {
+            // In CoreGraphics mode, the port state only needs to be saved/set when redrawing the plug-in view.
+            // The plug-in is not allowed to draw at any other time.
+            portState = [self saveAndSetNewPortStateForUpdate:eventIsDrawRect];
+            // We may have changed the window, so inform the plug-in.
+            [self setWindowIfNecessary];
+        }
+    }
     
 #if !defined(NDEBUG) && !defined(NP_NO_QUICKDRAW)
     // Draw green to help debug.
@@ -912,6 +919,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (BOOL)isNewWindowEqualToOldWindow
 {
+    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
+        
     if (window.x != lastSetWindow.x)
         return NO;
     if (window.y != lastSetWindow.y)
@@ -960,6 +969,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)updateAndSetWindow
 {
+    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
+
     // A plug-in can only update if it's (1) already been started (2) isn't stopped
     // and (3) is able to draw on-screen. To meet condition (3) the plug-in must not
     // be hidden and be attached to a window. QuickDraw plug-ins are an important
@@ -977,6 +988,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif // NP_NO_QUICKDRAW
     
     BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
+    
+    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelQuickDraw) {
+        [self setWindowIfNecessary];
+        if (didLockFocus)
+            [self unlockFocus];
+
+        return;
+    }
+    
     PortState portState = [self saveAndSetNewPortState];
     if (portState) {
         [self setWindowIfNecessary];
@@ -989,6 +1009,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)setWindowIfNecessary
 {
+    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
+           
     if (!isStarted) {
         return;
     }
@@ -1027,7 +1049,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d",
                 npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
             break;
-            
+                        
             default:
                 ASSERT_NOT_REACHED();
             break;
@@ -1196,6 +1218,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }        
 #endif // NP_NO_CARBON
     
+#ifndef BUILDING_ON_TIGER
+    if (drawingModel == NPDrawingModelCoreAnimation) {
+        void *value = 0;
+        if (NPP_GetValue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
+            _layer = (CALayer *)value;
+            [self setWantsLayer:YES];
+            [self setLayer:_layer];
+            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", pluginPackage, _layer);
+        }
+
+        ASSERT(_layer);
+    }
+#endif
+    
     // Create the event handler
     eventHandler = WebNetscapePluginEventHandler::create(self);
     
@@ -1214,7 +1250,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     isStarted = YES;
     [[self webView] addPluginInstanceView:self];
         
-    [self updateAndSetWindow];
+    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelQuickDraw)
+        [self updateAndSetWindow];
 
     if ([self window]) {
         [self addWindowObservers];
@@ -1439,7 +1476,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self setMode:NP_EMBED];
     
     _loadManually = loadManually;
-    
     return self;
 }
 
@@ -1509,6 +1545,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)drawRect:(NSRect)rect
 {
+    if (drawingModel == NPDrawingModelCoreAnimation)
+        return;
+
     if (!isStarted)
         return;
     
@@ -2486,6 +2525,16 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
             return NPERR_NO_ERROR;
         }
         
+        case NPNVsupportsCoreAnimationBool:
+        {
+#ifdef BUILDING_ON_TIGER
+            *(NPBool *)value = FALSE;
+#else
+            *(NPBool *)value = TRUE;
+#endif
+            return NPERR_NO_ERROR;
+        }
+            
 #ifndef NP_NO_CARBON
         case NPNVsupportsCarbonBool:
         {
@@ -2557,6 +2606,11 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
                 case NPDrawingModelCoreGraphics:
                     drawingModel = newDrawingModel;
                     return NPERR_NO_ERROR;
+                    
+                case NPDrawingModelCoreAnimation:
+                    drawingModel = newDrawingModel;
+                    return NPERR_NO_ERROR;
+                    
 
                 // Unsupported (or unknown) drawing models:
                 default:
@@ -2745,7 +2799,9 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     if (drawingModel == NPDrawingModelQuickDraw)
         [self tellQuickTimeToChill];
 #endif
-    [self updateAndSetWindow];
+    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelQuickDraw)
+        [self updateAndSetWindow];
+    
     [self resetTrackingRect];
     
     // Check to see if the plugin view is completely obscured (scrolled out of view, for example).

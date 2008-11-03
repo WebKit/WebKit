@@ -350,6 +350,8 @@ typedef enum {
     NPPVpluginEventModel = 1001,
     /* The plug-in text input vtable */
     NPPVpluginTextInputFuncs = 1002,
+    /* In the NPDrawingModelCoreAnimation drawing model, the browser asks the plug-in for a Core Animation layer. */
+    NPPVpluginCoreAnimationLayer = 1003
 #endif
 } NPPVariable;
 
@@ -418,7 +420,8 @@ typedef enum {
     NPDrawingModelQuickDraw = 0,
 #endif
     NPDrawingModelCoreGraphics = 1,
-    NPDrawingModelOpenGL = 2
+    NPDrawingModelOpenGL = 2,
+    NPDrawingModelCoreAnimation
 } NPDrawingModel;
 
 /*
@@ -448,7 +451,6 @@ typedef enum {
     NPCocoaEventScrollWheel,
 } NPCocoaEventType;
 
-typedef struct _NPCALayer NPCALayer;
 typedef struct _NPNSString NPNSString;
 typedef struct _NPNSWindow NPNSWindow;
 typedef struct _NPNSMenu NPNSMenu;
@@ -607,17 +609,6 @@ typedef struct NP_GLContext
     void *window; // Can be either an NSWindow or a WindowRef depending on the event model
 #endif
 } NP_GLContext;
-
-/* 
- * NP_CALayer is the type of the NPWindow's 'window' when the plugin specifies NPDrawingModelCoreAnimation as its
- * drawing model.
- */
-
-typedef struct NP_CALayer
-{
-    NPCALayer *layer;
-    NPNSWindow *window;
-} NP_CALayer;
 
 #endif /* XP_MACOSX */
 

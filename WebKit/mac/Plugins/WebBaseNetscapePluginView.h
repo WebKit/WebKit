@@ -68,6 +68,9 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     
     BOOL _loadManually;
     RefPtr<WebNetscapePluginStream> _manualStream;
+#ifndef BUILDING_ON_TIGER
+    CALayer *_layer;
+#endif
     unsigned _dataLengthReceived;
     NSError *_error;
     

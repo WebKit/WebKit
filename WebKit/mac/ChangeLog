@@ -1,3 +1,28 @@
+2008-11-03  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22053
+        
+        This patch adds initial support for the NPDrawingModelCoreAnimation drawing model. 
+                
+        * Plugins/WebBaseNetscapePluginView.h: Added _layer ivar.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]): ASSERT this is not a plug-in using NPDrawingModelCoreAnimation.
+        (-[WebBaseNetscapePluginView restorePortState:]): Ditto.
+        (-[WebBaseNetscapePluginView sendEvent:isDrawRect:]): Slightly refactored a small block of code which with the PortState.
+        Plug-ins using the NPDrawingModelCoreAnimation drawing model have no PortState. 
+        (-[WebBaseNetscapePluginView isNewWindowEqualToOldWindow]): ASSERT this is not a plug-in using NPDrawingModelCoreAnimation
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):  Ditto.
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]): Ditto.
+        (-[WebBaseNetscapePluginView start]): If the plug-in is a plug-in using the Core Animation model, request a layer from it.
+        (-[WebBaseNetscapePluginView drawRect:]): Return early for NPDrawingModelCoreAnimation plug-ins.
+        (-[WebBaseNetscapePluginView getVariable:value:]): Tell plug-ins running on post-Tiger systems WebKit supports
+         NPDrawingModelCoreAnimation.
+        (-[WebBaseNetscapePluginView setVariable:value:]): Added the new NPDrawingModelCoreAnimation case, which initializes drawingMode.
+        (-[WebBaseNetscapePluginView _viewHasMoved]): Reworded the conditional call to updateAndSetWindow to be specific to 
+        CoreGraphics and QuickDraw plug-ins.
+
 2008-10-31  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.
