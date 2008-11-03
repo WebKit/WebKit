@@ -1,3 +1,17 @@
+2008-11-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=22026
+
+        When computing the bounds of the transparency layer, we need to
+        map the clipRect through the enclosing transform.
+        
+        Test: fast/layers/opacity-transforms.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox):
+
 2008-11-03  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders Carlsson.

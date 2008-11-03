@@ -1,3 +1,16 @@
+2008-11-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=22026
+        Fix bounds of transparency layer for a div with a transform
+        inside an opacity layer.
+
+        * fast/layers/opacity-transforms.html: Added.
+        * platform/mac/fast/layers/opacity-transforms-expected.checksum: Added.
+        * platform/mac/fast/layers/opacity-transforms-expected.png: Added.
+        * platform/mac/fast/layers/opacity-transforms-expected.txt: Added.
+
 2008-11-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
