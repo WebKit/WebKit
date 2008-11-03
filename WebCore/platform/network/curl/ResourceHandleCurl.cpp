@@ -152,7 +152,9 @@ void ResourceHandle::setDefersLoading(bool defers)
         return;
 
 #if LIBCURL_VERSION_NUM > 0x071200
-    if (defers) {
+    if (!d->m_handle)
+        d->m_defersLoading = defers;
+    else if (defers) {
         CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_ALL);
         // If we could not defer the handle, so don't do it.
         if (error != CURLE_OK)
