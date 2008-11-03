@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-#if PLATFORM(DARWIN)
+#if PLATFORM(DARWIN) && ENABLE(JSC_MULTIPLE_THREADS)
 static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
 #endif
 

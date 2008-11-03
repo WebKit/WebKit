@@ -1,3 +1,12 @@
+2008-11-03  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix warning when building on Darwin without JSC_MULTIPLE_THREADS
+        enabled.
+
+        * kjs/InitializeThreading.cpp:
+
 2008-11-02  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Cameron Zwarich.
