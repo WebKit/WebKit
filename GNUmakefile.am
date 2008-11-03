@@ -58,18 +58,16 @@ global_cflags := \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter -Wno-parentheses
+	-Wno-unused-parameter -Wno-parentheses \
+	-fno-exceptions
 
 global_cxxflags := \
-	$(SYMBOL_VISIBILITY_INLINES)
+	$(SYMBOL_VISIBILITY_INLINES) \
+	-fno-rtti
 
 if !ENABLE_DEBUG
 global_cflags += \
-	-fno-exceptions \
 	$(SYMBOL_VISIBILITY)
-
-global_cxxflags += \
-	-fno-rtti
 endif
 
 # -no-undefined required for building DLLs on Windows
