@@ -23,6 +23,7 @@
 #include "CString.h"
 #include "ResourceHandle.h"
 
+#include "Base64.h"
 #include "CookieJar.h"
 #include "DocLoader.h"
 #include "Frame.h"
@@ -33,10 +34,17 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "TextEncoding.h"
 
 #include <gio/gio.h>
 #include <libsoup/soup.h>
 #include <libsoup/soup-message.h>
+
+#if PLATFORM(GTK)
+    #if GLIB_CHECK_VERSION(2,12,0)
+        #define USE_GLIB_BASE64
+    #endif
+#endif
 
 namespace WebCore {
 
@@ -186,61 +194,68 @@ static void finishedCallback(SoupSession *session, SoupMessage* msg, gpointer da
     client->didFinishLoading(handle);
 }
 
+// parseDataUrl() is taken from the CURL http backend.
 static gboolean parseDataUrl(gpointer callback_data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(callback_data);
-    String data = handle->request().url().string();
+    ResourceHandleClient* client = handle->client();
 
-    ASSERT(data.startsWith("data:", false));
+    ASSERT(client);
+    if (!client)
+        return FALSE;
 
-    String header;
-    bool base64 = false;
+    String url = handle->request().url().string();
+    ASSERT(url.startsWith("data:", false));
 
-    int index = data.find(',');
-    if (index != -1) {
-        header = data.substring(5, index - 5).lower();
-        data = data.substring(index + 1);
-
-        if (header.endsWith(";base64")) {
-            base64 = true;
-            header = header.left(header.length() - 7);
-        }
-    } else
-        data = String();
-
-    data = decodeURLEscapeSequences(data);
-
-    size_t outLength = 0;
-    char* outData = 0;
-    if (base64 && !data.isEmpty()) {
-        // Use the GLib Base64 if available, since WebCore's decoder isn't
-        // general-purpose and fails on Acid3 test 97 (whitespace).
-        outData = reinterpret_cast<char*>(g_base64_decode(data.utf8().data(), &outLength));
+    int index = url.find(',');
+    if (index == -1) {
+        client->cannotShowURL(handle);
+        return FALSE;
     }
 
-    if (header.isEmpty())
-        header = "text/plain;charset=US-ASCII";
+    String mediaType = url.substring(5, index - 5);
+    String data = url.substring(index + 1);
 
-    ResourceHandleClient* client = handle->getInternal()->client();
+    bool base64 = mediaType.endsWith(";base64", false);
+    if (base64)
+        mediaType = mediaType.left(mediaType.length() - 7);
+
+    if (mediaType.isEmpty())
+        mediaType = "text/plain;charset=US-ASCII";
+
+    String mimeType = extractMIMETypeFromMediaType(mediaType);
+    String charset = extractCharsetFromMediaType(mediaType);
 
     ResourceResponse response;
+    response.setMimeType(mimeType);
 
-    response.setMimeType(extractMIMETypeFromMediaType(header));
-    response.setTextEncodingName(extractCharsetFromMediaType(header));
-    if (outData)
-        response.setExpectedContentLength(outLength);
-    else
-        response.setExpectedContentLength(data.length());
-    response.setHTTPStatusCode(200);
+    if (base64) {
+        data = decodeURLEscapeSequences(data);
+        response.setTextEncodingName(charset);
+        client->didReceiveResponse(handle, response);
 
-    client->didReceiveResponse(handle, response);
-
-    if (outData)
-        client->didReceiveData(handle, outData, outLength, 0);
-    else
-        client->didReceiveData(handle, data.latin1().data(), data.length(), 0);
-
-    g_free(outData);
+        // Use the GLib Base64 if available, since WebCore's decoder isn't
+        // general-purpose and fails on Acid3 test 97 (whitespace).
+#ifdef USE_GLIB_BASE64
+        size_t outLength = 0;
+        char* outData = 0;
+        outData = reinterpret_cast<char*>(g_base64_decode(data.utf8().data(), &outLength));
+        if (outData && outLength > 0)
+            client->didReceiveData(handle, outData, outLength, 0);
+        g_free(outData);
+#else
+        Vector<char> out;
+        if (base64Decode(data.latin1().data(), data.latin1().length(), out) && out.size() > 0)
+            client->didReceiveData(handle, out.data(), out.size(), 0);
+#endif
+    } else {
+        // We have to convert to UTF-16 early due to limitations in KURL
+        data = decodeURLEscapeSequences(data, TextEncoding(charset));
+        response.setTextEncodingName("UTF-16");
+        client->didReceiveResponse(handle, response);
+        if (data.length() > 0)
+            client->didReceiveData(handle, reinterpret_cast<const char*>(data.characters()), data.length() * sizeof(UChar), 0);
+    }
 
     client->didFinishLoading(handle);
 

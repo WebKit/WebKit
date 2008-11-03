@@ -1,3 +1,14 @@
+2008-11-03  Xan Lopez  <xan@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        Update parseDataUrl() function in the libsoup http backend with
+        the one from the curl backend which has recent correctness and crash
+        fixes.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::parseDataUrl):
+
 2008-11-03  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Alp Toker.
