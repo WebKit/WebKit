@@ -1,3 +1,15 @@
+2008-11-04  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - part of https://bugs.webkit.org/show_bug.cgi?id=21821
+          Removed pixel results in platform/mac-tiger that were only slightly different
+          (within 1% tolerance) from the platform/mac results.
+          Removed results in platform/mac-tiger where the results in platform/mac were
+          also correct for Tiger.
+
+        (file listing elided)
+
 2008-11-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
