@@ -1,3 +1,10 @@
+2008-11-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Add AccessibilityObject.o to the exclude list for the
+        check for global destructors.
+        
+        * Scripts/check-for-exit-time-destructors:
+
 2008-11-04  Darin Adler  <darin@apple.com>
 
         * Scripts/check-for-exit-time-destructors: Fix failures seen on the

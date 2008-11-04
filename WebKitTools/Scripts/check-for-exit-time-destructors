@@ -93,6 +93,7 @@ for my $file (sort @files) {
     $shortName =~ s/.*\///;
 
     if ($target eq "WebCore") {
+        next if $shortName eq "AccessibilityObject.o";
         next if $shortName eq "AccessibilityRenderObject.o";
         next if $shortName eq "ApplicationCacheStorage.o";
         next if $shortName eq "ApplyStyleCommand.o";
