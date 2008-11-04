@@ -333,6 +333,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 #endif
     
+    window.type = NPWindowTypeWindow;
     window.x = (int32)boundsInWindow.origin.x; 
     window.y = (int32)boundsInWindow.origin.y;
     window.width = static_cast<uint32>(NSWidth(boundsInWindow));
@@ -662,7 +663,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Draw green to help debug.
     // If we see any green we know something's wrong.
     // Note that PaintRect() only works for QuickDraw plugins; otherwise the current QD port is undefined.
-    if (isDrawingModelQuickDraw(drawingModel) && !isTransparent && eventIsDrawRect) {
+    if (isDrawingModelQuickDraw(drawingModel) && eventIsDrawRect) {
         ForeColor(greenColor);
         const ::Rect bigRect = { -10000, -10000, 10000, 10000 };
         PaintRect(&bigRect);
@@ -1179,10 +1180,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     // Initialize eventModel to an invalid value so that we can detect when the plugin does not specify an event model.
     eventModel = (NPEventModel)-1;
-    
-    // Plug-ins are "windowed" by default.  On MacOS, windowed plug-ins share the same window and graphics port as the main
-    // browser window.  Windowless plug-ins are rendered off-screen, then copied into the main browser window.
-    window.type = NPWindowTypeWindow;
     
     NPError npErr = [self _createPlugin];
     if (npErr != NPERR_NO_ERROR) {
@@ -2567,30 +2564,6 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 - (NPError)setVariable:(NPPVariable)variable value:(void *)value
 {
     switch (variable) {
-        case NPPVpluginWindowBool:
-        {
-            NPWindowType newWindowType = (value ? NPWindowTypeWindow : NPWindowTypeDrawable);
-
-            // Redisplay if window type is changing (some drawing models can only have their windows set while updating).
-            if (newWindowType != window.type)
-                [self setNeedsDisplay:YES];
-            
-            window.type = newWindowType;
-        }
-        
-        case NPPVpluginTransparentBool:
-        {
-            BOOL newTransparent = (value != 0);
-            
-            // Redisplay if transparency is changing
-            if (isTransparent != newTransparent)
-                [self setNeedsDisplay:YES];
-            
-            isTransparent = newTransparent;
-            
-            return NPERR_NO_ERROR;
-        }
-        
         case NPPVpluginDrawingModel:
         {
             // Can only set drawing model inside NPP_New()

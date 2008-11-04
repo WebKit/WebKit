@@ -1,3 +1,17 @@
+2008-11-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22065
+        
+        Remove some old, unused plug-in code.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+
 2008-11-04  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
