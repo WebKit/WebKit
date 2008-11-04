@@ -1,5 +1,15 @@
 2008-11-04  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Delete unused forwarding headers.
+
+        * ForwardingHeaders/kjs/Activation.h: Removed.
+        * ForwardingHeaders/kjs/Register.h: Removed.
+        * ForwardingHeaders/kjs/RegisterID.h: Removed.
+
+2008-11-04  Cameron Zwarich  <zwarich@apple.com>
+
         Not reviewed.
 
         Fix stupid typo in previous build fix.
