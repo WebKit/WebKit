@@ -1,3 +1,13 @@
+2008-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22061
+          create script to check for exit-time destructors
+
+        * WebKit.xcodeproj/project.pbxproj: Added a script
+        phase that runs the check-for-exit-time-destructors script.
+
 2008-10-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

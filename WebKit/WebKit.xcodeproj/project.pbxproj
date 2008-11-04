@@ -1315,6 +1315,7 @@
 				939810B20824BF01008DF038 /* Resources */,
 				939810BB0824BF01008DF038 /* Sources */,
 				939D054F09DA02D500984996 /* Check For Global Initializers */,
+				9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables */,
 				939811270824BF01008DF038 /* Frameworks */,
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
@@ -1435,6 +1436,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$PROJECT_DIR/mac/Info.plist\"\n";
+		};
+		9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Exit Time Destructors";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
 		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;
