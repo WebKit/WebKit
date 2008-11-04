@@ -368,6 +368,11 @@ static WebWindowWatcher *_windowWatcher = nil;
     return core(_private)->scrollPoint();
 }
 
+- (void)_visitedWithTitle:(NSString *)title
+{
+    core(_private)->visited(title, [NSDate timeIntervalSinceReferenceDate]);
+}
+
 @end
 
 @implementation WebHistoryItem (WebPrivate)

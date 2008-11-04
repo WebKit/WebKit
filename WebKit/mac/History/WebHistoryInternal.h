@@ -33,6 +33,6 @@ namespace WebCore {
 }
 
 @interface WebHistory (WebInternal)
-- (void)_addItemForURL:(NSURL *)URL title:(NSString *)title;
+- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title;
 - (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group;
 @end

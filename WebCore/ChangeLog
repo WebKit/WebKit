@@ -1,3 +1,16 @@
+2008-11-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan
+
+        Add a simple "visited" method to HistoryItem for use by global history
+
+        * WebCore.base.exp:
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::visited):  Update the title on the item, set last visited time,
+          and bump the visit count.  All things that should happen when a url is visited again!
+        * history/HistoryItem.h:
+
 2008-11-04  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Build fix. Not reviewed.

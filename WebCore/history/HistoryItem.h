@@ -139,6 +139,7 @@ public:
     // This should not be called directly for HistoryItems that are already included
     // in GlobalHistory. The WebKit api for this is to use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.
     void setLastVisitedTime(double);
+    void visited(const String& title, double time);
     
     bool isCurrentDocument(Document*) const;
     

@@ -71,6 +71,8 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     int ageInDaysLimit;
 }
 
+- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title;
+
 - (void)addItem:(WebHistoryItem *)entry;
 - (void)addItems:(NSArray *)newEntries;
 - (BOOL)removeItem:(WebHistoryItem *)entry;
@@ -256,6 +258,30 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
         [_orderedLastVisitedDays release];
         _orderedLastVisitedDays = nil;
     }
+}
+
+- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title
+{
+    ASSERT(url);
+    ASSERT(title);
+    
+    NSString *URLString = [url _web_originalDataAsString];
+    WebHistoryItem *entry = [_entriesByURL objectForKey:URLString];
+
+    if (entry) {
+        LOG(History, "Updating global history entry %@", entry);
+        [entry _visitedWithTitle:title];
+        [self removeItemFromDateCaches:entry];
+    } else {
+        LOG(History, "Adding new global history entry for %@", url);
+        entry = [[WebHistoryItem alloc] initWithURLString:URLString title:title lastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
+        [_entriesByURL setObject:entry forKey:URLString];
+        [entry release];
+    }
+    
+    [self addItemToDateCaches:entry];
+
+    return entry;
 }
 
 - (void)addItem:(WebHistoryItem *)entry
@@ -763,17 +789,12 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 @implementation WebHistory (WebInternal)
 
-- (void)_addItemForURL:(NSURL *)URL title:(NSString *)title
+- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title;
 {
-    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:title];
-    [entry _setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
-
-    LOG(History, "adding %@", entry);
-    [_historyPrivate addItem:entry];
+    WebHistoryItem *entry = [_historyPrivate visitedURL:URL withTitle:title];
+    
     [self _sendNotification:WebHistoryItemsAddedNotification
                     entries:[NSArray arrayWithObject:entry]];
-                    
-    [entry release];
 }
 
 - (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group

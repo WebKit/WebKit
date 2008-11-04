@@ -715,7 +715,7 @@ void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
 {
     NSURL *cocoaURL = url;
     const String& pageTitle = core(m_webFrame.get())->loader()->documentLoader()->title();
-    [[WebHistory optionalSharedHistory] _addItemForURL:cocoaURL title:pageTitle];
+    [[WebHistory optionalSharedHistory] _visitedURL:cocoaURL withTitle:pageTitle];
 }
  
 bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const

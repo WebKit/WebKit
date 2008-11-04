@@ -1,3 +1,26 @@
+2008-11-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan
+
+        Cleanup global history a tad.  
+
+        Used to _addItemForURL always create a new item and merge it with a previous item if one existed.
+
+        It is more efficient and less complicated to update the previous item if one exists.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:]):
+        (-[WebHistory _visitedURL:withTitle:]):  Instead of calling the general purpose [WebHistoryPrivate addItem:]
+          with a new history item, call the new special purposed visitedURL:withTitle:
+        * History/WebHistoryInternal.h:
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem _visitedWithTitle:]): Call "visited()" on the WebCore history item with the pertinent info.
+        * History/WebHistoryItemInternal.h:
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory):
+
 2008-11-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
