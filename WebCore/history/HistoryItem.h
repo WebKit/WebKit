@@ -37,6 +37,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(QT)
+#include <QVariant>
+#endif
+
 #if PLATFORM(MAC)
 #import <wtf/RetainPtr.h>
 typedef struct objc_object* id;
@@ -148,6 +152,11 @@ public:
     void setTransientProperty(const String&, id);
 #endif
 
+#if PLATFORM(QT)
+    QVariant userData() const { return m_userData; }
+    void setUserData(const QVariant& userData) { m_userData = userData; }
+#endif
+
 #ifndef NDEBUG
     int showTree() const;
     int showTreeWithIndent(unsigned indentLevel) const;
@@ -195,6 +204,9 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;
     OwnPtr<HashMap<String, RetainPtr<id> > > m_transientProperties;
+#endif
+#if PLATFORM(QT)
+    QVariant m_userData;
 #endif
 }; //class HistoryItem
 

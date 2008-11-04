@@ -1,3 +1,16 @@
+2008-11-03  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add methods for getting and setting user data on History Item.
+        This change is limited to QT port only. Tests were added in
+        the patch for https://bugs.webkit.org/show_bug.cgi?id=21864.
+
+        Minor change by Simon: made the functions inline and added a missing
+        const.
+
+        * history/HistoryItem.h:
+
 2008-11-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

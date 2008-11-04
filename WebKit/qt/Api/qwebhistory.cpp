@@ -47,6 +47,7 @@
   \row    \o originalUrl() \o The URL used to access the page.
   \row    \o lastVisited() \o The date and time of the user's last visit to the page.
   \row    \o icon()        \o The icon associated with the page that was provided by the server.
+  \row    \o userData()    \o The user specific data that was stored with the history item.
   \endtable
 
   \note QWebHistoryItem objects are value based and \l{explicitly shared}.
@@ -144,6 +145,32 @@ QIcon QWebHistoryItem::icon() const
 }
 
 /*!
+  \since 4.5
+  Returns the user specific data that was stored with the history item.
+
+  \sa setUserData()
+*/
+QVariant QWebHistoryItem::userData() const
+{
+    if (d->item)
+        return d->item->userData();
+    return QVariant();
+}
+
+/*!
+  \since 4.5
+
+ Stores user specific data with the history item.
+
+ \sa userData()
+*/
+void QWebHistoryItem::setUserData(const QVariant& userData)
+{
+    if (d->item)
+        d->item->setUserData(userData);
+}
+
+/*!*
   \internal
 */
 QWebHistoryItem::QWebHistoryItem(QWebHistoryItemPrivate *priv)
@@ -364,6 +391,15 @@ QWebHistoryItem QWebHistory::forwardItem() const
 }
 
 /*!
+  \since 4.5
+  Returns the index of the current item in history.
+*/
+int QWebHistory::currentItemIndex() const
+{
+    return d->lst->backListCount();
+}
+
+/*!
   Returns the item at index \a i in the history.
 */
 QWebHistoryItem QWebHistory::itemAt(int i) const
@@ -380,5 +416,27 @@ QWebHistoryItem QWebHistory::itemAt(int i) const
 int QWebHistory::count() const
 {
     return d->lst->entries().size();
+}
+
+/*!
+  \since 4.5
+  Returns the maximum number of items in the history.
+
+  \sa setMaximumItemCount()
+*/
+int QWebHistory::maximumItemCount() const
+{
+    return d->lst->capacity();
+}
+
+/*!
+  \since 4.5
+  Sets the maximum number of items in the history.
+
+  \sa maximumItemCount()
+*/
+void QWebHistory::setMaximumItemCount(int count)
+{
+    d->lst->setCapacity(count);
 }
 

@@ -304,6 +304,23 @@ void tst_QWebPage::modified()
     QVERIFY(m_page->history()->canGoForward());
 
     QVERIFY(!m_page->isModified());
+
+    QVERIFY(m_page->history()->currentItemIndex() == 0);
+
+    m_page->history()->setMaximumItemCount(3);
+    QVERIFY(m_page->history()->maximumItemCount() == 3);
+
+    QVariant variant("string test");
+    m_page->history()->currentItem().setUserData(variant);
+    QVERIFY(m_page->history()->currentItem().userData().toString() == "string test");
+
+    m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is second page"));
+    m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is third page"));
+    QVERIFY(m_page->history()->count() == 2);
+    m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is fourth page"));
+    QVERIFY(m_page->history()->count() == 2);
+    m_page->mainFrame()->setUrl(QUrl("data:text/html,<body>This is fifth page"));
+    QVERIFY(::waitForSignal(m_page->mainFrame(), SIGNAL(aboutToUpdateHistory(QWebHistoryItem*))));
 }
 
 void tst_QWebPage::contextMenuCrash()

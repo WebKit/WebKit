@@ -1,3 +1,28 @@
+2008-10-24  Yael Aharon <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add userData() and setUserData() to QWebHistoryItem.
+        Add setMaximumItemCount() and maximumItemCount() to QWebHistory.
+        Add currentItemIndex() to QWebHistory.
+
+        See also https://bugs.webkit.org/show_bug.cgi?id=21864
+
+        Small cleanup by Simon (docs and forward declaration of QWebHistoryItem in qwebframe.h)
+
+        * Api/qwebframe.h:
+        * Api/qwebhistory.cpp:
+        (QWebHistoryItem::userData):
+        (QWebHistoryItem::setUserData):
+        (QWebHistory::currentItemIndex):
+        (QWebHistory::maximumItemCount):
+        (QWebHistory::setMaximumItemCount):
+        * Api/qwebhistory.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::saveViewStateToItem):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::modified):
+
 2008-11-03  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.
