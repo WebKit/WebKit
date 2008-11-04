@@ -16180,6 +16180,7 @@
 				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
+				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
 				5D0D540D0E9862F60029E223 /* Check For Weak VTables */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
 				1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */,
@@ -16376,6 +16377,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
+		};
+		933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Exit Time Destructors";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
 		};
 		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;

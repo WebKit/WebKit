@@ -55,7 +55,7 @@ OriginQuotaManager& DatabaseTracker::originQuotaManager()
 
 DatabaseTracker& DatabaseTracker::tracker()
 {
-    static DatabaseTracker tracker;
+    static DatabaseTracker& tracker = *new DatabaseTracker;
     return tracker;
 }
 
@@ -771,13 +771,15 @@ void DatabaseTracker::setClient(DatabaseTrackerClient* client)
 
 static Mutex& notificationMutex()
 {
-    static Mutex mutex;
+    static Mutex& mutex = *new Mutex;
     return mutex;
 }
 
-static Vector<pair<SecurityOrigin*, String> >& notificationQueue()
+typedef Vector<pair<SecurityOrigin*, String> > NotificationQueue;
+
+static NotificationQueue& notificationQueue()
 {
-    static Vector<pair<SecurityOrigin*, String> > queue;
+    static NotificationQueue& queue = *new NotificationQueue;
     return queue;
 }
 
@@ -807,7 +809,7 @@ void DatabaseTracker::notifyDatabasesChanged(void*)
     // mechanism to include which tracker the notification goes out on as well.
     DatabaseTracker& theTracker(tracker());
 
-    Vector<pair<SecurityOrigin*, String> > notifications;
+    NotificationQueue notifications;
     {
         MutexLocker locker(notificationMutex());
 

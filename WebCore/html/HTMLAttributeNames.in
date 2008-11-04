@@ -84,7 +84,6 @@ keytype
 label
 lang
 language
-left
 leftmargin
 link
 longdesc
@@ -155,12 +154,7 @@ onwebkitanimationstart
 onwebkitanimationiteration
 onwebkitanimationend
 onwebkittransitionend
-pagex
-pagey
 placeholder
-plain
-pluginpage
-pluginspage
 pluginurl
 poster
 precision

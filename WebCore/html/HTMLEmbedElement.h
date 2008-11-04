@@ -63,7 +63,6 @@ public:
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
 private:
-    String m_pluginPage;
     bool m_needWidgetUpdate;
 };
 

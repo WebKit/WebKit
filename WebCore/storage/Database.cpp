@@ -55,32 +55,34 @@ namespace WebCore {
 
 static Mutex& guidMutex()
 {
-    // FIXME: this is not a thread-safe way to initialize a shared global.
-    static Mutex mutex;
+    // Note: We don't have to use AtomicallyInitializedStatic here because
+    // this function is called once in the constructor on the main thread
+    // before any other threads that call this function are used.
+    static Mutex& mutex = *new Mutex;
     return mutex;
 }
 
 static HashMap<int, String>& guidToVersionMap()
 {
-    static HashMap<int, String> map;
+    static HashMap<int, String>& map = *new HashMap<int, String>;
     return map;
 }
 
 static HashMap<int, HashSet<Database*>*>& guidToDatabaseMap()
 {
-    static HashMap<int, HashSet<Database*>*> map;
+    static HashMap<int, HashSet<Database*>*>& map = *new HashMap<int, HashSet<Database*>*>;
     return map;
 }
 
 const String& Database::databaseInfoTableName()
 {
-    static String name = "__WebKitDatabaseInfoTable__";
+    static String& name = *new String("__WebKitDatabaseInfoTable__");
     return name;
 }
 
 static const String& databaseVersionKey()
 {
-    static String key = "WebKitDatabaseVersionKey";
+    static String& key =  *new String("WebKitDatabaseVersionKey");
     return key;
 }
 
@@ -216,7 +218,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 
 bool Database::getVersionFromDatabase(String& version)
 {
-    static String getVersionQuery = "SELECT value FROM " + databaseInfoTableName() + " WHERE key = '" + databaseVersionKey() + "';";
+    static String& getVersionQuery = *new String("SELECT value FROM " + databaseInfoTableName() + " WHERE key = '" + databaseVersionKey() + "';");
 
     m_databaseAuthorizer->disable();
 
@@ -252,7 +254,7 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 
 bool Database::setVersionInDatabase(const String& version)
 {
-    static String setVersionQuery = "INSERT INTO " + databaseInfoTableName() + " (key, value) VALUES ('" + databaseVersionKey() + "', ?);";
+    static String& setVersionQuery = *new String("INSERT INTO " + databaseInfoTableName() + " (key, value) VALUES ('" + databaseVersionKey() + "', ?);");
 
     m_databaseAuthorizer->disable();
 
@@ -352,19 +354,21 @@ void Database::enableAuthorizer()
 
 static int guidForOriginAndName(const String& origin, const String& name)
 {
-    static int currentNewGUID = 1;
-    static Mutex stringIdentifierMutex;
-    static HashMap<String, int> stringIdentifierToGUIDMap;
-
     String stringID;
     if (origin.endsWith("/"))
         stringID = origin + name;
     else
         stringID = origin + "/" + name;
 
+    // Note: We don't have to use AtomicallyInitializedStatic here because
+    // this function is called once in the constructor on the main thread
+    // before any other threads that call this function are used.
+    static Mutex& stringIdentifierMutex = *new Mutex;
     MutexLocker locker(stringIdentifierMutex);
+    static HashMap<String, int>& stringIdentifierToGUIDMap = *new HashMap<String, int>;
     int guid = stringIdentifierToGUIDMap.get(stringID);
     if (!guid) {
+        static int currentNewGUID = 1;
         guid = currentNewGUID++;
         stringIdentifierToGUIDMap.set(stringID, guid);
     }
