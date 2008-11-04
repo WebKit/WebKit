@@ -640,18 +640,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Can only send drawRect (updateEvt) to CoreGraphics plugins when actually drawing
     ASSERT((drawingModel != NPDrawingModelCoreGraphics) || !eventIsDrawRect || [NSView focusView] == self);
     
-    PortState portState;
+    PortState portState = NULL;
     
-    if (drawingModel == NPDrawingModelCoreAnimation) {
-        portState = NULL;
-    } else {
-        if ((drawingModel == NPDrawingModelQuickDraw) || eventIsDrawRect) {
-            // In CoreGraphics mode, the port state only needs to be saved/set when redrawing the plug-in view.
-            // The plug-in is not allowed to draw at any other time.
-            portState = [self saveAndSetNewPortStateForUpdate:eventIsDrawRect];
-            // We may have changed the window, so inform the plug-in.
-            [self setWindowIfNecessary];
-        }
+    if ((drawingModel == NPDrawingModelQuickDraw) || (drawingModel != NPDrawingModelCoreAnimation && eventIsDrawRect)) {
+        // In CoreGraphics mode, the port state only needs to be saved/set when redrawing the plug-in view.
+        // The plug-in is not allowed to draw at any other time.
+        portState = [self saveAndSetNewPortStateForUpdate:eventIsDrawRect];
+        // We may have changed the window, so inform the plug-in.
+        [self setWindowIfNecessary];
     }
     
 #if !defined(NDEBUG) && !defined(NP_NO_QUICKDRAW)
