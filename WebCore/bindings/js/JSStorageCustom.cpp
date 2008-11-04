@@ -29,7 +29,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "PlatformString.h"
-#include <kjs/PropertyNameArray.h>
+#include <runtime/PropertyNameArray.h.h>
 #include "Storage.h"
 
 using namespace JSC;

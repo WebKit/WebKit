@@ -2,6 +2,18 @@
 
         Not reviewed.
 
+        Fix the build for all non-Mac platforms.
+
+        * ForwardingHeaders/kjs/PropertyNameArray.h: Removed.
+        * ForwardingHeaders/runtime/PropertyNameArray.h: Copied from ForwardingHeaders/kjs/PropertyNameArray.h.
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+
+2008-11-03  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
         Fix the wxWindows build.
 
         * bridge/c/c_instance.cpp:
