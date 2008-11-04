@@ -93,7 +93,6 @@ for my $file (sort @files) {
     $shortName =~ s/.*\///;
 
     if ($target eq "WebCore") {
-        next if $shortName eq "AccessibilityObject.o";
         next if $shortName eq "AccessibilityRenderObject.o";
         next if $shortName eq "ApplicationCacheStorage.o";
         next if $shortName eq "ApplyStyleCommand.o";
@@ -138,7 +137,11 @@ for my $file (sort @files) {
         next if $shortName eq "JSHTMLElementWrapperFactory.o";
         next if $shortName eq "JSInspectedObjectWrapper.o";
         next if $shortName eq "JSInspectorCallbackWrapper.o";
+        next if $shortName eq "JSSVGAnimatedLength.o";
+        next if $shortName eq "JSSVGAnimatedRect.o";
         next if $shortName eq "JSSVGElementWrapperFactory.o";
+        next if $shortName eq "JSSVGLength.o";
+        next if $shortName eq "JSSVGRect.o";
         next if $shortName eq "JavaScriptDebugServer.o";
         next if $shortName eq "JavaScriptProfile.o";
         next if $shortName eq "JavaScriptProfileNode.o";
@@ -171,6 +174,7 @@ for my $file (sort @files) {
         next if $shortName eq "ScrollbarThemeMac.o";
         next if $shortName eq "SecurityOrigin.o";
         next if $shortName eq "SimpleFontDataMac.o";
+        next if $shortName eq "StyleTransformData.o";
         next if $shortName eq "TextEncoding.o";
         next if $shortName eq "ThemeMac.o";
         next if $shortName eq "ThreadCheck.o";
