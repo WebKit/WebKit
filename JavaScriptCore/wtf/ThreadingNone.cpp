@@ -32,27 +32,27 @@
 
 namespace WTF {
 
-void initializeThreading() {}
+void initializeThreading() { }
 ThreadIdentifier createThread(ThreadFunction, void*, const char*) { return 0; }
 int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
 void detachThread(ThreadIdentifier) { }
 ThreadIdentifier currentThread() { return 0; }
 bool isMainThread() { return false; }
 
-Mutex::Mutex() {}
-Mutex::~Mutex() {}
-void Mutex::lock() {}
+Mutex::Mutex() { }
+Mutex::~Mutex() { }
+void Mutex::lock() { }
 bool Mutex::tryLock() { return false; }
-void Mutex::unlock() {}
+void Mutex::unlock() { }
 
-ThreadCondition::ThreadCondition() {}
-ThreadCondition::~ThreadCondition() {}
-void ThreadCondition::wait(Mutex& mutex) {}
+ThreadCondition::ThreadCondition() { }
+ThreadCondition::~ThreadCondition() { }
+void ThreadCondition::wait(Mutex& mutex) { }
 bool ThreadCondition::timedWait(Mutex& mutex, double interval) { return false; }
-void ThreadCondition::signal() {}
-void ThreadCondition::broadcast() {}
+void ThreadCondition::signal() { }
+void ThreadCondition::broadcast() { }
 
-void lockAtomicallyInitializedStaticMutex() {}
+void lockAtomicallyInitializedStaticMutex() { }
 void unlockAtomicallyInitializedStaticMutex() { }
 
 } // namespace WebCore
