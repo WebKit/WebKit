@@ -148,9 +148,6 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
         
     if (core([view webFrame])->loader()->shouldHideReferrer([request URL], core([view webFrame])->loader()->outgoingReferrer()))
         [m_request.get() _web_setHTTPReferrer:nil];
-    
-    m_loader = NetscapePlugInStreamLoader::create(core([view webFrame]), this);
-    m_loader->setShouldBufferData(false);
 }
 
 WebNetscapePluginStream::~WebNetscapePluginStream()
@@ -256,6 +253,10 @@ void WebNetscapePluginStream::start()
 {
     ASSERT(m_request);
     ASSERT(!m_frameLoader);
+    ASSERT(!m_loader);
+    
+    m_loader = NetscapePlugInStreamLoader::create(core([m_pluginView.get() webFrame]), this);
+    m_loader->setShouldBufferData(false);
     
     m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
     m_loader->load(m_request.get());

@@ -1,6 +1,18 @@
 2008-11-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22065
+
+        Only create the plug-in stream loader when the stream is started. 
+        
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        (WebNetscapePluginStream::start):
+
+2008-11-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
         
         https://bugs.webkit.org/show_bug.cgi?id=22065
         
