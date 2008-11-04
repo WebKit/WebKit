@@ -38,7 +38,7 @@
 #include <runtime/ExecState.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSNumberCell.h>
-#include <kjs/PropertyNameArray.h>
+#include <runtime/PropertyNameArray.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
