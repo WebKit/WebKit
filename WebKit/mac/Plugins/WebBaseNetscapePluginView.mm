@@ -76,6 +76,14 @@ using namespace WebCore;
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
+static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
+{
+#ifndef NP_NO_QUICKDRAW
+    return drawingModel == NPDrawingModelQuickDraw;
+#else
+    return false;
+#endif
+};
 
 @interface WebBaseNetscapePluginView (Internal)
 - (void)_viewHasMoved;
@@ -208,14 +216,14 @@ typedef struct {
     return NO;
 }
 
-#ifndef NP_NO_QUICKDRAW
 
 // The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
 // the entire window frame (or structure region to use the Carbon term) rather then just the window content.
 // We can remove this when <rdar://problem/4201099> is fixed.
 - (void)fixWindowPort
 {
-    ASSERT(drawingModel == NPDrawingModelQuickDraw);
+#ifndef NP_NO_QUICKDRAW
+    ASSERT(isDrawingModelQuickDraw(drawingModel));
     
     NSWindow *currentWindow = [self currentWindow];
     if ([currentWindow isKindOfClass:objc_getClass("NSCarbonWindow")])
@@ -233,8 +241,10 @@ typedef struct {
     PortSize(static_cast<short>(contentRect.size.width), static_cast<short>(contentRect.size.height));
     
     SetPort(oldPort);
+#endif
 }
 
+#ifndef NP_NO_QUICKDRAW
 static UInt32 getQDPixelFormatForBitmapContext(CGContextRef context)
 {
     UInt32 byteOrder = CGBitmapContextGetBitmapInfo(context) & kCGBitmapByteOrderMask;
@@ -291,12 +301,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(drawingModel != NPDrawingModelCoreAnimation);
     ASSERT([self currentWindow] != nil);
 
-#ifndef NP_NO_QUICKDRAW
     // If drawing with QuickDraw, fix the window port so that it has the same bounds as the NSWindow's
     // content view.  This makes it easier to convert between AppKit view and QuickDraw port coordinates.
-    if (drawingModel == NPDrawingModelQuickDraw)
+    if (isDrawingModelQuickDraw(drawingModel))
         [self fixWindowPort];
-#endif
 
     // Use AppKit to convert view coordinates to NSWindow coordinates.
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
@@ -310,9 +318,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifndef NP_NO_QUICKDRAW
     WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
     ASSERT(windowRef);
-        
+
     // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
-    if (drawingModel == NPDrawingModelQuickDraw) {
+    if (isDrawingModelQuickDraw(drawingModel)) {
         ::Rect portBounds;
         CGrafPtr port = GetWindowPort(windowRef);
         GetPortBounds(port, &portBounds);
@@ -642,7 +650,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     PortState portState = NULL;
     
-    if ((drawingModel == NPDrawingModelQuickDraw) || (drawingModel != NPDrawingModelCoreAnimation && eventIsDrawRect)) {
+    if (isDrawingModelQuickDraw(drawingModel) || (drawingModel != NPDrawingModelCoreAnimation && eventIsDrawRect)) {
         // In CoreGraphics mode, the port state only needs to be saved/set when redrawing the plug-in view.
         // The plug-in is not allowed to draw at any other time.
         portState = [self saveAndSetNewPortStateForUpdate:eventIsDrawRect];
@@ -654,7 +662,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Draw green to help debug.
     // If we see any green we know something's wrong.
     // Note that PaintRect() only works for QuickDraw plugins; otherwise the current QD port is undefined.
-    if (drawingModel == NPDrawingModelQuickDraw && !isTransparent && eventIsDrawRect) {
+    if (isDrawingModelQuickDraw(drawingModel) && !isTransparent && eventIsDrawRect) {
         ForeColor(greenColor);
         const ::Rect bigRect = { -10000, -10000, 10000, 10000 };
         PaintRect(&bigRect);
@@ -985,7 +993,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
     
-    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelQuickDraw) {
+    if (drawingModel == NPDrawingModelCoreGraphics || isDrawingModelQuickDraw(drawingModel)) {
         [self setWindowIfNecessary];
         if (didLockFocus)
             [self unlockFocus];
@@ -1204,8 +1212,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 
 #ifndef NP_NO_CARBON
-    if (eventModel == NPEventModelCocoa &&
-        drawingModel == NPDrawingModelQuickDraw) {
+    if (eventModel == NPEventModelCocoa && isDrawingModelQuickDraw(drawingModel)) {
         LOG(Plugins, "Plugin can't use use Cocoa event model with QuickDraw drawing model: %@", pluginPackage);
         [self _destroyPlugin];
         [pluginPackage close];
@@ -1245,8 +1252,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     isStarted = YES;
     [[self webView] addPluginInstanceView:self];
-        
-    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelQuickDraw)
+
+    if (drawingModel == NPDrawingModelCoreGraphics || isDrawingModelQuickDraw(drawingModel))
         [self updateAndSetWindow];
 
     if ([self window]) {
@@ -1581,10 +1588,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self _viewHasMoved];
 }
 
-#ifndef NP_NO_QUICKDRAW
 -(void)tellQuickTimeToChill
 {
-    ASSERT(drawingModel == NPDrawingModelQuickDraw);
+#ifndef NP_NO_QUICKDRAW
+    ASSERT(isDrawingModelQuickDraw(drawingModel));
     
     // Make a call to the secret QuickDraw API that makes QuickTime calm down.
     WindowRef windowRef = (WindowRef)[[self window] windowRef];
@@ -1595,15 +1602,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ::Rect bounds;
     GetPortBounds(port, &bounds);
     WKCallDrawingNotification(port, &bounds);
-}
 #endif /* NP_NO_QUICKDRAW */
+}
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-#ifndef NP_NO_QUICKDRAW
-    if (drawingModel == NPDrawingModelQuickDraw)
+    if (isDrawingModelQuickDraw(drawingModel))
         [self tellQuickTimeToChill];
-#endif
 
     // We must remove the tracking rect before we move to the new window.
     // Once we move to the new window, it will be too late.
@@ -2790,12 +2795,11 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     // is moved back into a window, everything should be set up correctly.
     if (![self window])
         return;
-    
-#ifndef NP_NO_QUICKDRAW
-    if (drawingModel == NPDrawingModelQuickDraw)
+
+    if (isDrawingModelQuickDraw(drawingModel))
         [self tellQuickTimeToChill];
-#endif
-    if (drawingModel == NPDrawingModelCoreGraphics || drawingModel == NPDrawingModelQuickDraw)
+
+    if (drawingModel == NPDrawingModelCoreGraphics || isDrawingModelQuickDraw(drawingModel))
         [self updateAndSetWindow];
     
     [self resetTrackingRect];

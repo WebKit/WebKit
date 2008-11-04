@@ -1,3 +1,24 @@
+2008-11-03  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 64-bit build.
+
+        Pull the frequently-made check for drawingModel == NPDrawingModelQuickDraw out into a
+        helper function to avoid #ifdef'ing all of the new places that this check is made.
+
+        A few other #ifdef's are moved inside functions to allow their call sites to remain #ifdef-free,
+        and we rely on the compiler to optimise out the check (which will always be false in 64-bit) instead.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (isDrawingModelQuickDraw):
+        (-[WebBaseNetscapePluginView fixWindowPort]):
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView tellQuickTimeToChill]):
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        (-[WebBaseNetscapePluginView _viewHasMoved]):
+
 2008-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin Decker.
