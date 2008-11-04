@@ -47,6 +47,7 @@
 #import "UIDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
+#import <Carbon/Carbon.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import <WebKit/DOMElementPrivate.h>
 #import <WebKit/DOMExtensions.h>
@@ -310,13 +311,21 @@ static void setDefaultsToConsistentValuesForTesting()
     static const int BlueTintedAppearance = 1;
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
     [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"]; // smallest font size to CG should perform antialiasing on
     [defaults setInteger:NoFontSmoothing forKey:@"AppleFontSmoothing"];
     [defaults setInteger:BlueTintedAppearance forKey:@"AppleAquaColorVariant"];
     [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
     [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
     [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
+
+    // Scrollbars are drawn either using AppKit (which uses NSUserDefaults) or using HIToolbox (which uses CFPreferences / kCFPreferencesAnyApplication / kCFPreferencesCurrentUser / kCFPreferencesAnyHost)
+    [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
+    RetainPtr<CFTypeRef> initialValue = CFPreferencesCopyValue(CFSTR("AppleScrollBarVariant"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), CFSTR("DoubleMax"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+    ThemeScrollBarArrowStyle style;
+    GetThemeScrollBarArrowStyle(&style); // Force HIToolbox to read from CFPreferences
+    if (initialValue)
+        CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), initialValue.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 
     NSString *libraryPath = [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
     [defaults setObject:[libraryPath stringByAppendingPathComponent:@"Databases"] forKey:WebDatabaseDirectoryDefaultsKey];
