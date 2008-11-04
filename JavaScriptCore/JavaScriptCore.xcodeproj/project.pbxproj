@@ -817,6 +817,7 @@
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
+				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
 				1432EBD70A34CAD400717B9F /* API */,
 				149B15DF0D81F887009CB8C7 /* compiler */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
@@ -1080,7 +1081,6 @@
 			isa = PBXGroup;
 			children = (
 				6507D2970E871E4A00D7D896 /* TypeInfo.h */,
-				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
 				F692A8520255597D01FF60F7 /* collector.cpp */,
 				F692A8530255597D01FF60F7 /* collector.h */,
 				F5BB2BC5030F772101FCFE1D /* completion.h */,

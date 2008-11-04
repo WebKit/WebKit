@@ -391,7 +391,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/grammar.h
 
 javascriptcore_sources += \
-	JavaScriptCore/kjs/AllInOneFile.cpp
+	JavaScriptCore/AllInOneFile.cpp
 endif # END ENABLE_DEBUG
 
 DerivedSources/grammar.h: DerivedSources/grammar.cpp;

@@ -1,5 +1,16 @@
 2008-11-04  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Move AllInOneFile.cpp to the top level of JavaScriptCore.
+
+        * AllInOneFile.cpp: Copied from kjs/AllInOneFile.cpp.
+        * GNUmakefile.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/AllInOneFile.cpp: Removed.
+
+2008-11-04  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Alexey Proskuryakov.
 
         Add NodeInfo.h to the JavaScriptCore Xcode project.
