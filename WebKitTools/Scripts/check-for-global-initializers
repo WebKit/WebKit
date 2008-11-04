@@ -52,8 +52,7 @@ my $executablePath = "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";
 
 my $buildTimestampPath = $ENV{'TARGET_TEMP_DIR'} . "/" . basename($0) . ".timestamp";
 my $buildTimestampAge = -M $buildTimestampPath;
-
-touch($buildTimestampPath);
+my $scriptAge = -M $0;
 
 my $list = $ENV{"LINK_FILE_LIST_${variant}_${arch}"};
 
@@ -69,7 +68,7 @@ close LIST;
 my $sawError = 0;
 
 for my $file (sort @files) {
-    if (defined $buildTimestampAge) {
+    if (defined $buildTimestampAge && $buildTimestampAge < $scriptAge) {
         my $fileAge = -M $file;
         next if defined $fileAge && $fileAge > $buildTimestampAge;
     }
@@ -125,6 +124,7 @@ if ($sawError and !$coverageBuild) {
     exit 1;
 }
 
+touch($buildTimestampPath);
 exit 0;
 
 sub touch($)

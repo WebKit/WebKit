@@ -1,3 +1,17 @@
+2008-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22061
+          create script to check for exit-time destructors
+
+        * Scripts/check-for-exit-time-destructors: Added.
+        Started as a copy of check-for-global-initializers.
+
+        * Scripts/check-for-global-initializers: Added code to make
+        this script rerun any time it's modified, and also to properly
+        run again after the first time it reports an error.
+
 2008-11-03  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.
