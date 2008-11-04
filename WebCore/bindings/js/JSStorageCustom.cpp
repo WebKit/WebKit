@@ -29,7 +29,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "PlatformString.h"
-#include <runtime/PropertyNameArray.h.h>
+#include <runtime/PropertyNameArray.h>
 #include "Storage.h"
 
 using namespace JSC;
