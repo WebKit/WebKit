@@ -352,7 +352,8 @@ webkitgtk_cppflags += \
 
 webkitgtk_cleanfiles += \
 	$(top_builddir)/Programs/GtkLauncher \
-	$(top_builddir)/WebKit/gtk/webkit-1.0.pc
+	$(top_builddir)/WebKit/gtk/webkit-1.0.pc \
+	$(top_builddir)/WebKit/gtk/webkit/webkitenumtypes.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
@@ -450,7 +451,7 @@ EXTRA_DIST = \
 
 # Files that will be cleaned
 MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES)
-DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES)
+DISTCLEANFILES := $(stamp_files) $(BUILT_SOURCES) doltcompile doltlibtool
 CLEANFILES := $(stamp_files) $(BUILT_SOURCES)
 
 # Include module makefiles
