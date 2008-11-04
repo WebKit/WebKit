@@ -991,15 +991,16 @@ IntSize RenderBox::offsetForPositionedInContainer(RenderObject* container) const
     return offset;
 }
 
-bool RenderBox::absolutePosition(int& xPos, int& yPos, bool fixed) const
+FloatPoint RenderBox::localToAbsolute(FloatPoint localPoint, bool fixed, bool useTransforms) const
 {
     if (RenderView* v = view()) {
         if (LayoutState* layoutState = v->layoutState()) {
-            xPos = layoutState->m_offset.width() + m_x;
-            yPos = layoutState->m_offset.height() + m_y;
+            IntSize offset = layoutState->m_offset;
+            offset.expand(m_x, m_y);
+            localPoint += offset;
             if (style()->position() == RelativePosition && m_layer)
-                m_layer->relativePositionOffset(xPos, yPos);
-            return true;
+                localPoint += m_layer->relativePositionOffset();
+            return localPoint;
         }
     }
 
@@ -1007,15 +1008,14 @@ bool RenderBox::absolutePosition(int& xPos, int& yPos, bool fixed) const
         fixed = true;
 
     RenderObject* o = container();
-    if (o && o->absolutePositionForContent(xPos, yPos, fixed)) {
-        if (style()->position() == AbsolutePosition) {
-            IntSize offset = offsetForPositionedInContainer(o);
-            xPos += offset.width();
-            yPos += offset.height();
+    if (o) {
+        if (useTransforms && m_layer && m_layer->transform()) {
+            fixed = false;  // Elements with transforms act as a containing block for fixed position descendants
+            localPoint = m_layer->transform()->mapPoint(localPoint);
         }
 
-        if (o->hasOverflowClip())
-            o->layer()->subtractScrollOffset(xPos, yPos);
+        if (isRelPositioned())
+            localPoint += relativePositionOffset();
 
         if (!isInline() || isReplaced()) {
             RenderBlock* cb;
@@ -1023,25 +1023,21 @@ bool RenderBox::absolutePosition(int& xPos, int& yPos, bool fixed) const
                     && (cb = static_cast<RenderBlock*>(o))->hasColumns()) {
                 IntRect rect(m_x, m_y, 1, 1);
                 cb->adjustRectForColumns(rect);
-                xPos += rect.x();
-                yPos += rect.y();
-            } else {
-                xPos += m_x;
-                yPos += m_y;
-            }
+                localPoint.move(rect.x(), rect.y());
+            } else
+                localPoint.move(m_x, m_y);
         }
 
-        if (isRelPositioned()) {
-            xPos += relativePositionOffsetX();
-            yPos += relativePositionOffsetY();
-        }
+        if (o->hasOverflowClip())
+            localPoint -= o->layer()->scrolledContentOffset();
 
-        return true;
-    } else {
-        xPos = 0;
-        yPos = 0;
-        return false;
+        if (style()->position() == AbsolutePosition)
+            localPoint += offsetForPositionedInContainer(o);
+
+        return o->localToAbsoluteForContent(localPoint, fixed, useTransforms);
     }
+    
+    return FloatPoint();
 }
 
 void RenderBox::dirtyLineBoxes(bool fullLayout, bool /*isRootLineBox*/)
@@ -1124,12 +1120,9 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 {
     if (RenderView* v = view()) {
         if (LayoutState* layoutState = v->layoutState()) {
-            if (style()->position() == RelativePosition && m_layer) {
-                int relX = 0;
-                int relY = 0;
-                m_layer->relativePositionOffset(relX, relY);
-                rect.move(relX, relY);
-            }
+            if (style()->position() == RelativePosition && m_layer)
+                rect.move(m_layer->relativePositionOffset());
+
             rect.move(m_x, m_y);
             rect.move(layoutState->m_offset);
             if (layoutState->m_clipped)
@@ -1147,15 +1140,15 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
         invalidatingReflection = false;
     }
 
-    int x = rect.x() + m_x;
-    int y = rect.y() + m_y;
+    IntPoint topLeft = rect.location();
+    topLeft.move(m_x, m_y);
 
     // Apply the relative position offset when invalidating a rectangle.  The layer
     // is translated, but the render box isn't, so we need to do this to get the
     // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
     // flag on the RenderObject has been cleared, so use the one on the style().
     if (style()->position() == RelativePosition && m_layer)
-        m_layer->relativePositionOffset(x, y);
+        topLeft += m_layer->relativePositionOffset();
 
     if (style()->position() == FixedPosition)
         fixed = true;
@@ -1165,27 +1158,23 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
         if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
             RenderBlock* cb = static_cast<RenderBlock*>(o);
             if (cb->hasColumns()) {
-                IntRect repaintRect(x, y, rect.width(), rect.height());
+                IntRect repaintRect(topLeft, rect.size());
                 cb->adjustRectForColumns(repaintRect);
-                x = repaintRect.x();
-                y = repaintRect.y();
+                topLeft = repaintRect.location();
                 rect = repaintRect;
             }
         }
 
-        if (style()->position() == AbsolutePosition) {
-            IntSize offset = offsetForPositionedInContainer(o);
-            x += offset.width();
-            y += offset.height();
-        }
+        if (style()->position() == AbsolutePosition)
+            topLeft += offsetForPositionedInContainer(o);
         
         // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
         // in the parent's coordinate space that encloses us.
         if (m_layer && m_layer->transform()) {
             fixed = false;
             rect = m_layer->transform()->mapRect(rect);
-            x = rect.x() + m_x;
-            y = rect.y() + m_y;
+            topLeft = rect.location();
+            topLeft.move(m_x, m_y);
         }
 
         // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
@@ -1195,15 +1184,15 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
             // anyway if its size does change.
             IntRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
-            o->layer()->subtractScrollOffset(x, y); // For overflow:auto/scroll/hidden.
-            IntRect repaintRect(x, y, rect.width(), rect.height());
+            int x = 0, y = 0;
+            o->layer()->subtractScrolledContentOffset(x, y); // For overflow:auto/scroll/hidden.
+            topLeft.move(x, y);
+            IntRect repaintRect(topLeft, rect.size());
             rect = intersection(repaintRect, boxRect);
             if (rect.isEmpty())
                 return;
-        } else {
-            rect.setX(x);
-            rect.setY(y);
-        }
+        } else
+            rect.setLocation(topLeft);
         
         o->computeAbsoluteRepaintRect(rect, fixed);
     }
@@ -2675,15 +2664,16 @@ IntRect RenderBox::caretRect(InlineBox* box, int caretOffset, int* extraWidthToE
         rect.setHeight(fontHeight);
 
     RenderObject* cb = containingBlock();
-    int cbx, cby;
-    if (!cb || !cb->absolutePosition(cbx, cby))
+    if (!cb)
         // No point returning a relative position.
         return IntRect();
+
+    FloatPoint absPos = cb->localToAbsolute();
 
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = xPos() + m_width - rect.right();
 
-    rect.move(cbx, cby);
+    rect.move(absPos.x(), absPos.y());
     return rect;
 }
 

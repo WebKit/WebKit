@@ -895,9 +895,8 @@ IntRect RenderListMarker::selectionRect(bool clipToVisibleContent)
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
-        int absx, absy;
-        absolutePosition(absx, absy);
-        rect.move(absx, absy);
+        FloatPoint absPos = localToAbsolute();
+        rect.move(absPos.x(), absPos.y());
     }
     
     return rect;

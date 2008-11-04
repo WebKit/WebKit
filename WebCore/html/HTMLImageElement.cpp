@@ -407,9 +407,10 @@ int HTMLImageElement::x() const
     RenderObject* r = renderer();
     if (!r)
         return 0;
-    int x, y;
-    r->absolutePosition(x, y);
-    return x;
+
+    // FIXME: This doesn't work correctly with transforms.
+    FloatPoint absPos = r->localToAbsolute();
+    return absPos.x();
 }
 
 int HTMLImageElement::y() const
@@ -417,9 +418,10 @@ int HTMLImageElement::y() const
     RenderObject* r = renderer();
     if (!r)
         return 0;
-    int x, y;
-    r->absolutePosition(x, y);
-    return y;
+
+    // FIXME: This doesn't work correctly with transforms.
+    FloatPoint absPos = r->localToAbsolute();
+    return absPos.y();
 }
 
 bool HTMLImageElement::complete() const

@@ -1183,11 +1183,10 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             xPos = 0;
             yPos = 0;
         } else {
-            int offsetX, offsetY;
-            renderer()->absolutePosition(offsetX, offsetY);
-            xPos = me->pageX() - offsetX;
-            // FIXME: Why is yPos a short?
-            yPos = me->pageY() - offsetY;
+            // FIXME: This doesn't work correctly with transforms.
+            IntPoint absOffset = roundedIntPoint(renderer()->localToAbsolute());
+            xPos = me->pageX() - absOffset.x();
+            yPos = me->pageY() - absOffset.y();
         }
     }
 

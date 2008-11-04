@@ -258,9 +258,8 @@ IntRect RenderReplaced::selectionRect(bool clipToVisibleContent)
     if (clipToVisibleContent)
         computeAbsoluteRepaintRect(rect);
     else {
-        int absx, absy;
-        absolutePositionForContent(absx, absy);
-        rect.move(absx, absy);
+        FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
+        rect.move(absPos.x(), absPos.y());
     }
     
     return rect;

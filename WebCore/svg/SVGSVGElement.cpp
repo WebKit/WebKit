@@ -397,25 +397,21 @@ AffineTransform SVGSVGElement::getCTM() const
 AffineTransform SVGSVGElement::getScreenCTM() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    float rootX = 0.0f;
-    float rootY = 0.0f;
-    
+    FloatPoint rootLocation;    
+
     if (RenderObject* renderer = this->renderer()) {
         if (isOutermostSVG()) {
-            int tx = 0;
-            int ty = 0;
+            // FIXME: This doesn't work correctly with CSS transforms.
+            FloatPoint point;
             if (renderer->parent())
-                renderer->absolutePosition(tx, ty, true);
-            rootX += tx;
-            rootY += ty;
-        } else {
-            rootX += x().value(this);
-            rootY += y().value(this);
-        }
+                point = renderer->localToAbsolute(point, true);
+            rootLocation.move(point.x(), point.y());
+        } else
+            rootLocation.move(x().value(this), y().value(this));
     }
     
     AffineTransform mat = SVGStyledLocatableElement::getScreenCTM();
-    mat.translate(rootX, rootY);
+    mat.translate(rootLocation.x(), rootLocation.y());
 
     if (attributes()->getNamedItem(SVGNames::viewBoxAttr)) {
         AffineTransform viewBox = viewBoxToViewTransform(width().value(this), height().value(this));

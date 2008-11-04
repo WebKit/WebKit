@@ -133,11 +133,11 @@ void MouseRelatedEvent::receivedTarget()
     // Adjust offsetX/Y to be relative to the target's position.
     if (!isSimulated()) {
         if (RenderObject* r = targ->renderer()) {
-            int rx, ry;
-            if (r->absolutePosition(rx, ry)) {
-                m_offsetX -= rx;
-                m_offsetY -= ry;
-            }
+            // FIXME: This doesn't work correctly with transforms. We need
+            // an absoluteToLocal() method.
+            FloatPoint absPos = r->localToAbsolute();
+            m_offsetX -= absPos.x();
+            m_offsetY -= absPos.y();
         }
     }
 

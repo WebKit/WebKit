@@ -751,7 +751,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
             // Adjust repaint rect for scroll offset
             int x = repaintRect.x();
             int y = repaintRect.y();
-            layer()->subtractScrollOffset(x, y);
+            layer()->subtractScrolledContentOffset(x, y);
             repaintRect.setX(x);
             repaintRect.setY(y);
 
@@ -1692,7 +1692,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     int scrolledX = tx;
     int scrolledY = ty;
     if (hasOverflowClip())
-        m_layer->subtractScrollOffset(scrolledX, scrolledY);
+        m_layer->subtractScrolledContentOffset(scrolledX, scrolledY);
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
@@ -1901,16 +1901,16 @@ GapRects RenderBlock::selectionGapRects()
     if (!shouldPaintSelectionGaps())
         return GapRects();
 
-    int tx, ty;
-    absolutePositionForContent(tx, ty);
+    // FIXME: this is broken with transforms
+    FloatPoint absContentPoint = localToAbsoluteForContent(FloatPoint());
     if (hasOverflowClip())
-        layer()->subtractScrollOffset(tx, ty);
+        absContentPoint -= layer()->scrolledContentOffset();
 
     int lastTop = -borderTopExtra();
     int lastLeft = leftSelectionOffset(this, lastTop);
     int lastRight = rightSelectionOffset(this, lastTop);
     
-    return fillSelectionGaps(this, tx, ty, tx, ty, lastTop, lastLeft, lastRight);
+    return fillSelectionGaps(this, absContentPoint.x(), absContentPoint.y(), absContentPoint.x(), absContentPoint.y(), lastTop, lastLeft, lastRight);
 }
 
 void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
@@ -2055,10 +2055,8 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
         if (curr->isRelPositioned() && curr->hasLayer()) {
             // If the relposition offset is anything other than 0, then treat this just like an absolute positioned element.
             // Just disregard it completely.
-            int x = 0;
-            int y = 0;
-            curr->layer()->relativePositionOffset(x, y);
-            if (x || y)
+            IntSize relOffset = curr->layer()->relativePositionOffset();
+            if (relOffset.width() || relOffset.height())
                 continue;
         }
 
@@ -3140,7 +3138,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         int scrolledX = tx;
         int scrolledY = ty;
         if (hasOverflowClip())
-            m_layer->subtractScrollOffset(scrolledX, scrolledY);
+            m_layer->subtractScrolledContentOffset(scrolledX, scrolledY);
 
         // Hit test contents if we don't have columns.
         if (!m_hasColumns && hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction))
@@ -3295,7 +3293,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int x, int y)
     int contentsX = x;
     int contentsY = y - borderTopExtra();
     if (hasOverflowClip())
-        m_layer->scrollOffset(contentsX, contentsY);
+        m_layer->addScrolledContentOffset(contentsX, contentsY);
     if (m_hasColumns) {
         IntPoint contentsPoint(contentsX, contentsY);
         adjustPointToColumnContents(contentsPoint);

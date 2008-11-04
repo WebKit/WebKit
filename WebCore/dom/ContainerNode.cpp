@@ -29,6 +29,7 @@
 #include "Editor.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
@@ -647,25 +648,26 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
         document()->frame()->editor()->deleteButtonController()->enable();
 }
 
-bool ContainerNode::getUpperLeftCorner(int &xPos, int &yPos) const
+// FIXME: This doesn't work correctly with transforms.
+bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
 {
     if (!renderer())
         return false;
+    // What is this code really trying to do?
     RenderObject *o = renderer();
     RenderObject *p = o;
 
-    xPos = yPos = 0;
     if (!o->isInline() || o->isReplaced()) {
-        o->absolutePosition(xPos, yPos);
+        point = o->localToAbsolute();
         return true;
     }
 
     // find the next text/image child, to get a position
-    while(o) {
+    while (o) {
         p = o;
         if (o->firstChild())
             o = o->firstChild();
-        else if(o->nextSibling())
+        else if (o->nextSibling())
             o = o->nextSibling();
         else {
             RenderObject *next = 0;
@@ -680,70 +682,72 @@ bool ContainerNode::getUpperLeftCorner(int &xPos, int &yPos) const
         }
 
         if (!o->isInline() || o->isReplaced()) {
-            o->absolutePosition(xPos, yPos);
+            point = o->localToAbsolute();
             return true;
         }
 
         if (p->element() && p->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
                 // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
-            o->container()->absolutePosition(xPos, yPos);
+            point = o->container()->localToAbsolute();
             if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
-                xPos += static_cast<RenderText *>(o)->minXPos();
-                yPos += static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow();
-            } else {
-                xPos += o->xPos();
-                yPos += o->yPos();
-            }
+                point.move(static_cast<RenderText *>(o)->minXPos(),
+                           static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow());
+            } else
+                point.move(o->xPos(), o->yPos());
             return true;
         }
     }
     
     // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
-    // at the end of the document.  Scroll to the bottom.
+    // at the end of the document.  Scroll to the bottom. FIXME: who said anything about scrolling?
     if (!o && document()->view()) {
-        yPos += document()->view()->contentsHeight();
+        point = FloatPoint(0, document()->view()->contentsHeight());
         return true;
     }
     return false;
 }
 
-bool ContainerNode::getLowerRightCorner(int &xPos, int &yPos) const
+// FIXME: This doesn't work correctly with transforms.
+bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
 {
     if (!renderer())
         return false;
 
     RenderObject *o = renderer();
-    xPos = yPos = 0;
     if (!o->isInline() || o->isReplaced())
     {
-        o->absolutePosition(xPos, yPos);
-        xPos += o->width();
-        yPos += o->height() + o->borderTopExtra() + o->borderBottomExtra();
+        point = o->localToAbsolute();
+        point.move(o->width(),
+                   o->height() + o->borderTopExtra() + o->borderBottomExtra());
         return true;
     }
+
     // find the last text/image child, to get a position
-    while(o) {
-        if(o->lastChild())
+    while (o) {
+        if (o->lastChild())
             o = o->lastChild();
-        else if(o->previousSibling())
+        else if (o->previousSibling())
             o = o->previousSibling();
         else {
             RenderObject *prev = 0;
             while(!prev) {
                 o = o->parent();
-                if(!o) return false;
+                if (!o)
+                    return false;
                 prev = o->previousSibling();
             }
             o = prev;
         }
         if (o->isText() || o->isReplaced()) {
-            o->container()->absolutePosition(xPos, yPos);
+            point = o->container()->localToAbsolute();
+            int xOffset;
             if (o->isText())
-                xPos += static_cast<RenderText *>(o)->minXPos() + o->width();
+                xOffset = static_cast<RenderText *>(o)->minXPos() + o->width();
             else
-                xPos += o->xPos()+o->width();
-            yPos += o->yPos()+o->height();
+                xOffset = o->xPos() + o->width();
+            
+            point.move(xOffset, o->yPos() + o->height());
             return true;
         }
     }
@@ -752,29 +756,24 @@ bool ContainerNode::getLowerRightCorner(int &xPos, int &yPos) const
 
 IntRect ContainerNode::getRect() const
 {
-    int xPos = 0, yPos = 0, xEnd = 0, yEnd = 0;
-    bool foundUpperLeft = getUpperLeftCorner(xPos,yPos);
-    bool foundLowerRight = getLowerRightCorner(xEnd,yEnd);
+    FloatPoint  upperLeft, lowerRight;
+    bool foundUpperLeft = getUpperLeftCorner(upperLeft);
+    bool foundLowerRight = getLowerRightCorner(lowerRight);
     
     // If we've found one corner, but not the other,
     // then we should just return a point at the corner that we did find.
     if (foundUpperLeft != foundLowerRight)
     {
-        if (foundUpperLeft) {
-            xEnd = xPos;
-            yEnd = yPos;
-        } else {
-            xPos = xEnd;
-            yPos = yEnd;
-        }
+        if (foundUpperLeft)
+            lowerRight = upperLeft;
+        else
+            upperLeft = lowerRight;
     } 
 
-    if (xEnd < xPos)
-        xEnd = xPos;
-    if (yEnd < yPos)
-        yEnd = yPos;
-        
-    return IntRect(xPos, yPos, xEnd - xPos, yEnd - yPos);
+    lowerRight.setX(max(upperLeft.x(), lowerRight.x()));
+    lowerRight.setY(max(upperLeft.y(), lowerRight.y()));
+    
+    return enclosingIntRect(FloatRect(upperLeft, lowerRight - upperLeft));
 }
 
 void ContainerNode::setFocus(bool received)

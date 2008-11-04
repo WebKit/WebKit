@@ -214,27 +214,26 @@ void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigne
     start = min(start, static_cast<unsigned>(INT_MAX));
     end = min(end, static_cast<unsigned>(INT_MAX));
     
-    int x, y;
-    absolutePositionForContent(x, y);
+    FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
 
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
-            IntRect r = IntRect(x + box->xPos(), y + box->yPos(), box->width(), box->height());
+            IntRect r = IntRect(absPos.x() + box->xPos(), absPos.y() + box->yPos(), box->width(), box->height());
             if (useSelectionHeight) {
-                IntRect selectionRect = box->selectionRect(x, y, start, end);
+                IntRect selectionRect = box->selectionRect(absPos.x(), absPos.y(), start, end);
                 r.setHeight(selectionRect.height());
                 r.setY(selectionRect.y());
             }
             rects.append(r);
         } else {
             unsigned realEnd = min(box->end() + 1, end);
-            IntRect r = box->selectionRect(x, y, start, realEnd);
+            IntRect r = box->selectionRect(absPos.x(), absPos.y(), start, realEnd);
             if (!r.isEmpty()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
                     r.setHeight(box->height());
-                    r.setY(y + box->yPos());
+                    r.setY(absPos.y() + box->yPos());
                 }
                 rects.append(r);
             }
@@ -342,18 +341,18 @@ IntRect RenderText::caretRect(InlineBox* inlineBox, int caretOffset, int* extraW
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = (box->root()->width() + rootLeft) - (left + 1);
 
-    int absx, absy;
-    absolutePositionForContent(absx, absy);
-    left += absx;
-    top += absy;
+    // FIXME: broken with transforms
+    FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
+    left += absPos.x();
+    top += absPos.y();
 
     RenderBlock* cb = containingBlock();
     if (style()->autoWrap()) {
         int availableWidth = cb->lineWidth(top);
         if (box->direction() == LTR)
-            left = min(left, absx + rootLeft + availableWidth - 1);
+            left = min(left, static_cast<int>(absPos.x()) + rootLeft + availableWidth - 1);
         else
-            left = max(left, absx + rootLeft);
+            left = max(left, static_cast<int>(absPos.x()) + rootLeft);
     }
 
     return IntRect(left, top, 1, height);
@@ -1079,9 +1078,9 @@ IntRect RenderText::selectionRect(bool clipToVisibleContent)
     else {
         if (cb->hasColumns())
             cb->adjustRectForColumns(rect);
-        int absx, absy;
-        absolutePosition(absx, absy);
-        rect.move(absx, absy);
+        // FIXME: This doesn't work correctly with transforms.
+        FloatPoint absPos = localToAbsolute();
+        rect.move(absPos.x(), absPos.y());
     }
 
     return rect;

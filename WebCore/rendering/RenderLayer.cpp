@@ -409,7 +409,7 @@ void RenderLayer::updateLayerPosition()
         RenderLayer* positionedParent = enclosingPositionedAncestor();
 
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
-        positionedParent->subtractScrollOffset(x, y);
+        positionedParent->subtractScrolledContentOffset(x, y);
         
         if (m_object->isPositioned()) {
             IntSize offset = static_cast<RenderBox*>(m_object)->offsetForPositionedInContainer(positionedParent->renderer());
@@ -417,7 +417,7 @@ void RenderLayer::updateLayerPosition()
             y += offset.height();
         }
     } else if (parent())
-        parent()->subtractScrollOffset(x, y);
+        parent()->subtractScrolledContentOffset(x, y);
     
     setPos(x,y);
 
@@ -687,11 +687,10 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
         
     if (m_object->style()->position() == FixedPosition) {
         // Add in the offset of the view.  We can obtain this by calling
-        // absolutePosition() on the RenderView.
-        int xOff, yOff;
-        m_object->absolutePosition(xOff, yOff, true);
-        x += xOff;
-        y += yOff;
+        // localToAbsolute() on the RenderView.
+        FloatPoint absPos = m_object->localToAbsolute(FloatPoint(), true);
+        x += absPos.x();
+        y += absPos.y();
         return;
     }
  
@@ -772,14 +771,14 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
 
 
 void
-RenderLayer::scrollOffset(int& x, int& y)
+RenderLayer::addScrolledContentOffset(int& x, int& y) const
 {
     x += scrollXOffset() + m_scrollLeftOverflow;
     y += scrollYOffset();
 }
 
 void
-RenderLayer::subtractScrollOffset(int& x, int& y)
+RenderLayer::subtractScrolledContentOffset(int& x, int& y) const
 {
     x -= scrollXOffset() + m_scrollLeftOverflow;
     y -= scrollYOffset();
@@ -865,17 +864,15 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, 
     if (m_object->hasOverflowClip() && !restrictedByLineClamp) {
         // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
-        int x, y;
-        m_object->absolutePosition(x, y);
-        x += m_object->borderLeft();
-        y += m_object->borderTop();
+        FloatPoint absPos = m_object->localToAbsolute();
+        absPos.move(m_object->borderLeft(), m_object->borderTop());
 
-        IntRect layerBounds = IntRect(x + scrollXOffset(), y + scrollYOffset(), m_object->clientWidth(), m_object->clientHeight());
+        IntRect layerBounds = IntRect(absPos.x() + scrollXOffset(), absPos.y() + scrollYOffset(), m_object->clientWidth(), m_object->clientHeight());
         IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        xOffset = r.x() - x;
-        yOffset = r.y() - y;
+        xOffset = r.x() - absPos.x();
+        yOffset = r.y() - absPos.y();
         // Adjust offsets if they're outside of the allowable range.
         xOffset = max(0, min(scrollWidth() - layerBounds.width(), xOffset));
         yOffset = max(0, min(scrollHeight() - layerBounds.height(), yOffset));

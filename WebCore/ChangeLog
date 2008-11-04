@@ -1,3 +1,118 @@
+2008-11-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=21941
+
+        Rename absolutePosition() to localToAbsolute(), and add the ability
+        to optionally take transforms into account (which will eventually be the
+        default behavior).
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        (WebCore::ContainerNode::getRect):
+        * dom/ContainerNode.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        * dom/Node.cpp:
+        (WebCore::Node::getRect):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::caretRect):
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::getRect):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::x):
+        (WebCore::HTMLImageElement::y):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLInputElement.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::roundedIntPoint):
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::expand):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::selectionGapRects):
+        (WebCore::RenderBlock::fillBlockSelectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::positionForCoordinates):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localToAbsolute):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        (WebCore::RenderBox::caretRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::relativePositionOffset):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addLineBoxRects):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::absoluteClippedOverflowRect):
+        (WebCore::RenderFlow::caretRect):
+        (WebCore::RenderFlow::addFocusRingRects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::addScrolledContentOffset):
+        (WebCore::RenderLayer::subtractScrolledContentOffset):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::scrolledContentOffset):
+        (WebCore::RenderLayer::relativePositionOffset):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::scrollToward):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::selectionRect):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::addDashboardRegions):
+        (WebCore::RenderObject::absoluteContentBox):
+        (WebCore::RenderObject::absoluteOutlineBox):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsoluteForContent):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::updateWidgetPosition):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRect):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeAbsoluteRectForRange):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::localToAbsolute):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::addLineBoxRects):
+        (WebCore::RenderText::caretRect):
+        (WebCore::RenderText::selectionRect):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::localToAbsolute):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetPosition):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getScreenCTM):
+
 2008-11-03  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

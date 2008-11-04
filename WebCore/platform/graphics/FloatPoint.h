@@ -28,6 +28,7 @@
 #define FloatPoint_h
 
 #include "FloatSize.h"
+#include "IntPoint.h"
 #include <wtf/Platform.h>
 
 #if PLATFORM(CG)
@@ -144,6 +145,11 @@ inline bool operator==(const FloatPoint& a, const FloatPoint& b)
 inline bool operator!=(const FloatPoint& a, const FloatPoint& b)
 {
     return a.x() != b.x() || a.y() != b.y();
+}
+
+inline IntPoint roundedIntPoint(const FloatPoint& p)
+{
+    return IntPoint(static_cast<int>(roundf(p.x())), static_cast<int>(roundf(p.y())));
 }
 
 }

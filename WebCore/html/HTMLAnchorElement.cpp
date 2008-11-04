@@ -115,9 +115,8 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
             return true;
 
     Vector<IntRect> rects;
-    int x, y;
-    renderer()->absolutePosition(x, y);
-    renderer()->absoluteRects(rects, x, y);
+    FloatPoint absPos = renderer()->localToAbsolute();
+    renderer()->absoluteRects(rects, absPos.x(), absPos.y());
     size_t n = rects.size();
     for (size_t i = 0; i < n; ++i)
         if (!rects[i].isEmpty())
@@ -200,10 +199,10 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
             if (img && img->isServerMap()) {
                 RenderImage* r = static_cast<RenderImage*>(img->renderer());
                 if (r && e) {
-                    int absx, absy;
-                    r->absolutePosition(absx, absy);
-                    int x = e->pageX() - absx;
-                    int y = e->pageY() - absy;
+                    // FIXME: broken with transforms
+                    FloatPoint absPos = r->localToAbsolute();
+                    int x = e->pageX() - absPos.x();
+                    int y = e->pageY() - absPos.y();
                     url += "?";
                     url += String::number(x);
                     url += ",";

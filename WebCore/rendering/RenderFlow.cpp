@@ -522,7 +522,7 @@ IntRect RenderFlow::absoluteClippedOverflowRect()
             int x = r.x();
             int y = r.y();
             IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
-            cb->layer()->subtractScrollOffset(x, y); // For overflow:auto/scroll/hidden.
+            cb->layer()->subtractScrolledContentOffset(x, y); // For overflow:auto/scroll/hidden.
             IntRect repaintRect(x, y, r.width(), r.height());
             r = intersection(repaintRect, boxRect);
         }
@@ -684,20 +684,19 @@ IntRect RenderFlow::caretRect(InlineBox* inlineBox, int caretOffset, int* extraW
             // So *extraWidthToEndOfLine will always be 0 here.
 
             int myRight = x + caretWidth;
-            int ignore;
-            absolutePositionForContent(myRight, ignore);
+            // FIXME: why call localToAbsoluteForContent() twice here, too?
+            FloatPoint absRightPoint = localToAbsoluteForContent(FloatPoint(myRight, 0));
 
             int containerRight = containingBlock()->xPos() + containingBlockWidth();
-            absolutePositionForContent(containerRight, ignore);
+            FloatPoint absContainerPoint = localToAbsoluteForContent(FloatPoint(containerRight, 0));
 
-            *extraWidthToEndOfLine = containerRight - myRight;
+            *extraWidthToEndOfLine = absContainerPoint.x() - absRightPoint.x();
         }
     }
 
-    int absx, absy;
-    absolutePositionForContent(absx, absy);
-    x += absx;
-    int y = absy + paddingTop() + borderTop();
+    FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
+    x += absPos.x();
+    int y = absPos.y() + paddingTop() + borderTop();
 
     return IntRect(x, y, caretWidth, height);
 }
@@ -723,15 +722,13 @@ void RenderFlow::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int
 
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
             if (!curr->isText() && !curr->isListMarker()) {
-                int x = 0;
-                int y = 0;
+                FloatPoint pos;
+                // FIXME: This doesn't work correctly with transforms.
                 if (curr->layer()) 
-                    curr->absolutePosition(x, y);
-                else {
-                    x = tx + curr->xPos();
-                    y = ty + curr->yPos();
-                }
-                curr->addFocusRingRects(graphicsContext, x, y);
+                    pos = curr->localToAbsolute();
+                else
+                    pos = FloatPoint(tx + curr->xPos(), ty + curr->yPos());
+                curr->addFocusRingRects(graphicsContext, pos.x(), pos.y());
             }
     }
 

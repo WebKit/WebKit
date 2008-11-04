@@ -86,10 +86,10 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     Widget* widget = renderWidget ? renderWidget->widget() : 0;
     NSView *view = widget ? widget->platformWidget() : nil;
 
-    int nx, ny;
-    node->absolutePosition(nx, ny);
+    // FIXME: broken with transforms
+    FloatPoint absPos = node->localToAbsolute(FloatPoint());
     WebRenderNode *result = [[WebRenderNode alloc] initWithName:name
-        position:NSMakePoint(nx, ny) rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
+        position:absPos rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
         view:view children:children];
 
     [name release];

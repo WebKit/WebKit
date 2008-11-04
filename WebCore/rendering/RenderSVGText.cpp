@@ -151,8 +151,7 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     if (!root)
         return;
 
-    int x, y;
-    absolutePosition(x, y);
+    FloatPoint absPos = localToAbsolute();
 
     AffineTransform htmlParentCtm = root->RenderContainer::absoluteTransform();
  
@@ -164,7 +163,7 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int, bool)
         InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
         for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine()) {
             FloatRect boxRect(box->xPos(), box->yPos(), box->width(), box->height());
-            boxRect.move(narrowPrecisionToFloat(x - htmlParentCtm.e()), narrowPrecisionToFloat(y - htmlParentCtm.f()));
+            boxRect.move(narrowPrecisionToFloat(absPos.x() - htmlParentCtm.e()), narrowPrecisionToFloat(absPos.y() - htmlParentCtm.f()));
             rects.append(enclosingIntRect(absoluteTransform().mapRect(boxRect)));
         }
     }
