@@ -47,7 +47,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 class MediaTokenizer : public Tokenizer {
@@ -151,12 +150,12 @@ void MediaDocument::defaultEventHandler(Event* event)
     if (targetNode && targetNode->hasTagName(videoTag)) {
         HTMLVideoElement* video = static_cast<HTMLVideoElement*>(targetNode);
         ExceptionCode ec;
-        if (event->type() == clickEvent) {
+        if (event->type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause(ec);
                 event->setDefaultHandled();
             }
-        } else if (event->type() == dblclickEvent) {
+        } else if (event->type() == eventNames().dblclickEvent) {
             if (video->canPlay()) {
                 video->play(ec);
                 event->setDefaultHandled();

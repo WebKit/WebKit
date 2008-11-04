@@ -112,7 +112,6 @@ namespace WebCore {
 using namespace SVGNames;
 #endif
 using namespace HTMLNames;
-using namespace EventNames;
 
 #if USE(LOW_BANDWIDTH_DISPLAY)
 const unsigned int cMaxPendingSourceLengthInLowBandwidthDisplay = 128 * 1024;
@@ -592,7 +591,7 @@ void FrameLoader::stopLoading(bool sendUnload)
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
-                m_frame->document()->dispatchWindowEvent(unloadEvent, false, false);
+                m_frame->document()->dispatchWindowEvent(eventNames().unloadEvent, false, false);
                 if (m_frame->document())
                     m_frame->document()->updateRendering();
                 m_wasUnloadEventEmitted = true;
@@ -1911,7 +1910,7 @@ bool FrameLoader::canCachePage()
         && !m_containsPlugIns
         && !m_URL.protocolIs("https")
         && m_frame->document()
-        && !m_frame->document()->hasWindowEventListener(unloadEvent)
+        && !m_frame->document()->hasWindowEventListener(eventNames().unloadEvent)
 #if ENABLE(DATABASE)
         && !m_frame->document()->hasOpenDatabases()
 #endif

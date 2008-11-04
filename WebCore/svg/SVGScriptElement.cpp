@@ -204,7 +204,7 @@ void SVGScriptElement::dispatchLoadEvent()
 
 void SVGScriptElement::dispatchErrorEvent()
 {
-    dispatchEventForType(EventNames::errorEvent, true, false);
+    dispatchEventForType(eventNames().errorEvent, true, false);
 }
 
 }

@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 static const int defaultRows = 2;
@@ -168,13 +167,13 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
     } else if (attr->name() == onfocusAttr)
-        setInlineEventListenerForTypeAndAttribute(focusEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().focusEvent, attr);
     else if (attr->name() == onblurAttr)
-        setInlineEventListenerForTypeAndAttribute(blurEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().blurEvent, attr);
     else if (attr->name() == onselectAttr)
-        setInlineEventListenerForTypeAndAttribute(selectEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().selectEvent, attr);
     else if (attr->name() == onchangeAttr)
-        setInlineEventListenerForTypeAndAttribute(changeEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().changeEvent, attr);
     else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
 }
@@ -233,7 +232,7 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 
 void HTMLTextAreaElement::defaultEventHandler(Event* event)
 {
-    if (renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == blurEvent))
+    if (renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == eventNames().blurEvent))
         static_cast<RenderTextControl*>(renderer())->forwardEvent(event);
 
     HTMLFormControlElementWithState::defaultEventHandler(event);

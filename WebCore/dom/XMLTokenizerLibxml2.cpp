@@ -33,7 +33,6 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -63,8 +62,6 @@
 using namespace std;
 
 namespace WebCore {
-
-using namespace EventNames;
 
 class PendingCallbacks {
 public:

@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
@@ -161,7 +160,7 @@ void HTMLFormControlElement::setName(const AtomicString &value)
 
 void HTMLFormControlElement::onChange()
 {
-    dispatchEventForType(changeEvent, true, false);
+    dispatchEventForType(eventNames().changeEvent, true, false);
 }
 
 bool HTMLFormControlElement::disabled() const

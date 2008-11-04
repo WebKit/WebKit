@@ -56,7 +56,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 // Value chosen by observation.  This can be tweaked.
@@ -842,7 +841,7 @@ void RenderTextControl::calcPrefWidths()
 
 void RenderTextControl::forwardEvent(Event* evt)
 {
-    if (evt->type() == blurEvent) {
+    if (evt->type() == eventNames().blurEvent) {
         RenderObject* innerRenderer = m_innerText->renderer();
         if (innerRenderer) {
             RenderLayer* innerLayer = innerRenderer->layer();
@@ -850,7 +849,7 @@ void RenderTextControl::forwardEvent(Event* evt)
                 innerLayer->scrollToOffset(style()->direction() == RTL ? innerLayer->scrollWidth() : 0, 0);
         }
         capsLockStateMayHaveChanged();
-    } else if (evt->type() == focusEvent)
+    } else if (evt->type() == eventNames().focusEvent)
         capsLockStateMayHaveChanged();
     else {
         if (evt->isMouseEvent() && m_resultsButton && static_cast<MouseEvent*>(evt)->x() < m_innerText->renderer()->absoluteBoundingBoxRect().x())
@@ -871,7 +870,7 @@ void RenderTextControl::selectionChanged(bool userTriggered)
         static_cast<HTMLInputElement*>(element)->cacheSelection(selectionStart(), selectionEnd());
     if (Frame* frame = document()->frame())
         if (frame->selection()->isRange() && userTriggered)
-            element->dispatchEventForType(selectEvent, true, false);
+            element->dispatchEventForType(eventNames().selectEvent, true, false);
 }
 
 void RenderTextControl::autoscroll()

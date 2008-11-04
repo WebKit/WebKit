@@ -134,6 +134,7 @@ inline bool equalIgnoringCase(const char* a, const AtomicString& b) { return equ
 inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return equalIgnoringCase(a.impl(), b.impl()); }
 
 // Define external global variables for the commonly used atomic strings.
+// These are only usable from the main thread.
 #ifndef ATOMICSTRING_HIDE_GLOBALS
     extern const AtomicString nullAtom;
     extern const AtomicString emptyAtom;

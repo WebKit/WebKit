@@ -46,7 +46,7 @@ void SVGImageLoader::dispatchLoadEvent()
         setHaveFiredLoadEvent(true);
         
         if (image()->errorOccurred())
-            element()->dispatchEventForType(EventNames::errorEvent, false, false);
+            element()->dispatchEventForType(eventNames().errorEvent, false, false);
         else {
             SVGImageElement* imageElement = static_cast<SVGImageElement*>(element());
             if (imageElement->externalResourcesRequiredBaseValue())

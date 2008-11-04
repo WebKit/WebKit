@@ -58,7 +58,6 @@ using namespace WTF;
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace EventNames;
 
 #if MOBILE
 // The mobile device needs to be responsive, as such the tokenizer chunk size is reduced.
@@ -2006,11 +2005,11 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
 #endif
 
         if (errorOccurred)
-            EventTargetNodeCast(n.get())->dispatchEventForType(errorEvent, true, false);
+            EventTargetNodeCast(n.get())->dispatchEventForType(eventNames().errorEvent, true, false);
         else {
             if (static_cast<HTMLScriptElement*>(n.get())->shouldExecuteAsJavaScript())
                 m_state = scriptExecution(scriptSource, m_state, cachedScriptUrl);
-            EventTargetNodeCast(n.get())->dispatchEventForType(loadEvent, false, false);
+            EventTargetNodeCast(n.get())->dispatchEventForType(eventNames().loadEvent, false, false);
         }
 
         // The state of pendingScripts.isEmpty() can change inside the scriptExecution()

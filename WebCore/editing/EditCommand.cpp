@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 EditCommand::EditCommand(Document* document) 
     : m_document(document)
     , m_parent(0)

@@ -29,47 +29,45 @@
 #include "EventNames.h"
 
 namespace WebCore {
-    
-    using namespace EventNames;
-    
-    WebKitAnimationEvent::WebKitAnimationEvent()
+
+WebKitAnimationEvent::WebKitAnimationEvent()
     : m_elapsedTime(0.0)
-    {
-    }
-    
-    WebKitAnimationEvent::WebKitAnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime)
+{
+}
+
+WebKitAnimationEvent::WebKitAnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime)
     : Event(type, true, true)
     , m_animationName(animationName)
     , m_elapsedTime(elapsedTime)
-    {
-    }
+{
+}
+
+WebKitAnimationEvent::~WebKitAnimationEvent()
+{
+}
+
+void WebKitAnimationEvent::initWebKitAnimationEvent(const AtomicString& type, 
+                                        bool /*canBubbleArg*/,
+                                        bool /*cancelableArg*/,
+                                        const String& animationName,
+                                        double elapsedTime)
+{
+    if (dispatched())
+        return;
     
-    WebKitAnimationEvent::~WebKitAnimationEvent()
-    {
-    }
+    initEvent(type, false, true);
     
-    void WebKitAnimationEvent::initWebKitAnimationEvent(const AtomicString& type, 
-                                            bool /*canBubbleArg*/,
-                                            bool /*cancelableArg*/,
-                                            const String& animationName,
-                                            double elapsedTime)
-    {
-        if (dispatched())
-            return;
-        
-        initEvent(type, false, true);
-        
-        m_animationName = animationName;
-    }
-    
-    const String& WebKitAnimationEvent::animationName() const
-    {
-        return m_animationName;
-    }
-    
-    double WebKitAnimationEvent::elapsedTime() const
-    {
-        return m_elapsedTime;
-    }
-    
+    m_animationName = animationName;
+}
+
+const String& WebKitAnimationEvent::animationName() const
+{
+    return m_animationName;
+}
+
+double WebKitAnimationEvent::elapsedTime() const
+{
+    return m_elapsedTime;
+}
+
 } // namespace WebCore

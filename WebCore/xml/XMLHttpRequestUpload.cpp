@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
     : m_xmlHttpRequest(xmlHttpRequest)
 {
@@ -120,27 +118,27 @@ void XMLHttpRequestUpload::dispatchXMLHttpRequestProgressEvent(EventListener* li
 
 void XMLHttpRequestUpload::dispatchAbortEvent()
 {
-    dispatchXMLHttpRequestProgressEvent(m_onAbortListener.get(), abortEvent, false, 0, 0);
+    dispatchXMLHttpRequestProgressEvent(m_onAbortListener.get(), eventNames().abortEvent, false, 0, 0);
 }
 
 void XMLHttpRequestUpload::dispatchErrorEvent()
 {
-    dispatchXMLHttpRequestProgressEvent(m_onErrorListener.get(), errorEvent, false, 0, 0);
+    dispatchXMLHttpRequestProgressEvent(m_onErrorListener.get(), eventNames().errorEvent, false, 0, 0);
 }
 
 void XMLHttpRequestUpload::dispatchLoadEvent()
 {
-    dispatchXMLHttpRequestProgressEvent(m_onLoadListener.get(), loadEvent, false, 0, 0);
+    dispatchXMLHttpRequestProgressEvent(m_onLoadListener.get(), eventNames().loadEvent, false, 0, 0);
 }
 
 void XMLHttpRequestUpload::dispatchLoadStartEvent()
 {
-    dispatchXMLHttpRequestProgressEvent(m_onLoadStartListener.get(), loadstartEvent, false, 0, 0);
+    dispatchXMLHttpRequestProgressEvent(m_onLoadStartListener.get(), eventNames().loadstartEvent, false, 0, 0);
 }
 
 void XMLHttpRequestUpload::dispatchProgressEvent(long long bytesSent, long long totalBytesToBeSent)
 {
-    dispatchXMLHttpRequestProgressEvent(m_onProgressListener.get(), progressEvent, true, static_cast<unsigned>(bytesSent), static_cast<unsigned>(totalBytesToBeSent));
+    dispatchXMLHttpRequestProgressEvent(m_onProgressListener.get(), eventNames().progressEvent, true, static_cast<unsigned>(bytesSent), static_cast<unsigned>(totalBytesToBeSent));
 }
 
 } // namespace WebCore

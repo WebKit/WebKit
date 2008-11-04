@@ -60,7 +60,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 static const char hexDigits[17] = "0123456789ABCDEF";
@@ -123,7 +122,7 @@ void HTMLFormElement::removedFromDocument()
 void HTMLFormElement::handleLocalEvents(Event* event, bool useCapture)
 {
     EventTargetNode* targetNode = event->target()->toNode();
-    if (!useCapture && targetNode && targetNode != this && (event->type() == submitEvent || event->type() == resetEvent)) {
+    if (!useCapture && targetNode && targetNode != this && (event->type() == eventNames().submitEvent || event->type() == eventNames().resetEvent)) {
         event->stopPropagation();
         return;
     }
@@ -363,7 +362,7 @@ bool HTMLFormElement::prepareSubmit(Event* event)
     m_insubmit = true;
     m_doingsubmit = false;
 
-    if (dispatchEventForType(submitEvent, true, true) && !m_doingsubmit)
+    if (dispatchEventForType(eventNames().submitEvent, true, true) && !m_doingsubmit)
         m_doingsubmit = true;
 
     m_insubmit = false;
@@ -518,7 +517,7 @@ void HTMLFormElement::reset()
 
     // ### DOM2 labels this event as not cancelable, however
     // common browsers( sick! ) allow it be cancelled.
-    if ( !dispatchEventForType(resetEvent,true, true) ) {
+    if ( !dispatchEventForType(eventNames().resetEvent,true, true) ) {
         m_inreset = false;
         return;
     }
@@ -555,9 +554,9 @@ void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
         else
             document()->unregisterForDocumentActivationCallbacks(this);
     } else if (attr->name() == onsubmitAttr)
-        setInlineEventListenerForTypeAndAttribute(submitEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().submitEvent, attr);
     else if (attr->name() == onresetAttr)
-        setInlineEventListenerForTypeAndAttribute(resetEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().resetEvent, attr);
     else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {

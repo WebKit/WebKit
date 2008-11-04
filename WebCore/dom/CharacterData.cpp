@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 CharacterData::CharacterData(Document *doc)
     : EventTargetNode(doc)
     , m_data(StringImpl::empty())
@@ -201,7 +199,7 @@ void CharacterData::dispatchModifiedEvent(StringImpl* prevValue)
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER)) {
         ExceptionCode ec;
-        dispatchEvent(MutationEvent::create(DOMCharacterDataModifiedEvent, true, false, 0, prevValue, m_data, String(), 0), ec);
+        dispatchEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, false, 0, prevValue, m_data, String(), 0), ec);
     }
     dispatchSubtreeModifiedEvent();
 }

@@ -25,7 +25,6 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
@@ -40,8 +39,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-using namespace EventNames;
 
 ASSERT_CLASS_FITS_IN_CELL(JSAbstractEventListener)
 

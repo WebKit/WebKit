@@ -34,7 +34,6 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventHandler.h"
-#include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameTree.h"
@@ -51,7 +50,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 FocusController::FocusController(Page* page)

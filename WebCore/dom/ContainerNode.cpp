@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 static void dispatchChildInsertionEvents(Node*, ExceptionCode&);
 static void dispatchChildRemovalEvents(Node*, ExceptionCode&);
 
@@ -883,7 +881,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
         doc->hasListenerType(Document::DOMNODEINSERTED_LISTENER) &&
         c->isEventTargetNode()) {
         ec = 0;
-        EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(DOMNodeInsertedEvent, true, false,
+        EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, false,
             c->parentNode(), String(), String(), String(), 0), ec);
         if (ec)
             return;
@@ -896,7 +894,7 @@ static void dispatchChildInsertionEvents(Node* child, ExceptionCode& ec)
                 continue;
           
             ec = 0;
-            EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(DOMNodeInsertedIntoDocumentEvent, false, false,
+            EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(eventNames().DOMNodeInsertedIntoDocumentEvent, false, false,
                 0, String(), String(), String(), 0), ec);
             if (ec)
                 return;
@@ -916,7 +914,7 @@ static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
         doc->hasListenerType(Document::DOMNODEREMOVED_LISTENER) &&
         c->isEventTargetNode()) {
         ec = 0;
-        EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(DOMNodeRemovedEvent, true, false,
+        EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, true, false,
             c->parentNode(), String(), String(), String(), 0), ec);
         if (ec)
             return;
@@ -928,7 +926,7 @@ static void dispatchChildRemovalEvents(Node* child, ExceptionCode& ec)
             if (!c->isEventTargetNode())
                 continue;
             ec = 0;
-            EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(DOMNodeRemovedFromDocumentEvent, false, false,
+            EventTargetNodeCast(c.get())->dispatchEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false, false,
                 0, String(), String(), String(), 0), ec);
             if (ec)
                 return;

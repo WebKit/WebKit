@@ -35,7 +35,6 @@
 #import "DocumentLoader.h"
 #import "EditorClient.h"
 #import "Event.h"
-#import "EventNames.h"
 #import "FrameLoaderClient.h"
 #import "FramePrivate.h"
 #import "FrameView.h"
@@ -75,7 +74,6 @@ using JSC::JSLock;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 // Either get cached regexp or build one that matches any of the labels.

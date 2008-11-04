@@ -34,7 +34,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "EventHandler.h"
-#include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -69,7 +68,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 #ifndef NDEBUG

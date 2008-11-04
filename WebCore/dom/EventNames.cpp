@@ -21,31 +21,54 @@
  */
 
 #include "config.h"
+#include "EventNames.h"
 
-#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC
-#define DOM_EVENT_NAMES_HIDE_GLOBALS 1
+#include <wtf/Threading.h>
+
+#if ENABLE(WORKERS)
+#include <wtf/ThreadSpecific.h>
+using namespace WTF;
 #endif
 
-#include "EventNames.h"
-#include "StaticConstructors.h"
+namespace WebCore {
 
-namespace WebCore { namespace EventNames {
+#if ENABLE(WORKERS)
+static ThreadSpecific<EventNames>* staticEventNames;
+#else
+static EventNames* staticEventNames;
+#endif
 
-#define DEFINE_EVENT_GLOBAL(name) \
-    DEFINE_GLOBAL(AtomicString, name##Event, #name)
-DOM_EVENT_NAMES_FOR_EACH(DEFINE_EVENT_GLOBAL)
-
-void init()
+#define INITIALIZE_EVENT_NAME(name) \
+    , name##Event(#name)
+EventNames::EventNames()
+    : dummy(0)
+DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_EVENT_NAME)
 {
-    static bool initialized;
-    if (!initialized) {
-        // Use placement new to initialize the globals.
-        
+}
+
+EventNames& eventNames()
+{
+#if ENABLE(WORKERS)
+    return **staticEventNames;
+#else
+    return *staticEventNames;
+#endif
+}
+
+void EventNames::init()
+{
+    if (!staticEventNames) {
+        // Initialization is not thread safe, so this function must be called from the main thread first.
+        ASSERT(isMainThread());
+
         AtomicString::init();
-        #define INITIALIZE_GLOBAL(name) new ((void*)&name##Event) AtomicString(#name);
-        DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_GLOBAL)
-        initialized = true;
+
+#if ENABLE(WORKERS)
+        staticEventNames = new ThreadSpecific<EventNames>;
+#else
+        staticEventNames = new EventNames;
+#endif
     }
 }
 
-} }
+}

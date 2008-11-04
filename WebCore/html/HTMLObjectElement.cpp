@@ -42,7 +42,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLObjectElement::HTMLObjectElement(Document* doc, bool createdByParser) 
@@ -94,7 +93,7 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         if (renderer())
           m_needWidgetUpdate = true;
     } else if (attr->name() == onloadAttr) {
-        setInlineEventListenerForTypeAndAttribute(loadEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
     } else if (attr->name() == nameAttr) {
         const AtomicString& newName = attr->value();
         if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {

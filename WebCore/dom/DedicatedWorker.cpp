@@ -141,7 +141,7 @@ void DedicatedWorker::notifyFinished(CachedResource* resource)
 void DedicatedWorker::dispatchErrorEvent()
 {
     if (m_onErrorListener) {
-        RefPtr<Event> evt = Event::create(EventNames::errorEvent, false, true);
+        RefPtr<Event> evt = Event::create(eventNames().errorEvent, false, true);
         // DedicatedWorker is not an EventTarget, so target and currentTarget remain null.
         m_onErrorListener->handleEvent(evt.release().get(), true);
     }

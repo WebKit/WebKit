@@ -73,7 +73,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 // The link drag hysteresis is much larger than the others because there
@@ -1066,7 +1065,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         return true;
     }
 
-    bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+    bool swallowEvent = dispatchMouseEvent(eventNames().mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
     // in case the scrollbar widget was destroyed when the mouse event was handled.
@@ -1122,12 +1121,12 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     }
 
     m_clickCount = mouseEvent.clickCount();
-    bool swallowMouseUpEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
+    bool swallowMouseUpEvent = dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 
     bool swallowClickEvent = false;
     // Don't ever dispatch click events for right clicks
     if (mouseEvent.button() != RightButton && mev.targetNode() == m_clickNode)
-        swallowClickEvent = dispatchMouseEvent(clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+        swallowClickEvent = dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     if (m_lastScrollbarUnderMouse)
         swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp();
@@ -1180,7 +1179,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 #endif
 
     if (m_frameSetBeingResized)
-        return dispatchMouseEvent(mousemoveEvent, m_frameSetBeingResized.get(), false, 0, mouseEvent, false);
+        return dispatchMouseEvent(eventNames().mousemoveEvent, m_frameSetBeingResized.get(), false, 0, mouseEvent, false);
 
     // Send events right to a scrollbar if the mouse is pressed.
     if (m_lastScrollbarUnderMouse && m_mousePressed)
@@ -1241,7 +1240,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     if (swallowEvent)
         return true;
     
-    swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
+    swallowEvent = dispatchMouseEvent(eventNames().mousemoveEvent, mev.targetNode(), false, 0, mouseEvent, true);
     if (!swallowEvent)
         swallowEvent = handleMouseDraggedEvent(mev);
 
@@ -1273,7 +1272,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 #endif
 
     if (m_frameSetBeingResized)
-        return dispatchMouseEvent(mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, mouseEvent, false);
+        return dispatchMouseEvent(eventNames().mouseupEvent, m_frameSetBeingResized.get(), true, m_clickCount, mouseEvent, false);
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();
@@ -1287,12 +1286,12 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
         return true;
     }
 
-    bool swallowMouseUpEvent = dispatchMouseEvent(mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
+    bool swallowMouseUpEvent = dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 
     // Don't ever dispatch click events for right clicks
     bool swallowClickEvent = false;
     if (m_clickCount > 0 && mouseEvent.button() != RightButton && mev.targetNode() == m_clickNode)
-        swallowClickEvent = dispatchMouseEvent(clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
+        swallowClickEvent = dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);
@@ -1350,7 +1349,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
             if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
                 accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->eventHandler()->updateDragAndDrop(event, clipboard);
             else
-                accept = dispatchDragEvent(dragenterEvent, newTarget, event, clipboard);
+                accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget, event, clipboard);
         
         if (m_dragTarget) {
             Frame* frame = (m_dragTarget->hasTagName(frameTag) || m_dragTarget->hasTagName(iframeTag)) 
@@ -1358,14 +1357,14 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
             if (frame)
                 accept = frame->eventHandler()->updateDragAndDrop(event, clipboard);
             else
-                dispatchDragEvent(dragleaveEvent, m_dragTarget.get(), event, clipboard);
+                dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
         }
     } else {
         if (newTarget)
             if (newTarget->hasTagName(frameTag) || newTarget->hasTagName(iframeTag))
                 accept = static_cast<HTMLFrameElementBase*>(newTarget)->contentFrame()->eventHandler()->updateDragAndDrop(event, clipboard);
             else
-                accept = dispatchDragEvent(dragoverEvent, newTarget, event, clipboard);
+                accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget, event, clipboard);
     }
     m_dragTarget = newTarget;
 
@@ -1380,7 +1379,7 @@ void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         if (frame)
             frame->eventHandler()->cancelDragAndDrop(event, clipboard);
         else
-            dispatchDragEvent(dragleaveEvent, m_dragTarget.get(), event, clipboard);
+            dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
     }
     clearDragState();
 }
@@ -1394,7 +1393,7 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard
         if (frame)
             accept = frame->eventHandler()->performDragAndDrop(event, clipboard);
         else
-            accept = dispatchDragEvent(dropEvent, m_dragTarget.get(), event, clipboard);
+            accept = dispatchDragEvent(eventNames().dropEvent, m_dragTarget.get(), event, clipboard);
     }
     clearDragState();
     return accept;
@@ -1505,10 +1504,10 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         if (m_lastNodeUnderMouse != m_nodeUnderMouse) {
             // send mouseout event to the old node
             if (m_lastNodeUnderMouse)
-                EventTargetNodeCast(m_lastNodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, mouseoutEvent, 0, m_nodeUnderMouse.get());
+                EventTargetNodeCast(m_lastNodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventNames().mouseoutEvent, 0, m_nodeUnderMouse.get());
             // send mouseover event to the new node
             if (m_nodeUnderMouse)
-                EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, mouseoverEvent, 0, m_lastNodeUnderMouse.get());
+                EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventNames().mouseoverEvent, 0, m_lastNodeUnderMouse.get());
         }
         m_lastNodeUnderMouse = m_nodeUnderMouse;
 #if ENABLE(SVG)
@@ -1526,7 +1525,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
     if (m_nodeUnderMouse)
         swallowEvent = EventTargetNodeCast(m_nodeUnderMouse.get())->dispatchMouseEvent(mouseEvent, eventType, clickCount);
     
-    if (!swallowEvent && eventType == mousedownEvent) {
+    if (!swallowEvent && eventType == eventNames().mousedownEvent) {
         // Blur current focus node when a link/button is clicked; this
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
@@ -1640,7 +1639,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     }
 #endif
 
-    swallowEvent = dispatchMouseEvent(contextmenuEvent, mev.targetNode(), true, 0, event, true);
+    swallowEvent = dispatchMouseEvent(eventNames().contextmenuEvent, mev.targetNode(), true, 0, event, true);
     
     return swallowEvent;
 }
@@ -1663,7 +1662,7 @@ bool EventHandler::canMouseDownStartSelect(Node* node)
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())    
         if (Node* node = curr->element())
-            return EventTargetNodeCast(node)->dispatchEventForType(selectstartEvent, true, true);
+            return EventTargetNodeCast(node)->dispatchEventForType(eventNames().selectstartEvent, true, true);
     
     return true;
 }
@@ -1675,7 +1674,7 @@ bool EventHandler::canMouseDragExtendSelect(Node* node)
             
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent())    
         if (Node* node = curr->element())
-            return EventTargetNodeCast(node)->dispatchEventForType(selectstartEvent, true, true);
+            return EventTargetNodeCast(node)->dispatchEventForType(eventNames().selectstartEvent, true, true);
     
     return true;
 }
@@ -1866,7 +1865,7 @@ void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
     
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
-   if (event->type() == keydownEvent) {
+   if (event->type() == eventNames().keydownEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
         if (event->defaultHandled())
             return;
@@ -1877,7 +1876,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
        if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
            handleKeyboardSelectionMovement(event);       
    }
-   if (event->type() == keypressEvent) {
+   if (event->type() == eventNames().keypressEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
         if (event->defaultHandled())
             return;
@@ -1924,7 +1923,7 @@ void EventHandler::dragSourceMovedTo(const PlatformMouseEvent& event)
 {
     if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML)
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(dragEvent, event);
+        dispatchDragSrcEvent(eventNames().dragEvent, event);
 }
     
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
@@ -1932,7 +1931,7 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
     if (dragState().m_dragSrc && dragState().m_dragSrcMayBeDHTML) {
         dragState().m_dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(dragendEvent, event);
+        dispatchDragSrcEvent(eventNames().dragendEvent, event);
     }
     freeClipboard();
     dragState().m_dragSrc = 0;
@@ -2037,7 +2036,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
             }
         } 
         
-        m_mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown)
+        m_mouseDownMayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown)
             && !m_frame->selection()->isInPasswordField();
         
         // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
@@ -2060,7 +2059,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         bool startedDrag = dragController && dragController->startDrag(m_frame, dragState().m_dragClipboard.get(), srcOp, event.event(), m_mouseDownPos, dragState().m_dragSrcIsDHTML);
         if (!startedDrag && dragState().m_dragSrcMayBeDHTML) {
             // Drag was canned at the last minute - we owe m_dragSrc a DRAGEND event
-            dispatchDragSrcEvent(dragendEvent, event.event());
+            dispatchDragSrcEvent(eventNames().dragendEvent, event.event());
             m_mouseDownMayStartDrag = false;
         }
     } 
@@ -2085,7 +2084,7 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     // Platforms should differentiate real commands like selectAll from text input in disguise (like insertNewline),
     // and avoid dispatching text input events from keydown default handlers.
     if (underlyingEvent && underlyingEvent->isKeyboardEvent())
-        ASSERT(static_cast<KeyboardEvent*>(underlyingEvent)->type() == keypressEvent);
+        ASSERT(static_cast<KeyboardEvent*>(underlyingEvent)->type() == eventNames().keypressEvent);
 #endif
     EventTarget* target;
     if (underlyingEvent)

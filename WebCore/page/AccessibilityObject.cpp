@@ -32,7 +32,6 @@
 #include "AccessibilityRenderObject.h"
 #include "AXObjectCache.h"
 #include "CharacterNames.h"
-#include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -57,7 +56,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 AccessibilityObject::AccessibilityObject()

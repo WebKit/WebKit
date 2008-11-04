@@ -85,7 +85,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 const RenderLayer::ScrollAlignment RenderLayer::gAlignCenterIfNeeded = { RenderLayer::noScroll, RenderLayer::alignCenter, RenderLayer::alignToClosestEdge };
@@ -841,7 +840,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     // Schedule the scroll DOM event.
     if (view) {
         if (FrameView* frameView = view->frameView())
-            frameView->scheduleEvent(Event::create(scrollEvent, false, false), EventTargetNodeCast(renderer()->element()));
+            frameView->scheduleEvent(Event::create(eventNames().scrollEvent, false, false), EventTargetNodeCast(renderer()->element()));
     }
 }
 

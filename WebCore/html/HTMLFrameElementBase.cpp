@@ -41,7 +41,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Document *doc)
@@ -141,10 +140,10 @@ void HTMLFrameElementBase::parseMappedAttribute(MappedAttribute *attr)
         if (contentFrame())
             contentFrame()->setInViewSourceMode(viewSourceMode());
     } else if (attr->name() == onloadAttr) {
-        setInlineEventListenerForTypeAndAttribute(loadEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?
-        setInlineEventListenerForTypeAndAttribute(beforeunloadEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().beforeunloadEvent, attr);
     } else
         HTMLFrameOwnerElement::parseMappedAttribute(attr);
 }

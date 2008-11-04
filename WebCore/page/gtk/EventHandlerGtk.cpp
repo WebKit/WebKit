@@ -27,7 +27,6 @@
 #include "EventHandler.h"
 
 #include "ClipboardGtk.h"
-#include "EventNames.h"
 #include "FloatPoint.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -42,8 +41,6 @@
 #include "Scrollbar.h"
 
 namespace WebCore {
-
-using namespace EventNames;
 
 unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::AltKey;
 

@@ -82,7 +82,7 @@ void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* ren
 
 void ImplicitAnimation::onAnimationEnd(double elapsedTime)
 {
-    if (!sendTransitionEvent(EventNames::webkitTransitionEndEvent, elapsedTime)) {
+    if (!sendTransitionEvent(eventNames().webkitTransitionEndEvent, elapsedTime)) {
         // We didn't dispatch an event, which would call endAnimation(), so we'll just call it here.
         endAnimation(true);
     }
@@ -90,7 +90,7 @@ void ImplicitAnimation::onAnimationEnd(double elapsedTime)
 
 bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, double elapsedTime)
 {
-    if (eventType == EventNames::webkitTransitionEndEvent) {
+    if (eventType == eventNames().webkitTransitionEndEvent) {
         Document::ListenerType listenerType = Document::TRANSITIONEND_LISTENER;
 
         if (shouldSendEventForListener(listenerType)) {
@@ -114,7 +114,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
             element->dispatchWebKitTransitionEvent(eventType, propertyName, elapsedTime);
 
             // Restore the original (unanimated) style
-            if (eventType == EventNames::webkitAnimationEndEvent && element->renderer())
+            if (eventType == eventNames().webkitAnimationEndEvent && element->renderer())
                 setChanged(element.get());
 
             return true; // Did dispatch an event

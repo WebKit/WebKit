@@ -29,10 +29,8 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 BeforeUnloadEvent::BeforeUnloadEvent()
-    : Event(beforeunloadEvent, false, true)
+    : Event(eventNames().beforeunloadEvent, false, true)
 {
 }
 

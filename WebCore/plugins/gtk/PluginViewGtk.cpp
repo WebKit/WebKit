@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
-#include "EventNames.h"
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
 #include "FrameTree.h"
@@ -81,7 +80,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 void PluginView::updatePluginWidget() const

@@ -75,7 +75,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
@@ -505,7 +504,7 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
     
     // FIXME: Do the continuation search like anchorElement does
     for (EventTargetNode* elt = static_cast<EventTargetNode*>(node); elt; elt = static_cast<EventTargetNode*>(elt->parentNode())) {
-        if (elt->inlineEventListenerForType(clickEvent) || elt->inlineEventListenerForType(mousedownEvent) || elt->inlineEventListenerForType(mouseupEvent))
+        if (elt->inlineEventListenerForType(eventNames().clickEvent) || elt->inlineEventListenerForType(eventNames().mousedownEvent) || elt->inlineEventListenerForType(eventNames().mouseupEvent))
             return static_cast<Element*>(elt);
     }
     

@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLFrameSetElement::HTMLFrameSetElement(Document *doc)
@@ -127,11 +126,11 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
             m_borderColorSet = true;
         }
     } else if (attr->name() == onloadAttr) {
-        document()->setWindowInlineEventListenerForTypeAndAttribute(loadEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
-        document()->setWindowInlineEventListenerForTypeAndAttribute(beforeunloadEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().beforeunloadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
-        document()->setWindowInlineEventListenerForTypeAndAttribute(unloadEvent, attr);
+        document()->setWindowInlineEventListenerForTypeAndAttribute(eventNames().unloadEvent, attr);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

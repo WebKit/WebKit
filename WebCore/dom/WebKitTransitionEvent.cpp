@@ -29,48 +29,46 @@
 #include "EventNames.h"
 
 namespace WebCore {
-    
-    using namespace EventNames;
-    
-    WebKitTransitionEvent::WebKitTransitionEvent()
+        
+WebKitTransitionEvent::WebKitTransitionEvent()
     : m_propertyName()
     , m_elapsedTime(0.0)
-    {
-    }
-    
-    WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime)
+{
+}
+
+WebKitTransitionEvent::WebKitTransitionEvent(const AtomicString& type, const String& propertyName, double elapsedTime)
     : Event(type, true, true)
     , m_propertyName(propertyName)
     , m_elapsedTime(elapsedTime)
-    {
-    }
-    
-    WebKitTransitionEvent::~WebKitTransitionEvent()
-    {
-    }
-    
-    void WebKitTransitionEvent::initWebKitTransitionEvent(const AtomicString& type, 
+{
+}
+
+WebKitTransitionEvent::~WebKitTransitionEvent()
+{
+}
+
+void WebKitTransitionEvent::initWebKitTransitionEvent(const AtomicString& type, 
                                             bool /*canBubbleArg*/,
                                             bool /*cancelableArg*/,
                                             const String& propertyName,
                                             double elapsedTime)
-    {
-        if (dispatched())
-            return;
-        
-        initEvent(type, false, true);
-        
-        m_propertyName = propertyName;
-    }
+{
+    if (dispatched())
+        return;
     
-    const String& WebKitTransitionEvent::propertyName() const
-    {
-        return m_propertyName;
-    }
+    initEvent(type, false, true);
     
-    double WebKitTransitionEvent::elapsedTime() const
-    {
-        return m_elapsedTime;
-    }
-    
+    m_propertyName = propertyName;
+}
+
+const String& WebKitTransitionEvent::propertyName() const
+{
+    return m_propertyName;
+}
+
+double WebKitTransitionEvent::elapsedTime() const
+{
+    return m_elapsedTime;
+}
+
 } // namespace WebCore

@@ -45,8 +45,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey | PlatformKeyboardEvent::AltKey;
 
 const double EventHandler::TextDragDelay = 0.15;
@@ -97,7 +95,7 @@ PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
 static inline bool isKeyboardOptionTab(KeyboardEvent* event)
 {
     return event
-        && (event->type() == keydownEvent || event->type() == keypressEvent)
+        && (event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent)
         && event->altKey()
         && event->keyIdentifier() == "U+0009";    
 }

@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 DOMApplicationCache::DOMApplicationCache(Frame* frame)
     : m_frame(frame)
 {
@@ -250,37 +248,37 @@ void DOMApplicationCache::callListener(const AtomicString& eventType, EventListe
 
 void DOMApplicationCache::callCheckingListener()
 {
-    callListener(checkingEvent, m_onCheckingListener.get());
+    callListener(eventNames().checkingEvent, m_onCheckingListener.get());
 }
 
 void DOMApplicationCache::callErrorListener()
 {
-    callListener(errorEvent, m_onErrorListener.get());
+    callListener(eventNames().errorEvent, m_onErrorListener.get());
 }
 
 void DOMApplicationCache::callNoUpdateListener()
 {
-    callListener(noupdateEvent, m_onNoUpdateListener.get());
+    callListener(eventNames().noupdateEvent, m_onNoUpdateListener.get());
 }
 
 void DOMApplicationCache::callDownloadingListener()
 {
-    callListener(downloadingEvent, m_onDownloadingListener.get());
+    callListener(eventNames().downloadingEvent, m_onDownloadingListener.get());
 }
 
 void DOMApplicationCache::callProgressListener()
 {
-    callListener(progressEvent, m_onProgressListener.get());
+    callListener(eventNames().progressEvent, m_onProgressListener.get());
 }
 
 void DOMApplicationCache::callUpdateReadyListener()
 {
-    callListener(updatereadyEvent, m_onUpdateReadyListener.get());
+    callListener(eventNames().updatereadyEvent, m_onUpdateReadyListener.get());
 }
 
 void DOMApplicationCache::callCachedListener()
 {
-    callListener(cachedEvent, m_onCachedListener.get());
+    callListener(eventNames().cachedEvent, m_onCachedListener.get());
 }
 
 } // namespace WebCore

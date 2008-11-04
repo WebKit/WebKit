@@ -27,12 +27,9 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "Element.h"
-#include "EventNames.h"
 #include "RenderImage.h"
 
 namespace WebCore {
-
-using namespace EventNames;
 
 ImageLoader::ImageLoader(Element* elt)
     : m_element(elt)

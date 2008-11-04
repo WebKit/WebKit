@@ -29,7 +29,6 @@
 
 #include "CSSStyleSelector.h"
 #include "Document.h"
-#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
@@ -41,7 +40,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace EventNames;
 
 HTMLOptionElement::HTMLOptionElement(Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(optionTag, doc, f)

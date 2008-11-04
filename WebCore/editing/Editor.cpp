@@ -68,7 +68,6 @@
 namespace WebCore {
 
 using namespace std;
-using namespace EventNames;
 using namespace HTMLNames;
 
 // When an event handler has moved the selection outside of a text control
@@ -129,17 +128,17 @@ bool Editor::canEditRichly() const
 
 bool Editor::canDHTMLCut()
 {
-    return !m_frame->selection()->isInPasswordField() && !dispatchCPPEvent(beforecutEvent, ClipboardNumb);
+    return !m_frame->selection()->isInPasswordField() && !dispatchCPPEvent(eventNames().beforecutEvent, ClipboardNumb);
 }
 
 bool Editor::canDHTMLCopy()
 {
-    return !m_frame->selection()->isInPasswordField() && !dispatchCPPEvent(beforecopyEvent, ClipboardNumb);
+    return !m_frame->selection()->isInPasswordField() && !dispatchCPPEvent(eventNames().beforecopyEvent, ClipboardNumb);
 }
 
 bool Editor::canDHTMLPaste()
 {
-    return !dispatchCPPEvent(beforepasteEvent, ClipboardNumb);
+    return !dispatchCPPEvent(eventNames().beforepasteEvent, ClipboardNumb);
 }
 
 bool Editor::canCut() const
@@ -357,7 +356,7 @@ bool Editor::tryDHTMLCopy()
     // also done for security, as it erases data from the last copy/paste.
     Pasteboard::generalPasteboard()->clear();
 
-    return !dispatchCPPEvent(copyEvent, ClipboardWritable);
+    return !dispatchCPPEvent(eventNames().copyEvent, ClipboardWritable);
 }
 
 bool Editor::tryDHTMLCut()
@@ -369,12 +368,12 @@ bool Editor::tryDHTMLCut()
     // also done for security, as it erases data from the last copy/paste.
     Pasteboard::generalPasteboard()->clear();
 
-    return !dispatchCPPEvent(cutEvent, ClipboardWritable);
+    return !dispatchCPPEvent(eventNames().cutEvent, ClipboardWritable);
 }
 
 bool Editor::tryDHTMLPaste()
 {
-    return !dispatchCPPEvent(pasteEvent, ClipboardReadable);
+    return !dispatchCPPEvent(eventNames().pasteEvent, ClipboardReadable);
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard* pasteboard)
@@ -748,9 +747,9 @@ static void dispatchEditableContentChangedEvents(const EditCommand& command)
     Element* endRoot = command.endingRootEditableElement();
     ExceptionCode ec;
     if (startRoot)
-        startRoot->dispatchEvent(Event::create(webkitEditableContentChangedEvent, false, false), ec);
+        startRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false), ec);
     if (endRoot && endRoot != startRoot)
-        endRoot->dispatchEvent(Event::create(webkitEditableContentChangedEvent, false, false), ec);
+        endRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false), ec);
 }
 
 void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)

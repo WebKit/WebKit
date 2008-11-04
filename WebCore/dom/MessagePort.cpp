@@ -210,7 +210,7 @@ void MessagePort::dispatchMessages()
     RefPtr<Event> evt;
     while (m_messageQueue.tryGetMessage(evt)) {
 
-        ASSERT(evt->type() == EventNames::messageEvent);
+        ASSERT(evt->type() == eventNames().messageEvent);
 
         if (m_onMessageListener) {
             evt->setTarget(this);
@@ -238,7 +238,7 @@ void MessagePort::dispatchCloseEvent()
     ASSERT(m_pendingCloseEvent);
     m_pendingCloseEvent = false;
 
-    RefPtr<Event> evt = Event::create(EventNames::closeEvent, false, true);
+    RefPtr<Event> evt = Event::create(eventNames().closeEvent, false, true);
     if (m_onCloseListener) {
         evt->setTarget(this);
         evt->setCurrentTarget(this);

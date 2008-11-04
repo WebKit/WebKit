@@ -554,7 +554,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 // Set the start timer to the initial delay (0 if no delay)
                 m_waitedForResponse = false;
                 m_animState = AnimationStateStartWaitTimer;
-                m_animationTimerCallback.startTimer(m_animation->delay(), EventNames::webkitAnimationStartEvent, m_animation->delay());
+                m_animationTimerCallback.startTimer(m_animation->delay(), eventNames().webkitAnimationStartEvent, m_animation->delay());
             }
             break;
         case AnimationStateStartWaitTimer:
@@ -718,11 +718,11 @@ void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, d
     ASSERT(m_object->document() && !m_object->document()->inPageCache());
 
     // FIXME: use an enum
-    if (eventType == EventNames::webkitAnimationStartEvent)
+    if (eventType == eventNames().webkitAnimationStartEvent)
         updateStateMachine(AnimationStateInputStartTimerFired, elapsedTime);
-    else if (eventType == EventNames::webkitAnimationIterationEvent)
+    else if (eventType == eventNames().webkitAnimationIterationEvent)
         updateStateMachine(AnimationStateInputLoopTimerFired, elapsedTime);
-    else if (eventType == EventNames::webkitAnimationEndEvent) {
+    else if (eventType == eventNames().webkitAnimationEndEvent) {
         updateStateMachine(AnimationStateInputEndTimerFired, elapsedTime);
         // |this| may be deleted here
     }
@@ -804,11 +804,11 @@ void AnimationBase::primeEventTimers()
         // We are not at the end yet, send a loop event
         ASSERT(nextIterationTime > 0);
         m_animState = AnimationStateLooping;
-        m_animationTimerCallback.startTimer(durationLeft, EventNames::webkitAnimationIterationEvent, nextIterationTime);
+        m_animationTimerCallback.startTimer(durationLeft, eventNames().webkitAnimationIterationEvent, nextIterationTime);
     } else {
         // We are at the end, send an end event
         m_animState = AnimationStateEnding;
-        m_animationTimerCallback.startTimer(durationLeft, EventNames::webkitAnimationEndEvent, nextIterationTime);
+        m_animationTimerCallback.startTimer(durationLeft, eventNames().webkitAnimationEndEvent, nextIterationTime);
     }
 }
   

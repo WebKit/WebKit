@@ -57,7 +57,6 @@
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
-using namespace EventNames;
 
 // Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
 #define _webkit_PDFViewDisplayModeChangedNotification @"PDFViewDisplayModeChanged"
@@ -935,7 +934,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         case NSKeyDown: {
             PlatformKeyboardEvent pe(nsEvent);
             pe.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
-            event = KeyboardEvent::create(keydownEvent, true, true, 0,
+            event = KeyboardEvent::create(eventNames().keydownEvent, true, true, 0,
                 pe.keyIdentifier(), pe.windowsVirtualKeyCode(),
                 pe.ctrlKey(), pe.altKey(), pe.shiftKey(), pe.metaKey(), false);
         }
@@ -943,7 +942,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             break;
     }
     if (button != noButton)
-        event = MouseEvent::create(clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
+        event = MouseEvent::create(eventNames().clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
             [nsEvent modifierFlags] & NSControlKeyMask,
             [nsEvent modifierFlags] & NSAlternateKeyMask,
             [nsEvent modifierFlags] & NSShiftKeyMask,

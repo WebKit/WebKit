@@ -162,17 +162,17 @@ bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType listen
 
 void KeyframeAnimation::onAnimationStart(double elapsedTime)
 {
-    sendAnimationEvent(EventNames::webkitAnimationStartEvent, elapsedTime);
+    sendAnimationEvent(eventNames().webkitAnimationStartEvent, elapsedTime);
 }
 
 void KeyframeAnimation::onAnimationIteration(double elapsedTime)
 {
-    sendAnimationEvent(EventNames::webkitAnimationIterationEvent, elapsedTime);
+    sendAnimationEvent(eventNames().webkitAnimationIterationEvent, elapsedTime);
 }
 
 void KeyframeAnimation::onAnimationEnd(double elapsedTime)
 {
-    if (!sendAnimationEvent(EventNames::webkitAnimationEndEvent, elapsedTime)) {
+    if (!sendAnimationEvent(eventNames().webkitAnimationEndEvent, elapsedTime)) {
         // We didn't dispatch an event, which would call endAnimation(), so we'll just call it here.
         endAnimation(true);
     }
@@ -181,12 +181,12 @@ void KeyframeAnimation::onAnimationEnd(double elapsedTime)
 bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double elapsedTime)
 {
     Document::ListenerType listenerType;
-    if (eventType == EventNames::webkitAnimationIterationEvent)
+    if (eventType == eventNames().webkitAnimationIterationEvent)
         listenerType = Document::ANIMATIONITERATION_LISTENER;
-    else if (eventType == EventNames::webkitAnimationEndEvent)
+    else if (eventType == eventNames().webkitAnimationEndEvent)
         listenerType = Document::ANIMATIONEND_LISTENER;
     else {
-        ASSERT(eventType == EventNames::webkitAnimationStartEvent);
+        ASSERT(eventType == eventNames().webkitAnimationStartEvent);
         listenerType = Document::ANIMATIONSTART_LISTENER;
     }
 
@@ -207,7 +207,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
         element->dispatchWebKitAnimationEvent(eventType, m_keyframes.animationName(), elapsedTime);
 
         // Restore the original (unanimated) style
-        if (eventType == EventNames::webkitAnimationEndEvent && element->renderer())
+        if (eventType == eventNames().webkitAnimationEndEvent && element->renderer())
             setChanged(element.get());
 
         return true; // Did dispatch an event

@@ -36,7 +36,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(Document* doc, HTMLFormElement* f)
@@ -122,9 +121,9 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attrName == ismapAttr)
         ismap = true;
     else if (attrName == onabortAttr)
-        setInlineEventListenerForTypeAndAttribute(abortEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().abortEvent, attr);
     else if (attrName == onloadAttr)
-        setInlineEventListenerForTypeAndAttribute(loadEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().loadEvent, attr);
     else if (attrName == compositeAttr) {
         if (!parseCompositeOperator(attr->value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;

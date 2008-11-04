@@ -38,8 +38,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 class RenderTextControlInnerBlock : public RenderBlock {
 public:
     RenderTextControlInnerBlock(Node* node) : RenderBlock(node) { }
@@ -100,7 +98,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* evt)
                 static_cast<HTMLInputElement*>(shadowAncestor)->defaultEventHandler(evt);
             else
                 static_cast<HTMLTextAreaElement*>(shadowAncestor)->defaultEventHandler(evt);
-        if (evt->type() == webkitEditableContentChangedEvent)
+        if (evt->type() == eventNames().webkitEditableContentChangedEvent)
             static_cast<RenderTextControl*>(shadowAncestor->renderer())->subtreeHasChanged();
     }
     if (!evt->defaultHandled())
@@ -121,7 +119,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
 {
     // On mousedown, bring up a menu, if needed
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
-    if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         input->focus();
         input->select();
         if (input && input->renderer() && static_cast<RenderTextControl*>(input->renderer())->popupIsVisible())
@@ -144,7 +142,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
-    if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    if (evt->type() == eventNames().mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         input->focus();
         input->select();
         evt->setDefaultHandled();
@@ -153,7 +151,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
                 frame->eventHandler()->setCapturingMouseEventsNode(this);
                 m_capturing = true;
             }
-    } else if (evt->type() == mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+    } else if (evt->type() == eventNames().mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         if (m_capturing && renderer() && renderer()->style()->visibility() == VISIBLE) {
             if (hovered()) {
                 input->setValue("");

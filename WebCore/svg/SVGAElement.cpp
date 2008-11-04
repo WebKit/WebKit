@@ -45,8 +45,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
     : SVGStyledTransformableElement(tagName, doc)
     , SVGURIReference()
@@ -108,13 +106,13 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
 
 void SVGAElement::defaultEventHandler(Event* evt)
 {
-    if (isLink() && (evt->type() == clickEvent || (evt->type() == keydownEvent && focused()))) {
+    if (isLink() && (evt->type() == eventNames().clickEvent || (evt->type() == eventNames().keydownEvent && focused()))) {
         MouseEvent* e = 0;
-        if (evt->type() == clickEvent && evt->isMouseEvent())
+        if (evt->type() == eventNames().clickEvent && evt->isMouseEvent())
             e = static_cast<MouseEvent*>(evt);
         
         KeyboardEvent* k = 0;
-        if (evt->type() == keydownEvent && evt->isKeyboardEvent())
+        if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent())
             k = static_cast<KeyboardEvent*>(evt);
         
         if (e && e->button() == RightButton) {

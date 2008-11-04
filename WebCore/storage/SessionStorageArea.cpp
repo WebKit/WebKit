@@ -82,7 +82,7 @@ void SessionStorageArea::dispatchStorageEvent(const String& key, const String& o
         
     for (unsigned i = 0; i < frames.size(); ++i) {
         if (HTMLElement* body = frames[i]->document()->body())
-            body->dispatchStorageEvent(EventNames::storageEvent, key, oldValue, newValue, sourceFrame);        
+            body->dispatchStorageEvent(eventNames().storageEvent, key, oldValue, newValue, sourceFrame);        
     }
 }
 

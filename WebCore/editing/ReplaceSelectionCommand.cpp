@@ -51,7 +51,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
@@ -123,7 +122,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     
     Node* shadowAncestorNode = editableRoot->shadowAncestorNode();
     
-    if (!editableRoot->inlineEventListenerForType(webkitBeforeTextInsertedEvent) &&
+    if (!editableRoot->inlineEventListenerForType(eventNames().webkitBeforeTextInsertedEvent) &&
         // FIXME: Remove these checks once textareas and textfields actually register an event handler.
         !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextField()) &&
         !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextArea()) &&

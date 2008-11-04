@@ -1,3 +1,316 @@
+2008-11-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22030
+        Make EventNames usable from multiple threads
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::stringTable):
+        (WebCore::AtomicString::add):
+        (WebCore::AtomicString::remove):
+        (WebCore::AtomicString::find):
+        (WebCore::AtomicString::init):
+        * platform/text/AtomicString.h:
+        Atomic string table is now per-thread. Individual strings cannot be shared between threads,
+        so global AtomicString constants cannot be used from threads other than the main one.
+
+        * dom/EventNames.cpp:
+        (WebCore::EventNames::EventNames):
+        (WebCore::eventNames):
+        (WebCore::EventNames::init):
+        * dom/EventNames.h:
+        Made EventNames a ThreadSpecific struct. Individual event names are now accessed as
+        eventNames().fooEvent, not EventNames::fooEvent. This makes EventNames usable from all
+        threads.
+
+        * WebCore.base.exp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * dom/BeforeTextInsertedEvent.cpp:
+        (WebCore::BeforeTextInsertedEvent::BeforeTextInsertedEvent):
+        * dom/BeforeUnloadEvent.cpp:
+        (WebCore::BeforeUnloadEvent::BeforeUnloadEvent):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/DedicatedWorker.cpp:
+        (WebCore::DedicatedWorker::dispatchErrorEvent):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::setFocusedNode):
+        (WebCore::Document::addListenerTypeIfNeeded):
+        (WebCore::Document::removeWindowInlineEventListenerForType):
+        (WebCore::Document::addWindowEventListener):
+        (WebCore::Document::removeWindowEventListener):
+        (WebCore::Document::finishedParsing):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchGenericEvent):
+        (WebCore::EventTargetNode::dispatchSubtreeModifiedEvent):
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        (WebCore::EventTargetNode::dispatchUIEvent):
+        (WebCore::EventTargetNode::dispatchSimulatedClick):
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchFocusEvent):
+        (WebCore::EventTargetNode::dispatchBlurEvent):
+        (WebCore::EventTargetNode::defaultEventHandler):
+        (WebCore::EventTargetNode::on*): (multiple methods)
+        (WebCore::EventTargetNode::setOn*): (multiple methods)
+        * dom/KeyboardEvent.cpp:
+        (WebCore::eventTypeForKeyboardEventType):
+        (WebCore::KeyboardEvent::keyCode):
+        (WebCore::KeyboardEvent::charCode):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::dispatchCloseEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::isDragEvent):
+        (WebCore::MouseEvent::toElement):
+        (WebCore::MouseEvent::fromElement):
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEvent::OverflowEvent):
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::TextEvent):
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEvent::WebKitAnimationEvent):
+        (WebCore::WebKitAnimationEvent::~WebKitAnimationEvent):
+        (WebCore::WebKitAnimationEvent::initWebKitAnimationEvent):
+        (WebCore::WebKitAnimationEvent::animationName):
+        (WebCore::WebKitAnimationEvent::elapsedTime):
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEvent::WebKitTransitionEvent):
+        (WebCore::WebKitTransitionEvent::~WebKitTransitionEvent):
+        (WebCore::WebKitTransitionEvent::initWebKitTransitionEvent):
+        (WebCore::WebKitTransitionEvent::propertyName):
+        (WebCore::WebKitTransitionEvent::elapsedTime):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/XMLTokenizerLibxml2.cpp:
+        * dom/XMLTokenizerQt.cpp:
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::defaultEventHandler):
+        * editing/EditCommand.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::canDHTMLPaste):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::tryDHTMLPaste):
+        (WebCore::dispatchEditableContentChangedEvents):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setFocused):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::onChange):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::handleLocalEvents):
+        (WebCore::HTMLFormElement::prepareSubmit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        (WebCore::HTMLInputElement::postDispatchEventHandler):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        (WebCore::HTMLInputElement::onSearch):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::setDefaultPlaybackRate):
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::documentWillBecomeInactive):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::dispatchLoadEvent):
+        (WebCore::HTMLScriptElement::dispatchErrorEvent):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseMappedAttribute):
+        (WebCore::HTMLTextAreaElement::defaultEventHandler):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::canCachePage):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageEventListener::handleEvent):
+        * loader/ImageLoader.cpp:
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::callCheckingListener):
+        (WebCore::DOMApplicationCache::callErrorListener):
+        (WebCore::DOMApplicationCache::callNoUpdateListener):
+        (WebCore::DOMApplicationCache::callDownloadingListener):
+        (WebCore::DOMApplicationCache::callProgressListener):
+        (WebCore::DOMApplicationCache::callUpdateReadyListener):
+        (WebCore::DOMApplicationCache::callCachedListener):
+        * page/AccessibilityObject.cpp:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::mouseButtonListener):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::on*): (multiple methods)
+        (WebCore::DOMWindow::setOn*): (multiple methods)
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::cancelDragAndDrop):
+        (WebCore::EventHandler::performDragAndDrop):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        (WebCore::EventHandler::canMouseDragExtendSelect):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        (WebCore::EventHandler::dragSourceMovedTo):
+        (WebCore::EventHandler::dragSourceEndedAt):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::handleTextInputEvent):
+        * page/FocusController.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::sendResizeEvent):
+        (WebCore::Frame::sendScrollEvent):
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::animationTimerCallbackFired):
+        (WebCore::AnimationBase::primeEventTimers):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::onAnimationStart):
+        (WebCore::KeyframeAnimation::onAnimationIteration):
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * page/gtk/EventHandlerGtk.cpp:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::isKeyboardOptionTab):
+        * page/mac/FrameMac.mm:
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::isKeyboardOptionTab):
+        * plugins/PluginView.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlMuteButtonElement::defaultEventHandler):
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler):
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::valueChanged):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::forwardEvent):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderSlider.cpp:
+        (WebCore::HTMLSliderThumbElement::defaultEventHandler):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::forwardEvent):
+        (WebCore::RenderTextControl::selectionChanged):
+        * rendering/RenderWidget.cpp:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::dispatchStorageEvent):
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::dispatchStorageEvent):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::dispatchZoomEvent):
+        (WebCore::SVGDocument::dispatchScrollEvent):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseMappedAttribute):
+        (WebCore::hasLoadListener):
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::on*): (multiple methods)
+        (WebCore::SVGElementInstance::setOn*): (multiple methods)
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::dispatchErrorEvent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dispatchReadyStateChangeEvent):
+        (WebCore::XMLHttpRequest::dispatchAbortEvent):
+        (WebCore::XMLHttpRequest::dispatchErrorEvent):
+        (WebCore::XMLHttpRequest::dispatchLoadEvent):
+        (WebCore::XMLHttpRequest::dispatchLoadStartEvent):
+        (WebCore::XMLHttpRequest::dispatchProgressEvent):
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::dispatchAbortEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchErrorEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchLoadEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchLoadStartEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchProgressEvent):
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::XPathResult):
+        (WebCore::XPathResult::~XPathResult):
+        (WebCore::XPathResult::invalidateIteratorState):
+        Access event names via eventNames() function.
+
 2008-11-04  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.

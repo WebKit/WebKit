@@ -50,7 +50,6 @@
 #endif
 
 using namespace JSC;
-using namespace WebCore::EventNames;
 
 namespace WebCore {
 
@@ -184,15 +183,15 @@ bool ScriptController::processingUserGesture() const
     if (Event* event = m_windowShell->window()->currentEvent()) {
         const AtomicString& type = event->type();
         if ( // mouse events
-            type == clickEvent || type == mousedownEvent ||
-            type == mouseupEvent || type == dblclickEvent ||
+            type == eventNames().clickEvent || type == eventNames().mousedownEvent ||
+            type == eventNames().mouseupEvent || type == eventNames().dblclickEvent ||
             // keyboard events
-            type == keydownEvent || type == keypressEvent ||
-            type == keyupEvent ||
+            type == eventNames().keydownEvent || type == eventNames().keypressEvent ||
+            type == eventNames().keyupEvent ||
             // other accepted events
-            type == selectEvent || type == changeEvent ||
-            type == focusEvent || type == blurEvent ||
-            type == submitEvent)
+            type == eventNames().selectEvent || type == eventNames().changeEvent ||
+            type == eventNames().focusEvent || type == eventNames().blurEvent ||
+            type == eventNames().submitEvent)
             return true;
     } else { // no event
         if (m_sourceURL && m_sourceURL->isNull() && !m_processingTimerCallback) {

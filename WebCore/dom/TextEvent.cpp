@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 TextEvent::TextEvent()
     : m_isLineBreak(false)
     , m_isBackTab(false)
@@ -40,7 +38,7 @@ TextEvent::TextEvent()
 }
 
 TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data)
-    : UIEvent(textInputEvent, true, true, view, 0)
+    : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_data(data)
     , m_isLineBreak(false)
     , m_isBackTab(false)

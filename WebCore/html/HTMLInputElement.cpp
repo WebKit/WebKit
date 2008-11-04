@@ -61,7 +61,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 const int maxSavedResults = 256;
@@ -668,20 +667,20 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         if (respectHeightAndWidthAttrs())
             addCSSLength(attr, CSSPropertyHeight, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setInlineEventListenerForTypeAndAttribute(focusEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setInlineEventListenerForTypeAndAttribute(blurEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().blurEvent, attr);
     } else if (attr->name() == onselectAttr) {
-        setInlineEventListenerForTypeAndAttribute(selectEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().selectEvent, attr);
     } else if (attr->name() == onchangeAttr) {
-        setInlineEventListenerForTypeAndAttribute(changeEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().changeEvent, attr);
     } else if (attr->name() == oninputAttr) {
-        setInlineEventListenerForTypeAndAttribute(inputEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().inputEvent, attr);
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setInlineEventListenerForTypeAndAttribute(searchEvent, attr);
+        setInlineEventListenerForTypeAndAttribute(eventNames().searchEvent, attr);
     } else if (attr->name() == resultsAttr) {
         int oldResults = m_maxResults;
         m_maxResults = !attr->isNull() ? min(attr->value().toInt(), maxSavedResults) : -1;
@@ -1058,7 +1057,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     setValueMatchesRenderer();
 
     // Fire the "input" DOM event.
-    dispatchEventForType(inputEvent, true, false);
+    dispatchEventForType(eventNames().inputEvent, true, false);
 }
 
 void HTMLInputElement::setFileListFromRenderer(const Vector<String>& paths)
@@ -1099,7 +1098,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
     // This result gives us enough info to perform the "undo" in postDispatch of the action we take here.
     void* result = 0; 
     if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
-            && evt->type() == clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+            && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         if (inputType() == CHECKBOX) {
             // As a way to store the state, we return 0 if we were unchecked, 1 if we were checked, and 2 for
             // indeterminate.
@@ -1137,7 +1136,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
 void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 {
     if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
-            && evt->type() == clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+            && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         if (inputType() == CHECKBOX) {
             // Reverse the checking we did in preDispatch.
             if (evt->defaultPrevented() || evt->defaultHandled()) {
@@ -1172,10 +1171,10 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 {
     bool clickDefaultFormButton = false;
 
-    if (isTextField() && evt->type() == textInputEvent && evt->isTextEvent() && static_cast<TextEvent*>(evt)->data() == "\n")
+    if (isTextField() && evt->type() == eventNames().textInputEvent && evt->isTextEvent() && static_cast<TextEvent*>(evt)->data() == "\n")
         clickDefaultFormButton = true;
 
-    if (inputType() == IMAGE && evt->isMouseEvent() && evt->type() == clickEvent) {
+    if (inputType() == IMAGE && evt->isMouseEvent() && evt->type() == eventNames().clickEvent) {
         // record the mouse position for when we get the DOMActivate event
         MouseEvent* me = static_cast<MouseEvent*>(evt);
         // FIXME: We could just call offsetX() and offsetY() on the event,
@@ -1192,14 +1191,14 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
     }
 
-    if (isTextField() && evt->type() == keydownEvent && evt->isKeyboardEvent() && focused() && document()->frame()
+    if (isTextField() && evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent() && focused() && document()->frame()
                 && document()->frame()->doTextFieldCommandFromEvent(this, static_cast<KeyboardEvent*>(evt))) {
         evt->setDefaultHandled();
         return;
     }
 
     if (inputType() == RADIO && evt->isMouseEvent()
-            && evt->type() == clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+            && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         evt->setDefaultHandled();
         return;
     }
@@ -1215,7 +1214,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // actually submitting the form. For reset inputs, the form is reset. These events are sent when the user clicks
     // on the element, or presses enter while it is the active element. JavaScript code wishing to activate the element
     // must dispatch a DOMActivate event - a click event will not do the job.
-    if (evt->type() == DOMActivateEvent && !disabled()) {
+    if (evt->type() == eventNames().DOMActivateEvent && !disabled()) {
         if (inputType() == IMAGE || inputType() == SUBMIT || inputType() == RESET) {
             if (!form())
                 return;
@@ -1239,7 +1238,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
+    if (evt->type() == eventNames().keypressEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
 
         int charCode = static_cast<KeyboardEvent*>(evt)->charCode();
@@ -1291,7 +1290,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
     }
 
-    if (evt->type() == keydownEvent && evt->isKeyboardEvent()) {
+    if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent()) {
         String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
 
         if (key == "U+0020") {
@@ -1347,7 +1346,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         }
     }
 
-    if (evt->type() == keyupEvent && evt->isKeyboardEvent()) {
+    if (evt->type() == eventNames().keyupEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
 
         String key = static_cast<KeyboardEvent*>(evt)->keyIdentifier();
@@ -1422,12 +1421,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         textEvent->setText(constrainValue(textEvent->text(), maxNewLen));
     }
 
-    if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == blurEvent || evt->type() == focusEvent))
+    if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == eventNames().blurEvent || evt->type() == eventNames().focusEvent))
         static_cast<RenderTextControl*>(renderer())->forwardEvent(evt);
 
     if (inputType() == RANGE && renderer()) {
         RenderSlider* slider = static_cast<RenderSlider*>(renderer());
-        if (evt->isMouseEvent() && evt->type() == mousedownEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
+        if (evt->isMouseEvent() && evt->type() == eventNames().mousedownEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
             MouseEvent* mEvt = static_cast<MouseEvent*>(evt);
             if (!slider->mouseEventIsInThumb(mEvt)) {
                 IntPoint eventOffset(mEvt->offsetX(), mEvt->offsetY());
@@ -1624,7 +1623,7 @@ void HTMLInputElement::onSearch()
     ASSERT(isSearchField());
     if (renderer())
         static_cast<RenderTextControl*>(renderer())->stopSearchEventTimer();
-    dispatchEventForType(searchEvent, true, false);
+    dispatchEventForType(eventNames().searchEvent, true, false);
 }
 
 Selection HTMLInputElement::selection() const

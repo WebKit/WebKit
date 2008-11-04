@@ -57,7 +57,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 const int NoXPosForVerticalArrowNavigation = INT_MIN;
@@ -1148,7 +1147,7 @@ void SelectionController::setFocused(bool flag)
     focusedOrActiveStateChanged();
 
     if (Document* doc = m_frame->document())
-        doc->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
+        doc->dispatchWindowEvent(flag ? eventNames().focusEvent : eventNames().blurEvent, false, false);
 }
 
 bool SelectionController::isFocusedAndActive() const

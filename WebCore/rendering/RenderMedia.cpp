@@ -46,8 +46,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
-
 static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
 // FIXME get this from style
@@ -376,11 +374,11 @@ void RenderMedia::forwardEvent(Event* event)
         if (m_fullscreenButton && m_fullscreenButton->renderer() && m_fullscreenButton->renderer()->absoluteBoundingBoxRect().contains(point))
             m_fullscreenButton->defaultEventHandler(event);
         
-        if (event->type() == mouseoverEvent) {
+        if (event->type() == eventNames().mouseoverEvent) {
             m_mouseOver = true;
             updateControlVisibility();
         }
-        if (event->type() == mouseoutEvent) {
+        if (event->type() == eventNames().mouseoutEvent) {
             // FIXME: moving over scrollbar thumb generates mouseout for the ancestor media element for some reason
             m_mouseOver = absoluteBoundingBoxRect().contains(point);
             updateControlVisibility();

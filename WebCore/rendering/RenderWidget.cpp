@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "Event.h"
-#include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -40,8 +39,6 @@
 using namespace std;
 
 namespace WebCore {
-
-using namespace EventNames;
 
 static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
 {

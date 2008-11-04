@@ -92,7 +92,6 @@ using namespace std;
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 #ifndef NDEBUG    
@@ -1314,7 +1313,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 void Frame::sendResizeEvent()
 {
     if (Document* doc = document())
-        doc->dispatchWindowEvent(EventNames::resizeEvent, false, false);
+        doc->dispatchWindowEvent(eventNames().resizeEvent, false, false);
 }
 
 void Frame::sendScrollEvent()
@@ -1326,7 +1325,7 @@ void Frame::sendScrollEvent()
     Document* doc = document();
     if (!doc)
         return;
-    doc->dispatchEventForType(scrollEvent, true, false);
+    doc->dispatchEventForType(eventNames().scrollEvent, true, false);
 }
 
 void Frame::clearTimers(FrameView *view, Document *document)

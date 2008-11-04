@@ -83,7 +83,6 @@
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/Element.h>
 #import <WebCore/EventHandler.h>
-#import <WebCore/EventNames.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/DragController.h>
 #import <WebCore/FloatRect.h>

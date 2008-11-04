@@ -67,8 +67,6 @@
 
 namespace WebCore {
 
-using namespace EventNames;
-
 static HashSet<Page*>* allPages;
 
 #ifndef NDEBUG
@@ -86,7 +84,7 @@ static void networkStateChanged()
             frames.append(frame);
     }
 
-    AtomicString eventName = networkStateNotifier().onLine() ? onlineEvent : offlineEvent;
+    AtomicString eventName = networkStateNotifier().onLine() ? eventNames().onlineEvent : eventNames().offlineEvent;
     
     for (unsigned i = 0; i < frames.size(); i++) {
         Document* document = frames[i]->document();

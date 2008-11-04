@@ -56,8 +56,6 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-using namespace EventNames;
-
 unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey;
 
 const double EventHandler::TextDragDelay = 0.0;
@@ -65,7 +63,7 @@ const double EventHandler::TextDragDelay = 0.0;
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {
     return event
-        && (event->type() == keydownEvent || event->type() == keypressEvent)
+        && (event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent)
         && event->altKey()
         && event->keyIdentifier() == "U+0009";
 }
