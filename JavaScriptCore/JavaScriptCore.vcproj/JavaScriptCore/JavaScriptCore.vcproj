@@ -613,11 +613,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSStaticScopeObject.cpp"
+				RelativePath="..\..\runtime\JSStaticScopeObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSStaticScopeObject.h"
+				RelativePath="..\..\runtime\JSStaticScopeObject.h"
 				>
 			</File>
 			<File

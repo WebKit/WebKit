@@ -1,3 +1,10 @@
+2008-11-04  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Update
+        the location of JSStaticScopeObject.{cpp,h}.
+
 2008-11-04  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Alexey Proskuryakov.
