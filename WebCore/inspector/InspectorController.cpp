@@ -68,9 +68,9 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <kjs/ustring.h>
-#include <kjs/CollectorHeapIterator.h>
+#include <runtime/CollectorHeapIterator.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
 #include <wtf/RefCounted.h>

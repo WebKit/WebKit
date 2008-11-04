@@ -23,7 +23,7 @@
 #include "JSNode.h"
 #include "JSNodeFilter.h"
 #include "NodeFilter.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 namespace WebCore {
 

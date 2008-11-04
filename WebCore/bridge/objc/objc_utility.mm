@@ -31,7 +31,7 @@
 #include "runtime_object.h"
 #include "WebScriptObject.h"
 #include <runtime/JSGlobalObject.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
 
 #if !defined(_C_LNG_LNG)

@@ -26,7 +26,7 @@
 #ifndef JavaScriptCallFrame_h
 #define JavaScriptCallFrame_h
 
-#include <kjs/ExecState.h>
+#include <runtime/ExecState.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <debugger/DebuggerCallFrame.h>

@@ -32,7 +32,7 @@
 #include "JSGeoposition.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 namespace WebCore {
 

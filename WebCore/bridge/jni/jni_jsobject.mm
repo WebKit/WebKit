@@ -35,9 +35,9 @@
 #include "ScriptController.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <kjs/ExecState.h>
+#include <runtime/ExecState.h>
 #include <runtime/JSGlobalObject.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <kjs/completion.h>
 #include <kjs/interpreter.h>
 #include <wtf/Assertions.h>

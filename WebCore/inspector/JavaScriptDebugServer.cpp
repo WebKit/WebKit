@@ -44,9 +44,9 @@
 #include "ScrollView.h"
 #include "Widget.h"
 #include "ScriptController.h"
-#include <kjs/CollectorHeapIterator.h>
+#include <runtime/CollectorHeapIterator.h>
 #include <debugger/DebuggerCallFrame.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <kjs/Parser.h>
 #include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>

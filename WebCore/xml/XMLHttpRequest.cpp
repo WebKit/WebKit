@@ -47,7 +47,7 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 namespace WebCore {
 

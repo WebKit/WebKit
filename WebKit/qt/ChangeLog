@@ -1,3 +1,11 @@
+2008-11-03  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Move more files into the runtime subdirectory of JavaScriptCore.
+
+        * Api/qwebpage.cpp:
+
 2008-10-25  Jade Han  <jade.han@nokia.com>
 
         Reviewed by Anders. 

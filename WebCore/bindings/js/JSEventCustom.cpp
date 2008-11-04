@@ -56,7 +56,7 @@
 #include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
 #include "XMLHttpRequestProgressEvent.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 #if ENABLE(DOM_STORAGE)
 #include "JSStorageEvent.h"

@@ -26,7 +26,7 @@
 #include "NodeFilter.h"
 
 #include "Node.h"
-#include <kjs/ExecState.h>
+#include <runtime/ExecState.h>
 
 using namespace JSC;
 

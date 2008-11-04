@@ -25,7 +25,7 @@
 #include "config.h"
 #include "NodeIterator.h"
 
-#include <kjs/ExecState.h>
+#include <runtime/ExecState.h>
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "NodeFilter.h"

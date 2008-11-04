@@ -51,7 +51,7 @@
 #include "Widget.h"
 #include "ScriptController.h"
 #include <kjs/collector.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
 

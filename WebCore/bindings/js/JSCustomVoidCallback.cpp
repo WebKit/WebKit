@@ -36,7 +36,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 namespace WebCore {
     

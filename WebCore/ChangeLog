@@ -1,5 +1,82 @@
 2008-11-03  Cameron Zwarich  <zwarich@apple.com>
 
+        Rubber-stamped by Maciej Stachowiak.
+
+        Move more files into the runtime subdirectory of JavaScriptCore.
+
+        * ForwardingHeaders/kjs/ArgList.h: Removed.
+        * ForwardingHeaders/kjs/CollectorHeapIterator.h: Removed.
+        * ForwardingHeaders/kjs/ExecState.h: Removed.
+        * ForwardingHeaders/kjs/InitializeThreading.h: Removed.
+        * ForwardingHeaders/kjs/JSGlobalData.h: Removed.
+        * ForwardingHeaders/kjs/JSLock.h: Removed.
+        * ForwardingHeaders/kjs/SymbolTable.h: Removed.
+        * ForwardingHeaders/runtime/ArgList.h: Copied from ForwardingHeaders/kjs/ArgList.h.
+        * ForwardingHeaders/runtime/CollectorHeapIterator.h: Copied from ForwardingHeaders/kjs/CollectorHeapIterator.h.
+        * ForwardingHeaders/runtime/ExecState.h: Copied from ForwardingHeaders/kjs/ExecState.h.
+        * ForwardingHeaders/runtime/InitializeThreading.h: Copied from ForwardingHeaders/kjs/InitializeThreading.h.
+        * ForwardingHeaders/runtime/JSGlobalData.h: Copied from ForwardingHeaders/kjs/JSGlobalData.h.
+        * ForwardingHeaders/runtime/JSLock.h: Copied from ForwardingHeaders/kjs/JSLock.h.
+        * ForwardingHeaders/runtime/SymbolTable.h: Copied from ForwardingHeaders/kjs/SymbolTable.h.
+        * bindings/js/GCController.cpp:
+        * bindings/js/JSCustomPositionCallback.cpp:
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        * bindings/js/JSCustomVoidCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSNodeFilterCondition.cpp:
+        * bindings/js/ScheduledAction.cpp:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptControllerMac.mm:
+        * bindings/objc/WebScriptObject.mm:
+        * bridge/NP_jsobject.cpp:
+        * bridge/c/c_class.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/c/c_runtime.cpp:
+        * bridge/c/c_utility.cpp:
+        * bridge/jni/jni_class.cpp:
+        * bridge/jni/jni_instance.cpp:
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/jni/jni_objc.mm:
+        * bridge/jni/jni_runtime.cpp:
+        * bridge/jni/jni_runtime.h:
+        * bridge/jni/jni_utility.cpp:
+        * bridge/npruntime.cpp:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/objc/objc_utility.mm:
+        * bridge/runtime.cpp:
+        * dom/Document.cpp:
+        * dom/Node.cpp:
+        * dom/NodeFilter.cpp:
+        * dom/NodeIterator.cpp:
+        * dom/TreeWalker.cpp:
+        * history/CachedPage.cpp:
+        * inspector/InspectorController.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/JavaScriptCallFrame.h:
+        * inspector/JavaScriptDebugServer.cpp:
+        * inspector/JavaScriptProfileNode.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/icon/IconDatabase.cpp:
+        * page/Console.cpp:
+        * page/Page.cpp:
+        * page/mac/FrameMac.mm:
+        * plugins/PluginView.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        * storage/Database.cpp:
+        * xml/XMLHttpRequest.cpp:
+
+2008-11-03  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove the forwarding header for FunctionCallProfile, because it was

@@ -52,7 +52,7 @@
 #import "WebViewInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import <Carbon/Carbon.h>
-#import <kjs/JSLock.h>
+#import <runtime/JSLock.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>

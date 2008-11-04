@@ -33,10 +33,10 @@
 #import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
 #import <debugger/DebuggerCallFrame.h>
-#import <kjs/ExecState.h>
+#import <runtime/ExecState.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSFunction.h>
-#import <kjs/JSLock.h>
+#import <runtime/JSLock.h>
 #import <kjs/interpreter.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>

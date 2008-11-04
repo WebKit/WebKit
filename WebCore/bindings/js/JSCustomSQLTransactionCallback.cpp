@@ -37,7 +37,7 @@
 #include "ScriptController.h"
 #include "JSSQLTransaction.h"
 #include "Page.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCountedLeakCounter.h>
 

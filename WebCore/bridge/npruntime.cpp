@@ -33,7 +33,7 @@
 
 #include "c_utility.h"
 #include <kjs/identifier.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 

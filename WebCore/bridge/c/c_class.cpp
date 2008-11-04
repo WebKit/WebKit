@@ -33,7 +33,7 @@
 #include "c_runtime.h"
 #include "npruntime_impl.h"
 #include <kjs/identifier.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 namespace JSC { namespace Bindings {
 

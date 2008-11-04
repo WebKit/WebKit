@@ -112,7 +112,7 @@
 #include "XMLTokenizer.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 #if ENABLE(DATABASE)
 #include "Database.h"

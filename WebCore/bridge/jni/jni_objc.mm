@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 #import "jni_utility.h"
 #import "objc_utility.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 using namespace JSC::Bindings;
 

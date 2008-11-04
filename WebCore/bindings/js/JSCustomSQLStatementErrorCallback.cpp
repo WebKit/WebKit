@@ -36,7 +36,7 @@
 #include "ScriptController.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 namespace WebCore {
     

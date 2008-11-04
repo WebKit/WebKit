@@ -30,7 +30,7 @@
 #include <debugger/DebuggerCallFrame.h>
 #include <runtime/JSGlobalObject.h>
 #include <kjs/interpreter.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
 

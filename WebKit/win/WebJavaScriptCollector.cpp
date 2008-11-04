@@ -32,7 +32,7 @@
 #include <JavaScriptCore/collector.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #pragma warning(pop)
 
 using namespace JSC;

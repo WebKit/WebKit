@@ -41,7 +41,7 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SystemTime.h"
-#include <kjs/InitializeThreading.h>
+#include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(WIN_OS)

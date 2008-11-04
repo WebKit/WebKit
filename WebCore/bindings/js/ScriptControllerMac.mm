@@ -38,7 +38,7 @@
 #import "WebScriptObjectPrivate.h"
 #import "Widget.h"
 #import <JavaScriptCore/APICast.h>
-#import <kjs/JSLock.h>
+#import <runtime/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "c_instance.h"

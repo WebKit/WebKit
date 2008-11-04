@@ -25,7 +25,7 @@
 #include "config.h"
 #include "TreeWalker.h"
 
-#include <kjs/ExecState.h>
+#include <runtime/ExecState.h>
 #include "ExceptionCode.h"
 #include "ContainerNode.h"
 #include "NodeFilter.h"

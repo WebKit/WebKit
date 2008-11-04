@@ -29,7 +29,7 @@
 #include "PageGroup.h"
 #include "Pasteboard.h"
 #include "PasteboardHelperGtk.h"
-#include <kjs/InitializeThreading.h>
+#include <runtime/InitializeThreading.h>
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"

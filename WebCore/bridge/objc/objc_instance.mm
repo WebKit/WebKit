@@ -29,7 +29,7 @@
 #import "FoundationExtras.h"
 #import "WebScriptObject.h"
 #include <runtime/Error.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
 
 #ifdef NDEBUG

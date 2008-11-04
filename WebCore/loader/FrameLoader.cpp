@@ -86,7 +86,7 @@
 #include "XMLTokenizer.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

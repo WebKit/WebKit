@@ -31,7 +31,7 @@
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 using namespace JSC;
 

@@ -55,8 +55,8 @@
 #include "Text.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
-#include <kjs/ExecState.h>
-#include <kjs/JSLock.h>
+#include <runtime/ExecState.h>
+#include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {

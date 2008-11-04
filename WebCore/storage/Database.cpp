@@ -48,7 +48,7 @@
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
-#include <kjs/InitializeThreading.h>
+#include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

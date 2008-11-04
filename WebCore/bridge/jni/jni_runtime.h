@@ -30,7 +30,7 @@
 
 #include <jni_utility.h>
 #include <jni_instance.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 
 namespace JSC

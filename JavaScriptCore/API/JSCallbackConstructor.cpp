@@ -28,7 +28,7 @@
 
 #include "APICast.h"
 #include <runtime/JSGlobalObject.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <runtime/ObjectPrototype.h>
 #include <wtf/Vector.h>
 

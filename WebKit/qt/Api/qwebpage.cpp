@@ -63,7 +63,7 @@
 #include "HitTestResult.h"
 #include "WindowFeatures.h"
 #include "LocalizedStrings.h"
-#include "kjs/InitializeThreading.h"
+#include "runtime/InitializeThreading.h"
 
 #include <QApplication>
 #include <QBasicTimer>

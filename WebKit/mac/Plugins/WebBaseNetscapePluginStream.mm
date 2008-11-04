@@ -38,7 +38,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNetscapePluginPackage.h"
 #import <Foundation/NSURLResponse.h>
-#import <kjs/JSLock.h>
+#import <runtime/JSLock.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>

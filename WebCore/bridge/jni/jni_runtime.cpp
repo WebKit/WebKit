@@ -34,7 +34,7 @@
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <runtime/Error.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)

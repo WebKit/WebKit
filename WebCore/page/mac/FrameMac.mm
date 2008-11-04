@@ -59,7 +59,7 @@
 #import "visible_units.h"
 
 #import <Carbon/Carbon.h>
-#import <kjs/JSLock.h>
+#import <runtime/JSLock.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import "WebDashboardRegion.h"

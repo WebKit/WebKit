@@ -28,7 +28,7 @@
 
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 #if PLATFORM(QT)
 #include "qt_instance.h"

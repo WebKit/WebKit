@@ -127,8 +127,8 @@
 #import <WebKitSystemInterface.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/DateInstance.h>
-#import <kjs/InitializeThreading.h>
-#import <kjs/JSLock.h>
+#import <runtime/InitializeThreading.h>
+#import <runtime/JSLock.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>

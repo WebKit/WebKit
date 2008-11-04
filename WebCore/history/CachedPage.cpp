@@ -45,7 +45,7 @@
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)

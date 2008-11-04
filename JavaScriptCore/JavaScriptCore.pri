@@ -47,12 +47,12 @@ SOURCES += \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp \
     API/OpaqueJSString.cpp \
-    kjs/InitializeThreading.cpp \
-    kjs/JSGlobalData.cpp \
+    runtime/InitializeThreading.cpp \
+    runtime/JSGlobalData.cpp \
     runtime/JSGlobalObject.cpp \
-    kjs/JSStaticScopeObject.cpp \
+    runtime/JSStaticScopeObject.cpp \
     runtime/JSVariableObject.cpp \
-    kjs/JSActivation.cpp \
+    runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
     VM/CodeBlock.cpp \
     VM/CodeGenerator.cpp \
@@ -66,8 +66,8 @@ SOURCES += \
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time
 SOURCES += \
-    kjs/ArgList.cpp \
-    kjs/Arguments.cpp \
+    runtime/ArgList.cpp \
+    runtime/Arguments.cpp \
     runtime/ArrayConstructor.cpp \
     runtime/ArrayPrototype.cpp \
     runtime/BooleanConstructor.cpp \
@@ -75,7 +75,7 @@ SOURCES += \
     runtime/BooleanPrototype.cpp \
     runtime/CallData.cpp \
     kjs/collector.cpp \
-    kjs/CommonIdentifiers.cpp \
+    runtime/CommonIdentifiers.cpp \
     runtime/ConstructData.cpp \
     runtime/DateConstructor.cpp \
     runtime/DateInstance.cpp \
@@ -88,10 +88,10 @@ SOURCES += \
     runtime/ErrorConstructor.cpp \
     runtime/ErrorInstance.cpp \
     runtime/ErrorPrototype.cpp \
-    kjs/ExecState.cpp \
+    runtime/ExecState.cpp \
     runtime/FunctionConstructor.cpp \
     runtime/FunctionPrototype.cpp \
-    kjs/GetterSetter.cpp \
+    runtime/GetterSetter.cpp \
     runtime/GlobalEvalFunction.cpp \
     kjs/identifier.cpp \
     runtime/InternalFunction.cpp \
@@ -101,7 +101,7 @@ SOURCES += \
     runtime/JSFunction.cpp \
     runtime/JSGlobalObjectFunctions.cpp \
     runtime/JSImmediate.cpp \
-    kjs/JSLock.cpp \
+    runtime/JSLock.cpp \
     runtime/JSNumberCell.cpp \
     runtime/JSObject.cpp \
     runtime/JSString.cpp \
@@ -121,14 +121,14 @@ SOURCES += \
     runtime/ObjectPrototype.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
-    kjs/PropertyNameArray.cpp \
+    runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/PrototypeFunction.cpp \
     kjs/regexp.cpp \
     runtime/RegExpConstructor.cpp \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
-    kjs/ScopeChain.cpp \
+    runtime/ScopeChain.cpp \
     runtime/SmallStrings.cpp \
     runtime/StringConstructor.cpp \
     runtime/StringObject.cpp \

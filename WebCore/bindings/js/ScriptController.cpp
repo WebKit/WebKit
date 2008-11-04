@@ -43,7 +43,7 @@
 
 #include <kjs/completion.h>
 #include <debugger/Debugger.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "HTMLPlugInElement.h"

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "OpaqueJSString.h"
 
-#include <kjs/ExecState.h>
+#include <runtime/ExecState.h>
 #include <runtime/JSGlobalObject.h>
 #include <kjs/identifier.h>
 

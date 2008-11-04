@@ -33,7 +33,7 @@
 #include "runtime_object.h"
 #include <runtime/Error.h>
 #include <runtime/JSGlobalObject.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <runtime/ObjectPrototype.h>
 #include <wtf/RetainPtr.h>
 

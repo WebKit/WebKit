@@ -1,3 +1,83 @@
+2008-11-03  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Move more files into the runtime subdirectory of JavaScriptCore.
+
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSClassRef.cpp:
+        * API/OpaqueJSString.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArgList.cpp: Removed.
+        * kjs/ArgList.h: Removed.
+        * kjs/Arguments.cpp: Removed.
+        * kjs/Arguments.h: Removed.
+        * kjs/BatchedTransitionOptimizer.h: Removed.
+        * kjs/CollectorHeapIterator.h: Removed.
+        * kjs/CommonIdentifiers.cpp: Removed.
+        * kjs/CommonIdentifiers.h: Removed.
+        * kjs/ExecState.cpp: Removed.
+        * kjs/ExecState.h: Removed.
+        * kjs/GetterSetter.cpp: Removed.
+        * kjs/GetterSetter.h: Removed.
+        * kjs/InitializeThreading.cpp: Removed.
+        * kjs/InitializeThreading.h: Removed.
+        * kjs/JSActivation.cpp: Removed.
+        * kjs/JSActivation.h: Removed.
+        * kjs/JSGlobalData.cpp: Removed.
+        * kjs/JSGlobalData.h: Removed.
+        * kjs/JSLock.cpp: Removed.
+        * kjs/JSLock.h: Removed.
+        * kjs/JSStaticScopeObject.cpp: Removed.
+        * kjs/JSStaticScopeObject.h: Removed.
+        * kjs/JSType.h: Removed.
+        * kjs/PropertyNameArray.cpp: Removed.
+        * kjs/PropertyNameArray.h: Removed.
+        * kjs/ScopeChain.cpp: Removed.
+        * kjs/ScopeChain.h: Removed.
+        * kjs/ScopeChainMark.h: Removed.
+        * kjs/SymbolTable.h: Removed.
+        * kjs/Tracing.d: Removed.
+        * kjs/Tracing.h: Removed.
+        * runtime/ArgList.cpp: Copied from kjs/ArgList.cpp.
+        * runtime/ArgList.h: Copied from kjs/ArgList.h.
+        * runtime/Arguments.cpp: Copied from kjs/Arguments.cpp.
+        * runtime/Arguments.h: Copied from kjs/Arguments.h.
+        * runtime/BatchedTransitionOptimizer.h: Copied from kjs/BatchedTransitionOptimizer.h.
+        * runtime/CollectorHeapIterator.h: Copied from kjs/CollectorHeapIterator.h.
+        * runtime/CommonIdentifiers.cpp: Copied from kjs/CommonIdentifiers.cpp.
+        * runtime/CommonIdentifiers.h: Copied from kjs/CommonIdentifiers.h.
+        * runtime/ExecState.cpp: Copied from kjs/ExecState.cpp.
+        * runtime/ExecState.h: Copied from kjs/ExecState.h.
+        * runtime/GetterSetter.cpp: Copied from kjs/GetterSetter.cpp.
+        * runtime/GetterSetter.h: Copied from kjs/GetterSetter.h.
+        * runtime/InitializeThreading.cpp: Copied from kjs/InitializeThreading.cpp.
+        * runtime/InitializeThreading.h: Copied from kjs/InitializeThreading.h.
+        * runtime/JSActivation.cpp: Copied from kjs/JSActivation.cpp.
+        * runtime/JSActivation.h: Copied from kjs/JSActivation.h.
+        * runtime/JSGlobalData.cpp: Copied from kjs/JSGlobalData.cpp.
+        * runtime/JSGlobalData.h: Copied from kjs/JSGlobalData.h.
+        * runtime/JSLock.cpp: Copied from kjs/JSLock.cpp.
+        * runtime/JSLock.h: Copied from kjs/JSLock.h.
+        * runtime/JSStaticScopeObject.cpp: Copied from kjs/JSStaticScopeObject.cpp.
+        * runtime/JSStaticScopeObject.h: Copied from kjs/JSStaticScopeObject.h.
+        * runtime/JSType.h: Copied from kjs/JSType.h.
+        * runtime/PropertyNameArray.cpp: Copied from kjs/PropertyNameArray.cpp.
+        * runtime/PropertyNameArray.h: Copied from kjs/PropertyNameArray.h.
+        * runtime/ScopeChain.cpp: Copied from kjs/ScopeChain.cpp.
+        * runtime/ScopeChain.h: Copied from kjs/ScopeChain.h.
+        * runtime/ScopeChainMark.h: Copied from kjs/ScopeChainMark.h.
+        * runtime/SymbolTable.h: Copied from kjs/SymbolTable.h.
+        * runtime/Tracing.d: Copied from kjs/Tracing.d.
+        * runtime/Tracing.h: Copied from kjs/Tracing.h.
+
 2008-11-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,21 @@
+2008-11-03  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Move more files into the runtime subdirectory of JavaScriptCore.
+
+        * ForwardingHeaders/kjs/JSLock.h: Removed.
+        * ForwardingHeaders/kjs/SymbolTable.h: Removed.
+        * ForwardingHeaders/runtime/JSLock.h: Copied from ForwardingHeaders/kjs/JSLock.h.
+        * ForwardingHeaders/runtime/SymbolTable.h: Copied from ForwardingHeaders/kjs/SymbolTable.h.
+        * Misc/WebCoreStatistics.mm:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebPluginController.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebView.mm:
+
 2008-11-03  Mark Rowe  <mrowe@apple.com>
 
         Fix the 64-bit build.
@@ -1922,7 +1940,7 @@
 
         Bring back shared JSGlobalData and implicit locking, because too many clients rely on it.
 
-        * ForwardingHeaders/kjs/JSLock.h: Added.
+        * ForwardingHeaders/runtime/JSLock.h: Added.
         * Misc/WebCoreStatistics.mm:
         (+[WebCoreStatistics javaScriptObjectsCount]):
         (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
@@ -2488,7 +2506,7 @@
         Eliminate JSLock (it was already disabled, removing the stub implementaion and all
         call sites now).
 
-        * ForwardingHeaders/kjs/JSLock.h: Removed.
+        * ForwardingHeaders/runtime/JSLock.h: Removed.
         * Misc/WebCoreStatistics.mm:
         (+[WebCoreStatistics javaScriptObjectsCount]):
         (+[WebCoreStatistics javaScriptGlobalObjectsCount]):

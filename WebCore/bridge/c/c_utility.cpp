@@ -34,7 +34,7 @@
 #include "NP_jsobject.h"
 #include "c_instance.h"
 #include <runtime/JSGlobalObject.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include "PlatformString.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"

@@ -110,36 +110,36 @@ javascriptcore_sources += \
 	JavaScriptCore/icu/unicode/utf_old.h \
 	JavaScriptCore/icu/unicode/utypes.h \
 	JavaScriptCore/icu/unicode/uversion.h \
-	JavaScriptCore/kjs/ArgList.h \
-	JavaScriptCore/kjs/Arguments.h \
-	JavaScriptCore/kjs/BatchedTransitionOptimizer.h \
-	JavaScriptCore/kjs/CollectorHeapIterator.h \
+	JavaScriptCore/runtime/ArgList.h \
+	JavaScriptCore/runtime/Arguments.h \
+	JavaScriptCore/runtime/BatchedTransitionOptimizer.h \
+	JavaScriptCore/runtime/CollectorHeapIterator.h \
 	JavaScriptCore/debugger/DebuggerCallFrame.cpp \
 	JavaScriptCore/debugger/DebuggerCallFrame.h \
-	JavaScriptCore/kjs/ExecState.cpp \
-	JavaScriptCore/kjs/ExecState.h \
-	JavaScriptCore/kjs/InitializeThreading.cpp \
-	JavaScriptCore/kjs/InitializeThreading.h \
-	JavaScriptCore/kjs/JSActivation.cpp \
-	JavaScriptCore/kjs/JSActivation.h \
-	JavaScriptCore/kjs/JSGlobalData.cpp \
-	JavaScriptCore/kjs/JSGlobalData.h \
-	JavaScriptCore/kjs/JSStaticScopeObject.h \
-	JavaScriptCore/kjs/JSType.h \
+	JavaScriptCore/runtime/ExecState.cpp \
+	JavaScriptCore/runtime/ExecState.h \
+	JavaScriptCore/runtime/InitializeThreading.cpp \
+	JavaScriptCore/runtime/InitializeThreading.h \
+	JavaScriptCore/runtime/JSActivation.cpp \
+	JavaScriptCore/runtime/JSActivation.h \
+	JavaScriptCore/runtime/JSGlobalData.cpp \
+	JavaScriptCore/runtime/JSGlobalData.h \
+	JavaScriptCore/runtime/JSStaticScopeObject.h \
+	JavaScriptCore/runtime/JSType.h \
 	JavaScriptCore/kjs/NodeInfo.h \
 	JavaScriptCore/kjs/Parser.h \
-	JavaScriptCore/kjs/PropertyNameArray.h \
+	JavaScriptCore/runtime/PropertyNameArray.h \
 	JavaScriptCore/runtime/RegExpConstructor.h \
 	JavaScriptCore/runtime/RegExpMatchesArray.h \
 	JavaScriptCore/runtime/RegExpObject.h \
 	JavaScriptCore/runtime/RegExpPrototype.h \
 	JavaScriptCore/kjs/ResultType.h \
-	JavaScriptCore/kjs/ScopeChain.h \
-	JavaScriptCore/kjs/ScopeChainMark.h \
+	JavaScriptCore/runtime/ScopeChain.h \
+	JavaScriptCore/runtime/ScopeChainMark.h \
 	JavaScriptCore/kjs/SourceProvider.h \
 	JavaScriptCore/kjs/SourceCode.h \
-	JavaScriptCore/kjs/SymbolTable.h \
-	JavaScriptCore/kjs/Tracing.h \
+	JavaScriptCore/runtime/SymbolTable.h \
+	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/kjs/TypeInfo.h \
 	JavaScriptCore/kjs/collector.h \
 	JavaScriptCore/kjs/completion.h \
@@ -308,22 +308,22 @@ javascriptcore_built_sources += \
 javascriptcore_sources += \
 	JavaScriptCore/VM/CodeGenerator.cpp \
 	JavaScriptCore/VM/RegisterFile.cpp \
-	JavaScriptCore/kjs/ArgList.cpp \
-	JavaScriptCore/kjs/Arguments.cpp \
-	JavaScriptCore/kjs/CommonIdentifiers.cpp \
-	JavaScriptCore/kjs/CommonIdentifiers.h \
-	JavaScriptCore/kjs/GetterSetter.cpp \
-	JavaScriptCore/kjs/GetterSetter.h \
-	JavaScriptCore/kjs/JSLock.cpp \
-	JavaScriptCore/kjs/JSLock.h \
-	JavaScriptCore/kjs/JSStaticScopeObject.cpp \
+	JavaScriptCore/runtime/ArgList.cpp \
+	JavaScriptCore/runtime/Arguments.cpp \
+	JavaScriptCore/runtime/CommonIdentifiers.cpp \
+	JavaScriptCore/runtime/CommonIdentifiers.h \
+	JavaScriptCore/runtime/GetterSetter.cpp \
+	JavaScriptCore/runtime/GetterSetter.h \
+	JavaScriptCore/runtime/JSLock.cpp \
+	JavaScriptCore/runtime/JSLock.h \
+	JavaScriptCore/runtime/JSStaticScopeObject.cpp \
 	JavaScriptCore/kjs/LabelScope.h \
 	JavaScriptCore/kjs/Parser.cpp \
-	JavaScriptCore/kjs/PropertyNameArray.cpp \
+	JavaScriptCore/runtime/PropertyNameArray.cpp \
 	JavaScriptCore/runtime/RegExpConstructor.cpp \
 	JavaScriptCore/runtime/RegExpObject.cpp \
 	JavaScriptCore/runtime/RegExpPrototype.cpp \
-	JavaScriptCore/kjs/ScopeChain.cpp \
+	JavaScriptCore/runtime/ScopeChain.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/debugger/Debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \

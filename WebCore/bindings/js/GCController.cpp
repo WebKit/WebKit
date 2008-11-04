@@ -27,8 +27,8 @@
 #include "GCController.h"
 
 #include "JSDOMWindow.h"
-#include <kjs/JSGlobalData.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSGlobalData.h>
+#include <runtime/JSLock.h>
 #include <kjs/collector.h>
 
 #if USE(PTHREADS)

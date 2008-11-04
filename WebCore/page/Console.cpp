@@ -39,7 +39,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
-#include <kjs/ArgList.h>
+#include <runtime/ArgList.h>
 #include <kjs/interpreter.h>
 #include <runtime/JSObject.h>
 #include <VM/Machine.h>

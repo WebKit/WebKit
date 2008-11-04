@@ -269,19 +269,19 @@
 			Name="KJS"
 			>
 			<File
-				RelativePath="..\..\kjs\ArgList.cpp"
+				RelativePath="..\..\runtime\ArgList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ArgList.h"
+				RelativePath="..\..\runtime\ArgList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\Arguments.cpp"
+				RelativePath="..\..\runtime\Arguments.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\Arguments.h"
+				RelativePath="..\..\runtime\Arguments.h"
 				>
 			</File>
 			<File
@@ -345,15 +345,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\CollectorHeapIntrospector.h"
+				RelativePath="..\..\runtime\CollectorHeapIntrospector.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\CommonIdentifiers.cpp"
+				RelativePath="..\..\runtime\CommonIdentifiers.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\CommonIdentifiers.h"
+				RelativePath="..\..\runtime\CommonIdentifiers.h"
 				>
 			</File>
 			<File
@@ -445,11 +445,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ExecState.cpp"
+				RelativePath="..\..\runtime\ExecState.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ExecState.h"
+				RelativePath="..\..\runtime\ExecState.h"
 				>
 			</File>
 			<File
@@ -469,11 +469,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\GetterSetter.cpp"
+				RelativePath="..\..\runtime\GetterSetter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\GetterSetter.h"
+				RelativePath="..\..\runtime\GetterSetter.h"
 				>
 			</File>
 			<File
@@ -493,11 +493,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\InitializeThreading.cpp"
+				RelativePath="..\..\runtime\InitializeThreading.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\InitializeThreading.h"
+				RelativePath="..\..\runtime\InitializeThreading.h"
 				>
 			</File>
 			<File
@@ -517,11 +517,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSActivation.cpp"
+				RelativePath="..\..\runtime\JSActivation.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSActivation.h"
+				RelativePath="..\..\runtime\JSActivation.h"
 				>
 			</File>
 			<File
@@ -549,11 +549,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSGlobalData.cpp"
+				RelativePath="..\..\runtime\JSGlobalData.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSGlobalData.h"
+				RelativePath="..\..\runtime\JSGlobalData.h"
 				>
 			</File>
 			<File
@@ -581,11 +581,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSLock.cpp"
+				RelativePath="..\..\runtime\JSLock.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSLock.h"
+				RelativePath="..\..\runtime\JSLock.h"
 				>
 			</File>
 			<File
@@ -629,7 +629,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSType.h"
+				RelativePath="..\..\runtime\JSType.h"
 				>
 			</File>
 			<File
@@ -749,11 +749,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertyNameArray.cpp"
+				RelativePath="..\..\runtime\PropertyNameArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertyNameArray.h"
+				RelativePath="..\..\runtime\PropertyNameArray.h"
 				>
 			</File>
 			<File
@@ -809,15 +809,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ScopeChain.cpp"
+				RelativePath="..\..\runtime\ScopeChain.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ScopeChain.h"
+				RelativePath="..\..\runtime\ScopeChain.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ScopeChainMark.h"
+				RelativePath="..\..\runtime\ScopeChainMark.h"
 				>
 			</File>
 			<File
@@ -885,7 +885,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\SymbolTable.h"
+				RelativePath="..\..\runtime\SymbolTable.h"
 				>
 			</File>
 			<File

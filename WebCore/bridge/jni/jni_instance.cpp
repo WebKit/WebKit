@@ -33,9 +33,9 @@
 #include "jni_utility.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <kjs/ArgList.h>
+#include <runtime/ArgList.h>
 #include <runtime/Error.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)

@@ -32,7 +32,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <runtime/JSArray.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <dlfcn.h>
 
 namespace JSC {

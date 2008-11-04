@@ -31,11 +31,11 @@
 #include "completion.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"
-#include <kjs/ExecState.h>
-#include <kjs/InitializeThreading.h>
+#include <runtime/ExecState.h>
+#include <runtime/InitializeThreading.h>
 #include <kjs/interpreter.h>
 #include <runtime/JSGlobalObject.h>
-#include <kjs/JSLock.h>
+#include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 
 using namespace JSC;
