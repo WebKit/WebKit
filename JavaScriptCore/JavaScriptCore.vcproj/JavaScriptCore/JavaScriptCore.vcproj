@@ -361,7 +361,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\config.h"
+				RelativePath="..\..\config.h"
 				>
 			</File>
 			<File

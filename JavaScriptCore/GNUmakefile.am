@@ -143,7 +143,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/TypeInfo.h \
 	JavaScriptCore/kjs/collector.h \
 	JavaScriptCore/kjs/completion.h \
-	JavaScriptCore/kjs/config.h \
+	JavaScriptCore/config.h \
 	JavaScriptCore/debugger/Debugger.h \
 	JavaScriptCore/kjs/dtoa.h \
 	JavaScriptCore/kjs/identifier.h \
