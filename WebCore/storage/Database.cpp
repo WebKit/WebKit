@@ -82,7 +82,7 @@ const String& Database::databaseInfoTableName()
 
 static const String& databaseVersionKey()
 {
-    static String& key =  *new String("WebKitDatabaseVersionKey");
+    static String& key = *new String("WebKitDatabaseVersionKey");
     return key;
 }
 
