@@ -1,3 +1,10 @@
+2008-11-04  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Build fix. Not reviewed.
+
+        * platform/graphics/FloatPoint.h: include math.h.
+        reported by zdobersek in #webkit.
+
 2008-11-04  Darin Fisher  <darin@chromium.org>
  
         Reviewed by Anders Carlsson.
