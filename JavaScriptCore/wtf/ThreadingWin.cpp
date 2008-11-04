@@ -111,6 +111,7 @@ static Mutex* atomicallyInitializedStaticMutex;
 
 void lockAtomicallyInitializedStaticMutex()
 {
+    ASSERT(atomicallyInitializedStaticMutex);
     atomicallyInitializedStaticMutex->lock();
 }
 

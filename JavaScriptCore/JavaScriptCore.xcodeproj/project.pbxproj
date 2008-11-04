@@ -1617,6 +1617,7 @@
 				932F5B3F0822A1C700736975 /* Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				9319586B09D9F91A00A56FD4 /* Check For Global Initializers */,
+				933457200EBFDC3F00B80894 /* Check For Exit Time Destructors */,
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables */,
 				932F5BD20822A1C700736975 /* Frameworks */,
 				1C395CBC0C6BCC16000D1E52 /* Generate 64-bit Export File */,
@@ -1806,6 +1807,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-global-initializers ]; then\n    ../WebKitTools/Scripts/check-for-global-initializers || exit $?\nfi";
+		};
+		933457200EBFDC3F00B80894 /* Check For Exit Time Destructors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Exit Time Destructors";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f ../WebKitTools/Scripts/check-for-exit-time-destructors ]; then\n    ../WebKitTools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

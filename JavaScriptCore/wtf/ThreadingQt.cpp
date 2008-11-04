@@ -64,7 +64,7 @@ void ThreadPrivate::run()
 }
 
 
-Mutex* atomicallyInitializedStaticMutex;
+static Mutex* atomicallyInitializedStaticMutex;
 
 static ThreadIdentifier mainThreadIdentifier;
 
@@ -122,7 +122,7 @@ static QThread* threadForIdentifier(ThreadIdentifier id)
 
 void initializeThreading()
 {
-    if(!atomicallyInitializedStaticMutex) {
+    if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         wtf_random_init();
@@ -132,6 +132,17 @@ void initializeThreading()
             mainThreadIdentifier = establishIdentifierForThread(mainThread);
         initializeMainThread();
     }
+}
+
+void lockAtomicallyInitializedStaticMutex()
+{
+    ASSERT(atomicallyInitializedStaticMutex);
+    atomicallyInitializedStaticMutex->lock();
+}
+
+void unlockAtomicallyInitializedStaticMutex()
+{
+    atomicallyInitializedStaticMutex->unlock();
 }
 
 ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*)

@@ -26,12 +26,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "Threading.h"
 
 namespace WTF {
-
-Mutex* atomicallyInitializedStaticMutex;
 
 void initializeThreading() {}
 ThreadIdentifier createThread(ThreadFunction, void*, const char*) { return 0; }
@@ -44,7 +43,7 @@ Mutex::Mutex() {}
 Mutex::~Mutex() {}
 void Mutex::lock() {}
 bool Mutex::tryLock() { return false; }
-void Mutex::unlock() {};
+void Mutex::unlock() {}
 
 ThreadCondition::ThreadCondition() {}
 ThreadCondition::~ThreadCondition() {}
@@ -52,5 +51,8 @@ void ThreadCondition::wait(Mutex& mutex) {}
 bool ThreadCondition::timedWait(Mutex& mutex, double interval) { return false; }
 void ThreadCondition::signal() {}
 void ThreadCondition::broadcast() {}
+
+void lockAtomicallyInitializedStaticMutex() {}
+void unlockAtomicallyInitializedStaticMutex() { }
 
 } // namespace WebCore

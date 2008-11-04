@@ -40,7 +40,7 @@
 
 namespace WTF {
 
-Mutex* atomicallyInitializedStaticMutex;
+static Mutex* atomicallyInitializedStaticMutex;
 
 static ThreadIdentifier mainThreadIdentifier;
 
@@ -63,6 +63,17 @@ void initializeThreading()
         mainThreadIdentifier = currentThread();
         initializeMainThread();
     }
+}
+
+void lockAtomicallyInitializedStaticMutex()
+{
+    ASSERT(atomicallyInitializedStaticMutex);
+    atomicallyInitializedStaticMutex->lock();
+}
+
+void unlockAtomicallyInitializedStaticMutex()
+{
+    atomicallyInitializedStaticMutex->unlock();
 }
 
 static HashMap<ThreadIdentifier, GThread*>& threadMap()

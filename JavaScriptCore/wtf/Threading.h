@@ -251,14 +251,8 @@ private:
 // Darwin is an exception to this rule: it is OK to call it from any thread, the only requirement is that the calls are not reentrant.
 void initializeThreading();
 
-#if !PLATFORM(WIN_OS) || PLATFORM(WX)
-extern Mutex* atomicallyInitializedStaticMutex;
-inline void lockAtomicallyInitializedStaticMutex() { atomicallyInitializedStaticMutex->lock(); }
-inline void unlockAtomicallyInitializedStaticMutex() { atomicallyInitializedStaticMutex->unlock(); }
-#else
 void lockAtomicallyInitializedStaticMutex();
 void unlockAtomicallyInitializedStaticMutex();
-#endif
 
 } // namespace WTF
 

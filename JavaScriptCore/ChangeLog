@@ -1,3 +1,44 @@
+2008-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22061
+          create script to check for exit-time destructors
+
+        * JavaScriptCore.exp: Changed to export functions rather than
+        a global for the atomically initialized static mutex.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added a script
+        phase that runs the check-for-exit-time-destructors script.
+
+        * wtf/MainThread.cpp:
+        (WTF::mainThreadFunctionQueueMutex): Changed to leak an object
+        rather than using an exit time destructor.
+        (WTF::functionQueue): Ditto.
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::cachedCollatorMutex): Ditto.
+
+        * wtf/Threading.h: Changed other platforms to share the Windows
+        approach where the mutex is internal and the functions are exported.
+        * wtf/ThreadingGtk.cpp:
+        (WTF::lockAtomicallyInitializedStaticMutex): Ditto.
+        (WTF::unlockAtomicallyInitializedStaticMutex): Ditto.
+        * wtf/ThreadingNone.cpp:
+        (WTF::lockAtomicallyInitializedStaticMutex): Ditto.
+        (WTF::unlockAtomicallyInitializedStaticMutex): Ditto.
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex): Changed to leak an object rather than using
+        an exit time destructor.
+        (WTF::lockAtomicallyInitializedStaticMutex): Mutex change.
+        (WTF::unlockAtomicallyInitializedStaticMutex): Ditto.
+        (WTF::threadMap): Changed to leak an object rather than using
+        an exit time destructor.
+        * wtf/ThreadingQt.cpp:
+        (WTF::lockAtomicallyInitializedStaticMutex): Mutex change.
+        (WTF::unlockAtomicallyInitializedStaticMutex): Ditto.
+        * wtf/ThreadingWin.cpp:
+        (WTF::lockAtomicallyInitializedStaticMutex): Added an assertion.
+
 2008-11-04  Adam Roben  <aroben@apple.com>
 
         Windows build fix
