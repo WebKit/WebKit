@@ -1,3 +1,16 @@
+2008-11-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        - implement WebMutableURLRequest::setHTTPShouldHandleCookies()
+        - add and implement WebMutableURLRequest::mutableCopy()
+
+        * Interfaces/IWebURLRequest.idl:
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::setHTTPShouldHandleCookies):
+        (WebMutableURLRequest::mutableCopy):
+        * WebMutableURLRequest.h:
+
 2008-10-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

@@ -30,6 +30,7 @@
 #include "WebKit.h"
 #include "MarshallingHelpers.h"
 #include "WebKit.h"
+#include <CFNetwork/CFURLRequestPriv.h>
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/CString.h>
@@ -282,10 +283,10 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPMethod(
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPShouldHandleCookies( 
-    /* [in] */ BOOL /*handleCookies*/)
+    /* [in] */ BOOL handleCookies)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    m_request.setAllowHTTPCookies(handleCookies);
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setMainDocumentURL( 
@@ -359,6 +360,16 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setClientCertificate(
 CFURLRequestRef STDMETHODCALLTYPE WebMutableURLRequest::cfRequest()
 {
     return m_request.cfURLRequest();
+}
+
+HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mutableCopy(
+        /* [out, retval] */ IWebMutableURLRequest** result)
+{
+    if (!result)
+        return E_POINTER;
+    RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest()));
+    *result = createInstance(ResourceRequest(mutableRequest.get()));
+    return S_OK;
 }
 
 // IWebMutableURLRequest ----------------------------------------------------

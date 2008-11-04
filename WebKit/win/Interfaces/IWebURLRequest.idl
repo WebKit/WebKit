@@ -108,4 +108,6 @@ interface IWebURLRequest : IUnknown
     HRESULT valueForHTTPHeaderField([in] BSTR field, [out, retval] BSTR* result);
 
     HRESULT isEmpty([out, retval] BOOL* result);
+
+    HRESULT mutableCopy([out, retval] IWebMutableURLRequest** result);
 }
