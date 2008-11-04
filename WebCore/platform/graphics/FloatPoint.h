@@ -29,8 +29,8 @@
 
 #include "FloatSize.h"
 #include "IntPoint.h"
+#include <wtf/MathExtras.h>
 #include <wtf/Platform.h>
-#include <math.h>
 
 #if PLATFORM(CG)
 typedef struct CGPoint CGPoint;
