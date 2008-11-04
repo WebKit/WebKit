@@ -2437,17 +2437,17 @@ void FrameLoader::reload()
     if (!m_documentLoader)
         return;
 
-    ResourceRequest& initialRequest = m_documentLoader->request();
-    
     // If a window is created by javascript, its main frame can have an empty but non-nil URL.
     // Reloading in this case will lose the current contents (see 4151001).
-    if (initialRequest.url().isEmpty())
+    if (m_documentLoader->request().url().isEmpty())
         return;
+
+    ResourceRequest initialRequest = m_documentLoader->request();
 
     // Replace error-page URL with the URL we were trying to reach.
     KURL unreachableURL = m_documentLoader->unreachableURL();
     if (!unreachableURL.isEmpty())
-        initialRequest = ResourceRequest(unreachableURL);
+        initialRequest.setURL(unreachableURL);
     
     // Create a new document loader for the reload, this will become m_documentLoader eventually,
     // but first it has to be the "policy" document loader, and then the "provisional" document loader.
