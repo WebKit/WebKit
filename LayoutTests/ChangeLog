@@ -4,7 +4,19 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=21821
 
-        Imported more image bases for a representative set of pixel tests in order to
+        Another set of updated expected pixel results generated with the same
+        setup. Includes accessiblity/, animations/, css1/, css2.1/, css3/,
+        dom/ and editing/.
+
+        (file listing elided)
+
+2008-11-05  Pierre-Olivier Latour  <pol@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Imported more image bases for fast/ and svg/ in order to
         fully validate latest DRT and test script changes. These results were generated
         by a release build of r38003 on an Intel iMac running Mac OS X 10.5.5 with
         QuickTime 7.5.5.
