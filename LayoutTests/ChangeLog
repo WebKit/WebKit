@@ -1,3 +1,16 @@
+2008-11-05  Pierre-Olivier Latour  <pol@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Imported more image bases for a representative set of pixel tests in order to
+        fully validate latest DRT and test script changes. These results were generated
+        by a release build of r38003 on an Intel iMac running Mac OS X 10.5.5 with
+        QuickTime 7.5.5.
+
+        (file listing elided)
+
 2008-11-04  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.
