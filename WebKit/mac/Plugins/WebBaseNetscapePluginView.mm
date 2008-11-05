@@ -1221,10 +1221,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (drawingModel == NPDrawingModelCoreAnimation) {
         void *value = 0;
         if (NPP_GetValue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
-            _layer = (CALayer *)value;
+            
+            // The plug-in gives us a retained layer.
+            _layer.adoptNS((CALayer *)value);
             [self setWantsLayer:YES];
-            [self setLayer:_layer];
-            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _layer);
+            [self setLayer:_layer.get()];
+            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _layer.get());
         }
 
         ASSERT(_layer);
@@ -1305,6 +1307,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
     lastSetWindow.type = (NPWindowType)0;
+    
+    _layer = 0;
     
     [self _destroyPlugin];
     [_pluginPackage.get() close];
@@ -2540,10 +2544,9 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
                 case NPDrawingModelQuickDraw:
 #endif
                 case NPDrawingModelCoreGraphics:
-                    drawingModel = newDrawingModel;
-                    return NPERR_NO_ERROR;
-                    
+#ifndef BUILDING_ON_TIGER
                 case NPDrawingModelCoreAnimation:
+#endif
                     drawingModel = newDrawingModel;
                     return NPERR_NO_ERROR;
                     

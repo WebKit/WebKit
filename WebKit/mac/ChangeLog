@@ -1,3 +1,18 @@
+2008-11-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Don't leak the CALayer.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        Make the layer a RetainPtr.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView start]):
+        
+        (-[WebBaseNetscapePluginView stop]):
+        Make sure to clear out the layer here.
+
 2008-11-04  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Sam Weinig.
