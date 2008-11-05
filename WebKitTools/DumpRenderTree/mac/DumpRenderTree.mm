@@ -322,8 +322,11 @@ static void setDefaultsToConsistentValuesForTesting()
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
     RetainPtr<CFTypeRef> initialValue = CFPreferencesCopyValue(CFSTR("AppleScrollBarVariant"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), CFSTR("DoubleMax"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+#ifndef __LP64__
+    // See <rdar://problem/6347388>.
     ThemeScrollBarArrowStyle style;
     GetThemeScrollBarArrowStyle(&style); // Force HIToolbox to read from CFPreferences
+#endif
     if (initialValue)
         CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), initialValue.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 

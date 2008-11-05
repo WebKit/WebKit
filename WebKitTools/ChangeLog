@@ -1,3 +1,10 @@
+2008-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Fix 64-bit build.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+
 2008-11-04  Simon Fraser  <simon.fraser@apple.com>
 
         Add AccessibilityObject.o to the exclude list for the
