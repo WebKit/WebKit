@@ -1,3 +1,53 @@
+2008-11-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        More cleanup. Make a bunch of instance variables RetainPtrs.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView visibleRect]):
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView sendDrawRectEvent:]):
+        (-[WebBaseNetscapePluginView stopTimers]):
+        (-[WebBaseNetscapePluginView restartTimers]):
+        (-[WebBaseNetscapePluginView setHasFocus:]):
+        (-[WebBaseNetscapePluginView mouseDown:]):
+        (-[WebBaseNetscapePluginView mouseUp:]):
+        (-[WebBaseNetscapePluginView mouseEntered:]):
+        (-[WebBaseNetscapePluginView mouseExited:]):
+        (-[WebBaseNetscapePluginView handleMouseMoved:]):
+        (-[WebBaseNetscapePluginView mouseDragged:]):
+        (-[WebBaseNetscapePluginView scrollWheel:]):
+        (-[WebBaseNetscapePluginView keyUp:]):
+        (-[WebBaseNetscapePluginView keyDown:]):
+        (-[WebBaseNetscapePluginView flagsChanged:]):
+        (-[WebBaseNetscapePluginView cut:]):
+        (-[WebBaseNetscapePluginView copy:]):
+        (-[WebBaseNetscapePluginView paste:]):
+        (-[WebBaseNetscapePluginView selectAll:]):
+        (-[WebBaseNetscapePluginView didStart]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView stop]):
+        (-[WebBaseNetscapePluginView dataSource]):
+        (-[WebBaseNetscapePluginView pluginPackage]):
+        (-[WebBaseNetscapePluginView setPluginPackage:]):
+        (-[WebBaseNetscapePluginView setAttributeKeys:andValues:]):
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+        (-[WebBaseNetscapePluginView fini]):
+        (-[WebBaseNetscapePluginView dealloc]):
+        (-[WebBaseNetscapePluginView pluginView:receivedError:]):
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginView userAgent]):
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+        (-[WebBaseNetscapePluginView _createPlugin]):
+        (-[WebBaseNetscapePluginView _redeliverStream]):
+
 2008-11-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John Sullivan

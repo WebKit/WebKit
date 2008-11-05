@@ -293,18 +293,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch
     // that clip now.    
-    return NSIntersectionRect([self convertRect:[element _windowClipRect] fromView:nil], [super visibleRect]);
+    return NSIntersectionRect([self convertRect:[_element.get() _windowClipRect] fromView:nil], [super visibleRect]);
 }
 
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
     ASSERT(drawingModel != NPDrawingModelCoreAnimation);
     ASSERT([self currentWindow] != nil);
-
-    // If drawing with QuickDraw, fix the window port so that it has the same bounds as the NSWindow's
-    // content view.  This makes it easier to convert between AppKit view and QuickDraw port coordinates.
-    if (isDrawingModelQuickDraw(drawingModel))
-        [self fixWindowPort];
 
     // Use AppKit to convert view coordinates to NSWindow coordinates.
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
@@ -321,6 +316,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
     if (isDrawingModelQuickDraw(drawingModel)) {
+        // If drawing with QuickDraw, fix the window port so that it has the same bounds as the NSWindow's
+        // content view.  This makes it easier to convert between AppKit view and QuickDraw port coordinates.
+        [self fixWindowPort];
+        
         ::Rect portBounds;
         CGrafPtr port = GetWindowPort(windowRef);
         GetPortBounds(port, &portBounds);
@@ -529,7 +528,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifdef NP_NO_CARBON
             nPort.cgPort.window = (NPNSWindow *)[self currentWindow];
 #else
-            nPort.cgPort.window = eventHandler->platformWindow([self currentWindow]);
+            nPort.cgPort.window = _eventHandler->platformWindow([self currentWindow]);
 #endif /* NP_NO_CARBON */
             nPort.cgPort.context = context;
             window.window = &nPort.cgPort;
@@ -699,20 +698,20 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->windowFocusChanged(activate);
+    _eventHandler->windowFocusChanged(activate);
 }
 
 - (void)sendDrawRectEvent:(NSRect)rect
 {
-    ASSERT(eventHandler);
+    ASSERT(_eventHandler);
     
-    eventHandler->drawRect(rect);
+    _eventHandler->drawRect(rect);
 }
 
 - (void)stopTimers
 {
-    if (eventHandler)
-        eventHandler->stopTimers();
+    if (_eventHandler)
+        _eventHandler->stopTimers();
     
     shouldFireTimers = NO;
     
@@ -740,7 +739,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     // If the plugin is completely obscured (scrolled out of view, for example), then we will
     // send null events at a reduced rate.
-    eventHandler->startTimers(isCompletelyObscured);
+    _eventHandler->startTimers(isCompletelyObscured);
     
     if (!timers)
         return;
@@ -771,8 +770,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // We need to null check the event handler here because
     // the plug-in view can resign focus after it's been stopped
     // and the event handler has been deleted.
-    if (eventHandler)
-        eventHandler->focusChanged(hasFocus);    
+    if (_eventHandler)
+        _eventHandler->focusChanged(hasFocus);    
 }
 
 - (BOOL)becomeFirstResponder
@@ -804,7 +803,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->mouseDown(theEvent);
+    _eventHandler->mouseDown(theEvent);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
@@ -812,7 +811,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->mouseUp(theEvent);
+    _eventHandler->mouseUp(theEvent);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -820,7 +819,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->mouseEntered(theEvent);
+    _eventHandler->mouseEntered(theEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
@@ -828,7 +827,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->mouseExited(theEvent);
+    _eventHandler->mouseExited(theEvent);
     
     // Set cursor back to arrow cursor.  Because NSCursor doesn't know about changes that the plugin made, we could get confused about what we think the
     // current cursor is otherwise.  Therefore we have no choice but to unconditionally reset the cursor when the mouse exits the plugin.
@@ -842,7 +841,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->mouseMoved(theEvent);
+    _eventHandler->mouseMoved(theEvent);
 }
     
 - (void)mouseDragged:(NSEvent *)theEvent
@@ -850,7 +849,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->mouseDragged(theEvent);
+    _eventHandler->mouseDragged(theEvent);
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -860,7 +859,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return;
     }
 
-    if (!eventHandler->scrollWheel(theEvent))
+    if (!_eventHandler->scrollWheel(theEvent))
         [super scrollWheel:theEvent];
 }
 
@@ -869,7 +868,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->keyUp(theEvent);
+    _eventHandler->keyUp(theEvent);
 }
 
 - (void)keyDown:(NSEvent *)theEvent
@@ -877,7 +876,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->keyDown(theEvent);
+    _eventHandler->keyDown(theEvent);
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
@@ -885,7 +884,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->flagsChanged(theEvent);
+    _eventHandler->flagsChanged(theEvent);
 }
 
 - (void)cut:(id)sender
@@ -893,7 +892,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->keyDown([NSApp currentEvent]);
+    _eventHandler->keyDown([NSApp currentEvent]);
 }
 
 - (void)copy:(id)sender
@@ -901,7 +900,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->keyDown([NSApp currentEvent]);
+    _eventHandler->keyDown([NSApp currentEvent]);
 }
 
 - (void)paste:(id)sender
@@ -909,7 +908,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->keyDown([NSApp currentEvent]);
+    _eventHandler->keyDown([NSApp currentEvent]);
 }
 
 - (void)selectAll:(id)sender
@@ -917,7 +916,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return;
 
-    eventHandler->keyDown([NSApp currentEvent]);
+    _eventHandler->keyDown([NSApp currentEvent]);
 }
 
 #pragma mark WEB_NETSCAPE_PLUGIN
@@ -1114,8 +1113,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
     // Check for this and don't start a load in this case.
-    if (sourceURL != nil && ![sourceURL _web_isEmpty]) {
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:sourceURL];
+    if (_sourceURL && ![_sourceURL.get() _web_isEmpty]) {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_sourceURL.get()];
         [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     } 
@@ -1173,7 +1172,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NO;
 
     // Open the plug-in package so it remains loaded while our plugin uses it
-    [pluginPackage open];
+    [_pluginPackage.get() open];
     
     // Initialize drawingModel to an invalid value so that we can detect when the plugin does not specify a drawingModel
     drawingModel = (NPDrawingModel)-1;
@@ -1185,7 +1184,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (npErr != NPERR_NO_ERROR) {
         LOG_ERROR("NPP_New failed with error: %d", npErr);
         [self _destroyPlugin];
-        [pluginPackage close];
+        [_pluginPackage.get() close];
         return NO;
     }
     
@@ -1210,9 +1209,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 #ifndef NP_NO_CARBON
     if (eventModel == NPEventModelCocoa && isDrawingModelQuickDraw(drawingModel)) {
-        LOG(Plugins, "Plugin can't use use Cocoa event model with QuickDraw drawing model: %@", pluginPackage);
+        LOG(Plugins, "Plugin can't use use Cocoa event model with QuickDraw drawing model: %@", _pluginPackage.get());
         [self _destroyPlugin];
-        [pluginPackage close];
+        [_pluginPackage.get() close];
         
         return NO;
     }        
@@ -1225,7 +1224,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             _layer = (CALayer *)value;
             [self setWantsLayer:YES];
             [self setLayer:_layer];
-            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", pluginPackage, _layer);
+            LOG(Plugins, "%@ is using Core Animation drawing model with layer %@", _pluginPackage.get(), _layer);
         }
 
         ASSERT(_layer);
@@ -1233,7 +1232,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif
     
     // Create the event handler
-    eventHandler = WebNetscapePluginEventHandler::create(self);
+    _eventHandler.set(WebNetscapePluginEventHandler::create(self));
     
     // Get the text input vtable
     if (eventModel == NPEventModelCocoa) {
@@ -1296,23 +1295,21 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     for (size_t i = 0; i < streamsCopy.size(); i++)
         streamsCopy[i]->stop();
     
-   
     // Stop the timers
     [self stopTimers];
     
     // Stop notifications and callbacks.
     [self removeWindowObservers];
-    [[pendingFrameLoads allKeys] makeObjectsPerformSelector:@selector(_setInternalLoadDelegate:) withObject:nil];
+    [[_pendingFrameLoads.get() allKeys] makeObjectsPerformSelector:@selector(_setInternalLoadDelegate:) withObject:nil];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
     lastSetWindow.type = (NPWindowType)0;
     
     [self _destroyPlugin];
-    [pluginPackage close];
+    [_pluginPackage.get() close];
     
-    delete eventHandler;
-    eventHandler = 0;
+    _eventHandler.clear();
     
     textInputFuncs = 0;
 }
@@ -1329,7 +1326,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (WebDataSource *)dataSource
 {
-    WebFrame *webFrame = kit(core(element)->document()->frame());
+    WebFrame *webFrame = kit(core(_element.get())->document()->frame());
     return [webFrame _dataSource];
 }
 
@@ -1355,42 +1352,26 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (WebNetscapePluginPackage *)pluginPackage
 {
-    return pluginPackage;
+    return _pluginPackage.get();
 }
 
 - (void)setPluginPackage:(WebNetscapePluginPackage *)thePluginPackage;
 {
-    [thePluginPackage retain];
-    [pluginPackage release];
-    pluginPackage = thePluginPackage;
+    _pluginPackage = thePluginPackage;
 
-    NPP_New =           [pluginPackage NPP_New];
-    NPP_Destroy =       [pluginPackage NPP_Destroy];
-    NPP_SetWindow =     [pluginPackage NPP_SetWindow];
-    NPP_NewStream =     [pluginPackage NPP_NewStream];
-    NPP_WriteReady =    [pluginPackage NPP_WriteReady];
-    NPP_Write =         [pluginPackage NPP_Write];
-    NPP_StreamAsFile =  [pluginPackage NPP_StreamAsFile];
-    NPP_DestroyStream = [pluginPackage NPP_DestroyStream];
-    NPP_HandleEvent =   [pluginPackage NPP_HandleEvent];
-    NPP_URLNotify =     [pluginPackage NPP_URLNotify];
-    NPP_GetValue =      [pluginPackage NPP_GetValue];
-    NPP_SetValue =      [pluginPackage NPP_SetValue];
-    NPP_Print =         [pluginPackage NPP_Print];
-}
-
-- (void)setMIMEType:(NSString *)theMIMEType
-{
-    NSString *type = [theMIMEType copy];
-    [MIMEType release];
-    MIMEType = type;
-}
-
-- (void)setBaseURL:(NSURL *)theBaseURL
-{
-    [theBaseURL retain];
-    [baseURL release];
-    baseURL = theBaseURL;
+    NPP_New =           [_pluginPackage.get() NPP_New];
+    NPP_Destroy =       [_pluginPackage.get() NPP_Destroy];
+    NPP_SetWindow =     [_pluginPackage.get() NPP_SetWindow];
+    NPP_NewStream =     [_pluginPackage.get() NPP_NewStream];
+    NPP_WriteReady =    [_pluginPackage.get() NPP_WriteReady];
+    NPP_Write =         [_pluginPackage.get() NPP_Write];
+    NPP_StreamAsFile =  [_pluginPackage.get() NPP_StreamAsFile];
+    NPP_DestroyStream = [_pluginPackage.get() NPP_DestroyStream];
+    NPP_HandleEvent =   [_pluginPackage.get() NPP_HandleEvent];
+    NPP_URLNotify =     [_pluginPackage.get() NPP_URLNotify];
+    NPP_GetValue =      [_pluginPackage.get() NPP_GetValue];
+    NPP_SetValue =      [_pluginPackage.get() NPP_SetValue];
+    NPP_Print =         [_pluginPackage.get() NPP_Print];
 }
 
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
@@ -1402,18 +1383,18 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // modifiable and live the entire life of the plugin.
 
     // The Java plug-in requires the first argument to be the base URL
-    if ([MIMEType isEqualToString:@"application/x-java-applet"]) {
+    if ([_MIMEType.get() isEqualToString:@"application/x-java-applet"]) {
         cAttributes = (char **)malloc(([keys count] + 1) * sizeof(char *));
         cValues = (char **)malloc(([values count] + 1) * sizeof(char *));
         cAttributes[0] = strdup("DOCBASE");
-        cValues[0] = strdup([baseURL _web_URLCString]);
+        cValues[0] = strdup([_baseURL.get() _web_URLCString]);
         argsCount++;
     } else {
         cAttributes = (char **)malloc([keys count] * sizeof(char *));
         cValues = (char **)malloc([values count] * sizeof(char *));
     }
 
-    BOOL isWMP = [[[pluginPackage bundle] bundleIdentifier] isEqualToString:@"com.microsoft.WMP.defaultplugin"];
+    BOOL isWMP = [[[_pluginPackage.get() bundle] bundleIdentifier] isEqualToString:@"com.microsoft.WMP.defaultplugin"];
     
     unsigned i;
     unsigned count = [keys count];
@@ -1436,11 +1417,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (void)setMode:(int)theMode
-{
-    mode = theMode;
-}
-
 #pragma mark NSVIEW
 
 - (id)initWithFrame:(NSRect)frame
@@ -1455,7 +1431,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     [super initWithFrame:frame];
  
-    pendingFrameLoads = [[NSMutableDictionary alloc] init];    
+    _pendingFrameLoads.adoptNS([[NSMutableDictionary alloc] init]);
     
     // load the plug-in if it is not already loaded
     if (![thePluginPackage load]) {
@@ -1464,16 +1440,15 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     [self setPluginPackage:thePluginPackage];
     
-    element = [anElement retain];
-    sourceURL = [theURL retain];
+    _element = anElement;
+    _sourceURL.adoptNS([theURL copy]);
+    _baseURL.adoptNS([theBaseURL copy]);
     
-    [self setMIMEType:MIME];
-    [self setBaseURL:theBaseURL];
     [self setAttributeKeys:keys andValues:values];
     if (loadManually)
-        [self setMode:NP_FULL];
+        _mode = NP_FULL;
     else
-        [self setMode:NP_EMBED];
+        _mode = NP_EMBED;
     
     _loadManually = loadManually;
     return self;
@@ -1492,15 +1467,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         DisposeGWorld(offscreenGWorld);
 #endif
 
-    unsigned i;
-    for (i = 0; i < argsCount; i++) {
+    for (unsigned i = 0; i < argsCount; i++) {
         free(cAttributes[i]);
         free(cValues[i]);
     }
     free(cAttributes);
     free(cValues);
     
-    ASSERT(!eventHandler);
+    ASSERT(!_eventHandler);
     
     if (timers) {
         deleteAllValues(*timers);
@@ -1516,16 +1490,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)dealloc
 {
     ASSERT(!isStarted);
-
-    [sourceURL release];
-    [_error release];
-    
-    [pluginPackage release];
-    [MIMEType release];
-    [baseURL release];
-    [pendingFrameLoads release];
-    [element release];
-    
     ASSERT(!plugin);
 
     [self fini];
@@ -1822,9 +1786,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error
 {
     ASSERT(_loadManually);
-    
-    [error retain];
-    [_error release];
+
     _error = error;
     
     if (![self isStarted]) {
@@ -2010,7 +1972,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(string); // All strings should be representable in ISO Latin 1
     
     NSString *URLString = [(NSString *)string _web_stringByStrippingReturnCharacters];
-    NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:baseURL];
+    NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:_baseURL.get()];
     CFRelease(string);
     if (!URL)
         return nil;
@@ -2074,7 +2036,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT(isStarted);
     
-    WebPluginRequest *pluginRequest = [pendingFrameLoads objectForKey:webFrame];
+    WebPluginRequest *pluginRequest = [_pendingFrameLoads.get() objectForKey:webFrame];
     ASSERT(pluginRequest != nil);
     ASSERT([pluginRequest sendNotification]);
         
@@ -2085,7 +2047,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     [self didCallPlugInFunction];
     
-    [pendingFrameLoads removeObjectForKey:webFrame];
+    [_pendingFrameLoads.get() removeObjectForKey:webFrame];
     [webFrame _setInternalLoadDelegate:nil];
 }
 
@@ -2151,7 +2113,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 ASSERT([view isKindOfClass:[WebBaseNetscapePluginView class]]);
                 [view webFrame:frame didFinishLoadWithReason:NPRES_USER_BREAK];
             }
-            [pendingFrameLoads _webkit_setObject:pluginRequest forUncopiedKey:frame];
+            [_pendingFrameLoads.get() _webkit_setObject:pluginRequest forUncopiedKey:frame];
             [frame _setInternalLoadDelegate:self];
         }
     }
@@ -2187,7 +2149,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if (![[[self webView] preferences] isJavaScriptEnabled]) {
             // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
             return NPERR_GENERIC_ERROR;
-        } else if (cTarget == NULL && mode == NP_FULL) {
+        } else if (cTarget == NULL && _mode == NP_FULL) {
             // Don't allow a JavaScript request from a standalone plug-in that is self-targetted
             // because this can cause the user to be redirected to a blank page (3424039).
             return NPERR_INVALID_PARAM;
@@ -2207,8 +2169,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         }
         
         bool currentEventIsUserGesture = false;
-        if (eventHandler)
-            currentEventIsUserGesture = eventHandler->currentEventIsUserGesture();
+        if (_eventHandler)
+            currentEventIsUserGesture = _eventHandler->currentEventIsUserGesture();
         
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request 
                                                                           frameName:target
@@ -2380,7 +2342,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (const char *)userAgent
 {
-    return [[[self webView] userAgentForURL:baseURL] UTF8String];
+    return [[[self webView] userAgentForURL:_baseURL.get()] UTF8String];
 }
 
 -(void)status:(const char *)message
@@ -2482,10 +2444,10 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
         case NPNVPluginElementNPObject:
         {
-            if (!element)
+            if (!_element)
                 return NPERR_GENERIC_ERROR;
             
-            NPObject *plugInScriptObject = (NPObject *)[element _NPObject];
+            NPObject *plugInScriptObject = (NPObject *)[_element.get() _NPObject];
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (plugInScriptObject)
@@ -2588,7 +2550,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
                 // Unsupported (or unknown) drawing models:
                 default:
-                    LOG(Plugins, "Plugin %@ uses unsupported drawing model: %d", pluginPackage, drawingModel);
+                    LOG(Plugins, "Plugin %@ uses unsupported drawing model: %d", _eventHandler.get(), drawingModel);
                     return NPERR_GENERIC_ERROR;
             }
         }
@@ -2612,7 +2574,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
                     
                     // Unsupported (or unknown) event models:
                 default:
-                    LOG(Plugins, "Plugin %@ uses unsupported event model: %d", pluginPackage, eventModel);
+                    LOG(Plugins, "Plugin %@ uses unsupported event model: %d", _eventHandler.get(), eventModel);
                     return NPERR_GENERIC_ERROR;
             }
         }
@@ -2737,7 +2699,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
     
     [[self class] setCurrentPluginView:self];
-    NPError npErr = NPP_New((char *)[MIMEType cString], plugin, mode, argsCount, cAttributes, cValues, NULL);
+    NPError npErr = NPP_New((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
     
     if (!wasDeferring)
@@ -2869,7 +2831,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
             [self pluginView:self receivedData:data];
             if (![[self dataSource] isLoading]) {
                 if (_error)
-                    [self pluginView:self receivedError:_error];
+                    [self pluginView:self receivedError:_error.get()];
                 else
                     [self pluginViewFinishedLoading:self];
             }
