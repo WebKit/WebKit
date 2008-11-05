@@ -21,7 +21,7 @@
 #ifndef PropertyMapHashTable_h
 #define PropertyMapHashTable_h
 
-#include "ustring.h"
+#include "UString.h"
 
 namespace JSC {
 

@@ -22,8 +22,8 @@
 #define JSDOMBinding_h
 
 #include "JSDOMGlobalObject.h"
-#include <kjs/interpreter.h>
-#include <kjs/lookup.h>
+#include <runtime/Interpreter.h>
+#include <runtime/Lookup.h>
 #include <runtime/JSFunction.h>
 #include <wtf/Noncopyable.h>
 

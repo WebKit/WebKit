@@ -30,7 +30,7 @@
 #include "PropertyNameArray.h"
 #include "StructureIDChain.h"
 #include "identifier.h"
-#include "lookup.h"
+#include "Lookup.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
 

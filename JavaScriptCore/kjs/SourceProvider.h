@@ -29,7 +29,7 @@
 #ifndef SourceProvider_h
 #define SourceProvider_h
 
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {

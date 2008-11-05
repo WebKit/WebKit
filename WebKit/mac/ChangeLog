@@ -1,3 +1,19 @@
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Correct forwarding headers for files moved to the runtime subdirectory
+        of JavaScriptCore and remove unused forwarding headers.
+
+        * ForwardingHeaders/kjs/collector.h: Removed.
+        * ForwardingHeaders/kjs/identifier.h: Removed.
+        * ForwardingHeaders/kjs/interpreter.h: Removed.
+        * ForwardingHeaders/kjs/lookup.h: Removed.
+        * ForwardingHeaders/kjs/operations.h: Removed.
+        * ForwardingHeaders/kjs/protect.h: Removed.
+        * ForwardingHeaders/runtime/Interpreter.h: Copied from ForwardingHeaders/kjs/interpreter.h.
+        * WebView/WebScriptDebugDelegate.mm:
+
 2008-11-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

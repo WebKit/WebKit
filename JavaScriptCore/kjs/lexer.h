@@ -23,8 +23,8 @@
 #ifndef Lexer_h
 #define Lexer_h
 
-#include "lookup.h"
-#include "ustring.h"
+#include "Lookup.h"
+#include "UString.h"
 #include <wtf/Vector.h>
 #include "SourceCode.h"
 

@@ -23,7 +23,7 @@
 
 #include "JSGlobalObject.h"
 #include "StringObject.h"
-#include "ustring.h"
+#include "UString.h"
 
 namespace JSC {
 

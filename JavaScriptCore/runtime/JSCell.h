@@ -25,7 +25,7 @@
 
 #include "StructureID.h"
 #include "JSValue.h"
-#include "collector.h"
+#include "Collector.h"
 
 namespace JSC {
 

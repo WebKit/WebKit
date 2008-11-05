@@ -50,9 +50,9 @@
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
-#include "collector.h"
+#include "Collector.h"
 #include "Debugger.h"
-#include "operations.h"
+#include "Operations.h"
 #include "SamplingTool.h"
 #include <stdio.h>
 

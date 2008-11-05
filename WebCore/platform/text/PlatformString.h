@@ -30,9 +30,9 @@
 #include <wtf/PassRefPtr.h>
 
 #if USE(JSC)
-#include <kjs/identifier.h>
+#include <runtime/Identifier.h>
 #else
-// kjs/identifier.h includes HashMap.h. We explicitly include it in the case of
+// runtime/Identifier.h includes HashMap.h. We explicitly include it in the case of
 // non-JSC builds to keep things consistent.
 #include <wtf/HashMap.h>
 #endif

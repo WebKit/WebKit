@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "lookup.h"
+#include "Lookup.h"
 
 #include "PrototypeFunction.h"
 

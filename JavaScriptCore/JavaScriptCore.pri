@@ -74,7 +74,7 @@ SOURCES += \
     runtime/BooleanObject.cpp \
     runtime/BooleanPrototype.cpp \
     runtime/CallData.cpp \
-    kjs/collector.cpp \
+    runtime/Collector.cpp \
     runtime/CommonIdentifiers.cpp \
     runtime/ConstructData.cpp \
     runtime/DateConstructor.cpp \
@@ -93,9 +93,9 @@ SOURCES += \
     runtime/FunctionPrototype.cpp \
     runtime/GetterSetter.cpp \
     runtime/GlobalEvalFunction.cpp \
-    kjs/identifier.cpp \
+    runtime/Identifier.cpp \
     runtime/InternalFunction.cpp \
-    kjs/interpreter.cpp \
+    runtime/Interpreter.cpp \
     runtime/JSArray.cpp \
     runtime/JSCell.cpp \
     runtime/JSFunction.cpp \
@@ -108,7 +108,7 @@ SOURCES += \
     runtime/JSValue.cpp \
     runtime/JSWrapperObject.cpp \
     kjs/lexer.cpp \
-    kjs/lookup.cpp \
+    runtime/Lookup.cpp \
     runtime/MathObject.cpp \
     runtime/NativeErrorConstructor.cpp \
     runtime/NativeErrorPrototype.cpp \
@@ -119,12 +119,12 @@ SOURCES += \
     runtime/NumberPrototype.cpp \
     runtime/ObjectConstructor.cpp \
     runtime/ObjectPrototype.cpp \
-    kjs/operations.cpp \
+    runtime/Operations.cpp \
     kjs/Parser.cpp \
     runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/PrototypeFunction.cpp \
-    kjs/regexp.cpp \
+    runtime/RegExp.cpp \
     runtime/RegExpConstructor.cpp \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
@@ -135,7 +135,7 @@ SOURCES += \
     runtime/StringPrototype.cpp \
     runtime/StructureID.cpp \
     runtime/StructureIDChain.cpp \
-    kjs/ustring.cpp \
+    runtime/UString.cpp \
     profiler/HeavyProfile.cpp \
     profiler/Profile.cpp \
     profiler/ProfileGenerator.cpp \

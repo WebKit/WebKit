@@ -22,7 +22,7 @@
 #include "MathObject.h"
 
 #include "ObjectPrototype.h"
-#include "operations.h"
+#include "Operations.h"
 #include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>

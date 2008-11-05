@@ -51,7 +51,7 @@ the JavaScript specification. There are also some supporting functions. */
 
 #if REGEXP_HISTOGRAM
 #include <kjs/DateMath.h>
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 #endif
 
 using namespace WTF;

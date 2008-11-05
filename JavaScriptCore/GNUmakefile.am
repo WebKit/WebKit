@@ -140,21 +140,21 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/SourceCode.h \
 	JavaScriptCore/runtime/SymbolTable.h \
 	JavaScriptCore/runtime/Tracing.h \
-	JavaScriptCore/kjs/TypeInfo.h \
-	JavaScriptCore/kjs/collector.h \
-	JavaScriptCore/kjs/completion.h \
+	JavaScriptCore/runtime/TypeInfo.h \
+	JavaScriptCore/runtime/Collector.h \
+	JavaScriptCore/runtime/Completion.h \
 	JavaScriptCore/config.h \
 	JavaScriptCore/debugger/Debugger.h \
 	JavaScriptCore/wtf/dtoa.h \
-	JavaScriptCore/kjs/identifier.h \
-	JavaScriptCore/kjs/interpreter.h \
+	JavaScriptCore/runtime/Identifier.h \
+	JavaScriptCore/runtime/Interpreter.h \
 	JavaScriptCore/kjs/lexer.h \
-	JavaScriptCore/kjs/lookup.h \
+	JavaScriptCore/runtime/Lookup.h \
 	JavaScriptCore/kjs/nodes.h \
-	JavaScriptCore/kjs/operations.h \
-	JavaScriptCore/kjs/protect.h \
-	JavaScriptCore/kjs/regexp.h \
-	JavaScriptCore/kjs/ustring.h \
+	JavaScriptCore/runtime/Operations.h \
+	JavaScriptCore/runtime/Protect.h \
+	JavaScriptCore/runtime/RegExp.h \
+	JavaScriptCore/runtime/UString.h \
 	JavaScriptCore/masm/X86Assembler.h \
 	JavaScriptCore/os-win32/stdbool.h \
 	JavaScriptCore/os-win32/stdint.h \
@@ -324,18 +324,18 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/RegExpObject.cpp \
 	JavaScriptCore/runtime/RegExpPrototype.cpp \
 	JavaScriptCore/runtime/ScopeChain.cpp \
-	JavaScriptCore/kjs/collector.cpp \
+	JavaScriptCore/runtime/Collector.cpp \
 	JavaScriptCore/debugger/Debugger.cpp \
 	JavaScriptCore/wtf/dtoa.cpp \
-	JavaScriptCore/kjs/identifier.cpp \
-	JavaScriptCore/kjs/interpreter.cpp \
+	JavaScriptCore/runtime/Identifier.cpp \
+	JavaScriptCore/runtime/Interpreter.cpp \
 	JavaScriptCore/kjs/lexer.cpp \
-	JavaScriptCore/kjs/lookup.cpp \
+	JavaScriptCore/runtime/Lookup.cpp \
 	JavaScriptCore/kjs/nodes.cpp \
 	JavaScriptCore/kjs/nodes2string.cpp \
-	JavaScriptCore/kjs/operations.cpp \
-	JavaScriptCore/kjs/regexp.cpp \
-	JavaScriptCore/kjs/ustring.cpp \
+	JavaScriptCore/runtime/Operations.cpp \
+	JavaScriptCore/runtime/RegExp.cpp \
+	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/ArrayConstructor.cpp \
 	JavaScriptCore/runtime/ArrayPrototype.cpp \
 	JavaScriptCore/runtime/BooleanConstructor.cpp \

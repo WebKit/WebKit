@@ -22,7 +22,7 @@
 
 #include "PlatformString.h"
 #include "JSDOMBinding.h"
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 

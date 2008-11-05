@@ -21,7 +21,7 @@
 #define ScheduledAction_h
 
 #include "PlatformString.h"
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

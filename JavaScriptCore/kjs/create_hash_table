@@ -30,7 +30,7 @@ my $file = $ARGV[0];
 shift;
 my $includelookup = 0;
 
-# Use -i as second argument to make it include "lookup.h"
+# Use -i as second argument to make it include "Lookup.h"
 $includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
 
 # Use -n as second argument to make it use the third argument as namespace parameter ie. -n KDOM

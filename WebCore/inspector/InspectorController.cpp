@@ -69,7 +69,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <runtime/JSLock.h>
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 #include <runtime/CollectorHeapIterator.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>

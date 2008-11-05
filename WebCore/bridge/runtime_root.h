@@ -29,7 +29,7 @@
 #if PLATFORM(MAC)
 #include "jni_jsobject.h"
 #endif
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

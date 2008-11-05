@@ -44,7 +44,7 @@ using namespace JSC;
 #include "grammar.h"
 #endif
 
-#include "lookup.h"
+#include "Lookup.h"
 #include "lexer.lut.h"
 
 // a bridge for yacc from the C world to C++

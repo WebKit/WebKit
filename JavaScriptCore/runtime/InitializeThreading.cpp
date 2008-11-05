@@ -29,12 +29,12 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
-#include "collector.h"
+#include "Collector.h"
 #include "DateMath.h"
 #include "dtoa.h"
 #include "identifier.h"
 #include "JSGlobalObject.h"
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/Threading.h>
 
 namespace JSC {

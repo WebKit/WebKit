@@ -38,8 +38,8 @@
 #include <runtime/ExecState.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
-#include <kjs/completion.h>
-#include <kjs/interpreter.h>
+#include <runtime/Completion.h>
+#include <runtime/Interpreter.h>
 #include <wtf/Assertions.h>
 #include <kjs/SourceProvider.h>
 

@@ -29,7 +29,7 @@
 #include "JSDOMWindow.h"
 #include <runtime/JSGlobalData.h>
 #include <runtime/JSLock.h>
-#include <kjs/collector.h>
+#include <runtime/Collector.h>
 
 #if USE(PTHREADS)
 #include <pthread.h>

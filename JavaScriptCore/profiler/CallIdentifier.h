@@ -27,7 +27,7 @@
 #ifndef CallIdentifier_h
 #define CallIdentifier_h
 
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 
 namespace JSC {
 

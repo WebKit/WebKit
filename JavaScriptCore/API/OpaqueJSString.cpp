@@ -28,7 +28,7 @@
 
 #include <runtime/ExecState.h>
 #include <runtime/JSGlobalObject.h>
-#include <kjs/identifier.h>
+#include <runtime/Identifier.h>
 
 using namespace JSC;
 

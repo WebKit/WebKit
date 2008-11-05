@@ -24,7 +24,7 @@
 #include "JSNumberCell.h"
 
 #include "NumberObject.h"
-#include "ustring.h"
+#include "UString.h"
 
 namespace JSC {
 

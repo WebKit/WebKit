@@ -27,7 +27,7 @@
 #include "config.h"
 #include "JSCallbackObject.h"
 
-#include "collector.h"
+#include "Collector.h"
 
 namespace JSC {
 

@@ -55,7 +55,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextMetrics.h"
-#include <kjs/interpreter.h>
+#include <runtime/Interpreter.h>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 

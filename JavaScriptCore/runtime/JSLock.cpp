@@ -21,7 +21,7 @@
 #include "config.h"
 #include "JSLock.h"
 
-#include "collector.h"
+#include "Collector.h"
 #include "ExecState.h"
 
 #if ENABLE(JSC_MULTIPLE_THREADS)

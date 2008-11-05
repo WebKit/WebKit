@@ -29,7 +29,7 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
-#include "regexp.h"
+#include "RegExp.h"
 
 namespace JSC {
 

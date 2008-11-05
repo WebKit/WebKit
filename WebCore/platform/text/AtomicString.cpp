@@ -28,7 +28,7 @@
 
 #include "StaticConstructors.h"
 #include "StringHash.h"
-#include <kjs/identifier.h>
+#include <runtime/Identifier.h>
 #include <wtf/Threading.h>
 #include <wtf/HashSet.h>
 

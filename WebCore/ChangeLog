@@ -1,3 +1,56 @@
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Move more files to the runtime subdirectory of JavaScriptCore.
+
+        * ForwardingHeaders/kjs/collector.h: Removed.
+        * ForwardingHeaders/kjs/completion.h: Removed.
+        * ForwardingHeaders/kjs/identifier.h: Removed.
+        * ForwardingHeaders/kjs/interpreter.h: Removed.
+        * ForwardingHeaders/kjs/lookup.h: Removed.
+        * ForwardingHeaders/kjs/operations.h: Removed.
+        * ForwardingHeaders/kjs/protect.h: Removed.
+        * ForwardingHeaders/kjs/ustring.h: Removed.
+        * ForwardingHeaders/runtime/Collector.h: Copied from ForwardingHeaders/kjs/collector.h.
+        * ForwardingHeaders/runtime/Completion.h: Copied from ForwardingHeaders/kjs/completion.h.
+        * ForwardingHeaders/runtime/Identifier.h: Copied from ForwardingHeaders/kjs/identifier.h.
+        * ForwardingHeaders/runtime/Interpreter.h: Copied from ForwardingHeaders/kjs/interpreter.h.
+        * ForwardingHeaders/runtime/Lookup.h: Copied from ForwardingHeaders/kjs/lookup.h.
+        * ForwardingHeaders/runtime/Operations.h: Copied from ForwardingHeaders/kjs/operations.h.
+        * ForwardingHeaders/runtime/Protect.h: Copied from ForwardingHeaders/kjs/protect.h.
+        * ForwardingHeaders/runtime/UString.h: Copied from ForwardingHeaders/kjs/ustring.h.
+        * bindings/js/GCController.cpp:
+        * bindings/js/JSCustomPositionCallback.h:
+        * bindings/js/JSCustomPositionErrorCallback.h:
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSEventListener.h:
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptController.h:
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        * bridge/c/c_class.cpp:
+        * bridge/jni/jni_class.cpp:
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/npruntime.cpp:
+        * bridge/runtime_root.h:
+        * history/CachedPage.h:
+        * html/CanvasRenderingContext2D.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * inspector/InspectorController.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        * page/Console.cpp:
+        * page/Page.cpp:
+        * platform/text/AtomicString.cpp:
+        * platform/text/PlatformString.h:
+
 2008-11-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

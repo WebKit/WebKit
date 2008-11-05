@@ -29,7 +29,7 @@
 #include "APICast.h"
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 #include <runtime/JSValue.h>
 #include <wtf/OwnArrayPtr.h>
 

@@ -40,8 +40,8 @@
 #include <runtime/JSLock.h>
 #include <runtime/PropertyNameArray.h>
 #include <kjs/SourceCode.h>
-#include <kjs/completion.h>
-#include <kjs/interpreter.h>
+#include <runtime/Completion.h>
+#include <runtime/Interpreter.h>
 
 using WebCore::String;
 using WebCore::StringSourceProvider;

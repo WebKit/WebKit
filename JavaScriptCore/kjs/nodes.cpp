@@ -37,7 +37,7 @@
 #include "SamplingTool.h"
 #include "Debugger.h"
 #include "lexer.h"
-#include "operations.h"
+#include "Operations.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashCountedSet.h>

@@ -30,7 +30,7 @@
 #define SymbolTable_h
 
 #include "JSObject.h"
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/AlwaysInline.h>
 
 namespace JSC {

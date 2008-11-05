@@ -395,7 +395,7 @@ sub GenerateHeader
     }
 
     if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
-        push(@headerContentHeader, "#include <kjs/lookup.h>\n");
+        push(@headerContentHeader, "#include <runtime/Lookup.h>\n");
         push(@headerContentHeader, "#include <wtf/AlwaysInline.h>\n");
     }
 

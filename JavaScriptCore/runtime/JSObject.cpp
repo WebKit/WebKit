@@ -31,9 +31,9 @@
 #include "NativeErrorConstructor.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
-#include "lookup.h"
+#include "Lookup.h"
 #include "nodes.h"
-#include "operations.h"
+#include "Operations.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 

@@ -32,7 +32,7 @@
 #include "npruntime_priv.h"
 
 #include "c_utility.h"
-#include <kjs/identifier.h>
+#include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>

@@ -32,7 +32,7 @@
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
-#include <kjs/identifier.h>
+#include <runtime/Identifier.h>
 
 using namespace JSC;
 

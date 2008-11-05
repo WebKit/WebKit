@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "operations.h"
+#include "Operations.h"
 
 #include "Error.h"
 #include "JSObject.h"

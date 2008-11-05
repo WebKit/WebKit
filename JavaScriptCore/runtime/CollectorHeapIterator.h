@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "collector.h"
+#include "Collector.h"
 
 namespace JSC {
 

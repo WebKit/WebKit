@@ -26,7 +26,7 @@
 #ifndef StructureIDTransitionTable_h
 #define StructureIDTransitionTable_h
 
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>

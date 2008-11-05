@@ -28,7 +28,7 @@
 
 #if ENABLE(WREC)
 
-#include "ustring.h"
+#include "UString.h"
 
 namespace JSC {
 

@@ -27,7 +27,7 @@
 #define Profile_h
 
 #include "ProfileNode.h"
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

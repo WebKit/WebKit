@@ -23,7 +23,7 @@
 #define ScriptController_h
 
 #include "JSDOMWindowShell.h"
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)

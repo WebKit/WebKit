@@ -38,9 +38,9 @@
 #include "JSStaticScopeObject.h"
 #include "Machine.h"
 #include "Parser.h"
-#include "collector.h"
+#include "Collector.h"
 #include "lexer.h"
-#include "lookup.h"
+#include "Lookup.h"
 #include "nodes.h"
 
 #if ENABLE(JSC_MULTIPLE_THREADS)

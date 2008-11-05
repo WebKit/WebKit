@@ -26,7 +26,7 @@
 #ifndef APICast_h
 #define APICast_h
 
-#include "ustring.h"
+#include "UString.h"
 #include "ExecState.h"
 
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;

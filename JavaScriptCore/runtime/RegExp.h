@@ -21,7 +21,7 @@
 #ifndef KJS_REGEXP_H
 #define KJS_REGEXP_H
 
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 

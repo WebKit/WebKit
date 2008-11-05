@@ -44,7 +44,7 @@
 #include "ScriptController.h"
 #include "JSDOMBinding.h"
 #include <runtime/JSValue.h>
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP

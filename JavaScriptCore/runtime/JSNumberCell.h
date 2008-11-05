@@ -26,8 +26,8 @@
 #include "ExecState.h"
 #include "JSCell.h"
 #include "JSImmediate.h"
-#include "collector.h"
-#include "ustring.h"
+#include "Collector.h"
+#include "UString.h"
 #include <stddef.h> // for size_t
 
 namespace JSC {

@@ -337,11 +337,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\collector.cpp"
+				RelativePath="..\..\runtime\Collector.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\collector.h"
+				RelativePath="..\..\runtime\Collector.h"
 				>
 			</File>
 			<File
@@ -357,7 +357,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\completion.h"
+				RelativePath="..\..\runtime\Completion.h"
 				>
 			</File>
 			<File
@@ -477,11 +477,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\identifier.cpp"
+				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\identifier.h"
+				RelativePath="..\..\runtime\Identifier.h"
 				>
 			</File>
 			<File
@@ -501,11 +501,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\interpreter.cpp"
+				RelativePath="..\..\runtime\Interpreter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\interpreter.h"
+				RelativePath="..\..\runtime\Interpreter.h"
 				>
 			</File>
 			<File
@@ -653,11 +653,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\lookup.cpp"
+				RelativePath="..\..\runtime\Lookup.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\lookup.h"
+				RelativePath="..\..\runtime\Lookup.h"
 				>
 			</File>
 			<File
@@ -729,11 +729,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\operations.cpp"
+				RelativePath="..\..\runtime\Operations.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\operations.h"
+				RelativePath="..\..\runtime\Operations.h"
 				>
 			</File>
 			<File
@@ -757,7 +757,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\protect.h"
+				RelativePath="..\..\runtime\Protect.h"
 				>
 			</File>
 			<File
@@ -769,11 +769,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\regexp.cpp"
+				RelativePath="..\..\runtime\RegExp.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\regexp.h"
+				RelativePath="..\..\runtime\RegExp.h"
 				>
 			</File>
 			<File
@@ -881,11 +881,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ustring.cpp"
+				RelativePath="..\..\runtime\UString.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\ustring.h"
+				RelativePath="..\..\runtime\UString.h"
 				>
 			</File>
 			<Filter

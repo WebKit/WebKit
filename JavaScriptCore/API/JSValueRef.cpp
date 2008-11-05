@@ -32,9 +32,9 @@
 
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSString.h>
-#include <kjs/operations.h>
-#include <kjs/protect.h>
-#include <kjs/ustring.h>
+#include <runtime/Operations.h>
+#include <runtime/Protect.h>
+#include <runtime/UString.h>
 #include <runtime/JSValue.h>
 
 #include <wtf/Assertions.h>

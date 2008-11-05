@@ -43,8 +43,8 @@
 #import <runtime/ExecState.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSLock.h>
-#import <kjs/completion.h>
-#import <kjs/interpreter.h>
+#import <runtime/Completion.h>
+#import <runtime/Interpreter.h>
 
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;

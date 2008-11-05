@@ -35,7 +35,7 @@
 #include "nodes.h"
 #include "Parser.h"
 #include "SourceCode.h"
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

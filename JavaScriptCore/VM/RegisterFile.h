@@ -30,7 +30,7 @@
 #define RegisterFile_h
 
 #include "Register.h"
-#include "collector.h"
+#include "Collector.h"
 #if HAVE(MMAP)
 #include <sys/mman.h>
 #endif

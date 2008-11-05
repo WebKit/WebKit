@@ -32,7 +32,7 @@
 #include "SQLStatementCallback.h"
 
 #include <runtime/JSObject.h>
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 #include <wtf/Forward.h>
 
 namespace JSC {

@@ -22,7 +22,7 @@
 #define RegExpObject_h
 
 #include "JSObject.h"
-#include "regexp.h"
+#include "RegExp.h"
 
 namespace JSC {
 

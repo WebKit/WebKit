@@ -26,7 +26,7 @@
 #ifndef SmallStrings_h
 #define SmallStrings_h
 
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/OwnPtr.h>
 
 namespace JSC {

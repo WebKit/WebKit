@@ -26,8 +26,8 @@
 
 #include "Machine.h"
 #include "ObjectPrototype.h"
-#include "lookup.h"
-#include "operations.h"
+#include "Lookup.h"
+#include "Operations.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>

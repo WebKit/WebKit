@@ -22,7 +22,7 @@
 
 #include "EventListener.h"
 #include "PlatformString.h"
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 
 namespace WebCore {
 

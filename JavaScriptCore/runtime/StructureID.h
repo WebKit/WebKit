@@ -33,7 +33,7 @@
 #include "StructureIDTransitionTable.h"
 #include "TypeInfo.h"
 #include "identifier.h"
-#include "ustring.h"
+#include "UString.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/OwnArrayPtr.h>

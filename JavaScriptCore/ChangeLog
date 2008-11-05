@@ -1,3 +1,102 @@
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Move more files to the runtime subdirectory of JavaScriptCore.
+
+        * API/APICast.h:
+        * API/JSBase.cpp:
+        * API/JSCallbackObject.cpp:
+        * API/JSClassRef.cpp:
+        * API/JSClassRef.h:
+        * API/JSStringRefCF.cpp:
+        * API/JSValueRef.cpp:
+        * API/OpaqueJSString.cpp:
+        * API/OpaqueJSString.h:
+        * AllInOneFile.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        * VM/Machine.cpp:
+        * VM/RegisterFile.h:
+        * debugger/Debugger.h:
+        * kjs/SourceProvider.h:
+        * kjs/TypeInfo.h: Removed.
+        * kjs/collector.cpp: Removed.
+        * kjs/collector.h: Removed.
+        * kjs/completion.h: Removed.
+        * kjs/create_hash_table:
+        * kjs/identifier.cpp: Removed.
+        * kjs/identifier.h: Removed.
+        * kjs/interpreter.cpp: Removed.
+        * kjs/interpreter.h: Removed.
+        * kjs/lexer.cpp:
+        * kjs/lexer.h:
+        * kjs/lookup.cpp: Removed.
+        * kjs/lookup.h: Removed.
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/operations.cpp: Removed.
+        * kjs/operations.h: Removed.
+        * kjs/protect.h: Removed.
+        * kjs/regexp.cpp: Removed.
+        * kjs/regexp.h: Removed.
+        * kjs/ustring.cpp: Removed.
+        * kjs/ustring.h: Removed.
+        * pcre/pcre_exec.cpp:
+        * profiler/CallIdentifier.h:
+        * profiler/Profile.h:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/ArrayPrototype.h:
+        * runtime/Collector.cpp: Copied from kjs/collector.cpp.
+        * runtime/Collector.h: Copied from kjs/collector.h.
+        * runtime/CollectorHeapIterator.h:
+        * runtime/Completion.h: Copied from kjs/completion.h.
+        * runtime/ErrorPrototype.cpp:
+        * runtime/Identifier.cpp: Copied from kjs/identifier.cpp.
+        * runtime/Identifier.h: Copied from kjs/identifier.h.
+        * runtime/InitializeThreading.cpp:
+        * runtime/Interpreter.cpp: Copied from kjs/interpreter.cpp.
+        * runtime/Interpreter.h: Copied from kjs/interpreter.h.
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalData.h:
+        * runtime/JSLock.cpp:
+        * runtime/JSNumberCell.cpp:
+        * runtime/JSNumberCell.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSValue.h:
+        * runtime/Lookup.cpp: Copied from kjs/lookup.cpp.
+        * runtime/Lookup.h: Copied from kjs/lookup.h.
+        * runtime/MathObject.cpp:
+        * runtime/NativeErrorPrototype.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/Operations.cpp: Copied from kjs/operations.cpp.
+        * runtime/Operations.h: Copied from kjs/operations.h.
+        * runtime/PropertyMapHashTable.h:
+        * runtime/Protect.h: Copied from kjs/protect.h.
+        * runtime/RegExp.cpp: Copied from kjs/regexp.cpp.
+        * runtime/RegExp.h: Copied from kjs/regexp.h.
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/SmallStrings.h:
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        * runtime/StructureID.cpp:
+        * runtime/StructureID.h:
+        * runtime/StructureIDTransitionTable.h:
+        * runtime/SymbolTable.h:
+        * runtime/TypeInfo.h: Copied from kjs/TypeInfo.h.
+        * runtime/UString.cpp: Copied from kjs/ustring.cpp.
+        * runtime/UString.h: Copied from kjs/ustring.h.
+        * wrec/CharacterClassConstructor.h:
+        * wrec/WREC.h:
+
 2008-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Suggested by Darin Adler.

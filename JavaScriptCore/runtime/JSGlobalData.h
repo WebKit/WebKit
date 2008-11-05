@@ -32,7 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
-#include "collector.h"
+#include "Collector.h"
 #include "SmallStrings.h"
 
 struct OpaqueJSClass;

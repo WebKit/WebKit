@@ -26,7 +26,7 @@
 #include "JSString.h"
 #include "PrototypeFunction.h"
 #include "dtoa.h"
-#include "operations.h"
+#include "Operations.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>

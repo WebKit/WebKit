@@ -22,7 +22,7 @@
 #define KJS_IDENTIFIER_H
 
 #include "JSGlobalData.h"
-#include "ustring.h"
+#include "UString.h"
 
 namespace JSC {
 

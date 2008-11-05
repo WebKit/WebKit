@@ -33,7 +33,7 @@
 #include "BatchedTransitionOptimizer.h"
 #include "JSFunction.h"
 #include "Machine.h"
-#include "ustring.h"
+#include "UString.h"
 
 using namespace std;
 

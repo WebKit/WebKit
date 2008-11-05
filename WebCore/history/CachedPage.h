@@ -29,7 +29,7 @@
 #include "KURL.h"
 #include <wtf/OwnPtr.h>
 #include "PausedTimeouts.h"
-#include <kjs/protect.h>
+#include <runtime/Protect.h>
 
 namespace WebCore {
     

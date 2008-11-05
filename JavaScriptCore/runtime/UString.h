@@ -22,7 +22,7 @@
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
 
-#include "collector.h"
+#include "Collector.h"
 #include <stdint.h>
 #include <string.h>
 #include <wtf/Assertions.h>

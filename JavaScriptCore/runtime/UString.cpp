@@ -21,13 +21,13 @@
  */
 
 #include "config.h"
-#include "ustring.h"
+#include "UString.h"
 
 #include "JSGlobalObjectFunctions.h"
-#include "collector.h"
+#include "Collector.h"
 #include "dtoa.h"
 #include "identifier.h"
-#include "operations.h"
+#include "Operations.h"
 #include <ctype.h>
 #include <float.h>
 #include <limits.h>

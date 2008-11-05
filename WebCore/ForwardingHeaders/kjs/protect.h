@@ -1,1 +1,0 @@
-#include <JavaScriptCore/protect.h>

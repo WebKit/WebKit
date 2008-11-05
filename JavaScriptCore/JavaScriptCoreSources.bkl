@@ -47,15 +47,10 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
-        kjs/collector.cpp
         wtf/dtoa.cpp
-        kjs/identifier.cpp
-        kjs/interpreter.cpp
         kjs/lexer.cpp
-        kjs/lookup.cpp
         kjs/nodes.cpp
         kjs/nodes2string.cpp
-        kjs/operations.cpp
         kjs/Parser.cpp
         kjs/regexp.cpp
         kjs/ustring.cpp
@@ -84,6 +79,7 @@ Source files for JSCore.
         runtime/BooleanObject.cpp
         runtime/BooleanPrototype.cpp
         runtime/CallData.cpp
+        runtime/Collector.cpp
         runtime/CommonIdentifiers.cpp
         runtime/ConstructData.cpp
         runtime/DateConstructor.cpp
@@ -99,8 +95,10 @@ Source files for JSCore.
         runtime/FunctionPrototype.cpp
         runtime/GetterSetter.cpp
         runtime/GlobalEvalFunction.cpp
+        runtime/Identifier.cpp
         runtime/InitializeThreading.cpp
         runtime/InternalFunction.cpp
+        runtime/Interpreter.cpp
         runtime/JSActivation.cpp
         runtime/JSArray.cpp
         runtime/JSCell.cpp
@@ -119,6 +117,7 @@ Source files for JSCore.
         runtime/JSValue.cpp
         runtime/JSVariableObject.cpp
         runtime/JSWrapperObject.cpp
+        runtime/Lookup.cpp
         runtime/MathObject.cpp
         runtime/NativeErrorConstructor.cpp
         runtime/NativeErrorPrototype.cpp

@@ -26,7 +26,7 @@
 #include "CallData.h"
 #include "ConstructData.h"
 #include "JSImmediate.h"
-#include "ustring.h"
+#include "UString.h"
 #include <stddef.h> // for size_t
 
 // The magic number 0x4000 is not important here, it is being subtracted back out (avoiding using zero since this

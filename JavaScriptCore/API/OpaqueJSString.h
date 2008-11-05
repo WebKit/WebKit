@@ -26,7 +26,7 @@
 #ifndef OpaqueJSString_h
 #define OpaqueJSString_h
 
-#include <kjs/ustring.h>
+#include <runtime/UString.h>
 
 namespace JSC {
     class Identifier;

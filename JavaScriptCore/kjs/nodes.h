@@ -34,7 +34,7 @@
 #include "ResultType.h"
 #include "SourceCode.h"
 #include "SymbolTable.h"
-#include "regexp.h"
+#include "RegExp.h"
 #include <wtf/ListRefPtr.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>

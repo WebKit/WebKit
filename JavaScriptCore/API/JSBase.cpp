@@ -33,7 +33,7 @@
 #include "SourceCode.h"
 #include <runtime/ExecState.h>
 #include <runtime/InitializeThreading.h>
-#include <kjs/interpreter.h>
+#include <runtime/Interpreter.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
