@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,18 +26,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-namespace JSC {
-    class ExecState;
-}
-
 namespace WebCore {
 
     class AtomicString;
     class Frame;
     class PluginData;
-
-    // FIXME: Generated JSPluginArray.cpp doesn't include JSPlugin.h for toJS
-    JSC::JSValue* toJS(JSC::ExecState*, Plugin*);
 
     class PluginArray : public RefCounted<PluginArray> {
     public:
@@ -48,15 +42,17 @@ namespace WebCore {
         unsigned length() const;
         PassRefPtr<Plugin> item(unsigned index);
         bool canGetItemsForName(const AtomicString& propertyName);
-        PassRefPtr<Plugin> nameGetter(const AtomicString& propertyName);
+        PassRefPtr<Plugin> namedItem(const AtomicString& propertyName);
 
         void refresh(bool reload);
+
     private:
         PluginArray(Frame*);
         PluginData* getPluginData() const;
 
         Frame* m_frame;
     };
-}
 
-#endif
+} // namespace WebCore
+
+#endif // PluginArray_h

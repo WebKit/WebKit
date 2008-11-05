@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,7 +20,11 @@
 
 module window {
 
-    interface [HasNameGetter, HasIndexGetter] Plugin {
+    interface [
+        GenerateConstructor,
+        HasNameGetter,
+        HasIndexGetter
+    ] Plugin {
         readonly attribute DOMString name;
         readonly attribute DOMString filename;
         readonly attribute DOMString description;

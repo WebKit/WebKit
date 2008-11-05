@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -68,7 +69,7 @@ bool PluginArray::canGetItemsForName(const AtomicString& propertyName)
     return false;
 }
 
-PassRefPtr<Plugin> PluginArray::nameGetter(const AtomicString& propertyName)
+PassRefPtr<Plugin> PluginArray::namedItem(const AtomicString& propertyName)
 {
     PluginData* data = getPluginData();
     if (!data)

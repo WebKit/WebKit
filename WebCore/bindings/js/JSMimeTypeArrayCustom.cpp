@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
 #include "JSMimeTypeArray.h"
 
 #include "AtomicString.h"
+#include "JSMimeType.h"
 #include "MimeTypeArray.h"
 
 namespace WebCore {
@@ -34,7 +36,7 @@ bool JSMimeTypeArray::canGetItemsForName(ExecState*, MimeTypeArray* mimeTypeArra
 JSValue* JSMimeTypeArray::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSMimeTypeArray* thisObj = static_cast<JSMimeTypeArray*>(asObject(slot.slotBase()));
-    return toJS(exec, thisObj->impl()->nameGetter(propertyName));
+    return toJS(exec, thisObj->impl()->namedItem(propertyName));
 }
 
-}
+} // namespace WebCore

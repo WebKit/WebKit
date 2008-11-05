@@ -364,6 +364,12 @@ module window {
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
 
+        attribute PluginConstructor Plugin;
+        attribute PluginArrayConstructor PluginArray;
+
+        attribute MimeTypeConstructor MimeType;
+        attribute MimeTypeArrayConstructor MimeTypeArray;
+
 #if ENABLE_DOM_STORAGE
         attribute StorageConstructor Storage;
         attribute StorageEventConstructor StorageEvent;

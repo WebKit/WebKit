@@ -1,3 +1,28 @@
+2008-11-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=21648
+        navigator.mimeTypes and navigator.plugins don't expose item and namedItem to JS
+
+        - Also adds constructors for Plugin, PluginArray, MimeType and MimeTypeArray.
+
+        * bindings/js/JSMimeTypeArrayCustom.cpp:
+        (WebCore::JSMimeTypeArray::nameGetter):
+        * bindings/js/JSPluginArrayCustom.cpp:
+        (WebCore::JSPluginArray::nameGetter):
+        * page/DOMWindow.idl:
+        * plugins/MimeType.idl:
+        * plugins/MimeTypeArray.cpp:
+        (WebCore::MimeTypeArray::namedItem):
+        * plugins/MimeTypeArray.h:
+        * plugins/MimeTypeArray.idl:
+        * plugins/Plugin.idl:
+        * plugins/PluginArray.cpp:
+        (WebCore::PluginArray::namedItem):
+        * plugins/PluginArray.h:
+        * plugins/PluginArray.idl:
+
 2008-11-05  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

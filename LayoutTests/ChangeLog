@@ -1,3 +1,15 @@
+2008-11-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Update tests for https://bugs.webkit.org/show_bug.cgi?id=21648
+        navigator.mimeTypes and navigator.plugins don't expose item and namedItem to JS
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * plugins/plugin-javascript-access-expected.txt:
+        * plugins/plugin-javascript-access.html:
+
 2008-11-05  Pierre-Olivier Latour  <pol@apple.com>
 
         Rubber-stamped by Dan Bernstein.
