@@ -1308,7 +1308,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
     lastSetWindow.type = (NPWindowType)0;
     
+#ifndef BUILDING_ON_TIGER
     _layer = 0;
+#endif
     
     [self _destroyPlugin];
     [_pluginPackage.get() close];
