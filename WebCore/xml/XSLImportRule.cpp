@@ -61,7 +61,7 @@ void XSLImportRule::setXSLStyleSheet(const String& url, const String& sheet)
     
     XSLStyleSheet* parent = parentStyleSheet();
     if (parent)
-        m_styleSheet->setOwnerDocument(parent->ownerDocument());
+        m_styleSheet->setParentStyleSheet(parent);
 
     m_styleSheet->parseString(sheet);
     m_loading = false;

@@ -60,6 +60,7 @@ XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& href)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
     , m_stylesheetDocTaken(false)
+    , m_parentStyleSheet(0)
 {
 }
 
@@ -70,6 +71,7 @@ XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& href,  bool embedde
     , m_embedded(embedded)
     , m_processed(true) // The root sheet starts off processed.
     , m_stylesheetDocTaken(false)
+    , m_parentStyleSheet(0)
 {
 }
 
@@ -147,7 +149,24 @@ bool XSLStyleSheet::parseString(const String& string, bool strict)
     xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
     xmlSetGenericErrorFunc(console, XSLTProcessor::genericErrorFunc);
 
-    m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar),
+    const char* buffer = reinterpret_cast<const char*>(string.characters());
+    int size = string.length() * sizeof(UChar);
+
+    xmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(buffer, size);
+
+    if (m_parentStyleSheet) {
+        // The XSL transform may leave the newly-transformed document
+        // with references to the symbol dictionaries of the style sheet
+        // and any of its children. XML document disposal can corrupt memory
+        // if a document uses more than one symbol dictionary, so we
+        // ensure that all child stylesheets use the same dictionaries as their
+        // parents.
+        xmlDictFree(ctxt->dict);
+        ctxt->dict = m_parentStyleSheet->m_stylesheetDoc->dict;
+        xmlDictReference(ctxt->dict);
+    }
+
+    m_stylesheetDoc = xmlCtxtReadMemory(ctxt, buffer, size,
         href().utf8().data(),
         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
         XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);
@@ -233,6 +252,13 @@ xsltStylesheetPtr XSLStyleSheet::compileStyleSheet()
     if (result)
         m_stylesheetDocTaken = true;
     return result;
+}
+
+void XSLStyleSheet::setParentStyleSheet(XSLStyleSheet* parent)
+{
+    m_parentStyleSheet = parent;
+    if (parent)
+        m_ownerDocument = parent->ownerDocument();
 }
 
 xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const xmlChar* uri)
