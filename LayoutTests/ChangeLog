@@ -1,3 +1,14 @@
+2008-11-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update tests for https://bugs.webkit.org/show_bug.cgi?id=22085
+        The Plugin JS object should expose item() and namedItem() methods to match Firefox
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * plugins/plugin-javascript-access-expected.txt:
+        * plugins/plugin-javascript-access.html:
+
 2008-11-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

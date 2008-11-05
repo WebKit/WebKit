@@ -31,6 +31,18 @@ for (var i = 0; i < navigator.plugins.length; i++) {
         document.writeln("<p>Description: " + plugin[mi].description + "<\/p>");
         document.writeln("<p>Suffixes: " + plugin[mi].suffixes + "<\/p>");
         document.writeln("<br>");
+
+        if (plugin.item(i).type == plugin[mi].type) {
+            document.writeln("<p>Plugin.item() works.<\/p>");
+        } else {
+            document.writeln("<p>FAIL. Plugin.item() does not work.<\/p>");
+        }
+
+        if (plugin.namedItem(plugin[mi].type).type == plugin[mi].type) {
+            document.writeln("<p>Plugin.namedItem() works.<\/p>");
+        } else {
+            document.writeln("<p>FAIL. Plugin.namedItem() does not work.<\/p>");
+        }
     }
 
     if (navigator.plugins.item(i).name == plugin.name) {

@@ -79,7 +79,7 @@ bool Plugin::canGetItemsForName(const AtomicString& propertyName)
     return false;
 }
 
-PassRefPtr<MimeType> Plugin::nameGetter(const AtomicString& propertyName)
+PassRefPtr<MimeType> Plugin::namedItem(const AtomicString& propertyName)
 {
     const Vector<MimeClassInfo*>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)

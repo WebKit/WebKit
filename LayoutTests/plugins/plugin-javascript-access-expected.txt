@@ -13,6 +13,10 @@ Description: test netscape content
 Suffixes: testnetscape
 
 
+Plugin.item() works.
+
+Plugin.namedItem() works.
+
 PluginArray.item() works.
 
 PluginArray.namedItem() works.

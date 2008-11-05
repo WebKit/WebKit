@@ -29,6 +29,8 @@ module window {
         readonly attribute DOMString filename;
         readonly attribute DOMString description;
         readonly attribute unsigned long length;
+        MimeType item(in unsigned long index);
+        MimeType namedItem(in DOMString name);
     };
 
 }

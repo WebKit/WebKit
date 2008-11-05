@@ -20,6 +20,7 @@
 #include "JSPlugin.h"
 
 #include "AtomicString.h"
+#include "JSMimeType.h"
 #include "Plugin.h"
 
 namespace WebCore {
@@ -34,7 +35,7 @@ bool JSPlugin::canGetItemsForName(ExecState*, Plugin* plugin, const Identifier& 
 JSValue* JSPlugin::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSPlugin* thisObj = static_cast<JSPlugin*>(asObject(slot.slotBase()));
-    return toJS(exec, thisObj->impl()->nameGetter(propertyName));
+    return toJS(exec, thisObj->impl()->namedItem(propertyName));
 }
 
-}
+} // namespace WebCore
