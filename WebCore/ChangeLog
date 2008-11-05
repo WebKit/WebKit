@@ -1,3 +1,14 @@
+2008-11-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21060
+        Range#surroundContents incorrectly throws BAD_BOUNDARYPOINTS_ERR
+
+        Test: fast/dom/Range/surroundContents-check-boundary-points.html
+
+        * dom/Range.cpp: (WebCore::Range::surroundContents): Fix BAD_BOUNDARYPOINTS_ERR checks.
+
 2008-11-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

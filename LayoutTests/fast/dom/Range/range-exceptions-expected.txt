@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS node.innerHTML is '<bar>AB<moo>C</moo>DE</bar>'
 PASS foo.outerHTML is '<foo></foo>'
-PASS range.surroundContents(foo) threw exception Error: BAD_BOUNDARYPOINTS_ERR: DOM Range Exception 1.
+PASS range.surroundContents(foo) threw exception Error: INVALID_NODE_TYPE_ERR: DOM Range Exception 2.
 PASS r.surroundContents(document.createElement('a')) threw exception Error: BAD_BOUNDARYPOINTS_ERR: DOM Range Exception 1.
 PASS r.surroundContents(document.createElement('a')) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 PASS successfullyParsed is true
