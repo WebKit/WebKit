@@ -50,7 +50,7 @@
 #include "runtime/DateMath.cpp"
 #include "runtime/DatePrototype.cpp"
 #include "runtime/DateInstance.cpp"
-#include "kjs/dtoa.cpp"
+#include "wtf/dtoa.cpp"
 #include "runtime/ErrorInstance.cpp"
 #include "runtime/ErrorPrototype.cpp"
 #include "runtime/ErrorConstructor.cpp"

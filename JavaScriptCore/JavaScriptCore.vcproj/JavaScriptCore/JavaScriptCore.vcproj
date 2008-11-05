@@ -405,11 +405,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\dtoa.cpp"
+				RelativePath="..\..\wtf\dtoa.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\dtoa.h"
+				RelativePath="..\..\wtf\dtoa.h"
 				>
 			</File>
 			<File

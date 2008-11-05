@@ -1,3 +1,15 @@
+2008-11-04  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Move kjs/dtoa.h to the wtf subdirectory of JavaScriptCore.
+
+        * ForwardingHeaders/kjs/dtoa.h: Removed.
+        * ForwardingHeaders/wtf/dtoa.h: Copied from ForwardingHeaders/kjs/dtoa.h.
+        * css/CSSParser.cpp:
+        * platform/text/String.cpp:
+        * platform/text/StringImpl.cpp:
+
 2008-11-04  Jonathan Haas  <myrdred@gmail.com>
 
         Addiitonal tweaks and patch prep by Pamela Greene <pam@chromium.org>

@@ -83,7 +83,7 @@ SOURCES += \
     runtime/DatePrototype.cpp \
     debugger/Debugger.cpp \
     debugger/DebuggerCallFrame.cpp \
-    kjs/dtoa.cpp \
+    wtf/dtoa.cpp \
     runtime/Error.cpp \
     runtime/ErrorConstructor.cpp \
     runtime/ErrorInstance.cpp \

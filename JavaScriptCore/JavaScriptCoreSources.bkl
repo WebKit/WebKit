@@ -48,7 +48,7 @@ Source files for JSCore.
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
         kjs/collector.cpp
-        kjs/dtoa.cpp
+        wtf/dtoa.cpp
         kjs/identifier.cpp
         kjs/interpreter.cpp
         kjs/lexer.cpp

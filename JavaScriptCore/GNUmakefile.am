@@ -145,7 +145,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/completion.h \
 	JavaScriptCore/config.h \
 	JavaScriptCore/debugger/Debugger.h \
-	JavaScriptCore/kjs/dtoa.h \
+	JavaScriptCore/wtf/dtoa.h \
 	JavaScriptCore/kjs/identifier.h \
 	JavaScriptCore/kjs/interpreter.h \
 	JavaScriptCore/kjs/lexer.h \
@@ -326,7 +326,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ScopeChain.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/debugger/Debugger.cpp \
-	JavaScriptCore/kjs/dtoa.cpp \
+	JavaScriptCore/wtf/dtoa.cpp \
 	JavaScriptCore/kjs/identifier.cpp \
 	JavaScriptCore/kjs/interpreter.cpp \
 	JavaScriptCore/kjs/lexer.cpp \

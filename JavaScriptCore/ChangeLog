@@ -2,6 +2,23 @@
 
         Rubber-stamped by Sam Weinig.
 
+        Move kjs/dtoa.h to the wtf subdirectory of JavaScriptCore.
+
+        * AllInOneFile.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/dtoa.cpp: Removed.
+        * kjs/dtoa.h: Removed.
+        * wtf/dtoa.cpp: Copied from kjs/dtoa.cpp.
+        * wtf/dtoa.h: Copied from kjs/dtoa.h.
+
+2008-11-04  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
         Move kjs/config.h to the top level of JavaScriptCore.
 
         * GNUmakefile.am:
