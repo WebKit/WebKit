@@ -433,14 +433,15 @@ void Scrollbar::setEnabled(bool e)
 
 bool Scrollbar::isWindowActive() const
 {
-    return m_client->isActive();
+    return m_client && m_client->isActive();
 }
  
 void Scrollbar::invalidateRect(const IntRect& rect)
 {
     if (suppressInvalidation())
         return;
-    m_client->invalidateScrollbarRect(this, rect);
+    if (m_client)
+        m_client->invalidateScrollbarRect(this, rect);
 }
 
 PlatformMouseEvent Scrollbar::transformEvent(const PlatformMouseEvent& event)
