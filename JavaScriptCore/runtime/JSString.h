@@ -25,9 +25,9 @@
 
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
+#include "Identifier.h"
 #include "JSNumberCell.h"
 #include "PropertySlot.h"
-#include "identifier.h"
 
 namespace JSC {
 

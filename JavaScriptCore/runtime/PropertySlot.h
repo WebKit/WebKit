@@ -21,9 +21,9 @@
 #ifndef PropertySlot_h
 #define PropertySlot_h
 
-#include "Register.h"
+#include "Identifier.h"
 #include "JSValue.h"
-#include "identifier.h"
+#include "Register.h"
 #include <wtf/Assertions.h>
 #include <wtf/NotFound.h>
 

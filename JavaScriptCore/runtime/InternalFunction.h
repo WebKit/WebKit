@@ -25,7 +25,7 @@
 #define InternalFunction_h
 
 #include "JSObject.h"
-#include "identifier.h"
+#include "Identifier.h"
 
 namespace JSC {
 

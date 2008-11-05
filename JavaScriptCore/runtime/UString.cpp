@@ -26,7 +26,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "Collector.h"
 #include "dtoa.h"
-#include "identifier.h"
+#include "Identifier.h"
 #include "Operations.h"
 #include <ctype.h>
 #include <float.h>

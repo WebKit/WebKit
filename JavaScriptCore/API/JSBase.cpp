@@ -28,7 +28,7 @@
 #include "JSBasePrivate.h"
 
 #include "APICast.h"
-#include "completion.h"
+#include "Completion.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"
 #include <runtime/ExecState.h>

@@ -21,7 +21,7 @@
 #ifndef CommonIdentifiers_h
 #define CommonIdentifiers_h
 
-#include "identifier.h"
+#include "Identifier.h"
 #include <wtf/Noncopyable.h>
 
 // ArgList of property names, passed to a macro so we can do set them up various

@@ -22,8 +22,8 @@
 #define PropertyNameArray_h
 
 #include "ExecState.h"
+#include "Identifier.h"
 #include "StructureID.h"
-#include "identifier.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

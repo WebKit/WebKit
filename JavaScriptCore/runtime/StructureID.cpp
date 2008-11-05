@@ -26,10 +26,10 @@
 #include "config.h"
 #include "StructureID.h"
 
+#include "Identifier.h"
 #include "JSObject.h"
 #include "PropertyNameArray.h"
 #include "StructureIDChain.h"
-#include "identifier.h"
 #include "Lookup.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>

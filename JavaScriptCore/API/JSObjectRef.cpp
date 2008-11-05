@@ -31,6 +31,7 @@
 #include "DateConstructor.h"
 #include "ErrorConstructor.h"
 #include "FunctionConstructor.h"
+#include "Identifier.h"
 #include "JSArray.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
@@ -45,7 +46,6 @@
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
-#include "identifier.h"
 #include <wtf/Platform.h>
 
 using namespace JSC;

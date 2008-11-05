@@ -1,5 +1,25 @@
 2008-11-05  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Fix the build for case-sensitive build systems.
+
+        * API/JSBase.cpp:
+        * API/JSObjectRef.cpp:
+        * runtime/CommonIdentifiers.h:
+        * runtime/Identifier.cpp:
+        * runtime/InitializeThreading.cpp:
+        * runtime/InternalFunction.h:
+        * runtime/JSString.h:
+        * runtime/Lookup.h:
+        * runtime/PropertyNameArray.h:
+        * runtime/PropertySlot.h:
+        * runtime/StructureID.cpp:
+        * runtime/StructureID.h:
+        * runtime/UString.cpp:
+
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Move more files to the runtime subdirectory of JavaScriptCore.

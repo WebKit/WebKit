@@ -32,7 +32,7 @@
 #include "Collector.h"
 #include "DateMath.h"
 #include "dtoa.h"
-#include "identifier.h"
+#include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "UString.h"
 #include <wtf/Threading.h>
