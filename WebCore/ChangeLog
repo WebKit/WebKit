@@ -1,3 +1,15 @@
+2008-11-05  Jeff Cook  <cookiecaper@gmail.com>
+
+        Reviewed by Simon Hausmann and Tor Arne.
+
+        Fix crash in the Qt port when unloading swfdec and Flash 10
+        by reordering window destruction and plugin stop.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=20779
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::stop):
+
 2008-11-05  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø
