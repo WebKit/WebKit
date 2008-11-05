@@ -1,3 +1,17 @@
+2008-11-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - make the {protocol,proxyType} argument of
+          WebURLProtectionSpace::initWith{Proxy}Host actually work and fix
+          assertion failures.
+
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::initWithHost): The BString comparisons were
+        applying the BString==BSTR operator to a right hand side that was
+        actually a WCHAR string. Fixed by using BStrings on both sides.
+        (WebURLProtectionSpace::initWithProxyHost): Ditto.
+
 2008-11-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

@@ -152,14 +152,19 @@ HRESULT STDMETHODCALLTYPE WebURLProtectionSpace::initWithHost(
     /* [in] */ BSTR realm, 
     /* [in] */ BSTR authenticationMethod)
 {
+    static BString& webURLProtectionSpaceHTTPBString = *new BString(WebURLProtectionSpaceHTTP);
+    static BString& webURLProtectionSpaceHTTPSBString = *new BString(WebURLProtectionSpaceHTTPS);
+    static BString& webURLProtectionSpaceFTPBString = *new BString(WebURLProtectionSpaceFTP);
+    static BString& webURLProtectionSpaceFTPSBString = *new BString(WebURLProtectionSpaceFTPS);
+
     ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
-    if (BString(protocol) == WebURLProtectionSpaceHTTP)
+    if (BString(protocol) == webURLProtectionSpaceHTTPBString)
         serverType = ProtectionSpaceServerHTTP;
-    else if (BString(protocol) == WebURLProtectionSpaceHTTPS)
+    else if (BString(protocol) == webURLProtectionSpaceHTTPSBString)
         serverType = ProtectionSpaceServerHTTPS;
-    else if (BString(protocol) == WebURLProtectionSpaceFTP)
+    else if (BString(protocol) == webURLProtectionSpaceFTPBString)
         serverType = ProtectionSpaceServerFTP;
-    else if (BString(protocol) == WebURLProtectionSpaceFTPS)
+    else if (BString(protocol) == webURLProtectionSpaceFTPSBString)
         serverType = ProtectionSpaceServerFTPS;
     else
         ASSERT_NOT_REACHED();
@@ -177,14 +182,19 @@ HRESULT STDMETHODCALLTYPE WebURLProtectionSpace::initWithProxyHost(
     /* [in] */ BSTR realm, 
     /* [in] */ BSTR authenticationMethod)
 {
+    static BString& webURLProtectionSpaceHTTPProxyBString = *new BString(WebURLProtectionSpaceHTTPProxy);
+    static BString& webURLProtectionSpaceHTTPSProxyBString = *new BString(WebURLProtectionSpaceHTTPSProxy);
+    static BString& webURLProtectionSpaceFTPProxyBString = *new BString(WebURLProtectionSpaceFTPProxy);
+    static BString& webURLProtectionSpaceSOCKSProxyBString = *new BString(WebURLProtectionSpaceSOCKSProxy);
+
     ProtectionSpaceServerType serverType = ProtectionSpaceProxyHTTP;
-    if (BString(proxyType) == WebURLProtectionSpaceHTTPProxy)
+    if (BString(proxyType) == webURLProtectionSpaceHTTPProxyBString)
         serverType = ProtectionSpaceProxyHTTP;
-    else if (BString(proxyType) == WebURLProtectionSpaceHTTPSProxy)
+    else if (BString(proxyType) == webURLProtectionSpaceHTTPSProxyBString)
         serverType = ProtectionSpaceProxyHTTPS;
-    else if (BString(proxyType) == WebURLProtectionSpaceFTPProxy)
+    else if (BString(proxyType) == webURLProtectionSpaceFTPProxyBString)
         serverType = ProtectionSpaceProxyFTP;
-    else if (BString(proxyType) == WebURLProtectionSpaceSOCKSProxy)
+    else if (BString(proxyType) == webURLProtectionSpaceSOCKSProxyBString)
         serverType = ProtectionSpaceProxySOCKS;
     else
         ASSERT_NOT_REACHED();
