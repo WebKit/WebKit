@@ -4,6 +4,17 @@
 
         Fix the build for case-sensitive build systems.
 
+        * JavaScriptCoreSources.bkl:
+        * kjs/Shell.cpp:
+        * runtime/Interpreter.cpp:
+        * runtime/JSArray.cpp:
+
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Fix the build for case-sensitive build systems.
+
         * API/JSBase.cpp:
         * API/JSObjectRef.cpp:
         * runtime/CommonIdentifiers.h:

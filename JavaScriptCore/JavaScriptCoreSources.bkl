@@ -52,7 +52,6 @@ Source files for JSCore.
         kjs/nodes.cpp
         kjs/nodes2string.cpp
         kjs/Parser.cpp
-        kjs/regexp.cpp
         kjs/ustring.cpp
     </set>
     <set append="1" var="JSCORE_SOURCES_PCRE">
@@ -129,6 +128,7 @@ Source files for JSCore.
         runtime/PropertyNameArray.cpp
         runtime/PropertySlot.cpp
         runtime/PrototypeFunction.cpp
+        runtime/RegExp.cpp
         runtime/RegExpConstructor.cpp
         runtime/RegExpObject.cpp
         runtime/RegExpPrototype.cpp

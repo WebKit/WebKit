@@ -22,14 +22,14 @@
 
 #include "config.h"
 
+#include "Completion.h"
 #include "CodeGenerator.h"
 #include "InitializeThreading.h"
+#include "Interpreter.h"
 #include "JSArray.h"
 #include "JSLock.h"
 #include "PrototypeFunction.h"
 #include "SamplingTool.h"
-#include "completion.h"
-#include "interpreter.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>

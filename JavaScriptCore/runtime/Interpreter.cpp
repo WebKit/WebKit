@@ -21,14 +21,14 @@
  */
 
 #include "config.h"
-#include "interpreter.h"
+#include "Interpreter.h"
 
+#include "Completion.h"
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "Machine.h"
 #include "Parser.h"
-#include "completion.h"
 #include "Debugger.h"
 #include <stdio.h>
 

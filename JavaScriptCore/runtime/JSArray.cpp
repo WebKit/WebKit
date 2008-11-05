@@ -27,7 +27,7 @@
 #include "PropertyNameArray.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Assertions.h>
-#include <operations.h>
+#include <Operations.h>
 
 #define CHECK_ARRAY_CONSISTENCY 0
 
