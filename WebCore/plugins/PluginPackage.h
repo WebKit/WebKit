@@ -74,6 +74,8 @@ namespace WebCore {
         bool isPluginBlacklisted();
         void determineQuirks(const String& mimeType);
 
+        void determineModuleVersionFromDescription();
+
         bool m_isLoaded;
         int m_loadCount;
 

@@ -80,36 +80,6 @@ static PlatformModuleVersion getModuleVersion(const char *description)
     return version;
 }
 
-void PluginPackage::determineQuirks(const String& mimeType)
-{
-    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
-        // Because a single process cannot create multiple VMs, and we cannot reliably unload a
-        // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
-        m_quirks.add(PluginQuirkDontUnloadPlugin);
-
-        // Setting the window region to an empty region causes bad scrolling repaint problems
-        // with the Java plug-in.
-        m_quirks.add(PluginQuirkDontClipToZeroRectWhenScrolling);
-        return;
-    }
-    
-    if (mimeType == "application/x-shockwave-flash") {
-        static const PlatformModuleVersion flashTenVersion(0x0a000000);
-
-        if (compareFileVersion(flashTenVersion) >= 0) {
-            // Flash 10.0 b218 doesn't like having a NULL window handle
-            m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
-        } else {
-            // Flash 9 and older requests windowless plugins if we return a mozilla user agent
-            m_quirks.add(PluginQuirkWantsMozillaUserAgent);
-        }
-
-        m_quirks.add(PluginQuirkThrottleInvalidate);
-        m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
-        m_quirks.add(PluginQuirkFlashURLNotifyBug);
-    }
-}
-
 bool PluginPackage::fetchInfo()
 {
 #if defined(XP_UNIX)
@@ -131,7 +101,7 @@ bool PluginPackage::fetchInfo()
     err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
     if (err == NPERR_NO_ERROR) {
         m_description = buffer;
-        m_moduleVersion = getModuleVersion(buffer); 
+        determineModuleVersionFromDescription();
     }
 
     const gchar* types = NP_GetMIMEDescription();

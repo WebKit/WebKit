@@ -148,8 +148,88 @@ PassRefPtr<PluginPackage> PluginPackage::createPackage(const String& path, const
 
     if (!package->fetchInfo())
         return 0;
-    
+
     return package.release();
+}
+
+#if defined(XP_UNIX)
+void PluginPackage::determineQuirks(const String& mimeType)
+{
+    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
+        // Because a single process cannot create multiple VMs, and we cannot reliably unload a
+        // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
+        m_quirks.add(PluginQuirkDontUnloadPlugin);
+
+        // Setting the window region to an empty region causes bad scrolling repaint problems
+        // with the Java plug-in.
+        m_quirks.add(PluginQuirkDontClipToZeroRectWhenScrolling);
+        return;
+    }
+
+    if (mimeType == "application/x-shockwave-flash") {
+        static const PlatformModuleVersion flashTenVersion(0x0a000000);
+
+        if (compareFileVersion(flashTenVersion) >= 0) {
+            // Flash 10.0 b218 doesn't like having a NULL window handle
+            m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
+        } else {
+            // Flash 9 and older requests windowless plugins if we return a mozilla user agent
+            m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        }
+
+        m_quirks.add(PluginQuirkThrottleInvalidate);
+        m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
+        m_quirks.add(PluginQuirkFlashURLNotifyBug);
+    }
+}
+#endif
+
+void PluginPackage::determineModuleVersionFromDescription()
+{
+    // It's a bit lame to detect the plugin version by parsing it
+    // from the plugin description string, but it doesn't seem that
+    // version information is available in any standardized way at
+    // the module level, like in Windows
+
+    if (m_description.isEmpty())
+        return;
+
+    if (m_description.startsWith("Shockwave Flash") && m_description.length() >= 19) {
+        // The flash version as a PlatformModuleVersion differs on Unix from Windows
+        // since the revision can be larger than a 8 bits, so we allow it 16 here and
+        // push the major/minor up 8 bits. Thus on Unix, Flash's version may be
+        // 0x0a000000 instead of 0x000a0000.
+
+        Vector<String> versionParts;
+        m_description.substring(16).split(' ', /*allowEmptyEntries =*/ false, versionParts);
+        if (versionParts.isEmpty())
+            return;
+
+        if (versionParts.size() >= 1) {
+            Vector<String> majorMinorParts;
+            versionParts[0].split('.', majorMinorParts);
+            if (majorMinorParts.size() >= 1) {
+                bool converted = false;
+                unsigned major = majorMinorParts[0].toUInt(&converted);
+                if (converted)
+                    m_moduleVersion = (major & 0xff) << 24;
+            }
+            if (majorMinorParts.size() == 2) {
+                bool converted = false;
+                unsigned minor = majorMinorParts[1].toUInt(&converted);
+                if (converted)
+                    m_moduleVersion |= (minor & 0xff) << 16;
+            }
+        }
+
+        if (versionParts.size() >= 2) {
+            String revision = versionParts[1];
+            if (revision.length() > 1 && (revision[0] == 'r' || revision[0] == 'b')) {
+                revision.remove(0, 1);
+                m_moduleVersion |= revision.toInt() & 0xffff;
+            }
+        }
+    }
 }
 
 }
