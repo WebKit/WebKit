@@ -2,6 +2,21 @@
 
         Reviewed by Tor Arne Vestbø
 
+        Fix loading of Flash 10 in the Qt port by faking the toolkit to be Gtk.
+
+        Otherwise Flash refuses to load and function :(
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        * plugins/PluginQuirkSet.h:
+        (WebCore::):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::getValue):
+
+2008-11-05  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø
+
         Unify determineQuirks between the Qt and the Gtk PluginPackage.
         Share the code for parsing the module version from the description.
         This is currently used to determine Flash based quirks.
