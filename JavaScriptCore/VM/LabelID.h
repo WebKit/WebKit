@@ -46,23 +46,8 @@ namespace JSC {
         {
         }
 
-        // It doesn't really make sense to copy a LabelID, but we need this copy
-        // constructor to support moving LabelIDs in a Vector.
-
-        LabelID(const LabelID& other)
-            : m_refCount(other.m_refCount)
-            , m_location(other.m_location)
-            , m_codeBlock(other.m_codeBlock)
-            , m_unresolvedJumps(other.m_unresolvedJumps)
-        {
-        #ifndef NDEBUG
-            const_cast<LabelID&>(other).m_codeBlock = 0;
-        #endif
-        }
-
         void setLocation(unsigned location)
         {
-            ASSERT(m_codeBlock);
             m_location = location;
 
             unsigned size = m_unresolvedJumps.size();
@@ -76,7 +61,6 @@ namespace JSC {
 
         int offsetFrom(int location) const
         {
-            ASSERT(m_codeBlock);
             if (m_location == invalidLocation) {
                 m_unresolvedJumps.append(location);
                 return 0;
@@ -84,21 +68,13 @@ namespace JSC {
             return m_location - location;
         }
 
-        void ref()
-        {
-            ++m_refCount;
-        }
-
+        void ref() { ++m_refCount; }
         void deref()
         {
             --m_refCount;
             ASSERT(m_refCount >= 0);
         }
-
-        int refCount() const
-        {
-            return m_refCount;
-        }
+        int refCount() const { return m_refCount; }
 
         bool isForwardLabel() const { return m_location == invalidLocation; }
 

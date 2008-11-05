@@ -50,19 +50,6 @@ namespace JSC {
         {
         }
 
-        // It doesn't really make sense to copy a LabelScope, but we need this copy
-        // constructor to support moving LabelScopes in a Vector.
-
-        LabelScope(const LabelScope& other)
-            : m_refCount(other.m_refCount)
-            , m_type(other.m_type)
-            , m_name(other.m_name)
-            , m_scopeDepth(other.m_scopeDepth)
-            , m_breakTarget(other.m_breakTarget)
-            , m_continueTarget(other.m_continueTarget)
-        {
-        }
-
         void ref() { ++m_refCount; }
         void deref()
         {
