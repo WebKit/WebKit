@@ -1,3 +1,11 @@
+2008-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Remove WebPlugInStreamLoaderDelegate.h
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-11-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
