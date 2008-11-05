@@ -1,3 +1,9 @@
+2008-11-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * plugins/PluginPackage.cpp:
+
 2008-11-05  Jeff Cook  <cookiecaper@gmail.com>
 
         Reviewed by Simon Hausmann and Tor Arne.

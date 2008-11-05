@@ -187,6 +187,7 @@ void PluginPackage::determineQuirks(const String& mimeType)
 }
 #endif
 
+#if !PLATFORM(WIN)
 void PluginPackage::determineModuleVersionFromDescription()
 {
     // It's a bit lame to detect the plugin version by parsing it
@@ -234,5 +235,6 @@ void PluginPackage::determineModuleVersionFromDescription()
         }
     }
 }
+#endif
 
 }
