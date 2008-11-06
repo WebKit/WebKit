@@ -1,3 +1,11 @@
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Disable webkit plugins for Symbian.
+
+        * WebCore.pro:
+
 2008-11-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Fix build break in debug mode when XSLT is not enabled
