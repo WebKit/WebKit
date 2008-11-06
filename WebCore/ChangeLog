@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        Removed dead (and broken) code from an ancient Symbian port.
+
+        * config.h:
+        * platform/text/AtomicString.h:
+        * platform/text/PlatformString.h:
+
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Use QLibrary as PlatformModule when compiling with Qt for S60.
 
         * platform/FileSystem.h:

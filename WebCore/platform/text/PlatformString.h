@@ -204,12 +204,6 @@ public:
     operator QString() const;
 #endif
 
-#if PLATFORM(SYMBIAN)
-    String(const TDesC&);
-    operator TPtrC() const { return des(); }
-    TPtrC des() const { if (!m_impl) return KNullDesC(); return m_impl->des(); }
-#endif
-
 #if PLATFORM(WX)
     String(const wxString&);
     operator wxString() const;

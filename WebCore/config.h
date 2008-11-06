@@ -67,11 +67,6 @@
 #include <wx/defs.h>
 #endif
 
-#if !PLATFORM(SYMBIAN)
-#define IMPORT_C
-#define EXPORT_C
-#endif
-
 #ifdef __cplusplus
 
 // These undefs match up with defines in WebCorePrefix.h for Mac OS X.
