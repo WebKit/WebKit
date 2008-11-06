@@ -149,6 +149,24 @@ static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef functio
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->getChildAtIndex(indexNumber));
 }
 
+static JSValueRef isAttributeSettableCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSStringRef attribute = NULL;
+    if (argumentCount == 1)
+        attribute = JSValueToStringCopy(context, arguments[0], exception);
+    
+    return JSValueMakeNumber(context, toAXElement(thisObject)->isAttributeSettable(attribute));
+}
+
+static JSValueRef attributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSStringRef attribute = NULL;
+    if (argumentCount == 1)
+        attribute = JSValueToStringCopy(context, arguments[0], exception);
+    
+    return JSValueMakeString(context, toAXElement(thisObject)->attributeValue(attribute));
+}
+
 static JSValueRef cellForColumnAndRowCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     unsigned column = 0, row = 0;
@@ -290,6 +308,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "cellForColumnAndRow", cellForColumnAndRowCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "titleUIElement", titleUIElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectedTextRange", setSelectedTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributeValue", attributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isAttributeSettable", isAttributeSettableCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

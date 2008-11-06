@@ -1,3 +1,23 @@
+2008-11-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add ability to query an attribute's settable status and the
+        ability to retrieve a single attribute from an AXObject
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (isAttributeSettableCallback):
+        (attributeValueCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (+[NSString stringWithJSStringRef:]):
+        (AccessibilityUIElement::attributeValue):
+        (AccessibilityUIElement::isAttributeSettable):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::attributeValue):
+        (AccessibilityUIElement::isAttributeSettable):
+
 2008-11-06  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.

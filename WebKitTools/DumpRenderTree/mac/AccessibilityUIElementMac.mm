@@ -53,10 +53,20 @@ AccessibilityUIElement::~AccessibilityUIElement()
 }
 
 @interface NSString (JSStringRefAdditions)
++ (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
 - (JSStringRef)createJSStringRef;
 @end
 
 @implementation NSString (JSStringRefAdditions)
+
++ (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef
+{
+    if (!jsStringRef)
+        return NULL;
+    
+    CFStringRef cfString = JSStringCopyCFString(kCFAllocatorDefault, jsStringRef);
+    return [(NSString *)cfString autorelease];
+}
 
 - (JSStringRef)createJSStringRef
 {
@@ -223,6 +233,19 @@ JSStringRef AccessibilityUIElement::allAttributes()
 {
     NSString* attributes = attributesOfElement(m_element);
     return [attributes createJSStringRef];
+}
+
+JSStringRef AccessibilityUIElement::attributeValue(JSStringRef attribute)
+{
+    id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
+    if (![value isKindOfClass:[NSString class]])
+        return NULL;
+    return [value createJSStringRef];
+}
+
+bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
+{
+    return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
 }
 
 JSStringRef AccessibilityUIElement::parameterizedAttributeNames()

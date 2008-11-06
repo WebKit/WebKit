@@ -264,3 +264,14 @@ JSStringRef AccessibilityUIElement::selectedTextRange()
 void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
 }
+
+JSStringRef AccessibilityUIElement::attributeValue(JSStringRef attribute)
+{
+    return JSStringCreateWithCharacters(0, 0);
+}
+
+bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
+{
+    return false;
+}
+

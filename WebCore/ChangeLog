@@ -1,3 +1,15 @@
+2008-11-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 22112: if a <body> has contenteditable=true, it should report a writable AXValue
+        https://bugs.webkit.org/show_bug.cgi?id=22112
+
+        Test: accessibility/content-editable.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+
 2008-11-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice Liu.
