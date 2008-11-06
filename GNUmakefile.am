@@ -34,7 +34,7 @@ GENSOURCES := $(top_builddir)/DerivedSources
 GENPROGRAMS := $(top_builddir)/Programs
 
 # Script for creating hash tables
-CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/kjs/create_hash_table
+CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/create_hash_table
 
 # Libraries and support components
 bin_PROGRAMS :=
