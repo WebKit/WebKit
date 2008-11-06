@@ -27,6 +27,15 @@
 
         Reviewed by Simon Hausmann.
 
+        Use the GCC defines of the WTF_ALIGN* macros for the RVCT and the
+        MINSCW compiler.
+
+        * wtf/Vector.h:
+
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Define capabilities of the SYMBIAN platform. Some of the system
         headers are actually dependent on RVCT.
 
