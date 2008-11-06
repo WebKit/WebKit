@@ -1,3 +1,27 @@
+2008-11-06  John Sullivan  <sullivan@apple.com>
+
+        Fixed problem with switching between text-only zoom and full-content zoom
+        
+        There were two booleans tracking whether zoom was text-only, one in WebCore settings
+        and one in WebViewPrivate. Fixed by eliminating the one in WebViewPrivate.
+
+        Reviewed by Adam Roben
+
+        * WebView/WebView.mm:
+        remove declaration of zoomMultiplierIsTextOnly instance variable in WebViewPrivate
+        (-[WebViewPrivate init]):
+        removed initialization of zoomMultiplierIsTextOnly
+        (-[WebView textSizeMultiplier]):
+        call [self _realZoomMultiplierIsTextOnly] instead of accessing WebViewPrivate instance variable
+        (-[WebView _setZoomMultiplier:isTextOnly:]):
+        update WebCore settings rather than WebViewPrivate instance variable
+        (-[WebView _zoomMultiplier:]):
+        call [self _realZoomMultiplierIsTextOnly] instead of accessing WebViewPrivate instance variable
+        (-[WebView _realZoomMultiplierIsTextOnly]):
+        return value from WebCore settings instead of accessing WebViewPrivate instance variable
+        (-[WebView pageSizeMultiplier]):
+        call [self _realZoomMultiplierIsTextOnly] instead of accessing WebViewPrivate instance variable
+
 2008-11-06  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
