@@ -239,6 +239,11 @@
 #define WTF_COMPILER_RVCT 1
 #endif
 
+/* COMPILER(WINSCW) */
+#if defined(__WINSCW__)
+#define WTF_COMPILER_WINSCW 1
+#endif
+
 #if (PLATFORM(MAC) || PLATFORM(WIN)) && !defined(ENABLE_JSC_MULTIPLE_THREADS)
 #define ENABLE_JSC_MULTIPLE_THREADS 1
 #endif

@@ -1,3 +1,11 @@
+2008-11-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added WINSCW compiler define for Symbian S60.
+
+        * wtf/Platform.h:
+
 2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.
