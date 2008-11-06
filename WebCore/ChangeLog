@@ -1,5 +1,12 @@
 2008-11-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Fix build break in debug mode when XSLT is not enabled
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::dumpStats):
+
+2008-11-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon Hausmann.
 
         Repaint video on UpdateRequest to prevent recursive painting
