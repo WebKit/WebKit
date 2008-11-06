@@ -446,6 +446,16 @@ static inline void* currentThreadStackBase()
         stackThread = thread;
     }
     return static_cast<char*>(stackBase) + stackSize;
+#elif PLATFORM(SYMBIAN)
+    static void* stackBase = 0;
+    if (stackBase == 0) {
+        TThreadStackInfo info;
+        RThread thread;
+        thread.StackInfo(info);
+        stackBase = (void*)info.iBase;
+    }
+    //fixme
+    return (void*)stackBase;
 #else
 #error Need a way to get the stack base on this platform
 #endif
