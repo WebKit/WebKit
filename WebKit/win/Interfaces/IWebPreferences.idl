@@ -183,4 +183,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT setShouldPaintCustomScrollbars(BOOL shouldPaint);
     HRESULT shouldPaintCustomScrollbars(BOOL *shouldPaint);
+
+    HRESULT setZoomsTextOnly(BOOL zoomsTextOnly);
+    HRESULT zoomsTextOnly(BOOL *zoomsTextOnly);
 }

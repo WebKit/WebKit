@@ -1,3 +1,26 @@
+2008-11-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add support for a WebKitZoomsTextOnly preference.
+
+        * Interfaces/IWebPreferences.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::setZoomsTextOnly):
+        (WebPreferences::zoomsTextOnly):
+        * WebPreferences.h:
+
+        * WebView.cpp:
+        (WebView::canMakeTextLarger): Consider the zoomsTextOnly setting when computing this.
+        (WebView::makeTextLarger): ditto.
+        (WebView::canMakeTextSmaller): ditto.
+        (WebView::makeTextSmaller): ditto.
+        (WebView::canMakeTextStandardSize): 
+        Don't consider the setting in this case since we need to reset both text zoom and page zoom regardless of the setting.
+        (WebView::makeTextStandardSize):
+        (WebView::notifyPreferencesChanged): Set the WebCore settings to match the WebPreference for WebKitZoomsTextOnly.
+
 2008-11-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

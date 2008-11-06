@@ -320,6 +320,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE shouldPaintNativeControls( 
     /* [retval][out] */ BOOL *shouldPaint);
 
+    virtual HRESULT STDMETHODCALLTYPE setZoomsTextOnly( 
+    /* [retval][out] */ BOOL zoomsTextOnly);
+
+    virtual HRESULT STDMETHODCALLTYPE zoomsTextOnly( 
+    /* [retval][out] */ BOOL *zoomsTextOnly);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

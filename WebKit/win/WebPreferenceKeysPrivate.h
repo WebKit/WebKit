@@ -116,3 +116,5 @@
 
 #define WebKitPaintNativeControlsPreferenceKey "WebKitPaintNativeControls"
 
+#define WebKitZoomsTextOnlyPreferenceKey "WebKitZoomsTextOnly"
+
