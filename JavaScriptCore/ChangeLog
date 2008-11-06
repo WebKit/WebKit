@@ -1,3 +1,12 @@
+2008-11-06  Adam Roben  <aroben@apple.com>
+
+        Windows clean build fix after r38155
+
+        Rubberstamped by Cameron Zwarich.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Update
+        the post-build event for the move of create_hash_table out of kjs/.
+
 2008-11-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.
