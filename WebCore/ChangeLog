@@ -1,3 +1,87 @@
+2008-11-05  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 21596: WebCore::Cache should use parsed Pragma and Cache-Control headers
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21596>
+
+        Reviewed by Antti.
+
+        This patch adds real parsing for Pragma and Cache-Control headers
+        based on RFC 2616, Sections 2, 14.9 and 14.32.  It also adds some
+        new String and StringImpl methods to assist with the parsing.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::dumpStats): Added.  Convenience method for dumping
+        stats outside of Safari.
+        * loader/Cache.h: Declared dumpStats().
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::mustRevalidate): Updated to use
+        ResourceResponseBase::cacheControlDirectives() instead of substring
+        matching of the entire Cache-Control header.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didReceiveResponse): Used the local
+        'resource' variable instead of 'request->cachedResource()'.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::setHTTPHeaderField): Set
+        m_haveParsedCacheControlHeader to false when a "Cache-Control"
+        header is set.  Ditto for m_haveParsedPragmaHeader and "Pragma".
+        (WebCore::ResourceResponseBase::parsePragmaDirectives): Added.
+        Provides parsed Pragma header directives.
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives): Added.
+        Provides parsed Cache-Control header directives.
+        (WebCore::isCacheHeaderSeparator): Added.  Returns true if a
+        character is a separator character per RFC 2616, Section 2.2, else
+        returns false.
+        (WebCore::isControlCharacter): Added.  Returns true if a character
+        is a control character per RFC 2616 Section 2.2, else returns false.
+        (WebCore::trimToNextSeparator): Added.  Returns a string truncated
+        at the first separator character per isCacheHeaderSeparator().
+        (WebCore::parseCacheHeader): Added.  This is the main parsing
+        routine for both Cache-Control and Pragma headers.
+        (WebCore::parseCacheControlDirectiveValues): Added.  This splits
+        certain Cache-Control directive values into a vector of strings.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::CacheControlDirectiveMap): Added.  Typedef for a parsed
+        Cache-Control header.
+        (WebCore::PragmaDirectiveMap): Added.  Typedef for a parsed Pragma
+        header.
+        (WebCore::ResourceResponseBase::parsePragmaDirectives): Added
+        declaration.
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives): Ditto.
+        (WebCore::ResourceResponseBase::m_haveParsedCacheControlHeader):
+        Added.  Boolean to describe when the "Cache-Control" header needs to
+        be reparsed.
+        (WebCore::ResourceResponseBase::m_haveParsedPragmaHeader):  Added.
+        Boolean to describe when the "Pragma" header needs to be reparsed.
+        (WebCore::ResourceResponseBase::m_cacheControlDirectiveMap): Added.
+        Cached map to hold parsed "Cache-Control" headers.
+        (WebCore::ResourceResponseBase::m_pragmaDirectiveMap): Added.
+        Cached map to hold parsed "Pragma" headers.
+
+        * platform/text/PlatformString.h:
+        (WebCore::String::find): Added.  Returns the first match based on
+        the character-matching function pointer passed in.
+        (WebCore::String::removeCharacters): Added declaration.
+        (WebCore::find): Added.  Inline method that takes a character-
+        matching function pointer.  Called by StringImpl::find().
+        * platform/text/String.cpp:
+        (WebCore::String::removeCharacters): Added.  Calls
+        StringImpl::removeCharacters().
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::removeCharacters): Added.  Returns a string
+        with all characters removed that match the character-matching
+        function pointer passed in.  If there is no change to the string, it
+        returns itself.  Based heavily on StringImpl::simplifyWhitespace().
+        (WebCore::StringImpl::find): Added.  Calls WebCore::find().
+        * platform/text/StringImpl.h:
+        (WebCore::FindMatchFunctionPtr): Added.  Typedef for a character-
+        matching function pointer.
+        (WebCore::StringImpl::removeCharacters): Added declaration.
+        (WebCore::StringImpl::find): Ditto.
+
 2008-11-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Beth Dakin.

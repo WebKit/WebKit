@@ -395,16 +395,16 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
         // Did not get 304 response, continue as a regular resource load.
         cache()->revalidationFailed(resource);
     }
-    
+
     resource->setResponse(response);
-    
+
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
-        request->cachedResource()->setEncoding(encoding);
+        resource->setEncoding(encoding);
     
     if (request->isMultipart()) {
-        ASSERT(request->cachedResource()->isImage());
-        static_cast<CachedImage*>(request->cachedResource())->clear();
+        ASSERT(resource->isImage());
+        static_cast<CachedImage*>(resource)->clear();
         if (request->docLoader()->frame())
             request->docLoader()->frame()->loader()->checkCompleted();
     } else if (response.isMultipart()) {
@@ -412,10 +412,10 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
         
         // We don't count multiParts in a DocLoader's request count
         request->docLoader()->decrementRequestCount();
-            
+
         // If we get a multipart response, we must have a handle
         ASSERT(loader->handle());
-        if (!request->cachedResource()->isImage())
+        if (!resource->isImage())
             loader->handle()->cancel();
     }
 }

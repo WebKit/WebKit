@@ -98,6 +98,8 @@ public:
 
     int find(UChar c, int start = 0) const
         { return m_impl ? m_impl->find(c, start) : -1; }
+    int find(CharacterMatchFunctionPtr matchFunction, int start = 0) const
+        { return m_impl ? m_impl->find(matchFunction, start) : -1; }
     int find(const char* str, int start = 0, bool caseSensitive = true) const
         { return m_impl ? m_impl->find(str, start, caseSensitive) : -1; }
     int find(const String& str, int start = 0, bool caseSensitive = true) const
@@ -138,7 +140,9 @@ public:
 
     String stripWhiteSpace() const;
     String simplifyWhiteSpace() const;
-    
+
+    String removeCharacters(CharacterMatchFunctionPtr) const;
+
     // Return the string with case folded for case insensitive comparison.
     String foldCase() const;
 
@@ -291,6 +295,17 @@ inline int find(const UChar* characters, size_t length, UChar character, int sta
         return -1;
     for (size_t i = startPosition; i < length; ++i) {
         if (characters[i] == character)
+            return static_cast<int>(i);
+    }
+    return -1;
+}
+
+inline int find(const UChar* characters, size_t length, CharacterMatchFunctionPtr matchFunction, int startPosition)
+{
+    if (startPosition >= static_cast<int>(length))
+        return -1;
+    for (size_t i = startPosition; i < length; ++i) {
+        if (matchFunction(characters[i]))
             return static_cast<int>(i);
     }
     return -1;

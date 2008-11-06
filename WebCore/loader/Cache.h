@@ -160,6 +160,7 @@ private:
     LRUList* lruListFor(CachedResource*);
     void resourceAccessed(CachedResource*);
 #ifndef NDEBUG
+    void dumpStats();
     void dumpLRULists(bool includeLive) const;
 #endif
 

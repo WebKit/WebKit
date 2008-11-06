@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+typedef HashMap<String, HashSet<String>, CaseFoldingHash> CacheControlDirectiveMap;
+typedef HashMap<String, String, CaseFoldingHash> PragmaDirectiveMap;
+
 class ResourceResponse;
 
 // Do not use this class directly, use the class ResponseResponse instead
@@ -65,6 +68,9 @@ class ResourceResponseBase {
     String httpHeaderField(const String& name) const;
     void setHTTPHeaderField(const String& name, const String& value);
     const HTTPHeaderMap& httpHeaderFields() const;
+
+    const PragmaDirectiveMap& parsePragmaDirectives() const;
+    const CacheControlDirectiveMap& parseCacheControlDirectives() const;
 
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
@@ -119,8 +125,11 @@ class ResourceResponseBase {
     HTTPHeaderMap m_httpHeaderFields;
     time_t m_expirationDate;
     time_t m_lastModifiedDate;
-    bool m_isNull;
-
+    bool m_isNull:1;
+    mutable bool m_haveParsedCacheControlHeader:1;
+    mutable bool m_haveParsedPragmaHeader:1;
+    mutable CacheControlDirectiveMap m_cacheControlDirectiveMap;
+    mutable PragmaDirectiveMap m_pragmaDirectiveMap;
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }

@@ -334,6 +334,38 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
     return create(m_data + start, end + 1 - start);
 }
 
+PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
+{
+    const UChar* from = m_data;
+    const UChar* fromend = from + m_length;
+
+    // Assume the common case will not remove any characters
+    while (from != fromend && !findMatch(*from))
+        from++;
+    if (from == fromend)
+        return this;
+
+    StringBuffer data(m_length);
+    UChar* to = data.characters();
+    unsigned outc = from - m_data;
+
+    if (outc)
+        memcpy(to, m_data, outc * sizeof(UChar));
+
+    while (true) {
+        while (from != fromend && findMatch(*from))
+            from++;
+        while (from != fromend && !findMatch(*from))
+            to[outc++] = *from++;
+        if (from == fromend)
+            break;
+    }
+
+    data.shrink(outc);
+
+    return adopt(data);
+}
+
 PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
 {
     StringBuffer data(m_length);
@@ -508,6 +540,11 @@ int StringImpl::find(const char* chs, int index, bool caseSensitive)
 int StringImpl::find(UChar c, int start)
 {
     return WebCore::find(m_data, m_length, c, start);
+}
+
+int StringImpl::find(CharacterMatchFunctionPtr matchFunction, int start)
+{
+    return WebCore::find(m_data, m_length, matchFunction, start);
 }
 
 int StringImpl::find(StringImpl* str, int index, bool caseSensitive)

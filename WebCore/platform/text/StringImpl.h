@@ -47,6 +47,8 @@ struct HashAndCharactersTranslator;
 struct StringHash;
 struct UCharBufferTranslator;
 
+typedef bool (*CharacterMatchFunctionPtr)(UChar);
+
 class StringImpl : public RefCounted<StringImpl> {
     friend class AtomicString;
     friend struct CStringTranslator;
@@ -124,8 +126,11 @@ public:
     PassRefPtr<StringImpl> stripWhiteSpace();
     PassRefPtr<StringImpl> simplifyWhiteSpace();
 
+    PassRefPtr<StringImpl> removeCharacters(CharacterMatchFunctionPtr);
+
     int find(const char*, int index = 0, bool caseSensitive = true);
     int find(UChar, int index = 0);
+    int find(CharacterMatchFunctionPtr, int index = 0);
     int find(StringImpl*, int index, bool caseSensitive = true);
 
     int reverseFind(UChar, int index);
