@@ -71,7 +71,11 @@ typedef enum {
     BOOL isLoaded;
     BOOL needsUnload;
     unsigned int instanceCount;
-        
+     
+#if !defined(BUILDING_ONLEOPARD) && !defined(BUILDING_ON_TIGER) && defined(__x86_64__)
+    cpu_type_t pluginHostArchitecture;
+#endif
+    
 #ifdef SUPPORT_CFM
     BOOL isBundle;
     BOOL isCFM;

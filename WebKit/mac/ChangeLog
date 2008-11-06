@@ -1,3 +1,14 @@
+2008-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Keep track of which plug-in host architecture would be needed for a given plug-in package.
+        
+        * Plugins/WebNetscapePluginPackage.h:
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        * WebKitPrefix.h:
+
 2008-11-05  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Sam Weinig.

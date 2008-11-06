@@ -77,6 +77,10 @@ typedef float CGFloat;
 
 #include "EmptyProtocolDefinitions.h"
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER) && defined(__x86_64__)
+#define USE_PLUGIN_HOST_PROCESS 1
+#endif
+
 #include <wtf/Platform.h>
 
 /* WebKit has no way to pull settings from WebCore/config.h for now */

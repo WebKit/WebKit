@@ -236,9 +236,20 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if (hasCFMHeader)
             return NO;
 #endif
+
+#if USE(PLUGIN_HOST_PROCESS)
+        NSArray *archs = [bundle executableArchitectures];
         
+        if ([archs containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureX86_64]])
+            pluginHostArchitecture = CPU_TYPE_X86_64;
+        else if ([archs containsObject:[NSNumber numberWithInteger:NSBundleExecutableArchitectureI386]])
+            pluginHostArchitecture = CPU_TYPE_X86;
+        else
+            return NO;
+#else
         if (![self isNativeLibraryData:data])
             return NO;
+#endif
     }
 
     if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources])
