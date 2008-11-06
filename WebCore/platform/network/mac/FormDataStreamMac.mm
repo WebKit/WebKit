@@ -49,14 +49,14 @@ namespace WebCore {
 typedef HashMap<CFReadStreamRef, RefPtr<FormData> > StreamFormDataMap;
 static StreamFormDataMap& getStreamFormDataMap()
 {
-    static StreamFormDataMap streamFormDataMap;
+    static StreamFormDataMap& streamFormDataMap = *new StreamFormDataMap;
     return streamFormDataMap;
 }
 
 typedef HashMap<CFReadStreamRef, RefPtr<ResourceHandle> > StreamResourceHandleMap;
 static StreamResourceHandleMap& getStreamResourceHandleMap()
 {
-    static StreamResourceHandleMap streamResourceHandleMap;
+    static StreamResourceHandleMap& streamResourceHandleMap = *new StreamResourceHandleMap;
     return streamResourceHandleMap;
 }
 

@@ -45,7 +45,7 @@ const Value::AdoptTag Value::adopt = {};
 const NodeSet& Value::toNodeSet() const
 {
     if (!m_data) {
-        static NodeSet emptyNodeSet;
+        static NodeSet& emptyNodeSet = *new NodeSet;
         return emptyNodeSet;
     }
 

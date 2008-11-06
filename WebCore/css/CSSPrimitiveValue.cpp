@@ -686,7 +686,7 @@ String CSSPrimitiveValue::cssText() const
             // FIXME: Add list-style and separator
             break;
         case CSS_RECT: {
-            static const String rectParen("rect(");
+            static const String& rectParen = *new String("rect(");
 
             Rect* rectVal = getRectValue();
             Vector<UChar> result;
@@ -709,9 +709,9 @@ String CSSPrimitiveValue::cssText() const
         }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
-            static const String commaSpace(", ");
-            static const String rgbParen("rgb(");
-            static const String rgbaParen("rgba(");
+            static const String& commaSpace = *new String(", ");
+            static const String& rgbParen = *new String("rgb(");
+            static const String& rgbaParen = *new String("rgba(");
 
             RGBA32 rgbColor = m_value.rgbcolor;
             if (m_type == CSS_PARSER_HEXCOLOR)

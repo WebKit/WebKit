@@ -73,7 +73,7 @@ bool HTMLOptionElement::isFocusable() const
 
 const AtomicString& HTMLOptionElement::type() const
 {
-    static const AtomicString option("option");
+    static const AtomicString& option = *new AtomicString("option");
     return option;
 }
 

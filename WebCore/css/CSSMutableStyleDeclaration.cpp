@@ -501,7 +501,7 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
 {
     ec = 0;
 
-    static HashMap<int, PropertyLonghand> shorthandMap;
+    static HashMap<int, PropertyLonghand>& shorthandMap = *new HashMap<int, PropertyLonghand>;
     if (shorthandMap.isEmpty())
         initShorthandMap(shorthandMap);
 

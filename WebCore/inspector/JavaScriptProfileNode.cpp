@@ -46,7 +46,7 @@ typedef HashMap<ProfileNode*, JSObject*> ProfileNodeMap;
 
 static ProfileNodeMap& profileNodeCache()
 { 
-    static ProfileNodeMap staticProfileNodes;
+    static ProfileNodeMap& staticProfileNodes = *new ProfileNodeMap;
     return staticProfileNodes;
 }
 

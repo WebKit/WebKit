@@ -73,7 +73,7 @@ typedef HashMap<std::pair<String, KURL>, PreflightResultCacheItem*> PreflightRes
 
 static PreflightResultCache& preflightResultCache()
 {
-    static PreflightResultCache cache;
+    static PreflightResultCache& cache = *new PreflightResultCache;
     return cache;
 }
 
@@ -88,9 +88,9 @@ static void appendPreflightResultCacheEntry(String origin, KURL url, unsigned ex
 
 static bool isSafeRequestHeader(const String& name)
 {
-    static HashSet<String, CaseFoldingHash> forbiddenHeaders;
-    static String proxyString("proxy-");
-    static String secString("sec-");
+    static HashSet<String, CaseFoldingHash>& forbiddenHeaders = *new HashSet<String, CaseFoldingHash>;
+    static String& proxyString = *new String("proxy-");
+    static String& secString = *new String("sec-");
     
     if (forbiddenHeaders.isEmpty()) {
         forbiddenHeaders.add("accept-charset");
@@ -121,7 +121,7 @@ static bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name)
 
 static bool isOnAccessControlResponseHeaderWhitelist(const String& name)
 {
-    static HashSet<String, CaseFoldingHash> allowedHeaders;
+    static HashSet<String, CaseFoldingHash>& allowedHeaders = *new HashSet<String, CaseFoldingHash>;
     if (allowedHeaders.isEmpty()) {
         allowedHeaders.add("cache-control");
         allowedHeaders.add("content-language");

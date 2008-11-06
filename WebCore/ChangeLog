@@ -1,5 +1,11 @@
 2008-11-06  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD WAS NOT BROKEN: Rolling r38189 back in.
+
+        Please perform a clean build if you see crashes.
+
+2008-11-06  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX: Backed out r38189 since it apparently broke the world.
 
 2008-11-06  Chris Fleizach  <cfleizach@apple.com>

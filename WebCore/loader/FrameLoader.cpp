@@ -1172,7 +1172,7 @@ bool FrameLoader::allowSubstituteDataAccessToLocal()
 
 static HashSet<String, CaseFoldingHash>& localSchemes()
 {
-    static HashSet<String, CaseFoldingHash> localSchemes;
+    static HashSet<String, CaseFoldingHash>& localSchemes = *new HashSet<String, CaseFoldingHash>;
 
     if (localSchemes.isEmpty()) {
         localSchemes.add("file");

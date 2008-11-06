@@ -862,20 +862,20 @@ static JSValueRef platform(JSContextRef ctx, JSObjectRef /*function*/, JSObjectR
 {
 #if PLATFORM(MAC)
 #ifdef BUILDING_ON_TIGER
-    static const String platform = "mac-tiger";
+    static const String& platform = *new String("mac-tiger");
 #else
-    static const String platform = "mac-leopard";
+    static const String& platform = *new String("mac-leopard");
 #endif
 #elif PLATFORM(WIN_OS)
-    static const String platform = "windows";
+    static const String& platform = *new String("windows");
 #elif PLATFORM(QT)
-    static const String platform = "qt";
+    static const String& platform = *new String("qt");
 #elif PLATFORM(GTK)
-    static const String platform = "gtk";
+    static const String& platform = *new String("gtk");
 #elif PLATFORM(WX)
-    static const String platform = "wx";
+    static const String& platform = *new String("wx");
 #else
-    static const String platform = "unknown";
+    static const String& platform = *new String("unknown");
 #endif
 
     JSValueRef platformValue = JSValueMakeString(ctx, jsStringRef(platform).get());

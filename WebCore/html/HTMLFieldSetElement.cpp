@@ -55,7 +55,7 @@ bool HTMLFieldSetElement::isFocusable() const
 
 const AtomicString& HTMLFieldSetElement::type() const
 {
-    static const AtomicString fieldset("fieldset");
+    static const AtomicString& fieldset = *new AtomicString("fieldset");
     return fieldset;
 }
 

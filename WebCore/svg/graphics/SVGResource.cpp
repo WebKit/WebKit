@@ -48,7 +48,7 @@ struct ResourceSet {
 };
 
 static HashMap<SVGStyledElement*, ResourceSet*>& clientMap() {
-    static HashMap<SVGStyledElement*, ResourceSet*> map;
+    static HashMap<SVGStyledElement*, ResourceSet*>& map = *new HashMap<SVGStyledElement*, ResourceSet*>;
     return map;
 }
 

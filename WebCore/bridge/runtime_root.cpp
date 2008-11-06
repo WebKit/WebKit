@@ -42,7 +42,7 @@ typedef HashSet<RootObject*> RootObjectSet;
 
 static RootObjectSet* rootObjectSet()
 {
-    static RootObjectSet staticRootObjectSet;
+    static RootObjectSet& staticRootObjectSet = *new RootObjectSet;
     return &staticRootObjectSet;
 }
 

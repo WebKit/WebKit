@@ -850,7 +850,7 @@ String IconDatabase::databasePath() const
 
 String IconDatabase::defaultDatabaseFilename()
 {
-    static String defaultDatabaseFilename = "WebpageIcons.db";
+    static String& defaultDatabaseFilename = *new String("WebpageIcons.db");
     return defaultDatabaseFilename.copy();
 }
 

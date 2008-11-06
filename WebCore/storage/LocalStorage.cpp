@@ -42,7 +42,7 @@ typedef HashMap<String, LocalStorage*> LocalStorageMap;
 
 static LocalStorageMap& localStorageMap()
 {
-    static LocalStorageMap localStorageMap;
+    static LocalStorageMap& localStorageMap = *new LocalStorageMap;
     return localStorageMap;
 }
 

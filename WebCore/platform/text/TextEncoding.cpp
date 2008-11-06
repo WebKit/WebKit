@@ -122,7 +122,7 @@ bool TextEncoding::isJapanese() const
     if (noExtendedTextEncodingNameUsed())
         return false;
 
-    static HashSet<const char*> set;
+    static HashSet<const char*>& set = *new HashSet<const char*>;
     if (set.isEmpty()) {
         addEncodingName(set, "x-mac-japanese");
         addEncodingName(set, "cp932");
