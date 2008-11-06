@@ -315,6 +315,19 @@
 #define HAVE_SYS_TIMEB_H 1
 #define HAVE_VIRTUALALLOC 1
 
+#elif PLATFORM(SYMBIAN)
+
+#define HAVE_ERRNO_H 1
+#define HAVE_MMAP 0
+#define HAVE_SBRK 1
+
+#define HAVE_SYS_TIME_H 1
+#define HAVE_STRINGS_H 1
+
+#if !COMPILER(RVCT)
+#define HAVE_SYS_PARAM_H 1
+#endif
+
 #else
 
 /* FIXME: is this actually used or do other platforms generate their own config.h? */

@@ -27,6 +27,15 @@
 
         Reviewed by Simon Hausmann.
 
+        Define capabilities of the SYMBIAN platform. Some of the system
+        headers are actually dependent on RVCT.
+
+        * wtf/Platform.h:
+
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Add missing stddef.h header needed for compilation in Symbian.
 
         * runtime/Collector.h:
