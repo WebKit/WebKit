@@ -799,8 +799,13 @@ sub buildAutotoolsProject($@)
 
     print "Calling configure in " . $dir . "\n\n";
     print "Installation directory: $prefix\n" if(defined($prefix));
-     
-    $result = system "$sourceDir/autogen.sh", @buildArgs;
+
+    # Make the path relative since it will appear in all -I compiler flags.
+    # Long argument lists cause bizarre slowdowns in libtool.
+    my $relSourceDir = File::Spec->abs2rel($sourceDir);
+    $relSourceDir = "." if !$relSourceDir;
+
+    $result = system "$relSourceDir/autogen.sh", @buildArgs;
     if ($result ne 0) {
         die "Failed to setup build environment using 'autotools'!\n";
     }

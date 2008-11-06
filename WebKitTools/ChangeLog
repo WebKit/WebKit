@@ -1,3 +1,13 @@
+2008-11-05  Alp Toker  <alp@nuanti.com>
+
+        GTK build script tweak.
+
+        Make the path relative since it will appear in all -I compiler flags.
+        Long argument lists cause bizarre slowdowns in libtool and result
+        in huge build logs.
+
+        * Scripts/webkitdirs.pm:
+
 2008-11-05  Anders Carlsson  <andersca@apple.com>
 
         Fix 64-bit build.
