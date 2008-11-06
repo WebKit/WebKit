@@ -96,7 +96,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 
     connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)),
             this, SLOT(stateChanged(Phonon::State, Phonon::State)));
-    connect(m_mediaObject, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
     connect(m_mediaObject, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     connect(m_mediaObject, SIGNAL(seekableChanged(bool)), this, SLOT(seekableChanged(bool)));
     connect(m_mediaObject, SIGNAL(hasVideoChanged(bool)), this, SLOT(hasVideoChanged(bool)));
@@ -105,7 +104,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     connect(m_mediaObject, SIGNAL(currentSourceChanged(const Phonon::MediaSource&)),
             this, SLOT(currentSourceChanged(const Phonon::MediaSource&)));
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(aboutToFinish()));
-    connect(m_mediaObject, SIGNAL(prefinishMarkReached(qint32)), this, SLOT(prefinishMarkReached(qint32)));
     connect(m_mediaObject, SIGNAL(totalTimeChanged(qint64)), this, SLOT(totalTimeChanged(qint64)));
 }
 
@@ -371,42 +369,6 @@ void MediaPlayerPrivate::setRect(const IntRect& newRect)
         m_videoWidget->resize(newRect.width(), newRect.height());
 }
 
-
-void MediaPlayerPrivate::loadStateChanged()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::rateChanged()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::sizeChanged()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::timeChanged()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::volumeChanged()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::didEnd()
-{
-    notImplemented();
-}
-
-void MediaPlayerPrivate::loadingFailed()
-{
-    notImplemented();
-}
-
 IntSize MediaPlayerPrivate::naturalSize() const
 {
     if (!hasVideo()) {
@@ -436,11 +398,6 @@ bool MediaPlayerPrivate::eventFilter(QObject* obj, QEvent* event)
     return QObject::eventFilter(obj, event);
 }
 
-void MediaPlayerPrivate::repaint()
-{
-    m_player->repaint();
-}
-
 void MediaPlayerPrivate::paint(GraphicsContext* graphicsContect, const IntRect& rect)
 {
     if (graphicsContect->paintingDisabled())
@@ -467,12 +424,6 @@ void MediaPlayerPrivate::stateChanged(Phonon::State newState, Phonon::State oldS
             phononStates.valueToKey(newState), phononStates.valueToKey(oldState));
 
     updateStates();
-}
-
-void MediaPlayerPrivate::tick(qint64)
-{
-    updateStates();
-    m_player->timeChanged();
 }
 
 void MediaPlayerPrivate::metaDataChanged()
@@ -511,12 +462,6 @@ void MediaPlayerPrivate::currentSourceChanged(const Phonon::MediaSource&)
 }
 
 void MediaPlayerPrivate::aboutToFinish()
-{
-    notImplemented();
-    LOG_MEDIAOBJECT();
-}
-
-void MediaPlayerPrivate::prefinishMarkReached(qint32)
 {
     notImplemented();
     LOG_MEDIAOBJECT();

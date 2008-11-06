@@ -1,3 +1,13 @@
+2008-11-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Remove a bunch of unused methods in the Qt media element implementation
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.h:
+
 2008-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
