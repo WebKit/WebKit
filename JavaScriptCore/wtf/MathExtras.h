@@ -100,16 +100,21 @@ inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x
 
 #endif
 
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) || COMPILER(RVCT)
 
-inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
-inline bool isnan(double num) { return !!_isnan(num); }
 inline long lround(double num) { return static_cast<long>(num > 0 ? num + 0.5 : ceil(num - 0.5)); }
 inline long lroundf(float num) { return static_cast<long>(num > 0 ? num + 0.5f : ceilf(num - 0.5f)); }
 inline double round(double num) { return num > 0 ? floor(num + 0.5) : ceil(num - 0.5); }
 inline float roundf(float num) { return num > 0 ? floorf(num + 0.5f) : ceilf(num - 0.5f); }
-inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
+
+#endif
+
+#if COMPILER(MSVC)
+
+inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
+inline bool isnan(double num) { return !!_isnan(num); }
+inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
 inline double nextafter(double x, double y) { return _nextafter(x, y); }
 inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x + FLT_EPSILON; }

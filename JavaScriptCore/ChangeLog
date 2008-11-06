@@ -2,6 +2,18 @@
 
         Reviewed by Simon Hausmann.
 
+        Borrow some math functions from the MSVC port to the build with the
+        RVCT compiler.
+
+        * wtf/MathExtras.h:
+        (isinf):
+        (isnan):
+        (signbit):
+
+2008-11-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Include strings.h for strncasecmp().
         This is needed for compilation inside Symbian and it is also
         confirmed by the man-page on Linux.
