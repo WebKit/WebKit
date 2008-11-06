@@ -2,6 +2,14 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Added a unit tests for QWebFrame::metaData().
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
+2008-11-06  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Improved documentation for QWebFrame::metaData().
 
         * Api/qwebframe.cpp:

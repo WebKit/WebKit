@@ -565,6 +565,7 @@ private slots:
     void domCycles();
     void setHtml();
     void ipv6HostEncoding();
+    void metaData();
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -2066,6 +2067,43 @@ void tst_QWebFrame::ipv6HostEncoding()
             );
     QCOMPARE(networkManager->requestedUrls.count(), 1);
     QCOMPARE(networkManager->requestedUrls.at(0), QUrl::fromEncoded("http://[::1]/test.xml"));
+}
+
+void tst_QWebFrame::metaData()
+{
+    m_view->setHtml("<html>"
+                    "    <head>"
+                    "        <meta name=\"description\" content=\"Test description\">"
+                    "        <meta name=\"keywords\" content=\"HTML, JavaScript, Css\">"
+                    "    </head>"
+                    "</html>");
+
+    QMultiMap<QString, QString> metaData = m_view->page()->mainFrame()->metaData();
+
+    QCOMPARE(metaData.count(), 2);
+
+    QCOMPARE(metaData.value("description"), QString("Test description"));
+    QCOMPARE(metaData.value("keywords"), QString("HTML, JavaScript, Css"));
+    QCOMPARE(metaData.value("nonexistant"), QString());
+
+    m_view->setHtml("<html>"
+                    "    <head>"
+                    "        <meta name=\"samekey\" content=\"FirstValue\">"
+                    "        <meta name=\"samekey\" content=\"SecondValue\">"
+                    "    </head>"
+                    "</html>");
+
+    metaData = m_view->page()->mainFrame()->metaData();
+
+    QCOMPARE(metaData.count(), 2);
+
+    QStringList values = metaData.values("samekey");
+    QCOMPARE(values.count(), 2);
+
+    QVERIFY(values.contains("FirstValue"));
+    QVERIFY(values.contains("SecondValue"));
+
+    QCOMPARE(metaData.value("nonexistant"), QString());
 }
 
 QTEST_MAIN(tst_QWebFrame)
