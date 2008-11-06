@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "JSDocument.h"
 #include "JSMessageChannel.h"
+#include "JSWorkerContext.h"
 #include "MessageChannel.h"
 
 using namespace JSC;
@@ -43,8 +44,10 @@ JSMessageChannelConstructor::JSMessageChannelConstructor(ExecState* exec, Script
 {
     if (m_scriptExecutionContext->isDocument())
         m_contextWrapper = toJS(exec, static_cast<Document*>(scriptExecutionContext));
+#if ENABLE(WORKERS)
     else if (m_scriptExecutionContext->isWorkerContext())
-        ; // Not yet implemented.
+        m_contextWrapper = toJSDOMGlobalObject(scriptExecutionContext);
+#endif
     else
         ASSERT_NOT_REACHED();
 

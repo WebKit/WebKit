@@ -44,6 +44,7 @@
 #include "SecurityOrigin.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include "WorkerThread.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -113,6 +114,11 @@ void DedicatedWorker::postMessage(const String& /*message*/, MessagePort* /*port
 
 void DedicatedWorker::startLoad()
 {
+    // The document may have been destroyed already.
+    // FIXME: Should we explicitly check whether the document has been detached, and cancel loading in that case?
+    if (!document())
+        return;
+
     m_cachedScript = document()->docLoader()->requestScript(m_scriptURL, document()->charset());
 
     if (m_cachedScript) {
@@ -131,7 +137,7 @@ void DedicatedWorker::notifyFinished(CachedResource* resource)
         dispatchErrorEvent();
         unsetPendingActivity(this);
     } else  {
-        // Start the worker thread.
+        WorkerThread::create(m_scriptURL, m_cachedScript->script(), this)->start();
     }
 
     m_cachedScript->removeClient(this);

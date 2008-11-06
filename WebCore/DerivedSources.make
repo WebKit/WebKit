@@ -359,6 +359,7 @@ DOM_CLASSES = \
     WebKitCSSTransformValue \
     WebKitTransitionEvent \
     WheelEvent \
+    WorkerLocation \
     XMLHttpRequest \
     XMLHttpRequestException \
     XMLHttpRequestProgressEvent \
@@ -379,6 +380,7 @@ all : \
     \
     JSDOMWindowBase.lut.h \
     JSRGBColor.lut.h \
+    JSWorkerContext.lut.h \
     \
     JSJavaScriptCallFrame.h \
     \

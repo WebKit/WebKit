@@ -1,3 +1,47 @@
+2008-11-05  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22066
+        Implement Worker global object
+
+        * DerivedSources.make: Added WorkerLocation IDL and JSWorkerContext lookup table.
+
+        * WebCore.xcodeproj/project.pbxproj: Only adding files to Mac project for now, as Worker
+        support is still disabled by default.
+
+        * bindings/js/JSDOMGlobalObject.cpp: (WebCore::toJSDOMGlobalObject): Implemented Worker case.
+
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor): Ditto.
+
+        * bindings/js/JSWorkerContext.cpp: Added.
+        * bindings/js/JSWorkerContext.h: Added.
+        * bindings/js/WorkerScriptController.cpp: Added.
+        * bindings/js/WorkerScriptController.h: Added.
+        * dom/WorkerContext.cpp: Added.
+        * dom/WorkerContext.h: Added.
+        Added an implementation of worker contexts.
+
+        * dom/DedicatedWorker.cpp:
+        (WebCore::DedicatedWorker::startLoad): Fixed a lifetime bug I saw on my tests.
+        (WebCore::DedicatedWorker::notifyFinished): Create a thread. Currently, object ownership
+        and lifetime is not clear at all.
+
+        * dom/WorkerLocation.cpp: Added.
+        * dom/WorkerLocation.h: Added.
+        * dom/WorkerLocation.idl: Added.
+        Added WorkerLocation, which is one of the objects available to workers.
+
+        * dom/WorkerThread.cpp: Added.
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::start):
+        (WebCore::WorkerThread::workerThreadStart):
+        (WebCore::WorkerThread::workerThread):
+        * dom/WorkerThread.h: Added.
+        (WebCore::WorkerThread::create):
+        Run some code in a worker thread (no message loop yet).
+
 2008-11-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -4151,6 +4151,8 @@
 		E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A302BB0DE8370300C52F2C /* StringBuilder.h */; };
 		E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A302C00DE8376900C52F2C /* StringBuilder.cpp */; };
 		E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */; };
+		E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A643F10EC0972500779668 /* WorkerScriptController.h */; };
+		E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */; };
 		E1ACAF4C0E791AAF0087D12B /* DOMMessagePort.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */; };
 		E1ACAF4D0E791AAF0087D12B /* DOMMessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */; };
 		E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */; };
@@ -4163,8 +4165,19 @@
 		E1ADEDDB0E76BD93004A1A5E /* JSMessagePort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
+		E1C2C4240EACE0BC007E61FB /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C2C4230EACE0BC007E61FB /* WorkerThread.h */; };
+		E1C2C4290EACE0E0007E61FB /* WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C2C4280EACE0E0007E61FB /* WorkerThread.cpp */; };
+		E1C2C43E0EAD0133007E61FB /* WorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C2C43D0EAD0133007E61FB /* WorkerContext.h */; };
+		E1C2C4420EAD017B007E61FB /* WorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C2C4410EAD017B007E61FB /* WorkerContext.cpp */; };
+		E1C362BC0EAF29FB007410BC /* WorkerLocation.idl in Resources */ = {isa = PBXBuildFile; fileRef = E1C362BB0EAF29FB007410BC /* WorkerLocation.idl */; };
+		E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */; };
+		E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */; };
+		E1C363010EAF2CC6007410BC /* WorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C363000EAF2CC6007410BC /* WorkerLocation.h */; };
+		E1C363060EAF2D07007410BC /* WorkerLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C363050EAF2D07007410BC /* WorkerLocation.cpp */; };
 		E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */; };
+		E1C36D340EB0A094007410BC /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C36D320EB0A094007410BC /* JSWorkerContext.cpp */; };
+		E1C36D350EB0A094007410BC /* JSWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C36D330EB0A094007410BC /* JSWorkerContext.h */; };
 		E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */; };
 		E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */; };
 		E1C8BE5D0E8BD15A0064CB7D /* JSDedicatedWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C8BE5C0E8BD15A0064CB7D /* JSDedicatedWorker.cpp */; };
@@ -8761,6 +8774,8 @@
 		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		E1A302C00DE8376900C52F2C /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
 		E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelCustom.cpp; sourceTree = "<group>"; };
+		E1A643F10EC0972500779668 /* WorkerScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerScriptController.h; sourceTree = "<group>"; };
+		E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptController.cpp; sourceTree = "<group>"; };
 		E1ACAF4A0E791AAF0087D12B /* DOMMessagePort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessagePort.mm; sourceTree = "<group>"; };
 		E1ACAF4B0E791AAF0087D12B /* DOMMessagePort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMessagePort.h; sourceTree = "<group>"; };
 		E1ADECBD0E76ACF1004A1A5E /* MessagePort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = MessagePort.h; sourceTree = "<group>"; };
@@ -8775,8 +8790,19 @@
 		E1ADEDD90E76BD93004A1A5E /* JSMessagePort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessagePort.cpp; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
+		E1C2C4230EACE0BC007E61FB /* WorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThread.h; sourceTree = "<group>"; };
+		E1C2C4280EACE0E0007E61FB /* WorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThread.cpp; sourceTree = "<group>"; };
+		E1C2C43D0EAD0133007E61FB /* WorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerContext.h; sourceTree = "<group>"; };
+		E1C2C4410EAD017B007E61FB /* WorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerContext.cpp; sourceTree = "<group>"; };
+		E1C362BB0EAF29FB007410BC /* WorkerLocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerLocation.idl; sourceTree = "<group>"; };
+		E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerLocation.h; sourceTree = "<group>"; };
+		E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerLocation.cpp; sourceTree = "<group>"; };
+		E1C363000EAF2CC6007410BC /* WorkerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerLocation.h; sourceTree = "<group>"; };
+		E1C363050EAF2D07007410BC /* WorkerLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerLocation.cpp; sourceTree = "<group>"; };
 		E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObject.h; sourceTree = "<group>"; };
 		E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObject.cpp; sourceTree = "<group>"; };
+		E1C36D320EB0A094007410BC /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
+		E1C36D330EB0A094007410BC /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMObject.h; sourceTree = "<group>"; };
 		E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMObject.cpp; sourceTree = "<group>"; };
 		E1C8BE440E8BCCBB0064CB7D /* DedicatedWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DedicatedWorker.idl; sourceTree = "<group>"; };
@@ -12880,6 +12906,8 @@
 				BC3452410D7E00EA0016574A /* JSRGBColor.cpp */,
 				BC3452420D7E00EA0016574A /* JSRGBColor.h */,
 				B21127A50B3186770009BE53 /* JSSVGPODTypeWrapper.h */,
+				E1C36D320EB0A094007410BC /* JSWorkerContext.cpp */,
+				E1C36D330EB0A094007410BC /* JSWorkerContext.h */,
 				BC348BE70DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp */,
 				BC348BE80DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h */,
 				BCE99EC10DCA624100182683 /* JSXSLTProcessorConstructor.cpp */,
@@ -12894,6 +12922,8 @@
 				65488D6A0DD5A83D009D83B2 /* StringSourceProvider.h */,
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
+				E1A643F10EC0972500779668 /* WorkerScriptController.h */,
+				E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */,
 			);
 			path = js;
 			sourceTree = "<group>";
@@ -13354,6 +13384,8 @@
 			children = (
 				E1C8BE5C0E8BD15A0064CB7D /* JSDedicatedWorker.cpp */,
 				E1CAA5C50E8BD23600A73ECA /* JSDedicatedWorker.h */,
+				E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */,
+				E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */,
 			);
 			name = Threads;
 			sourceTree = "<group>";
@@ -14020,6 +14052,13 @@
 				85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */,
 				85031B3B0A44EFC700F992E0 /* WheelEvent.h */,
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
+				E1C2C4410EAD017B007E61FB /* WorkerContext.cpp */,
+				E1C2C43D0EAD0133007E61FB /* WorkerContext.h */,
+				E1C363050EAF2D07007410BC /* WorkerLocation.cpp */,
+				E1C363000EAF2CC6007410BC /* WorkerLocation.h */,
+				E1C362BB0EAF29FB007410BC /* WorkerLocation.idl */,
+				E1C2C4280EACE0E0007E61FB /* WorkerThread.cpp */,
+				E1C2C4230EACE0BC007E61FB /* WorkerThread.h */,
 				F523D30902DE4476018635CA /* XMLTokenizer.cpp */,
 				F523D30A02DE4476018635CA /* XMLTokenizer.h */,
 				54C50F7A0E801DF3009832A0 /* XMLTokenizerLibxml2.cpp */,
@@ -16154,6 +16193,11 @@
 				BCE659A90EA927B9007E4533 /* ThemeTypes.h in Headers */,
 				BCE659E60EA92FB2007E4533 /* ThemeMac.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,
+				E1C2C4240EACE0BC007E61FB /* WorkerThread.h in Headers */,
+				E1C2C43E0EAD0133007E61FB /* WorkerContext.h in Headers */,
+				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
+				E1C363010EAF2CC6007410BC /* WorkerLocation.h in Headers */,
+				E1C36D350EB0A094007410BC /* JSWorkerContext.h in Headers */,
 				FEAB90130EA51B9C006348C3 /* GeolocationService.h in Headers */,
 				BCE65BEB0EACDF16007E4533 /* Length.h in Headers */,
 				BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */,
@@ -16161,6 +16205,7 @@
 				E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */,
 				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
+				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16275,6 +16320,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				E1C362BC0EAF29FB007410BC /* WorkerLocation.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18057,11 +18103,17 @@
 				939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */,
 				BCE659E90EA92FFA007E4533 /* ThemeMac.mm in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
+				E1C2C4290EACE0E0007E61FB /* WorkerThread.cpp in Sources */,
+				E1C2C4420EAD017B007E61FB /* WorkerContext.cpp in Sources */,
+				E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */,
+				E1C363060EAF2D07007410BC /* WorkerLocation.cpp in Sources */,
+				E1C36D340EB0A094007410BC /* JSWorkerContext.cpp in Sources */,
 				FEAB90120EA51B9C006348C3 /* GeolocationService.cpp in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
 				BCE65D320EAD1211007E4533 /* Theme.cpp in Sources */,
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,
 				E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */,
+				E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
