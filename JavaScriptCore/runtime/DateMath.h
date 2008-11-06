@@ -113,7 +113,7 @@ struct GregorianDateTime : Noncopyable {
         , year(inTm.tm_year)
         , isDST(inTm.tm_isdst)
     {
-#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS)
+#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS) && !COMPILER(RVCT)
         utcOffset = static_cast<int>(inTm.tm_gmtoff);
 
         int inZoneSize = strlen(inTm.tm_zone) + 1;
@@ -140,7 +140,7 @@ struct GregorianDateTime : Noncopyable {
         ret.tm_year  =  year;
         ret.tm_isdst =  isDST;
 
-#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS)
+#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS) && !COMPILER(RVCT)
         ret.tm_gmtoff = static_cast<long>(utcOffset);
         ret.tm_zone = timeZone;
 #endif

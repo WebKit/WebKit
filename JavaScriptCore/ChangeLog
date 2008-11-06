@@ -1,3 +1,14 @@
+2008-11-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        RVCT does not support tm_gmtoff field, so disable that code just like
+        for MSVC.
+
+        * runtime/DateMath.h:
+        (JSC::GregorianDateTime::GregorianDateTime):
+        (JSC::GregorianDateTime::operator tm):
+
 2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.
