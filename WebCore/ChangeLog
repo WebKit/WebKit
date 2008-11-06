@@ -1,3 +1,13 @@
+2008-11-06  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Fix a case-sensitivity issue in Mac forwarding headers. Strangely
+        enough, this does not always cause the build to break, even with a
+        case-sensitive filesystem.
+
+        * ForwardingHeaders/runtime/Interpreter.h:
+
 2008-11-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
