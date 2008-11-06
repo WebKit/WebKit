@@ -2,6 +2,16 @@
 
         Not reviewed.
 
+        Speculatively fix the Windows build, even though these changes may not
+        actually matter for anything in the build, because the Windows bots are
+        behind.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
         Fix the Qt build.
 
         * bridge/qt/qt_class.cpp:

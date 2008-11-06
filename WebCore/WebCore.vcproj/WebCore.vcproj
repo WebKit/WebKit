@@ -15845,6 +15845,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ForwardingHeaders\wtf\dtoa.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ForwardingHeaders\wtf\FastMalloc.h"
 					>
 				</File>
@@ -15941,27 +15945,23 @@
 				Name="kjs"
 				>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\ArgList.h"
+					RelativePath="..\ForwardingHeaders\runtime\ArgList.h"
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\collector.h"
+					RelativePath="..\ForwardingHeaders\runtime\Collector.h"
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\dtoa.h"
+					RelativePath="..\ForwardingHeaders\runtime\Identifier.h"
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\identifier.h"
+					RelativePath="..\ForwardingHeaders\runtime\Interpreter.h"
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\interpreter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\ForwardingHeaders\kjs\JSLock.h"
+					RelativePath="..\ForwardingHeaders\runtime\JSLock.h"
 					>
 				</File>
 				<File
@@ -15977,11 +15977,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\lookup.h"
+					RelativePath="..\ForwardingHeaders\runtime\Lookup.h"
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\operations.h"
+					RelativePath="..\ForwardingHeaders\runtime\Operations.h"
 					>
 				</File>
 				<File
@@ -15989,7 +15989,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\protect.h"
+					RelativePath="..\ForwardingHeaders\runtime\Protect.h"
 					>
 				</File>
 				<File
@@ -16001,7 +16001,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\ustring.h"
+					RelativePath="..\ForwardingHeaders\runtime\UString.h"
 					>
 				</File>
 			</Filter>
