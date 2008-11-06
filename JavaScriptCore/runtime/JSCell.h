@@ -284,7 +284,7 @@ namespace JSC {
     inline JSObject* JSValue::toThisObject(ExecState* exec) const
     {
         if (UNLIKELY(JSImmediate::isImmediate(asValue())))
-            return JSImmediate::toObject(asValue(), exec);
+            return JSImmediate::toThisObject(asValue(), exec);
         return asCell()->toThisObject(exec);
     }
 

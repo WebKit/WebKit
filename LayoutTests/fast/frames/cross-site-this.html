@@ -2,13 +2,23 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
-var test = "PASS";
-function foo() {
-     bar(); // resolve -> implicit this
+// The 'this' value provided to this method, and provided by this method to 'bar', should
+// both be the containing window object.
+function foo(childThis) {
+    bar(childThis, this);
 }
 
-function bar() {
-     dump(this.test); // this is now wrong
+function bar(childThis, parentThis) {
+    var result = "PASS";
+
+    if (childThis != frames[0])
+        result = "FAIL";
+    if (parentThis != window)
+        result = "FAIL";
+    if (this != window)
+        result = "FAIL";
+
+    dump(result);
 }
 
 function dump(str)

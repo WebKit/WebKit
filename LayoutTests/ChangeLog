@@ -1,3 +1,16 @@
+2008-11-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Previosly the test 'cross-site-this' checked that the second level deep method called
+        across frames recieved the correct this pointer, when no base object is provided.
+        
+        Test updated so that it check that the code in the child frame, and both the first
+        and second functions called in the parent frame recieve the correct this values.
+
+        * fast/frames/cross-site-this.html:
+        * fast/frames/resources/cross-site-this-helper.html:
+
 2008-11-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Beth Dakin.

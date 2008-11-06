@@ -32,6 +32,21 @@
 
 namespace JSC {
 
+JSObject* JSImmediate::toThisObject(JSValue* v, ExecState* exec)
+{
+    ASSERT(isImmediate(v));
+    if (isNumber(v))
+        return constructNumberFromImmediateNumber(exec, v);
+    if (isBoolean(v))
+        return constructBooleanFromImmediateBoolean(exec, v);
+    if (v == jsNull())
+        return exec->globalThisValue();
+    
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
+    exec->setException(exception);
+    return new (exec) JSNotAnObject(exec, exception);
+}
+
 JSObject* JSImmediate::toObject(JSValue* v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
