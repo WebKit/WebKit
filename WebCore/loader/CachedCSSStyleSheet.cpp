@@ -65,6 +65,16 @@ String CachedCSSStyleSheet::encoding() const
 {
     return m_decoder->encoding().name();
 }
+    
+const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType) const 
+{ 
+    if (!m_data || m_data->isEmpty() || !canUseSheet(enforceMIMEType))
+        return String();
+    
+    String result = m_decoder->decode(m_data->data(), encodedSize());
+    result += m_decoder->flush();
+    return result;
+}
 
 void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
@@ -73,10 +83,6 @@ void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceiv
 
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
-    if (m_data.get()) {
-        m_sheet = m_decoder->decode(m_data->data(), encodedSize());
-        m_sheet += m_decoder->flush();
-    }
     m_loading = false;
     checkNotify();
 }

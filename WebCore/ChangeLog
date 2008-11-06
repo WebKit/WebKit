@@ -1,3 +1,21 @@
+2008-11-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22093
+        Don't keep decoded stylesheet data in cache
+        
+        <rdar://problem/6343588>
+
+        Don't keep decoded stylesheet string around in the cache. There are no sharing benefits and
+        performance benefits are negligible (no measured PLT impact). Reduces memory consumption of
+        style sheet data in cache by 2/3 in common case.  
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText):
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedCSSStyleSheet.h:
+
 2008-11-05  David Kilzer  <ddkilzer@apple.com>
 
         Bug 21596: WebCore::Cache should use parsed Pragma and Cache-Control headers
