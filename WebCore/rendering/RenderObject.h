@@ -583,6 +583,7 @@ public:
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If useTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
     virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
+    virtual FloatPoint absoluteToLocal(FloatPoint, bool fixed = false, bool useTransforms = false) const;
 
     // This function is used to deal with the extra top space that can occur in table cells (called borderTopExtra).
     // The children of the cell do not factor this space in, so we have to add it in.  Any code that wants to

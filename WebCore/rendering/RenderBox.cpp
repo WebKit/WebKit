@@ -1014,30 +1014,70 @@ FloatPoint RenderBox::localToAbsolute(FloatPoint localPoint, bool fixed, bool us
             localPoint = m_layer->transform()->mapPoint(localPoint);
         }
 
-        if (isRelPositioned())
-            localPoint += relativePositionOffset();
-
-        if (!isInline() || isReplaced()) {
-            RenderBlock* cb;
-            if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition
-                    && (cb = static_cast<RenderBlock*>(o))->hasColumns()) {
-                IntRect rect(m_x, m_y, 1, 1);
-                cb->adjustRectForColumns(rect);
-                localPoint.move(rect.x(), rect.y());
-            } else
-                localPoint.move(m_x, m_y);
-        }
-
-        if (o->hasOverflowClip())
-            localPoint -= o->layer()->scrolledContentOffset();
-
-        if (style()->position() == AbsolutePosition)
-            localPoint += offsetForPositionedInContainer(o);
+        localPoint += offsetFromContainer(o);
 
         return o->localToAbsoluteForContent(localPoint, fixed, useTransforms);
     }
     
     return FloatPoint();
+}
+
+FloatPoint RenderBox::absoluteToLocal(FloatPoint containerPoint, bool fixed, bool useTransforms) const
+{
+    // We don't expect absoluteToLocal() to be called during layout (yet)
+    ASSERT(!view() || !view()->layoutState());
+    
+    if (style()->position() == FixedPosition)
+        fixed = true;
+
+    if (useTransforms && m_layer && m_layer->transform())
+        fixed = false;
+    
+    RenderObject* o = container();
+    if (o) {
+        FloatPoint localPoint = o->absoluteToLocal(containerPoint, fixed, useTransforms);
+
+        // Take into account space above a vertically aligned table cell
+        // (see localToAbsoluteForContent())
+        localPoint.move(0.0f, -static_cast<float>(borderTopExtra()));
+
+        localPoint -= offsetFromContainer(o);
+
+        if (useTransforms && m_layer && m_layer->transform())
+            localPoint = m_layer->transform()->inverse().mapPoint(localPoint);
+        
+        return localPoint;
+    }
+    
+    return FloatPoint();
+}
+
+IntSize RenderBox::offsetFromContainer(RenderObject* o) const
+{
+    ASSERT(o == container());
+
+    IntSize offset;    
+    if (isRelPositioned())
+        offset += relativePositionOffset();
+
+    if (!isInline() || isReplaced()) {
+        RenderBlock* cb;
+        if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition
+                && (cb = static_cast<RenderBlock*>(o))->hasColumns()) {
+            IntRect rect(m_x, m_y, 1, 1);
+            cb->adjustRectForColumns(rect);
+            offset.expand(rect.x(), rect.y());
+        } else
+            offset.expand(m_x, m_y);
+    }
+
+    if (o->hasOverflowClip())
+        offset -= o->layer()->scrolledContentOffset();
+
+    if (style()->position() == AbsolutePosition)
+        offset += offsetForPositionedInContainer(o);
+
+    return offset;
 }
 
 void RenderBox::dirtyLineBoxes(bool fullLayout, bool /*isRootLineBox*/)

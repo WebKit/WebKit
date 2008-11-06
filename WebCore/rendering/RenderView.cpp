@@ -139,6 +139,14 @@ FloatPoint RenderView::localToAbsolute(FloatPoint localPoint, bool fixed, bool u
     return localPoint;
 }
 
+FloatPoint RenderView::absoluteToLocal(FloatPoint containerPoint, bool fixed, bool useTransforms) const
+{
+    if (fixed && m_frameView)
+        containerPoint -= m_frameView->scrollOffset();
+
+    return containerPoint;
+}
+
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.

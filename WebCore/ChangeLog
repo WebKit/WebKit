@@ -1,3 +1,35 @@
+2008-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=21870
+        
+        Implement absoluteToLocal() to convert a point from absolute
+        to local coordinates, optionally taking transforms into account.
+        
+        Use this to set offsetX/offsetY in mouse events, thus fixing
+        offsetX/offsetY in events on elements with transforms.
+
+        Test: fast/events/offsetX-offsetY.html
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localToAbsolute):
+        (WebCore::RenderBox::absoluteToLocal):
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteToLocal):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::localToAbsolute):
+        (WebCore::RenderTableCell::absoluteToLocal):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteToLocal):
+        * rendering/RenderView.h:
+
 2008-11-06  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Cameron Zwarich.

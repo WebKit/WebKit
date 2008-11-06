@@ -102,6 +102,7 @@ public:
     virtual IntRect absoluteClippedOverflowRect();
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
     virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
+    virtual FloatPoint absoluteToLocal(FloatPoint containerPoint, bool fixed = false, bool useTransforms = false) const;
 
     virtual int baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
 

@@ -1,0 +1,23 @@
+Absolute position
+Relative position
+Fixed position
+First	Second
+This cell has borderTopExtra
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+In columns
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Div with transform
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+In RTL overflow
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+PASS: event at (112, 62) hit abs-box at offset (32, 37)
+PASS: event at (157, 32) hit rel-box at offset (22, 24)
+PASS: event at (410, 30) hit fixed-box at offset (10, 10)
+PASS: event at (36, 272) hit with-bordertopextra at offset (4, 4)
+PASS: event at (563, 410) hit inside-overflow at offset (7, 6)
+PASS: event at (112, 369) hit transformed at offset (11, 15)
+

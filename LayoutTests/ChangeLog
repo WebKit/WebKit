@@ -1,3 +1,15 @@
+2008-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=21870
+        
+        Test event.offsetX/offsetY for various types of elements, which
+        exercises absoluteToLocal() code.
+
+        * fast/events/offsetX-offsetY-expected.txt: Added.
+        * fast/events/offsetX-offsetY.html: Added.
+
 2008-11-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak.
