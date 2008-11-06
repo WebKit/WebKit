@@ -1,3 +1,11 @@
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added COMPILER(RVCT) to detect the ARM RVCT compiler used in the Symbian environment.
+
+        * wtf/Platform.h:
+
 2008-11-06  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, adjust include paths after move of jsc.pro.
