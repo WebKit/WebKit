@@ -56,7 +56,7 @@ HTMLKeygenElement::HTMLKeygenElement(Document* doc, HTMLFormElement* f)
 
 const AtomicString& HTMLKeygenElement::type() const
 {
-    static const AtomicString& keygen = *new AtomicString("keygen");
+    static const AtomicString keygen("keygen");
     return keygen;
 }
 

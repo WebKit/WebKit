@@ -55,7 +55,7 @@ static NSString *CarbonPathFromPOSIXPath(NSString *posixPath);
 typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
 {
-    static StreamMap& staticStreams = *new StreamMap;
+    static StreamMap staticStreams;
     return staticStreams;
 }
 

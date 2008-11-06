@@ -720,13 +720,13 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
 #if ENABLE(DASHBOARD_SUPPORT)
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 {
-    static Vector<StyleDashboardRegion>& emptyList = *new Vector<StyleDashboardRegion>;
+    static Vector<StyleDashboardRegion> emptyList;
     return emptyList;
 }
 
 const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 {
-    static Vector<StyleDashboardRegion>& noneList = *new Vector<StyleDashboardRegion>;
+    static Vector<StyleDashboardRegion> noneList;
     static bool noneListInitialized = false;
 
     if (!noneListInitialized) {

@@ -51,7 +51,7 @@ using namespace WebCore;
 
 static HashMap<BackForwardList*, WebBackForwardList*>& backForwardLists()
 {
-    static HashMap<BackForwardList*, WebBackForwardList*>& staticBackForwardLists = *new HashMap<BackForwardList*, WebBackForwardList*>;
+    static HashMap<BackForwardList*, WebBackForwardList*> staticBackForwardLists;
     return staticBackForwardLists;
 }
 

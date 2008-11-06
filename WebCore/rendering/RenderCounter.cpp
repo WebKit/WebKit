@@ -41,7 +41,7 @@ static CounterNode* counter(RenderObject*, const AtomicString& counterName, bool
 
 static CounterMaps& counterMaps()
 {
-    static CounterMaps& staticCounterMaps = *new CounterMaps;
+    static CounterMaps staticCounterMaps;
     return staticCounterMaps;
 }
 

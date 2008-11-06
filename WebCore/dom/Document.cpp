@@ -713,9 +713,9 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
 
 bool Document::hasPrefixNamespaceMismatch(const QualifiedName& qName)
 {
-    static const AtomicString& xmlnsNamespaceURI = *new AtomicString("http://www.w3.org/2000/xmlns/");
-    static const AtomicString& xmlns = *new AtomicString("xmlns");
-    static const AtomicString& xml = *new AtomicString("xml");
+    static const AtomicString xmlnsNamespaceURI("http://www.w3.org/2000/xmlns/");
+    static const AtomicString xmlns("xmlns");
+    static const AtomicString xml("xml");
 
     // These checks are from DOM Core Level 2, createElementNS
     // http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS

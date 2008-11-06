@@ -1563,7 +1563,7 @@ String mimeTypeFromDataURL(const String& url)
 
 const KURL& blankURL()
 {
-    static KURL& staticBlankURL = *new KURL("about:blank");
+    static KURL staticBlankURL("about:blank");
     return staticBlankURL;
 }
 

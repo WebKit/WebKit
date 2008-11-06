@@ -38,7 +38,7 @@ typedef HashMap<JSObject*, JSInspectorCallbackWrapper*> WrapperMap;
 
 static WrapperMap& wrappers()
 {
-    static WrapperMap& map = *new WrapperMap;
+    static WrapperMap map;
     return map;
 }
 

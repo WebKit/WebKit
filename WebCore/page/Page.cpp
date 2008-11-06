@@ -232,7 +232,7 @@ void Page::setGroupName(const String& name)
 
 const String& Page::groupName() const
 {
-    static String& nullString = *new String;
+    static String nullString;
     return m_group ? m_group->name() : nullString;
 }
 

@@ -79,7 +79,7 @@ void reportThreadViolation(const char* function)
 void WebCoreReportThreadViolation(const char* function)
 {
     using namespace WebCore;
-    static HashSet<String>& loggedFunctions = *new HashSet<String>;
+    static HashSet<String> loggedFunctions;
     switch (threadViolationBehavior) {
         case NoThreadCheck:
             break;

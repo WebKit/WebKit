@@ -1,3 +1,7 @@
+2008-11-06  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Backed out r38189 since it apparently broke the world.
+
 2008-11-06  John Sullivan  <sullivan@apple.com>
 
         Fixed problem with switching between text-only zoom and full-content zoom

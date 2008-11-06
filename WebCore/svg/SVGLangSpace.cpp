@@ -51,7 +51,7 @@ void SVGLangSpace::setXmllang(const AtomicString& xmlLang)
 const AtomicString& SVGLangSpace::xmlspace() const
 {
     if (!m_space) {
-        static const AtomicString& defaultString = *new AtomicString("default");
+        static const AtomicString defaultString("default");
         return defaultString;
     }
 

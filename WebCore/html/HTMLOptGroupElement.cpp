@@ -49,7 +49,7 @@ bool HTMLOptGroupElement::isFocusable() const
 
 const AtomicString& HTMLOptGroupElement::type() const
 {
-    static const AtomicString& optgroup = *new AtomicString("optgroup");
+    static const AtomicString optgroup("optgroup");
     return optgroup;
 }
 

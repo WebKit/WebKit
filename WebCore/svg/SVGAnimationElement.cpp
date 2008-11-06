@@ -196,10 +196,10 @@ SVGAnimationElement::AnimationMode SVGAnimationElement::animationMode() const
 
 SVGAnimationElement::CalcMode SVGAnimationElement::calcMode() const
 {    
-    static const AtomicString& discrete = *new AtomicString("discrete");
-    static const AtomicString& linear = *new AtomicString("linear");
-    static const AtomicString& paced = *new AtomicString("paced");
-    static const AtomicString& spline = *new AtomicString("spline");
+    static const AtomicString discrete("discrete");
+    static const AtomicString linear("linear");
+    static const AtomicString paced("paced");
+    static const AtomicString spline("spline");
     const AtomicString& value = getAttribute(SVGNames::calcModeAttr);
     if (value == discrete)
         return CalcModeDiscrete;
@@ -214,8 +214,8 @@ SVGAnimationElement::CalcMode SVGAnimationElement::calcMode() const
 
 SVGAnimationElement::AttributeType SVGAnimationElement::attributeType() const
 {    
-    static const AtomicString& css = *new AtomicString("CSS");
-    static const AtomicString& xml = *new AtomicString("XML");
+    static const AtomicString css("CSS");
+    static const AtomicString xml("XML");
     const AtomicString& value = getAttribute(SVGNames::attributeTypeAttr);
     if (value == css)
         return AttributeTypeCSS;
@@ -241,14 +241,14 @@ String SVGAnimationElement::fromValue() const
 
 bool SVGAnimationElement::isAdditive() const
 {
-    static const AtomicString& sum = *new AtomicString("sum");
+    static const AtomicString sum("sum");
     const AtomicString& value = getAttribute(SVGNames::additiveAttr);
     return value == sum || animationMode() == ByAnimation;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
-    static const AtomicString& sum = *new AtomicString("sum");
+    static const AtomicString sum("sum");
     const AtomicString& value = getAttribute(SVGNames::accumulateAttr);
     return value == sum && animationMode() != ToAnimation;
 }

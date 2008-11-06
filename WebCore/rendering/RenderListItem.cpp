@@ -289,7 +289,7 @@ const String& RenderListItem::markerText() const
 {
     if (m_marker)
         return m_marker->text();
-    static String& staticNullString = *new String;
+    static String staticNullString;
     return staticNullString;
 }
 

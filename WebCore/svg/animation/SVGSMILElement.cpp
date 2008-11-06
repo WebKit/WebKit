@@ -193,7 +193,7 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
     
     String parse = data.stripWhiteSpace();
 
-    static const AtomicString& indefiniteValue = *new AtomicString("indefinite");
+    static const AtomicString indefiniteValue("indefinite");
     if (parse == indefiniteValue)
         return SMILTime::indefinite();
 
@@ -457,8 +457,8 @@ bool SVGSMILElement::isFrozen() const
     
 SVGSMILElement::Restart SVGSMILElement::restart() const
 {    
-    static const AtomicString& never = *new AtomicString("never");
-    static const AtomicString& whenNotActive = *new AtomicString("whenNotActive");
+    static const AtomicString never("never");
+    static const AtomicString whenNotActive("whenNotActive");
     const AtomicString& value = getAttribute(SVGNames::restartAttr);
     if (value == never)
         return RestartNever;
@@ -469,7 +469,7 @@ SVGSMILElement::Restart SVGSMILElement::restart() const
     
 SVGSMILElement::FillMode SVGSMILElement::fill() const
 {   
-    static const AtomicString& freeze = *new AtomicString("freeze");
+    static const AtomicString freeze("freeze");
     const AtomicString& value = getAttribute(SVGNames::fillAttr);
     return value == freeze ? FillFreeze : FillRemove;
 }
@@ -506,7 +506,7 @@ SMILTime SVGSMILElement::repeatCount() const
     if (value.isNull())
         return SMILTime::unresolved();
 
-    static const AtomicString& indefiniteValue = *new AtomicString("indefinite");
+    static const AtomicString indefiniteValue("indefinite");
     if (value == indefiniteValue)
         return SMILTime::indefinite();
     bool ok;
@@ -861,7 +861,7 @@ void SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement)
 void SVGSMILElement::notifyDependentsIntervalChanged(NewOrExistingInterval newOrExisting)
 {
     ASSERT(m_intervalBegin.isFinite());
-    static HashSet<SVGSMILElement*>& loopBreaker = *new HashSet<SVGSMILElement*>;
+    static HashSet<SVGSMILElement*> loopBreaker;
     if (loopBreaker.contains(this))
         return;
     loopBreaker.add(this);

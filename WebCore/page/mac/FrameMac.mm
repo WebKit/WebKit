@@ -88,8 +88,8 @@ RegularExpression* regExpForLabels(NSArray* labels)
     // that the app will use is equal to the number of locales is used in searching.
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray* regExpLabels = nil;
-    static Vector<RegularExpression*>& regExps = *new Vector<RegularExpression*>;
-    static RegularExpression& wordRegExp = *new RegularExpression("\\w");
+    static Vector<RegularExpression*> regExps;
+    static RegularExpression wordRegExp = RegularExpression("\\w");
 
     RegularExpression* result;
     if (!regExpLabels)

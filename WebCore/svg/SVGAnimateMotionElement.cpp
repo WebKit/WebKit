@@ -91,8 +91,8 @@ void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
 {
-    static const AtomicString& autoVal = *new AtomicString("auto");
-    static const AtomicString& autoReverse = *new AtomicString("auto-reverse");
+    static const AtomicString autoVal("auto");
+    static const AtomicString autoReverse("auto-reverse");
     String rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoVal)
         return RotateAuto;

@@ -86,7 +86,7 @@ namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
-    static ScrollbarThemeMac& theme = *new ScrollbarThemeMac;
+    static ScrollbarThemeMac theme;
     return &theme;
 }
 
