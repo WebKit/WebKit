@@ -1,3 +1,17 @@
+2008-11-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22107
+
+        Bug uncovered during RVCT port in functions not used. get_lt() and
+        get_gt() takes only one argument - remove second argument where
+        applicable.
+
+        * wtf/AVLTree.h:
+        (JSC::AVLTree::remove): Remove second argument of get_lt/get_gt().
+        (JSC::AVLTree::subst): Ditto.
+
 2008-11-06  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Cameron Zwarich.
