@@ -1,3 +1,13 @@
+2008-11-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Include strings.h for strncasecmp().
+        This is needed for compilation inside Symbian and it is also
+        confirmed by the man-page on Linux.
+
+        * runtime/DateMath.cpp:
+
 2008-11-06  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Simon Hausmann.
