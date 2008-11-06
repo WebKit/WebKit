@@ -136,7 +136,7 @@
 #define WTF_PLATFORM_CAIRO 1
 #endif
 
-#ifdef __S60__
+#if defined (__S60__) || defined (__SYMBIAN32__)
 // we are cross-compiling, it is not really windows
 #undef WTF_PLATFORM_WIN_OS
 #undef WTF_PLATFORM_WIN

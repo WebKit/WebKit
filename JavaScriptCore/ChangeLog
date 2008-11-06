@@ -1,3 +1,11 @@
+2008-11-06  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added __SYMBIAN32__ condition for defining PLATFORM(SYMBIAN).
+
+        * wtf/Platform.h:
+
 2008-11-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon Hausmann.
