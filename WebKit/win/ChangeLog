@@ -1,3 +1,20 @@
+2008-11-06  John Sullivan  <sullivan@apple.com>
+    
+        Eliminated one of the two booleans tracking whether zoom was text-only, to avoid future problems.
+    
+        Reviewed by Adam Roben
+
+        * WebView.h:
+        removed m_zoomMultiplierIsTextOnly
+        
+        * WebView.cpp:
+        (WebView::WebView):
+        removed initialization of m_zoomMultiplierIsTextOnly
+        (WebView::setZoomMultiplier):
+        use m_page->settings()->setZoomsTextOnly() instead of setting m_zoomMultiplierIsTextOnly
+        (WebView::zoomMultiplier):
+        use m_page->settings()->zoomsTextOnly() instead of reading m_zoomMultiplierIsTextOnly
+
 2008-11-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam Roben.

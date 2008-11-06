@@ -268,7 +268,6 @@ WebView::WebView()
 , m_useBackForwardList(true)
 , m_userAgentOverridden(false)
 , m_zoomMultiplier(1.0f)
-, m_zoomMultiplierIsTextOnly(true)
 , m_mouseActivated(false)
 , m_dragData(0)
 , m_currentCharacterCode(0)
@@ -2497,7 +2496,7 @@ HRESULT STDMETHODCALLTYPE WebView::setPageSizeMultiplier(
 void WebView::setZoomMultiplier(float multiplier, bool isTextOnly)
 {
     m_zoomMultiplier = multiplier;
-    m_zoomMultiplierIsTextOnly = isTextOnly;
+    m_page->settings()->setZoomsTextOnly(isTextOnly);
     if (Frame* coreFrame = core(m_mainFrame))
         coreFrame->setZoomFactor(multiplier, isTextOnly);
 }
@@ -2518,7 +2517,7 @@ HRESULT STDMETHODCALLTYPE WebView::pageSizeMultiplier(
 
 float WebView::zoomMultiplier(bool isTextOnly)
 {
-    if (isTextOnly != m_zoomMultiplierIsTextOnly)
+    if (isTextOnly != m_page->settings()->zoomsTextOnly())
         return 1.0f;
     return m_zoomMultiplier;
 }
