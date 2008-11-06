@@ -1,3 +1,17 @@
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implemented the block allocation on Symbian through heap allocation.
+
+        Unfortunately there is no way to allocate virtual memory. The Posix
+        layer provides mmap() but no anonymous mapping. So this is a very slow
+        solution but it should work as a start.
+
+        * runtime/Collector.cpp:
+        (JSC::allocateBlock):
+        (JSC::freeBlock):
+
 2008-11-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
