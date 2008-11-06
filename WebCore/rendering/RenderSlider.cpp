@@ -54,7 +54,7 @@ public:
     bool inDragMode() const { return m_inDragMode; }
 private:
     Node* m_shadowParent;
-    IntPoint m_initialClickPoint;
+    FloatPoint m_initialClickPoint;       // initial click point in RenderSlider-local coordinates
     int m_initialPosition;
     bool m_inDragMode;
 };
@@ -73,12 +73,14 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
     const AtomicString& eventType = event->type();
     if (eventType == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-        if (document()->frame() && renderer() && renderer()->parent()
-                && static_cast<RenderSlider*>(renderer()->parent())->mouseEventIsInThumb(mouseEvent)) {
-            // Cache the initial point where the mouse down occurred.
-            m_initialClickPoint = IntPoint(mouseEvent->pageX(), mouseEvent->pageY());
+        RenderSlider* slider;
+        if (document()->frame() && renderer() && renderer()->parent() &&
+                (slider = static_cast<RenderSlider*>(renderer()->parent())) &&
+                slider->mouseEventIsInThumb(mouseEvent)) {
+            // Cache the initial point where the mouse down occurred, in slider coordinates
+            m_initialClickPoint = slider->absoluteToLocal(FloatPoint(mouseEvent->pageX(), mouseEvent->pageY()), false, true);
             // Cache the initial position of the thumb.
-            m_initialPosition = static_cast<RenderSlider*>(renderer()->parent())->currentPosition();
+            m_initialPosition = slider->currentPosition();
             m_inDragMode = true;
             
             document()->frame()->eventHandler()->setCapturingMouseEventsNode(m_shadowParent);
@@ -99,10 +101,11 @@ void HTMLSliderThumbElement::defaultEventHandler(Event* event)
             // Move the slider
             MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
             RenderSlider* slider = static_cast<RenderSlider*>(renderer()->parent());
+            FloatPoint curPoint = slider->absoluteToLocal(FloatPoint(mouseEvent->pageX(), mouseEvent->pageY()), false, true);
             int newPosition = slider->positionForOffset(
-                IntPoint(m_initialPosition + mouseEvent->pageX() - m_initialClickPoint.x()
+                IntPoint(m_initialPosition + curPoint.x() - m_initialClickPoint.x()
                         + (renderer()->width() / 2), 
-                    m_initialPosition + mouseEvent->pageY() - m_initialClickPoint.y()
+                    m_initialPosition + curPoint.y() - m_initialClickPoint.y()
                         + (renderer()->height() / 2)));
             if (slider->currentPosition() != newPosition) {
                 slider->setCurrentPosition(newPosition);
@@ -256,8 +259,9 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
     if (!m_thumb || !m_thumb->renderer())
         return false;
  
-    IntRect thumbBounds = m_thumb->renderer()->absoluteBoundingBoxRect();
-    return thumbBounds.contains(evt->pageX(), evt->pageY());
+    FloatPoint localPoint = m_thumb->renderer()->absoluteToLocal(FloatPoint(evt->pageX(), evt->pageY()), false, true);
+    IntRect thumbBounds = m_thumb->renderer()->borderBox();
+    return thumbBounds.contains(roundedIntPoint(localPoint));
 }
 
 void RenderSlider::setValueForPosition(int position)

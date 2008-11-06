@@ -1,3 +1,13 @@
+2008-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        https://bugs.webkit.org/show_bug.cgi?id=22109
+        Make <input type="range"> work correctly with transforms
+        
+        * fast/forms/slider-transformed-expected.txt: Added.
+        * fast/forms/slider-transformed.html: Added.
+
 2008-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
