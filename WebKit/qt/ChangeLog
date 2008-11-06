@@ -1,3 +1,11 @@
+2008-11-06  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Improved documentation for QWebFrame::metaData().
+
+        * Api/qwebframe.cpp:
+
 2008-11-05  Sriram Yadavalli <sriram.yadavalli@nokia.com>
 
         Reviewed by Simon Hausmann.
