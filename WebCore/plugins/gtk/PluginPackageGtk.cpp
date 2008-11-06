@@ -86,11 +86,14 @@ bool PluginPackage::fetchInfo()
     if (!load())
         return false;
 
-    NP_GetMIMEDescriptionFuncPtr NP_GetMIMEDescription;
-    NPP_GetValueProcPtr NPP_GetValue;
+    NP_GetMIMEDescriptionFuncPtr NP_GetMIMEDescription = 0;
+    NPP_GetValueProcPtr NPP_GetValue = 0;
 
     g_module_symbol(m_module, "NP_GetMIMEDescription", (void**)&NP_GetMIMEDescription);
     g_module_symbol(m_module, "NP_GetValue", (void**)&NPP_GetValue);
+
+    if (!NP_GetMIMEDescription || !NPP_GetValue)
+        return false;
 
     char* buffer = 0;
     NPError err = NPP_GetValue(0, NPPVpluginNameString, &buffer);
@@ -152,7 +155,9 @@ bool PluginPackage::load()
 
     m_isLoaded = true;
 
-    NP_InitializeFuncPtr NP_Initialize;
+    NP_InitializeFuncPtr NP_Initialize = 0;
+    m_NPP_Shutdown = 0;
+
     NPError npErr;
 
     g_module_symbol(m_module, "NP_Initialize", (void**)&NP_Initialize);
@@ -164,8 +169,10 @@ bool PluginPackage::load()
     memset(&m_pluginFuncs, 0, sizeof(m_pluginFuncs));
     m_pluginFuncs.size = sizeof(m_pluginFuncs);
 
+    memset(&m_browserFuncs, 0, sizeof(m_browserFuncs));
     m_browserFuncs.size = sizeof (m_browserFuncs);
     m_browserFuncs.version = NP_VERSION_MINOR;
+
     m_browserFuncs.geturl = NPN_GetURL;
     m_browserFuncs.posturl = NPN_PostURL;
     m_browserFuncs.requestread = NPN_RequestRead;
@@ -189,6 +196,7 @@ bool PluginPackage::load()
     m_browserFuncs.getJavaPeer = NPN_GetJavaPeer;
     m_browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
     m_browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
+    m_browserFuncs.pluginthreadasynccall = NPN_PluginThreadAsyncCall;
 
     m_browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
     m_browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;
@@ -196,6 +204,7 @@ bool PluginPackage::load()
     m_browserFuncs.getintidentifier = _NPN_GetIntIdentifier;
     m_browserFuncs.identifierisstring = _NPN_IdentifierIsString;
     m_browserFuncs.utf8fromidentifier = _NPN_UTF8FromIdentifier;
+    m_browserFuncs.intfromidentifier = _NPN_IntFromIdentifier;
     m_browserFuncs.createobject = _NPN_CreateObject;
     m_browserFuncs.retainobject = _NPN_RetainObject;
     m_browserFuncs.releaseobject = _NPN_ReleaseObject;
