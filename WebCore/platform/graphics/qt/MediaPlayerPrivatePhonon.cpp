@@ -430,7 +430,7 @@ IntSize MediaPlayerPrivate::naturalSize() const
 
 bool MediaPlayerPrivate::eventFilter(QObject* obj, QEvent* event)
 {
-    if (event->type() == QEvent::Paint)
+    if (event->type() == QEvent::UpdateRequest)
         m_player->repaint();
 
     return QObject::eventFilter(obj, event);
