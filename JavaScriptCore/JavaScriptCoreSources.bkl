@@ -52,7 +52,6 @@ Source files for JSCore.
         kjs/nodes.cpp
         kjs/nodes2string.cpp
         kjs/Parser.cpp
-        kjs/ustring.cpp
     </set>
     <set append="1" var="JSCORE_SOURCES_PCRE">
         pcre/pcre_compile.cpp
@@ -139,6 +138,7 @@ Source files for JSCore.
         runtime/StringPrototype.cpp
         runtime/StructureID.cpp
         runtime/StructureIDChain.cpp
+        runtime/UString.cpp
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">
         VM/CodeBlock.cpp

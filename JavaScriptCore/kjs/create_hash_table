@@ -207,7 +207,7 @@ sub output() {
     my $nameEntries = "${name}Values";
     $nameEntries =~ s/:/_/g;
 
-    print "\n#include \"lookup.h\"\n" if ($includelookup);
+    print "\n#include \"Lookup.h\"\n" if ($includelookup);
     if ($useNameSpace) {
         print "\nnamespace ${useNameSpace} {\n";
         print "\nusing namespace JSC;\n";
