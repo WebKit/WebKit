@@ -97,7 +97,7 @@ const PlatformFileHandle invalidPlatformFileHandle = 0;
 #if defined(Q_WS_MAC)
 typedef CFBundleRef PlatformModule;
 typedef unsigned PlatformModuleVersion;
-#elif defined(Q_WS_X11) || defined(Q_WS_QWS)
+#elif defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_WS_S60)
 typedef QLibrary* PlatformModule;
 typedef unsigned PlatformModuleVersion;
 #elif defined(Q_OS_WIN32)
