@@ -1,3 +1,9 @@
+2008-11-05  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after Operations.cpp move.
+
+        * JavaScriptCoreSources.bkl:
+
 2008-11-05  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.
