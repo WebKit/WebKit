@@ -1,3 +1,15 @@
+2008-11-06  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22047
+        GTK: Add support for multiple file selection in the file upload control
+
+        Implemented with GtkFileChooser.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::runOpenPanel):
+
 2008-11-03  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

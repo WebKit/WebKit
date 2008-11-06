@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007, 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -381,9 +382,7 @@ void ChromeClient::exceededDatabaseQuota(Frame* frame, const String&)
 
 void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 {
-    // FIXME: Support multiple files.
-
-    RefPtr<FileChooser> fileChooser = prpFileChooser;
+    RefPtr<FileChooser> chooser = prpFileChooser;
 
     GtkWidget* dialog = gtk_file_chooser_dialog_new(_("Upload File"),
                                                     GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(platformWindow()))),
@@ -392,11 +391,26 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                     NULL);
 
+    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), chooser->allowsMultipleFiles());
+
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-        gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-        if (filename)
-            fileChooser->chooseFile(filenameToString(filename));
-        g_free(filename);
+        if (gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog))) {
+            GSList* filenames = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+            Vector<String> names;
+            for (GSList* item = filenames ; item ; item = item->next) {
+                if (!item->data)
+                    continue;
+                names.append(filenameToString(static_cast<char*>(item->data)));
+                g_free(item->data);
+            }
+            g_slist_free(filenames);
+            chooser->chooseFiles(names);
+        } else {
+            gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+            if (filename)
+                chooser->chooseFile(filenameToString(filename));
+            g_free(filename);
+        }
     }
     gtk_widget_destroy(dialog);
 }
