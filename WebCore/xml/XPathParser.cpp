@@ -97,7 +97,7 @@ static void setUpAxisNamesMap(HashMap<String, Step::Axis>& axisNames)
 
 static bool isAxisName(const String& name, Step::Axis& type)
 {
-    static HashMap<String, Step::Axis> axisNames;
+    static HashMap<String, Step::Axis>& axisNames = *new HashMap<String, Step::Axis>;
 
     if (axisNames.isEmpty())
         setUpAxisNamesMap(axisNames);
@@ -111,7 +111,7 @@ static bool isAxisName(const String& name, Step::Axis& type)
 
 static bool isNodeTypeName(const String& name)
 {
-    static HashSet<String> nodeTypeNames;
+    static HashSet<String>& nodeTypeNames = *new HashSet<String>;
     if (nodeTypeNames.isEmpty()) {
         nodeTypeNames.add("comment");
         nodeTypeNames.add("text");

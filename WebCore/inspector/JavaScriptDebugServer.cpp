@@ -59,7 +59,7 @@ typedef JavaScriptDebugServer::ListenerSet ListenerSet;
 
 JavaScriptDebugServer& JavaScriptDebugServer::shared()
 {
-    static JavaScriptDebugServer server;
+    static JavaScriptDebugServer& server = *new JavaScriptDebugServer;
     return server;
 }
 

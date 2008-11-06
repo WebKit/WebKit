@@ -70,7 +70,7 @@ static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* list) { return (We
 
 HashMap<HistoryItem*, WebHistoryItem*>& historyItemWrappers()
 {
-    static HashMap<HistoryItem*, WebHistoryItem*> historyItemWrappers;
+    static HashMap<HistoryItem*, WebHistoryItem*>& historyItemWrappers = *new HashMap<HistoryItem*, WebHistoryItem*>;
     return historyItemWrappers;
 }
 

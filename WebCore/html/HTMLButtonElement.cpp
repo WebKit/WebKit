@@ -57,15 +57,15 @@ const AtomicString& HTMLButtonElement::type() const
 {
     switch (m_type) {
         case SUBMIT: {
-            static const AtomicString submit("submit");
+            static const AtomicString& submit = *new AtomicString("submit");
             return submit;
         }
         case BUTTON: {
-            static const AtomicString button("button");
+            static const AtomicString& button = *new AtomicString("button");
             return button;
         }
         case RESET: {
-            static const AtomicString reset("reset");
+            static const AtomicString& reset = *new AtomicString("reset");
             return reset;
         }
     }

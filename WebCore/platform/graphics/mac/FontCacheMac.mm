@@ -140,7 +140,7 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
     while (currFamily && !platformData) {
         if (currFamily->family().length()) {
             static String matchWords[3] = { String("Arabic"), String("Pashto"), String("Urdu") };
-            static AtomicString geezaStr("Geeza Pro");
+            static AtomicString& geezaStr = *new AtomicString("Geeza Pro");
             for (int j = 0; j < 3 && !platformData; ++j)
                 if (currFamily->family().contains(matchWords[j], false))
                     platformData = getCachedFontPlatformData(font.fontDescription(), geezaStr);
@@ -153,8 +153,8 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 
 FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    static AtomicString timesStr("Times");
-    static AtomicString lucidaGrandeStr("Lucida Grande");
+    static AtomicString& timesStr = *new AtomicString("Times");
+    static AtomicString& lucidaGrandeStr = *new AtomicString("Lucida Grande");
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.

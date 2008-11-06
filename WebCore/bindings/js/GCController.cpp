@@ -52,7 +52,7 @@ static void* collect(void*)
 
 GCController& gcController()
 {
-    static GCController staticGCController;
+    static GCController& staticGCController = *new GCController;
     return staticGCController;
 }
 

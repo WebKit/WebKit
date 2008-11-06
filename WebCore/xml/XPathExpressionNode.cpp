@@ -37,7 +37,7 @@ namespace XPath {
     
 EvaluationContext& Expression::evaluationContext()
 {
-    static EvaluationContext evaluationContext;
+    static EvaluationContext& evaluationContext = *new EvaluationContext;
     return evaluationContext;
 }
 

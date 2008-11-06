@@ -36,7 +36,7 @@ namespace {
 
 String convertedSpaceString()
 {
-    static String convertedSpaceString;
+    static String& convertedSpaceString = *new String;
     if (convertedSpaceString.isNull()) {
         convertedSpaceString = "<span class=\"";
         convertedSpaceString += AppleConvertedSpace;

@@ -1,3 +1,21 @@
+2008-11-06  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Bug 21810: Remove use of static C++ objects that are destroyed at exit time (destructors)
+        https://bugs.webkit.org/show_bug.cgi?id=21810
+
+        * History/WebBackForwardList.mm:
+        (backForwardLists): Changed to leak an object to avoid an exit-time destructor.
+        * History/WebHistoryItem.mm:
+        (historyItemWrappers): Ditto
+        * Misc/WebStringTruncator.m:
+        (fontFromNSFont): Ditto
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (streams): Ditto
+        * WebView/WebView.mm:
+        (aeDescFromJSValue): Ditto
+
 2008-11-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark Rowe.

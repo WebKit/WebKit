@@ -124,21 +124,24 @@ static FontPlatformDataCache* gFontPlatformDataCache = 0;
 static const AtomicString& alternateFamilyName(const AtomicString& familyName)
 {
     // Alias Courier <-> Courier New
-    static AtomicString courier("Courier"), courierNew("Courier New");
+    static AtomicString& courier = *new AtomicString("Courier");
+    static AtomicString& courierNew = *new AtomicString("Courier New");
     if (equalIgnoringCase(familyName, courier))
         return courierNew;
     if (equalIgnoringCase(familyName, courierNew))
         return courier;
 
     // Alias Times and Times New Roman.
-    static AtomicString times("Times"), timesNewRoman("Times New Roman");
+    static AtomicString& times = *new AtomicString("Times");
+    static AtomicString& timesNewRoman = *new AtomicString("Times New Roman");
     if (equalIgnoringCase(familyName, times))
         return timesNewRoman;
     if (equalIgnoringCase(familyName, timesNewRoman))
         return times;
     
     // Alias Arial and Helvetica
-    static AtomicString arial("Arial"), helvetica("Helvetica");
+    static AtomicString& arial = *new AtomicString("Arial");
+    static AtomicString& helvetica = *new AtomicString("Helvetica");
     if (equalIgnoringCase(familyName, arial))
         return helvetica;
     if (equalIgnoringCase(familyName, helvetica))

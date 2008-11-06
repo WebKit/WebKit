@@ -372,13 +372,13 @@ static bool elementCanUseSimpleDefaultStyle(Element* e)
 
 static const MediaQueryEvaluator& screenEval()
 {
-    static const MediaQueryEvaluator staticScreenEval("screen");
+    static const MediaQueryEvaluator& staticScreenEval = *new MediaQueryEvaluator("screen");
     return staticScreenEval;
 }
 
 static const MediaQueryEvaluator& printEval()
 {
-    static const MediaQueryEvaluator staticPrintEval("print");
+    static const MediaQueryEvaluator& staticPrintEval = *new MediaQueryEvaluator("print");
     return staticPrintEval;
 }
 

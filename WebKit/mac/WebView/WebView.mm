@@ -3600,7 +3600,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
             }
         }
         else if (object->inherits(&JSArray::info)) {
-            static HashSet<JSObject*> visitedElems;
+            static HashSet<JSObject*>& visitedElems = *new HashSet<JSObject*>;
             if (!visitedElems.contains(object)) {
                 visitedElems.add(object);
                 
