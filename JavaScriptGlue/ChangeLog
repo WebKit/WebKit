@@ -1,3 +1,15 @@
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Fix the JavaScriptGlue build. This wouldn't show up unless one was
+        doing a clean build, because changes in JavaScriptCore don't cause
+        anything in JavaScriptGlue to get rebuilt.
+
+        * JSRun.cpp:
+        * JSUtils.h:
+        * JavaScriptGlue.cpp:
+
 2008-11-04  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.

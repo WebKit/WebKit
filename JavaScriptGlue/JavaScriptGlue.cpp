@@ -32,7 +32,7 @@
 #include "JSBase.h"
 #include "JSObject.h"
 #include "JSRun.h"
-#include <JavaScriptCore/completion.h>
+#include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/InitializeThreading.h>
 
 static CFTypeRef sJSCFNullRef = 0;

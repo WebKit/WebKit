@@ -30,8 +30,8 @@
 #include "JSRun.h"
 
 #include "UserObjectImp.h"
+#include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/SourceCode.h>
-#include <JavaScriptCore/completion.h>
 
 JSGlueGlobalObject::JSGlueGlobalObject(PassRefPtr<StructureID> structure, JSFlags flags)
     : JSGlobalObject(structure, new Data, this)
