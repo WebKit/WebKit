@@ -1,3 +1,21 @@
+2008-11-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/5480736> In Mail and Gmail, copied indented text pastes with line break
+        
+        As a rule, we don't allow merges out of blockquotes.  In the bug, we are inserting a text node 
+        between two blockquotes.  Because the start merge moves the text node into a blockquote, when we
+        determine whether or not we should do the end merge, it incorrectly appears as though the end merge 
+        is merging out of a blockquote.  The fix is to determine whether or not we should do the end merge
+        before we do the start merge, so that the start merge doesn't effect our decision.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand): Initialize the new boolean.
+        (WebCore::ReplaceSelectionCommand::mergeEndIfNeeded): Moved code from doApply() here for clarity.
+        (WebCore::ReplaceSelectionCommand::doApply): Set m_shouldMergeEnd before we do the start merge.
+        * editing/ReplaceSelectionCommand.h: Added m_shouldMergeEnd.
+
 2008-11-05  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

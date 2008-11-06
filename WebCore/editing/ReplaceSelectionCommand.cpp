@@ -321,7 +321,8 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<
       m_documentFragment(fragment),
       m_preventNesting(preventNesting),
       m_movingParagraph(movingParagraph),
-      m_editAction(editAction)
+      m_editAction(editAction),
+      m_shouldMergeEnd(false)
 {
 }
 
@@ -621,6 +622,40 @@ void ReplaceSelectionCommand::handleStyleSpans()
     setNodeAttribute(static_cast<Element*>(copiedRangeStyleSpan), styleAttr, copiedRangeStyle->cssText());
 }
 
+void ReplaceSelectionCommand::mergeEndIfNeeded()
+{
+    if (!m_shouldMergeEnd)
+        return;
+
+    VisiblePosition startOfInsertedContent(positionAtStartOfInsertedContent());
+    VisiblePosition endOfInsertedContent(positionAtEndOfInsertedContent());
+    
+    // Bail to avoid infinite recursion.
+    if (m_movingParagraph) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    // Merging two paragraphs will destroy the moved one's block styles.  Always move the end of inserted forward 
+    // to preserve the block style of the paragraph already in the document, unless the paragraph to move would 
+    // include the what was the start of the selection that was pasted into, so that we preserve that paragraph's
+    // block styles.
+    bool mergeForward = !(inSameParagraph(startOfInsertedContent, endOfInsertedContent) && !isStartOfParagraph(startOfInsertedContent));
+    
+    VisiblePosition destination = mergeForward ? endOfInsertedContent.next() : endOfInsertedContent;
+    VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
+
+    moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
+    // Merging forward will remove m_lastLeafInserted from the document.
+    // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
+    // only ever used to create positions where inserted content starts/ends.
+    if (mergeForward) {
+        m_lastLeafInserted = destination.previous().deepEquivalent().node();
+        if (!m_firstNodeInserted->inDocument())
+            m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().node();
+    }
+}
+
 void ReplaceSelectionCommand::doApply()
 {
     Selection selection = endingSelection();
@@ -783,6 +818,10 @@ void ReplaceSelectionCommand::doApply()
     if (shouldRemoveEndBR(endBR, originalVisPosBeforeEndBR))
         removeNodeAndPruneAncestors(endBR);
     
+    // Determine whether or not we should merge the end of inserted content with what's after it before we do
+    // the start merge so that the start merge doesn't effect our decision.
+    m_shouldMergeEnd = shouldMergeEnd(selectionEndWasEndOfParagraph);
+    
     if (shouldMergeStart(selectionStartWasStartOfParagraph, fragment.hasInterchangeNewlineAtStart())) {
         // Bail to avoid infinite recursion.
         if (m_movingParagraph) {
@@ -833,31 +872,9 @@ void ReplaceSelectionCommand::doApply()
             // Select up to the beginning of the next paragraph.
             lastPositionToSelect = next.deepEquivalent().downstream();
         }
-            
-    } else if (shouldMergeEnd(selectionEndWasEndOfParagraph)) {
-        // Bail to avoid infinite recursion.
-        if (m_movingParagraph) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        // Merging two paragraphs will destroy the moved one's block styles.  Always move forward to preserve
-        // the block style of the paragraph already in the document, unless the paragraph to move would include the
-        // what was the start of the selection that was pasted into.
-        bool mergeForward = !inSameParagraph(startOfInsertedContent, endOfInsertedContent) || isStartOfParagraph(startOfInsertedContent);
         
-        VisiblePosition destination = mergeForward ? endOfInsertedContent.next() : endOfInsertedContent;
-        VisiblePosition startOfParagraphToMove = mergeForward ? startOfParagraph(endOfInsertedContent) : endOfInsertedContent.next();
-
-        moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
-        // Merging forward will remove m_lastLeafInserted from the document.
-        // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
-        // only ever used to create positions where inserted content starts/ends.
-        if (mergeForward) {
-            m_lastLeafInserted = destination.previous().deepEquivalent().node();
-            if (!m_firstNodeInserted->inDocument())
-                m_firstNodeInserted = endingSelection().visibleStart().deepEquivalent().node();
-        }
-    }
+    } else
+        mergeEndIfNeeded();
     
     handlePasteAsQuotationNode();
     

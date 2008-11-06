@@ -58,8 +58,10 @@ private:
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);
     
     bool shouldMergeStart(bool, bool);
-    bool shouldMergeEnd(bool);
+    bool shouldMergeEnd(bool selectEndWasEndOfParagraph);
     bool shouldMerge(const VisiblePosition&, const VisiblePosition&);
+    
+    void mergeEndIfNeeded();
     
     void removeUnrenderedTextNodesAtEnds();
     
@@ -83,6 +85,7 @@ private:
     bool m_preventNesting;
     bool m_movingParagraph;
     EditAction m_editAction;
+    bool m_shouldMergeEnd;
 };
 
 } // namespace WebCore
