@@ -70,6 +70,7 @@
 #include <qevent.h>
 #include <qfileinfo.h>
 #include <qpainter.h>
+#include <QMultiMap>
 #if QT_VERSION >= 0x040400
 #include <qnetworkrequest.h>
 #else
@@ -77,6 +78,8 @@
 #endif
 #include <qregion.h>
 #include <qprinter.h>
+#include "HTMLMetaElement.h"
+#include "NodeList.h"
 
 using namespace WebCore;
 
@@ -278,6 +281,27 @@ QString QWebFrame::title() const
     if (d->frame->document())
         return d->frame->loader()->documentLoader()->title();
     else return QString();
+}
+
+/*!
+    \since 4.5
+    \brief Returns the meta data in this frame as a QMultiMap
+    \sa metaData()
+*/
+QMultiMap<QString, QString> QWebFrame::metaData() const
+{
+    if(!d->frame->document())
+       return QMap<QString,QString>();
+
+    QMultiMap<QString,QString> map;
+    Document* doc = d->frame->document();
+    RefPtr<NodeList> list = doc->getElementsByTagName("meta");
+    unsigned len = list->length();
+    for (unsigned i = 0; i < len; i++) {
+        HTMLMetaElement* meta = static_cast<HTMLMetaElement*>(list->item(i));
+        map.insert(meta->name(), meta->content());
+    }
+    return map;
 }
 
 static inline QUrl ensureAbsoluteUrl(const QUrl &url)
