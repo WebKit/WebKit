@@ -25,6 +25,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 VPATH = \
+    $(JavaScriptCore) \
     $(JavaScriptCore)/kjs \
     $(JavaScriptCore)/VM \
     $(JavaScriptCore)/pcre \

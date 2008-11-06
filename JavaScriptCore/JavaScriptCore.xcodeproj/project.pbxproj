@@ -815,6 +815,7 @@
 			isa = PBXGroup;
 			children = (
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
+				F692A8540255597D01FF60F7 /* create_hash_table */,
 				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
@@ -1083,7 +1084,6 @@
 		65417200039E01BA0058BFEB /* kjs */ = {
 			isa = PBXGroup;
 			children = (
-				F692A8540255597D01FF60F7 /* create_hash_table */,
 				933A3499038AE7C6008635CE /* grammar.y */,
 				93F1981A08245AAE001E9ABC /* keywords.table */,
 				869EBCB60E8C6D4A008722CC /* ResultType.h */,

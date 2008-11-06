@@ -1,3 +1,20 @@
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Move create_hash_table and jsc.pro out of the kjs directory and into the
+        root directory of JavaScriptCore.
+
+        * DerivedSources.make:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * create_hash_table: Copied from kjs/create_hash_table.
+        * jsc.pro: Copied from kjs/jsc.pro.
+        * kjs/create_hash_table: Removed.
+        * kjs/jsc.pro: Removed.
+        * make-generated-sources.sh:
+
 2008-11-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Maciej Stachowiak.

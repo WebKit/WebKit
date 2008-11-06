@@ -148,7 +148,7 @@ SOURCES += \
 
 # GENERATOR 1-A: LUT creator
 lut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
-lut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
+lut.commands = perl $$PWD/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 lut.depend = ${QMAKE_FILE_NAME}
 lut.input = LUT_FILES
 lut.CONFIG += no_link
@@ -156,7 +156,7 @@ addExtraCompiler(lut)
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 keywordlut.output = $$GENERATED_SOURCES_DIR/lexer.lut.h
-keywordlut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
+keywordlut.commands = perl $$PWD/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 keywordlut.depend = ${QMAKE_FILE_NAME}
 keywordlut.input = KEYWORDLUT_FILES
 keywordlut.CONFIG += no_link

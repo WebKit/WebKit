@@ -2,7 +2,7 @@
 
 export SRCROOT=$PWD
 export WebCore=$PWD
-export CREATE_HASH_TABLE="$SRCROOT/kjs/create_hash_table"
+export CREATE_HASH_TABLE="$SRCROOT/create_hash_table"
 
 mkdir -p DerivedSources/JavaScriptCore
 cd DerivedSources/JavaScriptCore
