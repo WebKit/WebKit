@@ -78,11 +78,21 @@
 #define WTF_PLATFORM_SOLARIS 1
 #endif
 
+#if defined (__S60__) || defined (__SYMBIAN32__)
+// we are cross-compiling, it is not really windows
+#undef WTF_PLATFORM_WIN_OS
+#undef WTF_PLATFORM_WIN
+#undef WTF_PLATFORM_CAIRO
+#define WTF_PLATFORM_S60 1
+#define WTF_PLATFORM_SYMBIAN 1
+#endif
+
 /* PLATFORM(UNIX) */
 /* Operating system level dependencies for Unix-like systems that */
 /* should be used regardless of operating environment */
 #if   PLATFORM(DARWIN)     \
    || PLATFORM(FREEBSD)    \
+   || PLATFORM(S60)        \
    || defined(unix)        \
    || defined(__unix)      \
    || defined(__unix__)    \
@@ -134,15 +144,6 @@
 /* Makes PLATFORM(WIN) default to PLATFORM(CAIRO) */
 #if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(WX)
 #define WTF_PLATFORM_CAIRO 1
-#endif
-
-#if defined (__S60__) || defined (__SYMBIAN32__)
-// we are cross-compiling, it is not really windows
-#undef WTF_PLATFORM_WIN_OS
-#undef WTF_PLATFORM_WIN
-#undef WTF_PLATFORM_CAIRO
-#define WTF_PLATFORM_S60 1
-#define WTF_PLATFORM_SYMBIAN 1
 #endif
 
 /* CPU */
