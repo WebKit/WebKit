@@ -95,6 +95,7 @@ void NetworkStateNotifier::networkStateChangeTimerFired(Timer<NetworkStateNotifi
 
 NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(false)
+    , m_networkStateChangedFunction(0)
     , m_networkStateChangeTimer(this, &NetworkStateNotifier::networkStateChangeTimerFired)
 {
     SCDynamicStoreContext context = { 0, this, 0, 0, 0 };

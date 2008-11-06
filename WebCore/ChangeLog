@@ -1,3 +1,12 @@
+2008-11-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        Fix failed assert at launch caused by unintialized data member on the mac.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+
 2008-11-06  Steve Falkenburg  <sfalken@apple.com>
 
         Fix failed assert at launch caused by unintialized data member.
