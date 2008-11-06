@@ -1,3 +1,15 @@
+2008-11-06  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 22099: Make the Qt port build the JSC shell in the correct place
+        <https://bugs.webkit.org/show_bug.cgi?id=22099>
+
+        Adjust include paths and build destination dir for the 'jsc' executable
+        in the Qt build.
+
+        * jsc.pro:
+
 2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.

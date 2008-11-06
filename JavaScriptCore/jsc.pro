@@ -1,14 +1,14 @@
 TEMPLATE = app
 TARGET = jsc
-DESTDIR = ..
+DESTDIR = .
 SOURCES = jsc.cpp
 QT -= gui
-INCLUDEPATH += $$PWD/.. \
-    $$PWD \
-    $$PWD/../bindings \
-    $$PWD/../bindings/c \
-    $$PWD/../wtf \
-    $$PWD/../VM
+INCLUDEPATH += $$PWD \
+    $$PWD/kjs \
+    $$PWD/bindings \
+    $$PWD/bindings/c \
+    $$PWD/wtf \
+    $$PWD/VM
 CONFIG -= app_bundle
 DEFINES += BUILDING_QT__
 CONFIG += building-libs
@@ -23,7 +23,7 @@ CONFIG += link_pkgconfig
 
 QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 
-isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/../..
+isEmpty(OUTPUT_DIR):OUTPUT_DIR=$$PWD/..
 include($$OUTPUT_DIR/config.pri)
 OBJECTS_DIR = tmp
 OBJECTS_DIR_WTR = $$OBJECTS_DIR/
