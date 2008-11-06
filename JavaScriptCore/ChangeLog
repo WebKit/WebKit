@@ -27,6 +27,14 @@
 
         Reviewed by Simon Hausmann.
 
+        Add missing stddef.h header needed for compilation in Symbian.
+
+        * runtime/Collector.h:
+
+2008-11-06  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Added COMPILER(RVCT) to detect the ARM RVCT compiler used in the Symbian environment.
 
         * wtf/Platform.h:

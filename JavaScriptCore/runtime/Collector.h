@@ -23,6 +23,7 @@
 #define KJSCOLLECTOR_H_
 
 #include "JSImmediate.h"
+#include <stddef.h>
 #include <string.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
