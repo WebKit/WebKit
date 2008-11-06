@@ -446,7 +446,7 @@ Programs_minidom_LDADD = \
 
 # jsc
 Programs_jsc_SOURCES = \
-	JavaScriptCore/kjs/Shell.cpp
+	JavaScriptCore/jsc.cpp
 
 Programs_jsc_CPPFLAGS = \
 	$(global_cppflags) \

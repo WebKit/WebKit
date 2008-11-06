@@ -2,6 +2,21 @@
 
         Rubber-stamped by Sam Weinig.
 
+        Move kjs/Shell.cpp to the top level of the JavaScriptCore directory and
+        rename it to jsc.cpp to reflect the name of the binary compiled from it.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp: Copied from kjs/Shell.cpp.
+        * jsc.pro:
+        * jscore.bkl:
+        * kjs/Shell.cpp: Removed.
+
+2008-11-06  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
         Move create_hash_table and jsc.pro out of the kjs directory and into the
         root directory of JavaScriptCore.
 

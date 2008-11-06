@@ -228,7 +228,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\kjs\Shell.cpp"
+			RelativePath="..\..\jsc.cpp"
 			>
 		</File>
 	</Files>

@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = jsc
 DESTDIR = ..
-SOURCES = Shell.cpp
+SOURCES = jsc.cpp
 QT -= gui
 INCLUDEPATH += $$PWD/.. \
     $$PWD \
