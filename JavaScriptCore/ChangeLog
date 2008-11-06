@@ -1,3 +1,10 @@
+2008-11-06  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r38196
+
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Added bytecompiler/ to the
+        include path.
+
 2008-11-06  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Sam Weinig.
