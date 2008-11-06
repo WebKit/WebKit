@@ -777,6 +777,11 @@ sub buildAutotoolsProject($@)
         push @buildArgs, "--disable-debug";
     }
 
+    # Use rm to clean the build directory since distclean may miss files
+    if ($clean && -d $dir) {
+        system "rm", "-rf", "$dir";
+    }
+
     if (! -d $dir) {
         system "mkdir", "-p", "$dir";
         if (! -d $dir) {
@@ -788,7 +793,7 @@ sub buildAutotoolsProject($@)
 
     my $result;
     if ($clean) {
-        $result = system $make, "distclean";
+        #$result = system $make, "distclean";
         return 0;
     }
 
