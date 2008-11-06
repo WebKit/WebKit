@@ -127,7 +127,6 @@
 #define U_HAVE_INTTYPES_H 0
 
 #include <stdio.h>
-#include <snprintf.h>
 #include <limits.h>
 #include <wtf/MathExtras.h>
 #endif
