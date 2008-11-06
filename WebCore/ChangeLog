@@ -1,5 +1,14 @@
 2008-11-05  Cameron Zwarich  <zwarich@apple.com>
 
+        Not reviewed.
+
+        Fix the Qt build.
+
+        * bridge/qt/qt_class.cpp:
+        * bridge/qt/qt_runtime.h:
+
+2008-11-05  Cameron Zwarich  <zwarich@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Move more files to the runtime subdirectory of JavaScriptCore.
