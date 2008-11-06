@@ -454,7 +454,6 @@ static inline void* currentThreadStackBase()
         thread.StackInfo(info);
         stackBase = (void*)info.iBase;
     }
-    //fixme
     return (void*)stackBase;
 #else
 #error Need a way to get the stack base on this platform
