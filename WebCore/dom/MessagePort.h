@@ -41,6 +41,7 @@
 namespace WebCore {
 
     class AtomicStringImpl;
+    class DOMWindow;
     class Event;
     class Frame;
     class ScriptExecutionContext;
@@ -108,7 +109,17 @@ namespace WebCore {
         void dispatchCloseEvent();
 
         MessagePort* m_entangledPort;
-        MessageQueue<RefPtr<Event> > m_messageQueue;
+        
+        struct EventData {
+            EventData();
+            EventData(const String&, PassRefPtr<DOMWindow>, PassRefPtr<MessagePort>);
+            ~EventData();
+
+            String message;
+            RefPtr<DOMWindow> window;
+            RefPtr<MessagePort> messagePort;
+        };
+        MessageQueue<EventData> m_messageQueue;
         bool m_queueIsOpen;
 
         ScriptExecutionContext* m_scriptExecutionContext;

@@ -23,6 +23,7 @@ module events {
     // Introduced in DOM Level 2:
     interface [
         GenerateConstructor,
+        NoStaticTables,
         ObjCCustomInternalImpl,
         InterfaceUUID=D17495FA-ACAD-4d27-9362-E19E057B189D,
         ImplementationUUID=CFDCDDB2-5B3F-412d-BDA4-80B23C721549

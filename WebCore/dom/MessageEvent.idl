@@ -27,7 +27,8 @@
 module events {
 
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        NoStaticTables
     ] MessageEvent : Event {
 
         readonly attribute DOMString data;
