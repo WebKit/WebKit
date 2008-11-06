@@ -2,7 +2,7 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
                $$PWD/ForwardingHeaders
 DEFINES += BUILDING_QT__
 
@@ -55,7 +55,7 @@ SOURCES += \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
     VM/CodeBlock.cpp \
-    VM/CodeGenerator.cpp \
+    bytecompiler/CodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
     VM/Machine.cpp \

@@ -427,8 +427,8 @@
 		149B15E50D81F986009CB8C7 /* Opcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Opcode.cpp; path = VM/Opcode.cpp; sourceTree = "<group>"; };
 		149B15E60D81F986009CB8C7 /* Machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Machine.h; path = VM/Machine.h; sourceTree = "<group>"; };
 		149B15E70D81F986009CB8C7 /* Machine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Machine.cpp; path = VM/Machine.cpp; sourceTree = "<group>"; };
-		149B15E80D81F986009CB8C7 /* CodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeGenerator.h; path = VM/CodeGenerator.h; sourceTree = "<group>"; };
-		149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeGenerator.cpp; path = VM/CodeGenerator.cpp; sourceTree = "<group>"; };
+		149B15E80D81F986009CB8C7 /* CodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeGenerator.h; sourceTree = "<group>"; };
+		149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenerator.cpp; sourceTree = "<group>"; };
 		149B16B80D82583F009CB8C7 /* RegisterID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegisterID.h; path = VM/RegisterID.h; sourceTree = "<group>"; };
 		149B1A9D0D86ED73009CB8C7 /* CodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeBlock.h; path = VM/CodeBlock.h; sourceTree = "<group>"; };
 		149B1A9E0D86ED73009CB8C7 /* CodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeBlock.cpp; path = VM/CodeBlock.cpp; sourceTree = "<group>"; };
@@ -587,7 +587,7 @@
 		95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CallIdentifier.h; path = profiler/CallIdentifier.h; sourceTree = "<group>"; };
 		95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeavyProfile.cpp; path = profiler/HeavyProfile.cpp; sourceTree = "<group>"; };
 		95FDFA150E2299980006FB00 /* HeavyProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeavyProfile.h; path = profiler/HeavyProfile.h; sourceTree = "<group>"; };
-		960097A50EBABB58007A7297 /* LabelScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LabelScope.h; path = kjs/LabelScope.h; sourceTree = "<group>"; };
+		960097A50EBABB58007A7297 /* LabelScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelScope.h; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExceptionHelpers.h; path = VM/ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -822,6 +822,7 @@
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				1432EBD70A34CAD400717B9F /* API */,
+				7E39D81D0EC38EFA003AF11A /* bytecompiler */,
 				149B15DF0D81F887009CB8C7 /* compiler */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
 				65417200039E01BA0058BFEB /* kjs */,
@@ -941,9 +942,6 @@
 		149B15DF0D81F887009CB8C7 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
-				960097A50EBABB58007A7297 /* LabelScope.h */,
-				149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */,
-				149B15E80D81F986009CB8C7 /* CodeGenerator.h */,
 				149B20D70D8A0891009CB8C7 /* LabelID.h */,
 				F692A8650255597D01FF60F7 /* lexer.cpp */,
 				F692A8660255597D01FF60F7 /* lexer.h */,
@@ -1111,6 +1109,16 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		7E39D81D0EC38EFA003AF11A /* bytecompiler */ = {
+			isa = PBXGroup;
+			children = (
+				149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */,
+				149B15E80D81F986009CB8C7 /* CodeGenerator.h */,
+				960097A50EBABB58007A7297 /* LabelScope.h */,
+			);
+			path = bytecompiler;
+			sourceTree = "<group>";
 		};
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;

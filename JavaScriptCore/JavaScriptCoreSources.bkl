@@ -60,6 +60,9 @@ Source files for JSCore.
         pcre/pcre_ucp_searchfuncs.cpp
         pcre/pcre_xclass.cpp
     </set>
+    <set append="1" var="JSCORE_BYTECOMPILER_SOURCES">
+        bytecompiler/CodeGenerator.cpp
+    </set>
     <set append="1" var="JSCORE_PROFILER_SOURCES">
         profiler/HeavyProfile.cpp
         profiler/ProfileGenerator.cpp
@@ -143,7 +146,6 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">
         VM/CodeBlock.cpp
-        VM/CodeGenerator.cpp
         VM/ExceptionHelpers.cpp
         VM/Machine.cpp
         VM/Opcode.cpp

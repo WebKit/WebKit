@@ -2,6 +2,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/API \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/VM \
+	-I$(srcdir)/JavaScriptCore/bytecompiler \
 	-I$(srcdir)/JavaScriptCore/debugger \
 	-I$(srcdir)/JavaScriptCore/pcre \
 	-I$(srcdir)/JavaScriptCore/profiler \
@@ -71,7 +72,7 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/CTI.h \
 	JavaScriptCore/VM/CodeBlock.cpp \
 	JavaScriptCore/VM/CodeBlock.h \
-	JavaScriptCore/VM/CodeGenerator.h \
+	JavaScriptCore/bytecompiler/CodeGenerator.h \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
 	JavaScriptCore/VM/ExceptionHelpers.h \
 	JavaScriptCore/VM/Instruction.h \
@@ -306,7 +307,7 @@ javascriptcore_built_sources += \
 	DerivedSources/grammar.h
 
 javascriptcore_sources += \
-	JavaScriptCore/VM/CodeGenerator.cpp \
+	JavaScriptCore/bytecompiler/CodeGenerator.cpp \
 	JavaScriptCore/VM/RegisterFile.cpp \
 	JavaScriptCore/runtime/ArgList.cpp \
 	JavaScriptCore/runtime/Arguments.cpp \
@@ -317,7 +318,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSLock.cpp \
 	JavaScriptCore/runtime/JSLock.h \
 	JavaScriptCore/runtime/JSStaticScopeObject.cpp \
-	JavaScriptCore/kjs/LabelScope.h \
+	JavaScriptCore/bytecompiler/LabelScope.h \
 	JavaScriptCore/kjs/Parser.cpp \
 	JavaScriptCore/runtime/PropertyNameArray.cpp \
 	JavaScriptCore/runtime/RegExpConstructor.cpp \

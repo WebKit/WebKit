@@ -102,5 +102,5 @@
 #include "runtime/JSVariableObject.cpp"
 #include "wtf/FastMalloc.cpp"
 #include "wtf/TCSystemAlloc.cpp"
-#include "VM/CodeGenerator.cpp"
+#include "bytecompiler/CodeGenerator.cpp"
 #include "VM/RegisterFile.cpp"
