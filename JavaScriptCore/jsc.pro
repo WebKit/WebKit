@@ -17,7 +17,7 @@ CONFIG(release) {
     DEFINES += NDEBUG USE_SYSTEM_MALLOC
 }
 
-include($$PWD/../../WebKit.pri)
+include($$PWD/../WebKit.pri)
 
 CONFIG += link_pkgconfig
 
@@ -28,7 +28,7 @@ include($$OUTPUT_DIR/config.pri)
 OBJECTS_DIR = tmp
 OBJECTS_DIR_WTR = $$OBJECTS_DIR/
 win32-*: OBJECTS_DIR_WTR ~= s|/|\|
-include($$PWD/../JavaScriptCore.pri)
+include($$PWD/JavaScriptCore.pri)
 
 lessThan(QT_MINOR_VERSION, 4) {
     DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
