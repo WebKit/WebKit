@@ -1,3 +1,11 @@
+2008-11-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix test that would fail if it had the wrong set of plugins.
+
+        * plugins/plugin-javascript-access.html:
+
 2008-11-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

@@ -32,7 +32,7 @@ for (var i = 0; i < navigator.plugins.length; i++) {
         document.writeln("<p>Suffixes: " + plugin[mi].suffixes + "<\/p>");
         document.writeln("<br>");
 
-        if (plugin.item(i).type == plugin[mi].type) {
+        if (plugin.item(mi).type == plugin[mi].type) {
             document.writeln("<p>Plugin.item() works.<\/p>");
         } else {
             document.writeln("<p>FAIL. Plugin.item() does not work.<\/p>");
