@@ -1,3 +1,10 @@
+2008-11-07  Alp Toker  <alp@nuanti.com>
+
+        More grammar.cpp -> Grammar.cpp build fixes.
+
+        * AllInOneFile.cpp:
+        * GNUmakefile.am:
+
 2008-11-07  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the build on case-sensitive file systems. grammar.y was renamed to

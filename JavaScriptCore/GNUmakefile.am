@@ -303,8 +303,8 @@ javascriptcore_sources += \
 # Debug build
 if ENABLE_DEBUG
 javascriptcore_built_sources += \
-	DerivedSources/grammar.cpp \
-	DerivedSources/grammar.h
+	DerivedSources/Grammar.cpp \
+	DerivedSources/Grammar.h
 
 javascriptcore_sources += \
 	JavaScriptCore/bytecompiler/CodeGenerator.cpp \
@@ -388,20 +388,20 @@ javascriptcore_sources += \
 
 else
 javascriptcore_built_nosources += \
-	DerivedSources/grammar.cpp \
-	DerivedSources/grammar.h
+	DerivedSources/Grammar.cpp \
+	DerivedSources/Grammar.h
 
 javascriptcore_sources += \
 	JavaScriptCore/AllInOneFile.cpp
 endif # END ENABLE_DEBUG
 
-DerivedSources/grammar.h: DerivedSources/grammar.cpp;
+DerivedSources/Grammar.h: DerivedSources/Grammar.cpp;
 
-DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/parser/Grammar.y
+DerivedSources/Grammar.cpp: $(srcdir)/JavaScriptCore/parser/Grammar.y
 	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/parser/Grammar.y -o $@ > bison_out.txt 2>&1
-	$(PERL) -p -e 'END { if ($$conflict) { unlink "grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
-	cat $(GENSOURCES)/grammar.hpp > $(GENSOURCES)/grammar.h
-	rm -f $(GENSOURCES)/grammar.hpp bison_out.txt
+	$(PERL) -p -e 'END { if ($$conflict) { unlink "Grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
+	cat $(GENSOURCES)/Grammar.hpp > $(GENSOURCES)/Grammar.h
+	rm -f $(GENSOURCES)/Grammar.hpp bison_out.txt
 
 DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
 	$(PERL) $^ > $@
