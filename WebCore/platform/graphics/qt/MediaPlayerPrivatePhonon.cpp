@@ -84,6 +84,9 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 {
     // Hint to Phonon to disable overlay painting
     m_videoWidget->setAttribute(Qt::WA_DontShowOnScreen);
+#if QT_VERSION < 0x040500
+    m_videoWidget->setAttribute(Qt::WA_QuitOnClose, false);
+#endif
 
     createPath(m_mediaObject, m_videoWidget);
     createPath(m_mediaObject, m_audioOutput);
