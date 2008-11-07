@@ -421,7 +421,7 @@ typedef enum {
 #endif
     NPDrawingModelCoreGraphics = 1,
     NPDrawingModelOpenGL = 2,
-    NPDrawingModelCoreAnimation
+    NPDrawingModelCoreAnimation = 3
 } NPDrawingModel;
 
 /*
