@@ -49,7 +49,7 @@
 #define _GTK_DRAWING_H_
 
 #include <gdk/gdk.h>
-#include <gtk/gtkstyle.h>
+#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,3 +1,22 @@
+2008-11-07  Alp Toker  <alp@nuanti.com>
+
+        Fix build with bleeding edge GTK+ versions. GTK+ and other libraries
+        now require that only their top-level header file is included.
+
+        Patch tested and still builds fine with older GTK+ versions (back to
+        2.8).
+
+        Future WebKit GTK+ contributions are required to adhere to this
+        policy.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        * platform/gtk/KeyEventGtk.cpp:
+        * platform/gtk/MouseEventGtk.cpp:
+        * platform/gtk/WheelEventGtk.cpp:
+        * platform/gtk/gtkdrawing.h:
+        * plugins/gtk/gtk2xtbin.c:
+        * plugins/gtk/gtk2xtbin.h:
+
 2008-11-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker

@@ -36,7 +36,9 @@
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#include <gtk/gtkversion.h>
+
+// GTK_CHECK_VERSION is defined in gtk/gtkversion.h
+#include <gtk/gtk.h>
 
 namespace WebCore {
 

@@ -40,7 +40,7 @@
 #ifndef __GTK_XTBIN_H__
 #define __GTK_XTBIN_H__
 
-#include <gtk/gtksocket.h>
+#include <gtk/gtk.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xutil.h>
 #include <X11/Xlib.h>
