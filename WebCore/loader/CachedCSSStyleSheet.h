@@ -60,6 +60,7 @@ namespace WebCore {
 
     protected:
         RefPtr<TextResourceDecoder> m_decoder;
+        String m_decodedSheetText;
     };
 
 }

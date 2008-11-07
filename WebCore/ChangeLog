@@ -1,3 +1,20 @@
+2008-11-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22093
+        
+        Delaying the text decoding caused regression since the decoding
+        also determines the encoding in case of @charset rule. 
+        
+        Decode immediately in data() and keep the decoded string around
+        during the checkNotify().
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::sheetText):
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedCSSStyleSheet.h:
+
 2008-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
