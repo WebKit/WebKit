@@ -1,3 +1,11 @@
+2008-11-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the build on case-sensitive file systems. grammar.y was renamed to
+        Grammar.y but Lexer.cpp includes grammar.h. The build bots didn't
+        notice this change because of stale files.
+
+        * parser/Lexer.cpp:
+
 2008-11-07  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Alexey Proskuryakov.

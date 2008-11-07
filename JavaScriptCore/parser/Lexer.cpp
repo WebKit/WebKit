@@ -41,7 +41,7 @@ using namespace Unicode;
 using namespace JSC;
 
 #ifndef KDE_USE_FINAL
-#include "grammar.h"
+#include "Grammar.h"
 #endif
 
 #include "Lookup.h"
