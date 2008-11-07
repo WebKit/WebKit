@@ -45,8 +45,6 @@
 
 namespace WebCore {
 
-unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::AltKey;
-
 const double EventHandler::TextDragDelay = 0.0;
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
@@ -106,6 +104,11 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
 {
     notImplemented();
     return false;
+}
+
+unsigned EventHandler::accessKeyModifiers()
+{
+    return PlatformKeyboardEvent::AltKey;
 }
 
 }

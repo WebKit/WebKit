@@ -1,3 +1,30 @@
+2008-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21107
+        <rdar://problem/6264219> New access key combination conflicts with VoiceOver
+
+        * page/EventHandler.h:
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::accessKeyModifiers):
+        Access access key modifiers via a function, not a static variable.
+
+        * page/mac/EventHandlerMac.mm: (WebCore::EventHandler::accessKeyModifiers):
+        Use Ctrl when VoiceOver is enabled, because a conflict with Emacs-style key bindings is
+        less troublesome than one with VO keys.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::handleAccessKey):
+        Also fix an access key matching bug introduced in r32424 - Any superset of specified
+        modifier set invoked access keys. We can use simple equality comparison instead because
+        CapsLock is not part of modifiers(), so it doesn't need to be ignored explicitly.
+
 2008-11-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
