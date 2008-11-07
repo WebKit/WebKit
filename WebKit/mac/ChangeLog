@@ -1,3 +1,15 @@
+2008-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22115
+        NPN_HasPropertyUPP and NPN_HasMethodUPP entries in NPNetscapeFuncs are NULL
+        
+        Initialize the browser funcs correctly.
+        
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+
 2008-11-06  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Backed out r38189 (and r38203) for Xcode 3.0.

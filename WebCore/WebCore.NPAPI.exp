@@ -6,6 +6,8 @@ __NPN_GetIntIdentifier
 __NPN_GetProperty
 __NPN_GetStringIdentifier
 __NPN_GetStringIdentifiers
+__NPN_HasMethod
+__NPN_HasProperty
 __NPN_IdentifierIsString
 __NPN_IntFromIdentifier
 __NPN_Invoke

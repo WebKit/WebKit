@@ -1,3 +1,14 @@
+2008-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22115
+        NPN_HasPropertyUPP and NPN_HasMethodUPP entries in NPNetscapeFuncs are NULL
+
+        Export _NPN_HasMethod and _NPN_HasProperty.
+        
+        * WebCore.NPAPI.exp:
+
 2008-11-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Antti Koivisto
