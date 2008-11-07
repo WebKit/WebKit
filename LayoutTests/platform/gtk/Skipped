@@ -1,11 +1,24 @@
-# print dialog hangs DRT
-editing/execCommand/print.html
-# Missing LayoutTestController implementations and database related delegate callback
-storage/quota-tracking.html
-storage/success-callback.html
-# Application cache
-http/tests/appcache
-# Missing AccessibilityController implementation
+# blacklist everything
 accessibility
+animations
+css1
+css2.1
+css3
+dom
+editing
+fast
+geolocation
+http
+media
+platform
+plugins
 printing
-
+scrollbars
+security
+storage
+svg
+tables
+transforms
+transitions
+traversal
+webarchive
