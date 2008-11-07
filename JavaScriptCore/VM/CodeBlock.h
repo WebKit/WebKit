@@ -289,6 +289,11 @@ namespace JSC {
             linkedCallerList.shrink(lastPos);
         }
 
+        ALWAYS_INLINE bool isConstant(int index)
+        {
+            return index >= numVars && index < numVars + numConstants;
+        }
+
 #if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
         void dump(ExecState*) const;
         void printStructureIDs(const Instruction*) const;

@@ -357,7 +357,6 @@ namespace JSC {
 
         static uintptr_t asInteger(JSValue*);
 
-        bool isConstant(int src);
         JSValue* getConstant(CallFrame*, int src);
 
         void privateCompileMainPass();
