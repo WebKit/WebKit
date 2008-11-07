@@ -2830,8 +2830,8 @@ DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(
 	$(PERL) $< $@ DerivedSources/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # lookup tables for old-style JavaScript bindings
-%.lut.h: %.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< -n WebCore > $@
+WebCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/WebCore/%.cpp
+	$(PERL) $^ -n WebCore > $@
 
 # HTML tag and attribute names
 DerivedSources/HTMLNames.h: DerivedSources/HTMLNames.cpp;

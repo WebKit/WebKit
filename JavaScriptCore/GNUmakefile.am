@@ -407,10 +407,10 @@ DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser
 	$(PERL) $^ > $@
 
 JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
-	$^ -i > $@
+	$(PERL) $^ -i > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
-	$^ $@
+	$(PERL) $^ $@
 
 bin_PROGRAMS += \
 	Programs/jsc
