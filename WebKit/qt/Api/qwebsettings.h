@@ -59,7 +59,8 @@ public:
         JavascriptCanAccessClipboard,
         DeveloperExtrasEnabled,
         LinksIncludedInFocusChain,
-        ZoomTextOnly
+        ZoomTextOnly,
+        PrintBackgroundElements
     };
     enum WebGraphic {
         MissingImageGraphic,

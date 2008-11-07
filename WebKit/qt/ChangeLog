@@ -1,3 +1,16 @@
+2008-11-07  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Tor Arne Vestbø and Simon Hausmann.
+
+        Added an option to allow printing the background color and images.
+        Mostly reworked from a patch by Holger.
+        This setting is enabled by default.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
 2008-11-06  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
