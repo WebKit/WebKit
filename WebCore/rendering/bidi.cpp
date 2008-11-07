@@ -2192,7 +2192,7 @@ void RenderBlock::checkLinesForTextOverflow()
     // Determine the width of the ellipsis using the current font.
     // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if horizontal ellipsis is "not renderable"
     TextRun ellipsisRun(&horizontalEllipsis, 1);
-    static AtomicString& ellipsisStr = *new AtomicString(&horizontalEllipsis, 1);
+    static AtomicString ellipsisStr(&horizontalEllipsis, 1);
     const Font& firstLineFont = firstLineStyle()->font();
     const Font& font = style()->font();
     int firstLineEllipsisWidth = firstLineFont.width(ellipsisRun);

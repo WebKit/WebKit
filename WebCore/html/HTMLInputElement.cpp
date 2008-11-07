@@ -373,53 +373,53 @@ const AtomicString& HTMLInputElement::type() const
     // needs to be lowercase according to DOM spec
     switch (inputType()) {
         case BUTTON: {
-            static const AtomicString& button = *new AtomicString("button");
+            static const AtomicString button("button");
             return button;
         }
         case CHECKBOX: {
-            static const AtomicString& checkbox = *new AtomicString("checkbox");
+            static const AtomicString checkbox("checkbox");
             return checkbox;
         }
         case FILE: {
-            static const AtomicString& file = *new AtomicString("file");
+            static const AtomicString file("file");
             return file;
         }
         case HIDDEN: {
-            static const AtomicString& hidden = *new AtomicString("hidden");
+            static const AtomicString hidden("hidden");
             return hidden;
         }
         case IMAGE: {
-            static const AtomicString& image = *new AtomicString("image");
+            static const AtomicString image("image");
             return image;
         }
         case ISINDEX:
             return emptyAtom;
         case PASSWORD: {
-            static const AtomicString& password = *new AtomicString("password");
+            static const AtomicString password("password");
             return password;
         }
         case RADIO: {
-            static const AtomicString& radio = *new AtomicString("radio");
+            static const AtomicString radio("radio");
             return radio;
         }
         case RANGE: {
-            static const AtomicString& range = *new AtomicString("range");
+            static const AtomicString range("range");
             return range;
         }
         case RESET: {
-            static const AtomicString& reset = *new AtomicString("reset");
+            static const AtomicString reset("reset");
             return reset;
         }
         case SEARCH: {
-            static const AtomicString& search = *new AtomicString("search");
+            static const AtomicString search("search");
             return search;
         }
         case SUBMIT: {
-            static const AtomicString& submit = *new AtomicString("submit");
+            static const AtomicString submit("submit");
             return submit;
         }
         case TEXT: {
-            static const AtomicString& text = *new AtomicString("text");
+            static const AtomicString text("text");
             return text;
         }
     }

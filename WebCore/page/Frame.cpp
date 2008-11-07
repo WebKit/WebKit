@@ -317,7 +317,7 @@ static RegularExpression* createRegExpForLabels(const Vector<String>& labels)
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    static RegularExpression& wordRegExp = *new RegularExpression("\\w");
+    static RegularExpression wordRegExp = RegularExpression("\\w");
     String pattern("(");
     unsigned int numLabels = labels.size();
     unsigned int i;
@@ -1011,7 +1011,7 @@ void Frame::removeEditingStyleFromElement(Element*) const
 #ifndef NDEBUG
 static HashSet<Frame*>& keepAliveSet()
 {
-    static HashSet<Frame*>& staticKeepAliveSet = *new HashSet<Frame*>;
+    static HashSet<Frame*> staticKeepAliveSet;
     return staticKeepAliveSet;
 }
 #endif

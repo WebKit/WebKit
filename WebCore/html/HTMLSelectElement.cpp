@@ -114,8 +114,8 @@ void HTMLSelectElement::recalcStyle( StyleChange ch )
 
 const AtomicString& HTMLSelectElement::type() const
 {
-    static const AtomicString& selectMultiple = *new AtomicString("select-multiple");
-    static const AtomicString& selectOne = *new AtomicString("select-one");
+    static const AtomicString selectMultiple("select-multiple");
+    static const AtomicString selectOne("select-one");
     return m_multiple ? selectMultiple : selectOne;
 }
 

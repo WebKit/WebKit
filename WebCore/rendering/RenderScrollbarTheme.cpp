@@ -31,7 +31,7 @@ namespace WebCore {
 
 RenderScrollbarTheme* RenderScrollbarTheme::renderScrollbarTheme()
 {
-    static RenderScrollbarTheme& theme = *new RenderScrollbarTheme;
+    static RenderScrollbarTheme theme;
     return &theme;
 }
 

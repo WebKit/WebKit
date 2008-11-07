@@ -364,9 +364,9 @@ int maxDeepOffset(const Node *node)
 
 String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
-    static String& twoSpaces = *new String("  ");
-    static String& nbsp = *new String("\xa0");
-    static String& pattern = *new String(" \xa0");
+    static String twoSpaces("  ");
+    static String nbsp("\xa0");
+    static String pattern(" \xa0");
 
     String rebalancedString = string;
 
@@ -393,7 +393,7 @@ bool isTableStructureNode(const Node *node)
 
 const String& nonBreakingSpaceString()
 {
-    static String& nonBreakingSpaceString = *new String(&noBreakSpace, 1);
+    static String nonBreakingSpaceString = String(&noBreakSpace, 1);
     return nonBreakingSpaceString;
 }
 

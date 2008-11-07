@@ -51,7 +51,7 @@ template <typename ArchiveClass> static PassRefPtr<Archive> archiveFactoryCreate
 
 static HashMap<String, RawDataCreationFunction*, CaseFoldingHash>& archiveMIMETypes()
 {
-    static HashMap<String, RawDataCreationFunction*, CaseFoldingHash>& mimeTypes = *new HashMap<String, RawDataCreationFunction*, CaseFoldingHash>;
+    static HashMap<String, RawDataCreationFunction*, CaseFoldingHash> mimeTypes;
     static bool initialized = false;
     
     if (initialized)

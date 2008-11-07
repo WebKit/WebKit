@@ -43,7 +43,7 @@ using namespace HTMLNames;
 
 static String indentBlockquoteString()
 {
-    static String& string = *new String("webkit-indent-blockquote");
+    static String string = "webkit-indent-blockquote";
     return string;
 }
 

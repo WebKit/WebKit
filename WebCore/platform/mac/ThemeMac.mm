@@ -46,7 +46,7 @@ enum {
 
 Theme* platformTheme()
 {
-    static ThemeMac& themeMac = *new ThemeMac;
+    static ThemeMac themeMac;
     return &themeMac;
 }
 

@@ -59,7 +59,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(Document* document, HTMLFormElement* fo
 
 const AtomicString& HTMLTextAreaElement::type() const
 {
-    static const AtomicString& textarea = *new AtomicString("textarea");
+    static const AtomicString textarea("textarea");
     return textarea;
 }
 

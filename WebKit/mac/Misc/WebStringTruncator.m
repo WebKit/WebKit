@@ -49,7 +49,7 @@ static NSFont *defaultMenuFont()
 static Font& fontFromNSFont(NSFont *font)
 {
     static NSFont *currentFont;
-    static Font& currentRenderer = *new Font;
+    static Font currentRenderer;
 
     if ([font isEqual:currentFont])
         return currentRenderer;

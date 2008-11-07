@@ -89,14 +89,14 @@ private:
 
 static bool isInterchangeNewlineNode(const Node *node)
 {
-    static String& interchangeNewlineClassString = *new String(AppleInterchangeNewline);
+    static String interchangeNewlineClassString(AppleInterchangeNewline);
     return node && node->hasTagName(brTag) && 
            static_cast<const Element *>(node)->getAttribute(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node *node)
 {
-    static String& convertedSpaceSpanClassString = *new String(AppleConvertedSpace);
+    static String convertedSpaceSpanClassString(AppleConvertedSpace);
     return node->isHTMLElement() && 
            static_cast<const HTMLElement *>(node)->getAttribute(classAttr) == convertedSpaceSpanClassString;
 }

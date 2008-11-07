@@ -498,7 +498,7 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
             return;
         if (SVGLangSpace::parseMappedAttribute(attr)) {
             if (attr->name().matches(XMLNames::spaceAttr)) {
-                static const AtomicString& preserveString = *new AtomicString("preserve");
+                static const AtomicString preserveString("preserve");
 
                 if (attr->value() == preserveString)
                     addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePre);

@@ -97,10 +97,10 @@ static inline void removeWrappers(const JSWrapperCache&)
 static HashSet<DOMObject*>& wrapperSet()
 {
 #if ENABLE(WORKERS)
-    static ThreadSpecific<HashSet<DOMObject*> >& staticWrapperSet = *new ThreadSpecific<HashSet<DOMObject*> >;
+    static ThreadSpecific<HashSet<DOMObject*> > staticWrapperSet;
     return *staticWrapperSet;
 #else
-    static HashSet<DOMObject*>& staticWrapperSet = *new HashSet<DOMObject*>;
+    static HashSet<DOMObject*> staticWrapperSet;
     return staticWrapperSet;
 #endif
 }

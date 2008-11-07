@@ -1,5 +1,12 @@
 2008-11-06  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX: Backed out r38189 (and r38203) for Xcode 3.0.
+
+        Apparently older versions of gcc have issues with this patch.
+        Backing out a second time until the issues are resolved.
+
+2008-11-06  David Kilzer  <ddkilzer@apple.com>
+
         BUILD WAS NOT BROKEN: Rolling r38189 back in.
 
         Please perform a clean build if you see crashes.

@@ -168,13 +168,13 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
 
 void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription) const
 {
-    static FontDescription& systemFont = *new FontDescription;
-    static FontDescription& smallSystemFont = *new FontDescription;
-    static FontDescription& menuFont = *new FontDescription;
-    static FontDescription& labelFont = *new FontDescription;
-    static FontDescription& miniControlFont = *new FontDescription;
-    static FontDescription& smallControlFont = *new FontDescription;
-    static FontDescription& controlFont = *new FontDescription;
+    static FontDescription systemFont;
+    static FontDescription smallSystemFont;
+    static FontDescription menuFont;
+    static FontDescription labelFont;
+    static FontDescription miniControlFont;
+    static FontDescription smallControlFont;
+    static FontDescription controlFont;
 
     FontDescription* cachedDesc;
     NSFont* font = nil;
