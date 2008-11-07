@@ -592,11 +592,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         oldOutlineBox = absoluteOutlineBox();
     }
 
-    bool hadColumns = m_hasColumns;
-    if (!hadColumns && !hasReflection())
-        view()->pushLayoutState(this, IntSize(xPos(), yPos()));
-    else
-        view()->disableLayoutState();
+    LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns && !hasReflection());
 
     int oldWidth = m_width;
     int oldColumnWidth = desiredColumnWidth();
@@ -725,10 +721,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         }
     }
 
-    if (!hadColumns && !hasReflection())
-        view()->popLayoutState();
-    else
-        view()->enableLayoutState();
+    statePusher.pop();
 
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
@@ -1394,10 +1387,7 @@ bool RenderBlock::layoutOnlyPositionedObjects()
     if (!posChildNeedsLayout() || normalChildNeedsLayout() || selfNeedsLayout())
         return false;
 
-    if (!m_hasColumns)
-        view()->pushLayoutState(this, IntSize(xPos(), yPos()));
-    else
-        view()->disableLayoutState();
+    LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns);
 
     if (needsPositionedMovementLayout()) {
         tryLayoutDoingPositionedMovementOnly();
@@ -1408,10 +1398,7 @@ bool RenderBlock::layoutOnlyPositionedObjects()
     // All we have to is lay out our positioned objects.
     layoutPositionedObjects(false);
 
-    if (!m_hasColumns)
-        view()->popLayoutState();
-    else
-        view()->enableLayoutState();
+    statePusher.pop();
 
     if (hasOverflowClip())
         m_layer->updateScrollInfoAfterLayout();

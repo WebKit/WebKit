@@ -1,3 +1,35 @@
+2008-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22122
+        
+        Use a stack-based object to simplify the pushLayoutState/popLayoutState
+        code. LayoutStateMaintainer either pushes in the constructor, or allows
+        an explicit push() later. Both cases require an explicit pop().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::layout):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setCellWidths):
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderView.h:
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::~LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::pop):
+        (WebCore::LayoutStateMaintainer::push):
+        (WebCore::LayoutStateMaintainer::didPush):
+
 2008-11-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Fix the QtWebKit build on Mac

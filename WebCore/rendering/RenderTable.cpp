@@ -265,7 +265,7 @@ void RenderTable::layout()
         oldOutlineBox = absoluteOutlineBox();
     }
     
-    view()->pushLayoutState(this, IntSize(m_x, m_y));
+    LayoutStateMaintainer statePusher(view(), this, IntSize(m_x, m_y));
 
     m_height = 0;
     m_overflowHeight = 0;
@@ -425,7 +425,7 @@ void RenderTable::layout()
         }
     }
 
-    view()->popLayoutState();
+    statePusher.pop();
 
     bool didFullRepaint = true;
     // Repaint with our new bounds if they are different from our old bounds.

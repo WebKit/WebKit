@@ -157,6 +157,64 @@ private:
     unsigned m_layoutStateDisableCount;
 };
 
+// Stack-based class to assist with LayoutState push/pop
+class LayoutStateMaintainer : Noncopyable {
+public:
+    // ctor to push now
+    LayoutStateMaintainer(RenderView* view, RenderBox* root, IntSize offset, bool shouldPush = true)
+        : m_view(view)
+        , m_shouldPushPop(shouldPush)
+        , m_didStart(false)
+        , m_didEnd(false)
+    {
+        push(root, offset);
+    }
+    
+    // ctor to maybe push later
+    LayoutStateMaintainer(RenderView* view)
+        : m_view(view)
+        , m_shouldPushPop(true)
+        , m_didStart(false)
+        , m_didEnd(false)
+    {
+    }
+    
+    ~LayoutStateMaintainer()
+    {
+        ASSERT(m_didStart == m_didEnd);   // if this fires, it means that someone did a push(), but forgot to pop().
+    }
+
+    void pop()
+    {
+        if (m_didStart) {
+            ASSERT(!m_didEnd);
+            if (m_shouldPushPop)
+                m_view->popLayoutState();
+            else
+                m_view->enableLayoutState();
+            m_didEnd = true;
+        }
+    }
+
+    void push(RenderBox* root, IntSize offset)
+    {
+        ASSERT(!m_didStart);
+        if (m_shouldPushPop)
+            m_view->pushLayoutState(root, offset);
+        else
+            m_view->disableLayoutState();
+        m_didStart = true;
+    }
+    
+    bool didPush() const { return m_didStart; }
+
+private:
+    RenderView* m_view;
+    bool m_shouldPushPop : 1;   // true if we should push/pop, rather than disable/enable
+    bool m_didStart : 1;        // true if we did a push or disable
+    bool m_didEnd : 1;          // true if we popped or re-enabled
+};
+
 } // namespace WebCore
 
 #endif // RenderView_h
