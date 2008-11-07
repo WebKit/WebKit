@@ -1,3 +1,15 @@
+2008-11-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix layout test brokenness following r38211.
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::handleAccessKey):
+        Restore old Shift key behavior. We ignore Shift key state when matching access keys (which
+        matches neither IE nor Firefox), and this patch made WebKit behave like Firefox
+        inadvertently. This may or may not be a good thing, but it's certainly not something that
+        should change by accident.
+
 2008-11-06  Antti Koivisto  <antti@apple.com>
 
         Eh, this trivial last minute change was wrong.

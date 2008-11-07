@@ -1722,7 +1722,12 @@ static EventTargetNode* eventTargetNodeForDocument(Document* doc)
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)
 {
-    if (evt.modifiers() != accessKeyModifiers())
+    // FIXME: Ignoring the state of Shift key is what neither IE nor Firefox do.
+    // IE matches lower and upper case access keys regardless of Shift key state - but if both upper and
+    // lower case variants are present in a document, the correct element is matched based on Shift key state.
+    // Firefox only matches an access key if Shift is not pressed, and does that case-insensitively.
+    ASSERT(!(accessKeyModifiers() & PlatformKeyboardEvent::ShiftKey));
+    if ((evt.modifiers() & ~PlatformKeyboardEvent::ShiftKey) != accessKeyModifiers())
         return false;
     String key = evt.unmodifiedText();
     Element* elem = m_frame->document()->getElementByAccessKey(key.lower());
