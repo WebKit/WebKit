@@ -1,3 +1,25 @@
+2008-11-06  Gavin Barraclough  barraclough@apple.com
+
+        Reviewed by Oliver Hunt.
+
+        Do not make a cti_* call to perform an op_call unless either:
+        (1) The codeblock for the function body has not been generated.
+        (2) The number of arguments passed does not match the callee arity.
+
+        ~1% progression on sunspider --v8
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCallInitializeCallFrame):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_op_call_arityCheck):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        * VM/Machine.h:
+        * kjs/nodes.h:
+
 2008-11-06  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

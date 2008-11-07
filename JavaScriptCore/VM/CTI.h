@@ -80,6 +80,7 @@
 #define ARG_instr5 static_cast<Instruction*>(ARGS[5])
 #define ARG_instr6 static_cast<Instruction*>(ARGS[6])
 #define ARG_linkInfo2 static_cast<CallLinkInfo*>(ARGS[2])
+#define ARG_codeBlock4 static_cast<CodeBlock*>(ARGS[4])
 
 #define CTI_RETURN_ADDRESS_SLOT (ARGS[-1])
 

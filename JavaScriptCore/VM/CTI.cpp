@@ -587,17 +587,14 @@ static void unreachable()
     exit(1);
 }
 
-void CTI::compileOpCallInitializeCallFrame(unsigned callee, unsigned argCount)
+void CTI::compileOpCallInitializeCallFrame(unsigned, unsigned argCount)
 {
-    emitGetArg(callee, X86::ecx); // Load callee JSFunction into ecx
-    m_jit.movl_rm(X86::eax, RegisterFile::CodeBlock * static_cast<int>(sizeof(Register)), X86::edx); // callee CodeBlock was returned in eax
-    m_jit.movl_i32m(asInteger(noValue()), RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edx);
-    m_jit.movl_rm(X86::ecx, RegisterFile::Callee * static_cast<int>(sizeof(Register)), X86::edx);
-
     m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_scopeChain) + OBJECT_OFFSET(ScopeChain, m_node), X86::ecx, X86::ebx); // newScopeChain
-    m_jit.movl_i32m(argCount, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)), X86::edx);
-    m_jit.movl_rm(X86::edi, RegisterFile::CallerFrame * static_cast<int>(sizeof(Register)), X86::edx);
-    m_jit.movl_rm(X86::ebx, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)), X86::edx);
+
+    m_jit.movl_i32m(asInteger(noValue()), RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edi);
+    m_jit.movl_rm(X86::ecx, RegisterFile::Callee * static_cast<int>(sizeof(Register)), X86::edi);
+    m_jit.movl_i32m(argCount, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)), X86::edi);
+    m_jit.movl_rm(X86::ebx, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)), X86::edi);
 }
 
 void CTI::compileOpCallSetupArgs(Instruction* instruction, bool isConstruct, bool isEval)
@@ -658,12 +655,12 @@ void CTI::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned i,
 
     // The following is the fast case, only used whan a callee can be linked.
 
-    // In the case of OpConstruct, call oout to a cti_ function to create the new object.
+    // In the case of OpConstruct, call out to a cti_ function to create the new object.
     if (opcodeID == op_construct) {
         emitPutArg(X86::ecx, 0);
-        emitGetPutArg(instruction[3].u.operand, 4, X86::eax);
-        emitCTICall(instruction, i, Machine::cti_op_construct_JSConstructFast);
-        emitPutResult(instruction[4].u.operand);
+        emitGetPutArg(instruction[3].u.operand, 16, X86::eax);
+        emitCTICall(instruction, i, Machine::cti_op_construct_JSConstruct);
+        emitPutResult(firstArg);
         emitGetArg(callee, X86::ecx);
     }
 
@@ -2777,7 +2774,9 @@ void CTI::privateCompileSlowCases()
         case op_construct: {
             int dst = instruction[i + 1].u.operand;
             int callee = instruction[i + 2].u.operand;
+            int firstArg = instruction[i + 4].u.operand;
             int argCount = instruction[i + 5].u.operand;
+            int registerOffset = instruction[i + 6].u.operand;
 
             m_jit.link(iter->from, m_jit.label());
 
@@ -2791,11 +2790,37 @@ void CTI::privateCompileSlowCases()
             m_jit.cmpl_i32m(reinterpret_cast<unsigned>(m_machine->m_jsFunctionVptr), X86::ecx);
             X86Assembler::JmpSrc callLinkFailNotJSFunction = m_jit.emitUnlinkedJne();
 
-            // This handles JSFunctions
-            emitCTICall(instruction + i, i, (opcodeID == op_construct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction);
-            // initialize the new call frame (pointed to by edx, after the last call), then set edi to point to it.
-            compileOpCallInitializeCallFrame(callee, argCount);
+            // First, in the cale of a construct, allocate the new object.
+            if (opcodeID == op_construct) {
+                emitCTICall(instruction, i, Machine::cti_op_construct_JSConstruct);
+                emitPutResult(firstArg);
+                emitGetArg(callee, X86::ecx);
+            }
+
+            // Load the callee CodeBlock* into eax
+            m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
+            m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
+            m_jit.testl_rr(X86::eax, X86::eax);
+            X86Assembler::JmpSrc hasCodeBlockForLink = m_jit.emitUnlinkedJne();
+            emitCTICall(instruction + i, i, Machine::cti_op_call_JSFunction);
+            emitGetArg(callee, X86::ecx);
+            m_jit.link(hasCodeBlockForLink, m_jit.label());
+
+            // Speculatively roll the callframe, assuming argCount will match the arity.
+            m_jit.movl_rm(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register)), X86::edi);
+            m_jit.addl_i32r(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
+
+            // Check argCount matches callee arity.
+            m_jit.cmpl_i32m(argCount, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
+            X86Assembler::JmpSrc arityCheckOkayForLink = m_jit.emitUnlinkedJe();
+            emitPutArg(X86::eax, 12);
+            emitCTICall(instruction + i, i, Machine::cti_op_call_arityCheck);
+            emitGetArg(callee - registerOffset, X86::ecx);
             m_jit.movl_rr(X86::edx, X86::edi);
+            m_jit.link(arityCheckOkayForLink, m_jit.label());
+
+            // initialize the new call frame (pointed to by edx, after the last call).
+            compileOpCallInitializeCallFrame(callee, argCount);
 
             // Try to link & repatch this call.
             CallLinkInfo* info = &(m_codeBlock->callLinkInfos[callLinkInfoIndex]);
@@ -2828,22 +2853,41 @@ void CTI::privateCompileSlowCases()
 
             // Next, handle JSFunctions...
             m_jit.link(isJSFunction, m_jit.label());
-            emitCTICall(instruction + i, i, (opcodeID == op_construct) ? Machine::cti_op_construct_JSConstruct : Machine::cti_op_call_JSFunction);
+
+            // First, in the cale of a construct, allocate the new object.
+            if (opcodeID == op_construct) {
+                emitCTICall(instruction, i, Machine::cti_op_construct_JSConstruct);
+                emitPutResult(firstArg);
+                emitGetArg(callee, X86::ecx);
+            }
+
+            // Load the callee CodeBlock* into eax
+            m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
+            m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
+            m_jit.testl_rr(X86::eax, X86::eax);
+            X86Assembler::JmpSrc hasCodeBlock = m_jit.emitUnlinkedJne();
+            emitCTICall(instruction + i, i, Machine::cti_op_call_JSFunction);
+            emitGetArg(callee, X86::ecx);
+            m_jit.link(hasCodeBlock, m_jit.label());
+
+            // Speculatively roll the callframe, assuming argCount will match the arity.
+            m_jit.movl_rm(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register)), X86::edi);
+            m_jit.addl_i32r(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
+
+            // Check argCount matches callee arity.
+            m_jit.cmpl_i32m(argCount, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
+            X86Assembler::JmpSrc arityCheckOkay = m_jit.emitUnlinkedJe();
+            emitPutArg(X86::eax, 12);
+            emitCTICall(instruction + i, i, Machine::cti_op_call_arityCheck);
+            emitGetArg(callee - registerOffset, X86::ecx);
+            m_jit.movl_rr(X86::edx, X86::edi);
+            m_jit.link(arityCheckOkay, m_jit.label());
+
             // initialize the new call frame (pointed to by edx, after the last call).
             compileOpCallInitializeCallFrame(callee, argCount);
-            m_jit.movl_rr(X86::edx, X86::edi);
 
             // load ctiCode from the new codeBlock.
             m_jit.movl_mr(OBJECT_OFFSET(CodeBlock, ctiCode), X86::eax, X86::eax);
-
-            // Move the new callframe into edi.
-            m_jit.movl_rr(X86::edx, X86::edi);
-
-            // Check the ctiCode has been generated (if not compile it now), and make the call.
-            m_jit.testl_rr(X86::eax, X86::eax);
-            X86Assembler::JmpSrc hasCode = m_jit.emitUnlinkedJne();
-            emitCTICall(instruction + i, i, Machine::cti_vm_compile);
-            m_jit.link(hasCode, m_jit.label());
 
             emitNakedCall(i, X86::eax);
 
