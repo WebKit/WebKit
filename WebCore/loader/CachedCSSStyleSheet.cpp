@@ -71,7 +71,7 @@ const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType) const
     if (!m_data || m_data->isEmpty() || !canUseSheet(enforceMIMEType))
         return String();
     
-    if (!m_decodedSheetText)
+    if (!m_decodedSheetText.isNull())
         return m_decodedSheetText;
     
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory
