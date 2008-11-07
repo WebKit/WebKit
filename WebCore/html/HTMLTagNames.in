@@ -2,7 +2,7 @@ namespace="HTML"
 namespacePrefix="xhtml"
 namespaceURI="http://www.w3.org/1999/xhtml"
 
-a interfaceName=AnchorElement
+a interfaceName=HTMLAnchorElement
 abbr
 acronym
 address
@@ -13,56 +13,56 @@ audio applyAudioHack=1
 #endif
 b
 base
-basefont interfaceName=BaseFontElement
+basefont interfaceName=HTMLBaseFontElement
 bdo
 big
 blockquote
 body
-br interfaceName=BRElement
+br interfaceName=HTMLBRElement
 button
 canvas
-caption interfaceName=TableCaptionElement
+caption interfaceName=HTMLTableCaptionElement
 center
 cite
 code
-col interfaceName=TableColElement
+col interfaceName=HTMLTableColElement
 colgroup
 dd
-del interfaceName=ModElement
+del interfaceName=HTMLModElement
 dfn
-dir interfaceName=DirectoryElement
+dir interfaceName=HTMLDirectoryElement
 div
-dl interfaceName=DListElement
+dl interfaceName=HTMLDListElement
 dt
 em
 embed
-fieldset interfaceName=FieldSetElement
+fieldset interfaceName=HTMLFieldSetElement
 font
 form
 frame
-frameset interfaceName=FrameSetElement
+frameset interfaceName=HTMLFrameSetElement
 head
-h1 interfaceName=HeadingElement
+h1 interfaceName=HTMLHeadingElement
 h2
 h3
 h4
 h5
 h6
-hr interfaceName=HRElement
+hr interfaceName=HTMLHRElement
 html
 i
-iframe interfaceName=IFrameElement
+iframe interfaceName=HTMLIFrameElement
 image
-img interfaceName=ImageElement
+img interfaceName=HTMLImageElement
 input
 ins
-isindex interfaceName=IsIndexElement
+isindex interfaceName=HTMLIsIndexElement
 kbd
 keygen
 label
 layer
 legend
-li interfaceName=LIElement
+li interfaceName=HTMLLIElement
 link
 listing
 map
@@ -75,14 +75,14 @@ noframes
 nolayer
 noscript
 object
-ol interfaceName=OListElement
-optgroup interfaceName=OptGroupElement
+ol interfaceName=HTMLOListElement
+optgroup interfaceName=HTMLOptGroupElement
 option
-p interfaceName=ParagraphElement
+p interfaceName=HTMLParagraphElement
 param
 plaintext
 pre
-q interfaceName=QuoteElement
+q interfaceName=HTMLQuoteElement
 s
 samp
 script
@@ -98,17 +98,17 @@ style
 sub
 sup
 table
-tbody interfaceName=TableSectionElement
-td interfaceName=TableCellElement
-textarea interfaceName=TextAreaElement
+tbody interfaceName=HTMLTableSectionElement
+td interfaceName=HTMLTableCellElement
+textarea interfaceName=HTMLTextAreaElement
 tfoot
 th
 thead
 title
-tr interfaceName=TableRowElement
+tr interfaceName=HTMLTableRowElement
 tt
 u
-ul interfaceName=UListElement
+ul interfaceName=HTMLUListElement
 var
 #if ENABLE_VIDEO
 video applyAudioHack=1

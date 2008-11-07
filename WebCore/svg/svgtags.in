@@ -80,7 +80,7 @@ glyph
 glyphRef
 #endif
 #if ENABLE_SVG_FONTS
-hkern interfaceName=HKernElement
+hkern interfaceName=SVGHKernElement
 #endif
 image
 line
@@ -91,7 +91,7 @@ metadata
 #if ENABLE_SVG_FONTS
 missing_glyph
 #endif
-mpath interfaceName=MPathElement
+mpath interfaceName=SVGMPathElement
 path
 pattern
 polygon
@@ -101,16 +101,16 @@ rect
 script
 stop
 style
-svg interfaceName=SVGElement
+svg interfaceName=SVGSVGElement
 switch
 symbol
 text
 textPath
 title
-tref interfaceName=TRefElement
-tspan interfaceName=TSpanElement
+tref interfaceName=SVGTRefElement
+tspan interfaceName=SVGTSpanElement
 use
 view
 #if 0
-vkern interfaceName=VKernElement
+vkern interfaceName=SVGVKernElement
 #endif

@@ -88,7 +88,7 @@ if ($printWrapperFactory) {
 
 sub initializeTagPropertyHash
 {
-    return ('interfaceName' => upperCaseName($_[0])."Element",
+    return ('interfaceName' => defaultInterfaceName($_[0]),
             'applyAudioHack' => 0,
             'exportString' => 0);
 }
@@ -210,11 +210,11 @@ sub printConstructors
 
     print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
     for my $name (sort keys %names) {
-        my $ucName = $names{$name}{"interfaceName"};
+        my $ucName = $names{$name}{'interfaceName'};
 
         print F "$parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
-        print F "    return new $parameters{'namespace'}${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
+        print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
         print F "}\n\n";
     }
     print F "#endif\n" if $parameters{'guardFactoryWith'};
@@ -431,7 +431,7 @@ sub printJSElementIncludes
         next if (hasCustomMapping($name));
 
         my $ucName = $names{$name}{"interfaceName"};
-        print F "#include \"JS$parameters{'namespace'}${ucName}.h\"\n";
+        print F "#include \"JS${ucName}.h\"\n";
     }
 }
 
@@ -443,7 +443,7 @@ sub printElementIncludes
         next if ($shouldSkipCustomMappings && hasCustomMapping($name));
 
         my $ucName = $names{$name}{"interfaceName"};
-        print F "#include \"$parameters{'namespace'}${ucName}.h\"\n";
+        print F "#include \"${ucName}.h\"\n";
     }
 }
 
@@ -595,7 +595,7 @@ END
 print F <<END
 }
 
-} // namespace
+} // namespace WebCore
 
 END
 ;
@@ -644,6 +644,12 @@ namespace WebCore {
 }
 
 ## Wrapper Factory routines
+
+sub defaultInterfaceName
+{
+    die "No namespace found" if !$parameters{'namespace'};
+    return $parameters{'namespace'} . upperCaseName($_[0]) . "Element"
+}
 
 sub initializeCustomMappings
 {
@@ -730,7 +736,7 @@ static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'n
 {
     if (!MediaPlayer::isAvailable())
         return CREATE_DOM_NODE_WRAPPER(exec, $parameters{'namespace'}Element, element.get());
-    return CREATE_DOM_NODE_WRAPPER(exec, $parameters{'namespace'}${ucName}, element.get());
+    return CREATE_DOM_NODE_WRAPPER(exec, ${ucName}, element.get());
 }
 
 END
@@ -739,7 +745,7 @@ END
             print F <<END
 static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
-    return CREATE_DOM_NODE_WRAPPER(exec, $parameters{'namespace'}${ucName}, element.get());
+    return CREATE_DOM_NODE_WRAPPER(exec, ${ucName}, element.get());
 }
 
 END
