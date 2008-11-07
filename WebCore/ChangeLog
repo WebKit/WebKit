@@ -1,5 +1,12 @@
 2008-11-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Fix the QtWebKit build on Mac
+
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginView::invalidateRect):
+
+2008-11-07  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Rubber-stamped by Simon Hausmann.
 
         Don't allow Phonon's invisible video widget to keep the app running

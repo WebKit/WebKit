@@ -84,6 +84,7 @@ int PluginPackage::compareFileVersion(const PlatformModuleVersion&) const { notI
 void PluginView::setNPWindowRect(const IntRect&) { notImplemented(); }
 const char* PluginView::userAgent() { notImplemented(); return 0; }
 void PluginView::invalidateRect(NPRect*) { notImplemented(); }
+void PluginView::invalidateRect(const IntRect&) { notImplemented(); }
 void PluginView::invalidateRegion(NPRegion) { notImplemented(); }
 void PluginView::forceRedraw() { notImplemented(); }
 void PluginView::setFocus() { Widget::setFocus(); }
