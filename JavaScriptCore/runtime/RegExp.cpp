@@ -22,7 +22,7 @@
 #include "RegExp.h"
 
 #include "CTI.h"
-#include "lexer.h"
+#include "Lexer.h"
 #include <pcre/pcre.h>
 #include <stdio.h>
 #include <stdlib.h>

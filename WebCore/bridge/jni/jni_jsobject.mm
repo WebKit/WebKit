@@ -41,7 +41,7 @@
 #include <runtime/Completion.h>
 #include <runtime/Interpreter.h>
 #include <wtf/Assertions.h>
-#include <kjs/SourceProvider.h>
+#include <parser/SourceProvider.h>
 
 using WebCore::Frame;
 

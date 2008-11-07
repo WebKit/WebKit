@@ -21,11 +21,11 @@
  */
 
 #include "config.h"
-#include "lexer.h"
+#include "Lexer.h"
 
 #include "dtoa.h"
 #include "JSFunction.h"
-#include "nodes.h"
+#include "Nodes.h"
 #include "NodeInfo.h"
 #include "JSGlobalObjectFunctions.h"
 #include <ctype.h>
@@ -45,7 +45,7 @@ using namespace JSC;
 #endif
 
 #include "Lookup.h"
-#include "lexer.lut.h"
+#include "Lexer.lut.h"
 
 // a bridge for yacc from the C world to C++
 int kjsyylex(void* lvalp, void* llocp, void* globalData)

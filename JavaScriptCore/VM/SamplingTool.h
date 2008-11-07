@@ -33,7 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
 
-#include "nodes.h"
+#include "Nodes.h"
 #include "Opcode.h"
 
 namespace JSC {

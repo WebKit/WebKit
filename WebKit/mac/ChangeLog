@@ -1,3 +1,16 @@
+2008-11-06  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Move the remaining files in the kjs subdirectory of JavaScriptCore to
+        a new parser subdirectory, and remove the kjs subdirectory entirely.
+
+        The header SavedBuiltins.h was removed in r32587, so it no longer needs
+        a forwarding header.
+
+        * ForwardingHeaders/kjs: Removed.
+        * ForwardingHeaders/kjs/SavedBuiltins.h: Removed.
+
 2008-11-06  David Kilzer  <ddkilzer@apple.com>
 
         BUILD WAS NOT BROKEN: Rolling r38189 back in.

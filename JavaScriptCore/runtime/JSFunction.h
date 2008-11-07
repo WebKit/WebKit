@@ -27,7 +27,7 @@
 #include "InternalFunction.h"
 #include "JSVariableObject.h"
 #include "SymbolTable.h"
-#include "nodes.h"
+#include "Nodes.h"
 #include "JSObject.h"
 
 namespace JSC {

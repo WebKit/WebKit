@@ -32,7 +32,7 @@
 
 #include "Instruction.h"
 #include "JSGlobalObject.h"
-#include "nodes.h"
+#include "Nodes.h"
 #include "Parser.h"
 #include "SourceCode.h"
 #include "UString.h"

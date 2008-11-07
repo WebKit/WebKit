@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "nodes.h"
+#include "Nodes.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>

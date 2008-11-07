@@ -47,7 +47,7 @@
 #include <runtime/CollectorHeapIterator.h>
 #include <debugger/DebuggerCallFrame.h>
 #include <runtime/JSLock.h>
-#include <kjs/Parser.h>
+#include <parser/Parser.h>
 #include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>
 

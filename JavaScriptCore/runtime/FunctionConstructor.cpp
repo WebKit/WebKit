@@ -27,8 +27,8 @@
 #include "JSString.h"
 #include "Parser.h"
 #include "Debugger.h"
-#include "lexer.h"
-#include "nodes.h"
+#include "Lexer.h"
+#include "Nodes.h"
 
 namespace JSC {
 

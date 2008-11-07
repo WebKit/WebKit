@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include "JSValue.h"
 #include "JSObject.h"
-#include "nodes.h"
-#include "lexer.h"
+#include "Nodes.h"
+#include "Lexer.h"
 #include "JSString.h"
 #include "JSGlobalData.h"
 #include "CommonIdentifiers.h"

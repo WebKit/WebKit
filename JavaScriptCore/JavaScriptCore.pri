@@ -2,7 +2,7 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
+INCLUDEPATH += $$PWD $$PWD/parser $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
                $$PWD/ForwardingHeaders
 DEFINES += BUILDING_QT__
 
@@ -24,10 +24,10 @@ LUT_FILES += \
     runtime/RegExpObject.cpp
 
 KEYWORDLUT_FILES += \
-    kjs/keywords.table
+    parser/Keywords.table
 
 KJSBISON += \
-    kjs/grammar.y
+    parser/Grammar.y
 
 SOURCES += \
     wtf/Assertions.cpp \
@@ -107,20 +107,20 @@ SOURCES += \
     runtime/JSString.cpp \
     runtime/JSValue.cpp \
     runtime/JSWrapperObject.cpp \
-    kjs/lexer.cpp \
+    parser/Lexer.cpp \
     runtime/Lookup.cpp \
     runtime/MathObject.cpp \
     runtime/NativeErrorConstructor.cpp \
     runtime/NativeErrorPrototype.cpp \
-    kjs/nodes.cpp \
-    kjs/nodes2string.cpp \
+    parser/Nodes.cpp \
+    parser/nodes2string.cpp \
     runtime/NumberConstructor.cpp \
     runtime/NumberObject.cpp \
     runtime/NumberPrototype.cpp \
     runtime/ObjectConstructor.cpp \
     runtime/ObjectPrototype.cpp \
     runtime/Operations.cpp \
-    kjs/Parser.cpp \
+    parser/Parser.cpp \
     runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/PrototypeFunction.cpp \
@@ -155,7 +155,7 @@ lut.CONFIG += no_link
 addExtraCompiler(lut)
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
-keywordlut.output = $$GENERATED_SOURCES_DIR/lexer.lut.h
+keywordlut.output = $$GENERATED_SOURCES_DIR/Lexer.lut.h
 keywordlut.commands = perl $$PWD/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 keywordlut.depend = ${QMAKE_FILE_NAME}
 keywordlut.input = KEYWORDLUT_FILES

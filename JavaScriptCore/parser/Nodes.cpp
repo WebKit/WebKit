@@ -24,7 +24,7 @@
 */
 
 #include "config.h"
-#include "nodes.h"
+#include "Nodes.h"
 
 #include "CodeGenerator.h"
 #include "ExecState.h"
@@ -36,7 +36,7 @@
 #include "RegExpObject.h"
 #include "SamplingTool.h"
 #include "Debugger.h"
-#include "lexer.h"
+#include "Lexer.h"
 #include "Operations.h"
 #include <math.h>
 #include <wtf/Assertions.h>

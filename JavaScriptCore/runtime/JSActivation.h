@@ -33,7 +33,7 @@
 #include "JSVariableObject.h"
 #include "RegisterFile.h"
 #include "SymbolTable.h"
-#include "nodes.h"
+#include "Nodes.h"
 
 namespace JSC {
 

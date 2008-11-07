@@ -32,8 +32,8 @@
 #include "Machine.h"
 #include "Parser.h"
 #include "dtoa.h"
-#include "lexer.h"
-#include "nodes.h"
+#include "Lexer.h"
+#include "Nodes.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -48,10 +48,6 @@ Source files for JSCore.
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
         wtf/dtoa.cpp
-        kjs/lexer.cpp
-        kjs/nodes.cpp
-        kjs/nodes2string.cpp
-        kjs/Parser.cpp
     </set>
     <set append="1" var="JSCORE_SOURCES_PCRE">
         pcre/pcre_compile.cpp
@@ -62,6 +58,12 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_BYTECOMPILER_SOURCES">
         bytecompiler/CodeGenerator.cpp
+    </set>
+    <set append="1" var="JSCORE_PARSER_SOURCES">
+        parser/Lexer.cpp
+        parser/Nodes.cpp
+        parser/nodes2string.cpp
+        parser/Parser.cpp
     </set>
     <set append="1" var="JSCORE_PROFILER_SOURCES">
         profiler/HeavyProfile.cpp

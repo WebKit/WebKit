@@ -40,7 +40,7 @@
 #include "SegmentedVector.h"
 #include "SymbolTable.h"
 #include "Debugger.h"
-#include "nodes.h"
+#include "Nodes.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 

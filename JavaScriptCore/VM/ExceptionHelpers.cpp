@@ -34,7 +34,7 @@
 #include "JSObject.h"
 #include "JSNotAnObject.h"
 #include "Machine.h"
-#include "nodes.h"
+#include "Nodes.h"
 
 namespace JSC {
 

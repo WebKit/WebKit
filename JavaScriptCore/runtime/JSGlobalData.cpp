@@ -39,9 +39,9 @@
 #include "Machine.h"
 #include "Parser.h"
 #include "Collector.h"
-#include "lexer.h"
+#include "Lexer.h"
 #include "Lookup.h"
-#include "nodes.h"
+#include "Nodes.h"
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <wtf/Threading.h>

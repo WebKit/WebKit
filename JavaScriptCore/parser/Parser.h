@@ -25,7 +25,7 @@
 
 #include "SourceProvider.h"
 #include "Debugger.h"
-#include "nodes.h"
+#include "Nodes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>

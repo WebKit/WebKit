@@ -20,7 +20,7 @@
 #ifndef NodeInfo_h
 #define NodeInfo_h
 
-#include "nodes.h"
+#include "Nodes.h"
 #include "Parser.h"
 
 namespace JSC {

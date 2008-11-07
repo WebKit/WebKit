@@ -26,7 +26,7 @@
 
 VPATH = \
     $(JavaScriptCore) \
-    $(JavaScriptCore)/kjs \
+    $(JavaScriptCore)/parser \
     $(JavaScriptCore)/VM \
     $(JavaScriptCore)/pcre \
     $(JavaScriptCore)/docs \
@@ -39,7 +39,7 @@ all : \
     chartables.c \
     DatePrototype.lut.h \
     grammar.cpp \
-    lexer.lut.h \
+    Lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
     RegExpConstructor.lut.h \
@@ -52,12 +52,12 @@ all : \
 
 %.lut.h: create_hash_table %.cpp
 	$^ -i > $@
-lexer.lut.h: create_hash_table keywords.table
+Lexer.lut.h: create_hash_table Keywords.table
 	$^ > $@
 
 # JavaScript language grammar
 
-grammar.cpp: grammar.y
+grammar.cpp: Grammar.y
 	bison -d -p kjsyy $< -o $@ > bison_out.txt 2>&1
 	perl -p -e 'END { if ($$conflict) { unlink "grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
 	touch grammar.cpp.h

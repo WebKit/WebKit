@@ -1,3 +1,64 @@
+2008-11-06  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Move the remaining files in the kjs subdirectory of JavaScriptCore to
+        a new parser subdirectory, and remove the kjs subdirectory entirely.
+
+        * AllInOneFile.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/CodeBlock.h:
+        * VM/ExceptionHelpers.cpp:
+        * VM/SamplingTool.h:
+        * bytecompiler/CodeGenerator.h:
+        * jsc.pro:
+        * jscore.bkl:
+        * kjs: Removed.
+        * kjs/NodeInfo.h: Removed.
+        * kjs/Parser.cpp: Removed.
+        * kjs/Parser.h: Removed.
+        * kjs/ResultType.h: Removed.
+        * kjs/SourceCode.h: Removed.
+        * kjs/SourceProvider.h: Removed.
+        * kjs/grammar.y: Removed.
+        * kjs/keywords.table: Removed.
+        * kjs/lexer.cpp: Removed.
+        * kjs/lexer.h: Removed.
+        * kjs/nodes.cpp: Removed.
+        * kjs/nodes.h: Removed.
+        * kjs/nodes2string.cpp: Removed.
+        * parser: Added.
+        * parser/Grammar.y: Copied from kjs/grammar.y.
+        * parser/Keywords.table: Copied from kjs/keywords.table.
+        * parser/Lexer.cpp: Copied from kjs/lexer.cpp.
+        * parser/Lexer.h: Copied from kjs/lexer.h.
+        * parser/NodeInfo.h: Copied from kjs/NodeInfo.h.
+        * parser/Nodes.cpp: Copied from kjs/nodes.cpp.
+        * parser/Nodes.h: Copied from kjs/nodes.h.
+        * parser/Parser.cpp: Copied from kjs/Parser.cpp.
+        * parser/Parser.h: Copied from kjs/Parser.h.
+        * parser/ResultType.h: Copied from kjs/ResultType.h.
+        * parser/SourceCode.h: Copied from kjs/SourceCode.h.
+        * parser/SourceProvider.h: Copied from kjs/SourceProvider.h.
+        * parser/nodes2string.cpp: Copied from kjs/nodes2string.cpp.
+        * pcre/pcre.pri:
+        * pcre/pcre_exec.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toNumber):
+        * runtime/RegExp.cpp:
+
 2008-11-06  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r38196

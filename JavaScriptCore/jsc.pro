@@ -4,7 +4,7 @@ DESTDIR = .
 SOURCES = jsc.cpp
 QT -= gui
 INCLUDEPATH += $$PWD \
-    $$PWD/kjs \
+    $$PWD/parser \
     $$PWD/bindings \
     $$PWD/bindings/c \
     $$PWD/wtf \

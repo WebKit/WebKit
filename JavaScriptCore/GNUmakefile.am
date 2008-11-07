@@ -9,7 +9,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/runtime \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
 	-I$(top_builddir)/JavaScriptCore/pcre \
-	-I$(top_builddir)/JavaScriptCore/kjs \
+	-I$(top_builddir)/JavaScriptCore/parser \
 	-I$(top_builddir)/JavaScriptCore/runtime
 
 javascriptcore_h_api += \
@@ -25,7 +25,7 @@ javascriptcore_h_api += \
 	JavaScriptCore/API/WebKitAvailability.h
 
 javascriptcore_built_nosources += \
-	DerivedSources/lexer.lut.h \
+	DerivedSources/Lexer.lut.h \
 	JavaScriptCore/runtime/ArrayPrototype.lut.h \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
 	JavaScriptCore/runtime/MathObject.lut.h \
@@ -127,18 +127,18 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSGlobalData.h \
 	JavaScriptCore/runtime/JSStaticScopeObject.h \
 	JavaScriptCore/runtime/JSType.h \
-	JavaScriptCore/kjs/NodeInfo.h \
-	JavaScriptCore/kjs/Parser.h \
+	JavaScriptCore/parser/NodeInfo.h \
+	JavaScriptCore/parser/Parser.h \
 	JavaScriptCore/runtime/PropertyNameArray.h \
 	JavaScriptCore/runtime/RegExpConstructor.h \
 	JavaScriptCore/runtime/RegExpMatchesArray.h \
 	JavaScriptCore/runtime/RegExpObject.h \
 	JavaScriptCore/runtime/RegExpPrototype.h \
-	JavaScriptCore/kjs/ResultType.h \
+	JavaScriptCore/parser/ResultType.h \
 	JavaScriptCore/runtime/ScopeChain.h \
 	JavaScriptCore/runtime/ScopeChainMark.h \
-	JavaScriptCore/kjs/SourceProvider.h \
-	JavaScriptCore/kjs/SourceCode.h \
+	JavaScriptCore/parser/SourceProvider.h \
+	JavaScriptCore/parser/SourceCode.h \
 	JavaScriptCore/runtime/SymbolTable.h \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/TypeInfo.h \
@@ -149,9 +149,9 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/dtoa.h \
 	JavaScriptCore/runtime/Identifier.h \
 	JavaScriptCore/runtime/Interpreter.h \
-	JavaScriptCore/kjs/lexer.h \
+	JavaScriptCore/parser/Lexer.h \
 	JavaScriptCore/runtime/Lookup.h \
-	JavaScriptCore/kjs/nodes.h \
+	JavaScriptCore/parser/Nodes.h \
 	JavaScriptCore/runtime/Operations.h \
 	JavaScriptCore/runtime/Protect.h \
 	JavaScriptCore/runtime/RegExp.h \
@@ -319,7 +319,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSLock.h \
 	JavaScriptCore/runtime/JSStaticScopeObject.cpp \
 	JavaScriptCore/bytecompiler/LabelScope.h \
-	JavaScriptCore/kjs/Parser.cpp \
+	JavaScriptCore/parser/Parser.cpp \
 	JavaScriptCore/runtime/PropertyNameArray.cpp \
 	JavaScriptCore/runtime/RegExpConstructor.cpp \
 	JavaScriptCore/runtime/RegExpObject.cpp \
@@ -330,10 +330,10 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/dtoa.cpp \
 	JavaScriptCore/runtime/Identifier.cpp \
 	JavaScriptCore/runtime/Interpreter.cpp \
-	JavaScriptCore/kjs/lexer.cpp \
+	JavaScriptCore/parser/Lexer.cpp \
 	JavaScriptCore/runtime/Lookup.cpp \
-	JavaScriptCore/kjs/nodes.cpp \
-	JavaScriptCore/kjs/nodes2string.cpp \
+	JavaScriptCore/parser/Nodes.cpp \
+	JavaScriptCore/parser/nodes2string.cpp \
 	JavaScriptCore/runtime/Operations.cpp \
 	JavaScriptCore/runtime/RegExp.cpp \
 	JavaScriptCore/runtime/UString.cpp \
@@ -397,13 +397,13 @@ endif # END ENABLE_DEBUG
 
 DerivedSources/grammar.h: DerivedSources/grammar.cpp;
 
-DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/kjs/grammar.y
-	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/kjs/grammar.y -o $@ > bison_out.txt 2>&1
+DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/parser/Grammar.y
+	$(BISON) -d -p kjsyy $(srcdir)/JavaScriptCore/parser/Grammar.y -o $@ > bison_out.txt 2>&1
 	$(PERL) -p -e 'END { if ($$conflict) { unlink "grammar.cpp"; die; } } $$conflict ||= /conflict/' < bison_out.txt
 	cat $(GENSOURCES)/grammar.hpp > $(GENSOURCES)/grammar.h
 	rm -f $(GENSOURCES)/grammar.hpp bison_out.txt
 
-DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/keywords.table
+DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser/Keywords.table
 	$(PERL) $^ > $@
 
 JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
@@ -476,8 +476,8 @@ javascriptcore_dist += \
 	JavaScriptCore/pcre/AUTHORS \
 	JavaScriptCore/pcre/dftables \
 	JavaScriptCore/pcre/ucptable.cpp \
-	JavaScriptCore/kjs/grammar.y \
-	JavaScriptCore/kjs/keywords.table
+	JavaScriptCore/parser/Grammar.y \
+	JavaScriptCore/parser/Keywords.table
 
 # Clean rules for JavaScriptCore
 CLEANFILES += \

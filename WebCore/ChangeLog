@@ -1,3 +1,28 @@
+2008-11-06  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Move the remaining files in the kjs subdirectory of JavaScriptCore to
+        a new parser subdirectory, and remove the kjs subdirectory entirely.
+
+        * ForwardingHeaders/kjs: Removed.
+        * ForwardingHeaders/kjs/Parser.h: Removed.
+        * ForwardingHeaders/kjs/SavedBuiltins.h: Removed.
+        * ForwardingHeaders/kjs/SourceCode.h: Removed.
+        * ForwardingHeaders/kjs/SourceProvider.h: Removed.
+        * ForwardingHeaders/parser: Added.
+        * ForwardingHeaders/parser/Parser.h: Copied from ForwardingHeaders/kjs/Parser.h.
+        * ForwardingHeaders/parser/SourceCode.h: Copied from ForwardingHeaders/kjs/SourceCode.h.
+        * ForwardingHeaders/parser/SourceProvider.h: Copied from ForwardingHeaders/kjs/SourceProvider.h.
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/StringSourceProvider.h:
+        * bindings/js/WorkerScriptController.cpp:
+        * bridge/NP_jsobject.cpp:
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/testbindings.pro:
+        * inspector/JavaScriptDebugServer.cpp:
+
 2008-11-06  David Kilzer  <ddkilzer@apple.com>
 
         BUILD WAS NOT BROKEN: Rolling r38189 back in.

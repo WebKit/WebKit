@@ -32,7 +32,7 @@
 
 #include "JSWorkerContext.h"
 #include "WorkerContext.h"
-#include <kjs/SourceCode.h>
+#include <parser/SourceCode.h>
 #include <runtime/Completion.h>
 #include <runtime/Interpreter.h>
 #include <runtime/JSLock.h>
