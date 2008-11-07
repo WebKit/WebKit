@@ -101,8 +101,8 @@ javascriptcore_dist :=
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/JavaScriptCore/parser \
 	-I$(srcdir)/JavaScriptCore/wtf \
-	-I$(srcdir)/JavaScriptCore/kjs \
 	-I$(top_builddir)/DerivedSources
 
 # The variables above are already included below so no need to touch
