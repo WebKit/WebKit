@@ -32,6 +32,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSMessageChannelConstructor.h"
+#include "JSMessageEvent.h"
 #include "JSMessagePort.h"
 #include "JSWorkerLocation.h"
 #include "WorkerContext.h"
@@ -45,6 +46,8 @@ JSValue* jsWorkerContextLocation(ExecState*, const Identifier&, const PropertySl
 JSValue* jsWorkerContextMessageChannel(ExecState*, const Identifier&, const PropertySlot&);
 void setJSWorkerContextMessageChannel(ExecState*, JSObject*, JSValue*);
 JSValue* jsWorkerContextMessagePort(ExecState*, const Identifier&, const PropertySlot&);
+void setJSWorkerContextMessageEvent(ExecState*, JSObject*, JSValue*);
+JSValue* jsWorkerContextMessageEvent(ExecState*, const Identifier&, const PropertySlot&);
 void setJSWorkerContextMessagePort(ExecState*, JSObject*, JSValue*);
 JSValue* jsWorkerContextWorkerLocation(ExecState*, const Identifier&, const PropertySlot&);
 void setJSWorkerContextWorkerLocation(ExecState*, JSObject*, JSValue*);
@@ -65,6 +68,7 @@ void setJSWorkerContextWorkerLocation(ExecState*, JSObject*, JSValue*);
 #  onconnect                     jsWorkerContextOnconnect           DontDelete
 #  onmessage and other MessagePort attributes?
   MessageChannel                jsWorkerContextMessageChannel                DontDelete
+  MessageEvent                  jsWorkerContextMessageEvent                  DontDelete
   MessagePort                   jsWorkerContextMessagePort                   DontDelete
   WorkerLocation                jsWorkerContextWorkerLocation                DontDelete
 #  XMLHttpRequest                jsWorkerContextXMLHttpRequest                DontDelete
@@ -139,6 +143,11 @@ JSValue* jsWorkerContextMessageChannel(ExecState* exec, const Identifier&, const
     return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSWorkerContext*>(asObject(slot.slotBase())));
 }
 
+JSValue* jsWorkerContextMessageEvent(ExecState* exec, const Identifier&, const PropertySlot& slot)
+{
+    return JSMessageEvent::getConstructor(exec);
+}
+
 JSValue* jsWorkerContextMessagePort(ExecState* exec, const Identifier&, const PropertySlot&)
 {
     return JSMessagePort::getConstructor(exec);
@@ -169,6 +178,11 @@ bool JSWorkerContextPrototype::getOwnPropertySlot(ExecState* exec, const Identif
 void setJSWorkerContextMessageChannel(ExecState*, JSObject*, JSValue*)
 {
     // FIXME: Do we need to override put for global constructors, like JSDOMWindowBase does?
+    ASSERT_NOT_REACHED();
+}
+
+void setJSWorkerContextMessageEvent(ExecState*, JSObject*, JSValue*)
+{
     ASSERT_NOT_REACHED();
 }
 

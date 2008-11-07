@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22097
+        Expose MessageEvent constructor on WorkerContext
+
+        * bindings/js/JSWorkerContext.cpp:
+        (WebCore::jsWorkerContextMessageEvent):
+        (WebCore::setJSWorkerContextMessageEvent):
+
+2008-11-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=21107
         <rdar://problem/6264219> New access key combination conflicts with VoiceOver
 
