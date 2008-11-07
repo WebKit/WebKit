@@ -52,7 +52,7 @@ QGradient* Gradient::platformGradient()
 
     QColor stopColor;
     Vector<ColorStop>::iterator stopIterator = m_stops.begin();
-    qreal lastStop;
+    qreal lastStop(0.0);
     const qreal lastStopDiff = 0.0000001;
     while (stopIterator != m_stops.end()) {
         stopColor.setRgbF(stopIterator->red, stopIterator->green, stopIterator->blue, stopIterator->alpha);

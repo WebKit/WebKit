@@ -1,3 +1,12 @@
+2008-11-07  Henrik Hartz  <henrik.hartz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix valgrind warning about uninitialized lastStop variable.
+
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2008-11-07  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.
