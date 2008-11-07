@@ -900,7 +900,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.cpp"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\Grammar.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -937,7 +937,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\grammar.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\Grammar.h"
 					>
 				</File>
 				<File
