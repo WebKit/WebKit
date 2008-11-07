@@ -1,3 +1,15 @@
+2008-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        https://bugs.webkit.org/show_bug.cgi?id=15678
+        
+        Fix transformed menu selects to show the popup in the correct
+        location.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+
 2008-11-06  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Backed out r38189 (and r38203) for Xcode 3.0.
