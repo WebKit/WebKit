@@ -2,6 +2,19 @@
 
         Reviewed by Geoff Garen.
 
+        Bug 21801: REGRESSION (r37821): YUI date formatting JavaScript puts the letter 'd' in place of the day
+        <https://bugs.webkit.org/show_bug.cgi?id=21801>
+
+        Fix the constant register check in the 'typeof' optimization in
+        CodeGenerator, which was completely broken after r37821.
+
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitEqualityOp):
+
+2008-11-07  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 22129: Move CTI::isConstant() to CodeBlock
         <https://bugs.webkit.org/show_bug.cgi?id=22129>
 

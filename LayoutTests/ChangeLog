@@ -1,3 +1,11 @@
+2008-11-07  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * fast/js/resources/typeof-constant-string.js: Added.
+        * fast/js/typeof-constant-string-expected.txt: Added.
+        * fast/js/typeof-constant-string.html: Added.
+
 2008-11-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

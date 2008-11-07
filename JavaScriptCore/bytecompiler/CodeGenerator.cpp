@@ -783,9 +783,9 @@ RegisterID* CodeGenerator::emitEqualityOp(OpcodeID opcode, RegisterID* dst, Regi
 
         if (src1->index() == dstIndex
             && src1->isTemporary()
-            && static_cast<unsigned>(src2->index()) < m_codeBlock->constantRegisters.size()
-            && m_codeBlock->constantRegisters[src2->index()].jsValue(m_scopeChain->globalObject()->globalExec())->isString()) {
-            const UString& value = asString(m_codeBlock->constantRegisters[src2->index()].jsValue(m_scopeChain->globalObject()->globalExec()))->value();
+            && m_codeBlock->isConstant(src2->index())
+            && m_codeBlock->constantRegisters[src2->index() - m_codeBlock->numVars].jsValue(m_scopeChain->globalObject()->globalExec())->isString()) {
+            const UString& value = asString(m_codeBlock->constantRegisters[src2->index() - m_codeBlock->numVars].jsValue(m_scopeChain->globalObject()->globalExec()))->value();
             if (value == "undefined") {
                 rewindUnaryOp();
                 emitOpcode(op_is_undefined);
