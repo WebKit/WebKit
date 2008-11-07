@@ -165,14 +165,14 @@ bool CodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*
 
 bool CodeGenerator::addGlobalVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
 {
-    int index = m_nextGlobal;
+    int index = m_nextGlobalIndex;
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
     pair<SymbolTable::iterator, bool> result = symbolTable().add(ident.ustring().rep(), newEntry);
 
     if (!result.second)
         index = result.first->second.getIndex();
     else {
-        --m_nextGlobal;
+        --m_nextGlobalIndex;
         m_globals.append(index + m_globalVarStorageOffset);
     }
 
@@ -186,7 +186,7 @@ void CodeGenerator::allocateConstants(size_t count)
     if (!count)
         return;
     
-    m_nextConstant = m_calleeRegisters.size();
+    m_nextConstantIndex = m_calleeRegisters.size();
 
     for (size_t i = 0; i < count; ++i)
         newRegister();
@@ -204,7 +204,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     , m_finallyDepth(0)
     , m_dynamicScopeDepth(0)
     , m_codeType(GlobalCode)
-    , m_nextGlobal(-1)
+    , m_nextGlobalIndex(-1)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
 {
@@ -236,7 +236,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     bool canOptimizeNewGlobals = symbolTable->size() + functionStack.size() + varStack.size() < registerFile->maxGlobals();
     if (canOptimizeNewGlobals) {
         // Shift new symbols so they get stored prior to existing symbols.
-        m_nextGlobal -= symbolTable->size();
+        m_nextGlobalIndex -= symbolTable->size();
 
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FuncDeclNode* funcDecl = functionStack[i].get();
@@ -321,12 +321,12 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
 
     const Identifier* parameters = functionBody->parameters();
     size_t parameterCount = functionBody->parameterCount();
-    m_nextParameter = -RegisterFile::CallFrameHeaderSize - parameterCount - 1;
+    m_nextParameterIndex = -RegisterFile::CallFrameHeaderSize - parameterCount - 1;
     m_parameters.resize(1 + parameterCount); // reserve space for "this"
 
     // Add "this" as a parameter
-    m_thisRegister.setIndex(m_nextParameter);
-    ++m_nextParameter;
+    m_thisRegister.setIndex(m_nextParameterIndex);
+    ++m_nextParameterIndex;
     ++m_codeBlock->numParameters;
 
     if (functionBody->usesThis()) {
@@ -370,15 +370,15 @@ RegisterID* CodeGenerator::addParameter(const Identifier& ident)
     RegisterID* result = 0;
     UString::Rep* rep = ident.ustring().rep();
     if (!m_functions.contains(rep)) {
-        symbolTable().set(rep, m_nextParameter);
-        RegisterID& parameter = registerFor(m_nextParameter);
-        parameter.setIndex(m_nextParameter);
+        symbolTable().set(rep, m_nextParameterIndex);
+        RegisterID& parameter = registerFor(m_nextParameterIndex);
+        parameter.setIndex(m_nextParameterIndex);
         result = &parameter;
     }
 
     // To maintain the calling convention, we have to allocate unique space for
     // each parameter, even if the parameter doesn't make it into the symbol table.
-    ++m_nextParameter;
+    ++m_nextParameterIndex;
     ++m_codeBlock->numParameters;
     return result;
 }
@@ -683,11 +683,11 @@ unsigned CodeGenerator::addConstant(const Identifier& ident)
 
 RegisterID* CodeGenerator::addConstant(JSValue* v)
 {
-    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_nextConstant);
+    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_nextConstantIndex);
     if (result.second) {
-        RegisterID& constant = m_calleeRegisters[m_nextConstant];
+        RegisterID& constant = m_calleeRegisters[m_nextConstantIndex];
         
-        ++m_nextConstant;
+        ++m_nextConstantIndex;
 
         m_codeBlock->constantRegisters.append(v);
         return &constant;

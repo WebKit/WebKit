@@ -1,3 +1,21 @@
+2008-11-07  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rename the m_nextGlobal, m_nextParameter, and m_nextConstant member
+        variables of CodeGenerator to m_nextGlobalIndex, m_nextParameterIndex,
+        and m_nextConstantIndex respectively. This is to distinguish these from
+        member variables like m_lastConstant, which are actually RefPtrs to
+        Registers.
+
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::addGlobalVar):
+        (JSC::CodeGenerator::allocateConstants):
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::addParameter):
+        (JSC::CodeGenerator::addConstant):
+        * bytecompiler/CodeGenerator.h:
+
 2008-11-06  Gavin Barraclough  barraclough@apple.com
 
         Reviewed by Oliver Hunt.
