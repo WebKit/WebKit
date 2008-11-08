@@ -1,3 +1,15 @@
+2008-11-08  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22137: PLATFORM(MAC) build broken with HAVE(ACCESSIBILITY) disabled
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22137>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _accessibilityTree]): Return nil if HAVE(ACCESSIBILITY)
+        is false.
+
 2008-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

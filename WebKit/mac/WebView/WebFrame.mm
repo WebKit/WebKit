@@ -684,6 +684,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (id)_accessibilityTree
 {
+#if HAVE(ACCESSIBILITY)
     if (!AXObjectCache::accessibilityEnabled()) {
         AXObjectCache::enableAccessibility();
         if ([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue])
@@ -696,6 +697,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!root)
         return nil;
     return _private->coreFrame->document()->axObjectCache()->get(root)->wrapper();
+#else
+    return nil;
+#endif
 }
 
 - (DOMRange *)_rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity

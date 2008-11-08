@@ -392,8 +392,12 @@ public:
 #endif
 
     // a platform-specific method for determining if an attachment is ignored
+#if HAVE(ACCESSIBILITY)
     bool accessibilityIgnoreAttachment() const;
-    
+#else
+    bool accessibilityIgnoreAttachment() const { return true; }
+#endif
+
 protected:
     unsigned m_id;
     AccessibilityChildrenVector m_children;

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "AXObjectCache.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #import "AccessibilityObject.h"
 #import "AccessibilityObjectWrapper.h"
 #import "RenderObject.h"
@@ -85,3 +87,5 @@ void AXObjectCache::handleFocusedUIElementChanged()
 }
 
 }
+
+#endif // HAVE(ACCESSIBILITY)

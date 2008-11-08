@@ -29,6 +29,8 @@
 #import "config.h"
 #import "AccessibilityObjectWrapper.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #import "AXObjectCache.h"
 #import "AccessibilityListBox.h"
 #import "AccessibilityList.h"
@@ -1994,3 +1996,5 @@ static RenderObject* rendererForView(NSView* view)
 }
 
 @end
+
+#endif // HAVE(ACCESSIBILITY)
