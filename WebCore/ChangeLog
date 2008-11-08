@@ -1,3 +1,25 @@
+2008-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebCore part of adding WebPreferences for controlling databases and local storage
+
+        * WebCore.base.exp: Exported Settings::setDatabasesEnabled() and
+        Settings::setLocalStorageEnabled().
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage): Changed to return 0 if local storage
+        is disabled in settings.
+        (WebCore::DOMWindow::openDatabase): Changed to return 0 if databases
+        are disabled in settings.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize m_databasesEnabled and
+        m_localStorageEnabled.
+        (WebCore::Settings::setDatabasesEnabled): Added.
+        (WebCore::Settings::setLocalStorageEnabled): Added.
+        * page/Settings.h:
+        (WebCore::Settings::databasesEnabled): Added.
+        (WebCore::Settings::localStorageEnabled): Added.
+
 2008-11-07  Alp Toker  <alp@nuanti.com>
 
         Fix build with bleeding edge GTK+ versions. GTK+ and other libraries

@@ -1283,6 +1283,8 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     settings->setMinimumFontSize([preferences minimumFontSize]);
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
+    settings->setDatabasesEnabled([preferences databasesEnabled]);
+    settings->setLocalStorageEnabled([preferences localStorageEnabled]);
     settings->setPrivateBrowsingEnabled([preferences privateBrowsingEnabled]);
     settings->setSansSerifFontFamily([preferences sansSerifFontFamily]);
     settings->setSerifFontFamily([preferences serifFontFamily]);

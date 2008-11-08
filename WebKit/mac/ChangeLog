@@ -1,3 +1,24 @@
+2008-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebKit/mac part of adding WebPreferences for controlling databases and local storage
+
+        * WebView/WebPreferenceKeysPrivate.h: Added
+        WebKitDatabasesEnabledPreferenceKey and
+        WebKitLocalStorageEnabledPreferenceKey.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Made databases and local storage enabled
+        by default.
+        (-[WebPreferences databasesEnabled]): Added.
+        (-[WebPreferences setDatabasesEnabled:]): Added.
+        (-[WebPreferences localStorageEnabled]): Added.
+        (-[WebPreferences setLocalStorageEnabled:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Transfer the databases
+        and local storage preferences to WebCore settings.
+
 2008-11-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

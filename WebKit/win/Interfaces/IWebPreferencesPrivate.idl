@@ -60,4 +60,10 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setShouldPaintNativeControls([in] BOOL shouldPaint);
     HRESULT shouldPaintNativeControls([out, retval] BOOL* enabled);
+
+    HRESULT setDatabasesEnabled([in] BOOL enabled);
+    HRESULT databasesEnabled([out, retval] BOOL *enabled);
+
+    HRESULT setLocalStorageEnabled([in] BOOL enabled);
+    HRESULT localStorageEnabled([out, retval] BOOL *enabled);
 }

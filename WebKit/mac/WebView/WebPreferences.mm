@@ -315,6 +315,8 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitLocalStorageEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImagesPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
@@ -913,6 +915,26 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)_setUseSiteSpecificSpoofing:(BOOL)newValue
 {
     [self _setBoolValue:newValue forKey:WebKitUseSiteSpecificSpoofingPreferenceKey];
+}
+
+- (BOOL)databasesEnabled
+{
+    return [self _boolValueForKey:WebKitDatabasesEnabledPreferenceKey];
+}
+
+- (void)setDatabasesEnabled:(BOOL)databasesEnabled
+{
+    [self _setBoolValue:databasesEnabled forKey:WebKitDatabasesEnabledPreferenceKey];
+}
+
+- (BOOL)localStorageEnabled
+{
+    return [self _boolValueForKey:WebKitLocalStorageEnabledPreferenceKey];
+}
+
+- (void)setLocalStorageEnabled:(BOOL)localStorageEnabled
+{
+    [self _setBoolValue:localStorageEnabled forKey:WebKitLocalStorageEnabledPreferenceKey];
 }
 
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)ident

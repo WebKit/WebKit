@@ -33,10 +33,6 @@
 #include "PageCache.h"
 #include <limits>
 
-#if ENABLE(DATABASE)
-#include "DatabaseTracker.h"
-#endif
-
 namespace WebCore {
 
 static void setNeedsReapplyStylesInAllFrames(Page* page)
@@ -60,6 +56,8 @@ Settings::Settings(Page* page)
     , m_loadsImagesAutomatically(false)
     , m_privateBrowsingEnabled(false)
     , m_arePluginsEnabled(false)
+    , m_databasesEnabled(false)
+    , m_localStorageEnabled(false)
     , m_isJavaScriptEnabled(false)
     , m_javaScriptCanOpenWindowsAutomatically(false)
     , m_shouldPrintBackgrounds(false)
@@ -200,6 +198,16 @@ void Settings::setJavaEnabled(bool isJavaEnabled)
 void Settings::setPluginsEnabled(bool arePluginsEnabled)
 {
     m_arePluginsEnabled = arePluginsEnabled;
+}
+
+void Settings::setDatabasesEnabled(bool databasesEnabled)
+{
+    m_databasesEnabled = databasesEnabled;
+}
+
+void Settings::setLocalStorageEnabled(bool localStorageEnabled)
+{
+    m_localStorageEnabled = localStorageEnabled;
 }
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)

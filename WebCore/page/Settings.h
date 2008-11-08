@@ -92,6 +92,12 @@ namespace WebCore {
         void setPluginsEnabled(bool);
         bool arePluginsEnabled() const { return m_arePluginsEnabled; }
 
+        void setDatabasesEnabled(bool);
+        bool databasesEnabled() const { return m_databasesEnabled; }
+
+        void setLocalStorageEnabled(bool);
+        bool localStorageEnabled() const { return m_localStorageEnabled; }
+
         void setPrivateBrowsingEnabled(bool);
         bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
         
@@ -206,6 +212,8 @@ namespace WebCore {
         bool m_loadsImagesAutomatically : 1;
         bool m_privateBrowsingEnabled : 1;
         bool m_arePluginsEnabled : 1;
+        bool m_databasesEnabled : 1;
+        bool m_localStorageEnabled : 1;
         bool m_isJavaScriptEnabled : 1;
         bool m_javaScriptCanOpenWindowsAutomatically : 1;
         bool m_shouldPrintBackgrounds : 1;

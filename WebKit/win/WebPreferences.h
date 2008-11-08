@@ -308,6 +308,18 @@ public:
     virtual HRESULT STDMETHODCALLTYPE offlineWebApplicationCacheEnabled( 
         /* [retval][out] */ BOOL *enabled);
 
+    virtual HRESULT STDMETHODCALLTYPE setDatabasesEnabled( 
+        /* [in] */ BOOL enabled);
+        
+    virtual HRESULT STDMETHODCALLTYPE databasesEnabled( 
+        /* [retval][out] */ BOOL *enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE setLocalStorageEnabled( 
+        /* [in] */ BOOL enabled);
+        
+    virtual HRESULT STDMETHODCALLTYPE localStorageEnabled( 
+        /* [retval][out] */ BOOL *enabled);
+
     virtual HRESULT STDMETHODCALLTYPE localStorageDatabasePath(
         /* [out, retval] */ BSTR* location);
 

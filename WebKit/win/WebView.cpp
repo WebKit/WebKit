@@ -4155,6 +4155,16 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setOfflineWebApplicationCacheEnabled(enabled);
 
+    hr = prefsPrivate->databasesEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setDatabasesEnabled(enabled);
+
+    hr = prefsPrivate->localStorageEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setLocalStorageEnabled(enabled);
+
 #if USE(SAFARI_THEME)
     hr = prefsPrivate->shouldPaintNativeControls(&enabled);
     if (FAILED(hr))

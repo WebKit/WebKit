@@ -1,3 +1,25 @@
+2008-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebKit/win part of adding WebPreferences for controlling databases and local storage
+
+        * Interfaces/IWebPreferencesPrivate.idl: Declared setDatabasesEnabled,
+        databasesEnabled, setLocalStorageEnabled and localStorageEnabled.
+        * WebPreferenceKeysPrivate.h: Added WebKitDatabasesEnabledPreferenceKey
+        and WebKitLocalStorageEnabledPreferenceKey.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Made databases and local
+        storage enabled by default.
+        (WebPreferences::setDatabasesEnabled): Added.
+        (WebPreferences::databasesEnabled): Added.
+        (WebPreferences::setLocalStorageEnabled): Added.
+        (WebPreferences::localStorageEnabled): Added.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Transfer the databases and local
+        storage preferences to WebCore settings.
+
 2008-11-06  John Sullivan  <sullivan@apple.com>
     
         Eliminated one of the two booleans tracking whether zoom was text-only, to avoid future problems.

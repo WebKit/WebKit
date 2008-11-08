@@ -77,6 +77,12 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)offlineWebApplicationCacheEnabled;
 - (void)setOfflineWebApplicationCacheEnabled:(BOOL)offlineWebApplicationCacheEnabled;
 
+- (BOOL)databasesEnabled;
+- (void)setDatabasesEnabled:(BOOL)databasesEnabled;
+
+- (BOOL)localStorageEnabled;
+- (void)setLocalStorageEnabled:(BOOL)localStorageEnabled;
+
 - (BOOL)zoomsTextOnly;
 - (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
 
