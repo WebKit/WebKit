@@ -27243,7 +27243,7 @@ element is when the element reports itself to the screen reader. So all of these
 
         * platform/qt/RenderThemeQt.cpp:
 
-2008-04-24  George Staikos  <george@staikos.net>
+2008-04-24  George Staikos  <george.staikos@torchmobile.com>
 
         Reviewed by Simon.
 
