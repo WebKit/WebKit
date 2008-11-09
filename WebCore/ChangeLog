@@ -1,3 +1,17 @@
+2008-11-09  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Qt build broke after r38235.
+
+        Added HAVE(ACCESSIBILITY) header guards to platform implementation
+        source files.
+
+        * page/gtk/AccessibilityObjectAtk.cpp: Added HAVE(ACCESSIBILITY)
+        guards.
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp: Ditto.
+        * page/qt/AccessibilityObjectQt.cpp: Ditto.
+        * page/win/AccessibilityObjectWin.cpp: Ditto.
+        * page/wx/AccessibilityObjectWx.cpp: Ditto.
+
 2008-11-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

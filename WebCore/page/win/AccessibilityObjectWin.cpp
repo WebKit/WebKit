@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #include "config.h"
 #include "AccessibilityObject.h"
+
+#if HAVE(ACCESSIBILITY)
 
 namespace WebCore {
 
@@ -35,3 +36,5 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
 }
 
 } // namespace WebCore
+
+#endif // HAVE(ACCESSIBILITY)

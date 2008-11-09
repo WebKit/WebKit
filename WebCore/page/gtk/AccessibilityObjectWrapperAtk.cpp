@@ -20,6 +20,8 @@
 #include "config.h"
 #include "AccessibilityObjectWrapperAtk.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityRenderObject.h"
@@ -674,3 +676,5 @@ void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
 }
 
 } // namespace WebCore
+
+#endif // HAVE(ACCESSIBILITY)
