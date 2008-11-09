@@ -1,3 +1,30 @@
+2008-11-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=15063
+          <rdar://problem/5452227> REGRESSION (r25151): Switching to a tab waiting
+          for first data does not clear the window
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::frameLoadCompleted): Added comments, and got rid of
+        a local variable to make this code match the code in the function below
+        more closely.
+        (WebFrameLoaderClient::provisionalLoadStarted): Added comments.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]): Improved comment.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollView]): Tweaked formatting.
+        (-[WebFrameView initWithFrame:]): Ditto.
+        (-[WebFrameView setFrameSize:]): Added a comment and tweaked formatting.
+        (-[WebFrameView viewDidMoveToWindow]): Added. This is the change that fixes
+        the bug. Calls setDrawsBackground:YES as appropriate since moving the view
+        out of the window to switch to another view disrupts the special technique
+        for showing the old page during the start of loading. This is the identical
+        reason for the setFrameSize: method above, and the code is almost the same.
+
 2008-11-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22137: PLATFORM(MAC) build broken with HAVE(ACCESSIBILITY) disabled

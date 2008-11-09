@@ -800,11 +800,13 @@ String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLSche
 void WebFrameLoaderClient::frameLoadCompleted()
 {
     // Note: Can be called multiple times.
+
+    // See WebFrameLoaderClient::provisionalLoadStarted.
+    if ([getWebView(m_webFrame.get()) drawsBackground])
+        [[m_webFrame->_private->webFrameView _scrollView] setDrawsBackground:YES];
+
     // Even if already complete, we might have set a previous item on a frame that
     // didn't do any data loading on the past transaction. Make sure to clear these out.
-    NSScrollView *sv = [m_webFrame->_private->webFrameView _scrollView];
-    if ([getWebView(m_webFrame.get()) drawsBackground])
-        [sv setDrawsBackground:YES];
     core(m_webFrame.get())->loader()->setPreviousHistoryItem(0);
 }
 
@@ -846,9 +848,15 @@ void WebFrameLoaderClient::restoreViewState()
 
 void WebFrameLoaderClient::provisionalLoadStarted()
 {    
-    // FIXME: This is OK as long as no one resizes the window,
-    // but in the case where someone does, it means garbage outside
-    // the occupied part of the scroll view.
+    // Tell the scroll view not to draw a background so we can leave the contents of
+    // the old page showing during the beginning of the loading process.
+
+    // This will stay set to NO until:
+    //    1) The load gets far enough along: WebFrameLoader::frameLoadCompleted.
+    //    2) The window is resized: -[WebFrameView setFrameSize:].
+    // or 3) The view is moved out of the window: -[WebFrameView viewDidMoveToWindow].
+    // Please keep the comments in these four functions in agreement with each other.
+
     [[m_webFrame->_private->webFrameView _scrollView] setDrawsBackground:NO];
 }
 

@@ -189,11 +189,10 @@ enum {
 
 - (WebDynamicScrollBarsView *)_scrollView
 {
-    // this can be called by [super dealloc] when cleaning up the keyview loop,
+    // This can be called by [super dealloc] when cleaning up the key view loop,
     // after _private has been nilled out.
-    if (_private == nil) {
+    if (_private == nil)
         return nil;
-    }
     return _private->frameScrollView;
 }
 
@@ -300,9 +299,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         didFirstTimeInitialization = true;
         InitWebCoreSystemInterface();
         
-        // Need to tell WebCore what function to call for the 
-        // "History Item has Changed" notification
-        // Note: We also do this in WebHistoryItem's init method
+        // Need to tell WebCore what function to call for the "History Item has Changed" notification.
+        // Note: We also do this in WebHistoryItem's init method.
         WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
 
         [WebViewFactory createSharedFactory];
@@ -310,9 +308,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
-        // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is set
-        // to NO, or has no value.  For compatibility with Mac OS X 10.4.6, deferred updates are OFF by
-        // default.
+        // CoreGraphics deferred updates are disabled if WebKitEnableCoalescedUpdatesPreferenceKey is NO
+        // or has no value. For compatibility with Mac OS X 10.4.6, deferred updates are off by default.
         if (![defaults boolForKey:WebKitEnableDeferredUpdatesPreferenceKey])
             WKDisableCGDeferredUpdates();
 
@@ -322,7 +319,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     
     _private = [[WebFrameViewPrivate alloc] init];
 
-    WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)];
+    WebDynamicScrollBarsView *scrollView = [[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)];
     _private->frameScrollView = scrollView;
     [scrollView setContentView:[[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
     [scrollView setDrawsBackground:NO];
@@ -331,9 +328,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     [scrollView setLineScroll:40.0f];
     [self addSubview:scrollView];
-    // don't call our overridden version here; we need to make the standard NSView link between us
-    // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
-    // together with our becomeFirstResponder and setNextKeyView overrides.
+
+    // Don't call our overridden version of setNextKeyView here; we need to make the standard NSView
+    // link between us and our subview so that previousKeyView and previousValidKeyView work as expected.
+    // This works together with our becomeFirstResponder and setNextKeyView overrides.
     [super setNextKeyView:scrollView];
     
     ++WebFrameViewCount;
@@ -491,10 +489,18 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)setFrameSize:(NSSize)size
 {
-    if (!NSEqualSizes(size, [self frame].size) && [[[self webFrame] webView] drawsBackground]) {
+    // See WebFrameLoaderClient::provisionalLoadStarted.
+    if (!NSEqualSizes(size, [self frame].size) && [[[self webFrame] webView] drawsBackground])
         [[self _scrollView] setDrawsBackground:YES];
-    }
     [super setFrameSize:size];
+}
+
+- (void)viewDidMoveToWindow
+{
+    // See WebFrameLoaderClient::provisionalLoadStarted.
+    if ([[[self webFrame] webView] drawsBackground])
+        [[self _scrollView] setDrawsBackground:YES];
+    [super viewDidMoveToWindow];
 }
 
 - (BOOL)_scrollOverflowInDirection:(ScrollDirection)direction granularity:(ScrollGranularity)granularity
