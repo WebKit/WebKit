@@ -1,3 +1,17 @@
+2008-11-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fix https://bugs.webkit.org/show_bug.cgi?id=22141
+        REGRESSION: Safari error page is not fully styled when loaded from cache
+        
+        Reset text decoder on flush so it does not pass through the BOM when it is reused.
+
+        Test: fast/encoding/css-cached-bom.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::flush):
+
 2008-11-08  Kevin Ollivier  <kevino@theolliviers.com>
  
         Reviewed by Mark Rowe.

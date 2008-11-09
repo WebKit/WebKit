@@ -1,3 +1,15 @@
+2008-11-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Test for https://bugs.webkit.org/show_bug.cgi?id=22141
+        REGRESSION: Safari error page is not fully styled when loaded from cache
+
+        * fast/encoding/css-cached-bom.html: Added.
+        * fast/encoding/css-cached-bom-expected.txt: Added.
+        * fast/encoding/resources/css-cached-bom-frame.html: Added.
+        * fast/encoding/resources/utf-16-little-endian.css: Added.
+
 2008-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
