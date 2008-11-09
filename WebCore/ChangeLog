@@ -1,4 +1,14 @@
 2008-11-08  Kevin Ollivier  <kevino@theolliviers.com>
+ 
+        Reviewed by Mark Rowe.
+
+        Send URL errors to stderr rather than stdout. While debugging wx DumpRenderTree,
+        it was causing these errors to end up in the page's text representation.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
+2008-11-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after addition of JSCore parser and bycompiler dirs. 
 
