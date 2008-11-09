@@ -1,3 +1,11 @@
+2008-11-09  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed and tweaked by Darin Adler.
+
+        * platform/graphics/Color.cpp: Added definitions for the static data members
+        in this class. Static data members need a definition, even when they are the
+        simple integer constant kind that can be initialized in the header.
+
 2008-11-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Sam Weinig.
