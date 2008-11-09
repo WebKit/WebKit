@@ -873,6 +873,11 @@ void RenderTextControl::selectionChanged(bool userTriggered)
             element->dispatchEventForType(eventNames().selectEvent, true, false);
 }
 
+void RenderTextControl::addFocusRingRects(GraphicsContext* graphicsContext, int tx, int ty)
+{
+    graphicsContext->addFocusRingRect(IntRect(tx, ty, width(), height()));
+}
+
 void RenderTextControl::autoscroll()
 {
     RenderLayer* layer = m_innerText->renderer()->layer();

@@ -1,3 +1,19 @@
+2008-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=21906
+        
+        Test focus ring drawing on a transformed text input (and fix the HTML in
+        an unrelated test case).
+
+        * fast/repaint/focus-layers.html: Quoted id attribute and removed extra
+            closing div tag.
+        * fast/transforms/transformed-focused-text-input.html: Added.
+        * platform/mac/fast/transforms/transformed-focused-text-input-expected.checksum: Added.
+        * platform/mac/fast/transforms/transformed-focused-text-input-expected.png: Added.
+        * platform/mac/fast/transforms/transformed-focused-text-input-expected.txt: Added.
+
 2008-11-07  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

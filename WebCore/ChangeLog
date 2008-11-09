@@ -1,3 +1,21 @@
+2008-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=21906
+        
+        Override addFocusRingRects() in RenderTextControl to avoid
+        the RenderFlow behavior of recursing on descendent renderers.
+        RenderTextControl should only ever need a simple focus rect.
+        
+        This fixes focus ring issues with transforms on text controls.
+        
+        Test: fast/transforms/transformed-focused-text-input.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::addFocusRingRects):
+        * rendering/RenderTextControl.h:
+
 2008-11-08  Dimitri Dupuis-Latour  <dupuislatour@apple.com>
 
         Make sure the icon thumbnail width/height is at least 1px in
