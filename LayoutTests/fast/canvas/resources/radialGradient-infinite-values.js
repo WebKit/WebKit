@@ -2,7 +2,7 @@ description(
 'This test checks createRadialGradient with infinite values'
 );
 
-var ctx = document.getElementById('canvas').getContext('2d');
+var ctx = document.createElement('canvas').getContext('2d');
 
 shouldThrow("ctx.createRadialGradient(0, 0, 100, 0, 0, NaN)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 shouldThrow("ctx.createRadialGradient(0, 0, 100, 0, 0, Infinity)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");

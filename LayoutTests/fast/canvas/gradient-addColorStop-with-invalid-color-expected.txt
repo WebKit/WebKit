@@ -1,4 +1,4 @@
-This test checks invalid colors on gradieints
+This test checks invalid colors on gradients.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

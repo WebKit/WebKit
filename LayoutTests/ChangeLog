@@ -1,3 +1,24 @@
+2008-11-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22142
+          a few fast/canvas tests use non-standard HTML wrappers but don't need to
+
+        * fast/canvas/gradient-addColorStop-with-invalid-color-expected.txt:
+        Fixed spelling error: "gradieints".
+
+        * fast/canvas/gradient-addColorStop-with-invalid-color.html: Regenerated with
+        make-js-test-wrappers script; removes the canvas element that was in here.
+        * fast/canvas/linearGradient-infinite-values.html: Ditto.
+        * fast/canvas/radialGradient-infinite-values.html: Ditto.
+
+        * fast/canvas/resources/gradient-addColorStop-with-invalid-color.js:
+        Fixed spelling error and changed code to use createElement to make a canvas
+        element rather than using getElementById to find an existing canvas element.
+        * fast/canvas/resources/linearGradient-infinite-values.js: Ditto.
+        * fast/canvas/resources/radialGradient-infinite-values.js: Ditto.
+
 2008-11-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Sam Weinig.

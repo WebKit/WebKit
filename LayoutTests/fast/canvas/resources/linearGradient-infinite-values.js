@@ -2,7 +2,7 @@ description(
 'This test checks createLinearGradient with infinite values'
 );
 
-var ctx = document.getElementById('canvas').getContext('2d');
+var ctx = document.createElement('canvas').getContext('2d');
 
 shouldThrow("ctx.createLinearGradient(0, 0, 100, NaN)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
 shouldThrow("ctx.createLinearGradient(0, 0, 100, Infinity)", "'Error: NOT_SUPPORTED_ERR: DOM Exception 9'");
