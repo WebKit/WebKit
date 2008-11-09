@@ -1,3 +1,13 @@
+2008-11-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22104
+        Javascript URL percent encoding/decoding broken by some characters
+
+        * fast/loader/javascript-url-encoding-2-expected.txt:
+        * fast/loader/javascript-url-encoding-2.html:
+
 2008-11-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1480,7 +1480,7 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
     TextEncoding pathEncoding(UTF8Encoding()); // Path is always encoded as UTF-8; other parts may depend on the scheme.
 
     int pathEnd = -1;
-    if (encoding != pathEncoding && encoding.isValid() && !protocolIs(rel, "mailto") && !protocolIs(rel, "data")) {
+    if (encoding != pathEncoding && encoding.isValid() && !protocolIs(rel, "mailto") && !protocolIs(rel, "data") && !protocolIs(rel, "javascript")) {
         // Find the first instance of either # or ?, keep pathEnd at -1 otherwise.
         pathEnd = findFirstOf(s.data(), s.size(), 0, "#?");
     }
