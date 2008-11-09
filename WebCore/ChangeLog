@@ -1,3 +1,14 @@
+2008-11-08  Dimitri Dupuis-Latour  <dupuislatour@apple.com>
+
+        Make sure the icon thumbnail width/height is at least 1px in
+        the Web Inspector's resource panel.
+
+        <rdar://problem/5988888>
+
+        Reviewed by Tim Hatcher.
+
+        * inspector/front-end/inspector.css:
+
 2008-11-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 22137: PLATFORM(MAC) build broken with HAVE(ACCESSIBILITY) disabled

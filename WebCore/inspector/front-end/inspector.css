@@ -2765,6 +2765,8 @@ body.inactive .sidebar-tree-item.selected {
     right: 5px;
     max-width: 18px;
     max-height: 21px;
+    min-width: 1px;
+    min-height: 1px;
 }
 
 .children.small .resource-sidebar-tree-item.resources-category-images .icon {
