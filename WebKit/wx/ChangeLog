@@ -1,3 +1,9 @@
+2008-11-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after addition of JSCore parser and bycompiler dirs. 
+
+        * presets/wxwebkit.bkl:
+
 2008-11-05  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Sam Weinig.

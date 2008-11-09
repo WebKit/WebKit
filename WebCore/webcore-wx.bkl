@@ -48,7 +48,6 @@ wxWebCore port Bakefile project file.
 
             editing/wx/EditorWx.cpp
 
-            page/wx/AccessibilityObjectWx.cpp
             page/wx/DragControllerWx.cpp
             page/wx/EventHandlerWx.cpp
            

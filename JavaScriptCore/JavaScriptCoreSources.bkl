@@ -29,7 +29,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Source files for JSCore.
 -->
 <makefile>
-    <set append="1" var="JSCORE_SOURCES_API">
+    <set append="1" var="JSCORE_API_SOURCES">
         API/JSBase.cpp
         API/JSCallbackConstructor.cpp
         API/JSCallbackFunction.cpp
@@ -41,23 +41,23 @@ Source files for JSCore.
         API/JSValueRef.cpp
         API/OpaqueJSString.cpp
     </set>
+    <set append="1" var="JSCORE_BYTECOMPILER_SOURCES">
+        bytecompiler/CodeGenerator.cpp
+    </set>
     <set append="1" var="JSCORE_DEBUGGER_SOURCES">
         debugger/Debugger.cpp
         debugger/DebuggerCallFrame.cpp
     </set>
-    <set append="1" var="JSCORE_SOURCES_KJS">
+    <set append="1" var="JSCORE_KJS_SOURCES">
         DerivedSources/JavaScriptCore/Grammar.cpp
         wtf/dtoa.cpp
     </set>
-    <set append="1" var="JSCORE_SOURCES_PCRE">
+    <set append="1" var="JSCORE_PCRE_SOURCES">
         pcre/pcre_compile.cpp
         pcre/pcre_exec.cpp
         pcre/pcre_tables.cpp
         pcre/pcre_ucp_searchfuncs.cpp
         pcre/pcre_xclass.cpp
-    </set>
-    <set append="1" var="JSCORE_BYTECOMPILER_SOURCES">
-        bytecompiler/CodeGenerator.cpp
     </set>
     <set append="1" var="JSCORE_PARSER_SOURCES">
         parser/Lexer.cpp
