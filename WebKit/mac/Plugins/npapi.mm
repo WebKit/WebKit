@@ -30,13 +30,13 @@
 #import <WebKit/npapi.h>
 #import <WebKit/nptextinput.h>
 
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
 #import <WebCore/PluginMainThreadScheduler.h>
 
 using namespace WebCore;
 
-WebBaseNetscapePluginView *pluginViewForInstance(NPP instance);
+WebNetscapePluginView *pluginViewForInstance(NPP instance);
 
 // general plug-in to browser functions
 
@@ -70,14 +70,14 @@ NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 // instance-specific functions
 // The plugin view is always the ndata of the instance. Sometimes, plug-ins will call an instance-specific function
 // with a NULL instance. To workaround this, call the last plug-in view that made a call to a plug-in.
-// Currently, the current plug-in view is only set before NPP_New in [WebBaseNetscapePluginView start].
+// Currently, the current plug-in view is only set before NPP_New in [WebNetscapePluginView start].
 // This specifically works around Flash and Shockwave. When we call NPP_New, they call NPN_UserAgent with a NULL instance.
-WebBaseNetscapePluginView *pluginViewForInstance(NPP instance)
+WebNetscapePluginView *pluginViewForInstance(NPP instance)
 {
     if (instance && instance->ndata)
-        return (WebBaseNetscapePluginView *)instance->ndata;
+        return (WebNetscapePluginView *)instance->ndata;
     else
-        return [WebBaseNetscapePluginView currentPluginView];
+        return [WebNetscapePluginView currentPluginView];
 }
 
 NPError NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData)
@@ -194,14 +194,14 @@ NPError NPN_PopUpContextMenu(NPP instance, NPMenu *menu)
 
 void NPN_MarkedTextAbandoned(NPP instance)
 {
-    WebBaseNetscapePluginView *pluginView = pluginViewForInstance(instance);
+    WebNetscapePluginView *pluginView = pluginViewForInstance(instance);
     
     [[NSInputManager currentInputManager] markedTextAbandoned:pluginView];
 }
 
 void NPN_MarkedTextSelectionChanged(NPP instance, NSRange newSel)
 {
-    WebBaseNetscapePluginView *pluginView = pluginViewForInstance(instance);
+    WebNetscapePluginView *pluginView = pluginViewForInstance(instance);
     
     [[NSInputManager currentInputManager] markedTextSelectionChanged:newSel client:pluginView];
 }

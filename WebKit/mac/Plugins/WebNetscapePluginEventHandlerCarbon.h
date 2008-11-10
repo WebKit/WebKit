@@ -35,7 +35,7 @@
 
 class WebNetscapePluginEventHandlerCarbon : public WebNetscapePluginEventHandler {
 public:
-    WebNetscapePluginEventHandlerCarbon(WebBaseNetscapePluginView*); 
+    WebNetscapePluginEventHandlerCarbon(WebNetscapePluginView*); 
 
     virtual void drawRect(const NSRect&);
 

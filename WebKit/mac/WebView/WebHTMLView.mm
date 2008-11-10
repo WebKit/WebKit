@@ -32,7 +32,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 #import "WebClipView.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDataSourceInternal.h"
@@ -1985,8 +1985,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     
     for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
         NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
-            [(WebBaseNetscapePluginView *)subview stopTimers];
+        if ([subview isKindOfClass:[WebNetscapePluginView class]]) 
+            [(WebNetscapePluginView *)subview stopTimers];
     } 
 } 
 #endif 
@@ -2000,8 +2000,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     
     for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
         NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
-            [(WebBaseNetscapePluginView *)subview restartTimers]; 
+        if ([subview isKindOfClass:[WebNetscapePluginView class]]) 
+            [(WebNetscapePluginView *)subview restartTimers]; 
     } 
 } 
 #endif 
@@ -4541,9 +4541,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NSEnumerator *enumerator = [self objectEnumerator];
-    WebBaseNetscapePluginView *view;
+    WebNetscapePluginView *view;
     while ((view = [enumerator nextObject]) != nil)
-        if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
+        if ([view isKindOfClass:[WebNetscapePluginView class]])
             [view performSelector:selector withObject:object];
 #endif
 }

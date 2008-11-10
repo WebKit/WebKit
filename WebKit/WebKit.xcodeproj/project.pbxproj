@@ -16,6 +16,8 @@
 		1A2D754D0DE480B900F0A648 /* WebIconFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D754B0DE480B900F0A648 /* WebIconFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */; };
 		1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */; };
+		1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */; };
+		1A4DF5230EC8C74D006BD4B4 /* WebNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
@@ -112,7 +114,6 @@
 		939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */; };
 		9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398102B0824BF01008DF038 /* WebBaseNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */; };
-		9398102C0824BF01008DF038 /* WebBaseNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */; };
 		9398102E0824BF01008DF038 /* WebBasePluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E4AF46036652150000E506 /* WebBasePluginPackage.h */; };
 		939810310824BF01008DF038 /* WebNetscapePluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */; };
 		939810340824BF01008DF038 /* WebNullPluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = F5883BE0025E5E9D01000102 /* WebNullPluginView.h */; };
@@ -212,7 +213,6 @@
 		939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = F8CA15B6029A39D901000122 /* WebAuthenticationPanel.m */; };
 		939810D00824BF01008DF038 /* WebPanelAuthenticationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 93154EF203A41270008635CE /* WebPanelAuthenticationHandler.m */; };
 		939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */; };
-		939810D20824BF01008DF038 /* WebBaseNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		939810D30824BF01008DF038 /* WebBasePluginPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E4AF47036652150000E506 /* WebBasePluginPackage.m */; };
 		939810D60824BF01008DF038 /* WebNetscapePluginPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F7171F0288493C018635CA /* WebNetscapePluginPackage.m */; };
 		939810D90824BF01008DF038 /* WebNullPluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5883BE1025E5E9D01000102 /* WebNullPluginView.mm */; };
@@ -301,6 +301,8 @@
 		1A2D754B0DE480B900F0A648 /* WebIconFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconFetcher.h; sourceTree = "<group>"; };
 		1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIconFetcher.mm; sourceTree = "<group>"; };
 		1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconFetcherInternal.h; sourceTree = "<group>"; };
+		1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginView.h; sourceTree = "<group>"; };
+		1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginView.mm; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
 		1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginEventHandler.mm; sourceTree = "<group>"; };
@@ -553,8 +555,6 @@
 		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		F5E0A76E02B8FEE401C1A525 /* WebURLsWithTitles.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebURLsWithTitles.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5E0A76F02B8FEE401C1A525 /* WebURLsWithTitles.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebURLsWithTitles.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBaseNetscapePluginView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginPackage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F7171F0288493C018635CA /* WebNetscapePluginPackage.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNetscapePluginPackage.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F717200288493C018635CA /* WebPluginDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginDatabase.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -879,12 +879,10 @@
 				1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */,
 				F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */,
 				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */,
-				F5EBC45502134BC301CA1520 /* WebBaseNetscapePluginView.h */,
-				F5EBC45602134BC301CA1520 /* WebBaseNetscapePluginView.mm */,
-				BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */,
-				BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */,
 				F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */,
 				F5F7171F0288493C018635CA /* WebNetscapePluginPackage.m */,
+				1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */,
+				1A4DF5210EC8C74D006BD4B4 /* WebNetscapePluginView.mm */,
 				226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */,
 				226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */,
 			);
@@ -894,6 +892,9 @@
 		848DFF430365F71500CA2ACA /* WebKit Plug-ins */ = {
 			isa = PBXGroup;
 			children = (
+				51863EFC065419EB00E9E8DD /* WebJavaPlugIn.h */,
+				BCDFA9120C10B93E00D3A10C /* WebKitPluginContainerView.mm */,
+				BCDFA8F80C10B6F500D3A10C /* WebKitPluginContainerView.h */,
 				848DFF840365FE6A00CA2ACA /* WebPlugin.h */,
 				225F881409F97E8A00423A40 /* WebPluginPrivate.h */,
 				848DFF850365FE6A00CA2ACA /* WebPluginContainer.h */,
@@ -906,7 +907,6 @@
 				83E4AF4C036659440000E506 /* WebPluginPackage.m */,
 				848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */,
 				83E679780726D7CF006C7A36 /* WebPluginViewFactoryPrivate.h */,
-				51863EFC065419EB00E9E8DD /* WebJavaPlugIn.h */,
 			);
 			name = "WebKit Plug-ins";
 			sourceTree = "<group>";
@@ -1145,7 +1145,6 @@
 				51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */,
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
 				9398102B0824BF01008DF038 /* WebBaseNetscapePluginStream.h in Headers */,
-				9398102C0824BF01008DF038 /* WebBaseNetscapePluginView.h in Headers */,
 				9398102E0824BF01008DF038 /* WebBasePluginPackage.h in Headers */,
 				5241ADF50B1BC48A004012BD /* WebCache.h in Headers */,
 				51CBFCAD0D10E6C5002DBF51 /* WebCachedPagePlatformData.h in Headers */,
@@ -1294,6 +1293,7 @@
 				1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */,
 				5D1638F30E35B45D00F3038E /* EmptyProtocolDefinitions.h in Headers */,
 				F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */,
+				1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1495,7 +1495,6 @@
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,
 				939810D10824BF01008DF038 /* WebBaseNetscapePluginStream.mm in Sources */,
-				939810D20824BF01008DF038 /* WebBaseNetscapePluginView.mm in Sources */,
 				939810D30824BF01008DF038 /* WebBasePluginPackage.m in Sources */,
 				5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */,
 				14D825300AF955090004F057 /* WebChromeClient.mm in Sources */,
@@ -1590,6 +1589,7 @@
 				1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */,
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,
 				1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */,
+				1A4DF5230EC8C74D006BD4B4 /* WebNetscapePluginView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

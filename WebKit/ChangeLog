@@ -1,3 +1,12 @@
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+                
+        Rename WebBaseNetscapePluginView to WebNetscapePluginView.
+
+        * StringsNotToBeLocalized.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-11-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

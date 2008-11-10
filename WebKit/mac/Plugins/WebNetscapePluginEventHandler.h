@@ -26,18 +26,18 @@
 #ifndef WebNetscapePluginEventHandler_h
 #define WebNetscapePluginEventHandler_h
 
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 @class NSEvent;
-@class WebBaseNetscapePluginView;
+@class WebNetscapePluginView;
 
 struct CGRect;
 
 class WebNetscapePluginEventHandler {
 public:
-    static WebNetscapePluginEventHandler* create(WebBaseNetscapePluginView*);
+    static WebNetscapePluginEventHandler* create(WebNetscapePluginView*);
     virtual ~WebNetscapePluginEventHandler() { }
     
     virtual void drawRect(const NSRect&) = 0;
@@ -65,13 +65,13 @@ public:
     
     bool currentEventIsUserGesture() const { return m_currentEventIsUserGesture; }
 protected:
-    WebNetscapePluginEventHandler(WebBaseNetscapePluginView* pluginView)
+    WebNetscapePluginEventHandler(WebNetscapePluginView* pluginView)
         : m_pluginView(pluginView)
         , m_currentEventIsUserGesture(false)
     {
     }
     
-    WebBaseNetscapePluginView* m_pluginView;
+    WebNetscapePluginView* m_pluginView;
     bool m_currentEventIsUserGesture;
 };
 

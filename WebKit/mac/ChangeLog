@@ -1,3 +1,47 @@
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Rename WebBaseNetscapePluginView to WebNetscapePluginView.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        (WebNetscapePluginStream::setPlugin):
+        * Plugins/WebBaseNetscapePluginView.h: Removed.
+        * Plugins/WebBaseNetscapePluginView.mm: Removed.
+        * Plugins/WebNetscapePluginEventHandler.h:
+        (WebNetscapePluginEventHandler::WebNetscapePluginEventHandler):
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.h:
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::WebNetscapePluginEventHandlerCarbon):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.h:
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa):
+        * Plugins/WebNetscapePluginView.h: Copied from mac/Plugins/WebBaseNetscapePluginView.h.
+        * Plugins/WebNetscapePluginView.mm: Copied from mac/Plugins/WebBaseNetscapePluginView.mm.
+        (+[WebNetscapePluginView setCurrentPluginView:]):
+        (+[WebNetscapePluginView currentPluginView]):
+        (-[WebNetscapePluginView loadPluginRequest:]):
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase removePluginInstanceViewsFor:]):
+        (-[WebPluginDatabase destroyAllPluginInstanceViews]):
+        * Plugins/npapi.mm:
+        (pluginViewForInstance):
+        (NPN_MarkedTextAbandoned):
+        (NPN_MarkedTextSelectionChanged):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (NetscapePluginWidget::NetscapePluginWidget):
+        (NetscapePluginWidget::handleEvent):
+        (WebFrameLoaderClient::createPlugin):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]):
+        (-[WebHTMLView _resumeNullEventsForAllNetscapePlugins]):
+        (-[NSArray _web_makePluginViewsPerformSelector:withObject:]):
+        * WebView/WebView.mm:
+
 2008-11-09  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

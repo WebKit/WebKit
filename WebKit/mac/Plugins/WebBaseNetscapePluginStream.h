@@ -37,14 +37,14 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 
 namespace WebCore {
     class FrameLoader;
     class NetscapePlugInStreamLoader;
 }
 
-@class WebBaseNetscapePluginView;
+@class WebNetscapePluginView;
 @class NSURLResponse;
 
 class WebNetscapePluginStream : public RefCounted<WebNetscapePluginStream>
@@ -112,7 +112,7 @@ private:
     BOOL m_sendNotification;
     void *m_notifyData;
     char *m_headers;
-    RetainPtr<WebBaseNetscapePluginView> m_pluginView;
+    RetainPtr<WebNetscapePluginView> m_pluginView;
     NPReason m_reason;
     bool m_isTerminated;
     bool m_newStreamSuccessful;

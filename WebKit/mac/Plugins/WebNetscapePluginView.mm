@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
@@ -85,7 +85,7 @@ static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 #endif
 };
 
-@interface WebBaseNetscapePluginView (Internal)
+@interface WebNetscapePluginView (Internal)
 - (void)_viewHasMoved;
 - (NPError)_createPlugin;
 - (void)_destroyPlugin;
@@ -93,7 +93,7 @@ static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 - (void)_redeliverStream;
 @end
 
-static WebBaseNetscapePluginView *currentPluginView = nil;
+static WebNetscapePluginView *currentPluginView = nil;
 
 typedef struct OpaquePortState* PortState;
 
@@ -187,12 +187,12 @@ typedef struct {
 - (NSInteger)_web_locationAfterFirstBlankLine;
 @end
 
-@interface WebBaseNetscapePluginView (ForwardDeclarations)
+@interface WebNetscapePluginView (ForwardDeclarations)
 - (void)setWindowIfNecessary;
 - (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData sendNotification:(BOOL)sendNotification;
 @end
 
-@implementation WebBaseNetscapePluginView
+@implementation WebNetscapePluginView
 
 + (void)initialize
 {
@@ -1089,12 +1089,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-+ (void)setCurrentPluginView:(WebBaseNetscapePluginView *)view
++ (void)setCurrentPluginView:(WebNetscapePluginView *)view
 {
     currentPluginView = view;
 }
 
-+ (WebBaseNetscapePluginView *)currentPluginView
++ (WebNetscapePluginView *)currentPluginView
 {
     return currentPluginView;
 }
@@ -1967,7 +1967,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 @end
 
-@implementation WebBaseNetscapePluginView (WebNPPCallbacks)
+@implementation WebNetscapePluginView (WebNPPCallbacks)
 
 - (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString
 {
@@ -2114,9 +2114,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if ([pluginRequest sendNotification]) {
             // Check if another plug-in view or even this view is waiting for the frame to load.
             // If it is, tell it that the load was cancelled because it will be anyway.
-            WebBaseNetscapePluginView *view = [frame _internalLoadDelegate];
+            WebNetscapePluginView *view = [frame _internalLoadDelegate];
             if (view != nil) {
-                ASSERT([view isKindOfClass:[WebBaseNetscapePluginView class]]);
+                ASSERT([view isKindOfClass:[WebNetscapePluginView class]]);
                 [view webFrame:frame didFinishLoadWithReason:NPRES_USER_BREAK];
             }
             [_pendingFrameLoads.get() _webkit_setObject:pluginRequest forUncopiedKey:frame];
@@ -2678,7 +2678,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
 @end
 
-@implementation WebBaseNetscapePluginView (Internal)
+@implementation WebNetscapePluginView (Internal)
 
 - (NPError)_createPlugin
 {

@@ -29,7 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "WebBaseNetscapePluginStream.h"
 
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 #import "WebFrameInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -134,7 +134,7 @@ WebNetscapePluginStream::WebNetscapePluginStream(NSURLRequest *request, NPP plug
 {
     memset(&m_stream, 0, sizeof(NPStream));
 
-    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)plugin->ndata;
+    WebNetscapePluginView *view = (WebNetscapePluginView *)plugin->ndata;
     
     // This check has already been done by the plug-in view.
     ASSERT(FrameLoader::canLoad([request URL], String(), core([view webFrame])->document()));
@@ -170,13 +170,13 @@ void WebNetscapePluginStream::setPlugin(NPP plugin)
 {
     if (plugin) {
         m_plugin = plugin;
-        m_pluginView = static_cast<WebBaseNetscapePluginView *>(m_plugin->ndata);
+        m_pluginView = static_cast<WebNetscapePluginView *>(m_plugin->ndata);
 
         WebNetscapePluginPackage *pluginPackage = [m_pluginView.get() pluginPackage];
         
         m_pluginFuncs = [pluginPackage pluginFuncs];
     } else {
-        WebBaseNetscapePluginView *view = m_pluginView.get();
+        WebNetscapePluginView *view = m_pluginView.get();
         m_plugin = 0;
         m_pluginFuncs = 0;
         

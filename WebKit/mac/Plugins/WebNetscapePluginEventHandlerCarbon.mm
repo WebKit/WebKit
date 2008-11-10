@@ -27,7 +27,7 @@
 
 #import "WebNetscapePluginEventHandlerCarbon.h"
 
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
 #import "WebKitSystemInterface.h"
 
@@ -35,7 +35,7 @@
 #define NullEventIntervalActive         0.02
 #define NullEventIntervalNotActive      0.25
 
-WebNetscapePluginEventHandlerCarbon::WebNetscapePluginEventHandlerCarbon(WebBaseNetscapePluginView* pluginView)
+WebNetscapePluginEventHandlerCarbon::WebNetscapePluginEventHandlerCarbon(WebNetscapePluginView* pluginView)
     : WebNetscapePluginEventHandler(pluginView)
     , m_keyEventHandler(0)
     , m_suspendKeyUpEvents(false)

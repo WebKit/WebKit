@@ -28,11 +28,11 @@
 #import "WebNetscapePluginEventHandler.h"
 
 #import <wtf/Assertions.h>
-#import "WebBaseNetscapePluginView.h"
+#import "WebNetscapePluginView.h"
 #import "WebNetscapePluginEventHandlerCarbon.h"
 #import "WebNetscapePluginEventHandlerCocoa.h"
 
-WebNetscapePluginEventHandler* WebNetscapePluginEventHandler::create(WebBaseNetscapePluginView* pluginView)
+WebNetscapePluginEventHandler* WebNetscapePluginEventHandler::create(WebNetscapePluginView* pluginView)
 {
     switch ([pluginView eventModel]) {
 #ifndef NP_NO_CARBON
