@@ -1,3 +1,16 @@
+2008-11-10  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 22158: Would like to turn on WebCore logging channels via an
+        environment variable
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22158>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Call WebCore's
+        InitializeLoggingChannelsIfNecessary.
+
 2008-11-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

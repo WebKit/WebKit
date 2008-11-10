@@ -2146,6 +2146,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     sharedPreferences->willAddToWebView();
     m_preferences = sharedPreferences;
 
+    InitializeLoggingChannelsIfNecessary();
     WebKitSetWebDatabasesPathIfNecessary();
     WebKitSetApplicationCachePathIfNecessary();
     

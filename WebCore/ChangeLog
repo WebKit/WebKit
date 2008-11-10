@@ -1,3 +1,23 @@
+2008-11-10  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 22158: Would like to turn on WebCore logging channels via an
+        environment variable
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22158>
+
+        Logging channels can now be enabled by setting the WebCoreLogLevel
+        environment variable to a hexadecimal number.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcproj/WebCore.vcproj: Added LoggingWin.cpp.
+        * platform/win/LoggingWin.cpp: Copied from WebCore/platform/mac/LoggingMac.mm.
+        (WebCore::initializeWithUserDefault): Read in the WebCoreLogLevel
+        environment variable, parse its value as a hexadecimal number, and
+        turn the channel on/off based on whether the mask bit is set.
+        (WebCore::InitializeLoggingChannelsIfNecessary): Initialize each
+        logging channel in turn.
+
 2008-11-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.
