@@ -1,5 +1,25 @@
 2008-11-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        Add a new WebBaseNetscapePluginView class.
+
+        * Plugins/WebBaseNetscapePluginView.h: Added.
+        * Plugins/WebBaseNetscapePluginView.mm: Added.
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+        (-[WebBaseNetscapePluginView setAttributeKeys:andValues:]):
+        (-[WebBaseNetscapePluginView handleMouseMoved:]):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView cut:]):
+        (-[WebNetscapePluginView copy:]):
+        (-[WebNetscapePluginView paste:]):
+        (-[WebNetscapePluginView selectAll:]):
+        (-[WebNetscapePluginView start]):
+        (-[WebNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
         
         Rename WebBaseNetscapePluginView to WebNetscapePluginView.

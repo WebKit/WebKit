@@ -887,38 +887,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _eventHandler->flagsChanged(theEvent);
 }
 
-- (void)cut:(id)sender
-{
-    if (!isStarted)
-        return;
-
-    _eventHandler->keyDown([NSApp currentEvent]);
-}
-
-- (void)copy:(id)sender
-{
-    if (!isStarted)
-        return;
-
-    _eventHandler->keyDown([NSApp currentEvent]);
-}
-
-- (void)paste:(id)sender
-{
-    if (!isStarted)
-        return;
-
-    _eventHandler->keyDown([NSApp currentEvent]);
-}
-
-- (void)selectAll:(id)sender
-{
-    if (!isStarted)
-        return;
-
-    _eventHandler->keyDown([NSApp currentEvent]);
-}
-
 #pragma mark WEB_NETSCAPE_PLUGIN
 
 - (BOOL)isNewWindowEqualToOldWindow
@@ -1099,27 +1067,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return currentPluginView;
 }
 
-- (BOOL)canStart
-{
-    return YES;
-}
-
-- (void)didStart
-{
-    if (_loadManually) {
-        [self _redeliverStream];
-        return;
-    }
-    
-    // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
-    // Check for this and don't start a load in this case.
-    if (_sourceURL && ![_sourceURL.get() _web_isEmpty]) {
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_sourceURL.get()];
-        [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
-        [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
-    } 
-}
-
 - (void)addWindowObservers
 {
     ASSERT([self window]);
@@ -1163,9 +1110,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (isStarted)
         return YES;
 
-    if (![self canStart])
-        return NO;
-    
     ASSERT([self webView]);
     
     if (![[[self webView] preferences] arePlugInsEnabled])
@@ -1263,8 +1207,19 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 
     [self resetTrackingRect];
+
+    if (_loadManually) {
+        [self _redeliverStream];
+        return YES;
+    }
     
-    [self didStart];
+    // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
+    // Check for this and don't start a load in this case.
+    if (_sourceURL && ![_sourceURL.get() _web_isEmpty]) {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_sourceURL.get()];
+        [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
+        [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
+    } 
     
     return YES;
 }
@@ -1426,37 +1381,29 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #pragma mark NSVIEW
 
 - (id)initWithFrame:(NSRect)frame
-      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
-                URL:(NSURL *)theURL
-            baseURL:(NSURL *)theBaseURL
+      pluginPackage:(WebNetscapePluginPackage *)pluginPackage
+                URL:(NSURL *)URL
+            baseURL:(NSURL *)baseURL
            MIMEType:(NSString *)MIME
       attributeKeys:(NSArray *)keys
     attributeValues:(NSArray *)values
        loadManually:(BOOL)loadManually
-         DOMElement:(DOMElement *)anElement
+         DOMElement:(DOMElement *)element
 {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually DOMElement:element];
+    if (!self)
+        return nil;
  
     _pendingFrameLoads.adoptNS([[NSMutableDictionary alloc] init]);
     
     // load the plug-in if it is not already loaded
-    if (![thePluginPackage load]) {
+    if (![pluginPackage load]) {
         [self release];
         return nil;
     }
-    [self setPluginPackage:thePluginPackage];
+
+    [self setPluginPackage:pluginPackage];
     
-    _element = anElement;
-    _sourceURL.adoptNS([theURL copy]);
-    _baseURL.adoptNS([theBaseURL copy]);
-    
-    [self setAttributeKeys:keys andValues:values];
-    if (loadManually)
-        _mode = NP_FULL;
-    else
-        _mode = NP_EMBED;
-    
-    _loadManually = loadManually;
     return self;
 }
 

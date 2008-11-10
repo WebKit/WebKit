@@ -27,17 +27,15 @@
  */
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#import <Cocoa/Cocoa.h>
+
+#import "WebBaseNetscapePluginView.h"
 
 #import <WebKit/npfunctions.h>
 #import <WebKit/npapi.h>
-#import <WebKit/WebBasePluginPackage.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/OwnPtr.h>
-#import <wtf/RetainPtr.h>
 
-@class DOMElement;
 @class WebDataSource;
 @class WebFrame;
 @class WebNetscapePluginPackage;
@@ -61,23 +59,15 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 // for the plug-in to function correctly. (rdar://problem/4699455)
 #define WebNetscapePluginView WebNetscapePluginDocumentView
 
-@interface WebNetscapePluginView : NSView <WebPluginManualLoader, NSTextInput>
+@interface WebNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader, NSTextInput>
 {
-    RetainPtr<WebNetscapePluginPackage> _pluginPackage;
-    
-    RetainPtr<NSURL> _sourceURL;
-    WebFrame *_webFrame;
-    
-    BOOL _loadManually;
     RefPtr<WebNetscapePluginStream> _manualStream;
 #ifndef BUILDING_ON_TIGER
     RetainPtr<CALayer> _layer;
 #endif
     unsigned _dataLengthReceived;
     RetainPtr<NSError> _error;
-    
-    int _mode;
-    
+        
     unsigned argsCount;
     char **cAttributes;
     char **cValues;
@@ -109,13 +99,9 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 
     unsigned pluginFunctionCallDepth;
     
-    RetainPtr<DOMElement> _element;
-    
     int32 specifiedHeight;
     int32 specifiedWidth;
             
-    RetainPtr<NSString> _MIMEType;
-    RetainPtr<NSURL> _baseURL;
     NSTrackingRectTag trackingTag;
     
     HashSet<RefPtr<WebNetscapePluginStream> > streams;
