@@ -1,3 +1,11 @@
+2008-11-09  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * platform/graphics/Color.cpp: For some reason MSVC doesn't follow the rules
+        about needed a separate definition for static const integer data members.
+        Until I get to the bottom of this, put the definitions inside an ifdef.
+
 2008-11-09  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Qt build broke after r38235.
