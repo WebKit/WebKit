@@ -90,7 +90,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     BOOL inSetWindow;
     BOOL shouldStopSoon;
 
-    BOOL shouldFireTimers;
     uint32 currentTimerID;
     HashMap<uint32, PluginTimer*>* timers;
 
@@ -122,8 +121,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 - (BOOL)start;
 - (BOOL)isStarted;
 - (void)stop;
-- (void)stopTimers;
-- (void)restartTimers;
 
 - (NPP)plugin;
 

@@ -709,10 +709,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)stopTimers
 {
+    [super stopTimers];
+    
     if (_eventHandler)
         _eventHandler->stopTimers();
-    
-    shouldFireTimers = NO;
     
     if (!timers)
         return;
@@ -724,17 +724,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }    
 }
 
-- (void)restartTimers
+- (void)startTimers
 {
-    ASSERT([self window]);
-    
-    if (shouldFireTimers)
-        [self stopTimers];
-    
-    if (!_isStarted || [[self window] isMiniaturized])
-        return;
-
-    shouldFireTimers = YES;
+    [super startTimers];
     
     // If the plugin is completely obscured (scrolled out of view, for example), then we will
     // send null events at a reduced rate.
@@ -2478,7 +2470,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     PluginTimer* timer = new PluginTimer(plugin, timerID, interval, repeat, timerFunc);
     timers->set(timerID, timer);
 
-    if (shouldFireTimers)
+    if (_shouldFireTimers)
         timer->start(_isCompletelyObscured);
     
     return 0;

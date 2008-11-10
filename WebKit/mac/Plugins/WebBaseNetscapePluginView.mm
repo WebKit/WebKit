@@ -130,6 +130,28 @@
     }
 }
 
+- (void)stopTimers
+{
+    _shouldFireTimers = NO;
+}
+
+- (void)startTimers
+{
+    _shouldFireTimers = YES;
+}
+
+- (void)restartTimers
+{
+    ASSERT([self window]);
+    
+    [self stopTimers];
+    
+    if (!_isStarted || [[self window] isMiniaturized])
+        return;
+    
+    [self startTimers];
+}
+
 - (WebDataSource *)dataSource
 {
     WebFrame *webFrame = kit(core(_element.get())->document()->frame());

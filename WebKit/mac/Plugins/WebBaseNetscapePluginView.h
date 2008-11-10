@@ -45,8 +45,9 @@
     WebFrame *_webFrame;
     
     int _mode;
-    BOOL _loadManually;
     
+    BOOL _loadManually;
+    BOOL _shouldFireTimers;
     BOOL _isStarted;
     BOOL _hasFocus;
     BOOL _isCompletelyObscured;
@@ -80,6 +81,11 @@
 
 - (void)removeTrackingRect;
 - (void)resetTrackingRect;
+
+- (void)stopTimers;
+- (void)startTimers;
+
+- (void)restartTimers;
 
 @end
 
