@@ -59,7 +59,7 @@ Subject: [% flag.type.name %] [%+ subject_status %]: [[% terms.Bug %] [%+ flag.t
 [% FILTER bullet = wrap(80) %]
 Attachment [% attidsummary %]
 [%- END %]
-[%+ Param('urlbase') %]attachment.cgi?id=[% flag.target.attachment.id %]&action=edit
+[%+ Param('urlbase') %]attachment.cgi?id=[% flag.target.attachment.id %]&action=review
 [%- END %]
 [%- FILTER bullet = wrap(80) %]
 

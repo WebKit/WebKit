@@ -1,3 +1,8 @@
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        * template/en/custom/request/email.txt.tmpl: Send review links instead
+        of edit links when flags are set on a bug.
+
 2008-10-27  Darin Adler  <darin@apple.com>
 
         * template/en/custom/attachment/reviewform.html.tmpl: Leave out the
