@@ -28,6 +28,7 @@
 
 #include "ApplyStyleCommand.h"
 #include "BeforeTextInsertedEvent.h"
+#include "BreakBlockquoteCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -385,21 +386,21 @@ void ReplaceSelectionCommand::removeNodeAndPruneAncestors(Node* node)
         m_firstNodeInserted = m_lastLeafInserted && m_lastLeafInserted->inDocument() ? afterFirst : 0;
 }
 
-bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& from, const VisiblePosition& to)
+bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const VisiblePosition& destination)
 {
-    if (from.isNull() || to.isNull())
+    if (source.isNull() || destination.isNull())
         return false;
         
-    Node* fromNode = from.deepEquivalent().node();
-    Node* toNode = to.deepEquivalent().node();
-    Node* fromNodeBlock = enclosingBlock(fromNode);
-    return !enclosingNodeOfType(from.deepEquivalent(), &isMailPasteAsQuotationNode) &&
-           fromNodeBlock && (!fromNodeBlock->hasTagName(blockquoteTag) || isMailBlockquote(fromNodeBlock))  &&
-           enclosingListChild(fromNode) == enclosingListChild(toNode) &&
-           enclosingTableCell(from.deepEquivalent()) == enclosingTableCell(from.deepEquivalent()) &&
+    Node* sourceNode = source.deepEquivalent().node();
+    Node* destinationNode = destination.deepEquivalent().node();
+    Node* sourceBlock = enclosingBlock(sourceNode);
+    return !enclosingNodeOfType(source.deepEquivalent(), &isMailPasteAsQuotationNode) &&
+           sourceBlock && (!sourceBlock->hasTagName(blockquoteTag) || isMailBlockquote(sourceBlock))  &&
+           enclosingListChild(sourceBlock) == enclosingListChild(destinationNode) &&
+           enclosingTableCell(source.deepEquivalent()) == enclosingTableCell(destination.deepEquivalent()) &&
            // Don't merge to or from a position before or after a block because it would
            // be a no-op and cause infinite recursion.
-           !isBlock(fromNode) && !isBlock(toNode);
+           !isBlock(sourceNode) && !isBlock(destinationNode);
 }
 
 // Style rules that match just inserted elements could change their appearance, like
@@ -685,15 +686,19 @@ void ReplaceSelectionCommand::doApply()
         startBlock && startBlock->renderer() && startBlock->renderer()->isListItem() ||
         selectionIsPlainText)
         m_preventNesting = false;
-    
+        
     Position insertionPos = selection.start();
+    
+    bool startIsInsideMailBlockquote = nearestMailBlockquote(insertionPos.node());
     
     if (selection.isRange()) {
         // When the end of the selection being pasted into is at the end of a paragraph, and that selection
         // spans multiple blocks, not merging may leave an empty line.
         // When the start of the selection being pasted into is at the start of a block, not merging 
         // will leave hanging block(s).
-        bool mergeBlocksAfterDelete = isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
+        // Merge blocks if the start of the selection was in a Mail blockquote, since we handle 
+        // that case specially to prevent nesting.
+        bool mergeBlocksAfterDelete = startIsInsideMailBlockquote || isEndOfParagraph(visibleEnd) || isStartOfBlock(visibleStart);
         // FIXME: We should only expand to include fully selected special elements if we are copying a 
         // selection and pasting it on top of itself.
         deleteSelection(false, mergeBlocksAfterDelete, true, false);
@@ -718,12 +723,25 @@ void ReplaceSelectionCommand::doApply()
         // We split the current paragraph in two to avoid nesting the blocks from the fragment inside the current block.
         // For example paste <div>foo</div><div>bar</div><div>baz</div> into <div>x^x</div>, where ^ is the caret.  
         // As long as the  div styles are the same, visually you'd expect: <div>xbar</div><div>bar</div><div>bazx</div>, 
-        // not <div>xbar<div>bar</div><div>bazx</div></div>
-        if (m_preventNesting && !isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
+        // not <div>xbar<div>bar</div><div>bazx</div></div>.
+        // Don't do this if the selection started in a Mail blockquote, we prevent nesting in that case separately, below.
+        if (m_preventNesting && !startIsInsideMailBlockquote && !isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
             insertParagraphSeparator();
             setEndingSelection(endingSelection().visibleStart().previous());
         }
         insertionPos = endingSelection().start();
+    }
+    
+    if (m_preventNesting && startIsInsideMailBlockquote) {
+        // We don't want any of the pasted content to end up nested in a Mail blockquote, so first break
+        // out of any surrounding Mail blockquotes.
+        applyCommandToComposite(BreakBlockquoteCommand::create(document()));
+        // This will leave a br between the split.
+        Node* br = endingSelection().start().node();
+        ASSERT(br->hasTagName(brTag));
+        // Insert content between the two blockquotes, but remove the br (since it was just a placeholder).
+        insertionPos = positionBeforeNode(br);
+        removeNode(br);
     }
     
     // Inserting content could cause whitespace to collapse, e.g. inserting <div>foo</div> into hello^ world.
@@ -740,7 +758,8 @@ void ReplaceSelectionCommand::doApply()
     startBlock = enclosingBlock(insertionPos.node());
     
     // Adjust insertionPos to prevent nesting.
-    if (m_preventNesting && startBlock) {
+    // If the start was in a Mail blockquote, we will have already handled adjusting insertionPos above.
+    if (m_preventNesting && startBlock && !startIsInsideMailBlockquote) {
         ASSERT(startBlock != currentRoot);
         VisiblePosition visibleInsertionPos(insertionPos);
         if (isEndOfBlock(visibleInsertionPos) && !(isStartOfBlock(visibleInsertionPos) && fragment.hasInterchangeNewlineAtEnd()))

@@ -1,3 +1,19 @@
+2008-11-10  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/4037481> REGRESSION (Mail): pasting quoted text 
+        into quoted text yields double-quoting
+        
+        Don't nest inserted content in Mail blockquotes.  Perform a 
+        BreakBlockquoteCommand if we're in
+        one and insert the incoming fragment between the split blockquotes.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldMerge): Renamed from -> 
+        source and to -> destination.
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2008-11-10  Adam Roben  <aroben@apple.com>
 
         Fix Bug 22158: Would like to turn on WebCore logging channels via an

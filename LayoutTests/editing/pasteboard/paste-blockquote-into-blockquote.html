@@ -1,0 +1,25 @@
+<html>
+<head>
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    margin: 0px;
+    padding: 0 0 0 20px;
+}
+</style>
+</head>
+
+<body>
+<p>This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted.</p>
+<div contenteditable="true"><blockquote type='cite' id="block">One</blockquote></div>
+
+<script>
+var sel = window.getSelection();
+var block = document.getElementById("block");
+
+sel.setPosition(block, 3);
+document.execCommand("InsertHTML", false, "<span><blockquote type='cite'><div>Two</div><div>Three</div></blockquote></span>");
+</script>
+</body>
+</html>

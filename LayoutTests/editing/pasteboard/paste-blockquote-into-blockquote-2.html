@@ -1,0 +1,19 @@
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    margin: 0px;
+    padding: 0 0 0 20px;
+}
+</style>
+
+<p>This tests pasting a nested blockquote into a blockquote. The first line below should be singly-blockquoted, and the second should be doubly-quoted.</p>
+<div contenteditable="true"><blockquote type='cite' id="block">One</blockquote></div>
+
+<script>
+var sel = window.getSelection();
+var block = document.getElementById("block");
+
+sel.setPosition(block, 3);
+document.execCommand("InsertHTML", false, "<span><blockquote type='cite'><blockquote type='cite'><div>Two</div><div>Three</div></blockquote></blockquote></span>");
+</script>
