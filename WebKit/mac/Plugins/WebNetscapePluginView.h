@@ -87,10 +87,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 
     OwnPtr<WebNetscapePluginEventHandler> _eventHandler;
     
-    BOOL isStarted;
     BOOL inSetWindow;
-    BOOL hasFocus;
-    BOOL isCompletelyObscured;
     BOOL shouldStopSoon;
 
     BOOL shouldFireTimers;
@@ -102,8 +99,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     int32 specifiedHeight;
     int32 specifiedWidth;
             
-    NSTrackingRectTag trackingTag;
-    
     HashSet<RefPtr<WebNetscapePluginStream> > streams;
     RetainPtr<NSMutableDictionary> _pendingFrameLoads;
     
@@ -129,11 +124,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 - (void)stop;
 - (void)stopTimers;
 - (void)restartTimers;
-
-- (WebFrame *)webFrame;
-- (WebDataSource *)dataSource;
-- (WebView *)webView;
-- (NSWindow *)currentWindow;
 
 - (NPP)plugin;
 

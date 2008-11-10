@@ -31,7 +31,13 @@
 #import "WebBaseNetscapePluginView.h"
 
 #import "WebKitSystemInterface.h"
+#import "WebFrameInternal.h"
+#import "WebKitLogging.h"
+#import "WebView.h"
+
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/Document.h>
+#import <WebCore/Element.h>
 #import <wtf/Assertions.h>
 
 @implementation WebBaseNetscapePluginView
@@ -74,6 +80,21 @@
     return self;
 }
 
+- (void)dealloc
+{
+    ASSERT(!_isStarted);
+
+    [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT_MAIN_THREAD();
+    ASSERT(!_isStarted);
+
+    [super finalize];
+}
+
 // Methods that subclasses must override
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values
 {
@@ -83,6 +104,51 @@
 - (void)handleMouseMoved:(NSEvent *)event
 {
     ASSERT_NOT_REACHED();
+}
+
+- (void)removeTrackingRect
+{
+    if (_trackingTag) {
+        [self removeTrackingRect:_trackingTag];
+        _trackingTag = 0;
+        
+        // Do the following after setting trackingTag to 0 so we don't re-enter.
+        
+        // Balance the retain in resetTrackingRect. Use autorelease in case we hold 
+        // the last reference to the window during tear-down, to avoid crashing AppKit. 
+        [[self window] autorelease];
+    }
+}
+
+- (void)resetTrackingRect
+{
+    [self removeTrackingRect];
+    if (_isStarted) {
+        // Retain the window so that removeTrackingRect can work after the window is closed.
+        [[self window] retain];
+        _trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
+    }
+}
+
+- (WebDataSource *)dataSource
+{
+    WebFrame *webFrame = kit(core(_element.get())->document()->frame());
+    return [webFrame _dataSource];
+}
+
+- (WebFrame *)webFrame
+{
+    return [[self dataSource] webFrame];
+}
+
+- (WebView *)webView
+{
+    return [[self webFrame] webView];
+}
+
+- (NSWindow *)currentWindow
+{
+    return [self window] ? [self window] : [[self webView] hostWindow];
 }
 
 // We want to treat these as regular keyboard events.

@@ -54,7 +54,6 @@
 #import <Carbon/Carbon.h>
 #import <runtime/JSLock.h>
 #import <WebCore/npruntime_impl.h>
-#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h> 
@@ -622,7 +621,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NO;
     ASSERT(event);
        
-    if (!isStarted)
+    if (!_isStarted)
         return NO;
 
     ASSERT([_pluginPackage.get() pluginFuncs]->event);
@@ -695,7 +694,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)sendActivateEvent:(BOOL)activate
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->windowFocusChanged(activate);
@@ -732,14 +731,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (shouldFireTimers)
         [self stopTimers];
     
-    if (!isStarted || [[self window] isMiniaturized])
+    if (!_isStarted || [[self window] isMiniaturized])
         return;
 
     shouldFireTimers = YES;
     
     // If the plugin is completely obscured (scrolled out of view, for example), then we will
     // send null events at a reduced rate.
-    _eventHandler->startTimers(isCompletelyObscured);
+    _eventHandler->startTimers(_isCompletelyObscured);
     
     if (!timers)
         return;
@@ -748,7 +747,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     for (HashMap<uint32, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
         PluginTimer* timer = it->second;
         ASSERT(!timer->isActive());
-        timer->start(isCompletelyObscured);
+        timer->start(_isCompletelyObscured);
     }    
 }
 
@@ -759,19 +758,19 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)setHasFocus:(BOOL)flag
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
-    if (hasFocus == flag)
+    if (_hasFocus == flag)
         return;
     
-    hasFocus = flag;
+    _hasFocus = flag;
     
     // We need to null check the event handler here because
     // the plug-in view can resign focus after it's been stopped
     // and the event handler has been deleted.
     if (_eventHandler)
-        _eventHandler->focusChanged(hasFocus);    
+        _eventHandler->focusChanged(_hasFocus);
 }
 
 - (BOOL)becomeFirstResponder
@@ -800,7 +799,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->mouseDown(theEvent);
@@ -808,7 +807,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->mouseUp(theEvent);
@@ -816,7 +815,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)mouseEntered:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->mouseEntered(theEvent);
@@ -824,7 +823,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->mouseExited(theEvent);
@@ -838,7 +837,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 // the NSView mouseMoved implementation.
 - (void)handleMouseMoved:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->mouseMoved(theEvent);
@@ -846,7 +845,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
 - (void)mouseDragged:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->mouseDragged(theEvent);
@@ -854,7 +853,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-    if (!isStarted) {
+    if (!_isStarted) {
         [super scrollWheel:theEvent];
         return;
     }
@@ -865,7 +864,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->keyUp(theEvent);
@@ -873,7 +872,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->keyDown(theEvent);
@@ -881,7 +880,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
-    if (!isStarted)
+    if (!_isStarted)
         return;
 
     _eventHandler->flagsChanged(theEvent);
@@ -949,7 +948,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // excpetion to rule (3) because they manually must be told when to stop writing
     // bits to the window backing store, thus to do so requires a new call to
     // NPP_SetWindow() with an empty NPWindow struct.
-    if (!isStarted)
+    if (!_isStarted)
         return;
 #ifdef NP_NO_QUICKDRAW
     if (![self canDraw])
@@ -983,9 +982,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT(drawingModel != NPDrawingModelCoreAnimation);
            
-    if (!isStarted) {
+    if (!_isStarted) 
         return;
-    }
     
     if (![self isNewWindowEqualToOldWindow]) {        
         // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
@@ -1030,30 +1028,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
         lastSetWindow = window;
         lastSetPort = nPort;
-    }
-}
-
-- (void)removeTrackingRect
-{
-    if (trackingTag) {
-        [self removeTrackingRect:trackingTag];
-        trackingTag = 0;
-
-        // Do the following after setting trackingTag to 0 so we don't re-enter.
-
-        // Balance the retain in resetTrackingRect. Use autorelease in case we hold 
-        // the last reference to the window during tear-down, to avoid crashing AppKit. 
-        [[self window] autorelease];
-    }
-}
-
-- (void)resetTrackingRect
-{
-    [self removeTrackingRect];
-    if (isStarted) {
-        // Retain the window so that removeTrackingRect can work after the window is closed.
-        [[self window] retain];
-        trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     }
 }
 
@@ -1107,7 +1081,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     ASSERT([self currentWindow]);
     
-    if (isStarted)
+    if (_isStarted)
         return YES;
 
     ASSERT([self webView]);
@@ -1192,7 +1166,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self didCallPlugInFunction];
     }
     
-    isStarted = YES;
+    _isStarted = YES;
     [[self webView] addPluginInstanceView:self];
 
     if (drawingModel == NPDrawingModelCoreGraphics || isDrawingModelQuickDraw(drawingModel))
@@ -1237,10 +1211,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     [self removeTrackingRect];
 
-    if (!isStarted)
+    if (!_isStarted)
         return;
     
-    isStarted = NO;
+    _isStarted = NO;
     
     [[self webView] removePluginInstanceView:self];
 
@@ -1277,33 +1251,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (BOOL)isStarted
 {
-    return isStarted;
+    return _isStarted;
 }
 
 - (NPEventModel)eventModel
 {
     return eventModel;
-}
-
-- (WebDataSource *)dataSource
-{
-    WebFrame *webFrame = kit(core(_element.get())->document()->frame());
-    return [webFrame _dataSource];
-}
-
-- (WebFrame *)webFrame
-{
-    return [[self dataSource] webFrame];
-}
-
-- (WebView *)webView
-{
-    return [[self webFrame] webView];
-}
-
-- (NSWindow *)currentWindow
-{
-    return [self window] ? [self window] : [[self webView] hostWindow];
 }
 
 - (NPP)plugin
@@ -1421,7 +1374,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)dealloc
 {
-    ASSERT(!isStarted);
+    ASSERT(!_isStarted);
     ASSERT(!plugin);
 
     [self fini];
@@ -1432,7 +1385,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
-    ASSERT(!isStarted);
+    ASSERT(!_isStarted);
 
     [self fini];
 
@@ -1444,7 +1397,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (drawingModel == NPDrawingModelCoreAnimation)
         return;
 
-    if (!isStarted)
+    if (!_isStarted)
         return;
     
     if ([NSGraphicsContext currentContextDrawingToScreen])
@@ -1595,9 +1548,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self sendActivateEvent:YES];
     [self setNeedsDisplay:YES];
     [self restartTimers];
-#ifndef NP_NO_CARBON
-    SetUserFocusWindow((WindowRef)[[self window] windowRef]);
-#endif // NP_NO_CARBON
 }
 
 - (void)windowResignedKey:(NSNotification *)notification
@@ -1632,7 +1582,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     WebPreferences *preferences = [[self webView] preferences];
     BOOL arePlugInsEnabled = [preferences arePlugInsEnabled];
     
-    if ([notification object] == preferences && isStarted != arePlugInsEnabled) {
+    if ([notification object] == preferences && _isStarted != arePlugInsEnabled) {
         if (arePlugInsEnabled) {
             if ([self currentWindow]) {
                 [self start];
@@ -1922,7 +1872,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // FIXME: Is this isStarted check needed here? evaluateJavaScriptPluginRequest should not be called
     // if we are stopped since this method is called after a delay and we call 
     // cancelPreviousPerformRequestsWithTarget inside of stop.
-    if (!isStarted) {
+    if (!_isStarted) {
         return;
     }
     
@@ -1933,7 +1883,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     NSString *result = [[self webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:[JSPluginRequest isCurrentEventUserGesture]];
     
     // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
-    if (!isStarted) {
+    if (!_isStarted) {
         return;
     }
         
@@ -1966,7 +1916,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)webFrame:(WebFrame *)webFrame didFinishLoadWithReason:(NPReason)reason
 {
-    ASSERT(isStarted);
+    ASSERT(_isStarted);
     
     WebPluginRequest *pluginRequest = [_pendingFrameLoads.get() objectForKey:webFrame];
     ASSERT(pluginRequest != nil);
@@ -2529,7 +2479,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     timers->set(timerID, timer);
 
     if (shouldFireTimers)
-        timer->start(isCompletelyObscured);
+        timer->start(_isCompletelyObscured);
     
     return 0;
 }
@@ -2672,9 +2622,9 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     
     // Check to see if the plugin view is completely obscured (scrolled out of view, for example).
     // For performance reasons, we send null events at a lower rate to plugins which are obscured.
-    BOOL oldIsObscured = isCompletelyObscured;
-    isCompletelyObscured = NSIsEmptyRect([self visibleRect]);
-    if (isCompletelyObscured != oldIsObscured)
+    BOOL oldIsObscured = _isCompletelyObscured;
+    _isCompletelyObscured = NSIsEmptyRect([self visibleRect]);
+    if (_isCompletelyObscured != oldIsObscured)
         [self restartTimers];
 }
 

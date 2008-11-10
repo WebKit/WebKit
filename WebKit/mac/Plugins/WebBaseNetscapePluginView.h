@@ -34,7 +34,9 @@
 #import <wtf/RetainPtr.h>
 
 @class DOMElement;
+@class WebDataSource;
 @class WebFrame;
+@class WebView;
 
 @interface WebBaseNetscapePluginView : NSView
 {
@@ -44,11 +46,17 @@
     
     int _mode;
     BOOL _loadManually;
-
+    
+    BOOL _isStarted;
+    BOOL _hasFocus;
+    BOOL _isCompletelyObscured;
+    
     RetainPtr<DOMElement> _element;
     RetainPtr<NSString> _MIMEType;
     RetainPtr<NSURL> _baseURL;
     RetainPtr<NSURL> _sourceURL;
+    
+    NSTrackingRectTag _trackingTag;
 }
 
 - (id)initWithFrame:(NSRect)r
@@ -64,6 +72,14 @@
 // Subclasses must override these.
 - (void)handleMouseMoved:(NSEvent *)event;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
+
+- (WebFrame *)webFrame;
+- (WebDataSource *)dataSource;
+- (WebView *)webView;
+- (NSWindow *)currentWindow;
+
+- (void)removeTrackingRect;
+- (void)resetTrackingRect;
 
 @end
 

@@ -1,6 +1,14 @@
 2008-11-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
+        
+        Add WebHostedNetscapePluginView to the project.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
 
         Add a new WebBaseNetscapePluginView class.
         

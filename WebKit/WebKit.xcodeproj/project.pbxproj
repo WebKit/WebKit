@@ -21,6 +21,8 @@
 		1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */; };
 		1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */; };
 		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AB067950EC8F356003A6F56 /* WebHostedNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB067930EC8F356003A6F56 /* WebHostedNetscapePluginView.h */; };
+		1AB067960EC8F356003A6F56 /* WebHostedNetscapePluginView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB067940EC8F356003A6F56 /* WebHostedNetscapePluginView.mm */; };
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
 		1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */; };
@@ -308,6 +310,8 @@
 		1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginView.h; sourceTree = "<group>"; };
 		1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBaseNetscapePluginView.mm; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
+		1AB067930EC8F356003A6F56 /* WebHostedNetscapePluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHostedNetscapePluginView.h; sourceTree = "<group>"; };
+		1AB067940EC8F356003A6F56 /* WebHostedNetscapePluginView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHostedNetscapePluginView.mm; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
 		1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginEventHandler.mm; sourceTree = "<group>"; };
 		1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandlerCarbon.h; sourceTree = "<group>"; };
@@ -885,6 +889,8 @@
 				F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */,
 				1A4DF5E20EC8D104006BD4B4 /* WebBaseNetscapePluginView.h */,
 				1A4DF5E30EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm */,
+				1AB067930EC8F356003A6F56 /* WebHostedNetscapePluginView.h */,
+				1AB067940EC8F356003A6F56 /* WebHostedNetscapePluginView.mm */,
 				F5F7171E0288493C018635CA /* WebNetscapePluginPackage.h */,
 				F5F7171F0288493C018635CA /* WebNetscapePluginPackage.m */,
 				1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */,
@@ -1301,6 +1307,7 @@
 				F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */,
 				1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */,
 				1A4DF5E40EC8D104006BD4B4 /* WebBaseNetscapePluginView.h in Headers */,
+				1AB067950EC8F356003A6F56 /* WebHostedNetscapePluginView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1598,6 +1605,7 @@
 				1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */,
 				1A4DF5230EC8C74D006BD4B4 /* WebNetscapePluginView.mm in Sources */,
 				1A4DF5E50EC8D104006BD4B4 /* WebBaseNetscapePluginView.mm in Sources */,
+				1AB067960EC8F356003A6F56 /* WebHostedNetscapePluginView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

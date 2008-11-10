@@ -265,11 +265,14 @@ void WebNetscapePluginEventHandlerCarbon::focusChanged(bool hasFocus)
 
 void WebNetscapePluginEventHandlerCarbon::windowFocusChanged(bool hasFocus)
 {
+    WindowRef windowRef = (WindowRef)[[m_pluginView window] windowRef];
+
+    SetUserFocusWindow(windowRef);
+    
     EventRecord event;
     
     getCarbonEvent(&event);
     event.what = activateEvt;
-    WindowRef windowRef = (WindowRef)[[m_pluginView window] windowRef];
     event.message = (unsigned long)windowRef;
     if (hasFocus)
         event.modifiers |= activeFlag;

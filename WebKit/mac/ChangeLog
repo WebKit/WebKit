@@ -1,5 +1,54 @@
 2008-11-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        Move a bunch of methods and ivars up to WebBaseNetscapePluginView.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView dealloc]):
+        (-[WebBaseNetscapePluginView finalize]):
+        (-[WebBaseNetscapePluginView removeTrackingRect]):
+        (-[WebBaseNetscapePluginView resetTrackingRect]):
+        (-[WebBaseNetscapePluginView dataSource]):
+        (-[WebBaseNetscapePluginView webFrame]):
+        (-[WebBaseNetscapePluginView webView]):
+        (-[WebBaseNetscapePluginView currentWindow]):
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::windowFocusChanged):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebNetscapePluginView sendActivateEvent:]):
+        (-[WebNetscapePluginView restartTimers]):
+        (-[WebNetscapePluginView setHasFocus:]):
+        (-[WebNetscapePluginView mouseDown:]):
+        (-[WebNetscapePluginView mouseUp:]):
+        (-[WebNetscapePluginView mouseEntered:]):
+        (-[WebNetscapePluginView mouseExited:]):
+        (-[WebNetscapePluginView handleMouseMoved:]):
+        (-[WebNetscapePluginView mouseDragged:]):
+        (-[WebNetscapePluginView scrollWheel:]):
+        (-[WebNetscapePluginView keyUp:]):
+        (-[WebNetscapePluginView keyDown:]):
+        (-[WebNetscapePluginView flagsChanged:]):
+        (-[WebNetscapePluginView updateAndSetWindow]):
+        (-[WebNetscapePluginView setWindowIfNecessary]):
+        (-[WebNetscapePluginView start]):
+        (-[WebNetscapePluginView stop]):
+        (-[WebNetscapePluginView isStarted]):
+        (-[WebNetscapePluginView dealloc]):
+        (-[WebNetscapePluginView finalize]):
+        (-[WebNetscapePluginView drawRect:]):
+        (-[WebNetscapePluginView windowBecameKey:]):
+        (-[WebNetscapePluginView preferencesHaveChanged:]):
+        (-[WebNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]):
+        (-[WebNetscapePluginView _viewHasMoved]):
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker and Mark Rowe.
 
         Add a WebHostedNetscapePluginView class.
