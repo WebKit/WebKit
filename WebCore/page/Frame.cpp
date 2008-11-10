@@ -739,10 +739,10 @@ void Frame::setNeedsReapplyStyles()
 
     d->m_needsReapplyStyles = true;
 
-    // Invalidate the FrameView so that FrameView::layout will get called,
-    // which calls reapplyStyles.
+    // FrameView's "layout" timer includes reapplyStyles, so despite its
+    // name, it's what we want to call here.
     if (view())
-        view()->invalidate();
+        view()->scheduleRelayout();
 }
 
 bool Frame::needsReapplyStyles() const

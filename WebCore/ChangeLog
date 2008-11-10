@@ -2,6 +2,39 @@
 
         Reviewed by Adam Roben.
 
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22103
+          Changing fonts in preferences does not immediately update WebViews
+
+        This broke when the meaning of FrameView::invalidate changed.
+        I changed setNeedsReapplyStyles to no longer depend on invalidate.
+
+        * dom/Document.cpp: (WebCore::Document::shouldScheduleLayout):
+        Removed the part of this function that duplicated what's already in
+        FrameView::needsLayout, since the copy here left out a few key things.
+        For example, it didn't handle the fact that "needs reapply styles"
+        counts as needing layout.
+
+        * page/Frame.cpp: (WebCore::Frame::setNeedsReapplyStyles): This called
+        FrameView::invalidate before. There were two things wrong with that.
+        1) It requested that the entire view repaint even if the style change
+        didn't necessitate that. 2) FrameView::invalidate no longer causes any
+        repainting at all in certain cases, because of Hyatt's changes to how
+        widgets and the host window are involved in the repainting process.
+        So call FrameView::scheduleRelayout instead, which is more precisely
+        what we want and need here.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayout): Add a call to needsLayout here
+        so that Document::shouldScheduleLayout doesn't have to replicate the
+        logic that's in needsLayout and can instead rely on the fact that it
+        was already called.
+        (WebCore::FrameView::needsLayout): Tweaked the comments and formatting
+        in this function.
+
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
         - speculative fix for <rdar://problem/5557243> crashes in Safari at
           WebCore::HTMLSelectElement::updateListBoxSelection + 280
 

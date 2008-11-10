@@ -1622,13 +1622,14 @@ void Document::setParsing(bool b)
 
 bool Document::shouldScheduleLayout()
 {
-    // We can update layout if:
-    // (a) we actually need a layout
-    // (b) our stylesheets are all loaded
-    // (c) we have a <body>
-    return (renderer() && renderer()->needsLayout() && haveStylesheetsLoaded() &&
-            documentElement() && documentElement()->renderer() &&
-            (!documentElement()->hasTagName(htmlTag) || body()));
+    // This function will only be called when FrameView thinks a layout is needed.
+    // This enforces a couple extra rules.
+    //
+    //    (a) Only schedule a layout once the stylesheets are loaded.
+    //    (b) Only schedule layout once we have a body element.
+
+    return haveStylesheetsLoaded()
+        && body() || (documentElement() && !documentElement()->hasTagName(htmlTag));
 }
 
 int Document::minimumLayoutDelay()

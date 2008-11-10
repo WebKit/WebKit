@@ -746,7 +746,8 @@ void FrameView::scheduleRelayout()
     }
     if (!d->m_layoutSchedulingEnabled)
         return;
-
+    if (!needsLayout())
+        return;
     if (!m_frame->document() || !m_frame->document()->shouldScheduleLayout())
         return;
 
@@ -818,14 +819,18 @@ bool FrameView::layoutPending() const
 
 bool FrameView::needsLayout() const
 {
-    // It is possible that our document will not have a body yet. If this is the case, 
-    // then we are not allowed to schedule layouts yet, so we won't be pending layout.
+    // This can return true in cases where the document does not have a body yet.
+    // Document::shouldScheduleLayout takes care of preventing us from scheduling
+    // layout in that case.
     if (!m_frame)
         return false;
     RenderView* root = m_frame->contentRenderer();
-    Document * doc = m_frame->document();
-    // doc->hasChangedChild() condition can occur when using WebKit ObjC interface
-    return layoutPending() || (root && root->needsLayout()) || d->m_layoutRoot || (doc && doc->hasChangedChild()) || m_frame->needsReapplyStyles();
+    Document* document = m_frame->document();
+    return layoutPending()
+        || (root && root->needsLayout())
+        || d->m_layoutRoot
+        || (document && document->hasChangedChild()) // can occur when using WebKit ObjC interface
+        || m_frame->needsReapplyStyles();
 }
 
 void FrameView::setNeedsLayout()
