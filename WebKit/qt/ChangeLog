@@ -1,3 +1,14 @@
+2008-11-10  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        To fit Qt API, scroll offset is a QPoint instead of a QSize.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::scrollOffset):
+        (QWebFrame::setScrollOffset):
+        * Api/qwebframe.h:
+
 2008-11-10  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.

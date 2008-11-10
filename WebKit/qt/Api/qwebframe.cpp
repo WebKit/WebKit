@@ -687,19 +687,20 @@ void QWebFrame::scroll(int dx, int dy) const
   \brief The offset from the start this frame is currently scrolled to.
 */
 
-QSize QWebFrame::scrollOffset() const
+QPoint QWebFrame::scrollOffset() const
 {
     if (!d->frame->view())
-        return QSize(0,0);
+        return QPoint(0,0);
 
-    return d->frame->view()->scrollOffset();
+    IntSize ofs = d->frame->view()->scrollOffset();
+    return QPoint(ofs.width(), ofs.height());
 }
 
-void QWebFrame::setScrollOffset(const QSize &offset) const
+void QWebFrame::setScrollOffset(const QPoint &offset) const
 {
-    QSize current = scrollOffset();
-    int dx = offset.width() - current.width();
-    int dy = offset.height() - current.height();
+    QPoint current = scrollOffset();
+    int dx = offset.x() - current.x();
+    int dy = offset.y() - current.y();
     scroll(dx, dy);
 }
 
