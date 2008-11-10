@@ -823,8 +823,9 @@ void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
         if (dashLength % 2)
             count *= 2;
 
+        float penWidth = narrowPrecisionToFloat(double(pen.widthF()));
         for (unsigned i = 0; i < count; i++)
-            pattern.append(dashes[i % dashLength] / narrowPrecisionToFloat(pen.widthF()));
+            pattern.append(dashes[i % dashLength] / penWidth);
 
         pen.setDashPattern(pattern);
         pen.setDashOffset(dashOffset);
