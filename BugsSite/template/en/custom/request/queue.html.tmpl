@@ -185,7 +185,7 @@
 
 [% BLOCK display_attachment %]
   [% IF request.attach_id %]
-    <a href="attachment.cgi?id=[% request.attach_id %]&amp;action=edit">
+    <a href="attachment.cgi?id=[% request.attach_id %]&amp;action=review">
       [% request.attach_id %]: [%+ request.attach_summary FILTER html %]</a>
   [% ELSE %]
     N/A

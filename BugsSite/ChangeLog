@@ -1,5 +1,25 @@
 2008-11-10  Darin Adler  <darin@apple.com>
 
+        - fix more of https://bugs.webkit.org/show_bug.cgi?id=21400
+          "Edit" links for patches in comments, review queue, review emails
+          should be replaced by "Review Patch" links
+
+        * globals.pl: Fix cases that are automatically generated, such as links
+        in comments in bugs.
+
+        * template/en/custom/attachment/created.html.tmpl: Fix the link on the
+        "I just created an attachment" page.
+
+        * template/en/custom/request/queue.html.tmpl: Fix the link in the queue
+        page.
+
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        * template/en/default/request/queue.html.tmpl: Use review links instead
+        of edit links in the review queue.
+
+2008-11-10  Darin Adler  <darin@apple.com>
+
         * template/en/custom/request/email.txt.tmpl: Send review links instead
         of edit links when flags are set on a bug.
 
