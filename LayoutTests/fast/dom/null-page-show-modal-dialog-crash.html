@@ -1,0 +1,25 @@
+This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=19541">https://bugs.webkit.org/show_bug.cgi?id=19541</a> 
+RBug 19541: Null pointer in showModalDialog()
+
+This tests calling the showModalDialog() function on a window object from a detached iframe, both calling the saved showModalDialog() function and getting the property again after the iframe has been detached.
+
+If there is no crash this test passes.
+<script type="text/javascript">
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var iframe = document.createElement("iframe");
+
+iframe.onload = function() {
+    var iframeWindow = iframe.contentWindow;
+    var f = iframeWindow.showModalDialog;
+
+    iframe.parentNode.removeChild(iframe);
+    if (iframeWindow.showModalDialog)
+        iframeWindow.showModalDialog();
+    if (f)
+        f.call(iframeWindow);
+};
+
+document.body.appendChild(iframe);
+</script>

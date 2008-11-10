@@ -297,14 +297,24 @@ static bool canShowModalDialog(const Frame* frame)
 {
     if (!frame)
         return false;
-    return frame->page()->chrome()->canRunModal();
+
+    Page* page = frame->page();
+    if (!page)
+        return false;
+
+    return page->chrome()->canRunModal();
 }
 
 static bool canShowModalDialogNow(const Frame* frame)
 {
     if (!frame)
         return false;
-    return frame->page()->chrome()->canRunModalNow();
+
+    Page* page = frame->page();
+    if (!page)
+        return false;
+
+    return page->chrome()->canRunModalNow();
 }
 
 static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url, JSValue* dialogArgs, const String& featureArgs)

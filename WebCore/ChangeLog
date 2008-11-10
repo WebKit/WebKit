@@ -1,3 +1,17 @@
+2008-11-09  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 19541: Null pointer in showModalDialog()
+        <https://bugs.webkit.org/show_bug.cgi?id=19541>
+
+        Add null frame->page() checks to JSDOMWindowBase::canShowModalDialog()
+        and JSDOMWindowBase::canShowModalDialogNow()C
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::canShowModalDialog):
+        (WebCore::canShowModalDialogNow):
+
 2008-11-09  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build

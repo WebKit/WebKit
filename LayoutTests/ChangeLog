@@ -1,3 +1,13 @@
+2008-11-09  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add a test for bug 19541: Null pointer in showModalDialog()
+        <https://bugs.webkit.org/show_bug.cgi?id=19541>
+
+        * fast/dom/null-page-show-modal-dialog-crash-expected.txt: Added.
+        * fast/dom/null-page-show-modal-dialog-crash.html: Added.
+
 2008-11-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
