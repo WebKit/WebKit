@@ -802,7 +802,9 @@ static int cssValueIdToSysColorIndex(int cssValueId)
 Color RenderThemeWin::systemColor(int cssValueId) const
 {
     int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
-    ASSERT(sysColorIndex != -1);
+    if (sysColorIndex == -1)
+        return RenderTheme::systemColor(cssValueId);
+
     COLORREF color = GetSysColor(sysColorIndex);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
