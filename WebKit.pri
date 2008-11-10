@@ -11,7 +11,11 @@ building-libs {
     win32-msvc*: INCLUDEPATH += $$PWD/JavaScriptCore/os-win32
 } else {
     QMAKE_LIBDIR = $$OUTPUT_DIR/lib $$QMAKE_LIBDIR
-    LIBS += -lQtWebKit
+    mac {
+        LIBS += -framework QtWebKit
+    } else {
+        LIBS += -lQtWebKit
+    }
     DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 

@@ -1,3 +1,11 @@
+2008-11-10  Morten Sørvig  <msorvig@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make tests/auto/qwebframe compile on Qt/Mac.
+
+        * WebKit.pri: Fix linkage against QtWebKit when compiled as framework.
+
 2008-11-06  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.
