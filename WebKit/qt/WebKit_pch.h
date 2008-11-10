@@ -33,7 +33,7 @@
 
 #if defined __cplusplus
 
-#if defined (_WIN32)
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 #define _CRT_RAND_S
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
