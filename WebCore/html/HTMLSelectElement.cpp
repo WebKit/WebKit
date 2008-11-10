@@ -865,7 +865,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
             if (!option->disabled()) {
                 if (i >= start && i <= end)
                     option->setSelectedState(m_activeSelectionState);
-                else if (deselectOtherOptions)
+                else if (deselectOtherOptions || i >= m_cachedStateForActiveSelection.size())
                     option->setSelectedState(false);
                 else
                     option->setSelectedState(m_cachedStateForActiveSelection[i]);

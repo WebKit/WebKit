@@ -1,3 +1,14 @@
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - speculative fix for <rdar://problem/5557243> crashes in Safari at
+          WebCore::HTMLSelectElement::updateListBoxSelection + 280
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        Check index against size of vector before indexing into the vector.
+
 2008-11-10  Tom Cooksey  <thomas.cooksey@trolltech.com>
 
         Reviewed by Tor Arne Vestbø.
