@@ -1,3 +1,11 @@
+2008-11-10  Tobias Koenig <tobias.koenig@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Removed old and stale prf file that breaks the MingW build.
+
+        * Api/qtwebkit.prf: Removed.
+
 2008-11-10  Kavindra Palaraja  <kdpalara@trolltech.com>
 
         Reviewed by Simon Hausmann.
