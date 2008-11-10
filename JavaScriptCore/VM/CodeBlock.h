@@ -34,6 +34,7 @@
 #include "JSGlobalObject.h"
 #include "Nodes.h"
 #include "Parser.h"
+#include "RegExp.h"
 #include "SourceCode.h"
 #include "UString.h"
 #include <wtf/RefPtr.h>

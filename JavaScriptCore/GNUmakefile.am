@@ -333,7 +333,6 @@ javascriptcore_sources += \
 	JavaScriptCore/parser/Lexer.cpp \
 	JavaScriptCore/runtime/Lookup.cpp \
 	JavaScriptCore/parser/Nodes.cpp \
-	JavaScriptCore/parser/nodes2string.cpp \
 	JavaScriptCore/runtime/Operations.cpp \
 	JavaScriptCore/runtime/RegExp.cpp \
 	JavaScriptCore/runtime/UString.cpp \

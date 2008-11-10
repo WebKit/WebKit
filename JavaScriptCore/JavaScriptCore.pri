@@ -113,7 +113,6 @@ SOURCES += \
     runtime/NativeErrorConstructor.cpp \
     runtime/NativeErrorPrototype.cpp \
     parser/Nodes.cpp \
-    parser/nodes2string.cpp \
     runtime/NumberConstructor.cpp \
     runtime/NumberObject.cpp \
     runtime/NumberPrototype.cpp \

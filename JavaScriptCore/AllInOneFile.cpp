@@ -76,7 +76,6 @@
 #include "runtime/NumberObject.cpp"
 #include "runtime/NumberPrototype.cpp"
 #include "parser/Nodes.cpp"
-#include "parser/nodes2string.cpp"
 #include "runtime/JSObject.cpp"
 #include "runtime/Error.cpp"
 #include "runtime/JSGlobalObject.cpp"

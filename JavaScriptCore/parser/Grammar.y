@@ -1408,9 +1408,6 @@ static ExpressionNode* makeNegateNode(void* globalPtr, ExpressionNode* n)
 
 static NumberNode* makeNumberNode(void* globalPtr, double d)
 {
-    JSValue* value = JSImmediate::from(d);
-    if (value)
-        return new ImmediateNumberNode(GLOBAL_DATA, value, d);
     return new NumberNode(GLOBAL_DATA, d);
 }
 

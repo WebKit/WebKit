@@ -1,5 +1,86 @@
 2008-11-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22149
+          remove unused code from the parser
+
+        * AllInOneFile.cpp: Removed nodes2string.cpp.
+        * GNUmakefile.am: Ditto.
+        * JavaScriptCore.exp: Ditto.
+        * JavaScriptCore.pri: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * JavaScriptCoreSources.bkl: Ditto.
+
+        * VM/CodeBlock.h: Added include.
+
+        * VM/Machine.cpp: (JSC::Machine::execute): Use the types from
+        DeclarationStacks as DeclarationStacks:: rather than Node:: since
+        "Node" really has little to do with it.
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator): Ditto.
+
+        * jsc.cpp:
+        (Options::Options): Removed prettyPrint option.
+        (runWithScripts): Ditto.
+        (printUsageStatement): Ditto.
+        (parseArguments): Ditto.
+        (jscmain): Ditto.
+
+        * parser/Grammar.y: Removed use of obsolete ImmediateNumberNode.
+
+        * parser/Nodes.cpp:
+        (JSC::ThrowableExpressionData::emitThrowError): Use inline functions
+        instead of direct member access for ThrowableExpressionData values.
+        (JSC::BracketAccessorNode::emitCode): Ditto.
+        (JSC::DotAccessorNode::emitCode): Ditto.
+        (JSC::NewExprNode::emitCode): Ditto.
+        (JSC::EvalFunctionCallNode::emitCode): Ditto.
+        (JSC::FunctionCallValueNode::emitCode): Ditto.
+        (JSC::FunctionCallResolveNode::emitCode): Ditto.
+        (JSC::FunctionCallBracketNode::emitCode): Ditto.
+        (JSC::FunctionCallDotNode::emitCode): Ditto.
+        (JSC::PostfixResolveNode::emitCode): Ditto.
+        (JSC::PostfixBracketNode::emitCode): Ditto.
+        (JSC::PostfixDotNode::emitCode): Ditto.
+        (JSC::DeleteResolveNode::emitCode): Ditto.
+        (JSC::DeleteBracketNode::emitCode): Ditto.
+        (JSC::DeleteDotNode::emitCode): Ditto.
+        (JSC::PrefixResolveNode::emitCode): Ditto.
+        (JSC::PrefixBracketNode::emitCode): Ditto.
+        (JSC::PrefixDotNode::emitCode): Ditto.
+        (JSC::ThrowableBinaryOpNode::emitCode): Ditto.
+        (JSC::InstanceOfNode::emitCode): Ditto.
+        (JSC::ReadModifyResolveNode::emitCode): Ditto.
+        (JSC::AssignResolveNode::emitCode): Ditto.
+        (JSC::AssignDotNode::emitCode): Ditto.
+        (JSC::ReadModifyDotNode::emitCode): Ditto.
+        (JSC::AssignBracketNode::emitCode): Ditto.
+        (JSC::ReadModifyBracketNode::emitCode): Ditto.
+        (JSC::statementListEmitCode): Take a const StatementVector instead
+        of a non-const one. Also removed unused statementListPushFIFO.
+        (JSC::ForInNode::emitCode): Inline functions instead of member access.
+        (JSC::ThrowNode::emitCode): Ditto.
+        (JSC::EvalNode::emitCode): Ditto.
+        (JSC::FunctionBodyNode::emitCode): Ditto.
+        (JSC::ProgramNode::emitCode): Ditto.
+
+        * parser/Nodes.h: Removed unused includes and forward declarations.
+        Removed Precedence enum. Made many more members private instead of
+        protected or public. Removed unused NodeStack typedef. Moved the
+        VarStack and FunctionStack typedefs from Node to ScopeNode. Made
+        Node::emitCode pure virtual and changed classes that don't emit
+        any code to inherit from ParserRefCounted rather than Node.
+        Moved isReturnNode from Node to StatementNode. Removed the
+        streamTo, precedence, and needsParensIfLeftmost functions from
+        all classes. Removed the ImmediateNumberNode class and make
+        NumberNode::setValue nonvirtual.
+
+        * parser/nodes2string.cpp: Removed.
+
+2008-11-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig and Maciej Stachowiak.
         Includes some work done by Chris Brichford.
 

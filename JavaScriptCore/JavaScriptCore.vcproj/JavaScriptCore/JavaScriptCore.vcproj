@@ -1214,10 +1214,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\parser\nodes2string.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\parser\Parser.cpp"
 				>
 			</File>

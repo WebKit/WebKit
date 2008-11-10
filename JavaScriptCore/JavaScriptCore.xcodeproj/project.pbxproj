@@ -709,7 +709,6 @@
 		E1EF79A90CE97BA60088D500 /* UTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
-		F5FFE656026B47A6018635CA /* nodes2string.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nodes2string.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F68EBB8C0255D4C601FF60F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayPrototype.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A84E0255597D01FF60F7 /* ArrayPrototype.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -1108,7 +1107,6 @@
 				7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */,
 				F692A86D0255597D01FF60F7 /* Nodes.cpp */,
 				F692A86E0255597D01FF60F7 /* Nodes.h */,
-				F5FFE656026B47A6018635CA /* nodes2string.cpp */,
 				93F0B3A909BB4DC00068FCE3 /* Parser.cpp */,
 				93F0B3AA09BB4DC00068FCE3 /* Parser.h */,
 				869EBCB60E8C6D4A008722CC /* ResultType.h */,

@@ -1042,9 +1042,9 @@ JSValue* Machine::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject* th
 
         BatchedTransitionOptimizer optimizer(variableObject);
 
-        const Node::VarStack& varStack = codeBlock->ownerNode->varStack();
-        Node::VarStack::const_iterator varStackEnd = varStack.end();
-        for (Node::VarStack::const_iterator it = varStack.begin(); it != varStackEnd; ++it) {
+        const DeclarationStacks::VarStack& varStack = codeBlock->ownerNode->varStack();
+        DeclarationStacks::VarStack::const_iterator varStackEnd = varStack.end();
+        for (DeclarationStacks::VarStack::const_iterator it = varStack.begin(); it != varStackEnd; ++it) {
             const Identifier& ident = (*it).first;
             if (!variableObject->hasProperty(callFrame, ident)) {
                 PutPropertySlot slot;
@@ -1052,9 +1052,9 @@ JSValue* Machine::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject* th
             }
         }
 
-        const Node::FunctionStack& functionStack = codeBlock->ownerNode->functionStack();
-        Node::FunctionStack::const_iterator functionStackEnd = functionStack.end();
-        for (Node::FunctionStack::const_iterator it = functionStack.begin(); it != functionStackEnd; ++it) {
+        const DeclarationStacks::FunctionStack& functionStack = codeBlock->ownerNode->functionStack();
+        DeclarationStacks::FunctionStack::const_iterator functionStackEnd = functionStack.end();
+        for (DeclarationStacks::FunctionStack::const_iterator it = functionStack.begin(); it != functionStackEnd; ++it) {
             PutPropertySlot slot;
             variableObject->put(callFrame, (*it)->m_ident, (*it)->makeFunction(callFrame, scopeChain), slot);
         }

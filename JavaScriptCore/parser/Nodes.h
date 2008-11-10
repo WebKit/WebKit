@@ -27,17 +27,12 @@
 #define NODES_H_
 
 #include "Error.h"
-#include "JSString.h"
-#include "JSType.h"
 #include "Opcode.h"
-#include "RegisterID.h"
 #include "ResultType.h"
 #include "SourceCode.h"
 #include "SymbolTable.h"
-#include "RegExp.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(X86) && COMPILER(GCC)
@@ -51,15 +46,15 @@ namespace JSC {
     class CodeBlock;
     class CodeGenerator;
     class FuncDeclNode;
-    class Node;
     class EvalCodeBlock;
     class JSFunction;
     class NodeReleaser;
     class ProgramCodeBlock;
     class PropertyListNode;
-    class SourceStream;
+    class RegisterID;
+    class ScopeChainNode;
 
-    typedef unsigned int CodeFeatures;
+    typedef unsigned CodeFeatures;
 
     const CodeFeatures NoFeatures = 0;
     const CodeFeatures EvalFeature = 1 << 0;
@@ -93,30 +88,7 @@ namespace JSC {
         OpLogicalOr
     };
 
-    enum Precedence {
-        PrecPrimary,
-        PrecMember,
-        PrecCall,
-        PrecLeftHandSide,
-        PrecPostfix,
-        PrecUnary,
-        PrecMultiplicative,
-        PrecAdditive,
-        PrecShift,
-        PrecRelational,
-        PrecEquality,
-        PrecBitwiseAnd,
-        PrecBitwiseXor,
-        PrecBitwiseOr,
-        PrecLogicalAnd,
-        PrecLogicalOr,
-        PrecConditional,
-        PrecAssignment,
-        PrecExpression
-    };
-
     namespace DeclarationStacks {
-        typedef Vector<Node*, 16> NodeStack;
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
         typedef Vector<std::pair<Identifier, unsigned>, 16> VarStack;
         typedef Vector<RefPtr<FuncDeclNode>, 16> FunctionStack;
@@ -132,9 +104,9 @@ namespace JSC {
     protected:
         ParserRefCounted(JSGlobalData*) JSC_FAST_CALL;
 
-        JSGlobalData* m_globalData;
-
     public:
+        virtual ~ParserRefCounted();
+
         // Nonrecursive destruction.
         virtual void releaseNodes(NodeReleaser&);
 
@@ -144,15 +116,12 @@ namespace JSC {
 
         static void deleteNewObjects(JSGlobalData*) JSC_FAST_CALL;
 
-        virtual ~ParserRefCounted();
+    private:
+        JSGlobalData* m_globalData;
     };
 
     class Node : public ParserRefCounted {
     public:
-        typedef DeclarationStacks::NodeStack NodeStack;
-        typedef DeclarationStacks::VarStack VarStack;
-        typedef DeclarationStacks::FunctionStack FunctionStack;
-
         Node(JSGlobalData*) JSC_FAST_CALL;
 
         /*
@@ -177,22 +146,9 @@ namespace JSC {
             because the assignment node, "x =", passes r[x] as dst to the number
             node, "1".
         */
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL 
-        {
-            ASSERT_WITH_MESSAGE(0, "Don't know how to generate code for:\n%s\n", toString().ascii());
-            UNUSED_PARAM(dst); 
-            return 0; 
-        } // FIXME: Make this pure virtual.
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL = 0;
 
-        UString toString() const JSC_FAST_CALL;
         int lineNo() const { return m_line; }
-
-        virtual bool isReturnNode() const JSC_FAST_CALL { return false; }
-
-        // Serialization.
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL = 0;
-        virtual Precedence precedence() const = 0;
-        virtual bool needsParensIfLeftmost() const { return false; }
 
     protected:
         int m_line;
@@ -233,8 +189,8 @@ namespace JSC {
         int firstLine() const JSC_FAST_CALL { return lineNo(); }
         int lastLine() const JSC_FAST_CALL { return m_lastLine; }
 
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return false; }
+        virtual bool isReturnNode() const JSC_FAST_CALL { return false; }
 
         virtual bool isBlock() const JSC_FAST_CALL { return false; }
         virtual bool isLoop() const JSC_FAST_CALL { return false; }
@@ -253,9 +209,6 @@ namespace JSC {
         virtual bool isNull() const JSC_FAST_CALL { return true; }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
     };
 
     class BooleanNode : public ExpressionNode {
@@ -269,10 +222,8 @@ namespace JSC {
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
 
-    protected:
+    private:
         bool m_value;
     };
 
@@ -286,31 +237,13 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return signbit(m_double) ? PrecUnary : PrecPrimary; }
-
         virtual bool isNumber() const JSC_FAST_CALL { return true; }
         virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
         double value() const JSC_FAST_CALL { return m_double; }
-        virtual void setValue(double d) JSC_FAST_CALL { m_double = d; }
-
-    protected:
-        double m_double;
-    };
-
-    class ImmediateNumberNode : public NumberNode {
-    public:
-        ImmediateNumberNode(JSGlobalData* globalData, JSValue* v, double d) JSC_FAST_CALL
-            : NumberNode(globalData, d)
-            , m_value(v)
-        {
-            ASSERT(v == JSImmediate::from(d));
-        }
-
-        virtual void setValue(double d) JSC_FAST_CALL { m_double = d; m_value = JSImmediate::from(d); ASSERT(m_value); }
+        void setValue(double d) JSC_FAST_CALL { m_double = d; }
 
     private:
-        JSValue* m_value; // This is never a JSCell, only JSImmediate, thus no ProtectedPtr
+        double m_double;
     };
 
     class StringNode : public ExpressionNode {
@@ -326,8 +259,6 @@ namespace JSC {
         virtual bool isString() const JSC_FAST_CALL { return true; }
         const Identifier& value() { return m_value; }
         virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
 
     private:
         Identifier m_value;
@@ -363,6 +294,8 @@ namespace JSC {
     protected:
         RegisterID* emitThrowError(CodeGenerator&, ErrorType, const char* msg);
         RegisterID* emitThrowError(CodeGenerator&, ErrorType, const char* msg, const Identifier&);
+
+    private:
         uint32_t m_divot;
         uint16_t m_startOffset;
         uint16_t m_endOffset;
@@ -384,11 +317,12 @@ namespace JSC {
         {
         }
 
-        void setSubexpressionInfo(uint32_t subexpressionDivot, uint16_t subexpressionOffset) {
-            ASSERT(subexpressionDivot <= m_divot);
-            if ((m_divot - subexpressionDivot) & ~0xFFFF) // Overflow means we can't do this safely, so just point at the primary divot
+        void setSubexpressionInfo(uint32_t subexpressionDivot, uint16_t subexpressionOffset)
+        {
+            ASSERT(subexpressionDivot <= divot());
+            if ((divot() - subexpressionDivot) & ~0xFFFF) // Overflow means we can't do this safely, so just point at the primary divot
                 return;
-            m_subexpressionDivotOffset = m_divot - subexpressionDivot;
+            m_subexpressionDivotOffset = divot() - subexpressionDivot;
             m_subexpressionEndOffset = subexpressionOffset;
         }
 
@@ -413,11 +347,12 @@ namespace JSC {
         {
         }
 
-        void setSubexpressionInfo(uint32_t subexpressionDivot, uint16_t subexpressionOffset) {
-            ASSERT(subexpressionDivot >= m_divot);
-            if ((subexpressionDivot - m_divot) & ~0xFFFF) // Overflow means we can't do this safely, so just point at the primary divot
+        void setSubexpressionInfo(uint32_t subexpressionDivot, uint16_t subexpressionOffset)
+        {
+            ASSERT(subexpressionDivot >= divot());
+            if ((subexpressionDivot - divot()) & ~0xFFFF) // Overflow means we can't do this safely, so just point at the primary divot
                 return;
-            m_subexpressionDivotOffset = subexpressionDivot - m_divot;
+            m_subexpressionDivotOffset = subexpressionDivot - divot();
             m_subexpressionStartOffset = subexpressionOffset;
         }
 
@@ -437,9 +372,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
-
     private:
         UString m_pattern;
         UString m_flags;
@@ -453,9 +385,6 @@ namespace JSC {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
     };
 
     class ResolveNode : public ExpressionNode {
@@ -469,30 +398,27 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
-
         virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL;
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isResolveNode() const JSC_FAST_CALL { return true; }
         const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
 
-    protected:
+    private:
         Identifier m_ident;
         int32_t m_startOffset;
     };
 
-    class ElementNode : public Node {
+    class ElementNode : public ParserRefCounted {
     public:
         ElementNode(JSGlobalData* globalData, int elision, ExpressionNode* node) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_elision(elision)
             , m_node(node)
         {
         }
 
         ElementNode(JSGlobalData* globalData, ElementNode* l, int elision, ExpressionNode* node) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_elision(elision)
             , m_node(node)
         {
@@ -501,9 +427,6 @@ namespace JSC {
 
         virtual ~ElementNode();
         virtual void releaseNodes(NodeReleaser&);
-
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
         int elision() const { return m_elision; }
         ExpressionNode* value() { return m_node.get(); }
@@ -546,21 +469,18 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
-
     private:
         RefPtr<ElementNode> m_element;
         int m_elision;
         bool m_optional;
     };
 
-    class PropertyNode : public Node {
+    class PropertyNode : public ParserRefCounted {
     public:
         enum Type { Constant, Getter, Setter };
 
         PropertyNode(JSGlobalData* globalData, const Identifier& name, ExpressionNode* assign, Type type) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_name(name)
             , m_assign(assign)
             , m_type(type)
@@ -569,9 +489,6 @@ namespace JSC {
 
         virtual ~PropertyNode();
         virtual void releaseNodes(NodeReleaser&);
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
         const Identifier& name() const { return m_name; }
 
@@ -601,11 +518,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
     private:
-        friend class ObjectLiteralNode;
         RefPtr<PropertyNode> m_node;
         RefPtr<PropertyListNode> m_next;
     };
@@ -627,9 +541,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPrimary; }
-        virtual bool needsParensIfLeftmost() const { return true; }
 
     private:
         RefPtr<PropertyListNode> m_list;
@@ -649,9 +560,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMember; }
 
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return true; }
@@ -677,8 +585,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMember; }
 
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isDotAccessorNode() const JSC_FAST_CALL { return true; }
@@ -709,31 +615,26 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
         RefPtr<ArgumentListNode> m_next;
         RefPtr<ExpressionNode> m_expr;
     };
 
-    class ArgumentsNode : public Node {
+    class ArgumentsNode : public ParserRefCounted {
     public:
         ArgumentsNode(JSGlobalData* globalData) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
         {
         }
 
         ArgumentsNode(JSGlobalData* globalData, ArgumentListNode* listNode) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_listNode(listNode)
         {
         }
 
         virtual ~ArgumentsNode();
         virtual void releaseNodes(NodeReleaser&);
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
         RefPtr<ArgumentListNode> m_listNode;
     };
@@ -758,9 +659,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecLeftHandSide; }
-
     private:
         RefPtr<ExpressionNode> m_expr;
         RefPtr<ArgumentsNode> m_args;
@@ -779,8 +677,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecCall; }
 
     private:
         RefPtr<ArgumentsNode> m_args;
@@ -800,8 +696,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecCall; }
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -823,10 +717,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecCall; }
-
-    protected:
+    private:
         Identifier m_ident;
         RefPtr<ArgumentsNode> m_args;
         size_t m_index; // Used by LocalVarFunctionCallNode.
@@ -848,10 +739,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecCall; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         RefPtr<ArgumentsNode> m_args;
@@ -872,8 +761,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecCall; }
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -903,10 +790,8 @@ namespace JSC {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPostfix; }
 
-    protected:
+    private:
         Operator m_operator;
     };
 
@@ -925,10 +810,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPostfix; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         Operator m_operator;
@@ -949,10 +832,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPostfix; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         Operator m_operator;
@@ -972,8 +853,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPostfix; }
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -990,9 +869,6 @@ namespace JSC {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
 
     private:
         Identifier m_ident;
@@ -1012,9 +888,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1036,9 +909,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
-
     private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
@@ -1057,9 +927,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
-
     private:
         RefPtr<ExpressionNode> m_expr;
     };
@@ -1077,9 +944,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
-
     private:
         RefPtr<ExpressionNode> m_expr;
     };
@@ -1094,14 +958,10 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
-
         const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
 
-    protected:
+    private:
         Identifier m_ident;
-        size_t m_index; // Used by LocalTypeOfNode.
     };
 
     class TypeOfValueNode : public ExpressionNode {
@@ -1117,9 +977,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
-
     private:
         RefPtr<ExpressionNode> m_expr;
     };
@@ -1134,10 +991,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
-
-    protected:
+    private:
         Operator m_operator;
     };
 
@@ -1156,10 +1010,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         Operator m_operator;
@@ -1180,10 +1032,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecPostfix; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         Operator m_operator;
@@ -1203,8 +1053,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1245,8 +1093,6 @@ namespace JSC {
         virtual ExpressionNode* stripUnaryPlus() { return m_expr.get(); }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_to_jsnumber; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
     };
 
     class NegateNode : public UnaryOpNode {
@@ -1257,8 +1103,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_negate; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
     };
 
     class BitwiseNotNode : public UnaryOpNode {
@@ -1269,8 +1113,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_bitnot; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
     };
 
     class LogicalNotNode : public UnaryOpNode {
@@ -1281,8 +1123,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_not; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecUnary; }
     };
 
     class BinaryOpNode : public ExpressionNode {
@@ -1338,8 +1178,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_mul; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicative; }
     };
 
     class DivNode : public BinaryOpNode {
@@ -1350,8 +1188,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_div; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicative; }
     };
 
     class ModNode : public BinaryOpNode {
@@ -1362,8 +1198,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_mod; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicative; }
     };
 
     class AddNode : public BinaryOpNode {
@@ -1374,8 +1208,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_add; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAdditive; }
     };
 
     class SubNode : public BinaryOpNode {
@@ -1386,8 +1218,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_sub; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAdditive; }
     };
 
     class LeftShiftNode : public BinaryOpNode {
@@ -1398,8 +1228,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_lshift; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecShift; }
     };
 
     class RightShiftNode : public BinaryOpNode {
@@ -1410,8 +1238,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_rshift; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecShift; }
     };
 
     class UnsignedRightShiftNode : public BinaryOpNode {
@@ -1422,8 +1248,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_urshift; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecShift; }
     };
 
     class LessNode : public BinaryOpNode {
@@ -1434,8 +1258,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_less; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecRelational; }
     };
 
     class GreaterNode : public ReverseBinaryOpNode {
@@ -1446,8 +1268,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_less; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecRelational; }
     };
 
     class LessEqNode : public BinaryOpNode {
@@ -1458,8 +1278,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_lesseq; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecRelational; }
     };
 
     class GreaterEqNode : public ReverseBinaryOpNode {
@@ -1470,8 +1288,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_lesseq; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecRelational; }
     };
 
     class ThrowableBinaryOpNode : public BinaryOpNode, public ThrowableExpressionData {
@@ -1495,8 +1311,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_instanceof; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecRelational; }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
@@ -1509,8 +1323,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_in; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecRelational; }
     };
 
     class EqualNode : public BinaryOpNode {
@@ -1522,8 +1334,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_eq; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecEquality; }
     };
 
     class NotEqualNode : public BinaryOpNode {
@@ -1534,8 +1344,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_neq; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecEquality; }
     };
 
     class StrictEqualNode : public BinaryOpNode {
@@ -1547,8 +1355,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_stricteq; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecEquality; }
     };
 
     class NotStrictEqualNode : public BinaryOpNode {
@@ -1559,8 +1365,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_nstricteq; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecEquality; }
     };
 
     class BitAndNode : public BinaryOpNode {
@@ -1571,8 +1375,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_bitand; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecBitwiseAnd; }
     };
 
     class BitOrNode : public BinaryOpNode {
@@ -1583,8 +1385,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_bitor; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecBitwiseOr; }
     };
 
     class BitXOrNode : public BinaryOpNode {
@@ -1595,8 +1395,6 @@ namespace JSC {
         }
 
         virtual OpcodeID opcode() const JSC_FAST_CALL { return op_bitxor; }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecBitwiseXor; }
     };
 
     /**
@@ -1616,8 +1414,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return (m_operator == OpLogicalAnd) ? PrecLogicalAnd : PrecLogicalOr; }
 
     private:
         RefPtr<ExpressionNode> m_expr1;
@@ -1642,8 +1438,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecConditional; }
 
     private:
         RefPtr<ExpressionNode> m_logical;
@@ -1668,10 +1462,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
-
-    protected:
+    private:
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
         size_t m_index; // Used by ReadModifyLocalVarNode.
@@ -1694,10 +1485,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
-
-    protected:
+    private:
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
         size_t m_index; // Used by ReadModifyLocalVarNode.
@@ -1723,10 +1511,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
-
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         RefPtr<ExpressionNode> m_right;
@@ -1753,10 +1538,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
-
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
         RefPtr<ExpressionNode> m_right;
@@ -1780,10 +1562,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
@@ -1808,10 +1588,7 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
-
-    protected:
+    private:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
         RefPtr<ExpressionNode> m_right;
@@ -1834,10 +1611,8 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAssignment; }
 
-    protected:
+    private:
         RefPtr<ExpressionNode> m_left;
         Operator m_operator;
         RefPtr<ExpressionNode> m_right;
@@ -1856,8 +1631,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecExpression; }
 
     private:
         RefPtr<ExpressionNode> m_expr1;
@@ -1870,7 +1643,6 @@ namespace JSC {
             : CommaNode(globalData, expr1, expr2)
         {
         }
-        virtual Precedence precedence() const { return PrecAssignment; }
     };
 
     class ConstDeclNode : public ExpressionNode {
@@ -1879,9 +1651,6 @@ namespace JSC {
 
         virtual ~ConstDeclNode();
         virtual void releaseNodes(NodeReleaser&);
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
         Identifier m_ident;
         RefPtr<ConstDeclNode> m_next;
@@ -1902,8 +1671,6 @@ namespace JSC {
         virtual ~ConstStatementNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
@@ -1935,13 +1702,12 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
         StatementVector& children() { return m_children; }
 
         virtual bool isBlock() const JSC_FAST_CALL { return true; }
 
-    protected:
+    private:
         StatementVector m_children;
     };
 
@@ -1954,7 +1720,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return true; }
     };
     
@@ -1966,8 +1731,6 @@ namespace JSC {
         }
         
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
     };
 
     class ExprStatementNode : public StatementNode {
@@ -1979,7 +1742,6 @@ namespace JSC {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1998,8 +1760,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-
     private:
         RefPtr<ExpressionNode> m_expr;
     };
@@ -2017,7 +1777,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     protected:
         RefPtr<ExpressionNode> m_condition;
@@ -2036,7 +1795,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         RefPtr<StatementNode> m_elseBlock;
@@ -2055,7 +1813,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -2077,7 +1834,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -2103,7 +1859,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -2124,7 +1879,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -2151,7 +1905,6 @@ namespace JSC {
         }
         
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -2171,7 +1924,6 @@ namespace JSC {
         }
         
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -2189,7 +1941,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
         virtual bool isReturnNode() const JSC_FAST_CALL { return true; }
 
     private:
@@ -2211,7 +1962,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -2233,7 +1983,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         Identifier m_name;
@@ -2252,7 +2001,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -2272,8 +2020,6 @@ namespace JSC {
         virtual ~TryNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL;
 
     private:
@@ -2283,16 +2029,16 @@ namespace JSC {
         RefPtr<StatementNode> m_finallyBlock;
     };
 
-    class ParameterNode : public Node {
+    class ParameterNode : public ParserRefCounted {
     public:
         ParameterNode(JSGlobalData* globalData, const Identifier& ident) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_ident(ident)
         {
         }
 
         ParameterNode(JSGlobalData* globalData, ParameterNode* l, const Identifier& ident) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_ident(ident)
         {
             l->m_next = this;
@@ -2301,24 +2047,21 @@ namespace JSC {
         virtual ~ParameterNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        Identifier ident() JSC_FAST_CALL { return m_ident; }
-        ParameterNode *nextParam() JSC_FAST_CALL { return m_next.get(); }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
+        const Identifier& ident() const JSC_FAST_CALL { return m_ident; }
+        ParameterNode* nextParam() const JSC_FAST_CALL { return m_next.get(); }
 
     private:
-        friend class FuncDeclNode;
-        friend class FuncExprNode;
         Identifier m_ident;
         RefPtr<ParameterNode> m_next;
     };
 
     class ScopeNode : public BlockNode {
     public:
+        typedef DeclarationStacks::VarStack VarStack;
+        typedef DeclarationStacks::FunctionStack FunctionStack;
+
         ScopeNode(JSGlobalData*, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        
         const SourceCode& source() const { return m_source; }
         const UString& sourceURL() const JSC_FAST_CALL { return m_source.provider()->url(); }
         intptr_t sourceID() const { return m_source.provider()->asID(); }
@@ -2450,10 +2193,9 @@ namespace JSC {
                 ScopeNode::deref();
         }
 
-    protected:
+    private:
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
-    private:
         void generateCode(ScopeChainNode*) JSC_FAST_CALL;
 
         Identifier* m_parameters;
@@ -2479,15 +2221,10 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMember; }
-        virtual bool needsParensIfLeftmost() const { return true; }
 
         FunctionBodyNode* body() { return m_body.get(); }
 
     private:
-        // Used for streamTo
-        friend class PropertyNode;
         Identifier m_ident;
         RefPtr<ParameterNode> m_parameter;
         RefPtr<FunctionBodyNode> m_body;
@@ -2509,7 +2246,6 @@ namespace JSC {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
 
         Identifier m_ident;
@@ -2521,16 +2257,16 @@ namespace JSC {
         RefPtr<FunctionBodyNode> m_body;
     };
 
-    class CaseClauseNode : public Node {
+    class CaseClauseNode : public ParserRefCounted {
     public:
         CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_expr(expr)
         {
         }
 
         CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr, SourceElements* children) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_expr(expr)
         {
             if (children)
@@ -2540,9 +2276,6 @@ namespace JSC {
         virtual ~CaseClauseNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
-
         ExpressionNode* expr() const { return m_expr.get(); }
         StatementVector& children() { return m_children; }
 
@@ -2551,16 +2284,16 @@ namespace JSC {
         StatementVector m_children;
     };
 
-    class ClauseListNode : public Node {
+    class ClauseListNode : public ParserRefCounted {
     public:
         ClauseListNode(JSGlobalData* globalData, CaseClauseNode* clause) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_clause(clause)
         {
         }
 
         ClauseListNode(JSGlobalData* globalData, ClauseListNode* clauseList, CaseClauseNode* clause) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_clause(clause)
         {
             clauseList->m_next = this;
@@ -2571,19 +2304,16 @@ namespace JSC {
 
         CaseClauseNode* getClause() const JSC_FAST_CALL { return m_clause.get(); }
         ClauseListNode* getNext() const JSC_FAST_CALL { return m_next.get(); }
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
     private:
-        friend class CaseBlockNode;
         RefPtr<CaseClauseNode> m_clause;
         RefPtr<ClauseListNode> m_next;
     };
 
-    class CaseBlockNode : public Node {
+    class CaseBlockNode : public ParserRefCounted {
     public:
         CaseBlockNode(JSGlobalData* globalData, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2) JSC_FAST_CALL
-            : Node(globalData)
+            : ParserRefCounted(globalData)
             , m_list1(list1)
             , m_defaultClause(defaultClause)
             , m_list2(list2)
@@ -2594,9 +2324,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         RegisterID* emitCodeForBlock(CodeGenerator&, RegisterID* input, RegisterID* dst = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
-        virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
     private:
         SwitchInfo::SwitchType tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
@@ -2618,8 +2345,6 @@ namespace JSC {
         virtual void releaseNodes(NodeReleaser&);
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;

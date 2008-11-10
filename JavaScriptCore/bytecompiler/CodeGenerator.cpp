@@ -309,7 +309,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     if (usesArguments)
         emitOpcode(op_create_arguments);
 
-    const Node::FunctionStack& functionStack = functionBody->functionStack();
+    const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FuncDeclNode* funcDecl = functionStack[i].get();
         const Identifier& ident = funcDecl->m_ident;
@@ -317,7 +317,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
         emitNewFunction(addVar(ident, false), funcDecl);
     }
 
-    const Node::VarStack& varStack = functionBody->varStack();
+    const DeclarationStacks::VarStack& varStack = functionBody->varStack();
     for (size_t i = 0; i < varStack.size(); ++i)
         addVar(varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant);
 
