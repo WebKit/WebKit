@@ -1,3 +1,14 @@
+2008-11-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        A few coding style fixes for AVLTree.
+
+        * wtf/AVLTree.h: Moved to WTF namespace, Removed "KJS_" from include guards.
+        (WTF::AVLTree::Iterator::start_iter): Fixed indentation
+
+        * runtime/JSArray.cpp: Added "using namepace WTF".
+
 2008-11-09  Cameron Zwarich  <zwarich@apple.com>
 
         Not reviewed.

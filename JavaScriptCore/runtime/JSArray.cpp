@@ -32,6 +32,7 @@
 #define CHECK_ARRAY_CONSISTENCY 0
 
 using namespace std;
+using namespace WTF;
 
 namespace JSC {
 
