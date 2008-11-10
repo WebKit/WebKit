@@ -1,3 +1,20 @@
+2008-11-10  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22152: Remove asObject() call from JSCallbackObject::getOwnPropertySlot()
+        <https://bugs.webkit.org/show_bug.cgi?id=22152>
+
+        With the recent change to adopt asType() style cast functions with
+        assertions instead of static_casts in many places, the assertion for
+        the asObject() call in JSCallbackObject::getOwnPropertySlot() has been
+        failing when using any nontrivial client of the JavaScriptCore API.
+        The cast isn't even necessary to call slot.setCustom(), so it should
+        be removed.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject::getOwnPropertySlot):
+
 2008-11-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.

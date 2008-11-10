@@ -130,7 +130,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
                 // cache the value so we don't have to compute it again
                 // FIXME: This violates the PropertySlot design a little bit.
                 // We should either use this optimization everywhere, or nowhere.
-                slot.setCustom(asObject(toJS(value)), cachedValueGetter);
+                slot.setCustom(toJS(value), cachedValueGetter);
                 return true;
             }
         }
