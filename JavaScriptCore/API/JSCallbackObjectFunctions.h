@@ -127,10 +127,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
             JSLock::DropAllLocks dropAllLocks(exec);
             if (JSValueRef value = getProperty(ctx, thisRef, propertyNameRef.get(), toRef(exec->exceptionSlot()))) {
-                // cache the value so we don't have to compute it again
-                // FIXME: This violates the PropertySlot design a little bit.
-                // We should either use this optimization everywhere, or nowhere.
-                slot.setCustom(toJS(value), cachedValueGetter);
+                slot.setValue(toJS(value));
                 return true;
             }
         }
@@ -427,14 +424,6 @@ bool JSCallbackObject<Base>::inherits(JSClassRef c) const
             return true;
     
     return false;
-}
-
-template <class Base>
-JSValue* JSCallbackObject<Base>::cachedValueGetter(ExecState*, const Identifier&, const PropertySlot& slot)
-{
-    JSValue* v = slot.slotBase();
-    ASSERT(v);
-    return v;
 }
 
 template <class Base>

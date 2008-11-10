@@ -82,7 +82,6 @@ private:
     static JSValue* call(ExecState*, JSObject* functionObject, JSValue* thisValue, const ArgList&);
     static JSObject* construct(ExecState*, JSObject* constructor, const ArgList&);
    
-    static JSValue* cachedValueGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* staticFunctionGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* callbackGetter(ExecState*, const Identifier&, const PropertySlot&);
