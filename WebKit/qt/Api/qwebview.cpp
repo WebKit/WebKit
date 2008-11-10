@@ -515,11 +515,18 @@ qreal QWebView::zoomFactor() const
   By default, this property contains a value of 1.0.
 */
 
+/*!
+    Sets the value of the multiplier used to scale the text in a Web page to
+    the \a factor specified.
+*/
 void QWebView::setTextSizeMultiplier(qreal factor)
 {
     page()->mainFrame()->setTextSizeMultiplier(factor);
 }
 
+/*!
+    Returns the value of the multiplier used to scale the text in a Web page.
+*/
 qreal QWebView::textSizeMultiplier() const
 {
     return page()->mainFrame()->textSizeMultiplier();

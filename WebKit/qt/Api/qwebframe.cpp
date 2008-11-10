@@ -758,11 +758,18 @@ void QWebFrame::render(QPainter *painter)
     QWebSettings.
 */
 
+/*!
+    Sets the value of the multiplier used to scale the text in a Web frame to
+    the \a factor specified.
+*/
 void QWebFrame::setTextSizeMultiplier(qreal factor)
 {
     d->frame->setZoomFactor(factor, /*isTextOnly*/true);
 }
 
+/*!
+    Returns the value of the multiplier used to scale the text in a Web frame.
+*/
 qreal QWebFrame::textSizeMultiplier() const
 {
     return d->frame->zoomFactor();
