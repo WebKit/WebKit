@@ -35,7 +35,7 @@
 @implementation WebBaseNetscapePluginView
 
 - (id)initWithFrame:(NSRect)frame
-      pluginPackage:(WebNetscapePluginPackage *)thePluginPackage
+      pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                 URL:(NSURL *)URL
             baseURL:(NSURL *)baseURL
            MIMEType:(NSString *)MIME
@@ -48,6 +48,7 @@
     if (!self)
         return nil;
     
+    _pluginPackage = pluginPackage;
     _element = anElement;
     _sourceURL.adoptNS([URL copy]);
     _baseURL.adoptNS([baseURL copy]);

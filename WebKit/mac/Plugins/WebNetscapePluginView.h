@@ -108,20 +108,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
     RetainPtr<NSMutableDictionary> _pendingFrameLoads;
     
     NPPluginTextInputFuncs *textInputFuncs;
-    
-    NPP_NewProcPtr NPP_New;
-    NPP_DestroyProcPtr NPP_Destroy;
-    NPP_SetWindowProcPtr NPP_SetWindow;
-    NPP_NewStreamProcPtr NPP_NewStream;
-    NPP_DestroyStreamProcPtr NPP_DestroyStream;
-    NPP_StreamAsFileProcPtr NPP_StreamAsFile;
-    NPP_WriteReadyProcPtr NPP_WriteReady;
-    NPP_WriteProcPtr NPP_Write;
-    NPP_PrintProcPtr NPP_Print;
-    NPP_HandleEventProcPtr NPP_HandleEvent;
-    NPP_URLNotifyProcPtr NPP_URLNotify;
-    NPP_GetValueProcPtr NPP_GetValue;
-    NPP_SetValueProcPtr NPP_SetValue;    
 }
 
 + (WebNetscapePluginView *)currentPluginView;
@@ -152,7 +138,6 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
 - (NPP)plugin;
 
 - (WebNetscapePluginPackage *)pluginPackage;
-- (void)setPluginPackage:(WebNetscapePluginPackage *)thePluginPackage;
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)viewDidMoveToHostWindow;
 - (void)disconnectStream:(WebNetscapePluginStream*)stream;

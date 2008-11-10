@@ -625,7 +625,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!isStarted)
         return NO;
 
-    ASSERT(NPP_HandleEvent);
+    ASSERT([_pluginPackage.get() pluginFuncs]->event);
     
     // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
     // We probably don't want more general reentrancy protection; we are really
@@ -677,7 +677,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(false);
-        acceptedEvent = NPP_HandleEvent(plugin, event);
+        acceptedEvent = ![_pluginPackage.get() pluginFuncs]->event(plugin, event);
     }
     [self didCallPlugInFunction];
         
@@ -1003,7 +1003,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self willCallPlugInFunction];
         {
             JSC::JSLock::DropAllLocks dropAllLocks(false);
-            npErr = NPP_SetWindow(plugin, &window);
+            npErr = [_pluginPackage.get() pluginFuncs]->setwindow(plugin, &window);
         }
         [self didCallPlugInFunction];
         inSetWindow = NO;
@@ -1164,7 +1164,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifndef BUILDING_ON_TIGER
     if (drawingModel == NPDrawingModelCoreAnimation) {
         void *value = 0;
-        if (NPP_GetValue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
+        if (![_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
             
             // The plug-in gives us a retained layer.
             _layer.adoptNS((CALayer *)value);
@@ -1186,7 +1186,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         {
             JSC::JSLock::DropAllLocks dropAllLocks(false);
             NPPluginTextInputFuncs *value;
-            if (NPP_GetValue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
+            if (![_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
                 textInputFuncs = value;
         }
         [self didCallPlugInFunction];
@@ -1316,25 +1316,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return _pluginPackage.get();
 }
 
-- (void)setPluginPackage:(WebNetscapePluginPackage *)thePluginPackage;
-{
-    _pluginPackage = thePluginPackage;
-
-    NPP_New =           [_pluginPackage.get() NPP_New];
-    NPP_Destroy =       [_pluginPackage.get() NPP_Destroy];
-    NPP_SetWindow =     [_pluginPackage.get() NPP_SetWindow];
-    NPP_NewStream =     [_pluginPackage.get() NPP_NewStream];
-    NPP_WriteReady =    [_pluginPackage.get() NPP_WriteReady];
-    NPP_Write =         [_pluginPackage.get() NPP_Write];
-    NPP_StreamAsFile =  [_pluginPackage.get() NPP_StreamAsFile];
-    NPP_DestroyStream = [_pluginPackage.get() NPP_DestroyStream];
-    NPP_HandleEvent =   [_pluginPackage.get() NPP_HandleEvent];
-    NPP_URLNotify =     [_pluginPackage.get() NPP_URLNotify];
-    NPP_GetValue =      [_pluginPackage.get() NPP_GetValue];
-    NPP_SetValue =      [_pluginPackage.get() NPP_SetValue];
-    NPP_Print =         [_pluginPackage.get() NPP_Print];
-}
-
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 {
     ASSERT([keys count] == [values count]);
@@ -1402,8 +1383,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return nil;
     }
 
-    [self setPluginPackage:pluginPackage];
-    
     return self;
 }
 
@@ -1667,7 +1646,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (NPObject *)createPluginScriptableObject
 {
-    if (!NPP_GetValue || ![self isStarted])
+    if (![_pluginPackage.get() pluginFuncs]->getvalue || ![self isStarted])
         return NULL;
         
     NPObject *value = NULL;
@@ -1675,7 +1654,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(false);
-        error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
+        error = [_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginScriptableNPObject, &value);
     }
     [self didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
@@ -1964,7 +1943,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             [self willCallPlugInFunction];
             {
                 JSC::JSLock::DropAllLocks dropAllLocks(false);
-                NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
+                [_pluginPackage.get() pluginFuncs]->urlnotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
             }
             [self didCallPlugInFunction];
         }
@@ -1996,7 +1975,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(false);
-        NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
+        [_pluginPackage.get() pluginFuncs]->urlnotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
     }
     [self didCallPlugInFunction];
     
@@ -2040,7 +2019,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                     [self willCallPlugInFunction];
                     {
                         JSC::JSLock::DropAllLocks dropAllLocks(false);
-                        NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
+                        [_pluginPackage.get() pluginFuncs]->urlnotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
                     }
                     [self didCallPlugInFunction];
                 }
@@ -2632,7 +2611,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     plugin = (NPP)calloc(1, sizeof(NPP_t));
     plugin->ndata = self;
 
-    ASSERT(NPP_New);
+    ASSERT([_pluginPackage.get() pluginFuncs]->newp);
 
     // NPN_New(), which creates the plug-in instance, should never be called while calling a plug-in function for that instance.
     ASSERT(pluginFunctionCallDepth == 0);
@@ -2651,7 +2630,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
     
     [[self class] setCurrentPluginView:self];
-    NPError npErr = NPP_New((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
+    NPError npErr = [_pluginPackage.get() pluginFuncs]->newp((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
     
     if (!wasDeferring)
@@ -2666,7 +2645,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     PluginMainThreadScheduler::scheduler().unregisterPlugin(plugin);
     
     NPError npErr;
-    npErr = NPP_Destroy(plugin, NULL);
+    npErr = ![_pluginPackage.get() pluginFuncs]->destroy(plugin, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);
     
     if (Frame* frame = core([self webFrame]))
@@ -2705,7 +2684,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     return nil;
 #else
     // Cannot print plugins that do not implement NPP_Print
-    if (!NPP_Print)
+    if (![_pluginPackage.get() pluginFuncs]->print)
         return nil;
 
     // This NSBitmapImageRep will share its bitmap buffer with a GWorld that the plugin will draw into.
@@ -2762,7 +2741,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     [self willCallPlugInFunction];
     {
         JSC::JSLock::DropAllLocks dropAllLocks(false);
-        NPP_Print(plugin, &npPrint);
+        [_pluginPackage.get() pluginFuncs]->print(plugin, &npPrint);
     }
     [self didCallPlugInFunction];
 
