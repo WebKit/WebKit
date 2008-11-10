@@ -496,7 +496,7 @@ void QWebFrame::load(const QNetworkRequest &req,
 
 /*!
   Sets the content of this frame to \a html. \a baseUrl is optional and used to resolve relative
-  URLs in the document.
+  URLs in the document, such as referenced images or stylesheets.
 
   When using this method WebKit assumes that external resources such as JavaScript programs or style
   sheets are encoded in UTF-8 unless otherwise specified. For example, the encoding of an external
