@@ -207,6 +207,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     , m_nextGlobalIndex(-1)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
+    , m_emitNodeDepth(0)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->needsFullScopeChain = true;
@@ -283,6 +284,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     , m_codeType(FunctionCode)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
+    , m_emitNodeDepth(0)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->needsFullScopeChain = true;
@@ -353,6 +355,7 @@ CodeGenerator::CodeGenerator(EvalNode* evalNode, const Debugger* debugger, const
     , m_codeType(EvalCode)
     , m_globalData(&scopeChain.globalObject()->globalExec()->globalData())
     , m_lastOpcodeID(op_end)
+    , m_emitNodeDepth(0)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->needsFullScopeChain = true;
@@ -1674,6 +1677,18 @@ void CodeGenerator::endSwitch(uint32_t clauseCount, RefPtr<LabelID>* labels, Exp
 
         prepareJumpTableForStringSwitch(jumpTable, switchInfo.opcodeOffset + 3, clauseCount, labels, nodes);
     }
+}
+
+RegisterID* CodeGenerator::emitThrowExpressionTooDeepException()
+{
+    // It would be nice to do an even better job of identifying exactly where the expression is.
+    // And we could make the caller pass the node pointer in, if there was some way of getting
+    // that from an arbitrary node. However, calling emitExpressionInfo without any useful data
+    // is still good enough to get us an accurate line number.
+    emitExpressionInfo(0, 0, 0);
+    RegisterID* exception = emitNewError(newTemporary(), SyntaxError, jsString(globalData(), "Expression too deep"));
+    emitThrow(exception);
+    return exception;
 }
 
 } // namespace JSC

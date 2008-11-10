@@ -10,6 +10,17 @@
 
 2008-11-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig and Maciej Stachowiak.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=14886
+          Stack overflow due to deeply nested parse tree doing repeated string concatentation
+
+        * fast/js/large-expressions-expected.txt: Added.
+        * fast/js/large-expressions.html: Added.
+        * fast/js/resources/large-expressions.js: Added.
+
+2008-11-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam Weinig.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=22142

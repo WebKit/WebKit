@@ -1,3 +1,43 @@
+2008-11-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig and Maciej Stachowiak.
+        Includes some work done by Chris Brichford.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=14886
+          Stack overflow due to deeply nested parse tree doing repeated string concatentation
+
+        Test: fast/js/large-expressions.html
+
+        1) Code generation is recursive, so takes stack proportional to the complexity
+           of the source code expression. Fixed by setting an arbitrary recursion limit
+           of 10,000 nodes.
+
+        2) Destruction of the syntax tree was recursive. Fixed by introducing a
+           non-recursive mechanism for destroying the tree.
+
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::CodeGenerator): Initialize depth to 0.
+        (JSC::CodeGenerator::emitThrowExpressionTooDeepException): Added. Emits the code
+        to throw a "too deep" exception.
+        * bytecompiler/CodeGenerator.h:
+        (JSC::CodeGenerator::emitNode): Check depth and emit an exception if we exceed
+        the maximum depth.
+
+        * parser/Nodes.cpp:
+        (JSC::NodeReleaser::releaseAllNodes): Added. To be called inside node destructors
+        to avoid recursive calls to destructors for nodes inside this one.
+        (JSC::NodeReleaser::release): Added. To be called inside releaseNodes functions.
+        Also added releaseNodes functions and calls to releaseAllNodes inside destructors
+        for each class derived from Node that has RefPtr to other nodes.
+        (JSC::NodeReleaser::adopt): Added. Used by the release function.
+        (JSC::NodeReleaser::adoptFunctionBodyNode): Added.
+
+        * parser/Nodes.h: Added declarations of releaseNodes and destructors in all classes
+        that needed it. Eliminated use of ListRefPtr and releaseNext, which are the two parts
+        of an older solution to the non-recursive destruction problem that works only for
+        lists, whereas the new solution works for other graphs. Changed ReverseBinaryOpNode
+        to use BinaryOpNode as a base class to avoid some duplicated code.
+
 2008-11-08  Kevin Ollivier  <kevino@theolliviers.com>
         
         wx build fixes after addition of JSCore parser and bycompiler dirs. Also cleanup

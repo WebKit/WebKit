@@ -50,7 +50,73 @@ using namespace WTF;
 
 namespace JSC {
 
-// ------------------------------ Node -----------------------------------------
+static void substitute(UString& string, const UString& substring) JSC_FAST_CALL;
+
+// ------------------------------ NodeReleaser --------------------------------
+
+class NodeReleaser : Noncopyable {
+public:
+    // Call this function inside the destructor of a class derived from Node.
+    // This will traverse the tree below this node, destroying all of those nodes,
+    // but without relying on recursion.
+    static void releaseAllNodes(ParserRefCounted* root);
+
+    // Call this on each node in a the releaseNodes virtual function.
+    // It gives the node to the NodeReleaser, which will then release the
+    // node later at the end of the releaseAllNodes process.
+    template <typename T> void release(RefPtr<T>& node) { if (node) adopt(node.release()); }
+    void release(RefPtr<FunctionBodyNode>& node) { if (node) adoptFunctionBodyNode(node); }
+
+private:
+    NodeReleaser() { }
+    ~NodeReleaser() { }
+
+    void adopt(PassRefPtr<ParserRefCounted>);
+    void adoptFunctionBodyNode(RefPtr<FunctionBodyNode>&);
+
+    typedef Vector<RefPtr<ParserRefCounted> > NodeReleaseVector;
+    OwnPtr<NodeReleaseVector> m_vector;
+};
+
+void NodeReleaser::releaseAllNodes(ParserRefCounted* root)
+{
+    ASSERT(root);
+    NodeReleaser releaser;
+    root->releaseNodes(releaser);
+    if (!releaser.m_vector)
+        return;
+    // Note: The call to release.m_vector->size() is intentionally inside
+    // the loop, since calls to releaseNodes are expected to increase the size.
+    for (size_t i = 0; i < releaser.m_vector->size(); ++i) {
+        ParserRefCounted* node = (*releaser.m_vector)[i].get();
+        if (node->hasOneRef())
+            node->releaseNodes(releaser);
+    }
+}
+
+void NodeReleaser::adopt(PassRefPtr<ParserRefCounted> node)
+{
+    ASSERT(node);
+    if (!node->hasOneRef())
+        return;
+    if (!m_vector)
+        m_vector.set(new NodeReleaseVector);
+    m_vector->append(node);
+}
+
+void NodeReleaser::adoptFunctionBodyNode(RefPtr<FunctionBodyNode>& functionBodyNode)
+{
+    // This sidesteps a problem where if you assign a PassRefPtr<FunctionBodyNode>
+    // to a PassRefPtr<Node> we leave the two reference counts (FunctionBodyNode
+    // and ParserRefCounted) unbalanced. It would be nice to fix this problem in
+    // a cleaner way -- perhaps we could remove the FunctionBodyNode reference
+    // count at some point.
+    RefPtr<Node> node = functionBodyNode;
+    functionBodyNode = 0;
+    adopt(node.release());
+}
+
+// ------------------------------ ParserRefCounted -----------------------------------------
 
 #ifndef NDEBUG
 static RefCountedLeakCounter parserRefCountedCounter("JSC::Node");
@@ -73,6 +139,10 @@ ParserRefCounted::~ParserRefCounted()
 #ifndef NDEBUG
     parserRefCountedCounter.decrement();
 #endif
+}
+
+void ParserRefCounted::releaseNodes(NodeReleaser&)
+{
 }
 
 void ParserRefCounted::ref()
@@ -140,13 +210,16 @@ void ParserRefCounted::deleteNewObjects(JSGlobalData* globalData)
     globalData->newParserObjects = 0;
 }
 
+// ------------------------------ Node --------------------------------
+
 Node::Node(JSGlobalData* globalData)
     : ParserRefCounted(globalData)
 {
     m_line = globalData->lexer->lineNo();
 }
 
-static void substitute(UString& string, const UString& substring) JSC_FAST_CALL;
+// ------------------------------ ThrowableExpressionData --------------------------------
+
 static void substitute(UString& string, const UString& substring)
 {
     int position = string.find("%s");
@@ -275,7 +348,30 @@ RegisterID* ResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return generator.emitResolve(generator.finalDestination(dst), m_ident);
 }
 
+// ------------------------------ ElementNode ------------------------------------
+
+ElementNode::~ElementNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ElementNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_next);
+    releaser.release(m_node);
+}
+
 // ------------------------------ ArrayNode ------------------------------------
+
+ArrayNode::~ArrayNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ArrayNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_element);
+}
 
 RegisterID* ArrayNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -308,7 +404,29 @@ RegisterID* ArrayNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return generator.moveToDestinationIfNeeded(dst, array.get());
 }
 
+// ------------------------------ PropertyNode ----------------------------
+
+PropertyNode::~PropertyNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PropertyNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_assign);
+}
+
 // ------------------------------ ObjectLiteralNode ----------------------------
+
+ObjectLiteralNode::~ObjectLiteralNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ObjectLiteralNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_list);
+}
 
 RegisterID* ObjectLiteralNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -321,6 +439,17 @@ RegisterID* ObjectLiteralNode::emitCode(CodeGenerator& generator, RegisterID* ds
 }
 
 // ------------------------------ PropertyListNode -----------------------------
+
+PropertyListNode::~PropertyListNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PropertyListNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_node);
+    releaser.release(m_next);
+}
 
 RegisterID* PropertyListNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -354,6 +483,17 @@ RegisterID* PropertyListNode::emitCode(CodeGenerator& generator, RegisterID* dst
 
 // ------------------------------ BracketAccessorNode --------------------------------
 
+BracketAccessorNode::~BracketAccessorNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void BracketAccessorNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+}
+
 RegisterID* BracketAccessorNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base.get(), m_subscriptHasAssignments, m_subscript->isPure(generator));
@@ -364,6 +504,16 @@ RegisterID* BracketAccessorNode::emitCode(CodeGenerator& generator, RegisterID* 
 
 // ------------------------------ DotAccessorNode --------------------------------
 
+DotAccessorNode::~DotAccessorNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void DotAccessorNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+}
+
 RegisterID* DotAccessorNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RegisterID* base = generator.emitNode(m_base.get());
@@ -373,18 +523,64 @@ RegisterID* DotAccessorNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ArgumentListNode -----------------------------
 
+ArgumentListNode::~ArgumentListNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ArgumentListNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_next);
+    releaser.release(m_expr);
+}
+
 RegisterID* ArgumentListNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     ASSERT(m_expr);
     return generator.emitNode(dst, m_expr.get());
 }
 
+// ------------------------------ ArgumentsNode -----------------------------
+
+ArgumentsNode::~ArgumentsNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ArgumentsNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_listNode);
+}
+
 // ------------------------------ NewExprNode ----------------------------------
+
+NewExprNode::~NewExprNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void NewExprNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+    releaser.release(m_args);
+}
 
 RegisterID* NewExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> func = generator.emitNode(m_expr.get());
     return generator.emitConstruct(generator.finalDestination(dst), func.get(), m_args.get(), m_divot, m_startOffset, m_endOffset);
+}
+
+// ------------------------------ EvalFunctionCallNode ----------------------------------
+
+EvalFunctionCallNode::~EvalFunctionCallNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void EvalFunctionCallNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_args);
 }
 
 RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -395,10 +591,35 @@ RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID*
     return generator.emitCallEval(generator.finalDestination(dst, base.get()), func.get(), base.get(), m_args.get(), m_divot, m_startOffset, m_endOffset);
 }
 
+// ------------------------------ FunctionCallValueNode ----------------------------------
+
+FunctionCallValueNode::~FunctionCallValueNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void FunctionCallValueNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+    releaser.release(m_args);
+}
+
 RegisterID* FunctionCallValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> func = generator.emitNode(m_expr.get());
     return generator.emitCall(generator.finalDestination(dst), func.get(), 0, m_args.get(), m_divot, m_startOffset, m_endOffset);
+}
+
+// ------------------------------ FunctionCallResolveNode ----------------------------------
+
+FunctionCallResolveNode::~FunctionCallResolveNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void FunctionCallResolveNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_args);
 }
 
 RegisterID* FunctionCallResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -422,6 +643,20 @@ RegisterID* FunctionCallResolveNode::emitCode(CodeGenerator& generator, Register
     return generator.emitCall(generator.finalDestination(dst, base.get()), func.get(), base.get(), m_args.get(), m_divot, m_startOffset, m_endOffset);
 }
 
+// ------------------------------ FunctionCallBracketNode ----------------------------------
+
+FunctionCallBracketNode::~FunctionCallBracketNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void FunctionCallBracketNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+    releaser.release(m_args);
+}
+
 RegisterID* FunctionCallBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
@@ -429,6 +664,19 @@ RegisterID* FunctionCallBracketNode::emitCode(CodeGenerator& generator, Register
     generator.emitExpressionInfo(m_divot - m_subexpressionDivotOffset, m_startOffset - m_subexpressionDivotOffset, m_subexpressionEndOffset);
     RefPtr<RegisterID> function = generator.emitGetByVal(generator.newTemporary(), base.get(), property);
     return generator.emitCall(generator.finalDestination(dst, base.get()), function.get(), base.get(), m_args.get(), m_divot, m_startOffset, m_endOffset);
+}
+
+// ------------------------------ FunctionCallDotNode ----------------------------------
+
+FunctionCallDotNode::~FunctionCallDotNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void FunctionCallDotNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_args);
 }
 
 RegisterID* FunctionCallDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -497,6 +745,17 @@ RegisterID* PostfixResolveNode::emitCode(CodeGenerator& generator, RegisterID* d
 
 // ------------------------------ PostfixBracketNode ----------------------------------
 
+PostfixBracketNode::~PostfixBracketNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PostfixBracketNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+}
+
 RegisterID* PostfixBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
@@ -521,6 +780,16 @@ RegisterID* PostfixBracketNode::emitCode(CodeGenerator& generator, RegisterID* d
 
 // ------------------------------ PostfixDotNode ----------------------------------
 
+PostfixDotNode::~PostfixDotNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PostfixDotNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+}
+
 RegisterID* PostfixDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
@@ -544,6 +813,16 @@ RegisterID* PostfixDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ PostfixErrorNode -----------------------------------
 
+PostfixErrorNode::~PostfixErrorNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PostfixErrorNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
+
 RegisterID* PostfixErrorNode::emitCode(CodeGenerator& generator, RegisterID*)
 {
     return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus ? "Postfix ++ operator applied to value that is not a reference." : "Postfix -- operator applied to value that is not a reference.");
@@ -563,6 +842,17 @@ RegisterID* DeleteResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ DeleteBracketNode -----------------------------------
 
+DeleteBracketNode::~DeleteBracketNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void DeleteBracketNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+}
+
 RegisterID* DeleteBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> r0 = generator.emitNode(m_base.get());
@@ -574,6 +864,16 @@ RegisterID* DeleteBracketNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ DeleteDotNode -----------------------------------
 
+DeleteDotNode::~DeleteDotNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void DeleteDotNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+}
+
 RegisterID* DeleteDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RegisterID* r0 = generator.emitNode(m_base.get());
@@ -584,6 +884,16 @@ RegisterID* DeleteDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ DeleteValueNode -----------------------------------
 
+DeleteValueNode::~DeleteValueNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void DeleteValueNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
+
 RegisterID* DeleteValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     generator.emitNode(ignoredResult(), m_expr.get());
@@ -593,6 +903,16 @@ RegisterID* DeleteValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ VoidNode -------------------------------------
+
+VoidNode::~VoidNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void VoidNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
 
 RegisterID* VoidNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -622,6 +942,16 @@ RegisterID* TypeOfResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 }
 
 // ------------------------------ TypeOfValueNode -----------------------------------
+
+TypeOfValueNode::~TypeOfValueNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void TypeOfValueNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
 
 RegisterID* TypeOfValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -669,6 +999,17 @@ RegisterID* PrefixResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ PrefixBracketNode ----------------------------------
 
+PrefixBracketNode::~PrefixBracketNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PrefixBracketNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+}
+
 RegisterID* PrefixBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
@@ -688,6 +1029,16 @@ RegisterID* PrefixBracketNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ PrefixDotNode ----------------------------------
 
+PrefixDotNode::~PrefixDotNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PrefixDotNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+}
+
 RegisterID* PrefixDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
@@ -706,12 +1057,32 @@ RegisterID* PrefixDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ PrefixErrorNode -----------------------------------
 
+PrefixErrorNode::~PrefixErrorNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void PrefixErrorNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
+
 RegisterID* PrefixErrorNode::emitCode(CodeGenerator& generator, RegisterID*)
 {
     return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus ? "Prefix ++ operator applied to value that is not a reference." : "Prefix -- operator applied to value that is not a reference.");
 }
 
 // ------------------------------ Unary Operation Nodes -----------------------------------
+
+UnaryOpNode::~UnaryOpNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void UnaryOpNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
 
 RegisterID* UnaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -720,6 +1091,17 @@ RegisterID* UnaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ Binary Operation Nodes -----------------------------------
+
+BinaryOpNode::~BinaryOpNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void BinaryOpNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr1);
+    releaser.release(m_expr2);
+}
 
 RegisterID* BinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -782,7 +1164,18 @@ RegisterID* InstanceOfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return generator.emitInstanceOf(generator.finalDestination(dst, src1.get()), src1.get(), src2.get(), src2Prototype);
 }
 
-// ------------------------------ Binary Logical Nodes ----------------------------
+// ------------------------------ LogicalOpNode ----------------------------
+
+LogicalOpNode::~LogicalOpNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void LogicalOpNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr1);
+    releaser.release(m_expr2);
+}
 
 RegisterID* LogicalOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -801,6 +1194,18 @@ RegisterID* LogicalOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ ConditionalNode ------------------------------
+
+ConditionalNode::~ConditionalNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ConditionalNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_logical);
+    releaser.release(m_expr1);
+    releaser.release(m_expr2);
+}
 
 RegisterID* ConditionalNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -823,6 +1228,16 @@ RegisterID* ConditionalNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ ReadModifyResolveNode -----------------------------------
+
+ReadModifyResolveNode::~ReadModifyResolveNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ReadModifyResolveNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_right);
+}
 
 // FIXME: should this be moved to be a method on CodeGenerator?
 static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(CodeGenerator& generator, RegisterID* dst, RegisterID* src1, RegisterID* src2, Operator oper, OperandTypes types)
@@ -914,6 +1329,16 @@ RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID
 
 // ------------------------------ AssignResolveNode -----------------------------------
 
+AssignResolveNode::~AssignResolveNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void AssignResolveNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_right);
+}
+
 RegisterID* AssignResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (RegisterID* local = generator.registerFor(m_ident)) {
@@ -945,6 +1370,17 @@ RegisterID* AssignResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ AssignDotNode -----------------------------------
 
+AssignDotNode::~AssignDotNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void AssignDotNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_right);
+}
+
 RegisterID* AssignDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base.get(), m_rightHasAssignments, m_right->isPure(generator));
@@ -956,6 +1392,17 @@ RegisterID* AssignDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ ReadModifyDotNode -----------------------------------
+
+ReadModifyDotNode::~ReadModifyDotNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ReadModifyDotNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_right);
+}
 
 RegisterID* ReadModifyDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -972,12 +1419,35 @@ RegisterID* ReadModifyDotNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ AssignErrorNode -----------------------------------
 
+AssignErrorNode::~AssignErrorNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void AssignErrorNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_left);
+    releaser.release(m_right);
+}
+
 RegisterID* AssignErrorNode::emitCode(CodeGenerator& generator, RegisterID*)
 {
     return emitThrowError(generator, ReferenceError, "Left side of assignment is not a reference.");
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------
+
+AssignBracketNode::~AssignBracketNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void AssignBracketNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+    releaser.release(m_right);
+}
 
 RegisterID* AssignBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -989,6 +1459,20 @@ RegisterID* AssignBracketNode::emitCode(CodeGenerator& generator, RegisterID* ds
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
     generator.emitPutByVal(base.get(), property.get(), result);
     return generator.moveToDestinationIfNeeded(dst, result);
+}
+
+// ------------------------------ ReadModifyBracketNode -----------------------------------
+
+ReadModifyBracketNode::~ReadModifyBracketNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ReadModifyBracketNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_base);
+    releaser.release(m_subscript);
+    releaser.release(m_right);
 }
 
 RegisterID* ReadModifyBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -1009,13 +1493,35 @@ RegisterID* ReadModifyBracketNode::emitCode(CodeGenerator& generator, RegisterID
 
 // ------------------------------ CommaNode ------------------------------------
 
+CommaNode::~CommaNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void CommaNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr1);
+    releaser.release(m_expr2);
+}
+
 RegisterID* CommaNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     generator.emitNode(ignoredResult(), m_expr1.get());
     return generator.emitNode(dst, m_expr2.get());
 }
 
-// ------------------------------ ConstDeclNode ----------------------------------
+// ------------------------------ ConstDeclNode ------------------------------------
+
+ConstDeclNode::~ConstDeclNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ConstDeclNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_next);
+    releaser.release(m_init);
+}
 
 ConstDeclNode::ConstDeclNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* init)
     : ExpressionNode(globalData)
@@ -1051,6 +1557,16 @@ RegisterID* ConstDeclNode::emitCode(CodeGenerator& generator, RegisterID*)
 
 // ------------------------------ ConstStatementNode -----------------------------
 
+ConstStatementNode::~ConstStatementNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ConstStatementNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_next);
+}
+
 RegisterID* ConstStatementNode::emitCode(CodeGenerator& generator, RegisterID*)
 {
     return generator.emitNode(m_next.get());
@@ -1081,6 +1597,18 @@ static inline void statementListPushFIFO(StatementVector& statements, Declaratio
 }
 
 // ------------------------------ BlockNode ------------------------------------
+
+BlockNode::~BlockNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void BlockNode::releaseNodes(NodeReleaser& releaser)
+{
+    size_t size = m_children.size();
+    for (size_t i = 0; i < size; ++i)
+        releaser.release(m_children[i]);
+}
 
 BlockNode::BlockNode(JSGlobalData* globalData, SourceElements* children)
     : StatementNode(globalData)
@@ -1119,6 +1647,16 @@ RegisterID* ExprStatementNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ VarStatementNode ----------------------------
 
+VarStatementNode::~VarStatementNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void VarStatementNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
+
 RegisterID* VarStatementNode::emitCode(CodeGenerator& generator, RegisterID*)
 {
     ASSERT(m_expr);
@@ -1126,6 +1664,17 @@ RegisterID* VarStatementNode::emitCode(CodeGenerator& generator, RegisterID*)
 }
 
 // ------------------------------ IfNode ---------------------------------------
+
+IfNode::~IfNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void IfNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_condition);
+    releaser.release(m_ifBlock);
+}
 
 RegisterID* IfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -1140,8 +1689,21 @@ RegisterID* IfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     generator.emitNode(dst, m_ifBlock.get());
     generator.emitLabel(afterThen.get());
 
-    // FIXME: This should return the last statement exectuted so that it can be returned as a Completion
+    // FIXME: This should return the last statement executed so that it can be returned as a Completion.
     return 0;
+}
+
+// ------------------------------ IfElseNode ---------------------------------------
+
+IfElseNode::~IfElseNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void IfElseNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_elseBlock);
+    IfNode::releaseNodes(releaser);
 }
 
 RegisterID* IfElseNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -1167,11 +1729,22 @@ RegisterID* IfElseNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
     generator.emitLabel(afterElse.get());
 
-    // FIXME: This should return the last statement exectuted so that it can be returned as a Completion
+    // FIXME: This should return the last statement executed so that it can be returned as a Completion.
     return 0;
 }
 
 // ------------------------------ DoWhileNode ----------------------------------
+
+DoWhileNode::~DoWhileNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void DoWhileNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_statement);
+    releaser.release(m_expr);
+}
 
 RegisterID* DoWhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -1197,6 +1770,17 @@ RegisterID* DoWhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ WhileNode ------------------------------------
+
+WhileNode::~WhileNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void WhileNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+    releaser.release(m_statement);
+}
 
 RegisterID* WhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -1224,6 +1808,19 @@ RegisterID* WhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ ForNode --------------------------------------
+
+ForNode::~ForNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ForNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr1);
+    releaser.release(m_expr2);
+    releaser.release(m_expr3);
+    releaser.release(m_statement);
+}
 
 RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -1263,6 +1860,19 @@ RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ ForInNode ------------------------------------
+
+ForInNode::~ForInNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ForInNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_init);
+    releaser.release(m_lexpr);
+    releaser.release(m_expr);
+    releaser.release(m_statement);
+}
 
 ForInNode::ForInNode(JSGlobalData* globalData, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
     : StatementNode(globalData)
@@ -1387,6 +1997,16 @@ RegisterID* BreakNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ReturnNode -----------------------------------
 
+ReturnNode::~ReturnNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ReturnNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_value);
+}
+
 RegisterID* ReturnNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (generator.codeType() != FunctionCode)
@@ -1406,6 +2026,17 @@ RegisterID* ReturnNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ WithNode -------------------------------------
 
+WithNode::~WithNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void WithNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+    releaser.release(m_statement);
+}
+
 RegisterID* WithNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> scope = generator.emitNode(m_expr.get()); // scope must be protected until popped
@@ -1416,7 +2047,45 @@ RegisterID* WithNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return result;
 }
 
+// ------------------------------ CaseClauseNode --------------------------------
+
+CaseClauseNode::~CaseClauseNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void CaseClauseNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
+
+// ------------------------------ ClauseListNode --------------------------------
+
+ClauseListNode::~ClauseListNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ClauseListNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_clause);
+    releaser.release(m_next);
+}
+
 // ------------------------------ CaseBlockNode --------------------------------
+
+CaseBlockNode::~CaseBlockNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void CaseBlockNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_list1);
+    releaser.release(m_defaultClause);
+    releaser.release(m_list2);
+}
+
 enum SwitchKind { 
     SwitchUnset = 0,
     SwitchNumber = 1, 
@@ -1560,6 +2229,17 @@ RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID
 
 // ------------------------------ SwitchNode -----------------------------------
 
+SwitchNode::~SwitchNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void SwitchNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+    releaser.release(m_block);
+}
+
 RegisterID* SwitchNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Switch);
@@ -1572,6 +2252,16 @@ RegisterID* SwitchNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ LabelNode ------------------------------------
+
+LabelNode::~LabelNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void LabelNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_statement);
+}
 
 RegisterID* LabelNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -1587,6 +2277,16 @@ RegisterID* LabelNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ThrowNode ------------------------------------
 
+ThrowNode::~ThrowNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ThrowNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_expr);
+}
+
 RegisterID* ThrowNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (dst == ignoredResult())
@@ -1598,6 +2298,18 @@ RegisterID* ThrowNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ TryNode --------------------------------------
+
+TryNode::~TryNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void TryNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_tryBlock);
+    releaser.release(m_catchBlock);
+    releaser.release(m_finallyBlock);
+}
 
 RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
@@ -1657,6 +2369,17 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return dst;
 }
 
+// ------------------------------ ParameterNode -----------------------------
+
+ParameterNode::~ParameterNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ParameterNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_next);
+}
 
 // ------------------------------ ScopeNode -----------------------------
 
@@ -1736,8 +2459,8 @@ FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* chi
 
 FunctionBodyNode::~FunctionBodyNode()
 {
-    if (m_parameters)
-        fastFree(m_parameters);
+    ASSERT(!m_refCount);
+    fastFree(m_parameters);
 }
 
 void FunctionBodyNode::finishParsing(const SourceCode& source, ParameterNode* firstParameter)
@@ -1842,6 +2565,17 @@ Identifier* FunctionBodyNode::copyParameters()
 
 // ------------------------------ FuncDeclNode ---------------------------------
 
+FuncDeclNode::~FuncDeclNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void FuncDeclNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_parameter);
+    releaser.release(m_body);
+}
+
 JSFunction* FuncDeclNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
 {
     return new (exec) JSFunction(exec, m_ident, m_body.get(), scopeChain);
@@ -1853,6 +2587,17 @@ RegisterID* FuncDeclNode::emitCode(CodeGenerator&, RegisterID* dst)
 }
 
 // ------------------------------ FuncExprNode ---------------------------------
+
+FuncExprNode::~FuncExprNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void FuncExprNode::releaseNodes(NodeReleaser& releaser)
+{
+    releaser.release(m_parameter);
+    releaser.release(m_body);
+}
 
 RegisterID* FuncExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {

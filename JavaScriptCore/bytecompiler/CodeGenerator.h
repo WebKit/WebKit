@@ -165,7 +165,12 @@ namespace JSC {
                 LineInfo info = { instructions().size(), n->lineNo() };
                 m_codeBlock->lineInfo.append(info);
             }
-            return n->emitCode(*this, dst);
+            if (m_emitNodeDepth >= s_maxEmitNodeDepth)
+                return emitThrowExpressionTooDeepException();
+            ++m_emitNodeDepth;
+            RegisterID* r = n->emitCode(*this, dst);
+            --m_emitNodeDepth;
+            return r;
         }
 
         RegisterID* emitNode(Node* n)
@@ -399,6 +404,8 @@ namespace JSC {
         bool shouldOptimizeLocals() { return (m_codeType != EvalCode) && !m_dynamicScopeDepth; }
         bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval; }
 
+        RegisterID* emitThrowExpressionTooDeepException();
+
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
 
@@ -444,6 +451,10 @@ namespace JSC {
 #ifndef NDEBUG
         static bool s_dumpsGeneratedCode;
 #endif
+
+        unsigned m_emitNodeDepth;
+
+        static const unsigned s_maxEmitNodeDepth = 10000;
     };
 
 }
