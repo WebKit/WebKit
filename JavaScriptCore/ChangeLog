@@ -1,3 +1,11 @@
+2008-11-09  Cameron Zwarich  <zwarich@apple.com>
+
+        Not reviewed.
+
+        Speculatively fix the non-AllInOne build.
+
+        * runtime/NativeErrorConstructor.cpp:
+
 2008-11-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

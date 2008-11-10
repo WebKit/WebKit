@@ -23,6 +23,7 @@
 
 #include "ErrorInstance.h"
 #include "JSFunction.h"
+#include "JSString.h"
 #include "NativeErrorPrototype.h"
 
 namespace JSC {
