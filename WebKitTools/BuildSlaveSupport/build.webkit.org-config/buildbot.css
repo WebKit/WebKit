@@ -43,17 +43,20 @@ td.Activity, td.Change, td.Builder {
 td.Change {
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 td.Event {
 	color: #777;
 	background-color: #ddd;
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 
 td.Activity {
 	border-top-left-radius: 10px;
 	-webkit-border-top-left-radius: 10px;
+	-moz-border-radius-topleft: 10px;
 	min-height: 20px;
 	padding: 8px 0 8px 0;
 }
@@ -61,13 +64,16 @@ td.Activity {
 td.idle, td.waiting, td.offline, td.building {
 	border-top-left-radius: 0px;
 	-webkit-border-top-left-radius: 0px;
+	-moz-border-radius-topleft: 0px;
 }
 
 .LastBuild {
 	border-top-left-radius: 5px;
 	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
 	border-top-right-radius: 5px;	
 	-webkit-border-top-right-radius: 5px;	
+	-moz-border-radius-topright: 5px;
 }
 
 /* LastBuild, BuildStep states */
@@ -99,8 +105,10 @@ td.idle, td.waiting, td.offline, td.building {
 .start {
 	border-bottom-left-radius: 10px;
 	-webkit-border-bottom-left-radius: 10px;
+	-moz-border-radius-bottomleft: 10px;
 	border-bottom-right-radius: 10px;
 	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-radius-bottomright: 10px;
 }
 
 td.Project a:hover, td.start a:hover {
