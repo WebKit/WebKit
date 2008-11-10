@@ -1,3 +1,17 @@
+2008-11-10  Morten Sørvig  <msorvig@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Improve mouse wheel scolling on Qt/Cocoa.
+        Cocoa differs from Carbon (and other platforms I think) in that the
+        mouse wheel events we get have a much higher acceleration factor.
+
+        This submit switches over to scroll-per-pixel from scroll-per-line
+        for most of our scrolling views. This matches the native views
+        and works well with the increased acceleration.
+
+        * platform/qt/WheelEventQt.cpp:
+
 2008-11-09  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.

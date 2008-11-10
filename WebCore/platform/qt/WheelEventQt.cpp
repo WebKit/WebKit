@@ -35,7 +35,11 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
 #else
     : m_position(e->pos())
     , m_globalPosition(e->globalPos())
+#ifdef QT_MAC_USE_COCOA
+    , m_granularity(ScrollByPixelWheelEvent)
+#else
     , m_granularity(ScrollByLineWheelEvent)
+#endif
     , m_isAccepted(false)
     , m_shiftKey(e->modifiers() & Qt::ShiftModifier)
     , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
