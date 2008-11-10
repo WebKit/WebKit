@@ -4543,7 +4543,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     NSEnumerator *enumerator = [self objectEnumerator];
     WebNetscapePluginView *view;
     while ((view = [enumerator nextObject]) != nil)
-        if ([view isKindOfClass:[WebNetscapePluginView class]])
+        if ([view isKindOfClass:[WebBaseNetscapePluginView class]])
             [view performSelector:selector withObject:object];
 #endif
 }

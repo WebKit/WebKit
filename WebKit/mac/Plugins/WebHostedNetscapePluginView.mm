@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,56 +26,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#import "WebBasePluginPackage.h"
-
-#ifdef BUILDING_ON_TIGER
-typedef short ResFileRefNum;
-#endif
-
-#if defined(__ppc__) && !defined(__LP64__)
-#define SUPPORT_CFM
-#endif
-
-typedef enum {
-    WebCFMExecutableType,
-    WebMachOExecutableType
-} WebExecutableType;
-
-@interface WebNetscapePluginPackage : WebBasePluginPackage
-{
-    NPPluginFuncs pluginFuncs;
-    NPNetscapeFuncs browserFuncs;
-    
-    uint16 pluginSize;
-    uint16 pluginVersion;
-    
-    ResFileRefNum resourceRef;
-    
-    NPP_ShutdownProcPtr NP_Shutdown;
-
-    BOOL isLoaded;
-    BOOL needsUnload;
-    unsigned int instanceCount;
-     
 #if USE(PLUGIN_HOST_PROCESS)
-    cpu_type_t pluginHostArchitecture;
+
+#import "WebHostedNetscapePluginView.h"
+
+#import "WebKitSystemInterface.h"
+#import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Assertions.h>
+
+@implementation WebHostedNetscapePluginView
+
++ (void)initialize
+{
+#ifndef BUILDING_ON_TIGER
+    WebCoreObjCFinalizeOnMainThread(self);
 #endif
-    
-#ifdef SUPPORT_CFM
-    BOOL isBundle;
-    BOOL isCFM;
-    CFragConnectionID connID;
-#endif
+    WKSendUserChangeNotifications();
 }
 
-// Netscape plug-in packages must be explicitly opened and closed by each plug-in instance.
-// This is to protect Netscape plug-ins from being unloaded while they are in use.
-- (void)open;
-- (void)close;
+- (id)initWithFrame:(NSRect)frame
+      pluginPackage:(WebNetscapePluginPackage *)pluginPackage
+                URL:(NSURL *)URL
+            baseURL:(NSURL *)baseURL
+           MIMEType:(NSString *)MIME
+      attributeKeys:(NSArray *)keys
+    attributeValues:(NSArray *)values
+       loadManually:(BOOL)loadManually
+         DOMElement:(DOMElement *)element
+{
+    self = [super initWithFrame:frame pluginPackage:pluginPackage URL:URL baseURL:baseURL MIMEType:MIME attributeKeys:keys attributeValues:values loadManually:loadManually DOMElement:element];
+    if (!self)
+        return nil;
+    
+    return self;
+}    
 
-- (WebExecutableType)executableType;
-- (NPPluginFuncs *)pluginFuncs;
+- (void)handleMouseMoved:(NSEvent *)event
+{
+    // FIXME: Implement.
+}
+
+- (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values
+{
+    ASSERT(!_attributeKeys && !_attributeValues);
+    
+    _attributeKeys = [keys copy];
+    _attributeValues = [values copy];
+}    
 
 @end
+
 #endif

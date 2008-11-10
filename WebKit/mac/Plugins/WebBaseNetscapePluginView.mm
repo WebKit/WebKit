@@ -30,9 +30,19 @@
 
 #import "WebBaseNetscapePluginView.h"
 
+#import "WebKitSystemInterface.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Assertions.h>
 
 @implementation WebBaseNetscapePluginView
+
++ (void)initialize
+{
+#ifndef BUILDING_ON_TIGER
+    WebCoreObjCFinalizeOnMainThread(self);
+#endif
+    WKSendUserChangeNotifications();
+}
 
 - (id)initWithFrame:(NSRect)frame
       pluginPackage:(WebNetscapePluginPackage *)pluginPackage

@@ -113,6 +113,10 @@
 #import "WebJavaPlugIn.h"
 #endif
 
+#if USE(PLUGIN_HOST_PROCESS)
+#import "WebHostedNetscapePluginView.h"
+#endif
+
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -1267,7 +1271,7 @@ public:
 
 class NetscapePluginWidget : public PluginWidget {
 public:
-    NetscapePluginWidget(WebNetscapePluginView *view)
+    NetscapePluginWidget(WebBaseNetscapePluginView *view)
         : PluginWidget(view)
     {
     }
@@ -1280,12 +1284,21 @@ public:
         
         NSEvent* event = frame->eventHandler()->currentNSEvent();
         if ([event type] == NSMouseMoved)
-            [(WebNetscapePluginView *)platformWidget() handleMouseMoved:event];
+            [(WebBaseNetscapePluginView *)platformWidget() handleMouseMoved:event];
     }
     
 };
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+static Class netscapePluginViewClass()
+{
+#if USE(PLUGIN_HOST_PROCESS)
+    return [WebHostedNetscapePluginView class];
+#else
+    return [WebNetscapePluginView class];
+#endif
+}
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
@@ -1349,7 +1362,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
             
 #if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            WebNetscapePluginView *embeddedView = [[[WebNetscapePluginView alloc]
+            WebBaseNetscapePluginView *pluginView = [[[netscapePluginViewClass() alloc]
                 initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                 pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                 URL:URL
@@ -1360,7 +1373,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, Element* element
                 loadManually:loadManually
                 DOMElement:kit(element)] autorelease];
             
-            return new NetscapePluginWidget(embeddedView);
+            return new NetscapePluginWidget(pluginView);
         } 
 #endif
     } else
@@ -1442,7 +1455,7 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, Elemen
         } 
 #if ENABLE(NETSCAPE_PLUGIN_API)
         else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            view = [[[WebNetscapePluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+            view = [[[netscapePluginViewClass() alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                 pluginPackage:(WebNetscapePluginPackage *)pluginPackage
                 URL:nil
                 baseURL:baseURL

@@ -28,20 +28,20 @@
 
 #import "WebPluginDatabase.h"
 
+#import "WebBaseNetscapePluginView.h"
 #import "WebBasePluginPackage.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrame.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLView.h"
+#import "WebHTMLView.h"
 #import "WebKitLogging.h"
-#import "WebNetscapePluginPackage.h"
 #import "WebNSFileManagerExtras.h"
+#import "WebNetscapePluginPackage.h"
 #import "WebPluginController.h"
-#import "WebNetscapePluginView.h"
 #import "WebPluginPackage.h"
 #import "WebViewPrivate.h"
-#import "WebHTMLView.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
@@ -333,7 +333,7 @@ static NSArray *additionalWebPlugInPaths;
         
         for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
             NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-            if ([subview isKindOfClass:[WebNetscapePluginView class]] || [WebPluginController isPlugInView:subview]) 
+            if ([subview isKindOfClass:[WebBaseNetscapePluginView class]] || [WebPluginController isPlugInView:subview]) 
                 [pluginInstanceViews removeObject:subview]; 
         }
     }
@@ -345,7 +345,7 @@ static NSArray *additionalWebPlugInPaths;
     NSArray *pli = [pluginInstanceViews allObjects];
     NSEnumerator *enumerator = [pli objectEnumerator];
     while ((view = [enumerator nextObject]) != nil) {
-        if ([view isKindOfClass:[WebNetscapePluginView class]]) {
+        if ([view isKindOfClass:[WebBaseNetscapePluginView class]]) {
             ASSERT([view respondsToSelector:@selector(stop)]);
             [view performSelector:@selector(stop)];
         } else if ([WebPluginController isPlugInView:view]) {

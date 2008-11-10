@@ -1,5 +1,45 @@
 2008-11-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker and Mark Rowe.
+
+        Add a WebHostedNetscapePluginView class.
+        
+        * Plugins/WebHostedNetscapePluginView.h: Added.
+        * Plugins/WebHostedNetscapePluginView.mm: Added.
+
+        * Plugins/WebNetscapePluginPackage.h:
+        Use the right define.
+        
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase removePluginInstanceViewsFor:]):
+        Check for WebBaseNetscapePluginView.
+        
+        (-[WebPluginDatabase destroyAllPluginInstanceViews]):
+        Check for WebBaseNetscapePluginView.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (NetscapePluginWidget::NetscapePluginWidget):
+        (NetscapePluginWidget::handleEvent):
+        Use WebBaseNetscapePluginView.
+        
+        (netscapePluginViewClass):
+        New function that returns the right netscape plugin view type to use.
+        
+        (WebFrameLoaderClient::createPlugin):
+        Get the right class.
+        
+        * WebKitPrefix.h:
+        Prefix the #define with WTF_.
+        
+        * WebView/WebHTMLView.mm:
+        (-[NSArray _web_makePluginViewsPerformSelector:withObject:]):
+        Check for WebBaseNetscapePluginView.
+        
+        * WebView/WebView.mm:
+        Remove an unnecessary include.
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Don't use individual ivars for each plug-in vtable function. Instead, get them from the plugin package.
