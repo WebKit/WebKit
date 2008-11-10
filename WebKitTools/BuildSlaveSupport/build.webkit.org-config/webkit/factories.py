@@ -12,22 +12,25 @@ class StandardBuildFactory(BuildFactory):
     def __init__(self):
         BuildFactory.__init__(self)
         self.steps.append(s(SetConfiguration, configuration="release"))
-        self.steps.append(s(self.getCompileStep(), configuration="release"))
-        self.steps.append(s(self.getJavaScriptCoreTestStep()))
-        self.steps.append(s(LayoutTest))
+        self.addCompileStep()
+        self.addJavaScriptCoreTestStep()
+        self.addLayoutTestStep()
         self.steps.append(s(UploadLayoutResults))
 #        self.steps.append(s(UploadDiskImage))
 
-    def getCompileStep(self):
-        return CompileWebKit
+    def addCompileStep(self):
+        self.steps.append(s(CompileWebKit, configuration="release"))
 
-    def getJavaScriptCoreTestStep(self):
-        return JavaScriptCoreTest
+    def addJavaScriptCoreTestStep(self):
+        self.steps.append(s(JavaScriptCoreTest))
+
+    def addLayoutTestStep(self):
+        self.steps.append(s(LayoutTest))
 
 
 class NoSVGBuildFactory(StandardBuildFactory):
-    def getCompileStep(self):
-        return CompileWebKitNoSVG
+    def addCompileStep(self):
+        self.steps.append(s(CompileWebKitNoSVG, configuration="release"))
 
 
 class PixelTestBuildFactory(BuildFactory):
@@ -37,6 +40,7 @@ class PixelTestBuildFactory(BuildFactory):
         self.steps.append(s(CompileWebKit, configuration="release"))
         self.steps.append(s(PixelLayoutTest))
         self.steps.append(s(UploadLayoutResults))
+
 
 class LeakBuildFactory(BuildFactory):
     def __init__(self):
@@ -48,20 +52,55 @@ class LeakBuildFactory(BuildFactory):
         self.steps.append(s(UploadLayoutResults))
 #        self.steps.append(s(UploadDiskImage))
 
+
 class PageLoadTestBuildFactory(BuildFactory):
     def __init__(self):
         BuildFactory.__init__(self)
         self.steps.append(s(CompileWebKit, configuration="release"))
         self.steps.append(s(PageLoadTest))
 
-Win32BuildFactory = StandardBuildFactory
+
+class Win32BuildFactory(StandardBuildFactory):
+    def addCompileStep(self):
+        self.steps.append(s(InstallWin32Dependencies))
+        self.steps.append(s(SetConfiguration, configuration="debug"))
+        self.steps.append(s(CompileWebKitWindows, configuration="debug"))
+
+    def addLayoutTestStep(self):
+        self.steps.append(s(LayoutTestWindows))
 
 class GtkBuildFactory(StandardBuildFactory):
-    def getCompileStep(self):
-        return CompileWebKitGtk
+    def addCompileStep(self):
+#        self.steps.append(s(CleanWebKitGtk, configuration="release"))
+        self.steps.append(s(CompileWebKitGtk, configuration="release"))
 
-    def getJavaScriptCoreTestStep(self):
-        return JavaScriptCoreTestGtk
+    def addJavaScriptCoreTestStep(self):
+        self.steps.append(s(JavaScriptCoreTestGtk))
+
+    def addLayoutTestStep(self):
+        pass
+
+
+class WxBuildFactory(StandardBuildFactory):
+    def addCompileStep(self):
+        self.steps.append(s(CleanWebKitWx, configuration="release"))
+        self.steps.append(s(CompileWebKitWx, configuration="release"))
+
+    def addJavaScriptCoreTestStep(self):
+        self.steps.append(s(JavaScriptCoreTestWx))
+
+    def addLayoutTestStep(self):
+        pass
+
+
+class QtBuildFactory(StandardBuildFactory):
+    def addCompileStep(self):
+        self.steps.append(s(CleanWebKit, configuration="release"))
+        self.steps.append(s(CompileWebKit, configuration="release"))
+
+    def addLayoutTestStep(self):
+        pass # self.steps.append(s(LayoutTestQt))
+
 
 class CoverageDataBuildFactory(BuildFactory):
     def __init__(self):

@@ -2,13 +2,13 @@ from webkit.basesteps import ShellCommand, SVN, Test, Compile, UploadCommand
 from buildbot.status.builder import SUCCESS, FAILURE, WARNINGS
 
 class CheckOutSource(SVN):
-    svnurl = "http://svn.webkit.org/repository/webkit/trunk"
+    baseURL = "http://svn.webkit.org/repository/webkit/"
     mode = "update"
     def __init__(self, *args, **kwargs):
-        SVN.__init__(self, svnurl=self.svnurl, mode=self.mode, *args, **kwargs)
+        SVN.__init__(self, baseURL=self.baseURL, defaultBranch="trunk", mode=self.mode, *args, **kwargs)
 
 class SetConfiguration(ShellCommand):
-    command = ["./WebKitTools/Scripts/set-webkit-configuration"]
+    command = ["perl", "./WebKitTools/Scripts/set-webkit-configuration"]
     
     def __init__(self, *args, **kwargs):
         configuration = kwargs.pop('configuration')
@@ -23,17 +23,20 @@ class LayoutTest(Test):
     name = "layout-test"
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
-    command = ["./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--no-new-test-results", "--results-directory", "layout-test-results"]
+    command = ["perl", "./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--no-new-test-results", "--no-sample-on-timeout", "--results-directory", "layout-test-results"]
 
     def commandComplete(self, cmd):
         Test.commandComplete(self, cmd)
         
         logText = cmd.logs['stdio'].getText()
-        incorrectLayoutLines = [line for line in logText.splitlines() if line.find('had incorrect layout') >= 0 or (line.find('test case') >= 0 and line.find(' crashed') >= 0)]
-        if incorrectLayoutLines:
-            self.incorrectLayoutLines = incorrectLayoutLines
-        else:
-            self.incorrectLayoutLines = None
+        incorrectLayoutLines = [line for line in logText.splitlines() if line.find('had incorrect layout') >= 0 or (line.find('test case') >= 0 and (line.find(' crashed') >= 0 or line.find(' timed out') >= 0))]
+        self.incorrectLayoutLines = incorrectLayoutLines
+
+    def evaluateCommand(self, cmd):
+        if self.incorrectLayoutLines or cmd.rc != 0:
+            return FAILURE
+
+        return SUCCESS
 
     def getText(self, cmd, results):
         return self.getText2(cmd, results)
@@ -49,7 +52,7 @@ class JavaScriptCoreTest(Test):
     name = "jscore-test"
     description = ["jscore-tests running"]
     descriptionDone = ["jscore-tests"]
-    command = ["./WebKitTools/Scripts/run-javascriptcore-tests"]
+    command = ["perl", "./WebKitTools/Scripts/run-javascriptcore-tests"]
     logfiles = {'results': 'JavaScriptCore/tests/mozilla/actual.html'}
 
     def commandComplete(self, cmd):
@@ -63,10 +66,10 @@ class JavaScriptCoreTest(Test):
             self.regressionLine = None
 
     def evaluateCommand(self, cmd):
-        if cmd.rc != 0:
+        if self.regressionLine:
             return FAILURE
 
-        if self.regressionLine:
+        if cmd.rc != 0:
             return FAILURE
 
         return SUCCESS
@@ -84,42 +87,34 @@ class PixelLayoutTest(LayoutTest):
     name = "pixel-layout-test"
     description = ["pixel-layout-tests running"]
     descriptionDone = ["pixel-layout-tests"]
-    command = LayoutTest.command + ["--pixel"]
+    command = LayoutTest.command + ["--pixel", "--tolerance", "0.1"]
 
     
-class LeakTest(Test):
-    name = "leak-test"
-    description = ["leak-tests running"]
-    descriptionDone = ["leak-tests"]
-    command = ["./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--leaks", "--results-directory", "layout-test-results"]
+class LeakTest(LayoutTest):
+    command = ["perl", "./WebKitTools/Scripts/run-webkit-tests", "--no-launch-safari", "--no-sample-on-timeout", "--leaks", "--results-directory", "layout-test-results"]
 
     def commandComplete(self, cmd):
-        Test.commandComplete(self, cmd)
+        LayoutTest.commandComplete(self, cmd)
 
         logText = cmd.logs['stdio'].getText()
         lines = logText.splitlines()
-        self.totalLeakLines = [line for line in lines if line.find('total leaks found!') >= 0]
-        self.totalLeakLines += [line for line in lines if line.find('LEAK: ') >= 0]
-        self.totalLeakLines = [' '.join(x.split()[1:]) for x in self.totalLeakLines]
-        self.totalLeakLines += [line for line in lines if line.find('test case') >= 0 and line.find('crashed') >= 0]
+        leakLines = [line for line in lines if line.find('total leaks found!') >= 0]
+        leakLines += [line for line in lines if line.find('LEAK: ') >= 0]
+        leakLines = [' '.join(x.split()[1:]) for x in leakLines]
 
+        leakSummary = {}
+        for line in leakLines:
+            count, key = line.split(' ', 1)
+            if key.find('total leaks found!') >= 0:
+                key = 'allocations found by "leaks" tool'
 
-    def evaluateCommand(self, cmd):
-        if cmd.rc != 0:
-            return FAILURE
+            leakSummary[key] = leakSummary.get(key, 0) + int(count)
 
-        if self.totalLeakLines:
-            return FAILURE
+        leakSummaryLines = []
+        for key in sorted(leakSummary.keys()):
+            leakSummaryLines.append('%s %s' % (leakSummary[key], key))
 
-        return SUCCESS
-
-    def getText(self, cmd, results):
-        return self.getText2(cmd, results)
-
-    def getText2(self, cmd, results):
-        if results != SUCCESS and self.totalLeakLines:
-            return self.totalLeakLines
-        return [self.name]
+        self.incorrectLayoutLines += leakSummaryLines
 
 
 class UploadLayoutResults(UploadCommand, ShellCommand):
@@ -135,24 +130,24 @@ class UploadLayoutResults(UploadCommand, ShellCommand):
         ShellCommand.setBuild(self, build)
         self.initializeForUpload()
 
-        self.command = '''\
+        self.command = '''
         if [[ -d layout-test-results ]]; then \
             find layout-test-results -type d -print0 | xargs -0 chmod ug+rx; \
             find layout-test-results -type f -print0 | xargs -0 chmod ug+r; \
-            rsync -rlvzP --rsync-path="/home/buildresults/bin/rsync" layout-test-results/ %s && rm -rf layout-test-results; \
+            rsync -rlvzP --rsync-path=/home/buildresults/bin/rsync layout-test-results/ %s && rm -rf layout-test-results; \
         fi; \
         CRASH_LOG=~/Library/Logs/CrashReporter/DumpRenderTree*.crash*; \
         if [[ -f $(ls -1 $CRASH_LOG | head -n 1 ) ]]; then \
             chmod ug+r $CRASH_LOG; \
-            rsync -rlvzP --rsync-path="/home/buildresults/bin/rsync" $CRASH_LOG %s && rm -rf $CRASH_LOG; \
-        fi;''' % (self.getRemotePath(), self.getRemotePath())
+            rsync -rlvzP --rsync-path=/home/buildresults/bin/rsync $CRASH_LOG %s && rm -rf $CRASH_LOG; \
+        fi; ''' % (self.getRemotePath(), self.getRemotePath())
 
         self.addFactoryArguments(command=self.command)
 
 
 class CompileWebKit(Compile):
-    command = ["./WebKitTools/Scripts/build-webkit", "--no-color"]
-    env = {'WEBKITSUPPORTLIBRARIESZIPDIR': 'C:\\cygwin\\home\\buildbot'}
+    command = ["perl", "./WebKitTools/Scripts/build-webkit"]
+    env = {'WEBKITSUPPORTLIBRARIESZIPDIR': 'C:\\cygwin\\home\\buildbot', 'MFLAGS':''}
     def __init__(self, *args, **kwargs):
         configuration = kwargs.pop('configuration')
         
@@ -160,22 +155,69 @@ class CompileWebKit(Compile):
         self.description = ["compiling " + configuration]
         self.descriptionDone = ["compiled " + configuration]
 
-        Compile.__init__(self, *args, **kwargs)
+        Compile.__init__(self, env=self.env, *args, **kwargs)
 
+class CleanWebKit(CompileWebKit):
+    command = CompileWebKit.command + ['--clean']
+    description = ['cleaning']
+    descriptionDone = ['cleaned']
 
 class CompileWebKitNoSVG(CompileWebKit):
-    command = 'rm -rf WebKitBuild && ./WebKitTools/Scripts/build-webkit --no-svg --no-color'
+    command = 'rm -rf WebKitBuild && perl ./WebKitTools/Scripts/build-webkit --no-svg'
 
 class CompileWebKitGtk(CompileWebKit):
-    command = CompileWebKit.command + ['--gtk']
+    command = ['perl', './WebKitTools/Scripts/build-webkit', '--gtk', '--qmake=qmake-qt4']
+
+class CleanWebKitGtk(CompileWebKitGtk):
+    command = CompileWebKitGtk.command + ['--clean']
+    description = ['cleaning']
+    descriptionDone = ['cleaned']
+
+class CompileWebKitWx(CompileWebKit):
+    command = ['perl', './WebKitTools/Scripts/build-webkit', '--wx']
+
+class CleanWebKitWx(CompileWebKitWx):
+    command = CompileWebKitWx.command + ['--clean']
+    description = ['cleaning']
+    descriptionDone = ['cleaned']
+
+class CompileWebKitWindows(UploadCommand, CompileWebKit):
+    def setBuild(self, build):
+        CompileWebKit.setBuild(self, build)
+        self.initializeForUpload()
+
+        self.command = '''\
+        ./WebKitTools/Scripts/build-webkit; \
+        RESULT=$?
+        for log in $(find WebKitBuild/*/*/*/*.htm); do \
+            chmod ug+r $log; \
+            REMOTE_NAME=$(echo $log | sed -e 's|WebKitBuild/obj/||' -e 's|/Release/|-|' -e 's|/Debug/|-|'); \
+            rsync -rlvzP --rsync-path="/home/buildresults/bin/rsync" $log %s/$REMOTE_NAME && rm $log; \
+        done; \
+        exit $RESULT;''' % (self.getRemotePath(), )
+
+        self.addFactoryArguments(command=self.command)
+
+class LayoutTestWindows(LayoutTest):
+    env = {'WEBKIT_TESTFONTS': 'C:\\cygwin\\home\\buildbot\\WebKitTestFonts'}
+
+    def __init__(self, *args, **kwargs):
+        return LayoutTest.__init__(self, env=self.env, *args, **kwargs)
+
 
 class JavaScriptCoreTestGtk(JavaScriptCoreTest):
     command = JavaScriptCoreTest.command + ['--gtk']
 
+class JavaScriptCoreTestWx(JavaScriptCoreTest):
+    command = JavaScriptCoreTest.command + ['--wx']
+
+class LayoutTestQt(LayoutTest):
+    command  = LayoutTest.command + ['--qt']
+
 class InstallWin32Dependencies(ShellCommand):
     description = ["installing Windows dependencies"]
     descriptionDone = ["installed Windows dependencies"]
-    command = ["WebKitTools/Scripts/update-webkit-auxiliary-libs"]
+    command = ["perl", "./WebKitTools/Scripts/update-webkit-auxiliary-libs"]
 
 
 # class UploadDiskImage(UploadCommand, ShellCommand):
@@ -189,7 +231,7 @@ class InstallWin32Dependencies(ShellCommand):
 #         ShellCommand.__init__(self, *args, **kwargs)
 
 class GenerateCoverageData(Compile):
-    command = ["./WebKitTools/Scripts/generate-coverage-data"]
+    command = ["perl", "./WebKitTools/Scripts/generate-coverage-data"]
     description = ["generating coverage data"]
     descriptionDone = ["generated coverage data"]
 

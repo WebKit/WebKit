@@ -16,4 +16,4 @@ IRC = words.IRC(host="irc.freenode.net",
                 )
 
 def getStatusListeners():
-    return [web, allBuildsEmail, breakageEmail, IRC]
+    return [web, allBuildsEmail, IRC]

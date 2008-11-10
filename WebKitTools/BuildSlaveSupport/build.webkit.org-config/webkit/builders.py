@@ -1,35 +1,51 @@
 from webkit.factories import *
-from buildbot import locks
 
-# There are four build slaves that take care of the majority of builds, with two other specialist slaves at Apple
-# Slave 1 isn older G4 PowerMac dedicated to the PLT builds, as it needs extra configuration
-# Slave 2 is a Windows PC dedicated to the Windows builds
-# Slaves 3 and 4 are older G4 PowerMacs with relatively low amounts of RAM which leads to insanely slow leaks tests
-# Slaves 4 and 5 are newer G5 PowerMacs with ATI graphics cards that lead to kernel panics during pixel tests
+allWinBuilders = ['apple-slave-7', 'apple-slave-2'] # pewtermoose-slave-1
+allMacPPCBuilders = ['apple-slave-1', 'apple-slave-3', 'apple-slave-6']
+allMacIntelBuilders = ['bdash-slave-1', 'bdash-slave-2']
+macIntelPixelBuilders = ['apple-slave-8']
+allQtLinuxBuilders = ['webtroll-slave-1']
+allQtWinBuilders = ['qt-slave-2']
+allGtkLinuxBuilders = ['zecke-slave-1']
+allWxMacBuilders = ['kollivier-slave-1']
 
-nonATIPowerPCBuilders = ['apple-slave-%d' % i for i in (3, 4)]
-ATIPowerPCBuilders = ['apple-slave-%d' % i for i in (1, 5, 6)]
-allPowerPCBuilders = nonATIPowerPCBuilders + ATIPowerPCBuilders
-allIntelBuilders = ['bdash-slave-1', 'bdash-slave-2']
+# apple-slave-4 is currently giving incomprehensible ICEs when compiling:
+# WebKit/History/WebBackForwardList.mm: In function 'WebHistoryItem* -[WebBackForwardList currentItem](WebBackForwardList*, objc_selector*)':
+# WebKit/History/WebBackForwardList.mm:178: internal compiler error: Bus error
 
-_builders = [('post-commit-powerpc-mac-os-x', StandardBuildFactory, allPowerPCBuilders),
-             ('post-commit-intel-mac-os-x', StandardBuildFactory, allIntelBuilders),
-             ('post-commit-leaks-powerpc-mac-os-x', LeakBuildFactory, allPowerPCBuilders),
-             ('post-commit-leaks-intel-mac-os-x', LeakBuildFactory, allIntelBuilders),
-#             ('page-layout-test-mac-os-x', PageLoadTestBuildFactory, ['apple-slave-1']),
-#             ('post-commit-pixel-powerpc-mac-os-x', PixelTestBuildFactory, nonATIPowerPCBuilders),
-             ('post-commit-win32', Win32BuildFactory, ['apple-slave-2']),
-             ('post-commit-linux-qt', StandardBuildFactory, ['webtroll-slave-1']),
-             ('post-commit-linux-gtk', GtkBuildFactory, ['zecke-slave-1']),
-             ('periodic-powerpc-mac-os-x-no-svg', NoSVGBuildFactory, allPowerPCBuilders),
-             ('periodic-intel-mac-os-x-coverage', CoverageDataBuildFactory, allIntelBuilders),
+# apple-slave-5 is currently giving incomprehensible link errors:
+# WebKitBuild/JavaScriptCore.build/Release/JavaScriptCore.build/Objects-normal/ppc/pcre_tables.o r_address (0x34a10d) field of relocation entry 12 in section (__DWARFA,__debug_info) out of range
+# /usr/bin/libtool: internal link edit command failed
+
+
+_builders = [('trunk-mac-ppc-release', StandardBuildFactory, allMacPPCBuilders, False),
+             ('trunk-mac-intel-release', StandardBuildFactory, allMacIntelBuilders, False),
+#             ('trunk-mac-ppc-debug', LeakBuildFactory, allMacPPCBuilders, False),
+             ('trunk-mac-intel-debug', LeakBuildFactory, allMacIntelBuilders, False),
+             ('trunk-mac-intel-pixel', PixelTestBuildFactory, macIntelPixelBuilders, False),
+#             ('trunk-win-release', Win32BuildFactory, allWinBuilders, False),
+             ('trunk-win-debug', Win32BuildFactory, allWinBuilders, False),
+             ('trunk-qt-linux-release', QtBuildFactory, allQtLinuxBuilders, False),
+             ('trunk-qt-win-release', QtBuildFactory, allQtWinBuilders, False),
+             ('trunk-gtk-linux-release', GtkBuildFactory, allGtkLinuxBuilders, False),
+             ('trunk-wx-mac-debug', WxBuildFactory, allWxMacBuilders, False),
+
+#             ('trunk-mac-intel-coverage', CoverageDataBuildFactory, ['bdash-slave-1'], True),
+#             ('trunk-mac-intel-nosvg', NoSVGBuildFactory, ['bdash-slave-2'], True),
+
+#             ('stable-mac-ppc-release', StandardBuildFactory, allMacPPCBuilders, False),
+#             ('stable-mac-intel-release', StandardBuildFactory, allMacIntelBuilders, False),
+#             ('stable-mac-ppc-debug', LeakBuildFactory, allMacPPCBuilders, False),
+#             ('stable-mac-intel-debug', LeakBuildFactory, allMacIntelBuilders, False),
+#             ('stable-win-release', Win32BuildFactory, allWinBuilders, False),
              ]
 
 def getBuilders():
     result = []
-    for name, factory, slaves in _builders:
+    for name, factory, slaves, periodic in _builders:
         result.append({'name': name,
                        'slavenames': slaves,
                        'builddir': name,
-                       'factory': factory()})
+                       'factory': factory(),
+                       'periodic': periodic})
     return result
