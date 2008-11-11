@@ -288,13 +288,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     npr.right = static_cast<uint16>(NSMaxX(nr));
 }
 
-- (NSRect)visibleRect
-{
-    // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch
-    // that clip now.    
-    return NSIntersectionRect([self convertRect:[_element.get() _windowClipRect] fromView:nil], [super visibleRect]);
-}
-
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate
 {
     ASSERT(drawingModel != NPDrawingModelCoreAnimation);
@@ -743,38 +736,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }    
 }
 
-- (BOOL)acceptsFirstResponder
+- (void)focusChanged
 {
-    return YES;
-}
-
-- (void)setHasFocus:(BOOL)flag
-{
-    if (!_isStarted)
-        return;
-
-    if (_hasFocus == flag)
-        return;
-    
-    _hasFocus = flag;
-    
     // We need to null check the event handler here because
     // the plug-in view can resign focus after it's been stopped
     // and the event handler has been deleted.
     if (_eventHandler)
         _eventHandler->focusChanged(_hasFocus);
-}
-
-- (BOOL)becomeFirstResponder
-{
-    [self setHasFocus:YES];
-    return YES;
-}
-
-- (BOOL)resignFirstResponder
-{
-    [self setHasFocus:NO];    
-    return YES;
 }
 
 // AppKit doesn't call mouseDown or mouseUp on right-click. Simulate control-click
@@ -930,9 +898,27 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return YES;
 }
 
+-(void)tellQuickTimeToChill
+{
+#ifndef NP_NO_QUICKDRAW
+    ASSERT(isDrawingModelQuickDraw(drawingModel));
+    
+    // Make a call to the secret QuickDraw API that makes QuickTime calm down.
+    WindowRef windowRef = (WindowRef)[[self window] windowRef];
+    if (!windowRef) {
+        return;
+    }
+    CGrafPtr port = GetWindowPort(windowRef);
+    ::Rect bounds;
+    GetPortBounds(port, &bounds);
+    WKCallDrawingNotification(port, &bounds);
+#endif /* NP_NO_QUICKDRAW */
+}
+
 - (void)updateAndSetWindow
 {
-    ASSERT(drawingModel != NPDrawingModelCoreAnimation);
+    if (drawingModel != NPDrawingModelCoreAnimation)
+        return;
 
     // A plug-in can only update if it's (1) already been started (2) isn't stopped
     // and (3) is able to draw on-screen. To meet condition (3) the plug-in must not
@@ -946,8 +932,11 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (![self canDraw])
         return;
 #else
-    if (drawingModel != NPDrawingModelQuickDraw && ![self canDraw])
+    if (drawingModel == NPDrawingModelQuickDraw)
+        [self tellQuickTimeToChill];
+    else if (![self canDraw])
         return;
+    
 #endif // NP_NO_QUICKDRAW
     
     BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
@@ -1069,17 +1058,17 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [notificationCenter removeObserver:self name:LoginWindowDidSwitchToUserNotification     object:nil];
 }
 
-- (BOOL)start
+- (void)start
 {
     ASSERT([self currentWindow]);
     
     if (_isStarted)
-        return YES;
+        return;
 
     ASSERT([self webView]);
     
     if (![[[self webView] preferences] arePlugInsEnabled])
-        return NO;
+        return;
 
     // Open the plug-in package so it remains loaded while our plugin uses it
     [_pluginPackage.get() open];
@@ -1095,7 +1084,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         LOG_ERROR("NPP_New failed with error: %d", npErr);
         [self _destroyPlugin];
         [_pluginPackage.get() close];
-        return NO;
+        return;
     }
     
     if (drawingModel == (NPDrawingModel)-1) {
@@ -1123,7 +1112,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self _destroyPlugin];
         [_pluginPackage.get() close];
         
-        return NO;
+        return;
     }        
 #endif // NP_NO_CARBON
     
@@ -1161,8 +1150,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _isStarted = YES;
     [[self webView] addPluginInstanceView:self];
 
-    if (drawingModel == NPDrawingModelCoreGraphics || isDrawingModelQuickDraw(drawingModel))
-        [self updateAndSetWindow];
+    [self updateAndSetWindow];
 
     if ([self window]) {
         [self addWindowObservers];
@@ -1176,7 +1164,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     if (_loadManually) {
         [self _redeliverStream];
-        return YES;
+        return;
     }
     
     // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
@@ -1186,8 +1174,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     } 
-    
-    return YES;
 }
 
 - (void)stop
@@ -1209,7 +1195,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _isStarted = NO;
     
     [[self webView] removePluginInstanceView:self];
-
+    
+    // Stop the timers
+    [self stopTimers];
+    
+    // Stop notifications and callbacks.
+    [self removeWindowObservers];
+    
     // To stop active streams it's necessary to invoke stop() on a copy 
     // of streams. This is because calling WebNetscapePluginStream::stop() also has the side effect
     // of removing a stream from this hash set.
@@ -1218,11 +1210,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     for (size_t i = 0; i < streamsCopy.size(); i++)
         streamsCopy[i]->stop();
     
-    // Stop the timers
-    [self stopTimers];
-    
-    // Stop notifications and callbacks.
-    [self removeWindowObservers];
     [[_pendingFrameLoads.get() allKeys] makeObjectsPerformSelector:@selector(_setInternalLoadDelegate:) withObject:nil];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 
@@ -1239,11 +1226,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _eventHandler.clear();
     
     textInputFuncs = 0;
-}
-
-- (BOOL)isStarted
-{
-    return _isStarted;
 }
 
 - (NPEventModel)eventModel
@@ -1426,28 +1408,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self _viewHasMoved];
 }
 
--(void)tellQuickTimeToChill
-{
-#ifndef NP_NO_QUICKDRAW
-    ASSERT(isDrawingModelQuickDraw(drawingModel));
-    
-    // Make a call to the secret QuickDraw API that makes QuickTime calm down.
-    WindowRef windowRef = (WindowRef)[[self window] windowRef];
-    if (!windowRef) {
-        return;
-    }
-    CGrafPtr port = GetWindowPort(windowRef);
-    ::Rect bounds;
-    GetPortBounds(port, &bounds);
-    WKCallDrawingNotification(port, &bounds);
-#endif /* NP_NO_QUICKDRAW */
-}
-
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
-    if (isDrawingModelQuickDraw(drawingModel))
-        [self tellQuickTimeToChill];
-
     // We must remove the tracking rect before we move to the new window.
     // Once we move to the new window, it will be too late.
     [self removeTrackingRect];
@@ -1588,7 +1550,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (NPObject *)createPluginScriptableObject
 {
-    if (![_pluginPackage.get() pluginFuncs]->getvalue || ![self isStarted])
+    if (![_pluginPackage.get() pluginFuncs]->getvalue || !_isStarted)
         return NULL;
         
     NPObject *value = NULL;
@@ -1641,7 +1603,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     _dataLengthReceived += [data length];
     
-    if (![self isStarted])
+    if (!_isStarted)
         return;
 
     if (!_manualStream->plugin()) {
@@ -1663,7 +1625,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     _error = error;
     
-    if (![self isStarted]) {
+    if (!_isStarted) {
         return;
     }
 
@@ -1675,7 +1637,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(_loadManually);
     ASSERT(_manualStream);
     
-    if ([self isStarted])
+    if (_isStarted)
         _manualStream->didFinishLoading(0);
 }
 
@@ -1684,7 +1646,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSTextInputContext *)inputContext
 {
 #ifndef NP_NO_CARBON
-    if (![self isStarted] || eventModel == NPEventModelCarbon)
+    if (!_isStarted || eventModel == NPEventModelCarbon)
         return nil;
 #endif
 
@@ -1694,7 +1656,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (BOOL)hasMarkedText
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
     
     if (textInputFuncs && textInputFuncs->hasMarkedText)
         return textInputFuncs->hasMarkedText(plugin);
@@ -1705,7 +1667,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)insertText:(id)aString
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
     
     if (textInputFuncs && textInputFuncs->insertText)
         textInputFuncs->insertText(plugin, aString);
@@ -1714,7 +1676,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSRange)markedRange
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
 
     if (textInputFuncs && textInputFuncs->markedRange)
         return textInputFuncs->markedRange(plugin);
@@ -1725,7 +1687,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSRange)selectedRange
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
 
     if (textInputFuncs && textInputFuncs->selectedRange)
         return textInputFuncs->selectedRange(plugin);
@@ -1736,7 +1698,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)setMarkedText:(id)aString selectedRange:(NSRange)selRange
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
 
     if (textInputFuncs && textInputFuncs->setMarkedText)
         textInputFuncs->setMarkedText(plugin, aString, selRange);
@@ -1745,7 +1707,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)unmarkText
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
     
     if (textInputFuncs && textInputFuncs->unmarkText)
         textInputFuncs->unmarkText(plugin);
@@ -1754,7 +1716,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSArray *)validAttributesForMarkedText
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
         
     if (textInputFuncs && textInputFuncs->validAttributesForMarkedText)
         return textInputFuncs->validAttributesForMarkedText(plugin);
@@ -1765,7 +1727,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
     
     if (textInputFuncs && textInputFuncs->attributedSubstringFromRange)
         return textInputFuncs->attributedSubstringFromRange(plugin, theRange);
@@ -1776,7 +1738,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
 
     if (textInputFuncs && textInputFuncs->characterIndexForPoint) {
         // Convert the point to window coordinates
@@ -1794,7 +1756,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)doCommandBySelector:(SEL)aSelector
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
 
     if (textInputFuncs && textInputFuncs->doCommandBySelector)
         textInputFuncs->doCommandBySelector(plugin, aSelector);
@@ -1803,7 +1765,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
     ASSERT(eventModel == NPEventModelCocoa);
-    ASSERT([self isStarted]);
+    ASSERT(_isStarted);
 
     if (textInputFuncs && textInputFuncs->firstRectForCharacterRange) {
         NSRect rect = textInputFuncs->firstRectForCharacterRange(plugin, theRange);
@@ -2604,11 +2566,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     if (![self window])
         return;
 
-    if (isDrawingModelQuickDraw(drawingModel))
-        [self tellQuickTimeToChill];
-
-    if (drawingModel == NPDrawingModelCoreGraphics || isDrawingModelQuickDraw(drawingModel))
-        [self updateAndSetWindow];
+    [self updateAndSetWindow];
     
     [self resetTrackingRect];
     
@@ -2696,7 +2654,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
 - (void)_redeliverStream
 {
-    if ([self dataSource] && [self isStarted]) {
+    if ([self dataSource] && _isStarted) {
         // Deliver what has not been passed to the plug-in up to this point.
         if (_dataLengthReceived > 0) {
             NSData *data = [[[self dataSource] data] subdataWithRange:NSMakeRange(0, _dataLengthReceived)];

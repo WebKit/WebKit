@@ -118,8 +118,7 @@ typedef struct _NPPluginTextInputFuncs NPPluginTextInputFuncs;
          DOMElement:(DOMElement *)anElement;
 
 
-- (BOOL)start;
-- (BOOL)isStarted;
+- (void)start;
 - (void)stop;
 
 - (NPP)plugin;

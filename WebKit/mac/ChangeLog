@@ -1,5 +1,46 @@
 2008-11-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Move even more code down to WebBaseNetscapePluginView, get rid of some unnecessary methods.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView focusChanged]):
+        (-[WebBaseNetscapePluginView visibleRect]):
+        (-[WebBaseNetscapePluginView acceptsFirstResponder]):
+        (-[WebBaseNetscapePluginView setHasFocus:]):
+        (-[WebBaseNetscapePluginView becomeFirstResponder]):
+        (-[WebBaseNetscapePluginView resignFirstResponder]):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView focusChanged]):
+        (-[WebNetscapePluginView tellQuickTimeToChill]):
+        (-[WebNetscapePluginView updateAndSetWindow]):
+        (-[WebNetscapePluginView start]):
+        (-[WebNetscapePluginView stop]):
+        (-[WebNetscapePluginView viewWillMoveToWindow:]):
+        (-[WebNetscapePluginView createPluginScriptableObject]):
+        (-[WebNetscapePluginView pluginView:receivedData:]):
+        (-[WebNetscapePluginView pluginView:receivedError:]):
+        (-[WebNetscapePluginView pluginViewFinishedLoading:]):
+        (-[WebNetscapePluginView inputContext]):
+        (-[WebNetscapePluginView hasMarkedText]):
+        (-[WebNetscapePluginView insertText:]):
+        (-[WebNetscapePluginView markedRange]):
+        (-[WebNetscapePluginView selectedRange]):
+        (-[WebNetscapePluginView setMarkedText:selectedRange:]):
+        (-[WebNetscapePluginView unmarkText]):
+        (-[WebNetscapePluginView validAttributesForMarkedText]):
+        (-[WebNetscapePluginView attributedSubstringFromRange:]):
+        (-[WebNetscapePluginView characterIndexForPoint:]):
+        (-[WebNetscapePluginView doCommandBySelector:]):
+        (-[WebNetscapePluginView firstRectForCharacterRange:]):
+        (-[WebNetscapePluginView _viewHasMoved]):
+        (-[WebNetscapePluginView _redeliverStream]):
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Kevin Decker.
 
         Move timer handling code down to WebBaseNetscapePluginView.

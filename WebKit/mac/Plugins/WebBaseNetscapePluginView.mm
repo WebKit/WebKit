@@ -30,14 +30,15 @@
 
 #import "WebBaseNetscapePluginView.h"
 
-#import "WebKitSystemInterface.h"
 #import "WebFrameInternal.h"
 #import "WebKitLogging.h"
+#import "WebKitSystemInterface.h"
 #import "WebView.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
+#import <WebKit/DOMPrivate.h>
 #import <wtf/Assertions.h>
 
 @implementation WebBaseNetscapePluginView
@@ -106,6 +107,11 @@
     ASSERT_NOT_REACHED();
 }
 
+- (void)focusChanged
+{
+    ASSERT_NOT_REACHED();
+}
+
 - (void)removeTrackingRect
 {
     if (_trackingTag) {
@@ -150,6 +156,43 @@
         return;
     
     [self startTimers];
+}
+
+- (NSRect)visibleRect
+{
+    // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch
+    // that clip now.    
+    return NSIntersectionRect([self convertRect:[_element.get() _windowClipRect] fromView:nil], [super visibleRect]);
+}
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (void)setHasFocus:(BOOL)flag
+{
+    if (!_isStarted)
+        return;
+    
+    if (_hasFocus == flag)
+        return;
+    
+    _hasFocus = flag;
+    
+    [self focusChanged];
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [self setHasFocus:YES];
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    [self setHasFocus:NO];    
+    return YES;
 }
 
 - (WebDataSource *)dataSource
