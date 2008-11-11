@@ -1,3 +1,15 @@
+2008-11-10  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Clear the image source cache even if we haven't decoded any of the image data.
+        We use the image source cache when calculating layout.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneDeadResources):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+
 2008-11-10  Adam Roben  <aroben@apple.com>
 
         Fix Bug 22161: Assertion failure in RenderThemeWin::systemColor when
