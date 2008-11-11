@@ -1,3 +1,14 @@
+2008-11-11  Ada Chan  <adachan@apple.com>
+
+        Fix: https://bugs.webkit.org/show_bug.cgi?id=22187
+        Bug 22187: CLEARTYPE_QUALITY flag is not supported on Win2000
+        
+        Update window versions to correspond to Windows XP.
+
+        Reviewed by Steve Falkenburg.
+
+        * win/tools/vsprops/common.vsprops:
+
 2008-10-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
