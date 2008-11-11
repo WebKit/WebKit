@@ -1,3 +1,16 @@
+2008-11-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=17997
+
+        Stop using the new Leopard API tiling call for scaled tiles when drawing background images.  The method
+        is buggy.  Fall back to using the slower (and more correct) pattern tiling that Tiger still uses.  This
+        is a Leopard-only workaround, since the API has been fixed on Snow Leopard.
+
+        Reviewed by John Sullivan
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+
 2008-11-10  David Hyatt  <hyatt@apple.com>
 
         Disable the Aqua look for menu lists when full page zoom is turned on.  Because the control is buggy
