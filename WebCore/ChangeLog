@@ -1,3 +1,24 @@
+2008-11-11  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Oliver Hunt.
+
+        PatternCairo needs to invert the pattern matrix because
+        of transformation from user space to pattern space.
+        Give a identity matrix to pattern for Qt and Cairo. Because the 
+        context is transformed already.
+
+        [CAIRO][QT] Canvas transformations applied twice to Patterns
+        https://bugs.webkit.org/show_bug.cgi?id=21555
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/graphics/cairo/PatternCairo.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+
 2008-11-10  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Dan Bernstein.

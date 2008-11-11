@@ -533,11 +533,13 @@ void GraphicsContext::fillPath()
         if (fillColor().alpha())
             p->fillPath(path, p->brush());
         break;
-    case PatternColorSpace:
-        p->fillPath(path, QBrush(m_common->state.fillPattern.get()->createPlatformPattern(getCTM())));
+    case PatternColorSpace: {
+        AffineTransform affine;
+        p->fillPath(path, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
         break;
+    }
     case GradientColorSpace:
-        QGradient* gradient = m_common->state.fillGradient.get()->platformGradient();
+        QGradient* gradient = m_common->state.fillGradient->platformGradient();
         *gradient = applySpreadMethod(*gradient, spreadMethod());  
         p->fillPath(path, QBrush(*gradient));
         break;
@@ -559,13 +561,14 @@ void GraphicsContext::strokePath()
             p->strokePath(path, pen);
         break;
     case PatternColorSpace: {
-        pen.setBrush(QBrush(m_common->state.strokePattern.get()->createPlatformPattern(getCTM())));
+        AffineTransform affine;
+        pen.setBrush(QBrush(m_common->state.strokePattern->createPlatformPattern(affine)));
         p->setPen(pen);
         p->strokePath(path, pen);
         break;
     }
     case GradientColorSpace: {
-        QGradient* gradient = m_common->state.strokeGradient.get()->platformGradient();
+        QGradient* gradient = m_common->state.strokeGradient->platformGradient();
         *gradient = applySpreadMethod(*gradient, spreadMethod()); 
         pen.setBrush(QBrush(*gradient));
         p->setPen(pen);
@@ -587,9 +590,11 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         if (fillColor().alpha())
             p->fillRect(rect, p->brush());
         break;
-    case PatternColorSpace:
-        p->fillRect(rect, QBrush(m_common->state.fillPattern.get()->createPlatformPattern(getCTM())));
+    case PatternColorSpace: {
+        AffineTransform affine;
+        p->fillRect(rect, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
         break;
+    }
     case GradientColorSpace:
         p->fillRect(rect, QBrush(*(m_common->state.fillGradient.get()->platformGradient())));
         break;
