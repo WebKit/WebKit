@@ -10,7 +10,7 @@ ctx2.fillStyle = '#f00';
 ctx2.fillRect(50, 0, 50, 50);
 ctx2.fillRect(0, 50, 50, 50);
 
-var ctx = document.getElementById('canvas').getContext('2d');
+var ctx = document.createElement('canvas').getContext('2d');
 
 ctx.save();
 ctx.transform(2, 0, 0, 2, 0, 0);
@@ -26,7 +26,7 @@ ctx.fillStyle = pattern;
 ctx.fillRect(0,0,100,100);
 ctx.restore();
 
-var imageData = ctx.getImageData(25, 25, 75, 75);
+var imageData = ctx.getImageData(26, 26, 74, 74);
 var imgdata = imageData.data;
 shouldBe("imgdata[4]", "0");
 shouldBe("imgdata[5]", "255");
