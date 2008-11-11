@@ -2967,27 +2967,27 @@ void CTI::privateCompile()
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
         SwitchRecord record = m_switches[i];
-        unsigned opcodeIndex = record.m_opcodeIndex;
+        unsigned opcodeIndex = record.opcodeIndex;
 
-        if (record.m_type != SwitchRecord::String) {
-            ASSERT(record.m_type == SwitchRecord::Immediate || record.m_type == SwitchRecord::Character); 
-            ASSERT(record.m_jumpTable.m_simpleJumpTable->branchOffsets.size() == record.m_jumpTable.m_simpleJumpTable->ctiOffsets.size());
+        if (record.type != SwitchRecord::String) {
+            ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
+            ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
-            record.m_jumpTable.m_simpleJumpTable->ctiDefault = m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + record.m_defaultOffset]);
+            record.jumpTable.simpleJumpTable->ctiDefault = m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + record.defaultOffset]);
 
-            for (unsigned j = 0; j < record.m_jumpTable.m_simpleJumpTable->branchOffsets.size(); ++j) {
-                unsigned offset = record.m_jumpTable.m_simpleJumpTable->branchOffsets[j];
-                record.m_jumpTable.m_simpleJumpTable->ctiOffsets[j] = offset ? m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + offset]) : record.m_jumpTable.m_simpleJumpTable->ctiDefault;
+            for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
+                unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
+                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + offset]) : record.jumpTable.simpleJumpTable->ctiDefault;
             }
         } else {
-            ASSERT(record.m_type == SwitchRecord::String);
+            ASSERT(record.type == SwitchRecord::String);
 
-            record.m_jumpTable.m_stringJumpTable->ctiDefault = m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + record.m_defaultOffset]);
+            record.jumpTable.stringJumpTable->ctiDefault = m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + record.defaultOffset]);
 
-            StringJumpTable::StringOffsetTable::iterator end = record.m_jumpTable.m_stringJumpTable->offsetTable.end();            
-            for (StringJumpTable::StringOffsetTable::iterator it = record.m_jumpTable.m_stringJumpTable->offsetTable.begin(); it != end; ++it) {
+            StringJumpTable::StringOffsetTable::iterator end = record.jumpTable.stringJumpTable->offsetTable.end();            
+            for (StringJumpTable::StringOffsetTable::iterator it = record.jumpTable.stringJumpTable->offsetTable.begin(); it != end; ++it) {
                 unsigned offset = it->second.branchOffset;
-                it->second.ctiOffset = offset ? m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + offset]) : record.m_jumpTable.m_stringJumpTable->ctiDefault;
+                it->second.ctiOffset = offset ? m_jit.getRelocatedAddress(code, m_labels[opcodeIndex + 3 + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
             }
         }
     }
