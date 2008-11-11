@@ -352,7 +352,7 @@ static WebWindowWatcher *_windowWatcher = nil;
 
     NSArray *childDicts = [dict objectForKey:WebChildrenKey];
     if (childDicts) {
-        for (int i = [childDicts count]; i >= 0; i--) {
+        for (int i = [childDicts count] - 1; i >= 0; i--) {
             WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation: [childDicts objectAtIndex:i]];
             core(_private)->addChildItem(core(child->_private));
             [child release];
@@ -410,7 +410,7 @@ static WebWindowWatcher *_windowWatcher = nil;
         const HistoryItemVector& children = coreItem->children();
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
-        for (int i = children.size(); i >= 0; i--)
+        for (int i = children.size() - 1; i >= 0; i--)
             [childDicts addObject:[kit(children[i].get()) dictionaryRepresentation]];
         [dict setObject: childDicts forKey:WebChildrenKey];
     }
