@@ -638,7 +638,9 @@ Machine::Machine()
 
 void Machine::initialize(JSGlobalData* globalData)
 {
+#if ENABLE(CTI)
     CTI::compileCTIMachineTrampolines(globalData);
+#endif
 }
 
 Machine::~Machine()
