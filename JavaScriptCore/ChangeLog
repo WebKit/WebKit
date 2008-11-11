@@ -1,3 +1,10 @@
+2008-11-11  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        * wtf/AVLTree.h: (WTF::AVLTree::Iterator::start_iter):
+        Fix indentation a little more.
+
 2008-11-11  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Sam Weinig.

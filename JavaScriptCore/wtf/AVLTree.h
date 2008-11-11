@@ -214,8 +214,8 @@ public:
                     break;
                 branch[d] = cmp > 0;
                 path_h[d++] = h;
-                }
             }
+        }
 
         void start_iter_least(AVLTree &tree)
         {
