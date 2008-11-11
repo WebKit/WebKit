@@ -1,3 +1,14 @@
+2008-11-10  David Hyatt  <hyatt@apple.com>
+
+        Disable the Aqua look for menu lists when full page zoom is turned on.  Because the control is buggy
+        when scaling and because it's impossible to paint into an offscreen bitmap without completely rewriting
+        how we draw the control on Mac, our only real option for now is to just switch to our styled look when zoomed.
+
+        Reviewed by Adam Roben
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled):
+
 2008-11-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
