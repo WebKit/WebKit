@@ -364,14 +364,14 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
     setPressedPart(theme()->hitTest(this, evt));
     int pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
     
-    if (theme()->shouldCenterOnThumb(this, evt)) {
+    if ((pressedPart() == BackTrackPart || pressedPart() == ForwardTrackPart) && theme()->shouldCenterOnThumb(this, evt)) {
         setHoveredPart(ThumbPart);
         setPressedPart(ThumbPart);
         int thumbLen = theme()->thumbLength(this);
-        int desiredPos = pressedPos - thumbLen / 2;
-        // Set the pressed position to the top of the thumb so that when we do the move, the delta
+        int desiredPos = pressedPos;
+        // Set the pressed position to the middle of the thumb so that when we do the move, the delta
         // will be from the current pixel position of the thumb to the new desired position for the thumb.
-        m_pressedPos = theme()->trackPosition(this) + theme()->thumbPosition(this);
+        m_pressedPos = theme()->trackPosition(this) + theme()->thumbPosition(this) + thumbLen / 2;
         moveThumb(desiredPos);
         return true;
     }

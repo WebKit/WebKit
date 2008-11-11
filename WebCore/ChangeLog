@@ -1,3 +1,16 @@
+2008-11-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=22182
+
+        Fix problems with scrollbars when the OS setting for clicks in the track jumping the thumb to that location
+        is turned on.  Make sure to only jump the thumb if the click happens in the track.  Also fix some math
+        errors when jumping the thumb that cause dragging after the jump to incorrectly jump the thumb again.
+
+        Reviewed by Adele
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::mouseDown):
+
 2008-11-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
