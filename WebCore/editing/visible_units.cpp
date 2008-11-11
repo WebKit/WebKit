@@ -493,12 +493,12 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     }
     
     if (root) {
-        // FIXME: Can be wrong for multi-column layout, and with transforms
+        // FIXME: Can be wrong for multi-column layout and with transforms.
         FloatPoint absPos = containingBlock->localToAbsoluteForContent(FloatPoint());
         if (containingBlock->hasOverflowClip())
             absPos -= containingBlock->layer()->scrolledContentOffset();
         RenderObject *renderer = root->closestLeafChildForXPos(x - absPos.x(), isEditablePosition(p))->object();
-        Node* node = renderer->element();
+        Node* node = renderer->node();
         if (editingIgnoresContent(node))
             return Position(node->parent(), node->nodeIndex());
         return renderer->positionForCoordinates(x - absPos.x(), root->topOverflow());
@@ -594,12 +594,12 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     }
     
     if (root) {
-        // FIXME: Can be wrong for multi-column layout and with transforms
+        // FIXME: Can be wrong for multi-column layout and with transforms.
         FloatPoint absPos = containingBlock->localToAbsoluteForContent(FloatPoint());
         if (containingBlock->hasOverflowClip())
             absPos -= containingBlock->layer()->scrolledContentOffset();
         RenderObject *renderer = root->closestLeafChildForXPos(x - absPos.x(), isEditablePosition(p))->object();
-        Node* node = renderer->element();
+        Node* node = renderer->node();
         if (editingIgnoresContent(node))
             return Position(node->parent(), node->nodeIndex());
         return renderer->positionForCoordinates(x - absPos.x(), root->topOverflow());

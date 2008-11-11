@@ -1,3 +1,18 @@
+2008-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22160
+        speculative fix for <rdar://problem/5995450> Nil deref because nextLinePosition
+        (previousLinePosition, too) uses a nil node
+
+        * editing/visible_units.cpp:
+        (WebCore::nextLinePosition): Use RenderObject::node instead of RenderObject::element
+        to check editingIgnoresContent. It makes sense to use the associated DOM node for
+        this, even in cases of anonymous content, and it avoids the case where element() can
+        be 0.
+        (WebCore::previousLinePosition): Ditto.
+
 2008-11-11  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Darin Adler.
