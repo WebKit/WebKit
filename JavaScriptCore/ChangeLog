@@ -2,6 +2,19 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Use 'value' instead of 'js' in CTI as a name for JSValue* to match our
+        usual convention elsewhere.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::getConstantImmediateNumericArg):
+        (JSC::CTI::printOpcodeOperandTypes):
+
+2008-11-10  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
         Make CTI::getConstant() a member function of CodeBlock instead.
 
         * VM/CTI.cpp:

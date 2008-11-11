@@ -178,8 +178,8 @@ ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst)
 {
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* js = m_codeBlock->getConstant(src);
-        m_jit.movl_i32r(asInteger(js), dst);
+        JSValue* value = m_codeBlock->getConstant(src);
+        m_jit.movl_i32r(asInteger(value), dst);
     } else
         m_jit.movl_mr(src * sizeof(Register), X86::edi, dst);
 }
@@ -188,8 +188,8 @@ ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst)
 ALWAYS_INLINE void CTI::emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch)
 {
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* js = m_codeBlock->getConstant(src);
-        m_jit.movl_i32m(asInteger(js), offset + sizeof(void*), X86::esp);
+        JSValue* value = m_codeBlock->getConstant(src);
+        m_jit.movl_i32m(asInteger(value), offset + sizeof(void*), X86::esp);
     } else {
         m_jit.movl_mr(src * sizeof(Register), X86::edi, scratch);
         m_jit.movl_rm(scratch, offset + sizeof(void*), X86::esp);
@@ -210,8 +210,8 @@ ALWAYS_INLINE void CTI::emitPutArgConstant(unsigned value, unsigned offset)
 ALWAYS_INLINE JSValue* CTI::getConstantImmediateNumericArg(unsigned src)
 {
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* js = m_codeBlock->getConstant(src);
-        return JSImmediate::isNumber(js) ? js : noValue();
+        JSValue* value = m_codeBlock->getConstant(src);
+        return JSImmediate::isNumber(value) ? value : noValue();
     }
     return noValue();
 }
@@ -269,30 +269,30 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 {
     char which1 = '*';
     if (m_codeBlock->isConstantRegisterIndex(src1)) {
-        JSValue* js = m_codeBlock->getConstant(src1);
+        JSValue* value = m_codeBlock->getConstant(src1);
         which1 = 
-            JSImmediate::isImmediate(js) ?
-                (JSImmediate::isNumber(js) ? 'i' :
-                JSImmediate::isBoolean(js) ? 'b' :
-                js->isUndefined() ? 'u' :
-                js->isNull() ? 'n' : '?')
+            JSImmediate::isImmediate(value) ?
+                (JSImmediate::isNumber(value) ? 'i' :
+                JSImmediate::isBoolean(value) ? 'b' :
+                value->isUndefined() ? 'u' :
+                value->isNull() ? 'n' : '?')
                 :
-            (js->isString() ? 's' :
-            js->isObject() ? 'o' :
+            (value->isString() ? 's' :
+            value->isObject() ? 'o' :
             'k');
     }
     char which2 = '*';
     if (m_codeBlock->isConstantRegisterIndex(src2)) {
-        JSValue* js = m_codeBlock->getConstant(src2);
+        JSValue* value = m_codeBlock->getConstant(src2);
         which2 = 
-            JSImmediate::isImmediate(js) ?
-                (JSImmediate::isNumber(js) ? 'i' :
-                JSImmediate::isBoolean(js) ? 'b' :
-                js->isUndefined() ? 'u' :
-                js->isNull() ? 'n' : '?')
+            JSImmediate::isImmediate(value) ?
+                (JSImmediate::isNumber(value) ? 'i' :
+                JSImmediate::isBoolean(value) ? 'b' :
+                value->isUndefined() ? 'u' :
+                value->isNull() ? 'n' : '?')
                 :
-            (js->isString() ? 's' :
-            js->isObject() ? 'o' :
+            (value->isString() ? 's' :
+            value->isObject() ? 'o' :
             'k');
     }
     if ((which1 != '*') | (which2 != '*'))
