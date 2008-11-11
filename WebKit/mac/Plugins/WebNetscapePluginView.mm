@@ -1058,18 +1058,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [notificationCenter removeObserver:self name:LoginWindowDidSwitchToUserNotification     object:nil];
 }
 
-- (void)start
+- (BOOL)createPlugin
 {
-    ASSERT([self currentWindow]);
-    
-    if (_isStarted)
-        return;
-
-    ASSERT([self webView]);
-    
-    if (![[[self webView] preferences] arePlugInsEnabled])
-        return;
-
     // Open the plug-in package so it remains loaded while our plugin uses it
     [_pluginPackage.get() open];
     
@@ -1084,7 +1074,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         LOG_ERROR("NPP_New failed with error: %d", npErr);
         [self _destroyPlugin];
         [_pluginPackage.get() close];
-        return;
+        return NO;
     }
     
     if (drawingModel == (NPDrawingModel)-1) {
@@ -1112,7 +1102,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self _destroyPlugin];
         [_pluginPackage.get() close];
         
-        return;
+        return NO;
     }        
 #endif // NP_NO_CARBON
     
@@ -1147,6 +1137,40 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self didCallPlugInFunction];
     }
     
+    return YES;
+}
+
+- (void)loadStream
+{
+    if (_loadManually) {
+        [self _redeliverStream];
+        return;
+    }
+    
+    // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
+    // Check for this and don't start a load in this case.
+    if (_sourceURL && ![_sourceURL.get() _web_isEmpty]) {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_sourceURL.get()];
+        [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
+        [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
+    } 
+}
+
+- (void)start
+{
+    ASSERT([self currentWindow]);
+    
+    if (_isStarted)
+        return;
+
+    ASSERT([self webView]);
+    
+    if (![[[self webView] preferences] arePlugInsEnabled])
+        return;
+
+    if (![self createPlugin])
+        return;
+    
     _isStarted = YES;
     [[self webView] addPluginInstanceView:self];
 
@@ -1162,21 +1186,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
     [self resetTrackingRect];
 
-    if (_loadManually) {
-        [self _redeliverStream];
-        return;
-    }
-    
-    // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
-    // Check for this and don't start a load in this case.
-    if (_sourceURL && ![_sourceURL.get() _web_isEmpty]) {
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_sourceURL.get()];
-        [request _web_setHTTPReferrer:core([self webFrame])->loader()->outgoingReferrer()];
-        [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
-    } 
+    [self loadStream];
 }
 
-- (void)stop
+- (BOOL)shouldStop
 {
     // If we're already calling a plug-in function, do not call NPP_Destroy().  The plug-in function we are calling
     // may assume that its instance->pdata, or other memory freed by NPP_Destroy(), is valid and unchanged until said
@@ -1184,24 +1197,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // See <rdar://problem/4480737>.
     if (pluginFunctionCallDepth > 0) {
         shouldStopSoon = YES;
-        return;
+        return NO;
     }
-    
-    [self removeTrackingRect];
 
-    if (!_isStarted)
-        return;
-    
-    _isStarted = NO;
-    
-    [[self webView] removePluginInstanceView:self];
-    
-    // Stop the timers
-    [self stopTimers];
-    
-    // Stop notifications and callbacks.
-    [self removeWindowObservers];
-    
+    return YES;
+}
+
+- (void)destroyPlugin
+{
     // To stop active streams it's necessary to invoke stop() on a copy 
     // of streams. This is because calling WebNetscapePluginStream::stop() also has the side effect
     // of removing a stream from this hash set.
@@ -1226,6 +1229,29 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _eventHandler.clear();
     
     textInputFuncs = 0;
+}
+
+- (void)stop
+{
+    if (![self shouldStop])
+        return;
+    
+    [self removeTrackingRect];
+
+    if (!_isStarted)
+        return;
+    
+    _isStarted = NO;
+    
+    [[self webView] removePluginInstanceView:self];
+    
+    // Stop the timers
+    [self stopTimers];
+    
+    // Stop notifications and callbacks.
+    [self removeWindowObservers];
+    
+    [self destroyPlugin];
 }
 
 - (NPEventModel)eventModel
