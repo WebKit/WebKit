@@ -168,7 +168,7 @@ extern "C" {
 
 #endif
 
-inline uintptr_t CTI::asInteger(JSValue* value)
+inline uintptr_t asInteger(JSValue* value)
 {
     return reinterpret_cast<uintptr_t>(value);
 }

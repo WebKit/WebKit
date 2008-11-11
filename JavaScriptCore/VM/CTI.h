@@ -350,8 +350,6 @@ namespace JSC {
     private:
         CTI(JSGlobalData*, CodeBlock* = 0);
 
-        static uintptr_t asInteger(JSValue*);
-
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();

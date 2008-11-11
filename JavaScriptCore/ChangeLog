@@ -1,5 +1,16 @@
 2008-11-10  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Make CTI::asInteger() a non-member function, since it needs no access to
+        any of CTI's member variables.
+
+        * VM/CTI.cpp:
+        (JSC::asInteger):
+        * VM/CTI.h:
+
+2008-11-10  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Use 'value' instead of 'js' in CTI as a name for JSValue* to match our
