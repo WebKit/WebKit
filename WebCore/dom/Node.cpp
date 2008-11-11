@@ -849,6 +849,13 @@ bool Node::isDescendantOf(const Node *other) const
     return false;
 }
 
+bool Node::contains(const Node* node) const
+{
+    if (!node)
+        return false;
+    return this == node || node->isDescendantOf(this);
+}
+
 bool Node::childAllowed(Node* newChild)
 {
     return childTypeAllowed(newChild->nodeType());

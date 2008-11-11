@@ -1,3 +1,30 @@
+2008-11-11  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/5089327> Too much indentation when pasting 
+        quoted paragraphs
+
+        This patch re-addresses pasting blockquotes into blockquotes. It 
+        backs out most of revision 38273. 38273 fixed the bug by inserting 
+        the pasted content as a sibling blockquote node to the pre-existing 
+        blockquote node. The problem with that is that by default, 
+        blockquotes have a giant margin, so visually, this can be weird. 
+        This patch instead inserts the pasted content as siblings of the 
+        the content already inside the outer blockquote, and then removes 
+        the blockquote node from the pasted content itself, so that it 
+        doesn't nest itself into the outer blockquote.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
+        Move contains() from Element to Node since there is nothing 
+        Element-specific about it.
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::contains):
+        * dom/Node.h:
+
 2008-11-11  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=17997

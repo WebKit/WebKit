@@ -10,8 +10,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 5 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -33,18 +32,16 @@ layer at (0,0) size 800x600
           text run at (0,0) width 289: "This tests pasting text into a Mail blockquote. "
           text run at (289,0) width 470: "The last bit of content in the incoming fragment should be merged with the"
           text run at (0,18) width 287: "paragraph after the position being pasted into."
-      RenderBlock {DIV} at (0,120) size 784x52
-        RenderBlock {BLOCKQUOTE} at (40,0) size 704x18
-          RenderBlock {DIV} at (0,0) size 704x18
+      RenderBlock {DIV} at (0,120) size 784x36
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x36
+          RenderBlock {DIV} at (0,0) size 704x36
             RenderText {#text} at (0,0) size 81x18
               text run at (0,0) width 81: "Blockquoted"
             RenderText {#text} at (81,0) size 21x18
               text run at (81,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,34) size 784x0
-        RenderBlock {BLOCKQUOTE} at (40,34) size 704x18
-          RenderBlock {DIV} at (0,0) size 704x18
-            RenderText {#text} at (0,0) size 20x18
-              text run at (0,0) width 20: "bar"
-            RenderText {#text} at (20,0) size 29x18
-              text run at (20,0) width 29: "Text"
-caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+            RenderBR {BR} at (102,14) size 0x0
+            RenderText {#text} at (0,18) size 20x18
+              text run at (0,18) width 20: "bar"
+            RenderText {#text} at (20,18) size 33x18
+              text run at (20,18) width 33: " Text"
+caret: position 3 of child 3 {#text} of child 0 {DIV} of child 0 {BLOCKQUOTE} of child 10 {DIV} of child 1 {BODY} of child 0 {HTML} of document

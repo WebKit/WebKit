@@ -587,13 +587,6 @@ KURL Element::baseURI() const
     return KURL(parentBase, base.string());
 }
 
-bool Element::contains(const Node* node) const
-{
-    if (!node)
-        return false;
-    return this == node || node->isDescendantOf(this);
-}
-
 void Element::createAttributeMap() const
 {
     namedAttrMap = NamedAttrMap::create(const_cast<Element*>(this));
