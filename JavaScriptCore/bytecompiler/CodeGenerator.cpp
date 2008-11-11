@@ -786,7 +786,7 @@ RegisterID* CodeGenerator::emitEqualityOp(OpcodeID opcode, RegisterID* dst, Regi
 
         if (src1->index() == dstIndex
             && src1->isTemporary()
-            && m_codeBlock->isConstant(src2->index())
+            && m_codeBlock->isConstantRegisterIndex(src2->index())
             && m_codeBlock->constantRegisters[src2->index() - m_codeBlock->numVars].jsValue(m_scopeChain->globalObject()->globalExec())->isString()) {
             const UString& value = asString(m_codeBlock->constantRegisters[src2->index() - m_codeBlock->numVars].jsValue(m_scopeChain->globalObject()->globalExec()))->value();
             if (value == "undefined") {

@@ -290,7 +290,7 @@ namespace JSC {
             linkedCallerList.shrink(lastPos);
         }
 
-        ALWAYS_INLINE bool isConstant(int index)
+        ALWAYS_INLINE bool isConstantRegisterIndex(int index)
         {
             return index >= numVars && index < numVars + numConstants;
         }
