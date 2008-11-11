@@ -2,6 +2,16 @@
 
         Reviewed by Kevin Decker.
 
+        Move renewGState to the base class.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView renewGState]):
+        * Plugins/WebNetscapePluginView.mm:
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
         Move start, stop and all the related methods down to WebBaseNetscapePluginView.
         
         * Plugins/WebBaseNetscapePluginView.h:

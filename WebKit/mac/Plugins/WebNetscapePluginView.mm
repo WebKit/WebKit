@@ -85,7 +85,6 @@ static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
 };
 
 @interface WebNetscapePluginView (Internal)
-- (void)_viewHasMoved;
 - (NPError)_createPlugin;
 - (void)_destroyPlugin;
 - (NSBitmapImageRep *)_printedPluginBitmap;
@@ -1316,17 +1315,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return YES;
 }
 
-- (void)renewGState
-{
-    [super renewGState];
-    
-    // -renewGState is called whenever the view's geometry changes.  It's a little hacky to override this method, but
-    // much safer than walking up the view hierarchy and observing frame/bounds changed notifications, since you don't
-    // have to track subsequent changes to the view hierarchy and add/remove notification observers.
-    // NSOpenGLView uses the exact same technique to reshape its OpenGL surface.
-    [self _viewHasMoved];
-}
-
 - (NPObject *)createPluginScriptableObject
 {
     if (![_pluginPackage.get() pluginFuncs]->getvalue || !_isStarted)
@@ -2336,25 +2324,6 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
         
     free(plugin);
     plugin = NULL;
-}
-
-- (void)_viewHasMoved
-{
-    // All of the work this method does may safely be skipped if the view is not in a window.  When the view
-    // is moved back into a window, everything should be set up correctly.
-    if (![self window])
-        return;
-
-    [self updateAndSetWindow];
-    
-    [self resetTrackingRect];
-    
-    // Check to see if the plugin view is completely obscured (scrolled out of view, for example).
-    // For performance reasons, we send null events at a lower rate to plugins which are obscured.
-    BOOL oldIsObscured = _isCompletelyObscured;
-    _isCompletelyObscured = NSIsEmptyRect([self visibleRect]);
-    if (_isCompletelyObscured != oldIsObscured)
-        [self restartTimers];
 }
 
 - (NSBitmapImageRep *)_printedPluginBitmap
