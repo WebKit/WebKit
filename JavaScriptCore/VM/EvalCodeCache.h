@@ -46,19 +46,19 @@ namespace JSC {
             RefPtr<EvalNode> evalNode;
 
             if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
-                evalNode = cacheMap.get(evalSource.rep());
+                evalNode = m_cacheMap.get(evalSource.rep());
 
             if (!evalNode) {
-                int errLine;
-                UString errMsg;
+                int errorLine;
+                UString errorMessage;
                 
                 SourceCode source = makeSource(evalSource);
-                evalNode = exec->globalData().parser->parse<EvalNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
+                evalNode = exec->globalData().parser->parse<EvalNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errorLine, &errorMessage);
                 if (evalNode) {
-                    if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && cacheMap.size() < maxCacheEntries)
-                        cacheMap.set(evalSource.rep(), evalNode);
+                    if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
+                        m_cacheMap.set(evalSource.rep(), evalNode);
                 } else {
-                    exceptionValue = Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), NULL);
+                    exceptionValue = Error::create(exec, SyntaxError, errorMessage, errorLine, source.provider()->asID(), 0);
                     return 0;
                 }
             }
@@ -70,7 +70,7 @@ namespace JSC {
         static const int maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;
 
-        HashMap<RefPtr<UString::Rep>, RefPtr<EvalNode> > cacheMap;
+        HashMap<RefPtr<UString::Rep>, RefPtr<EvalNode> > m_cacheMap;
     };
 
 } // namespace JSC

@@ -2,6 +2,15 @@
 
         Rubber-stamped by Sam Weinig.
 
+        Clean up EvalCodeCache to match our coding style a bit more.
+
+        * VM/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+
+2008-11-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
         Bug 22179: Move EvalCodeCache from CodeBlock.h into its own file
         <https://bugs.webkit.org/show_bug.cgi?id=22179>
 
