@@ -82,6 +82,7 @@
 		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-format-attribute"; }; };
 		7E2ADD8E0E79AAD500D50C51 /* CharacterClassConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */; };
 		7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */; };
+		7E4C89140ECA0F9A00DBEEEC /* EvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C89130ECA0F9A00DBEEEC /* EvalCodeCache.h */; };
 		7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureIDChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E4EE70F0EBB7A5B005934AA /* StructureIDChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */; };
 		7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */; };
@@ -524,6 +525,7 @@
 		7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterClassConstructor.h; sourceTree = "<group>"; };
 		7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CharacterClassConstructor.cpp; sourceTree = "<group>"; };
 		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
+		7E4C89130ECA0F9A00DBEEEC /* EvalCodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EvalCodeCache.h; path = VM/EvalCodeCache.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureIDChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDChain.cpp; sourceTree = "<group>"; };
 		7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeInfo.h; sourceTree = "<group>"; };
@@ -953,10 +955,9 @@
 			children = (
 				8683B02B0E636482004C19EE /* CTI.cpp */,
 				8683B02C0E636482004C19EE /* CTI.h */,
-				8613F4580E3A433E00C948FD /* SamplingTool.cpp */,
-				8613F4590E3A433E00C948FD /* SamplingTool.h */,
 				149B1A9E0D86ED73009CB8C7 /* CodeBlock.cpp */,
 				149B1A9D0D86ED73009CB8C7 /* CodeBlock.h */,
+				7E4C89130ECA0F9A00DBEEEC /* EvalCodeCache.h */,
 				A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */,
 				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
 				149B1AA10D86ED7C009CB8C7 /* Instruction.h */,
@@ -967,6 +968,8 @@
 				149B24FF0D8AF6D1009CB8C7 /* Register.h */,
 				14D792650DAA03FB001A9F05 /* RegisterFile.cpp */,
 				14D792640DAA03FB001A9F05 /* RegisterFile.h */,
+				8613F4580E3A433E00C948FD /* SamplingTool.cpp */,
+				8613F4590E3A433E00C948FD /* SamplingTool.h */,
 			);
 			name = vm;
 			sourceTree = "<group>";
@@ -1570,6 +1573,7 @@
 				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */,
 				7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */,
+				7E4C89140ECA0F9A00DBEEEC /* EvalCodeCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,12 +30,11 @@
 #ifndef CodeBlock_h
 #define CodeBlock_h
 
+#include "EvalCodeCache.h"
 #include "Instruction.h"
 #include "JSGlobalObject.h"
 #include "Nodes.h"
-#include "Parser.h"
 #include "RegExp.h"
-#include "SourceCode.h"
 #include "UString.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -209,40 +208,6 @@ namespace JSC {
             return ctiDefault;
         }
 #endif
-    };
-
-    class EvalCodeCache {
-    public:
-        PassRefPtr<EvalNode> get(ExecState* exec, const UString& evalSource, ScopeChainNode* scopeChain, JSValue*& exceptionValue)
-        {
-            RefPtr<EvalNode> evalNode;
-
-            if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
-                evalNode = cacheMap.get(evalSource.rep());
-
-            if (!evalNode) {
-                int errLine;
-                UString errMsg;
-                
-                SourceCode source = makeSource(evalSource);
-                evalNode = exec->globalData().parser->parse<EvalNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
-                if (evalNode) {
-                    if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && cacheMap.size() < maxCacheEntries)
-                        cacheMap.set(evalSource.rep(), evalNode);
-                } else {
-                    exceptionValue = Error::create(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), NULL);
-                    return 0;
-                }
-            }
-
-            return evalNode.release();
-        }
-
-    private:
-        static const int maxCacheableSourceLength = 256;
-        static const int maxCacheEntries = 64;
-
-        HashMap<RefPtr<UString::Rep>, RefPtr<EvalNode> > cacheMap;
     };
 
     struct CodeBlock {

@@ -34,6 +34,7 @@
 #include "BatchedTransitionOptimizer.h"
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
+#include "EvalCodeCache.h"
 #include "ExceptionHelpers.h"
 #include "ExecState.h"
 #include "GlobalEvalFunction.h"

@@ -73,6 +73,7 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/CodeBlock.cpp \
 	JavaScriptCore/VM/CodeBlock.h \
 	JavaScriptCore/bytecompiler/CodeGenerator.h \
+	JavaScriptCore/VM/EvalCodeCache.h \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
 	JavaScriptCore/VM/ExceptionHelpers.h \
 	JavaScriptCore/VM/Instruction.h \
