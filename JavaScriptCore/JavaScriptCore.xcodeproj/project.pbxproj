@@ -1763,7 +1763,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/kjs/Tracing.d",
+				"$(SRCROOT)/runtime/Tracing.d",
 			);
 			name = "Generate DTrace header";
 			outputPaths = (
