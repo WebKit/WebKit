@@ -2,6 +2,25 @@
 
         Reviewed by Kevin Decker.
 
+        Move rightMouseDown, rightMouseUp and sendActivateEvent to the base plugin view. 
+        Add stubs for createPlugin, loadStream, shouldStop and destroyPlugin.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView windowFocusChanged:]):
+        (-[WebBaseNetscapePluginView createPlugin]):
+        (-[WebBaseNetscapePluginView loadStream]):
+        (-[WebBaseNetscapePluginView destroyPlugin]):
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView rightMouseDown:]):
+        (-[WebBaseNetscapePluginView rightMouseUp:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView windowFocusChanged:]):
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
         Factor plug-in type specific code out to three new methods, createPlugin, destroyPlugin and loadStream.
         
         * Plugins/WebNetscapePluginView.mm:

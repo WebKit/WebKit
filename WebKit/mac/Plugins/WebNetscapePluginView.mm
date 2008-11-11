@@ -685,12 +685,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return acceptedEvent;
 }
 
-- (void)sendActivateEvent:(BOOL)activate
+- (void)windowFocusChanged:(BOOL)hasFocus
 {
-    if (!_isStarted)
-        return;
-
-    _eventHandler->windowFocusChanged(activate);
+    _eventHandler->windowFocusChanged(hasFocus);
 }
 
 - (void)sendDrawRectEvent:(NSRect)rect
@@ -743,18 +740,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // and the event handler has been deleted.
     if (_eventHandler)
         _eventHandler->focusChanged(_hasFocus);
-}
-
-// AppKit doesn't call mouseDown or mouseUp on right-click. Simulate control-click
-// mouseDown and mouseUp so plug-ins get the right-click event as they do in Carbon (3125743).
-- (void)rightMouseDown:(NSEvent *)theEvent
-{
-    [self mouseDown:theEvent];
-}
-
-- (void)rightMouseUp:(NSEvent *)theEvent
-{
-    [self mouseUp:theEvent];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent

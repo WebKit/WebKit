@@ -112,6 +112,33 @@
     ASSERT_NOT_REACHED();
 }
 
+- (void)windowFocusChanged:(BOOL)hasFocus
+{
+    ASSERT_NOT_REACHED();
+}
+
+- (BOOL)createPlugin
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
+- (void)loadStream
+{
+    ASSERT_NOT_REACHED();
+}
+
+- (BOOL)shouldStop
+{
+    ASSERT_NOT_REACHED();
+    return YES;
+}
+
+- (void)destroyPlugin
+{
+    ASSERT_NOT_REACHED();
+}
+
 - (void)removeTrackingRect
 {
     if (_trackingTag) {
@@ -168,6 +195,14 @@
 - (BOOL)acceptsFirstResponder
 {
     return YES;
+}
+
+- (void)sendActivateEvent:(BOOL)activate
+{
+    if (!_isStarted)
+        return;
+    
+    [self windowFocusChanged:activate];
 }
 
 - (void)setHasFocus:(BOOL)flag
@@ -236,6 +271,18 @@
 - (void)selectAll:(id)sender
 {
     [self keyDown:[NSApp currentEvent]];
+}
+
+// AppKit doesn't call mouseDown or mouseUp on right-click. Simulate control-click
+// mouseDown and mouseUp so plug-ins get the right-click event as they do in Carbon (3125743).
+- (void)rightMouseDown:(NSEvent *)theEvent
+{
+    [self mouseDown:theEvent];
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent
+{
+    [self mouseUp:theEvent];
 }
 
 @end
