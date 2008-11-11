@@ -941,6 +941,10 @@ public:
     void documentWillBecomeInactive();
     void documentDidBecomeActive();
 
+    void registerForMediaVolumeCallbacks(Element*);
+    void unregisterForMediaVolumeCallbacks(Element*);
+    void mediaVolumeDidChange();
+
     void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
     
@@ -1049,6 +1053,7 @@ private:
     String m_iconURL;
     
     HashSet<Element*> m_documentActivationCallbackElements;
+    HashSet<Element*> m_mediaVolumeCallbackElements;
 
     bool m_useSecureKeyboardEntryWhenActive;
 

@@ -177,6 +177,10 @@ typedef enum {
 - (BOOL)canResetPageZoom;
 - (IBAction)resetPageZoom:(id)sender;
 
+// Sets a master volume control for all media elements in the WebView. Valid values are 0..1.
+- (void)setMediaVolume:(float)volume;
+- (float)mediaVolume;
+
 @end
 
 @interface WebView (WebPrivate)

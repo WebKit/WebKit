@@ -142,6 +142,9 @@ namespace WebCore {
         bool cookieEnabled() const { return m_cookieEnabled; }
         void setCookieEnabled(bool enabled) { m_cookieEnabled = enabled; }
 
+        float mediaVolume() const { return m_mediaVolume; }
+        void setMediaVolume(float volume);
+
         void userStyleSheetLocationChanged();
         const String& userStyleSheet() const;
         
@@ -205,6 +208,7 @@ namespace WebCore {
 
         bool m_inLowQualityInterpolationMode;
         bool m_cookieEnabled;
+        float m_mediaVolume;
     
         InspectorController* m_parentInspectorController;
 

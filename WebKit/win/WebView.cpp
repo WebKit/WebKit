@@ -4979,6 +4979,27 @@ HRESULT STDMETHODCALLTYPE WebView::cookieEnabled(BOOL* enabled)
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::setMediaVolume(float volume)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    m_page->setMediaVolume(volume);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::mediaVolume(float* volume)
+{
+    if (!volume)
+        return E_POINTER;
+
+    if (!m_page)
+        return E_FAIL;
+
+    *volume = m_page->mediaVolume();
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::setDefersCallbacks(BOOL defersCallbacks)
 {
     if (!m_page)

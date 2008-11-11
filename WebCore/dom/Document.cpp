@@ -3142,6 +3142,23 @@ void Document::unregisterForDocumentActivationCallbacks(Element* e)
     m_documentActivationCallbackElements.remove(e);
 }
 
+void Document::mediaVolumeDidChange() 
+{
+    HashSet<Element*>::iterator end = m_mediaVolumeCallbackElements.end();
+    for (HashSet<Element*>::iterator i = m_mediaVolumeCallbackElements.begin(); i != end; ++i)
+        (*i)->mediaVolumeDidChange();
+}
+
+void Document::registerForMediaVolumeCallbacks(Element* e)
+{
+    m_mediaVolumeCallbackElements.add(e);
+}
+
+void Document::unregisterForMediaVolumeCallbacks(Element* e)
+{
+    m_mediaVolumeCallbackElements.remove(e);
+}
+
 void Document::setShouldCreateRenderers(bool f)
 {
     m_createRenderers = f;

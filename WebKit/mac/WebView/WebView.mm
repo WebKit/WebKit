@@ -3789,6 +3789,20 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
     return [self _resetZoom:sender isTextOnly:NO];
 }
 
+- (void)setMediaVolume:(float)volume
+{
+    if (_private->page)
+        _private->page->setMediaVolume(volume);
+}
+
+- (float)mediaVolume
+{
+    if (!_private->page)
+        return 0;
+
+    return _private->page->mediaVolume();
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)

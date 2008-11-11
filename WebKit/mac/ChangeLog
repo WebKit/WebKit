@@ -1,3 +1,14 @@
+2008-11-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit/mac part of adding a master volume control for media elements in a WebView
+
+        * WebView/WebView.mm:
+        (-[WebView setMediaVolume:]): Added.
+        (-[WebView mediaVolume]): Added.
+        * WebView/WebViewPrivate.h:
+
 2008-11-11  Aaron Golden  <agolden@apple.com>
 
         Bug 22134: -[WebHistoryItem dictionaryRepresentation] accesses past the end of a vector

@@ -1,3 +1,37 @@
+2008-11-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebCore part of adding a master volume control for media elements in a WebView
+
+        * WebCore.base.exp: Exported WebCore::Page::setMediaVolume().
+        * dom/Document.cpp:
+        (WebCore::Document::mediaVolumeDidChange): Added. Called by the Page
+        when the media volume is changed.
+        (WebCore::Document::registerForMediaVolumeCallbacks): Added. Allows
+        elements to register for a callback when the media volume is changed.
+        (WebCore::Document::unregisterForMediaVolumeCallbacks): Added. Allows
+        elements to unregister for the callback.
+        * dom/Document.h:
+        * dom/Element.h:
+        (WebCore::Element::mediaVolumeDidChange): Added an empty implementation.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Added a call to
+        registerForMediaVolumeCallbacks().
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Added a call to
+        unregisterForMediaVolumeCallbacks().
+        (WebCore::HTMLMediaElement::updateVolume): Changed to multiply the
+        element's intrinsic volume by the master volume from the page.
+        (WebCore::HTMLMediaElement::mediaVolumeDidChange): Added. Calls
+        updateVolume().
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_mediaVolume to 1.
+        (WebCore::Page::setMediaVolume): Added. Calls mediaVolumeDidChange() on
+        every document in the page when the master volume changes.
+        * page/Page.h:
+        (WebCore::Page::mediaVolume): Added this getter.
+
 2008-11-11  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=22182

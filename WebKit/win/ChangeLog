@@ -1,3 +1,15 @@
+2008-11-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit/win part of adding a master volume control for media elements in a WebView
+        * Interfaces/IWebViewPrivate.idl: Added setMediaVolume() and
+        mediaVolume().
+        * WebView.cpp:
+        (WebView::setMediaVolume): Added.
+        (WebView::mediaVolume): Added.
+        * WebView.h:
+
 2008-11-10  Adam Roben  <aroben@apple.com>
 
         Fix Bug 22158: Would like to turn on WebCore logging channels via an

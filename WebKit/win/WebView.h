@@ -702,6 +702,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE cookieEnabled(
         /* [out, retval] */ BOOL* enabled);
 
+    virtual HRESULT STDMETHODCALLTYPE setMediaVolume(
+        /* [in] */ float volume);
+
+    virtual HRESULT STDMETHODCALLTYPE mediaVolume(
+        /* [out, retval] */ float* volume);
+
     // WebView
     WebCore::Page* page();
     bool handleMouseEvent(UINT, WPARAM, LPARAM);

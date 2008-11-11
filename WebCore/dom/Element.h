@@ -178,10 +178,13 @@ public:
     IntSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const IntSize&);
 
-    // Use Document::registerForDocumentActivationCallbacks() to subscribe these
+    // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
     virtual void documentWillBecomeInactive() { }
     virtual void documentDidBecomeActive() { }
-    
+
+    // Use Document::registerForMediaVolumeCallbacks() to subscribe to this
+    virtual void mediaVolumeDidChange() { }
+
     bool isFinishedParsingChildren() const { return m_parsingChildrenFinished; }
     virtual void finishParsingChildren();
     virtual void beginParsingChildren() { m_parsingChildrenFinished = false; }

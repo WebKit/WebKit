@@ -146,4 +146,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setCookieEnabled([in] BOOL enable);
     HRESULT cookieEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setMediaVolume([in] float volume);
+    HRESULT mediaVolume([out, retval] float* volume);
 }
