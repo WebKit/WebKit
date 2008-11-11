@@ -90,9 +90,6 @@ static inline cairo_pattern_t* applySpreadMethod(cairo_pattern_t* pattern, Gradi
         case SpreadMethodRepeat:
             cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
             break;
-        default:
-            cairo_pattern_set_extend(pattern, CAIRO_EXTEND_NONE);
-            break;
     }
     return pattern;
 }
