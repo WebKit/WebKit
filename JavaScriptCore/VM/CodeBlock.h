@@ -357,8 +357,6 @@ namespace JSC {
         Vector<SimpleJumpTable> immediateSwitchJumpTables;
         Vector<SimpleJumpTable> characterSwitchJumpTables;
         Vector<StringJumpTable> stringSwitchJumpTables;
-        
-        HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned> > labels;
 
 #if ENABLE(CTI)
         HashMap<void*, unsigned> ctiReturnAddressVPCMap;

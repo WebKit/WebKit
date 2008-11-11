@@ -1,3 +1,13 @@
+2008-11-10  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove the unused labels member variable of CodeBlock.
+
+        * VM/CodeBlock.h:
+        * VM/LabelID.h:
+        (JSC::LabelID::setLocation):
+
 2008-11-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Camron Zwarich.
