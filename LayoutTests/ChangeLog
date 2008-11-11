@@ -1,3 +1,19 @@
+2008-11-11  Pierre-Olivier Latour  <pol@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Removed pixel results in platform/mac-tiger that were only slightly different
+        (within 1% tolerance) from the platform/mac results.
+        Removed results in platform/mac-tiger where the results in platform/mac were
+        also correct for Tiger.
+        Also updated results in platform/mac-tiger that were out of date.
+
+        Made sure every test that has a specific mac-tiger render tree output also has matching images.
+
+        (file listing elided)
+
 2008-11-11  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Darin Adler.
@@ -20,7 +36,7 @@
 
 2008-11-11  Pierre-Olivier Latour  <pol@apple.com>
 
-        Rubber-stamped by Dan Bernstein
+        Rubber-stamped by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=21821
 
