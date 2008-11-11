@@ -1,5 +1,21 @@
 2008-11-10  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Make CTI::getConstant() a member function of CodeBlock instead.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::getConstantImmediateNumericArg):
+        (JSC::CTI::printOpcodeOperandTypes):
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CTI.h:
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::getConstant):
+
+2008-11-10  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Sam Weinig.
 
         Rename CodeBlock::isConstant() to isConstantRegisterIndex().

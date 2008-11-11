@@ -295,6 +295,11 @@ namespace JSC {
             return index >= numVars && index < numVars + numConstants;
         }
 
+        ALWAYS_INLINE JSValue* getConstant(int index)
+        {
+            return constantRegisters[index - numVars].getJSValue();
+        }
+
 #if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
         void dump(ExecState*) const;
         void printStructureIDs(const Instruction*) const;

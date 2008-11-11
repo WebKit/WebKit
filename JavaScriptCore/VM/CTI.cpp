@@ -168,11 +168,6 @@ extern "C" {
 
 #endif
 
-ALWAYS_INLINE JSValue* CTI::getConstant(int src)
-{
-    return m_codeBlock->constantRegisters[src - m_codeBlock->numVars].getJSValue();
-}
-
 inline uintptr_t CTI::asInteger(JSValue* value)
 {
     return reinterpret_cast<uintptr_t>(value);
@@ -183,7 +178,7 @@ ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst)
 {
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* js = getConstant(src);
+        JSValue* js = m_codeBlock->getConstant(src);
         m_jit.movl_i32r(asInteger(js), dst);
     } else
         m_jit.movl_mr(src * sizeof(Register), X86::edi, dst);
@@ -193,7 +188,7 @@ ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst)
 ALWAYS_INLINE void CTI::emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch)
 {
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* js = getConstant(src);
+        JSValue* js = m_codeBlock->getConstant(src);
         m_jit.movl_i32m(asInteger(js), offset + sizeof(void*), X86::esp);
     } else {
         m_jit.movl_mr(src * sizeof(Register), X86::edi, scratch);
@@ -215,7 +210,7 @@ ALWAYS_INLINE void CTI::emitPutArgConstant(unsigned value, unsigned offset)
 ALWAYS_INLINE JSValue* CTI::getConstantImmediateNumericArg(unsigned src)
 {
     if (m_codeBlock->isConstantRegisterIndex(src)) {
-        JSValue* js = getConstant(src);
+        JSValue* js = m_codeBlock->getConstant(src);
         return JSImmediate::isNumber(js) ? js : noValue();
     }
     return noValue();
@@ -274,7 +269,7 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 {
     char which1 = '*';
     if (m_codeBlock->isConstantRegisterIndex(src1)) {
-        JSValue* js = getConstant(src1);
+        JSValue* js = m_codeBlock->getConstant(src1);
         which1 = 
             JSImmediate::isImmediate(js) ?
                 (JSImmediate::isNumber(js) ? 'i' :
@@ -288,7 +283,7 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
     }
     char which2 = '*';
     if (m_codeBlock->isConstantRegisterIndex(src2)) {
-        JSValue* js = getConstant(src2);
+        JSValue* js = m_codeBlock->getConstant(src2);
         which2 = 
             JSImmediate::isImmediate(js) ?
                 (JSImmediate::isNumber(js) ? 'i' :
@@ -1005,7 +1000,7 @@ void CTI::privateCompileMainPass()
         case op_mov: {
             unsigned src = instruction[i + 2].u.operand;
             if (m_codeBlock->isConstantRegisterIndex(src))
-                m_jit.movl_i32r(asInteger(getConstant(src)), X86::eax);
+                m_jit.movl_i32r(asInteger(m_codeBlock->getConstant(src)), X86::eax);
             else
                 emitGetArg(src, X86::eax);
             emitPutResult(instruction[i + 1].u.operand);
