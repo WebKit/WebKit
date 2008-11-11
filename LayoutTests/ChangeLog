@@ -1,3 +1,15 @@
+2008-11-11  Pierre-Olivier Latour  <pol@apple.com>
+
+        Rubber-stamped by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Remaining set of updated expected pixel results. This includes http/,
+        media/, plugins/, scrollbars/, tables/, transforms/, transitions/ and
+        webarchive/.
+
+        (file listing elided)
+
 2008-11-10  Adam Roben  <aroben@apple.com>
 
         Test for Bug 22161: Assertion failure in RenderThemeWin::systemColor
