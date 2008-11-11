@@ -1,3 +1,14 @@
+2008-11-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        - remove inline capacity from declaration stacks (15M savings on membuster test)
+
+        No perf regression on SunSpider or V8 test combined with other upcoming memory improvement patch.
+        
+        * JavaScriptCore.exp:
+        * parser/Nodes.h:
+
 2008-11-11  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
