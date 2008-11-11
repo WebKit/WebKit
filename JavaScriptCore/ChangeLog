@@ -1,3 +1,50 @@
+2008-11-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Camron Zwarich.
+
+        Batch compile the set of static trampolines at the point Machine is constructed, using a single allocation.
+        Refactor out m_callFrame from CTI, since this is only needed to access the global data (instead store a
+        pointer to the global data directly, since this is available at the point the Machine is constructed).
+        Add a method to align the code buffer, to allow JIT generation for multiple trampolines in one block.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::getConstant):
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::getConstantImmediateNumericArg):
+        (JSC::CTI::printOpcodeOperandTypes):
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::freeCTIMachineTrampolines):
+        * VM/CTI.h:
+        (JSC::CTI::compile):
+        (JSC::CTI::compileGetByIdSelf):
+        (JSC::CTI::compileGetByIdProto):
+        (JSC::CTI::compileGetByIdChain):
+        (JSC::CTI::compilePutByIdReplace):
+        (JSC::CTI::compilePutByIdTransition):
+        (JSC::CTI::compileCTIMachineTrampolines):
+        (JSC::CTI::compilePatchGetArrayLength):
+        * VM/Machine.cpp:
+        (JSC::Machine::initialize):
+        (JSC::Machine::~Machine):
+        (JSC::Machine::execute):
+        (JSC::Machine::tryCTICachePutByID):
+        (JSC::Machine::tryCTICacheGetByID):
+        (JSC::Machine::cti_op_call_JSFunction):
+        (JSC::Machine::cti_vm_lazyLinkCall):
+        * VM/Machine.h:
+        * masm/X86Assembler.h:
+        (JSC::JITCodeBuffer::isAligned):
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::align):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2008-11-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti Koivisto.

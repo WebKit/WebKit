@@ -106,6 +106,8 @@ namespace JSC {
     public:
         Machine();
         ~Machine();
+
+        void initialize(JSGlobalData*);
         
         RegisterFile& registerFile() { return m_registerFile; }
         
@@ -322,9 +324,6 @@ namespace JSC {
 
         void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
-
-        void* getCTIArrayLengthTrampoline(CallFrame*, CodeBlock*);
-        void* getCTIStringLengthTrampoline(CallFrame*, CodeBlock*);
 
         JITCodeBuffer* jitCodeBuffer() const { return m_jitCodeBuffer.get(); }
 #endif

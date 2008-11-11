@@ -96,6 +96,7 @@ JSGlobalData::JSGlobalData(bool isShared)
 #if PLATFORM(MAC)
     startProfilerServerIfNeeded();
 #endif
+    machine->initialize(this);
 }
 
 JSGlobalData::~JSGlobalData()
