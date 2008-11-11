@@ -1,3 +1,13 @@
+2008-11-11  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Oliver Hunter.
+
+        Added test to check behavior on transformations of patterns in canvas.
+
+        * fast/canvas/canvas-pattern-transform-expected.txt: Added.
+        * fast/canvas/canvas-pattern-transform.html: Added.
+        * fast/canvas/canvas-pattern-transform.js: Added.
+
 2008-11-11  Pierre-Olivier Latour  <pol@apple.com>
 
         Rubber-stamped by Dan Bernstein
