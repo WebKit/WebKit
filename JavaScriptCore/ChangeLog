@@ -1,3 +1,21 @@
+2008-11-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti Koivisto.
+        
+        - Make Vector::clear() release the Vector's memory (1MB savings on membuster)
+        https://bugs.webkit.org/show_bug.cgi?id=22170
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::deallocateBuffer): Set capacity to 0 as
+        well as size, otherwise shrinking capacity to 0 can fail to reset
+        the capacity and thus cause a future crash.
+        (WTF::Vector::~Vector): Shrink size not capacity; we only need
+        to call destructors, the buffer will be freed anyway.
+        (WTF::Vector::clear): Change this to shrinkCapacity(0), not just shrink(0).
+        (WTF::::shrinkCapacity): Use shrink() instead of resize() for case where
+        the size is greater than the new capacity, to work with types that have no
+        default constructor.
+
 2008-11-10  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

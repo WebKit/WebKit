@@ -279,8 +279,10 @@ namespace WTF {
 
         void deallocateBuffer(T* bufferToDeallocate)
         {
-            if (m_buffer == bufferToDeallocate)
+            if (m_buffer == bufferToDeallocate) {
                 m_buffer = 0;
+                m_capacity = 0;
+            }
             fastFree(bufferToDeallocate);
         }
 
@@ -442,7 +444,7 @@ namespace WTF {
 
         ~Vector()
         {
-            clear();
+            if (m_size) shrink(0);
         }
 
         Vector(const Vector&);
@@ -493,7 +495,7 @@ namespace WTF {
         void reserveCapacity(size_t newCapacity);
         void shrinkCapacity(size_t newCapacity);
 
-        void clear() { if (m_size) shrink(0); }
+        void clear() { shrinkCapacity(0); }
 
         template<typename U> void append(const U*, size_t);
         template<typename U> void append(const U&);
@@ -725,7 +727,8 @@ namespace WTF {
         if (newCapacity >= capacity())
             return;
 
-        resize(min(m_size, newCapacity));
+        if (newCapacity < size()) 
+            shrink(newCapacity);
 
         T* oldBuffer = begin();
         if (newCapacity > 0) {
