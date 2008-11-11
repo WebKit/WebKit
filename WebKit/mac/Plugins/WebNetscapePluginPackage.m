@@ -470,7 +470,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         LOG(Plugins, "%f main timing started", mainStart);
         NPP_ShutdownProcPtr shutdownFunction;
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &shutdownFunction);
-        NPP_Shutdown = (NPP_ShutdownProcPtr)functionPointerForTVector((TransitionVector)shutdownFunction);
+        NP_Shutdown = (NPP_ShutdownProcPtr)functionPointerForTVector((TransitionVector)shutdownFunction);
         if (!isBundle)
             // Don't free pluginMainFunc if we got it from a bundle because it is owned by CFBundle in that case.
             free(pluginMainFunc);
