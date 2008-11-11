@@ -1,3 +1,11 @@
+2008-11-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Remove pointless dependencies on the deleted kjs directory.
+
+        * presets/wxwebkit.bkl:
+
 2008-11-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after addition of JSCore parser and bycompiler dirs. 

@@ -134,7 +134,6 @@ and WebCore. Include this file to use these settings.
         
         <include>$(WK_ROOT)/JavaScriptCore</include>
         <include>$(WK_ROOT)/JavaScriptCore/bytecompiler</include>
-        <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
         <include>$(WK_ROOT)/JavaScriptCore/parser</include>
         <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
         <include>$(WK_ROOT)/JavaScriptCore/profiler</include>

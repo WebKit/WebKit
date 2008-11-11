@@ -1,3 +1,11 @@
+2008-11-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Remove an unused forwarding header for a file that no longer exists.
+
+        * ForwardingHeaders/JavaScriptCore/JSLock.h: Removed.
+
 2008-11-11  Mark Rowe  <mrowe@apple.com>
 
         Fix broken dependencies building JavaScriptCore on a freezing cold cat, caused

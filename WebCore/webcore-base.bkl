@@ -109,7 +109,6 @@ wxWebCore port Bakefile project file.
         <include>$(WK_ROOT)/JavaScriptCore/bindings</include>
         <include>$(WK_ROOT)/JavaScriptCore/bytecompiler</include>
         <include>$(WK_ROOT)/JavaScriptCore/debugger</include>
-        <include>$(WK_ROOT)/JavaScriptCore/kjs</include>
         <include>$(WK_ROOT)/JavaScriptCore/parser</include>
         <include>$(WK_ROOT)/JavaScriptCore/pcre</include>
         <include>$(WK_ROOT)/JavaScriptCore/profiler</include>

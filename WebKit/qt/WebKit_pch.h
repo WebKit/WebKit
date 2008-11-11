@@ -39,7 +39,7 @@
 #include <windows.h>
 #endif
 
-#include "../../JavaScriptCore/kjs/config.h"
+#include "../../JavaScriptCore/config.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -79,5 +79,5 @@
 #include <wtf/GetPtr.h>
 
 #include "../../WebCore/bindings/js/JSDOMBinding.h"
-#include "../../JavaScriptCore/kjs/MathObject.h"
+#include "../../JavaScriptCore/runtime/MathObject.h"
 #endif

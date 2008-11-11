@@ -128,9 +128,9 @@ INCLUDEPATH += \
     $$PWD/../WebKit/qt/Api \
     $$PWD/bridge/qt
 
-# Make sure storage/ appears before JavaScriptCore/kjs. Both provide LocalStorage.h
+# Make sure storage/ appears before JavaScriptCore/. Both provide LocalStorage.h
 # but the header from the former include path is included across directories while
-# kjs/LocalStorage.h is included only from files within the same directory
+# LocalStorage.h is included only from files within the same directory
 INCLUDEPATH = $$PWD/storage $$INCLUDEPATH
 
 INCLUDEPATH +=  $$PWD \
