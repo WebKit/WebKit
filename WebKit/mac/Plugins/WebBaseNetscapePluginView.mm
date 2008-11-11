@@ -34,12 +34,16 @@
 #import "WebKitLogging.h"
 #import "WebKitSystemInterface.h"
 #import "WebView.h"
+#import "WebViewInternal.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebKit/DOMPrivate.h>
 #import <wtf/Assertions.h>
+
+#define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
+#define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
 @implementation WebBaseNetscapePluginView
 
@@ -139,6 +143,11 @@
     ASSERT_NOT_REACHED();
 }
 
+- (void)updateAndSetWindow
+{
+    ASSERT_NOT_REACHED();
+}
+
 - (void)removeTrackingRect
 {
     if (_trackingTag) {
@@ -216,6 +225,238 @@
     _hasFocus = flag;
     
     [self focusChanged];
+}
+
+- (void)addWindowObservers
+{
+    ASSERT([self window]);
+    
+    NSWindow *theWindow = [self window];
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(windowWillClose:) 
+                               name:NSWindowWillCloseNotification object:theWindow]; 
+    [notificationCenter addObserver:self selector:@selector(windowBecameKey:)
+                               name:NSWindowDidBecomeKeyNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowResignedKey:)
+                               name:NSWindowDidResignKeyNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowDidMiniaturize:)
+                               name:NSWindowDidMiniaturizeNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowDidDeminiaturize:)
+                               name:NSWindowDidDeminiaturizeNotification object:theWindow];
+    
+    [notificationCenter addObserver:self selector:@selector(loginWindowDidSwitchFromUser:)
+                               name:LoginWindowDidSwitchFromUserNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(loginWindowDidSwitchToUser:)
+                               name:LoginWindowDidSwitchToUserNotification object:nil];
+}
+
+- (void)removeWindowObservers
+{
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:NSWindowWillCloseNotification        object:nil]; 
+    [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification     object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification     object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidMiniaturizeNotification   object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidDeminiaturizeNotification object:nil];
+    [notificationCenter removeObserver:self name:LoginWindowDidSwitchFromUserNotification   object:nil];
+    [notificationCenter removeObserver:self name:LoginWindowDidSwitchToUserNotification     object:nil];
+}
+
+- (void)start
+{
+    ASSERT([self currentWindow]);
+    
+    if (_isStarted)
+        return;
+    
+    ASSERT([self webView]);
+    
+    if (![[[self webView] preferences] arePlugInsEnabled])
+        return;
+    
+    if (![self createPlugin])
+        return;
+    
+    _isStarted = YES;
+    [[self webView] addPluginInstanceView:self];
+    
+    [self updateAndSetWindow];
+    
+    if ([self window]) {
+        [self addWindowObservers];
+        if ([[self window] isKeyWindow]) {
+            [self sendActivateEvent:YES];
+        }
+        [self restartTimers];
+    }
+    
+    [self resetTrackingRect];
+    
+    [self loadStream];
+}
+
+- (void)stop
+{
+    if (![self shouldStop])
+        return;
+    
+    [self removeTrackingRect];
+    
+    if (!_isStarted)
+        return;
+    
+    _isStarted = NO;
+    
+    [[self webView] removePluginInstanceView:self];
+    
+    // Stop the timers
+    [self stopTimers];
+    
+    // Stop notifications and callbacks.
+    [self removeWindowObservers];
+    
+    [self destroyPlugin];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    // We must remove the tracking rect before we move to the new window.
+    // Once we move to the new window, it will be too late.
+    [self removeTrackingRect];
+    [self removeWindowObservers];
+    
+    // Workaround for: <rdar://problem/3822871> resignFirstResponder is not sent to first responder view when it is removed from the window
+    [self setHasFocus:NO];
+    
+    if (!newWindow) {
+        if ([[self webView] hostWindow]) {
+            // View will be moved out of the actual window but it still has a host window.
+            [self stopTimers];
+        } else {
+            // View will have no associated windows.
+            [self stop];
+            
+            // Stop observing WebPreferencesChangedNotification -- we only need to observe this when installed in the view hierarchy.
+            // When not in the view hierarchy, -viewWillMoveToWindow: and -viewDidMoveToWindow will start/stop the plugin as needed.
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+        }
+    }
+}
+
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+{
+    if (!newSuperview) {
+        // Stop the plug-in when it is removed from its superview.  It is not sufficient to do this in -viewWillMoveToWindow:nil, because
+        // the WebView might still has a hostWindow at that point, which prevents the plug-in from being destroyed.
+        // There is no need to start the plug-in when moving into a superview.  -viewDidMoveToWindow takes care of that.
+        [self stop];
+        
+        // Stop observing WebPreferencesChangedNotification -- we only need to observe this when installed in the view hierarchy.
+        // When not in the view hierarchy, -viewWillMoveToWindow: and -viewDidMoveToWindow will start/stop the plugin as needed.
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+    }
+}
+
+- (void)viewDidMoveToWindow
+{
+    [self resetTrackingRect];
+    
+    if ([self window]) {
+        // While in the view hierarchy, observe WebPreferencesChangedNotification so that we can start/stop depending
+        // on whether plugins are enabled.
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(preferencesHaveChanged:)
+                                                     name:WebPreferencesChangedNotification
+                                                   object:nil];
+        
+        // View moved to an actual window. Start it if not already started.
+        [self start];
+        [self restartTimers];
+        [self addWindowObservers];
+    } else if ([[self webView] hostWindow]) {
+        // View moved out of an actual window, but still has a host window.
+        // Call setWindow to explicitly "clip out" the plug-in from sight.
+        // FIXME: It would be nice to do this where we call stopNullEvents in viewWillMoveToWindow.
+        [self updateAndSetWindow];
+    }
+}
+
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+    if (!hostWindow && ![self window]) {
+        // View will have no associated windows.
+        [self stop];
+        
+        // Remove WebPreferencesChangedNotification observer -- we will observe once again when we move back into the window
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+    }
+}
+
+- (void)viewDidMoveToHostWindow
+{
+    if ([[self webView] hostWindow]) {
+        // View now has an associated window. Start it if not already started.
+        [self start];
+    }
+}
+
+#pragma mark NOTIFICATIONS
+
+- (void)windowWillClose:(NSNotification *)notification 
+{
+    [self stop]; 
+} 
+
+- (void)windowBecameKey:(NSNotification *)notification
+{
+    [self sendActivateEvent:YES];
+    [self setNeedsDisplay:YES];
+    [self restartTimers];
+}
+
+- (void)windowResignedKey:(NSNotification *)notification
+{
+    [self sendActivateEvent:NO];
+    [self setNeedsDisplay:YES];
+    [self restartTimers];
+}
+
+- (void)windowDidMiniaturize:(NSNotification *)notification
+{
+    [self stopTimers];
+}
+
+- (void)windowDidDeminiaturize:(NSNotification *)notification
+{
+    [self stopTimers];
+}
+
+- (void)loginWindowDidSwitchFromUser:(NSNotification *)notification
+{
+    [self stopTimers];
+}
+
+-(void)loginWindowDidSwitchToUser:(NSNotification *)notification
+{
+    [self restartTimers];
+}
+
+- (void)preferencesHaveChanged:(NSNotification *)notification
+{
+    WebPreferences *preferences = [[self webView] preferences];
+    BOOL arePlugInsEnabled = [preferences arePlugInsEnabled];
+    
+    if ([notification object] == preferences && _isStarted != arePlugInsEnabled) {
+        if (arePlugInsEnabled) {
+            if ([self currentWindow]) {
+                [self start];
+            }
+        } else {
+            [self stop];
+            [self setNeedsDisplay:YES];
+        }
+    }
 }
 
 - (BOOL)becomeFirstResponder

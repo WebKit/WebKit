@@ -2,6 +2,35 @@
 
         Reviewed by Kevin Decker.
 
+        Move start, stop and all the related methods down to WebBaseNetscapePluginView.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):
+        (-[WebBaseNetscapePluginView addWindowObservers]):
+        (-[WebBaseNetscapePluginView removeWindowObservers]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView stop]):
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        (-[WebBaseNetscapePluginView viewWillMoveToSuperview:]):
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]):
+        (-[WebBaseNetscapePluginView viewWillMoveToHostWindow:]):
+        (-[WebBaseNetscapePluginView viewDidMoveToHostWindow]):
+        (-[WebBaseNetscapePluginView windowWillClose:]):
+        (-[WebBaseNetscapePluginView windowBecameKey:]):
+        (-[WebBaseNetscapePluginView windowResignedKey:]):
+        (-[WebBaseNetscapePluginView windowDidMiniaturize:]):
+        (-[WebBaseNetscapePluginView windowDidDeminiaturize:]):
+        (-[WebBaseNetscapePluginView loginWindowDidSwitchFromUser:]):
+        (-[WebBaseNetscapePluginView loginWindowDidSwitchToUser:]):
+        (-[WebBaseNetscapePluginView preferencesHaveChanged:]):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
         Move rightMouseDown, rightMouseUp and sendActivateEvent to the base plugin view. 
         Add stubs for createPlugin, loadStream, shouldStop and destroyPlugin.
         
