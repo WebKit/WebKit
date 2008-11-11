@@ -1,3 +1,18 @@
+2008-11-11  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Removed invalid bases incorrectly checked-in in r38305. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=22185
+
+        * platform/mac-tiger/fast/text/international/complex-character-based-fallback-expected.checksum: Removed.
+        * platform/mac-tiger/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+        * platform/mac-tiger/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+        * platform/mac-tiger/fast/text/international/hindi-spacing-expected.checksum: Removed.
+        * platform/mac-tiger/fast/text/international/hindi-spacing-expected.png: Removed.
+        * platform/mac-tiger/fast/text/international/hindi-spacing-expected.txt: Removed.
+
 2008-11-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
