@@ -2,6 +2,21 @@
 
         Reviewed by Mark Rowe.
         
+        - shrink CodeBlock and AST related Vectors to exact fit (5-10M savings on membuster test)
+        
+        No perf regression combined with the last patch (each seems like a small regression individually)
+
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::generate):
+        * parser/Nodes.h:
+        (JSC::SourceElements::releaseContentsIntoVector):
+        * wtf/Vector.h:
+        (WTF::Vector::shrinkToFit):
+
+2008-11-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+        
         - remove inline capacity from declaration stacks (15M savings on membuster test)
 
         No perf regression on SunSpider or V8 test combined with other upcoming memory improvement patch.

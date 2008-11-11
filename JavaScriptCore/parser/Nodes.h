@@ -1688,6 +1688,7 @@ namespace JSC {
         {
             ASSERT(destination.isEmpty());
             m_statements.swap(destination);
+            destination.shrinkToFit();
         }
 
     private:
