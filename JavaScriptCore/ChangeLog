@@ -1,3 +1,12 @@
+2008-11-11  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        While r38286 removed the need for the m_callFrame member variable of
+        CTI, it should be also be removed.
+
+        * VM/CTI.h:
+
 2008-11-10  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Oliver Hunt.
