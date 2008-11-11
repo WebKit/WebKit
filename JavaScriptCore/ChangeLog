@@ -1,5 +1,14 @@
 2008-11-10  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Split multiple definitions into separate lines.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileBinaryArithOp):
+
+2008-11-10  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Geoff Garen.
 
         Bug 22162: Remove cachedValueGetter from the JavaScriptCore API implementation
