@@ -1057,7 +1057,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifndef BUILDING_ON_TIGER
     if (drawingModel == NPDrawingModelCoreAnimation) {
         void *value = 0;
-        if (![_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
+        if ([_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
             
             // The plug-in gives us a retained layer.
             _layer.adoptNS((CALayer *)value);
