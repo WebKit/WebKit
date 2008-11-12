@@ -3427,15 +3427,12 @@ void CTI::privateCompilePatchGetArrayLength(void* returnAddress)
     m_jit.movl_mr(OBJECT_OFFSET(JSArray, m_storage), X86::eax, X86::ecx);
     m_jit.movl_mr(OBJECT_OFFSET(ArrayStorage, m_length), X86::ecx, X86::ecx);
 
+    m_jit.cmpl_i32r(JSImmediate::maxImmediateInt, X86::ecx);
+    X86Assembler::JmpSrc failureCases3 = m_jit.emitUnlinkedJa();
+
     m_jit.addl_rr(X86::ecx, X86::ecx);
-    X86Assembler::JmpSrc failureClobberedECX = m_jit.emitUnlinkedJo();
     m_jit.addl_i8r(1, X86::ecx);
-
     X86Assembler::JmpSrc success = m_jit.emitUnlinkedJmp();
-
-    m_jit.link(failureClobberedECX, m_jit.label());
-    m_jit.emitRestoreArgumentReference();
-    X86Assembler::JmpSrc failureCases3 = m_jit.emitUnlinkedJmp();
 
     void* code = m_jit.copy();
     ASSERT(code);
