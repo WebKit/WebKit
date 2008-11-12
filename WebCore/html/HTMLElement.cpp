@@ -36,7 +36,7 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
-#include "HTMLTokenizer.h"
+#include "HTMLTokenizer.h" // parseHTMLDocumentFragment
 #include "RenderWordBreak.h"
 #include "Settings.h"
 #include "Text.h"

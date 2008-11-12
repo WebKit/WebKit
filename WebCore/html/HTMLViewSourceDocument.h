@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class DoctypeToken;
-class Token;
+struct Token;
 
 class HTMLViewSourceDocument : public HTMLDocument {
 public:

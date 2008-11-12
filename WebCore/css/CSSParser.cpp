@@ -4138,19 +4138,7 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, Ref
     return value;
 }
 
-#ifdef CSS_DEBUG
-
-static inline int yyerror(const char *str)
-{
-    kdDebug(6080) << "CSS parse error " << str << endl;
-    return 1;
-}
-
-#else
-
 static inline int yyerror(const char*) { return 1; }
-
-#endif
 
 #define END_TOKEN 0
 

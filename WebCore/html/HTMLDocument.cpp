@@ -66,7 +66,6 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
-#include "HTMLElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"

@@ -36,7 +36,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
-#include "HTMLTokenizer.h"
+#include "HTMLTokenizer.h" // for parseHTMLDocumentFragment
 #include "Page.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"

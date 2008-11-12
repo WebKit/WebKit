@@ -224,7 +224,7 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         while (charsLeft) {
             // split large blocks of text to nodes of manageable size
             n = Text::createWithLengthLimit(document, text, charsLeft);
-            if (!insertNode(n.get(), t->flat))
+            if (!insertNode(n.get(), t->selfClosingTag))
                 return 0;
         }
         return n;
@@ -254,7 +254,7 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         }
     }
 
-    if (!insertNode(n.get(), t->flat)) {
+    if (!insertNode(n.get(), t->selfClosingTag)) {
         // we couldn't insert the node
 
         if (n->isElementNode()) {
@@ -721,10 +721,10 @@ bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
 bool HTMLParser::isindexCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     RefPtr<Node> n = handleIsindex(t);
-    if (!inBody) {
+    if (!inBody)
         m_isindexElement = n.release();
-    } else {
-        t->flat = true;
+    else {
+        t->selfClosingTag = true;
         result = n.release();
     }
     return false;

@@ -35,7 +35,6 @@
 #include "HTMLParser.h"
 #include "HTMLTokenizer.h"
 #include "RenderTheme.h"
-#include "Tokenizer.h"
 
 namespace WebCore {
 

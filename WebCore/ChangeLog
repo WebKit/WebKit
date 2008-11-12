@@ -1,3 +1,79 @@
+2008-11-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Antti Koivisto and Sam Weinig.
+
+        Clean up HTMLTokenizer a litle
+        https://bugs.webkit.org/show_bug.cgi?id=22188
+
+        Rename pendingScripts to m_pendingScripts
+        Rename scriptNode to m_scriptNode make the type specific
+        Rename pendingSrc to m_pendingSrc
+        Rename currentPrependingSrc to m_currentPrependingSrc
+        Rename noMoreData to m_noMoreData and cBuffer to m_cBuffer
+        Remove long-since-dead kdDebug and qDebug calls
+        Rename brokenComments to m_brokenComments
+        Remove HTMLTokenizer includes and document the rest
+        Rename src to m_src
+        Rename parser to m_parser and make it an OwnPtr
+        Rename inWrite to m_inWrite and jsProxy to scriptController
+        Rename brokenServer to m_brokenServer
+        Rename buffer to m_buffer and dest to m_dest
+        Rename size to m_bufferSize
+        Rename attrName to m_attrName
+        Rename searchStopper to m_searchStopper and searchStopperLen to m_searchStopperLen
+        Rename scriptCode* to m_scriptCode* and change scriptCodeMax to m_scriptCodeCapacity
+        Rename scriptStartLineno to m_currentScriptTagStartLineNumber and tagStartLineno to m_currentTagStartLineNumber
+        Rename scriptSrc to m_scriptTagSrcAttrValue and scriptSrcCharset to m_scriptTagCharsetAttrValue -- a bit unwieldy, but more precise
+        Rename flat to selfClosingTag
+        Rename currToken to m_currentToken
+
+        * css/CSSParser.cpp:
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizerLibxml2.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLParser.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute):
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::begin):
+        (WebCore::HTMLTokenizer::processListing):
+        (WebCore::HTMLTokenizer::parseSpecial):
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::parseComment):
+        (WebCore::HTMLTokenizer::parseServer):
+        (WebCore::HTMLTokenizer::parseProcessingInstruction):
+        (WebCore::HTMLTokenizer::parseText):
+        (WebCore::HTMLTokenizer::parseEntity):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        (WebCore::HTMLTokenizer::processingData):
+        (WebCore::HTMLTokenizer::end):
+        (WebCore::HTMLTokenizer::finish):
+        (WebCore::HTMLTokenizer::processToken):
+        (WebCore::HTMLTokenizer::processDoctypeToken):
+        (WebCore::HTMLTokenizer::~HTMLTokenizer):
+        (WebCore::HTMLTokenizer::enlargeBuffer):
+        (WebCore::HTMLTokenizer::enlargeScriptBuffer):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        (WebCore::HTMLTokenizer::setSrc):
+        * html/HTMLTokenizer.h:
+        (WebCore::Token::Token):
+        (WebCore::Token::reset):
+        (WebCore::HTMLTokenizer::processingContentWrittenByScript):
+        (WebCore::HTMLTokenizer::htmlParser):
+        (WebCore::HTMLTokenizer::checkBuffer):
+        (WebCore::HTMLTokenizer::checkScriptBuffer):
+        * html/HTMLViewSourceDocument.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::leftRelOffset):
+        (WebCore::RenderBlock::rightRelOffset):
+        (WebCore::RenderBlock::lineWidth):
+        * xml/XSLTProcessor.cpp:
+
 2008-11-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

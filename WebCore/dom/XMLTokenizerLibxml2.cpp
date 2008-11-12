@@ -38,7 +38,7 @@
 #include "FrameView.h"
 #include "HTMLLinkElement.h"
 #include "HTMLStyleElement.h"
-#include "HTMLTokenizer.h"
+#include "HTMLTokenizer.h" // for decodeNamedEntity
 #include "ScriptController.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"

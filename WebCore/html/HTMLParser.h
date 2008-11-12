@@ -39,9 +39,9 @@ class HTMLFormElement;
 class HTMLHeadElement;
 class HTMLMapElement;
 class Node;
-class Token;
 
 struct HTMLStackElem;
+struct Token;
 
 /**
  * The parser for HTML. It receives a stream of tokens from the HTMLTokenizer, and

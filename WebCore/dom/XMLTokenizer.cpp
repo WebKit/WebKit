@@ -40,7 +40,6 @@
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
-#include "HTMLTokenizer.h"
 #include "ScriptController.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"

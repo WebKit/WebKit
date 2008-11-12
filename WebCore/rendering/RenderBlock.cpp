@@ -2484,13 +2484,12 @@ RenderBlock::leftRelOffset(int y, int fixedOffset, bool applyTextIndent,
     }
 
     if (applyTextIndent && m_firstLine && style()->direction() == LTR) {
-        int cw=0;
+        int cw = 0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->availableWidth();
         left += style()->textIndent().calcMinValue(cw);
     }
 
-    //kdDebug( 6040 ) << "leftOffset(" << y << ") = " << left << endl;
     return left;
 }
 
@@ -2522,20 +2521,18 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent,
     }
     
     if (applyTextIndent && m_firstLine && style()->direction() == RTL) {
-        int cw=0;
+        int cw = 0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->availableWidth();
         right -= style()->textIndent().calcMinValue(cw);
     }
     
-    //kdDebug( 6040 ) << "rightOffset(" << y << ") = " << right << endl;
     return right;
 }
 
 int
 RenderBlock::lineWidth(int y) const
 {
-    //kdDebug( 6040 ) << "lineWidth(" << y << ")=" << rightOffset(y) - leftOffset(y) << endl;
     int result = rightOffset(y) - leftOffset(y);
     return (result < 0) ? 0 : result;
 }
