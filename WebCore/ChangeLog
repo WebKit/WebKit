@@ -1,3 +1,9 @@
+2008-11-12  Adam Roben  <aroben@apple.com>
+
+        Fix a typo in the include path for the Release_Cairo configuration
+
+        * WebCore.vcproj/WebCore.vcproj: Fixed "caro" -> "cairo" typo.
+
 2008-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
