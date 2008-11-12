@@ -1,3 +1,15 @@
+2008-11-12  Brent Fulgham <bfulgham@gmail.com>
+
+        Fix Bug 22178: Build errors in WebKit Cairo port
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22178>
+
+        Reviewed by Mark Rowe.
+
+        * platform/graphics/cairo/PatternCairo.cpp: Correct build error under
+        Visual Studio.
+        (WebCore::Pattern::createPlatformPattern):
+
 2008-11-12  Adam Roben  <aroben@apple.com>
 
         Fix a typo in the include path for the Release_Cairo configuration
