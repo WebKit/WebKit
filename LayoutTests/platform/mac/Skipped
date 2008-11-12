@@ -41,3 +41,5 @@ printing
 # https://bugs.webkit.org/show_bug.cgi?id=20342 REGRESSION: fast/dom/cssTarget-crash.html fails
 fast/dom/cssTarget-crash.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=21916 Pixel test doesn't repaint entire view so result is corrupted by previous test
+tables/mozilla_expected_failures/bugs/bug178855.xml

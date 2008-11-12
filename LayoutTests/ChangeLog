@@ -1,3 +1,97 @@
+2008-11-12  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Updated reference images so that all pixel tests now "pass" on 10.5.5 Intel + r38318.
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Removed empty directory.
+
+        * platform/mac-leopard/http: Removed.
+        * platform/mac-leopard/http/tests: Removed.
+        * platform/mac-leopard/http/tests/security: Removed.
+        * platform/mac-leopard/http/tests/security/dataURL: Removed.
+
+        Test doesn't repaint entire view so result is corrupted by previous test
+        https://bugs.webkit.org/show_bug.cgi?id=21916
+
+        * platform/mac/Skipped:
+
+        Test is passing but original reference image was invalid.
+
+        * platform/mac/fast/backgrounds/size/backgroundSize05-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize05-expected.png:
+
+        Invalid image tiling
+        https://bugs.webkit.org/show_bug.cgi?id=21915
+
+        * platform/mac/fast/backgrounds/size/backgroundSize19-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize19-expected.png:
+
+        SVG not rendering
+        https://bugs.webkit.org/show_bug.cgi?id=21910
+
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-1-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-4-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.png:
+        * platform/mac/fast/backgrounds/svg-as-mask-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-mask-expected.png:
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.checksum:
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.png:
+        * platform/mac/fast/borders/svg-as-border-image-expected.checksum:
+        * platform/mac/fast/borders/svg-as-border-image-expected.png:
+        * platform/mac/fast/images/svg-as-background-expected.checksum:
+        * platform/mac/fast/images/svg-as-background-expected.png:
+        * platform/mac/fast/images/svg-as-image-expected.checksum:
+        * platform/mac/fast/images/svg-as-image-expected.png:
+        * platform/mac/fast/images/svg-as-relative-image-expected.checksum:
+        * platform/mac/fast/images/svg-as-relative-image-expected.png:
+        * platform/mac/fast/images/svg-as-tiled-background-expected.checksum:
+        * platform/mac/fast/images/svg-as-tiled-background-expected.png:
+
+        Possible Flash failure
+        https://bugs.webkit.org/show_bug.cgi?id=21912
+
+        * platform/mac/fast/dynamic/flash-replacement-test-expected.checksum:
+        * platform/mac/fast/dynamic/flash-replacement-test-expected.png:
+
+        Repaint failure
+        https://bugs.webkit.org/show_bug.cgi?id=21913
+
+        * platform/mac/fast/repaint/body-background-image-expected.checksum:
+        * platform/mac/fast/repaint/body-background-image-expected.png:
+
+        Excessive repainting
+        https://bugs.webkit.org/show_bug.cgi?id=21914
+
+        * platform/mac/fast/repaint/float-overflow-expected.checksum:
+        * platform/mac/fast/repaint/float-overflow-expected.png:
+        * platform/mac/fast/repaint/float-overflow-right-expected.checksum:
+        * platform/mac/fast/repaint/float-overflow-right-expected.png:
+
+        No video images
+        https://bugs.webkit.org/show_bug.cgi?id=21911
+
+        * platform/mac/media/video-aspect-ratio-expected.checksum:
+        * platform/mac/media/video-aspect-ratio-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.checksum:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-display-toggle-expected.checksum:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-layer-crash-expected.checksum:
+        * platform/mac/media/video-layer-crash-expected.png:
+        * platform/mac/media/video-transformed-expected.checksum:
+        * platform/mac/media/video-transformed-expected.png:
+
 2008-11-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Cameron Zwarich.
