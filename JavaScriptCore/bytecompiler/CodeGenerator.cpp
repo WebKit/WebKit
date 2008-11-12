@@ -1219,25 +1219,24 @@ RegisterID* CodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNod
     return r0;
 }
 
-RegisterID* CodeGenerator::emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
+RegisterID* CodeGenerator::emitCall(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    return emitCall(op_call, dst, func, base, argumentsNode, divot, startOffset, endOffset);
+    return emitCall(op_call, dst, func, thisRegister, argumentsNode, divot, startOffset, endOffset);
 }
 
-RegisterID* CodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
+RegisterID* CodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    return emitCall(op_call_eval, dst, func, base, argumentsNode, divot, startOffset, endOffset);
+    return emitCall(op_call_eval, dst, func, thisRegister, argumentsNode, divot, startOffset, endOffset);
 }
 
-RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
+RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(opcodeID == op_call || opcodeID == op_call_eval);
     ASSERT(func->refCount());
-    ASSERT(!base || base->refCount());
     
     // Generate code for arguments.
     Vector<RefPtr<RegisterID>, 16> argv;
-    argv.append(newTemporary()); // reserve space for "this"
+    argv.append(thisRegister);
     for (ArgumentListNode* n = argumentsNode->m_listNode.get(); n; n = n->m_next.get()) {
         argv.append(newTemporary());
         emitNode(argv.last().get(), n);
@@ -1255,12 +1254,12 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
 
     emitExpressionInfo(divot, startOffset, endOffset);
     m_codeBlock->callLinkInfos.append(CallLinkInfo());
+
+    // Emit call.
     emitOpcode(opcodeID);
-    instructions().append(dst->index());
-    instructions().append(func->index());
-    instructions().append(base ? base->index() : missingThisObjectMarker()); // We encode the "this" value in the instruction stream, to avoid an explicit instruction for copying or loading it.
-    instructions().append(argv[0]->index()); // argv
-    instructions().append(argv.size()); // argc
+    instructions().append(dst->index()); // dst
+    instructions().append(func->index()); // func
+    instructions().append(argv.size()); // argCount
     instructions().append(argv[0]->index() + argv.size() + RegisterFile::CallFrameHeaderSize); // registerOffset
 
     if (m_shouldEmitProfileHooks) {
@@ -1319,13 +1318,14 @@ RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, Argu
 
     emitExpressionInfo(divot, startOffset, endOffset);
     m_codeBlock->callLinkInfos.append(CallLinkInfo());
+
     emitOpcode(op_construct);
-    instructions().append(dst->index());
-    instructions().append(func->index());
-    instructions().append(funcProto->index());
-    instructions().append(argv[0]->index()); // argv
-    instructions().append(argv.size()); // argc
+    instructions().append(dst->index()); // dst
+    instructions().append(func->index()); // func
+    instructions().append(argv.size()); // argCount
     instructions().append(argv[0]->index() + argv.size() + RegisterFile::CallFrameHeaderSize); // registerOffset
+    instructions().append(funcProto->index()); // proto
+    instructions().append(argv[0]->index()); // thisRegister
 
     emitOpcode(op_construct_verify);
     instructions().append(dst->index());

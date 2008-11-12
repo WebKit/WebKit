@@ -812,23 +812,19 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_call: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int r2 = (++it)->u.operand;
-            int tempCount = (++it)->u.operand;
+            int dst = (++it)->u.operand;
+            int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
-            printf("[%4d] call\t\t %s, %s, %s, %d, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount, registerOffset);
+            printf("[%4d] call\t\t %s, %s, %d, %d\n", location, registerName(dst).c_str(), registerName(func).c_str(), argCount, registerOffset);
             break;
         }
         case op_call_eval: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int r2 = (++it)->u.operand;
-            int tempCount = (++it)->u.operand;
+            int dst = (++it)->u.operand;
+            int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
-            printf("[%4d] call_eval\t\t %s, %s, %s, %d, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount, registerOffset);
+            printf("[%4d] call_eval\t %s, %s, %d, %d\n", location, registerName(dst).c_str(), registerName(func).c_str(), argCount, registerOffset);
             break;
         }
         case op_tear_off_activation: {
@@ -846,13 +842,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_construct: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int r2 = (++it)->u.operand;
-            int tempCount = (++it)->u.operand;
+            int dst = (++it)->u.operand;
+            int func = (++it)->u.operand;
             int argCount = (++it)->u.operand;
             int registerOffset = (++it)->u.operand;
-            printf("[%4d] construct\t %s, %s, %s, %d, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount, registerOffset);
+            int proto = (++it)->u.operand;
+            int thisRegister = (++it)->u.operand;
+            printf("[%4d] construct\t %s, %s, %d, %d, %s, %s\n", location, registerName(dst).c_str(), registerName(func).c_str(), argCount, registerOffset, registerName(proto).c_str(), registerName(thisRegister).c_str());
             break;
         }
         case op_construct_verify: {

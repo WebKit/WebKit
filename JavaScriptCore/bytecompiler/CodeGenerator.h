@@ -273,8 +273,8 @@ namespace JSC {
         RegisterID* emitPutGetter(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitPutSetter(RegisterID* base, const Identifier& property, RegisterID* value);
 
-        RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
-        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
@@ -345,7 +345,7 @@ namespace JSC {
         typedef HashMap<double, JSValue*> NumberMap;
         typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
 
-        RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         
         RegisterID* newRegister();
 

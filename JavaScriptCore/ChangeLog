@@ -1,3 +1,79 @@
+2008-11-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22174
+        Simplified op_call by nixing its responsibility for moving the value of
+        "this" into the first argument slot.
+
+        Instead, the caller emits an explicit load or mov instruction, or relies
+        on implicit knowledge that "this" is already in the first argument slot.
+        As a result, two operands to op_call are gone: firstArg and thisVal.
+        
+        SunSpider and v8 tests show no change in bytecode or CTI.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCallSetupArgs):
+        (JSC::CTI::compileOpCallEvalSetupArgs):
+        (JSC::CTI::compileOpConstructSetupArgs): Split apart these three versions
+        of setting up arguments to op_call, because they're more different than
+        they are the same -- even more so with this patch.
+
+        (JSC::CTI::compileOpCall): Updated for the fact that op_construct doesn't
+        match op_call anymore.
+
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases): Merged a few call cases. Updated
+        for changes mentioned above.
+
+        * VM/CTI.h:
+
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): Updated for new bytecode format of call / construct.
+
+        * VM/Machine.cpp:
+        (JSC::Machine::callEval): Updated for new bytecode format of call / construct.
+
+        (JSC::Machine::dumpCallFrame):
+        (JSC::Machine::dumpRegisters): Simplified these debugging functions, 
+        taking advantage of the new call frame layout.
+
+        (JSC::Machine::execute): Fixed up the eval version of execute to be
+        friendlier to calls in the new format.
+
+        (JSC::Machine::privateExecute): Implemented the new call format in
+        bytecode.
+
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_call_eval): Updated CTI helpers to match the new
+        call format.
+        
+        Fixed a latent bug in stack overflow checking that is now hit because
+        the register layout has changed a bit -- namely: when throwing a stack
+        overflow exception inside an op_call helper, we need to account for the
+        fact that the current call frame is only half-constructed, and use the
+        parent call frame instead.
+
+        * VM/Machine.h:
+
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitCallEval):
+        (JSC::CodeGenerator::emitConstruct):
+        * bytecompiler/CodeGenerator.h: Updated codegen to match the new call
+        format.
+
+        * parser/Nodes.cpp:
+        (JSC::EvalFunctionCallNode::emitCode):
+        (JSC::FunctionCallValueNode::emitCode):
+        (JSC::FunctionCallResolveNode::emitCode):
+        (JSC::FunctionCallBracketNode::emitCode):
+        (JSC::FunctionCallDotNode::emitCode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::neededConstants): ditto
+
 2008-11-11  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.
