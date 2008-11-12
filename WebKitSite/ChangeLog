@@ -1,3 +1,23 @@
+2008-11-11  Dean Jackson  <dino@apple.com>
+
+        Add a bunch of examples for CSS Animation blog draft.
+
+        * blog-files/bounce.html: Added.
+        * blog-files/bounce.png: Added.
+        * blog-files/leaves-screenshot.jpg: Added.
+        * blog-files/leaves/images/apple-touch-icon.png: Added.
+        * blog-files/leaves/images/backgroundLeaves.jpg: Added.
+        * blog-files/leaves/images/realLeaf1.png: Added.
+        * blog-files/leaves/images/realLeaf2.png: Added.
+        * blog-files/leaves/images/realLeaf3.png: Added.
+        * blog-files/leaves/images/realLeaf4.png: Added.
+        * blog-files/leaves/images/textBackground.png: Added.
+        * blog-files/leaves/index.html: Added.
+        * blog-files/leaves/leaves.css: Added.
+        * blog-files/leaves/leaves.js: Added.
+        * blog-files/pulse.html: Added.
+        * blog-files/pulse.png: Added.
+
 2008-10-30  Cameron Zwarich  <zwarich@apple.com>
 
         Rubber-stamped by Mark Rowe.
