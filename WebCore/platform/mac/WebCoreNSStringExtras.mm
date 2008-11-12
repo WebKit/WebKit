@@ -29,6 +29,11 @@
 #import "config.h"
 #import "WebCoreNSStringExtras.h"
 
+BOOL stringIsCaseInsensitiveEqualToString(NSString *first, NSString *second)
+{
+    return [first compare:second options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+}
+
 BOOL hasCaseInsensitiveSuffix(NSString *string, NSString *suffix)
 {
     return [string rangeOfString:suffix options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)].location != NSNotFound;

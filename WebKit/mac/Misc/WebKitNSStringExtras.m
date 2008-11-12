@@ -191,7 +191,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string
 {
-  return [self compare:string options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+    return stringIsCaseInsensitiveEqualToString(self, string);
 }
 
 -(BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)prefix

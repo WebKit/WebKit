@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+BOOL stringIsCaseInsensitiveEqualToString(NSString *first, NSString *second);
 BOOL hasCaseInsensitiveSuffix(NSString *string, NSString *suffix);
 BOOL hasCaseInsensitiveSubstring(NSString *string, NSString *substring);
 NSString *filenameByFixingIllegalCharacters(NSString *string);
