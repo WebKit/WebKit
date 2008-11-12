@@ -86,6 +86,11 @@ void RenderSVGHiddenContainer::absoluteRects(Vector<IntRect>& rects, int, int, b
     // This subtree does not take up space or paint
 }
 
+void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    // This subtree does not take up space or paint
+}
+
 AffineTransform RenderSVGHiddenContainer::absoluteTransform() const
 {
     return AffineTransform();

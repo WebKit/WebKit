@@ -33,6 +33,7 @@ public:
     RenderSVGTSpan(Node*);
     virtual const char* renderName() const { return "RenderSVGTSpan"; }
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 };
 }
 

@@ -53,6 +53,7 @@ namespace WebCore {
         
         virtual IntRect absoluteClippedOverflowRect();
         virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool topLevel = true);
+        virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
         
         virtual AffineTransform absoluteTransform() const;
         virtual AffineTransform localTransform() const;

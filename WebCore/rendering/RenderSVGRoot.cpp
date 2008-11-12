@@ -259,6 +259,12 @@ void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, int, int)
         current->absoluteRects(rects, 0, 0);
 }
 
+void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    for (RenderObject* current = firstChild(); current != 0; current = current->nextSibling())
+        current->absoluteQuads(quads);
+}
+
 AffineTransform RenderSVGRoot::absoluteTransform() const
 {
     AffineTransform ctm = RenderContainer::absoluteTransform();

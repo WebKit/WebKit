@@ -46,6 +46,7 @@ public:
     virtual void calcPrefWidths();
     virtual FloatPoint localToAbsolute(FloatPoint localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
     virtual FloatPoint absoluteToLocal(FloatPoint containerPoint, bool fixed = false, bool useTransforms = false) const;
+    virtual FloatQuad localToAbsoluteQuad(const FloatQuad&, bool fixed = false) const;
     
     int docHeight() const;
     int docWidth() const;
@@ -81,6 +82,7 @@ public:
     int truncatedAt() const { return m_truncatedAt; }
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
     IntRect selectionRect(bool clipToVisibleContent = true) const;
 

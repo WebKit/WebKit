@@ -51,6 +51,8 @@ public:
     virtual void layout();
     
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
+
     virtual IntRect absoluteClippedOverflowRect();
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
     

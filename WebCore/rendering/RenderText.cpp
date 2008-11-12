@@ -241,6 +241,49 @@ void RenderText::addLineBoxRects(Vector<IntRect>& rects, unsigned start, unsigne
     }
 }
 
+void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+        quads.append(localToAbsoluteQuad(FloatRect(box->xPos(), box->yPos(), box->width(), box->height())));
+}
+
+void RenderText::collectAbsoluteLineBoxQuads(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool useSelectionHeight)
+{
+    // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
+    // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
+    // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
+    // passing UINT_MAX to it causes trouble. Ideally we'd change selectionRect to take unsigneds, but 
+    // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
+    ASSERT(end == UINT_MAX || end <= INT_MAX);
+    ASSERT(start <= INT_MAX);
+    start = min(start, static_cast<unsigned>(INT_MAX));
+    end = min(end, static_cast<unsigned>(INT_MAX));
+    
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        // Note: box->end() returns the index of the last character, not the index past it
+        if (start <= box->start() && box->end() < end) {
+            IntRect r = IntRect(box->xPos(), box->yPos(), box->width(), box->height());
+            if (useSelectionHeight) {
+                IntRect selectionRect = box->selectionRect(0, 0, start, end);
+                r.setHeight(selectionRect.height());
+                r.setY(selectionRect.y());
+            }
+            quads.append(localToAbsoluteQuad(FloatRect(r)));
+        } else {
+            unsigned realEnd = min(box->end() + 1, end);
+            IntRect r = box->selectionRect(0, 0, start, realEnd);
+            if (!r.isEmpty()) {
+                if (!useSelectionHeight) {
+                    // change the height and y position because selectionRect uses selection-specific values
+                    r.setHeight(box->height());
+                    r.setY(box->yPos());
+                }
+                quads.append(localToAbsoluteQuad(FloatRect(r)));
+            }
+        }
+    }
+}
+
 InlineTextBox* RenderText::findNextInlineTextBox(int offset, int& pos) const
 {
     // The text runs point to parts of the RenderText's m_text

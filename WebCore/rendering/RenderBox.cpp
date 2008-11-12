@@ -1052,6 +1052,34 @@ FloatPoint RenderBox::absoluteToLocal(FloatPoint containerPoint, bool fixed, boo
     return FloatPoint();
 }
 
+FloatQuad RenderBox::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
+{
+    // We don't expect localToAbsoluteQuad() to be called during layout (yet)
+    ASSERT(!view() || !view()->layoutState());
+
+    if (style()->position() == FixedPosition)
+        fixed = true;
+
+    RenderObject* o = container();
+    if (o) {
+        FloatQuad quad = localQuad;
+        if (m_layer && m_layer->transform()) {
+            fixed = false;  // Elements with transforms act as a containing block for fixed position descendants
+            quad = m_layer->transform()->mapQuad(quad);
+        }
+
+        quad += offsetFromContainer(o);
+
+        // Take into account space above a vertically aligned table cell
+        // (see localToAbsoluteForContent())
+        quad.move(0.0f, static_cast<float>(borderTopExtra()));
+
+        return o->localToAbsoluteQuad(quad, fixed);
+    }
+    
+    return FloatQuad();
+}
+
 IntSize RenderBox::offsetFromContainer(RenderObject* o) const
 {
     ASSERT(o == container());

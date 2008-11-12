@@ -301,6 +301,22 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
                                       topLevel);
 }
 
+void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        FloatRect localRect(curr->xPos(), curr->yPos(), curr->width(), curr->height());
+        quads.append(localToAbsoluteQuad(localRect));
+    }
+    
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        if (!curr->isText())
+            curr->absoluteQuads(quads, false);
+    }
+
+    if (continuation() && topLevel)
+        continuation()->absoluteQuads(quads, topLevel);
+}
+
 bool RenderInline::requiresLayer()
 {
     return isRelPositioned() || isTransparent() || hasMask();

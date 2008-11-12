@@ -1240,6 +1240,7 @@ webcore_sources += \
 	WebCore/platform/graphics/FloatPoint.h \
 	WebCore/platform/graphics/FloatPoint3D.cpp \
 	WebCore/platform/graphics/FloatPoint3D.h \
+	WebCore/platform/graphics/FloatQuad.cpp \
 	WebCore/platform/graphics/FloatRect.cpp \
 	WebCore/platform/graphics/FloatRect.h \
 	WebCore/platform/graphics/FloatSize.cpp \

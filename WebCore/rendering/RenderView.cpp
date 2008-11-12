@@ -147,6 +147,15 @@ FloatPoint RenderView::absoluteToLocal(FloatPoint containerPoint, bool fixed, bo
     return containerPoint;
 }
 
+FloatQuad RenderView::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
+{
+    FloatQuad quad = localQuad;
+    if (fixed && m_frameView)
+        quad += m_frameView->scrollOffset();
+
+    return quad;
+}
+
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
@@ -240,6 +249,11 @@ void RenderView::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 void RenderView::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool)
 {
     rects.append(IntRect(tx, ty, m_layer->width(), m_layer->height()));
+}
+
+void RenderView::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    quads.append(FloatRect(0, 0, m_layer->width(), m_layer->height()));
 }
 
 RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)

@@ -1,3 +1,115 @@
+2008-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=21942
+        https://bugs.webkit.org/show_bug.cgi?id=18557
+        
+        Add methods which can be used to map renderer-local rectangles
+        to quads in absolute coordinates, taking transforms into account:
+            localToAbsoluteQuad() converts a local rect into an absolute quad.
+            collectAbsoluteLineBoxQuads() is an analogue of addLineBoxRects()
+                that works with quads.
+            absoluteQuads() is an analogue of absoluteRects(), for quads.
+        
+        Use the quad methods to fix the inspector highlight for transformed
+        elements.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * inspector/InspectorController.cpp:
+        (WebCore::drawOutlinedQuad):
+        (WebCore::drawHighlightForBoxes):
+        (WebCore::frameToMainFrameOffset):
+        (WebCore::InspectorController::drawNodeHighlight):
+        * platform/graphics/AffineTransform.cpp:
+        (WebCore::AffineTransform::mapQuad):
+        * platform/graphics/AffineTransform.h:
+        * platform/graphics/FloatQuad.cpp: Added.
+        (WebCore::min4):
+        (WebCore::max4):
+        (WebCore::FloatQuad::boundingBox):
+        * platform/graphics/FloatQuad.h: Added.
+        (WebCore::FloatQuad::FloatQuad):
+        (WebCore::FloatQuad::p1):
+        (WebCore::FloatQuad::p2):
+        (WebCore::FloatQuad::p3):
+        (WebCore::FloatQuad::p4):
+        (WebCore::FloatQuad::setP1):
+        (WebCore::FloatQuad::setP2):
+        (WebCore::FloatQuad::setP3):
+        (WebCore::FloatQuad::setP4):
+        (WebCore::FloatQuad::isEmpty):
+        (WebCore::FloatQuad::enclosingBoundingBox):
+        (WebCore::FloatQuad::move):
+        (WebCore::operator+=):
+        (WebCore::operator-=):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localToAbsoluteQuad):
+        * rendering/RenderBox.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::collectAbsoluteLineBoxQuads):
+        * rendering/RenderContainer.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteQuads):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        (WebCore::RenderObject::collectAbsoluteLineBoxQuads):
+        (WebCore::RenderObject::absoluteQuads):
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        (WebCore::RenderObject::absoluteContentQuad):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::absoluteQuads):
+        * rendering/RenderPath.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::absoluteQuads):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::absoluteQuads):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::calculateAbsoluteBounds):
+        (WebCore::RenderSVGImage::absoluteQuads):
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::absoluteQuads):
+        (WebCore::RenderSVGInlineText::computeAbsoluteRectForRange):
+        * rendering/RenderSVGInlineText.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::absoluteQuads):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGTSpan.cpp:
+        (WebCore::RenderSVGTSpan::absoluteRects):
+        (WebCore::RenderSVGTSpan::absoluteQuads):
+        * rendering/RenderSVGTSpan.h:
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteRects):
+        (WebCore::RenderSVGText::absoluteQuads):
+        * rendering/RenderSVGText.h:
+        * rendering/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::absoluteRects):
+        (WebCore::RenderSVGTextPath::absoluteQuads):
+        * rendering/RenderSVGTextPath.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::localToAbsolute):
+        (WebCore::RenderTableCell::localToAbsoluteQuad):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::collectAbsoluteLineBoxQuads):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::localToAbsoluteQuad):
+        (WebCore::RenderView::absoluteQuads):
+        * rendering/RenderView.h:
+
 2008-11-12  Brent Fulgham <bfulgham@gmail.com>
 
         Fix Bug 22178: Build errors in WebKit Cairo port

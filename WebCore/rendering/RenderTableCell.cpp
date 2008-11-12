@@ -203,7 +203,7 @@ FloatPoint RenderTableCell::localToAbsolute(FloatPoint localPoint, bool fixed, b
         // Rows are in the same coordinate space, so don't add their offset in.
         localPoint.move(-parent()->xPos(), -parent()->yPos());
     }
-    return RenderBlock::localToAbsolute(localPoint, fixed, useTransforms);;
+    return RenderBlock::localToAbsolute(localPoint, fixed, useTransforms);
 }
 
 FloatPoint RenderTableCell::absoluteToLocal(FloatPoint containerPoint, bool fixed, bool useTransforms) const
@@ -214,6 +214,16 @@ FloatPoint RenderTableCell::absoluteToLocal(FloatPoint containerPoint, bool fixe
         localPoint.move(parent()->xPos(), parent()->yPos());
     }
     return localPoint;
+}
+
+FloatQuad RenderTableCell::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
+{
+    FloatQuad quad = localQuad;
+    if (parent()) {
+        // Rows are in the same coordinate space, so don't add their offset in.
+        quad.move(-parent()->xPos(), -parent()->yPos());
+    }
+    return RenderBlock::localToAbsoluteQuad(quad, fixed);
 }
 
 int RenderTableCell::baselinePosition(bool /*firstLine*/, bool /*isRootLineBox*/) const

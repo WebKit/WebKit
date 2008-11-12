@@ -1704,9 +1704,22 @@ void RenderObject::absoluteRects(Vector<IntRect>& rects, int tx, int ty, bool to
         rects.append(IntRect(tx, ty, width(), height() + borderTopExtra() + borderBottomExtra()));
 }
 
-IntRect RenderObject::absoluteBoundingBoxRect()
+IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
 {
-    // FIXME: This doesn't work correctly with transforms.
+    if (useTransforms) {
+        Vector<FloatQuad> quads;
+        absoluteQuads(quads);
+
+        size_t n = quads.size();
+        if (!n)
+            return IntRect();
+    
+        IntRect result = quads[0].enclosingBoundingBox();
+        for (size_t i = 1; i < n; ++i)
+            result.unite(quads[i].enclosingBoundingBox());
+        return result;
+    }
+
     FloatPoint absPos = localToAbsolute();
     Vector<IntRect> rects;
     absoluteRects(rects, absPos.x(), absPos.y());
@@ -1719,6 +1732,24 @@ IntRect RenderObject::absoluteBoundingBoxRect()
     for (size_t i = 1; i < n; ++i)
         result.unite(rects[i]);
     return result;
+}
+
+void RenderObject::collectAbsoluteLineBoxQuads(Vector<FloatQuad>& quads, unsigned startOffset, unsigned endOffset, bool useSelectionHeight)
+{
+}
+
+void RenderObject::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    // For blocks inside inlines, we go ahead and include margins so that we run right up to the
+    // inline boxes above and below us (thus getting merged with them to form a single irregular
+    // shape).
+    if (topLevel && continuation()) {
+        FloatRect localRect(0, -collapsedMarginTop(),
+                            width(), height() + collapsedMarginTop() + collapsedMarginBottom());
+        quads.append(localToAbsoluteQuad(localRect));
+        continuation()->absoluteQuads(quads, topLevel);
+    } else
+        quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height() + borderTopExtra() + borderBottomExtra())));
 }
 
 void RenderObject::addAbsoluteRectForLayer(IntRect& result)
@@ -2398,6 +2429,20 @@ FloatPoint RenderObject::absoluteToLocal(FloatPoint containerPoint, bool fixed, 
     return FloatPoint();
 }
 
+FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
+{
+    RenderObject* o = parent();
+    if (o) {
+        FloatQuad quad = localQuad;
+        quad.move(0.0f, static_cast<float>(o->borderTopExtra()));
+        if (o->hasOverflowClip())
+            quad -= o->layer()->scrolledContentOffset();
+        return o->localToAbsoluteQuad(quad, fixed);
+    }
+
+    return FloatQuad();
+}
+
 IntRect RenderObject::caretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
 {
    if (extraWidthToEndOfLine)
@@ -3068,6 +3113,12 @@ IntRect RenderObject::absoluteContentBox() const
     FloatPoint absPos = localToAbsoluteForContent(FloatPoint());
     rect.move(absPos.x(), absPos.y());
     return rect;
+}
+
+FloatQuad RenderObject::absoluteContentQuad() const
+{
+    IntRect rect = contentBox();
+    return localToAbsoluteQuad(FloatRect(rect));
 }
 
 void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const

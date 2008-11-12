@@ -49,6 +49,7 @@ public:
     
     virtual IntRect absoluteClippedOverflowRect();
     virtual void absoluteRects(Vector<IntRect>& rects, int tx, int ty);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
     virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual AffineTransform absoluteTransform() const;

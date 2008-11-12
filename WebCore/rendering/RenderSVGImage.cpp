@@ -237,6 +237,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr image)
 
 void RenderSVGImage::calculateAbsoluteBounds()
 {
+    // FIXME: broken with CSS transforms
     FloatRect absoluteRect = absoluteTransform().mapRect(relativeBBox(true));
 
 #if ENABLE(SVG_FILTERS)
@@ -267,6 +268,11 @@ void RenderSVGImage::addFocusRingRects(GraphicsContext* graphicsContext, int tx,
 void RenderSVGImage::absoluteRects(Vector<IntRect>& rects, int, int, bool)
 {
     rects.append(absoluteClippedOverflowRect());
+}
+
+void RenderSVGImage::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    quads.append(FloatRect(absoluteClippedOverflowRect()));
 }
 
 }

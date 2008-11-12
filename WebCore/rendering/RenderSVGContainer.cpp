@@ -393,6 +393,11 @@ void RenderSVGContainer::absoluteRects(Vector<IntRect>& rects, int, int, bool)
     rects.append(absoluteClippedOverflowRect());
 }
 
+void RenderSVGContainer::absoluteQuads(Vector<FloatQuad>& quads, bool topLevel)
+{
+    quads.append(absoluteClippedOverflowRect());
+}
+
 FloatRect RenderSVGContainer::relativeBBox(bool includeStroke) const
 {
     FloatRect rect;

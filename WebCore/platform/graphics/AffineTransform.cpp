@@ -27,6 +27,7 @@
 #include "AffineTransform.h"
 
 #include "FloatRect.h"
+#include "FloatQuad.h"
 #include "IntRect.h"
 
 #include <wtf/MathExtras.h>
@@ -158,6 +159,16 @@ FloatPoint AffineTransform::mapPoint(const FloatPoint& point) const
     map(point.x(), point.y(), &x2, &y2);
 
     return FloatPoint(static_cast<float>(x2), static_cast<float>(y2));
+}
+
+FloatQuad AffineTransform::mapQuad(const FloatQuad& quad) const
+{
+    // FIXME: avoid 4 seperate library calls. Point mapping really needs
+    // to be platform-independent code.
+    return FloatQuad(mapPoint(quad.p1()),
+                     mapPoint(quad.p2()),
+                     mapPoint(quad.p3()),
+                     mapPoint(quad.p4()));
 }
 
 void AffineTransform::blend(const AffineTransform& from, double progress)

@@ -50,6 +50,7 @@ class IntPoint;
 class IntRect;
 class FloatPoint;
 class FloatRect;
+class FloatQuad;
 
 class AffineTransform {
 public:
@@ -72,6 +73,8 @@ public:
     IntRect mapRect(const IntRect&) const;
 
     FloatRect mapRect(const FloatRect&) const;
+
+    FloatQuad mapQuad(const FloatQuad&) const;
 
     bool isIdentity() const;
 

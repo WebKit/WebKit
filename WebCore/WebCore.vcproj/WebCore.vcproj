@@ -3673,6 +3673,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FloatQuad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FloatQuad.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FloatRect.cpp"
 					>
 				</File>
