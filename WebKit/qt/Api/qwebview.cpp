@@ -156,15 +156,11 @@ QWebView::QWebView(QWidget *parent)
 {
     d = new QWebViewPrivate(this);
 
-    QPalette pal = palette();
-    pal.setBrush(QPalette::Background, Qt::white);
-
     setAttribute(Qt::WA_OpaquePaintEvent);
 #if !defined(Q_WS_QWS)
     setAttribute(Qt::WA_InputMethodEnabled);
 #endif
 
-    setPalette(pal);
     setAcceptDrops(true);
 
     setMouseTracking(true);

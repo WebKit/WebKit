@@ -124,7 +124,7 @@ void QWebFramePrivate::updateBackground()
     WebCore::FrameView *view = frame->view();
     if (!view)
         return;
-    QBrush brush = page->palette().brush(QPalette::Background);
+    QBrush brush = page->palette().brush(QPalette::Base);
     if (brush.style() == Qt::SolidPattern) {
         view->setBaseBackgroundColor(brush.color());
         if (!brush.color().alpha())
