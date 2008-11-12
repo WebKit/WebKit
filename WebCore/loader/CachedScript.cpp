@@ -70,6 +70,16 @@ String CachedScript::encoding() const
     return m_encoding.name();
 }
 
+const String& CachedScript::script()
+{
+    if (!m_script && m_data) {
+        m_script = m_encoding.decode(m_data->data(), encodedSize());
+        setDecodedSize(m_script.length() * sizeof(UChar));
+    }
+
+    return m_script;
+}
+
 void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     if (!allDataReceived)
@@ -77,8 +87,6 @@ void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
-    if (m_data.get())
-        m_script = m_encoding.decode(m_data->data(), encodedSize());
     m_loading = false;
     checkNotify();
 }
@@ -100,4 +108,10 @@ void CachedScript::error()
     checkNotify();
 }
 
+void CachedScript::destroyDecodedData()
+{
+    m_script = String();
+    setDecodedSize(0);
 }
+
+} // namespace WebCore

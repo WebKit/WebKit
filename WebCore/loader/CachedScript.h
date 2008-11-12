@@ -40,7 +40,7 @@ namespace WebCore {
         CachedScript(const String& url, const String& charset);
         virtual ~CachedScript();
 
-        const String& script() const { return m_script; }
+        const String& script();
 
         virtual void addClient(CachedResourceClient*);
 
@@ -52,6 +52,8 @@ namespace WebCore {
         virtual bool schedule() const { return false; }
 
         void checkNotify();
+
+        virtual void destroyDecodedData();
 
     private:
         String m_script;

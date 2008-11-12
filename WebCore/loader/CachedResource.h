@@ -96,7 +96,7 @@ public:
     PreloadResult preloadResult() const { return m_preloadResult; }
     void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
         
-    virtual void allClientsRemoved() { };
+    virtual void allClientsRemoved() { }
 
     unsigned count() const { return m_clients.size(); }
 
@@ -148,7 +148,7 @@ public:
     bool errorOccurred() const { return m_errorOccurred; }
     bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
     
-    virtual void destroyDecodedData() {};
+    virtual void destroyDecodedData() { }
 
     void setDocLoader(DocLoader* docLoader) { m_docLoader = docLoader; }
     
