@@ -1,3 +1,28 @@
+2008-11-12  Justin Garcia  <justin.garcia@apple.com>
+ 
+        Reviewed by Beth Dakin.
+ 
+        <rdar://problem/5495723> Selecting and deleting quoted text quotes other text
+        <rdar://problem/4775313> Deleting lines from the bottom of a messages leaves the last blank line quoted
+        
+        We don't want to merge into a block if it will mean changing the quote level of content after deleting 
+        selections that contain a whole number paragraphs plus a line break, since it is unclear to most users 
+        that such a selection actually ends at the start of the next paragraph.  Instead we want to completely
+        remove the selected paragraph(s) and all evidence of the first one's quote level.  This matches TextEdit behavior 
+        for indented paragraphs.
+ 
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData): For the selections described above, do not
+        try to merge after the deletion.  Instead try and prune the start block or blocks if they've been emptied
+        so that we remove evidence of the deleted paragraphs' quote level.
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Try and prune the start block(s) if necessary.  Also 
+        make sure that the caret is placed correctly so that it ends up on the same line that the deleted selection 
+        started on, instead of one higher.
+        * editing/DeleteSelectionCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::numEnclosingMailBlockquotes): Added.
+        * editing/htmlediting.h:
+
 2008-11-10  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.

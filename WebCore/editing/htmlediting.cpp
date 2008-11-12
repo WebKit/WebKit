@@ -856,6 +856,16 @@ Node *nearestMailBlockquote(const Node *node)
     return 0;
 }
 
+unsigned numEnclosingMailBlockquotes(const Position& p)
+{
+    unsigned num = 0;
+    for (Node* n = p.node(); n; n = n->parentNode())
+        if (isMailBlockquote(n))
+            num++;
+    
+    return num;
+}
+
 bool isMailBlockquote(const Node *node)
 {
     if (!node || !node->isElementNode() && !node->hasTagName(blockquoteTag))

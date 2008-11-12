@@ -1,3 +1,15 @@
+2008-11-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        <rdar://problem/5495723> Selecting and deleting quoted text quotes other text
+        <rdar://problem/4775313> Deleting lines from the bottom of a messages leaves the last blank line quoted
+
+        * editing/deleting/5495723-expected.txt: Added.
+        * editing/deleting/5495723.html: Added.
+        * platform/mac/editing/deleting/delete-4038408-fix-expected.txt: Change demonstrates that we
+        now behave correctly when pressing delete when the caret is just after empty quoted paragraphs.
+
 2008-11-12  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.
