@@ -1,3 +1,10 @@
+2008-11-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Update leaves animation sample.
+        
+        * blog-files/leaves/index.html:
+        * blog-files/leaves/leaves.css:
+
 2008-11-11  Dean Jackson  <dino@apple.com>
 
         Removed quotes in animation name value.

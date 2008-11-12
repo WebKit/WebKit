@@ -64,42 +64,43 @@ Copyright (C) 2008 Apple Inc. All Rights Reserved.
 
 body
 {
-    width: 500px;
-    height: 700px;
-    margin: 0px;
-    background: #4E4226 url('images/backgroundLeaves.jpg') no-repeat top left;
+    background-color: #4E4226;
 }
 
+#container {
+    position: relative;
+    height: 700px;
+    width: 500px;
+    margin: 50px auto;
+    overflow: hidden;
+    border: 4px solid #5C090A;
+    background: #4E4226 url('images/backgroundLeaves.jpg') no-repeat top left;
+}
 
 /* Defines the position and dimensions of the leafContainer div */
 #leafContainer 
 {
     position: absolute;
-    top: 0px;
     width: 100%;
-    height: 700px;
-    z-index: 0;
-    overflow: hidden;
+    height: 100%;
 }
-
 
 /* Defines the appearance, position, and dimensions of the message div */
 #message
 {
-    position: relative;
+    position: absolute;
+    top: 160px;
     width: 100%;
-    margin: 160px auto 0px auto;
-
+    height: 300px;
     background:transparent url('images/textBackground.png') repeat-x center;
-
     color: #5C090A;
-
     font-size: 220%;
     font-family: 'Georgia';
     text-align: center;
     padding: 20px 10px;
     -webkit-box-sizing: border-box;
     -webkit-background-size: 100% 100%;
+    z-index: 1;
 }
 
 p {
