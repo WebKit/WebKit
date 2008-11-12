@@ -284,8 +284,8 @@ namespace JSC {
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        NEVER_INLINE JSValue* callEval(CallFrame*, RegisterFile*, Register* argv, int argc, int registerOffset, JSValue*& exceptionValue);
-        JSValue* execute(EvalNode*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValue** exception);
+        NEVER_INLINE JSValue* callEval(CallFrame*, JSObject* thisObject, ScopeChainNode*, RegisterFile*, int argv, int argc, JSValue*& exceptionValue);
+        JSValue* execute(EvalNode*, CallFrame*, JSObject* thisObject, int registerOffset, ScopeChainNode*, JSValue** exception);
 
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
 
@@ -306,8 +306,8 @@ namespace JSC {
 
         JSValue* privateExecute(ExecutionFlag, RegisterFile*, CallFrame*, JSValue** exception);
 
-        void dumpCallFrame(CallFrame*);
-        void dumpRegisters(CallFrame*);
+        void dumpCallFrame(const RegisterFile*, CallFrame*);
+        void dumpRegisters(const RegisterFile*, CallFrame*);
 
         JSValue* checkTimeout(JSGlobalObject*);
         void resetTimeoutCheck();
@@ -320,7 +320,7 @@ namespace JSC {
         bool isCallOpcode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
 
 #if ENABLE(CTI)
-        static void throwStackOverflowPreviousFrame(CallFrame**, JSGlobalData*, void*& returnAddress);
+        static void throwStackOverflowPreviousFrame(CallFrame*, JSGlobalData*, void*& returnAddress);
 
         void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);

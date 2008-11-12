@@ -365,9 +365,7 @@ namespace JSC {
 
         void compileOpCall(OpcodeID, Instruction* instruction, unsigned i, unsigned callLinkInfoIndex);
         void compileOpCallInitializeCallFrame(unsigned callee, unsigned argCount);
-        void compileOpCallSetupArgs(Instruction*);
-        void compileOpCallEvalSetupArgs(Instruction*);
-        void compileOpConstructSetupArgs(Instruction*);
+        void compileOpCallSetupArgs(Instruction* instruction, bool isConstruct, bool isEval);
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStrictEqType type);
         void putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSource, X86::RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell,  X86::XMMRegisterID tempXmm, X86::RegisterID tempReg1, X86::RegisterID tempReg2);

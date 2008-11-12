@@ -1,3 +1,11 @@
+2008-11-12  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r38322 due to test failures on the bots.
+
+        * fast/js/global-recursion-on-full-stack-expected.txt:
+
 2008-11-11  Stephanie  <slewis@apple.com>
 
         Reviewed by Dan Bernstein.

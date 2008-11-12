@@ -1,3 +1,46 @@
+2008-11-12  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r38322 due to test failures on the bots.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCallSetupArgs):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/Machine.cpp:
+        (JSC::Machine::callEval):
+        (JSC::Machine::dumpCallFrame):
+        (JSC::Machine::dumpRegisters):
+        (JSC::Machine::execute):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::throwStackOverflowPreviousFrame):
+        (JSC::Machine::cti_register_file_check):
+        (JSC::Machine::cti_op_call_arityCheck):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_call_eval):
+        (JSC::Machine::cti_vm_throw):
+        * VM/Machine.h:
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitCallEval):
+        (JSC::CodeGenerator::emitConstruct):
+        * bytecompiler/CodeGenerator.h:
+        * parser/Nodes.cpp:
+        (JSC::EvalFunctionCallNode::emitCode):
+        (JSC::FunctionCallValueNode::emitCode):
+        (JSC::FunctionCallResolveNode::emitCode):
+        (JSC::FunctionCallBracketNode::emitCode):
+        (JSC::FunctionCallDotNode::emitCode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::neededConstants):
+
 2008-11-11  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
