@@ -65,3 +65,55 @@ NSString *filenameByFixingIllegalCharacters(NSString *string)
     
     return filename;
 }
+
+CFStringEncoding stringEncodingForResource(Handle resource)
+{
+    short resRef = HomeResFile(resource);
+    if (ResError() != noErr) {
+        return NSMacOSRomanStringEncoding;
+    }
+    
+    // Get the FSRef for the current resource file
+    FSRef fref;
+    OSStatus error = FSGetForkCBInfo(resRef, 0, NULL, NULL, NULL, &fref, NULL);
+    if (error != noErr) {
+        return NSMacOSRomanStringEncoding;
+    }
+    
+    CFURLRef URL = CFURLCreateFromFSRef(NULL, &fref);
+    if (URL == NULL) {
+        return NSMacOSRomanStringEncoding;
+    }
+    
+    NSString *path = [(NSURL *)URL path];
+    CFRelease(URL);
+    
+    // Get the lproj directory name
+    path = [path stringByDeletingLastPathComponent];
+    if (!stringIsCaseInsensitiveEqualToString([path pathExtension], @"lproj")) {
+        return NSMacOSRomanStringEncoding;
+    }
+    
+    NSString *directoryName = [[path stringByDeletingPathExtension] lastPathComponent];
+    CFStringRef locale = CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName);
+    if (locale == NULL) {
+        return NSMacOSRomanStringEncoding;
+    }
+            
+    LangCode lang;
+    RegionCode region;
+    error = LocaleStringToLangAndRegionCodes([(NSString *)locale UTF8String], &lang, &region);
+    CFRelease(locale);
+    if (error != noErr) {
+        return NSMacOSRomanStringEncoding;
+    }
+    
+    TextEncoding encoding;
+    error = UpgradeScriptInfoToTextEncoding(kTextScriptDontCare, lang, region, NULL, &encoding);
+    if (error != noErr) {
+        return NSMacOSRomanStringEncoding;
+    }
+    
+    return encoding;
+}
+
