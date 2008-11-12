@@ -1,3 +1,14 @@
+2008-11-11  Stephanie  <slewis@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Null check image data before setting it as image source.
+
+        Test: fast/images/image-empty-data.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+
 2008-11-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim Hatcher.

@@ -104,7 +104,8 @@ void BitmapImage::destroyDecodedData(bool incremental, bool preserveNearbyFrames
         // Reset the image source, since Image I/O has an underlying cache that it uses
         // while animating that it seems to never clear.
         m_source.clear();
-        m_source.setData(m_data.get(), m_allDataReceived);
+        if (m_data) 
+            m_source.setData(m_data.get(), m_allDataReceived);
     }    
 }
 
