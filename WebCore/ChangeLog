@@ -1,3 +1,11 @@
+2008-11-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Remove ifdef so future OS versions can use the new delegate method.
+
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::ResourceHandle::didSendBodyDataDelegateExists):
+
 2008-11-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Antti Koivisto and Sam Weinig.

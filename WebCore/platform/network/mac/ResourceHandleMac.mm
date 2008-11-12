@@ -116,12 +116,7 @@ ResourceHandle::~ResourceHandle()
 static const double MaxFoundationVersionWithoutdidSendBodyDataDelegate = 677.21;
 bool ResourceHandle::didSendBodyDataDelegateExists()
 {
-// FIXME: Refine this check as the delegate becomes more widely available.
-#ifdef BUILDING_ON_LEOPARD
     return NSFoundationVersionNumber > MaxFoundationVersionWithoutdidSendBodyDataDelegate;
-#else
-    return false;
-#endif
 }
 
 bool ResourceHandle::start(Frame* frame)
