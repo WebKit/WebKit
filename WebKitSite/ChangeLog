@@ -1,5 +1,11 @@
 2008-11-11  Dean Jackson  <dino@apple.com>
 
+        Removed quotes in animation name value.
+
+        * blog-files/pulse.html:
+
+2008-11-11  Dean Jackson  <dino@apple.com>
+
         Added a smaller version of a screenshot.
 
         * blog-files/leaves-screenshot-small.jpg: Added.
