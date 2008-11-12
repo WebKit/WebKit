@@ -1,3 +1,20 @@
+2008-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=17840
+
+        Fix repainting when the transform on a positioned element changes.
+        In computeAbsoluteRepaintRect(), add the offsets due to relative positioning,
+        and being in a positioned container after applying the transform to the local
+        rect.
+
+        Tests: fast/repaint/transform-absolute-in-positioned-container.html
+               fast/repaint/transform-relative-position.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+
 2008-11-12  Justin Garcia  <justin.garcia@apple.com>
  
         Reviewed by Beth Dakin.
