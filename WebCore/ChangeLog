@@ -3,6 +3,18 @@
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=17840
+        Patch 2
+        
+        Code cleanup in RenderBox::computeAbsoluteRepaintRect().
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+
+2008-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=17840
 
         Fix repainting when the transform on a positioned element changes.
         In computeAbsoluteRepaintRect(), add the offsets due to relative positioning,
