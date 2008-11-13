@@ -419,6 +419,12 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
     case NPPVpluginTransparentBool:
         m_isTransparent = value;
         return NPERR_NO_ERROR;
+#if defined(XP_MACOSX)
+    case NPPVpluginDrawingModel:
+        return NPERR_NO_ERROR;
+    case NPPVpluginEventModel:
+        return NPERR_NO_ERROR;
+#endif
     default:
         notImplemented();
         return NPERR_GENERIC_ERROR;
@@ -540,7 +546,11 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_popPopupsStateTimer(this, &PluginView::popPopupsStateTimerFired)
     , m_paramNames(0)
     , m_paramValues(0)
+#if defined(XP_MACOSX)
+    , m_isWindowed(false)
+#else
     , m_isWindowed(true)
+#endif
     , m_isTransparent(false)
     , m_haveInitialized(false)
 #if PLATFORM(GTK) || defined(Q_WS_X11)
@@ -554,7 +564,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_lastMessage(0)
     , m_isCallingPluginWndProc(false)
 #endif
-#if PLATFORM(WIN_OS) && PLATFORM(QT)
+#if (PLATFORM(QT) && PLATFORM(WIN_OS)) || defined(XP_MACOSX)
     , m_window(0)
 #endif
     , m_loadManually(loadManually)

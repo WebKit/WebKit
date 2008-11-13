@@ -263,17 +263,28 @@ namespace WebCore {
         bool m_isCallingPluginWndProc;
 #endif
 
-#if PLATFORM(WIN_OS) && PLATFORM(QT)
-        // Only under Qt on Windows, the plugin widget (HWND) does not match the native widget (QWidget).
-        PlatformPluginWidget m_window; // for windowed plug-ins
+#if (PLATFORM(QT) && PLATFORM(WIN_OS)) || defined(XP_MACOSX)
+        // On Mac OSX and Qt/Windows the plugin does not have its own native widget,
+        // but is using the containing window as its reference for positioning/painting.
+        PlatformPluginWidget m_window;
 public:
         PlatformPluginWidget platformPluginWidget() const { return m_window; }
+        void setPlatformPluginWidget(PlatformPluginWidget widget) { m_window = widget; }
 #else
 public:
         PlatformPluginWidget platformPluginWidget() const { return platformWidget(); }
 #endif
 
 private:
+
+#if defined(XP_MACOSX)
+        NP_CGContext m_npCgContext;
+        OwnPtr<Timer<PluginView> > m_nullEventTimer;
+
+        void setNPWindowIfNeeded();
+        void nullEventTimerFired(Timer<PluginView>*);
+        Point globalMousePosForPlugin() const;
+#endif
 
         mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         mutable IntRect m_windowRect; // Our window rect.
