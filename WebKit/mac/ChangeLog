@@ -1,3 +1,31 @@
+2008-11-13  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/6361578> Web Kit UI strings: a few edits
+
+        Reviewed by Tim Hatcher
+
+        * Misc/WebKitErrors.m:
+        "Cannot show content with specified mime type" -> "Content with specified MIME type can't be shown"
+        "Cannot show URL" -> "The URL can't be shown"
+        "Cannot find plug-in" -> "The plug-in can't be found"
+        "Cannot load plug-in" -> "The plug-in can't be loaded"
+        
+        * Panels/English.lproj/WebAuthenticationPanel.nib/classes.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/info.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib: Added.
+        * Panels/English.lproj/WebAuthenticationPanel.nib/objects.nib: Removed.
+        Changed placeholder fine print in the nib to match one of the two strings it might be replaced by.
+        This automagically updated the nib to a newer format, hence the objects -> keyedobjects change.
+        I could have changed the placeholder fine print to be empty but this lets localizers understand
+        the dialog layout better.
+        
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+        "you need to log in" -> "you must log in"
+        "Your log-in information" -> "Your login information"
+        "The name or password entered" -> "The user name or password you entered"
+        "Please try again." -> "Make sure you're entering them correctly, and then try again."        
+
 2008-11-12  Stephanie Lewis  <slewis@apple.com>
 
         Fix Mac build.        

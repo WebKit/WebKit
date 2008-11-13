@@ -133,21 +133,21 @@
 
     if ([chall previousFailureCount] == 0) {
         if ([space isProxy]) {
-            message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to the %@ proxy server %@.",
+            message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
                 [space proxyType], host];
         } else {
-            message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to area “%@” on %@.",
+            message = [NSString stringWithFormat:UI_STRING("To view this page, you must log in to area “%@” on %@.",
                                                            "prompt string in authentication panel"),
                 realm, host];
         }
     } else {
         if ([space isProxy]) {
-            message = [NSString stringWithFormat:UI_STRING("The name or password entered for the %@ proxy server %@ was incorrect. Please try again.",
+            message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                            "prompt string in authentication panel"),
                 [space proxyType], host];
         } else {
-            message = [NSString stringWithFormat:UI_STRING("The name or password entered for area “%@” on %@ was incorrect. Please try again.",
+            message = [NSString stringWithFormat:UI_STRING("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                            "prompt string in authentication panel"),
                 realm, host];
         }
@@ -158,7 +158,7 @@
 
     if ([space receivesCredentialSecurely] || [[space protocol] _webkit_isCaseInsensitiveEqualToString:@"https"]) {
         [smallLabel setStringValue:
-            UI_STRING("Your log-in information will be sent securely.",
+            UI_STRING("Your login information will be sent securely.",
                 "message in authentication panel")];
     } else {
         // Use this scary-sounding phrase only when using basic auth with non-https servers. In this case the password

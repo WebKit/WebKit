@@ -471,7 +471,6 @@
 "localhost"
 "localized string not found"
 "localizedStrings"
-"lproj"
 "mailto:"
 "mainFrameDocument"
 "mainFrameIcon"

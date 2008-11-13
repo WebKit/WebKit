@@ -1,3 +1,15 @@
+2008-11-13  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/6361578> Web Kit UI strings: a few edits
+
+        Reviewed by Tim Hatcher
+
+        * English.lproj/Localizable.strings:
+        updated for these changes
+        
+        * StringsNotToBeLocalized.txt:
+        removed unused exception
+
 2008-11-12  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/3839110> Authentication dialogs talk about passwords being sent "in the clear"
