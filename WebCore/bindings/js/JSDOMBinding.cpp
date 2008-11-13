@@ -289,8 +289,8 @@ void markDOMNodesForDocument(Document* doc)
 
 void markActiveObjectsForContext(JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)
 {
-    // If an element has pending activity that may result in listeners being called
-    // (e.g. an XMLHttpRequest), we need to keep all JS wrappers alive.
+    // If an element has pending activity that may result in event listeners being called
+    // (e.g. an XMLHttpRequest), we need to keep JS wrappers alive.
 
     const HashMap<ActiveDOMObject*, void*>& activeObjects = scriptExecutionContext->activeDOMObjects();
     HashMap<ActiveDOMObject*, void*>::const_iterator activeObjectsEnd = activeObjects.end();
@@ -308,7 +308,7 @@ void markActiveObjectsForContext(JSGlobalData& globalData, ScriptExecutionContex
     for (HashSet<MessagePort*>::const_iterator iter = messagePorts.begin(); iter != portsEnd; ++iter) {
         if ((*iter)->hasPendingActivity()) {
             DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, *iter);
-            // An object with pending activity must have a wrapper to mark its listeners, so no null check.
+            // A port with pending activity must have a wrapper to mark its listeners, so no null check.
             if (!wrapper->marked())
                 wrapper->mark();
         }
@@ -321,6 +321,7 @@ void markCrossHeapDependentObjectsForContext(JSGlobalData& globalData, ScriptExe
     HashSet<MessagePort*>::const_iterator portsEnd = messagePorts.end();
     for (HashSet<MessagePort*>::const_iterator iter = messagePorts.begin(); iter != portsEnd; ++iter) {
         MessagePort* port = *iter;
+        ASSERT(port->scriptExecutionContext() == scriptExecutionContext);
         RefPtr<MessagePort> entangledPort = port->entangledPort();
         if (entangledPort) {
             // No wrapper, or wrapper is already marked - no need to examine cross-heap dependencies.
@@ -330,18 +331,14 @@ void markCrossHeapDependentObjectsForContext(JSGlobalData& globalData, ScriptExe
 
             // Don't use cross-heap model of marking on same-heap pairs. Otherwise, they will never be destroyed, because a port will mark its entangled one,
             // and it will never get a chance to be marked as inaccessible. So, the port will keep getting marked in this function.
-            if ((port->scriptExecutionContext() == entangledPort->scriptExecutionContext()) || (port->scriptExecutionContext()->isDocument() && entangledPort->scriptExecutionContext()->isDocument()))
+            if ((scriptExecutionContext == entangledPort->scriptExecutionContext())
+                 || (scriptExecutionContext->isDocument() && entangledPort->scriptExecutionContext() && entangledPort->scriptExecutionContext()->isDocument()))
                 continue;
 
-            // If the wrapper hasn't been marked during the mark phase of GC, then the port shouldn't protect its entangled one.
-            // It's important not to call this when there is no wrapper. E.g., if GC is triggered after a MessageChannel is created, but before its ports are used from JS,
-            // irreversibly telling the object that its (not yet existing) wrapper is inaccessible would be wrong. Similarly, ports posted via postMessage() may not
-            // have wrappers until delivered.
-            port->setJSWrapperIsInaccessible();
-
-            // If the port is protected by its entangled one, mark it.
-            // This is an atomic read of a boolean value, no synchronization between threads is required (at least on platforms that guarantee cache coherency).
-            if (!entangledPort->jsWrapperIsInaccessible())
+            // If the port is active, mark it.
+            // FIXME: This is not quite correct, because a pair of inaccessible ports will not be collected until manually closed, or until either script execution context is destroyed.
+            // Also, there is a race condition: if a message is posted after markActiveObjectsForContext, and then ports get unentangled, we will not mark receiving port, which will result in a crash.
+            if (entangledPort)
                 wrapper->mark();
         }
     }

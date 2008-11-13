@@ -41,7 +41,6 @@
 namespace WebCore {
 
     class AtomicStringImpl;
-    class DOMWindow;
     class Event;
     class Frame;
     class ScriptExecutionContext;
@@ -53,7 +52,7 @@ namespace WebCore {
         static PassRefPtr<MessagePort> create(ScriptExecutionContext* scriptExecutionContext) { return adoptRef(new MessagePort(scriptExecutionContext)); }
         ~MessagePort();
 
-        PassRefPtr<MessagePort> clone(ScriptExecutionContext*, ExceptionCode&);
+        PassRefPtr<MessagePort> clone(ExceptionCode&); // Returns a port that isn't attached to any context.
 
         bool active() const { return m_entangledPort; }
         void postMessage(const String& message, ExceptionCode&);
@@ -69,7 +68,8 @@ namespace WebCore {
         void unentangle();
 
         void contextDestroyed();
-        virtual ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
+        void attachToContext(ScriptExecutionContext*);
+        virtual ScriptExecutionContext* scriptExecutionContext() const;
 
         virtual MessagePort* toMessagePort() { return this; }
 
@@ -95,11 +95,8 @@ namespace WebCore {
         void setOnclose(PassRefPtr<EventListener> eventListener) { m_onCloseListener = eventListener; }
         EventListener* onclose() const { return m_onCloseListener.get(); }
 
-        void setJSWrapperIsInaccessible() { m_jsWrapperIsInaccessible = true; }
-        bool jsWrapperIsInaccessible() const { return m_jsWrapperIsInaccessible; }
-
     private:
-        friend class CloseMessagePortTimer;
+        friend class MessagePortCloseEventTask;
 
         MessagePort(ScriptExecutionContext*);
 
@@ -110,16 +107,17 @@ namespace WebCore {
 
         MessagePort* m_entangledPort;
         
-        struct EventData {
-            EventData();
-            EventData(const String&, PassRefPtr<DOMWindow>, PassRefPtr<MessagePort>);
+        struct EventData : public ThreadSafeShared<EventData> {
+            static PassRefPtr<EventData> create(const String& message, PassRefPtr<MessagePort>);
             ~EventData();
 
             String message;
-            RefPtr<DOMWindow> window;
             RefPtr<MessagePort> messagePort;
+
+        private:
+            EventData(const String& message, PassRefPtr<MessagePort>);
         };
-        MessageQueue<EventData> m_messageQueue;
+        MessageQueue<RefPtr<EventData> > m_messageQueue;
         bool m_queueIsOpen;
 
         ScriptExecutionContext* m_scriptExecutionContext;
@@ -129,8 +127,7 @@ namespace WebCore {
 
         EventListenersMap m_eventListeners;
 
-        bool m_pendingCloseEvent;
-        bool m_jsWrapperIsInaccessible;
+        bool m_pendingCloseEvent; // The port is GC protected while waiting for a close event to be dispatched.
     };
 
 } // namespace WebCore

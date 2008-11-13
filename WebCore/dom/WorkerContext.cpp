@@ -28,23 +28,34 @@
 
 #if ENABLE(WORKERS)
 
-#include "SecurityOrigin.h"
 #include "WorkerContext.h"
+
+#include "Event.h"
+#include "EventException.h"
+#include "SecurityOrigin.h"
 #include "WorkerLocation.h"
+#include "WorkerTask.h"
 
 namespace WebCore {
 
-WorkerContext::WorkerContext(const KURL& url)
+WorkerContext::WorkerContext(const KURL& url, WorkerThread* thread)
     : m_url(url)
     , m_location(WorkerLocation::create(url))
     , m_securityOrigin(SecurityOrigin::create(url))
     , m_script(this)
+    , m_thread(thread)
 {
 }
 
 WorkerContext::~WorkerContext()
 {
 }
+
+ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
+{
+    return const_cast<WorkerContext*>(this);
+}
+
 
 const KURL& WorkerContext::virtualURL() const
 {
@@ -59,6 +70,57 @@ KURL WorkerContext::completeURL(const String& url) const
         return KURL();
     // FIXME: does this need to provide a charset, like Document::completeURL does?
     return KURL(m_location->url(), url);
+}
+
+void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
+{
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
+    if (iter == m_eventListeners.end()) {
+        ListenerVector listeners;
+        listeners.append(eventListener);
+        m_eventListeners.add(eventType, listeners);
+    } else {
+        ListenerVector& listeners = iter->second;
+        for (ListenerVector::iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
+            if (*listenerIter == eventListener)
+                return;
+        }
+        
+        listeners.append(eventListener);
+        m_eventListeners.add(eventType, listeners);
+    }    
+}
+
+void WorkerContext::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+{
+    EventListenersMap::iterator iter = m_eventListeners.find(eventType);
+    if (iter == m_eventListeners.end())
+        return;
+    
+    ListenerVector& listeners = iter->second;
+    for (ListenerVector::const_iterator listenerIter = listeners.begin(); listenerIter != listeners.end(); ++listenerIter) {
+        if (*listenerIter == eventListener) {
+            listeners.remove(listenerIter - listeners.begin());
+            return;
+        }
+    }
+}
+
+bool WorkerContext::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
+{
+    if (event->type().isEmpty()) {
+        ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
+        return true;
+    }
+    
+    ListenerVector listenersCopy = m_eventListeners.get(event->type());
+    for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
+        event->setTarget(this);
+        event->setCurrentTarget(this);
+        listenerIter->get()->handleEvent(event.get(), false);
+    }
+    
+    return !event->defaultPrevented();
 }
 
 } // namespace WebCore

@@ -44,79 +44,22 @@ void JSDedicatedWorker::mark()
 {
     DOMObject::mark();
 
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onMessageListener()))
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onmessage()))
         listener->mark();
 
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onCloseListener()))
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onclose()))
         listener->mark();
 
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onErrorListener()))
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onerror()))
         listener->mark();
 }
 
-JSValue* JSDedicatedWorker::startConversation(ExecState* exec, const ArgList& args)
+JSValue* JSDedicatedWorker::connect(ExecState* exec, const ArgList& args)
 {
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
     const UString& message = args.at(exec, 0)->toString(exec);
 
-    return toJS(exec, impl()->startConversation(window->document(), message).get());
-}
-
-void JSDedicatedWorker::setOnmessage(ExecState* exec, JSValue* value)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return;
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return;
-    impl()->setOnMessageListener(window->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDedicatedWorker::onmessage(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onMessageListener()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDedicatedWorker::setOnclose(ExecState* exec, JSValue* value)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return;
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return;
-    impl()->setOnCloseListener(window->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDedicatedWorker::onclose(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onCloseListener()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
-}
-
-void JSDedicatedWorker::setOnerror(ExecState* exec, JSValue* value)
-{
-    Document* document = impl()->document();
-    if (!document)
-        return;
-    JSDOMWindow* window = toJSDOMWindow(document->frame());
-    if (!window)
-        return;
-    impl()->setOnErrorListener(window->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* JSDedicatedWorker::onerror(ExecState*) const
-{
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(impl()->onErrorListener()))
-        if (JSObject* listenerObj = listener->listenerObj())
-            return listenerObj;
-    return jsNull();
+    return toJS(exec, impl()->connect(window->document(), message).get());
 }
 
 } // namespace WebCore

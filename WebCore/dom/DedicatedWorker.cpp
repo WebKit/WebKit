@@ -40,10 +40,12 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FrameLoader.h"
+#include "MessageEvent.h"
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
-#include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include "WorkerContext.h"
+#include "WorkerTask.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 
@@ -67,8 +69,39 @@ private:
     RefPtr<DedicatedWorker> m_worker;
 };
 
+class WorkerConnectTask : public WorkerTask {
+public:
+    WorkerConnectTask(const String& message, PassRefPtr<MessagePort> port)
+        : m_message(message.copy())
+        , m_port(port)
+    {
+    }
+
+    virtual void performTask(WorkerContext* context)
+    {
+        m_port->attachToContext(context);
+
+        RefPtr<Event> evt = MessageEvent::create(m_message, "", "", 0, m_port);
+
+        if (context->onconnect()) {
+            evt->setTarget(context);
+            evt->setCurrentTarget(context);
+            context->onconnect()->handleEvent(evt.get(), false);
+        }
+
+        ExceptionCode ec = 0;
+        context->dispatchEvent(evt.release(), ec);
+        ASSERT(!ec);
+    }
+
+private:
+    String m_message;
+    RefPtr<MessagePort> m_port;
+};
+
 DedicatedWorker::DedicatedWorker(const String& url, Document* document, ExceptionCode& ec)
     : ActiveDOMObject(document, this)
+    , m_thread(0)
 {
     m_scriptURL = document->completeURL(url);
     if (!m_scriptURL.isValid()) {
@@ -96,10 +129,17 @@ Document* DedicatedWorker::document() const
     return static_cast<Document*>(scriptExecutionContext());
 }
 
-PassRefPtr<MessagePort> DedicatedWorker::startConversation(ScriptExecutionContext* /*scriptExecutionContext*/, const String& /*message*/)
+PassRefPtr<MessagePort> DedicatedWorker::connect(ScriptExecutionContext* scriptExecutionContext, const String& message)
 {
-    // Not implemented.
-    return 0;
+    RefPtr<MessagePort> port = MessagePort::create(scriptExecutionContext);
+    RefPtr<MessagePort> otherPort = MessagePort::create(0);
+    MessagePort::entangle(port.get(), otherPort.get());
+    if (m_thread)
+        m_thread->messageQueue().append(new WorkerConnectTask(message, otherPort));
+    else
+        m_queuedEarlyTasks.append(new WorkerConnectTask(message, otherPort));
+
+    return port;
 }
 
 void DedicatedWorker::close()
@@ -137,8 +177,19 @@ void DedicatedWorker::notifyFinished(CachedResource* resource)
         dispatchErrorEvent();
         unsetPendingActivity(this);
     } else  {
-        WorkerThread::create(m_scriptURL, m_cachedScript->script(), this)->start();
+        // FIXME: When can we unsetPendingActivity()? Currently, worker objects are never collected, and threads never exit.
+
+        RefPtr<WorkerThread> thread = WorkerThread::create(m_scriptURL, m_cachedScript->script(), this);
+        m_thread = thread.get();
+
+        unsigned taskCount = m_queuedEarlyTasks.size();
+        for (unsigned i = 0; i < taskCount; ++i)
+            m_thread->messageQueue().append(m_queuedEarlyTasks[i]);
+
+        m_thread->start();
     }
+
+    m_queuedEarlyTasks.clear();
 
     m_cachedScript->removeClient(this);
     m_cachedScript = 0;

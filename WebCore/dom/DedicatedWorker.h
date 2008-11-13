@@ -45,6 +45,8 @@ namespace WebCore {
     class ScriptExecutionContext;
     class MessagePort;
     class String;
+    class WorkerTask;
+    class WorkerThread;
 
     typedef int ExceptionCode;
 
@@ -55,18 +57,18 @@ namespace WebCore {
 
         Document* document() const;
 
-        PassRefPtr<MessagePort> startConversation(ScriptExecutionContext*, const String& message);
+        PassRefPtr<MessagePort> connect(ScriptExecutionContext*, const String& message);
         void close();
         void postMessage(const String& message, MessagePort* port = 0);
 
-        void setOnMessageListener(PassRefPtr<EventListener> eventListener) { m_onMessageListener = eventListener; }
-        EventListener* onMessageListener() const { return m_onMessageListener.get(); }
+        void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onMessageListener = eventListener; }
+        EventListener* onmessage() const { return m_onMessageListener.get(); }
 
-        void setOnCloseListener(PassRefPtr<EventListener> eventListener) { m_onCloseListener = eventListener; }
-        EventListener* onCloseListener() const { return m_onCloseListener.get(); }
+        void setOnclose(PassRefPtr<EventListener> eventListener) { m_onCloseListener = eventListener; }
+        EventListener* onclose() const { return m_onCloseListener.get(); }
 
-        void setOnErrorListener(PassRefPtr<EventListener> eventListener) { m_onErrorListener = eventListener; }
-        EventListener* onErrorListener() const { return m_onErrorListener.get(); }
+        void setOnerror(PassRefPtr<EventListener> eventListener) { m_onErrorListener = eventListener; }
+        EventListener* onerror() const { return m_onErrorListener.get(); }
 
     private:
         friend class WorkerThreadScriptLoadTimer;
@@ -81,9 +83,13 @@ namespace WebCore {
         KURL m_scriptURL;
         CachedResourceHandle<CachedScript> m_cachedScript;
 
+        WorkerThread* m_thread;
+
         RefPtr<EventListener> m_onMessageListener;
         RefPtr<EventListener> m_onCloseListener;
         RefPtr<EventListener> m_onErrorListener;
+
+        Vector<RefPtr<WorkerTask> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
     };
 
 } // namespace WebCore

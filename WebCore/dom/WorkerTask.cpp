@@ -24,20 +24,18 @@
  *
  */
 
-module threads {
+#include "config.h"
 
-    interface [CustomMarkFunction, Conditional=WORKERS] DedicatedWorker {
+#if ENABLE(WORKERS)
 
-        // These also used for shared workers.
-        attribute EventListener onclose;
-        attribute EventListener onerror;
+#include "WorkerTask.h"
 
-        // These are only for dedicated workers.
-        attribute EventListener onmessage;
-        [Custom] MessagePort connect(in DOMString message);
-        void close();
-        void postMessage(in DOMString message, in [Optional] MessagePort port);
+namespace WebCore {
 
-    };
-
+WorkerTask::~WorkerTask()
+{
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(WORKERS)

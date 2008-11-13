@@ -59,7 +59,7 @@ namespace WebCore {
     private:
         void initScriptIfNeeded()
         {
-            if (!m_workerContext)
+            if (!m_workerContextWrapper)
                 initScript();
         }
         void initScript();

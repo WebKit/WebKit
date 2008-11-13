@@ -67,6 +67,9 @@ void WorkerScriptController::initScript()
 
 JSValue* WorkerScriptController::evaluate(const String& sourceURL, int baseLine, const String& code)
 {
+    initScriptIfNeeded();
+    JSLock lock(false);
+
     ExecState* exec = m_workerContextWrapper->globalExec();
     m_workerContextWrapper->startTimeoutCheck();
     Completion comp = Interpreter::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), makeSource(code, sourceURL, baseLine), m_workerContextWrapper);

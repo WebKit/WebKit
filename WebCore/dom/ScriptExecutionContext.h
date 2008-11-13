@@ -29,6 +29,8 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -64,10 +66,17 @@ namespace WebCore {
         void ref() { refScriptExecutionContext(); }
         void deref() { derefScriptExecutionContext(); }
 
+        class Task : public ThreadSafeShared<Task> {
+        public:
+            virtual ~Task();
+            virtual void performTask(ScriptExecutionContext*) = 0;
+        };
+
+        void postTask(PassRefPtr<Task>); // Executes the task on context's thread asynchronously.
+
     private:
         virtual const KURL& virtualURL() const = 0;
 
-        bool m_firedMessagePortTimer;
         HashSet<MessagePort*> m_messagePorts;
 
         HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;

@@ -42,6 +42,7 @@ namespace WebCore {
         virtual ~JSWorkerContext();
 
         static JSC::JSObject* createPrototype(JSC::ExecState*);
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue*, JSC::PutPropertySlot&);
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
         static const JSC::ClassInfo s_info;

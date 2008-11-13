@@ -33,8 +33,16 @@
 #include "DedicatedWorker.h"
 #include "JSWorkerContext.h"
 #include "WorkerContext.h"
+#include "WorkerTask.h"
+
+using namespace JSC;
 
 namespace WebCore {
+
+PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& sourceCode, PassRefPtr<DedicatedWorker> workerObject)
+{
+    return adoptRef(new WorkerThread(scriptURL, sourceCode, workerObject));
+}
 
 WorkerThread::WorkerThread(const KURL& scriptURL, const String& sourceCode, PassRefPtr<DedicatedWorker> workerObject)
     : m_threadID(0)
@@ -62,13 +70,21 @@ void* WorkerThread::workerThreadStart(void* thread)
 
 void* WorkerThread::workerThread()
 {
-    RefPtr<WorkerContext> workerContext = WorkerContext::create(KURL(m_scriptURL));
+    RefPtr<WorkerContext> workerContext = WorkerContext::create(KURL(m_scriptURL), this);
     WorkerScriptController* script = workerContext->script();
 
-    // This is temporary code for testing. The thread will run a message loop.
     script->evaluate(m_scriptURL, 1, m_sourceCode);
 
+    while (true) {
+        RefPtr<WorkerTask> task;
+        if (!m_messageQueue.waitForMessage(task))
+            break;
+
+        task->performTask(workerContext.get());
+    }
+
     workerContext = 0;
+    m_threadID = 0;
 
     deref();
     return 0;

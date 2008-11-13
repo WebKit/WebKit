@@ -29,6 +29,9 @@
 
 #if ENABLE(WORKERS)
 
+#include "AtomicStringHash.h"
+#include "EventListener.h"
+#include "EventTarget.h"
 #include "KURL.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerScriptController.h"
@@ -39,17 +42,21 @@
 namespace WebCore {
 
     class WorkerLocation;
+    class WorkerTask;
+    class WorkerThread;
 
-    class WorkerContext : public RefCounted<WorkerContext>, public ScriptExecutionContext {
+    class WorkerContext : public RefCounted<WorkerContext>, public ScriptExecutionContext, public EventTarget {
     public:
-        static PassRefPtr<WorkerContext> create(const KURL& url)
+        static PassRefPtr<WorkerContext> create(const KURL& url, WorkerThread* thread)
         {
-            return adoptRef(new WorkerContext(url));
+            return adoptRef(new WorkerContext(url, thread));
         }
 
         virtual ~WorkerContext();
 
         virtual bool isWorkerContext() const { return true; }
+
+        virtual ScriptExecutionContext* scriptExecutionContext() const;
 
         const KURL& url() const { return m_url; }
         virtual KURL completeURL(const String&) const;
@@ -58,6 +65,20 @@ namespace WebCore {
         WorkerLocation* location() const { return m_location.get(); }
 
         WorkerScriptController* script() { return &m_script; }
+        WorkerThread* thread() { return m_thread; }
+
+        virtual WorkerContext* toWorkerContext() { return this; }
+
+        virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+        virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+
+        void setOnconnect(PassRefPtr<EventListener> eventListener) { m_onconnectListener = eventListener; }
+        EventListener* onconnect() const { return m_onconnectListener.get(); }
+
+        typedef Vector<RefPtr<EventListener> > ListenerVector;
+        typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
+        EventListenersMap& eventListeners() { return m_eventListeners; }
 
         using RefCounted<WorkerContext>::ref;
         using RefCounted<WorkerContext>::deref;
@@ -65,8 +86,10 @@ namespace WebCore {
     private:
         virtual void refScriptExecutionContext() { ref(); }
         virtual void derefScriptExecutionContext() { deref(); }
+        virtual void refEventTarget() { ref(); }
+        virtual void derefEventTarget() { deref(); }
 
-        WorkerContext(const KURL& url);
+        WorkerContext(const KURL&, WorkerThread*);
 
         virtual const KURL& virtualURL() const;
 
@@ -75,6 +98,10 @@ namespace WebCore {
         RefPtr<SecurityOrigin> m_securityOrigin;
 
         WorkerScriptController m_script;
+        WorkerThread* m_thread;
+
+        RefPtr<EventListener> m_onconnectListener;
+        EventListenersMap m_eventListeners;
     };
 
 } // namespace WebCore

@@ -1,3 +1,137 @@
+2008-11-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22203
+        Implement Worker messaging
+
+        No test cases included, because this functionality is disabled by default.
+
+        The implementation is known to still have many race condition, but works quite well for
+        testing.
+
+        * WebCore.xcodeproj/project.pbxproj: Added WorkerTask.{h,cpp}.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markActiveObjectsForContext): Re-worded comments a little.
+        (WebCore::markCrossHeapDependentObjectsForContext): Existing cross-heap GC protocol was
+        incorrect, changed it to a much simpler (but still incorrect) version.
+
+        * dom/WorkerTask.cpp: Added.
+        (WebCore::WorkerTask::~WorkerTask):
+        * dom/WorkerTask.h: Added.
+        Tasks posted to workers implement this new interface.
+
+        * bindings/js/JSDedicatedWorkerCustom.cpp:
+        (WebCore::JSDedicatedWorker::mark):
+        (WebCore::JSDedicatedWorker::connect):
+        * dom/DedicatedWorker.h:
+        * dom/DedicatedWorker.idl:
+        Auto-generate event listener attributes. Renamed startConversation() to connect(), tracking
+        WHATWG discussions.
+
+        * dom/DedicatedWorker.cpp:
+        (WebCore::WorkerConnectTask::WorkerConnectTask): A task that performs worker-side connect()
+        operations.
+        (WebCore::DedicatedWorker::DedicatedWorker): Initialize WorkerThread pointer.
+        (WebCore::DedicatedWorker::connect): Connect() creates a pair of entangled ports, and posts
+        one to worker. Since message port registration in ScriptExecutionContext is not thread safe,
+        this port starts with a null context pointer.
+        (WebCore::DedicatedWorker::notifyFinished): Since Worker methods should work immediately
+        after creation, we have to queue tasks until after a WorkerThread object is created. Then we
+        forward all queued tasks to its queue.
+
+        * dom/EventTarget.cpp: (WebCore::EventTarget::toWorkerContext):
+        * dom/EventTarget.h:
+        * bindings/js/JSEventTarget.cpp: (WebCore::toJS):
+        Added cases for WorkerContext, which is now an EventTarget, too.
+
+        * bindings/js/JSWorkerContext.h: Added JSWorkerContext::put() to make onconnect settable.
+        * bindings/js/JSWorkerContext.cpp:
+        (WebCore::JSWorkerContext::mark): Mark event listeners.
+        (WebCore::JSWorkerContext::createPrototype): Fixed a typo, use the right StructureID.
+        (WebCore::JSWorkerContext::put): Implemented.
+        (WebCore::jsWorkerContextPrototypeFunctionAddEventListener): Added an EventTarget implementation.
+        (WebCore::jsWorkerContextPrototypeFunctionRemoveEventListener): Ditto.
+        (WebCore::jsWorkerContextPrototypeFunctionDispatchEvent): Ditto.
+        (WebCore::jsWorkerContextOnconnect): Added.
+        (WebCore::setJSWorkerContextOnconnect): Added.
+
+        * bindings/js/WorkerScriptController.cpp: (WebCore::WorkerScriptController::evaluate):
+        Made it actually work by adding necessary setup.
+
+        * bindings/js/WorkerScriptController.h: (WebCore::WorkerScriptController::initScriptIfNeeded):
+        Check the right variable - it is the wrapper that may not be initialized yet.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        Assert being called from the correct thread, as active DOM object tracking is not thread safe.
+
+        * dom/ScriptExecutionContext.h: Added a Task interface and a postTask() method, to be used
+        for asynchronously executing tasks in context's thread.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ProcessMessagesSoonTask): Changed from a Timer to a Task
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext): Removed m_firedMessagePortTimer.
+        It was an optimization that couldn't be easily preserved without introducing race conditions
+        in multithreading case.
+        (WebCore::ScriptExecutionContext::processMessagePortMessagesSoon): Use postTask().
+        (WebCore::ScriptExecutionContext::dispatchMessagePortEvents): Added a comment explaining
+        why it's OK to not ref() ports in a frozen copy.
+        (WebCore::ScriptExecutionContext::createdMessagePort): Assert that we're not being called
+        from a wrong thread.
+        (WebCore::ScriptExecutionContext::destroyedMessagePort): Ditto.
+        (WebCore::ScriptExecutionContextTaskTimer): Part of
+        ScriptExecutionContext::Task implementation - use Timer if posting from main thread to main
+        thread.
+        (WebCore::ScriptExecutionContextTaskWorkerTask): Another part - use WorkerTask if posting
+        to a worker.
+        (WebCore::PerformTaskContext::PerformTaskContext): Finally, use callOnMainThread() if posting
+        to main thread from a secondary one.
+        (WebCore::performTask): A helper function for callOnMainThread().
+        (WebCore::ScriptExecutionContext::postTask): Use one of the above implementations.
+
+        * dom/MessagePort.h: Fixed message queue to keep EventData pointers - otherwise, we would
+        ref/deref EventData::message from different threads, which is not allowed.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePortCloseEventTask): Use a task instead of a timer to work across threads.
+        (WebCore::MessagePort::EventData::create): Updated for EventData being refcountable now.
+        (WebCore::MessagePort::EventData::EventData): Ditto.
+        (WebCore::MessagePort::MessagePort): ScriptExecutionContext is now allowed to be null at
+        first, because we need to create ports for posting to other threads, and it is not possible
+        to register in a context from another thread.
+        (WebCore::MessagePort::clone): Always create ports with null contexts - it is now message
+        receiver's job to set the context.
+        (WebCore::MessagePort::postMessage): Enable posting to ports that are not attached to any
+        context yet.
+        (WebCore::MessagePort::startConversation): Ditto. Data port is always posted unattached.
+        (WebCore::MessagePort::contextDestroyed): Assert that we had a context.
+        (WebCore::MessagePort::attachToContext): Called when receiving a data port to register in
+        context.
+        (WebCore::MessagePort::scriptExecutionContext): Moved from header, as the function is virtual.
+        (WebCore::MessagePort::dispatchMessages): Attach data port to receiving context. Use postTask().
+        (WebCore::MessagePort::queueCloseEvent): Use postTask().
+        (WebCore::MessagePort::hasPendingActivity): Reworded comment a little. As mentioned above,
+        MessagePort cross-heap GC is still quite wrong.
+
+        * dom/WorkerContext.h: Made WorkerContext an event target, added onconnect attribute.
+        * dom/WorkerContext.cpp: Keep a pointer to WorkerThread. It is only used for debug assertions
+        now, but there is no harm in tracking it in release builds, too.
+
+        * dom/WorkerThread.cpp:
+        (WebCore::WorkerThread::create): WorkerThread is refcountable, construct with create().
+        (WebCore::WorkerThread::workerThread): Implemented a message loop.
+        * dom/WorkerThread.h:
+        (WebCore::WorkerThread::threadID): Also only used for assertions.
+        (WebCore::WorkerThread::messageQueue): Return a reference to queue, so clients can post to it.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage): MessagePort::clone() no longer takes a context, as it
+        always sets it to null.
+        (WebCore::DOMWindow::postMessageTimerFired): Attach data port to receiving context.
+
 2008-11-12  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed Darin Adler.

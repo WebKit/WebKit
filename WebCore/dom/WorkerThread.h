@@ -30,8 +30,9 @@
 #if ENABLE(WORKERS)
 
 #include "PlatformString.h"
+#include "WorkerTask.h"
+#include <wtf/MessageQueue.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -40,12 +41,12 @@ namespace WebCore {
 
     class WorkerThread : public ThreadSafeShared<WorkerThread> {
     public:
-        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& sourceCode, PassRefPtr<DedicatedWorker> workerObject)
-        {
-            return adoptRef(new WorkerThread(scriptURL, sourceCode, workerObject));
-        }
+        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& sourceCode, PassRefPtr<DedicatedWorker>);
 
         bool start();
+
+        ThreadIdentifier threadID() const { return m_threadID; }
+        MessageQueue<RefPtr<WorkerTask> >& messageQueue() { return m_messageQueue; }
 
     private:
         WorkerThread(const KURL&, const String& sourceCode, PassRefPtr<DedicatedWorker>);
@@ -58,6 +59,8 @@ namespace WebCore {
         String m_scriptURL;
         String m_sourceCode;
         RefPtr<DedicatedWorker> m_workerObject;
+
+        MessageQueue<RefPtr<WorkerTask> > m_messageQueue;
     };
 
 } // namespace WebCore

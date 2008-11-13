@@ -4138,6 +4138,8 @@
 		E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E107400C0E77BDC00033AF24 /* JSMessageChannel.h */; };
 		E10743240E7835830033AF24 /* JSMessageChannelConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10743230E7835830033AF24 /* JSMessageChannelConstructor.cpp */; };
 		E10743270E7835A50033AF24 /* JSMessageChannelConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E10743260E7835A50033AF24 /* JSMessageChannelConstructor.h */; };
+		E108224B0EC3153A00E93953 /* WorkerTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E108224A0EC3153A00E93953 /* WorkerTask.h */; };
+		E108224F0EC3156700E93953 /* WorkerTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E108224E0EC3156700E93953 /* WorkerTask.cpp */; };
 		E10B937C0B73C00A003ED890 /* JSCustomXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */; };
 		E10B93C30B73C291003ED890 /* JSCustomXPathNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */; };
 		E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */; };
@@ -8765,6 +8767,8 @@
 		E107400C0E77BDC00033AF24 /* JSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageChannel.h; sourceTree = "<group>"; };
 		E10743230E7835830033AF24 /* JSMessageChannelConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelConstructor.cpp; sourceTree = "<group>"; };
 		E10743260E7835A50033AF24 /* JSMessageChannelConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessageChannelConstructor.h; sourceTree = "<group>"; };
+		E108224A0EC3153A00E93953 /* WorkerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerTask.h; sourceTree = "<group>"; };
+		E108224E0EC3156700E93953 /* WorkerTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerTask.cpp; sourceTree = "<group>"; };
 		E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomXPathNSResolver.h; sourceTree = "<group>"; };
 		E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomXPathNSResolver.cpp; sourceTree = "<group>"; };
 		E10B9B6A0B747599003ED890 /* NativeXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeXPathNSResolver.h; sourceTree = "<group>"; };
@@ -14063,6 +14067,8 @@
 				E1C363050EAF2D07007410BC /* WorkerLocation.cpp */,
 				E1C363000EAF2CC6007410BC /* WorkerLocation.h */,
 				E1C362BB0EAF29FB007410BC /* WorkerLocation.idl */,
+				E108224E0EC3156700E93953 /* WorkerTask.cpp */,
+				E108224A0EC3153A00E93953 /* WorkerTask.h */,
 				E1C2C4280EACE0E0007E61FB /* WorkerThread.cpp */,
 				E1C2C4230EACE0BC007E61FB /* WorkerThread.h */,
 				F523D30902DE4476018635CA /* XMLTokenizer.cpp */,
@@ -16212,6 +16218,7 @@
 				0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
+				E108224B0EC3153A00E93953 /* WorkerTask.h in Headers */,
 				0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18121,6 +18128,7 @@
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,
 				E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */,
 				E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */,
+				E108224F0EC3156700E93953 /* WorkerTask.cpp in Sources */,
 				0FD723830EC8BD9300CA5DD7 /* FloatQuad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -28,31 +28,31 @@
 #include "ScriptExecutionContext.h"
 
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include "MessagePort.h"
 #include "Timer.h"
+#include "WorkerContext.h"
+#include "WorkerTask.h"
+#include "WorkerThread.h"
+#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class MessagePortTimer : public TimerBase {
+class ProcessMessagesSoonTask : public ScriptExecutionContext::Task {
 public:
-    MessagePortTimer(PassRefPtr<ScriptExecutionContext> context)
-        : m_context(context)
+    static PassRefPtr<ProcessMessagesSoonTask> create()
     {
+        return adoptRef(new ProcessMessagesSoonTask);
     }
 
-private:
-    virtual void fired()
+    virtual void performTask(ScriptExecutionContext* context)
     {
-        m_context->dispatchMessagePortEvents();
-        delete this;
+        context->dispatchMessagePortEvents();
     }
-
-    RefPtr<ScriptExecutionContext> m_context;
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_firedMessagePortTimer(false)
 {
 }
 
@@ -73,13 +73,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
 {
-    if (m_firedMessagePortTimer)
-        return;
-
-    MessagePortTimer* timer = new MessagePortTimer(this);
-    timer->startOneShot(0);
-
-    m_firedMessagePortTimer = true;
+    postTask(ProcessMessagesSoonTask::create());
 }
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
@@ -90,11 +84,11 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
     Vector<MessagePort*> ports;
     copyToVector(m_messagePorts, ports);
 
-    m_firedMessagePortTimer = false;
-
     unsigned portCount = ports.size();
     for (unsigned i = 0; i < portCount; ++i) {
         MessagePort* port = ports[i];
+        // The port may be destroyed, and another one created at the same address, but this is safe, as the worst that can happen
+        // as a result is that dispatchMessages() will be called needlessly.
         if (m_messagePorts.contains(port) && port->queueIsOpen())
             port->dispatchMessages();
     }
@@ -103,12 +97,22 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 void ScriptExecutionContext::createdMessagePort(MessagePort* port)
 {
     ASSERT(port);
+#if ENABLE(WORKERS)
+    ASSERT((isDocument() && isMainThread())
+        || (isWorkerContext() && currentThread() == static_cast<WorkerContext*>(this)->thread()->threadID()));
+#endif
+
     m_messagePorts.add(port);
 }
 
 void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
 {
     ASSERT(port);
+#if ENABLE(WORKERS)
+    ASSERT((isDocument() && isMainThread())
+        || (isWorkerContext() && currentThread() == static_cast<WorkerContext*>(this)->thread()->threadID()));
+#endif
+
     m_messagePorts.remove(port);
 }
 
@@ -134,5 +138,85 @@ void ScriptExecutionContext::destroyedActiveDOMObject(ActiveDOMObject* object)
     m_activeDOMObjects.remove(object);
 }
 
+ScriptExecutionContext::Task::~Task()
+{
+}
+
+class ScriptExecutionContextTaskTimer : public TimerBase {
+public:
+    ScriptExecutionContextTaskTimer(PassRefPtr<Document> context, PassRefPtr<ScriptExecutionContext::Task> task)
+        : m_context(context)
+        , m_task(task)
+    {
+    }
+
+private:
+    virtual void fired()
+    {
+        m_task->performTask(m_context.get());
+        delete this;
+    }
+
+    RefPtr<Document> m_context;
+    RefPtr<ScriptExecutionContext::Task> m_task;
+};
+
+#if ENABLE(WORKERS)
+class ScriptExecutionContextTaskWorkerTask : public WorkerTask {
+public:
+    static PassRefPtr<ScriptExecutionContextTaskWorkerTask> create(PassRefPtr<ScriptExecutionContext::Task> task)
+    {
+        return adoptRef(new ScriptExecutionContextTaskWorkerTask(task));
+    }
+
+private:
+    ScriptExecutionContextTaskWorkerTask(PassRefPtr<ScriptExecutionContext::Task> task)
+        : m_task(task)
+    {
+    }
+
+    virtual void performTask(WorkerContext* context)
+    {
+        m_task->performTask(context);
+    }
+
+    RefPtr<ScriptExecutionContext::Task> m_task;
+};
+#endif
+
+struct PerformTaskContext {
+    PerformTaskContext(ScriptExecutionContext* scriptExecutionContext, PassRefPtr<ScriptExecutionContext::Task> task)
+        : scriptExecutionContext(scriptExecutionContext)
+        , task(task)
+    {
+    }
+
+    RefPtr<ScriptExecutionContext> scriptExecutionContext;
+    RefPtr<ScriptExecutionContext::Task> task;
+};
+
+static void performTask(void* ctx)
+{
+    PerformTaskContext* ptctx = reinterpret_cast<PerformTaskContext*>(ctx);
+    ptctx->task->performTask(ptctx->scriptExecutionContext.get());
+    delete ptctx;
+}
+
+void ScriptExecutionContext::postTask(PassRefPtr<Task> task)
+{
+    if (isDocument()) {
+        if (isMainThread()) {
+            ScriptExecutionContextTaskTimer* timer = new ScriptExecutionContextTaskTimer(static_cast<Document*>(this), task);
+            timer->startOneShot(0);
+        } else {
+            callOnMainThread(performTask, new PerformTaskContext(this, task));
+        }
+    } else {
+        ASSERT(isWorkerContext());
+#if ENABLE(WORKERS)
+        static_cast<WorkerContext*>(this)->thread()->messageQueue().append(ScriptExecutionContextTaskWorkerTask::create(task));
+#endif
+    }
+}
 
 } // namespace WebCore

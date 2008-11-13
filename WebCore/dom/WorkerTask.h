@@ -24,20 +24,25 @@
  *
  */
 
-module threads {
+#ifndef WorkerTask_h
+#define WorkerTask_h
 
-    interface [CustomMarkFunction, Conditional=WORKERS] DedicatedWorker {
+#if ENABLE(WORKERS)
 
-        // These also used for shared workers.
-        attribute EventListener onclose;
-        attribute EventListener onerror;
+#include <wtf/Threading.h>
 
-        // These are only for dedicated workers.
-        attribute EventListener onmessage;
-        [Custom] MessagePort connect(in DOMString message);
-        void close();
-        void postMessage(in DOMString message, in [Optional] MessagePort port);
+namespace WebCore {
 
+    class WorkerContext;
+
+    class WorkerTask : public ThreadSafeShared<WorkerTask> {
+    public:
+        virtual ~WorkerTask();
+        virtual void performTask(WorkerContext*) = 0;
     };
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(WORKERS)
+
+#endif // WorkerTask_h
