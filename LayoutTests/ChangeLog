@@ -1,6 +1,6 @@
 2008-11-12  Geoffrey Garen  <ggaren@apple.com>
 
-        Roll in r38322, onw that test failures have been fixed.
+        Roll in r38322, now that test failures have been fixed.
         
         * fast/js/global-recursion-on-full-stack-expected.txt:
 
