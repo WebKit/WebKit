@@ -1,3 +1,19 @@
+2008-11-12  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed Darin Adler.
+
+        use strokeColor.alpha() instead of fillColor.alpha()
+        on GraphicsContext::strokePath()
+
+        [Canvas] Transparent fillStyle stops line rendering
+        https://bugs.webkit.org/show_bug.cgi?id=21888
+
+        Test: fast/canvas/canvas-stroke-empty-fill.html
+
+        * ChangeLog:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::strokePath):
+
 2008-11-12  Stephanie  <slewis@apple.com>
 
         Reviewed by Mark Rowe.

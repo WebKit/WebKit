@@ -512,7 +512,7 @@ void GraphicsContext::strokePath()
     CGContextRef context = platformContext();
     switch (m_common->state.strokeColorSpace) {
     case SolidColorSpace:
-        if (fillColor().alpha())
+        if (strokeColor().alpha())
             CGContextStrokePath(context);
         break;
     case PatternColorSpace:
