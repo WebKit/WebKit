@@ -211,12 +211,9 @@ void MessagePort::contextDestroyed()
 {
     ASSERT(m_scriptExecutionContext);
 
-    if (m_entangledPort) {
-        RefPtr<MessagePort> survivingPort = m_entangledPort;
+    if (m_entangledPort)
         unentangle();
-        if (survivingPort->m_scriptExecutionContext != m_scriptExecutionContext) // Otherwise, survivingPort won't really survive.
-            survivingPort->queueCloseEvent();
-    }
+
     m_scriptExecutionContext = 0;
 }
 
