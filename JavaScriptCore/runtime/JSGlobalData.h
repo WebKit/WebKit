@@ -67,7 +67,7 @@ namespace JSC {
 
         JSValue* exception;
 #if ENABLE(CTI)
-        void* throwReturnAddress;
+        void* exceptionLocation;
 #endif
 
         const HashTable* arrayTable;

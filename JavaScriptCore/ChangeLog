@@ -1,3 +1,76 @@
+2008-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=22192
+        +37 failures in fast/profiler
+        
+        along with Darin's review comments in
+        https://bugs.webkit.org/show_bug.cgi?id=22174
+        Simplified op_call by nixing its responsibility for moving the value of
+        "this" into the first argument slot
+
+        * VM/Machine.cpp:
+        (JSC::returnToThrowTrampoline):
+        (JSC::throwStackOverflowError):
+        (JSC::Machine::cti_register_file_check):
+        (JSC::Machine::cti_op_call_arityCheck):
+        (JSC::Machine::cti_vm_throw): Moved the throw logic into a function, since
+        functions are better than macros.
+
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitConstruct): Ensure that the function register
+        is preserved if profiling is enabled, since the profiler uses that
+        register.
+
+        * runtime/JSGlobalData.h: Renamed throwReturnAddress to exceptionLocation,
+        because I had a hard time understanding what "throwReturnAddress" meant.
+
+2008-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Roll in r38322, now that test failures have been fixed.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCallSetupArgs):
+        (JSC::CTI::compileOpCallEvalSetupArgs):
+        (JSC::CTI::compileOpConstructSetupArgs):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/Machine.cpp:
+        (JSC::Machine::callEval):
+        (JSC::Machine::dumpCallFrame):
+        (JSC::Machine::dumpRegisters):
+        (JSC::Machine::execute):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_register_file_check):
+        (JSC::Machine::cti_op_call_arityCheck):
+        (JSC::Machine::cti_op_call_NotJSFunction):
+        (JSC::Machine::cti_op_construct_JSConstruct):
+        (JSC::Machine::cti_op_construct_NotJSConstruct):
+        (JSC::Machine::cti_op_call_eval):
+        (JSC::Machine::cti_vm_throw):
+        * VM/Machine.h:
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitCall):
+        (JSC::CodeGenerator::emitCallEval):
+        (JSC::CodeGenerator::emitConstruct):
+        * bytecompiler/CodeGenerator.h:
+        * parser/Nodes.cpp:
+        (JSC::EvalFunctionCallNode::emitCode):
+        (JSC::FunctionCallValueNode::emitCode):
+        (JSC::FunctionCallResolveNode::emitCode):
+        (JSC::FunctionCallBracketNode::emitCode):
+        (JSC::FunctionCallDotNode::emitCode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::neededConstants):
+
 2008-11-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Cameron Zwarich.

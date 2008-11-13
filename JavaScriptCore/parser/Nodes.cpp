@@ -585,10 +585,10 @@ void EvalFunctionCallNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.tempDestination(dst);
-    RefPtr<RegisterID> func = generator.newTemporary();
-    generator.emitResolveWithBase(base.get(), func.get(), generator.propertyNames().eval);
-    return generator.emitCallEval(generator.finalDestination(dst, base.get()), func.get(), base.get(), m_args.get(), divot(), startOffset(), endOffset());
+    RefPtr<RegisterID> func = generator.tempDestination(dst);
+    RefPtr<RegisterID> thisRegister = generator.newTemporary();
+    generator.emitResolveWithBase(thisRegister.get(), func.get(), generator.propertyNames().eval);
+    return generator.emitCallEval(generator.finalDestination(dst, func.get()), func.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }
 
 // ------------------------------ FunctionCallValueNode ----------------------------------
@@ -607,7 +607,8 @@ void FunctionCallValueNode::releaseNodes(NodeReleaser& releaser)
 RegisterID* FunctionCallValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> func = generator.emitNode(m_expr.get());
-    return generator.emitCall(generator.finalDestination(dst), func.get(), 0, m_args.get(), divot(), startOffset(), endOffset());
+    RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsNull());
+    return generator.emitCall(generator.finalDestination(dst, func.get()), func.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }
 
 // ------------------------------ FunctionCallResolveNode ----------------------------------
@@ -624,23 +625,26 @@ void FunctionCallResolveNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* FunctionCallResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    if (RefPtr<RegisterID> local = generator.registerFor(m_ident))
-        return generator.emitCall(generator.finalDestination(dst), local.get(), 0, m_args.get(), divot(), startOffset(), endOffset());
+    if (RefPtr<RegisterID> local = generator.registerFor(m_ident)) {
+        RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsNull());
+        return generator.emitCall(generator.finalDestination(dst, thisRegister.get()), local.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
+    }
 
     int index = 0;
     size_t depth = 0;
     JSObject* globalObject = 0;
     if (generator.findScopedProperty(m_ident, index, depth, false, globalObject) && index != missingSymbolMarker()) {
         RefPtr<RegisterID> func = generator.emitGetScopedVar(generator.newTemporary(), depth, index, globalObject);
-        return generator.emitCall(generator.finalDestination(dst), func.get(), 0, m_args.get(), divot(), startOffset(), endOffset());
+        RefPtr<RegisterID> thisRegister = generator.emitLoad(generator.newTemporary(), jsNull());
+        return generator.emitCall(generator.finalDestination(dst, func.get()), func.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
     }
 
-    RefPtr<RegisterID> base = generator.tempDestination(dst);
-    RefPtr<RegisterID> func = generator.newTemporary();
+    RefPtr<RegisterID> func = generator.tempDestination(dst);
+    RefPtr<RegisterID> thisRegister = generator.newTemporary();
     int identifierStart = divot() - startOffset();
     generator.emitExpressionInfo(identifierStart + m_ident.size(), m_ident.size(), 0);
-    generator.emitResolveFunction(base.get(), func.get(), m_ident);
-    return generator.emitCall(generator.finalDestination(dst, base.get()), func.get(), base.get(), m_args.get(), divot(), startOffset(), endOffset());
+    generator.emitResolveFunction(thisRegister.get(), func.get(), m_ident);
+    return generator.emitCall(generator.finalDestination(dst, func.get()), func.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }
 
 // ------------------------------ FunctionCallBracketNode ----------------------------------
@@ -662,8 +666,9 @@ RegisterID* FunctionCallBracketNode::emitCode(CodeGenerator& generator, Register
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
     RegisterID* property = generator.emitNode(m_subscript.get());
     generator.emitExpressionInfo(divot() - m_subexpressionDivotOffset, startOffset() - m_subexpressionDivotOffset, m_subexpressionEndOffset);
-    RefPtr<RegisterID> function = generator.emitGetByVal(generator.newTemporary(), base.get(), property);
-    return generator.emitCall(generator.finalDestination(dst, base.get()), function.get(), base.get(), m_args.get(), divot(), startOffset(), endOffset());
+    RefPtr<RegisterID> function = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property);
+    RefPtr<RegisterID> thisRegister = generator.emitMove(generator.newTemporary(), base.get());
+    return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }
 
 // ------------------------------ FunctionCallDotNode ----------------------------------
@@ -683,8 +688,9 @@ RegisterID* FunctionCallDotNode::emitCode(CodeGenerator& generator, RegisterID* 
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
     generator.emitExpressionInfo(divot() - m_subexpressionDivotOffset, startOffset() - m_subexpressionDivotOffset, m_subexpressionEndOffset);
-    RefPtr<RegisterID> function = generator.emitGetById(generator.newTemporary(), base.get(), m_ident);
-    return generator.emitCall(generator.finalDestination(dst, base.get()), function.get(), base.get(), m_args.get(), divot(), startOffset(), endOffset());
+    RefPtr<RegisterID> function = generator.emitGetById(generator.tempDestination(dst), base.get(), m_ident);
+    RefPtr<RegisterID> thisRegister = generator.emitMove(generator.newTemporary(), base.get());
+    return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), thisRegister.get(), m_args.get(), divot(), startOffset(), endOffset());
 }
 
 // ------------------------------ PostfixResolveNode ----------------------------------
