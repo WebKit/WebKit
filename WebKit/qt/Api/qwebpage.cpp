@@ -813,7 +813,7 @@ void QWebPagePrivate::leaveEvent(QEvent *ev)
     \property QWebPage::palette
     \brief the page's palette
 
-    The background brush of the palette is used to draw the background of the main frame.
+    The base brush of the palette is used to draw the background of the main frame.
 
     By default, this property contains the application's default palette.
 */
