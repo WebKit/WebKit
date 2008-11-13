@@ -1,3 +1,15 @@
+2008-11-12  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/3839110> Authentication dialogs talk about passwords being sent "in the clear"
+
+        Reviewed by Tim Hatcher
+
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+        use "unencrypted" instead of "in the clear". Also, use the "Your log-in information
+        will be sent securely" version when the receiving server is https, regardless of
+        whether it uses basic or digest authentication.
+
 2008-11-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

@@ -155,13 +155,15 @@
     [mainLabel setStringValue:message];
     [mainLabel sizeToFitAndAdjustWindowHeight];
 
-    if ([space receivesCredentialSecurely]) {
+    if ([space receivesCredentialSecurely] || [[space protocol] _webkit_isCaseInsensitiveEqualToString:@"https"]) {
         [smallLabel setStringValue:
             UI_STRING("Your log-in information will be sent securely.",
                 "message in authentication panel")];
     } else {
+        // Use this scary-sounding phrase only when using basic auth with non-https servers. In this case the password
+        // could be sniffed by intercepting the network traffic.
         [smallLabel setStringValue:
-            UI_STRING("Your password will be sent in the clear.",
+            UI_STRING("Your password will be sent unencrypted.",
                 "message in authentication panel")];
     }
 

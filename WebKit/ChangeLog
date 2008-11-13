@@ -1,3 +1,13 @@
+2008-11-12  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/3839110> Authentication dialogs talk about passwords being sent "in the clear"
+
+        Reviewed by Tim Hatcher
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+        updated for this change
+
 2008-11-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
