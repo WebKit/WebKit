@@ -2110,7 +2110,9 @@ endif # END ENABLE_XSLT
 # ----
 webcore_sources += \
 	WebCore/bindings/js/JSDedicatedWorkerConstructor.h \
-	WebCore/dom/DedicatedWorker.h
+	WebCore/bindings/js/JSWorkerContext.h \
+	WebCore/dom/DedicatedWorker.h \
+	WebCore/dom/WorkerContext.h
 
 # ----
 # SVG Support
