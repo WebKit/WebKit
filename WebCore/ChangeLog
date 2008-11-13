@@ -1,3 +1,14 @@
+2008-11-13  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove unused or unnecessary code from AnimationBase class.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::playStatePlaying):
+        * page/animation/AnimationBase.h:
+
 2008-11-12  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.

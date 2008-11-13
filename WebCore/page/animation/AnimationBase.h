@@ -235,7 +235,6 @@ protected:
 
 protected:
     AnimState m_animState;
-    int m_iteration;
 
     bool m_isAnimating;       // transition/animation requires continual timer firing
     bool m_waitedForResponse;
