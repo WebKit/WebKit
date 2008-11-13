@@ -498,7 +498,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (void)viewDidMoveToWindow
 {
     // See WebFrameLoaderClient::provisionalLoadStarted.
-    if ([[[self webFrame] webView] drawsBackground])
+    // Need to check _private for nil because this can be called inside -[WebView initWithCoder:].
+    if (_private && [[[self webFrame] webView] drawsBackground])
         [[self _scrollView] setDrawsBackground:YES];
     [super viewDidMoveToWindow];
 }

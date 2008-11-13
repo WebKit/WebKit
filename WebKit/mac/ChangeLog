@@ -1,3 +1,13 @@
+2008-11-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22223
+          <rdar://problem/6366864> REGRESSION(r38245): "View Source" crashes the browser
+
+        * WebView/WebFrameView.mm: (-[WebFrameView viewDidMoveToWindow]):
+        Add missing null check.
+
 2008-11-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.
