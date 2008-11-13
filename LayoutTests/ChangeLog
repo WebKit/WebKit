@@ -1,3 +1,13 @@
+2008-11-12  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Skip fast/repaint/body-background-image.html test as it is not reliable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21913
+
+        * platform/mac/Skipped:
+
 2008-11-12  Dan Bernstein  <mitz@apple.com>
 
         - remove an empty directory
