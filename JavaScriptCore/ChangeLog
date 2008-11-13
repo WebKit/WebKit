@@ -1,5 +1,24 @@
 2008-11-13  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Bug 22238: Avoid unnecessary reads of temporaries when the target machine register is not eax
+        <https://bugs.webkit.org/show_bug.cgi?id=22238>
+
+        Enable the optimization of not reading a value back from memory that we
+        just wrote when the target machine register is not eax. In order to do
+        this, the code generation for op_put_global_var must be changed to
+        read its argument into a register before overwriting eax.
+
+        This is a 0.5% speedup on SunSpider and shows no change on the V8
+        benchmark suite when run in either harness.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::privateCompileMainPass):
+
+2008-11-13  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Perform teardown in the 'jsc' shell in order to suppress annoying and

@@ -189,7 +189,7 @@ ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst, unsign
         return;
     }
 
-    if (src == m_lastResultBytecodeRegister && dst == X86::eax && m_codeBlock->isTemporaryRegisterIndex(src)) {
+    if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src)) {
         bool atJumpTarget = false;
         while (m_jumpTargetsPosition < m_codeBlock->jumpTargets.size() && m_codeBlock->jumpTargets[m_jumpTargetsPosition] <= currentInstructionIndex) {
             if (m_codeBlock->jumpTargets[m_jumpTargetsPosition] == currentInstructionIndex)
@@ -199,6 +199,8 @@ ALWAYS_INLINE void CTI::emitGetArg(int src, X86Assembler::RegisterID dst, unsign
 
         if (!atJumpTarget) {
             // The argument we want is already stored in eax
+            if (dst != X86::eax)
+                m_jit.movl_rr(X86::eax, dst);
             killLastResultRegister();
             return;
         }
@@ -1385,9 +1387,9 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_put_global_var: {
+            emitGetArg(instruction[i + 3].u.operand, X86::edx, i);
             JSVariableObject* globalObject = static_cast<JSVariableObject*>(instruction[i + 1].u.jsCell);
             m_jit.movl_i32r(asInteger(globalObject), X86::eax);
-            emitGetArg(instruction[i + 3].u.operand, X86::edx, i);
             emitPutVariableObjectRegister(X86::edx, X86::eax, instruction[i + 2].u.operand);
             i += 4;
             break;
