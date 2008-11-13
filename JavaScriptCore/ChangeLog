@@ -1,3 +1,29 @@
+2008-11-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - remove immediate checks from native codegen for known non-immediate cases like "this"
+        
+        ~.5% speedup on v8 benchmarks
+        
+        In the future we can extend this model to remove all sorts of
+        typechecks based on local type info or type inference.
+        
+        I also added an assertion to verify that all slow cases linked as
+        many slow case jumps as the corresponding fast case generated, and
+        fixed the pre-existing cases where this was not true.
+        
+        * VM/CTI.cpp:
+        (JSC::CTI::emitJumpSlowCaseIfNotJSCell):
+        (JSC::CTI::linkSlowCaseIfNotJSCell):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::isKnownNotImmediate):
+
 2008-11-13  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

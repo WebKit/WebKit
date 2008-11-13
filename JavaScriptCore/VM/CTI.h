@@ -269,12 +269,12 @@ namespace JSC {
         static const int ctiArgumentInitSize = 0;
 #endif
         // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
-        static const int repatchOffsetPutByIdStructureID = 19;
-        static const int repatchOffsetPutByIdPropertyMapOffset = 34;
+        static const int repatchOffsetPutByIdStructureID = 7;
+        static const int repatchOffsetPutByIdPropertyMapOffset = 22;
         // These architecture specific value are used to enable repatching - see comment on op_get_by_id.
-        static const int repatchOffsetGetByIdStructureID = 19;
-        static const int repatchOffsetGetByIdBranchToSlowCase = 25;
-        static const int repatchOffsetGetByIdPropertyMapOffset = 34;
+        static const int repatchOffsetGetByIdStructureID = 7;
+        static const int repatchOffsetGetByIdBranchToSlowCase = 13;
+        static const int repatchOffsetGetByIdPropertyMapOffset = 22;
 #if ENABLE(OPCODE_SAMPLING)
         static const int repatchOffsetGetByIdSlowCaseCall = 27 + 4 + ctiArgumentInitSize;
 #else
@@ -392,8 +392,9 @@ namespace JSC {
         JSValue* getConstantImmediateNumericArg(unsigned src);
         unsigned getDeTaggedConstantImmediate(JSValue* imm);
 
-        void emitJumpSlowCaseIfIsJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex);
-        void emitJumpSlowCaseIfNotJSCell(X86Assembler::RegisterID reg, unsigned opcodeIndex);
+        bool linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::iterator&, int vReg);
+        void emitJumpSlowCaseIfNotJSCell(X86Assembler::RegisterID, unsigned opcodeIndex);
+        void emitJumpSlowCaseIfNotJSCell(X86Assembler::RegisterID, unsigned opcodeIndex, int VReg);
 
         void emitJumpSlowCaseIfNotImmNum(X86Assembler::RegisterID, unsigned opcodeIndex);
         void emitJumpSlowCaseIfNotImmNums(X86Assembler::RegisterID, X86Assembler::RegisterID, unsigned opcodeIndex);
