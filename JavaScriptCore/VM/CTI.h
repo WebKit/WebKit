@@ -374,7 +374,7 @@ namespace JSC {
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
 
-        void emitGetArg(int src, X86Assembler::RegisterID dst);
+        void emitGetArg(int src, X86Assembler::RegisterID dst, unsigned i);
         void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
         void emitPutArg(X86Assembler::RegisterID src, unsigned offset);
         void emitPutArgConstant(unsigned value, unsigned offset);
@@ -430,6 +430,8 @@ namespace JSC {
         void printOpcodeOperandTypes(unsigned src1, unsigned src2);
 #endif
 
+        void killLastResultRegister();
+
         X86Assembler m_jit;
         Machine* m_machine;
         JSGlobalData* m_globalData;
@@ -456,9 +458,11 @@ namespace JSC {
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
 
+        int m_lastResultBytecodeRegister;
+        unsigned m_jumpTargetsPosition;
+
         // This limit comes from the limit set in PCRE
         static const int MaxPatternSize = (1 << 16);
-
     };
 }
 

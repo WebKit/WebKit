@@ -497,11 +497,22 @@ PassRefPtr<LabelID> CodeGenerator::newLabel()
 
 PassRefPtr<LabelID> CodeGenerator::emitLabel(LabelID* l0)
 {
-    l0->setLocation(instructions().size());
-    
+    unsigned newLabelIndex = instructions().size();
+    l0->setLocation(newLabelIndex);
+
+    if (m_codeBlock->jumpTargets.size() != 0) {
+        unsigned lastLabelIndex = m_codeBlock->jumpTargets.last();
+        ASSERT(lastLabelIndex <= newLabelIndex);
+        if (newLabelIndex == lastLabelIndex) {
+            // Peephole optimizations have already been disabled by emitting the last label
+            return l0;            
+        }
+    }
+
+    m_codeBlock->jumpTargets.append(newLabelIndex);
+
     // This disables peephole optimizations when an instruction is a jump target
     m_lastOpcodeID = op_end;
-    
     return l0;
 }
 

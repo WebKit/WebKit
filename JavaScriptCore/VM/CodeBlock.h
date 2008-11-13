@@ -265,6 +265,11 @@ namespace JSC {
             return constantRegisters[index - numVars].getJSValue();
         }
 
+        ALWAYS_INLINE bool isTemporaryRegisterIndex(int index)
+        {
+            return index >= numVars + numConstants;
+        }
+
 #if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
         void dump(ExecState*) const;
         void printStructureIDs(const Instruction*) const;
@@ -331,6 +336,8 @@ namespace JSC {
 #if ENABLE(CTI)
         HashMap<void*, unsigned> ctiReturnAddressVPCMap;
 #endif
+
+        Vector<unsigned> jumpTargets;
 
         EvalCodeCache evalCodeCache;
 

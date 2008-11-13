@@ -1,3 +1,65 @@
+2008-11-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 21943: Avoid needless reads of temporary values in CTI code
+        <https://bugs.webkit.org/show_bug.cgi?id=21943>
+
+        If an opcode needs to load a virtual register and a previous opcode left
+        the contents of that virtual register in a machine register, use the
+        value in the machine register rather than getting it from memory.
+
+        In order to perform this optimization, it is necessary to know the
+        jump tagets in the CodeBlock. For temporaries, the only problematic
+        jump targets are binary logical operators and the ternary conditional
+        operator. However, if this optimization were to be extended to local 
+        variable registers as well, other jump targets would need to be
+        included, like switch statement cases and the beginnings of catch
+        blocks.
+
+        This optimization also requires that the fast case and the slow case
+        of an opcode use emitPutResult() on the same register, which was chosen
+        to be eax, as that is the register into which we read the first operand
+        of opcodes. In order to make this the case, we needed to add some mov
+        instructions to the slow cases of some instructions.
+
+        This optimizaton is not applied whenever compileBinaryArithOp() is used
+        to compile an opcode, because different machine registers may be used to
+        store the final result. It seems possible to rewrite the code generation
+        in compileBinaryArithOp() to allow for this optimization.
+
+        This optimization is also not applied when generating slow cases,
+        because some fast cases overwrite the value of eax before jumping to the
+        slow case. In the future, it may be possible to apply this optimization
+        to slow cases as well, but it did not seem to be a speedup when testing
+        an early version of this patch.
+
+        This is a 1.0% speedup on SunSpider and a 6.3% speedup on the V8
+        benchmark suite.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::killLastResultRegister):
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::emitGetCTIParam):
+        (JSC::CTI::emitGetFromCallFrameHeader):
+        (JSC::CTI::emitPutResult):
+        (JSC::CTI::emitCTICall):
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::compileOpStrictEq):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        * VM/CTI.h:
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::isTemporaryRegisterIndex):
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitLabel):
+
 2008-11-12  Alp Toker  <alp@nuanti.com>
 
         autotools build system fix-up only. Add FloatQuad.h to the source
