@@ -532,6 +532,7 @@ static bool shouldEmitExtraNewlineForNode(Node* node)
     return false;
 }
 
+// Whether or not we should emit a character as we enter m_node (if it's a container) or as we hit it (if it's atomic).
 bool TextIterator::shouldRepresentNodeOffsetZero()
 {
     if (m_emitCharactersBetweenAllVisiblePositions && m_node->renderer() && m_node->renderer()->isTable())
@@ -554,22 +555,28 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     // is whether the inline vs block flow changed since the previous visible element.
     // I think we're already in a special enough case that that won't be needed, tho.
 
-    // If we are at the start, obviously no newline is needed.
+    // No character needed if this is the first node in the range.
     if (m_node == m_startContainer)
         return false;
     
-    // If we are outside the start container's subtree, assume we need a newline.
+    // If we are outside the start container's subtree, assume we need to emit.
     // FIXME: m_startContainer could be an inline block
     if (!m_node->isDescendantOf(m_startContainer))
         return true;
 
     // If we started as m_startContainer offset 0 and the current node is a descendant of
     // the start container, we already had enough context to correctly decide whether to
-    // emit a newline after a preceding block. We chose not to emit (m_haveEmitted is false),
+    // emit after a preceding block. We chose not to emit (m_haveEmitted is false),
     // so don't second guess that now.
     // NOTE: Is this really correct when m_node is not a leftmost descendant? Probably
     // immaterial since we likely would have already emitted something by now.
     if (m_startOffset == 0)
+        return false;
+        
+    // If this node is unrendered or invisible the VisiblePosition checks below won't have much meaning.
+    // Additionally, if the range we are iterating over contains huge sections of unrendered content, 
+    // we would create VisiblePositions on every call to this function without this check.
+    if (!m_node->renderer() || m_node->renderer()->style()->visibility() != VISIBLE)
         return false;
     
     // The currPos.isNotNull() check is needed because positions in non-html content
