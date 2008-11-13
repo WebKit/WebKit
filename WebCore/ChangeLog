@@ -1,3 +1,12 @@
+2008-11-12  Alp Toker  <alp@nuanti.com>
+
+        Build fixes for r38346. FloatQuad.cpp is missing:
+
+        1) #include "config.h"
+        2) #include <algorithm> for various mathematical definitions it uses.
+
+        * platform/graphics/FloatQuad.cpp:
+
 2008-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

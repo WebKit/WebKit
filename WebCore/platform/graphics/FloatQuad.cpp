@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "FloatQuad.h"
+
+#include <algorithm>
 
 using std::max;
 using std::min;
