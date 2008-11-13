@@ -1,3 +1,13 @@
+2008-11-12  Stephanie  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix context leak in XSLStyleSheets.
+        See bug https://bugs.webkit.org/show_bug.cgi?id=15715
+
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+
 2008-11-12  Alp Toker  <alp@nuanti.com>
 
         autotools: List web worker-related headers needed for a successful

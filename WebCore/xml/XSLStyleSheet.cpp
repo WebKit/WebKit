@@ -170,6 +170,8 @@ bool XSLStyleSheet::parseString(const String& string, bool strict)
         href().utf8().data(),
         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
         XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);
+    xmlFreeParserCtxt(ctxt);
+    
     loadChildSheets();
 
     xmlSetStructuredErrorFunc(0, 0);
