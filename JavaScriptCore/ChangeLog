@@ -1,3 +1,15 @@
+2008-11-13  Mike Pinkerton  <pinkerton@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22087
+        Need correct platform defines for Mac Chromium
+
+        Set the appropriate platform defines for Mac Chromium, which is
+        similar to PLATFORM(MAC), but isn't.
+
+        * wtf/Platform.h:
+
 2008-11-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.
