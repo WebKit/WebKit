@@ -1,3 +1,74 @@
+2008-11-12  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Updated reference images so that all pixel tests now "pass" on 10.4.11 PowerPC + r38347.
+        https://bugs.webkit.org/show_bug.cgi?id=21821
+
+        Checked-in specific reference images for pixel tests that are valid on Tiger but fail
+        because difference with reference image due to text rendering is greater than 1.0%
+
+        * platform/mac-tiger/svg/carto.net: Added.
+        * platform/mac-tiger/svg/carto.net/selectionlist-expected.checksum: Added.
+        * platform/mac-tiger/svg/carto.net/selectionlist-expected.png: Added.
+        * platform/mac-tiger/svg/custom/feComponentTransfer-Gamma-expected.checksum: Added.
+        * platform/mac-tiger/svg/custom/feComponentTransfer-Gamma-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-align-01-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-align-01-b-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-align-02-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-align-02-b-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-align-04-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-align-04-b-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-fonts-01-t-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-fonts-01-t-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-text-03-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-text-03-b-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-tselect-01-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-tselect-01-b-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-tspan-01-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-tspan-01-b-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-ws-01-t-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-ws-01-t-expected.png: Added.
+        * platform/mac-tiger/svg/text/text-ws-02-t-expected.checksum: Added.
+        * platform/mac-tiger/svg/text/text-ws-02-t-expected.png: Added.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/filters-color-01-b-expected.png: Added.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum: Added.
+        * platform/mac-tiger/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png: Added.
+
+        svg/batik/paints/gradientLimit.svg is rendering different on Tiger and Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=22219
+
+        * platform/mac-tiger/svg/batik: Added.
+        * platform/mac-tiger/svg/batik/paints: Added.
+        * platform/mac-tiger/svg/batik/paints/gradientLimit-expected.checksum: Added.
+        * platform/mac-tiger/svg/batik/paints/gradientLimit-expected.png: Added.
+
+        svg/custom/mask-excessive-malloc.svg is failing on Tiger
+        https://bugs.webkit.org/show_bug.cgi?id=22218
+
+        * platform/mac-tiger/svg/custom/mask-excessive-malloc-expected.checksum: Added.
+        * platform/mac-tiger/svg/custom/mask-excessive-malloc-expected.png: Added.
+
+        svg/W3C-SVG-1.1/pservers-grad-17-b.svg is failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=22220
+
+        * platform/mac-leopard/svg: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.checksum: Added.
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png:
+
+        svg/custom/foreign-object-skew.svg is failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=22221
+
+        * platform/mac-leopard/svg/custom: Added.
+        * platform/mac-leopard/svg/custom/foreign-object-skew-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/foreign-object-skew-expected.png: Added.
+        * platform/mac/svg/custom/foreign-object-skew-expected.checksum:
+        * platform/mac/svg/custom/foreign-object-skew-expected.png:
+
 2008-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
