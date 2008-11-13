@@ -1,3 +1,15 @@
+2008-11-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Perform teardown in the 'jsc' shell in order to suppress annoying and
+        misleading leak messages. There is still a lone JSC::Node leaking when
+        quit() is called, but hopefully that can be fixed as well.
+
+        * jsc.cpp:
+        (functionQuit):
+        (main):
+
 2008-11-13  Mike Pinkerton  <pinkerton@chromium.org>
 
         Reviewed by Sam Weinig.

@@ -251,8 +251,15 @@ JSValue* functionReadline(ExecState* exec, JSObject*, JSValue*, const ArgList&)
     return jsString(exec, line.data());
 }
 
-JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&)
+JSValue* functionQuit(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
+    {
+        JSLock lock(false);
+        JSGlobalData& globalData = exec->globalData();
+        globalData.heap.destroy();
+        globalData.deref();
+    }
+
     exit(0);
 #if !COMPILER(MSVC)
     // MSVC knows that exit(0) never returns, so it flags this return statement as unreachable.
@@ -291,9 +298,14 @@ int main(int argc, char** argv)
 #endif
 
     int res = 0;
+    RefPtr<JSGlobalData> globalData = JSGlobalData::create();
     TRY
-        res = jscmain(argc, argv, JSGlobalData::create().releaseRef());
+        res = jscmain(argc, argv, globalData.get());
     EXCEPT(res = 3)
+    {
+        JSLock lock(false);
+        globalData->heap.destroy();
+    }
     return res;
 }
 
