@@ -1054,9 +1054,6 @@ FloatPoint RenderBox::absoluteToLocal(FloatPoint containerPoint, bool fixed, boo
 
 FloatQuad RenderBox::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed) const
 {
-    // We don't expect localToAbsoluteQuad() to be called during layout (yet)
-    ASSERT(!view() || !view()->layoutState());
-
     if (style()->position() == FixedPosition)
         fixed = true;
 
@@ -1072,7 +1069,7 @@ FloatQuad RenderBox::localToAbsoluteQuad(const FloatQuad& localQuad, bool fixed)
 
         // Take into account space above a vertically aligned table cell
         // (see localToAbsoluteForContent())
-        quad.move(0.0f, static_cast<float>(borderTopExtra()));
+        quad.move(0.0f, static_cast<float>(o->borderTopExtra()));
 
         return o->localToAbsoluteQuad(quad, fixed);
     }

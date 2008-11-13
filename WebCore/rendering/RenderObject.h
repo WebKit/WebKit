@@ -607,7 +607,8 @@ public:
     virtual int height() const { return 0; }
 
     virtual IntRect borderBox() const { return IntRect(0, 0, width(), height()); }
-    IntRect absoluteOutlineBox() const;
+    // Bounds of the outline box in absolute coords. Respects transforms
+    IntRect absoluteOutlineBounds() const;
 
     // The height of a block when you include normal flow overflow spillage out of the bottom
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside

@@ -1898,7 +1898,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const IntRect& oldBounds, const In
     if (!fullRepaint && style()->borderFit() == BorderFitLines)
         fullRepaint = true;
     if (!fullRepaint) {
-        newOutlineBox = absoluteOutlineBox();
+        newOutlineBox = absoluteOutlineBounds();
         if (newOutlineBox.location() != oldOutlineBox.location() || (mustRepaintBackgroundOrBorder() && (newBounds != oldBounds || newOutlineBox != oldOutlineBox)))
             fullRepaint = true;
     }
@@ -3146,13 +3146,15 @@ void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
         rect.inflate(outlineSize);
 }
 
-IntRect RenderObject::absoluteOutlineBox() const
+IntRect RenderObject::absoluteOutlineBounds() const
 {
     IntRect box = borderBox();
-    FloatPoint absPos = localToAbsolute();
-    box.move(absPos.x(), absPos.y());
-    box.move(view()->layoutDelta());
     adjustRectForOutlineAndShadow(box);
+
+    FloatQuad absOutlineQuad = localToAbsoluteQuad(FloatRect(box));
+    box = absOutlineQuad.enclosingBoundingBox();
+    box.move(view()->layoutDelta());
+
     return box;
 }
 

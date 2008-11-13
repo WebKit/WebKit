@@ -237,7 +237,7 @@ void RenderSVGContainer::layout()
     bool checkForRepaint = checkForRepaintDuringLayout() && selfWillPaint();
     if (checkForRepaint) {
         oldBounds = m_absoluteBounds;
-        oldOutlineBox = absoluteOutlineBox();
+        oldOutlineBox = absoluteOutlineBounds();
     }
     
     calculateLocalTransform();

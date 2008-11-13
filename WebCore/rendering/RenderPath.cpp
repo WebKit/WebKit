@@ -127,7 +127,7 @@ void RenderPath::layout()
     bool checkForRepaint = checkForRepaintDuringLayout() && selfNeedsLayout();
     if (checkForRepaint) {
         oldBounds = m_absoluteBounds;
-        oldOutlineBox = absoluteOutlineBox();
+        oldOutlineBox = absoluteOutlineBounds();
     }
         
     calculateLocalTransform();

@@ -589,7 +589,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     bool checkForRepaint = m_everHadLayout && checkForRepaintDuringLayout();
     if (checkForRepaint) {
         oldBounds = absoluteClippedOverflowRect();
-        oldOutlineBox = absoluteOutlineBox();
+        oldOutlineBox = absoluteOutlineBounds();
     }
 
     LayoutStateMaintainer statePusher(view(), this, IntSize(xPos(), yPos()), !m_hasColumns && !hasReflection());

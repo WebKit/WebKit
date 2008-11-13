@@ -228,7 +228,7 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
         ASSERT(!view->layoutState());
 
         IntRect newRect = m_object->absoluteClippedOverflowRect();
-        IntRect newOutlineBox = m_object->absoluteOutlineBox();
+        IntRect newOutlineBox = m_object->absoluteOutlineBounds();
         if (checkForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {
@@ -285,7 +285,7 @@ void RenderLayer::setHasVisibleContent(bool b)
     m_hasVisibleContent = b;
     if (m_hasVisibleContent) {
         m_repaintRect = renderer()->absoluteClippedOverflowRect();
-        m_outlineBox = renderer()->absoluteOutlineBox();
+        m_outlineBox = renderer()->absoluteOutlineBounds();
         if (!isOverflowOnly())
             dirtyStackingContextZOrderLists();
     }

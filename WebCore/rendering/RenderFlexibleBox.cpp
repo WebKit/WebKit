@@ -216,7 +216,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     bool checkForRepaint = checkForRepaintDuringLayout();
     if (checkForRepaint) {
         oldBounds = absoluteClippedOverflowRect();
-        oldOutlineBox = absoluteOutlineBox();
+        oldOutlineBox = absoluteOutlineBounds();
     }
 
     LayoutStateMaintainer statePusher(view(), this, IntSize(m_x, m_y), !hasReflection());

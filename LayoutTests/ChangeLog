@@ -1,3 +1,16 @@
+2008-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22212
+        
+        Repaint test for a transform change on an element with a positioned child.
+        
+        * fast/repaint/transform-absolute-child.html: Added.
+        * platform/mac/fast/repaint/transform-absolute-child-expected.checksum: Added.
+        * platform/mac/fast/repaint/transform-absolute-child-expected.png: Added.
+        * platform/mac/fast/repaint/transform-absolute-child-expected.txt: Added.
+
 2008-11-12  Geoffrey Garen  <ggaren@apple.com>
 
         Roll in r38322, now that test failures have been fixed.

@@ -9,6 +9,59 @@
 
 2008-11-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22212
+
+        Rename absoluteOutlineBox() to absoluteOutlineBounds(), to indicate that
+        it may be the bounding outline box of a transformed element, and fix it
+        to respect transforms by mapping the outline box to an absolute quad and
+        taking the enclosing rect.
+        
+        RenderBox::localToAbsoluteQuad() can no longer assert that there is no
+        LayoutState, but LayoutState cannot be used during quad mapping (it knows
+        nothing about transforms).
+        
+        Finally, fix a bug in RenderBox::localToAbsoluteQuad() which was getting
+        borderTopExtra() from the object, rather than its container (as localToAbsolute()
+        does).
+        
+        Test: fast/repaint/transform-absolute-child.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localToAbsoluteQuad):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::absoluteOutlineBounds):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::layout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
+2008-11-12  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         https://bugs.webkit.org/show_bug.cgi?id=21942

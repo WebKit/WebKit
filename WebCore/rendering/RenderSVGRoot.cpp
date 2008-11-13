@@ -95,7 +95,7 @@ void RenderSVGRoot::layout()
     IntRect oldOutlineBox;
     bool checkForRepaint = checkForRepaintDuringLayout() && selfNeedsLayout();
     if (checkForRepaint)
-        oldOutlineBox = absoluteOutlineBox();
+        oldOutlineBox = absoluteOutlineBounds();
 
     calcWidth();
     calcHeight();
