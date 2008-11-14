@@ -1,3 +1,74 @@
+2008-11-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22269
+        Reduce PropertyMap usage
+
+        From observation of StructureID statistics, it became clear that many
+        StructureID's were not being used as StructureIDs themselves, but rather
+        only being necessary as links in the transition chain.  Acknowledging this
+        and that PropertyMaps stored in StructureIDs can be treated as caches, that
+        is that they can be reconstructed on demand, it became clear that we could
+        reduce the memory consumption of StructureIDs by only keeping PropertyMaps
+        for the StructureIDs that need them the most.
+
+        The specific strategy used to reduce the number of StructureIDs with
+        PropertyMaps is to take the previous StructureIDs PropertyMap when initially
+        transitioning (addPropertyTransition) from it and clearing out the pointer 
+        in the process.  The next time we need to do the same transition, for instance
+        repeated calls to the same constructor, we use the new addPropertyTransitionToExistingStructure
+        first, which allows us not to need the PropertyMap to determine if the property
+        exists already, since a transition to that property would require it not already
+        be present in the StructureID.  Should there be no transition, the PropertyMap
+        can be constructed on demand (via materializePropertyMap) to determine if the put is a 
+        replace or a transition to a new StructureID.
+
+        Reduces memory use on Membuster head test (30 pages open) by ~15MB.
+
+        * JavaScriptCore.exp:
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect): First use addPropertyTransitionToExistingStructure
+        so that we can avoid building the PropertyMap on subsequent similar object
+        creations.
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry): Add version of constructor which takes
+        all values to be used when lazily building the PropertyMap. 
+        * runtime/StructureID.cpp:
+        (JSC::StructureID::dumpStatistics): Add statistics on the number of StructureIDs
+        with PropertyMaps.
+        (JSC::StructureID::StructureID): Rename m_cachedTransistionOffset to m_offset
+        (JSC::isPowerOf2):
+        (JSC::nextPowerOf2):
+        (JSC::sizeForKeyCount): Returns the expected size of a PropertyMap for a key count.
+        (JSC::StructureID::materializePropertyMap): Builds the PropertyMap out of its previous pointer chain.
+        (JSC::StructureID::addPropertyTransitionToExistingStructure): Only transitions if there is a
+        an existing transition.
+        (JSC::StructureID::addPropertyTransition): Instead of always copying the ProperyMap, try and take
+        it from it previous pointer.
+        (JSC::StructureID::removePropertyTransition): Simplify by calling toDictionaryTransition() to do
+        transition work.
+        (JSC::StructureID::changePrototypeTransition): Build the PropertyMap if necessary before transitioning
+        because once you have transitioned, you will not be able to reconstruct it afterwards as there is no
+        previous pointer, pinning the ProperyMap as well.
+        (JSC::StructureID::getterSetterTransition): Ditto.
+        (JSC::StructureID::toDictionaryTransition): Pin the PropertyMap so that it is not destroyed on further transitions.
+        (JSC::StructureID::fromDictionaryTransition): We can only transition back from a dictionary transition if there
+        are no deleted offsets.
+        (JSC::StructureID::addPropertyWithoutTransition): Build PropertyMap on demands and pin.
+        (JSC::StructureID::removePropertyWithoutTransition): Ditto.
+        (JSC::StructureID::get): Build on demand.
+        (JSC::StructureID::createPropertyMapHashTable): Add version of create that takes a size
+        for on demand building.
+        (JSC::StructureID::expandPropertyMapHashTable):
+        (JSC::StructureID::rehashPropertyMapHashTable):
+        (JSC::StructureID::getEnumerablePropertyNamesInternal): Build PropertyMap on demand.
+        * runtime/StructureID.h:
+        (JSC::StructureID::propertyStorageSize): Account for StructureIDs without PropertyMaps.
+        (JSC::StructureID::isEmpty): Ditto.
+        (JSC::StructureID::materializePropertyMapIfNecessary):
+        (JSC::StructureID::get): Build PropertyMap on demand
+
 2008-11-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

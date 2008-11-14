@@ -64,9 +64,10 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
         static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& propertyName, unsigned attributes, size_t& offset);
+        static PassRefPtr<StructureID> addPropertyTransitionToExistingStructure(StructureID*, const Identifier& propertyName, unsigned attributes, size_t& offset);
         static PassRefPtr<StructureID> removePropertyTransition(StructureID*, const Identifier& propertyName, size_t& offset);
+        static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
         static PassRefPtr<StructureID> getterSetterTransition(StructureID*);
         static PassRefPtr<StructureID> toDictionaryTransition(StructureID*);
         static PassRefPtr<StructureID> fromDictionaryTransition(StructureID*);
@@ -100,37 +101,42 @@ namespace JSC {
         void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureIDChain* cachedPrototypeChain() const { return m_cachedPrototypeChain.get(); }
 
-        void setCachedTransistionOffset(size_t offset) { m_cachedTransistionOffset = offset; }
-        size_t cachedTransistionOffset() const { return m_cachedTransistionOffset; }
-
         void growPropertyStorageCapacity();
         size_t propertyStorageCapacity() const { return m_propertyStorageCapacity; }
-        size_t propertyStorageSize() const { return m_propertyTable ? m_propertyTable->keyCount + m_deletedOffsets.size() : 0; }
+        size_t propertyStorageSize() const { return m_propertyTable ? m_propertyTable->keyCount + m_deletedOffsets.size() : m_offset + 1; }
 
-        size_t get(const Identifier& propertyName) const;
-        size_t get(const Identifier& propertyName, unsigned& attributes) const;
+        size_t get(const Identifier& propertyName);
+        size_t get(const Identifier& propertyName, unsigned& attributes);
         void getEnumerablePropertyNames(ExecState*, PropertyNameArray&, JSObject*);
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
 
-        bool isEmpty() const { return !m_propertyTable; }
+        bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == WTF::notFound; }
 
     private:
         StructureID(JSValue* prototype, const TypeInfo&);
 
         size_t put(const Identifier& propertyName, unsigned attributes);
         size_t remove(const Identifier& propertyName);
-        void getEnumerablePropertyNamesInternal(PropertyNameArray&) const;
+        void getEnumerablePropertyNamesInternal(PropertyNameArray&);
 
         void expandPropertyMapHashTable();
         void rehashPropertyMapHashTable();
         void rehashPropertyMapHashTable(unsigned newTableSize);
         void createPropertyMapHashTable();
+        void createPropertyMapHashTable(unsigned newTableSize);
         void insertIntoPropertyMapHashTable(const PropertyMapEntry&);
         void checkConsistency();
 
         PropertyMapHashTable* copyPropertyTable();
+        void materializePropertyMap();
+        void materializePropertyMapIfNecessary()
+        {
+            if (m_propertyTable || !m_previous)             
+                return;
+            materializePropertyMap();
+        }
 
         void clearEnumerationCache();
 
@@ -158,19 +164,20 @@ namespace JSC {
         Vector<unsigned> m_deletedOffsets;
 
         size_t m_propertyStorageCapacity;
-
-        size_t m_cachedTransistionOffset;
+        size_t m_offset;
 
         bool m_isDictionary : 1;
+        bool m_isPinnedPropertyTable : 1;
         bool m_hasGetterSetterProperties : 1;
         bool m_usingSingleTransitionSlot : 1;
         unsigned m_attributesInPrevious : 5;
     };
 
-    inline size_t StructureID::get(const Identifier& propertyName) const
+    inline size_t StructureID::get(const Identifier& propertyName)
     {
         ASSERT(!propertyName.isNull());
 
+        materializePropertyMapIfNecessary();
         if (!m_propertyTable)
             return WTF::notFound;
 

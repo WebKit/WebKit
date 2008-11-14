@@ -31,11 +31,19 @@ namespace JSC {
         unsigned attributes;
         unsigned index;
 
-        PropertyMapEntry(UString::Rep* k, int a)
-            : key(k)
+        PropertyMapEntry(UString::Rep* key, unsigned attributes)
+            : key(key)
             , offset(0)
-            , attributes(a)
+            , attributes(attributes)
             , index(0)
+        {
+        }
+
+        PropertyMapEntry(UString::Rep* key, unsigned offset, unsigned attributes, unsigned index)
+            : key(key)
+            , offset(offset)
+            , attributes(attributes)
+            , index(index)
         {
         }
     };
