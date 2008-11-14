@@ -47,6 +47,7 @@ class QWebFramePrivate;
 class QWebPage;
 class QWebHitTestResult;
 class QWebHistoryItem;
+class QWebSecurityOrigin;
 
 namespace WebCore {
     class WidgetPrivate;
@@ -168,6 +169,8 @@ public:
     QWebHitTestResult hitTestContent(const QPoint &pos) const;
 
     virtual bool event(QEvent *);
+
+    QWebSecurityOrigin securityOrigin() const;
 
 public Q_SLOTS:
     QVariant evaluateJavaScript(const QString& scriptSource);

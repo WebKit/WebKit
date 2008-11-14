@@ -8,4 +8,6 @@ WEBKIT_API_HEADERS = $$PWD/qcookiejar.h \
                      $$PWD/qwebview.h \
                      $$PWD/qwebpagehistory.h \
                      $$PWD/qwebsettings.h \
-                     $$PWD/qwebhistoryinterface.h
+                     $$PWD/qwebhistoryinterface.h \
+                     $$PWD/qwebdatabase.h \
+                     $$PWD/qwebsecurityorigin.h

@@ -1,3 +1,70 @@
+2008-10-24  Yael Aharon <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Adding public API to provide access to the security origin
+        (QWebSecurityOrigin) and the databases used for the offline
+        storage (QWebDatabase).
+
+        In addition QWebSettings gains configuration functions for
+        enabling/disabling offline storage, web application cache
+        and DOM local storage.
+
+        This commits lands the core feature(s), the unit tests and the
+        documentation are going to follow in the comming days/weeks.
+
+        Note: The API is not frozen yet.
+
+        * Api/headers.pri:
+        * Api/qwebdatabase.cpp: Added.
+        (QWebDatabase::QWebDatabase):
+        (QWebDatabase::operator=):
+        (QWebDatabase::name):
+        (QWebDatabase::displayName):
+        (QWebDatabase::expectedSize):
+        (QWebDatabase::size):
+        (QWebDatabase::absoluteFilePath):
+        (QWebDatabase::origin):
+        (QWebDatabase::remove):
+        (QWebDatabase::~QWebDatabase):
+        * Api/qwebdatabase.h: Added.
+        * Api/qwebdatabase_p.h: Added.
+        * Api/qwebframe.cpp:
+        (QWebFrame::securityOrigin):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * Api/qwebsecurityorigin.cpp: Added.
+        (QWebSecurityOrigin::QWebSecurityOrigin):
+        (QWebSecurityOrigin::operator=):
+        (QWebSecurityOrigin::scheme):
+        (QWebSecurityOrigin::host):
+        (QWebSecurityOrigin::port):
+        (QWebSecurityOrigin::databaseUsage):
+        (QWebSecurityOrigin::databaseQuota):
+        (QWebSecurityOrigin::setDatabaseQuota):
+        (QWebSecurityOrigin::~QWebSecurityOrigin):
+        (QWebSecurityOrigin::allOrigins):
+        (QWebSecurityOrigin::databases):
+        * Api/qwebsecurityorigin.h: Added.
+        * Api/qwebsecurityorigin_p.h: Added.
+        (QWebSecurityOriginPrivate::QWebSecurityOriginPrivate):
+        (QWebSecurityOriginPrivate::~QWebSecurityOriginPrivate):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::setOfflineStoragePath):
+        (QWebSettings::offlineStoragePath):
+        (QWebSettings::setOfflineStorageDefaultQuota):
+        (QWebSettings::offlineStorageDefaultQuota):
+        (QWebSettings::setOfflineWebApplicationCachePath):
+        (QWebSettings::offlineWebApplicationCachePath):
+        (QWebSettings::setLocalStorageDatabasePath):
+        (QWebSettings::localStorageDatabasePath):
+        * Api/qwebsettings.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::exceededDatabaseQuota):
+
 2008-11-12  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Tor Arne Vestbø.

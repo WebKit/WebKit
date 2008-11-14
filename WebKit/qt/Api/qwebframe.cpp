@@ -23,6 +23,8 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
+#include "qwebsecurityorigin.h"
+#include "qwebsecurityorigin_p.h"
 
 #include "DocumentLoader.h"
 #include "FocusController.h"
@@ -951,6 +953,13 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
         }
     }
     return rc;
+}
+
+QWebSecurityOrigin QWebFrame::securityOrigin() const
+{
+    QWebFrame* that = const_cast<QWebFrame*>(this);
+    QWebSecurityOriginPrivate* priv = new QWebSecurityOriginPrivate(QWebFramePrivate::core(that)->document()->securityOrigin());
+    return QWebSecurityOrigin(priv);
 }
 
 WebCore::Frame* QWebFramePrivate::core(QWebFrame* webFrame)

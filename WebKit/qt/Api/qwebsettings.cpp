@@ -32,6 +32,8 @@
 #include "IconDatabase.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "ApplicationCacheStorage.h"
+#include "DatabaseTracker.h"
 
 #include <QHash>
 #include <QSharedData>
@@ -50,6 +52,9 @@ public:
     QHash<int, int> fontSizes;
     QHash<int, bool> attributes;
     QUrl userStyleSheetLocation;
+    QString localStorageDatabasePath;
+    QString offlineWebApplicationCachePath;
+    qint64 offlineStorageDefaultQuota;
 
     void apply();
     WebCore::Settings *settings;
@@ -156,6 +161,9 @@ void QWebSettingsPrivate::apply()
         QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
 
+        QString localStoragePath = !localStorageDatabasePath.isEmpty() ? localStorageDatabasePath : global->localStorageDatabasePath;
+        settings->setLocalStorageDatabasePath(localStoragePath);
+
         value = attributes.value(QWebSettings::ZoomTextOnly,
                                  global->attributes.value(QWebSettings::ZoomTextOnly));
         settings->setZoomsTextOnly(value);
@@ -164,6 +172,17 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::PrintBackgroundElements));
         settings->setShouldPrintBackgrounds(value);
 
+        value = attributes.value(QWebSettings::OfflineStorageDatabaseEnabled,
+                                      global->attributes.value(QWebSettings::OfflineStorageDatabaseEnabled));
+        settings->setDatabasesEnabled(value);
+
+        value = attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled,
+                                      global->attributes.value(QWebSettings::OfflineWebApplicationCacheEnabled));
+        settings->setOfflineWebApplicationCacheEnabled(value);
+
+        value = attributes.value(QWebSettings::LocalStorageDatabaseEnabled,
+                                      global->attributes.value(QWebSettings::LocalStorageDatabaseEnabled));
+        settings->setLocalStorageEnabled(value);
     } else {
         QList<QWebSettingsPrivate *> settings = *::allSettings();
         for (int i = 0; i < settings.count(); ++i)
@@ -202,7 +221,8 @@ QWebSettings *QWebSettings::globalSettings()
     enum further describes this.
     
     QWebSettings also configures global properties such as the web page memory
-    cache and the web page icon database.
+    cache and the web page icon database, local database storage and offline
+    applications storage.
 
     \sa QWebPage::settings(), QWebView::settings(), {Browser}
 */
@@ -299,6 +319,11 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LinksIncludedInFocusChain, true);
     d->attributes.insert(QWebSettings::ZoomTextOnly, false);
     d->attributes.insert(QWebSettings::PrintBackgroundElements, true);
+    d->attributes.insert(QWebSettings::OfflineStorageDatabaseEnabled, true);
+    d->attributes.insert(QWebSettings::OfflineWebApplicationCacheEnabled, true);
+    d->attributes.insert(QWebSettings::LocalStorageDatabaseEnabled, true);
+    d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
+
 }
 
 /*!
@@ -608,3 +633,104 @@ void QWebSettings::resetAttribute(WebAttribute attr)
     }
 }
 
+/*!
+    Sets the path for HTML5 offline storage to \a path.
+
+    \a path must point to an existing directory where the databases are stored.
+
+    Setting an empty path disables the feature.
+
+    \sa offlineStoragePath()
+*/
+void QWebSettings::setOfflineStoragePath(const QString& path)
+{
+#if ENABLE(DATABASE)
+    WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(path);
+#endif
+}
+
+/*!
+    Returns the path of the HTML5 offline storage or an empty string if the
+    feature is disabled.
+
+    \sa setOfflineStoragePath()
+*/
+QString QWebSettings::offlineStoragePath()
+{
+#if ENABLE(DATABASE)
+    return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
+#else
+    return QString();
+#endif
+}
+
+void QWebSettings::setOfflineStorageDefaultQuota(qint64 maximumSize)
+{
+    QWebSettings::globalSettings()->d->offlineStorageDefaultQuota = maximumSize;
+}
+
+qint64 QWebSettings::offlineStorageDefaultQuota()
+{
+    return QWebSettings::globalSettings()->d->offlineStorageDefaultQuota;
+}
+
+/*!
+    Sets the path for HTML5 offline web application cache storage to \a path.
+
+    \a path must point to an existing directory where the cache is stored.
+
+    Setting an empty path disables the feature.
+
+    \sa offlineWebApplicationCachePath()
+*/
+void QWebSettings::setOfflineWebApplicationCachePath(const QString& path)
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    WebCore::cacheStorage().setCacheDirectory(path);
+#endif
+}
+
+/*!
+    Returns the path of the HTML5 offline web application cache storage
+    or an empty string if the feature is disabled.
+
+    \sa setOfflineWebApplicationCachePath()
+*/
+QString QWebSettings::offlineWebApplicationCachePath()
+{
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    return WebCore::cacheStorage().cacheDirectory();
+#else
+    return QString();
+#endif
+}
+
+/*!
+    Sets the path for HTML5 offline web application cache storage to \a path.
+
+    \a path must point to an existing directory where the cache is stored.
+
+    Setting an empty path disables the feature.
+
+    \sa offlineWebApplicationCachePath()
+*/
+void QWebSettings::setLocalStorageDatabasePath(const QString& path)
+{
+    QWebSettingsPrivate *global = QWebSettings::globalSettings()->d;
+    global->localStorageDatabasePath = path;
+    d->apply();
+}
+
+/*!
+    Sets the path for HTML5 local storage database to \a path.
+
+    \a path must point to an existing directory where the cache is stored.
+
+    Setting an empty path disables the feature.
+
+*/
+QString QWebSettings::localStorageDatabasePath() const
+{
+    QWebSettingsPrivate *global = QWebSettings::globalSettings()->d;
+    return global->localStorageDatabasePath;
+}

@@ -37,10 +37,14 @@
 #include "HitTestResult.h"
 #include "NotImplemented.h"
 #include "WindowFeatures.h"
+#include "DatabaseTracker.h"
+#include "SecurityOrigin.h"
 
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "qwebframe_p.h"
+#include "qwebsecurityorigin.h"
+#include "qwebsecurityorigin_p.h"
 
 #include <qtooltip.h>
 
@@ -377,9 +381,14 @@ void ChromeClientQt::print(Frame *frame)
     emit m_webPage->printRequested(QWebFramePrivate::kit(frame));
 }
 
-void ChromeClientQt::exceededDatabaseQuota(Frame*, const String&)
+void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
-    notImplemented();
+    quint64 quota = QWebSettings::offlineStorageDefaultQuota();
+#if ENABLE(DATABASE)
+    if (!DatabaseTracker::tracker().hasEntryForOrigin(frame->document()->securityOrigin()))
+        DatabaseTracker::tracker().setQuota(frame->document()->securityOrigin(), quota);
+#endif
+    emit m_webPage->exceededDatabaseQuota(QWebFramePrivate::kit(frame), databaseName);
 }
 
 void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)

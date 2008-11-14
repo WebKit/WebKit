@@ -61,6 +61,8 @@ win32-g++ {
 
 # Optional components (look for defs in config.h and included files!)
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
+!contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=.): DEFINES += ENABLE_OFFLINE_WEB_APPLICATIONS=1
+!contains(DEFINES, ENABLE_DOM_STORAGE=.): DEFINES += ENABLE_DOM_STORAGE=1
 !contains(DEFINES, ENABLE_DATABASE=.): DEFINES += ENABLE_DATABASE=1
 !contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
@@ -1015,7 +1017,10 @@ HEADERS += \
     $$PWD/../WebKit/qt/Api/qwebhistoryinterface.h \
     $$PWD/../WebKit/qt/Api/qwebpluginfactory.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
-    $$PWD/platform/network/qt/QNetworkReplyHandler.h
+    $$PWD/platform/network/qt/QNetworkReplyHandler.h \
+    $$PWD/../WebKit/qt/Api/qwebsecurityorigin.h \
+    $$PWD/../WebKit/qt/Api/qwebdatabase.h
+
 
 SOURCES += \
     bindings/js/ScriptControllerQt.cpp \
@@ -1101,7 +1106,10 @@ SOURCES += \
     ../WebKit/qt/Api/qwebhistory.cpp \
     ../WebKit/qt/Api/qwebsettings.cpp \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
-    ../WebKit/qt/Api/qwebpluginfactory.cpp
+    ../WebKit/qt/Api/qwebpluginfactory.cpp \
+    ../WebKit/qt/Api/qwebsecurityorigin.cpp \
+    ../WebKit/qt/Api/qwebdatabase.cpp
+
 
     win32-*: SOURCES += platform/win/SystemTimeWin.cpp
     else: SOURCES += platform/qt/SystemTimeQt.cpp
@@ -1244,20 +1252,20 @@ contains(DEFINES, ENABLE_DATABASE=1) {
 }
 
 contains(DEFINES, ENABLE_DOM_STORAGE=1) {
-    FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE =1
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE=1
+
+    HEADERS += \
+        storage/Storage.h \
+        storage/StorageEvent.h \
+        storage/SessionStorage.h \
+        storage/SessionStorageArea.h
 
     SOURCES += \
-        storage/LocalStorage.cpp \
-        storage/LocalStorageArea.cpp \
         storage/Storage.cpp \
-        storage/StorageArea.cpp \
         storage/StorageEvent.cpp \
-        storage/StorageMap.cpp \
         storage/SessionStorage.cpp \
         storage/SessionStorageArea.cpp \
-        bindings/js/JSStorage.cpp \
-        bindings/js/JSStorageCustom.cpp \
-        bindings/js/JSStorageEvent.cpp \
+        bindings/js/JSStorageCustom.cpp
 
     IDL_BINDINGS += \
         storage/Storage.idl \
@@ -1776,6 +1784,21 @@ SOURCES += \
     addExtraCompiler(cssvalues)
 }
 
+contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_OFFLINE_WEB_APPLICATIONS=1
+
+IDL_BINDINGS += \
+    loader/appcache/DOMApplicationCache.idl
+
+SOURCES += \
+    loader/appcache/ApplicationCache.cpp \
+    loader/appcache/ApplicationCacheGroup.cpp \
+    loader/appcache/ApplicationCacheStorage.cpp \
+    loader/appcache/ApplicationCacheResource.cpp \
+    loader/appcache/DOMApplicationCache.cpp \
+    loader/appcache/ManifestParser.cpp \
+    bindings/js/JSDOMApplicationCacheCustom.cpp
+}
 
 # GENERATOR 1: IDL compiler
 idl.output = $$GENERATED_SOURCES_DIR/JS${QMAKE_FILE_BASE}.cpp

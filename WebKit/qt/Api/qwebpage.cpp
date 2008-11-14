@@ -2540,4 +2540,12 @@ quint64 QWebPage::bytesReceived() const {
     window that hosts QWebPage should be changed to \a visible.
 */
 
+/*!
+    \fn void QWebPage::exceededDatabaseQuota(QWebFrame* frame, QString databaseName);
+
+    This signal is emitted whenever a web site is asking to store data to the database \a databaseName
+    and the quota allocated to that web site is exceeded.
+*/
+
+
 #include "moc_qwebpage.cpp"
