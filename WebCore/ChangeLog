@@ -1,3 +1,27 @@
+2008-11-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        Fix (again) for <rdar://problem/5089327> Too much indentation when 
+        pasting quoted paragraphs
+
+        This patch goes back to Justin's original approach to fix this bug, 
+        written in revision 38273. That fix was mostly rolled out by 
+        revision 38310 because of styling issues created by the addition of 
+        extra blockquote nodes. This patch again goes back to Justin's 
+        original fix because of cases we discovered the newer fix could not 
+        possibly cover. This version of the patch minimizes the styling 
+        issues of extra blockquotes by opting into the merge start code. 
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::hasMatchingQuoteLevel): We want shouldMergeStart to 
+        return true when the quoting level of the end of the inserted 
+        content matches the quoting level of the end of the existing 
+        content.
+        (WebCore::ReplaceSelectionCommand::shouldMergeStart): Now calls 
+        hasMatchingQuoteLevel
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2008-11-14  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.
