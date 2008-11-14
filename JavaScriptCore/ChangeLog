@@ -1,3 +1,16 @@
+2008-11-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21500>
+
+        JavaScriptCore build with -O3 flag instead of -O2 (gcc).
+        2.02% speedup on SunSpider (Qt-port on Linux)
+        1.10% speedup on V8 (Qt-port on Linux)
+        3.45% speedup on WindScorpion (Qt-port on Linux)
+
+        * JavaScriptCore.pri:
+
 2008-11-14  Kristian Amlie  <kristian.amlie@trolltech.com>
 
         Reviewed by Darin Adler.
