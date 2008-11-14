@@ -1,3 +1,24 @@
+2008-11-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/4230923> "Make Plain Text" doesn't reset text alignment in single paragraph messages
+        
+        When applying block styles, we would add block properties to the body element, and Mail's
+        Make Plain Text feature isn't equipped to remove those.  This could have been fixed on our side,
+        but this change has the advantage that it fixes the bug on Tiger, where Mail does not plan future updates.
+        
+        We have code that puts the paragraphs that we're operating on into blocks of their own before
+        adding or removing block properties from the blocks that enclose them.  We need to run this code 
+        when the enclosing block is the body element.
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNewDefaultParagraphElementAt): Added, moved code from moveParagraphContents
+        to here.
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): Renamed some variables for clarity.
+        Added a few comments.  Fixed bug by not bailing out when the block about to be used is the body element.
+        * editing/CompositeEditCommand.h:
+
 2008-11-14  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.
@@ -54,7 +75,7 @@
 
         * platform/text/AtomicString.cpp:
         (WebCore::AtomicString::add):
-
+        
 2008-11-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

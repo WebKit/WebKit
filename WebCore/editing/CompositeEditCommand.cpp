@@ -611,6 +611,16 @@ void CompositeEditCommand::removePlaceholderAt(const VisiblePosition& visiblePos
     }
 }
 
+PassRefPtr<Node> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
+{
+    RefPtr<Node> paragraphElement = createDefaultParagraphElement(document());
+    appendNode(createBreakElement(document()).get(), paragraphElement.get());
+    insertNodeAt(paragraphElement.get(), position);
+    return paragraphElement.release();
+}
+
+// If the paragraph is not entirely within it's own block, create one and move the paragraph into 
+// it, and return that block.  Otherwise return 0.
 PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Position& pos)
 {
     if (pos.isNull())
@@ -618,33 +628,43 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
     
     updateLayout();
     
+    // It's strange that this function is responsible for verifying that pos has not been invalidated
+    // by an earlier call to this function.  The caller, applyBlockStyle, should do this.
     VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
     VisiblePosition visibleParagraphStart(startOfParagraph(visiblePos));
     VisiblePosition visibleParagraphEnd = endOfParagraph(visiblePos);
     VisiblePosition next = visibleParagraphEnd.next();
     VisiblePosition visibleEnd = next.isNotNull() ? next : visibleParagraphEnd;
     
-    Position paragraphStart = visibleParagraphStart.deepEquivalent().upstream();
-    Position end = visibleEnd.deepEquivalent().upstream();
+    Position upstreamStart = visibleParagraphStart.deepEquivalent().upstream();
+    Position upstreamEnd = visibleEnd.deepEquivalent().upstream();
 
     // If there are no VisiblePositions in the same block as pos then 
-    // paragraphStart will be outside the paragraph
-    if (Range::compareBoundaryPoints(pos, paragraphStart) < 0)
+    // upstreamStart will be outside the paragraph
+    if (Range::compareBoundaryPoints(pos, upstreamStart) < 0)
         return 0;
 
     // Perform some checks to see if we need to perform work in this function.
-    if (isBlock(paragraphStart.node())) {
-        if (isBlock(end.node())) {
-            if (!end.node()->isDescendantOf(paragraphStart.node())) {
+    if (isBlock(upstreamStart.node())) {
+        // If the block is the body element, always move content to a new block, so that
+        // we avoid adding styles to the body element, since Mail's Make Plain Text feature
+        // can't handle those.
+        if (upstreamStart.node()->hasTagName(bodyTag)) {
+            // If the block is the body element and there is nothing insde of it, create a new
+            // block but don't try and move content into it, since there's nothing to move.
+            if (upstreamStart == upstreamEnd)
+                return insertNewDefaultParagraphElementAt(upstreamStart);
+        } else if (isBlock(upstreamEnd.node())) {
+            if (!upstreamEnd.node()->isDescendantOf(upstreamStart.node())) {
                 // If the paragraph end is a descendant of paragraph start, then we need to run
                 // the rest of this function. If not, we can bail here.
                 return 0;
             }
         }
-        else if (enclosingBlock(end.node()) != paragraphStart.node()) {
+        else if (enclosingBlock(upstreamEnd.node()) != upstreamStart.node()) {
             // The visibleEnd.  It must be an ancestor of the paragraph start.
             // We can bail as we have a full block to work with.
-            ASSERT(paragraphStart.node()->isDescendantOf(enclosingBlock(end.node())));
+            ASSERT(upstreamStart.node()->isDescendantOf(enclosingBlock(upstreamEnd.node())));
             return 0;
         }
         else if (isEndOfDocument(visibleEnd)) {
@@ -653,13 +673,11 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
         }
     }
 
-    RefPtr<Node> newBlock = createDefaultParagraphElement(document());
-    appendNode(createBreakElement(document()).get(), newBlock.get());
-    insertNodeAt(newBlock.get(), paragraphStart);
+    RefPtr<Node> newBlock = insertNewDefaultParagraphElementAt(upstreamStart);
     
     moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(Position(newBlock.get(), 0)));
     
-    return newBlock.get();
+    return newBlock.release();
 }
 
 void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
