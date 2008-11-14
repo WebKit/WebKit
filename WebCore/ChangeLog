@@ -1,3 +1,12 @@
+2008-11-14  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22251
+        HTMLCanvasElement.cpp unnecessarily includes runtime/Interpreter.h
+
+        * html/HTMLCanvasElement.cpp:
+
 2008-11-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

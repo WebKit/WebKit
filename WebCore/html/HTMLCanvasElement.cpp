@@ -42,7 +42,6 @@
 #include "Page.h"
 #include "RenderHTMLCanvas.h"
 #include "Settings.h"
-#include <runtime/Interpreter.h>
 #include <math.h>
 #include <stdio.h>
 
