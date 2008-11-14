@@ -49,6 +49,9 @@ namespace WebCore {
 bool Scrollbar::contextMenu(const PlatformMouseEvent& event)
 {
 #ifndef QT_NO_CONTEXTMENU
+    if (!QApplication::style()->styleHint(QStyle::SH_ScrollBar_ContextMenu))
+        return true;
+
     bool horizontal = (m_orientation == HorizontalScrollbar);
 
     QMenu menu;

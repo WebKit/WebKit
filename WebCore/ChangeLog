@@ -2,6 +2,15 @@
 
         Rubber-stamped by Simon Hausmann.
 
+        Make sure Qt scrollbars follow the style with regard to context menus
+
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+
+2008-11-14  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
         Make scrollbar look active when the window is active on Qt/Mac
 
         * platform/qt/ScrollbarThemeQt.cpp:
