@@ -28,6 +28,8 @@
 #include <qnetworkrequest.h>
 #include <QDebug>
 #include <QMenu>
+#include <qwebsecurityorigin.h>
+#include <qwebdatabase.h>
 
 // Will try to wait for the condition while allowing event processing
 #define QTRY_COMPARE(__expr, __expected) \
@@ -83,12 +85,16 @@ public slots:
     void cleanup();
 
 private slots:
+    void initTestCase();
+    void cleanupTestCase();
+
     void acceptNavigationRequest();
     void loadFinished();
     void acceptNavigationRequestWithNewWindow();
     void userStyleSheet();
     void modified();
     void contextMenuCrash();
+    void database();
 
 private:
 
@@ -115,6 +121,18 @@ void tst_QWebPage::init()
 void tst_QWebPage::cleanup()
 {
     delete m_view;
+}
+
+void tst_QWebPage::initTestCase()
+{
+}
+
+void tst_QWebPage::cleanupTestCase()
+{
+    // clean up the database files we created
+    QFile::remove("Databases.db");
+    QDir::current().rmdir("http_www.myexample.com_0");
+    QFile::remove("http_www.myexample.com_0.localstorage");
 }
 
 class NavigationRequestOverride : public QWebPage
@@ -336,6 +354,60 @@ void tst_QWebPage::contextMenuCrash()
     }
     QVERIFY(contextMenu);
     delete contextMenu;
+}
+
+
+void tst_QWebPage::database()
+{
+    QString path = QDir::currentPath();
+    m_page->settings()->setOfflineStoragePath(path);
+    QVERIFY(m_page->settings()->offlineStoragePath() == path);
+
+    QWebSettings::setOfflineStorageDefaultQuota(1024 * 1024);
+    QVERIFY(QWebSettings::offlineStorageDefaultQuota() == 1024 * 1024);
+
+    m_page->settings()->setOfflineWebApplicationCachePath(path);
+    QVERIFY(m_page->settings()->offlineWebApplicationCachePath() == path);
+
+    m_page->settings()->setLocalStorageDatabasePath(path);
+    QVERIFY(m_page->settings()->localStorageDatabasePath() == path);
+
+    QString dbFileName = path + "Databases.db";
+
+    if (QFile::exists(dbFileName))
+        QFile::remove(dbFileName);
+
+    qRegisterMetaType<QWebFrame*>("QWebFrame*");
+    QSignalSpy spy(m_page, SIGNAL(exceededDatabaseQuota(QWebFrame *, QString)));
+    m_view->setHtml(QString("<html><head><script>var db; db=openDatabase('testdb', '1.0', 'test database API', 50000); </script></head><body><div></div></body></html>"), QUrl("http://www.myexample.com"));
+    QTRY_COMPARE(spy.count(), 1);
+    m_page->mainFrame()->evaluateJavaScript("var db2; db2=openDatabase('testdb', '1.0', 'test database API', 50000);");
+    QTRY_COMPARE(spy.count(),1);
+
+    m_page->mainFrame()->evaluateJavaScript("localStorage.test='This is a test for local storage';");
+    m_view->setHtml(QString("<html><body id='b'>text</body></html>"), QUrl("http://www.myexample.com"));
+
+    QVariant s1 = m_page->mainFrame()->evaluateJavaScript("localStorage.test");
+    QCOMPARE(s1.toString(), QString("This is a test for local storage"));
+
+    m_page->mainFrame()->evaluateJavaScript("sessionStorage.test='This is a test for session storage';");
+    m_view->setHtml(QString("<html><body id='b'>text</body></html>"), QUrl("http://www.myexample.com"));
+    QVariant s2 = m_page->mainFrame()->evaluateJavaScript("sessionStorage.test");
+    QCOMPARE(s2.toString(), QString("This is a test for session storage"));
+
+    m_view->setHtml(QString("<html><head></head><body><div></div></body></html>"), QUrl("http://www.myexample.com"));
+    m_page->mainFrame()->evaluateJavaScript("var db3; db3=openDatabase('testdb', '1.0', 'test database API', 50000);db3.transaction(function(tx) { tx.executeSql('CREATE TABLE IF NOT EXISTS Test (text TEXT)', []); }, function(tx, result) { }, function(tx, error) { });");
+    QTest::qWait(200);
+
+    QWebSecurityOrigin origin = m_page->mainFrame()->securityOrigin();
+    QList<QWebDatabase> dbs = origin.databases();
+    if (dbs.count() > 0) {
+        QString filePath = dbs[0].absoluteFilePath();
+        QVERIFY(QFile::exists(filePath));
+        dbs[0].remove();
+        QVERIFY(!QFile::exists(filePath));
+    }
+    QTest::qWait(1000);
 }
 
 QTEST_MAIN(tst_QWebPage)
