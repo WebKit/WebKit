@@ -37,6 +37,8 @@
 #include "UString.h"
 #include <wtf/Threading.h>
 
+using namespace WTF;
+
 namespace JSC {
 
 #if PLATFORM(DARWIN) && ENABLE(JSC_MULTIPLE_THREADS)

@@ -210,7 +210,6 @@ __ZN3JSC6JSLock6unlockEb
 __ZN3JSC6JSLock9lockCountEv
 __ZN3JSC6JSLockC1EPNS_9ExecStateE
 __ZN3JSC6Parser5parseEPNS_12JSGlobalDataEPiPNS_7UStringE
-__ZN3JSC6strtodEPKcPPc
 __ZN3JSC7ArgList10slowAppendEPNS_7JSValueE
 __ZN3JSC7CStringD1Ev
 __ZN3JSC7CStringaSERKS0_
@@ -295,6 +294,7 @@ __ZN3WTF5Mutex6unlockEv
 __ZN3WTF5Mutex7tryLockEv
 __ZN3WTF5MutexC1Ev
 __ZN3WTF5MutexD1Ev
+__ZN3WTF6strtodEPKcPPc
 __ZN3WTF7Unicode18convertUTF16ToUTF8EPPKtS2_PPcS4_b
 __ZN3WTF8Collator18setOrderLowerFirstEb
 __ZN3WTF8CollatorC1EPKc

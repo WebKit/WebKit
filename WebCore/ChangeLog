@@ -1,3 +1,15 @@
+2008-11-14  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22245: Move wtf/dtoa.h into the WTF namespace
+        <https://bugs.webkit.org/show_bug.cgi?id=22245>
+
+        Move wtf/dtoa.h into the WTF namespace from the JSC namespace.
+
+        * platform/text/String.cpp:
+        (WebCore::charactersToDouble):
+
 2008-11-14  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Rubber-stamped by Simon Hausmann.

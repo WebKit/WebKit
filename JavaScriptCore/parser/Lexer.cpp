@@ -477,7 +477,7 @@ int Lexer::lex(void* p1, void* p2)
 
     double dval = 0;
     if (m_state == Number)
-        dval = strtod(m_buffer8.data(), 0L);
+        dval = WTF::strtod(m_buffer8.data(), 0L);
     else if (m_state == Hex) { // scan hex numbers
         const char* p = m_buffer8.data() + 2;
         while (char c = *p++) {

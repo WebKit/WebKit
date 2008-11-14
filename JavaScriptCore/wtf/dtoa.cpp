@@ -166,7 +166,7 @@
 Exactly one of IEEE_8087, IEEE_ARM or IEEE_MC68k should be defined.
 #endif
 
-namespace JSC {
+namespace WTF {
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 Mutex* s_dtoaP5Mutex;
@@ -2432,4 +2432,4 @@ ret1:
     return s0;
 }
 
-} // namespace JSC
+} // namespace WTF
