@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        Made DatabaseTracker::hasEntryForOrigin() public. This allows the Qt
+        port to apply a default quota only if there is no entry in the
+        database for a given origin yet.
+
+        * storage/DatabaseTracker.h:
+
+2008-11-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Make it possible to get the cache directory set in the application
         cache storage.
 
