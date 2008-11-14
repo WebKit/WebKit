@@ -22,6 +22,8 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qshareddata.h>
 
+#include "qwebkitglobal.h"
+
 namespace WebCore {
     class DatabaseDetails;
 };
@@ -29,7 +31,7 @@ namespace WebCore {
 class QWebDatabasePrivate;
 class QWebSecurityOrigin;
 
-class QWebDatabase
+class QWEBKIT_EXPORT QWebDatabase
 {
 public:
     QWebDatabase(const QWebDatabase& other);

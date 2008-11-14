@@ -1,3 +1,10 @@
+2008-11-14  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, add missing export macros for the new classes.
+
+        * Api/qwebdatabase.h:
+        * Api/qwebsecurityorigin.h:
+
 2008-10-24  Yael Aharon <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

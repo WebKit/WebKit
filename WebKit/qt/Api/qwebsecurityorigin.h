@@ -23,6 +23,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qshareddata.h>
 
+#include "qwebkitglobal.h"
+
 namespace WebCore {
     class SecurityOrigin;
     class ChromeClientQt;
@@ -32,7 +34,7 @@ class QWebSecurityOriginPrivate;
 class QWebDatabase;
 class QWebFrame;
 
-class QWebSecurityOrigin
+class QWEBKIT_EXPORT QWebSecurityOrigin
 {
 public:
     static QList<QWebSecurityOrigin> allOrigins();
