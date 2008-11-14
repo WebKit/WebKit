@@ -1,5 +1,20 @@
 2008-11-13  Cameron Zwarich  <zwarich@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        In r38375 the 'jsc' shell was changed to improve teardown on quit. The
+        main() function in jsc.cpp uses Structured Exception Handling, so Visual
+        C++ emits a warning when destructors are used.
+        
+        In order to speculatively fix the Windows build, this patch changes that
+        code to use explicit pointer manipulation and locking rather than smart
+        pointers and RAII.
+
+        * jsc.cpp:
+        (main):
+
+2008-11-13  Cameron Zwarich  <zwarich@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 22246: Get arguments for opcodes together to eliminate more redundant memory reads

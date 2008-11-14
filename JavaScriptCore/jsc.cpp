@@ -297,15 +297,19 @@ int main(int argc, char** argv)
     QCoreApplication app(argc, argv);
 #endif
 
+    // We can't use destructors in the following code because it uses Windows
+    // Structured Exception Handling
     int res = 0;
-    RefPtr<JSGlobalData> globalData = JSGlobalData::create();
+    JSGlobalData* globalData = JSGlobalData::create().releaseRef();
     TRY
-        res = jscmain(argc, argv, globalData.get());
+        res = jscmain(argc, argv, globalData);
     EXCEPT(res = 3)
-    {
-        JSLock lock(false);
-        globalData->heap.destroy();
-    }
+
+    JSLock::lock(false);
+    globalData->heap.destroy();
+    JSLock::unlock(false);
+
+    globalData->deref();
     return res;
 }
 
