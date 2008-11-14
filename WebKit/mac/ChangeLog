@@ -1,3 +1,17 @@
+2008-11-13  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        Don't use NSPICTPboardType on systems where it is deprecated.  The system will take care of converting
+        from this format to a format that we can understand.
+
+        * WebCoreSupport/WebPasteboardHelper.mm:
+        (WebPasteboardHelper::insertablePasteboardTypes):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]):
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+
 2008-11-13  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/6361578> Web Kit UI strings: a few edits

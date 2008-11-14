@@ -661,13 +661,15 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                              subresources:0]))
         return fragment;
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if ([types containsObject:NSPICTPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSPICTPboardType
                                                 inContext:context
                                              subresources:0]))
         return fragment;
-        
+#endif
+
     // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
     // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
     if ([types containsObject:(NSString*)kUTTypePNG] &&
@@ -1464,10 +1466,11 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     static NSArray *types = nil;
     if (!types) {
-        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
-            NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
-            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType,
-            kUTTypePNG, nil];
+        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType,
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+            NSPICTPboardType,
+#endif
+            NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil];
         CFRetain(types);
     }
     return types;
@@ -1931,6 +1934,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         [resource release];
         return fragment;
     }
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if (pboardType == NSPICTPboardType) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:uniqueURLWithRelativePart(@"image.pict")
@@ -1941,6 +1945,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         [resource release];
         return fragment;
     }
+#endif
     // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
     // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
     if ([pboardType isEqualToString:(NSString*)kUTTypePNG]) {
