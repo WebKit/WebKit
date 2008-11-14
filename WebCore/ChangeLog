@@ -1,3 +1,13 @@
+2008-11-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Combine loadFrameRequestWithFormState to loadFrameRequestWithFormAndValues.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues):
+        * loader/FrameLoader.h:
+
 2008-11-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Eric Seidel.
