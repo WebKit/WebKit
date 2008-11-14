@@ -56,9 +56,12 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
 
         // This conversion operator allows implicit conversion to bool but not to other integer types.
+#if COMPILER(WINSCW)
+        operator bool() const { return m_ptr; }
+#else
         typedef T* PassRefPtr::*UnspecifiedBoolType;
         operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::m_ptr : 0; }
-        
+#endif
         PassRefPtr& operator=(T*);
         PassRefPtr& operator=(const PassRefPtr&);
         template <typename U> PassRefPtr& operator=(const PassRefPtr<U>&);

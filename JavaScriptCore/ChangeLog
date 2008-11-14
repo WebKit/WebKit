@@ -1,3 +1,19 @@
+2008-11-14  Kristian Amlie  <kristian.amlie@trolltech.com>
+
+        Reviewed by Darin Adler.
+
+        Compile fix for WINSCW.
+
+        This fix doesn't protect against implicit conversions from bool to
+        integers, but most likely that will be caught on another platform.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22260
+
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::operator bool):
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::operator bool):
+
 2008-11-14  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Darin Adler.
