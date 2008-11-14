@@ -1,3 +1,14 @@
+2008-11-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Make it possible to get the cache directory set in the application
+        cache storage.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheDirectory): Added.
+        * loader/appcache/ApplicationCacheStorage.h:
+
 2008-11-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Beth Dakin.

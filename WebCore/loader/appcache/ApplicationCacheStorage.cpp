@@ -212,6 +212,12 @@ void ApplicationCacheStorage::setCacheDirectory(const String& cacheDirectory)
     m_cacheDirectory = cacheDirectory;
 }
 
+const String& ApplicationCacheStorage::cacheDirectory() const
+{
+    return m_cacheDirectory;
+}
+
+
 bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
 {
     ASSERT(m_database.isOpen());

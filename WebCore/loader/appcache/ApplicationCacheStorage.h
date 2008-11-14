@@ -44,6 +44,7 @@ class KURL;
 class ApplicationCacheStorage {
 public:
     void setCacheDirectory(const String&);
+    const String& cacheDirectory() const;
     
     ApplicationCacheGroup* cacheGroupForURL(const KURL&);
 
