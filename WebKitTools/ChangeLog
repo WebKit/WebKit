@@ -1,3 +1,16 @@
+2008-11-14  Krishna <krishnamurty.podipireddy@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix hanging DRT with Qt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22209
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::dump):
+        Send empty pixel test data 'block', which is now
+        expected by run-layout-tests.
+
 2008-11-12  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -276,6 +276,11 @@ void DumpRenderTree::dump()
         fprintf(stdout, "%s", renderDump.toUtf8().constData());
     }
 
+    // signal end of text block
+    fprintf(stdout, "#EOF\n");
+
+    // Since pixel tests are currently unsupported by Qt's DRT,
+    // just signal an empty pixel test block to run-webkit-tests
     fprintf(stdout, "#EOF\n");
 
     fflush(stdout);
