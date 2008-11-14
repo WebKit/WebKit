@@ -60,6 +60,8 @@ namespace WTF {
         typedef ListHashSetNodeHashFunctions<ValueArg, HashArg> NodeHash;
 
         typedef HashTable<Node*, Node*, IdentityExtractor<Node*>, NodeHash, NodeTraits, NodeTraits> ImplType;
+        typedef HashTableIterator<Node*, Node*, IdentityExtractor<Node*>, NodeHash, NodeTraits, NodeTraits> ImplTypeIterator;
+        typedef HashTableConstIterator<Node*, Node*, IdentityExtractor<Node*>, NodeHash, NodeTraits, NodeTraits> ImplTypeConstIterator;
 
         typedef HashArg HashFunctions;
 
@@ -441,7 +443,7 @@ namespace WTF {
     inline typename ListHashSet<T, U>::iterator ListHashSet<T, U>::find(const ValueType& value)
     {
         typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
-        typename ImplType::iterator it = m_impl.template find<ValueType, Translator>(value);
+        ImplTypeIterator it = m_impl.template find<ValueType, Translator>(value);
         if (it == m_impl.end())
             return end();
         return makeIterator(*it); 
@@ -451,7 +453,7 @@ namespace WTF {
     inline typename ListHashSet<T, U>::const_iterator ListHashSet<T, U>::find(const ValueType& value) const
     {
         typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
-        typename ImplType::const_iterator it = m_impl.template find<ValueType, Translator>(value);
+        ImplTypeConstIterator it = m_impl.template find<ValueType, Translator>(value);
         if (it == m_impl.end())
             return end();
         return makeConstIterator(*it);

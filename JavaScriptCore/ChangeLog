@@ -2,6 +2,25 @@
 
         Reviewed by Darin Adler.
 
+        Compile fix for RVCT.
+
+        In reality, it is two fixes:
+
+        1. Remove typename. I believe typename can only be used when the named
+        type depends on the template parameters, which it doesn't in this
+        case, so I think this is more correct.
+        2. Replace ::iterator scope with specialized typedef. This is to work
+        around a bug in RVCT.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22260
+
+        * wtf/ListHashSet.h:
+        (WTF::::find):
+
+2008-11-14  Kristian Amlie  <kristian.amlie@trolltech.com>
+
+        Reviewed by Darin Adler.
+
         Compile fix for WINSCW.
 
         This fix doesn't protect against implicit conversions from bool to
