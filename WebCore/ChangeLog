@@ -1,3 +1,28 @@
+2008-11-14  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        Made SVGResourceClipper platform independent.
+        https://bugs.webkit.org/show_bug.cgi?id=21444
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::clipPath):
+        * svg/graphics/SVGResourceClipper.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+        * svg/graphics/cairo/SVGResourceClipperCairo.cpp: Removed.
+        * svg/graphics/cg/SVGResourceClipperCg.cpp: Removed.
+        * svg/graphics/qt/SVGResourceClipperQt.cpp: Removed.
+
 2008-11-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -626,7 +626,9 @@ void GraphicsContext::beginPath()
 
 void GraphicsContext::addPath(const Path& path)
 {
-    m_data->currentPath = *(path.platformPath());
+    QPainterPath newPath = m_data->currentPath;
+    newPath.addPath(*(path.platformPath()));
+    m_data->currentPath = newPath;
 }
 
 bool GraphicsContext::inTransparencyLayer() const
@@ -648,6 +650,17 @@ void GraphicsContext::clip(const FloatRect& rect)
     if (p->clipRegion().isEmpty())
         p->setClipRect(rect);
     else p->setClipRect(rect, Qt::IntersectClip);
+}
+
+void GraphicsContext::clipPath(WindRule clipRule)
+{
+    if (paintingDisabled())
+        return;
+
+    QPainter *p = m_data->p();
+    QPainterPath newPath = m_data->currentPath;
+    newPath.setFillRule(clipRule == RULE_EVENODD ? Qt::OddEvenFill : Qt::WindingFill);
+    p->setClipPath(newPath);
 }
 
 /**

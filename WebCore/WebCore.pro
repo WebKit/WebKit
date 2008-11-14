@@ -1707,7 +1707,6 @@ SOURCES += \
         svg/graphics/qt/SVGPaintServerQt.cpp \
         svg/graphics/qt/SVGPaintServerRadialGradientQt.cpp \
         svg/graphics/qt/SVGPaintServerSolidQt.cpp \
-        svg/graphics/qt/SVGResourceClipperQt.cpp \
         svg/graphics/qt/SVGResourceFilterQt.cpp \
         svg/graphics/qt/SVGResourceMaskerQt.cpp
 

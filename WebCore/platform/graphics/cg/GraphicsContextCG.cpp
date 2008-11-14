@@ -614,6 +614,21 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
     CGContextEOClip(platformContext());
 }
 
+void GraphicsContext::clipPath(WindRule clipRule)
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context = platformContext();
+
+    if (!CGContextIsPathEmpty(context)) {
+        if (clipRule == RULE_EVENODD)
+            CGContextEOClip(context);
+        else
+            CGContextClip(context);
+    }
+}
+
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
 {
     if (paintingDisabled())

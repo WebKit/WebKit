@@ -549,6 +549,16 @@ void GraphicsContext::clip(const FloatRect& rect)
     m_data->clip(rect);
 }
 
+void GraphicsContext::clipPath(WindRule clipRule)
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+    cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    cairo_clip(cr);
+}
+
 void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (paintingDisabled())
