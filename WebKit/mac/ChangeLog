@@ -1,3 +1,16 @@
+2008-11-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22222
+          selectKeyViewPrecedingView: with document view that can't be first responder
+          makes WebFrameView be first responder
+
+        * WebView/WebFrameView.mm: (-[WebFrameView becomeFirstResponder]):
+        Moved the acceptsFirstResponder special case inside the if statement so it won't
+        run in the "selecting previous" case. Also removed the "just before shipping Tiger"
+        code that doesn't need to be here any more.
+
 2008-11-13  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.

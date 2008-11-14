@@ -394,29 +394,22 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     // the key loop similar to the way NSScrollView does this. Note that
     // WebView has similar code.
     
-    // If the scrollView won't accept first-responderness now, then we just become
-    // the first responder ourself like a normal view. This lets us be the first 
-    // responder in cases where no page has yet been loaded (see 3469791).
-    if ([[self _scrollView] acceptsFirstResponder]) {
-        NSWindow *window = [self window];
-        if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
-            NSView *previousValidKeyView = [self previousValidKeyView];
-            // If we couldn't find a previous valid key view, ask the webview. This handles frameset
-            // cases like 3748628. Note that previousValidKeyView should never be self but can be
-            // due to AppKit oddness (mentioned in 3748628).
-            if (previousValidKeyView == nil || previousValidKeyView == self) {
-                previousValidKeyView = [[[self webFrame] webView] previousValidKeyView];
-            }
-            // I don't know if the following cases ever occur anymore, but I'm leaving in the old test for
-            // now to avoid causing trouble just before shipping Tiger.
-            ASSERT((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView]));
-            if ((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView])) {
-                [window makeFirstResponder:previousValidKeyView];
-            }
-        } else {
+    NSWindow *window = [self window];
+    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+        NSView *previousValidKeyView = [self previousValidKeyView];
+        // If we couldn't find a previous valid key view, ask the WebView. This handles frameset
+        // cases (one is mentioned in Radar bug 3748628). Note that previousValidKeyView should
+        // never be self but can be due to AppKit oddness (mentioned in Radar bug 3748628).
+        if (previousValidKeyView == nil || previousValidKeyView == self)
+            previousValidKeyView = [[[self webFrame] webView] previousValidKeyView];
+        [window makeFirstResponder:previousValidKeyView];
+    } else {
+        // If the scroll view won't accept first-responderness now, then just become
+        // the first responder ourself like a normal view. This lets us be the first 
+        // responder in cases where no page has yet been loaded.
+        if ([[self _scrollView] acceptsFirstResponder])
             [window makeFirstResponder:[self _scrollView]];
-        }
-    }    
+    }
     
     return YES;
 }
