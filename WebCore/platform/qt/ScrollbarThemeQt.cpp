@@ -94,11 +94,15 @@ static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
     return NoPart; 
 }
  
-static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
+static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar, QWidget* widget = 0)
 {
     static QStyleOptionSlider opt;
+    if (widget)
+        opt.initFrom(widget);
+    else
+        opt.state |= QStyle::State_Active;
+
     opt.rect = scrollbar->frameRect();
-    opt.state = 0;
     if (scrollbar->enabled())
         opt.state |= QStyle::State_Enabled;
     if (scrollbar->controlSize() != RegularScrollbar)
@@ -139,7 +143,8 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
       return true;
 
     p.painter->save();
-    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
+    QStyleOptionSlider* opt = styleOptionSlider(scrollbar, p.widget);
+
     p.painter->setClipRect(opt->rect.intersected(damageRect));
 
 #ifdef Q_WS_MAC

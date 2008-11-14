@@ -1,3 +1,13 @@
+2008-11-14  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Make scrollbar look active when the window is active on Qt/Mac
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::styleOptionSlider):
+        (WebCore::ScrollbarThemeQt::paint):
+
 2008-11-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
