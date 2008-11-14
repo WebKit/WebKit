@@ -1,6 +1,17 @@
 2008-11-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
+
+        Add a Scons-based build system for building
+        the Chromium-Mac build of JavaScriptCore.
+        https://bugs.webkit.org/show_bug.cgi?id=21991
+
+        * JavaScriptCore.scons: Added.
+        * SConstruct: Added.
+
+2008-11-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
         
         Add PLATFORM(CHROMIUM) to the "we don't use cairo" blacklist
         until https://bugs.webkit.org/show_bug.cgi?id=22250 is fixed.

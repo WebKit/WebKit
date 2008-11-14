@@ -1,0 +1,1 @@
+SConscript(['JavaScriptCore.scons'])
