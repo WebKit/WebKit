@@ -375,6 +375,7 @@ namespace JSC {
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
 
         void emitGetArg(int src, X86Assembler::RegisterID dst, unsigned i);
+        void emitGetArgs(int src1, X86Assembler::RegisterID dst1, int src2, X86Assembler::RegisterID dst2, unsigned i);
         void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
         void emitPutArg(X86Assembler::RegisterID src, unsigned offset);
         void emitPutArgConstant(unsigned value, unsigned offset);

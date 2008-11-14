@@ -2,6 +2,29 @@
 
         Reviewed by Darin Adler.
 
+        Bug 22246: Get arguments for opcodes together to eliminate more redundant memory reads
+        <https://bugs.webkit.org/show_bug.cgi?id=22246>
+
+        It is common for opcodes to read their first operand into eax and their
+        second operand into edx. If the value intended for the second operand is
+        in eax, we should first move eax to the register for the second operand
+        and then read the first operand into eax.
+
+        This is a 0.5% speedup on SunSpider and a 2.0% speedup on the V8
+        benchmark suite when measured using the V8 harness.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetArgs):
+        (JSC::CTI::compileOpStrictEq):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+
+2008-11-13  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
         Bug 22238: Avoid unnecessary reads of temporaries when the target machine register is not eax
         <https://bugs.webkit.org/show_bug.cgi?id=22238>
 
