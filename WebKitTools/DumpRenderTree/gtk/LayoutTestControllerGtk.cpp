@@ -37,6 +37,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 
+#include <stdio.h>
 #include <glib.h>
 #include <webkit/webkit.h>
 
