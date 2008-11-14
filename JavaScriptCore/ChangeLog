@@ -1,3 +1,12 @@
+2008-11-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+        
+        Add PLATFORM(CHROMIUM) to the "we don't use cairo" blacklist
+        until https://bugs.webkit.org/show_bug.cgi?id=22250 is fixed.
+
+        * wtf/Platform.h:
+
 2008-11-13  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Sam Weinig.
