@@ -28,7 +28,6 @@
 
 #include "StaticConstructors.h"
 #include "StringHash.h"
-#include <runtime/Identifier.h>
 #include <wtf/Threading.h>
 #include <wtf/HashSet.h>
 
@@ -38,6 +37,7 @@ using namespace WTF;
 #endif
 
 #if USE(JSC)
+#include <runtime/Identifier.h>
 using JSC::Identifier;
 using JSC::UString;
 #endif
@@ -269,7 +269,6 @@ PassRefPtr<StringImpl> AtomicString::add(const JSC::UString& ustring)
         return *addResult.first;
     return adoptRef(*addResult.first);
 }
-#endif
 
 AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
 {
@@ -292,6 +291,7 @@ AtomicString::operator UString() const
 {
     return m_string;
 }
+#endif
 
 DEFINE_GLOBAL(AtomicString, nullAtom)
 DEFINE_GLOBAL(AtomicString, emptyAtom, "")
