@@ -401,6 +401,14 @@ String contextMenuItemTagWritingDirectionMenu()
     return String();
 }
 
+String contextMenuItemTagTextDirectionMenu()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] contextMenuItemTagTextDirectionMenu];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 String contextMenuItemTagDefaultDirection()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

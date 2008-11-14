@@ -91,6 +91,7 @@ WebCore::Page* core(WebView *);
 WebView *kit(WebCore::Page*);
 
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);
+WebCore::TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior);
 
 WebView *getWebView(WebFrame *webFrame);
 

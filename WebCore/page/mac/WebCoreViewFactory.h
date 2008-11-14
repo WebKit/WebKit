@@ -79,6 +79,7 @@
 - (NSString *)contextMenuItemTagStartSpeaking;
 - (NSString *)contextMenuItemTagStopSpeaking;
 - (NSString *)contextMenuItemTagWritingDirectionMenu;
+- (NSString *)contextMenuItemTagTextDirectionMenu;
 - (NSString *)contextMenuItemTagDefaultDirection;
 - (NSString *)contextMenuItemTagLeftToRight;
 - (NSString *)contextMenuItemTagRightToLeft;

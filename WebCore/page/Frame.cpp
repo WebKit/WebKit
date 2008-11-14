@@ -844,9 +844,25 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
         mutableStyle = typingStyle();
     }
 
+    RefPtr<CSSValue> unicodeBidi;
+    RefPtr<CSSValue> direction;
+    if (editingAction == EditActionSetWritingDirection) {
+        unicodeBidi = mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+        direction = mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
+    }
+
     Node* node = selection()->selection().visibleStart().deepEquivalent().node();
     computedStyle(node)->diff(mutableStyle.get());
-    
+
+    if (editingAction == EditActionSetWritingDirection && unicodeBidi) {
+        ASSERT(unicodeBidi->isPrimitiveValue());
+        mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
+        if (direction) {
+            ASSERT(direction->isPrimitiveValue());
+            mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
+        }
+    }
+
     // Handle block styles, substracting these from the typing style.
     RefPtr<CSSMutableStyleDeclaration> blockStyle = mutableStyle->copyBlockProperties();
     blockStyle->diff(mutableStyle.get());

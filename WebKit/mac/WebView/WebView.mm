@@ -192,6 +192,9 @@ macro(insertParagraphSeparator) \
 macro(insertTab) \
 macro(insertTabIgnoringFieldEditor) \
 macro(lowercaseWord) \
+macro(makeTextWritingDirectionLeftToRight) \
+macro(makeTextWritingDirectionNatural) \
+macro(makeTextWritingDirectionRightToLeft) \
 macro(moveBackward) \
 macro(moveBackwardAndModifySelection) \
 macro(moveDown) \
@@ -1293,6 +1296,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
     settings->setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
     settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
+    settings->setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);

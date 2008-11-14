@@ -255,6 +255,15 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         case ContextMenuItemTagRightToLeft:
             frame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
             break;
+        case ContextMenuItemTagTextDirectionDefault:
+            frame->editor()->command("MakeTextWritingDirectionNatural").execute();
+            break;
+        case ContextMenuItemTagTextDirectionLeftToRight:
+            frame->editor()->command("MakeTextWritingDirectionLeftToRight").execute();
+            break;
+        case ContextMenuItemTagTextDirectionRightToLeft:
+            frame->editor()->command("MakeTextWritingDirectionRightToLeft").execute();
+            break;
 #if PLATFORM(MAC)
         case ContextMenuItemTagSearchInSpotlight:
             m_client->searchWithSpotlight();

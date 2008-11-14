@@ -247,6 +247,20 @@ EditableLinkBehavior core(WebKitEditableLinkBehavior editableLinkBehavior)
     return EditableLinkDefaultBehavior;
 }
 
+TextDirectionSubmenuInclusionBehavior core(WebTextDirectionSubmenuInclusionBehavior behavior)
+{
+    switch (behavior) {
+        case WebTextDirectionSubmenuNeverIncluded:
+            return TextDirectionSubmenuNeverIncluded;
+        case WebTextDirectionSubmenuAutomaticallyIncluded:
+            return TextDirectionSubmenuAutomaticallyIncluded;
+        case WebTextDirectionSubmenuAlwaysIncluded:
+            return TextDirectionSubmenuAlwaysIncluded;
+    }
+    ASSERT_NOT_REACHED();
+    return TextDirectionSubmenuNeverIncluded;
+}
+
 @implementation WebFrame (WebInternal)
 
 Frame* core(WebFrame *frame)

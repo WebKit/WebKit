@@ -1,3 +1,12 @@
+2008-11-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - part of <rdar://problem/6234337> Add a Text Direction menu to the default context menu when appropriate
+
+        * English.lproj/Localizable.strings: Added the Text Direction submenu
+        title.
+
 2008-11-13  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/6361578> Web Kit UI strings: a few edits

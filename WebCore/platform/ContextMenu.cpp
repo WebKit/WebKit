@@ -43,6 +43,7 @@
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "SelectionController.h"
+#include "Settings.h"
 #include "TextIterator.h"
 #include <memory>
 
@@ -170,6 +171,21 @@ static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, 
     writingDirectionMenu.appendItem(rtl);
 
     writingDirectionMenuItem.setSubMenu(&writingDirectionMenu);
+}
+
+static void createAndAppendTextDirectionSubMenu(const HitTestResult& result, ContextMenuItem& textDirectionMenuItem)
+{
+    ContextMenu textDirectionMenu(result);
+
+    ContextMenuItem defaultItem(ActionType, ContextMenuItemTagTextDirectionDefault, contextMenuItemTagDefaultDirection());
+    ContextMenuItem ltr(CheckableActionType, ContextMenuItemTagTextDirectionLeftToRight, contextMenuItemTagLeftToRight());
+    ContextMenuItem rtl(CheckableActionType, ContextMenuItemTagTextDirectionRightToLeft, contextMenuItemTagRightToLeft());
+
+    textDirectionMenu.appendItem(defaultItem);
+    textDirectionMenu.appendItem(ltr);
+    textDirectionMenu.appendItem(rtl);
+
+    textDirectionMenuItem.setSubMenu(&textDirectionMenu);
 }
 #endif
 
@@ -408,6 +424,18 @@ void ContextMenu::populate()
                 contextMenuItemTagWritingDirectionMenu());
             createAndAppendWritingDirectionSubMenu(m_hitTestResult, WritingDirectionMenuItem);
             appendItem(WritingDirectionMenuItem);
+            if (Page* page = frame->page()) {
+                if (Settings* settings = page->settings()) {
+                    bool includeTextDirectionSubmenu = settings->textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAlwaysIncluded
+                        || settings->textDirectionSubmenuInclusionBehavior() == TextDirectionSubmenuAutomaticallyIncluded && frame->editor()->hasBidiSelection();
+                    if (includeTextDirectionSubmenu) {
+                        ContextMenuItem TextDirectionMenuItem(SubmenuType, ContextMenuItemTagTextDirectionMenu, 
+                            contextMenuItemTagTextDirectionMenu());
+                        createAndAppendTextDirectionSubMenu(m_hitTestResult, TextDirectionMenuItem);
+                        appendItem(TextDirectionMenuItem);
+                    }
+                }
+            }
 #endif
         }
     }
@@ -463,6 +491,24 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
             style->setProperty(CSSPropertyDirection, direction, false, ec);
             shouldCheck = frame->editor()->selectionHasStyle(style.get()) != FalseTriState;
             shouldEnable = true;
+            break;
+        }
+        case ContextMenuItemTagTextDirectionDefault: {
+            Editor::Command command = frame->editor()->command("MakeTextWritingDirectionNatural");
+            shouldCheck = command.state() == TrueTriState;
+            shouldEnable = command.isEnabled();
+            break;
+        }
+        case ContextMenuItemTagTextDirectionLeftToRight: {
+            Editor::Command command = frame->editor()->command("MakeTextWritingDirectionLeftToRight");
+            shouldCheck = command.state() == TrueTriState;
+            shouldEnable = command.isEnabled();
+            break;
+        }
+        case ContextMenuItemTagTextDirectionRightToLeft: {
+            Editor::Command command = frame->editor()->command("MakeTextWritingDirectionRightToLeft");
+            shouldCheck = command.state() == TrueTriState;
+            shouldEnable = command.isEnabled();
             break;
         }
         case ContextMenuItemTagCopy:
@@ -595,6 +641,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagStartSpeaking:
         case ContextMenuItemTagStopSpeaking:
         case ContextMenuItemTagWritingDirectionMenu:
+        case ContextMenuItemTagTextDirectionMenu:
         case ContextMenuItemTagPDFSinglePageScrolling:
         case ContextMenuItemTagPDFFacingPagesScrolling:
         case ContextMenuItemTagInspectElement:

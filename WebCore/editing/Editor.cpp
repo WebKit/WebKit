@@ -32,6 +32,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "ClipboardEvent.h"
 #include "DeleteButtonController.h"
 #include "DeleteSelectionCommand.h"
@@ -459,6 +460,135 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 #else
     return 0;
 #endif
+}
+
+WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbeddings) const
+{
+    hasNestedOrMultipleEmbeddings = true;
+
+    if (m_frame->selection()->isNone())
+        return NaturalWritingDirection;
+
+    Position pos = m_frame->selection()->selection().start().downstream();
+
+    Node* node = pos.node();
+    if (!node)
+        return NaturalWritingDirection;
+
+    Position end;
+    if (m_frame->selection()->isRange()) {
+        end = m_frame->selection()->selection().end().upstream();
+
+        Node* pastLast = Range::create(m_frame->document(), rangeCompliantEquivalent(pos), rangeCompliantEquivalent(end))->pastLastNode();
+        for (Node* n = node; n && n != pastLast; n = n->traverseNextNode()) {
+            if (!n->isStyledElement())
+                continue;
+
+            RefPtr<CSSComputedStyleDeclaration> style = computedStyle(n);
+            RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+            if (!unicodeBidi)
+                continue;
+
+            ASSERT(unicodeBidi->isPrimitiveValue());
+            int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
+            if (unicodeBidiValue == CSSValueEmbed || unicodeBidiValue == CSSValueBidiOverride)
+                return NaturalWritingDirection;
+        }
+    }
+
+    if (m_frame->selection()->isCaret()) {
+        if (CSSMutableStyleDeclaration *typingStyle = m_frame->typingStyle()) {
+            RefPtr<CSSValue> unicodeBidi = typingStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+            if (unicodeBidi) {
+                ASSERT(unicodeBidi->isPrimitiveValue());
+                int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
+                if (unicodeBidiValue == CSSValueEmbed) {
+                    RefPtr<CSSValue> direction = typingStyle->getPropertyCSSValue(CSSPropertyDirection);
+                    ASSERT(!direction || direction->isPrimitiveValue());
+                    if (direction) {
+                        hasNestedOrMultipleEmbeddings = false;
+                        return static_cast<CSSPrimitiveValue*>(direction.get())->getIdent() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+                    }
+                } else if (unicodeBidiValue == CSSValueNormal) {
+                    hasNestedOrMultipleEmbeddings = false;
+                    return NaturalWritingDirection;
+                }
+            }
+        }
+        node = m_frame->selection()->selection().visibleStart().deepEquivalent().node();
+    }
+
+    // The selection is either a caret with no typing attributes or a range in which no embedding is added, so just use the start position
+    // to decide.
+    Node* block = enclosingBlock(node);
+    WritingDirection foundDirection = NaturalWritingDirection;
+
+    for (; node != block; node = node->parent()) {
+        if (!node->isStyledElement())
+            continue;
+
+        RefPtr<CSSComputedStyleDeclaration> style = computedStyle(node);
+        RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+        if (!unicodeBidi)
+            continue;
+
+        ASSERT(unicodeBidi->isPrimitiveValue());
+        int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
+        if (unicodeBidiValue == CSSValueNormal)
+            continue;
+
+        if (unicodeBidiValue == CSSValueBidiOverride)
+            return NaturalWritingDirection;
+
+        ASSERT(unicodeBidiValue == CSSValueEmbed);
+        RefPtr<CSSValue> direction = style->getPropertyCSSValue(CSSPropertyDirection);
+        if (!direction)
+            continue;
+
+        ASSERT(direction->isPrimitiveValue());
+        int directionValue = static_cast<CSSPrimitiveValue*>(direction.get())->getIdent();
+        if (directionValue != CSSValueLtr && directionValue != CSSValueRtl)
+            continue;
+
+        if (foundDirection != NaturalWritingDirection)
+            return NaturalWritingDirection;
+
+        // In the range case, make sure that the embedding element persists until the end of the range.
+        if (m_frame->selection()->isRange() && !end.node()->isDescendantOf(node))
+            return NaturalWritingDirection;
+
+        foundDirection = directionValue == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+    }
+    hasNestedOrMultipleEmbeddings = false;
+    return foundDirection;
+}
+
+bool Editor::hasBidiSelection() const
+{
+    if (m_frame->selection()->isNone())
+        return false;
+
+    Node* startNode;
+    if (m_frame->selection()->isRange()) {
+        startNode = m_frame->selection()->selection().start().downstream().node();
+        Node* endNode = m_frame->selection()->selection().end().upstream().node();
+        if (enclosingBlock(startNode) != enclosingBlock(endNode))
+            return false;
+    } else
+        startNode = m_frame->selection()->selection().visibleStart().deepEquivalent().node();
+
+    RenderObject* renderer = startNode->renderer();
+    while (renderer && !renderer->isRenderBlock())
+        renderer = renderer->parent();
+
+    if (!renderer)
+        return false;
+
+    RenderStyle* style = renderer->style();
+    if (style->direction() == RTL)
+        return true;
+
+    return static_cast<RenderBlock*>(renderer)->containsNonZeroBidiLevel();
 }
 
 TriState Editor::selectionUnorderedListState() const

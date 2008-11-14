@@ -344,6 +344,11 @@
     return UI_STRING("Writing Direction", "Writing direction context sub-menu item");
 }
 
+- (NSString *)contextMenuItemTagTextDirectionMenu
+{
+    return UI_STRING("Text Direction", "Text direction context sub-menu item");
+}
+
 - (NSString *)contextMenuItemTagDefaultDirection
 {
     return UI_STRING("Default", "Default writing direction context menu item");

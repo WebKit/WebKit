@@ -115,6 +115,7 @@ public:
 
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
     const SimpleFontData* fontForSelection(bool&) const;
+    WritingDirection textDirectionForSelection(bool&) const;
     
     TriState selectionUnorderedListState() const;
     TriState selectionOrderedListState() const;
@@ -220,6 +221,8 @@ public:
 
     bool smartInsertDeleteEnabled();
     
+    bool hasBidiSelection() const;
+
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
     void setComposition(const String&, const Vector<CompositionUnderline>&, unsigned selectionStart, unsigned selectionEnd);

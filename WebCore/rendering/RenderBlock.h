@@ -229,6 +229,8 @@ public:
     RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
     RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
 
+    bool containsNonZeroBidiLevel() const;
+
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;

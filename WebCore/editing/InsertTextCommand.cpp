@@ -27,8 +27,9 @@
 #include "InsertTextCommand.h"
 
 #include "CharacterNames.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
+#include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Element.h"
 #include "EditingText.h"
@@ -188,8 +189,23 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
     // Handle the case where there is a typing style.
     CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     RefPtr<CSSComputedStyleDeclaration> endingStyle = endPosition.computedStyle();
+    RefPtr<CSSValue> unicodeBidi;
+    RefPtr<CSSValue> direction;
+    if (typingStyle) {
+        unicodeBidi = typingStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+        direction = typingStyle->getPropertyCSSValue(CSSPropertyDirection);
+    }
     endingStyle->diff(typingStyle);
-    if (typingStyle && typingStyle->length() > 0)
+    if (typingStyle && unicodeBidi) {
+        ASSERT(unicodeBidi->isPrimitiveValue());
+        typingStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
+        if (direction) {
+            ASSERT(direction->isPrimitiveValue());
+            typingStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
+        }
+    }
+
+    if (typingStyle && typingStyle->length())
         applyStyle(typingStyle);
 
     if (!selectInsertedText)

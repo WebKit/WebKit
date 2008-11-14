@@ -1,3 +1,37 @@
+2008-11-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - <rdar://problem/6234333> Implement action methods for setting and clearing character-level directionality
+        - part of <rdar://problem/6234337> Add a Text Direction menu to the default context menu when appropriate
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory contextMenuItemTagTextDirectionMenu]): Added.
+        * WebView/WebFrame.mm:
+        (core): Added a convertor from WebTextDirectionSubmenuInclusionBehavior
+        to WebCore::TextDirectionSubmenuInclusionBehavior.
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        Added makeTextWritingDirectionLeftToRight:,
+        makeTextWritingDirectionNatural: and
+        makeTextWritingDirectionRightToLeft: using the WEBCORE_COMMAND macro.
+        * WebView/WebPreferenceKeysPrivate.h:
+        Added WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Set the default Text Direction
+        submenu inclusion behavior to never include.
+        (-[WebPreferences textDirectionSubmenuInclusionBehavior]): Added this
+        accessor.
+        (-[WebPreferences setTextDirectionSubmenuInclusionBehavior:]): Ditto.
+        * WebView/WebPreferencesPrivate.h: Defined the
+        WebTextDirectionSubmenuInclusionBehavior enum and declared
+        accessors.
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Added code to transfer
+        the Text Direction submenu inclusion behavior preference to WebCore
+        settings.
+
 2008-11-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

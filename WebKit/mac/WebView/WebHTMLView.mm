@@ -2224,6 +2224,9 @@ WEBCORE_COMMAND(insertNewlineIgnoringFieldEditor)
 WEBCORE_COMMAND(insertParagraphSeparator)
 WEBCORE_COMMAND(insertTab)
 WEBCORE_COMMAND(insertTabIgnoringFieldEditor)
+WEBCORE_COMMAND(makeTextWritingDirectionLeftToRight)
+WEBCORE_COMMAND(makeTextWritingDirectionNatural)
+WEBCORE_COMMAND(makeTextWritingDirectionRightToLeft)
 WEBCORE_COMMAND(moveBackward)
 WEBCORE_COMMAND(moveBackwardAndModifySelection)
 WEBCORE_COMMAND(moveDown)
@@ -2426,7 +2429,7 @@ WEBCORE_COMMAND(yankAndSelect)
                || action == @selector(lowercaseWord:)
                || action == @selector(uppercaseWord:))
         return [self _hasSelection] && [self _isEditable];
-    
+
     if (action == @selector(centerSelectionInVisibleArea:)
                || action == @selector(jumpToSelection:)
                || action == @selector(copyFont:))

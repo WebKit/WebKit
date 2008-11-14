@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CSSPrimitiveValue;
 class HTMLElement;
 class StyleChange;
 
@@ -64,6 +65,7 @@ private:
     bool isHTMLStyleNode(CSSMutableStyleDeclaration*, HTMLElement*);
     void removeHTMLStyleNode(HTMLElement*);
     void removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*);
+    void removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration*, HTMLElement*);
     void removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*);
     void removeBlockStyle(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
     void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>, const Position& start, const Position& end);
@@ -79,6 +81,7 @@ private:
     void applyBlockStyle(CSSMutableStyleDeclaration*);
     void applyRelativeFontStyleChange(CSSMutableStyleDeclaration*);
     void applyInlineStyle(CSSMutableStyleDeclaration*);
+    void applyInlineStyleToRange(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
     void addBlockStyle(const StyleChange&, HTMLElement*);
     void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end);
     bool splitTextAtStartIfNeeded(const Position& start, const Position& end);
@@ -92,6 +95,9 @@ private:
     void surroundNodeRangeWithElement(Node* start, Node* end, Element* element);
     float computedFontSize(const Node*);
     void joinChildTextNodes(Node*, const Position& start, const Position& end);
+
+    HTMLElement* splitAncestorsWithUnicodeBidi(Node*, bool before, RefPtr<CSSPrimitiveValue> allowedDirection);
+    void removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsplitAncestor);
 
     void updateStartEnd(const Position& newStart, const Position& newEnd);
     Position startPosition();

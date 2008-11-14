@@ -1,3 +1,106 @@
+2008-11-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - <rdar://problem/6234307> Support action methods for setting and clearing character-level directionality
+        - WebCore part of <rdar://problem/6234337> Add a Text Direction menu to the default context menu when appropriate
+
+        * WebCore.base.exp: Exported
+        WebCore::Settings::setTextDirectionSubmenuInclusionBehavior().
+
+        * editing/ApplyStyleCommand.cpp:
+        (StyleChange::init): Changed to always include the direction property
+        in the result if the unicode-bidi property is included.
+        (ApplyStyleCommand::splitAncestorsWithUnicodeBidi): Added. Finds the
+        highest ancestor of the given node that establishes bidi embedding. If
+        that embedding agrees with the given allowed direction, finds the
+        second-highest embedding ancestor. Splits all nodes through that
+        ancestor. If the highest embedding ancestor did not need to be split,
+        it is returned.
+        (ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock): Added. Removes
+        bidi embedding attributes and styles from all ancestors of the given
+        node up to its enclosing block or the given node.
+        (ApplyStyleCommand::applyInlineStyle): Added code to handle the
+        unicode-bidi property. Applying style the includes this property
+        involves removing all bidi embedding in effect, except  for one-level
+        embedding that agrees with the desired embedding, then applying the
+        desired embedding where it is not already in effect.
+        (ApplyStyleCommand::applyInlineStyleToRange): Factored out from
+        applyInlineStyle().
+        (ApplyStyleCommand::removeHTMLBidiEmbeddingStyle): Added. Removed the
+        "dir" attribute if necessary and the element if it becomes an unstyled
+        style span.
+        (ApplyStyleCommand::removeCSSStyle): Changed to remove the direction
+        property when removing the unicode-bidi property.
+        (ApplyStyleCommand::removeInlineStyle): Added a call to
+        removeHTMLBidiEmbeddingStyle().
+
+        * editing/ApplyStyleCommand.h:
+        * editing/Editor.cpp:
+        (Editor::textDirectionForSelection): Added. Returns the character-level
+        writing direction of the selection if it is uniform and simple (at most
+        one level of embedding).
+        (Editor::hasBidiSelection): Added. Returns true if the selection lies
+        entirely within a single block, and that block has direction:rtl or
+        contains any inline boxes with non-zero bidi embedding level.
+
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (stateTextWritingDirection): Added this helper function for deciding
+        the state of Text Direction submenu items.
+        (executeMakeTextWritingDirectionLeftToRight): Added. Applies
+        "unicode-bidi: embed; direction: ltr;".
+        (executeMakeTextWritingDirectionNatural): Added. Applies
+        "unicode-bidi: normal;"
+        (executeMakeTextWritingDirectionRightToLeft): Added. Applies
+        "unicode-bidi: embed; direction: rtl;".
+        (stateTextWritingDirectionLeftToRight): Added.
+        (stateTextWritingDirectionNatural): Added.
+        (stateTextWritingDirectionRightToLeft): Added.
+        (createCommandMap): Added "MakeTextWritingDirectionLeftToRight",
+        "MakeTextWritingDirectionNatural",
+        and "MakeTextWritingDirectionRightToLeft".
+
+        * editing/InsertTextCommand.cpp:
+        (InsertTextCommand::input): Added code to maintain the unicode-bidi
+        and direction properties in the typing style. Even if they have the
+        same values as the computed style at the caret, they need to be included
+        in the typing style so that inserted text will not inherit any nested
+        embedding.
+
+        * page/ContextMenuController.cpp:
+        (ContextMenuController::contextMenuItemSelected): Added calls to
+        the editor for the text direction menu items.
+
+        * page/Frame.cpp
+        (Frame::computeAndSetTypingStyle): Added code to maintain the
+        unicode-bidi and direction properties in the typing style.
+
+        * page/Settings.cpp:
+        (Settings::setTextDirectionSubmenuInclusionBehavior): Added this setter.
+
+        * page/Settings.h: Added a TextDirectionSubmenuInclusionBehavior enum,
+        an m_textDirectionSubmenuInclusionBehavior member, and accessors.
+
+        * page/mac/WebCoreViewFactory.h:
+        * platform/ContextMenu.cpp:
+        (WebCore::createAndAppendTextDirectionSubMenu): Added.
+        (ContextMenu::populate): Added the Text Direction submenu item based on
+        the inclusion behavior and the existence of a bidi selection.
+        (ContextMenu::checkOrEnableIfNeeded): Added code for the text direction
+        menu items.
+
+        * platform/ContextMenuItem.h:
+        * platform/LocalizedStrings.h: Declared
+        contextMenuItemTagTextDirectionMenu().
+
+        * platform/mac/LocalizedStringsMac.mm: Defined
+        contextMenuItemTagTextDirectionMenu().
+
+        * rendering/RenderBlock.cpp:
+        (RenderBlock::containsNonZeroBidiLevel): Added.
+        * rendering/RenderBlock.h:
+
 2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
