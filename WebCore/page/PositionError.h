@@ -35,11 +35,10 @@ namespace WebCore {
 class PositionError : public RefCounted<PositionError> {
 public:
     enum ErrorCode {
-        PERMISSION_ERROR = 1,
-        LOCATION_PROVIDER_ERROR,
-        POSITION_NOT_FOUND_ERROR,
-        TIMEOUT_ERROR,
-        UNKNOWN_ERROR
+        UNKNOWN_ERROR = 0,
+        PERMISSION_DENIED = 1,
+        POSITION_UNAVAILABLE = 2,
+        TIMEOUT = 3
     };
     
     static PassRefPtr<PositionError> create(ErrorCode code, const String& message) { return adoptRef(new PositionError(code, message)); }

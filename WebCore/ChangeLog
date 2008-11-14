@@ -1,3 +1,20 @@
+2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22264
+        Need to update to latest Geolocation spec (13 November 2008)
+        
+        Update to new error code constants and values.
+
+        * page/Geolocation.cpp: Use new named ErrorCode enums
+        (WebCore::Geolocation::GeoNotifier::timerFired):
+        (WebCore::Geolocation::getCurrentPosition):
+        (WebCore::Geolocation::watchPosition):
+        * page/PositionError.h: Have ErrorCode enum names match new error constant names and values
+        (WebCore::PositionError::):
+        * page/PositionError.idl: Add new named error constants
+
 2008-11-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Justin Garcia.
