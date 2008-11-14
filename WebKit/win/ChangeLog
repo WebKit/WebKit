@@ -1,3 +1,18 @@
+2008-11-13  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 22244: Webkit nightly builds crash with Safari 3.2
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22244>
+
+        r36652 added IWebViewPrivate::clearMainFrameName into the middle of
+        the IWebViewPrivate interface, which modifies the part of the
+        IWebViewPrivate vtable that Safari 3.2 relies on.
+
+        Reviewed by Dan Bernstein.
+
+        * Interfaces/IWebViewPrivate.idl: Move clearMainFrameName to the end
+        of the interface.
+
 2008-11-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

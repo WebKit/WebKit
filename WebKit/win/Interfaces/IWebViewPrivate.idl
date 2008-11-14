@@ -122,7 +122,6 @@ interface IWebViewPrivate : IUnknown
 
     // SPI for DumpRenderTree
     HRESULT executeCoreCommandByName([in] BSTR name, [in] BSTR value);
-    HRESULT clearMainFrameName();
 
     HRESULT windowAncestryDidChange();
 
@@ -149,4 +148,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setMediaVolume([in] float volume);
     HRESULT mediaVolume([out, retval] float* volume);
+
+    // SPI for DumpRenderTree
+    HRESULT clearMainFrameName();
 }
