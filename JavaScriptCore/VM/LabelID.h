@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LabelID_h
-#define LabelID_h
+#ifndef Label_h
+#define Label_h
 
 #include "CodeBlock.h"
 #include "Instruction.h"
@@ -37,9 +37,9 @@
 
 namespace JSC {
 
-    class LabelID {
+    class Label {
     public:
-        explicit LabelID(CodeBlock* codeBlock)
+        explicit Label(CodeBlock* codeBlock)
             : m_refCount(0)
             , m_location(invalidLocation)
             , m_codeBlock(codeBlock)
@@ -74,7 +74,7 @@ namespace JSC {
         }
         int refCount() const { return m_refCount; }
 
-        bool isForwardLabel() const { return m_location == invalidLocation; }
+        bool isForward() const { return m_location == invalidLocation; }
 
     private:
         typedef Vector<int, 8> JumpVector;
@@ -89,4 +89,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // LabelID_h
+#endif // Label_h

@@ -2,6 +2,49 @@
 
         Reviewed by Sam Weinig.
         
+        Renamed LabelID to Label, Label::isForwardLabel to Label::isForward.
+
+        * VM/LabelID.h:
+        (JSC::Label::Label):
+        (JSC::Label::isForward):
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newLabel):
+        (JSC::BytecodeGenerator::emitLabel):
+        (JSC::BytecodeGenerator::emitJump):
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::emitComplexJumpScopes):
+        (JSC::BytecodeGenerator::emitJumpScopes):
+        (JSC::BytecodeGenerator::emitNextPropertyName):
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::BytecodeGenerator::emitJumpSubroutine):
+        (JSC::prepareJumpTableForImmediateSwitch):
+        (JSC::prepareJumpTableForCharacterSwitch):
+        (JSC::prepareJumpTableForStringSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * bytecompiler/CodeGenerator.h:
+        * bytecompiler/LabelScope.h:
+        (JSC::LabelScope::LabelScope):
+        (JSC::LabelScope::breakTarget):
+        (JSC::LabelScope::continueTarget):
+        * parser/Nodes.cpp:
+        (JSC::LogicalOpNode::emitBytecode):
+        (JSC::ConditionalNode::emitBytecode):
+        (JSC::IfNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::CaseBlockNode::emitBytecodeForBlock):
+        (JSC::TryNode::emitBytecode):
+
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Renamed JITCodeBuffer to AssemblerBuffer and renamed its data members
         to be more like the rest of our buffer classes, with a size and a
         capacity.

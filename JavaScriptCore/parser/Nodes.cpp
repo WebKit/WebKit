@@ -1186,7 +1186,7 @@ void LogicalOpNode::releaseNodes(NodeReleaser& releaser)
 RegisterID* LogicalOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> temp = generator.tempDestination(dst);
-    RefPtr<LabelID> target = generator.newLabel();
+    RefPtr<Label> target = generator.newLabel();
     
     generator.emitNode(temp.get(), m_expr1.get());
     if (m_operator == OpLogicalAnd)
@@ -1216,8 +1216,8 @@ void ConditionalNode::releaseNodes(NodeReleaser& releaser)
 RegisterID* ConditionalNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> newDst = generator.finalDestination(dst);
-    RefPtr<LabelID> beforeElse = generator.newLabel();
-    RefPtr<LabelID> afterElse = generator.newLabel();
+    RefPtr<Label> beforeElse = generator.newLabel();
+    RefPtr<Label> afterElse = generator.newLabel();
 
     RegisterID* cond = generator.emitNode(m_logical.get());
     generator.emitJumpIfFalse(cond, beforeElse.get());
@@ -1674,7 +1674,7 @@ void IfNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* IfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelID> afterThen = generator.newLabel();
+    RefPtr<Label> afterThen = generator.newLabel();
 
     RegisterID* cond = generator.emitNode(m_condition.get());
     generator.emitJumpIfFalse(cond, afterThen.get());
@@ -1704,8 +1704,8 @@ void IfElseNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelID> beforeElse = generator.newLabel();
-    RefPtr<LabelID> afterElse = generator.newLabel();
+    RefPtr<Label> beforeElse = generator.newLabel();
+    RefPtr<Label> afterElse = generator.newLabel();
 
     RegisterID* cond = generator.emitNode(m_condition.get());
     generator.emitJumpIfFalse(cond, beforeElse.get());
@@ -1746,7 +1746,7 @@ RegisterID* DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 {
     RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
-    RefPtr<LabelID> topOfLoop = generator.newLabel();
+    RefPtr<Label> topOfLoop = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
@@ -1784,7 +1784,7 @@ RegisterID* WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
     generator.emitJump(scope->continueTarget());
 
-    RefPtr<LabelID> topOfLoop = generator.newLabel();
+    RefPtr<Label> topOfLoop = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
 
     if (!m_statement->isBlock())
@@ -1830,10 +1830,10 @@ RegisterID* ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (m_expr1)
         generator.emitNode(ignoredResult(), m_expr1.get());
 
-    RefPtr<LabelID> condition = generator.newLabel();
+    RefPtr<Label> condition = generator.newLabel();
     generator.emitJump(condition.get());
 
-    RefPtr<LabelID> topOfLoop = generator.newLabel();
+    RefPtr<Label> topOfLoop = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
 
     if (!m_statement->isBlock())
@@ -1903,7 +1903,7 @@ RegisterID* ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     if (!m_lexpr->isLocation())
         return emitThrowError(generator, ReferenceError, "Left side of for-in statement is not a reference.");
 
-    RefPtr<LabelID> continueTarget = generator.newLabel(); 
+    RefPtr<Label> continueTarget = generator.newLabel(); 
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
 
@@ -1913,7 +1913,7 @@ RegisterID* ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     RefPtr<RegisterID> iter = generator.emitGetPropertyNames(generator.newTemporary(), forInBase);
     generator.emitJump(scope->continueTarget());
 
-    RefPtr<LabelID> loopStart = generator.newLabel();
+    RefPtr<Label> loopStart = generator.newLabel();
     generator.emitLabel(loopStart.get());
 
     RegisterID* propertyName;
@@ -2012,7 +2012,7 @@ RegisterID* ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         dst = 0;
     RegisterID* r0 = m_value ? generator.emitNode(dst, m_value.get()) : generator.emitLoad(dst, jsUndefined());
     if (generator.scopeDepth()) {
-        RefPtr<LabelID> l0 = generator.newLabel();
+        RefPtr<Label> l0 = generator.newLabel();
         generator.emitJumpScopes(l0.get(), 0);
         generator.emitLabel(l0.get());
     }
@@ -2161,8 +2161,8 @@ SwitchInfo::SwitchType CaseBlockNode::tryOptimizedSwitch(Vector<ExpressionNode*,
 
 RegisterID* CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterID* switchExpression, RegisterID* dst)
 {
-    RefPtr<LabelID> defaultLabel;
-    Vector<RefPtr<LabelID>, 8> labelVector;
+    RefPtr<Label> defaultLabel;
+    Vector<RefPtr<Label>, 8> labelVector;
     Vector<ExpressionNode*, 8> literalVector;
     int32_t min_num = std::numeric_limits<int32_t>::max();
     int32_t max_num = std::numeric_limits<int32_t>::min();
@@ -2309,9 +2309,9 @@ void TryNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelID> tryStartLabel = generator.newLabel();
-    RefPtr<LabelID> tryEndLabel = generator.newLabel();
-    RefPtr<LabelID> finallyStart;
+    RefPtr<Label> tryStartLabel = generator.newLabel();
+    RefPtr<Label> tryEndLabel = generator.newLabel();
+    RefPtr<Label> finallyStart;
     RefPtr<RegisterID> finallyReturnAddr;
     if (m_finallyBlock) {
         finallyStart = generator.newLabel();
@@ -2323,7 +2323,7 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitLabel(tryEndLabel.get());
 
     if (m_catchBlock) {
-        RefPtr<LabelID> handlerEndLabel = generator.newLabel();
+        RefPtr<Label> handlerEndLabel = generator.newLabel();
         generator.emitJump(handlerEndLabel.get());
         RefPtr<RegisterID> exceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), tryEndLabel.get());
         generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
@@ -2339,7 +2339,7 @@ RegisterID* TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         // ref the highest register ever used as a conservative
         // approach to not clobbering anything important
         RefPtr<RegisterID> highestUsedRegister = generator.highestUsedRegister();
-        RefPtr<LabelID> finallyEndLabel = generator.newLabel();
+        RefPtr<Label> finallyEndLabel = generator.newLabel();
         generator.emitJumpSubroutine(finallyReturnAddr.get(), finallyStart.get());
         // Use a label to record the subtle fact that sret will return to the
         // next instruction. sret is the only way to jump without an explicit label.
