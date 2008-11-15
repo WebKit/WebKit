@@ -2431,10 +2431,9 @@ void EvalNode::generateCode(ScopeChainNode* scopeChainNode)
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
-    SymbolTable symbolTable;
     m_code.set(new EvalCodeBlock(this, globalObject, source().provider()));
 
-    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &symbolTable, m_code.get());
+    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable, m_code.get());
     generator.generate();
 }
 
@@ -2500,7 +2499,7 @@ void FunctionBodyNode::generateCode(ScopeChainNode* scopeChainNode)
 
     m_code.set(new CodeBlock(this, FunctionCode, source().provider(), source().startOffset()));
 
-    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_symbolTable, m_code.get());
+    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable, m_code.get());
     generator.generate();
 }
 

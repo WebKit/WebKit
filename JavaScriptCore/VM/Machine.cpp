@@ -3994,7 +3994,7 @@ JSValue* Machine::retrieveArguments(CallFrame* callFrame, JSFunction* function) 
     CodeBlock* codeBlock = functionCallFrame->codeBlock();
     if (codeBlock->usesArguments) {
         ASSERT(codeBlock->codeType == FunctionCode);
-        SymbolTable& symbolTable = static_cast<FunctionBodyNode*>(codeBlock->ownerNode)->symbolTable();
+        SymbolTable& symbolTable = codeBlock->symbolTable;
         int argumentsIndex = symbolTable.get(functionCallFrame->propertyNames().arguments.ustring().rep()).getIndex();
         return functionCallFrame[argumentsIndex].jsValue(callFrame);
     }

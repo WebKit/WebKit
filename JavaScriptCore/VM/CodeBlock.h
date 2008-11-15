@@ -362,6 +362,7 @@ namespace JSC {
 
         EvalCodeCache evalCodeCache;
 
+        SymbolTable symbolTable;
     private:
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
