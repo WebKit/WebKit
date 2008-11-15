@@ -30,7 +30,7 @@
 
 #include "UString.h"
 
-namespace JSC {
+namespace WREC {
 
     struct CharacterClassRange {
         UChar begin;
@@ -114,7 +114,7 @@ namespace JSC {
         Vector<CharacterClassRange> m_rangesUnicode;
     };
 
-}
+} // namespace WREC
 
 #endif // ENABLE(WREC)
 

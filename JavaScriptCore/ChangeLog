@@ -2,6 +2,67 @@
 
         Reviewed by Sam Weinig.
         
+        Moved all WREC-related code into WREC.cpp and put it in a WREC namespace.
+        Removed the WREC prefix from class names.
+
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * VM/Machine.h:
+        (JSC::BytecodeInterpreter::assemblerBuffer):
+        * masm/X86Assembler.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        * wrec/CharacterClassConstructor.cpp:
+        * wrec/CharacterClassConstructor.h:
+        * wrec/WREC.cpp:
+        (WREC::GenerateParenthesesNonGreedyFunctor::GenerateParenthesesNonGreedyFunctor):
+        (WREC::GeneratePatternCharacterFunctor::generateAtom):
+        (WREC::GeneratePatternCharacterFunctor::backtrack):
+        (WREC::GenerateCharacterClassFunctor::generateAtom):
+        (WREC::GenerateCharacterClassFunctor::backtrack):
+        (WREC::GenerateBackreferenceFunctor::generateAtom):
+        (WREC::GenerateBackreferenceFunctor::backtrack):
+        (WREC::GenerateParenthesesNonGreedyFunctor::generateAtom):
+        (WREC::GenerateParenthesesNonGreedyFunctor::backtrack):
+        (WREC::Generator::generateBacktrack1):
+        (WREC::Generator::generateBacktrackBackreference):
+        (WREC::Generator::generateBackreferenceQuantifier):
+        (WREC::Generator::generateNonGreedyQuantifier):
+        (WREC::Generator::generateGreedyQuantifier):
+        (WREC::Generator::generatePatternCharacter):
+        (WREC::Generator::generateCharacterClassInvertedRange):
+        (WREC::Generator::generateCharacterClassInverted):
+        (WREC::Generator::generateCharacterClass):
+        (WREC::Generator::generateParentheses):
+        (WREC::Generator::generateParenthesesNonGreedy):
+        (WREC::Generator::generateParenthesesResetTrampoline):
+        (WREC::Generator::generateAssertionBOL):
+        (WREC::Generator::generateAssertionEOL):
+        (WREC::Generator::generateAssertionWordBoundary):
+        (WREC::Generator::generateBackreference):
+        (WREC::Generator::generateDisjunction):
+        (WREC::Generator::terminateDisjunction):
+        (WREC::Parser::parseGreedyQuantifier):
+        (WREC::Parser::parseQuantifier):
+        (WREC::Parser::parsePatternCharacterQualifier):
+        (WREC::Parser::parseCharacterClassQuantifier):
+        (WREC::Parser::parseBackreferenceQuantifier):
+        (WREC::Parser::parseParentheses):
+        (WREC::Parser::parseCharacterClass):
+        (WREC::Parser::parseOctalEscape):
+        (WREC::Parser::parseEscape):
+        (WREC::Parser::parseTerm):
+        (WREC::Parser::parseDisjunction):
+        (WREC::compileRegExp):
+        * wrec/WREC.h:
+        (WREC::Generator::Generator):
+        (WREC::Parser::Parser):
+        (WREC::Parser::parseAlternative):
+
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Changed another case of "m_jit" to "m_assembler".
 
         * VM/CTI.cpp:

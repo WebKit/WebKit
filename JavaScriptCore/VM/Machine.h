@@ -274,6 +274,8 @@ namespace JSC {
         static void* SFX_CALL cti_vm_lazyLinkCall(CTI_ARGS);
         static JSObject* SFX_CALL cti_op_push_activation(CTI_ARGS);
         
+        AssemblerBuffer* assemblerBuffer() const { return m_assemblerBuffer.get(); }
+
 #endif // ENABLE(CTI)
 
         // Default number of ticks before a timeout check should be done.
@@ -325,8 +327,6 @@ namespace JSC {
 
         void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
-
-        AssemblerBuffer* assemblerBuffer() const { return m_assemblerBuffer.get(); }
 #endif
 
         SamplingTool* m_sampler;

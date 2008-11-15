@@ -289,10 +289,6 @@ namespace JSC {
             cti.privateCompile();
         }
 
-#if ENABLE(WREC)
-        static void* compileRegExp(BytecodeInterpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
-#endif
-
         static void compileGetByIdSelf(JSGlobalData* globalData, CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress)
         {
             CTI cti(globalData, codeBlock);
@@ -464,9 +460,6 @@ namespace JSC {
 
         int m_lastResultBytecodeRegister;
         unsigned m_jumpTargetsPosition;
-
-        // This limit comes from the limit set in PCRE
-        static const int MaxPatternSize = (1 << 16);
     };
 }
 
