@@ -1,3 +1,22 @@
+2008-11-14  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 22259: Make all opcodes use eax as their final result register
+        <https://bugs.webkit.org/show_bug.cgi?id=22259>
+
+        Change one case of op_add (and the corresponding slow case) to use eax
+        rather than edx. Also, change the order in which the two results of
+        resolve_func and resolve_base are emitted so that the retrieved value is
+        put last into eax.
+
+        This gives no performance change on SunSpider or the V8 benchmark suite
+        when run in either harness.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+
 2008-11-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

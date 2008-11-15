@@ -1110,11 +1110,11 @@ void CTI::privateCompileMainPass()
             unsigned src2 = instruction[i + 3].u.operand;
 
             if (JSValue* value = getConstantImmediateNumericArg(src1)) {
-                emitGetVirtualRegister(src2, X86::edx, i);
-                emitJumpSlowCaseIfNotImmNum(X86::edx, i);
-                m_jit.addl_i32r(getDeTaggedConstantImmediate(value), X86::edx);
+                emitGetVirtualRegister(src2, X86::eax, i);
+                emitJumpSlowCaseIfNotImmNum(X86::eax, i);
+                m_jit.addl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
                 m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
-                emitPutVirtualRegister(dst, X86::edx);
+                emitPutVirtualRegister(dst);
             } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
                 emitGetVirtualRegister(src1, X86::eax, i);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
@@ -1523,8 +1523,8 @@ void CTI::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCTICall(instruction + i, i, Machine::cti_op_resolve_func);
-            emitPutVirtualRegister(instruction[i + 1].u.operand);
             emitPutVirtualRegister(instruction[i + 2].u.operand, X86::edx);
+            emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
         }
@@ -1902,8 +1902,8 @@ void CTI::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitCTICall(instruction + i, i, Machine::cti_op_resolve_with_base);
-            emitPutVirtualRegister(instruction[i + 1].u.operand);
             emitPutVirtualRegister(instruction[i + 2].u.operand, X86::edx);
+            emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
         }
@@ -2416,10 +2416,10 @@ void CTI::privateCompileSlowCases()
             if (JSValue* value = getConstantImmediateNumericArg(src1)) {
                 X86Assembler::JmpSrc notImm = iter->from;
                 m_jit.link((++iter)->from, m_jit.label());
-                m_jit.subl_i32r(getDeTaggedConstantImmediate(value), X86::edx);
+                m_jit.subl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
                 m_jit.link(notImm, m_jit.label());
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
-                emitPutCTIArg(X86::edx, 4);
+                emitPutCTIArg(X86::eax, 4);
                 emitCTICall(instruction + i, i, Machine::cti_op_add);
                 emitPutVirtualRegister(dst);
             } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
