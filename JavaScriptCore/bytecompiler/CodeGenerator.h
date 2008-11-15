@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CodeGenerator_h
-#define CodeGenerator_h
+#ifndef BytecodeGenerator_h
+#define BytecodeGenerator_h
 
 #include "CodeBlock.h"
 #include "HashTraits.h"
@@ -60,16 +60,16 @@ namespace JSC {
         FinallyContext finallyContext;
     };
 
-    class CodeGenerator {
+    class BytecodeGenerator {
     public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
 
-        CodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*, VarStack&, FunctionStack&);
-        CodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
-        CodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
+        BytecodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*, VarStack&, FunctionStack&);
+        BytecodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
+        BytecodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
 
         JSGlobalData* globalData() const { return m_globalData; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
@@ -459,4 +459,4 @@ namespace JSC {
 
 }
 
-#endif // CodeGenerator_h
+#endif // BytecodeGenerator_h

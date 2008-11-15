@@ -2,6 +2,212 @@
 
         Reviewed by Sam Weinig.
         
+        Renames:
+        
+        CodeGenerator => BytecodeGenerator
+        emitCodeForBlock => emitBytecodeForBlock
+        generatedByteCode => generatedBytecode
+        generateCode => generateBytecode
+
+        * JavaScriptCore.exp:
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::BytecodeGenerator::setDumpsGeneratedCode):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::allocateConstants):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addParameter):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::BytecodeGenerator::constRegisterFor):
+        (JSC::BytecodeGenerator::isLocal):
+        (JSC::BytecodeGenerator::isLocalConstant):
+        (JSC::BytecodeGenerator::newRegister):
+        (JSC::BytecodeGenerator::newTemporary):
+        (JSC::BytecodeGenerator::highestUsedRegister):
+        (JSC::BytecodeGenerator::newLabelScope):
+        (JSC::BytecodeGenerator::newLabel):
+        (JSC::BytecodeGenerator::emitLabel):
+        (JSC::BytecodeGenerator::emitBytecode):
+        (JSC::BytecodeGenerator::retrieveLastBinaryOp):
+        (JSC::BytecodeGenerator::retrieveLastUnaryOp):
+        (JSC::BytecodeGenerator::rewindBinaryOp):
+        (JSC::BytecodeGenerator::rewindUnaryOp):
+        (JSC::BytecodeGenerator::emitJump):
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::addUnexpectedConstant):
+        (JSC::BytecodeGenerator::addRegExp):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        (JSC::BytecodeGenerator::emitPreInc):
+        (JSC::BytecodeGenerator::emitPreDec):
+        (JSC::BytecodeGenerator::emitPostInc):
+        (JSC::BytecodeGenerator::emitPostDec):
+        (JSC::BytecodeGenerator::emitBinaryOp):
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::emitUnexpectedLoad):
+        (JSC::BytecodeGenerator::findScopedProperty):
+        (JSC::BytecodeGenerator::emitInstanceOf):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitGetScopedVar):
+        (JSC::BytecodeGenerator::emitPutScopedVar):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitResolveFunction):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitPutGetter):
+        (JSC::BytecodeGenerator::emitPutSetter):
+        (JSC::BytecodeGenerator::emitDeleteById):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        (JSC::BytecodeGenerator::emitDeleteByVal):
+        (JSC::BytecodeGenerator::emitPutByIndex):
+        (JSC::BytecodeGenerator::emitNewObject):
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitNewRegExp):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::emitUnaryNoDstOp):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitPushScope):
+        (JSC::BytecodeGenerator::emitPopScope):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::popFinallyContext):
+        (JSC::BytecodeGenerator::breakTarget):
+        (JSC::BytecodeGenerator::continueTarget):
+        (JSC::BytecodeGenerator::emitComplexJumpScopes):
+        (JSC::BytecodeGenerator::emitJumpScopes):
+        (JSC::BytecodeGenerator::emitNextPropertyName):
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::BytecodeGenerator::emitNewError):
+        (JSC::BytecodeGenerator::emitJumpSubroutine):
+        (JSC::BytecodeGenerator::emitSubroutineReturn):
+        (JSC::BytecodeGenerator::emitPushNewScope):
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        (JSC::BytecodeGenerator::emitThrowExpressionTooDeepException):
+        * bytecompiler/CodeGenerator.h:
+        * jsc.cpp:
+        (runWithScripts):
+        * parser/Nodes.cpp:
+        (JSC::ThrowableExpressionData::emitThrowError):
+        (JSC::NullNode::emitBytecode):
+        (JSC::BooleanNode::emitBytecode):
+        (JSC::NumberNode::emitBytecode):
+        (JSC::StringNode::emitBytecode):
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::ThisNode::emitBytecode):
+        (JSC::ResolveNode::isPure):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ObjectLiteralNode::emitBytecode):
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::ArgumentListNode::emitBytecode):
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::emitPreIncOrDec):
+        (JSC::emitPostIncOrDec):
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PostfixBracketNode::emitBytecode):
+        (JSC::PostfixDotNode::emitBytecode):
+        (JSC::PostfixErrorNode::emitBytecode):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::DeleteBracketNode::emitBytecode):
+        (JSC::DeleteDotNode::emitBytecode):
+        (JSC::DeleteValueNode::emitBytecode):
+        (JSC::VoidNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::TypeOfValueNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::PrefixBracketNode::emitBytecode):
+        (JSC::PrefixDotNode::emitBytecode):
+        (JSC::PrefixErrorNode::emitBytecode):
+        (JSC::UnaryOpNode::emitBytecode):
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::EqualNode::emitBytecode):
+        (JSC::StrictEqualNode::emitBytecode):
+        (JSC::ReverseBinaryOpNode::emitBytecode):
+        (JSC::ThrowableBinaryOpNode::emitBytecode):
+        (JSC::InstanceOfNode::emitBytecode):
+        (JSC::LogicalOpNode::emitBytecode):
+        (JSC::ConditionalNode::emitBytecode):
+        (JSC::emitReadModifyAssignment):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::AssignErrorNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        (JSC::CommaNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ConstDeclNode::emitBytecode):
+        (JSC::ConstStatementNode::emitBytecode):
+        (JSC::statementListEmitCode):
+        (JSC::BlockNode::emitBytecode):
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::DebuggerStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::VarStatementNode::emitBytecode):
+        (JSC::IfNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::CaseBlockNode::emitBytecodeForBlock):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        (JSC::EvalNode::emitBytecode):
+        (JSC::EvalNode::generateBytecode):
+        (JSC::FunctionBodyNode::generateBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        (JSC::ProgramNode::generateBytecode):
+        (JSC::FuncDeclNode::emitBytecode):
+        (JSC::FuncExprNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::):
+        (JSC::BooleanNode::):
+        (JSC::NumberNode::):
+        (JSC::StringNode::):
+        (JSC::ProgramNode::):
+        (JSC::EvalNode::):
+        (JSC::FunctionBodyNode::):
+        * runtime/Arguments.h:
+        (JSC::Arguments::getArgumentsData):
+        (JSC::JSActivation::copyRegisters):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::mark):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::JSActivationData::JSActivationData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Renamed all forms of "byte code" "opcode" "op code" "code" "bitcode"
         etc. to "bytecode".
 

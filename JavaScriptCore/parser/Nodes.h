@@ -44,7 +44,7 @@
 namespace JSC {
 
     class CodeBlock;
-    class CodeGenerator;
+    class BytecodeGenerator;
     class FuncDeclNode;
     class EvalCodeBlock;
     class JSFunction;
@@ -146,7 +146,7 @@ namespace JSC {
             because the assignment node, "x =", passes r[x] as dst to the number
             node, "1".
         */
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL = 0;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL = 0;
 
         int lineNo() const { return m_line; }
 
@@ -165,7 +165,7 @@ namespace JSC {
         virtual bool isNumber() const JSC_FAST_CALL { return false; }
         virtual bool isString() const JSC_FAST_CALL { return false; }
         virtual bool isNull() const JSC_FAST_CALL { return false; }
-        virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return false; }        
+        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return false; }        
         virtual bool isLocation() const JSC_FAST_CALL { return false; }
         virtual bool isResolveNode() const JSC_FAST_CALL { return false; }
         virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return false; }
@@ -208,7 +208,7 @@ namespace JSC {
 
         virtual bool isNull() const JSC_FAST_CALL { return true; }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class BooleanNode : public ExpressionNode {
@@ -219,9 +219,9 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
+        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
 
     private:
         bool m_value;
@@ -235,10 +235,10 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isNumber() const JSC_FAST_CALL { return true; }
-        virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
+        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
         double value() const JSC_FAST_CALL { return m_double; }
         void setValue(double d) JSC_FAST_CALL { m_double = d; }
 
@@ -254,11 +254,11 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         
         virtual bool isString() const JSC_FAST_CALL { return true; }
         const Identifier& value() { return m_value; }
-        virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL { return true; }
+        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL { return true; }
 
     private:
         Identifier m_value;
@@ -292,8 +292,8 @@ namespace JSC {
         uint16_t endOffset() const { return m_endOffset; }
 
     protected:
-        RegisterID* emitThrowError(CodeGenerator&, ErrorType, const char* msg);
-        RegisterID* emitThrowError(CodeGenerator&, ErrorType, const char* msg, const Identifier&);
+        RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* msg);
+        RegisterID* emitThrowError(BytecodeGenerator&, ErrorType, const char* msg, const Identifier&);
 
     private:
         uint32_t m_divot;
@@ -370,7 +370,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         UString m_pattern;
@@ -384,7 +384,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class ResolveNode : public ExpressionNode {
@@ -396,9 +396,9 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
-        virtual bool isPure(CodeGenerator&) const JSC_FAST_CALL;
+        virtual bool isPure(BytecodeGenerator&) const JSC_FAST_CALL;
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isResolveNode() const JSC_FAST_CALL { return true; }
         const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
@@ -467,7 +467,7 @@ namespace JSC {
         virtual ~ArrayNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ElementNode> m_element;
@@ -517,7 +517,7 @@ namespace JSC {
         virtual ~PropertyListNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<PropertyNode> m_node;
@@ -540,7 +540,7 @@ namespace JSC {
         virtual ~ObjectLiteralNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<PropertyListNode> m_list;
@@ -559,7 +559,7 @@ namespace JSC {
         virtual ~BracketAccessorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return true; }
@@ -584,7 +584,7 @@ namespace JSC {
         virtual ~DotAccessorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isLocation() const JSC_FAST_CALL { return true; }
         virtual bool isDotAccessorNode() const JSC_FAST_CALL { return true; }
@@ -614,7 +614,7 @@ namespace JSC {
         virtual ~ArgumentListNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         RefPtr<ArgumentListNode> m_next;
         RefPtr<ExpressionNode> m_expr;
@@ -657,7 +657,7 @@ namespace JSC {
         virtual ~NewExprNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -676,7 +676,7 @@ namespace JSC {
         virtual ~EvalFunctionCallNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ArgumentsNode> m_args;
@@ -695,7 +695,7 @@ namespace JSC {
         virtual ~FunctionCallValueNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -715,7 +715,7 @@ namespace JSC {
         virtual ~FunctionCallResolveNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -738,7 +738,7 @@ namespace JSC {
         virtual ~FunctionCallBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -760,7 +760,7 @@ namespace JSC {
         virtual ~FunctionCallDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -789,7 +789,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Operator m_operator;
@@ -809,7 +809,7 @@ namespace JSC {
         virtual ~PostfixBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -831,7 +831,7 @@ namespace JSC {
         virtual ~PostfixDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -852,7 +852,7 @@ namespace JSC {
         virtual ~PostfixErrorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -868,7 +868,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -887,7 +887,7 @@ namespace JSC {
         virtual ~DeleteBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -907,7 +907,7 @@ namespace JSC {
         virtual ~DeleteDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -925,7 +925,7 @@ namespace JSC {
         virtual ~DeleteValueNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -942,7 +942,7 @@ namespace JSC {
         virtual ~VoidNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -956,7 +956,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         const Identifier& identifier() const JSC_FAST_CALL { return m_ident; }
 
@@ -975,7 +975,7 @@ namespace JSC {
         virtual ~TypeOfValueNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -989,7 +989,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Operator m_operator;
@@ -1009,7 +1009,7 @@ namespace JSC {
         virtual ~PrefixBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1031,7 +1031,7 @@ namespace JSC {
         virtual ~PrefixDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1052,7 +1052,7 @@ namespace JSC {
         virtual ~PrefixErrorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1076,7 +1076,7 @@ namespace JSC {
         virtual ~UnaryOpNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual BytecodeID bytecode() const JSC_FAST_CALL = 0;
 
     protected:
@@ -1146,7 +1146,7 @@ namespace JSC {
         virtual ~BinaryOpNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual BytecodeID bytecode() const JSC_FAST_CALL = 0;
 
     protected:
@@ -1167,7 +1167,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class MultNode : public BinaryOpNode {
@@ -1300,7 +1300,7 @@ namespace JSC {
             : BinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
         {
         }
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
     
     class InstanceOfNode : public ThrowableBinaryOpNode {
@@ -1312,7 +1312,7 @@ namespace JSC {
 
         virtual BytecodeID bytecode() const JSC_FAST_CALL { return op_instanceof; }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class InNode : public ThrowableBinaryOpNode {
@@ -1332,7 +1332,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual BytecodeID bytecode() const JSC_FAST_CALL { return op_eq; }
     };
 
@@ -1353,7 +1353,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual BytecodeID bytecode() const JSC_FAST_CALL { return op_stricteq; }
     };
 
@@ -1413,7 +1413,7 @@ namespace JSC {
         virtual ~LogicalOpNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr1;
@@ -1437,7 +1437,7 @@ namespace JSC {
         virtual ~ConditionalNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_logical;
@@ -1460,7 +1460,7 @@ namespace JSC {
         virtual ~ReadModifyResolveNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -1483,7 +1483,7 @@ namespace JSC {
         virtual ~AssignResolveNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -1509,7 +1509,7 @@ namespace JSC {
         virtual ~ReadModifyBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1536,7 +1536,7 @@ namespace JSC {
         virtual ~AssignBracketNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1561,7 +1561,7 @@ namespace JSC {
         virtual ~AssignDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1586,7 +1586,7 @@ namespace JSC {
         virtual ~ReadModifyDotNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_base;
@@ -1610,7 +1610,7 @@ namespace JSC {
         virtual ~AssignErrorNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_left;
@@ -1630,7 +1630,7 @@ namespace JSC {
         virtual ~CommaNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr1;
@@ -1656,8 +1656,8 @@ namespace JSC {
         RefPtr<ConstDeclNode> m_next;
         RefPtr<ExpressionNode> m_init;
         
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
-        virtual RegisterID* emitCodeSingle(CodeGenerator&) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitCodeSingle(BytecodeGenerator&) JSC_FAST_CALL;
     };
 
     class ConstStatementNode : public StatementNode {
@@ -1671,7 +1671,7 @@ namespace JSC {
         virtual ~ConstStatementNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ConstDeclNode> m_next;
@@ -1702,7 +1702,7 @@ namespace JSC {
         virtual ~BlockNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         StatementVector& children() { return m_children; }
 
@@ -1719,7 +1719,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return true; }
     };
@@ -1731,7 +1731,7 @@ namespace JSC {
         {
         }
         
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
     };
 
     class ExprStatementNode : public StatementNode {
@@ -1742,7 +1742,7 @@ namespace JSC {
         {
         }
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1759,7 +1759,7 @@ namespace JSC {
         virtual ~VarStatementNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1777,7 +1777,7 @@ namespace JSC {
         virtual ~IfNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     protected:
         RefPtr<ExpressionNode> m_condition;
@@ -1795,7 +1795,7 @@ namespace JSC {
         virtual ~IfElseNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<StatementNode> m_elseBlock;
@@ -1813,7 +1813,7 @@ namespace JSC {
         virtual ~DoWhileNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -1834,7 +1834,7 @@ namespace JSC {
         virtual ~WhileNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -1859,7 +1859,7 @@ namespace JSC {
         virtual ~ForNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -1879,7 +1879,7 @@ namespace JSC {
         virtual ~ForInNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         virtual bool isLoop() const JSC_FAST_CALL { return true; }
 
@@ -1905,7 +1905,7 @@ namespace JSC {
         {
         }
         
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -1924,7 +1924,7 @@ namespace JSC {
         {
         }
         
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_ident;
@@ -1941,7 +1941,7 @@ namespace JSC {
         virtual ~ReturnNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         virtual bool isReturnNode() const JSC_FAST_CALL { return true; }
 
     private:
@@ -1962,7 +1962,7 @@ namespace JSC {
         virtual ~WithNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -1983,7 +1983,7 @@ namespace JSC {
         virtual ~LabelNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         Identifier m_name;
@@ -2001,7 +2001,7 @@ namespace JSC {
         virtual ~ThrowNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -2021,7 +2021,7 @@ namespace JSC {
         virtual ~TryNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* dst = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<StatementNode> m_tryBlock;
@@ -2102,15 +2102,15 @@ namespace JSC {
         ProgramCodeBlock& bytecode(ScopeChainNode* scopeChain) JSC_FAST_CALL
         {
             if (!m_code)
-                generateCode(scopeChain);
+                generateBytecode(scopeChain);
             return *m_code;
         }
 
     private:
         ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
-        void generateCode(ScopeChainNode*) JSC_FAST_CALL;
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        void generateBytecode(ScopeChainNode*) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         Vector<size_t> m_varIndexes; // Storage indexes belonging to the nodes in m_varStack. (Recorded to avoid double lookup.)
         Vector<size_t> m_functionIndexes; // Storage indexes belonging to the nodes in m_functionStack. (Recorded to avoid double lookup.)
@@ -2125,15 +2125,15 @@ namespace JSC {
         EvalCodeBlock& bytecode(ScopeChainNode* scopeChain) JSC_FAST_CALL
         {
             if (!m_code)
-                generateCode(scopeChain);
+                generateBytecode(scopeChain);
             return *m_code;
         }
 
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
-        void generateCode(ScopeChainNode*) JSC_FAST_CALL;
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        void generateBytecode(ScopeChainNode*) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         
         OwnPtr<EvalCodeBlock> m_code;
     };
@@ -2150,17 +2150,17 @@ namespace JSC {
         UString paramString() const JSC_FAST_CALL;
         Identifier* copyParameters();
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         
         CodeBlock& bytecode(ScopeChainNode* scopeChain) JSC_FAST_CALL
         {
             ASSERT(scopeChain);
             if (!m_code)
-                generateCode(scopeChain);
+                generateBytecode(scopeChain);
             return *m_code;
         }
 
-        CodeBlock& generatedByteCode() JSC_FAST_CALL
+        CodeBlock& generatedBytecode() JSC_FAST_CALL
         {
             ASSERT(m_code);
             return *m_code;
@@ -2195,7 +2195,7 @@ namespace JSC {
     private:
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
-        void generateCode(ScopeChainNode*) JSC_FAST_CALL;
+        void generateBytecode(ScopeChainNode*) JSC_FAST_CALL;
 
         Identifier* m_parameters;
         size_t m_parameterCount;
@@ -2217,7 +2217,7 @@ namespace JSC {
         virtual ~FuncExprNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
 
         FunctionBodyNode* body() { return m_body.get(); }
@@ -2242,7 +2242,7 @@ namespace JSC {
         virtual ~FuncDeclNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
 
@@ -2321,7 +2321,7 @@ namespace JSC {
         virtual ~CaseBlockNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        RegisterID* emitCodeForBlock(CodeGenerator&, RegisterID* input, RegisterID* dst = 0) JSC_FAST_CALL;
+        RegisterID* emitBytecodeForBlock(BytecodeGenerator&, RegisterID* input, RegisterID* dst = 0) JSC_FAST_CALL;
 
     private:
         SwitchInfo::SwitchType tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
@@ -2342,7 +2342,7 @@ namespace JSC {
         virtual ~SwitchNode();
         virtual void releaseNodes(NodeReleaser&);
 
-        virtual RegisterID* emitBytecode(CodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
 
     private:
         RefPtr<ExpressionNode> m_expr;
