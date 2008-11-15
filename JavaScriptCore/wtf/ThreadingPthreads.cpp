@@ -29,6 +29,8 @@
 #include "config.h"
 #include "Threading.h"
 
+#include "StdLibExtras.h"
+
 #if USE(PTHREADS)
 
 #include "HashMap.h"
@@ -40,6 +42,8 @@
 
 namespace WTF {
 
+typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
+
 static Mutex* atomicallyInitializedStaticMutex;
 
 #if !PLATFORM(DARWIN)
@@ -48,7 +52,7 @@ static ThreadIdentifier mainThreadIdentifier; // The thread that was the first t
 
 static Mutex& threadMapMutex()
 {
-    static Mutex& mutex = *new Mutex;
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -76,9 +80,9 @@ void unlockAtomicallyInitializedStaticMutex()
     atomicallyInitializedStaticMutex->unlock();
 }
 
-static HashMap<ThreadIdentifier, pthread_t>& threadMap()
+static ThreadMap& threadMap()
 {
-    static HashMap<ThreadIdentifier, pthread_t>& map = *new HashMap<ThreadIdentifier, pthread_t>;
+    DEFINE_STATIC_LOCAL(ThreadMap, map, ());
     return map;
 }
 
@@ -97,7 +101,7 @@ static ThreadIdentifier identifierByPthreadHandle(const pthread_t& pthreadHandle
 {
     MutexLocker locker(threadMapMutex());
 
-    HashMap<ThreadIdentifier, pthread_t>::iterator i = threadMap().begin();
+    ThreadMap::iterator i = threadMap().begin();
     for (; i != threadMap().end(); ++i) {
         if (pthread_equal(i->second, pthreadHandle))
             return i->first;

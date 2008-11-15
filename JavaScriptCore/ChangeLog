@@ -1,3 +1,36 @@
+2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin Alder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21810
+        Remove use of static C++ objects that are destroyed at exit time (destructors)
+
+        Create DEFINE_STATIC_LOCAL macro. Change static local objects to leak to avoid 
+        exit-time destructor. Update code that was changed to fix this issue that ran 
+        into a gcc bug (<rdar://problem/6354696> Codegen issue with C++ static reference 
+        in gcc build 5465). Also typdefs for template types needed to be added in some 
+        cases so the type could make it through the macro successfully.
+
+        Basically code of the form:
+        static T m;
+        becomes:
+        DEFINE_STATIC_LOCAL(T, m, ());
+
+        Also any code of the form:
+        static T& m = *new T;
+        also becomes:
+        DEFINE_STATIC_LOCAL(T, m, ());
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/MainThread.cpp:
+        (WTF::mainThreadFunctionQueueMutex):
+        (WTF::functionQueue):
+        * wtf/StdLibExtras.h: Added. Add DEFINE_STATIC_LOCAL macro
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+        (WTF::identifierByPthreadHandle):
+
 2008-11-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler

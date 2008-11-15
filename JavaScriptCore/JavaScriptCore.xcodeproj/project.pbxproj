@@ -307,6 +307,7 @@
 		E1A862D60D7F2B5C001EC6AA /* CollatorDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862D50D7F2B5C001EC6AA /* CollatorDefault.cpp */; };
 		E1EE793D0D6C9B9200FEA3BA /* ThreadingPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */; };
 		E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EF79A80CE97BA60088D500 /* UTF8.cpp */; };
+		FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -746,6 +747,7 @@
 		F692A8850255597D01FF60F7 /* UString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UString.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8860255597D01FF60F7 /* UString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = UString.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8870255597D01FF60F7 /* JSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValue.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdLibExtras.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1055,6 +1057,7 @@
 				65C647B3093EF8D60022C380 /* RefPtr.h */,
 				148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */,
 				51F648D60BB4E2CA0033D760 /* RetainPtr.h */,
+				FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */,
 				E11D51750B2E798D0056C188 /* StringExtras.h */,
 				5DA479650CFBCF56009328A0 /* TCPackedCache.h */,
 				6541BD6E08E80A17002CBEE7 /* TCPageMap.h */,
@@ -1574,6 +1577,7 @@
 				7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */,
 				7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */,
 				7E4C89140ECA0F9A00DBEEEC /* EvalCodeCache.h in Headers */,
+				FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
