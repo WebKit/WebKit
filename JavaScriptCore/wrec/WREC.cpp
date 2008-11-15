@@ -32,7 +32,7 @@
 #include "Machine.h"
 #include "pcre_internal.h"
 
-#define __ m_jit.
+#define __ m_assembler.
 
 using namespace WTF;
 

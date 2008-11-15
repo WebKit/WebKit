@@ -81,9 +81,9 @@ namespace JSC {
 
     class WRECGenerator {
     public:
-        WRECGenerator(WRECParser& parser, X86Assembler& jit)
+        WRECGenerator(WRECParser& parser, X86Assembler& assembler)
             : m_parser(parser)
-            , m_jit(jit)
+            , m_assembler(assembler)
         {
         }
 
@@ -127,7 +127,7 @@ namespace JSC {
 
     private:
         WRECParser& m_parser;
-        X86Assembler& m_jit;
+        X86Assembler& m_assembler;
     };
 
     class WRECParser {
@@ -146,12 +146,12 @@ namespace JSC {
             TempError_unsupportedParentheses,
         } m_err;
 
-        WRECParser(const UString& pattern, bool ignoreCase, bool multiline, X86Assembler& jit)
+        WRECParser(const UString& pattern, bool ignoreCase, bool multiline, X86Assembler& assembler)
             : m_ignoreCase(ignoreCase)
             , m_multiline(multiline)
             , m_numSubpatterns(0)
             , m_err(NoError)
-            , m_generator(*this, jit)
+            , m_generator(*this, assembler)
             , m_data(pattern.data())
             , m_size(pattern.size())
             , m_index(0)
