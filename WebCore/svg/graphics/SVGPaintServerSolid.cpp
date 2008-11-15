@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,9 @@
 
 #if ENABLE(SVG)
 #include "SVGPaintServerSolid.h"
+
+#include "GraphicsContext.h"
+#include "RenderPath.h"
 #include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
@@ -54,6 +58,53 @@ TextStream& SVGPaintServerSolid::externalRepresentation(TextStream& ts) const
     ts << "[type=SOLID]"
         << " [color="<< color() << "]";
     return ts;
+}
+
+bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
+{
+    RenderStyle* style = object ? object->style() : 0;
+    const SVGRenderStyle* svgStyle = object ? object->style()->svgStyle() : 0;
+
+    if ((type & ApplyToFillTargetType) && (!style || svgStyle->hasFill())) {
+        RGBA32 rgba = color().rgb();
+        ASSERT(!color().hasAlpha());
+        if (style)
+            rgba = colorWithOverrideAlpha(rgba, svgStyle->fillOpacity());
+
+        context->setFillRule(svgStyle->fillRule());
+        context->setFillColor(rgba);
+
+        if (isPaintingText)
+            context->setTextDrawingMode(cTextFill);
+    }
+
+    if ((type & ApplyToStrokeTargetType) && (!style || svgStyle->hasStroke())) {
+        RGBA32 rgba = color().rgb();
+        ASSERT(!color().hasAlpha());
+        if (style)
+            rgba = colorWithOverrideAlpha(rgba, svgStyle->strokeOpacity());
+
+        context->setStrokeColor(rgba);
+
+        if (style)
+            applyStrokeStyleToContext(context, style, object);
+
+        if (isPaintingText)
+            context->setTextDrawingMode(cTextStroke);
+    }
+
+    return true;
+}
+
+void SVGPaintServerSolid::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
+{
+    const SVGRenderStyle* svgStyle = path->style()->svgStyle();
+
+    if ((type & ApplyToFillTargetType) && svgStyle->hasFill())
+        context->fillPath();
+
+    if ((type & ApplyToStrokeTargetType) && svgStyle->hasStroke())
+        context->strokePath();
 }
 
 } // namespace WebCore

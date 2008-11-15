@@ -1,3 +1,21 @@
+2008-11-15  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Removed platform dependent code on SVGPaintServerSolid.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/graphics/SVGPaintServerSolid.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+        (WebCore::SVGPaintServerSolid::renderPath):
+        * svg/graphics/SVGPaintServerSolid.h:
+        * svg/graphics/cairo/SVGPaintServerSolidCairo.cpp: Removed.
+        * svg/graphics/cg/SVGPaintServerSolidCg.cpp: Removed.
+        * svg/graphics/qt/SVGPaintServerSolidQt.cpp: Removed.
+
 2008-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
