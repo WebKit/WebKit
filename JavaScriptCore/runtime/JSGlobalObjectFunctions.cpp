@@ -291,7 +291,7 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* function, JSValue* thisValue,
     if (!evalNode)
         return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), NULL);
 
-    return exec->machine()->execute(evalNode.get(), exec, thisObject, globalObject->globalScopeChain().node(), exec->exceptionSlot());
+    return exec->interpreter()->execute(evalNode.get(), exec, thisObject, globalObject->globalScopeChain().node(), exec->exceptionSlot());
 }
 
 JSValue* globalFuncParseInt(ExecState* exec, JSObject*, JSValue*, const ArgList& args)

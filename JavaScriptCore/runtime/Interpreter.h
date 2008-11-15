@@ -29,39 +29,13 @@
 
 namespace JSC {
 
-  class Completion;
-  class ExecState;
-  class ScopeChain;
-  class SourceCode;
-  
-  class Interpreter {
-  public:
-    /**
-     * Parses the supplied ECMAScript code and checks for syntax errors.
-     *
-     * @param code The code to check
-     * @return A normal completion if there were no syntax errors in the code, 
-     * otherwise a throw completion with the syntax error as its value.
-     */
-    static Completion checkSyntax(ExecState*, const SourceCode&);
+    class Completion;
+    class ExecState;
+    class ScopeChain;
+    class SourceCode;
 
-    /**
-     * Evaluates the supplied ECMAScript code.
-     *
-     * Since this method returns a Completion, you should check the type of
-     * completion to detect an error or before attempting to access the returned
-     * value. For example, if an error occurs during script execution and is not
-     * caught by the script, the completion type will be Throw.
-     *
-     * If the supplied code is invalid, a SyntaxError will be thrown.
-     *
-     * @param code The code to evaluate
-     * @param thisValue The value to pass in as the "this" value for the script
-     * execution. This should either be jsNull() or an Object.
-     * @return A completion object representing the result of the execution.
-     */
-    static Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue* thisValue = noValue());
-  };
+    Completion checkSyntax(ExecState*, const SourceCode&);
+    Completion evaluate(ExecState*, ScopeChain&, const SourceCode&, JSValue* thisValue = noValue());
 
 } // namespace JSC
 

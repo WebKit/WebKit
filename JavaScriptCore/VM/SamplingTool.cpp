@@ -94,7 +94,7 @@ void SamplingTool::run()
             continue;
 
         if (!sample.inHostFunction()) {
-            unsigned opcodeID = m_machine->getOpcodeID(sample.vPC()[0].u.opcode);
+            unsigned opcodeID = m_interpreter->getOpcodeID(sample.vPC()[0].u.opcode);
 
             ++m_opcodeSampleCount;
             ++m_opcodeSamples[opcodeID];

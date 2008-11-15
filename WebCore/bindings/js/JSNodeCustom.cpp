@@ -112,7 +112,7 @@ void JSNode::mark()
 
     Node* node = m_impl.get();
 
-    // Nodes in the document are kept alive by ScriptInterpreter::mark,
+    // Nodes in the document are kept alive by JSDocument::mark,
     // so we have no special responsibilities and can just call the base class here.
     if (node->inDocument()) {
         // But if the document isn't marked we have to mark it to ensure that

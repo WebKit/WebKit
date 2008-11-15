@@ -208,9 +208,9 @@ JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState* exec, bool isNull)
 
 JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error, const Instruction* vPC, CodeBlock* codeBlock)
 {
-    if (vPC[8].u.opcode == exec->machine()->getOpcode(op_instanceof))
+    if (vPC[8].u.opcode == exec->interpreter()->getOpcode(op_instanceof))
         return createInvalidParamError(exec, "instanceof", error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
-    if (vPC[8].u.opcode == exec->machine()->getOpcode(op_construct))
+    if (vPC[8].u.opcode == exec->interpreter()->getOpcode(op_construct))
         return createNotAConstructorError(exec, error->isNull() ? jsNull() : jsUndefined(), vPC, codeBlock);
 
     int startOffset = 0;

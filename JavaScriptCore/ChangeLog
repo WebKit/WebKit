@@ -1,3 +1,228 @@
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Renamed Machine to BytecodeInterpreter.
+        
+        Nixed the Interpreter class, and changed its two functions to stand-alone
+        functions.
+
+        * JavaScriptCore.exp:
+        * VM/CTI.cpp:
+        (JSC::):
+        (JSC::CTI::emitCTICall):
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::freeCTIMachineTrampolines):
+        (JSC::CTI::patchGetByIdSelf):
+        (JSC::CTI::patchPutByIdReplace):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        (JSC::CTI::compileRegExp):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::printStructureIDs):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructureIDs):
+        (JSC::CodeBlock::refStructureIDs):
+        * VM/ExceptionHelpers.cpp:
+        (JSC::createNotAnObjectError):
+        * VM/Machine.cpp:
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::BytecodeInterpreter::resolve):
+        (JSC::BytecodeInterpreter::resolveSkip):
+        (JSC::BytecodeInterpreter::resolveGlobal):
+        (JSC::BytecodeInterpreter::resolveBase):
+        (JSC::BytecodeInterpreter::resolveBaseAndProperty):
+        (JSC::BytecodeInterpreter::resolveBaseAndFunc):
+        (JSC::BytecodeInterpreter::slideRegisterWindowForCall):
+        (JSC::BytecodeInterpreter::callEval):
+        (JSC::BytecodeInterpreter::BytecodeInterpreter):
+        (JSC::BytecodeInterpreter::initialize):
+        (JSC::BytecodeInterpreter::~BytecodeInterpreter):
+        (JSC::BytecodeInterpreter::dumpCallFrame):
+        (JSC::BytecodeInterpreter::dumpRegisters):
+        (JSC::BytecodeInterpreter::isOpcode):
+        (JSC::BytecodeInterpreter::unwindCallFrame):
+        (JSC::BytecodeInterpreter::throwException):
+        (JSC::BytecodeInterpreter::execute):
+        (JSC::BytecodeInterpreter::debug):
+        (JSC::BytecodeInterpreter::resetTimeoutCheck):
+        (JSC::BytecodeInterpreter::checkTimeout):
+        (JSC::BytecodeInterpreter::createExceptionScope):
+        (JSC::BytecodeInterpreter::tryCachePutByID):
+        (JSC::BytecodeInterpreter::uncachePutByID):
+        (JSC::BytecodeInterpreter::tryCacheGetByID):
+        (JSC::BytecodeInterpreter::uncacheGetByID):
+        (JSC::BytecodeInterpreter::privateExecute):
+        (JSC::BytecodeInterpreter::retrieveArguments):
+        (JSC::BytecodeInterpreter::retrieveCaller):
+        (JSC::BytecodeInterpreter::retrieveLastCaller):
+        (JSC::BytecodeInterpreter::findFunctionCallFrame):
+        (JSC::BytecodeInterpreter::tryCTICachePutByID):
+        (JSC::BytecodeInterpreter::tryCTICacheGetByID):
+        (JSC::BytecodeInterpreter::cti_op_convert_this):
+        (JSC::BytecodeInterpreter::cti_op_end):
+        (JSC::BytecodeInterpreter::cti_op_add):
+        (JSC::BytecodeInterpreter::cti_op_pre_inc):
+        (JSC::BytecodeInterpreter::cti_timeout_check):
+        (JSC::BytecodeInterpreter::cti_register_file_check):
+        (JSC::BytecodeInterpreter::cti_op_loop_if_less):
+        (JSC::BytecodeInterpreter::cti_op_loop_if_lesseq):
+        (JSC::BytecodeInterpreter::cti_op_new_object):
+        (JSC::BytecodeInterpreter::cti_op_put_by_id):
+        (JSC::BytecodeInterpreter::cti_op_put_by_id_second):
+        (JSC::BytecodeInterpreter::cti_op_put_by_id_generic):
+        (JSC::BytecodeInterpreter::cti_op_put_by_id_fail):
+        (JSC::BytecodeInterpreter::cti_op_get_by_id):
+        (JSC::BytecodeInterpreter::cti_op_get_by_id_second):
+        (JSC::BytecodeInterpreter::cti_op_get_by_id_generic):
+        (JSC::BytecodeInterpreter::cti_op_get_by_id_fail):
+        (JSC::BytecodeInterpreter::cti_op_instanceof):
+        (JSC::BytecodeInterpreter::cti_op_del_by_id):
+        (JSC::BytecodeInterpreter::cti_op_mul):
+        (JSC::BytecodeInterpreter::cti_op_new_func):
+        (JSC::BytecodeInterpreter::cti_op_call_JSFunction):
+        (JSC::BytecodeInterpreter::cti_op_call_arityCheck):
+        (JSC::BytecodeInterpreter::cti_vm_dontLazyLinkCall):
+        (JSC::BytecodeInterpreter::cti_vm_lazyLinkCall):
+        (JSC::BytecodeInterpreter::cti_op_push_activation):
+        (JSC::BytecodeInterpreter::cti_op_call_NotJSFunction):
+        (JSC::BytecodeInterpreter::cti_op_create_arguments):
+        (JSC::BytecodeInterpreter::cti_op_create_arguments_no_params):
+        (JSC::BytecodeInterpreter::cti_op_tear_off_activation):
+        (JSC::BytecodeInterpreter::cti_op_tear_off_arguments):
+        (JSC::BytecodeInterpreter::cti_op_profile_will_call):
+        (JSC::BytecodeInterpreter::cti_op_profile_did_call):
+        (JSC::BytecodeInterpreter::cti_op_ret_scopeChain):
+        (JSC::BytecodeInterpreter::cti_op_new_array):
+        (JSC::BytecodeInterpreter::cti_op_resolve):
+        (JSC::BytecodeInterpreter::cti_op_construct_JSConstruct):
+        (JSC::BytecodeInterpreter::cti_op_construct_NotJSConstruct):
+        (JSC::BytecodeInterpreter::cti_op_get_by_val):
+        (JSC::BytecodeInterpreter::cti_op_resolve_func):
+        (JSC::BytecodeInterpreter::cti_op_sub):
+        (JSC::BytecodeInterpreter::cti_op_put_by_val):
+        (JSC::BytecodeInterpreter::cti_op_put_by_val_array):
+        (JSC::BytecodeInterpreter::cti_op_lesseq):
+        (JSC::BytecodeInterpreter::cti_op_loop_if_true):
+        (JSC::BytecodeInterpreter::cti_op_negate):
+        (JSC::BytecodeInterpreter::cti_op_resolve_base):
+        (JSC::BytecodeInterpreter::cti_op_resolve_skip):
+        (JSC::BytecodeInterpreter::cti_op_resolve_global):
+        (JSC::BytecodeInterpreter::cti_op_div):
+        (JSC::BytecodeInterpreter::cti_op_pre_dec):
+        (JSC::BytecodeInterpreter::cti_op_jless):
+        (JSC::BytecodeInterpreter::cti_op_not):
+        (JSC::BytecodeInterpreter::cti_op_jtrue):
+        (JSC::BytecodeInterpreter::cti_op_post_inc):
+        (JSC::BytecodeInterpreter::cti_op_eq):
+        (JSC::BytecodeInterpreter::cti_op_lshift):
+        (JSC::BytecodeInterpreter::cti_op_bitand):
+        (JSC::BytecodeInterpreter::cti_op_rshift):
+        (JSC::BytecodeInterpreter::cti_op_bitnot):
+        (JSC::BytecodeInterpreter::cti_op_resolve_with_base):
+        (JSC::BytecodeInterpreter::cti_op_new_func_exp):
+        (JSC::BytecodeInterpreter::cti_op_mod):
+        (JSC::BytecodeInterpreter::cti_op_less):
+        (JSC::BytecodeInterpreter::cti_op_neq):
+        (JSC::BytecodeInterpreter::cti_op_post_dec):
+        (JSC::BytecodeInterpreter::cti_op_urshift):
+        (JSC::BytecodeInterpreter::cti_op_bitxor):
+        (JSC::BytecodeInterpreter::cti_op_new_regexp):
+        (JSC::BytecodeInterpreter::cti_op_bitor):
+        (JSC::BytecodeInterpreter::cti_op_call_eval):
+        (JSC::BytecodeInterpreter::cti_op_throw):
+        (JSC::BytecodeInterpreter::cti_op_get_pnames):
+        (JSC::BytecodeInterpreter::cti_op_next_pname):
+        (JSC::BytecodeInterpreter::cti_op_push_scope):
+        (JSC::BytecodeInterpreter::cti_op_pop_scope):
+        (JSC::BytecodeInterpreter::cti_op_typeof):
+        (JSC::BytecodeInterpreter::cti_op_is_undefined):
+        (JSC::BytecodeInterpreter::cti_op_is_boolean):
+        (JSC::BytecodeInterpreter::cti_op_is_number):
+        (JSC::BytecodeInterpreter::cti_op_is_string):
+        (JSC::BytecodeInterpreter::cti_op_is_object):
+        (JSC::BytecodeInterpreter::cti_op_is_function):
+        (JSC::BytecodeInterpreter::cti_op_stricteq):
+        (JSC::BytecodeInterpreter::cti_op_nstricteq):
+        (JSC::BytecodeInterpreter::cti_op_to_jsnumber):
+        (JSC::BytecodeInterpreter::cti_op_in):
+        (JSC::BytecodeInterpreter::cti_op_push_new_scope):
+        (JSC::BytecodeInterpreter::cti_op_jmp_scopes):
+        (JSC::BytecodeInterpreter::cti_op_put_by_index):
+        (JSC::BytecodeInterpreter::cti_op_switch_imm):
+        (JSC::BytecodeInterpreter::cti_op_switch_char):
+        (JSC::BytecodeInterpreter::cti_op_switch_string):
+        (JSC::BytecodeInterpreter::cti_op_del_by_val):
+        (JSC::BytecodeInterpreter::cti_op_put_getter):
+        (JSC::BytecodeInterpreter::cti_op_put_setter):
+        (JSC::BytecodeInterpreter::cti_op_new_error):
+        (JSC::BytecodeInterpreter::cti_op_debug):
+        (JSC::BytecodeInterpreter::cti_vm_throw):
+        * VM/Machine.h:
+        * VM/Register.h:
+        * VM/SamplingTool.cpp:
+        (JSC::SamplingTool::run):
+        * VM/SamplingTool.h:
+        (JSC::SamplingTool::SamplingTool):
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::CodeGenerator::generate):
+        (JSC::CodeGenerator::CodeGenerator):
+        (JSC::CodeGenerator::emitOpcode):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * jsc.cpp:
+        (runWithScripts):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        * runtime/Collector.cpp:
+        (JSC::Heap::collect):
+        * runtime/ExecState.h:
+        (JSC::ExecState::interpreter):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncApply):
+        * runtime/Interpreter.cpp:
+        (JSC::Interpreter::evaluate):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::call):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::construct):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::setTimeoutTime):
+        (JSC::JSGlobalObject::startTimeoutCheck):
+        (JSC::JSGlobalObject::stopTimeoutCheck):
+        (JSC::JSGlobalObject::mark):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSString.h:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+
 2008-11-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

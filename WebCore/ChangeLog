@@ -1,3 +1,27 @@
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Updated for JavaScriptCore renames.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::mark):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::eval):
+        * page/Console.cpp:
+        (WebCore::retrieveLastCaller):
+        (WebCore::Console::trace):
+
 2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.

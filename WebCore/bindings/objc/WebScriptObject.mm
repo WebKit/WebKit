@@ -330,7 +330,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSLock lock(false);
     
     [self _rootObject]->globalObject()->startTimeoutCheck();
-    Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)));
+    Completion completion = JSC::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)));
     [self _rootObject]->globalObject()->stopTimeoutCheck();
     ComplType type = completion.complType();
     

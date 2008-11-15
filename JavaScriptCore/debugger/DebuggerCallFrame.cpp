@@ -76,7 +76,7 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     if (!evalNode)
         return Error::create(m_callFrame, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
 
-    return m_callFrame->scopeChain()->globalData->machine->execute(evalNode.get(), m_callFrame, thisObject(), m_callFrame->scopeChain(), &exception);
+    return m_callFrame->scopeChain()->globalData->interpreter->execute(evalNode.get(), m_callFrame, thisObject(), m_callFrame->scopeChain(), &exception);
 }
 
 } // namespace JSC

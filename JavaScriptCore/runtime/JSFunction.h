@@ -39,7 +39,7 @@ namespace JSC {
 
     class JSFunction : public InternalFunction {
         friend class CTI;
-        friend class Machine;
+        friend class BytecodeInterpreter;
 
         typedef InternalFunction Base;
         JSFunction(PassRefPtr<JSC::StructureID> st) : InternalFunction(st), m_scopeChain(NoScopeChain()) {}

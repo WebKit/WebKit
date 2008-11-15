@@ -153,7 +153,7 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     intptr_t sourceID;
     UString sourceURL;
     JSValue* function;
-    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
+    exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
     impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
     impl()->setLastSendURL(sourceURL);
 

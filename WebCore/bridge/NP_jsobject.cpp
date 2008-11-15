@@ -200,7 +200,7 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         JSLock lock(false);
         String scriptString = convertNPStringToUTF16(s);
         rootObject->globalObject()->startTimeoutCheck();
-        Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(scriptString));
+        Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(scriptString));
         rootObject->globalObject()->stopTimeoutCheck();
         ComplType type = completion.complType();
         

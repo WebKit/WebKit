@@ -64,7 +64,7 @@ extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
 JSGlobalData::JSGlobalData(bool isShared)
-    : machine(new Machine)
+    : interpreter(new BytecodeInterpreter)
     , exception(noValue())
     , arrayTable(new HashTable(JSC::arrayTable))
     , dateTable(new HashTable(JSC::dateTable))
@@ -96,17 +96,17 @@ JSGlobalData::JSGlobalData(bool isShared)
 #if PLATFORM(MAC)
     startProfilerServerIfNeeded();
 #endif
-    machine->initialize(this);
+    interpreter->initialize(this);
 }
 
 JSGlobalData::~JSGlobalData()
 {
     // By the time this is destroyed, heap.destroy() must already have been called.
 
-    delete machine;
+    delete interpreter;
 #ifndef NDEBUG
     // Zeroing out to make the behavior more predictable when someone attempts to use a deleted instance.
-    machine = 0;
+    interpreter = 0;
 #endif
 
     arrayTable->deleteTable();

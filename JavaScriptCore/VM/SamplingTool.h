@@ -40,7 +40,7 @@ namespace JSC {
 
     class CodeBlock;
     class ExecState;
-    class Machine;
+    class BytecodeInterpreter;
     class ScopeNode;
     struct Instruction;
 
@@ -125,8 +125,8 @@ namespace JSC {
         };
 #endif        
 
-        SamplingTool(Machine* machine)
-            : m_machine(machine)
+        SamplingTool(BytecodeInterpreter* interpreter)
+            : m_interpreter(interpreter)
             , m_running(false)
             , m_codeBlock(0)
             , m_sample(0)
@@ -188,7 +188,7 @@ namespace JSC {
         static void* threadStartFunc(void*);
         void run();
         
-        Machine* m_machine;
+        BytecodeInterpreter* m_interpreter;
         
         // Sampling thread state.
         bool m_running;

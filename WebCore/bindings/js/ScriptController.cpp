@@ -108,7 +108,7 @@ JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const
     m_frame->keepAlive();
 
     m_windowShell->window()->startTimeoutCheck();
-    Completion comp = Interpreter::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), makeSource(str, sourceURL, baseLine), m_windowShell);
+    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), makeSource(str, sourceURL, baseLine), m_windowShell);
     m_windowShell->window()->stopTimeoutCheck();
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {

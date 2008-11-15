@@ -79,19 +79,19 @@ CallType JSFunction::getCallData(CallData& callData)
 
 JSValue* JSFunction::call(ExecState* exec, JSValue* thisValue, const ArgList& args)
 {
-    return exec->machine()->execute(m_body.get(), exec, this, thisValue->toThisObject(exec), args, m_scopeChain.node(), exec->exceptionSlot());
+    return exec->interpreter()->execute(m_body.get(), exec, this, thisValue->toThisObject(exec), args, m_scopeChain.node(), exec->exceptionSlot());
 }
 
 JSValue* JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = asFunction(slot.slotBase());
-    return exec->machine()->retrieveArguments(exec, thisObj);
+    return exec->interpreter()->retrieveArguments(exec, thisObj);
 }
 
 JSValue* JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = asFunction(slot.slotBase());
-    return exec->machine()->retrieveCaller(exec, thisObj);
+    return exec->interpreter()->retrieveCaller(exec, thisObj);
 }
 
 JSValue* JSFunction::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
@@ -191,7 +191,7 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
         structure = exec->lexicalGlobalObject()->emptyObjectStructure();
     JSObject* thisObj = new (exec) JSObject(structure);
 
-    JSValue* result = exec->machine()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
+    JSValue* result = exec->interpreter()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
     if (exec->hadException() || !result->isObject())
         return thisObj;
     return asObject(result);

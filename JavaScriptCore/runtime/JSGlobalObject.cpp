@@ -114,7 +114,7 @@ JSGlobalObject::~JSGlobalObject()
     for (HashSet<ProgramCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->globalObject = 0;
         
-    RegisterFile& registerFile = globalData()->machine->registerFile();
+    RegisterFile& registerFile = globalData()->interpreter->registerFile();
     if (registerFile.globalObject() == this) {
         registerFile.setGlobalObject(0);
         registerFile.setNumGlobals(0);
@@ -345,17 +345,17 @@ void JSGlobalObject::resetPrototype(JSValue* prototype)
 
 void JSGlobalObject::setTimeoutTime(unsigned timeoutTime)
 {
-    globalData()->machine->setTimeoutTime(timeoutTime);
+    globalData()->interpreter->setTimeoutTime(timeoutTime);
 }
 
 void JSGlobalObject::startTimeoutCheck()
 {
-    globalData()->machine->startTimeoutCheck();
+    globalData()->interpreter->startTimeoutCheck();
 }
 
 void JSGlobalObject::stopTimeoutCheck()
 {
-    globalData()->machine->stopTimeoutCheck();
+    globalData()->interpreter->stopTimeoutCheck();
 }
 
 void JSGlobalObject::mark()
@@ -366,7 +366,7 @@ void JSGlobalObject::mark()
     for (HashSet<ProgramCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->mark();
 
-    RegisterFile& registerFile = globalData()->machine->registerFile();
+    RegisterFile& registerFile = globalData()->interpreter->registerFile();
     if (registerFile.globalObject() == this)
         registerFile.markGlobals(&globalData()->heap);
 
