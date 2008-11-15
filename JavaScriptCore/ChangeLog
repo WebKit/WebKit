@@ -1,3 +1,82 @@
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Renamed "jit" to "assembler" and, for brevity, replaced *jit.* with __
+        using a macro.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetVirtualRegister):
+        (JSC::CTI::emitPutCTIArgFromVirtualRegister):
+        (JSC::CTI::emitPutCTIArg):
+        (JSC::CTI::emitGetCTIArg):
+        (JSC::CTI::emitPutCTIArgConstant):
+        (JSC::CTI::emitPutCTIParam):
+        (JSC::CTI::emitGetCTIParam):
+        (JSC::CTI::emitPutToCallFrameHeader):
+        (JSC::CTI::emitGetFromCallFrameHeader):
+        (JSC::CTI::emitPutVirtualRegister):
+        (JSC::CTI::emitInitRegister):
+        (JSC::CTI::emitAllocateNumber):
+        (JSC::CTI::emitNakedCall):
+        (JSC::CTI::emitNakedFastCall):
+        (JSC::CTI::emitCTICall):
+        (JSC::CTI::emitJumpSlowCaseIfNotJSCell):
+        (JSC::CTI::linkSlowCaseIfNotJSCell):
+        (JSC::CTI::emitJumpSlowCaseIfNotImmNum):
+        (JSC::CTI::emitJumpSlowCaseIfNotImmNums):
+        (JSC::CTI::emitFastArithDeTagImmediate):
+        (JSC::CTI::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::CTI::emitFastArithReTagImmediate):
+        (JSC::CTI::emitFastArithPotentiallyReTagImmediate):
+        (JSC::CTI::emitFastArithImmToInt):
+        (JSC::CTI::emitFastArithIntToImmOrSlowCase):
+        (JSC::CTI::emitFastArithIntToImmNoCheck):
+        (JSC::CTI::emitArithIntToImmWithJump):
+        (JSC::CTI::emitTagAsBoolImmediate):
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileOpCallInitializeCallFrame):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::compileOpStrictEq):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileLinkPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        (JSC::CTI::emitGetVariableObjectRegister):
+        (JSC::CTI::emitPutVariableObjectRegister):
+        (JSC::CTI::compileRegExp):
+        * VM/CTI.h:
+        * wrec/WREC.cpp:
+        (JSC::WRECGenerator::generateBacktrack1):
+        (JSC::WRECGenerator::generateBacktrackBackreference):
+        (JSC::WRECGenerator::generateBackreferenceQuantifier):
+        (JSC::WRECGenerator::generateNonGreedyQuantifier):
+        (JSC::WRECGenerator::generateGreedyQuantifier):
+        (JSC::WRECGenerator::generatePatternCharacter):
+        (JSC::WRECGenerator::generateCharacterClassInvertedRange):
+        (JSC::WRECGenerator::generateCharacterClassInverted):
+        (JSC::WRECGenerator::generateCharacterClass):
+        (JSC::WRECGenerator::generateParentheses):
+        (JSC::WRECGenerator::generateParenthesesNonGreedy):
+        (JSC::WRECGenerator::generateParenthesesResetTrampoline):
+        (JSC::WRECGenerator::generateAssertionBOL):
+        (JSC::WRECGenerator::generateAssertionEOL):
+        (JSC::WRECGenerator::generateAssertionWordBoundary):
+        (JSC::WRECGenerator::generateBackreference):
+        (JSC::WRECGenerator::generateDisjunction):
+        (JSC::WRECGenerator::terminateDisjunction):
+
 2008-11-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

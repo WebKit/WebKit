@@ -32,6 +32,8 @@
 #include "Machine.h"
 #include "pcre_internal.h"
 
+#define __ m_jit.
+
 using namespace WTF;
 
 namespace JSC {
@@ -146,22 +148,22 @@ void GenerateParenthesesNonGreedyFunctor::backtrack(WRECGenerator*)
 
 void WRECGenerator::generateBacktrack1()
 {
-    m_jit.subl_i8r(1, currentPositionRegister);
+    __ subl_i8r(1, currentPositionRegister);
 }
 
 void WRECGenerator::generateBacktrackBackreference(unsigned subpatternId)
 {
-    m_jit.subl_mr((2 * subpatternId + 1) * sizeof(int), outputRegister, currentPositionRegister);
-    m_jit.addl_mr((2 * subpatternId) * sizeof(int), outputRegister, currentPositionRegister);
+    __ subl_mr((2 * subpatternId + 1) * sizeof(int), outputRegister, currentPositionRegister);
+    __ addl_mr((2 * subpatternId) * sizeof(int), outputRegister, currentPositionRegister);
 }
 
 void WRECGenerator::generateBackreferenceQuantifier(JmpSrcVector& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max)
 {
     GenerateBackreferenceFunctor functor(subpatternId);
 
-    m_jit.movl_mr((2 * subpatternId) * sizeof(int), outputRegister, currentValueRegister);
-    m_jit.cmpl_rm(currentValueRegister, ((2 * subpatternId) + 1) * sizeof(int), outputRegister);
-    JmpSrc skipIfEmpty = m_jit.emitUnlinkedJe();
+    __ movl_mr((2 * subpatternId) * sizeof(int), outputRegister, currentValueRegister);
+    __ cmpl_rm(currentValueRegister, ((2 * subpatternId) + 1) * sizeof(int), outputRegister);
+    JmpSrc skipIfEmpty = __ emitUnlinkedJe();
 
     ASSERT(quantifierType == Quantifier::Greedy || quantifierType == Quantifier::NonGreedy);
     if (quantifierType == Quantifier::Greedy)
@@ -169,7 +171,7 @@ void WRECGenerator::generateBackreferenceQuantifier(JmpSrcVector& failures, Quan
     else
         generateNonGreedyQuantifier(failures, functor, min, max);
 
-    m_jit.link(skipIfEmpty, m_jit.label());
+    __ link(skipIfEmpty, __ label());
 }
 
 void WRECGenerator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
@@ -179,63 +181,63 @@ void WRECGenerator::generateNonGreedyQuantifier(JmpSrcVector& failures, Generate
 
     // (0) Setup:
     //     init quantifierCountRegister
-    m_jit.pushl_r(quantifierCountRegister);
-    m_jit.xorl_rr(quantifierCountRegister, quantifierCountRegister);
-    JmpSrc gotoStart = m_jit.emitUnlinkedJmp();
+    __ pushl_r(quantifierCountRegister);
+    __ xorl_rr(quantifierCountRegister, quantifierCountRegister);
+    JmpSrc gotoStart = __ emitUnlinkedJmp();
 
     // (4) Failure case
 
-    JmpDst quantifierFailed = m_jit.label();
+    JmpDst quantifierFailed = __ label();
     // (4.1) Restore original value of quantifierCountRegister from the stack
-    m_jit.popl_r(quantifierCountRegister);
-    failures.append(m_jit.emitUnlinkedJmp()); 
+    __ popl_r(quantifierCountRegister);
+    failures.append(__ emitUnlinkedJmp()); 
 
     // (3) We just tried an alternative, and it failed - check we can try more.
     
-    JmpDst alternativeFailed = m_jit.label();
+    JmpDst alternativeFailed = __ label();
     // (3.1) remove the value pushed prior to testing the alternative
-    m_jit.popl_r(currentPositionRegister);
+    __ popl_r(currentPositionRegister);
     // (3.2) if there is a limit, and we have reached it, game over. 
     if (max != Quantifier::noMaxSpecified) {
-        m_jit.cmpl_i32r(max, quantifierCountRegister);
-        m_jit.link(m_jit.emitUnlinkedJe(), quantifierFailed);
+        __ cmpl_i32r(max, quantifierCountRegister);
+        __ link(__ emitUnlinkedJe(), quantifierFailed);
     }
 
     // (1) Do a check for the atom
 
     // (1.0) This is where we start, if there is a minimum (then we must read at least one of the atom).
-    JmpDst testQuantifiedAtom = m_jit.label();
+    JmpDst testQuantifiedAtom = __ label();
     if (min)
-        m_jit.link(gotoStart, testQuantifiedAtom);
+        __ link(gotoStart, testQuantifiedAtom);
     // (1.1) Do a check for the atom check.
     functor.generateAtom(this, newFailures);
     // (1.2) If we get here, successful match!
-    m_jit.addl_i8r(1, quantifierCountRegister);
+    __ addl_i8r(1, quantifierCountRegister);
     // (1.3) We needed to read the atom, and we failed - that's terminally  bad news.
     for (unsigned i = 0; i < newFailures.size(); ++i)
-        m_jit.link(newFailures[i], quantifierFailed);
+        __ link(newFailures[i], quantifierFailed);
     newFailures.clear();
     // (1.4) If there is a minimum, check we have read enough ...
     if (min) {
         // ... except if min was 1 no need to keep checking!
         if (min != 1) {
-            m_jit.cmpl_i32r(min, quantifierCountRegister);
-            m_jit.link(m_jit.emitUnlinkedJl(), testQuantifiedAtom);
+            __ cmpl_i32r(min, quantifierCountRegister);
+            __ link(__ emitUnlinkedJl(), testQuantifiedAtom);
         }
     } else
-        m_jit.link(gotoStart, m_jit.label());
+        __ link(gotoStart, __ label());
     // if there was no minimum, this is where we start.
 
     // (2) Plant an alternative check for the remainder of the expression
     
     // (2.1) recursively call to parseAlternative, if it falls through, success!
-    m_jit.pushl_r(currentPositionRegister);
+    __ pushl_r(currentPositionRegister);
     m_parser.parseAlternative(newFailures);
-    m_jit.addl_i8r(4, X86::esp);
-    m_jit.popl_r(quantifierCountRegister);
+    __ addl_i8r(4, X86::esp);
+    __ popl_r(quantifierCountRegister);
     // (2.2) link failure cases to jump back up to alternativeFailed.
     for (unsigned i = 0; i < newFailures.size(); ++i)
-        m_jit.link(newFailures[i], alternativeFailed);
+        __ link(newFailures[i], alternativeFailed);
     newFailures.clear();
 }
 
@@ -249,85 +251,85 @@ void WRECGenerator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAto
 
     // (0) Setup:
     //     init quantifierCountRegister
-    m_jit.pushl_r(quantifierCountRegister);
-    m_jit.xorl_rr(quantifierCountRegister, quantifierCountRegister);
+    __ pushl_r(quantifierCountRegister);
+    __ xorl_rr(quantifierCountRegister, quantifierCountRegister);
 
     // (1) Greedily read as many of the atom as possible
 
-    JmpDst readMore = m_jit.label();
+    JmpDst readMore = __ label();
 
     // (1.1) Do a character class check.
     functor.generateAtom(this, newFailures);
     // (1.2) If we get here, successful match!
-    m_jit.addl_i8r(1, quantifierCountRegister);
+    __ addl_i8r(1, quantifierCountRegister);
     // (1.3) loop, unless we've read max limit.
     if (max != Quantifier::noMaxSpecified) {
         if (max != 1) {
             // if there is a limit, only loop while less than limit, otherwise fall throught to...
-            m_jit.cmpl_i32r(max, quantifierCountRegister);
-            m_jit.link(m_jit.emitUnlinkedJne(), readMore);
+            __ cmpl_i32r(max, quantifierCountRegister);
+            __ link(__ emitUnlinkedJne(), readMore);
         }
         // ...if there is no min we need jump to the alternative test, if there is we can just fall through to it.
         if (!min)
-            newFailures.append(m_jit.emitUnlinkedJmp());
+            newFailures.append(__ emitUnlinkedJmp());
     } else
-        m_jit.link(m_jit.emitUnlinkedJmp(), readMore);
+        __ link(__ emitUnlinkedJmp(), readMore);
     // (1.4) check enough matches to bother trying an alternative...
     if (min) {
         // We will fall through to here if (min && max), after the max check.
         // First, also link a
-        JmpDst minimumTest = m_jit.label();
+        JmpDst minimumTest = __ label();
         for (unsigned i = 0; i < newFailures.size(); ++i)
-            m_jit.link(newFailures[i], minimumTest);
+            __ link(newFailures[i], minimumTest);
         newFailures.clear();
         // 
-        m_jit.cmpl_i32r(min, quantifierCountRegister);
-        newFailures.append(m_jit.emitUnlinkedJae());
+        __ cmpl_i32r(min, quantifierCountRegister);
+        newFailures.append(__ emitUnlinkedJae());
     }
 
     // (4) Failure case
 
-    JmpDst quantifierFailed = m_jit.label();
+    JmpDst quantifierFailed = __ label();
     // (4.1) Restore original value of quantifierCountRegister from the stack
-    m_jit.popl_r(quantifierCountRegister);
-    failures.append(m_jit.emitUnlinkedJmp()); 
+    __ popl_r(quantifierCountRegister);
+    failures.append(__ emitUnlinkedJmp()); 
 
     // (3) Backtrack
 
-    JmpDst backtrack = m_jit.label();
+    JmpDst backtrack = __ label();
     // (3.1) this was preserved prior to executing the alternative
-    m_jit.popl_r(currentPositionRegister);
+    __ popl_r(currentPositionRegister);
     // (3.2) check we can retry with fewer matches - backtracking fails if already at the minimum
-    m_jit.cmpl_i32r(min, quantifierCountRegister);
-    m_jit.link(m_jit.emitUnlinkedJe(), quantifierFailed);
+    __ cmpl_i32r(min, quantifierCountRegister);
+    __ link(__ emitUnlinkedJe(), quantifierFailed);
     // (3.3) roll off one match, and retry.
     functor.backtrack(this);
-    m_jit.subl_i8r(1, quantifierCountRegister);
+    __ subl_i8r(1, quantifierCountRegister);
 
     // (2) Try an alternative.
 
     // (2.1) point to retry
-    JmpDst tryAlternative = m_jit.label();
+    JmpDst tryAlternative = __ label();
     for (unsigned i = 0; i < newFailures.size(); ++i)
-        m_jit.link(newFailures[i], tryAlternative);
+        __ link(newFailures[i], tryAlternative);
     newFailures.clear();
     // (2.2) recursively call to parseAlternative, if it falls through, success!
-    m_jit.pushl_r(currentPositionRegister);
+    __ pushl_r(currentPositionRegister);
     m_parser.parseAlternative(newFailures);
-    m_jit.addl_i8r(4, X86::esp);
-    m_jit.popl_r(quantifierCountRegister);
+    __ addl_i8r(4, X86::esp);
+    __ popl_r(quantifierCountRegister);
     // (2.3) link failure cases to here.
     for (unsigned i = 0; i < newFailures.size(); ++i)
-        m_jit.link(newFailures[i], backtrack);
+        __ link(newFailures[i], backtrack);
     newFailures.clear();
 }
 
 void WRECGenerator::generatePatternCharacter(JmpSrcVector& failures, int ch)
 {
     // check there is more input, read a char.
-    m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-    failures.append(m_jit.emitUnlinkedJe());
-    m_jit.movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
+    __ cmpl_rr(lengthRegister, currentPositionRegister);
+    failures.append(__ emitUnlinkedJe());
+    __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
 
     // used for unicode case insensitive
     bool hasUpper = false;
@@ -339,28 +341,28 @@ void WRECGenerator::generatePatternCharacter(JmpSrcVector& failures, int ch)
         
         // check for ascii case sensitive characters
         if (isASCIIAlpha(ch)) {
-            m_jit.orl_i32r(32, currentValueRegister);
+            __ orl_i32r(32, currentValueRegister);
             ch |= 32;
         } else if ((ch > 0x7f) && ((lower = Unicode::toLower(ch)) != (upper = Unicode::toUpper(ch)))) {
             // handle unicode case sentitive characters - branch to success on upper
-            m_jit.cmpl_i32r(upper, currentValueRegister);
-            isUpper = m_jit.emitUnlinkedJe();
+            __ cmpl_i32r(upper, currentValueRegister);
+            isUpper = __ emitUnlinkedJe();
             hasUpper = true;
             ch = lower;
         }
     }
     
     // checks for ch, or lower case version of ch, if insensitive
-    m_jit.cmpl_i32r((unsigned short)ch, currentValueRegister);
-    failures.append(m_jit.emitUnlinkedJne());
+    __ cmpl_i32r((unsigned short)ch, currentValueRegister);
+    failures.append(__ emitUnlinkedJne());
 
     if (m_parser.m_ignoreCase && hasUpper) {
         // for unicode case insensitive matches, branch here if upper matches.
-        m_jit.link(isUpper, m_jit.label());
+        __ link(isUpper, __ label());
     }
     
     // on success consume the char
-    m_jit.addl_i8r(1, currentPositionRegister);
+    __ addl_i8r(1, currentPositionRegister);
 }
 
 void WRECGenerator::generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpSrcVector& matchDest, const CharacterClassRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount)
@@ -371,40 +373,40 @@ void WRECGenerator::generateCharacterClassInvertedRange(JmpSrcVector& failures, 
         char lo = ranges[which].begin;
         char hi = ranges[which].end;
         
-        m_jit.cmpl_i32r((unsigned short)lo, currentValueRegister);
+        __ cmpl_i32r((unsigned short)lo, currentValueRegister);
 
         // check if there are any ranges or matches below lo.  If not, just jl to failure -
         // if there is anything else to check, check that first, if it falls through jmp to failure.
         if ((*matchIndex < matchCount) && (matches[*matchIndex] < lo)) {
-            JmpSrc loOrAbove = m_jit.emitUnlinkedJge();
+            JmpSrc loOrAbove = __ emitUnlinkedJge();
             
             // generate code for all ranges before this one
             if (which)
                 generateCharacterClassInvertedRange(failures, matchDest, ranges, which, matchIndex, matches, matchCount);
             
             do {
-                m_jit.cmpl_i32r((unsigned short)matches[*matchIndex], currentValueRegister);
-                matchDest.append(m_jit.emitUnlinkedJe());
+                __ cmpl_i32r((unsigned short)matches[*matchIndex], currentValueRegister);
+                matchDest.append(__ emitUnlinkedJe());
                 ++*matchIndex;
             } while ((*matchIndex < matchCount) && (matches[*matchIndex] < lo));
-            failures.append(m_jit.emitUnlinkedJmp());
+            failures.append(__ emitUnlinkedJmp());
 
-            m_jit.link(loOrAbove, m_jit.label());
+            __ link(loOrAbove, __ label());
         } else if (which) {
-            JmpSrc loOrAbove = m_jit.emitUnlinkedJge();
+            JmpSrc loOrAbove = __ emitUnlinkedJge();
 
             generateCharacterClassInvertedRange(failures, matchDest, ranges, which, matchIndex, matches, matchCount);
-            failures.append(m_jit.emitUnlinkedJmp());
+            failures.append(__ emitUnlinkedJmp());
 
-            m_jit.link(loOrAbove, m_jit.label());
+            __ link(loOrAbove, __ label());
         } else
-            failures.append(m_jit.emitUnlinkedJl());
+            failures.append(__ emitUnlinkedJl());
 
         while ((*matchIndex < matchCount) && (matches[*matchIndex] <= hi))
             ++*matchIndex;
 
-        m_jit.cmpl_i32r((unsigned short)hi, currentValueRegister);
-        matchDest.append(m_jit.emitUnlinkedJle());
+        __ cmpl_i32r((unsigned short)hi, currentValueRegister);
+        matchDest.append(__ emitUnlinkedJle());
         // fall through to here, the value is above hi.
 
         // shuffle along & loop around if there are any more matches to handle.
@@ -418,14 +420,14 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
 {
     JmpSrc unicodeFail;
     if (charClass.numMatchesUnicode || charClass.numRangesUnicode) {
-        m_jit.cmpl_i8r(0x7f, currentValueRegister);
-        JmpSrc isAscii = m_jit.emitUnlinkedJle();
+        __ cmpl_i8r(0x7f, currentValueRegister);
+        JmpSrc isAscii = __ emitUnlinkedJle();
     
         if (charClass.numMatchesUnicode) {
             for (unsigned i = 0; i < charClass.numMatchesUnicode; ++i) {
                 UChar ch = charClass.matchesUnicode[i];
-                m_jit.cmpl_i32r((unsigned short)ch, currentValueRegister);
-                matchDest.append(m_jit.emitUnlinkedJe());
+                __ cmpl_i32r((unsigned short)ch, currentValueRegister);
+                matchDest.append(__ emitUnlinkedJe());
             }
         }
         
@@ -434,16 +436,16 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
                 UChar lo = charClass.rangesUnicode[i].begin;
                 UChar hi = charClass.rangesUnicode[i].end;
                 
-                m_jit.cmpl_i32r((unsigned short)lo, currentValueRegister);
-                JmpSrc below = m_jit.emitUnlinkedJl();
-                m_jit.cmpl_i32r((unsigned short)hi, currentValueRegister);
-                matchDest.append(m_jit.emitUnlinkedJle());
-                m_jit.link(below, m_jit.label());
+                __ cmpl_i32r((unsigned short)lo, currentValueRegister);
+                JmpSrc below = __ emitUnlinkedJl();
+                __ cmpl_i32r((unsigned short)hi, currentValueRegister);
+                matchDest.append(__ emitUnlinkedJle());
+                __ link(below, __ label());
             }
         }
 
-        unicodeFail = m_jit.emitUnlinkedJmp();
-        m_jit.link(isAscii, m_jit.label());
+        unicodeFail = __ emitUnlinkedJmp();
+        __ link(isAscii, __ label());
     }
 
     if (charClass.numRanges) {
@@ -451,13 +453,13 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
         JmpSrcVector failures; 
         generateCharacterClassInvertedRange(failures, matchDest, charClass.ranges, charClass.numRanges, &matchIndex, charClass.matches, charClass.numMatches);
         while (matchIndex < charClass.numMatches) {
-            m_jit.cmpl_i32r((unsigned short)charClass.matches[matchIndex], currentValueRegister);
-            matchDest.append(m_jit.emitUnlinkedJe());
+            __ cmpl_i32r((unsigned short)charClass.matches[matchIndex], currentValueRegister);
+            matchDest.append(__ emitUnlinkedJe());
             ++matchIndex;
         }
-        JmpDst noMatch = m_jit.label();
+        JmpDst noMatch = __ label();
         for (unsigned i = 0; i < failures.size(); ++i)
-            m_jit.link(failures[i], noMatch);
+            __ link(failures[i], noMatch);
         failures.clear();
     } else if (charClass.numMatches) {
         // optimization: gather 'a','A' etc back together, can mask & test once.
@@ -473,43 +475,43 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
                 if (isASCIIUpper(ch))
                     continue;
             }
-            m_jit.cmpl_i32r((unsigned short)ch, currentValueRegister);
-            matchDest.append(m_jit.emitUnlinkedJe());
+            __ cmpl_i32r((unsigned short)ch, currentValueRegister);
+            matchDest.append(__ emitUnlinkedJe());
         }
 
         if (unsigned countAZaz = matchesAZaz.size()) {
-            m_jit.orl_i32r(32, currentValueRegister);
+            __ orl_i32r(32, currentValueRegister);
 
             for (unsigned i = 0; i < countAZaz; ++i) {
                 char ch = matchesAZaz[i];
-                m_jit.cmpl_i32r((unsigned short)ch, currentValueRegister);
-                matchDest.append(m_jit.emitUnlinkedJe());
+                __ cmpl_i32r((unsigned short)ch, currentValueRegister);
+                matchDest.append(__ emitUnlinkedJe());
             }
         }
     }
 
     if (charClass.numMatchesUnicode || charClass.numRangesUnicode)
-        m_jit.link(unicodeFail, m_jit.label());
+        __ link(unicodeFail, __ label());
 }
 
 void WRECGenerator::generateCharacterClass(JmpSrcVector& failures, CharacterClass& charClass, bool invert)
 {
-    m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-    failures.append(m_jit.emitUnlinkedJe());
-    m_jit.movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
+    __ cmpl_rr(lengthRegister, currentPositionRegister);
+    failures.append(__ emitUnlinkedJe());
+    __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
 
     if (invert)
         generateCharacterClassInverted(failures, charClass);
     else {
         JmpSrcVector successes;
         generateCharacterClassInverted(successes, charClass);
-        failures.append(m_jit.emitUnlinkedJmp());
-        JmpDst here = m_jit.label();
+        failures.append(__ emitUnlinkedJmp());
+        JmpDst here = __ label();
         for (unsigned i = 0; i < successes.size(); ++i)
-            m_jit.link(successes[i], here);
+            __ link(successes[i], here);
     }
     
-    m_jit.addl_i8r(1, currentPositionRegister);
+    __ addl_i8r(1, currentPositionRegister);
 }
 
 WRECGenerator::JmpSrc WRECGenerator::generateParentheses(ParenthesesType type)
@@ -517,33 +519,33 @@ WRECGenerator::JmpSrc WRECGenerator::generateParentheses(ParenthesesType type)
     unsigned subpatternId = (type == capturing) ? ++m_parser.m_numSubpatterns : m_parser.m_numSubpatterns;
 
     // push pos, both to preserve for fail + reloaded in parseDisjunction
-    m_jit.pushl_r(currentPositionRegister);
+    __ pushl_r(currentPositionRegister);
 
     // Plant a disjunction, wrapped to invert behaviour - 
     JmpSrcVector newFailures;
     m_parser.parseDisjunction(newFailures);
     
     if (type == capturing) {
-        m_jit.popl_r(currentValueRegister);
-        m_jit.movl_rm(currentValueRegister, (2 * subpatternId) * sizeof(int), outputRegister);
-        m_jit.movl_rm(currentPositionRegister, (2 * subpatternId + 1) * sizeof(int), outputRegister);
+        __ popl_r(currentValueRegister);
+        __ movl_rm(currentValueRegister, (2 * subpatternId) * sizeof(int), outputRegister);
+        __ movl_rm(currentPositionRegister, (2 * subpatternId + 1) * sizeof(int), outputRegister);
     } else if (type == non_capturing)
-        m_jit.addl_i8r(4, X86::esp);
+        __ addl_i8r(4, X86::esp);
     else
-        m_jit.popl_r(currentPositionRegister);
+        __ popl_r(currentPositionRegister);
 
     // This is a little lame - jump to jump if there is a nested disjunction.
     // (suggestion to fix: make parseDisjunction populate a JmpSrcVector of
     // disjunct successes... this is probably not worth the compile cost in
     // the common case to fix).
-    JmpSrc successfulMatch = m_jit.emitUnlinkedJmp();
+    JmpSrc successfulMatch = __ emitUnlinkedJmp();
 
-    JmpDst originalFailure = m_jit.label();
+    JmpDst originalFailure = __ label();
     for (unsigned i = 0; i < newFailures.size(); ++i)
-        m_jit.link(newFailures[i], originalFailure);
+        __ link(newFailures[i], originalFailure);
     newFailures.clear();
     // fail: restore currentPositionRegister
-    m_jit.popl_r(currentPositionRegister);
+    __ popl_r(currentPositionRegister);
 
     JmpSrc jumpToFail;
     // If this was an inverted assert, fail = success! - just let the failure case drop through,
@@ -552,36 +554,36 @@ WRECGenerator::JmpSrc WRECGenerator::generateParentheses(ParenthesesType type)
         jumpToFail = successfulMatch;
     else {
         // plant a jump so any fail will link off to 'failures',
-        jumpToFail = m_jit.emitUnlinkedJmp();
+        jumpToFail = __ emitUnlinkedJmp();
         // link successes to jump here
-        m_jit.link(successfulMatch, m_jit.label());
+        __ link(successfulMatch, __ label());
     }
     return jumpToFail;
 }
 
 void WRECGenerator::generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail)
 {
-    m_jit.link(m_jit.emitUnlinkedJmp(), start);
-    m_jit.link(success, m_jit.label());
+    __ link(__ emitUnlinkedJmp(), start);
+    __ link(success, __ label());
 
     failures.append(fail);
 }
 
 WRECGenerator::JmpSrc WRECGenerator::generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
 {
-    JmpSrc skip = m_jit.emitUnlinkedJmp();
+    JmpSrc skip = __ emitUnlinkedJmp();
 
-    JmpDst subPatternResetTrampoline = m_jit.label();
+    JmpDst subPatternResetTrampoline = __ label();
     for (unsigned i = 0; i < newFailures.size(); ++i)
-        m_jit.link(newFailures[i], subPatternResetTrampoline);
+        __ link(newFailures[i], subPatternResetTrampoline);
     newFailures.clear();
     for (unsigned i = subpatternIdBefore + 1; i <= subpatternIdAfter; ++i) {
-        m_jit.movl_i32m(-1, (2 * i) * sizeof(int), outputRegister);
-        m_jit.movl_i32m(-1, (2 * i + 1) * sizeof(int), outputRegister);
+        __ movl_i32m(-1, (2 * i) * sizeof(int), outputRegister);
+        __ movl_i32m(-1, (2 * i + 1) * sizeof(int), outputRegister);
     }
     
-    JmpSrc newFailJump = m_jit.emitUnlinkedJmp();
-    m_jit.link(skip, m_jit.label());
+    JmpSrc newFailJump = __ emitUnlinkedJmp();
+    __ link(skip, __ label());
     
     return newFailJump;
 }
@@ -592,22 +594,22 @@ void WRECGenerator::generateAssertionBOL(JmpSrcVector& failures)
         JmpSrcVector previousIsNewline;
 
         // begin of input == success
-        m_jit.cmpl_i8r(0, currentPositionRegister);
-        previousIsNewline.append(m_jit.emitUnlinkedJe());
+        __ cmpl_i8r(0, currentPositionRegister);
+        previousIsNewline.append(__ emitUnlinkedJe());
 
         // now check prev char against newline characters.
-        m_jit.movzwl_mr(-2, inputRegister, currentPositionRegister, 2, currentValueRegister);
+        __ movzwl_mr(-2, inputRegister, currentPositionRegister, 2, currentValueRegister);
         generateCharacterClassInverted(previousIsNewline, getCharacterClassNewline());
 
-        failures.append(m_jit.emitUnlinkedJmp());
+        failures.append(__ emitUnlinkedJmp());
 
-        JmpDst success = m_jit.label();
+        JmpDst success = __ label();
         for (unsigned i = 0; i < previousIsNewline.size(); ++i)
-            m_jit.link(previousIsNewline[i], success);
+            __ link(previousIsNewline[i], success);
         previousIsNewline.clear();
     } else {
-        m_jit.cmpl_i8r(0, currentPositionRegister);
-        failures.append(m_jit.emitUnlinkedJne());
+        __ cmpl_i8r(0, currentPositionRegister);
+        failures.append(__ emitUnlinkedJne());
     }
 }
 
@@ -617,22 +619,22 @@ void WRECGenerator::generateAssertionEOL(JmpSrcVector& failures)
         JmpSrcVector nextIsNewline;
 
         // end of input == success
-        m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-        nextIsNewline.append(m_jit.emitUnlinkedJe());
+        __ cmpl_rr(lengthRegister, currentPositionRegister);
+        nextIsNewline.append(__ emitUnlinkedJe());
 
         // now check next char against newline characters.
-        m_jit.movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
+        __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
         generateCharacterClassInverted(nextIsNewline, getCharacterClassNewline());
 
-        failures.append(m_jit.emitUnlinkedJmp());
+        failures.append(__ emitUnlinkedJmp());
 
-        JmpDst success = m_jit.label();
+        JmpDst success = __ label();
         for (unsigned i = 0; i < nextIsNewline.size(); ++i)
-            m_jit.link(nextIsNewline[i], success);
+            __ link(nextIsNewline[i], success);
         nextIsNewline.clear();
     } else {
-        m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-        failures.append(m_jit.emitUnlinkedJne());
+        __ cmpl_rr(lengthRegister, currentPositionRegister);
+        failures.append(__ emitUnlinkedJne());
     }
 }
 
@@ -644,38 +646,38 @@ void WRECGenerator::generateAssertionWordBoundary(JmpSrcVector& failures, bool i
     // (1) Check if the previous value was a word char
 
     // (1.1) check for begin of input
-    m_jit.cmpl_i8r(0, currentPositionRegister);
-    JmpSrc atBegin = m_jit.emitUnlinkedJe();
+    __ cmpl_i8r(0, currentPositionRegister);
+    JmpSrc atBegin = __ emitUnlinkedJe();
     // (1.2) load the last char, and chck if is word character
-    m_jit.movzwl_mr(-2, inputRegister, currentPositionRegister, 2, currentValueRegister);
+    __ movzwl_mr(-2, inputRegister, currentPositionRegister, 2, currentValueRegister);
     JmpSrcVector previousIsWord;
     generateCharacterClassInverted(previousIsWord, getCharacterClassWordchar());
     // (1.3) if we get here, previous is not a word char
-    m_jit.link(atBegin, m_jit.label());
+    __ link(atBegin, __ label());
 
     // (2) Handle situation where previous was NOT a \w
 
     // (2.1) check for end of input
-    m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-    notWordBoundary.append(m_jit.emitUnlinkedJe());
+    __ cmpl_rr(lengthRegister, currentPositionRegister);
+    notWordBoundary.append(__ emitUnlinkedJe());
     // (2.2) load the next char, and chck if is word character
-    m_jit.movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
+    __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
     generateCharacterClassInverted(wordBoundary, getCharacterClassWordchar());
     // (2.3) If we get here, neither chars are word chars
-    notWordBoundary.append(m_jit.emitUnlinkedJmp());
+    notWordBoundary.append(__ emitUnlinkedJmp());
 
     // (3) Handle situation where previous was a \w
 
     // (3.0) link success in first match to here
-    JmpDst section3 = m_jit.label();
+    JmpDst section3 = __ label();
     for (unsigned i = 0; i < previousIsWord.size(); ++i)
-        m_jit.link(previousIsWord[i], section3);
+        __ link(previousIsWord[i], section3);
     previousIsWord.clear();
     // (3.1) check for end of input
-    m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-    wordBoundary.append(m_jit.emitUnlinkedJe());
+    __ cmpl_rr(lengthRegister, currentPositionRegister);
+    wordBoundary.append(__ emitUnlinkedJe());
     // (3.2) load the next char, and chck if is word character
-    m_jit.movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
+    __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
     generateCharacterClassInverted(notWordBoundary, getCharacterClassWordchar());
     // (3.3) If we get here, this is an end of a word, within the input.
     
@@ -683,20 +685,20 @@ void WRECGenerator::generateAssertionWordBoundary(JmpSrcVector& failures, bool i
     
     if (invert) {
         // handle the fall through case
-        wordBoundary.append(m_jit.emitUnlinkedJmp());
+        wordBoundary.append(__ emitUnlinkedJmp());
     
         // looking for non word boundaries, so link boundary fails to here.
-        JmpDst success = m_jit.label();
+        JmpDst success = __ label();
         for (unsigned i = 0; i < notWordBoundary.size(); ++i)
-            m_jit.link(notWordBoundary[i], success);
+            __ link(notWordBoundary[i], success);
         notWordBoundary.clear();
         
         failures.append(wordBoundary.begin(), wordBoundary.size());
     } else {
         // looking for word boundaries, so link successes here.
-        JmpDst success = m_jit.label();
+        JmpDst success = __ label();
         for (unsigned i = 0; i < wordBoundary.size(); ++i)
-            m_jit.link(wordBoundary[i], success);
+            __ link(wordBoundary[i], success);
         wordBoundary.clear();
         
         failures.append(notWordBoundary.begin(), notWordBoundary.size());
@@ -705,61 +707,61 @@ void WRECGenerator::generateAssertionWordBoundary(JmpSrcVector& failures, bool i
 
 void WRECGenerator::generateBackreference(JmpSrcVector& failures, unsigned subpatternId)
 {
-    m_jit.pushl_r(currentPositionRegister);
-    m_jit.pushl_r(quantifierCountRegister);
+    __ pushl_r(currentPositionRegister);
+    __ pushl_r(quantifierCountRegister);
 
     // get the start pos of the backref into quantifierCountRegister (multipurpose!)
-    m_jit.movl_mr((2 * subpatternId) * sizeof(int), outputRegister, quantifierCountRegister);
+    __ movl_mr((2 * subpatternId) * sizeof(int), outputRegister, quantifierCountRegister);
 
-    JmpSrc skipIncrement = m_jit.emitUnlinkedJmp();
-    JmpDst topOfLoop = m_jit.label();
-    m_jit.addl_i8r(1, currentPositionRegister);
-    m_jit.addl_i8r(1, quantifierCountRegister);
-    m_jit.link(skipIncrement, m_jit.label());
+    JmpSrc skipIncrement = __ emitUnlinkedJmp();
+    JmpDst topOfLoop = __ label();
+    __ addl_i8r(1, currentPositionRegister);
+    __ addl_i8r(1, quantifierCountRegister);
+    __ link(skipIncrement, __ label());
 
     // check if we're at the end of backref (if we are, success!)
-    m_jit.cmpl_rm(quantifierCountRegister, ((2 * subpatternId) + 1) * sizeof(int), outputRegister);
-    JmpSrc endOfBackRef = m_jit.emitUnlinkedJe();
+    __ cmpl_rm(quantifierCountRegister, ((2 * subpatternId) + 1) * sizeof(int), outputRegister);
+    JmpSrc endOfBackRef = __ emitUnlinkedJe();
     
-    m_jit.movzwl_mr(inputRegister, quantifierCountRegister, 2, currentValueRegister);
+    __ movzwl_mr(inputRegister, quantifierCountRegister, 2, currentValueRegister);
     
     // check if we've run out of input (this would be a can o'fail)
-    m_jit.cmpl_rr(lengthRegister, currentPositionRegister);
-    JmpSrc endOfInput = m_jit.emitUnlinkedJe();
+    __ cmpl_rr(lengthRegister, currentPositionRegister);
+    JmpSrc endOfInput = __ emitUnlinkedJe();
     
-    m_jit.cmpw_rm(currentValueRegister, inputRegister, currentPositionRegister, 2);
-    m_jit.link(m_jit.emitUnlinkedJe(), topOfLoop);
+    __ cmpw_rm(currentValueRegister, inputRegister, currentPositionRegister, 2);
+    __ link(__ emitUnlinkedJe(), topOfLoop);
     
-    m_jit.link(endOfInput, m_jit.label());
+    __ link(endOfInput, __ label());
     // Failure
-    m_jit.popl_r(quantifierCountRegister);
-    m_jit.popl_r(currentPositionRegister);
-    failures.append(m_jit.emitUnlinkedJmp());
+    __ popl_r(quantifierCountRegister);
+    __ popl_r(currentPositionRegister);
+    failures.append(__ emitUnlinkedJmp());
     
     // Success
-    m_jit.link(endOfBackRef, m_jit.label());
-    m_jit.popl_r(quantifierCountRegister);
-    m_jit.addl_i8r(4, X86::esp);
+    __ link(endOfBackRef, __ label());
+    __ popl_r(quantifierCountRegister);
+    __ addl_i8r(4, X86::esp);
 }
 
 void WRECGenerator::generateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures)
 {
-    successes.append(m_jit.emitUnlinkedJmp());
+    successes.append(__ emitUnlinkedJmp());
     
-    JmpDst here = m_jit.label();
+    JmpDst here = __ label();
     
     for (unsigned i = 0; i < failures.size(); ++i)
-        m_jit.link(failures[i], here);
+        __ link(failures[i], here);
     failures.clear();
     
-    m_jit.movl_mr(X86::esp, currentPositionRegister);
+    __ movl_mr(X86::esp, currentPositionRegister);
 }
 
 void WRECGenerator::terminateDisjunction(JmpSrcVector& successes)
 {
-    JmpDst here = m_jit.label();
+    JmpDst here = __ label();
     for (unsigned i = 0; i < successes.size(); ++i)
-        m_jit.link(successes[i], here);
+        __ link(successes[i], here);
     successes.clear();
 }
 
