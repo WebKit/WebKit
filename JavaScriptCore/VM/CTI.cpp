@@ -614,7 +614,7 @@ ALWAYS_INLINE void CTI::emitTagAsBoolImmediate(X86Assembler::RegisterID reg)
 }
 
 CTI::CTI(JSGlobalData* globalData, CodeBlock* codeBlock)
-    : m_jit(globalData->interpreter->jitCodeBuffer())
+    : m_jit(globalData->interpreter->assemblerBuffer())
     , m_interpreter(globalData->interpreter)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
@@ -3694,7 +3694,7 @@ void* CTI::compileRegExp(BytecodeInterpreter* interpreter, const UString& patter
         return 0;
     }
 
-    X86Assembler jit(interpreter->jitCodeBuffer());
+    X86Assembler jit(interpreter->assemblerBuffer());
     WRECParser parser(pattern, ignoreCase, multiline, jit);
     
     jit.emitConvertToFastCall();

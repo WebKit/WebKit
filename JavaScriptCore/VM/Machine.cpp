@@ -611,7 +611,7 @@ BytecodeInterpreter::BytecodeInterpreter()
     , m_ctiVirtualCallPreLink(0)
     , m_ctiVirtualCallLink(0)
     , m_ctiVirtualCall(0)
-    , m_jitCodeBuffer(new JITCodeBuffer(1024 * 1024))
+    , m_assemblerBuffer(new AssemblerBuffer(1024 * 1024))
 #endif
     , m_reentryDepth(0)
     , m_timeoutTime(0)

@@ -43,7 +43,7 @@ namespace JSC {
     class FunctionBodyNode;
     class Instruction;
     class InternalFunction;
-    class JITCodeBuffer;
+    class AssemblerBuffer;
     class JSFunction;
     class JSGlobalObject;
     class ProgramNode;
@@ -326,7 +326,7 @@ namespace JSC {
         void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void tryCTICachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
 
-        JITCodeBuffer* jitCodeBuffer() const { return m_jitCodeBuffer.get(); }
+        AssemblerBuffer* assemblerBuffer() const { return m_assemblerBuffer.get(); }
 #endif
 
         SamplingTool* m_sampler;
@@ -338,7 +338,7 @@ namespace JSC {
         void* m_ctiVirtualCallLink;
         void* m_ctiVirtualCall;
 
-        OwnPtr<JITCodeBuffer> m_jitCodeBuffer;
+        OwnPtr<AssemblerBuffer> m_assemblerBuffer;
 #endif
 
         int m_reentryDepth;

@@ -1,5 +1,70 @@
 2008-11-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Renamed JITCodeBuffer to AssemblerBuffer and renamed its data members
+        to be more like the rest of our buffer classes, with a size and a
+        capacity.
+        
+        Added an assert in the unchecked put case to match the test in the checked
+        put case.
+        
+        Changed a C-style cast to a C++-style cast.
+        
+        Renamed MAX_INSTRUCTION_SIZE to maxInstructionSize.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::CTI):
+        (JSC::CTI::compileRegExp):
+        * VM/Machine.cpp:
+        (JSC::BytecodeInterpreter::BytecodeInterpreter):
+        * VM/Machine.h:
+        (JSC::BytecodeInterpreter::assemblerBuffer):
+        * masm/X86Assembler.h:
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        (JSC::AssemblerBuffer::ensureSpace):
+        (JSC::AssemblerBuffer::isAligned):
+        (JSC::AssemblerBuffer::putByteUnchecked):
+        (JSC::AssemblerBuffer::putByte):
+        (JSC::AssemblerBuffer::putShortUnchecked):
+        (JSC::AssemblerBuffer::putShort):
+        (JSC::AssemblerBuffer::putIntUnchecked):
+        (JSC::AssemblerBuffer::putInt):
+        (JSC::AssemblerBuffer::data):
+        (JSC::AssemblerBuffer::size):
+        (JSC::AssemblerBuffer::reset):
+        (JSC::AssemblerBuffer::copy):
+        (JSC::AssemblerBuffer::grow):
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::X86Assembler):
+        (JSC::X86Assembler::testl_i32r):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::movl_i32m):
+        (JSC::X86Assembler::emitCall):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::emitUnlinkedJmp):
+        (JSC::X86Assembler::emitUnlinkedJne):
+        (JSC::X86Assembler::emitUnlinkedJe):
+        (JSC::X86Assembler::emitUnlinkedJl):
+        (JSC::X86Assembler::emitUnlinkedJb):
+        (JSC::X86Assembler::emitUnlinkedJle):
+        (JSC::X86Assembler::emitUnlinkedJbe):
+        (JSC::X86Assembler::emitUnlinkedJge):
+        (JSC::X86Assembler::emitUnlinkedJg):
+        (JSC::X86Assembler::emitUnlinkedJa):
+        (JSC::X86Assembler::emitUnlinkedJae):
+        (JSC::X86Assembler::emitUnlinkedJo):
+        (JSC::X86Assembler::emitUnlinkedJp):
+        (JSC::X86Assembler::emitUnlinkedJs):
+        (JSC::X86Assembler::link):
+        (JSC::X86Assembler::emitModRm_rr):
+        (JSC::X86Assembler::emitModRm_rm):
+        (JSC::X86Assembler::emitModRm_opr):
+
+2008-11-15  Geoffrey Garen  <ggaren@apple.com>
+
         Suggested by Maciej Stachowiak.
         
         Reverted most "opcode" => "bytecode" renames. We use "bytecode" as a
