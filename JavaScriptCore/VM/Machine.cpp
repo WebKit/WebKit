@@ -608,6 +608,9 @@ Machine::Machine()
 #if ENABLE(CTI)
     , m_ctiArrayLengthTrampoline(0)
     , m_ctiStringLengthTrampoline(0)
+    , m_ctiVirtualCallPreLink(0)
+    , m_ctiVirtualCallLink(0)
+    , m_ctiVirtualCall(0)
     , m_jitCodeBuffer(new JITCodeBuffer(1024 * 1024))
 #endif
     , m_reentryDepth(0)
@@ -4720,7 +4723,7 @@ VoidPtrPair Machine::cti_op_call_arityCheck(CTI_ARGS)
             // Rewind to the previous call frame because op_call already optimistically
             // moved the call frame forward.
             ARG_setCallFrame(oldCallFrame);
-            throwStackOverflowError(oldCallFrame, ARG_globalData, CTI_RETURN_ADDRESS, CTI_RETURN_ADDRESS);
+            throwStackOverflowError(oldCallFrame, ARG_globalData, ARG_returnAddress2, CTI_RETURN_ADDRESS);
             VoidPtrPairValue pair = {{ 0, 0 }};
             return pair.i;
         }
@@ -4737,6 +4740,20 @@ VoidPtrPair Machine::cti_op_call_arityCheck(CTI_ARGS)
     return pair.i;
 }
 
+void* Machine::cti_vm_dontLazyLinkCall(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    JSFunction* callee = asFunction(ARG_src1);
+    CodeBlock* codeBlock = &callee->m_body->byteCode(callee->m_scopeChain.node());
+    if (!codeBlock->ctiCode)
+        CTI::compile(ARG_globalData, codeBlock);
+
+    ctiRepatchCallByReturnAddress(ARG_returnAddress2, ARG_globalData->machine->m_ctiVirtualCallLink);
+
+    return codeBlock->ctiCode;
+}
+
 void* Machine::cti_vm_lazyLinkCall(CTI_ARGS)
 {
     CTI_STACK_HACK();
@@ -4746,7 +4763,8 @@ void* Machine::cti_vm_lazyLinkCall(CTI_ARGS)
     if (!codeBlock->ctiCode)
         CTI::compile(ARG_globalData, codeBlock);
 
-    CTI::linkCall(callee, codeBlock, codeBlock->ctiCode, ARG_linkInfo2, ARG_int3);
+    CallLinkInfo* callLinkInfo = &ARG_callFrame->callerFrame()->codeBlock()->getCallLinkInfo(ARG_returnAddress2);
+    CTI::linkCall(callee, codeBlock, codeBlock->ctiCode, callLinkInfo, ARG_int3);
 
     return codeBlock->ctiCode;
 }

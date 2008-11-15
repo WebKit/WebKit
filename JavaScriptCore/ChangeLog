@@ -1,3 +1,29 @@
+2008-11-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Generate less code for the slow cases of op_call and op_construct.
+        https://bugs.webkit.org/show_bug.cgi?id=22272
+
+        1% progression on v8 tests.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitRetrieveArg):
+        (JSC::CTI::emitNakedCall):
+        (JSC::CTI::compileOpCallInitializeCallFrame):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        * VM/CTI.h:
+        * VM/CodeBlock.h:
+        (JSC::getCallLinkInfoReturnLocation):
+        (JSC::CodeBlock::getCallLinkInfo):
+        * VM/Machine.cpp:
+        (JSC::Machine::Machine):
+        (JSC::Machine::cti_vm_dontLazyLinkCall):
+        (JSC::Machine::cti_vm_lazyLinkCall):
+        * VM/Machine.h:
+
 2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Alder.

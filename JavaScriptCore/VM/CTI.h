@@ -79,7 +79,7 @@
 #define ARG_instr4 static_cast<Instruction*>(ARGS[4])
 #define ARG_instr5 static_cast<Instruction*>(ARGS[5])
 #define ARG_instr6 static_cast<Instruction*>(ARGS[6])
-#define ARG_linkInfo2 static_cast<CallLinkInfo*>(ARGS[2])
+#define ARG_returnAddress2 static_cast<void*>(ARGS[2])
 #define ARG_codeBlock4 static_cast<CodeBlock*>(ARGS[4])
 
 #define CTI_RETURN_ADDRESS_SLOT (ARGS[-1])
@@ -364,7 +364,7 @@ namespace JSC {
         void privateCompilePatchGetArrayLength(void* returnAddress);
 
         void compileOpCall(OpcodeID, Instruction* instruction, unsigned i, unsigned callLinkInfoIndex);
-        void compileOpCallInitializeCallFrame(unsigned callee, unsigned argCount);
+        void compileOpCallInitializeCallFrame();
         void compileOpCallSetupArgs(Instruction*);
         void compileOpCallEvalSetupArgs(Instruction*);
         void compileOpConstructSetupArgs(Instruction*);
@@ -378,6 +378,7 @@ namespace JSC {
         void emitGetArgs(int src1, X86Assembler::RegisterID dst1, int src2, X86Assembler::RegisterID dst2, unsigned i);
         void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
         void emitPutArg(X86Assembler::RegisterID src, unsigned offset);
+        void emitRetrieveArg(unsigned offset, X86Assembler::RegisterID dst);
         void emitPutArgConstant(unsigned value, unsigned offset);
         void emitPutResult(unsigned dst, X86Assembler::RegisterID from = X86::eax);
 
@@ -414,7 +415,7 @@ namespace JSC {
         void emitAllocateNumber(JSGlobalData*, unsigned);
 
         X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, X86::RegisterID);
-        X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, void(*function)());
+        X86Assembler::JmpSrc emitNakedCall(unsigned opcodeIndex, void* function);
         X86Assembler::JmpSrc emitNakedFastCall(unsigned opcodeIndex, void*);
         X86Assembler::JmpSrc emitCTICall(Instruction*, unsigned opcodeIndex, CTIHelper_j);
         X86Assembler::JmpSrc emitCTICall(Instruction*, unsigned opcodeIndex, CTIHelper_o);

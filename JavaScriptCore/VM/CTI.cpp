@@ -241,6 +241,12 @@ ALWAYS_INLINE void CTI::emitPutArg(X86Assembler::RegisterID src, unsigned offset
     m_jit.movl_rm(src, offset + sizeof(void*), X86::esp);
 }
 
+ALWAYS_INLINE void CTI::emitRetrieveArg(unsigned offset, X86Assembler::RegisterID dst)
+{
+    m_jit.movl_mr(offset + sizeof(void*), X86::esp, dst);
+}
+
+
 ALWAYS_INLINE void CTI::emitPutArgConstant(unsigned value, unsigned offset)
 {
     m_jit.movl_i32m(value, offset + sizeof(void*), X86::esp);
@@ -365,7 +371,7 @@ ALWAYS_INLINE X86Assembler::JmpSrc CTI::emitNakedCall(unsigned opcodeIndex, X86:
     return call;
 }
 
-ALWAYS_INLINE  X86Assembler::JmpSrc CTI::emitNakedCall(unsigned opcodeIndex, void(*function)())
+ALWAYS_INLINE  X86Assembler::JmpSrc CTI::emitNakedCall(unsigned opcodeIndex, void* function)
 {
     X86Assembler::JmpSrc call = m_jit.emitCall();
     m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), opcodeIndex));
@@ -645,14 +651,15 @@ static void unreachable()
     exit(1);
 }
 
-void CTI::compileOpCallInitializeCallFrame(unsigned, unsigned argCount)
+void CTI::compileOpCallInitializeCallFrame()
 {
-    m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_scopeChain) + OBJECT_OFFSET(ScopeChain, m_node), X86::ecx, X86::ebx); // newScopeChain
+    m_jit.movl_rm(X86::edx, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)), X86::edi);
+
+    m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_scopeChain) + OBJECT_OFFSET(ScopeChain, m_node), X86::ecx, X86::edx); // newScopeChain
 
     m_jit.movl_i32m(asInteger(noValue()), RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register)), X86::edi);
     m_jit.movl_rm(X86::ecx, RegisterFile::Callee * static_cast<int>(sizeof(Register)), X86::edi);
-    m_jit.movl_i32m(argCount, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)), X86::edi);
-    m_jit.movl_rm(X86::ebx, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)), X86::edi);
+    m_jit.movl_rm(X86::edx, RegisterFile::ScopeChain * static_cast<int>(sizeof(Register)), X86::edi);
 }
 
 void CTI::compileOpCallSetupArgs(Instruction* instruction)
@@ -747,7 +754,7 @@ void CTI::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned i,
     m_jit.addl_i32r(registerOffset * sizeof(Register), X86::edi);
 
     // Call to the callee
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall(i, unreachable);
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall(i, reinterpret_cast<void*>(unreachable));
     
     if (opcodeID == op_call_eval)
         m_jit.link(wasEval, m_jit.label());
@@ -2900,37 +2907,15 @@ void CTI::privateCompileSlowCases()
                 emitGetArg(callee, X86::ecx, i);
             }
 
-            // Load the callee CodeBlock* into eax
-            m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
-            m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
-            m_jit.testl_rr(X86::eax, X86::eax);
-            X86Assembler::JmpSrc hasCodeBlockForLink = m_jit.emitUnlinkedJne();
-            emitCTICall(instruction + i, i, Machine::cti_op_call_JSFunction);
-            emitGetArg(callee, X86::ecx, i);
-            m_jit.link(hasCodeBlockForLink, m_jit.label());
+            m_jit.movl_i32r(argCount, X86::edx);
 
             // Speculatively roll the callframe, assuming argCount will match the arity.
             m_jit.movl_rm(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register)), X86::edi);
             m_jit.addl_i32r(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
 
-            // Check argCount matches callee arity.
-            m_jit.cmpl_i32m(argCount, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
-            X86Assembler::JmpSrc arityCheckOkayForLink = m_jit.emitUnlinkedJe();
-            emitPutArg(X86::eax, 12);
-            emitCTICall(instruction + i, i, Machine::cti_op_call_arityCheck);
-            emitGetArg(callee - registerOffset, X86::ecx, i);
-            m_jit.movl_rr(X86::edx, X86::edi);
-            m_jit.link(arityCheckOkayForLink, m_jit.label());
-
-            // initialize the new call frame (pointed to by edx, after the last call).
-            compileOpCallInitializeCallFrame(callee, argCount);
-
-            // Try to link & repatch this call.
-            CallLinkInfo* info = &(m_codeBlock->callLinkInfos[callLinkInfoIndex]);
-            emitPutArgConstant(reinterpret_cast<unsigned>(info), 4);
             m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation =
-                emitCTICall(instruction + i, i, Machine::cti_vm_lazyLinkCall);
-            emitNakedCall(i, X86::eax);
+                emitNakedCall(i, m_machine->m_ctiVirtualCallPreLink);
+
             X86Assembler::JmpSrc storeResultForFirstRun = m_jit.emitUnlinkedJmp();
 
             // This is the address for the cold path *after* the first run (which tries to link the call).
@@ -2966,35 +2951,12 @@ void CTI::privateCompileSlowCases()
                 emitGetArg(callee, X86::ecx, i);
             }
 
-            // Load the callee CodeBlock* into eax
-            m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
-            m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
-            m_jit.testl_rr(X86::eax, X86::eax);
-            X86Assembler::JmpSrc hasCodeBlock = m_jit.emitUnlinkedJne();
-            emitCTICall(instruction + i, i, Machine::cti_op_call_JSFunction);
-            emitGetArg(callee, X86::ecx, i);
-            m_jit.link(hasCodeBlock, m_jit.label());
-
             // Speculatively roll the callframe, assuming argCount will match the arity.
             m_jit.movl_rm(X86::edi, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register)), X86::edi);
             m_jit.addl_i32r(registerOffset * static_cast<int>(sizeof(Register)), X86::edi);
+            m_jit.movl_i32r(argCount, X86::edx);
 
-            // Check argCount matches callee arity.
-            m_jit.cmpl_i32m(argCount, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
-            X86Assembler::JmpSrc arityCheckOkay = m_jit.emitUnlinkedJe();
-            emitPutArg(X86::eax, 12);
-            emitCTICall(instruction + i, i, Machine::cti_op_call_arityCheck);
-            emitGetArg(callee - registerOffset, X86::ecx, i);
-            m_jit.movl_rr(X86::edx, X86::edi);
-            m_jit.link(arityCheckOkay, m_jit.label());
-
-            // initialize the new call frame (pointed to by edx, after the last call).
-            compileOpCallInitializeCallFrame(callee, argCount);
-
-            // load ctiCode from the new codeBlock.
-            m_jit.movl_mr(OBJECT_OFFSET(CodeBlock, ctiCode), X86::eax, X86::eax);
-
-            emitNakedCall(i, X86::eax);
+            emitNakedCall(i, m_machine->m_ctiVirtualCall);
 
             // Put the return value in dst. In the interpreter, op_ret does this.
             X86Assembler::JmpDst storeResult = m_jit.label();
@@ -3479,6 +3441,130 @@ void CTI::privateCompileCTIMachineTrampolines()
     
     m_jit.ret();
 
+    // (3) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
+    
+    X86Assembler::JmpDst virtualCallPreLinkBegin = m_jit.align(16);
+
+    // Load the callee CodeBlock* into eax
+    m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
+    m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
+    m_jit.testl_rr(X86::eax, X86::eax);
+    X86Assembler::JmpSrc hasCodeBlock1 = m_jit.emitUnlinkedJne();
+    m_jit.popl_r(X86::ebx);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callJSFunction1 = m_jit.emitCall();
+    emitRetrieveArg(0, X86::ecx);
+    emitRetrieveArg(8, X86::edx);
+    m_jit.pushl_r(X86::ebx);
+    m_jit.link(hasCodeBlock1, m_jit.label());
+
+    // Check argCount matches callee arity.
+    m_jit.cmpl_rm(X86::edx, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
+    X86Assembler::JmpSrc arityCheckOkay1 = m_jit.emitUnlinkedJe();
+    m_jit.popl_r(X86::ebx);
+    emitPutArg(X86::ebx, 4);
+    emitPutArg(X86::eax, 12);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callArityCheck1 = m_jit.emitCall();
+    m_jit.movl_rr(X86::edx, X86::edi);
+    emitRetrieveArg(0, X86::ecx);
+    emitRetrieveArg(8, X86::edx);
+    m_jit.pushl_r(X86::ebx);
+    m_jit.link(arityCheckOkay1, m_jit.label());
+
+    compileOpCallInitializeCallFrame();
+
+    m_jit.popl_r(X86::ebx);
+    emitPutArg(X86::ebx, 4);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callDontLazyLinkCall = m_jit.emitCall();
+    m_jit.pushl_r(X86::ebx);
+
+    m_jit.jmp_r(X86::eax);
+
+    X86Assembler::JmpDst virtualCallLinkBegin = m_jit.align(16);
+
+    // Load the callee CodeBlock* into eax
+    m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
+    m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
+    m_jit.testl_rr(X86::eax, X86::eax);
+    X86Assembler::JmpSrc hasCodeBlock2 = m_jit.emitUnlinkedJne();
+    m_jit.popl_r(X86::ebx);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callJSFunction2 = m_jit.emitCall();
+    emitRetrieveArg(0, X86::ecx);
+    emitRetrieveArg(8, X86::edx);
+    m_jit.pushl_r(X86::ebx);
+    m_jit.link(hasCodeBlock2, m_jit.label());
+
+    // Check argCount matches callee arity.
+    m_jit.cmpl_rm(X86::edx, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
+    X86Assembler::JmpSrc arityCheckOkay2 = m_jit.emitUnlinkedJe();
+    m_jit.popl_r(X86::ebx);
+    emitPutArg(X86::ebx, 4);
+    emitPutArg(X86::eax, 12);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callArityCheck2 = m_jit.emitCall();
+    m_jit.movl_rr(X86::edx, X86::edi);
+    emitRetrieveArg(0, X86::ecx);
+    emitRetrieveArg(8, X86::edx);
+    m_jit.pushl_r(X86::ebx);
+    m_jit.link(arityCheckOkay2, m_jit.label());
+
+    compileOpCallInitializeCallFrame();
+
+    m_jit.popl_r(X86::ebx);
+    emitPutArg(X86::ebx, 4);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callLazyLinkCall = m_jit.emitCall();
+    m_jit.pushl_r(X86::ebx);
+
+    m_jit.jmp_r(X86::eax);
+
+    X86Assembler::JmpDst virtualCallBegin = m_jit.align(16);
+
+    // Load the callee CodeBlock* into eax
+    m_jit.movl_mr(OBJECT_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
+    m_jit.movl_mr(OBJECT_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
+    m_jit.testl_rr(X86::eax, X86::eax);
+    X86Assembler::JmpSrc hasCodeBlock3 = m_jit.emitUnlinkedJne();
+    m_jit.popl_r(X86::ebx);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callJSFunction3 = m_jit.emitCall();
+    emitRetrieveArg(0, X86::ecx);
+    emitRetrieveArg(8, X86::edx);
+    m_jit.pushl_r(X86::ebx);
+    m_jit.link(hasCodeBlock3, m_jit.label());
+
+    // Check argCount matches callee arity.
+    m_jit.cmpl_rm(X86::edx, OBJECT_OFFSET(CodeBlock, numParameters), X86::eax);
+    X86Assembler::JmpSrc arityCheckOkay3 = m_jit.emitUnlinkedJe();
+    m_jit.popl_r(X86::ebx);
+    emitPutArg(X86::ebx, 4);
+    emitPutArg(X86::eax, 12);
+    m_jit.emitRestoreArgumentReference();
+    emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
+    X86Assembler::JmpSrc callArityCheck3 = m_jit.emitCall();
+    m_jit.movl_rr(X86::edx, X86::edi);
+    emitRetrieveArg(0, X86::ecx);
+    emitRetrieveArg(8, X86::edx);
+    m_jit.pushl_r(X86::ebx);
+    m_jit.link(arityCheckOkay3, m_jit.label());
+
+    compileOpCallInitializeCallFrame();
+
+    // load ctiCode from the new codeBlock.
+    m_jit.movl_mr(OBJECT_OFFSET(CodeBlock, ctiCode), X86::eax, X86::eax);
+
+    m_jit.jmp_r(X86::eax);
+
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
 
     void* code = m_jit.copy();
@@ -3490,9 +3576,20 @@ void CTI::privateCompileCTIMachineTrampolines()
     X86Assembler::link(code, string_failureCases1, reinterpret_cast<void*>(Machine::cti_op_get_by_id_fail));
     X86Assembler::link(code, string_failureCases2, reinterpret_cast<void*>(Machine::cti_op_get_by_id_fail));
     X86Assembler::link(code, string_failureCases3, reinterpret_cast<void*>(Machine::cti_op_get_by_id_fail));
+    X86Assembler::link(code, callArityCheck1, reinterpret_cast<void*>(Machine::cti_op_call_arityCheck));
+    X86Assembler::link(code, callArityCheck2, reinterpret_cast<void*>(Machine::cti_op_call_arityCheck));
+    X86Assembler::link(code, callArityCheck3, reinterpret_cast<void*>(Machine::cti_op_call_arityCheck));
+    X86Assembler::link(code, callJSFunction1, reinterpret_cast<void*>(Machine::cti_op_call_JSFunction));
+    X86Assembler::link(code, callJSFunction2, reinterpret_cast<void*>(Machine::cti_op_call_JSFunction));
+    X86Assembler::link(code, callJSFunction3, reinterpret_cast<void*>(Machine::cti_op_call_JSFunction));
+    X86Assembler::link(code, callDontLazyLinkCall, reinterpret_cast<void*>(Machine::cti_vm_dontLazyLinkCall));
+    X86Assembler::link(code, callLazyLinkCall, reinterpret_cast<void*>(Machine::cti_vm_lazyLinkCall));
 
     m_machine->m_ctiArrayLengthTrampoline = code;
     m_machine->m_ctiStringLengthTrampoline = X86Assembler::getRelocatedAddress(code, stringLengthBegin);
+    m_machine->m_ctiVirtualCallPreLink = X86Assembler::getRelocatedAddress(code, virtualCallPreLinkBegin);
+    m_machine->m_ctiVirtualCallLink = X86Assembler::getRelocatedAddress(code, virtualCallLinkBegin);
+    m_machine->m_ctiVirtualCall = X86Assembler::getRelocatedAddress(code, virtualCallBegin);
 }
 
 void CTI::freeCTIMachineTrampolines(Machine* machine)
