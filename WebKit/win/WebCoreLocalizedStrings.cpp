@@ -69,6 +69,7 @@ String WebCore::contextMenuItemTagItalic() { return String(LPCTSTR_UI_STRING("It
 String WebCore::contextMenuItemTagUnderline() { return String(LPCTSTR_UI_STRING("Underline", "Underline context menu item")); }
 String WebCore::contextMenuItemTagOutline() { return String(LPCTSTR_UI_STRING("Outline", "Outline context menu item")); }
 String WebCore::contextMenuItemTagWritingDirectionMenu() { return String(LPCTSTR_UI_STRING("Writing Direction", "Writing direction context sub-menu item")); }
+String WebCore::contextMenuItemTagTextDirectionMenu() { return String(LPCTSTR_UI_STRING("Text Direction", "Text direction context sub-menu item")); }
 String WebCore::contextMenuItemTagDefaultDirection() { return String(LPCTSTR_UI_STRING("Default", "Default writing direction context menu item")); }
 String WebCore::contextMenuItemTagLeftToRight() { return String(LPCTSTR_UI_STRING("Left to Right", "Left to Right context menu item")); }
 String WebCore::contextMenuItemTagRightToLeft() { return String(LPCTSTR_UI_STRING("Right to Left", "Right to Left context menu item")); }
