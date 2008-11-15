@@ -37,7 +37,7 @@ ThreadIdentifier createThread(ThreadFunction, void*, const char*) { return 0; }
 int waitForThreadCompletion(ThreadIdentifier, void**) { return 0; }
 void detachThread(ThreadIdentifier) { }
 ThreadIdentifier currentThread() { return 0; }
-bool isMainThread() { return false; }
+bool isMainThread() { return true; }
 
 Mutex::Mutex() { }
 Mutex::~Mutex() { }
