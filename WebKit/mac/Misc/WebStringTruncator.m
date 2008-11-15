@@ -33,6 +33,7 @@
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/StringTruncator.h>
+#import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -49,7 +50,7 @@ static NSFont *defaultMenuFont()
 static Font& fontFromNSFont(NSFont *font)
 {
     static NSFont *currentFont;
-    static Font currentRenderer;
+    DEFINE_STATIC_LOCAL(Font, currentRenderer, ());
 
     if ([font isEqual:currentFont])
         return currentRenderer;

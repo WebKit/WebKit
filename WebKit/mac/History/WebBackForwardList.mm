@@ -46,12 +46,15 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
-static HashMap<BackForwardList*, WebBackForwardList*>& backForwardLists()
+typedef HashMap<BackForwardList*, WebBackForwardList*> BackForwardListMap;
+
+static BackForwardListMap& backForwardLists()
 {
-    static HashMap<BackForwardList*, WebBackForwardList*> staticBackForwardLists;
+    DEFINE_STATIC_LOCAL(BackForwardListMap, staticBackForwardLists, ());
     return staticBackForwardLists;
 }
 

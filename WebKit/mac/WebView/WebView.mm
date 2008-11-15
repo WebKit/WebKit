@@ -135,6 +135,7 @@
 #import <wtf/HashTraits.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
+#import <wtf/StdLibExtras.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
@@ -3611,7 +3612,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
             }
         }
         else if (object->inherits(&JSArray::info)) {
-            static HashSet<JSObject*> visitedElems;
+            DEFINE_STATIC_LOCAL(HashSet<JSObject*>, visitedElems, ());
             if (!visitedElems.contains(object)) {
                 visitedElems.add(object);
                 

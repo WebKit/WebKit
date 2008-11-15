@@ -45,6 +45,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/HashMap.h>
+#import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -55,7 +56,7 @@ static NSString *CarbonPathFromPOSIXPath(NSString *posixPath);
 typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
 {
-    static StreamMap staticStreams;
+    DEFINE_STATIC_LOCAL(StreamMap, staticStreams, ());
     return staticStreams;
 }
 

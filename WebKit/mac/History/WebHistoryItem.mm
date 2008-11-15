@@ -51,6 +51,7 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Assertions.h>
+#import <wtf/StdLibExtras.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"
@@ -65,12 +66,14 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 using namespace WebCore;
 
+typedef HashMap<HistoryItem*, WebHistoryItem*> HistoryItemMap;
+
 static inline WebHistoryItemPrivate* kitPrivate(WebCoreHistoryItem* list) { return (WebHistoryItemPrivate*)list; }
 static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* list) { return (WebCoreHistoryItem*)list; }
 
-HashMap<HistoryItem*, WebHistoryItem*>& historyItemWrappers()
+HistoryItemMap& historyItemWrappers()
 {
-    static HashMap<HistoryItem*, WebHistoryItem*> historyItemWrappers;
+    DEFINE_STATIC_LOCAL(HistoryItemMap, historyItemWrappers, ());
     return historyItemWrappers;
 }
 
