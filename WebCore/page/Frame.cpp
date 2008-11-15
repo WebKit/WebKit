@@ -76,6 +76,7 @@
 #include "runtime_root.h"
 #include "visible_units.h"
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/StdLibExtras.h>
 
 #if FRAME_LOADS_USER_STYLESHEET
 #include "UserStyleSheetLoader.h"
@@ -317,7 +318,7 @@ static RegularExpression* createRegExpForLabels(const Vector<String>& labels)
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    static RegularExpression wordRegExp = RegularExpression("\\w");
+    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w"));
     String pattern("(");
     unsigned int numLabels = labels.size();
     unsigned int i;
@@ -1027,7 +1028,7 @@ void Frame::removeEditingStyleFromElement(Element*) const
 #ifndef NDEBUG
 static HashSet<Frame*>& keepAliveSet()
 {
-    static HashSet<Frame*> staticKeepAliveSet;
+    DEFINE_STATIC_LOCAL(HashSet<Frame*>, staticKeepAliveSet, ());
     return staticKeepAliveSet;
 }
 #endif

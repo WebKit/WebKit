@@ -30,6 +30,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -46,7 +47,7 @@ enum {
 
 Theme* platformTheme()
 {
-    static ThemeMac themeMac;
+    DEFINE_STATIC_LOCAL(ThemeMac, themeMac, ());
     return &themeMac;
 }
 

@@ -1,3 +1,271 @@
+2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21810
+        Remove use of static C++ objects that are destroyed at exit time (destructors)
+
+        Create DEFINE_STATIC_LOCAL macro. Change static local objects to leak to avoid 
+        exit-time destructor. Update code that was changed to fix this issue that ran 
+        into a gcc bug (<rdar://problem/6354696> Codegen issue with C++ static reference 
+        in gcc build 5465). Also typdefs for template types needed to be added in some 
+        cases so the type could make it through the macro successfully.
+
+        Basically code of the form:
+        static T m;
+        becomes:
+        DEFINE_STATIC_LOCAL(T, m, ());
+
+        Also any code of the form:
+        static T& m = *new T;
+        also becomes:
+        DEFINE_STATIC_LOCAL(T, m, ());
+
+        * ForwardingHeaders/wtf/StdLibExtras.h: Added.
+        * bindings/js/GCController.cpp:
+        (WebCore::gcController):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::wrapperSet):
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::wrappers):
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::wrappers):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::needsYouTubeQuirk):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::rootObjectSet):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::initShorthandMap):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::screenEval):
+        (WebCore::printEval):
+        * dom/DOMImplementation.cpp:
+        (WebCore::addString):
+        (WebCore::isSVG10Feature):
+        (WebCore::isSVG11Feature):
+        (WebCore::DOMImplementation::isXMLMIMEType):
+        * dom/Document.cpp:
+        (WebCore::Document::hasPrefixNamespaceMismatch):
+        * dom/ScriptElement.cpp:
+        (WebCore::isSupportedJavaScriptLanguage):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::styleSpanClassString):
+        * editing/HTMLInterchange.cpp:
+        (WebCore::):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::indentBlockquoteString):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInterchangeNewlineNode):
+        (WebCore::isInterchangeConvertedSpaceSpan):
+        * editing/htmlediting.cpp:
+        (WebCore::stringWithRebalancedWhitespace):
+        (WebCore::nonBreakingSpaceString):
+        * editing/markup.cpp:
+        (WebCore::appendAttributeValue):
+        (WebCore::appendEscapedContent):
+        (WebCore::shouldAddNamespaceAttr):
+        (WebCore::appendNamespace):
+        (WebCore::appendStartMarkup):
+        (WebCore::createMarkup):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::type):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isRecognizedTagName):
+        (WebCore::inlineTagList):
+        (WebCore::blockTagList):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::type):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::type):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::type):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::type):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::type):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::type):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode):
+        (WebCore::HTMLParser::isHeaderTag):
+        (WebCore::HTMLParser::isResidualStyleTag):
+        (WebCore::HTMLParser::isAffectedByResidualStyle):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::type):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::type):
+        * inspector/InspectorController.cpp:
+        (WebCore::platform):
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::shared):
+        * inspector/JavaScriptProfile.cpp:
+        (WebCore::profileCache):
+        * inspector/JavaScriptProfileNode.cpp:
+        (WebCore::profileNodeCache):
+        * loader/FrameLoader.cpp:
+        (WebCore::localSchemes):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::cacheStorage):
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes):
+        (WebCore::ArchiveFactory::registerKnownArchiveMIMETypes):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragState):
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels):
+        (WebCore::keepAliveSet):
+        * page/Page.cpp:
+        (WebCore::Page::groupName):
+        * page/SecurityOrigin.cpp:
+        (WebCore::isDefaultPortForProtocol):
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        * page/mac/FrameMac.mm:
+        (WebCore::regExpForLabels):
+        * platform/KURL.cpp:
+        (WebCore::blankURL):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::alternateFamilyName):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/mac/CursorMac.mm:
+        (WebCore::leakNamedCursor):
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::aliasCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::copyCursor):
+        (WebCore::noneCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::platformTheme):
+        * platform/mac/ThreadCheck.mm:
+        (WebCoreReportThreadViolation):
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::networkStateNotifier):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::getStreamFormDataMap):
+        (WebCore::getStreamResourceHandleMap):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::isJapanese):
+        * plugins/PluginMainThreadScheduler.cpp:
+        (WebCore::PluginMainThreadScheduler::scheduler):
+        * rendering/RenderBlock.cpp:
+        (WebCore::continuationOutlineTable):
+        (WebCore::RenderBlock::addContinuationWithOutline):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        * rendering/RenderCounter.cpp:
+        (WebCore::counterMaps):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::markerText):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::renderScrollbarTheme):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::initialDashboardRegions):
+        (WebCore::RenderStyle::noneDashboardRegions):
+        * storage/Database.cpp:
+        (WebCore::guidMutex):
+        (WebCore::guidToVersionMap):
+        (WebCore::guidToDatabaseMap):
+        (WebCore::Database::databaseInfoTableName):
+        (WebCore::databaseVersionKey):
+        (WebCore::Database::getVersionFromDatabase):
+        (WebCore::Database::setVersionInDatabase):
+        (WebCore::guidForOriginAndName):
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::tracker):
+        (WebCore::notificationMutex):
+        (WebCore::notificationQueue):
+        * storage/LocalStorage.cpp:
+        (WebCore::localStorageMap):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::rotateMode):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::calcMode):
+        (WebCore::SVGAnimationElement::attributeType):
+        (WebCore::SVGAnimationElement::isAdditive):
+        (WebCore::SVGAnimationElement::isAccumulated):
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::xmlspace):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::contentScriptType):
+        (WebCore::SVGSVGElement::contentStyleType):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type):
+        (WebCore::SVGStyleElement::media):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::SVGSMILElement::restart):
+        (WebCore::SVGSMILElement::fill):
+        (WebCore::SVGSMILElement::repeatCount):
+        (WebCore::SVGSMILElement::notifyDependentsIntervalChanged):
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::clientMap):
+        (WebCore::SVGResource::removeClient):
+        * svg/graphics/SVGResourceMarker.cpp:
+        (WebCore::SVGResourceMarker::draw):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::PreflightResultCacheItem::PreflightResultCacheItem):
+        (WebCore::preflightResultCache):
+        (WebCore::appendPreflightResultCacheEntry):
+        (WebCore::isSafeRequestHeader):
+        (WebCore::isOnAccessControlResponseHeaderWhitelist):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        * xml/XPathExpressionNode.cpp:
+        (WebCore::XPath::Expression::evaluationContext):
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::setUpAxisNamesMap):
+        (WebCore::XPath::isAxisName):
+        (WebCore::XPath::isNodeTypeName):
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::toNodeSet):
+
 2008-11-14  Dan Bernstein  <mitz@apple.com>
 
         - attempt to fix the Qt build

@@ -34,6 +34,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarClient.h"
 #include "Settings.h"
+#include <wtf/StdLibExtras.h>
 
 #include <Carbon/Carbon.h>
 
@@ -86,7 +87,7 @@ namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
-    static ScrollbarThemeMac theme;
+    DEFINE_STATIC_LOCAL(ScrollbarThemeMac, theme, ());
     return &theme;
 }
 

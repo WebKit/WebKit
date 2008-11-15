@@ -59,6 +59,7 @@
 
 #import <Carbon/Carbon.h>
 #import <runtime/JSLock.h>
+#import <wtf/StdLibExtras.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import "WebDashboardRegion.h"
@@ -88,8 +89,8 @@ RegularExpression* regExpForLabels(NSArray* labels)
     // that the app will use is equal to the number of locales is used in searching.
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray* regExpLabels = nil;
-    static Vector<RegularExpression*> regExps;
-    static RegularExpression wordRegExp = RegularExpression("\\w");
+    DEFINE_STATIC_LOCAL(Vector<RegularExpression*>, regExps, ());
+    DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w"));
 
     RegularExpression* result;
     if (!regExpLabels)

@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -57,15 +58,15 @@ const AtomicString& HTMLButtonElement::type() const
 {
     switch (m_type) {
         case SUBMIT: {
-            static const AtomicString submit("submit");
+            DEFINE_STATIC_LOCAL(const AtomicString, submit, ("submit"));
             return submit;
         }
         case BUTTON: {
-            static const AtomicString button("button");
+            DEFINE_STATIC_LOCAL(const AtomicString, button, ("button"));
             return button;
         }
         case RESET: {
-            static const AtomicString reset("reset");
+            DEFINE_STATIC_LOCAL(const AtomicString, reset, ("reset"));
             return reset;
         }
     }

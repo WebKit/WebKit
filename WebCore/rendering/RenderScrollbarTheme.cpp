@@ -26,12 +26,13 @@
 #include "config.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderScrollbar.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 RenderScrollbarTheme* RenderScrollbarTheme::renderScrollbarTheme()
 {
-    static RenderScrollbarTheme theme;
+    DEFINE_STATIC_LOCAL(RenderScrollbarTheme, theme, ());
     return &theme;
 }
 

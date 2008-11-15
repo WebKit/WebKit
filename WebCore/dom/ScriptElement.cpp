@@ -33,6 +33,7 @@
 #include "ScriptController.h"
 #include "StringHash.h"
 #include "Text.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -91,7 +92,8 @@ void ScriptElement::handleSourceAttribute(ScriptElementData& data, const String&
 // Helper function
 static bool isSupportedJavaScriptLanguage(const String& language)
 {
-    static HashSet<String, CaseFoldingHash> languages;
+    typedef HashSet<String, CaseFoldingHash> LanguageSet;
+    DEFINE_STATIC_LOCAL(LanguageSet, languages, ());
     if (languages.isEmpty()) {
         languages.add("javascript");
         languages.add("javascript");

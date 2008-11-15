@@ -27,6 +27,7 @@
 
 #include "SVGElement.h"
 #include "XMLNames.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ void SVGLangSpace::setXmllang(const AtomicString& xmlLang)
 const AtomicString& SVGLangSpace::xmlspace() const
 {
     if (!m_space) {
-        static const AtomicString defaultString("default");
+        DEFINE_STATIC_LOCAL(const AtomicString, defaultString, ("default"));
         return defaultString;
     }
 

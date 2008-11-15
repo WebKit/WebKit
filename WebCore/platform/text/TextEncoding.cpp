@@ -39,6 +39,7 @@
 #endif
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -122,7 +123,7 @@ bool TextEncoding::isJapanese() const
     if (noExtendedTextEncodingNameUsed())
         return false;
 
-    static HashSet<const char*> set;
+    DEFINE_STATIC_LOCAL(HashSet<const char*>, set, ());
     if (set.isEmpty()) {
         addEncodingName(set, "x-mac-japanese");
         addEncodingName(set, "cp932");

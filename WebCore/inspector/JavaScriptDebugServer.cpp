@@ -49,6 +49,7 @@
 #include <runtime/JSLock.h>
 #include <parser/Parser.h>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 
 using namespace JSC;
@@ -59,7 +60,7 @@ typedef JavaScriptDebugServer::ListenerSet ListenerSet;
 
 JavaScriptDebugServer& JavaScriptDebugServer::shared()
 {
-    static JavaScriptDebugServer server;
+    DEFINE_STATIC_LOCAL(JavaScriptDebugServer, server, ());
     return server;
 }
 

@@ -52,7 +52,8 @@
 #include "LocalizedStrings.h"
 #include "Settings.h"
 #include "Text.h"
-
+#include <wtf/StdLibExtras.h>
+    
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -832,7 +833,7 @@ bool HTMLParser::mapCreateErrorCheck(Token* t, RefPtr<Node>& result)
 PassRefPtr<Node> HTMLParser::getNode(Token* t)
 {
     // Init our error handling table.
-    static FunctionMap gFunctionMap;
+    DEFINE_STATIC_LOCAL(FunctionMap, gFunctionMap, ());
     if (gFunctionMap.isEmpty()) {
         gFunctionMap.set(aTag.localName().impl(), &HTMLParser::nestedCreateErrorCheck);
         gFunctionMap.set(addressTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
@@ -943,7 +944,7 @@ void HTMLParser::processCloseTag(Token* t)
 
 bool HTMLParser::isHeaderTag(const AtomicString& tagName)
 {
-    static HashSet<AtomicStringImpl*> headerTags;
+    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, headerTags, ());
     if (headerTags.isEmpty()) {
         headerTags.add(h1Tag.localName().impl());
         headerTags.add(h2Tag.localName().impl());
@@ -986,7 +987,7 @@ bool HTMLParser::isInline(Node* node) const
 
 bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
 {
-    static HashSet<AtomicStringImpl*> residualStyleTags;
+    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, residualStyleTags, ());
     if (residualStyleTags.isEmpty()) {
         residualStyleTags.add(aTag.localName().impl());
         residualStyleTags.add(fontTag.localName().impl());
@@ -1013,7 +1014,7 @@ bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
 
 bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
 {
-    static HashSet<AtomicStringImpl*> unaffectedTags;
+    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, unaffectedTags, ());
     if (unaffectedTags.isEmpty()) {
         unaffectedTags.add(bodyTag.localName().impl());
         unaffectedTags.add(tableTag.localName().impl());

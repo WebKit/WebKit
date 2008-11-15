@@ -28,6 +28,7 @@
 #include "CharacterNames.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -771,7 +772,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     continue;
 
                 const UChar ellipsisAndSpace[2] = { horizontalEllipsis, ' ' };
-                static AtomicString ellipsisAndSpaceStr(ellipsisAndSpace, 2);
+                DEFINE_STATIC_LOCAL(AtomicString, ellipsisAndSpaceStr, (ellipsisAndSpace, 2));
 
                 const Font& font = style(numVisibleLines == 1)->font();
                 int ellipsisAndSpaceWidth = font.width(TextRun(ellipsisAndSpace, 2));

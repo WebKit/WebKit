@@ -29,6 +29,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderStyle.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ static CounterNode* counter(RenderObject*, const AtomicString& counterName, bool
 
 static CounterMaps& counterMaps()
 {
-    static CounterMaps staticCounterMaps;
+    DEFINE_STATIC_LOCAL(CounterMaps, staticCounterMaps, ());
     return staticCounterMaps;
 }
 

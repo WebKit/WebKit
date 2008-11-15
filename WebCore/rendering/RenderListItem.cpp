@@ -31,6 +31,7 @@
 #include "HTMLOListElement.h"
 #include "RenderListMarker.h"
 #include "RenderView.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -289,7 +290,7 @@ const String& RenderListItem::markerText() const
 {
     if (m_marker)
         return m_marker->text();
-    static String staticNullString;
+    DEFINE_STATIC_LOCAL(String, staticNullString, ());
     return staticNullString;
 }
 

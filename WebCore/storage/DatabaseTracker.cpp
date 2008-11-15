@@ -41,6 +41,7 @@
 #include "SecurityOriginHash.h"
 #include "SQLiteStatement.h"
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -55,7 +56,7 @@ OriginQuotaManager& DatabaseTracker::originQuotaManager()
 
 DatabaseTracker& DatabaseTracker::tracker()
 {
-    static DatabaseTracker& tracker = *new DatabaseTracker;
+    DEFINE_STATIC_LOCAL(DatabaseTracker, tracker, ());
     return tracker;
 }
 
@@ -771,7 +772,7 @@ void DatabaseTracker::setClient(DatabaseTrackerClient* client)
 
 static Mutex& notificationMutex()
 {
-    static Mutex& mutex = *new Mutex;
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
@@ -779,7 +780,7 @@ typedef Vector<pair<SecurityOrigin*, String> > NotificationQueue;
 
 static NotificationQueue& notificationQueue()
 {
-    static NotificationQueue& queue = *new NotificationQueue;
+    DEFINE_STATIC_LOCAL(NotificationQueue, queue, ());
     return queue;
 }
 

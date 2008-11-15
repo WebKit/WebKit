@@ -32,6 +32,7 @@
 #include "SVGPathElement.h"
 #include "SVGTransformList.h"
 #include <math.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
     
@@ -91,8 +92,8 @@ void SVGAnimateMotionElement::parseMappedAttribute(MappedAttribute* attr)
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
 {
-    static const AtomicString autoVal("auto");
-    static const AtomicString autoReverse("auto-reverse");
+    DEFINE_STATIC_LOCAL(const AtomicString, autoVal, ("auto"));
+    DEFINE_STATIC_LOCAL(const AtomicString, autoReverse, ("auto-reverse"));
     String rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoVal)
         return RotateAuto;

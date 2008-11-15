@@ -31,6 +31,7 @@
 #include "Rect.h"
 #include "RenderStyle.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -686,7 +687,7 @@ String CSSPrimitiveValue::cssText() const
             // FIXME: Add list-style and separator
             break;
         case CSS_RECT: {
-            static const String rectParen("rect(");
+            DEFINE_STATIC_LOCAL(const String, rectParen, ("rect("));
 
             Rect* rectVal = getRectValue();
             Vector<UChar> result;
@@ -709,9 +710,9 @@ String CSSPrimitiveValue::cssText() const
         }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
-            static const String commaSpace(", ");
-            static const String rgbParen("rgb(");
-            static const String rgbaParen("rgba(");
+            DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
+            DEFINE_STATIC_LOCAL(const String, rgbParen, ("rgb("));
+            DEFINE_STATIC_LOCAL(const String, rgbaParen, ("rgba("));
 
             RGBA32 rgbColor = m_value.rgbcolor;
             if (m_type == CSS_PARSER_HEXCOLOR)

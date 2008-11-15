@@ -36,6 +36,7 @@
 #include "XPathException.h"
 #include "XPathNSResolver.h"
 #include "XPathStep.h"
+#include <wtf/StdLibExtras.h>
 
 int xpathyyparse(void*);
 
@@ -52,6 +53,8 @@ class LocationPath;
 Parser* Parser::currentParser = 0;
     
 enum XMLCat { NameStart, NameCont, NotPartOfName };
+
+typedef HashMap<String, Step::Axis> AxisNamesMap;
 
 static XMLCat charCat(UChar aChar)
 {
@@ -70,7 +73,7 @@ static XMLCat charCat(UChar aChar)
     return NotPartOfName;
 }
 
-static void setUpAxisNamesMap(HashMap<String, Step::Axis>& axisNames)
+static void setUpAxisNamesMap(AxisNamesMap& axisNames)
 {
     struct AxisName {
         const char* name;
@@ -97,12 +100,12 @@ static void setUpAxisNamesMap(HashMap<String, Step::Axis>& axisNames)
 
 static bool isAxisName(const String& name, Step::Axis& type)
 {
-    static HashMap<String, Step::Axis> axisNames;
+    DEFINE_STATIC_LOCAL(AxisNamesMap, axisNames, ());
 
     if (axisNames.isEmpty())
         setUpAxisNamesMap(axisNames);
 
-    HashMap<String, Step::Axis>::iterator it = axisNames.find(name);
+    AxisNamesMap::iterator it = axisNames.find(name);
     if (it == axisNames.end())
         return false;
     type = it->second;
@@ -111,7 +114,7 @@ static bool isAxisName(const String& name, Step::Axis& type)
 
 static bool isNodeTypeName(const String& name)
 {
-    static HashSet<String> nodeTypeNames;
+    DEFINE_STATIC_LOCAL(HashSet<String>, nodeTypeNames, ());
     if (nodeTypeNames.isEmpty()) {
         nodeTypeNames.add("comment");
         nodeTypeNames.add("text");

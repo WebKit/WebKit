@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "StorageArea.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ typedef HashMap<String, LocalStorage*> LocalStorageMap;
 
 static LocalStorageMap& localStorageMap()
 {
-    static LocalStorageMap localStorageMap;
+    DEFINE_STATIC_LOCAL(LocalStorageMap, localStorageMap, ());
     return localStorageMap;
 }
 

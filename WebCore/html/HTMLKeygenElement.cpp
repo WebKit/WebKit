@@ -33,6 +33,7 @@
 #include "HTMLOptionElement.h"
 #include "SSLKeyGenerator.h"
 #include "Text.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -56,7 +57,7 @@ HTMLKeygenElement::HTMLKeygenElement(Document* doc, HTMLFormElement* f)
 
 const AtomicString& HTMLKeygenElement::type() const
 {
-    static const AtomicString keygen("keygen");
+    DEFINE_STATIC_LOCAL(const AtomicString, keygen, ("keygen"));
     return keygen;
 }
 

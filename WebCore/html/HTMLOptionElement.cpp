@@ -35,6 +35,7 @@
 #include "RenderMenuList.h"
 #include "Text.h"
 #include "NodeRenderStyle.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -73,7 +74,7 @@ bool HTMLOptionElement::isFocusable() const
 
 const AtomicString& HTMLOptionElement::type() const
 {
-    static const AtomicString option("option");
+    DEFINE_STATIC_LOCAL(const AtomicString, option, ("option"));
     return option;
 }
 

@@ -30,6 +30,7 @@
 #include <runtime/JSGlobalData.h>
 #include <runtime/JSLock.h>
 #include <runtime/Collector.h>
+#include <wtf/StdLibExtras.h>
 
 #if USE(PTHREADS)
 #include <pthread.h>
@@ -52,7 +53,7 @@ static void* collect(void*)
 
 GCController& gcController()
 {
-    static GCController staticGCController;
+    DEFINE_STATIC_LOCAL(GCController, staticGCController, ());
     return staticGCController;
 }
 

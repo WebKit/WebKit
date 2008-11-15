@@ -29,6 +29,7 @@
 #include "CharacterNames.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ namespace {
 
 String convertedSpaceString()
 {
-    static String convertedSpaceString;
+    DEFINE_STATIC_LOCAL(String, convertedSpaceString, ());
     if (convertedSpaceString.isNull()) {
         convertedSpaceString = "<span class=\"";
         convertedSpaceString += AppleConvertedSpace;

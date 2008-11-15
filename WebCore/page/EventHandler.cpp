@@ -63,6 +63,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextEvent.h"
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"
@@ -150,7 +151,7 @@ EventHandler::~EventHandler()
     
 EventHandler::EventHandlerDragState& EventHandler::dragState()
 {
-    static EventHandlerDragState state;
+    DEFINE_STATIC_LOCAL(EventHandlerDragState, state, ());
     return state;
 }
     

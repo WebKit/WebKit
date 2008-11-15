@@ -41,6 +41,7 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -364,9 +365,9 @@ int maxDeepOffset(const Node *node)
 
 String stringWithRebalancedWhitespace(const String& string, bool startIsStartOfParagraph, bool endIsEndOfParagraph)
 {
-    static String twoSpaces("  ");
-    static String nbsp("\xa0");
-    static String pattern(" \xa0");
+    DEFINE_STATIC_LOCAL(String, twoSpaces, ("  "));
+    DEFINE_STATIC_LOCAL(String, nbsp, ("\xa0"));
+    DEFINE_STATIC_LOCAL(String, pattern, (" \xa0"));
 
     String rebalancedString = string;
 
@@ -393,7 +394,7 @@ bool isTableStructureNode(const Node *node)
 
 const String& nonBreakingSpaceString()
 {
-    static String nonBreakingSpaceString = String(&noBreakSpace, 1);
+    DEFINE_STATIC_LOCAL(String, nonBreakingSpaceString, (&noBreakSpace, 1));
     return nonBreakingSpaceString;
 }
 

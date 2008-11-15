@@ -42,6 +42,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/HashMap.h>
 #import <wtf/MainThread.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 
 namespace WebCore {
@@ -49,14 +50,14 @@ namespace WebCore {
 typedef HashMap<CFReadStreamRef, RefPtr<FormData> > StreamFormDataMap;
 static StreamFormDataMap& getStreamFormDataMap()
 {
-    static StreamFormDataMap streamFormDataMap;
+    DEFINE_STATIC_LOCAL(StreamFormDataMap, streamFormDataMap, ());
     return streamFormDataMap;
 }
 
 typedef HashMap<CFReadStreamRef, RefPtr<ResourceHandle> > StreamResourceHandleMap;
 static StreamResourceHandleMap& getStreamResourceHandleMap()
 {
-    static StreamResourceHandleMap streamResourceHandleMap;
+    DEFINE_STATIC_LOCAL(StreamResourceHandleMap, streamResourceHandleMap, ());
     return streamResourceHandleMap;
 }
 

@@ -28,6 +28,7 @@
 
 #import "StringHash.h"
 #import <wtf/HashSet.h>
+#import <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -79,7 +80,7 @@ void reportThreadViolation(const char* function)
 void WebCoreReportThreadViolation(const char* function)
 {
     using namespace WebCore;
-    static HashSet<String> loggedFunctions;
+    DEFINE_STATIC_LOCAL(HashSet<String>, loggedFunctions, ());
     switch (threadViolationBehavior) {
         case NoThreadCheck:
             break;

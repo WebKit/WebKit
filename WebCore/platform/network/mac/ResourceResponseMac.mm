@@ -28,6 +28,7 @@
 
 #import "WebCoreURLResponse.h"
 #import <Foundation/Foundation.h>
+#import <wtf/StdLibExtras.h>
 #import <limits>
 
 @interface NSURLResponse (FoundationSecretsWebCoreKnowsAbout)
@@ -99,7 +100,7 @@ void ResourceResponse::platformLazyInit()
         // is returning incorrect MIME type for local .xhtml files) which is only required in Leopard.
         if (m_url.isLocalFile() && m_mimeType == "text/html") {
             const String& path = m_url.path();
-            static const String xhtmlExt(".xhtml");
+            DEFINE_STATIC_LOCAL(const String, xhtmlExt, (".xhtml"));
             if (path.endsWith(xhtmlExt, false))
                 m_mimeType = "application/xhtml+xml";
         }

@@ -27,6 +27,7 @@
 #include "JSInspectorCallbackWrapper.h"
 
 #include "JSInspectedObjectWrapper.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace JSC;
 
@@ -38,7 +39,7 @@ typedef HashMap<JSObject*, JSInspectorCallbackWrapper*> WrapperMap;
 
 static WrapperMap& wrappers()
 {
-    static WrapperMap map;
+    DEFINE_STATIC_LOCAL(WrapperMap, map, ());
     return map;
 }
 

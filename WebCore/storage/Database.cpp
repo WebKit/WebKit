@@ -50,6 +50,7 @@
 #include "SQLResultSet.h"
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -58,31 +59,33 @@ static Mutex& guidMutex()
     // Note: We don't have to use AtomicallyInitializedStatic here because
     // this function is called once in the constructor on the main thread
     // before any other threads that call this function are used.
-    static Mutex& mutex = *new Mutex;
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
-static HashMap<int, String>& guidToVersionMap()
+typedef HashMap<int, String> GuidVersionMap;
+static GuidVersionMap& guidToVersionMap()
 {
-    static HashMap<int, String>& map = *new HashMap<int, String>;
+    DEFINE_STATIC_LOCAL(GuidVersionMap, map, ());
     return map;
 }
 
-static HashMap<int, HashSet<Database*>*>& guidToDatabaseMap()
+typedef HashMap<int, HashSet<Database*>*> GuidDatabaseMap;
+static GuidDatabaseMap& guidToDatabaseMap()
 {
-    static HashMap<int, HashSet<Database*>*>& map = *new HashMap<int, HashSet<Database*>*>;
+    DEFINE_STATIC_LOCAL(GuidDatabaseMap, map, ());
     return map;
 }
 
 const String& Database::databaseInfoTableName()
 {
-    static String& name = *new String("__WebKitDatabaseInfoTable__");
+    DEFINE_STATIC_LOCAL(String, name, ("__WebKitDatabaseInfoTable__"));
     return name;
 }
 
 static const String& databaseVersionKey()
 {
-    static String& key = *new String("WebKitDatabaseVersionKey");
+    DEFINE_STATIC_LOCAL(String, key, ("WebKitDatabaseVersionKey"));
     return key;
 }
 
@@ -218,7 +221,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 
 bool Database::getVersionFromDatabase(String& version)
 {
-    static String& getVersionQuery = *new String("SELECT value FROM " + databaseInfoTableName() + " WHERE key = '" + databaseVersionKey() + "';");
+    DEFINE_STATIC_LOCAL(String, getVersionQuery, ("SELECT value FROM " + databaseInfoTableName() + " WHERE key = '" + databaseVersionKey() + "';"));
 
     m_databaseAuthorizer->disable();
 
@@ -254,7 +257,7 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 
 bool Database::setVersionInDatabase(const String& version)
 {
-    static String& setVersionQuery = *new String("INSERT INTO " + databaseInfoTableName() + " (key, value) VALUES ('" + databaseVersionKey() + "', ?);");
+    DEFINE_STATIC_LOCAL(String, setVersionQuery, ("INSERT INTO " + databaseInfoTableName() + " (key, value) VALUES ('" + databaseVersionKey() + "', ?);"));
 
     m_databaseAuthorizer->disable();
 
@@ -363,9 +366,10 @@ static int guidForOriginAndName(const String& origin, const String& name)
     // Note: We don't have to use AtomicallyInitializedStatic here because
     // this function is called once in the constructor on the main thread
     // before any other threads that call this function are used.
-    static Mutex& stringIdentifierMutex = *new Mutex;
+    DEFINE_STATIC_LOCAL(Mutex, stringIdentifierMutex, ());
     MutexLocker locker(stringIdentifierMutex);
-    static HashMap<String, int>& stringIdentifierToGUIDMap = *new HashMap<String, int>;
+    typedef HashMap<String, int> IDGuidMap;
+    DEFINE_STATIC_LOCAL(IDGuidMap, stringIdentifierToGUIDMap, ());
     int guid = stringIdentifierToGUIDMap.get(stringID);
     if (!guid) {
         static int currentNewGUID = 1;

@@ -38,6 +38,7 @@
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"
 #include "XMLNames.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -498,7 +499,7 @@ void SVGTextContentElement::parseMappedAttribute(MappedAttribute* attr)
             return;
         if (SVGLangSpace::parseMappedAttribute(attr)) {
             if (attr->name().matches(XMLNames::spaceAttr)) {
-                static const AtomicString preserveString("preserve");
+                DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
 
                 if (attr->value() == preserveString)
                     addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePre);

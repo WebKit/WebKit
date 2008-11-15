@@ -31,13 +31,14 @@
 
 #include "Node.h"
 #include "XPathValue.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 namespace XPath {
     
 EvaluationContext& Expression::evaluationContext()
 {
-    static EvaluationContext evaluationContext;
+    DEFINE_STATIC_LOCAL(EvaluationContext, evaluationContext, ());
     return evaluationContext;
 }
 

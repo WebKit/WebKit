@@ -29,6 +29,7 @@
 
 #include "HTMLNames.h"
 #include "RenderFieldset.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ bool HTMLFieldSetElement::isFocusable() const
 
 const AtomicString& HTMLFieldSetElement::type() const
 {
-    static const AtomicString fieldset("fieldset");
+    DEFINE_STATIC_LOCAL(const AtomicString, fieldset, ("fieldset"));
     return fieldset;
 }
 

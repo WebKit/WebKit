@@ -49,6 +49,7 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include "visible_units.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -90,14 +91,14 @@ private:
 
 static bool isInterchangeNewlineNode(const Node *node)
 {
-    static String interchangeNewlineClassString(AppleInterchangeNewline);
+    DEFINE_STATIC_LOCAL(String, interchangeNewlineClassString, (AppleInterchangeNewline));
     return node && node->hasTagName(brTag) && 
            static_cast<const Element *>(node)->getAttribute(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node *node)
 {
-    static String convertedSpaceSpanClassString(AppleConvertedSpace);
+    DEFINE_STATIC_LOCAL(String, convertedSpaceSpanClassString, (AppleConvertedSpace));
     return node->isHTMLElement() && 
            static_cast<const HTMLElement *>(node)->getAttribute(classAttr) == convertedSpaceSpanClassString;
 }

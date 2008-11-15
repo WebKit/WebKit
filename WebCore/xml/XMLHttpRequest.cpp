@@ -48,11 +48,14 @@
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <runtime/JSLock.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
+typedef HashSet<String, CaseFoldingHash> HeadersSet;
+
 struct PreflightResultCacheItem {
-    PreflightResultCacheItem(unsigned expiryDelta, bool credentials, HashSet<String>* methods, HashSet<String, CaseFoldingHash>* headers)
+    PreflightResultCacheItem(unsigned expiryDelta, bool credentials, HashSet<String>* methods, HeadersSet* headers)
         : m_absoluteExpiryTime(currentTime() + expiryDelta)
         , m_credentials(credentials)
         , m_methods(methods)
@@ -66,19 +69,19 @@ struct PreflightResultCacheItem {
     double m_absoluteExpiryTime;
     bool m_credentials;
     OwnPtr<HashSet<String> > m_methods;
-    OwnPtr<HashSet<String, CaseFoldingHash> > m_headers;
+    OwnPtr<HeadersSet > m_headers;
 };
 
 typedef HashMap<std::pair<String, KURL>, PreflightResultCacheItem*> PreflightResultCache;
 
 static PreflightResultCache& preflightResultCache()
 {
-    static PreflightResultCache cache;
+    DEFINE_STATIC_LOCAL(PreflightResultCache, cache, ());
     return cache;
 }
 
 static void appendPreflightResultCacheEntry(String origin, KURL url, unsigned expiryDelta, 
-                                            bool credentials, HashSet<String>* methods, HashSet<String, CaseFoldingHash>* headers)
+                                            bool credentials, HashSet<String>* methods, HeadersSet* headers)
 {
     ASSERT(!preflightResultCache().contains(std::make_pair(origin, url)));
 
@@ -88,9 +91,9 @@ static void appendPreflightResultCacheEntry(String origin, KURL url, unsigned ex
 
 static bool isSafeRequestHeader(const String& name)
 {
-    static HashSet<String, CaseFoldingHash> forbiddenHeaders;
-    static String proxyString("proxy-");
-    static String secString("sec-");
+    DEFINE_STATIC_LOCAL(HeadersSet, forbiddenHeaders, ());
+    DEFINE_STATIC_LOCAL(String, proxyString, ("proxy-"));
+    DEFINE_STATIC_LOCAL(String, secString, ("sec-"));
     
     if (forbiddenHeaders.isEmpty()) {
         forbiddenHeaders.add("accept-charset");
@@ -121,7 +124,7 @@ static bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name)
 
 static bool isOnAccessControlResponseHeaderWhitelist(const String& name)
 {
-    static HashSet<String, CaseFoldingHash> allowedHeaders;
+    DEFINE_STATIC_LOCAL(HeadersSet, allowedHeaders, ());
     if (allowedHeaders.isEmpty()) {
         allowedHeaders.add("cache-control");
         allowedHeaders.add("content-language");
@@ -1165,7 +1168,7 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
         return;
     }
 
-    OwnPtr<HashSet<String, CaseFoldingHash> > headers(new HashSet<String, CaseFoldingHash>);
+    OwnPtr<HeadersSet > headers(new HeadersSet);
     if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Headers"), headers.get())) {
         networkError();
         return;

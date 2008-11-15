@@ -29,6 +29,7 @@
 #include "RenderArena.h"
 #include "RenderObject.h"
 #include "StyleImage.h"
+#include <wtf/StdLibExtras.h>
 #include <algorithm>
 
 namespace WebCore {
@@ -720,13 +721,13 @@ CounterDirectiveMap& RenderStyle::accessCounterDirectives()
 #if ENABLE(DASHBOARD_SUPPORT)
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 {
-    static Vector<StyleDashboardRegion> emptyList;
+    DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, emptyList, ());
     return emptyList;
 }
 
 const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 {
-    static Vector<StyleDashboardRegion> noneList;
+    DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, noneList, ());
     static bool noneListInitialized = false;
 
     if (!noneListInitialized) {

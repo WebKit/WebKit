@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "TextDocument.h"
 #include "XMLNames.h"
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -56,7 +57,9 @@ namespace WebCore {
 
 #if ENABLE(SVG)
 
-static void addString(HashSet<String, CaseFoldingHash>& set, const char* string)
+typedef HashSet<String, CaseFoldingHash> FeatureSet;
+
+static void addString(FeatureSet& set, const char* string)
 {
     set.add(string);
 }
@@ -64,7 +67,7 @@ static void addString(HashSet<String, CaseFoldingHash>& set, const char* string)
 static bool isSVG10Feature(const String &feature)
 {
     static bool initialized = false;
-    static HashSet<String, CaseFoldingHash> svgFeatures;
+    DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
     if (!initialized) {
 #if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
         addString(svgFeatures, "svg");
@@ -89,7 +92,7 @@ static bool isSVG10Feature(const String &feature)
 static bool isSVG11Feature(const String &feature)
 {
     static bool initialized = false;
-    static HashSet<String, CaseFoldingHash> svgFeatures;
+    DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
     if (!initialized) {
         // Sadly, we cannot claim to implement any of the SVG 1.1 generic feature sets
         // lack of Font and Filter support.
@@ -274,7 +277,7 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
     if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "text/xsl")
         return true;
     static const char* validChars = "[0-9a-zA-Z_\\-+~!$\\^{}|.%'`#&*]"; // per RFCs: 3023, 2045
-    static RegularExpression xmlTypeRegExp(String("^") + validChars + "+/" + validChars + "+\\+xml$");
+    DEFINE_STATIC_LOCAL(RegularExpression, xmlTypeRegExp, (String("^") + validChars + "+/" + validChars + "+\\+xml$"));
     return xmlTypeRegExp.match(mimeType) > -1;
 }
 

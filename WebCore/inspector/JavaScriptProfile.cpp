@@ -34,6 +34,7 @@
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace JSC;
 
@@ -45,7 +46,7 @@ typedef HashMap<Profile*, JSObject*> ProfileMap;
 
 static ProfileMap& profileCache()
 { 
-    static ProfileMap staticProfiles;
+    DEFINE_STATIC_LOCAL(ProfileMap, staticProfiles, ());
     return staticProfiles;
 }
 

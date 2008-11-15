@@ -40,6 +40,7 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <math.h>
 
 #ifdef BUILDING_ON_TIGER
@@ -168,13 +169,13 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
 
 void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription) const
 {
-    static FontDescription systemFont;
-    static FontDescription smallSystemFont;
-    static FontDescription menuFont;
-    static FontDescription labelFont;
-    static FontDescription miniControlFont;
-    static FontDescription smallControlFont;
-    static FontDescription controlFont;
+    DEFINE_STATIC_LOCAL(FontDescription, systemFont, ());
+    DEFINE_STATIC_LOCAL(FontDescription, smallSystemFont, ());
+    DEFINE_STATIC_LOCAL(FontDescription, menuFont, ());
+    DEFINE_STATIC_LOCAL(FontDescription, labelFont, ());
+    DEFINE_STATIC_LOCAL(FontDescription, miniControlFont, ());
+    DEFINE_STATIC_LOCAL(FontDescription, smallControlFont, ());
+    DEFINE_STATIC_LOCAL(FontDescription, controlFont, ());
 
     FontDescription* cachedDesc;
     NSFont* font = nil;

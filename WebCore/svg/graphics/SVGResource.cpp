@@ -31,6 +31,7 @@
 #include "RenderPath.h"
 #include "SVGElement.h"
 #include "SVGStyledElement.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -47,8 +48,10 @@ struct ResourceSet {
     SVGResource* resources[_ResourceTypeCount]; 
 };
 
-static HashMap<SVGStyledElement*, ResourceSet*>& clientMap() {
-    static HashMap<SVGStyledElement*, ResourceSet*> map;
+typedef HashMap<SVGStyledElement*, ResourceSet*> ResourceClientMap;
+
+static ResourceClientMap& clientMap() {
+    DEFINE_STATIC_LOCAL(ResourceClientMap, map, ());
     return map;
 }
 
@@ -116,7 +119,7 @@ void SVGResource::invalidateClients(HashSet<SVGStyledElement*> clients)
 
 void SVGResource::removeClient(SVGStyledElement* item) 
 {
-    HashMap<SVGStyledElement*, ResourceSet*>::iterator resourcePtr = clientMap().find(item);
+    ResourceClientMap::iterator resourcePtr = clientMap().find(item);
     if (resourcePtr == clientMap().end())
         return;
     

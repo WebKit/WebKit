@@ -33,6 +33,7 @@
 #include "FrameLoader.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -41,7 +42,8 @@ static bool isDefaultPortForProtocol(unsigned short port, const String& protocol
     if (protocol.isEmpty())
         return false;
 
-    static HashMap<String, unsigned> defaultPorts;
+    typedef HashMap<String, unsigned> DefaultPortsMap;
+    DEFINE_STATIC_LOCAL(DefaultPortsMap, defaultPorts, ());
     if (defaultPorts.isEmpty()) {
         defaultPorts.set("http", 80);
         defaultPorts.set("https", 443);
@@ -260,7 +262,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
 
 String SecurityOrigin::databaseIdentifier() const 
 {
-    static String separatorString = String(&SeparatorCharacter, 1);
+    DEFINE_STATIC_LOCAL(String, separatorString, (&SeparatorCharacter, 1));
     return m_protocol + separatorString + m_host + separatorString + String::number(m_port); 
 }
 

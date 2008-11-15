@@ -37,6 +37,7 @@
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace WTF;
 
@@ -124,21 +125,24 @@ static FontPlatformDataCache* gFontPlatformDataCache = 0;
 static const AtomicString& alternateFamilyName(const AtomicString& familyName)
 {
     // Alias Courier <-> Courier New
-    static AtomicString courier("Courier"), courierNew("Courier New");
+    DEFINE_STATIC_LOCAL(AtomicString, courier, ("Courier"));
+    DEFINE_STATIC_LOCAL(AtomicString, courierNew, ("Courier New"));
     if (equalIgnoringCase(familyName, courier))
         return courierNew;
     if (equalIgnoringCase(familyName, courierNew))
         return courier;
 
     // Alias Times and Times New Roman.
-    static AtomicString times("Times"), timesNewRoman("Times New Roman");
+    DEFINE_STATIC_LOCAL(AtomicString, times, ("Times"));
+    DEFINE_STATIC_LOCAL(AtomicString, timesNewRoman, ("Times New Roman"));
     if (equalIgnoringCase(familyName, times))
         return timesNewRoman;
     if (equalIgnoringCase(familyName, timesNewRoman))
         return times;
     
     // Alias Arial and Helvetica
-    static AtomicString arial("Arial"), helvetica("Helvetica");
+    DEFINE_STATIC_LOCAL(AtomicString, arial, ("Arial"));
+    DEFINE_STATIC_LOCAL(AtomicString, helvetica, ("Helvetica"));
     if (equalIgnoringCase(familyName, arial))
         return helvetica;
     if (equalIgnoringCase(familyName, helvetica))

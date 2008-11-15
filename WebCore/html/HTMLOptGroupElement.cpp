@@ -31,6 +31,7 @@
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ bool HTMLOptGroupElement::isFocusable() const
 
 const AtomicString& HTMLOptGroupElement::type() const
 {
-    static const AtomicString optgroup("optgroup");
+    DEFINE_STATIC_LOCAL(const AtomicString, optgroup, ("optgroup"));
     return optgroup;
 }
 

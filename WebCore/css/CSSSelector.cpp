@@ -24,6 +24,8 @@
 #include "config.h"
 #include "CSSSelector.h"
 
+#include <wtf/StdLibExtras.h>
+
 namespace WebCore {
 
 unsigned int CSSSelector::specificity()
@@ -62,75 +64,75 @@ void CSSSelector::extractPseudoType() const
     if (m_match != PseudoClass && m_match != PseudoElement)
         return;
 
-    static AtomicString active("active");
-    static AtomicString after("after");
-    static AtomicString anyLink("-webkit-any-link");
-    static AtomicString autofill("-webkit-autofill");
-    static AtomicString before("before");
-    static AtomicString checked("checked");
-    static AtomicString fileUploadButton("-webkit-file-upload-button");
-    static AtomicString disabled("disabled");
-    static AtomicString readOnly("read-only");
-    static AtomicString readWrite("read-write");
-    static AtomicString drag("-webkit-drag");
-    static AtomicString dragAlias("-khtml-drag"); // was documented with this name in Apple documentation, so keep an alias
-    static AtomicString empty("empty");
-    static AtomicString enabled("enabled");
-    static AtomicString firstChild("first-child");
-    static AtomicString firstLetter("first-letter");
-    static AtomicString firstLine("first-line");
-    static AtomicString firstOfType("first-of-type");
-    static AtomicString fullPageMedia("-webkit-full-page-media");
-    static AtomicString nthChild("nth-child(");
-    static AtomicString nthOfType("nth-of-type(");
-    static AtomicString nthLastChild("nth-last-child(");
-    static AtomicString nthLastOfType("nth-last-of-type(");
-    static AtomicString focus("focus");
-    static AtomicString hover("hover");
-    static AtomicString indeterminate("indeterminate");
-    static AtomicString inputPlaceholder("-webkit-input-placeholder");
-    static AtomicString lastChild("last-child");
-    static AtomicString lastOfType("last-of-type");
-    static AtomicString link("link");
-    static AtomicString lang("lang(");
-    static AtomicString mediaControlsPanel("-webkit-media-controls-panel");
-    static AtomicString mediaControlsMuteButton("-webkit-media-controls-mute-button");
-    static AtomicString mediaControlsPlayButton("-webkit-media-controls-play-button");
-    static AtomicString mediaControlsTimeDisplay("-webkit-media-controls-time-display");
-    static AtomicString mediaControlsTimeline("-webkit-media-controls-timeline");
-    static AtomicString mediaControlsSeekBackButton("-webkit-media-controls-seek-back-button");
-    static AtomicString mediaControlsSeekForwardButton("-webkit-media-controls-seek-forward-button");
-    static AtomicString mediaControlsFullscreenButton("-webkit-media-controls-fullscreen-button");
-    static AtomicString notStr("not(");
-    static AtomicString onlyChild("only-child");
-    static AtomicString onlyOfType("only-of-type");
-    static AtomicString resizer("-webkit-resizer");
-    static AtomicString root("root");
-    static AtomicString scrollbar("-webkit-scrollbar");
-    static AtomicString scrollbarButton("-webkit-scrollbar-button");
-    static AtomicString scrollbarCorner("-webkit-scrollbar-corner");
-    static AtomicString scrollbarThumb("-webkit-scrollbar-thumb");
-    static AtomicString scrollbarTrack("-webkit-scrollbar-track");
-    static AtomicString scrollbarTrackPiece("-webkit-scrollbar-track-piece");
-    static AtomicString searchCancelButton("-webkit-search-cancel-button");
-    static AtomicString searchDecoration("-webkit-search-decoration");
-    static AtomicString searchResultsDecoration("-webkit-search-results-decoration");
-    static AtomicString searchResultsButton("-webkit-search-results-button");
-    static AtomicString selection("selection");
-    static AtomicString sliderThumb("-webkit-slider-thumb");
-    static AtomicString target("target");
-    static AtomicString visited("visited");
-    static AtomicString windowInactive("window-inactive");
-    static AtomicString decrement("decrement");
-    static AtomicString increment("increment");
-    static AtomicString start("start");
-    static AtomicString end("end");
-    static AtomicString horizontal("horizontal");
-    static AtomicString vertical("vertical");
-    static AtomicString doubleButton("double-button");
-    static AtomicString singleButton("single-button");
-    static AtomicString noButton("no-button");
-    static AtomicString cornerPresent("corner-present");
+    DEFINE_STATIC_LOCAL(AtomicString, active, ("active"));
+    DEFINE_STATIC_LOCAL(AtomicString, after, ("after"));
+    DEFINE_STATIC_LOCAL(AtomicString, anyLink, ("-webkit-any-link"));
+    DEFINE_STATIC_LOCAL(AtomicString, autofill, ("-webkit-autofill"));
+    DEFINE_STATIC_LOCAL(AtomicString, before, ("before"));
+    DEFINE_STATIC_LOCAL(AtomicString, checked, ("checked"));
+    DEFINE_STATIC_LOCAL(AtomicString, fileUploadButton, ("-webkit-file-upload-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, disabled, ("disabled"));
+    DEFINE_STATIC_LOCAL(AtomicString, readOnly, ("read-only"));
+    DEFINE_STATIC_LOCAL(AtomicString, readWrite, ("read-write"));
+    DEFINE_STATIC_LOCAL(AtomicString, drag, ("-webkit-drag"));
+    DEFINE_STATIC_LOCAL(AtomicString, dragAlias, ("-khtml-drag")); // was documented with this name in Apple documentation, so keep an alia
+    DEFINE_STATIC_LOCAL(AtomicString, empty, ("empty"));
+    DEFINE_STATIC_LOCAL(AtomicString, enabled, ("enabled"));
+    DEFINE_STATIC_LOCAL(AtomicString, firstChild, ("first-child"));
+    DEFINE_STATIC_LOCAL(AtomicString, firstLetter, ("first-letter"));
+    DEFINE_STATIC_LOCAL(AtomicString, firstLine, ("first-line"));
+    DEFINE_STATIC_LOCAL(AtomicString, firstOfType, ("first-of-type"));
+    DEFINE_STATIC_LOCAL(AtomicString, fullPageMedia, ("-webkit-full-page-media"));
+    DEFINE_STATIC_LOCAL(AtomicString, nthChild, ("nth-child("));
+    DEFINE_STATIC_LOCAL(AtomicString, nthOfType, ("nth-of-type("));
+    DEFINE_STATIC_LOCAL(AtomicString, nthLastChild, ("nth-last-child("));
+    DEFINE_STATIC_LOCAL(AtomicString, nthLastOfType, ("nth-last-of-type("));
+    DEFINE_STATIC_LOCAL(AtomicString, focus, ("focus"));
+    DEFINE_STATIC_LOCAL(AtomicString, hover, ("hover"));
+    DEFINE_STATIC_LOCAL(AtomicString, indeterminate, ("indeterminate"));
+    DEFINE_STATIC_LOCAL(AtomicString, inputPlaceholder, ("-webkit-input-placeholder"));
+    DEFINE_STATIC_LOCAL(AtomicString, lastChild, ("last-child"));
+    DEFINE_STATIC_LOCAL(AtomicString, lastOfType, ("last-of-type"));
+    DEFINE_STATIC_LOCAL(AtomicString, link, ("link"));
+    DEFINE_STATIC_LOCAL(AtomicString, lang, ("lang("));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsPanel, ("-webkit-media-controls-panel"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsMuteButton, ("-webkit-media-controls-mute-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsPlayButton, ("-webkit-media-controls-play-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimeDisplay, ("-webkit-media-controls-time-display"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsTimeline, ("-webkit-media-controls-timeline"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsSeekBackButton, ("-webkit-media-controls-seek-back-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsSeekForwardButton, ("-webkit-media-controls-seek-forward-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, mediaControlsFullscreenButton, ("-webkit-media-controls-fullscreen-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, notStr, ("not("));
+    DEFINE_STATIC_LOCAL(AtomicString, onlyChild, ("only-child"));
+    DEFINE_STATIC_LOCAL(AtomicString, onlyOfType, ("only-of-type"));
+    DEFINE_STATIC_LOCAL(AtomicString, resizer, ("-webkit-resizer"));
+    DEFINE_STATIC_LOCAL(AtomicString, root, ("root"));
+    DEFINE_STATIC_LOCAL(AtomicString, scrollbar, ("-webkit-scrollbar"));
+    DEFINE_STATIC_LOCAL(AtomicString, scrollbarButton, ("-webkit-scrollbar-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, scrollbarCorner, ("-webkit-scrollbar-corner"));
+    DEFINE_STATIC_LOCAL(AtomicString, scrollbarThumb, ("-webkit-scrollbar-thumb"));
+    DEFINE_STATIC_LOCAL(AtomicString, scrollbarTrack, ("-webkit-scrollbar-track"));
+    DEFINE_STATIC_LOCAL(AtomicString, scrollbarTrackPiece, ("-webkit-scrollbar-track-piece"));
+    DEFINE_STATIC_LOCAL(AtomicString, searchCancelButton, ("-webkit-search-cancel-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, searchDecoration, ("-webkit-search-decoration"));
+    DEFINE_STATIC_LOCAL(AtomicString, searchResultsDecoration, ("-webkit-search-results-decoration"));
+    DEFINE_STATIC_LOCAL(AtomicString, searchResultsButton, ("-webkit-search-results-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, selection, ("selection"));
+    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
+    DEFINE_STATIC_LOCAL(AtomicString, target, ("target"));
+    DEFINE_STATIC_LOCAL(AtomicString, visited, ("visited"));
+    DEFINE_STATIC_LOCAL(AtomicString, windowInactive, ("window-inactive"));
+    DEFINE_STATIC_LOCAL(AtomicString, decrement, ("decrement"));
+    DEFINE_STATIC_LOCAL(AtomicString, increment, ("increment"));
+    DEFINE_STATIC_LOCAL(AtomicString, start, ("start"));
+    DEFINE_STATIC_LOCAL(AtomicString, end, ("end"));
+    DEFINE_STATIC_LOCAL(AtomicString, horizontal, ("horizontal"));
+    DEFINE_STATIC_LOCAL(AtomicString, vertical, ("vertical"));
+    DEFINE_STATIC_LOCAL(AtomicString, doubleButton, ("double-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, singleButton, ("single-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, noButton, ("no-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, cornerPresent, ("corner-present"));
 
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode

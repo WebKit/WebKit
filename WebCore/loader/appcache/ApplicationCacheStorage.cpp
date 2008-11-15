@@ -36,6 +36,7 @@
 #include "KURL.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -659,7 +660,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     
 ApplicationCacheStorage& cacheStorage()
 {
-    static ApplicationCacheStorage storage;
+    DEFINE_STATIC_LOCAL(ApplicationCacheStorage, storage, ());
     
     return storage;
 }

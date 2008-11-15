@@ -44,6 +44,7 @@
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include <math.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -114,8 +115,8 @@ void HTMLSelectElement::recalcStyle( StyleChange ch )
 
 const AtomicString& HTMLSelectElement::type() const
 {
-    static const AtomicString selectMultiple("select-multiple");
-    static const AtomicString selectOne("select-one");
+    DEFINE_STATIC_LOCAL(const AtomicString, selectMultiple, ("select-multiple"));
+    DEFINE_STATIC_LOCAL(const AtomicString, selectOne, ("select-one"));
     return m_multiple ? selectMultiple : selectOne;
 }
 
