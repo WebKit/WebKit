@@ -168,7 +168,7 @@ namespace JSC {
             if (m_emitNodeDepth >= s_maxEmitNodeDepth)
                 return emitThrowExpressionTooDeepException();
             ++m_emitNodeDepth;
-            RegisterID* r = n->emitCode(*this, dst);
+            RegisterID* r = n->emitBytecode(*this, dst);
             --m_emitNodeDepth;
             return r;
         }
@@ -231,10 +231,10 @@ namespace JSC {
         RegisterID* emitUnexpectedLoad(RegisterID* dst, bool);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, double);
 
-        RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src, ResultType);
-        RegisterID* emitBinaryOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes);
-        RegisterID* emitEqualityOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
+        RegisterID* emitUnaryOp(BytecodeID, RegisterID* dst, RegisterID* src, ResultType);
+        RegisterID* emitBinaryOp(BytecodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes);
+        RegisterID* emitEqualityOp(BytecodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2);
+        RegisterID* emitUnaryNoDstOp(BytecodeID, RegisterID* src);
 
         RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
@@ -317,7 +317,7 @@ namespace JSC {
         CodeType codeType() const { return m_codeType; }
 
     private:
-        void emitOpcode(OpcodeID);
+        void emitBytecode(BytecodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
         void rewindBinaryOp();
@@ -345,7 +345,7 @@ namespace JSC {
         typedef HashMap<double, JSValue*> NumberMap;
         typedef HashMap<UString::Rep*, JSString*, IdentifierRepHash> IdentifierStringMap;
 
-        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(BytecodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
         
         RegisterID* newRegister();
 
@@ -446,7 +446,7 @@ namespace JSC {
 
         JSGlobalData* m_globalData;
 
-        OpcodeID m_lastOpcodeID;
+        BytecodeID m_lastBytecodeID;
 
 #ifndef NDEBUG
         static bool s_dumpsGeneratedCode;

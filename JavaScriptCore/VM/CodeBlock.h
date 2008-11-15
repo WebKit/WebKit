@@ -79,15 +79,15 @@ namespace JSC {
     };
 
     struct StructureStubInfo {
-        StructureStubInfo(unsigned opcodeIndex)
-            : opcodeIndex(opcodeIndex)
+        StructureStubInfo(unsigned bytecodeIndex)
+            : bytecodeIndex(bytecodeIndex)
             , stubRoutine(0)
             , callReturnLocation(0)
             , hotPathBegin(0)
         {
         }
     
-        unsigned opcodeIndex;
+        unsigned bytecodeIndex;
         void* stubRoutine;
         void* callReturnLocation;
         void* hotPathBegin;
@@ -103,7 +103,7 @@ namespace JSC {
         {
         }
     
-        unsigned opcodeIndex;
+        unsigned bytecodeIndex;
         void* callReturnLocation;
         void* hotPathBegin;
         void* hotPathOther;
@@ -286,7 +286,7 @@ namespace JSC {
             return index >= numVars + numConstants;
         }
 
-#if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
+#if !defined(NDEBUG) || ENABLE_BYTECODE_SAMPLING
         void dump(ExecState*) const;
         void printStructureIDs(const Instruction*) const;
         void printStructureID(const char* name, const Instruction*, int operand) const;
@@ -364,7 +364,7 @@ namespace JSC {
 
         SymbolTable symbolTable;
     private:
-#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
+#if !defined(NDEBUG) || ENABLE(BYTECODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 #endif
 

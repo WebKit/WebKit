@@ -320,7 +320,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
     if (dump)
         CodeGenerator::setDumpsGeneratedCode(true);
 
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(BYTECODE_SAMPLING)
     BytecodeInterpreter* interpreter = globalObject->globalData()->interpreter;
     interpreter->setSampler(new SamplingTool(machine));
 #endif
@@ -332,7 +332,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
         if (!fillBufferWithContentsOfFile(fileName, script))
             return false; // fail early so we can catch missing files
 
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(BYTECODE_SAMPLING)
         interpreter->sampler()->start();
 #endif
         Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
@@ -346,12 +346,12 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
 
         globalObject->globalExec()->clearException();
 
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(BYTECODE_SAMPLING)
         interpreter->sampler()->stop();
 #endif
     }
 
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(BYTECODE_SAMPLING)
     interpreter->sampler()->dump(globalObject->globalExec());
     delete interpreter->sampler();
 #endif

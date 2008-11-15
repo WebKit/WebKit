@@ -743,14 +743,14 @@ void BytecodeInterpreter::dumpRegisters(CallFrame* callFrame)
 
 #endif
 
-bool BytecodeInterpreter::isOpcode(Opcode opcode)
+bool BytecodeInterpreter::isBytecode(Bytecode bytecode)
 {
 #if HAVE(COMPUTED_GOTO)
-    return opcode != HashTraits<Opcode>::emptyValue()
-        && !HashTraits<Opcode>::isDeletedValue(opcode)
-        && m_opcodeIDTable.contains(opcode);
+    return bytecode != HashTraits<Bytecode>::emptyValue()
+        && !HashTraits<Bytecode>::isDeletedValue(bytecode)
+        && m_bytecodeIDTable.contains(bytecode);
 #else
-    return opcode >= 0 && opcode <= op_end;
+    return bytecode >= 0 && bytecode <= op_end;
 #endif
 }
 
@@ -849,9 +849,9 @@ NEVER_INLINE Instruction* BytecodeInterpreter::throwException(CallFrame*& callFr
     // the profiler manually that the call instruction has returned, since
     // we'll never reach the relevant op_profile_did_call.
     if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-        if (isCallOpcode(vPC[0].u.opcode))
+        if (isCallBytecode(vPC[0].u.bytecode))
             profiler->didExecute(callFrame, callFrame[vPC[2].u.operand].jsValue(callFrame));
-        else if (vPC[8].u.opcode == getOpcode(op_construct))
+        else if (vPC[8].u.bytecode == getBytecode(op_construct))
             profiler->didExecute(callFrame, callFrame[vPC[10].u.operand].jsValue(callFrame));
     }
 
@@ -905,7 +905,7 @@ JSValue* BytecodeInterpreter::execute(ProgramNode* programNode, CallFrame* callF
         return jsNull();
     }
 
-    CodeBlock* codeBlock = &programNode->byteCode(scopeChain);
+    CodeBlock* codeBlock = &programNode->bytecode(scopeChain);
 
     Register* oldEnd = m_registerFile.end();
     Register* newEnd = oldEnd + codeBlock->numParameters + RegisterFile::CallFrameHeaderSize + codeBlock->numCalleeRegisters;
@@ -983,7 +983,7 @@ JSValue* BytecodeInterpreter::execute(FunctionBodyNode* functionBodyNode, CallFr
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         newCallFrame[++dst] = *it;
 
-    CodeBlock* codeBlock = &functionBodyNode->byteCode(scopeChain);
+    CodeBlock* codeBlock = &functionBodyNode->bytecode(scopeChain);
     newCallFrame = slideRegisterWindowForCall(codeBlock, &m_registerFile, newCallFrame, argc + RegisterFile::CallFrameHeaderSize, argc);
     if (UNLIKELY(!newCallFrame)) {
         *exception = createStackOverflowError(callFrame);
@@ -1021,7 +1021,7 @@ JSValue* BytecodeInterpreter::execute(FunctionBodyNode* functionBodyNode, CallFr
 
 JSValue* BytecodeInterpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject* thisObj, ScopeChainNode* scopeChain, JSValue** exception)
 {
-    return execute(evalNode, callFrame, thisObj, m_registerFile.size() + evalNode->byteCode(scopeChain).numParameters + RegisterFile::CallFrameHeaderSize, scopeChain, exception);
+    return execute(evalNode, callFrame, thisObj, m_registerFile.size() + evalNode->bytecode(scopeChain).numParameters + RegisterFile::CallFrameHeaderSize, scopeChain, exception);
 }
 
 JSValue* BytecodeInterpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject* thisObj, int globalRegisterOffset, ScopeChainNode* scopeChain, JSValue** exception)
@@ -1035,7 +1035,7 @@ JSValue* BytecodeInterpreter::execute(EvalNode* evalNode, CallFrame* callFrame, 
 
     DynamicGlobalObjectScope globalObjectScope(callFrame, callFrame->globalData().dynamicGlobalObject ? callFrame->globalData().dynamicGlobalObject : scopeChain->globalObject());
 
-    EvalCodeBlock* codeBlock = &evalNode->byteCode(scopeChain);
+    EvalCodeBlock* codeBlock = &evalNode->bytecode(scopeChain);
 
     JSVariableObject* variableObject;
     for (ScopeChainNode* node = scopeChain; ; node = node->next) {
@@ -1249,7 +1249,7 @@ static StructureIDChain* cachePrototypeChain(CallFrame* callFrame, StructureID* 
 NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, Instruction* vPC, JSValue* baseValue, const PutPropertySlot& slot)
 {
     // Recursive invocation may already have specialized this instruction.
-    if (vPC[0].u.opcode != getOpcode(op_put_by_id))
+    if (vPC[0].u.bytecode != getBytecode(op_put_by_id))
         return;
 
     if (JSImmediate::isImmediate(baseValue))
@@ -1257,7 +1257,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        vPC[0] = getOpcode(op_put_by_id_generic);
+        vPC[0] = getBytecode(op_put_by_id_generic);
         return;
     }
     
@@ -1265,7 +1265,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
     StructureID* structureID = baseCell->structureID();
 
     if (structureID->isDictionary()) {
-        vPC[0] = getOpcode(op_put_by_id_generic);
+        vPC[0] = getBytecode(op_put_by_id_generic);
         return;
     }
 
@@ -1279,7 +1279,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
         }
 
         // Second miss: give up.
-        vPC[0] = getOpcode(op_put_by_id_generic);
+        vPC[0] = getBytecode(op_put_by_id_generic);
         return;
     }
 
@@ -1287,13 +1287,13 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
 
     // If baseCell != slot.base(), then baseCell must be a proxy for another object.
     if (baseCell != slot.base()) {
-        vPC[0] = getOpcode(op_put_by_id_generic);
+        vPC[0] = getBytecode(op_put_by_id_generic);
         return;
     }
 
     // StructureID transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
-        vPC[0] = getOpcode(op_put_by_id_transition);
+        vPC[0] = getBytecode(op_put_by_id_transition);
         vPC[4] = structureID->previousID();
         vPC[5] = structureID;
         StructureIDChain* chain = structureID->cachedPrototypeChain();
@@ -1301,7 +1301,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
             chain = cachePrototypeChain(callFrame, structureID);
             if (!chain) {
                 // This happens if someone has manually inserted null into the prototype chain
-                vPC[0] = getOpcode(op_put_by_id_generic);
+                vPC[0] = getBytecode(op_put_by_id_generic);
                 return;
             }
         }
@@ -1311,7 +1311,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
         return;
     }
 
-    vPC[0] = getOpcode(op_put_by_id_replace);
+    vPC[0] = getBytecode(op_put_by_id_replace);
     vPC[5] = slot.cachedOffset();
     codeBlock->refStructureIDs(vPC);
 }
@@ -1319,42 +1319,42 @@ NEVER_INLINE void BytecodeInterpreter::tryCachePutByID(CallFrame* callFrame, Cod
 NEVER_INLINE void BytecodeInterpreter::uncachePutByID(CodeBlock* codeBlock, Instruction* vPC)
 {
     codeBlock->derefStructureIDs(vPC);
-    vPC[0] = getOpcode(op_put_by_id);
+    vPC[0] = getBytecode(op_put_by_id);
     vPC[4] = 0;
 }
 
 NEVER_INLINE void BytecodeInterpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, Instruction* vPC, JSValue* baseValue, const Identifier& propertyName, const PropertySlot& slot)
 {
     // Recursive invocation may already have specialized this instruction.
-    if (vPC[0].u.opcode != getOpcode(op_get_by_id))
+    if (vPC[0].u.bytecode != getBytecode(op_get_by_id))
         return;
 
     // FIXME: Cache property access for immediates.
     if (JSImmediate::isImmediate(baseValue)) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
+        vPC[0] = getBytecode(op_get_by_id_generic);
         return;
     }
 
     if (isJSArray(baseValue) && propertyName == callFrame->propertyNames().length) {
-        vPC[0] = getOpcode(op_get_array_length);
+        vPC[0] = getBytecode(op_get_array_length);
         return;
     }
 
     if (isJSString(baseValue) && propertyName == callFrame->propertyNames().length) {
-        vPC[0] = getOpcode(op_get_string_length);
+        vPC[0] = getBytecode(op_get_string_length);
         return;
     }
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
+        vPC[0] = getBytecode(op_get_by_id_generic);
         return;
     }
 
     StructureID* structureID = asCell(baseValue)->structureID();
 
     if (structureID->isDictionary()) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
+        vPC[0] = getBytecode(op_get_by_id_generic);
         return;
     }
 
@@ -1368,14 +1368,14 @@ NEVER_INLINE void BytecodeInterpreter::tryCacheGetByID(CallFrame* callFrame, Cod
         }
 
         // Second miss: give up.
-        vPC[0] = getOpcode(op_get_by_id_generic);
+        vPC[0] = getBytecode(op_get_by_id_generic);
         return;
     }
 
     // Cache hit: Specialize instruction and ref StructureIDs.
 
     if (slot.slotBase() == baseValue) {
-        vPC[0] = getOpcode(op_get_by_id_self);
+        vPC[0] = getBytecode(op_get_by_id_self);
         vPC[5] = slot.cachedOffset();
 
         codeBlock->refStructureIDs(vPC);
@@ -1395,7 +1395,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCacheGetByID(CallFrame* callFrame, Cod
             asCell(baseValue)->structureID()->setCachedPrototypeChain(0);
         }
 
-        vPC[0] = getOpcode(op_get_by_id_proto);
+        vPC[0] = getBytecode(op_get_by_id_proto);
         vPC[5] = baseObject->structureID();
         vPC[6] = slot.cachedOffset();
 
@@ -1411,7 +1411,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCacheGetByID(CallFrame* callFrame, Cod
         // If we didn't find base in baseValue's prototype chain, then baseValue
         // must be a proxy for another object.
         if (v->isNull()) {
-            vPC[0] = getOpcode(op_get_by_id_generic);
+            vPC[0] = getBytecode(op_get_by_id_generic);
             return;
         }
 
@@ -1433,7 +1433,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCacheGetByID(CallFrame* callFrame, Cod
         chain = cachePrototypeChain(callFrame, structureID);
     ASSERT(chain);
 
-    vPC[0] = getOpcode(op_get_by_id_chain);
+    vPC[0] = getBytecode(op_get_by_id_chain);
     vPC[4] = structureID;
     vPC[5] = chain;
     vPC[6] = count;
@@ -1444,7 +1444,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCacheGetByID(CallFrame* callFrame, Cod
 NEVER_INLINE void BytecodeInterpreter::uncacheGetByID(CodeBlock* codeBlock, Instruction* vPC)
 {
     codeBlock->derefStructureIDs(vPC);
-    vPC[0] = getOpcode(op_get_by_id);
+    vPC[0] = getBytecode(op_get_by_id);
     vPC[4] = 0;
 }
 
@@ -1454,14 +1454,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
     // here because our labels are only in scope inside this function.
     if (flag == InitializeAndReturn) {
         #if HAVE(COMPUTED_GOTO)
-            #define ADD_OPCODE(id) m_opcodeTable[id] = &&id;
-                FOR_EACH_OPCODE_ID(ADD_OPCODE);
-            #undef ADD_OPCODE
+            #define ADD_BYTECODE(id) m_bytecodeTable[id] = &&id;
+                FOR_EACH_BYTECODE_ID(ADD_BYTECODE);
+            #undef ADD_BYTECODE
 
-            #define ADD_OPCODE_ID(id) m_opcodeIDTable.add(&&id, id);
-                FOR_EACH_OPCODE_ID(ADD_OPCODE_ID);
-            #undef ADD_OPCODE_ID
-            ASSERT(m_opcodeIDTable.size() == numOpcodeIDs);
+            #define ADD_BYTECODE_ID(id) m_bytecodeIDTable.add(&&id, id);
+                FOR_EACH_BYTECODE_ID(ADD_BYTECODE_ID);
+            #undef ADD_BYTECODE_ID
+            ASSERT(m_bytecodeIDTable.size() == numBytecodeIDs);
             op_throw_end_indirect = &&op_throw_end;
             op_call_indirect = &&op_call;
         #endif // HAVE(COMPUTED_GOTO)
@@ -1489,8 +1489,8 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         } \
     } while (0)
 
-#if ENABLE(OPCODE_STATS)
-    OpcodeStats::resetLastInstruction();
+#if ENABLE(BYTECODE_STATS)
+    BytecodeStats::resetLastInstruction();
 #endif
 
 #define CHECK_FOR_TIMEOUT() \
@@ -1500,7 +1500,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         tickCount = m_ticksUntilNextTimeoutCheck; \
     }
     
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(BYTECODE_SAMPLING)
     #define SAMPLE(codeBlock, vPC) m_sampler->sample(codeBlock, vPC)
     #define CTI_SAMPLER ARG_globalData->interpreter->sampler()
 #else
@@ -1509,26 +1509,26 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 #endif
 
 #if HAVE(COMPUTED_GOTO)
-    #define NEXT_OPCODE SAMPLE(callFrame->codeBlock(), vPC); goto *vPC->u.opcode
-#if ENABLE(OPCODE_STATS)
-    #define BEGIN_OPCODE(opcode) opcode: OpcodeStats::recordInstruction(opcode);
+    #define NEXT_BYTECODE SAMPLE(callFrame->codeBlock(), vPC); goto *vPC->u.bytecode
+#if ENABLE(BYTECODE_STATS)
+    #define BEGIN_BYTECODE(bytecode) bytecode: BytecodeStats::recordInstruction(bytecode);
 #else
-    #define BEGIN_OPCODE(opcode) opcode:
+    #define BEGIN_BYTECODE(bytecode) bytecode:
 #endif
-    NEXT_OPCODE;
+    NEXT_BYTECODE;
 #else
-    #define NEXT_OPCODE SAMPLE(callFrame->codeBlock(), vPC); goto interpreterLoopStart
-#if ENABLE(OPCODE_STATS)
-    #define BEGIN_OPCODE(opcode) case opcode: OpcodeStats::recordInstruction(opcode);
+    #define NEXT_BYTECODE SAMPLE(callFrame->codeBlock(), vPC); goto interpreterLoopStart
+#if ENABLE(BYTECODE_STATS)
+    #define BEGIN_BYTECODE(bytecode) case bytecode: BytecodeStats::recordInstruction(bytecode);
 #else
-    #define BEGIN_OPCODE(opcode) case opcode:
+    #define BEGIN_BYTECODE(bytecode) case bytecode:
 #endif
     while (1) { // iterator loop begins
     interpreterLoopStart:;
-    switch (vPC->u.opcode)
+    switch (vPC->u.bytecode)
 #endif
     {
-    BEGIN_OPCODE(op_new_object) {
+    BEGIN_BYTECODE(op_new_object) {
         /* new_object dst(r)
 
            Constructs a new empty Object instance using the original
@@ -1538,9 +1538,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = constructEmptyObject(callFrame);
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_new_array) {
+    BEGIN_BYTECODE(op_new_array) {
         /* new_array dst(r) firstArg(r) argCount(n)
 
            Constructs a new Array instance using the original
@@ -1555,9 +1555,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = constructArray(callFrame, args);
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_new_regexp) {
+    BEGIN_BYTECODE(op_new_regexp) {
         /* new_regexp dst(r) regExp(re)
 
            Constructs a new RegExp instance using the original
@@ -1569,9 +1569,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = new (globalData) RegExpObject(callFrame->scopeChain()->globalObject()->regExpStructure(), callFrame->codeBlock()->regexps[regExp]);
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_mov) {
+    BEGIN_BYTECODE(op_mov) {
         /* mov dst(r) src(r)
 
            Copies register src to register dst.
@@ -1581,9 +1581,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = callFrame[src];
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_eq) {
+    BEGIN_BYTECODE(op_eq) {
         /* eq dst(r) src1(r) src2(r)
 
            Checks whether register src1 and register src2 are equal,
@@ -1602,9 +1602,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_eq_null) {
+    BEGIN_BYTECODE(op_eq_null) {
         /* eq_null dst(r) src(r)
 
            Checks whether register src is null, as with the ECMAScript '!='
@@ -1616,14 +1616,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (src->isUndefinedOrNull()) {
             callFrame[dst] = jsBoolean(true);
             ++vPC;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
         
         callFrame[dst] = jsBoolean(!JSImmediate::isImmediate(src) && src->asCell()->structureID()->typeInfo().masqueradesAsUndefined());
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_neq) {
+    BEGIN_BYTECODE(op_neq) {
         /* neq dst(r) src1(r) src2(r)
 
            Checks whether register src1 and register src2 are not
@@ -1642,9 +1642,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_neq_null) {
+    BEGIN_BYTECODE(op_neq_null) {
         /* neq_null dst(r) src(r)
 
            Checks whether register src is not null, as with the ECMAScript '!='
@@ -1656,14 +1656,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (src->isUndefinedOrNull()) {
             callFrame[dst] = jsBoolean(false);
             ++vPC;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
         
         callFrame[dst] = jsBoolean(JSImmediate::isImmediate(src) || !asCell(src)->structureID()->typeInfo().masqueradesAsUndefined());
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_stricteq) {
+    BEGIN_BYTECODE(op_stricteq) {
         /* stricteq dst(r) src1(r) src2(r)
 
            Checks whether register src1 and register src2 are strictly
@@ -1681,9 +1681,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = jsBoolean(strictEqualSlowCase(src1, src2));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_nstricteq) {
+    BEGIN_BYTECODE(op_nstricteq) {
         /* nstricteq dst(r) src1(r) src2(r)
 
            Checks whether register src1 and register src2 are not
@@ -1702,9 +1702,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = jsBoolean(!strictEqualSlowCase(src1, src2));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_less) {
+    BEGIN_BYTECODE(op_less) {
         /* less dst(r) src1(r) src2(r)
 
            Checks whether register src1 is less than register src2, as
@@ -1719,9 +1719,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = result;
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_lesseq) {
+    BEGIN_BYTECODE(op_lesseq) {
         /* lesseq dst(r) src1(r) src2(r)
 
            Checks whether register src1 is less than or equal to
@@ -1736,9 +1736,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = result;
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_pre_inc) {
+    BEGIN_BYTECODE(op_pre_inc) {
         /* pre_inc srcDst(r)
 
            Converts register srcDst to number, adds one, and puts the result
@@ -1755,9 +1755,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_pre_dec) {
+    BEGIN_BYTECODE(op_pre_dec) {
         /* pre_dec srcDst(r)
 
            Converts register srcDst to number, subtracts one, and puts the result
@@ -1774,9 +1774,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_post_inc) {
+    BEGIN_BYTECODE(op_post_inc) {
         /* post_inc dst(r) srcDst(r)
 
            Converts register srcDst to number. The number itself is
@@ -1797,9 +1797,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_post_dec) {
+    BEGIN_BYTECODE(op_post_dec) {
         /* post_dec dst(r) srcDst(r)
 
            Converts register srcDst to number. The number itself is
@@ -1820,9 +1820,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_to_jsnumber) {
+    BEGIN_BYTECODE(op_to_jsnumber) {
         /* to_jsnumber dst(r) src(r)
 
            Converts register src to number, and puts the result
@@ -1842,9 +1842,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_negate) {
+    BEGIN_BYTECODE(op_negate) {
         /* negate dst(r) src(r)
 
            Converts register src to number, negates it, and puts the
@@ -1863,9 +1863,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_add) {
+    BEGIN_BYTECODE(op_add) {
         /* add dst(r) src1(r) src2(r)
 
            Adds register src1 and register src2, and puts the result
@@ -1883,9 +1883,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = result;
         }
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_mul) {
+    BEGIN_BYTECODE(op_mul) {
         /* mul dst(r) src1(r) src2(r)
 
            Multiplies register src1 and register src2 (converted to
@@ -1912,9 +1912,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_div) {
+    BEGIN_BYTECODE(op_div) {
         /* div dst(r) dividend(r) divisor(r)
 
            Divides register dividend (converted to number) by the
@@ -1934,9 +1934,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = result;
         }
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_mod) {
+    BEGIN_BYTECODE(op_mod) {
         /* mod dst(r) dividend(r) divisor(r)
 
            Divides register dividend (converted to number) by
@@ -1953,7 +1953,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (JSImmediate::areBothImmediateNumbers(dividendValue, divisorValue) && divisorValue != JSImmediate::from(0)) {
             callFrame[dst] = JSImmediate::from(JSImmediate::getTruncatedInt32(dividendValue) % JSImmediate::getTruncatedInt32(divisorValue));
             ++vPC;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         double d = dividendValue->toNumber(callFrame);
@@ -1961,9 +1961,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         VM_CHECK_EXCEPTION();
         callFrame[dst] = result;
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_sub) {
+    BEGIN_BYTECODE(op_sub) {
         /* sub dst(r) src1(r) src2(r)
 
            Subtracts register src2 (converted to number) from register
@@ -1985,9 +1985,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = result;
         }
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_lshift) {
+    BEGIN_BYTECODE(op_lshift) {
         /* lshift dst(r) val(r) shift(r)
 
            Performs left shift of register val (converted to int32) by
@@ -2010,9 +2010,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_rshift) {
+    BEGIN_BYTECODE(op_rshift) {
         /* rshift dst(r) val(r) shift(r)
 
            Performs arithmetic right shift of register val (converted
@@ -2035,9 +2035,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_urshift) {
+    BEGIN_BYTECODE(op_urshift) {
         /* rshift dst(r) val(r) shift(r)
 
            Performs logical right shift of register val (converted
@@ -2056,9 +2056,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_bitand) {
+    BEGIN_BYTECODE(op_bitand) {
         /* bitand dst(r) src1(r) src2(r)
 
            Computes bitwise AND of register src1 (converted to int32)
@@ -2081,9 +2081,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_bitxor) {
+    BEGIN_BYTECODE(op_bitxor) {
         /* bitxor dst(r) src1(r) src2(r)
 
            Computes bitwise XOR of register src1 (converted to int32)
@@ -2106,9 +2106,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_bitor) {
+    BEGIN_BYTECODE(op_bitor) {
         /* bitor dst(r) src1(r) src2(r)
 
            Computes bitwise OR of register src1 (converted to int32)
@@ -2131,9 +2131,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_bitnot) {
+    BEGIN_BYTECODE(op_bitnot) {
         /* bitnot dst(r) src(r)
 
            Computes bitwise NOT of register src1 (converted to int32),
@@ -2150,9 +2150,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = result;
         }
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_not) {
+    BEGIN_BYTECODE(op_not) {
         /* not dst(r) src(r)
 
            Computes logical NOT of register src (converted to
@@ -2165,9 +2165,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = result;
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_instanceof) {
+    BEGIN_BYTECODE(op_instanceof) {
         /* instanceof dst(r) value(r) constructor(r) constructorProto(r)
 
            Tests whether register value is an instance of register
@@ -2194,9 +2194,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(baseObj->structureID()->typeInfo().implementsHasInstance() ? baseObj->hasInstance(callFrame, callFrame[value].jsValue(callFrame), callFrame[baseProto].jsValue(callFrame)) : false);
 
         vPC += 5;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_typeof) {
+    BEGIN_BYTECODE(op_typeof) {
         /* typeof dst(r) src(r)
 
            Determines the type string for src according to ECMAScript
@@ -2207,9 +2207,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsTypeStringForValue(callFrame, callFrame[src].jsValue(callFrame));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_is_undefined) {
+    BEGIN_BYTECODE(op_is_undefined) {
         /* is_undefined dst(r) src(r)
 
            Determines whether the type string for src according to
@@ -2222,9 +2222,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(JSImmediate::isImmediate(v) ? v->isUndefined() : v->asCell()->structureID()->typeInfo().masqueradesAsUndefined());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_is_boolean) {
+    BEGIN_BYTECODE(op_is_boolean) {
         /* is_boolean dst(r) src(r)
 
            Determines whether the type string for src according to
@@ -2236,9 +2236,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(callFrame[src].jsValue(callFrame)->isBoolean());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_is_number) {
+    BEGIN_BYTECODE(op_is_number) {
         /* is_number dst(r) src(r)
 
            Determines whether the type string for src according to
@@ -2250,9 +2250,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(callFrame[src].jsValue(callFrame)->isNumber());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_is_string) {
+    BEGIN_BYTECODE(op_is_string) {
         /* is_string dst(r) src(r)
 
            Determines whether the type string for src according to
@@ -2264,9 +2264,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(callFrame[src].jsValue(callFrame)->isString());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_is_object) {
+    BEGIN_BYTECODE(op_is_object) {
         /* is_object dst(r) src(r)
 
            Determines whether the type string for src according to
@@ -2278,9 +2278,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(jsIsObjectType(callFrame[src].jsValue(callFrame)));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_is_function) {
+    BEGIN_BYTECODE(op_is_function) {
         /* is_function dst(r) src(r)
 
            Determines whether the type string for src according to
@@ -2292,9 +2292,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = jsBoolean(jsIsFunctionType(callFrame[src].jsValue(callFrame)));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_in) {
+    BEGIN_BYTECODE(op_in) {
         /* in dst(r) property(r) base(r)
 
            Tests whether register base has a property named register
@@ -2325,9 +2325,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_resolve) {
+    BEGIN_BYTECODE(op_resolve) {
         /* resolve dst(r) property(id)
 
            Looks up the property named by identifier property in the
@@ -2338,9 +2338,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             goto vm_throw;
 
         vPC += 3;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_resolve_skip) {
+    BEGIN_BYTECODE(op_resolve_skip) {
         /* resolve_skip dst(r) property(id) skip(n)
 
          Looks up the property named by identifier property in the
@@ -2352,9 +2352,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         vPC += 4;
 
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_resolve_global) {
+    BEGIN_BYTECODE(op_resolve_global) {
         /* resolve_skip dst(r) globalObject(c) property(id) structureID(sID) offset(n)
          
            Performs a dynamic property lookup for the given property, on the provided
@@ -2367,9 +2367,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         
         vPC += 6;
         
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_global_var) {
+    BEGIN_BYTECODE(op_get_global_var) {
         /* get_global_var dst(r) globalObject(c) index(n)
 
            Gets the global var at global slot index and places it in register dst.
@@ -2381,9 +2381,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         callFrame[dst] = scope->registerAt(index);
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_global_var) {
+    BEGIN_BYTECODE(op_put_global_var) {
         /* put_global_var globalObject(c) index(n) value(r)
          
            Puts value into global slot index.
@@ -2395,9 +2395,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         
         scope->registerAt(index) = callFrame[value].jsValue(callFrame);
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }            
-    BEGIN_OPCODE(op_get_scoped_var) {
+    BEGIN_BYTECODE(op_get_scoped_var) {
         /* get_scoped_var dst(r) index(n) skip(n)
 
          Loads the contents of the index-th local from the scope skip nodes from
@@ -2420,9 +2420,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         callFrame[dst] = scope->registerAt(index);
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_scoped_var) {
+    BEGIN_BYTECODE(op_put_scoped_var) {
         /* put_scoped_var index(n) skip(n) value(r)
 
          */
@@ -2443,9 +2443,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         scope->registerAt(index) = callFrame[value].jsValue(callFrame);
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_resolve_base) {
+    BEGIN_BYTECODE(op_resolve_base) {
         /* resolve_base dst(r) property(id)
 
            Searches the scope chain for an object containing
@@ -2456,9 +2456,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         resolveBase(callFrame, vPC);
 
         vPC += 3;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_resolve_with_base) {
+    BEGIN_BYTECODE(op_resolve_with_base) {
         /* resolve_with_base baseDst(r) propDst(r) property(id)
 
            Searches the scope chain for an object containing
@@ -2474,9 +2474,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             goto vm_throw;
 
         vPC += 4;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_resolve_func) {
+    BEGIN_BYTECODE(op_resolve_func) {
         /* resolve_func baseDst(r) funcDst(r) property(id)
 
            Searches the scope chain for an object containing
@@ -2495,9 +2495,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             goto vm_throw;
 
         vPC += 4;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_by_id) {
+    BEGIN_BYTECODE(op_get_by_id) {
         /* get_by_id dst(r) base(r) property(id) structureID(sID) nop(n) nop(n) nop(n)
 
            Generic property access: Gets the property named by identifier
@@ -2518,9 +2518,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         callFrame[dst] = result;
         vPC += 8;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_by_id_self) {
+    BEGIN_BYTECODE(op_get_by_id_self) {
         /* op_get_by_id_self dst(r) base(r) property(id) structureID(sID) offset(n) nop(n) nop(n)
 
            Cached property access: Attempts to get a cached property from the
@@ -2544,14 +2544,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
                 callFrame[dst] = baseObject->getDirectOffset(offset);
 
                 vPC += 8;
-                NEXT_OPCODE;
+                NEXT_BYTECODE;
             }
         }
 
         uncacheGetByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_by_id_proto) {
+    BEGIN_BYTECODE(op_get_by_id_proto) {
         /* op_get_by_id_proto dst(r) base(r) property(id) structureID(sID) protoStructureID(sID) offset(n) nop(n)
 
            Cached property access: Attempts to get a cached property from the
@@ -2578,15 +2578,15 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
                     callFrame[dst] = protoObject->getDirectOffset(offset);
 
                     vPC += 8;
-                    NEXT_OPCODE;
+                    NEXT_BYTECODE;
                 }
             }
         }
 
         uncacheGetByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_by_id_chain) {
+    BEGIN_BYTECODE(op_get_by_id_chain) {
         /* op_get_by_id_chain dst(r) base(r) property(id) structureID(sID) structureIDChain(sIDc) count(n) offset(n)
 
            Cached property access: Attempts to get a cached property from the
@@ -2619,16 +2619,16 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
                         callFrame[dst] = baseObject->getDirectOffset(offset);
 
                         vPC += 8;
-                        NEXT_OPCODE;
+                        NEXT_BYTECODE;
                     }
                 }
             }
         }
 
         uncacheGetByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_by_id_generic) {
+    BEGIN_BYTECODE(op_get_by_id_generic) {
         /* op_get_by_id_generic dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
 
            Generic property access: Gets the property named by identifier
@@ -2646,9 +2646,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         callFrame[dst] = result;
         vPC += 8;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_array_length) {
+    BEGIN_BYTECODE(op_get_array_length) {
         /* op_get_array_length dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
 
            Cached property access: Gets the length of the array in register base,
@@ -2662,13 +2662,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             int dst = vPC[1].u.operand;
             callFrame[dst] = jsNumber(callFrame, asArray(baseValue)->length());
             vPC += 8;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         uncacheGetByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_string_length) {
+    BEGIN_BYTECODE(op_get_string_length) {
         /* op_get_string_length dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
 
            Cached property access: Gets the length of the string in register base,
@@ -2682,19 +2682,19 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             int dst = vPC[1].u.operand;
             callFrame[dst] = jsNumber(callFrame, asString(baseValue)->value().size());
             vPC += 8;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         uncacheGetByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_by_id) {
+    BEGIN_BYTECODE(op_put_by_id) {
         /* put_by_id base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n)
 
            Generic property access: Sets the property named by identifier
            property, belonging to register base, to register value.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
         */
 
@@ -2712,9 +2712,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         tryCachePutByID(callFrame, codeBlock, vPC, baseValue, slot);
 
         vPC += 8;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_by_id_transition) {
+    BEGIN_BYTECODE(op_put_by_id_transition) {
         /* op_put_by_id_transition base(r) property(id) value(r) oldStructureID(sID) newStructureID(sID) structureIDChain(sIDc) offset(n)
          
            Cached property access: Attempts to set a new property with a cached transition
@@ -2722,7 +2722,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            to register value. If the cache misses, op_put_by_id_transition
            reverts to op_put_by_id_generic.
          
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
          */
         int base = vPC[1].u.operand;
@@ -2743,7 +2743,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
                 while (!proto->isNull()) {
                     if (UNLIKELY(asObject(proto)->structureID() != (*it).get())) {
                         uncachePutByID(callFrame->codeBlock(), vPC);
-                        NEXT_OPCODE;
+                        NEXT_BYTECODE;
                     }
                     ++it;
                     proto = asObject(proto)->structureID()->prototypeForLookup(callFrame);
@@ -2757,14 +2757,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
                 baseObject->putDirectOffset(offset, callFrame[value].jsValue(callFrame));
 
                 vPC += 8;
-                NEXT_OPCODE;
+                NEXT_BYTECODE;
             }
         }
         
         uncachePutByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_by_id_replace) {
+    BEGIN_BYTECODE(op_put_by_id_replace) {
         /* op_put_by_id_replace base(r) property(id) value(r) structureID(sID) offset(n) nop(n) nop(n)
 
            Cached property access: Attempts to set a pre-existing, cached
@@ -2772,7 +2772,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            to register value. If the cache misses, op_put_by_id_replace
            reverts to op_put_by_id.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
         */
         int base = vPC[1].u.operand;
@@ -2792,20 +2792,20 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
                 baseObject->putDirectOffset(offset, callFrame[value].jsValue(callFrame));
 
                 vPC += 8;
-                NEXT_OPCODE;
+                NEXT_BYTECODE;
             }
         }
 
         uncachePutByID(callFrame->codeBlock(), vPC);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_by_id_generic) {
+    BEGIN_BYTECODE(op_put_by_id_generic) {
         /* op_put_by_id_generic base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n)
 
            Generic property access: Sets the property named by identifier
            property, belonging to register base, to register value.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
         */
         int base = vPC[1].u.operand;
@@ -2819,9 +2819,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         VM_CHECK_EXCEPTION();
 
         vPC += 8;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_del_by_id) {
+    BEGIN_BYTECODE(op_del_by_id) {
         /* del_by_id dst(r) base(r) property(id)
 
            Converts register base to Object, deletes the property
@@ -2839,9 +2839,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         VM_CHECK_EXCEPTION();
         callFrame[dst] = result;
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_by_val) {
+    BEGIN_BYTECODE(op_get_by_val) {
         /* get_by_val dst(r) base(r) property(r)
 
            Converts register base to Object, gets the property named
@@ -2879,9 +2879,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         VM_CHECK_EXCEPTION();
         callFrame[dst] = result;
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_by_val) {
+    BEGIN_BYTECODE(op_put_by_val) {
         /* put_by_val base(r) property(r) value(r)
 
            Sets register value on register base as the property named
@@ -2889,7 +2889,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            first. register property is nominally converted to string
            but numbers are treated more efficiently.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
         */
         int base = (++vPC)->u.operand;
@@ -2921,9 +2921,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         VM_CHECK_EXCEPTION();
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_del_by_val) {
+    BEGIN_BYTECODE(op_del_by_val) {
         /* del_by_val dst(r) base(r) property(r)
 
            Converts register base to Object, deletes the property
@@ -2952,19 +2952,19 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         VM_CHECK_EXCEPTION();
         callFrame[dst] = result;
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_by_index) {
+    BEGIN_BYTECODE(op_put_by_index) {
         /* put_by_index base(r) property(n) value(r)
 
            Sets register value on register base as the property named
            by the immediate number property. Base is converted to
            object first.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
 
-           This opcode is mainly used to initialize array literals.
+           This bytecode is mainly used to initialize array literals.
         */
         int base = (++vPC)->u.operand;
         unsigned property = (++vPC)->u.operand;
@@ -2973,9 +2973,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[base].jsValue(callFrame)->put(callFrame, property, callFrame[value].jsValue(callFrame));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_loop) {
+    BEGIN_BYTECODE(op_loop) {
         /* loop target(offset)
          
            Jumps unconditionally to offset target from the current
@@ -2984,29 +2984,29 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            Additionally this loop instruction may terminate JS execution is
            the JS timeout is reached.
          */
-#if ENABLE(OPCODE_STATS)
-        OpcodeStats::resetLastInstruction();
+#if ENABLE(BYTECODE_STATS)
+        BytecodeStats::resetLastInstruction();
 #endif
         int target = (++vPC)->u.operand;
         CHECK_FOR_TIMEOUT();
         vPC += target;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jmp) {
+    BEGIN_BYTECODE(op_jmp) {
         /* jmp target(offset)
 
            Jumps unconditionally to offset target from the current
            instruction.
         */
-#if ENABLE(OPCODE_STATS)
-        OpcodeStats::resetLastInstruction();
+#if ENABLE(BYTECODE_STATS)
+        BytecodeStats::resetLastInstruction();
 #endif
         int target = (++vPC)->u.operand;
 
         vPC += target;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_loop_if_true) {
+    BEGIN_BYTECODE(op_loop_if_true) {
         /* loop_if_true cond(r) target(offset)
          
            Jumps to offset target from the current instruction, if and
@@ -3020,13 +3020,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (callFrame[cond].jsValue(callFrame)->toBoolean(callFrame)) {
             vPC += target;
             CHECK_FOR_TIMEOUT();
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
         
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jtrue) {
+    BEGIN_BYTECODE(op_jtrue) {
         /* jtrue cond(r) target(offset)
 
            Jumps to offset target from the current instruction, if and
@@ -3036,13 +3036,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         int target = (++vPC)->u.operand;
         if (callFrame[cond].jsValue(callFrame)->toBoolean(callFrame)) {
             vPC += target;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jfalse) {
+    BEGIN_BYTECODE(op_jfalse) {
         /* jfalse cond(r) target(offset)
 
            Jumps to offset target from the current instruction, if and
@@ -3052,13 +3052,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         int target = (++vPC)->u.operand;
         if (!callFrame[cond].jsValue(callFrame)->toBoolean(callFrame)) {
             vPC += target;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jeq_null) {
+    BEGIN_BYTECODE(op_jeq_null) {
         /* jeq_null src(r) target(offset)
 
            Jumps to offset target from the current instruction, if and
@@ -3070,13 +3070,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         if (srcValue->isUndefinedOrNull() || (!JSImmediate::isImmediate(srcValue) && srcValue->asCell()->structureID()->typeInfo().masqueradesAsUndefined())) {
             vPC += target;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jneq_null) {
+    BEGIN_BYTECODE(op_jneq_null) {
         /* jneq_null src(r) target(offset)
 
            Jumps to offset target from the current instruction, if and
@@ -3088,13 +3088,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         if (!srcValue->isUndefinedOrNull() || (!JSImmediate::isImmediate(srcValue) && !srcValue->asCell()->structureID()->typeInfo().masqueradesAsUndefined())) {
             vPC += target;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_loop_if_less) {
+    BEGIN_BYTECODE(op_loop_if_less) {
         /* loop_if_less src1(r) src2(r) target(offset)
 
            Checks whether register src1 is less than register src2, as
@@ -3115,13 +3115,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (result) {
             vPC += target;
             CHECK_FOR_TIMEOUT();
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
         
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_loop_if_lesseq) {
+    BEGIN_BYTECODE(op_loop_if_lesseq) {
         /* loop_if_lesseq src1(r) src2(r) target(offset)
 
            Checks whether register src1 is less than or equal to register
@@ -3142,13 +3142,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (result) {
             vPC += target;
             CHECK_FOR_TIMEOUT();
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
         
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jnless) {
+    BEGIN_BYTECODE(op_jnless) {
         /* jnless src1(r) src2(r) target(offset)
 
            Checks whether register src1 is less than register src2, as
@@ -3165,13 +3165,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         
         if (!result) {
             vPC += target;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_switch_imm) {
+    BEGIN_BYTECODE(op_switch_imm) {
         /* switch_imm tableIndex(n) defaultOffset(offset) scrutinee(r)
 
            Performs a range checked switch on the scrutinee value, using
@@ -3189,9 +3189,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             int32_t value = JSImmediate::getTruncatedInt32(scrutinee);
             vPC += callFrame->codeBlock()->immediateSwitchJumpTables[tableIndex].offsetForValue(value, defaultOffset);
         }
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_switch_char) {
+    BEGIN_BYTECODE(op_switch_char) {
         /* switch_char tableIndex(n) defaultOffset(offset) scrutinee(r)
 
            Performs a range checked switch on the scrutinee value, using
@@ -3212,9 +3212,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             else
                 vPC += callFrame->codeBlock()->characterSwitchJumpTables[tableIndex].offsetForValue(value->data()[0], defaultOffset);
         }
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_switch_string) {
+    BEGIN_BYTECODE(op_switch_string) {
         /* switch_string tableIndex(n) defaultOffset(offset) scrutinee(r)
 
            Performs a sparse hashmap based switch on the value in the scrutinee
@@ -3230,9 +3230,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             vPC += defaultOffset;
         else 
             vPC += callFrame->codeBlock()->stringSwitchJumpTables[tableIndex].offsetForValue(asString(scrutinee)->value().rep(), defaultOffset);
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_new_func) {
+    BEGIN_BYTECODE(op_new_func) {
         /* new_func dst(r) func(f)
 
            Constructs a new Function instance from function func and
@@ -3246,9 +3246,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = callFrame->codeBlock()->functions[func]->makeFunction(callFrame, callFrame->scopeChain());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_new_func_exp) {
+    BEGIN_BYTECODE(op_new_func_exp) {
         /* new_func_exp dst(r) func(f)
 
            Constructs a new Function instance from function func and
@@ -3262,9 +3262,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = callFrame->codeBlock()->functionExpressions[func]->makeFunction(callFrame, callFrame->scopeChain());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_call_eval) {
+    BEGIN_BYTECODE(op_call_eval) {
         /* call_eval dst(r) func(r) argCount(n) registerOffset(n)
 
            Call a function named "eval" with no explicit "this" value
@@ -3273,7 +3273,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            that global object's original global eval function, then
            perform the eval operator in local scope (interpreting
            the argument registers as for the "call"
-           opcode). Otherwise, act exactly as the "call" opcode would.
+           bytecode). Otherwise, act exactly as the "call" bytecode would.
          */
 
         int dst = vPC[1].u.operand;
@@ -3295,7 +3295,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = result;
 
             vPC += 5;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         // We didn't find the blessed version of eval, so process this
@@ -3309,7 +3309,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 #endif
         // fall through to op_call
     }
-    BEGIN_OPCODE(op_call) {
+    BEGIN_BYTECODE(op_call) {
         /* call dst(r) func(r) argCount(n) registerOffset(n)
 
            Perform a function call.
@@ -3333,7 +3333,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (callType == CallTypeJS) {
             ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
             FunctionBodyNode* functionBodyNode = callData.js.functionBody;
-            CodeBlock* newCodeBlock = &functionBodyNode->byteCode(callDataScopeChain);
+            CodeBlock* newCodeBlock = &functionBodyNode->bytecode(callDataScopeChain);
 
             CallFrame* previousCallFrame = callFrame;
 
@@ -3347,11 +3347,11 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame->init(newCodeBlock, vPC + 5, callDataScopeChain, previousCallFrame, dst, argCount, asFunction(v));
             vPC = newCodeBlock->instructions.begin();
 
-#if ENABLE(OPCODE_STATS)
-            OpcodeStats::resetLastInstruction();
+#if ENABLE(BYTECODE_STATS)
+            BytecodeStats::resetLastInstruction();
 #endif
 
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         if (callType == CallTypeHost) {
@@ -3377,7 +3377,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = returnValue;
 
             vPC += 5;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ASSERT(callType == CallTypeNone);
@@ -3385,7 +3385,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         exceptionValue = createNotAFunctionError(callFrame, v, vPC, callFrame->codeBlock());
         goto vm_throw;
     }
-    BEGIN_OPCODE(op_tear_off_activation) {
+    BEGIN_BYTECODE(op_tear_off_activation) {
         /* tear_off_activation activation(r)
 
            Copy all locals and parameters to new memory allocated on
@@ -3395,7 +3395,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            this memory for storing the named parameters, but not any
            extra arguments.
 
-           This opcode should only be used immediately before op_ret.
+           This bytecode should only be used immediately before op_ret.
         */
 
         int src = (++vPC)->u.operand;
@@ -3404,9 +3404,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         asActivation(callFrame[src].getJSValue())->copyRegisters(callFrame->optionalCalleeArguments());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_tear_off_arguments) {
+    BEGIN_BYTECODE(op_tear_off_arguments) {
         /* tear_off_arguments
 
            Copy all arguments to new memory allocated on the heap,
@@ -3414,9 +3414,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            future when looking up named parameters, but not any
            extra arguments. If an activation object exists for the
            current function context, then the tear_off_activation
-           opcode should be used instead.
+           bytecode should be used instead.
 
-           This opcode should only be used immediately before op_ret.
+           This bytecode should only be used immediately before op_ret.
         */
 
         ASSERT(callFrame->codeBlock()->usesArguments && !callFrame->codeBlock()->needsFullScopeChain);
@@ -3424,9 +3424,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame->optionalCalleeArguments()->copyRegisters();
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_ret) {
+    BEGIN_BYTECODE(op_ret) {
         /* ret result(r)
            
            Return register result as the return value of the current
@@ -3452,16 +3452,16 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         callFrame[dst] = returnValue;
 
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_enter) {
+    BEGIN_BYTECODE(op_enter) {
         /* enter
 
            Initializes local variables to undefined and fills constant
            registers with their values. If the code block requires an
            activation, enter_with_activation should be used instead.
 
-           This opcode should only be used at the beginning of a code
+           This bytecode should only be used at the beginning of a code
            block.
         */
 
@@ -3475,9 +3475,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[i] = codeBlock->constantRegisters[j];
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_enter_with_activation) {
+    BEGIN_BYTECODE(op_enter_with_activation) {
         /* enter_with_activation dst(r)
 
            Initializes local variables to undefined, fills constant
@@ -3486,7 +3486,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            of the scope chain. If the code block does not require an
            activation, enter should be used instead.
 
-           This opcode should only be used at the beginning of a code
+           This bytecode should only be used at the beginning of a code
            block.
         */
 
@@ -3505,17 +3505,17 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame->setScopeChain(callFrame->scopeChain()->copy()->push(activation));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_convert_this) {
+    BEGIN_BYTECODE(op_convert_this) {
         /* convert_this this(r)
 
            Takes the value in the 'this' register, converts it to a
            value that is suitable for use as the 'this' value, and
-           stores it in the 'this' register. This opcode is emitted
+           stores it in the 'this' register. This bytecode is emitted
            to avoid doing the conversion in the caller unnecessarily.
 
-           This opcode should only be used at the beginning of a code
+           This bytecode should only be used at the beginning of a code
            block.
         */
 
@@ -3525,16 +3525,16 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[thisRegister] = thisVal->toThisObject(callFrame);
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_create_arguments) {
+    BEGIN_BYTECODE(op_create_arguments) {
         /* create_arguments
 
            Creates the 'arguments' object and places it in both the
            'arguments' call frame slot and the local 'arguments'
            register.
 
-           This opcode should only be used at the beginning of a code
+           This bytecode should only be used at the beginning of a code
            block.
         */
 
@@ -3543,17 +3543,17 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[RegisterFile::ArgumentsRegister] = arguments;
         
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_construct) {
+    BEGIN_BYTECODE(op_construct) {
         /* construct dst(r) func(r) argCount(n) registerOffset(n) proto(r) thisRegister(r)
 
            Invoke register "func" as a constructor. For JS
            functions, the calling convention is exactly as for the
-           "call" opcode, except that the "this" value is a newly
+           "call" bytecode, except that the "this" value is a newly
            created Object. For native constructors, no "this"
            value is passed. In either case, the argCount and registerOffset
-           registers are interpreted as for the "call" opcode.
+           registers are interpreted as for the "call" bytecode.
 
            Register proto must contain the prototype property of
            register func. This is to enable polymorphic inline
@@ -3575,7 +3575,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         if (constructType == ConstructTypeJS) {
             ScopeChainNode* callDataScopeChain = constructData.js.scopeChain;
             FunctionBodyNode* functionBodyNode = constructData.js.functionBody;
-            CodeBlock* newCodeBlock = &functionBodyNode->byteCode(callDataScopeChain);
+            CodeBlock* newCodeBlock = &functionBodyNode->bytecode(callDataScopeChain);
 
             StructureID* structure;
             JSValue* prototype = callFrame[proto].jsValue(callFrame);
@@ -3599,11 +3599,11 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame->init(newCodeBlock, vPC + 7, callDataScopeChain, previousCallFrame, dst, argCount, asFunction(v));
             vPC = newCodeBlock->instructions.begin();
 
-#if ENABLE(OPCODE_STATS)
-            OpcodeStats::resetLastInstruction();
+#if ENABLE(BYTECODE_STATS)
+            BytecodeStats::resetLastInstruction();
 #endif
 
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         if (constructType == ConstructTypeHost) {
@@ -3622,7 +3622,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             callFrame[dst] = returnValue;
 
             vPC += 7;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         ASSERT(constructType == ConstructTypeNone);
@@ -3630,7 +3630,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         exceptionValue = createNotAConstructorError(callFrame, v, vPC, callFrame->codeBlock());
         goto vm_throw;
     }
-    BEGIN_OPCODE(op_construct_verify) {
+    BEGIN_BYTECODE(op_construct_verify) {
         /* construct_verify dst(r) override(r)
 
            Verifies that register dst holds an object. If not, moves
@@ -3640,16 +3640,16 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         int dst = vPC[1].u.operand;;
         if (LIKELY(callFrame[dst].jsValue(callFrame)->isObject())) {
             vPC += 3;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
 
         int override = vPC[2].u.operand;
         callFrame[dst] = callFrame[override];
 
         vPC += 3;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_push_scope) {
+    BEGIN_BYTECODE(op_push_scope) {
         /* push_scope scope(r)
 
            Converts register scope to object, and pushes it onto the top
@@ -3663,9 +3663,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame->setScopeChain(callFrame->scopeChain()->push(o));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_pop_scope) {
+    BEGIN_BYTECODE(op_pop_scope) {
         /* pop_scope
 
            Removes the top item from the current scope chain.
@@ -3673,9 +3673,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame->setScopeChain(callFrame->scopeChain()->pop());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_get_pnames) {
+    BEGIN_BYTECODE(op_get_pnames) {
         /* get_pnames dst(r) base(r)
 
            Creates a property name list for register base and puts it
@@ -3688,9 +3688,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 
         callFrame[dst] = JSPropertyNameIterator::create(callFrame, callFrame[base].jsValue(callFrame));
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_next_pname) {
+    BEGIN_BYTECODE(op_next_pname) {
         /* next_pname dst(r) iter(r) target(offset)
 
            Tries to copies the next name from property name list in
@@ -3708,14 +3708,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             CHECK_FOR_TIMEOUT();
             callFrame[dst] = temp;
             vPC += target;
-            NEXT_OPCODE;
+            NEXT_BYTECODE;
         }
         it->invalidate();
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jmp_scopes) {
+    BEGIN_BYTECODE(op_jmp_scopes) {
         /* jmp_scopes count(n) target(offset)
 
            Removes the a number of items from the current scope chain
@@ -3731,13 +3731,13 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame->setScopeChain(tmp);
 
         vPC += target;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
 #if HAVE(COMPUTED_GOTO)
     // Appease GCC
     goto *(&&skip_new_scope);
 #endif
-    BEGIN_OPCODE(op_push_new_scope) {
+    BEGIN_BYTECODE(op_push_new_scope) {
         /* new_scope dst(r) property(id) value(r)
          
            Constructs a new StaticScopeObject with property set to value.  That scope
@@ -3747,12 +3747,12 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame->setScopeChain(createExceptionScope(callFrame, vPC));
 
         vPC += 4;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
 #if HAVE(COMPUTED_GOTO)
     skip_new_scope:
 #endif
-    BEGIN_OPCODE(op_catch) {
+    BEGIN_BYTECODE(op_catch) {
         /* catch ex(r)
 
            Retrieves the VMs current exception and puts it in register
@@ -3766,9 +3766,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         exceptionValue = noValue();
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_throw) {
+    BEGIN_BYTECODE(op_throw) {
         /* throw ex(r)
 
            Throws register ex as an exception. This involves three
@@ -3798,9 +3798,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
 #endif
 
         vPC = handlerVPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_unexpected_load) {
+    BEGIN_BYTECODE(op_unexpected_load) {
         /* unexpected_load load dst(r) src(k)
 
            Copies constant src to register dst.
@@ -3810,9 +3810,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = callFrame->codeBlock()->unexpectedConstants[src];
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_new_error) {
+    BEGIN_BYTECODE(op_new_error) {
         /* new_error dst(r) type(n) message(k)
 
            Constructs a new Error instance using the original
@@ -3828,9 +3828,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[dst] = Error::create(callFrame, (ErrorType)type, codeBlock->unexpectedConstants[message]->toString(callFrame), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceID(), codeBlock->ownerNode->sourceURL());
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_end) {
+    BEGIN_BYTECODE(op_end) {
         /* end result(r)
            
            Return register result as the value of a global or eval
@@ -3845,7 +3845,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         int result = (++vPC)->u.operand;
         return callFrame[result].jsValue(callFrame);
     }
-    BEGIN_OPCODE(op_put_getter) {
+    BEGIN_BYTECODE(op_put_getter) {
         /* put_getter base(r) property(id) function(r)
 
            Sets register function on register base as the getter named
@@ -3853,7 +3853,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            objects as this op should only be used for getters defined
            in object literal form.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
         */
         int base = (++vPC)->u.operand;
@@ -3867,9 +3867,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         baseObj->defineGetter(callFrame, ident, asObject(callFrame[function].jsValue(callFrame)));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_put_setter) {
+    BEGIN_BYTECODE(op_put_setter) {
         /* put_setter base(r) property(id) function(r)
 
            Sets register function on register base as the setter named
@@ -3877,7 +3877,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
            objects as this op should only be used for setters defined
            in object literal form.
 
-           Unlike many opcodes, this one does not write any output to
+           Unlike many bytecodes, this one does not write any output to
            the register file.
         */
         int base = (++vPC)->u.operand;
@@ -3891,9 +3891,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         baseObj->defineSetter(callFrame, ident, asObject(callFrame[function].jsValue(callFrame)));
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_jsr) {
+    BEGIN_BYTECODE(op_jsr) {
         /* jsr retAddrDst(r) target(offset)
 
            Places the address of the next instruction into the retAddrDst
@@ -3904,9 +3904,9 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         callFrame[retAddrDst] = vPC + 1;
 
         vPC += target;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_sret) {
+    BEGIN_BYTECODE(op_sret) {
         /* sret retAddrSrc(r)
 
          Jumps to the address stored in the retAddrSrc register. This
@@ -3915,12 +3915,12 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         */
         int retAddrSrc = (++vPC)->u.operand;
         vPC = callFrame[retAddrSrc].vPC();
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_debug) {
+    BEGIN_BYTECODE(op_debug) {
         /* debug debugHookID(n) firstLine(n) lastLine(n)
 
-         Notifies the debugger of the current state of execution. This opcode
+         Notifies the debugger of the current state of execution. This bytecode
          is only generated while the debugger is attached.
         */
         int debugHookID = (++vPC)->u.operand;
@@ -3930,12 +3930,12 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
         debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 
         ++vPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_profile_will_call) {
+    BEGIN_BYTECODE(op_profile_will_call) {
         /* op_profile_will_call function(r)
 
-         Notifies the profiler of the beginning of a function call. This opcode
+         Notifies the profiler of the beginning of a function call. This bytecode
          is only generated if developer tools are enabled.
         */
         int function = vPC[1].u.operand;
@@ -3944,12 +3944,12 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             (*enabledProfilerReference)->willExecute(callFrame, callFrame[function].jsValue(callFrame));
 
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
-    BEGIN_OPCODE(op_profile_did_call) {
+    BEGIN_BYTECODE(op_profile_did_call) {
         /* op_profile_did_call function(r)
 
-         Notifies the profiler of the end of a function call. This opcode
+         Notifies the profiler of the end of a function call. This bytecode
          is only generated if developer tools are enabled.
         */
         int function = vPC[1].u.operand;
@@ -3958,7 +3958,7 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             (*enabledProfilerReference)->didExecute(callFrame, callFrame[function].jsValue(callFrame));
 
         vPC += 2;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
     vm_throw: {
         globalData->exception = noValue();
@@ -3973,14 +3973,14 @@ JSValue* BytecodeInterpreter::privateExecute(ExecutionFlag flag, RegisterFile* r
             return jsNull();
         }
         vPC = handlerVPC;
-        NEXT_OPCODE;
+        NEXT_BYTECODE;
     }
     }
 #if !HAVE(COMPUTED_GOTO)
     } // iterator loop ends
 #endif
-    #undef NEXT_OPCODE
-    #undef BEGIN_OPCODE
+    #undef NEXT_BYTECODE
+    #undef BEGIN_BYTECODE
     #undef VM_CHECK_EXCEPTION
     #undef CHECK_FOR_TIMEOUT
 }
@@ -4095,7 +4095,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICachePutByID(CallFrame* callFrame, 
 
     // StructureID transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
-        vPC[0] = getOpcode(op_put_by_id_transition);
+        vPC[0] = getBytecode(op_put_by_id_transition);
         vPC[4] = structureID->previousID();
         vPC[5] = structureID;
         StructureIDChain* chain = structureID->cachedPrototypeChain();
@@ -4103,7 +4103,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICachePutByID(CallFrame* callFrame, 
             chain = cachePrototypeChain(callFrame, structureID);
             if (!chain) {
                 // This happens if someone has manually inserted null into the prototype chain
-                vPC[0] = getOpcode(op_put_by_id_generic);
+                vPC[0] = getBytecode(op_put_by_id_generic);
                 return;
             }
         }
@@ -4114,7 +4114,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICachePutByID(CallFrame* callFrame, 
         return;
     }
     
-    vPC[0] = getOpcode(op_put_by_id_replace);
+    vPC[0] = getBytecode(op_put_by_id_replace);
     vPC[4] = structureID;
     vPC[5] = slot.cachedOffset();
     codeBlock->refStructureIDs(vPC);
@@ -4177,7 +4177,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICacheGetByID(CallFrame* callFrame, 
 
     if (slot.slotBase() == baseValue) {
         // set this up, so derefStructureIDs can do it's job.
-        vPC[0] = getOpcode(op_get_by_id_self);
+        vPC[0] = getBytecode(op_get_by_id_self);
         vPC[4] = structureID;
         vPC[5] = slot.cachedOffset();
         codeBlock->refStructureIDs(vPC);
@@ -4203,7 +4203,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICacheGetByID(CallFrame* callFrame, 
             asObject(baseValue)->structureID()->setCachedPrototypeChain(0);
         }
 
-        vPC[0] = getOpcode(op_get_by_id_proto);
+        vPC[0] = getBytecode(op_get_by_id_proto);
         vPC[4] = structureID;
         vPC[5] = slotBaseObject->structureID();
         vPC[6] = slot.cachedOffset();
@@ -4222,7 +4222,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICacheGetByID(CallFrame* callFrame, 
         // must be a proxy for another object.
 
         if (v->isNull()) {
-            vPC[0] = getOpcode(op_get_by_id_generic);
+            vPC[0] = getBytecode(op_get_by_id_generic);
             return;
         }
 
@@ -4244,7 +4244,7 @@ NEVER_INLINE void BytecodeInterpreter::tryCTICacheGetByID(CallFrame* callFrame, 
         chain = cachePrototypeChain(callFrame, structureID);
 
     ASSERT(chain);
-    vPC[0] = getOpcode(op_get_by_id_chain);
+    vPC[0] = getBytecode(op_get_by_id_chain);
     vPC[4] = structureID;
     vPC[5] = chain;
     vPC[6] = count;
@@ -4685,7 +4685,7 @@ void* BytecodeInterpreter::cti_op_call_JSFunction(CTI_ARGS)
 #endif
 
     ScopeChainNode* callDataScopeChain = asFunction(ARG_src1)->m_scopeChain.node();
-    CodeBlock* newCodeBlock = &asFunction(ARG_src1)->m_body->byteCode(callDataScopeChain);
+    CodeBlock* newCodeBlock = &asFunction(ARG_src1)->m_body->bytecode(callDataScopeChain);
 
     if (!newCodeBlock->ctiCode)
         CTI::compile(ARG_globalData, newCodeBlock);
@@ -4745,7 +4745,7 @@ void* BytecodeInterpreter::cti_vm_dontLazyLinkCall(CTI_ARGS)
     CTI_STACK_HACK();
 
     JSFunction* callee = asFunction(ARG_src1);
-    CodeBlock* codeBlock = &callee->m_body->byteCode(callee->m_scopeChain.node());
+    CodeBlock* codeBlock = &callee->m_body->bytecode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
         CTI::compile(ARG_globalData, codeBlock);
 
@@ -4759,7 +4759,7 @@ void* BytecodeInterpreter::cti_vm_lazyLinkCall(CTI_ARGS)
     CTI_STACK_HACK();
 
     JSFunction* callee = asFunction(ARG_src1);
-    CodeBlock* codeBlock = &callee->m_body->byteCode(callee->m_scopeChain.node());
+    CodeBlock* codeBlock = &callee->m_body->bytecode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
         CTI::compile(ARG_globalData, codeBlock);
 

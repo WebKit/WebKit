@@ -497,7 +497,7 @@ PassRefPtr<StructureID> StructureID::fromDictionaryTransition(StructureID* struc
 {
     ASSERT(structureID->m_isDictionary);
 
-    // Since dictionary StructureIDs are not shared, and no opcodes specialize
+    // Since dictionary StructureIDs are not shared, and no bytecodes specialize
     // for them, we don't need to allocate a new StructureID when transitioning
     // to non-dictionary status.
 

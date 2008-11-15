@@ -54,7 +54,7 @@ void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
     // can fail if we sample mid op_call / op_ret.
     if (offest < m_size) {
         m_samples[offest]++;
-        m_opcodeSampleCount++;
+        m_bytecodeSampleCount++;
     }
 }
 
@@ -94,13 +94,13 @@ void SamplingTool::run()
             continue;
 
         if (!sample.inHostFunction()) {
-            unsigned opcodeID = m_interpreter->getOpcodeID(sample.vPC()[0].u.opcode);
+            unsigned bytecodeID = m_interpreter->getBytecodeID(sample.vPC()[0].u.bytecode);
 
-            ++m_opcodeSampleCount;
-            ++m_opcodeSamples[opcodeID];
+            ++m_bytecodeSampleCount;
+            ++m_bytecodeSamples[bytecodeID];
 
             if (sample.inCTIFunction())
-                m_opcodeSamplesInCTIFunctions[opcodeID]++;
+                m_bytecodeSamplesInCTIFunctions[bytecodeID]++;
         }
 
 #if ENABLE(CODEBLOCK_SAMPLING)
@@ -140,10 +140,10 @@ void SamplingTool::stop()
     waitForThreadCompletion(m_samplingThread, 0);
 }
 
-#if ENABLE(OPCODE_SAMPLING)
+#if ENABLE(BYTECODE_SAMPLING)
 
-struct OpcodeSampleInfo {
-    OpcodeID opcode;
+struct BytecodeSampleInfo {
+    BytecodeID bytecode;
     long long count;
     long long countInCTIFunctions;
 };
@@ -161,10 +161,10 @@ static int compareLineCountInfoSampling(const void* left, const void* right)
     return (leftLineCount->line > rightLineCount->line) ? 1 : (leftLineCount->line < rightLineCount->line) ? -1 : 0;
 }
 
-static int compareOpcodeIndicesSampling(const void* left, const void* right)
+static int compareBytecodeIndicesSampling(const void* left, const void* right)
 {
-    const OpcodeSampleInfo* leftSampleInfo = reinterpret_cast<const OpcodeSampleInfo*>(left);
-    const OpcodeSampleInfo* rightSampleInfo = reinterpret_cast<const OpcodeSampleInfo*>(right);
+    const BytecodeSampleInfo* leftSampleInfo = reinterpret_cast<const BytecodeSampleInfo*>(left);
+    const BytecodeSampleInfo* rightSampleInfo = reinterpret_cast<const BytecodeSampleInfo*>(right);
 
     return (leftSampleInfo->count < rightSampleInfo->count) ? 1 : (leftSampleInfo->count > rightSampleInfo->count) ? -1 : 0;
 }
@@ -183,48 +183,48 @@ void SamplingTool::dump(ExecState* exec)
     if (m_sampleCount < 10)
         return;
     
-    // (1) Build and sort 'opcodeSampleInfo' array.
+    // (1) Build and sort 'bytecodeSampleInfo' array.
 
-    OpcodeSampleInfo opcodeSampleInfo[numOpcodeIDs];
-    for (int i = 0; i < numOpcodeIDs; ++i) {
-        opcodeSampleInfo[i].opcode = static_cast<OpcodeID>(i);
-        opcodeSampleInfo[i].count = m_opcodeSamples[i];
-        opcodeSampleInfo[i].countInCTIFunctions = m_opcodeSamplesInCTIFunctions[i];
+    BytecodeSampleInfo bytecodeSampleInfo[numBytecodeIDs];
+    for (int i = 0; i < numBytecodeIDs; ++i) {
+        bytecodeSampleInfo[i].bytecode = static_cast<BytecodeID>(i);
+        bytecodeSampleInfo[i].count = m_bytecodeSamples[i];
+        bytecodeSampleInfo[i].countInCTIFunctions = m_bytecodeSamplesInCTIFunctions[i];
     }
 
-    qsort(opcodeSampleInfo, numOpcodeIDs, sizeof(OpcodeSampleInfo), compareOpcodeIndicesSampling);
+    qsort(bytecodeSampleInfo, numBytecodeIDs, sizeof(BytecodeSampleInfo), compareBytecodeIndicesSampling);
 
-    // (2) Print Opcode sampling results.
+    // (2) Print Bytecode sampling results.
 
-    printf("\nOpcode samples [*]\n");
+    printf("\nBytecode samples [*]\n");
     printf("                             sample   %% of       %% of     |   cti     cti %%\n");
-    printf("opcode                       count     VM        total    |  count   of self\n");
+    printf("bytecode                       count     VM        total    |  count   of self\n");
     printf("-------------------------------------------------------   |  ----------------\n");
 
-    for (int i = 0; i < numOpcodeIDs; ++i) {
-        long long count = opcodeSampleInfo[i].count;
+    for (int i = 0; i < numBytecodeIDs; ++i) {
+        long long count = bytecodeSampleInfo[i].count;
         if (!count)
             continue;
 
-        OpcodeID opcode = opcodeSampleInfo[i].opcode;
+        BytecodeID bytecode = bytecodeSampleInfo[i].bytecode;
         
-        const char* opcodeName = opcodeNames[opcode];
-        const char* opcodePadding = padOpcodeName(opcode, 28);
-        double percentOfVM = (static_cast<double>(count) * 100) / m_opcodeSampleCount;
+        const char* bytecodeName = bytecodeNames[bytecode];
+        const char* bytecodePadding = padBytecodeName(bytecode, 28);
+        double percentOfVM = (static_cast<double>(count) * 100) / m_bytecodeSampleCount;
         double percentOfTotal = (static_cast<double>(count) * 100) / m_sampleCount;
-        long long countInCTIFunctions = opcodeSampleInfo[i].countInCTIFunctions;
+        long long countInCTIFunctions = bytecodeSampleInfo[i].countInCTIFunctions;
         double percentInCTIFunctions = (static_cast<double>(countInCTIFunctions) * 100) / count;
-        fprintf(stdout, "%s:%s%-6lld %.3f%%\t%.3f%%\t  |   %-6lld %.3f%%\n", opcodeName, opcodePadding, count, percentOfVM, percentOfTotal, countInCTIFunctions, percentInCTIFunctions);
+        fprintf(stdout, "%s:%s%-6lld %.3f%%\t%.3f%%\t  |   %-6lld %.3f%%\n", bytecodeName, bytecodePadding, count, percentOfVM, percentOfTotal, countInCTIFunctions, percentInCTIFunctions);
     }
     
-    printf("\n[*] Samples inside host code are not charged to any Opcode.\n\n");
-    printf("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_opcodeSampleCount) * 100) / m_sampleCount);
-    printf("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_opcodeSampleCount) * 100) / m_sampleCount);
-    printf("\tsample count:\tsamples inside this opcode\n");
-    printf("\t%% of VM:\tsample count / all opcode samples\n");
+    printf("\n[*] Samples inside host code are not charged to any Bytecode.\n\n");
+    printf("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_bytecodeSampleCount, m_sampleCount, (static_cast<double>(m_bytecodeSampleCount) * 100) / m_sampleCount);
+    printf("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_bytecodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_bytecodeSampleCount) * 100) / m_sampleCount);
+    printf("\tsample count:\tsamples inside this bytecode\n");
+    printf("\t%% of VM:\tsample count / all bytecode samples\n");
     printf("\t%% of total:\tsample count / all samples\n");
     printf("\t--------------\n");
-    printf("\tcti count:\tsamples inside a CTI function called by this opcode\n");
+    printf("\tcti count:\tsamples inside a CTI function called by this bytecode\n");
     printf("\tcti %% of self:\tcti count / sample count\n");
     
     // (3) Build and sort 'codeBlockSamples' array.
@@ -254,7 +254,7 @@ void SamplingTool::dump(ExecState* exec)
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
 
-                printf("    Opcode and line number samples [*]\n\n");
+                printf("    Bytecode and line number samples [*]\n\n");
                 for (unsigned op = 0; op < record->m_size; ++op) {
                     int count = record->m_samples[op];
                     if (count) {
@@ -279,9 +279,9 @@ void SamplingTool::dump(ExecState* exec)
                     printf("    Line #%d has sample count %d.\n", lineCountInfo[lineno].line, lineCountInfo[lineno].count);
                 }
                 printf("\n");
-                printf("    [*] Samples inside host code are charged to the calling Opcode.\n");
-                printf("        Samples on a call / return boundary are not charged to a specific opcode or line.\n\n");
-                printf("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_opcodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_opcodeSampleCount) * 100) / record->m_sampleCount);
+                printf("    [*] Samples inside host code are charged to the calling Bytecode.\n");
+                printf("        Samples on a call / return boundary are not charged to a specific bytecode or line.\n\n");
+                printf("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_bytecodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_bytecodeSampleCount) * 100) / record->m_sampleCount);
             }
         }
     }
