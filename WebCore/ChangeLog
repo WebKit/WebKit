@@ -1,5 +1,15 @@
 2008-11-15  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        r38426 caused a wrong drawing of a LayoutTest. Use another
+        way to set the color to pass this test again.
+
+        * svg/graphics/SVGPaintServerSolid.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
+2008-11-15  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Darin Adler.
 
         Removed platform dependent code on SVGPaintServerSolid.

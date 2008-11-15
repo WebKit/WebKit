@@ -66,25 +66,17 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
     const SVGRenderStyle* svgStyle = object ? object->style()->svgStyle() : 0;
 
     if ((type & ApplyToFillTargetType) && (!style || svgStyle->hasFill())) {
-        RGBA32 rgba = color().rgb();
-        ASSERT(!color().hasAlpha());
-        if (style)
-            rgba = colorWithOverrideAlpha(rgba, svgStyle->fillOpacity());
-
+        context->setAlpha(svgStyle->fillOpacity());
+        context->setFillColor(color().rgb());
         context->setFillRule(svgStyle->fillRule());
-        context->setFillColor(rgba);
 
         if (isPaintingText)
             context->setTextDrawingMode(cTextFill);
     }
 
     if ((type & ApplyToStrokeTargetType) && (!style || svgStyle->hasStroke())) {
-        RGBA32 rgba = color().rgb();
-        ASSERT(!color().hasAlpha());
-        if (style)
-            rgba = colorWithOverrideAlpha(rgba, svgStyle->strokeOpacity());
-
-        context->setStrokeColor(rgba);
+        context->setAlpha(svgStyle->strokeOpacity());
+        context->setStrokeColor(color().rgb());
 
         if (style)
             applyStrokeStyleToContext(context, style, object);
