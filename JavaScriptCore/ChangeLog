@@ -1,3 +1,12 @@
+2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        Fix potential build break by adding StdLibExtras.h
+        
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
 2008-11-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

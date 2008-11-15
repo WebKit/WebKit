@@ -197,6 +197,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/RefPtr.h \
 	JavaScriptCore/wtf/RefPtrHashMap.h \
 	JavaScriptCore/wtf/RetainPtr.h \
+	JavaScriptCore/wtf/StdLibExtras.h \
 	JavaScriptCore/wtf/StringExtras.h \
 	JavaScriptCore/wtf/TCPackedCache.h \
 	JavaScriptCore/wtf/TCPageMap.h \
