@@ -1,3 +1,34 @@
+2008-11-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Geoff has this wacky notion that emitGetArg and emitPutArg should be related to
+        doing the same thing.  Crazy.
+        
+        Rename the methods for accessing virtual registers to say 'VirtualRegister' in the
+        name, and those for setting up the arguments for CTI methods to contain 'CTIArg'.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetVirtualRegister):
+        (JSC::CTI::emitGetVirtualRegisters):
+        (JSC::CTI::emitPutCTIArgFromVirtualRegister):
+        (JSC::CTI::emitPutCTIArg):
+        (JSC::CTI::emitGetCTIArg):
+        (JSC::CTI::emitPutCTIArgConstant):
+        (JSC::CTI::emitPutVirtualRegister):
+        (JSC::CTI::compileOpCallSetupArgs):
+        (JSC::CTI::compileOpCallEvalSetupArgs):
+        (JSC::CTI::compileOpConstructSetupArgs):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::compileOpStrictEq):
+        (JSC::CTI::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        * VM/CTI.h:
+
 2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Antti Koivisto

@@ -374,13 +374,14 @@ namespace JSC {
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
 
-        void emitGetArg(int src, X86Assembler::RegisterID dst, unsigned i);
-        void emitGetArgs(int src1, X86Assembler::RegisterID dst1, int src2, X86Assembler::RegisterID dst2, unsigned i);
-        void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
-        void emitPutArg(X86Assembler::RegisterID src, unsigned offset);
-        void emitRetrieveArg(unsigned offset, X86Assembler::RegisterID dst);
-        void emitPutArgConstant(unsigned value, unsigned offset);
-        void emitPutResult(unsigned dst, X86Assembler::RegisterID from = X86::eax);
+        void emitGetVirtualRegister(int src, X86Assembler::RegisterID dst, unsigned i);
+        void emitGetVirtualRegisters(int src1, X86Assembler::RegisterID dst1, int src2, X86Assembler::RegisterID dst2, unsigned i);
+        void emitPutVirtualRegister(unsigned dst, X86Assembler::RegisterID from = X86::eax);
+
+        void emitPutCTIArg(X86Assembler::RegisterID src, unsigned offset);
+        void emitPutCTIArgFromVirtualRegister(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
+        void emitPutCTIArgConstant(unsigned value, unsigned offset);
+        void emitGetCTIArg(unsigned offset, X86Assembler::RegisterID dst);
 
         void emitInitRegister(unsigned dst);
 
