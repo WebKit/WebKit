@@ -1,3 +1,11 @@
+2008-11-14  Dan Bernstein  <mitz@apple.com>
+
+        - attempt to fix the Qt build
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::contextMenuItemTagTextDirectionMenu): Added. Maybe this string
+        needs to go somewhere else in addition to here.
+
 2008-11-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.
