@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-#if !defined(NDEBUG) || ENABLE(BYTECODE_SAMPLING)
+#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
 static UString escapeQuotes(const UString& str)
 {
@@ -184,41 +184,41 @@ void CodeBlock::printStructureIDs(const Instruction* vPC) const
     BytecodeInterpreter* interpreter = globalData->interpreter;
     unsigned instructionOffset = vPC - instructions.begin();
 
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id)) {
         printStructureID("get_by_id", vPC, 4);
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
         printStructureID("get_by_id_self", vPC, 4);
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_proto)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
         printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str());
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_transition)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_new", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[6].u.structureIDChain).UTF8String().c_str());
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_chain)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
         printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureIDChain).UTF8String().c_str());
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id)) {
         printStructureID("put_by_id", vPC, 4);
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_replace)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
         printStructureID("put_by_id_replace", vPC, 4);
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_resolve_global)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
         printStructureID("resolve_global", vPC, 4);
         return;
     }
 
     // These instructions doesn't ref StructureIDs.
-    ASSERT(vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_generic) || vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_generic) || vPC[0].u.bytecode == interpreter->getBytecode(op_call) || vPC[0].u.bytecode == interpreter->getBytecode(op_call_eval) || vPC[0].u.bytecode == interpreter->getBytecode(op_construct));
+    ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_call) || vPC[0].u.opcode == interpreter->getOpcode(op_call_eval) || vPC[0].u.opcode == interpreter->getOpcode(op_construct));
 }
 
 void CodeBlock::dump(ExecState* exec) const
@@ -228,7 +228,7 @@ void CodeBlock::dump(ExecState* exec) const
 
     size_t instructionCount = 0;
     for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
-        if (exec->interpreter()->isBytecode(it->u.bytecode))
+        if (exec->interpreter()->isOpcode(it->u.opcode))
             ++instructionCount;
 
     printf("%lu instructions; %lu bytes at %p; %d parameter(s); %d callee register(s)\n\n",
@@ -359,7 +359,7 @@ void CodeBlock::dump(ExecState* exec) const
 void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator& it) const
 {
     int location = it - begin;
-    switch (exec->interpreter()->getBytecodeID(it->u.bytecode)) {
+    switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
         case op_enter: {
             printf("[%4d] enter\n", location);
             break;
@@ -945,7 +945,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
     }
 }
 
-#endif // !defined(NDEBUG) || ENABLE(BYTECODE_SAMPLING)
+#endif // !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
 CodeBlock::~CodeBlock()
 {
@@ -990,71 +990,71 @@ void CodeBlock::derefStructureIDs(Instruction* vPC) const
 {
     BytecodeInterpreter* interpreter = globalData->interpreter;
 
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
         vPC[4].u.structureID->deref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_proto)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
         vPC[4].u.structureID->deref();
         vPC[5].u.structureID->deref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_chain)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
         vPC[4].u.structureID->deref();
         vPC[5].u.structureIDChain->deref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_transition)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         vPC[4].u.structureID->deref();
         vPC[5].u.structureID->deref();
         vPC[6].u.structureIDChain->deref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_replace)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
         vPC[4].u.structureID->deref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_resolve_global)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
         if(vPC[4].u.structureID)
             vPC[4].u.structureID->deref();
         return;
     }
     
     // These instructions don't ref their StructureIDs.
-    ASSERT(vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id) || vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id) || vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_generic) || vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_generic) || vPC[0].u.bytecode == interpreter->getBytecode(op_get_array_length) || vPC[0].u.bytecode == interpreter->getBytecode(op_get_string_length));
+    ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_get_array_length) || vPC[0].u.opcode == interpreter->getOpcode(op_get_string_length));
 }
 
 void CodeBlock::refStructureIDs(Instruction* vPC) const
 {
     BytecodeInterpreter* interpreter = globalData->interpreter;
 
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_self)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
         vPC[4].u.structureID->ref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_proto)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
         vPC[4].u.structureID->ref();
         vPC[5].u.structureID->ref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_chain)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
         vPC[4].u.structureID->ref();
         vPC[5].u.structureIDChain->ref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_transition)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         vPC[4].u.structureID->ref();
         vPC[5].u.structureID->ref();
         vPC[6].u.structureIDChain->ref();
         return;
     }
-    if (vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_replace)) {
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
         vPC[4].u.structureID->ref();
         return;
     }
     
     // These instructions don't ref their StructureIDs.
-    ASSERT(vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id) || vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id) || vPC[0].u.bytecode == interpreter->getBytecode(op_get_by_id_generic) || vPC[0].u.bytecode == interpreter->getBytecode(op_put_by_id_generic));
+    ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic));
 }
 
 void CodeBlock::mark()

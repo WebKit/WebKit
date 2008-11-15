@@ -275,7 +275,7 @@ namespace JSC {
         static const int repatchOffsetGetByIdStructureID = 7;
         static const int repatchOffsetGetByIdBranchToSlowCase = 13;
         static const int repatchOffsetGetByIdPropertyMapOffset = 22;
-#if ENABLE(BYTECODE_SAMPLING)
+#if ENABLE(OPCODE_SAMPLING)
         static const int repatchOffsetGetByIdSlowCaseCall = 27 + 4 + ctiArgumentInitSize;
 #else
         static const int repatchOffsetGetByIdSlowCaseCall = 17 + 4 + ctiArgumentInitSize;
@@ -363,7 +363,7 @@ namespace JSC {
         void privateCompileCTIMachineTrampolines();
         void privateCompilePatchGetArrayLength(void* returnAddress);
 
-        void compileOpCall(BytecodeID, Instruction* instruction, unsigned i, unsigned callLinkInfoIndex);
+        void compileOpCall(OpcodeID, Instruction* instruction, unsigned i, unsigned callLinkInfoIndex);
         void compileOpCallInitializeCallFrame();
         void compileOpCallSetupArgs(Instruction*);
         void compileOpCallEvalSetupArgs(Instruction*);
@@ -371,8 +371,8 @@ namespace JSC {
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStrictEqType type);
         void putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSource, X86::RegisterID jsNumberCell, unsigned dst, X86Assembler::JmpSrc* wroteJSNumberCell,  X86::XMMRegisterID tempXmm, X86::RegisterID tempReg1, X86::RegisterID tempReg2);
-        void compileBinaryArithOp(BytecodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
-        void compileBinaryArithOpSlowCase(Instruction*, BytecodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
+        void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
+        void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi, unsigned i);
 
         void emitGetVirtualRegister(int src, X86Assembler::RegisterID dst, unsigned i);
         void emitGetVirtualRegisters(int src1, X86Assembler::RegisterID dst1, int src2, X86Assembler::RegisterID dst2, unsigned i);

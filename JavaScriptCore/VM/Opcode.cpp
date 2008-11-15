@@ -34,38 +34,38 @@ using namespace std;
 
 namespace JSC {
 
-#if ENABLE(BYTECODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(BYTECODE_STATS)
+#if ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
 
-const char* const bytecodeNames[] = {
-#define BYTECODE_NAME_ENTRY(bytecode) #bytecode,
-    FOR_EACH_BYTECODE_ID(BYTECODE_NAME_ENTRY)
-#undef BYTECODE_NAME_ENTRY
+const char* const opcodeNames[] = {
+#define OPCODE_NAME_ENTRY(opcode) #opcode,
+    FOR_EACH_OPCODE_ID(OPCODE_NAME_ENTRY)
+#undef OPCODE_NAME_ENTRY
 };
 
 #endif
 
-#if ENABLE(BYTECODE_STATS)
+#if ENABLE(OPCODE_STATS)
 
-long long BytecodeStats::bytecodeCounts[numBytecodeIDs];
-long long BytecodeStats::bytecodePairCounts[numBytecodeIDs][numBytecodeIDs];
-int BytecodeStats::lastBytecode = -1;
+long long OpcodeStats::opcodeCounts[numOpcodeIDs];
+long long OpcodeStats::opcodePairCounts[numOpcodeIDs][numOpcodeIDs];
+int OpcodeStats::lastOpcode = -1;
 
-static BytecodeStats logger;
+static OpcodeStats logger;
 
-BytecodeStats::BytecodeStats()
+OpcodeStats::OpcodeStats()
 {
-    for (int i = 0; i < numBytecodeIDs; ++i)
-        bytecodeCounts[i] = 0;
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        opcodeCounts[i] = 0;
     
-    for (int i = 0; i < numBytecodeIDs; ++i)
-        for (int j = 0; j < numBytecodeIDs; ++j)
-            bytecodePairCounts[i][j] = 0;
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        for (int j = 0; j < numOpcodeIDs; ++j)
+            opcodePairCounts[i][j] = 0;
 }
 
-static int compareBytecodeIndices(const void* left, const void* right)
+static int compareOpcodeIndices(const void* left, const void* right)
 {
-    long long leftValue = BytecodeStats::bytecodeCounts[*(int*) left];
-    long long rightValue = BytecodeStats::bytecodeCounts[*(int*) right];
+    long long leftValue = OpcodeStats::opcodeCounts[*(int*) left];
+    long long rightValue = OpcodeStats::opcodeCounts[*(int*) right];
     
     if (leftValue < rightValue)
         return 1;
@@ -75,12 +75,12 @@ static int compareBytecodeIndices(const void* left, const void* right)
         return 0;
 }
 
-static int compareBytecodePairIndices(const void* left, const void* right)
+static int compareOpcodePairIndices(const void* left, const void* right)
 {
     pair<int, int> leftPair = *(pair<int, int>*) left;
-    long long leftValue = BytecodeStats::bytecodePairCounts[leftPair.first][leftPair.second];
+    long long leftValue = OpcodeStats::opcodePairCounts[leftPair.first][leftPair.second];
     pair<int, int> rightPair = *(pair<int, int>*) right;
-    long long rightValue = BytecodeStats::bytecodePairCounts[rightPair.first][rightPair.second];
+    long long rightValue = OpcodeStats::opcodePairCounts[rightPair.first][rightPair.second];
     
     if (leftValue < rightValue)
         return 1;
@@ -90,95 +90,95 @@ static int compareBytecodePairIndices(const void* left, const void* right)
         return 0;
 }
 
-BytecodeStats::~BytecodeStats()
+OpcodeStats::~OpcodeStats()
 {
     long long totalInstructions = 0;
-    for (int i = 0; i < numBytecodeIDs; ++i)
-        totalInstructions += bytecodeCounts[i];
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        totalInstructions += opcodeCounts[i];
     
     long long totalInstructionPairs = 0;
-    for (int i = 0; i < numBytecodeIDs; ++i)
-        for (int j = 0; j < numBytecodeIDs; ++j)
-            totalInstructionPairs += bytecodePairCounts[i][j];
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        for (int j = 0; j < numOpcodeIDs; ++j)
+            totalInstructionPairs += opcodePairCounts[i][j];
 
-    int sortedIndices[numBytecodeIDs];    
-    for (int i = 0; i < numBytecodeIDs; ++i)
+    int sortedIndices[numOpcodeIDs];    
+    for (int i = 0; i < numOpcodeIDs; ++i)
         sortedIndices[i] = i;
-    qsort(sortedIndices, numBytecodeIDs, sizeof(int), compareBytecodeIndices);
+    qsort(sortedIndices, numOpcodeIDs, sizeof(int), compareOpcodeIndices);
     
-    pair<int, int> sortedPairIndices[numBytecodeIDs * numBytecodeIDs];
+    pair<int, int> sortedPairIndices[numOpcodeIDs * numOpcodeIDs];
     pair<int, int>* currentPairIndex = sortedPairIndices;
-    for (int i = 0; i < numBytecodeIDs; ++i)
-        for (int j = 0; j < numBytecodeIDs; ++j)
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        for (int j = 0; j < numOpcodeIDs; ++j)
             *(currentPairIndex++) = make_pair(i, j);
-    qsort(sortedPairIndices, numBytecodeIDs * numBytecodeIDs, sizeof(pair<int, int>), compareBytecodePairIndices);
+    qsort(sortedPairIndices, numOpcodeIDs * numOpcodeIDs, sizeof(pair<int, int>), compareOpcodePairIndices);
     
-    printf("\nExecuted bytecode statistics\n"); 
+    printf("\nExecuted opcode statistics\n"); 
     
     printf("Total instructions executed: %lld\n\n", totalInstructions);
 
-    printf("All bytecodes by frequency:\n\n");
+    printf("All opcodes by frequency:\n\n");
 
-    for (int i = 0; i < numBytecodeIDs; ++i) {
+    for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
-        printf("%s:%s %lld - %.2f%%\n", bytecodeNames[index], padBytecodeName((BytecodeID)index, 28), bytecodeCounts[index], ((double) bytecodeCounts[index]) / ((double) totalInstructions) * 100.0);    
+        printf("%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
     }
     
     printf("\n");
-    printf("2-bytecode sequences by frequency: %lld\n\n", totalInstructions);
+    printf("2-opcode sequences by frequency: %lld\n\n", totalInstructions);
     
-    for (int i = 0; i < numBytecodeIDs * numBytecodeIDs; ++i) {
+    for (int i = 0; i < numOpcodeIDs * numOpcodeIDs; ++i) {
         pair<int, int> indexPair = sortedPairIndices[i];
-        long long count = bytecodePairCounts[indexPair.first][indexPair.second];
+        long long count = opcodePairCounts[indexPair.first][indexPair.second];
         
         if (!count)
             break;
         
-        printf("%s%s %s:%s %lld %.2f%%\n", bytecodeNames[indexPair.first], padBytecodeName((BytecodeID)indexPair.first, 28), bytecodeNames[indexPair.second], padBytecodeName((BytecodeID)indexPair.second, 28), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
+        printf("%s%s %s:%s %lld %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
     }
     
     printf("\n");
-    printf("Most common bytecodes and sequences:\n");
+    printf("Most common opcodes and sequences:\n");
 
-    for (int i = 0; i < numBytecodeIDs; ++i) {
+    for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
-        long long bytecodeCount = bytecodeCounts[index];
-        double bytecodeProportion = ((double) bytecodeCount) / ((double) totalInstructions);
-        if (bytecodeProportion < 0.0001)
+        long long opcodeCount = opcodeCounts[index];
+        double opcodeProportion = ((double) opcodeCount) / ((double) totalInstructions);
+        if (opcodeProportion < 0.0001)
             break;
-        printf("\n%s:%s %lld - %.2f%%\n", bytecodeNames[index], padBytecodeName((BytecodeID)index, 28), bytecodeCount, bytecodeProportion * 100.0);
+        printf("\n%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCount, opcodeProportion * 100.0);
 
-        for (int j = 0; j < numBytecodeIDs * numBytecodeIDs; ++j) {
+        for (int j = 0; j < numOpcodeIDs * numOpcodeIDs; ++j) {
             pair<int, int> indexPair = sortedPairIndices[j];
-            long long pairCount = bytecodePairCounts[indexPair.first][indexPair.second];
+            long long pairCount = opcodePairCounts[indexPair.first][indexPair.second];
             double pairProportion = ((double) pairCount) / ((double) totalInstructionPairs);
         
-            if (!pairCount || pairProportion < 0.0001 || pairProportion < bytecodeProportion / 100)
+            if (!pairCount || pairProportion < 0.0001 || pairProportion < opcodeProportion / 100)
                 break;
 
             if (indexPair.first != index && indexPair.second != index)
                 continue;
 
-            printf("    %s%s %s:%s %lld - %.2f%%\n", bytecodeNames[indexPair.first], padBytecodeName((BytecodeID)indexPair.first, 28), bytecodeNames[indexPair.second], padBytecodeName((BytecodeID)indexPair.second, 28), pairCount, pairProportion * 100.0);
+            printf("    %s%s %s:%s %lld - %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), pairCount, pairProportion * 100.0);
         }
         
     }
     printf("\n");
 }
 
-void BytecodeStats::recordInstruction(int bytecode)
+void OpcodeStats::recordInstruction(int opcode)
 {
-    bytecodeCounts[bytecode]++;
+    opcodeCounts[opcode]++;
     
-    if (lastBytecode != -1)
-        bytecodePairCounts[lastBytecode][bytecode]++;
+    if (lastOpcode != -1)
+        opcodePairCounts[lastOpcode][opcode]++;
     
-    lastBytecode = bytecode;
+    lastOpcode = opcode;
 }
 
-void BytecodeStats::resetLastInstruction()
+void OpcodeStats::resetLastInstruction()
 {
-    lastBytecode = -1;
+    lastOpcode = -1;
 }
 
 #endif

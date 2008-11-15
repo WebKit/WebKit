@@ -111,26 +111,26 @@ namespace JSC {
         
         RegisterFile& registerFile() { return m_registerFile; }
         
-        Bytecode getBytecode(BytecodeID id)
+        Opcode getOpcode(OpcodeID id)
         {
             #if HAVE(COMPUTED_GOTO)
-                return m_bytecodeTable[id];
+                return m_opcodeTable[id];
             #else
                 return id;
             #endif
         }
 
-        BytecodeID getBytecodeID(Bytecode bytecode)
+        OpcodeID getOpcodeID(Opcode opcode)
         {
             #if HAVE(COMPUTED_GOTO)
-                ASSERT(isBytecode(bytecode));
-                return m_bytecodeIDTable.get(bytecode);
+                ASSERT(isOpcode(opcode));
+                return m_opcodeIDTable.get(opcode);
             #else
-                return bytecode;
+                return opcode;
             #endif
         }
 
-        bool isBytecode(Bytecode bytecode);
+        bool isOpcode(Opcode);
         
         JSValue* execute(ProgramNode*, CallFrame*, ScopeChainNode*, JSObject* thisObj, JSValue** exception);
         JSValue* execute(FunctionBodyNode*, CallFrame*, JSFunction*, JSObject* thisObj, const ArgList& args, ScopeChainNode*, JSValue** exception);
@@ -318,7 +318,7 @@ namespace JSC {
         void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue* baseValue, const PutPropertySlot&);
         void uncachePutByID(CodeBlock*, Instruction* vPC);
         
-        bool isCallBytecode(Bytecode bytecode) { return bytecode == getBytecode(op_call) || bytecode == getBytecode(op_construct) || bytecode == getBytecode(op_call_eval); }
+        bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
 
 #if ENABLE(CTI)
         static void throwStackOverflowPreviousFrame(CallFrame**, JSGlobalData*, void*& returnAddress);
@@ -355,8 +355,8 @@ namespace JSC {
         void* m_jsFunctionVptr;
 
 #if HAVE(COMPUTED_GOTO)
-        Bytecode m_bytecodeTable[numBytecodeIDs]; // Maps BytecodeID => Bytecode for compiling
-        HashMap<Bytecode, BytecodeID> m_bytecodeIDTable; // Maps Bytecode => BytecodeID for decompiling
+        Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
+        HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
     };
 

@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Bytecodes_h
-#define Bytecodes_h
+#ifndef Opcode_h
+#define Opcode_h
 
 #include <algorithm>
 #include <string.h>
@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-    #define FOR_EACH_BYTECODE_ID(macro) \
+    #define FOR_EACH_OPCODE_ID(macro) \
         macro(op_enter) \
         macro(op_enter_with_activation) \
         macro(op_create_arguments) \
@@ -162,34 +162,34 @@ namespace JSC {
         macro(op_profile_will_call) \
         macro(op_profile_did_call) \
         \
-        macro(op_end) // end must be the last bytecode in the list
+        macro(op_end) // end must be the last opcode in the list
 
-    #define BYTECODE_ID_ENUM(bytecode) bytecode,
-        typedef enum { FOR_EACH_BYTECODE_ID(BYTECODE_ID_ENUM) } BytecodeID;
-    #undef BYTECODE_ID_ENUM
+    #define OPCODE_ID_ENUM(opcode) opcode,
+        typedef enum { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) } OpcodeID;
+    #undef OPCODE_ID_ENUM
 
-    const int numBytecodeIDs = op_end + 1;
+    const int numOpcodeIDs = op_end + 1;
 
-    #define VERIFY_BYTECODE_ID(id) COMPILE_ASSERT(id <= op_end, ASSERT_THAT_JS_BYTECODE_IDS_ARE_VALID);
-        FOR_EACH_BYTECODE_ID(VERIFY_BYTECODE_ID);
-    #undef VERIFY_BYTECODE_ID
+    #define VERIFY_OPCODE_ID(id) COMPILE_ASSERT(id <= op_end, ASSERT_THAT_JS_OPCODE_IDS_ARE_VALID);
+        FOR_EACH_OPCODE_ID(VERIFY_OPCODE_ID);
+    #undef VERIFY_OPCODE_ID
 
 #if HAVE(COMPUTED_GOTO)
-    typedef void* Bytecode;
+    typedef void* Opcode;
 #else
-    typedef BytecodeID Bytecode;
+    typedef OpcodeID Opcode;
 #endif
 
-#if ENABLE(BYTECODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(BYTECODE_STATS)
+#if ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
 
 #define PADDING_STRING "                                "
 #define PADDING_STRING_LENGTH static_cast<unsigned>(strlen(PADDING_STRING))
 
-    extern const char* const bytecodeNames[];
+    extern const char* const opcodeNames[];
 
-    inline const char* padBytecodeName(BytecodeID op, unsigned width)
+    inline const char* padOpcodeName(OpcodeID op, unsigned width)
     {
-        unsigned pad = width - strlen(bytecodeNames[op]);
+        unsigned pad = width - strlen(opcodeNames[op]);
         pad = std::min(pad, PADDING_STRING_LENGTH);
         return PADDING_STRING + PADDING_STRING_LENGTH - pad;
     }
@@ -199,16 +199,16 @@ namespace JSC {
 
 #endif
 
-#if ENABLE(BYTECODE_STATS)
+#if ENABLE(OPCODE_STATS)
 
-    struct BytecodeStats {
-        BytecodeStats();
-        ~BytecodeStats();
-        static long long bytecodeCounts[numBytecodeIDs];
-        static long long bytecodePairCounts[numBytecodeIDs][numBytecodeIDs];
-        static int lastBytecode;
+    struct OpcodeStats {
+        OpcodeStats();
+        ~OpcodeStats();
+        static long long opcodeCounts[numOpcodeIDs];
+        static long long opcodePairCounts[numOpcodeIDs][numOpcodeIDs];
+        static int lastOpcode;
 
-        static void recordInstruction(int bytecode);
+        static void recordInstruction(int opcode);
         static void resetLastInstruction();
     };
 
@@ -216,4 +216,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // Bytecodes_h
+#endif // Opcode_h

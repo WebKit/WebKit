@@ -40,7 +40,7 @@ namespace JSC {
     class StructureIDChain;
 
     struct Instruction {
-        Instruction(Bytecode bytecode) { u.bytecode = bytecode; }
+        Instruction(Opcode opcode) { u.opcode = opcode; }
         Instruction(int operand)
         {
             // We have to initialize one of the pointer members to ensure that
@@ -54,7 +54,7 @@ namespace JSC {
         Instruction(JSCell* jsCell) { u.jsCell = jsCell; }
 
         union {
-            Bytecode bytecode;
+            Opcode opcode;
             int operand;
             StructureID* structureID;
             StructureIDChain* structureIDChain;

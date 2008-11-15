@@ -1093,7 +1093,7 @@ void UnaryOpNode::releaseNodes(NodeReleaser& releaser)
 RegisterID* UnaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RegisterID* src = generator.emitNode(m_expr.get());
-    return generator.emitUnaryOp(bytecode(), generator.finalDestination(dst), src, m_expr->resultDescriptor());
+    return generator.emitUnaryOp(opcodeID(), generator.finalDestination(dst), src, m_expr->resultDescriptor());
 }
 
 // ------------------------------ Binary Operation Nodes -----------------------------------
@@ -1111,8 +1111,8 @@ void BinaryOpNode::releaseNodes(NodeReleaser& releaser)
 
 RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    BytecodeID bytecode = this->bytecode();
-    if (bytecode == op_neq) {
+    OpcodeID opcodeID = this->opcodeID();
+    if (opcodeID == op_neq) {
         if (m_expr1->isNull() || m_expr2->isNull()) {
             RefPtr<RegisterID> src = generator.emitNode(dst, m_expr1->isNull() ? m_expr2.get() : m_expr1.get());
             return generator.emitUnaryOp(op_neq_null, generator.finalDestination(dst, src.get()), src.get(), ResultType::unknown());
@@ -1121,7 +1121,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
 
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBinaryOp(bytecode, generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(m_expr1->resultDescriptor(), m_expr2->resultDescriptor()));
+    return generator.emitBinaryOp(opcodeID, generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(m_expr1->resultDescriptor(), m_expr2->resultDescriptor()));
 }
 
 RegisterID* EqualNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -1147,7 +1147,7 @@ RegisterID* ReverseBinaryOpNode::emitBytecode(BytecodeGenerator& generator, Regi
 {
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBinaryOp(bytecode(), generator.finalDestination(dst, src1.get()), src2, src1.get(), OperandTypes(m_expr2->resultDescriptor(), m_expr1->resultDescriptor()));
+    return generator.emitBinaryOp(opcodeID(), generator.finalDestination(dst, src1.get()), src2, src1.get(), OperandTypes(m_expr2->resultDescriptor(), m_expr1->resultDescriptor()));
 }
 
 RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -1155,7 +1155,7 @@ RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, Re
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    return generator.emitBinaryOp(bytecode(), generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(m_expr1->resultDescriptor(), m_expr2->resultDescriptor()));
+    return generator.emitBinaryOp(opcodeID(), generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(m_expr1->resultDescriptor(), m_expr2->resultDescriptor()));
 }
 
 RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -1248,47 +1248,47 @@ void ReadModifyResolveNode::releaseNodes(NodeReleaser& releaser)
 // FIXME: should this be moved to be a method on BytecodeGenerator?
 static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& generator, RegisterID* dst, RegisterID* src1, RegisterID* src2, Operator oper, OperandTypes types)
 {
-    BytecodeID bytecode;
+    OpcodeID opcodeID;
     switch (oper) {
         case OpMultEq:
-            bytecode = op_mul;
+            opcodeID = op_mul;
             break;
         case OpDivEq:
-            bytecode = op_div;
+            opcodeID = op_div;
             break;
         case OpPlusEq:
-            bytecode = op_add;
+            opcodeID = op_add;
             break;
         case OpMinusEq:
-            bytecode = op_sub;
+            opcodeID = op_sub;
             break;
         case OpLShift:
-            bytecode = op_lshift;
+            opcodeID = op_lshift;
             break;
         case OpRShift:
-            bytecode = op_rshift;
+            opcodeID = op_rshift;
             break;
         case OpURShift:
-            bytecode = op_urshift;
+            opcodeID = op_urshift;
             break;
         case OpAndEq:
-            bytecode = op_bitand;
+            opcodeID = op_bitand;
             break;
         case OpXOrEq:
-            bytecode = op_bitxor;
+            opcodeID = op_bitxor;
             break;
         case OpOrEq:
-            bytecode = op_bitor;
+            opcodeID = op_bitor;
             break;
         case OpModEq:
-            bytecode = op_mod;
+            opcodeID = op_mod;
             break;
         default:
             ASSERT_NOT_REACHED();
             return dst;
     }
     
-    return generator.emitBinaryOp(bytecode, dst, src1, src2, types);
+    return generator.emitBinaryOp(opcodeID, dst, src1, src2, types);
 }
 
 RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -2389,7 +2389,7 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceE
         m_varStack = *varStack;
     if (funcStack)
         m_functionStack = *funcStack;
-#if ENABLE(BYTECODE_SAMPLING)
+#if ENABLE(OPCODE_SAMPLING)
     globalData->interpreter->sampler()->notifyOfScope(this);
 #endif
 }
