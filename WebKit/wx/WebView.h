@@ -118,6 +118,9 @@ public:
     wxString GetAsMarkup();
     wxString GetExternalRepresentation();
     
+    void SetTransparent(bool transparent);
+    bool IsTransparent() const;
+    
     wxString RunScript(const wxString& javascript);
     
     bool CanIncreaseTextSize() const;

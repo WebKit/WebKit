@@ -312,6 +312,30 @@ wxString wxWebView::GetExternalRepresentation()
     return wxEmptyString;
 }
 
+void wxWebView::SetTransparent(bool transparent)
+{
+    WebCore::Frame* frame = 0;
+    if (m_mainFrame)
+        frame = m_mainFrame->GetFrame();
+    
+    if (!frame || !frame->view())
+        return;
+
+    frame->view()->setTransparent(transparent);
+}
+
+bool wxWebView::IsTransparent() const
+{
+    WebCore::Frame* frame = 0;
+    if (m_mainFrame)
+        frame = m_mainFrame->GetFrame();
+
+   if (!frame || !frame->view())
+        return false;
+
+    return frame->view()->isTransparent();
+}
+
 wxString wxWebView::RunScript(const wxString& javascript)
 {
     if (m_mainFrame)
