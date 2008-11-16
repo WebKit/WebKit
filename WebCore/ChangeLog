@@ -1,5 +1,14 @@
 2008-11-16  Darin Adler  <darin@apple.com>
 
+        Suggested by Alexey Proskuryakov.
+
+        - fix the GTK build another way
+
+        * GNUmakefile.am: Add the worker-related source files.
+        * bindings/js/JSEventTarget.cpp: Take the #if back out.
+
+2008-11-16  Darin Adler  <darin@apple.com>
+
         - try to fix GTK build
 
         * bindings/js/JSEventTarget.cpp: Put worker includes inside an #if.

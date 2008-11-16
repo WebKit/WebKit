@@ -2110,8 +2110,10 @@ endif # END ENABLE_XSLT
 # ----
 webcore_sources += \
 	WebCore/bindings/js/JSDedicatedWorkerConstructor.h \
+	WebCore/bindings/js/JSWorker.h \
 	WebCore/bindings/js/JSWorkerContext.h \
 	WebCore/dom/DedicatedWorker.h \
+	WebCore/dom/Worker.h \
 	WebCore/dom/WorkerContext.h
 
 # ----
