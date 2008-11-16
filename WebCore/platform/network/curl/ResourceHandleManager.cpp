@@ -43,6 +43,7 @@
 #include "TextEncoding.h"
 
 #include <errno.h>
+#include <stdio.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(GTK)
@@ -585,7 +586,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     // timeout will occur and do curl_multi_perform
     if (ret && ret != CURLM_CALL_MULTI_PERFORM) {
 #ifndef NDEBUG
-        printf("Error %d starting job %s\n", ret, encodeWithURLEscapeSequences(job->request().url().string()).latin1().data());
+        fprintf(stderr, "Error %d starting job %s\n", ret, encodeWithURLEscapeSequences(job->request().url().string()).latin1().data());
 #endif
         job->cancel();
         return;
