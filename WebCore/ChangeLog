@@ -1,3 +1,9 @@
+2008-11-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        - fix the Gtk+ build
+
+        * GNUmakefile.am:
+
 2008-11-16  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build
