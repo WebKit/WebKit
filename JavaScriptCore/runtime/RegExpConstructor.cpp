@@ -103,7 +103,7 @@ struct RegExpConstructorPrivate {
     bool multiline : 1;
 };
 
-RegExpConstructor::RegExpConstructor(ExecState* exec, PassRefPtr<StructureID> structure, RegExpPrototype* regExpPrototype)
+RegExpConstructor::RegExpConstructor(ExecState* exec, PassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, "RegExp"))
     , d(new RegExpConstructorPrivate)
 {

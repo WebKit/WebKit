@@ -45,9 +45,9 @@ public:
         return exec->lexicalGlobalObject()->functionPrototype();
     }
 
-    static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
+    static PassRefPtr<Structure> createStructure(JSValue* prototype)
     {
-        return StructureID::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance));
+        return Structure::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance));
     }
 
 private:

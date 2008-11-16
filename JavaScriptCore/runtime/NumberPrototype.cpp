@@ -44,7 +44,7 @@ static JSValue* numberProtoFuncToPrecision(ExecState*, JSObject*, JSValue*, cons
 
 // ECMA 15.7.4
 
-NumberPrototype::NumberPrototype(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure)
+NumberPrototype::NumberPrototype(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
     : NumberObject(structure)
 {
     setInternalValue(jsNumber(exec, 0));

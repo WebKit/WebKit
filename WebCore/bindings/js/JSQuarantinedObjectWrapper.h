@@ -44,13 +44,13 @@ namespace WebCore {
 
         static const JSC::ClassInfo s_info;
 
-        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* proto) 
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* proto) 
         { 
-            return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::OverridesHasInstance)); 
+            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::OverridesHasInstance)); 
         }
 
     protected:
-        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::StructureID>);
+        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::Structure>);
 
         virtual void mark();
 

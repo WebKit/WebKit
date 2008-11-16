@@ -33,15 +33,15 @@ namespace JSC {
 
 class JSCallbackConstructor : public JSObject {
 public:
-    JSCallbackConstructor(PassRefPtr<StructureID>, JSClassRef, JSObjectCallAsConstructorCallback);
+    JSCallbackConstructor(PassRefPtr<Structure>, JSClassRef, JSObjectCallAsConstructorCallback);
     virtual ~JSCallbackConstructor();
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo info;
     
-    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    static PassRefPtr<Structure> createStructure(JSValue* proto) 
     { 
-        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | HasStandardGetOwnPropertySlot)); 
+        return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | HasStandardGetOwnPropertySlot)); 
     }
 
 private:

@@ -28,8 +28,8 @@ namespace JSC {
 
     class StringObject : public JSWrapperObject {
     public:
-        StringObject(ExecState*, PassRefPtr<StructureID>);
-        StringObject(ExecState*, PassRefPtr<StructureID>, const UString&);
+        StringObject(ExecState*, PassRefPtr<Structure>);
+        StringObject(ExecState*, PassRefPtr<Structure>, const UString&);
 
         static StringObject* create(ExecState*, JSString*);
 
@@ -45,13 +45,13 @@ namespace JSC {
 
         JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
 
-        static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
+        static PassRefPtr<Structure> createStructure(JSValue* prototype)
         {
-            return StructureID::create(prototype, TypeInfo(ObjectType));
+            return Structure::create(prototype, TypeInfo(ObjectType));
         }
 
     protected:
-        StringObject(PassRefPtr<StructureID>, JSString*);
+        StringObject(PassRefPtr<Structure>, JSString*);
 
     private:
         virtual UString toString(ExecState*) const;

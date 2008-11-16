@@ -46,7 +46,7 @@ static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const A
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
 
-StringConstructor::StringConstructor(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure, StringPrototype* stringPrototype)
+StringConstructor::StringConstructor(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure, StringPrototype* stringPrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, stringPrototype->classInfo()->className))
 {
     // ECMA 15.5.3.1 String.prototype

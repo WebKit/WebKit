@@ -34,7 +34,7 @@
 
 const ClassInfo UserObjectImp::info = { "UserObject", 0, 0, 0 };
 
-UserObjectImp::UserObjectImp(PassRefPtr<StructureID> structure, JSUserObject* userObject)
+UserObjectImp::UserObjectImp(PassRefPtr<Structure> structure, JSUserObject* userObject)
     : JSObject(structure)
     , fJSUserObject((JSUserObject*)userObject->Retain())
 {

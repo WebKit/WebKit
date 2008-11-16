@@ -40,7 +40,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 const ClassInfo JSActivation::info = { "JSActivation", 0, 0, 0 };
 
 JSActivation::JSActivation(CallFrame* callFrame, PassRefPtr<FunctionBodyNode> functionBody)
-    : Base(callFrame->globalData().activationStructureID, new JSActivationData(functionBody, callFrame))
+    : Base(callFrame->globalData().activationStructure, new JSActivationData(functionBody, callFrame))
 {
 }
 

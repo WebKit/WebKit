@@ -1,3 +1,21 @@
+2008-11-15  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Geoff Garen.
+
+        - do the long-planned StructureID -> Structure rename
+
+        * JSRun.cpp:
+        (JSGlueGlobalObject::JSGlueGlobalObject):
+        (JSRun::JSRun):
+        * JSRun.h:
+        (JSGlueGlobalObject::userObjectStructure):
+        * JSUtils.cpp:
+        (getThreadGlobalObject):
+        * UserObjectImp.cpp:
+        (UserObjectImp::UserObjectImp):
+        * UserObjectImp.h:
+        (UserObjectImp::createStructure):
+
 2008-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

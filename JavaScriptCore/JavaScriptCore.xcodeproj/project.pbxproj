@@ -83,8 +83,8 @@
 		7E2ADD8E0E79AAD500D50C51 /* CharacterClassConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */; };
 		7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */; };
 		7E4C89140ECA0F9A00DBEEEC /* EvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C89130ECA0F9A00DBEEEC /* EvalCodeCache.h */; };
-		7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureIDChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7E4EE70F0EBB7A5B005934AA /* StructureIDChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */; };
+		7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */; };
 		7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */; };
 		8613F45A0E3A433E00C948FD /* SamplingTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8613F4580E3A433E00C948FD /* SamplingTool.cpp */; };
 		8613F45B0E3A433E00C948FD /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 8613F4590E3A433E00C948FD /* SamplingTool.h */; };
@@ -287,7 +287,7 @@
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureIDTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9041470EB9250900FE26FA /* StructureTransitionTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
@@ -295,8 +295,8 @@
 		BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203460E17135E002C7E82 /* DateConstructor.h */; };
 		BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203480E17135E002C7E82 /* DatePrototype.h */; };
 		BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */; };
-		BCDE3AB80E6C82F5001453A7 /* StructureID.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE3AB10E6C82CF001453A7 /* StructureID.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */; };
+		BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE3AB10E6C82CF001453A7 /* Structure.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE3AB00E6C82CF001453A7 /* Structure.cpp */; };
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0A272630E50A06300E96E15 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A2723F0E509F1E00E96E15 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -527,8 +527,8 @@
 		7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CharacterClassConstructor.cpp; sourceTree = "<group>"; };
 		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
 		7E4C89130ECA0F9A00DBEEEC /* EvalCodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EvalCodeCache.h; path = VM/EvalCodeCache.h; sourceTree = "<group>"; };
-		7E4EE7080EBB7963005934AA /* StructureIDChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDChain.h; sourceTree = "<group>"; };
-		7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureIDChain.cpp; sourceTree = "<group>"; };
+		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
+		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
 		7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeInfo.h; sourceTree = "<group>"; };
 		8613F4580E3A433E00C948FD /* SamplingTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SamplingTool.cpp; path = VM/SamplingTool.cpp; sourceTree = "<group>"; };
 		8613F4590E3A433E00C948FD /* SamplingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SamplingTool.h; path = VM/SamplingTool.h; sourceTree = "<group>"; };
@@ -667,7 +667,7 @@
 		BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNumberCell.h; sourceTree = "<group>"; };
 		BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCell.cpp; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
-		BC9041470EB9250900FE26FA /* StructureIDTransitionTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTransitionTable.h; sourceTree = "<group>"; };
+		BC9041470EB9250900FE26FA /* StructureTransitionTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureTransitionTable.h; sourceTree = "<group>"; };
 		BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyMapHashTable.h; sourceTree = "<group>"; };
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
 		BCA62DFE0E2826230004F30D /* CallData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallData.cpp; sourceTree = "<group>"; };
@@ -682,8 +682,8 @@
 		BCD203470E17135E002C7E82 /* DatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatePrototype.cpp; sourceTree = "<group>"; };
 		BCD203480E17135E002C7E82 /* DatePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.h; sourceTree = "<group>"; };
 		BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.lut.h; sourceTree = "<group>"; };
-		BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureID.cpp; sourceTree = "<group>"; };
-		BCDE3AB10E6C82CF001453A7 /* StructureID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureID.h; sourceTree = "<group>"; };
+		BCDE3AB00E6C82CF001453A7 /* Structure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Structure.cpp; sourceTree = "<group>"; };
+		BCDE3AB10E6C82CF001453A7 /* Structure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Structure.h; sourceTree = "<group>"; };
 		BCF605110E203EF800B9A64D /* ArgList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgList.cpp; sourceTree = "<group>"; };
 		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
@@ -1272,11 +1272,11 @@
 				BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */,
 				BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */,
 				BC18C3C60E16EE3300B34460 /* StringPrototype.h */,
-				BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */,
-				BCDE3AB10E6C82CF001453A7 /* StructureID.h */,
-				7E4EE70E0EBB7A5B005934AA /* StructureIDChain.cpp */,
-				7E4EE7080EBB7963005934AA /* StructureIDChain.h */,
-				BC9041470EB9250900FE26FA /* StructureIDTransitionTable.h */,
+				BCDE3AB00E6C82CF001453A7 /* Structure.cpp */,
+				BCDE3AB10E6C82CF001453A7 /* Structure.h */,
+				7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */,
+				7E4EE7080EBB7963005934AA /* StructureChain.h */,
+				BC9041470EB9250900FE26FA /* StructureTransitionTable.h */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
@@ -1563,18 +1563,18 @@
 				869081410E640C89000D36ED /* X86Assembler.h in Headers */,
 				869083160E6518D7000D36ED /* WREC.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
-				BCDE3AB80E6C82F5001453A7 /* StructureID.h in Headers */,
+				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				7E2ADD8E0E79AAD500D50C51 /* CharacterClassConstructor.h in Headers */,
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				14F3488F0E95EF8A003648BC /* CollectorHeapIterator.h in Headers */,
-				BC9041480EB9250900FE26FA /* StructureIDTransitionTable.h in Headers */,
+				BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
-				7E4EE7090EBB7963005934AA /* StructureIDChain.h in Headers */,
+				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
 				7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */,
 				7E4C89140ECA0F9A00DBEEEC /* EvalCodeCache.h in Headers */,
 				FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */,
@@ -1909,10 +1909,10 @@
 				8683B02E0E636482004C19EE /* CTI.cpp in Sources */,
 				869083150E6518D7000D36ED /* WREC.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
-				BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */,
+				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E2ADD900E79AC1100D50C51 /* CharacterClassConstructor.cpp in Sources */,
 				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
-				7E4EE70F0EBB7A5B005934AA /* StructureIDChain.cpp in Sources */,
+				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

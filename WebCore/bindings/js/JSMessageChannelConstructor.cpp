@@ -39,7 +39,7 @@ namespace WebCore {
 const ClassInfo JSMessageChannelConstructor::s_info = { "MessageChannelConstructor", 0, 0, 0 };
 
 JSMessageChannelConstructor::JSMessageChannelConstructor(ExecState* exec, ScriptExecutionContext* scriptExecutionContext)
-    : DOMObject(JSMessageChannelConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMObject(JSMessageChannelConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
     , m_scriptExecutionContext(scriptExecutionContext)
 {
     if (m_scriptExecutionContext->isDocument())

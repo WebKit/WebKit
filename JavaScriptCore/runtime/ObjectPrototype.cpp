@@ -39,7 +39,7 @@ static JSValue* objectProtoFuncLookupSetter(ExecState*, JSObject*, JSValue*, con
 static JSValue* objectProtoFuncPropertyIsEnumerable(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* objectProtoFuncToLocaleString(ExecState*, JSObject*, JSValue*, const ArgList&);
 
-ObjectPrototype::ObjectPrototype(ExecState* exec, PassRefPtr<StructureID> stucture, StructureID* prototypeFunctionStructure)
+ObjectPrototype::ObjectPrototype(ExecState* exec, PassRefPtr<Structure> stucture, Structure* prototypeFunctionStructure)
     : JSObject(stucture)
 {
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);

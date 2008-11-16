@@ -173,51 +173,51 @@ static void printPutByIdOp(int location, Vector<Instruction>::const_iterator& it
     it += 4;
 }
 
-void CodeBlock::printStructureID(const char* name, const Instruction* vPC, int operand) const
+void CodeBlock::printStructure(const char* name, const Instruction* vPC, int operand) const
 {
     unsigned instructionOffset = vPC - instructions.begin();
-    printf("  [%4d] %s: %s\n", instructionOffset, name, pointerToSourceString(vPC[operand].u.structureID).UTF8String().c_str());
+    printf("  [%4d] %s: %s\n", instructionOffset, name, pointerToSourceString(vPC[operand].u.structure).UTF8String().c_str());
 }
 
-void CodeBlock::printStructureIDs(const Instruction* vPC) const
+void CodeBlock::printStructures(const Instruction* vPC) const
 {
     BytecodeInterpreter* interpreter = globalData->interpreter;
     unsigned instructionOffset = vPC - instructions.begin();
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id)) {
-        printStructureID("get_by_id", vPC, 4);
+        printStructure("get_by_id", vPC, 4);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
-        printStructureID("get_by_id_self", vPC, 4);
+        printStructure("get_by_id_self", vPC, 4);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
-        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str());
+        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(vPC[4].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structure).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
-        printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_new", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[6].u.structureIDChain).UTF8String().c_str());
+        printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_new", pointerToSourceString(vPC[4].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[6].u.structureChain).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
-        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureIDChain).UTF8String().c_str());
+        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(vPC[4].u.structure).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureChain).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id)) {
-        printStructureID("put_by_id", vPC, 4);
+        printStructure("put_by_id", vPC, 4);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
-        printStructureID("put_by_id_replace", vPC, 4);
+        printStructure("put_by_id_replace", vPC, 4);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
-        printStructureID("resolve_global", vPC, 4);
+        printStructure("resolve_global", vPC, 4);
         return;
     }
 
-    // These instructions doesn't ref StructureIDs.
+    // These instructions doesn't ref Structures.
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_call) || vPC[0].u.opcode == interpreter->getOpcode(op_call_eval) || vPC[0].u.opcode == interpreter->getOpcode(op_construct));
 }
 
@@ -278,19 +278,19 @@ void CodeBlock::dump(ExecState* exec) const
     }
 
     if (globalResolveInstructions.size() || propertyAccessInstructions.size())
-        printf("\nStructureIDs:\n");
+        printf("\nStructures:\n");
 
     if (globalResolveInstructions.size()) {
         size_t i = 0;
         do {
-             printStructureIDs(&instructions[globalResolveInstructions[i]]);
+             printStructures(&instructions[globalResolveInstructions[i]]);
              ++i;
         } while (i < globalResolveInstructions.size());
     }
     if (propertyAccessInstructions.size()) {
         size_t i = 0;
         do {
-             printStructureIDs(&instructions[propertyAccessInstructions[i].bytecodeIndex]);
+             printStructures(&instructions[propertyAccessInstructions[i].bytecodeIndex]);
              ++i;
         } while (i < propertyAccessInstructions.size());
     }
@@ -950,11 +950,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 CodeBlock::~CodeBlock()
 {
     for (size_t size = globalResolveInstructions.size(), i = 0; i < size; ++i) {
-        derefStructureIDs(&instructions[globalResolveInstructions[i]]);
+        derefStructures(&instructions[globalResolveInstructions[i]]);
     }
 
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
-        derefStructureIDs(&instructions[propertyAccessInstructions[i].bytecodeIndex]);
+        derefStructures(&instructions[propertyAccessInstructions[i].bytecodeIndex]);
         if (propertyAccessInstructions[i].stubRoutine)
             WTF::fastFreeExecutable(propertyAccessInstructions[i].stubRoutine);
     }
@@ -986,74 +986,74 @@ void CodeBlock::unlinkCallers()
 }
 #endif
 
-void CodeBlock::derefStructureIDs(Instruction* vPC) const
+void CodeBlock::derefStructures(Instruction* vPC) const
 {
     BytecodeInterpreter* interpreter = globalData->interpreter;
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
-        vPC[4].u.structureID->deref();
+        vPC[4].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
-        vPC[4].u.structureID->deref();
-        vPC[5].u.structureID->deref();
+        vPC[4].u.structure->deref();
+        vPC[5].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
-        vPC[4].u.structureID->deref();
-        vPC[5].u.structureIDChain->deref();
+        vPC[4].u.structure->deref();
+        vPC[5].u.structureChain->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
-        vPC[4].u.structureID->deref();
-        vPC[5].u.structureID->deref();
-        vPC[6].u.structureIDChain->deref();
+        vPC[4].u.structure->deref();
+        vPC[5].u.structure->deref();
+        vPC[6].u.structureChain->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
-        vPC[4].u.structureID->deref();
+        vPC[4].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
-        if(vPC[4].u.structureID)
-            vPC[4].u.structureID->deref();
+        if(vPC[4].u.structure)
+            vPC[4].u.structure->deref();
         return;
     }
     
-    // These instructions don't ref their StructureIDs.
+    // These instructions don't ref their Structures.
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_get_array_length) || vPC[0].u.opcode == interpreter->getOpcode(op_get_string_length));
 }
 
-void CodeBlock::refStructureIDs(Instruction* vPC) const
+void CodeBlock::refStructures(Instruction* vPC) const
 {
     BytecodeInterpreter* interpreter = globalData->interpreter;
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self)) {
-        vPC[4].u.structureID->ref();
+        vPC[4].u.structure->ref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto)) {
-        vPC[4].u.structureID->ref();
-        vPC[5].u.structureID->ref();
+        vPC[4].u.structure->ref();
+        vPC[5].u.structure->ref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain)) {
-        vPC[4].u.structureID->ref();
-        vPC[5].u.structureIDChain->ref();
+        vPC[4].u.structure->ref();
+        vPC[5].u.structureChain->ref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
-        vPC[4].u.structureID->ref();
-        vPC[5].u.structureID->ref();
-        vPC[6].u.structureIDChain->ref();
+        vPC[4].u.structure->ref();
+        vPC[5].u.structure->ref();
+        vPC[6].u.structureChain->ref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
-        vPC[4].u.structureID->ref();
+        vPC[4].u.structure->ref();
         return;
     }
     
-    // These instructions don't ref their StructureIDs.
+    // These instructions don't ref their Structures.
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic));
 }
 

@@ -857,23 +857,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StructureID.cpp"
+				RelativePath="..\..\runtime\Structure.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StructureID.h"
+				RelativePath="..\..\runtime\Structure.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StructureIDChain.cpp"
+				RelativePath="..\..\runtime\StructureChain.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StructureIDChain.h"
+				RelativePath="..\..\runtime\StructureChain.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StructureIDTransitionTable.h"
+				RelativePath="..\..\runtime\StructureTransitionTable.h"
 				>
 			</File>
 			<File

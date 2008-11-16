@@ -50,7 +50,7 @@ namespace JSC {
     class BytecodeInterpreter;
     class Parser;
     class ParserRefCounted;
-    class StructureID;
+    class Structure;
     class UString;
     struct HashTable;
 
@@ -78,13 +78,13 @@ namespace JSC {
         const HashTable* regExpConstructorTable;
         const HashTable* stringTable;
         
-        RefPtr<StructureID> activationStructureID;
-        RefPtr<StructureID> interruptedExecutionErrorStructure;
-        RefPtr<StructureID> staticScopeStructureID;
-        RefPtr<StructureID> stringStructureID;
-        RefPtr<StructureID> notAnObjectErrorStubStructure;
-        RefPtr<StructureID> notAnObjectStructure;
-        RefPtr<StructureID> numberStructureID;
+        RefPtr<Structure> activationStructure;
+        RefPtr<Structure> interruptedExecutionErrorStructure;
+        RefPtr<Structure> staticScopeStructure;
+        RefPtr<Structure> stringStructure;
+        RefPtr<Structure> notAnObjectErrorStubStructure;
+        RefPtr<Structure> notAnObjectStructure;
+        RefPtr<Structure> numberStructure;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

@@ -56,13 +56,13 @@ public:
         return exec->lexicalGlobalObject()->objectPrototype();
     }
 
-    static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
+    static PassRefPtr<Structure> createStructure(JSValue* prototype)
     {
-        return StructureID::create(prototype, TypeInfo(ObjectType));
+        return Structure::create(prototype, TypeInfo(ObjectType));
     }
 
 protected:
-    RuntimeObjectImp(ExecState*, PassRefPtr<StructureID>, PassRefPtr<Bindings::Instance>);
+    RuntimeObjectImp(ExecState*, PassRefPtr<Structure>, PassRefPtr<Bindings::Instance>);
 
 private:
     friend class Bindings::Instance;

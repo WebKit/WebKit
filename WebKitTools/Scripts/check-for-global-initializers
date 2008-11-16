@@ -95,7 +95,7 @@ for my $file (sort @files) {
             if ($target eq "JavaScriptCore") {
                 next if $shortName eq "AllInOneFile.o";
                 next if $shortName eq "Opcode.o";
-                next if $shortName eq "StructureID.o";
+                next if $shortName eq "Structure.o";
                 next if $shortName eq "nodes.o";
             }
             if ($target eq "WebCore") {

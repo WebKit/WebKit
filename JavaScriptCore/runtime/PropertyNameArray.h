@@ -23,7 +23,7 @@
 
 #include "ExecState.h"
 #include "Identifier.h"
-#include "StructureID.h"
+#include "Structure.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -41,21 +41,21 @@ namespace JSC {
 
         PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
 
-        void setCachedStructureID(StructureID* structureID) { m_cachedStructureID = structureID; }
-        StructureID* cachedStructureID() const { return m_cachedStructureID; }
+        void setCachedStructure(Structure* structure) { m_cachedStructure = structure; }
+        Structure* cachedStructure() const { return m_cachedStructure; }
 
-        void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
-        StructureIDChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
+        void setCachedPrototypeChain(PassRefPtr<StructureChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
+        StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
 
     private:
         PropertyNameArrayData()
-            : m_cachedStructureID(0)
+            : m_cachedStructure(0)
         {
         }
 
         PropertyNameVector m_propertyNameVector;
-        StructureID* m_cachedStructureID;
-        RefPtr<StructureIDChain> m_cachedPrototypeChain;
+        Structure* m_cachedStructure;
+        RefPtr<StructureChain> m_cachedPrototypeChain;
     };
 
     class PropertyNameArray {

@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StructureID_h
-#define StructureID_h
+#ifndef Structure_h
+#define Structure_h
 
 #include "Identifier.h"
 #include "JSType.h"
 #include "JSValue.h"
 #include "PropertyMapHashTable.h"
-#include "StructureIDChain.h"
-#include "StructureIDTransitionTable.h"
+#include "StructureChain.h"
+#include "StructureTransitionTable.h"
 #include "TypeInfo.h"
 #include "UString.h"
 #include <wtf/HashFunctions.h>
@@ -51,12 +51,12 @@ namespace JSC {
     class PropertyNameArray;
     class PropertyNameArrayData;
 
-    class StructureID : public RefCounted<StructureID> {
+    class Structure : public RefCounted<Structure> {
     public:
         friend class CTI;
-        static PassRefPtr<StructureID> create(JSValue* prototype, const TypeInfo& typeInfo)
+        static PassRefPtr<Structure> create(JSValue* prototype, const TypeInfo& typeInfo)
         {
-            return adoptRef(new StructureID(prototype, typeInfo));
+            return adoptRef(new Structure(prototype, typeInfo));
         }
 
         static void startIgnoringLeaks();
@@ -64,15 +64,15 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& propertyName, unsigned attributes, size_t& offset);
-        static PassRefPtr<StructureID> addPropertyTransitionToExistingStructure(StructureID*, const Identifier& propertyName, unsigned attributes, size_t& offset);
-        static PassRefPtr<StructureID> removePropertyTransition(StructureID*, const Identifier& propertyName, size_t& offset);
-        static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
-        static PassRefPtr<StructureID> getterSetterTransition(StructureID*);
-        static PassRefPtr<StructureID> toDictionaryTransition(StructureID*);
-        static PassRefPtr<StructureID> fromDictionaryTransition(StructureID*);
+        static PassRefPtr<Structure> addPropertyTransition(Structure*, const Identifier& propertyName, unsigned attributes, size_t& offset);
+        static PassRefPtr<Structure> addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, size_t& offset);
+        static PassRefPtr<Structure> removePropertyTransition(Structure*, const Identifier& propertyName, size_t& offset);
+        static PassRefPtr<Structure> changePrototypeTransition(Structure*, JSValue* prototype);
+        static PassRefPtr<Structure> getterSetterTransition(Structure*);
+        static PassRefPtr<Structure> toDictionaryTransition(Structure*);
+        static PassRefPtr<Structure> fromDictionaryTransition(Structure*);
 
-        ~StructureID();
+        ~Structure();
 
         void mark()
         {
@@ -95,11 +95,11 @@ namespace JSC {
         JSValue* storedPrototype() const { return m_prototype; }
         JSValue* prototypeForLookup(ExecState*); 
 
-        StructureID* previousID() const { return m_previous.get(); }
+        Structure* previousID() const { return m_previous.get(); }
 
-        StructureIDChain* createCachedPrototypeChain();
-        void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
-        StructureIDChain* cachedPrototypeChain() const { return m_cachedPrototypeChain.get(); }
+        StructureChain* createCachedPrototypeChain();
+        void setCachedPrototypeChain(PassRefPtr<StructureChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
+        StructureChain* cachedPrototypeChain() const { return m_cachedPrototypeChain.get(); }
 
         void growPropertyStorageCapacity();
         size_t propertyStorageCapacity() const { return m_propertyStorageCapacity; }
@@ -115,7 +115,7 @@ namespace JSC {
         bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == WTF::notFound; }
 
     private:
-        StructureID(JSValue* prototype, const TypeInfo&);
+        Structure(JSValue* prototype, const TypeInfo&);
 
         size_t put(const Identifier& propertyName, unsigned attributes);
         size_t remove(const Identifier& propertyName);
@@ -147,15 +147,15 @@ namespace JSC {
         TypeInfo m_typeInfo;
 
         JSValue* m_prototype;
-        RefPtr<StructureIDChain> m_cachedPrototypeChain;
+        RefPtr<StructureChain> m_cachedPrototypeChain;
 
-        RefPtr<StructureID> m_previous;
+        RefPtr<Structure> m_previous;
         UString::Rep* m_nameInPrevious;
 
         size_t m_transitionCount;
         union {
-            StructureID* singleTransition;
-            StructureIDTransitionTable* table;
+            Structure* singleTransition;
+            StructureTransitionTable* table;
         } m_transitions;
 
         RefPtr<PropertyNameArrayData> m_cachedPropertyNameArrayData;
@@ -173,7 +173,7 @@ namespace JSC {
         unsigned m_attributesInPrevious : 5;
     };
 
-    inline size_t StructureID::get(const Identifier& propertyName)
+    inline size_t Structure::get(const Identifier& propertyName)
     {
         ASSERT(!propertyName.isNull());
 
@@ -220,4 +220,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // StructureID_h
+#endif // Structure_h

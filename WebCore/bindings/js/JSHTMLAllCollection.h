@@ -35,14 +35,14 @@ namespace WebCore {
 
     class JSHTMLAllCollection : public JSHTMLCollection {
     public:
-        JSHTMLAllCollection(PassRefPtr<JSC::StructureID> structure, PassRefPtr<HTMLCollection> collection)
+        JSHTMLAllCollection(PassRefPtr<JSC::Structure> structure, PassRefPtr<HTMLCollection> collection)
             : JSHTMLCollection(structure, collection)
         {
         }
 
-        static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* proto) 
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* proto) 
         { 
-            return JSC::StructureID::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::MasqueradesAsUndefined)); 
+            return JSC::Structure::create(proto, JSC::TypeInfo(JSC::ObjectType, JSC::MasqueradesAsUndefined)); 
         }
 
         static const JSC::ClassInfo s_info;

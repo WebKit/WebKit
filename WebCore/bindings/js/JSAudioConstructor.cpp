@@ -41,7 +41,7 @@ namespace WebCore {
 const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, ScriptExecutionContext* context)
-    : DOMObject(JSAudioConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMObject(JSAudioConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
 {
     ASSERT(context->isDocument());
     m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));

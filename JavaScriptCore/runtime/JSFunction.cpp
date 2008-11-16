@@ -183,7 +183,7 @@ ConstructType JSFunction::getConstructData(ConstructData& constructData)
 
 JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
 {
-    StructureID* structure;
+    Structure* structure;
     JSValue* prototype = get(exec, exec->propertyNames().prototype);
     if (prototype->isObject())
         structure = asObject(prototype)->inheritorID();

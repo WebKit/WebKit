@@ -31,13 +31,13 @@
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
 #include "ScopeChain.h"
-#include "StructureID.h"
+#include "Structure.h"
 
 namespace JSC {
 
     class InternalFunction;
     class PropertyNameArray;
-    class StructureID;
+    class Structure;
     struct HashEntry;
     struct HashTable;
 
@@ -59,7 +59,7 @@ namespace JSC {
         friend class JSCell;
 
     public:
-        explicit JSObject(PassRefPtr<StructureID>);
+        explicit JSObject(PassRefPtr<Structure>);
 
         virtual void mark();
 
@@ -72,8 +72,8 @@ namespace JSC {
         JSValue* prototype() const;
         void setPrototype(JSValue* prototype);
         
-        void setStructureID(PassRefPtr<StructureID>);
-        StructureID* inheritorID();
+        void setStructure(PassRefPtr<Structure>);
+        Structure* inheritorID();
 
         PropertyStorage& propertyStorage() { return m_propertyStorage; }
 
@@ -124,19 +124,19 @@ namespace JSC {
         // This get function only looks at the property map.
         JSValue* getDirect(const Identifier& propertyName) const
         {
-            size_t offset = m_structureID->get(propertyName);
+            size_t offset = m_structure->get(propertyName);
             return offset != WTF::notFound ? m_propertyStorage[offset] : noValue();
         }
 
         JSValue** getDirectLocation(const Identifier& propertyName)
         {
-            size_t offset = m_structureID->get(propertyName);
+            size_t offset = m_structure->get(propertyName);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
         JSValue** getDirectLocation(const Identifier& propertyName, unsigned& attributes)
         {
-            size_t offset = m_structureID->get(propertyName, attributes);
+            size_t offset = m_structure->get(propertyName, attributes);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
@@ -150,11 +150,11 @@ namespace JSC {
             return &m_propertyStorage[offset];
         }
 
-        void transitionTo(StructureID*);
+        void transitionTo(Structure*);
 
         void removeDirect(const Identifier& propertyName);
-        bool hasCustomProperties() { return !m_structureID->isEmpty(); }
-        bool hasGetterSetterProperties() { return m_structureID->hasGetterSetterProperties(); }
+        bool hasCustomProperties() { return !m_structure->isEmpty(); }
+        bool hasGetterSetterProperties() { return m_structure->hasGetterSetterProperties(); }
 
         void putDirect(const Identifier& propertyName, JSValue* value, unsigned attr = 0);
         void putDirect(const Identifier& propertyName, JSValue* value, unsigned attr, bool checkReadOnly, PutPropertySlot& slot);
@@ -185,9 +185,9 @@ namespace JSC {
         static const size_t inlineStorageCapacity = 2;
         static const size_t nonInlineBaseStorageCapacity = 16;
 
-        static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
+        static PassRefPtr<Structure> createStructure(JSValue* prototype)
         {
-            return StructureID::create(prototype, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot));
+            return Structure::create(prototype, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot));
         }
 
     protected:
@@ -197,9 +197,9 @@ namespace JSC {
         bool inlineGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
 
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
-        StructureID* createInheritorID();
+        Structure* createInheritorID();
 
-        RefPtr<StructureID> m_inheritorID;
+        RefPtr<Structure> m_inheritorID;
 
         PropertyStorage m_propertyStorage;        
         JSValue* m_inlineStorage[inlineStorageCapacity];
@@ -215,43 +215,43 @@ inline JSObject* asObject(JSValue* value)
     return static_cast<JSObject*>(asCell(value));
 }
 
-inline JSObject::JSObject(PassRefPtr<StructureID> structureID)
-    : JSCell(structureID.releaseRef()) // ~JSObject balances this ref()
+inline JSObject::JSObject(PassRefPtr<Structure> structure)
+    : JSCell(structure.releaseRef()) // ~JSObject balances this ref()
     , m_propertyStorage(m_inlineStorage)
 {
-    ASSERT(m_structureID);
-    ASSERT(m_structureID->propertyStorageCapacity() == inlineStorageCapacity);
-    ASSERT(m_structureID->isEmpty());
+    ASSERT(m_structure);
+    ASSERT(m_structure->propertyStorageCapacity() == inlineStorageCapacity);
+    ASSERT(m_structure->isEmpty());
     ASSERT(prototype()->isNull() || Heap::heap(this) == Heap::heap(prototype()));
 }
 
 inline JSObject::~JSObject()
 {
-    ASSERT(m_structureID);
+    ASSERT(m_structure);
     if (m_propertyStorage != m_inlineStorage)
         delete [] m_propertyStorage;
-    m_structureID->deref();
+    m_structure->deref();
 }
 
 inline JSValue* JSObject::prototype() const
 {
-    return m_structureID->storedPrototype();
+    return m_structure->storedPrototype();
 }
 
 inline void JSObject::setPrototype(JSValue* prototype)
 {
     ASSERT(prototype);
-    RefPtr<StructureID> newStructureID = StructureID::changePrototypeTransition(m_structureID, prototype);
-    setStructureID(newStructureID.release());
+    RefPtr<Structure> newStructure = Structure::changePrototypeTransition(m_structure, prototype);
+    setStructure(newStructure.release());
 }
 
-inline void JSObject::setStructureID(PassRefPtr<StructureID> structureID)
+inline void JSObject::setStructure(PassRefPtr<Structure> structure)
 {
-    m_structureID->deref();
-    m_structureID = structureID.releaseRef(); // ~JSObject balances this ref()
+    m_structure->deref();
+    m_structure = structure.releaseRef(); // ~JSObject balances this ref()
 }
 
-inline StructureID* JSObject::inheritorID()
+inline Structure* JSObject::inheritorID()
 {
     if (m_inheritorID)
         return m_inheritorID.get();
@@ -276,7 +276,7 @@ inline bool JSValue::isObject(const ClassInfo* classInfo) const
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (JSValue** location = getDirectLocation(propertyName)) {
-        if (m_structureID->hasGetterSetterProperties() && location[0]->isGetterSetter())
+        if (m_structure->hasGetterSetterProperties() && location[0]->isGetterSetter())
             fillGetterPropertySlot(slot, location);
         else
             slot.setValueSlot(this, location, offsetForLocation(location));
@@ -296,7 +296,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
 {
     unsigned attributes;
     if (JSValue** location = getDirectLocation(propertyName, attributes)) {
-        if (m_structureID->hasGetterSetterProperties() && location[0]->isGetterSetter()) {
+        if (m_structure->hasGetterSetterProperties() && location[0]->isGetterSetter()) {
             slotIsWriteable = false;
             fillGetterPropertySlot(slot, location);
         } else {
@@ -326,7 +326,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifie
 
 ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (structureID()->typeInfo().hasStandardGetOwnPropertySlot())
+    if (structure()->typeInfo().hasStandardGetOwnPropertySlot())
         return asObject(this)->inlineGetOwnPropertySlot(exec, propertyName, slot);
     return getOwnPropertySlot(exec, propertyName, slot);
 }
@@ -387,9 +387,9 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
-    if (m_structureID->isDictionary()) {
+    if (m_structure->isDictionary()) {
         unsigned currentAttributes;
-        size_t offset = m_structureID->get(propertyName, currentAttributes);
+        size_t offset = m_structure->get(propertyName, currentAttributes);
         if (offset != WTF::notFound) {
             if (checkReadOnly && currentAttributes & ReadOnly)
                 return;
@@ -398,33 +398,33 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
             return;
         }
 
-        size_t currentCapacity = m_structureID->propertyStorageCapacity();
-        offset = m_structureID->addPropertyWithoutTransition(propertyName, attributes);
-        if (currentCapacity != m_structureID->propertyStorageCapacity())
-            allocatePropertyStorage(currentCapacity, m_structureID->propertyStorageCapacity());
+        size_t currentCapacity = m_structure->propertyStorageCapacity();
+        offset = m_structure->addPropertyWithoutTransition(propertyName, attributes);
+        if (currentCapacity != m_structure->propertyStorageCapacity())
+            allocatePropertyStorage(currentCapacity, m_structure->propertyStorageCapacity());
 
-        ASSERT(offset < m_structureID->propertyStorageCapacity());
+        ASSERT(offset < m_structure->propertyStorageCapacity());
         m_propertyStorage[offset] = value;
         slot.setNewProperty(this, offset);
         return;
     }
 
     size_t offset;
-    size_t currentCapacity = m_structureID->propertyStorageCapacity();
-    if (RefPtr<StructureID> structureID = StructureID::addPropertyTransitionToExistingStructure(m_structureID, propertyName, attributes, offset)) {
-        if (currentCapacity != structureID->propertyStorageCapacity())
-            allocatePropertyStorage(currentCapacity, structureID->propertyStorageCapacity());
+    size_t currentCapacity = m_structure->propertyStorageCapacity();
+    if (RefPtr<Structure> structure = Structure::addPropertyTransitionToExistingStructure(m_structure, propertyName, attributes, offset)) {
+        if (currentCapacity != structure->propertyStorageCapacity())
+            allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
 
-        ASSERT(offset < structureID->propertyStorageCapacity());
+        ASSERT(offset < structure->propertyStorageCapacity());
         m_propertyStorage[offset] = value;
         slot.setNewProperty(this, offset);
         slot.setWasTransition(true);
-        setStructureID(structureID.release());
+        setStructure(structure.release());
         return;
     }
 
     unsigned currentAttributes;
-    offset = m_structureID->get(propertyName, currentAttributes);
+    offset = m_structure->get(propertyName, currentAttributes);
     if (offset != WTF::notFound) {
         if (checkReadOnly && currentAttributes & ReadOnly)
             return;
@@ -433,31 +433,31 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
         return;
     }
 
-    RefPtr<StructureID> structureID = StructureID::addPropertyTransition(m_structureID, propertyName, attributes, offset);
-    if (currentCapacity != structureID->propertyStorageCapacity())
-        allocatePropertyStorage(currentCapacity, structureID->propertyStorageCapacity());
+    RefPtr<Structure> structure = Structure::addPropertyTransition(m_structure, propertyName, attributes, offset);
+    if (currentCapacity != structure->propertyStorageCapacity())
+        allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
 
-    ASSERT(offset < structureID->propertyStorageCapacity());
+    ASSERT(offset < structure->propertyStorageCapacity());
     m_propertyStorage[offset] = value;
     slot.setNewProperty(this, offset);
     slot.setWasTransition(true);
-    setStructureID(structureID.release());
+    setStructure(structure.release());
 }
 
 inline void JSObject::putDirectWithoutTransition(const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
-    size_t currentCapacity = m_structureID->propertyStorageCapacity();
-    size_t offset = m_structureID->addPropertyWithoutTransition(propertyName, attributes);
-    if (currentCapacity != m_structureID->propertyStorageCapacity())
-        allocatePropertyStorage(currentCapacity, m_structureID->propertyStorageCapacity());
+    size_t currentCapacity = m_structure->propertyStorageCapacity();
+    size_t offset = m_structure->addPropertyWithoutTransition(propertyName, attributes);
+    if (currentCapacity != m_structure->propertyStorageCapacity())
+        allocatePropertyStorage(currentCapacity, m_structure->propertyStorageCapacity());
     m_propertyStorage[offset] = value;
 }
 
-inline void JSObject::transitionTo(StructureID* newStructureID)
+inline void JSObject::transitionTo(Structure* newStructure)
 {
-    if (m_structureID->propertyStorageCapacity() != newStructureID->propertyStorageCapacity())
-        allocatePropertyStorage(m_structureID->propertyStorageCapacity(), newStructureID->propertyStorageCapacity());
-    setStructureID(newStructureID);
+    if (m_structure->propertyStorageCapacity() != newStructure->propertyStorageCapacity())
+        allocatePropertyStorage(m_structure->propertyStorageCapacity(), newStructure->propertyStorageCapacity());
+    setStructure(newStructure);
 }
 
 inline JSValue* JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const

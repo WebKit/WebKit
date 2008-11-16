@@ -114,8 +114,8 @@ sources['runtime'] = [
     'runtime/StringConstructor.cpp',
     'runtime/StringObject.cpp',
     'runtime/StringPrototype.cpp',
-    'runtime/StructureID.cpp',
-    'runtime/StructureIDChain.cpp',
+    'runtime/Structure.cpp',
+    'runtime/StructureChain.cpp',
     'runtime/UString.cpp',
 ]
 sources['VM'] = [

@@ -36,8 +36,8 @@
 namespace JSC {
 
     class JSCell;
-    class StructureID;
-    class StructureIDChain;
+    class Structure;
+    class StructureChain;
 
     struct Instruction {
         Instruction(Opcode opcode) { u.opcode = opcode; }
@@ -49,15 +49,15 @@ namespace JSC {
             u.operand = operand;
         }
 
-        Instruction(StructureID* structureID) { u.structureID = structureID; }
-        Instruction(StructureIDChain* structureIDChain) { u.structureIDChain = structureIDChain; }
+        Instruction(Structure* structure) { u.structure = structure; }
+        Instruction(StructureChain* structureChain) { u.structureChain = structureChain; }
         Instruction(JSCell* jsCell) { u.jsCell = jsCell; }
 
         union {
             Opcode opcode;
             int operand;
-            StructureID* structureID;
-            StructureIDChain* structureIDChain;
+            Structure* structure;
+            StructureChain* structureChain;
             JSCell* jsCell;
             ResultType::Type resultType;
         } u;

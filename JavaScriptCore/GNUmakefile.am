@@ -149,11 +149,11 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSPropertyNameIterator.h \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
-	JavaScriptCore/runtime/StructureID.cpp \
-	JavaScriptCore/runtime/StructureID.h \
-	JavaScriptCore/runtime/StructureIDChain.cpp \
-	JavaScriptCore/runtime/StructureIDChain.h \
-	JavaScriptCore/runtime/StructureIDTransitionTable.h \
+	JavaScriptCore/runtime/Structure.cpp \
+	JavaScriptCore/runtime/Structure.h \
+	JavaScriptCore/runtime/StructureChain.cpp \
+	JavaScriptCore/runtime/StructureChain.h \
+	JavaScriptCore/runtime/StructureTransitionTable.h \
 	JavaScriptCore/runtime/TypeInfo.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \

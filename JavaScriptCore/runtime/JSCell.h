@@ -23,7 +23,7 @@
 #ifndef JSCell_h
 #define JSCell_h
 
-#include "StructureID.h"
+#include "Structure.h"
 #include "JSValue.h"
 #include "Collector.h"
 
@@ -41,7 +41,7 @@ namespace JSC {
         friend class BytecodeInterpreter;
 
     private:
-        explicit JSCell(StructureID*);
+        explicit JSCell(Structure*);
         virtual ~JSCell();
 
     public:
@@ -52,7 +52,7 @@ namespace JSC {
         virtual bool isGetterSetter() const;
         virtual bool isObject(const ClassInfo*) const;
 
-        StructureID* structureID() const;
+        Structure* structure() const;
 
         // Extracting the value.
         bool getNumber(double&) const;
@@ -104,7 +104,7 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         
-        StructureID* m_structureID;
+        Structure* m_structure;
     };
 
     JSCell* asCell(JSValue*);
@@ -115,8 +115,8 @@ namespace JSC {
         return static_cast<JSCell*>(value);
     }
 
-    inline JSCell::JSCell(StructureID* structureID)
-        : m_structureID(structureID)
+    inline JSCell::JSCell(Structure* structure)
+        : m_structure(structure)
     {
     }
 
@@ -131,17 +131,17 @@ namespace JSC {
 
     inline bool JSCell::isObject() const
     {
-        return m_structureID->typeInfo().type() == ObjectType;
+        return m_structure->typeInfo().type() == ObjectType;
     }
 
     inline bool JSCell::isString() const
     {
-        return m_structureID->typeInfo().type() == StringType;
+        return m_structure->typeInfo().type() == StringType;
     }
 
-    inline StructureID* JSCell::structureID() const
+    inline Structure* JSCell::structure() const
     {
-        return m_structureID;
+        return m_structure;
     }
 
     inline bool JSCell::marked() const
@@ -292,7 +292,7 @@ namespace JSC {
     {
         if (UNLIKELY(JSImmediate::isImmediate(asValue())))
             return true;
-        return asCell()->structureID()->typeInfo().needsThisConversion();
+        return asCell()->structure()->typeInfo().needsThisConversion();
     }
 
     inline UString JSValue::toThisString(ExecState* exec) const

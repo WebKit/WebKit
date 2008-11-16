@@ -44,7 +44,7 @@ static JSValue* regExpProtoFuncToString(ExecState*, JSObject*, JSValue*, const A
 
 const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0, 0 };
 
-RegExpPrototype::RegExpPrototype(ExecState* exec, PassRefPtr<StructureID> structure, StructureID* prototypeFunctionStructure)
+RegExpPrototype::RegExpPrototype(ExecState* exec, PassRefPtr<Structure> structure, Structure* prototypeFunctionStructure)
     : JSObject(structure)
 {
     putDirectFunctionWithoutTransition(exec, new (exec) PrototypeFunction(exec, prototypeFunctionStructure, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);

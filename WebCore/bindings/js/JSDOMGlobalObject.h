@@ -36,7 +36,7 @@ namespace WebCore {
     class JSUnprotectedEventListener;
     class ScriptExecutionContext;
 
-    typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::StructureID> > JSDOMStructureMap;
+    typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::Structure> > JSDOMStructureMap;
     typedef HashMap<const JSC::ClassInfo*, JSC::JSObject*> JSDOMConstructorMap;
 
     class JSDOMGlobalObject : public JSC::JSGlobalObject {
@@ -44,7 +44,7 @@ namespace WebCore {
     protected:
         struct JSDOMGlobalObjectData;
 
-        JSDOMGlobalObject(PassRefPtr<JSC::StructureID>, JSDOMGlobalObjectData*, JSC::JSObject* thisValue);
+        JSDOMGlobalObject(PassRefPtr<JSC::Structure>, JSDOMGlobalObjectData*, JSC::JSObject* thisValue);
         virtual ~JSDOMGlobalObject();
 
     public:

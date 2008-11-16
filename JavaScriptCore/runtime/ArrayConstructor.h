@@ -29,7 +29,7 @@ namespace JSC {
 
     class ArrayConstructor : public InternalFunction {
     public:
-        ArrayConstructor(ExecState*, PassRefPtr<StructureID>, ArrayPrototype*);
+        ArrayConstructor(ExecState*, PassRefPtr<Structure>, ArrayPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);

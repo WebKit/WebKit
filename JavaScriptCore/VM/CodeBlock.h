@@ -288,8 +288,8 @@ namespace JSC {
 
 #if !defined(NDEBUG) || ENABLE_OPCODE_SAMPLING
         void dump(ExecState*) const;
-        void printStructureIDs(const Instruction*) const;
-        void printStructureID(const char* name, const Instruction*, int operand) const;
+        void printStructures(const Instruction*) const;
+        void printStructure(const char* name, const Instruction*, int operand) const;
 #endif
         int expressionRangeForVPC(const Instruction*, int& divot, int& startOffset, int& endOffset);
         int lineNumberForVPC(const Instruction* vPC);
@@ -297,8 +297,8 @@ namespace JSC {
         void* nativeExceptionCodeForHandlerVPC(const Instruction* handlerVPC);
 
         void mark();
-        void refStructureIDs(Instruction* vPC) const;
-        void derefStructureIDs(Instruction* vPC) const;
+        void refStructures(Instruction* vPC) const;
+        void derefStructures(Instruction* vPC) const;
 
         StructureStubInfo& getStubInfo(void* returnAddress)
         {

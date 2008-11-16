@@ -36,7 +36,7 @@
 
 class UserObjectImp : public JSObject {
 public:
-    UserObjectImp(PassRefPtr<StructureID>, JSUserObject*);
+    UserObjectImp(PassRefPtr<Structure>, JSUserObject*);
     virtual ~UserObjectImp();
 
     virtual const ClassInfo *classInfo() const;
@@ -59,9 +59,9 @@ public:
 
     JSUserObject *GetJSUserObject() const;
 
-    static PassRefPtr<StructureID> createStructureID(JSValue* prototype)
+    static PassRefPtr<Structure> createStructure(JSValue* prototype)
     {
-        return StructureID::create(prototype, TypeInfo(ObjectType));
+        return Structure::create(prototype, TypeInfo(ObjectType));
     }
 
 private:

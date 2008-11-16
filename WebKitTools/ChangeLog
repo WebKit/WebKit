@@ -1,3 +1,12 @@
+2008-11-15  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Geoff Garen.
+
+        - do the long-planned StructureID -> Structure rename
+
+        * Scripts/check-for-global-initializers: Update name of StructureID.o.
+        * Scripts/do-webcore-rename: Renaming script that I used.
+
 2008-11-15  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.

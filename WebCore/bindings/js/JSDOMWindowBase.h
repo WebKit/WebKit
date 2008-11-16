@@ -50,7 +50,7 @@ namespace WebCore {
 
         friend class ScheduledAction;
     protected:
-        JSDOMWindowBase(PassRefPtr<JSC::StructureID>, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
+        JSDOMWindowBase(PassRefPtr<JSC::Structure>, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
 
     public:
         virtual ~JSDOMWindowBase();

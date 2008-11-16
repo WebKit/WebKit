@@ -102,7 +102,7 @@ namespace JSC {
     class ScopeChainNode;
     class SimpleJumpTable;
     class StringJumpTable;
-    class StructureIDChain;
+    class StructureChain;
 
     struct CallLinkInfo;
     struct Instruction;
@@ -256,7 +256,7 @@ namespace JSC {
     void ctiRepatchCallByReturnAddress(void* where, void* what);
 
     class CTI {
-        static const int repatchGetByIdDefaultStructureID = -1;
+        static const int repatchGetByIdDefaultStructure = -1;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
         // will compress the displacement, and we may not be able to fit a repatched offset.
         static const int repatchGetByIdDefaultOffset = 256;
@@ -269,10 +269,10 @@ namespace JSC {
         static const int ctiArgumentInitSize = 0;
 #endif
         // These architecture specific value are used to enable repatching - see comment on op_put_by_id.
-        static const int repatchOffsetPutByIdStructureID = 7;
+        static const int repatchOffsetPutByIdStructure = 7;
         static const int repatchOffsetPutByIdPropertyMapOffset = 22;
         // These architecture specific value are used to enable repatching - see comment on op_get_by_id.
-        static const int repatchOffsetGetByIdStructureID = 7;
+        static const int repatchOffsetGetByIdStructure = 7;
         static const int repatchOffsetGetByIdBranchToSlowCase = 13;
         static const int repatchOffsetGetByIdPropertyMapOffset = 22;
 #if ENABLE(OPCODE_SAMPLING)
@@ -289,34 +289,34 @@ namespace JSC {
             cti.privateCompile();
         }
 
-        static void compileGetByIdSelf(JSGlobalData* globalData, CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress)
+        static void compileGetByIdSelf(JSGlobalData* globalData, CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress)
         {
             CTI cti(globalData, codeBlock);
-            cti.privateCompileGetByIdSelf(structureID, cachedOffset, returnAddress);
+            cti.privateCompileGetByIdSelf(structure, cachedOffset, returnAddress);
         }
 
-        static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureID* structureID, StructureID* prototypeStructureID, size_t cachedOffset, void* returnAddress)
+        static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress)
         {
             CTI cti(globalData, codeBlock);
-            cti.privateCompileGetByIdProto(structureID, prototypeStructureID, cachedOffset, returnAddress, callFrame);
+            cti.privateCompileGetByIdProto(structure, prototypeStructure, cachedOffset, returnAddress, callFrame);
         }
 
-        static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureID* structureID, StructureIDChain* chain, size_t count, size_t cachedOffset, void* returnAddress)
+        static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, void* returnAddress)
         {
             CTI cti(globalData, codeBlock);
-            cti.privateCompileGetByIdChain(structureID, chain, count, cachedOffset, returnAddress, callFrame);
+            cti.privateCompileGetByIdChain(structure, chain, count, cachedOffset, returnAddress, callFrame);
         }
 
-        static void compilePutByIdReplace(JSGlobalData* globalData, CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress)
+        static void compilePutByIdReplace(JSGlobalData* globalData, CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress)
         {
             CTI cti(globalData, codeBlock);
-            cti.privateCompilePutByIdReplace(structureID, cachedOffset, returnAddress);
+            cti.privateCompilePutByIdReplace(structure, cachedOffset, returnAddress);
         }
         
-        static void compilePutByIdTransition(JSGlobalData* globalData, CodeBlock* codeBlock, StructureID* oldStructureID, StructureID* newStructureID, size_t cachedOffset, StructureIDChain* sIDC, void* returnAddress)
+        static void compilePutByIdTransition(JSGlobalData* globalData, CodeBlock* codeBlock, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, void* returnAddress)
         {
             CTI cti(globalData, codeBlock);
-            cti.privateCompilePutByIdTransition(oldStructureID, newStructureID, cachedOffset, sIDC, returnAddress);
+            cti.privateCompilePutByIdTransition(oldStructure, newStructure, cachedOffset, chain, returnAddress);
         }
 
         static void compileCTIMachineTrampolines(JSGlobalData* globalData)
@@ -326,8 +326,8 @@ namespace JSC {
         }
         static void freeCTIMachineTrampolines(BytecodeInterpreter*);
 
-        static void patchGetByIdSelf(CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress);
-        static void patchPutByIdReplace(CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress);
+        static void patchGetByIdSelf(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress);
+        static void patchPutByIdReplace(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress);
 
         static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, void* returnAddress)
         {
@@ -350,11 +350,11 @@ namespace JSC {
         void privateCompileLinkPass();
         void privateCompileSlowCases();
         void privateCompile();
-        void privateCompileGetByIdSelf(StructureID*, size_t cachedOffset, void* returnAddress);
-        void privateCompileGetByIdProto(StructureID*, StructureID* prototypeStructureID, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
-        void privateCompileGetByIdChain(StructureID*, StructureIDChain*, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
-        void privateCompilePutByIdReplace(StructureID*, size_t cachedOffset, void* returnAddress);
-        void privateCompilePutByIdTransition(StructureID*, StructureID*, size_t cachedOffset, StructureIDChain*, void* returnAddress);
+        void privateCompileGetByIdSelf(Structure*, size_t cachedOffset, void* returnAddress);
+        void privateCompileGetByIdProto(Structure*, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
+        void privateCompileGetByIdChain(Structure*, StructureChain*, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
+        void privateCompilePutByIdReplace(Structure*, size_t cachedOffset, void* returnAddress);
+        void privateCompilePutByIdTransition(Structure*, Structure*, size_t cachedOffset, StructureChain*, void* returnAddress);
 
         void privateCompileCTIMachineTrampolines();
         void privateCompilePatchGetArrayLength(void* returnAddress);

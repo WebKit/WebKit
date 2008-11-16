@@ -427,11 +427,11 @@ sub GenerateHeader
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    $className(PassRefPtr<JSC::StructureID>, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
+        push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
     } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-        push(@headerContent, "    $className(PassRefPtr<JSC::StructureID>, PassRefPtr<$implType>, SVGElement* context);\n");
+        push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>, SVGElement* context);\n");
     } else {
-        push(@headerContent, "    $className(PassRefPtr<JSC::StructureID>, PassRefPtr<$implType>);\n");
+        push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>);\n");
     }
 
     # Destructor
@@ -483,15 +483,15 @@ sub GenerateHeader
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent,
-            "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* prototype)\n" .
+            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* prototype)\n" .
             "    {\n" .
-            "        return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::ImplementsHasInstance | JSC::NeedsThisConversion));\n" .
             "    }\n\n");
     } elsif ($hasGetter) {
         push(@headerContent,
-            "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* prototype)\n" .
+            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* prototype)\n" .
             "    {\n" .
-            "        return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
             "    }\n\n");
     }
 
@@ -669,12 +669,12 @@ sub GenerateHeader
     if ($numFunctions > 0 || $numConstants > 0) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
         push(@headerContent,
-            "    static PassRefPtr<JSC::StructureID> createStructureID(JSC::JSValue* prototype)\n" .
+            "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue* prototype)\n" .
             "    {\n" .
-            "        return JSC::StructureID::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
+            "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
             "    }\n");
     }
-    push(@headerContent, "    ${className}Prototype(PassRefPtr<JSC::StructureID> structure) : JSC::JSObject(structure) { }\n");
+    push(@headerContent, "    ${className}Prototype(PassRefPtr<JSC::Structure> structure) : JSC::JSObject(structure) { }\n");
 
     push(@headerContent, "};\n\n");
 
@@ -951,10 +951,10 @@ sub GenerateImplementation
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         AddIncludesForType("JSDOMWindowShell");
-        push(@implContent, "${className}::$className(PassRefPtr<StructureID> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
+        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
     } else {
-        push(@implContent, "${className}::$className(PassRefPtr<StructureID> structure, PassRefPtr<$implType> impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
+        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl" . ($needsSVGContext ? ", SVGElement* context" : "") . ")\n");
         if ($hasParent) {
             push(@implContent, "    : $parentClassName(structure, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
@@ -1000,9 +1000,9 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructureID(${parentClassName}Prototype::self(exec)));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(${parentClassName}Prototype::self(exec)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructureID(exec->lexicalGlobalObject()->objectPrototype()));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(${className}Prototype::createStructure(exec->lexicalGlobalObject()->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -1899,7 +1899,7 @@ my $implContent = << "EOF";
 class ${className}Constructor : public DOMObject {
 public:
     ${className}Constructor(ExecState* exec)
-        : DOMObject(${className}Constructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
+        : DOMObject(${className}Constructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
     {
         putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec), None);
     }
@@ -1907,9 +1907,9 @@ public:
     virtual const ClassInfo* classInfo() const { return &s_info; }
     static const ClassInfo s_info;
 
-    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    static PassRefPtr<Structure> createStructure(JSValue* proto) 
     { 
-        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
+        return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance)); 
     }
 EOF
 

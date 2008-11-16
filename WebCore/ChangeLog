@@ -1,5 +1,88 @@
 2008-11-15  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Geoff Garen.
+
+        - do the long-planned StructureID -> Structure rename
+
+        * ForwardingHeaders/runtime/Structure.h: Copied from WebCore/ForwardingHeaders/runtime/StructureID.h.
+        * ForwardingHeaders/runtime/StructureID.h: Removed.
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMStructure):
+        (WebCore::cacheDOMStructure):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObject::DOMObject):
+        (WebCore::getDOMStructure):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSDedicatedWorkerConstructor.cpp:
+        (WebCore::JSDedicatedWorkerConstructor::JSDedicatedWorkerConstructor):
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::JSHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::createStructure):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap):
+        (WebCore::JSInspectedObjectWrapper::JSInspectedObjectWrapper):
+        * bindings/js/JSInspectedObjectWrapper.h:
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::leakInspectorCallbackWrapperStructure):
+        (WebCore::JSInspectorCallbackWrapper::wrap):
+        (WebCore::JSInspectorCallbackWrapper::JSInspectorCallbackWrapper):
+        * bindings/js/JSInspectorCallbackWrapper.h:
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor):
+        * bindings/js/JSNamedNodesCollection.h:
+        (WebCore::JSNamedNodesCollection::createStructure):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::JSQuarantinedObjectWrapper):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::createStructure):
+        * bindings/js/JSRGBColor.h:
+        (WebCore::JSRGBColor::createStructure):
+        * bindings/js/JSWorkerContext.cpp:
+        (WebCore::createJSWorkerContextStructure):
+        (WebCore::JSWorkerContext::JSWorkerContext):
+        (WebCore::JSWorkerContext::createPrototype):
+        * bindings/js/JSWorkerContext.h:
+        (WebCore::JSWorkerContext::createStructure):
+        (WebCore::JSWorkerContextPrototype::JSWorkerContextPrototype):
+        (WebCore::JSWorkerContextPrototype::createStructure):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtConnectionObject::execute):
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::createStructure):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.cpp:
+        (JSC::RuntimeObjectImp::RuntimeObjectImp):
+        * bridge/runtime_object.h:
+        (JSC::RuntimeObjectImp::createStructure):
+
+2008-11-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         - fix just-introduced crash in the svg/custom/svg-fonts-in-html.html test

@@ -882,7 +882,7 @@ void CTI::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSourc
 
 void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes types, unsigned i)
 {
-    StructureID* numberStructureID = m_globalData->numberStructureID.get();
+    Structure* numberStructure = m_globalData->numberStructure.get();
     X86Assembler::JmpSrc wasJSNumberCell1;
     X86Assembler::JmpSrc wasJSNumberCell1b;
     X86Assembler::JmpSrc wasJSNumberCell2;
@@ -898,7 +898,7 @@ void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         X86Assembler::JmpSrc op2imm = __ emitUnlinkedJne();
         if (!types.second().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::edx, i, src2);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::edx);
+            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), OBJECT_OFFSET(JSCell, m_structure), X86::edx);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
         }
 
@@ -908,7 +908,7 @@ void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         X86Assembler::JmpSrc op1imm = __ emitUnlinkedJne();
         if (!types.first().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, src1);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
         }
 
@@ -945,7 +945,7 @@ void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         X86Assembler::JmpSrc op1imm = __ emitUnlinkedJne();
         if (!types.first().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, src1);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
         }
 
@@ -955,7 +955,7 @@ void CTI::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         X86Assembler::JmpSrc op2imm = __ emitUnlinkedJne();
         if (!types.second().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::edx, i, src2);
-            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::edx);
+            __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), OBJECT_OFFSET(JSCell, m_structure), X86::edx);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
         }
 
@@ -1218,16 +1218,16 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_put_by_id: {
-            // In order to be able to repatch both the StructureID, and the object offset, we store one pointer,
+            // In order to be able to repatch both the Structure, and the object offset, we store one pointer,
             // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
-            // such that the StructureID & offset are always at the same distance from this.
+            // such that the Structure & offset are always at the same distance from this.
 
             int baseVReg = instruction[i + 1].u.operand;
             emitGetVirtualRegisters(baseVReg, X86::eax, instruction[i + 3].u.operand, X86::edx, i);
 
             ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
 
-            // Jump to a slow case if either the base object is an immediate, or if the StructureID does not match.
+            // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, baseVReg);
 
             X86Assembler::JmpDst hotPathBegin = __ label();
@@ -1235,8 +1235,8 @@ void CTI::privateCompileMainPass()
             ++propertyAccessInstructionIndex;
 
             // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
-            __ cmpl_i32m(repatchGetByIdDefaultStructureID, OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
-            ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetPutByIdStructureID);
+            __ cmpl_i32m(repatchGetByIdDefaultStructure, OBJECT_OFFSET(JSCell, m_structure), X86::eax);
+            ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetPutByIdStructure);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
 
             // Plant a load from a bogus ofset in the object's property map; we will patch this later, if it is to be used.
@@ -1248,7 +1248,7 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_get_by_id: {
-            // As for put_by_id, get_by_id requires the offset of the StructureID and the offset of the access to be repatched.
+            // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be repatched.
             // Additionally, for get_by_id we need repatch the offset of the branch to the slow case (we repatch this to jump
             // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
             // to jump back to if one of these trampolies finds a match.
@@ -1264,8 +1264,8 @@ void CTI::privateCompileMainPass()
             m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
             ++propertyAccessInstructionIndex;
 
-            __ cmpl_i32m(repatchGetByIdDefaultStructureID, OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
-            ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetGetByIdStructureID);
+            __ cmpl_i32m(repatchGetByIdDefaultStructure, OBJECT_OFFSET(JSCell, m_structure), X86::eax);
+            ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetGetByIdStructure);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
             ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetGetByIdBranchToSlowCase);
 
@@ -1290,21 +1290,21 @@ void CTI::privateCompileMainPass()
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJnz(), i));
 
             // check that all are object type - this is a bit of a bithack to avoid excess branching;
-            // we check that the sum of the three type codes from StructureIDs is exactly 3 * ObjectType,
+            // we check that the sum of the three type codes from Structures is exactly 3 * ObjectType,
             // this works because NumberType and StringType are smaller
             __ movl_i32r(3 * ObjectType, X86::ecx);
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::eax);
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::edx, X86::edx);
-            __ subl_mr(OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::eax, X86::ecx);
-            __ subl_mr(OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::edx, X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::eax);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::edx, X86::edx);
+            __ subl_mr(OBJECT_OFFSET(Structure, m_typeInfo.m_type), X86::eax, X86::ecx);
+            __ subl_mr(OBJECT_OFFSET(Structure, m_typeInfo.m_type), X86::edx, X86::ecx);
             emitGetVirtualRegister(instruction[i + 3].u.operand, X86::edx, i); // reload baseVal
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::edx, X86::edx);
-            __ cmpl_rm(X86::ecx, OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::edx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::edx, X86::edx);
+            __ cmpl_rm(X86::ecx, OBJECT_OFFSET(Structure, m_typeInfo.m_type), X86::edx);
 
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
 
             // check that baseVal's flags include ImplementsHasInstance but not OverridesHasInstance
-            __ movl_mr(OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::edx, X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(Structure, m_typeInfo.m_flags), X86::edx, X86::ecx);
             __ andl_i32r(ImplementsHasInstance | OverridesHasInstance, X86::ecx);
             __ cmpl_i32r(ImplementsHasInstance, X86::ecx);
 
@@ -1319,8 +1319,8 @@ void CTI::privateCompileMainPass()
             X86Assembler::JmpDst loop = __ label();
 
             // load value's prototype
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::ecx, X86::ecx);
-            __ movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::ecx, X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(Structure, m_prototype), X86::ecx, X86::ecx);
             
             __ cmpl_rr(X86::ecx, X86::edx);
             X86Assembler::JmpSrc exit = __ emitUnlinkedJe();
@@ -1489,8 +1489,8 @@ void CTI::privateCompileMainPass()
 
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
             X86Assembler::JmpSrc isImmediate = __ emitUnlinkedJne();
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            __ cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+            __ cmpl_i32m(ObjectType, OBJECT_OFFSET(Structure, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
             X86Assembler::JmpSrc isObject = __ emitUnlinkedJe();
 
             __ link(isImmediate, __ label());
@@ -1623,8 +1623,8 @@ void CTI::privateCompileMainPass()
                 ResultType resultType(instruction[i + 3].u.resultType);
                 if (!resultType.definitelyIsNumber()) {
                     emitJumpSlowCaseIfNotJSCell(X86::eax, i, srcVReg);
-                    StructureID* numberStructureID = m_globalData->numberStructureID.get();
-                    __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+                    Structure* numberStructure = m_globalData->numberStructure.get();
+                    __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
                     m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
                 }
                 __ movsd_mr(OBJECT_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
@@ -1656,14 +1656,14 @@ void CTI::privateCompileMainPass()
             // Fast case
             unsigned globalObject = asInteger(instruction[i + 2].u.jsCell);
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
-            void* structureIDAddr = reinterpret_cast<void*>(instruction + i + 4);
+            void* structureAddress = reinterpret_cast<void*>(instruction + i + 4);
             void* offsetAddr = reinterpret_cast<void*>(instruction + i + 5);
 
-            // Check StructureID of global object
+            // Check Structure of global object
             __ movl_i32r(globalObject, X86::eax);
-            __ movl_mr(structureIDAddr, X86::edx);
-            __ cmpl_rm(X86::edx, OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
-            X86Assembler::JmpSrc noMatch = __ emitUnlinkedJne(); // StructureIDs don't match
+            __ movl_mr(structureAddress, X86::edx);
+            __ cmpl_rm(X86::edx, OBJECT_OFFSET(JSCell, m_structure), X86::eax);
+            X86Assembler::JmpSrc noMatch = __ emitUnlinkedJne(); // Structures don't match
 
             // Load cached property
             __ movl_mr(OBJECT_OFFSET(JSGlobalObject, m_propertyStorage), X86::eax, X86::eax);
@@ -1748,8 +1748,8 @@ void CTI::privateCompileMainPass()
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
             X86Assembler::JmpSrc isImmediate = __ emitUnlinkedJnz();
 
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setnz_r(X86::eax);
 
             X86Assembler::JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
@@ -1778,8 +1778,8 @@ void CTI::privateCompileMainPass()
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
             X86Assembler::JmpSrc isImmediate = __ emitUnlinkedJnz();
 
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setz_r(X86::eax);
 
             X86Assembler::JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
@@ -2069,8 +2069,8 @@ void CTI::privateCompileMainPass()
 
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, srcVReg);
 
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            __ cmpl_i32m(NumberType, OBJECT_OFFSET(StructureID, m_typeInfo.m_type), X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+            __ cmpl_i32m(NumberType, OBJECT_OFFSET(Structure, m_typeInfo.m_type), X86::ecx);
             
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
             
@@ -2222,8 +2222,8 @@ void CTI::privateCompileMainPass()
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
             X86Assembler::JmpSrc isImmediate = __ emitUnlinkedJnz();
 
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setnz_r(X86::eax);
 
             X86Assembler::JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
@@ -2252,8 +2252,8 @@ void CTI::privateCompileMainPass()
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
             X86Assembler::JmpSrc isImmediate = __ emitUnlinkedJnz();
 
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::ecx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+            __ testl_i32m(MasqueradesAsUndefined, OBJECT_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setz_r(X86::eax);
 
             X86Assembler::JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
@@ -2308,8 +2308,8 @@ void CTI::privateCompileMainPass()
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
 
             emitJumpSlowCaseIfNotJSCell(X86::eax, i);
-            __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::edx);
-            __ testl_i32m(NeedsThisConversion, OBJECT_OFFSET(StructureID, m_typeInfo.m_flags), X86::edx);
+            __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::edx);
+            __ testl_i32m(NeedsThisConversion, OBJECT_OFFSET(Structure, m_typeInfo.m_flags), X86::edx);
             m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJnz(), i));
 
             i += 2;
@@ -3101,12 +3101,12 @@ void CTI::privateCompile()
     m_codeBlock->ctiCode = code;
 }
 
-void CTI::privateCompileGetByIdSelf(StructureID* structureID, size_t cachedOffset, void* returnAddress)
+void CTI::privateCompileGetByIdSelf(Structure* structure, size_t cachedOffset, void* returnAddress)
 {
-    // Check eax is an object of the right StructureID.
+    // Check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
     X86Assembler::JmpSrc failureCases1 = __ emitUnlinkedJne();
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(structureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
     X86Assembler::JmpSrc failureCases2 = __ emitUnlinkedJne();
 
     // Checks out okay! - getDirectOffset
@@ -3125,7 +3125,7 @@ void CTI::privateCompileGetByIdSelf(StructureID* structureID, size_t cachedOffse
     ctiRepatchCallByReturnAddress(returnAddress, code);
 }
 
-void CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prototypeStructureID, size_t cachedOffset, void* returnAddress, CallFrame* callFrame)
+void CTI::privateCompileGetByIdProto(Structure* structure, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress, CallFrame* callFrame)
 {
 #if USE(CTI_REPATCH_PIC)
     StructureStubInfo& info = m_codeBlock->getStubInfo(returnAddress);
@@ -3133,21 +3133,21 @@ void CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prot
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
     ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
 
-    // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a StructureID that is
+    // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
-    JSObject* protoObject = asObject(structureID->prototypeForLookup(callFrame));
+    JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
     __ movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
-    // check eax is an object of the right StructureID.
+    // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
     X86Assembler::JmpSrc failureCases1 = __ emitUnlinkedJne();
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(structureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
     X86Assembler::JmpSrc failureCases2 = __ emitUnlinkedJne();
 
-    // Check the prototype object's StructureID had not changed.
-    StructureID** protoStructureIDAddress = &(protoObject->m_structureID);
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructureID), static_cast<void*>(protoStructureIDAddress));
+    // Check the prototype object's Structure had not changed.
+    Structure** prototypeStructureAddress = &(protoObject->m_structure);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), static_cast<void*>(prototypeStructureAddress));
     X86Assembler::JmpSrc failureCases3 = __ emitUnlinkedJne();
 
     // Checks out okay! - getDirectOffset
@@ -3176,21 +3176,21 @@ void CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prot
     intptr_t jmpLocation = reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
     X86Assembler::repatchBranchOffset(jmpLocation, code);
 #else
-    // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a StructureID that is
+    // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
-    JSObject* protoObject = asObject(structureID->prototypeForLookup(callFrame));
+    JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
     PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
     __ movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
-    // check eax is an object of the right StructureID.
+    // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
     X86Assembler::JmpSrc failureCases1 = __ emitUnlinkedJne();
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(structureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
     X86Assembler::JmpSrc failureCases2 = __ emitUnlinkedJne();
 
-    // Check the prototype object's StructureID had not changed.
-    StructureID** protoStructureIDAddress = &(protoObject->m_structureID);
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructureID), static_cast<void*>(protoStructureIDAddress));
+    // Check the prototype object's Structure had not changed.
+    Structure** prototypeStructureAddress = &(protoObject->m_structure);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), static_cast<void*>(prototypeStructureAddress));
     X86Assembler::JmpSrc failureCases3 = __ emitUnlinkedJne();
 
     // Checks out okay! - getDirectOffset
@@ -3211,28 +3211,28 @@ void CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prot
 #endif
 }
 
-void CTI::privateCompileGetByIdChain(StructureID* structureID, StructureIDChain* chain, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame)
+void CTI::privateCompileGetByIdChain(Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame)
 {
     ASSERT(count);
     
     Vector<X86Assembler::JmpSrc> bucketsOfFail;
 
-    // Check eax is an object of the right StructureID.
+    // Check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
     bucketsOfFail.append(__ emitUnlinkedJne());
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(structureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
     bucketsOfFail.append(__ emitUnlinkedJne());
 
-    StructureID* currStructureID = structureID;
-    RefPtr<StructureID>* chainEntries = chain->head();
+    Structure* currStructure = structure;
+    RefPtr<Structure>* chainEntries = chain->head();
     JSObject* protoObject = 0;
     for (unsigned i = 0; i<count; ++i) {
-        protoObject = asObject(currStructureID->prototypeForLookup(callFrame));
-        currStructureID = chainEntries[i].get();
+        protoObject = asObject(currStructure->prototypeForLookup(callFrame));
+        currStructure = chainEntries[i].get();
 
-        // Check the prototype object's StructureID had not changed.
-        StructureID** protoStructureIDAddress = &(protoObject->m_structureID);
-        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructureID), static_cast<void*>(protoStructureIDAddress));
+        // Check the prototype object's Structure had not changed.
+        Structure** prototypeStructureAddress = &(protoObject->m_structure);
+        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), static_cast<void*>(prototypeStructureAddress));
         bucketsOfFail.append(__ emitUnlinkedJne());
     }
     ASSERT(protoObject);
@@ -3255,12 +3255,12 @@ void CTI::privateCompileGetByIdChain(StructureID* structureID, StructureIDChain*
     ctiRepatchCallByReturnAddress(returnAddress, code);
 }
 
-void CTI::privateCompilePutByIdReplace(StructureID* structureID, size_t cachedOffset, void* returnAddress)
+void CTI::privateCompilePutByIdReplace(Structure* structure, size_t cachedOffset, void* returnAddress)
 {
-    // check eax is an object of the right StructureID.
+    // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
     X86Assembler::JmpSrc failureCases1 = __ emitUnlinkedJne();
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(structureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
     X86Assembler::JmpSrc failureCases2 = __ emitUnlinkedJne();
 
     // checks out okay! - putDirectOffset
@@ -3289,42 +3289,42 @@ extern "C" {
 
 }
 
-static inline bool transitionWillNeedStorageRealloc(StructureID* oldStructureID, StructureID* newStructureID)
+static inline bool transitionWillNeedStorageRealloc(Structure* oldStructure, Structure* newStructure)
 {
-    return oldStructureID->propertyStorageCapacity() != newStructureID->propertyStorageCapacity();
+    return oldStructure->propertyStorageCapacity() != newStructure->propertyStorageCapacity();
 }
 
-void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, StructureID* newStructureID, size_t cachedOffset, StructureIDChain* sIDC, void* returnAddress)
+void CTI::privateCompilePutByIdTransition(Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, void* returnAddress)
 {
     Vector<X86Assembler::JmpSrc, 16> failureCases;
-    // check eax is an object of the right StructureID.
+    // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
     failureCases.append(__ emitUnlinkedJne());
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(oldStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(oldStructure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
     failureCases.append(__ emitUnlinkedJne());
     Vector<X86Assembler::JmpSrc> successCases;
 
     //  ecx = baseObject
-    __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
-    // proto(ecx) = baseObject->structureID()->prototype()
-    __ cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
+    __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
+    // proto(ecx) = baseObject->structure()->prototype()
+    __ cmpl_i32m(ObjectType, OBJECT_OFFSET(Structure, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
     failureCases.append(__ emitUnlinkedJne());
-    __ movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
+    __ movl_mr(OBJECT_OFFSET(Structure, m_prototype), X86::ecx, X86::ecx);
     
-    // ecx = baseObject->m_structureID
-    for (RefPtr<StructureID>* it = sIDC->head(); *it; ++it) {
+    // ecx = baseObject->m_structure
+    for (RefPtr<Structure>* it = chain->head(); *it; ++it) {
         // null check the prototype
         __ cmpl_i32r(asInteger(jsNull()), X86::ecx);
         successCases.append(__ emitUnlinkedJe());
 
         // Check the structure id
-        __ cmpl_i32m(reinterpret_cast<uint32_t>(it->get()), OBJECT_OFFSET(JSCell, m_structureID), X86::ecx);
+        __ cmpl_i32m(reinterpret_cast<uint32_t>(it->get()), OBJECT_OFFSET(JSCell, m_structure), X86::ecx);
         failureCases.append(__ emitUnlinkedJne());
         
-        __ movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::ecx, X86::ecx);
-        __ cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
+        __ movl_mr(OBJECT_OFFSET(JSCell, m_structure), X86::ecx, X86::ecx);
+        __ cmpl_i32m(ObjectType, OBJECT_OFFSET(Structure, m_typeInfo) + OBJECT_OFFSET(TypeInfo, m_type), X86::ecx);
         failureCases.append(__ emitUnlinkedJne());
-        __ movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
+        __ movl_mr(OBJECT_OFFSET(Structure, m_prototype), X86::ecx, X86::ecx);
     }
 
     failureCases.append(__ emitUnlinkedJne());
@@ -3334,10 +3334,10 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
     X86Assembler::JmpSrc callTarget;
 
     // emit a call only if storage realloc is needed
-    if (transitionWillNeedStorageRealloc(oldStructureID, newStructureID)) {
+    if (transitionWillNeedStorageRealloc(oldStructure, newStructure)) {
         __ pushl_r(X86::edx);
-        __ pushl_i32(newStructureID->propertyStorageCapacity());
-        __ pushl_i32(oldStructureID->propertyStorageCapacity());
+        __ pushl_i32(newStructure->propertyStorageCapacity());
+        __ pushl_i32(oldStructure->propertyStorageCapacity());
         __ pushl_r(X86::eax);
         callTarget = __ emitCall();
         __ addl_i32r(3 * sizeof(void*), X86::esp);
@@ -3345,10 +3345,10 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
     }
 
     // Assumes m_refCount can be decremented easily, refcount decrement is safe as 
-    // codeblock should ensure oldStructureID->m_refCount > 0
-    __ subl_i8m(1, reinterpret_cast<void*>(oldStructureID));
-    __ addl_i8m(1, reinterpret_cast<void*>(newStructureID));
-    __ movl_i32m(reinterpret_cast<uint32_t>(newStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    // codeblock should ensure oldStructure->m_refCount > 0
+    __ subl_i8m(1, reinterpret_cast<void*>(oldStructure));
+    __ addl_i8m(1, reinterpret_cast<void*>(newStructure));
+    __ movl_i32m(reinterpret_cast<uint32_t>(newStructure), OBJECT_OFFSET(JSCell, m_structure), X86::eax);
 
     // write the value
     __ movl_mr(OBJECT_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
@@ -3370,7 +3370,7 @@ void CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, Structure
     if (failureCases.size())
         X86Assembler::link(code, failureJump, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_put_by_id_fail));
 
-    if (transitionWillNeedStorageRealloc(oldStructureID, newStructureID))
+    if (transitionWillNeedStorageRealloc(oldStructure, newStructure))
         X86Assembler::link(code, callTarget, reinterpret_cast<void*>(resizePropertyStorage));
     
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
@@ -3599,7 +3599,7 @@ void CTI::freeCTIMachineTrampolines(BytecodeInterpreter* interpreter)
     WTF::fastFreeExecutable(interpreter->m_ctiArrayLengthTrampoline);
 }
 
-void CTI::patchGetByIdSelf(CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress)
+void CTI::patchGetByIdSelf(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress)
 {
     StructureStubInfo& info = codeBlock->getStubInfo(returnAddress);
 
@@ -3607,12 +3607,12 @@ void CTI::patchGetByIdSelf(CodeBlock* codeBlock, StructureID* structureID, size_
     // Should probably go to BytecodeInterpreter::cti_op_get_by_id_fail, but that doesn't do anything interesting right now.
     ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_generic));
 
-    // Repatch the offset into the propoerty map to load from, then repatch the StructureID to look for.
+    // Repatch the offset into the propoerty map to load from, then repatch the Structure to look for.
     X86Assembler::repatchDisplacement(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset, cachedOffset * sizeof(JSValue*));
-    X86Assembler::repatchImmediate(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdStructureID, reinterpret_cast<uint32_t>(structureID));
+    X86Assembler::repatchImmediate(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdStructure, reinterpret_cast<uint32_t>(structure));
 }
 
-void CTI::patchPutByIdReplace(CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset, void* returnAddress)
+void CTI::patchPutByIdReplace(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress)
 {
     StructureStubInfo& info = codeBlock->getStubInfo(returnAddress);
     
@@ -3620,9 +3620,9 @@ void CTI::patchPutByIdReplace(CodeBlock* codeBlock, StructureID* structureID, si
     // Should probably go to BytecodeInterpreter::cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
     ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_put_by_id_generic));
 
-    // Repatch the offset into the propoerty map to load from, then repatch the StructureID to look for.
+    // Repatch the offset into the propoerty map to load from, then repatch the Structure to look for.
     X86Assembler::repatchDisplacement(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetPutByIdPropertyMapOffset, cachedOffset * sizeof(JSValue*));
-    X86Assembler::repatchImmediate(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetPutByIdStructureID, reinterpret_cast<uint32_t>(structureID));
+    X86Assembler::repatchImmediate(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetPutByIdStructure, reinterpret_cast<uint32_t>(structure));
 }
 
 void CTI::privateCompilePatchGetArrayLength(void* returnAddress)

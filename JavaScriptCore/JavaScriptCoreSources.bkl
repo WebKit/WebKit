@@ -141,8 +141,8 @@ Source files for JSCore.
         runtime/StringConstructor.cpp
         runtime/StringObject.cpp
         runtime/StringPrototype.cpp
-        runtime/StructureID.cpp
-        runtime/StructureIDChain.cpp
+        runtime/Structure.cpp
+        runtime/StructureChain.cpp
         runtime/UString.cpp
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">

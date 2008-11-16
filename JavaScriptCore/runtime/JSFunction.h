@@ -42,7 +42,7 @@ namespace JSC {
         friend class BytecodeInterpreter;
 
         typedef InternalFunction Base;
-        JSFunction(PassRefPtr<JSC::StructureID> st) : InternalFunction(st), m_scopeChain(NoScopeChain()) {}
+        JSFunction(PassRefPtr<JSC::Structure> st) : InternalFunction(st), m_scopeChain(NoScopeChain()) {}
     public:
         JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
         ~JSFunction();
@@ -68,9 +68,9 @@ namespace JSC {
         // FIXME: This should be private
         RefPtr<FunctionBodyNode> m_body;
 
-        static PassRefPtr<StructureID> createStructureID(JSValue* prototype) 
+        static PassRefPtr<Structure> createStructure(JSValue* prototype) 
         { 
-            return StructureID::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance)); 
+            return Structure::create(prototype, TypeInfo(ObjectType, ImplementsHasInstance)); 
         }
 
     private:

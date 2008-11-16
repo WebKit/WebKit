@@ -93,13 +93,13 @@ namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSWorkerContext)
 
-static inline PassRefPtr<StructureID> createJSWorkerContextStructureID(JSGlobalData* globalData)
+static inline PassRefPtr<Structure> createJSWorkerContextStructure(JSGlobalData* globalData)
 {
-    return JSWorkerContext::createStructureID(new (globalData) JSWorkerContextPrototype(JSWorkerContextPrototype::createStructureID(jsNull())));
+    return JSWorkerContext::createStructure(new (globalData) JSWorkerContextPrototype(JSWorkerContextPrototype::createStructure(jsNull())));
 }
 
 JSWorkerContext::JSWorkerContext(PassRefPtr<WorkerContext> impl)
-    : JSDOMGlobalObject(createJSWorkerContextStructureID(Heap::heap(this)->globalData()), new JSDOMGlobalObjectData, this)
+    : JSDOMGlobalObject(createJSWorkerContextStructure(Heap::heap(this)->globalData()), new JSDOMGlobalObjectData, this)
     , m_impl(impl)
 {
     GlobalPropertyInfo staticGlobals[] = {
@@ -148,7 +148,7 @@ const ClassInfo JSWorkerContext::s_info = { "WorkerContext", 0, 0, getJSWorkerCo
 
 JSObject* JSWorkerContext::createPrototype(ExecState* exec)
 {
-    return new (exec) JSWorkerContextPrototype(JSWorkerContextPrototype::createStructureID(exec->lexicalGlobalObject()->objectPrototype()));
+    return new (exec) JSWorkerContextPrototype(JSWorkerContextPrototype::createStructure(exec->lexicalGlobalObject()->objectPrototype()));
 }
 
 void JSWorkerContext::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)

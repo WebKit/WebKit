@@ -33,17 +33,17 @@
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/SourceCode.h>
 
-JSGlueGlobalObject::JSGlueGlobalObject(PassRefPtr<StructureID> structure, JSFlags flags)
+JSGlueGlobalObject::JSGlueGlobalObject(PassRefPtr<Structure> structure, JSFlags flags)
     : JSGlobalObject(structure, new Data, this)
 {
     d()->flags = flags;
-    d()->userObjectStructure = UserObjectImp::createStructureID(jsNull());
+    d()->userObjectStructure = UserObjectImp::createStructure(jsNull());
 }
 
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)
     :   JSBase(kJSRunTypeID),
         fSource(CFStringToUString(source)),
-        fGlobalObject(new (&getThreadGlobalExecState()->globalData()) JSGlueGlobalObject(JSGlueGlobalObject::createStructureID(jsNull()), inFlags)),
+        fGlobalObject(new (&getThreadGlobalExecState()->globalData()) JSGlueGlobalObject(JSGlueGlobalObject::createStructure(jsNull()), inFlags)),
         fFlags(inFlags)
 {
 }

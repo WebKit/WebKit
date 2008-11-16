@@ -126,8 +126,8 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 #endif
 
-JSArray::JSArray(PassRefPtr<StructureID> structureID)
-    : JSObject(structureID)
+JSArray::JSArray(PassRefPtr<Structure> structure)
+    : JSObject(structure)
 {
     unsigned initialCapacity = 0;
 
@@ -139,7 +139,7 @@ JSArray::JSArray(PassRefPtr<StructureID> structureID)
     checkConsistency();
 }
 
-JSArray::JSArray(PassRefPtr<StructureID> structure, unsigned initialLength)
+JSArray::JSArray(PassRefPtr<Structure> structure, unsigned initialLength)
     : JSObject(structure)
 {
     unsigned initialCapacity = min(initialLength, MIN_SPARSE_ARRAY_INDEX);
@@ -154,7 +154,7 @@ JSArray::JSArray(PassRefPtr<StructureID> structure, unsigned initialLength)
     checkConsistency();
 }
 
-JSArray::JSArray(ExecState* exec, PassRefPtr<StructureID> structure, const ArgList& list)
+JSArray::JSArray(ExecState* exec, PassRefPtr<Structure> structure, const ArgList& list)
     : JSObject(structure)
 {
     unsigned length = list.size();

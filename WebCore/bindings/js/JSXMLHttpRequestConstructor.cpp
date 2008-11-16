@@ -33,7 +33,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSXMLHttpRequestConstructor)
 const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstructor", 0, 0, 0 };
 
 JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, ScriptExecutionContext* context)
-    : DOMObject(JSXMLHttpRequestConstructor::createStructureID(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMObject(JSXMLHttpRequestConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
 {
     ASSERT(context->isDocument());
     m_document = static_cast<JSDocument*>(asObject(toJS(exec, static_cast<Document*>(context))));

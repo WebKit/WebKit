@@ -73,9 +73,9 @@ namespace JSC {
             d->registers = &activation->registerAt(0);
         }
 
-        static PassRefPtr<StructureID> createStructureID(JSValue* prototype) 
+        static PassRefPtr<Structure> createStructure(JSValue* prototype) 
         { 
-            return StructureID::create(prototype, TypeInfo(ObjectType)); 
+            return Structure::create(prototype, TypeInfo(ObjectType)); 
         }
 
     private:

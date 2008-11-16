@@ -28,7 +28,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectConstructor);
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<StructureID> structure, ObjectPrototype* objectPrototype)
+ObjectConstructor::ObjectConstructor(ExecState* exec, PassRefPtr<Structure> structure, ObjectPrototype* objectPrototype)
     : InternalFunction(&exec->globalData(), structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1

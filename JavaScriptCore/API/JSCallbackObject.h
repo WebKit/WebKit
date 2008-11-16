@@ -36,7 +36,7 @@ namespace JSC {
 template <class Base>
 class JSCallbackObject : public Base {
 public:
-    JSCallbackObject(ExecState*, PassRefPtr<StructureID>, JSClassRef, void* data);
+    JSCallbackObject(ExecState*, PassRefPtr<Structure>, JSClassRef, void* data);
     JSCallbackObject(JSClassRef);
     virtual ~JSCallbackObject();
 
@@ -48,9 +48,9 @@ public:
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
-    static PassRefPtr<StructureID> createStructureID(JSValue* proto) 
+    static PassRefPtr<Structure> createStructure(JSValue* proto) 
     { 
-        return StructureID::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | OverridesHasInstance)); 
+        return Structure::create(proto, TypeInfo(ObjectType, ImplementsHasInstance | OverridesHasInstance)); 
     }
 
 private:

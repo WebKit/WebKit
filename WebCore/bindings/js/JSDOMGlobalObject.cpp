@@ -42,7 +42,7 @@ JSDOMGlobalObject::JSDOMGlobalObjectData::JSDOMGlobalObjectData()
 {
 }
 
-JSDOMGlobalObject::JSDOMGlobalObject(PassRefPtr<StructureID> structure, JSDOMGlobalObject::JSDOMGlobalObjectData* data, JSObject* thisValue)
+JSDOMGlobalObject::JSDOMGlobalObject(PassRefPtr<Structure> structure, JSDOMGlobalObject::JSDOMGlobalObjectData* data, JSObject* thisValue)
     : JSGlobalObject(structure, data, thisValue)
 {
 }

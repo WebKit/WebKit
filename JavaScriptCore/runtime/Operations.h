@@ -50,13 +50,13 @@ namespace JSC {
                   return true;
               if (JSImmediate::isImmediate(v2))
                   return false;
-              return v2->asCell()->structureID()->typeInfo().masqueradesAsUndefined();
+              return v2->asCell()->structure()->typeInfo().masqueradesAsUndefined();
           }
 
           if (v2->isUndefinedOrNull()) {
               if (JSImmediate::isImmediate(v1))
                   return false;
-              return v1->asCell()->structureID()->typeInfo().masqueradesAsUndefined();
+              return v1->asCell()->structure()->typeInfo().masqueradesAsUndefined();
           }
 
           if (v1->isObject()) {

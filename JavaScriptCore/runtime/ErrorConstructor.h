@@ -30,7 +30,7 @@ namespace JSC {
 
     class ErrorConstructor : public InternalFunction {
     public:
-        ErrorConstructor(ExecState*, PassRefPtr<StructureID>, ErrorPrototype*);
+        ErrorConstructor(ExecState*, PassRefPtr<Structure>, ErrorPrototype*);
 
     private:
         virtual ConstructType getConstructData(ConstructData&);
