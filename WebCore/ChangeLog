@@ -1,5 +1,11 @@
 2008-11-16  Darin Adler  <darin@apple.com>
 
+        - try to fix Qt build
+
+        * WebCore.pro: Add the worker-related source files.
+
+2008-11-16  Darin Adler  <darin@apple.com>
+
         Suggested by Alexey Proskuryakov.
 
         - fix the GTK build another way
