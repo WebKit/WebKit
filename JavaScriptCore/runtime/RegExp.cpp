@@ -31,7 +31,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
+#if ENABLE(WREC)
 using namespace WREC;
+#endif
 
 namespace JSC {
 
