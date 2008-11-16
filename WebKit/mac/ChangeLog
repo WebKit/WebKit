@@ -1,3 +1,27 @@
+2008-11-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22295
+          track which history items are from page load failures
+
+        * History/WebHistoryItem.mm: Added lastVisitWasFailureKey.
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Set the lastVisitWasFailure
+        flag in the history item if the dictionary had lastVisitWasFailureKey true.
+        (-[WebHistoryItem dictionaryRepresentation]): Set the lastVisitWasFailureKey boolean
+        in the dictionary if the history item had the lastVisitWasFailure flag.
+        (-[WebHistoryItem lastVisitWasFailure]): Added.
+
+        * History/WebHistoryItemInternal.h: Moved include of WebBackForwardList here from
+        WebHistoryItemPrivate.h; removed other unneeded includes.
+
+        * History/WebHistoryItemPrivate.h: Added lastVisitWasFailure method.
+        Removed unneeded includes.
+
+        * Misc/WebNSDictionaryExtras.h: Added _webkit_boolForKey.
+        * Misc/WebNSDictionaryExtras.m:
+        (-[NSDictionary _webkit_boolForKey:]): Added.
+
 2008-11-14  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.

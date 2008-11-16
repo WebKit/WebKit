@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,12 @@
     }
     
     return [self objectForKey:[MIMEType substringToIndex:slashRange.location + 1]];
+}
+
+- (BOOL)_webkit_boolForKey:(id)key
+{
+    NSNumber *number = [self _webkit_numberForKey:key];
+    return number && [number boolValue];
 }
 
 @end

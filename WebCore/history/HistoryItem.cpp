@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,10 @@
 #include "config.h"
 #include "HistoryItem.h"
 
+#include "CString.h"
+#include "CachedPage.h"
 #include "Document.h"
-#include "FrameLoader.h"
 #include "IconDatabase.h"
-#include "IntSize.h"
-#include "KURL.h"
-#include "Logging.h"
 #include "PageCache.h"
 #include "ResourceRequest.h"
 #include <stdio.h>
@@ -46,6 +44,7 @@ void (*notifyHistoryItemChanged)() = defaultNotifyHistoryItemChanged;
 
 HistoryItem::HistoryItem()
     : m_lastVisitedTime(0)
+    , m_lastVisitWasFailure(false)
     , m_isInPageCache(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -57,6 +56,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_originalURLString(urlString)
     , m_title(title)
     , m_lastVisitedTime(time)
+    , m_lastVisitWasFailure(false)
     , m_isInPageCache(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -70,6 +70,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_title(title)
     , m_displayTitle(alternateTitle)
     , m_lastVisitedTime(time)
+    , m_lastVisitWasFailure(false)
     , m_isInPageCache(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -84,6 +85,7 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_parent(parent)
     , m_title(title)
     , m_lastVisitedTime(0)
+    , m_lastVisitWasFailure(false)
     , m_isInPageCache(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -107,6 +109,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_displayTitle(item.m_displayTitle)
     , m_lastVisitedTime(item.m_lastVisitedTime)
     , m_scrollPoint(item.m_scrollPoint)
+    , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
     , m_isInPageCache(item.m_isInPageCache)
     , m_isTargetItem(item.m_isTargetItem)
     , m_visitCount(item.m_visitCount)
@@ -398,6 +401,7 @@ void HistoryItem::mergeAutoCompleteHints(HistoryItem* otherItem)
 }
 
 #ifndef NDEBUG
+
 int HistoryItem::showTree() const
 {
     return showTreeWithIndent(0);
@@ -405,26 +409,27 @@ int HistoryItem::showTree() const
 
 int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
 {
-    String prefix("");
-    int totalSubItems = 0;
-    unsigned i;
-    for (i = 0; i < indentLevel; ++i)
-        prefix.append("  ");
+    Vector<char> prefix;
+    for (unsigned i = 0; i < indentLevel; ++i)
+        prefix.append("  ", 2);
 
-    fprintf(stderr, "%s+-%s (%p)\n", prefix.ascii().data(), m_urlString.ascii().data(), this);
+    fprintf(stderr, "%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
     
-    for (unsigned int i = 0; i < m_subItems.size(); ++i) {
+    int totalSubItems = 0;
+    for (unsigned i = 0; i < m_subItems.size(); ++i)
         totalSubItems += m_subItems[i]->showTreeWithIndent(indentLevel + 1);
-    }
     return totalSubItems + 1;
 }
+
 #endif
                 
-}; //namespace WebCore
+} // namespace WebCore
 
 #ifndef NDEBUG
+
 int showTree(const WebCore::HistoryItem* item)
 {
     return item->showTree();
 }
+
 #endif

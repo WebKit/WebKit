@@ -60,6 +60,7 @@ static NSString *WebVisitCountKey = @"visitCount";
 static NSString *WebTitleKey = @"title";
 static NSString *WebChildrenKey = @"children";
 static NSString *WebDisplayTitleKey = @"displayTitle";
+static NSString *lastVisitWasFailureKey = @"lastVisitWasFailure";
 
 // Notification strings.
 NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotification";
@@ -353,10 +354,13 @@ static WebWindowWatcher *_windowWatcher = nil;
 
     core(_private)->setVisitCount([dict _webkit_intForKey:WebVisitCountKey]);
 
+    if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
+        core(_private)->setLastVisitWasFailure(true);
+
     NSArray *childDicts = [dict objectForKey:WebChildrenKey];
     if (childDicts) {
         for (int i = [childDicts count] - 1; i >= 0; i--) {
-            WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation: [childDicts objectAtIndex:i]];
+            WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation:[childDicts objectAtIndex:i]];
             core(_private)->addChildItem(core(child->_private));
             [child release];
         }
@@ -406,9 +410,10 @@ static WebWindowWatcher *_windowWatcher = nil;
         [dict setObject:[NSString stringWithFormat:@"%.1lf", coreItem->lastVisitedTime()]
                  forKey:WebLastVisitedTimeIntervalKey];
     }
-    if (coreItem->visitCount()) {
+    if (coreItem->visitCount())
         [dict setObject:[NSNumber numberWithInt:coreItem->visitCount()] forKey:WebVisitCountKey];
-    }
+    if (coreItem->lastVisitWasFailure())
+        [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
     if (coreItem->children().size()) {
         const HistoryItemVector& children = coreItem->children();
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
@@ -515,6 +520,11 @@ static WebWindowWatcher *_windowWatcher = nil;
 - (void)_setTransientProperty:(id)property forKey:(NSString *)key
 {
     core(_private)->setTransientProperty(key, property);
+}
+
+- (BOOL)lastVisitWasFailure
+{
+    return core(_private)->lastVisitWasFailure();
 }
 
 @end

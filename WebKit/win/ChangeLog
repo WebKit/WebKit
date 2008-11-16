@@ -1,3 +1,21 @@
+2008-11-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22295
+          track which history items are from page load failures
+
+        * Interfaces/IWebHistoryItemPrivate.idl: Added lastVisitWasFailure function.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation): Set the lastVisitWasFailure
+        flag in the history item if the dictionary had an entry for lastVisitWasFailureKey.
+        (WebHistoryItem::dictionaryRepresentation): Set the lastVisitWasFailureKey key
+        in the dictionary if the history item had the lastVisitWasFailure flag.
+        (WebHistoryItem::lastVisitWasFailure): Added.
+
+        * WebHistoryItem.h: Added lastVisitWasFailure function.
+
 2008-11-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebBackForwardList.h"
 #import "WebHistoryItemPrivate.h"
-
-#import <wtf/PassRefPtr.h>
+#import <wtf/Forward.h>
 
 namespace WebCore {
     class HistoryItem;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,51 +94,46 @@ static CFStringRef urlKey = CFSTR("");
 static CFStringRef lastVisitedDateKey = CFSTR("lastVisitedDate");
 static CFStringRef titleKey = CFSTR("title");
 static CFStringRef visitCountKey = CFSTR("visitCount");
+static CFStringRef lastVisitWasFailureKey = CFSTR("lastVisitWasFailure");
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::initFromDictionaryRepresentation(void* dictionary)
 {
     CFDictionaryRef dictionaryRef = (CFDictionaryRef) dictionary;
-    HRESULT hr = S_OK;
-    int visitedCount = 0;
-    CFAbsoluteTime lastVisitedTime = 0.0;
 
     CFStringRef urlStringRef = (CFStringRef) CFDictionaryGetValue(dictionaryRef, urlKey);
-    if (urlStringRef && CFGetTypeID(urlStringRef) != CFStringGetTypeID()) {
-        hr = E_FAIL;
-        goto exit;
-    }
+    if (urlStringRef && CFGetTypeID(urlStringRef) != CFStringGetTypeID())
+        return E_FAIL;
 
     CFStringRef lastVisitedRef = (CFStringRef) CFDictionaryGetValue(dictionaryRef, lastVisitedDateKey);
-    if (!lastVisitedRef || CFGetTypeID(lastVisitedRef) != CFStringGetTypeID()) {
-        hr = E_FAIL;
-        goto exit;
-    }
-    lastVisitedTime = CFStringGetDoubleValue(lastVisitedRef);
+    if (!lastVisitedRef || CFGetTypeID(lastVisitedRef) != CFStringGetTypeID())
+        return E_FAIL;
+    CFAbsoluteTime lastVisitedTime = CFStringGetDoubleValue(lastVisitedRef);
 
     CFStringRef titleRef = (CFStringRef) CFDictionaryGetValue(dictionaryRef, titleKey);
-    if (titleRef && CFGetTypeID(titleRef) != CFStringGetTypeID()) {
-        hr = E_FAIL;
-        goto exit;
-    }
+    if (titleRef && CFGetTypeID(titleRef) != CFStringGetTypeID())
+        return E_FAIL;
 
     CFNumberRef visitCountRef = (CFNumberRef) CFDictionaryGetValue(dictionaryRef, visitCountKey);
-    if (!visitCountRef || CFGetTypeID(visitCountRef) != CFNumberGetTypeID()) {
-        hr = E_FAIL;
-        goto exit;
-    }
+    if (!visitCountRef || CFGetTypeID(visitCountRef) != CFNumberGetTypeID())
+        return E_FAIL;
+    int visitedCount = 0;
+    if (!CFNumberGetValue(visitCountRef, kCFNumberIntType, &visitedCount))
+        return E_FAIL;
+
+    CFBooleanRef lastVisitWasFailureRef = static_cast<CFBooleanRef>(CFDictionaryGetValue(dictionaryRef, lastVisitWasFailureKey));
+    if (lastVisitWasFailureRef && CFGetTypeID(lastVisitWasFailureRef) != CFBooleanGetTypeID())
+        return E_FAIL;
+    bool lastVisitWasFailure = lastVisitWasFailureRef && CFBooleanGetValue(lastVisitWasFailureRef);
 
     historyItemWrappers().remove(m_historyItem.get());
     m_historyItem = HistoryItem::create(urlStringRef, titleRef, lastVisitedTime);
     historyItemWrappers().set(m_historyItem.get(), this);
 
-    if (!CFNumberGetValue(visitCountRef, kCFNumberIntType, &visitedCount)) {
-        hr = E_FAIL;
-        goto exit;
-    }
-
     m_historyItem->setVisitCount(visitedCount);
-exit:
-    return hr;
+    if (lastVisitWasFailure)
+        m_historyItem->setLastVisitWasFailure(true);
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictionary)
@@ -151,8 +146,9 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
         return E_FAIL;
 
     int keyCount = 0;
-    CFTypeRef keys[4];
-    CFTypeRef values[4];
+    CFTypeRef keys[5];
+    CFTypeRef values[5];
+
     if (!m_historyItem->urlString().isEmpty()) {
         keys[keyCount] = urlKey;
         values[keyCount++] = m_historyItem->urlString().createCFString();
@@ -160,16 +156,21 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     keys[keyCount] = lastVisitedDateKey;
     values[keyCount++] = lastVisitedStringRef;
-    
+
     if (!m_historyItem->title().isEmpty()) {
         keys[keyCount] = titleKey;
         values[keyCount++] = m_historyItem->title().createCFString();
     }
-    
-    keys[keyCount]   = visitCountKey;
+
+    keys[keyCount] = visitCountKey;
     int visitCount = m_historyItem->visitCount();
     values[keyCount++] = CFNumberCreate(0, kCFNumberIntType, &visitCount);
-    
+
+    if (m_historyItem->lastVisitWasFailure()) {
+        keys[keyCount] = lastVisitWasFailureKey;
+        values[keyCount++] = CFRetain(kCFBooleanTrue);
+    }
+
     *dictionaryRef = CFDictionaryCreate(0, keys, values, keyCount, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     
     for (int i = 0; i < keyCount; ++i)
@@ -320,6 +321,17 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::children(unsigned* outChildCount, SAFE
 
 }
 
+HRESULT STDMETHODCALLTYPE WebHistoryItem::lastVisitWasFailure(BOOL* wasFailure)
+{
+    if (!wasFailure) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    *wasFailure = m_historyItem->lastVisitWasFailure();
+    return S_OK;
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebHistoryItem::QueryInterface(REFIID riid, void** ppvObject)
@@ -438,6 +450,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::icon(
 }
 
 // WebHistoryItem -------------------------------------------------------------
+
 HistoryItem* WebHistoryItem::historyItem() const
 {
     return m_historyItem.get();

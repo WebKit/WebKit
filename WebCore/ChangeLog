@@ -1,3 +1,28 @@
+2008-11-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22295
+          track which history items are from page load failures
+
+        * history/HistoryItem.cpp: Sort includes, add newly needed ones, and remove
+        no-longer-needed ones.
+        (WebCore::HistoryItem::HistoryItem): Initialize m_lastVisitWasFailure to false.
+        (WebCore::HistoryItem::showTreeWithIndent): Rewrote to avoid appending to a
+        String, since that's not efficient.
+
+        * history/HistoryItem.h: Removed unneeded includes. Added lastVisitWasFailure,
+        setLastVisitWasFailure, and m_lastVisitWasFailure.
+
+        * history/mac/HistoryItemMac.mm: Add newly-needed include
+        (WebCore::HistoryItem::setTransientProperty): Rewrote to avoid keeping a
+        m_transientProperties map around when it is empty.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createHistoryItem): Call setLastVisitWasFailure when
+        the page was unreachable or an HTTP page with a status code that indicates
+        failure.
+
 2008-11-16  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Timothy Hatcher.

@@ -4084,7 +4084,7 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
         if (useOriginal)
             url = originalURL;
         else if (docLoader)
-            url = docLoader->requestURL();                
+            url = docLoader->requestURL();
     }
 
     LOG(History, "WebCoreHistory: Creating item for %s", url.string().ascii().data());
@@ -4105,7 +4105,10 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
 
     RefPtr<HistoryItem> item = HistoryItem::create(url, m_frame->tree()->name(), parent, title);
     item->setOriginalURLString(originalURL.string());
-    
+
+    if (!unreachableURL.isEmpty() || !docLoader || docLoader->response().httpStatusCode() >= 400)
+        item->setLastVisitWasFailure(true);
+
     // Save form state if this is a POST
     if (docLoader) {
         if (useOriginal)

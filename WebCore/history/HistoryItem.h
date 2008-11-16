@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,34 +26,28 @@
 #ifndef HistoryItem_h
 #define HistoryItem_h
 
-#include "CachedPage.h"
-#include "FormData.h"
 #include "IntPoint.h"
 #include "PlatformString.h"
-#include <wtf/RefCounted.h>
-#include "StringHash.h"
-#include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-
-#if PLATFORM(QT)
-#include <QVariant>
-#endif
 
 #if PLATFORM(MAC)
 #import <wtf/RetainPtr.h>
 typedef struct objc_object* id;
 #endif
 
+#if PLATFORM(QT)
+#include <QVariant>
+#endif
+
 namespace WebCore {
 
+class CachedPage;
 class Document;
+class FormData;
+class HistoryItem;
 class Image;
 class KURL;
 class ResourceRequest;
 
-class HistoryItem;
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 
 extern void (*notifyHistoryItemChanged)();
@@ -106,6 +100,7 @@ public:
     String rssFeedReferrer() const;
     
     int visitCount() const;
+    bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
 
     void mergeAutoCompleteHints(HistoryItem* otherItem);
     
@@ -128,6 +123,7 @@ public:
 
     void setRSSFeedReferrer(const String&);
     void setVisitCount(int);
+    void setLastVisitWasFailure(bool wasFailure) { m_lastVisitWasFailure = wasFailure; }
 
     void addChildItem(PassRefPtr<HistoryItem>);
     HistoryItem* childItemWithName(const String&) const;
@@ -170,7 +166,7 @@ private:
     HistoryItem(const KURL& url, const String& target, const String& parent, const String& title);
 
     HistoryItem(const HistoryItem&);
-    
+
     String m_urlString;
     String m_originalURLString;
     String m_target;
@@ -185,6 +181,7 @@ private:
     
     HistoryItemVector m_subItems;
     
+    bool m_lastVisitWasFailure;
     bool m_isInPageCache;
     bool m_isTargetItem;
     int m_visitCount;
@@ -206,6 +203,7 @@ private:
     RetainPtr<id> m_viewState;
     OwnPtr<HashMap<String, RetainPtr<id> > > m_transientProperties;
 #endif
+
 #if PLATFORM(QT)
     QVariant m_userData;
 #endif
