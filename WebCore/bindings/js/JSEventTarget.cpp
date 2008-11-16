@@ -30,15 +30,18 @@
 #include "JSEventListener.h"
 #include "JSEventTargetNode.h"
 #include "JSMessagePort.h"
-#include "JSWorker.h"
-#include "JSWorkerContext.h"
 #include "JSXMLHttpRequestUpload.h"
-#include "Worker.h"
-#include "WorkerContext.h"
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
 #include "JSSVGElementInstance.h"
+#endif
+
+#if ENABLE(WORKERS)
+#include "JSWorker.h"
+#include "JSWorkerContext.h"
+#include "Worker.h"
+#include "WorkerContext.h"
 #endif
 
 using namespace JSC;

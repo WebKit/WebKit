@@ -1,5 +1,11 @@
 2008-11-16  Darin Adler  <darin@apple.com>
 
+        - try to fix GTK build
+
+        * bindings/js/JSEventTarget.cpp: Put worker includes inside an #if.
+
+2008-11-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         - https://bugs.webkit.org/show_bug.cgi?id=22295
