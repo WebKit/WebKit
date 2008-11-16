@@ -1,3 +1,12 @@
+2008-11-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Disable XHR upload progress event tests on Tiger due to race condition causing
+        intermittent failure reported in https://bugs.webkit.org/show_bug.cgi?id=22298
+
+        * platform/mac-tiger/Skipped:
+
 2008-11-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Justin Garcia.
