@@ -1,3 +1,25 @@
+2008-11-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22290
+        Remove cross-heap GC and MessagePort multi-threading support
+
+        It is broken (and may not be implementable at all), and no longer needed, as we
+        don't use MessagePorts for communication with workers any more.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        Removed cross-heap GC implementation.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::hasPendingActivity):
+        * dom/MessagePort.h:
+        Made objects RefCounted instead of ThreadSafeShared, added FIXME comments for code that is
+        unnecessarily complicated for single threaded case.
+
 2008-11-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

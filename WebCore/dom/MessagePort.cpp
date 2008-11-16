@@ -338,8 +338,6 @@ bool MessagePort::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
 
 bool MessagePort::hasPendingActivity()
 {
-    // In multi-threaded case, messages can be added to the queue asynchronously, but this can only happen if there is an accessible
-    // entangled port, in which case markCrossHeapDependentObjectsForContext will prevent collecting the port.
     return m_pendingCloseEvent || (m_queueIsOpen && !m_messageQueue.isEmpty());
 }
 

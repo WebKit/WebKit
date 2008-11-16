@@ -316,35 +316,6 @@ void markActiveObjectsForContext(JSGlobalData& globalData, ScriptExecutionContex
     }
 }
 
-void markCrossHeapDependentObjectsForContext(JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)
-{
-    const HashSet<MessagePort*>& messagePorts = scriptExecutionContext->messagePorts();
-    HashSet<MessagePort*>::const_iterator portsEnd = messagePorts.end();
-    for (HashSet<MessagePort*>::const_iterator iter = messagePorts.begin(); iter != portsEnd; ++iter) {
-        MessagePort* port = *iter;
-        ASSERT(port->scriptExecutionContext() == scriptExecutionContext);
-        RefPtr<MessagePort> entangledPort = port->entangledPort();
-        if (entangledPort) {
-            // No wrapper, or wrapper is already marked - no need to examine cross-heap dependencies.
-            DOMObject* wrapper = getCachedDOMObjectWrapper(globalData, port);
-            if (!wrapper || wrapper->marked())
-                continue;
-
-            // Don't use cross-heap model of marking on same-heap pairs. Otherwise, they will never be destroyed, because a port will mark its entangled one,
-            // and it will never get a chance to be marked as inaccessible. So, the port will keep getting marked in this function.
-            if ((scriptExecutionContext == entangledPort->scriptExecutionContext())
-                 || (scriptExecutionContext->isDocument() && entangledPort->scriptExecutionContext() && entangledPort->scriptExecutionContext()->isDocument()))
-                continue;
-
-            // If the port is active, mark it.
-            // FIXME: This is not quite correct, because a pair of inaccessible ports will not be collected until manually closed, or until either script execution context is destroyed.
-            // Also, there is a race condition: if a message is posted after markActiveObjectsForContext, and then ports get unentangled, we will not mark receiving port, which will result in a crash.
-            if (entangledPort)
-                wrapper->mark();
-        }
-    }
-}
-
 void updateDOMNodeDocument(Node* node, Document* oldDocument, Document* newDocument)
 {
     ASSERT(oldDocument != newDocument);
