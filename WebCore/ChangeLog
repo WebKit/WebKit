@@ -1,3 +1,18 @@
+2008-11-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - fix just-introduced crash in the svg/custom/svg-fonts-in-html.html test
+
+        This gets rid of the crash. It restores the behavior of the CG case from before Dirk
+        Shulze removed the platorm-dependent code, but perhaps it should be changed further
+        in the future so that the default for no style is "no stroke". I think the patch is
+        fine for fill.
+
+        * svg/graphics/SVGPaintServerSolid.cpp:
+        (WebCore::SVGPaintServerSolid::setup): Added null checks for svgStyle.
+        (WebCore::SVGPaintServerSolid::renderPath): Added null checks for style and svgStyle.
+
 2008-11-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Timothy Hatcher.
