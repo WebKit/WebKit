@@ -804,7 +804,10 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     // complicated (since it will involve testing whether our layer
     // is either occluded by another layer or clipped by an enclosing
     // layer or contains fixed backgrounds, etc.).
-    m_scrollX = x - m_scrollOriginX;
+    int newScrollX = x - m_scrollOriginX;
+    if (m_scrollY == y && m_scrollX == newScrollX)
+        return;
+    m_scrollX = newScrollX;
     m_scrollY = y;
 
     // Update the positions of our child layers.

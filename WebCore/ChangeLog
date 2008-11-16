@@ -1,3 +1,14 @@
+2008-11-16  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Timothy Hatcher.
+        Landed by George Staikos.
+
+        Optimization: don't relayout, repaint, or emit a DOM event if the
+        scroll event didn't scroll anywhere.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset): add early exit
+
 2008-11-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
