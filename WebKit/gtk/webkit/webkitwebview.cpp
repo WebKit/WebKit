@@ -1332,21 +1332,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
-static void webkit_web_view_screen_changed(WebKitWebView* webView, GdkScreen* previousScreen, gpointer userdata)
+static gdouble webViewGetDPI(WebKitWebView* webView)
 {
-    WebKitWebViewPrivate* priv = webView->priv;
-    WebKitWebSettings* webSettings = priv->webSettings;
-    Settings* settings = core(webView)->settings();
-
-    guint defaultFontSize, defaultMonospaceFontSize, minimumFontSize, minimumLogicalFontSize;
-
-    g_object_get(G_OBJECT(webSettings),
-                 "default-font-size", &defaultFontSize,
-                 "default-monospace-font-size", &defaultMonospaceFontSize,
-                 "minimum-font-size", &minimumFontSize,
-                 "minimum-logical-font-size", &minimumLogicalFontSize,
-                 NULL);
-
     gdouble DPI = defaultDPI;
 #if GTK_CHECK_VERSION(2,10,0)
     GdkScreen* screen = gtk_widget_has_screen(GTK_WIDGET(webView)) ? gtk_widget_get_screen(GTK_WIDGET(webView)) : gdk_screen_get_default();
@@ -1358,6 +1345,25 @@ static void webkit_web_view_screen_changed(WebKitWebView* webView, GdkScreen* pr
     }
 #endif
     ASSERT(DPI > 0);
+    return DPI;
+}
+
+static void webkit_web_view_screen_changed(WebKitWebView* webView, GdkScreen* previousScreen, gpointer userdata)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    WebKitWebSettings* webSettings = priv->webSettings;
+    Settings* settings = core(webView)->settings();
+    gdouble DPI = webViewGetDPI(webView);
+
+    guint defaultFontSize, defaultMonospaceFontSize, minimumFontSize, minimumLogicalFontSize;
+
+    g_object_get(G_OBJECT(webSettings),
+                 "default-font-size", &defaultFontSize,
+                 "default-monospace-font-size", &defaultMonospaceFontSize,
+                 "minimum-font-size", &minimumFontSize,
+                 "minimum-logical-font-size", &minimumLogicalFontSize,
+                 NULL);
+
     settings->setDefaultFontSize(defaultFontSize / 72.0 * DPI);
     settings->setDefaultFixedFontSize(defaultMonospaceFontSize / 72.0 * DPI);
     settings->setMinimumFontSize(minimumFontSize / 72.0 * DPI);
@@ -1419,6 +1425,12 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     webkit_web_view_screen_changed(webView, NULL, NULL);
 }
 
+static inline gint pixelsFromSize(WebKitWebView* webView, gint size)
+{
+    gdouble DPI = webViewGetDPI(webView);
+    return size / 72.0 * DPI;
+}
+
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView)
 {
     Settings* settings = core(webView)->settings();
@@ -1443,13 +1455,13 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("serif-font-family"))
         settings->setSerifFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("default-font-size"))
-        settings->setDefaultFontSize(g_value_get_int(&value));
+        settings->setDefaultFontSize(pixelsFromSize(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("default-monospace-font-size"))
-        settings->setDefaultFixedFontSize(g_value_get_int(&value));
+        settings->setDefaultFixedFontSize(pixelsFromSize(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("minimum-font-size"))
-        settings->setMinimumFontSize(g_value_get_int(&value));
+        settings->setMinimumFontSize(pixelsFromSize(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("minimum-logical-font-size"))
-        settings->setMinimumLogicalFontSize(g_value_get_int(&value));
+        settings->setMinimumLogicalFontSize(pixelsFromSize(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("auto-load-images"))
         settings->setLoadsImagesAutomatically(g_value_get_boolean(&value));
     else if (name == g_intern_string("auto-shrink-images"))
