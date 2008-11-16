@@ -191,14 +191,14 @@ struct PerformTaskContext {
     {
     }
 
-    RefPtr<ScriptExecutionContext> scriptExecutionContext;
+    ScriptExecutionContext* scriptExecutionContext; // The context should exist until task execution.
     RefPtr<ScriptExecutionContext::Task> task;
 };
 
 static void performTask(void* ctx)
 {
     PerformTaskContext* ptctx = reinterpret_cast<PerformTaskContext*>(ctx);
-    ptctx->task->performTask(ptctx->scriptExecutionContext.get());
+    ptctx->task->performTask(ptctx->scriptExecutionContext);
     delete ptctx;
 }
 

@@ -26,18 +26,21 @@
 
 module threads {
 
-    interface [CustomMarkFunction, Conditional=WORKERS] DedicatedWorker {
+    interface [CustomMarkFunction, Conditional=WORKERS] Worker {
 
-        // These also used for shared workers.
-        attribute EventListener onclose;
         attribute EventListener onerror;
-
-        // These are only for dedicated workers.
         attribute EventListener onmessage;
-        [Custom] MessagePort connect(in DOMString message);
-        void close();
-        void postMessage(in DOMString message, in [Optional] MessagePort port);
+        void postMessage(in DOMString message);
 
+        // EventTarget interface
+        [Custom] void addEventListener(in DOMString type, 
+                                       in EventListener listener, 
+                                       in boolean useCapture);
+        [Custom] void removeEventListener(in DOMString type, 
+                                          in EventListener listener, 
+                                          in boolean useCapture);
+        boolean dispatchEvent(in Event evt)
+            raises(EventException);
     };
 
 }

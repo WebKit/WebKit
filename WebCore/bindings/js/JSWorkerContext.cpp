@@ -44,18 +44,15 @@ using namespace JSC;
 
 namespace WebCore {
 
+static JSValue* jsWorkerContextPrototypeFunctionPostMessage(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* jsWorkerContextPrototypeFunctionAddEventListener(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* jsWorkerContextPrototypeFunctionRemoveEventListener(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* jsWorkerContextPrototypeFunctionDispatchEvent(ExecState*, JSObject*, JSValue*, const ArgList&);
 JSValue* jsWorkerContextLocation(ExecState*, const Identifier&, const PropertySlot&);
-JSValue* jsWorkerContextOnconnect(ExecState*, const Identifier&, const PropertySlot&);
-void setJSWorkerContextOnconnect(ExecState*, JSObject*, JSValue*);
-JSValue* jsWorkerContextMessageChannel(ExecState*, const Identifier&, const PropertySlot&);
-void setJSWorkerContextMessageChannel(ExecState*, JSObject*, JSValue*);
-JSValue* jsWorkerContextMessagePort(ExecState*, const Identifier&, const PropertySlot&);
+JSValue* jsWorkerContextOnmessage(ExecState*, const Identifier&, const PropertySlot&);
+void setJSWorkerContextOnmessage(ExecState*, JSObject*, JSValue*);
 void setJSWorkerContextMessageEvent(ExecState*, JSObject*, JSValue*);
 JSValue* jsWorkerContextMessageEvent(ExecState*, const Identifier&, const PropertySlot&);
-void setJSWorkerContextMessagePort(ExecState*, JSObject*, JSValue*);
 JSValue* jsWorkerContextWorkerLocation(ExecState*, const Identifier&, const PropertySlot&);
 void setJSWorkerContextWorkerLocation(ExecState*, JSObject*, JSValue*);
 
@@ -65,25 +62,17 @@ void setJSWorkerContextWorkerLocation(ExecState*, JSObject*, JSValue*);
 @begin JSWorkerContextPrototypeTable
   addEventListener               jsWorkerContextPrototypeFunctionAddEventListener              DontDelete|Function 3
   removeEventListener            jsWorkerContextPrototypeFunctionRemoveEventListener           DontDelete|Function 3
-  dispatchEvent                  jsWorkerContextPrototypeFunctionDispatchEvent                DontDelete|Function 2
-#  close                          jsWorkerContextPrototypeFunctionClose                         DontDelete|Function 0
-#  MessagePort methods?
+  dispatchEvent                  jsWorkerContextPrototypeFunctionDispatchEvent                 DontDelete|Function 2
+  postMessage                    jsWorkerContextPrototypeFunctionPostMessage                  DontDelete|Function 2
 @end
 */
 
 /*
 @begin JSWorkerContextTable
   location                      jsWorkerContextLocation            DontDelete|ReadOnly
-#  onclose                       jsWorkerContextOnclose             DontDelete
-  onconnect                     jsWorkerContextOnconnect                     DontDelete
-#  onmessage and other MessagePort attributes?
-#  navigator-like object for browser sniffing?
-  MessageChannel                jsWorkerContextMessageChannel                DontDelete
+  onmessage                     jsWorkerContextOnmessage                     DontDelete
   MessageEvent                  jsWorkerContextMessageEvent                  DontDelete
-  MessagePort                   jsWorkerContextMessagePort                   DontDelete
   WorkerLocation                jsWorkerContextWorkerLocation                DontDelete
-#  XMLHttpRequest                jsWorkerContextXMLHttpRequest                DontDelete
-#  Database
 @end
 */
 
@@ -125,7 +114,7 @@ void JSWorkerContext::mark()
 
     markActiveObjectsForContext(*globalData(), scriptExecutionContext());
 
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onconnect()))
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onmessage()))
         listener->mark();
 
     typedef WorkerContext::EventListenersMap EventListenersMap;
@@ -159,6 +148,17 @@ void JSWorkerContext::put(ExecState* exec, const Identifier& propertyName, JSVal
 bool JSWorkerContext::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<JSWorkerContext, Base>(exec, getJSWorkerContextTable(exec), this, propertyName, slot);
+}
+
+JSValue* jsWorkerContextPrototypeFunctionPostMessage(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
+{
+    if (!thisValue->isObject(&JSWorkerContext::s_info))
+        return throwError(exec, TypeError);
+    JSWorkerContext* workerContext = static_cast<JSWorkerContext*>(asObject(thisValue));
+    const UString& message = args.at(exec, 0)->toString(exec);
+
+    workerContext->impl()->postMessage(message);
+    return jsUndefined();
 }
 
 JSValue* jsWorkerContextPrototypeFunctionAddEventListener(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
@@ -205,38 +205,28 @@ JSValue* jsWorkerContextLocation(JSC::ExecState* exec, const Identifier&, const 
     return toJS(exec, imp->location());
 }
 
-JSValue* jsWorkerContextOnconnect(JSC::ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue* jsWorkerContextOnmessage(JSC::ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     WorkerContext* imp = static_cast<WorkerContext*>(static_cast<JSWorkerContext*>(asObject(slot.slotBase()))->impl());
-    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(imp->onconnect())) {
+    if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(imp->onmessage())) {
         if (JSObject* listenerObj = listener->listenerObj())
             return listenerObj;
     }
     return jsNull();
 }
 
-void setJSWorkerContextOnconnect(ExecState* exec, JSObject* thisObject, JSValue* value)
+void setJSWorkerContextOnmessage(ExecState* exec, JSObject* thisObject, JSValue* value)
 {
     WorkerContext* imp = static_cast<WorkerContext*>(static_cast<JSWorkerContext*>(thisObject)->impl());
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(imp->scriptExecutionContext());
     if (!globalObject)
         return;
-    imp->setOnconnect(globalObject->findOrCreateJSUnprotectedEventListener(exec, value, true));
-}
-
-JSValue* jsWorkerContextMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSWorkerContext*>(asObject(slot.slotBase())));
+    imp->setOnmessage(globalObject->findOrCreateJSUnprotectedEventListener(exec, value, true));
 }
 
 JSValue* jsWorkerContextMessageEvent(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return JSMessageEvent::getConstructor(exec);
-}
-
-JSValue* jsWorkerContextMessagePort(ExecState* exec, const Identifier&, const PropertySlot&)
-{
-    return JSMessagePort::getConstructor(exec);
 }
 
 JSValue* jsWorkerContextWorkerLocation(ExecState* exec, const Identifier&, const PropertySlot&)
@@ -261,19 +251,9 @@ bool JSWorkerContextPrototype::getOwnPropertySlot(ExecState* exec, const Identif
     return getStaticFunctionSlot<JSObject>(exec, getJSWorkerContextPrototypeTable(exec), this, propertyName, slot);
 }
 
-void setJSWorkerContextMessageChannel(ExecState*, JSObject*, JSValue*)
-{
-    // FIXME: Do we need to override put for global constructors, like JSDOMWindowBase does?
-    ASSERT_NOT_REACHED();
-}
-
 void setJSWorkerContextMessageEvent(ExecState*, JSObject*, JSValue*)
 {
-    ASSERT_NOT_REACHED();
-}
-
-void setJSWorkerContextMessagePort(ExecState*, JSObject*, JSValue*)
-{
+    // FIXME: Do we need to override put for global constructors, like JSDOMWindowBase does?
     ASSERT_NOT_REACHED();
 }
 

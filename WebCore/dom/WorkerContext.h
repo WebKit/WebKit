@@ -69,12 +69,14 @@ namespace WebCore {
 
         virtual WorkerContext* toWorkerContext() { return this; }
 
+        void postMessage(const String& message);
+
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
         virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
 
-        void setOnconnect(PassRefPtr<EventListener> eventListener) { m_onconnectListener = eventListener; }
-        EventListener* onconnect() const { return m_onconnectListener.get(); }
+        void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onmessageListener = eventListener; }
+        EventListener* onmessage() const { return m_onmessageListener.get(); }
 
         typedef Vector<RefPtr<EventListener> > ListenerVector;
         typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
@@ -100,7 +102,7 @@ namespace WebCore {
         WorkerScriptController m_script;
         WorkerThread* m_thread;
 
-        RefPtr<EventListener> m_onconnectListener;
+        RefPtr<EventListener> m_onmessageListener;
         EventListenersMap m_eventListeners;
     };
 

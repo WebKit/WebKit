@@ -1,3 +1,78 @@
+2008-11-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22266
+        Stop using MessagePort for communication with workers
+
+        The current MessagePort specification is not well suited for being implemented in a
+        multi-threaded or multi-process environment, and this doesn't appear to be easily fixable.
+        This patch implements a simpler Mozilla API for workers instead.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * DerivedSources.make:
+        * bindings/js/JSDOMWindowBase.cpp: (jsDOMWindowBaseWorker):
+        * bindings/js/JSDedicatedWorkerConstructor.cpp: Removed.
+        * bindings/js/JSDedicatedWorkerConstructor.h: Removed.
+        * bindings/js/JSDedicatedWorkerCustom.cpp: Removed.
+        * bindings/js/JSWorkerConstructor.cpp: Copied from WebCore/bindings/js/JSDedicatedWorkerConstructor.cpp.
+        * bindings/js/JSWorkerConstructor.h: Copied from WebCore/bindings/js/JSDedicatedWorkerConstructor.h.
+        * bindings/js/JSWorkerCustom.cpp: Copied from WebCore/bindings/js/JSDedicatedWorkerCustom.cpp.
+        * dom/DedicatedWorker.cpp: Removed.
+        * dom/DedicatedWorker.h: Removed.
+        * dom/DedicatedWorker.idl: Removed.
+        Renamed DedicatedWorker to Worker to match Mozilla and current WHATWG cpec.
+
+        * bindings/js/JSEventListener.cpp: (WebCore::JSAbstractEventListener::handleEvent):
+        Clear worker exceptions to avoid hitting an assertion.
+
+        * dom/EventTarget.cpp: (WebCore::EventTarget::toWorker):
+        * dom/EventTarget.h:
+        * bindings/js/JSEventTarget.cpp: (WebCore::toJS):
+        WorkerContext is now an EventTarget, too.
+
+        * bindings/js/JSWorkerContext.cpp: Removed onconnect, constructors for MessageChannel and
+        MessagePort. Added postMessage() and onmessage.
+
+        * dom/ScriptExecutionContext.cpp: (WebCore::performTask): Do not reference ScriptExecutionContext
+        when posting a task - this operation is not thread safe. It is also not necessary any more,
+        as the context is kept alive by WorkerMessagingProxy.
+
+        * dom/Worker.cpp: Copied from WebCore/dom/DedicatedWorker.cpp.
+        (WebCore::Worker::Worker): Start loading the script right away - there is no reason to do
+        that on a timer.
+        (WebCore::Worker::~Worker): Notify messaging proxy.
+        (WebCore::Worker::postMessage): Just ask the proxy to post the message.
+        (WebCore::Worker::notifyFinished): Notify messaging proxy when a thread object becomes
+        available. Also, it is now safe to unsetPendingActivity(), making the object collectable.
+        I'm not sure if this is the right lifetime for workers, as unreachable workers with event
+        listeners should probably be kept alive, but it at least lets the object be collected.
+        (WebCore::Worker::addEventListener): Added an EventTarget implementation.
+        (WebCore::Worker::removeEventListener): Added an EventTarget implementation.
+        (WebCore::Worker::dispatchEvent): Added an EventTarget implementation.
+
+        * dom/Worker.h: Copied from WebCore/dom/DedicatedWorker.h.
+        * dom/Worker.idl: Copied from WebCore/dom/DedicatedWorker.idl.
+        Removed onclose, made an EventListener. Actual messaging is now handled by WorkerMessagingProxy.
+
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::~WorkerContext): Notify messaging proxy that the context was shut
+        down successfully.
+        (WebCore::WorkerContext::postMessage): Added. Post the message via messaging proxy.
+
+        * dom/WorkerContext.h: Added postMessage and onmessage, removed onconnect.
+
+        * dom/WorkerMessagingProxy.cpp: Added.
+        * dom/WorkerMessagingProxy.h: Added.
+        This new class implements actual messaging. It is notified when a Worker is garbage collected,
+        and asks the thread to shut down. It also owns the thread object, and references script
+        execution context, making it safe to post messages to it remotely.
+
+        * dom/WorkerThread.cpp:
+        * dom/WorkerThread.h:
+        Keep a reference to messaging proxy, not to Worker itself. Also, the thread object no longer
+        keeps itself alive - it is now the job of messaging proxy.
+
 2008-11-15  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Geoff Garen.

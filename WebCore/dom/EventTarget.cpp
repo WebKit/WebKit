@@ -79,6 +79,11 @@ MessagePort* EventTarget::toMessagePort()
 }
 
 #if ENABLE(WORKERS)
+Worker* EventTarget::toWorker()
+{
+    return 0;
+}
+
 WorkerContext* EventTarget::toWorkerContext()
 {
     return 0;

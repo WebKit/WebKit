@@ -28,61 +28,102 @@
 
 #if ENABLE(WORKERS)
 
-#include "WorkerContext.h"
+#include "Worker.h"
 
+#include "CachedScript.h"
 #include "DOMWindow.h"
-#include "Event.h"
+#include "DocLoader.h"
+#include "Document.h"
 #include "EventException.h"
+#include "EventListener.h"
+#include "EventNames.h"
+#include "ExceptionCode.h"
+#include "FrameLoader.h"
+#include "MessageEvent.h"
 #include "SecurityOrigin.h"
-#include "WorkerLocation.h"
+#include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
+#include "WorkerTask.h"
 #include "WorkerThread.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-WorkerContext::WorkerContext(const KURL& url, WorkerThread* thread)
-    : m_url(url)
-    , m_location(WorkerLocation::create(url))
-    , m_securityOrigin(SecurityOrigin::create(url))
-    , m_script(this)
-    , m_thread(thread)
+Worker::Worker(const String& url, Document* doc, ExceptionCode& ec)
+    : ActiveDOMObject(doc, this)
+    , m_messagingProxy(new WorkerMessagingProxy(doc, this))
 {
+    m_scriptURL = doc->completeURL(url);
+    if (!m_scriptURL.isValid()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (!doc->securityOrigin()->canAccess(SecurityOrigin::create(m_scriptURL).get())) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    m_cachedScript = doc->docLoader()->requestScript(m_scriptURL, document()->charset());
+    if (!m_cachedScript) {
+        dispatchErrorEvent();
+        return;
+    }
+
+    setPendingActivity(this);  // The worker context does not exist while loading, so we much ensure that the worker object is not collected, as well as its event listeners.
+    m_cachedScript->addClient(this);
 }
 
-WorkerContext::~WorkerContext()
+Worker::~Worker()
 {
-    ASSERT(currentThread() == m_thread->threadID());
-
-    m_thread->messagingProxy()->workerContextDestroyed();
+    ASSERT(isMainThread());
+    ASSERT(scriptExecutionContext()); // The context is protected by messaging proxy, so it cannot be destroyed while a Worker exists.
+    m_messagingProxy->workerObjectDestroyed();
 }
 
-ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
+Document* Worker::document() const
 {
-    return const_cast<WorkerContext*>(this);
+    ASSERT(scriptExecutionContext()->isDocument());
+    return static_cast<Document*>(scriptExecutionContext());
 }
 
-
-const KURL& WorkerContext::virtualURL() const
+void Worker::postMessage(const String& message)
 {
-    return m_url;
+    m_messagingProxy->postMessageToWorkerContext(message);
 }
 
-KURL WorkerContext::completeURL(const String& url) const
+void Worker::notifyFinished(CachedResource* resource)
 {
-    // Always return a null URL when passed a null string.
-    // FIXME: Should we change the KURL constructor to have this behavior?
-    if (url.isNull())
-        return KURL();
-    // FIXME: does this need to provide a charset, like Document::completeURL does?
-    return KURL(m_location->url(), url);
+    ASSERT(resource == m_cachedScript.get());
+    if (m_cachedScript->errorOccurred())
+        dispatchErrorEvent();
+    else {
+        RefPtr<WorkerThread> thread = WorkerThread::create(m_scriptURL, m_cachedScript->script(), m_messagingProxy);
+        m_messagingProxy->workerThreadCreated(thread);
+        thread->start();
+    }
+
+    m_cachedScript->removeClient(this);
+    m_cachedScript = 0;
+
+    unsetPendingActivity(this);
 }
 
-void WorkerContext::postMessage(const String& message)
+void Worker::dispatchErrorEvent()
 {
-    m_thread->messagingProxy()->postMessageToWorkerObject(message);
+    RefPtr<Event> evt = Event::create(eventNames().errorEvent, false, true);
+    if (m_onErrorListener) {
+        evt->setTarget(this);
+        evt->setCurrentTarget(this);
+        m_onErrorListener->handleEvent(evt.get(), true);
+    }
+
+    ExceptionCode ec = 0;
+    dispatchEvent(evt.release(), ec);
+    ASSERT(!ec);
 }
 
-void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
+void Worker::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end()) {
@@ -101,7 +142,7 @@ void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<E
     }    
 }
 
-void WorkerContext::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
+void Worker::removeEventListener(const AtomicString& eventType, EventListener* eventListener, bool useCapture)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
     if (iter == m_eventListeners.end())
@@ -116,20 +157,20 @@ void WorkerContext::removeEventListener(const AtomicString& eventType, EventList
     }
 }
 
-bool WorkerContext::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
+bool Worker::dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec)
 {
     if (event->type().isEmpty()) {
         ec = EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return true;
     }
-    
+
     ListenerVector listenersCopy = m_eventListeners.get(event->type());
     for (ListenerVector::const_iterator listenerIter = listenersCopy.begin(); listenerIter != listenersCopy.end(); ++listenerIter) {
         event->setTarget(this);
         event->setCurrentTarget(this);
         listenerIter->get()->handleEvent(event.get(), false);
     }
-    
+
     return !event->defaultPrevented();
 }
 

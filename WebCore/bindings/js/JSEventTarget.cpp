@@ -30,8 +30,10 @@
 #include "JSEventListener.h"
 #include "JSEventTargetNode.h"
 #include "JSMessagePort.h"
+#include "JSWorker.h"
 #include "JSWorkerContext.h"
 #include "JSXMLHttpRequestUpload.h"
+#include "Worker.h"
 #include "WorkerContext.h"
 
 #if ENABLE(SVG)
@@ -74,6 +76,9 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
         return toJS(exec, messagePort);
 
 #if ENABLE(WORKERS)
+    if (Worker* worker = target->toWorker())
+        return toJS(exec, worker);
+
     if (WorkerContext* workerContext = target->toWorkerContext())
         return toJSDOMGlobalObject(workerContext);
 #endif

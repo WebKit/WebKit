@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,31 +21,56 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *
  */
 
-#ifndef JSDedicatedWorkerConstructor_h
-#define JSDedicatedWorkerConstructor_h
+#ifndef WorkerMessagingProxy_h
+#define WorkerMessagingProxy_h
 
 #if ENABLE(WORKERS)
 
-#include "JSDOMBinding.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class JSDedicatedWorkerConstructor : public DOMObject {
-    public:
-        JSDedicatedWorkerConstructor(JSC::ExecState*);
+    class ScriptExecutionContext;
+    class String;
+    class Worker;
+    class WorkerTask;
+    class WorkerThread;
 
-        static const JSC::ClassInfo s_info;
+    class WorkerMessagingProxy : Noncopyable {
+    public:
+        WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext>, Worker*);
+
+        void postMessageToWorkerObject(const String& message);
+        void postMessageToWorkerContext(const String& message);
+
+        void workerThreadCreated(PassRefPtr<WorkerThread>);
+        void workerObjectDestroyed();
+        void workerContextDestroyed();
 
     private:
-        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        friend class MessageWorkerTask;
+        friend class WorkerContextDestroyedTask;
 
-        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+        ~WorkerMessagingProxy();
+
+        void workerContextDestroyedInternal();
+        Worker* workerObject() const { return m_workerObject; }
+
+        RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+        Worker* m_workerObject;
+        RefPtr<WorkerThread> m_workerThread;
+
+        Vector<RefPtr<WorkerTask> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // JSDedicatedWorkerConstructor_h
+#endif // WorkerMessagingProxy_h

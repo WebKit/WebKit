@@ -30,8 +30,8 @@
 
 #include "WorkerThread.h"
 
-#include "DedicatedWorker.h"
 #include "JSWorkerContext.h"
+#include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerTask.h"
 
@@ -39,16 +39,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& sourceCode, PassRefPtr<DedicatedWorker> workerObject)
+PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& sourceCode, WorkerMessagingProxy* messagingProxy)
 {
-    return adoptRef(new WorkerThread(scriptURL, sourceCode, workerObject));
+    return adoptRef(new WorkerThread(scriptURL, sourceCode, messagingProxy));
 }
 
-WorkerThread::WorkerThread(const KURL& scriptURL, const String& sourceCode, PassRefPtr<DedicatedWorker> workerObject)
+WorkerThread::WorkerThread(const KURL& scriptURL, const String& sourceCode, WorkerMessagingProxy* messagingProxy)
     : m_threadID(0)
     , m_scriptURL(scriptURL.string().copy())
     , m_sourceCode(sourceCode.copy())
-    , m_workerObject(workerObject)
+    , m_messagingProxy(messagingProxy)
+{
+}
+
+WorkerThread::~WorkerThread()
 {
 }
 
@@ -57,7 +61,6 @@ bool WorkerThread::start()
     if (m_threadID)
         return true;
 
-    ref();
     m_threadID = createThread(WorkerThread::workerThreadStart, this, "WebCore::Worker");
 
     return m_threadID;
@@ -83,10 +86,9 @@ void* WorkerThread::workerThread()
         task->performTask(workerContext.get());
     }
 
-    workerContext = 0;
+    workerContext = 0; // Destroying the context will notify messaging proxy.
     m_threadID = 0;
 
-    deref();
     return 0;
 }
 

@@ -24,15 +24,17 @@
  *
  */
 
-#ifndef DedicatedWorker_h
-#define DedicatedWorker_h
+#ifndef Worker_h
+#define Worker_h
 
 #if ENABLE(WORKERS)
 
+#include "AtomicStringHash.h"
 #include "ActiveDOMObject.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "EventListener.h"
+#include "EventTarget.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -43,57 +45,63 @@ namespace WebCore {
     class CachedScript;
     class Document;
     class ScriptExecutionContext;
-    class MessagePort;
     class String;
+    class WorkerMessagingProxy;
     class WorkerTask;
-    class WorkerThread;
 
     typedef int ExceptionCode;
 
-    class DedicatedWorker : public RefCounted<DedicatedWorker>, public ActiveDOMObject, private CachedResourceClient {
+    class Worker : public RefCounted<Worker>, public ActiveDOMObject, private CachedResourceClient, public EventTarget {
     public:
-        static PassRefPtr<DedicatedWorker> create(const String& url, Document* document, ExceptionCode& ec) { return adoptRef(new DedicatedWorker(url, document, ec)); }
-        ~DedicatedWorker();
+        static PassRefPtr<Worker> create(const String& url, Document* document, ExceptionCode& ec) { return adoptRef(new Worker(url, document, ec)); }
+        ~Worker();
 
+        virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
         Document* document() const;
 
-        PassRefPtr<MessagePort> connect(ScriptExecutionContext*, const String& message);
-        void close();
-        void postMessage(const String& message, MessagePort* port = 0);
+        virtual Worker* toWorker() { return this; }
+
+        void postMessage(const String& message);
+
+        virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+        virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+        virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
+
+        typedef Vector<RefPtr<EventListener> > ListenerVector;
+        typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
+        EventListenersMap& eventListeners() { return m_eventListeners; }
+
+        using RefCounted<Worker>::ref;
+        using RefCounted<Worker>::deref;
 
         void setOnmessage(PassRefPtr<EventListener> eventListener) { m_onMessageListener = eventListener; }
         EventListener* onmessage() const { return m_onMessageListener.get(); }
-
-        void setOnclose(PassRefPtr<EventListener> eventListener) { m_onCloseListener = eventListener; }
-        EventListener* onclose() const { return m_onCloseListener.get(); }
 
         void setOnerror(PassRefPtr<EventListener> eventListener) { m_onErrorListener = eventListener; }
         EventListener* onerror() const { return m_onErrorListener.get(); }
 
     private:
-        friend class WorkerThreadScriptLoadTimer;
+        Worker(const String&, Document*, ExceptionCode&);
 
-        DedicatedWorker(const String&, Document*, ExceptionCode&);
-
-        void startLoad();
         virtual void notifyFinished(CachedResource*);
 
         void dispatchErrorEvent();
 
+        virtual void refEventTarget() { ref(); }
+        virtual void derefEventTarget() { deref(); }
+
         KURL m_scriptURL;
         CachedResourceHandle<CachedScript> m_cachedScript;
 
-        WorkerThread* m_thread;
+        WorkerMessagingProxy* m_messagingProxy; // The proxy outlives the worker to perform thread shutdown.
 
         RefPtr<EventListener> m_onMessageListener;
-        RefPtr<EventListener> m_onCloseListener;
         RefPtr<EventListener> m_onErrorListener;
-
-        Vector<RefPtr<WorkerTask> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
+        EventListenersMap m_eventListeners;
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // DedicatedWorker_h
+#endif // Worker_h

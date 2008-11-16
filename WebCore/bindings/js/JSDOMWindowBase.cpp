@@ -38,7 +38,6 @@
 #include "HTMLDocument.h"
 #include "InspectorController.h"
 #include "JSAudioConstructor.h"
-#include "JSDedicatedWorkerConstructor.h"
 #include "JSDOMWindowCustom.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
@@ -47,6 +46,7 @@
 #include "JSMessageChannelConstructor.h"
 #include "JSNode.h"
 #include "JSOptionConstructor.h"
+#include "JSWorkerConstructor.h"
 #include "JSXMLHttpRequestConstructor.h"
 #include "JSXSLTProcessorConstructor.h"
 #include "Logging.h"
@@ -456,7 +456,7 @@ JSValue* jsDOMWindowBaseWorker(ExecState* exec, const Identifier&, const Propert
 #if ENABLE(WORKERS)
     if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
-    return getDOMConstructor<JSDedicatedWorkerConstructor>(exec);
+    return getDOMConstructor<JSWorkerConstructor>(exec);
 #else
     return jsUndefined();
 #endif

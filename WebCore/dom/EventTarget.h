@@ -45,6 +45,7 @@ namespace WebCore {
     class RegisteredEventListener;
     class ScriptExecutionContext;
     class SVGElementInstance;
+    class Worker;
     class WorkerContext;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;
@@ -67,6 +68,7 @@ namespace WebCore {
         virtual SVGElementInstance* toSVGElementInstance();
 #endif
 #if ENABLE(WORKERS)
+        virtual Worker* toWorker();
         virtual WorkerContext* toWorkerContext();
 #endif
 

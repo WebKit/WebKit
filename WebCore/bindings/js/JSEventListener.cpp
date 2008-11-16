@@ -114,9 +114,10 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         globalObject->setCurrentEvent(savedEvent);
 
         if (exec->hadException()) {
-            // FIXME: Report exceptions in non-Document contexts.
             if (frame)
                 frame->domWindow()->console()->reportCurrentException(exec);
+            else
+                exec->clearException(); // FIXME: Report exceptions in non-Document contexts.
         } else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval->toString(exec));

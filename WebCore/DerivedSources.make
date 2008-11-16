@@ -77,7 +77,6 @@ DOM_CLASSES = \
     DOMParser \
     DOMSelection \
     DOMWindow \
-    DedicatedWorker \
     Database \
     Document \
     DocumentFragment \
@@ -359,6 +358,7 @@ DOM_CLASSES = \
     WebKitCSSTransformValue \
     WebKitTransitionEvent \
     WheelEvent \
+    Worker \
     WorkerLocation \
     XMLHttpRequest \
     XMLHttpRequestException \

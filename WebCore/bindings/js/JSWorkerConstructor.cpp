@@ -27,27 +27,27 @@
 
 #if ENABLE(WORKERS)
 
-#include "JSDedicatedWorkerConstructor.h"
+#include "JSWorkerConstructor.h"
 
-#include "DedicatedWorker.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "JSDOMWindowCustom.h"
-#include "JSDedicatedWorker.h"
+#include "JSWorker.h"
+#include "Worker.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSDedicatedWorkerConstructor::s_info = { "DedicatedWorkerConstructor", 0, 0, 0 };
+const ClassInfo JSWorkerConstructor::s_info = { "WorkerConstructor", 0, 0, 0 };
 
-JSDedicatedWorkerConstructor::JSDedicatedWorkerConstructor(ExecState* exec)
-    : DOMObject(JSDedicatedWorkerConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+JSWorkerConstructor::JSWorkerConstructor(ExecState* exec)
+    : DOMObject(JSWorkerConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructDedicatedWorker(ExecState* exec, JSObject* constructor, const ArgList& args)
+static JSObject* constructWorker(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
     if (args.size() == 0)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -57,15 +57,15 @@ static JSObject* constructDedicatedWorker(ExecState* exec, JSObject* constructor
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
     
     ExceptionCode ec = 0;
-    RefPtr<DedicatedWorker> worker = DedicatedWorker::create(scriptURL, window->document(), ec);
+    RefPtr<Worker> worker = Worker::create(scriptURL, window->document(), ec);
     setDOMException(exec, ec);
 
     return asObject(toJS(exec, worker.release()));
 }
 
-ConstructType JSDedicatedWorkerConstructor::getConstructData(ConstructData& constructData)
+ConstructType JSWorkerConstructor::getConstructData(ConstructData& constructData)
 {
-    constructData.native.function = constructDedicatedWorker;
+    constructData.native.function = constructWorker;
     return ConstructTypeHost;
 }
 
