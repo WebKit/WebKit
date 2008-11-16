@@ -23,6 +23,7 @@
 
 #include "PlatformString.h"
 #include "Image.h"
+#include "KURL.h"
 #include "Page.h"
 #include "PageGroup.h"
 

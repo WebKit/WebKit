@@ -1,3 +1,9 @@
+2008-11-16  Darin Adler  <darin@apple.com>
+
+        - try to fix build
+
+        * Api/qwebhistory.cpp: Added include of "KURL.h".
+
 2008-10-24  Yael Aharon <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.
