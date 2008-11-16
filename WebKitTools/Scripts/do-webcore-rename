@@ -87,12 +87,6 @@ my %renamesContemplatedForTheFuture = (
     "DateInstance" => "JSDate",
     "ErrorInstance" => "JSError",
 
-    "ImageConstructorImp" => "JSImageConstructor",
-    "Navigator" => "JSNavigator",
-
-    "JSHTMLOptionElementConstructor" => "JSOptionConstructor",
-    "XSLTProcessorPrototypeTable" => "JSXSLTProcessorPrototypeTable",
-
     "KURL" => "URL",
     "KURLCFNet" => "URLCF",
     "KURLHash" => "URLHash",

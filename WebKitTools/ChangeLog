@@ -1,3 +1,7 @@
+2008-11-16  Sam Weinig  <sam@webkit.org>
+
+        * Scripts/do-webcore-rename: Remove now fixed renames.
+
 2008-11-16  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Plan some future renames.
