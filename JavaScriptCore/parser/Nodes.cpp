@@ -2535,7 +2535,7 @@ void ProgramNode::generateBytecode(ScopeChainNode* scopeChainNode)
     
     m_code.set(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
     
-    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get(), m_varStack, m_functionStack);
+    BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get());
     generator.generate();
 }
 

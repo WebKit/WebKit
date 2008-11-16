@@ -67,7 +67,7 @@ namespace JSC {
 
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
 
-        BytecodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*, VarStack&, FunctionStack&);
+        BytecodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, ProgramCodeBlock*);
         BytecodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
         BytecodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
 

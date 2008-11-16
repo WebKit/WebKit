@@ -214,7 +214,7 @@ void BytecodeGenerator::allocateConstants(size_t count)
     m_lastConstant = &m_calleeRegisters.last();
 }
 
-BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock, VarStack& varStack, FunctionStack& functionStack)
+BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* debugger, const ScopeChain& scopeChain, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock)
     : m_shouldEmitDebugHooks(!!debugger)
     , m_shouldEmitProfileHooks(scopeChain.globalObject()->supportsProfiling())
     , m_scopeChain(&scopeChain)
@@ -255,6 +255,8 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const Debugger* d
         
     BatchedTransitionOptimizer optimizer(globalObject);
 
+    const VarStack& varStack = programNode->varStack();
+    const FunctionStack& functionStack = programNode->functionStack();
     bool canOptimizeNewGlobals = symbolTable->size() + functionStack.size() + varStack.size() < registerFile->maxGlobals();
     if (canOptimizeNewGlobals) {
         // Shift new symbols so they get stored prior to existing symbols.
