@@ -395,6 +395,7 @@
 		142711380A460BBB0080EEEA /* JSBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; };
 		1429D77B0ED20D7300B89619 /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
 		1429D7D30ED2128200B89619 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
+		1429D85B0ED218E900B89619 /* RegisterFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterFile.cpp; sourceTree = "<group>"; };
 		1440051F0A531D3B0005F061 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = tests/Node.h; sourceTree = "<group>"; };
 		144005200A531D3B0005F061 /* Node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Node.c; path = tests/Node.c; sourceTree = "<group>"; };
 		144007480A536CC20005F061 /* NodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeList.h; path = tests/NodeList.h; sourceTree = "<group>"; };
@@ -441,7 +442,6 @@
 		14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueRef.cpp; sourceTree = "<group>"; };
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
 		14D792640DAA03FB001A9F05 /* RegisterFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterFile.h; sourceTree = "<group>"; };
-		14D792650DAA03FB001A9F05 /* RegisterFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegisterFile.cpp; path = VM/RegisterFile.cpp; sourceTree = "<group>"; };
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = testapi.js; path = API/tests/testapi.js; sourceTree = "<group>"; };
 		14DA818E0D99FD2000B0A4FB /* JSActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActivation.h; sourceTree = "<group>"; };
 		14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSActivation.cpp; sourceTree = "<group>"; };
@@ -879,6 +879,7 @@
 				1429D7D30ED2128200B89619 /* Interpreter.cpp */,
 				1429D77B0ED20D7300B89619 /* Interpreter.h */,
 				149B24FF0D8AF6D1009CB8C7 /* Register.h */,
+				1429D85B0ED218E900B89619 /* RegisterFile.cpp */,
 				14D792640DAA03FB001A9F05 /* RegisterFile.h */,
 			);
 			path = interpreter;
@@ -959,7 +960,6 @@
 				8683B02B0E636482004C19EE /* CTI.cpp */,
 				8683B02C0E636482004C19EE /* CTI.h */,
 				A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */,
-				14D792650DAA03FB001A9F05 /* RegisterFile.cpp */,
 				8613F4580E3A433E00C948FD /* SamplingTool.cpp */,
 				8613F4590E3A433E00C948FD /* SamplingTool.h */,
 			);

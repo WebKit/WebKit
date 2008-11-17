@@ -62,7 +62,7 @@ SOURCES += \
     interpreter/Interpreter.cpp \
     bytecode/Opcode.cpp \
     VM/SamplingTool.cpp \
-    VM/RegisterFile.cpp
+    interpreter/RegisterFile.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time

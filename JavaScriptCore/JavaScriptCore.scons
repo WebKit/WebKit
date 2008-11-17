@@ -124,11 +124,11 @@ sources['bytecode'] = [
 ]
 sources['interpreter'] = [
     'interpreter/Interpreter.cpp',
+    'interpreter/RegisterFile.cpp',
 ]
 sources['VM'] = [
     'VM/CTI.cpp',
     'VM/ExceptionHelpers.cpp',
-    'VM/RegisterFile.cpp',
     'VM/SamplingTool.cpp',
 ]
 sources['wrec'] = [

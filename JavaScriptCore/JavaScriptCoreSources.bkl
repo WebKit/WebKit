@@ -151,7 +151,7 @@ Source files for JSCore.
         interpreter/Interpreter.cpp
         bytecode/Opcode.cpp
         VM/SamplingTool.cpp
-        VM/RegisterFile.cpp
+        interpreter/RegisterFile.cpp
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">
         wtf/Assertions.cpp

@@ -230,7 +230,7 @@ javascriptcore_built_sources += \
 	DerivedSources/Grammar.h
 
 javascriptcore_sources += \
-	JavaScriptCore/VM/RegisterFile.cpp \
+	JavaScriptCore/interpreter/RegisterFile.cpp \
 	JavaScriptCore/interpreter/RegisterFile.h \
 	JavaScriptCore/bytecompiler/BytecodeGenerator.cpp \
 	JavaScriptCore/bytecompiler/BytecodeGenerator.h \

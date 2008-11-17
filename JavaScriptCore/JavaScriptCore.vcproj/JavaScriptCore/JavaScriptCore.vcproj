@@ -1302,7 +1302,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\RegisterFile.cpp"
+				RelativePath="..\..\interpreter\RegisterFile.cpp"
 				>
 			</File>
 			<File
