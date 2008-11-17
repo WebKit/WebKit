@@ -93,37 +93,16 @@ for my $file (sort @files) {
     $shortName =~ s/.*\///;
 
     if ($target eq "WebCore") {
-        next if $shortName eq "AccessibilityObject.o";
         next if $shortName eq "AccessibilityRenderObject.o";
         next if $shortName eq "CSSStyleSelector.o";
-        next if $shortName eq "CachedImage.o";
-        next if $shortName eq "ColorMac.o";
-        next if $shortName eq "EventHandlerMac.o";
-        next if $shortName eq "FTPDirectoryDocument.o";
         next if $shortName eq "FontCache.o";
-        next if $shortName eq "FontCacheMac.o";
-        next if $shortName eq "GraphicsContextMac.o";
-        next if $shortName eq "HTMLTableElement.o";
-        next if $shortName eq "IconDatabase.o";
-        next if $shortName eq "Image.o";
         next if $shortName eq "JSHTMLElementWrapperFactory.o";
         next if $shortName eq "JSSVGAnimatedLength.o";
         next if $shortName eq "JSSVGAnimatedRect.o";
         next if $shortName eq "JSSVGElementWrapperFactory.o";
         next if $shortName eq "JSSVGLength.o";
         next if $shortName eq "JSSVGRect.o";
-        next if $shortName eq "PasteboardMac.o";
-        next if $shortName eq "RenderLayer.o";
-        next if $shortName eq "ScrollView.o";
-        next if $shortName eq "SecurityOrigin.o";
-        next if $shortName eq "SimpleFontDataMac.o";
         next if $shortName eq "StyleTransformData.o";
-    }
-
-    if ($target eq "WebKit") {
-        next if $shortName eq "WebHTMLRepresentation.o";
-        next if $shortName eq "WebNSPasteboardExtras.o";
-        next if $shortName eq "WebPasteboardHelper.o";
     }
 
     $sawError = 1 if printFunctions($shortName, $file);
@@ -168,6 +147,7 @@ sub printFunctions($$)
     my $currentSymbol = "";
     while (<OTOOL>) {
         $currentSymbol = $1 if /^(\w+):$/;
+        next unless $currentSymbol;
         $functions{demangle($currentSymbol)} = 1 if /___cxa_atexit/;
     }
     close OTOOL;
