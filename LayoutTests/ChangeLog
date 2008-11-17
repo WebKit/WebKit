@@ -1,3 +1,14 @@
+2008-11-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22320 SVG svg/text/text-text-08-b.svg fails
+
+        Updated the expected results to the correct ones.
+
+        * platform/mac/svg/text/text-text-08-b-expected.checksum:
+        * platform/mac/svg/text/text-text-08-b-expected.png:
+
 2008-11-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Beth Dakin.
