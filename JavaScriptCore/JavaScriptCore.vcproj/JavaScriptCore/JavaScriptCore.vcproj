@@ -1342,7 +1342,7 @@
 			Name="masm"
 			>
 			<File
-				RelativePath="..\..\masm\X86Assembler.h"
+				RelativePath="..\..\assembler\X86Assembler.h"
 				>
 			</File>
 		</Filter>
