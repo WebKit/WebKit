@@ -31,6 +31,7 @@
 
 #include "Frame.h"
 #include "FrameTree.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "ChromeClientQt.h"
@@ -220,6 +221,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::InitializeLoggingChannelsIfNecessary();
     WebCore::PageGroup::setShouldTrackVisitedLinks(true);
     JSC::initializeThreading();
+    WebCore::FrameLoader::setLocalLoadPolicy(WebCore::FrameLoader::AllowLocalLoadsForLocalAndSubstituteData);
 
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();

@@ -1,3 +1,16 @@
+2008-11-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Tor Arne Vestbø and Simon Hausmann.
+
+        Fix regression when loading resources from Qt resource system using qrc:/.
+
+        Added a unit test to catch future regression.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * tests/qwebframe/image.png: Added.
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2008-11-16  Darin Adler  <darin@apple.com>
 
         - try to fix build
