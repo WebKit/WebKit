@@ -78,14 +78,14 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecode/CodeBlock.h \
 	JavaScriptCore/bytecode/EvalCodeCache.h \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
-	JavaScriptCore/VM/ExceptionHelpers.h \
+	JavaScriptCore/runtime/ExceptionHelpers.h \
 	JavaScriptCore/bytecode/Instruction.h \
 	JavaScriptCore/bytecompiler/Label.h \
 	JavaScriptCore/interpreter/Interpreter.cpp \
 	JavaScriptCore/interpreter/Interpreter.h \
 	JavaScriptCore/bytecode/Opcode.cpp \
 	JavaScriptCore/bytecode/Opcode.h \
-	JavaScriptCore/VM/Register.h \
+	JavaScriptCore/interpreter/Register.h \
 	JavaScriptCore/bytecompiler/RegisterID.h \
 	JavaScriptCore/VM/SamplingTool.cpp \
 	JavaScriptCore/VM/SamplingTool.h \
@@ -231,7 +231,7 @@ javascriptcore_built_sources += \
 
 javascriptcore_sources += \
 	JavaScriptCore/VM/RegisterFile.cpp \
-	JavaScriptCore/VM/RegisterFile.h \
+	JavaScriptCore/interpreter/RegisterFile.h \
 	JavaScriptCore/bytecompiler/BytecodeGenerator.cpp \
 	JavaScriptCore/bytecompiler/BytecodeGenerator.h \
 	JavaScriptCore/bytecompiler/LabelScope.h \

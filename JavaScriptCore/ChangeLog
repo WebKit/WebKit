@@ -1,5 +1,25 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Moved:
+            VM/ExceptionHelpers.h => runtime/ExceptionHelpers.h
+            VM/Register.h => interpreter/Register.h
+            VM/RegisterFile.h => interpreter/RegisterFile.h
+        
+        
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/ExceptionHelpers.h: Removed.
+        * VM/Register.h: Removed.
+        * VM/RegisterFile.h: Removed.
+        * interpreter/Register.h: Copied from VM/Register.h.
+        * interpreter/RegisterFile.h: Copied from VM/RegisterFile.h.
+        * runtime/ExceptionHelpers.h: Copied from VM/ExceptionHelpers.h.
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix Qt build.

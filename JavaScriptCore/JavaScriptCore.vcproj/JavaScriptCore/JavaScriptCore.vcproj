@@ -1266,7 +1266,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\ExceptionHelpers.h"
+				RelativePath="..\..\interpreter\ExceptionHelpers.h"
 				>
 			</File>
 			<File
@@ -1298,7 +1298,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\Register.h"
+				RelativePath="..\..\interpreter\Register.h"
 				>
 			</File>
 			<File
@@ -1306,7 +1306,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\RegisterFile.h"
+				RelativePath="..\..\interpreter\RegisterFile.h"
 				>
 			</File>
 			<File
