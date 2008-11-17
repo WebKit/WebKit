@@ -30,6 +30,7 @@
 #if ENABLE(SVG)
 #include "Frame.h"
 #include "SVGElement.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -334,7 +335,7 @@ struct PODTypeWrapperCacheInfoTraits : WTF::GenericHashTraits<PODTypeWrapperCach
 
     static const CacheInfo& emptyValue()
     {
-        static CacheInfo key;
+        DEFINE_STATIC_LOCAL(CacheInfo, key, ());
         return key;
     }
 
@@ -366,7 +367,7 @@ public:
 
     static DynamicWrapperHashMap& dynamicWrapperHashMap()
     {
-        static DynamicWrapperHashMap s_dynamicWrapperHashMap;
+        DEFINE_STATIC_LOCAL(DynamicWrapperHashMap, s_dynamicWrapperHashMap, ());
         return s_dynamicWrapperHashMap;
     }
 

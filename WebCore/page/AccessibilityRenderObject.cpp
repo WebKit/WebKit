@@ -1986,7 +1986,7 @@ static const ARIARoleMap& createARIARoleMap()
         AccessibilityRole webcoreRole;
     };
 
-    static const RoleEntry roles[] = {
+    const RoleEntry roles[] = {
         { "button", ButtonRole },
         { "checkbox", CheckBoxRole },
         { "group", GroupRole },
