@@ -1,3 +1,19 @@
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Removed ascii-regexp-subject.html because it was the slowest JS test (20s
+        on my iMac) and it didn't actually verify anything.
+        
+        Filed https://bugs.webkit.org/show_bug.cgi?id=22303 to cover fixing
+        the bug that ascii-regexp-subject.html purported to test for, and
+        then relanding a faster version of ascii-regexp-subject.html once it
+        would pass (currently, it would fail).
+
+        * fast/js/ascii-regexp-subject-expected.txt: Removed.
+        * fast/js/ascii-regexp-subject.html: Removed.
+        * fast/js/resources/ascii-regexp-subject.js: Removed.
+
 2008-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

@@ -1,5 +1,0 @@
-PASS Congrats, your browser didn't hang!
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
