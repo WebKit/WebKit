@@ -32,6 +32,7 @@
 #include "PlatformWheelEvent.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include <wtf/StdLibExtras.h>
 
 using std::max;
 
@@ -668,10 +669,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     }
 
     // Paint the panScroll Icon
-    static RefPtr<Image> panScrollIcon;
     if (m_drawPanScrollIcon) {
-        if (!panScrollIcon)
-            panScrollIcon = Image::loadPlatformResource("panIcon");
+        DEFINE_STATIC_LOCAL(RefPtr<Image>, panScrollIcon, (Image::loadPlatformResource("panIcon")));
         context->drawImage(panScrollIcon.get(), m_panScrollIconPoint);
     }
 }

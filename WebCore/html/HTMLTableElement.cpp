@@ -520,8 +520,8 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
 {
     CellBorders borders = cellBorders();
 
-    static const AtomicString cellBorderNames[] = { "none", "solid", "inset", "solid-cols", "solid-rows" };
-    const AtomicString& cellborderValue = cellBorderNames[borders];
+    static const AtomicString* cellBorderNames[] = { new AtomicString("none"), new AtomicString("solid"), new AtomicString("inset"), new AtomicString("solid-cols"), new AtomicString("solid-rows") };
+    const AtomicString& cellborderValue = *cellBorderNames[borders];
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, cellborderAttr, cellborderValue);
     if (!decl) {
         decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
@@ -565,7 +565,7 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
                 break;
         }
 
-        setMappedAttributeDecl(ePersistent, cellborderAttr, cellBorderNames[borders], decl);
+        setMappedAttributeDecl(ePersistent, cellborderAttr, *cellBorderNames[borders], decl);
         decl->setParent(0);
         decl->setNode(0);
         decl->setMappedState(ePersistent, cellborderAttr, cellborderValue);

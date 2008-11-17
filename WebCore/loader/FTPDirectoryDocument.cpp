@@ -38,6 +38,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "Text.h"
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(QT)
 #include <QDateTime>
@@ -323,20 +324,22 @@ void FTPDirectoryTokenizer::parseAndAppendOneLine(const String& inputLine)
     appendEntry(filename, processFilesizeString(result.fileSize, result.type == FTPDirectoryEntry), processFileDateString(result.modifiedTime), result.type == FTPDirectoryEntry);
 }
 
+static inline SharedBuffer* createTemplateDocumentData(Settings* settings)
+{
+    SharedBuffer* buffer = 0;
+    if (settings)
+        buffer = SharedBuffer::createWithContentsOfFile(settings->ftpDirectoryTemplatePath()).releaseRef();
+    if (buffer)
+        LOG(FTP, "Loaded FTPDirectoryTemplate of length %i\n", templateDocumentData->size());
+    return buffer;
+}
+    
 bool FTPDirectoryTokenizer::loadDocumentTemplate()
 {
-    static RefPtr<SharedBuffer> templateDocumentData;
+    DEFINE_STATIC_LOCAL(RefPtr<SharedBuffer>, templateDocumentData, (createTemplateDocumentData(m_doc->settings())));
     // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
     // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
     // approach that make it worth putting this off.
-
-    if (!templateDocumentData) {
-        Settings* settings = m_doc->settings();
-        if (settings)
-            templateDocumentData = SharedBuffer::createWithContentsOfFile(settings->ftpDirectoryTemplatePath());
-        if (templateDocumentData)
-            LOG(FTP, "Loaded FTPDirectoryTemplate of length %i\n", templateDocumentData->size());
-    }
     
     if (!templateDocumentData) {
         LOG_ERROR("Could not load templateData");

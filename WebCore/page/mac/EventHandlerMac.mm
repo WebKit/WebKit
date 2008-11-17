@@ -43,6 +43,7 @@
 #include "RenderWidget.h"
 #include "Scrollbar.h"
 #include "Settings.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ const double EventHandler::TextDragDelay = 0.15;
 
 static RetainPtr<NSEvent>& currentEvent()
 {
-    static RetainPtr<NSEvent> event;
+    DEFINE_STATIC_LOCAL(RetainPtr<NSEvent>, event, ());
     return event;
 }
 

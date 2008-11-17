@@ -28,6 +28,7 @@
 #import "ColorMac.h"
 
 #import <wtf/Assertions.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 
 @interface WebCoreControlTintObserver : NSObject
@@ -59,21 +60,21 @@ NSColor* nsColor(const Color& color)
     switch (c) {
         case 0: {
             // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-            static RetainPtr<NSColor> clearColor = [NSColor clearColor];
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, clearColor, ([NSColor clearColor]));
             return clearColor.get();
         }
         case Color::black: {
-            static RetainPtr<NSColor> blackColor = [NSColor blackColor];
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, blackColor, ([NSColor blackColor]));
             return blackColor.get();
         }
         case Color::white: {
-            static RetainPtr<NSColor> whiteColor = [NSColor whiteColor];
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, whiteColor, ([NSColor whiteColor]));
             return whiteColor.get();
         }
         default: {
             const int cacheSize = 32;
             static unsigned cachedRGBAValues[cacheSize];
-            static RetainPtr<NSColor> cachedColors[cacheSize];
+            static RetainPtr<NSColor>* cachedColors = new RetainPtr<NSColor>[cacheSize];
 
             for (int i = 0; i != cacheSize; ++i)
                 if (cachedRGBAValues[i] == c)

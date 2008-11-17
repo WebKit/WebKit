@@ -34,6 +34,7 @@
 #include "Request.h"
 #include "Settings.h"
 #include "SystemTime.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -107,15 +108,13 @@ void CachedImage::allClientsRemoved()
 
 static Image* brokenImage()
 {
-    static RefPtr<Image> brokenImage;
-    if (!brokenImage)
-        brokenImage = Image::loadPlatformResource("missingImage");
+    DEFINE_STATIC_LOCAL(RefPtr<Image>, brokenImage, (Image::loadPlatformResource("missingImage")));
     return brokenImage.get();
 }
 
 static Image* nullImage()
 {
-    static RefPtr<BitmapImage> nullImage = BitmapImage::create();
+    DEFINE_STATIC_LOCAL(RefPtr<BitmapImage>, nullImage, (BitmapImage::create()));
     return nullImage.get();
 }
 

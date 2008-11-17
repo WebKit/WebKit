@@ -74,6 +74,7 @@
 #include "ScrollbarTheme.h"
 #include "SelectionController.h"
 #include "TranslateTransformOperation.h"
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -1518,9 +1519,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     }
 
     // Paint the resizer control.
-    static RefPtr<Image> resizeCornerImage;
-    if (!resizeCornerImage)
-        resizeCornerImage = Image::loadPlatformResource("textAreaResizeCorner");
+    DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
     IntPoint imagePoint(absRect.right() - resizeCornerImage->width(), absRect.bottom() - resizeCornerImage->height());
     context->drawImage(resizeCornerImage.get(), imagePoint);
 

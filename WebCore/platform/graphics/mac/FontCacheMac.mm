@@ -140,10 +140,10 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
     const FontFamily* currFamily = &font.fontDescription().family();
     while (currFamily && !platformData) {
         if (currFamily->family().length()) {
-            static String matchWords[3] = { String("Arabic"), String("Pashto"), String("Urdu") };
+            static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
             DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro"));
             for (int j = 0; j < 3 && !platformData; ++j)
-                if (currFamily->family().contains(matchWords[j], false))
+                if (currFamily->family().contains(*matchWords[j], false))
                     platformData = getCachedFontPlatformData(font.fontDescription(), geezaStr);
         }
         currFamily = currFamily->next();

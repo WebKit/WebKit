@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include <wtf/StdLibExtras.h>
 
 #include <math.h>
 
@@ -52,7 +53,7 @@ Image::~Image()
 
 Image* Image::nullImage()
 {
-    static RefPtr<Image> nullImage = BitmapImage::create();
+    DEFINE_STATIC_LOCAL(RefPtr<Image>, nullImage, (BitmapImage::create()));;
     return nullImage.get();
 }
 

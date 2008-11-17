@@ -44,6 +44,7 @@
 #import "WebCoreNSStringExtras.h"
 #import "markup.h"
 
+#import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSAttributedString (AppKitSecretsIKnowAbout)
@@ -78,27 +79,27 @@ static NSArray* selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selecti
 
 static NSArray* writableTypesForURL()
 {
-    static RetainPtr<NSArray> types = nil;
-    if (!types) {
-        types = [[NSArray alloc] initWithObjects:
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, ([[NSArray alloc] initWithObjects:
             WebURLsWithTitlesPboardType,
             NSURLPboardType,
             WebURLPboardType,
             WebURLNamePboardType,
             NSStringPboardType,
-            nil];
-    }
+            nil]));
     return types.get();
+}
+
+static inline NSArray* createWritableTypesForImage()
+{
+    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
+    [types addObjectsFromArray:writableTypesForURL()];
+    [types addObject:NSRTFDPboardType];
+    return types;
 }
 
 static NSArray* writableTypesForImage()
 {
-    static RetainPtr<NSMutableArray> types = nil;
-    if (!types) {
-        types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
-        [types.get() addObjectsFromArray:writableTypesForURL()];
-        [types.get() addObject:NSRTFDPboardType];
-    }
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (createWritableTypesForImage()));
     return types.get();
 }
 
@@ -121,7 +122,7 @@ void Pasteboard::clear()
 static NSAttributedString *stripAttachmentCharacters(NSAttributedString *string)
 {
     const unichar attachmentCharacter = NSAttachmentCharacter;
-    static RetainPtr<NSString> attachmentCharacterString = [NSString stringWithCharacters:&attachmentCharacter length:1];
+    DEFINE_STATIC_LOCAL(RetainPtr<NSString>, attachmentCharacterString, ([NSString stringWithCharacters:&attachmentCharacter length:1]));
     NSMutableAttributedString *result = [[string mutableCopy] autorelease];
     NSRange attachmentRange = [[result string] rangeOfString:attachmentCharacterString.get()];
     while (attachmentRange.location != NSNotFound) {

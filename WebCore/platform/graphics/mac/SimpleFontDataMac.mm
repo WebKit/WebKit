@@ -42,6 +42,7 @@
 #import <float.h>
 #import <unicode/uchar.h>
 #import <wtf/Assertions.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSFont (WebAppKitSecretAPI)
@@ -92,9 +93,7 @@ bool initFontData(SimpleFontData* fontData)
 
 static NSString *webFallbackFontFamily(void)
 {
-    static RetainPtr<NSString> webFallbackFontFamily = nil;
-    if (!webFallbackFontFamily)
-        webFallbackFontFamily = [[NSFont systemFontOfSize:16.0f] familyName];
+    DEFINE_STATIC_LOCAL(RetainPtr<NSString>, webFallbackFontFamily, ([[NSFont systemFontOfSize:16.0f] familyName]));
     return webFallbackFontFamily.get();
 }
 

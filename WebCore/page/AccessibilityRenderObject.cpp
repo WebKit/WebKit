@@ -70,6 +70,7 @@
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -2351,13 +2352,13 @@ void AccessibilityRenderObject::removeAXObjectID()
 const String& AccessibilityRenderObject::actionVerb() const
 {
     // FIXME: Need to add verbs for select elements.
-    static const String buttonAction = AXButtonActionVerb();
-    static const String textFieldAction = AXTextFieldActionVerb();
-    static const String radioButtonAction = AXRadioButtonActionVerb();
-    static const String checkedCheckBoxAction = AXCheckedCheckBoxActionVerb();
-    static const String uncheckedCheckBoxAction = AXUncheckedCheckBoxActionVerb();
-    static const String linkAction = AXLinkActionVerb();
-    static const String noAction;
+    DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
+    DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
+    DEFINE_STATIC_LOCAL(const String, radioButtonAction, (AXRadioButtonActionVerb()));
+    DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
+    DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
+    DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
+    DEFINE_STATIC_LOCAL(const String, noAction, ());
     
     switch (roleValue()) {
         case ButtonRole:
