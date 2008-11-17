@@ -119,9 +119,9 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #else
     "movl %esp, 0(%esp)" "\n"
 #endif
-    "call " SYMBOL_STRING(_ZN3JSC19BytecodeInterpreter12cti_vm_throwEPPv) "\n"
+    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPPv) "\n"
 #else
-    "call " SYMBOL_STRING(_ZN3JSC19BytecodeInterpreter12cti_vm_throwEPvz) "\n"
+    "call " SYMBOL_STRING(_ZN3JSC11Interpreter12cti_vm_throwEPvz) "\n"
 #endif
     "addl $0x20, %esp" "\n"
     "popl %ebx" "\n"
@@ -157,7 +157,7 @@ extern "C" {
     {
         __asm {
             mov ecx, esp;
-            call JSC::BytecodeInterpreter::cti_vm_throw;
+            call JSC::Interpreter::cti_vm_throw;
             add esp, 0x20;
             pop ebx;
             pop edi;
@@ -632,7 +632,7 @@ CTI::CTI(JSGlobalData* globalData, CodeBlock* codeBlock)
     case name: { \
         emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx); \
         emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx); \
-        emitCTICall(instruction + i, i, BytecodeInterpreter::cti_##name); \
+        emitCTICall(instruction + i, i, Interpreter::cti_##name); \
         emitPutVirtualRegister(instruction[i + 1].u.operand); \
         i += 4; \
         break; \
@@ -641,7 +641,7 @@ CTI::CTI(JSGlobalData* globalData, CodeBlock* codeBlock)
 #define CTI_COMPILE_UNARY_OP(name) \
     case name: { \
         emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx); \
-        emitCTICall(instruction + i, i, BytecodeInterpreter::cti_##name); \
+        emitCTICall(instruction + i, i, Interpreter::cti_##name); \
         emitPutVirtualRegister(instruction[i + 1].u.operand); \
         i += 3; \
         break; \
@@ -717,7 +717,7 @@ void CTI::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned i,
         emitGetVirtualRegister(callee, X86::ecx, i);
         compileOpCallEvalSetupArgs(instruction);
 
-        emitCTICall(instruction, i, BytecodeInterpreter::cti_op_call_eval);
+        emitCTICall(instruction, i, Interpreter::cti_op_call_eval);
         __ cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::eax);
         wasEval = __ emitUnlinkedJne();
     }
@@ -740,7 +740,7 @@ void CTI::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned i,
 
         emitPutCTIArg(X86::ecx, 0);
         emitPutCTIArgFromVirtualRegister(proto, 12, X86::eax);
-        emitCTICall(instruction, i, BytecodeInterpreter::cti_op_construct_JSConstruct);
+        emitCTICall(instruction, i, Interpreter::cti_op_construct_JSConstruct);
         emitPutVirtualRegister(thisRegister);
         emitGetVirtualRegister(callee, X86::ecx, i);
     }
@@ -828,11 +828,11 @@ void CTI::emitSlowScriptCheck(Instruction* vPC, unsigned bytecodeIndex)
 {
     __ subl_i8r(1, X86::esi);
     X86Assembler::JmpSrc skipTimeout = __ emitUnlinkedJne();
-    emitCTICall(vPC, bytecodeIndex, BytecodeInterpreter::cti_timeout_check);
+    emitCTICall(vPC, bytecodeIndex, Interpreter::cti_timeout_check);
 
     emitGetCTIParam(CTI_ARGS_globalData, X86::ecx);
     __ movl_mr(OBJECT_OFFSET(JSGlobalData, interpreter), X86::ecx, X86::ecx);
-    __ movl_mr(OBJECT_OFFSET(BytecodeInterpreter, m_ticksUntilNextTimeoutCheck), X86::ecx, X86::esi);
+    __ movl_mr(OBJECT_OFFSET(Interpreter, m_ticksUntilNextTimeoutCheck), X86::ecx, X86::esi);
     __ link(skipTimeout, __ label());
 
     killLastResultRegister();
@@ -1067,12 +1067,12 @@ void CTI::compileBinaryArithOpSlowCase(Instruction* vPC, OpcodeID opcodeID, Vect
     emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
     emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
     if (opcodeID == op_add)
-        emitCTICall(vPC, i, BytecodeInterpreter::cti_op_add);
+        emitCTICall(vPC, i, Interpreter::cti_op_add);
     else if (opcodeID == op_sub)
-        emitCTICall(vPC, i, BytecodeInterpreter::cti_op_sub);
+        emitCTICall(vPC, i, Interpreter::cti_op_sub);
     else {
         ASSERT(opcodeID == op_mul);
-        emitCTICall(vPC, i, BytecodeInterpreter::cti_op_mul);
+        emitCTICall(vPC, i, Interpreter::cti_op_mul);
     }
     emitPutVirtualRegister(dst);
 }
@@ -1130,7 +1130,7 @@ void CTI::privateCompileMainPass()
                 else {
                     emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
                     emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
-                    emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_add);
+                    emitCTICall(instruction + i, i, Interpreter::cti_op_add);
                     emitPutVirtualRegister(instruction[i + 1].u.operand);
                 }
             }
@@ -1140,7 +1140,7 @@ void CTI::privateCompileMainPass()
         }
         case op_end: {
             if (m_codeBlock->needsFullScopeChain)
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_end);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_end);
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
             __ pushl_m(RegisterFile::ReturnPC * static_cast<int>(sizeof(Register)), X86::edi);
             __ ret();
@@ -1212,7 +1212,7 @@ void CTI::privateCompileMainPass()
             break;
         }
         case op_new_object: {
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_new_object);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_new_object);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 2;
             break;
@@ -1342,7 +1342,7 @@ void CTI::privateCompileMainPass()
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_del_by_id);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_del_by_id);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -1381,7 +1381,7 @@ void CTI::privateCompileMainPass()
         case op_new_func: {
             FuncDeclNode* func = (m_codeBlock->functions[instruction[i + 2].u.operand]).get();
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(func), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_new_func);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_new_func);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -1437,19 +1437,19 @@ void CTI::privateCompileMainPass()
         }
         case op_tear_off_activation: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_tear_off_activation);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_tear_off_activation);
             i += 2;
             break;
         }
         case op_tear_off_arguments: {
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_tear_off_arguments);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_tear_off_arguments);
             i += 1;
             break;
         }
         case op_ret: {
             // We could JIT generate the deref, only calling out to C when the refcount hits zero.
             if (m_codeBlock->needsFullScopeChain)
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_ret_scopeChain);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_ret_scopeChain);
 
             // Return the result in %eax.
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
@@ -1471,7 +1471,7 @@ void CTI::privateCompileMainPass()
             __ leal_mr(sizeof(Register) * instruction[i + 2].u.operand, X86::edi, X86::edx);
             emitPutCTIArg(X86::edx, 0);
             emitPutCTIArgConstant(instruction[i + 3].u.operand, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_new_array);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_new_array);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -1479,7 +1479,7 @@ void CTI::privateCompileMainPass()
         case op_resolve: {
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_resolve);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_resolve);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -1524,7 +1524,7 @@ void CTI::privateCompileMainPass()
         case op_resolve_func: {
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_resolve_func);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_resolve_func);
             emitPutVirtualRegister(instruction[i + 2].u.operand, X86::edx);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
@@ -1588,7 +1588,7 @@ void CTI::privateCompileMainPass()
         case op_resolve_base: {
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_resolve_base);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_resolve_base);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -1613,7 +1613,7 @@ void CTI::privateCompileMainPass()
                 __ link(overflow, __ label());
                 __ link(notImmediate, __ label());
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_negate);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_negate);
                 emitPutVirtualRegister(instruction[i + 1].u.operand);
             } else {
                 // Slow case immediates
@@ -1647,7 +1647,7 @@ void CTI::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitPutCTIArgConstant(instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_resolve_skip);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_resolve_skip);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -1677,7 +1677,7 @@ void CTI::privateCompileMainPass()
             emitPutCTIArgConstant(globalObject, 0);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(instruction + i), 8);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_resolve_global);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_resolve_global);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             __ link(end, __ label());
             i += 6;
@@ -1903,7 +1903,7 @@ void CTI::privateCompileMainPass()
         case op_resolve_with_base: {
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_resolve_with_base);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_resolve_with_base);
             emitPutVirtualRegister(instruction[i + 2].u.operand, X86::edx);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
@@ -1912,7 +1912,7 @@ void CTI::privateCompileMainPass()
         case op_new_func_exp: {
             FuncExprNode* func = (m_codeBlock->functionExpressions[instruction[i + 2].u.operand]).get();
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(func), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_new_func_exp);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_new_func_exp);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -1989,7 +1989,7 @@ void CTI::privateCompileMainPass()
         case op_new_regexp: {
             RegExp* regExp = m_codeBlock->regexps[instruction[i + 2].u.operand].get();
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(regExp), 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_new_regexp);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_new_regexp);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -2004,7 +2004,7 @@ void CTI::privateCompileMainPass()
         }
         case op_throw: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_throw);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_throw);
             __ addl_i8r(0x20, X86::esp);
             __ popl_r(X86::ebx);
             __ popl_r(X86::edi);
@@ -2015,7 +2015,7 @@ void CTI::privateCompileMainPass()
         }
         case op_get_pnames: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_get_pnames);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_get_pnames);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -2023,7 +2023,7 @@ void CTI::privateCompileMainPass()
         case op_next_pname: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
             unsigned target = instruction[i + 3].u.operand;
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_next_pname);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_next_pname);
             __ testl_rr(X86::eax, X86::eax);
             X86Assembler::JmpSrc endOfIter = __ emitUnlinkedJe();
             emitPutVirtualRegister(instruction[i + 1].u.operand);
@@ -2034,12 +2034,12 @@ void CTI::privateCompileMainPass()
         }
         case op_push_scope: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_push_scope);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_push_scope);
             i += 2;
             break;
         }
         case op_pop_scope: {
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_pop_scope);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_pop_scope);
             i += 1;
             break;
         }
@@ -2083,7 +2083,7 @@ void CTI::privateCompileMainPass()
         case op_in: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_in);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_in);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2092,7 +2092,7 @@ void CTI::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 0);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_push_new_scope);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_push_new_scope);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2106,7 +2106,7 @@ void CTI::privateCompileMainPass()
         case op_jmp_scopes: {
             unsigned count = instruction[i + 1].u.operand;
             emitPutCTIArgConstant(count, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_jmp_scopes);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_jmp_scopes);
             unsigned target = instruction[i + 2].u.operand;
             m_jmpTable.append(JmpTable(__ emitUnlinkedJmp(), i + 2 + target));
             i += 3;
@@ -2116,7 +2116,7 @@ void CTI::privateCompileMainPass()
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::ecx);
             emitPutCTIArgConstant(instruction[i + 2].u.operand, 4);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 8, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_put_by_index);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_put_by_index);
             i += 4;
             break;
         }
@@ -2132,7 +2132,7 @@ void CTI::privateCompileMainPass()
 
             emitPutCTIArgFromVirtualRegister(scrutinee, 0, X86::ecx);
             emitPutCTIArgConstant(tableIndex, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_switch_imm);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_switch_imm);
             __ jmp_r(X86::eax);
             i += 4;
             break;
@@ -2149,7 +2149,7 @@ void CTI::privateCompileMainPass()
 
             emitPutCTIArgFromVirtualRegister(scrutinee, 0, X86::ecx);
             emitPutCTIArgConstant(tableIndex, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_switch_char);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_switch_char);
             __ jmp_r(X86::eax);
             i += 4;
             break;
@@ -2165,7 +2165,7 @@ void CTI::privateCompileMainPass()
 
             emitPutCTIArgFromVirtualRegister(scrutinee, 0, X86::ecx);
             emitPutCTIArgConstant(tableIndex, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_switch_string);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_switch_string);
             __ jmp_r(X86::eax);
             i += 4;
             break;
@@ -2173,7 +2173,7 @@ void CTI::privateCompileMainPass()
         case op_del_by_val: {
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_del_by_val);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_del_by_val);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2183,7 +2183,7 @@ void CTI::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 8, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_put_getter);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_put_getter);
             i += 4;
             break;
         }
@@ -2192,7 +2192,7 @@ void CTI::privateCompileMainPass()
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 2].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 8, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_put_setter);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_put_setter);
             i += 4;
             break;
         }
@@ -2201,7 +2201,7 @@ void CTI::privateCompileMainPass()
             emitPutCTIArgConstant(instruction[i + 2].u.operand, 0);
             emitPutCTIArgConstant(asInteger(message), 4);
             emitPutCTIArgConstant(m_codeBlock->lineNumberForVPC(&instruction[i]), 8);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_new_error);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_new_error);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2210,7 +2210,7 @@ void CTI::privateCompileMainPass()
             emitPutCTIArgConstant(instruction[i + 1].u.operand, 0);
             emitPutCTIArgConstant(instruction[i + 2].u.operand, 4);
             emitPutCTIArgConstant(instruction[i + 3].u.operand, 8);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_debug);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_debug);
             i += 4;
             break;
         }
@@ -2293,14 +2293,14 @@ void CTI::privateCompileMainPass()
             for (size_t j = 0; j < count; ++j)
                 emitInitRegister(j);
 
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_push_activation);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_push_activation);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
 
             i+= 2;
             break;
         }
         case op_create_arguments: {
-            emitCTICall(instruction + i, i, (m_codeBlock->numParameters == 1) ? BytecodeInterpreter::cti_op_create_arguments_no_params : BytecodeInterpreter::cti_op_create_arguments);
+            emitCTICall(instruction + i, i, (m_codeBlock->numParameters == 1) ? Interpreter::cti_op_create_arguments_no_params : Interpreter::cti_op_create_arguments);
             i += 1;
             break;
         }
@@ -2320,7 +2320,7 @@ void CTI::privateCompileMainPass()
             __ cmpl_i32m(0, X86::eax);
             X86Assembler::JmpSrc noProfiler = __ emitUnlinkedJe();
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::eax);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_profile_will_call);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_profile_will_call);
             __ link(noProfiler, __ label());
 
             i += 2;
@@ -2331,7 +2331,7 @@ void CTI::privateCompileMainPass()
             __ cmpl_i32m(0, X86::eax);
             X86Assembler::JmpSrc noProfiler = __ emitUnlinkedJe();
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::eax);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_profile_did_call);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_profile_did_call);
             __ link(noProfiler, __ label());
 
             i += 2;
@@ -2368,7 +2368,7 @@ void CTI::privateCompileLinkPass()
         __ link(iter->from, __ label()); \
         emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx); \
         emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx); \
-        emitCTICall(instruction + i, i, BytecodeInterpreter::cti_##name); \
+        emitCTICall(instruction + i, i, Interpreter::cti_##name); \
         emitPutVirtualRegister(instruction[i + 1].u.operand); \
         i += 4; \
         break; \
@@ -2380,7 +2380,7 @@ void CTI::privateCompileLinkPass()
         __ link((++iter)->from, __ label());                \
         emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx); \
         emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx); \
-        emitCTICall(instruction + i, i, BytecodeInterpreter::cti_##name); \
+        emitCTICall(instruction + i, i, Interpreter::cti_##name); \
         emitPutVirtualRegister(instruction[i + 1].u.operand); \
         i += 4; \
         break; \
@@ -2406,7 +2406,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             __ link((++iter)->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_convert_this);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_convert_this);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 2;
             break;
@@ -2422,7 +2422,7 @@ void CTI::privateCompileSlowCases()
                 __ link(notImm, __ label());
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArg(X86::eax, 4);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_add);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_add);
                 emitPutVirtualRegister(dst);
             } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
                 X86Assembler::JmpSrc notImm = iter->from;
@@ -2431,7 +2431,7 @@ void CTI::privateCompileSlowCases()
                 __ link(notImm, __ label());
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_add);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_add);
                 emitPutVirtualRegister(dst);
             } else {
                 OperandTypes types = OperandTypes::fromInt(instruction[i + 4].u.operand);
@@ -2455,7 +2455,7 @@ void CTI::privateCompileSlowCases()
             __ link(notImm, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_get_by_val);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_get_by_val);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             __ link(__ emitUnlinkedJmp(), m_labels[i + 4]);
 
@@ -2492,7 +2492,7 @@ void CTI::privateCompileSlowCases()
             }
 
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_negate);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_negate);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2502,7 +2502,7 @@ void CTI::privateCompileSlowCases()
             __ link((++iter)->from, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::ecx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_rshift);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_rshift);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2516,7 +2516,7 @@ void CTI::privateCompileSlowCases()
             __ link(notImm2, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::ecx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_lshift);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_lshift);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2530,7 +2530,7 @@ void CTI::privateCompileSlowCases()
                 __ link(iter->from, __ label());
                 emitPutCTIArg(X86::edx, 0);
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_loop_if_less);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_less);
                 __ testl_rr(X86::eax, X86::eax);
                 __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
             } else {
@@ -2538,7 +2538,7 @@ void CTI::privateCompileSlowCases()
                 __ link((++iter)->from, __ label());
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArg(X86::edx, 4);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_loop_if_less);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_less);
                 __ testl_rr(X86::eax, X86::eax);
                 __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
             }
@@ -2554,7 +2554,7 @@ void CTI::privateCompileSlowCases()
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 8);
-            X86Assembler::JmpSrc call = emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_put_by_id);
+            X86Assembler::JmpSrc call = emitCTICall(instruction + i, i, Interpreter::cti_op_put_by_id);
 
             // Track the location of the call; this will be used to recover repatch information.
             ASSERT(m_codeBlock->propertyAccessInstructions[propertyAccessInstructionIndex].bytecodeIndex == i);
@@ -2581,7 +2581,7 @@ void CTI::privateCompileSlowCases()
             emitPutCTIArg(X86::eax, 0);
             Identifier* ident = &(m_codeBlock->identifiers[instruction[i + 3].u.operand]);
             emitPutCTIArgConstant(reinterpret_cast<unsigned>(ident), 4);
-            X86Assembler::JmpSrc call = emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_get_by_id);
+            X86Assembler::JmpSrc call = emitCTICall(instruction + i, i, Interpreter::cti_op_get_by_id);
             ASSERT(X86Assembler::getDifferenceBetweenLabels(coldPathBegin, call) == repatchOffsetGetByIdSlowCaseCall);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
 
@@ -2602,7 +2602,7 @@ void CTI::privateCompileSlowCases()
                 __ link(iter->from, __ label());
                 emitPutCTIArg(X86::edx, 0);
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_loop_if_lesseq);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_lesseq);
                 __ testl_rr(X86::eax, X86::eax);
                 __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
             } else {
@@ -2610,7 +2610,7 @@ void CTI::privateCompileSlowCases()
                 __ link((++iter)->from, __ label());
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArg(X86::edx, 4);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_loop_if_lesseq);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_lesseq);
                 __ testl_rr(X86::eax, X86::eax);
                 __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
             }
@@ -2624,7 +2624,7 @@ void CTI::privateCompileSlowCases()
             __ subl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
             __ link(notImm, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_pre_inc);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_pre_inc);
             emitPutVirtualRegister(srcDst);
             i += 2;
             break;
@@ -2640,7 +2640,7 @@ void CTI::privateCompileSlowCases()
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitPutCTIArg(X86::ecx, 8);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_put_by_val);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_put_by_val);
             __ link(__ emitUnlinkedJmp(), m_labels[i + 4]);
 
             // slow cases for immediate int accesses to arrays
@@ -2650,7 +2650,7 @@ void CTI::privateCompileSlowCases()
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
             emitPutCTIArg(X86::ecx, 8);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_put_by_val_array);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_put_by_val_array);
 
             i += 4;
             break;
@@ -2660,7 +2660,7 @@ void CTI::privateCompileSlowCases()
 
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_jtrue);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_jtrue);
             __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
             __ link(__ emitUnlinkedJne(), m_labels[i + 2 + target]);
@@ -2674,7 +2674,7 @@ void CTI::privateCompileSlowCases()
             __ addl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
             __ link(notImm, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_pre_dec);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_pre_dec);
             emitPutVirtualRegister(srcDst);
             i += 2;
             break;
@@ -2686,7 +2686,7 @@ void CTI::privateCompileSlowCases()
                 __ link(iter->from, __ label());
                 emitPutCTIArg(X86::edx, 0);
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_jless);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_jless);
                 __ testl_rr(X86::eax, X86::eax);
                 __ link(__ emitUnlinkedJe(), m_labels[i + 3 + target]);
             } else {
@@ -2694,7 +2694,7 @@ void CTI::privateCompileSlowCases()
                 __ link((++iter)->from, __ label());
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArg(X86::edx, 4);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_jless);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_jless);
                 __ testl_rr(X86::eax, X86::eax);
                 __ link(__ emitUnlinkedJe(), m_labels[i + 3 + target]);
             }
@@ -2705,7 +2705,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             __ xorl_i8r(JSImmediate::FullTagTypeBool, X86::eax);
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_not);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_not);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -2713,7 +2713,7 @@ void CTI::privateCompileSlowCases()
         case op_jfalse: {
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_jtrue);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_jtrue);
             __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
             __ link(__ emitUnlinkedJe(), m_labels[i + 2 + target]); // inverted!
@@ -2725,7 +2725,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             __ link((++iter)->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_post_inc);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_post_inc);
             emitPutVirtualRegister(srcDst, X86::edx);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -2734,7 +2734,7 @@ void CTI::privateCompileSlowCases()
         case op_bitnot: {
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_bitnot);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_bitnot);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
             break;
@@ -2747,19 +2747,19 @@ void CTI::privateCompileSlowCases()
                 __ link(iter->from, __ label());
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArg(X86::eax, 4);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_bitand);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_bitand);
                 emitPutVirtualRegister(dst);
             } else if (getConstantImmediateNumericArg(src2)) {
                 __ link(iter->from, __ label());
                 emitPutCTIArg(X86::eax, 0);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_bitand);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_bitand);
                 emitPutVirtualRegister(dst);
             } else {
                 __ link(iter->from, __ label());
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArg(X86::edx, 4);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_bitand);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_bitand);
                 emitPutVirtualRegister(dst);
             }
             i += 5;
@@ -2768,7 +2768,7 @@ void CTI::privateCompileSlowCases()
         case op_jtrue: {
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_jtrue);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_jtrue);
             __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
             __ link(__ emitUnlinkedJne(), m_labels[i + 2 + target]);
@@ -2780,7 +2780,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             __ link((++iter)->from, __ label());
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_post_dec);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_post_dec);
             emitPutVirtualRegister(srcDst, X86::edx);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -2790,7 +2790,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_bitxor);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_bitxor);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 5;
             break;
@@ -2799,7 +2799,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_bitor);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_bitor);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 5;
             break;
@@ -2808,7 +2808,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_eq);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_eq);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2817,7 +2817,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::edx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_neq);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_neq);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2831,7 +2831,7 @@ void CTI::privateCompileSlowCases()
             emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 0, X86::ecx);
             emitPutCTIArgFromVirtualRegister(instruction[i + 3].u.operand, 4, X86::ecx);
             emitPutCTIArgFromVirtualRegister(instruction[i + 4].u.operand, 8, X86::ecx);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_instanceof);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_instanceof);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 5;
             break;
@@ -2846,7 +2846,7 @@ void CTI::privateCompileSlowCases()
             __ link(notImm2, __ label());
             emitPutCTIArg(X86::eax, 0);
             emitPutCTIArg(X86::ecx, 4);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_mod);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_mod);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -2864,7 +2864,7 @@ void CTI::privateCompileSlowCases()
                 // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_mul);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_mul);
                 emitPutVirtualRegister(dst);
             } else if (src2Value && ((value = JSImmediate::intValue(src2Value)) > 0)) {
                 __ link(iter->from, __ label());
@@ -2872,7 +2872,7 @@ void CTI::privateCompileSlowCases()
                 // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
                 emitPutCTIArgFromVirtualRegister(src1, 0, X86::ecx);
                 emitPutCTIArgFromVirtualRegister(src2, 4, X86::ecx);
-                emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_mul);
+                emitCTICall(instruction + i, i, Interpreter::cti_op_mul);
                 emitPutVirtualRegister(dst);
             } else
                 compileBinaryArithOpSlowCase(instruction + i, op_mul, iter, dst, src1, src2, OperandTypes::fromInt(instruction[i + 4].u.operand), i);
@@ -2904,7 +2904,7 @@ void CTI::privateCompileSlowCases()
 
             // First, in the case of a construct, allocate the new object.
             if (opcodeID == op_construct) {
-                emitCTICall(instruction, i, BytecodeInterpreter::cti_op_construct_JSConstruct);
+                emitCTICall(instruction, i, Interpreter::cti_op_construct_JSConstruct);
                 emitPutVirtualRegister(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
                 emitGetVirtualRegister(callee, X86::ecx, i);
             }
@@ -2940,7 +2940,7 @@ void CTI::privateCompileSlowCases()
             __ link(isNotObject, notJSFunctionlabel);
             __ link(callLinkFailNotObject, notJSFunctionlabel);
             __ link(callLinkFailNotJSFunction, notJSFunctionlabel);
-            emitCTICall(instruction + i, i, ((opcodeID == op_construct) ? BytecodeInterpreter::cti_op_construct_NotJSConstruct : BytecodeInterpreter::cti_op_call_NotJSFunction));
+            emitCTICall(instruction + i, i, ((opcodeID == op_construct) ? Interpreter::cti_op_construct_NotJSConstruct : Interpreter::cti_op_call_NotJSFunction));
             X86Assembler::JmpSrc wasNotJSFunction = __ emitUnlinkedJmp();
 
             // Next, handle JSFunctions...
@@ -2948,7 +2948,7 @@ void CTI::privateCompileSlowCases()
 
             // First, in the case of a construct, allocate the new object.
             if (opcodeID == op_construct) {
-                emitCTICall(instruction, i, BytecodeInterpreter::cti_op_construct_JSConstruct);
+                emitCTICall(instruction, i, Interpreter::cti_op_construct_JSConstruct);
                 emitPutVirtualRegister(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
                 emitGetVirtualRegister(callee, X86::ecx, i);
             }
@@ -2980,7 +2980,7 @@ void CTI::privateCompileSlowCases()
             __ link(iter->from, __ label());
 
             emitPutCTIArg(X86::eax, 0);
-            emitCTICall(instruction + i, i, BytecodeInterpreter::cti_op_to_jsnumber);
+            emitCTICall(instruction + i, i, Interpreter::cti_op_to_jsnumber);
 
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -3034,7 +3034,7 @@ void CTI::privateCompile()
 
     if (m_codeBlock->codeType == FunctionCode) {
         __ link(slowRegisterFileCheck, __ label());
-        emitCTICall(m_codeBlock->instructions.begin(), 0, BytecodeInterpreter::cti_register_file_check);
+        emitCTICall(m_codeBlock->instructions.begin(), 0, Interpreter::cti_register_file_check);
         X86Assembler::JmpSrc backToBody = __ emitUnlinkedJmp();
         __ link(backToBody, afterRegisterFileCheck);
     }
@@ -3117,8 +3117,8 @@ void CTI::privateCompileGetByIdSelf(Structure* structure, size_t cachedOffset, v
     void* code = __ copy();
     ASSERT(code);
 
-    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
     
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
     
@@ -3131,7 +3131,7 @@ void CTI::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
     StructureStubInfo& info = m_codeBlock->getStubInfo(returnAddress);
 
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
-    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
 
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
@@ -3201,9 +3201,9 @@ void CTI::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
     void* code = __ copy();
     ASSERT(code);
 
-    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, failureCases3, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
 
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
 
@@ -3248,7 +3248,7 @@ void CTI::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     ASSERT(code);
 
     for (unsigned i = 0; i < bucketsOfFail.size(); ++i)
-        X86Assembler::link(code, bucketsOfFail[i], reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
+        X86Assembler::link(code, bucketsOfFail[i], reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
 
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
 
@@ -3271,8 +3271,8 @@ void CTI::privateCompilePutByIdReplace(Structure* structure, size_t cachedOffset
     void* code = __ copy();
     ASSERT(code);
     
-    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_put_by_id_fail));
-    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_put_by_id_fail));
+    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_put_by_id_fail));
+    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_put_by_id_fail));
 
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
     
@@ -3368,7 +3368,7 @@ void CTI::privateCompilePutByIdTransition(Structure* oldStructure, Structure* ne
     ASSERT(code);
 
     if (failureCases.size())
-        X86Assembler::link(code, failureJump, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_put_by_id_fail));
+        X86Assembler::link(code, failureJump, reinterpret_cast<void*>(Interpreter::cti_op_put_by_id_fail));
 
     if (transitionWillNeedStorageRealloc(oldStructure, newStructure))
         X86Assembler::link(code, callTarget, reinterpret_cast<void*>(resizePropertyStorage));
@@ -3572,20 +3572,20 @@ void CTI::privateCompileCTIMachineTrampolines()
     void* code = __ copy();
     ASSERT(code);
 
-    X86Assembler::link(code, array_failureCases1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, array_failureCases2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, array_failureCases3, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, string_failureCases1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, string_failureCases2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, string_failureCases3, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
-    X86Assembler::link(code, callArityCheck1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_call_arityCheck));
-    X86Assembler::link(code, callArityCheck2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_call_arityCheck));
-    X86Assembler::link(code, callArityCheck3, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_call_arityCheck));
-    X86Assembler::link(code, callJSFunction1, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_call_JSFunction));
-    X86Assembler::link(code, callJSFunction2, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_call_JSFunction));
-    X86Assembler::link(code, callJSFunction3, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_call_JSFunction));
-    X86Assembler::link(code, callDontLazyLinkCall, reinterpret_cast<void*>(BytecodeInterpreter::cti_vm_dontLazyLinkCall));
-    X86Assembler::link(code, callLazyLinkCall, reinterpret_cast<void*>(BytecodeInterpreter::cti_vm_lazyLinkCall));
+    X86Assembler::link(code, array_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, array_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, array_failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, string_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, string_failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, string_failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
+    X86Assembler::link(code, callArityCheck1, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
+    X86Assembler::link(code, callArityCheck2, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
+    X86Assembler::link(code, callArityCheck3, reinterpret_cast<void*>(Interpreter::cti_op_call_arityCheck));
+    X86Assembler::link(code, callJSFunction1, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
+    X86Assembler::link(code, callJSFunction2, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
+    X86Assembler::link(code, callJSFunction3, reinterpret_cast<void*>(Interpreter::cti_op_call_JSFunction));
+    X86Assembler::link(code, callDontLazyLinkCall, reinterpret_cast<void*>(Interpreter::cti_vm_dontLazyLinkCall));
+    X86Assembler::link(code, callLazyLinkCall, reinterpret_cast<void*>(Interpreter::cti_vm_lazyLinkCall));
 
     m_interpreter->m_ctiArrayLengthTrampoline = code;
     m_interpreter->m_ctiStringLengthTrampoline = X86Assembler::getRelocatedAddress(code, stringLengthBegin);
@@ -3594,7 +3594,7 @@ void CTI::privateCompileCTIMachineTrampolines()
     m_interpreter->m_ctiVirtualCall = X86Assembler::getRelocatedAddress(code, virtualCallBegin);
 }
 
-void CTI::freeCTIMachineTrampolines(BytecodeInterpreter* interpreter)
+void CTI::freeCTIMachineTrampolines(Interpreter* interpreter)
 {
     WTF::fastFreeExecutable(interpreter->m_ctiArrayLengthTrampoline);
 }
@@ -3604,8 +3604,8 @@ void CTI::patchGetByIdSelf(CodeBlock* codeBlock, Structure* structure, size_t ca
     StructureStubInfo& info = codeBlock->getStubInfo(returnAddress);
 
     // We don't want to repatch more than once - in future go to cti_op_get_by_id_generic.
-    // Should probably go to BytecodeInterpreter::cti_op_get_by_id_fail, but that doesn't do anything interesting right now.
-    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_generic));
+    // Should probably go to Interpreter::cti_op_get_by_id_fail, but that doesn't do anything interesting right now.
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_generic));
 
     // Repatch the offset into the propoerty map to load from, then repatch the Structure to look for.
     X86Assembler::repatchDisplacement(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset, cachedOffset * sizeof(JSValue*));
@@ -3617,8 +3617,8 @@ void CTI::patchPutByIdReplace(CodeBlock* codeBlock, Structure* structure, size_t
     StructureStubInfo& info = codeBlock->getStubInfo(returnAddress);
     
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
-    // Should probably go to BytecodeInterpreter::cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
-    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_put_by_id_generic));
+    // Should probably go to Interpreter::cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_put_by_id_generic));
 
     // Repatch the offset into the propoerty map to load from, then repatch the Structure to look for.
     X86Assembler::repatchDisplacement(reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetPutByIdPropertyMapOffset, cachedOffset * sizeof(JSValue*));
@@ -3630,7 +3630,7 @@ void CTI::privateCompilePatchGetArrayLength(void* returnAddress)
     StructureStubInfo& info = m_codeBlock->getStubInfo(returnAddress);
 
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
-    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(BytecodeInterpreter::cti_op_get_by_id_fail));
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
 
     // Check eax is an array
     __ testl_i32r(JSImmediate::TagMask, X86::eax);

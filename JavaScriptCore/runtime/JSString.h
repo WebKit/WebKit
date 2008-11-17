@@ -60,7 +60,7 @@ namespace JSC {
 
     class JSString : public JSCell {
         friend class CTI;
-        friend class BytecodeInterpreter;
+        friend class Interpreter;
 
     public:
         JSString(JSGlobalData* globalData, const UString& value)

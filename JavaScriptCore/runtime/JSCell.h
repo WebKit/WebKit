@@ -38,7 +38,7 @@ namespace JSC {
         friend class JSPropertyNameIterator;
         friend class JSString;
         friend class JSValue;
-        friend class BytecodeInterpreter;
+        friend class Interpreter;
 
     private:
         explicit JSCell(Structure*);

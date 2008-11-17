@@ -1328,7 +1328,7 @@ void Parser::parseDisjunction(JmpSrcVector& failures)
 // This limit comes from the limit set in PCRE
 static const int MaxPatternSize = (1 << 16);
 
-void* compileRegExp(BytecodeInterpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
+void* compileRegExp(Interpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
 {
     // TODO: better error messages
     if (pattern.size() > MaxPatternSize) {

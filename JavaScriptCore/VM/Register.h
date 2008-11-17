@@ -59,9 +59,9 @@ namespace JSC {
         
     private:
         friend class ExecState;
-        friend class BytecodeInterpreter;
+        friend class Interpreter;
 
-        // Only CallFrame and BytecodeInterpreter should use these functions.
+        // Only CallFrame and Interpreter should use these functions.
 
         Register(intptr_t);
 
@@ -170,7 +170,7 @@ namespace JSC {
         getJSValue()->mark();
     }
     
-    // BytecodeInterpreter functions
+    // Interpreter functions
 
     ALWAYS_INLINE Register::Register(Arguments* arguments)
     {

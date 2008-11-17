@@ -1,5 +1,190 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Renamed BytecodeInterpreter => Interpreter.
+
+        * JavaScriptCore.exp:
+        * VM/CTI.cpp:
+        (JSC::):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::freeCTIMachineTrampolines):
+        (JSC::CTI::patchGetByIdSelf):
+        (JSC::CTI::patchPutByIdReplace):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        * VM/Machine.cpp:
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::resolveBaseAndFunc):
+        (JSC::Interpreter::slideRegisterWindowForCall):
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::~Interpreter):
+        (JSC::Interpreter::dumpCallFrame):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::isOpcode):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::debug):
+        (JSC::Interpreter::resetTimeoutCheck):
+        (JSC::Interpreter::checkTimeout):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::uncachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::uncacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        (JSC::Interpreter::retrieveCaller):
+        (JSC::Interpreter::retrieveLastCaller):
+        (JSC::Interpreter::findFunctionCallFrame):
+        (JSC::Interpreter::tryCTICachePutByID):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_convert_this):
+        (JSC::Interpreter::cti_op_end):
+        (JSC::Interpreter::cti_op_add):
+        (JSC::Interpreter::cti_op_pre_inc):
+        (JSC::Interpreter::cti_timeout_check):
+        (JSC::Interpreter::cti_register_file_check):
+        (JSC::Interpreter::cti_op_loop_if_less):
+        (JSC::Interpreter::cti_op_loop_if_lesseq):
+        (JSC::Interpreter::cti_op_new_object):
+        (JSC::Interpreter::cti_op_put_by_id):
+        (JSC::Interpreter::cti_op_put_by_id_second):
+        (JSC::Interpreter::cti_op_put_by_id_generic):
+        (JSC::Interpreter::cti_op_put_by_id_fail):
+        (JSC::Interpreter::cti_op_get_by_id):
+        (JSC::Interpreter::cti_op_get_by_id_second):
+        (JSC::Interpreter::cti_op_get_by_id_generic):
+        (JSC::Interpreter::cti_op_get_by_id_fail):
+        (JSC::Interpreter::cti_op_instanceof):
+        (JSC::Interpreter::cti_op_del_by_id):
+        (JSC::Interpreter::cti_op_mul):
+        (JSC::Interpreter::cti_op_new_func):
+        (JSC::Interpreter::cti_op_call_JSFunction):
+        (JSC::Interpreter::cti_op_call_arityCheck):
+        (JSC::Interpreter::cti_vm_dontLazyLinkCall):
+        (JSC::Interpreter::cti_vm_lazyLinkCall):
+        (JSC::Interpreter::cti_op_push_activation):
+        (JSC::Interpreter::cti_op_call_NotJSFunction):
+        (JSC::Interpreter::cti_op_create_arguments):
+        (JSC::Interpreter::cti_op_create_arguments_no_params):
+        (JSC::Interpreter::cti_op_tear_off_activation):
+        (JSC::Interpreter::cti_op_tear_off_arguments):
+        (JSC::Interpreter::cti_op_profile_will_call):
+        (JSC::Interpreter::cti_op_profile_did_call):
+        (JSC::Interpreter::cti_op_ret_scopeChain):
+        (JSC::Interpreter::cti_op_new_array):
+        (JSC::Interpreter::cti_op_resolve):
+        (JSC::Interpreter::cti_op_construct_JSConstruct):
+        (JSC::Interpreter::cti_op_construct_NotJSConstruct):
+        (JSC::Interpreter::cti_op_get_by_val):
+        (JSC::Interpreter::cti_op_resolve_func):
+        (JSC::Interpreter::cti_op_sub):
+        (JSC::Interpreter::cti_op_put_by_val):
+        (JSC::Interpreter::cti_op_put_by_val_array):
+        (JSC::Interpreter::cti_op_lesseq):
+        (JSC::Interpreter::cti_op_loop_if_true):
+        (JSC::Interpreter::cti_op_negate):
+        (JSC::Interpreter::cti_op_resolve_base):
+        (JSC::Interpreter::cti_op_resolve_skip):
+        (JSC::Interpreter::cti_op_resolve_global):
+        (JSC::Interpreter::cti_op_div):
+        (JSC::Interpreter::cti_op_pre_dec):
+        (JSC::Interpreter::cti_op_jless):
+        (JSC::Interpreter::cti_op_not):
+        (JSC::Interpreter::cti_op_jtrue):
+        (JSC::Interpreter::cti_op_post_inc):
+        (JSC::Interpreter::cti_op_eq):
+        (JSC::Interpreter::cti_op_lshift):
+        (JSC::Interpreter::cti_op_bitand):
+        (JSC::Interpreter::cti_op_rshift):
+        (JSC::Interpreter::cti_op_bitnot):
+        (JSC::Interpreter::cti_op_resolve_with_base):
+        (JSC::Interpreter::cti_op_new_func_exp):
+        (JSC::Interpreter::cti_op_mod):
+        (JSC::Interpreter::cti_op_less):
+        (JSC::Interpreter::cti_op_neq):
+        (JSC::Interpreter::cti_op_post_dec):
+        (JSC::Interpreter::cti_op_urshift):
+        (JSC::Interpreter::cti_op_bitxor):
+        (JSC::Interpreter::cti_op_new_regexp):
+        (JSC::Interpreter::cti_op_bitor):
+        (JSC::Interpreter::cti_op_call_eval):
+        (JSC::Interpreter::cti_op_throw):
+        (JSC::Interpreter::cti_op_get_pnames):
+        (JSC::Interpreter::cti_op_next_pname):
+        (JSC::Interpreter::cti_op_push_scope):
+        (JSC::Interpreter::cti_op_pop_scope):
+        (JSC::Interpreter::cti_op_typeof):
+        (JSC::Interpreter::cti_op_is_undefined):
+        (JSC::Interpreter::cti_op_is_boolean):
+        (JSC::Interpreter::cti_op_is_number):
+        (JSC::Interpreter::cti_op_is_string):
+        (JSC::Interpreter::cti_op_is_object):
+        (JSC::Interpreter::cti_op_is_function):
+        (JSC::Interpreter::cti_op_stricteq):
+        (JSC::Interpreter::cti_op_nstricteq):
+        (JSC::Interpreter::cti_op_to_jsnumber):
+        (JSC::Interpreter::cti_op_in):
+        (JSC::Interpreter::cti_op_push_new_scope):
+        (JSC::Interpreter::cti_op_jmp_scopes):
+        (JSC::Interpreter::cti_op_put_by_index):
+        (JSC::Interpreter::cti_op_switch_imm):
+        (JSC::Interpreter::cti_op_switch_char):
+        (JSC::Interpreter::cti_op_switch_string):
+        (JSC::Interpreter::cti_op_del_by_val):
+        (JSC::Interpreter::cti_op_put_getter):
+        (JSC::Interpreter::cti_op_put_setter):
+        (JSC::Interpreter::cti_op_new_error):
+        (JSC::Interpreter::cti_op_debug):
+        (JSC::Interpreter::cti_vm_throw):
+        * VM/Machine.h:
+        * VM/Register.h:
+        * VM/SamplingTool.h:
+        (JSC::SamplingTool::SamplingTool):
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * jsc.cpp:
+        (runWithScripts):
+        * runtime/ExecState.h:
+        (JSC::ExecState::interpreter):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSString.h:
+        * wrec/WREC.cpp:
+        (WREC::compileRegExp):
+        * wrec/WREC.h:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
         Roll out r38461 (my last patch) because it broke the world.
 
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>

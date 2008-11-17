@@ -96,7 +96,7 @@ namespace JSC {
 
     class CodeBlock;
     class JSPropertyNameIterator;
-    class BytecodeInterpreter;
+    class Interpreter;
     class Register;
     class RegisterFile;
     class ScopeChainNode;
@@ -324,7 +324,7 @@ namespace JSC {
             CTI cti(globalData);
             cti.privateCompileCTIMachineTrampolines();
         }
-        static void freeCTIMachineTrampolines(BytecodeInterpreter*);
+        static void freeCTIMachineTrampolines(Interpreter*);
 
         static void patchGetByIdSelf(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress);
         static void patchPutByIdReplace(CodeBlock* codeBlock, Structure* structure, size_t cachedOffset, void* returnAddress);
@@ -433,7 +433,7 @@ namespace JSC {
         void killLastResultRegister();
 
         X86Assembler m_assembler;
-        BytecodeInterpreter* m_interpreter;
+        Interpreter* m_interpreter;
         JSGlobalData* m_globalData;
         CodeBlock* m_codeBlock;
 

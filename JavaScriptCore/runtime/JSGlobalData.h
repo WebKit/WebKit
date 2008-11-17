@@ -47,7 +47,7 @@ namespace JSC {
     class JSGlobalObject;
     class JSObject;
     class Lexer;
-    class BytecodeInterpreter;
+    class Interpreter;
     class Parser;
     class ParserRefCounted;
     class Structure;
@@ -63,7 +63,7 @@ namespace JSC {
         static PassRefPtr<JSGlobalData> createLeaked();
         ~JSGlobalData();
 
-        BytecodeInterpreter* interpreter;
+        Interpreter* interpreter;
 
         JSValue* exception;
 #if ENABLE(CTI)
