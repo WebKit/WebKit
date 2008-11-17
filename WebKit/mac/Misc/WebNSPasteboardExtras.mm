@@ -41,6 +41,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <wtf/Assertions.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
 #import <WebKitSystemInterface.h>
 
@@ -58,37 +59,40 @@ NSString *WebURLNamePboardType = @"public.url-name";
 
 + (NSArray *)_web_writableTypesForURL
 {
-    static RetainPtr<NSArray> types;
-    if (!types) {
-        types = [[NSArray alloc] initWithObjects:
-            WebURLsWithTitlesPboardType,
-            NSURLPboardType,
-            WebURLPboardType,
-            WebURLNamePboardType,
-            NSStringPboardType,
-            nil];
-    }
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, ([[NSArray alloc] initWithObjects:
+        WebURLsWithTitlesPboardType,
+        NSURLPboardType,
+        WebURLPboardType,
+        WebURLNamePboardType,
+        NSStringPboardType,
+        nil]));
     return types.get();
+}
+
+static inline NSArray *_createWritableTypesForImageWithoutArchive()
+{
+    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
+    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
+    return types;
 }
 
 static NSArray *_writableTypesForImageWithoutArchive (void)
 {
-    static RetainPtr<NSMutableArray> types;
-    if (types == nil) {
-        types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
-        [types.get() addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
-    }
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (_createWritableTypesForImageWithoutArchive()));
     return types.get();
+}
+
+static inline NSArray *_createWritableTypesForImageWithArchive()
+{
+    NSMutableArray *types = [_writableTypesForImageWithoutArchive() mutableCopy];
+    [types addObject:NSRTFDPboardType];
+    [types addObject:WebArchivePboardType];
+    return types;
 }
 
 static NSArray *_writableTypesForImageWithArchive (void)
 {
-    static RetainPtr<NSMutableArray> types;
-    if (types == nil) {
-        types = [_writableTypesForImageWithoutArchive() mutableCopy];
-        [types.get() addObject:NSRTFDPboardType];
-        [types.get() addObject:WebArchivePboardType];
-    }
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, types, (_createWritableTypesForImageWithArchive()));
     return types.get();
 }
 
