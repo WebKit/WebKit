@@ -3,7 +3,7 @@ VPATH += $$PWD
 
 INCLUDEPATH += tmp
 INCLUDEPATH += $$PWD $$PWD/parser $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/wrec $$PWD/API $$PWD/.. \
-               $$PWD/ForwardingHeaders $$PWD/bytecode
+               $$PWD/ForwardingHeaders $$PWD/bytecode $$PWD/assembler
 DEFINES += BUILDING_QT__
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
@@ -55,6 +55,7 @@ SOURCES += \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
     bytecode/CodeBlock.cpp \
+    VM/CTI.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
