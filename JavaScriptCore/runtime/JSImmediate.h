@@ -86,7 +86,7 @@ namespace JSC {
 
     class JSImmediate {
     private:
-        friend class CTI;
+        friend class CTI; // Whooo!
     
         static const uintptr_t TagMask           = 0x3u; // primary tag is 2 bits long
         static const uintptr_t TagBitTypeInteger = 0x1u; // bottom bit set indicates integer, this dominates the following bit

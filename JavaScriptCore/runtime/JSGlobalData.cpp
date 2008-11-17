@@ -64,7 +64,7 @@ extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
 JSGlobalData::JSGlobalData(bool isShared)
-    : interpreter(new Interpreter)
+    : interpreter(new BytecodeInterpreter)
     , exception(noValue())
     , arrayTable(new HashTable(JSC::arrayTable))
     , dateTable(new HashTable(JSC::dateTable))

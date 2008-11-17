@@ -26,8 +26,6 @@
 #ifndef WREC_h
 #define WREC_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(WREC)
 
 #include "UString.h"
@@ -42,18 +40,18 @@
 #endif
 
 namespace JSC {
-    class Interpreter;
+    class BytecodeInterpreter;
 }
 
-namespace JSC { namespace WREC {
+namespace WREC {
 
     class GenerateAtomFunctor;
     struct CharacterClassRange;
     struct CharacterClass;
 
-    typedef int (*RegExpFunction)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
+    typedef int (*WRECFunction)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
 
-    RegExpFunction compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+    void* compileRegExp(JSC::BytecodeInterpreter*, const JSC::UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
 
     struct Quantifier {
         enum Type {
@@ -87,23 +85,22 @@ namespace JSC { namespace WREC {
 
     class Generator {
     public:
-        Generator(Parser& parser, X86Assembler& assembler)
+        Generator(Parser& parser, JSC::X86Assembler& assembler)
             : m_parser(parser)
             , m_assembler(assembler)
         {
         }
 
-        typedef X86Assembler::JmpSrc JmpSrc;
-        typedef X86Assembler::JmpDst JmpDst;
-        typedef X86Assembler::RegisterID RegisterID;
+        typedef JSC::X86Assembler::JmpSrc JmpSrc;
+        typedef JSC::X86Assembler::JmpDst JmpDst;
 
         // these regs setup by the params
-        static const RegisterID inputRegister = X86::eax;
-        static const RegisterID currentPositionRegister = X86::edx;
-        static const RegisterID lengthRegister = X86::ecx;
-        static const RegisterID currentValueRegister = X86::esi;
-        static const RegisterID outputRegister = X86::edi;
-        static const RegisterID quantifierCountRegister = X86::ebx;
+        static const JSC::X86Assembler::RegisterID inputRegister = JSC::X86::eax;
+        static const JSC::X86Assembler::RegisterID currentPositionRegister = JSC::X86::edx;
+        static const JSC::X86Assembler::RegisterID lengthRegister = JSC::X86::ecx;
+        static const JSC::X86Assembler::RegisterID currentValueRegister = JSC::X86::esi;
+        static const JSC::X86Assembler::RegisterID outputRegister = JSC::X86::edi;
+        static const JSC::X86Assembler::RegisterID quantifierCountRegister = JSC::X86::ebx;
 
         friend class GenerateAtomFunctor;
         friend class GeneratePatternCharacterFunctor;
@@ -111,30 +108,30 @@ namespace JSC { namespace WREC {
         friend class GenerateBackreferenceFunctor;
         friend class GenerateParenthesesNonGreedyFunctor;
 
-        void generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
-        void generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
+        void generateGreedyQuantifier(JSC::JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
+        void generateNonGreedyQuantifier(JSC::JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
         void generateBacktrack1();
         void generateBacktrackBackreference(unsigned subpatternId);
-        void generateCharacterClass(JmpSrcVector& failures, CharacterClass& charClass, bool invert);
-        void generateCharacterClassInverted(JmpSrcVector& failures, CharacterClass& charClass);
-        void generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpSrcVector& matchDest, const CharacterClassRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount);
-        void generatePatternCharacter(JmpSrcVector& failures, int ch);
-        void generateAssertionWordBoundary(JmpSrcVector& failures, bool invert);
-        void generateAssertionBOL(JmpSrcVector& failures);
-        void generateAssertionEOL(JmpSrcVector& failures);
-        void generateBackreference(JmpSrcVector& failures, unsigned subpatternID);
-        void generateBackreferenceQuantifier(JmpSrcVector& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max);
+        void generateCharacterClass(JSC::JmpSrcVector& failures, CharacterClass& charClass, bool invert);
+        void generateCharacterClassInverted(JSC::JmpSrcVector& failures, CharacterClass& charClass);
+        void generateCharacterClassInvertedRange(JSC::JmpSrcVector& failures, JSC::JmpSrcVector& matchDest, const CharacterClassRange* ranges, unsigned count, unsigned* matchIndex, const UChar* matches, unsigned matchCount);
+        void generatePatternCharacter(JSC::JmpSrcVector& failures, int ch);
+        void generateAssertionWordBoundary(JSC::JmpSrcVector& failures, bool invert);
+        void generateAssertionBOL(JSC::JmpSrcVector& failures);
+        void generateAssertionEOL(JSC::JmpSrcVector& failures);
+        void generateBackreference(JSC::JmpSrcVector& failures, unsigned subpatternID);
+        void generateBackreferenceQuantifier(JSC::JmpSrcVector& failures, Quantifier::Type quantifierType, unsigned subpatternId, unsigned min, unsigned max);
         enum ParenthesesType { capturing, non_capturing, assertion, inverted_assertion }; // order is relied on in generateParentheses()
         JmpSrc generateParentheses(ParenthesesType type);
-        JmpSrc generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter);
-        void generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail);
+        JmpSrc generateParenthesesResetTrampoline(JSC::JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter);
+        void generateParenthesesNonGreedy(JSC::JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail);
 
-        void generateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures);
-        void terminateDisjunction(JmpSrcVector& successes);
+        void generateDisjunction(JSC::JmpSrcVector& successes, JSC::JmpSrcVector& failures);
+        void terminateDisjunction(JSC::JmpSrcVector& successes);
 
     private:
         Parser& m_parser;
-        X86Assembler& m_assembler;
+        JSC::X86Assembler& m_assembler;
     };
 
     class Parser {
@@ -142,7 +139,7 @@ namespace JSC { namespace WREC {
         bool m_ignoreCase;
         bool m_multiline;
         unsigned m_numSubpatterns;
-        enum {
+        enum WRECError {
             NoError,
             Error_malformedCharacterClass,
             Error_malformedParentheses,
@@ -153,7 +150,7 @@ namespace JSC { namespace WREC {
             TempError_unsupportedParentheses,
         } m_err;
 
-        Parser(const UString& pattern, bool ignoreCase, bool multiline, X86Assembler& assembler)
+        Parser(const JSC::UString& pattern, bool ignoreCase, bool multiline, JSC::X86Assembler& assembler)
             : m_ignoreCase(ignoreCase)
             , m_multiline(multiline)
             , m_numSubpatterns(0)
@@ -165,21 +162,21 @@ namespace JSC { namespace WREC {
         {
         }
 
-        void parseAlternative(JmpSrcVector& failures)
+        void parseAlternative(JSC::JmpSrcVector& failures)
         {
             while (parseTerm(failures)) { }
         }
 
-        void parseDisjunction(JmpSrcVector& failures);
+        void parseDisjunction(JSC::JmpSrcVector& failures);
 
-        bool parseTerm(JmpSrcVector& failures);
-        bool parseEscape(JmpSrcVector& failures);
-        bool parseOctalEscape(JmpSrcVector& failures);
-        bool parseParentheses(JmpSrcVector& failures);
-        bool parseCharacterClass(JmpSrcVector& failures);
-        bool parseCharacterClassQuantifier(JmpSrcVector& failures, CharacterClass& charClass, bool invert);
-        bool parsePatternCharacterQualifier(JmpSrcVector& failures, int ch);
-        bool parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned subpatternId);
+        bool parseTerm(JSC::JmpSrcVector& failures);
+        bool parseEscape(JSC::JmpSrcVector& failures);
+        bool parseOctalEscape(JSC::JmpSrcVector& failures);
+        bool parseParentheses(JSC::JmpSrcVector& failures);
+        bool parseCharacterClass(JSC::JmpSrcVector& failures);
+        bool parseCharacterClassQuantifier(JSC::JmpSrcVector& failures, CharacterClass& charClass, bool invert);
+        bool parsePatternCharacterQualifier(JSC::JmpSrcVector& failures, int ch);
+        bool parseBackreferenceQuantifier(JSC::JmpSrcVector& failures, unsigned subpatternId);
 
         ALWAYS_INLINE Quantifier parseGreedyQuantifier();
         Quantifier parseQuantifier();
@@ -258,7 +255,7 @@ namespace JSC { namespace WREC {
         unsigned m_index;
     };
 
-} } // namespace JSC::WREC
+} // namespace JSC
 
 #endif // ENABLE(WREC)
 

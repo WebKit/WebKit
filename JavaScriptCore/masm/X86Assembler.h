@@ -122,7 +122,7 @@ public:
         return this;
     }
     
-    void* executableCopy()
+    void* copy()
     {
         if (!m_size)
             return 0;
@@ -1106,9 +1106,9 @@ public:
         reinterpret_cast<intptr_t*>(where)[-1] = (reinterpret_cast<intptr_t>(destination) - where);
     }
     
-    void* executableCopy() 
+    void* copy() 
     {
-        return m_buffer->executableCopy();
+        return m_buffer->copy();
     }
 
 #if COMPILER(MSVC)

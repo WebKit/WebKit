@@ -101,11 +101,11 @@ namespace JSC {
 
     enum { MaxReentryDepth = 128 };
 
-    class Interpreter {
+    class BytecodeInterpreter {
         friend class CTI;
     public:
-        Interpreter();
-        ~Interpreter();
+        BytecodeInterpreter();
+        ~BytecodeInterpreter();
 
         void initialize(JSGlobalData*);
         
