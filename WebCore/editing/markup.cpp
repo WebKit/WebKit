@@ -855,12 +855,9 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
                     || commonAncestorBlock->hasTagName(xmpTag))
             specialCommonAncestor = commonAncestorBlock;
     }
-    
-    bool selectedOneOrMoreParagraphs = startOfParagraph(visibleStart) != startOfParagraph(visibleEnd) ||
-                                       isStartOfParagraph(visibleStart) && isEndOfParagraph(visibleEnd);
                                       
     // Retain the Mail quote level by including all ancestor mail block quotes.
-    if (lastClosed && annotate && selectedOneOrMoreParagraphs) {
+    if (lastClosed && annotate) {
         for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode())
             if (isMailBlockquote(ancestor))
                 specialCommonAncestor = ancestor;

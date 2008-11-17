@@ -1,3 +1,13 @@
+2008-11-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        <rdar://problem/4922709> Copying less than a paragraph of quoted text and pasting it doesn't retain quote level
+
+        * editing/pasteboard/4922709-expected.txt: Added.
+        * editing/pasteboard/4922709.html: Added.
+        * editing/pasteboard/5006779.html:
+
 2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Sam Weinig.

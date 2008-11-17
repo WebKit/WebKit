@@ -1,3 +1,17 @@
+2008-11-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/4922709> Copying less than a paragraph of quoted text and pasting it doesn't retain quote level
+        
+        There was code to intentionally avoid quoting pasted content if less than a paragraph of 
+        it was copied.  That was added for <rdar://problem/5006779>, but was unnecessary because
+        that bug was about Paste and Match style for single paragraphs.  And quote stripping for
+        Paste and Match style is handled elsewhere.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
