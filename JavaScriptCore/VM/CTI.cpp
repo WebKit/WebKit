@@ -41,7 +41,7 @@
 
 #define __ m_assembler. 
 
-#if PlATFORM(WIN)
+#if PLATFORM(WIN)
 #undef FIELD_OFFSET // Fix conflict with winnt.h.
 #endif
 
