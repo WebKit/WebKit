@@ -1,5 +1,38 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        More file moves:
+        
+        VM/CodeBlock.* => bytecode/CodeBlock.*
+        VM/EvalCodeCache.h => bytecode/EvalCodeCache.h
+        VM/Instruction.h => bytecode/Instruction.h
+        VM/Opcode.* => bytecode/Opcode.*
+
+        * GNUmakefile.am:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/CodeBlock.cpp: Removed.
+        * VM/CodeBlock.h: Removed.
+        * VM/EvalCodeCache.h: Removed.
+        * VM/Instruction.h: Removed.
+        * VM/Opcode.cpp: Removed.
+        * VM/Opcode.h: Removed.
+        * bytecode: Added.
+        * bytecode/CodeBlock.cpp: Copied from VM/CodeBlock.cpp.
+        * bytecode/CodeBlock.h: Copied from VM/CodeBlock.h.
+        * bytecode/EvalCodeCache.h: Copied from VM/EvalCodeCache.h.
+        * bytecode/Instruction.h: Copied from VM/Instruction.h.
+        * bytecode/Opcode.cpp: Copied from VM/Opcode.cpp.
+        * bytecode/Opcode.h: Copied from VM/Opcode.h.
+        * jsc.pro:
+        * jscore.bkl:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix a few more builds.

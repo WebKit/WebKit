@@ -146,10 +146,10 @@ Source files for JSCore.
         runtime/UString.cpp
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">
-        VM/CodeBlock.cpp
+        bytecode/CodeBlock.cpp
         VM/ExceptionHelpers.cpp
         VM/Machine.cpp
-        VM/Opcode.cpp
+        bytecode/Opcode.cpp
         VM/SamplingTool.cpp
         VM/RegisterFile.cpp
     </set>

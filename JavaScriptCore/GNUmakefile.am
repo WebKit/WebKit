@@ -2,6 +2,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/API \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/VM \
+	-I$(srcdir)/JavaScriptCore/bytecode \
 	-I$(srcdir)/JavaScriptCore/bytecompiler \
 	-I$(srcdir)/JavaScriptCore/debugger \
 	-I$(srcdir)/JavaScriptCore/pcre \
@@ -72,17 +73,17 @@ javascriptcore_sources += \
 	JavaScriptCore/JavaScriptCorePrefix.h \
 	JavaScriptCore/VM/CTI.cpp \
 	JavaScriptCore/VM/CTI.h \
-	JavaScriptCore/VM/CodeBlock.cpp \
-	JavaScriptCore/VM/CodeBlock.h \
-	JavaScriptCore/VM/EvalCodeCache.h \
+	JavaScriptCore/bytecode/CodeBlock.cpp \
+	JavaScriptCore/bytecode/CodeBlock.h \
+	JavaScriptCore/bytecode/EvalCodeCache.h \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
 	JavaScriptCore/VM/ExceptionHelpers.h \
-	JavaScriptCore/VM/Instruction.h \
+	JavaScriptCore/bytecode/Instruction.h \
 	JavaScriptCore/bytecompiler/Label.h \
 	JavaScriptCore/VM/Machine.cpp \
 	JavaScriptCore/VM/Machine.h \
-	JavaScriptCore/VM/Opcode.cpp \
-	JavaScriptCore/VM/Opcode.h \
+	JavaScriptCore/bytecode/Opcode.cpp \
+	JavaScriptCore/bytecode/Opcode.h \
 	JavaScriptCore/VM/Register.h \
 	JavaScriptCore/bytecompiler/RegisterID.h \
 	JavaScriptCore/VM/SamplingTool.cpp \

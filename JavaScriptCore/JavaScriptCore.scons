@@ -118,12 +118,14 @@ sources['runtime'] = [
     'runtime/StructureChain.cpp',
     'runtime/UString.cpp',
 ]
+sources['bytecode'] = [
+    'bytecode/CodeBlock.cpp',
+    'bytecode/Opcode.cpp',
+]
 sources['VM'] = [
-    'VM/CodeBlock.cpp',
     'VM/CTI.cpp',
     'VM/ExceptionHelpers.cpp',
     'VM/Machine.cpp',
-    'VM/Opcode.cpp',
     'VM/RegisterFile.cpp',
     'VM/SamplingTool.cpp',
 ]
