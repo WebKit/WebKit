@@ -547,7 +547,7 @@ AC_ARG_ENABLE([jit],
 if test "$enable_jit" = "yes"; then
     case "$target_cpu" in
         i*86)
-            AC_DEFINE([ENABLE_CTI], [1], [Define to enable CTI])
+            AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
             AC_DEFINE([ENABLE_WREC], [1], [Define to enable WREC])
         ;;
         *)
