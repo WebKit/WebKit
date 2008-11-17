@@ -54,12 +54,12 @@ SOURCES += \
     runtime/JSVariableObject.cpp \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
-    VM/CodeBlock.cpp \
+    bytecode/CodeBlock.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
     VM/Machine.cpp \
-    VM/Opcode.cpp \
+    bytecode/Opcode.cpp \
     VM/SamplingTool.cpp \
     VM/RegisterFile.cpp
 
