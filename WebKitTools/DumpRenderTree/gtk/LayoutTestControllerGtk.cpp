@@ -269,3 +269,12 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     // FIXME: implement
 }
 
+bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+{    
+    // FIXME: implement
+}
+
+bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+{    
+    // FIXME: implement
+}
