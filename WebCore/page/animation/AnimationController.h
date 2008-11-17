@@ -36,8 +36,10 @@ namespace WebCore {
 class AnimationControllerPrivate;
 class Document;
 class Frame;
+class Node;
 class RenderObject;
 class RenderStyle;
+class String;
 
 class AnimationController {
 public:
@@ -49,6 +51,9 @@ public:
 
     void setAnimationStartTime(RenderObject*, double t);
     void setTransitionStartTime(RenderObject*, int property, double t);
+
+    bool pauseAnimationAtTime(RenderObject*, const String& name, double t); // To be used only for testing
+    bool pauseTransitionAtTime(RenderObject*, const String& property, double t); // To be used only for testing
 
     bool isAnimatingPropertyOnRenderer(RenderObject*, int property, bool isRunningNow) const;
 

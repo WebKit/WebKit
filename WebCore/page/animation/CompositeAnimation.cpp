@@ -78,6 +78,9 @@ public:
 
     void setWaitingForStyleAvailable(bool);
 
+    bool pauseAnimationAtTime(const AtomicString& name, double t);
+    bool pauseTransitionAtTime(int property, double t);
+
 protected:
     void updateTransitions(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
     void updateKeyframeAnimations(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
@@ -287,7 +290,7 @@ bool CompositeAnimationPrivate::isAnimating() const
     CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
         ImplicitAnimation* transition = it->second.get();
-        if (transition && transition->isAnimating() && transition->running())
+        if (transition && !transition->paused() && transition->isAnimating() && transition->active())
             return true;
     }
 
@@ -511,6 +514,35 @@ void CompositeAnimationPrivate::setWaitingForStyleAvailable(bool waiting)
     m_animationController->setWaitingForStyleAvailable(waiting);
 }
 
+bool CompositeAnimationPrivate::pauseAnimationAtTime(const AtomicString& name, double t)
+{
+    RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(name.impl());
+    if (!keyframeAnim || !keyframeAnim->running())
+        return false;
+
+    int count = keyframeAnim->m_animation->iterationCount();
+    if ((t >= 0.0) && (!count || (t <= count * keyframeAnim->duration()))) {
+        keyframeAnim->pauseAtTime(t);
+        return true;
+    }
+
+    return false;
+}
+
+bool CompositeAnimationPrivate::pauseTransitionAtTime(int property, double t)
+{
+    ImplicitAnimation* implAnim = m_transitions.get(property).get();
+    if (!implAnim || !implAnim->running())
+        return false;
+
+    if ((t >= 0.0) && (t <= implAnim->duration())) {
+        implAnim->pauseAtTime(t);
+        return true;
+    }
+
+    return false;
+}
+
 CompositeAnimation::CompositeAnimation(AnimationController* animationController)
     : m_data(new CompositeAnimationPrivate(animationController, this))
 {
@@ -589,6 +621,16 @@ void CompositeAnimation::overrideImplicitAnimations(int property)
 void CompositeAnimation::resumeOverriddenImplicitAnimations(int property)
 {
     m_data->resumeOverriddenImplicitAnimations(property);
+}
+
+bool CompositeAnimation::pauseAnimationAtTime(const AtomicString& name, double t)
+{
+    return m_data->pauseAnimationAtTime(name, t);
+}
+
+bool CompositeAnimation::pauseTransitionAtTime(int property, double t)
+{
+    return m_data->pauseTransitionAtTime(property, t);
 }
 
 } // namespace WebCore

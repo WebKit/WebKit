@@ -1,3 +1,24 @@
+2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added new JavaScript API on LayoutController to pause a running
+        CSS transition or animation at a given time.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21261
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (pauseAnimationAtTimeOnElementWithIdCallback):
+        (pauseTransitionAtTimeOnElementWithIdCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+
 2008-11-17  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

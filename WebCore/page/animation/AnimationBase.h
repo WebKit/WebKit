@@ -209,6 +209,8 @@ public:
 
     bool isTransformFunctionListValid() const { return m_transformFunctionListValid; }
     
+    void pauseAtTime(double t);
+    
 protected:
     virtual void overrideAnimations() { }
     virtual void resumeOverriddenAnimations() { }

@@ -50,6 +50,7 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
 #import <WebCore/AccessibilityObject.h>
+#import <WebCore/AnimationController.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
@@ -1164,6 +1165,40 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     }
 }
 #endif
+
+- (BOOL)_pauseAnimation:(NSString*)name onNode:(DOMNode *)node atTime:(NSTimeInterval)time
+{
+    Frame* frame = core(self);
+    if (!frame)
+        return false;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return false;
+
+    Node* coreNode = [node _node];
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    return controller->pauseAnimationAtTime(coreNode->renderer(), name, time);
+}
+
+- (BOOL)_pauseTransitionOfProperty:(NSString*)name onNode:(DOMNode*)node atTime:(NSTimeInterval)time
+{
+    Frame* frame = core(self);
+    if (!frame)
+        return false;
+
+    AnimationController* controller = frame->animation();
+    if (!controller)
+        return false;
+
+    Node* coreNode = [node _node];
+    if (!coreNode || !coreNode->renderer())
+        return false;
+
+    return controller->pauseTransitionAtTime(coreNode->renderer(), name, time);
+}
 
 @end
 

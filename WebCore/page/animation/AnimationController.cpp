@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AnimationController.h"
 #include "CompositeAnimation.h"
+#include "CSSParser.h"
 #include "Frame.h"
 #include "Timer.h"
 
@@ -58,6 +59,9 @@ public:
     void styleAvailable();
 
     bool isAnimatingPropertyOnRenderer(RenderObject*, int property, bool isRunningNow) const;
+
+    bool pauseAnimationAtTime(RenderObject*, const String& name, double t);
+    bool pauseTransitionAtTime(RenderObject*, const String& property, double t);
 
 private:
     typedef HashMap<RenderObject*, CompositeAnimation*> RenderObjectAnimationMap;
@@ -200,6 +204,40 @@ void AnimationControllerPrivate::resumeAnimations(Document* document)
     updateAnimationTimer();
 }
 
+bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, const String& name, double t)
+{
+    if (!renderer)
+        return false;
+
+    CompositeAnimation* compAnim = accessCompositeAnimation(renderer);
+    if (!compAnim)
+        return false;
+
+    if (compAnim->pauseAnimationAtTime(name, t)) {
+        renderer->node()->setChanged(AnimationStyleChange);
+        return true;
+    }
+
+    return false;
+}
+
+bool AnimationControllerPrivate::pauseTransitionAtTime(RenderObject* renderer, const String& property, double t)
+{
+    if (!renderer)
+        return false;
+
+    CompositeAnimation* compAnim = accessCompositeAnimation(renderer);
+    if (!compAnim)
+        return false;
+
+    if (compAnim->pauseTransitionAtTime(cssPropertyID(property), t)) {
+        renderer->node()->setChanged(AnimationStyleChange);
+        return true;
+    }
+
+    return false;
+}
+
 AnimationController::AnimationController(Frame* frame)
     : m_data(new AnimationControllerPrivate(frame))
     , m_numStyleAvailableWaiters(0)
@@ -265,6 +303,16 @@ void AnimationController::setTransitionStartTime(RenderObject* renderer, int pro
 {
     CompositeAnimation* rendererAnimations = m_data->accessCompositeAnimation(renderer);
     rendererAnimations->setTransitionStartTime(property, t);
+}
+
+bool AnimationController::pauseAnimationAtTime(RenderObject* renderer, const String& name, double t)
+{
+    return m_data->pauseAnimationAtTime(renderer, name, t);
+}
+
+bool AnimationController::pauseTransitionAtTime(RenderObject* renderer, const String& property, double t)
+{
+    return m_data->pauseTransitionAtTime(renderer, property, t);
 }
 
 bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* renderer, int property, bool isRunningNow) const

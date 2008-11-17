@@ -59,9 +59,6 @@ bool ImplicitAnimation::shouldSendEventForListener(Document::ListenerType inList
 void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* renderer, RenderStyle* currentStyle,
                                 RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)
 {
-    if (paused())
-        return;
-
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // So just return. Everything is already all cleaned up.
     if (postActive())

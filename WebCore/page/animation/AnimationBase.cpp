@@ -579,30 +579,21 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 
             m_compAnim->setWaitingForStyleAvailable(false);
 
-            if (input == AnimationStateInputStyleAvailable) {
-                // Start timer has fired, tell the animation to start and wait for it to respond with start time
+            // Start timer has fired, tell the animation to start and wait for it to respond with start time
+            m_animState = AnimationStateStartWaitResponse;
+
+            overrideAnimations();
+
+            // Send start event, if needed
+            onAnimationStart(0); // The elapsedTime is always 0 here
+
+            // Start the animation
+            if (overridden() || !startAnimation(0)) {
+                // We're not going to get a startTime callback, so fire the start time here
                 m_animState = AnimationStateStartWaitResponse;
-
-                overrideAnimations();
-
-                // Send start event, if needed
-                onAnimationStart(0); // The elapsedTime is always 0 here
-
-                // Start the animation
-                if (overridden() || !startAnimation(0)) {
-                    // We're not going to get a startTime callback, so fire the start time here
-                    m_animState = AnimationStateStartWaitResponse;
-                    updateStateMachine(AnimationStateInputStartTimeSet, currentTime());
-                } else
-                    m_waitedForResponse = true;
-            } else {
-                ASSERT(!paused());
-                // We're waiting for the a notification that the style has been setup. If we're asked to wait
-                // at this point, the style must have been processed, so we can deal with this like we would
-                // for WAIT_RESPONSE, except that we don't need to do an endAnimation().
-                m_pauseTime = 0;
-                m_animState = AnimationStateStartWaitResponse;
-            }
+                updateStateMachine(AnimationStateInputStartTimeSet, currentTime());
+            } else
+                m_waitedForResponse = true;
             break;
         case AnimationStateStartWaitResponse:
             ASSERT(input == AnimationStateInputStartTimeSet || input == AnimationStateInputPlayStatePaused);
@@ -622,7 +613,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
-                m_pauseTime = 0;
+                m_pauseTime = -1;
                 endAnimation(false);
                 m_animState = AnimationStatePausedWaitResponse;
             }
@@ -736,7 +727,7 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     if (preActive())
         return 0;
 
-    double elapsedTime = running() ? (currentTime() - m_startTime) : (m_pauseTime - m_startTime);
+    double elapsedTime = running() && !paused() ? (currentTime() - m_startTime) : (m_pauseTime - m_startTime);
     if (running() && elapsedTime < 0)
         return 0;
 
@@ -809,4 +800,10 @@ void AnimationBase::primeEventTimers()
     }
 }
   
+void AnimationBase::pauseAtTime(double t)
+{
+    updatePlayState(false);
+    m_pauseTime = m_startTime + t;
+}
+
 } // namespace WebCore

@@ -37,10 +37,12 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/DOMDocument.h>
+#import <WebKit/DOMElement.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
@@ -308,4 +310,24 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     NSString *valueNS = (NSString *)valueCF.get();
 
     [[mainFrame webView] _executeCoreCommandByName:nameNS value:valueNS];
+}
+
+bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+{
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, elementId));
+    NSString *idNS = (NSString *)idCF.get();
+    RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, animationName));
+    NSString *nameNS = (NSString *)nameCF.get();
+    
+    return [mainFrame _pauseAnimation:nameNS onNode:[[mainFrame DOMDocument] getElementById:idNS] atTime:time];
+}
+
+bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+{
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, elementId));
+    NSString *idNS = (NSString *)idCF.get();
+    RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, propertyName));
+    NSString *nameNS = (NSString *)nameCF.get();
+    
+    return [mainFrame _pauseTransitionOfProperty:nameNS onNode:[[mainFrame DOMDocument] getElementById:idNS] atTime:time];
 }

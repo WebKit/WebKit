@@ -1,3 +1,38 @@
+2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added functionality to AnimationController to allow pausing a running
+        animation or transition at a given time for testing purposes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21261
+
+        Tests: animations/animation-drt-api.html
+               transitions/transition-drt-api.html
+
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::progress):
+        (WebCore::AnimationBase::pauseAtTime):
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::pauseAnimationAtTime):
+        (WebCore::AnimationController::pauseTransitionAtTime):
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimationPrivate::isAnimating):
+        (WebCore::CompositeAnimationPrivate::pauseAnimationAtTime):
+        (WebCore::CompositeAnimationPrivate::pauseTransitionAtTime):
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::pauseTransitionAtTime):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

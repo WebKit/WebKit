@@ -1,3 +1,17 @@
+2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added SPI to allow pausing a running CSS transition or animation
+        at a given time for testing purposes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21261
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _pauseAnimation:onNode:atTime:]):
+        (-[WebFrame _pauseTransitionOfProperty:onNode:atTime:]):
+        * WebView/WebFramePrivate.h:
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

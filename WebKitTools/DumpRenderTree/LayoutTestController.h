@@ -153,6 +153,9 @@ public:
     const std::string& testPathOrURL() const { return m_testPathOrURL; }
     const std::string& expectedPixelHash() const { return m_expectedPixelHash; }
     
+    bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
+    bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
+    
 private:
     bool m_dumpAsText;
     bool m_dumpAsPDF;

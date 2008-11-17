@@ -1,3 +1,18 @@
+2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added tests to cover the new LayoutController JavaScript API available
+        in DRT (Mac only).
+
+        https://bugs.webkit.org/show_bug.cgi?id=21261
+
+        * animations/animation-drt-api.html: Added.
+        * platform/mac/animations/animation-drt-api-expected.txt: Added.
+        * platform/mac/transitions/transition-drt-api-expected.txt: Added.
+        * platform/win/Skipped:
+        * transitions/transition-drt-api.html: Added.
+
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

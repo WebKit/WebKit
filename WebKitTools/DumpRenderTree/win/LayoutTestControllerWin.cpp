@@ -628,3 +628,13 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 {
     printf("ERROR: LayoutTestController::setDatabaseQuota() not implemented\n");
 }
+
+bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+{
+    return false; // FIXME: Implement this on Windows
+}
+
+bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+{
+    return false; // FIXME: Implement this on Windows
+}
