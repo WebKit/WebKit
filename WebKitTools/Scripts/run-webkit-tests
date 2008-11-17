@@ -146,10 +146,13 @@ my $errorTag = "stderr";
 
 if (isTiger()) {
     $platform = "mac-tiger";
+    $tolerance = 1.0;
 } elsif (isLeopard()) {
     $platform = "mac-leopard";
+    $tolerance = 0.1;
 } elsif (isSnowLeopard()) {
     $platform = "mac-snowleopard";
+    $tolerance = 0.1;
 } elsif (isOSX()) {
     $platform = "mac";
 } elsif (isQt()) {
@@ -184,7 +187,7 @@ Usage: $programName [options] [testdir|testpath ...]
   -l|--leaks                      Enable leaks checking
   --[no-]new-test-results         Generate results for new tests
   -p|--pixel-tests                Enable pixel tests
-  --tolerance t                   Ignore image differences less than this percentage (implies --pixel-tests)
+  --tolerance t                   Ignore image differences less than this percentage (default: $tolerance)
   --platform                      Override the detected platform to use for tests and results (default: $platform)
   --port                          Web server port to use with http tests
   -q|--quiet                      Less verbose output
@@ -261,8 +264,6 @@ setConfiguration($configuration);
 
 my $configurationOption = "--" . lc($configuration);
 
-$pixelTests = 1 if $tolerance > 0;
-
 $testsPerDumpTool = 1000 if !$testsPerDumpTool;
 
 $verbose = 1 if $testsPerDumpTool == 1;
@@ -324,6 +325,9 @@ $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitE
 my $testResults = catfile($testResultsDirectory, "results.html");
 
 print "Running tests from $testDirectory\n";
+if ($pixelTests) {
+    print "Enabling pixel tests with a tolerance of $tolerance%\n";
+}
 
 my @tests = ();
 my %testType = ();
