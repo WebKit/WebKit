@@ -1178,15 +1178,15 @@
 			Name="Compiler"
 			>
 			<File
-				RelativePath="..\..\bytecompiler\CodeGenerator.cpp"
+				RelativePath="..\..\bytecompiler\BytecodeGenerator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecompiler\CodeGenerator.h"
+				RelativePath="..\..\bytecompiler\BytecodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\LabelID.h"
+				RelativePath="..\..\bytecompiler\Label.h"
 				>
 			</File>
 			<File
@@ -1222,11 +1222,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\RegisterID.h"
+				RelativePath="..\..\bytecompiler\RegisterID.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\SegmentedVector.h"
+				RelativePath="..\..\bytecompiler\SegmentedVector.h"
 				>
 			</File>
 		</Filter>
