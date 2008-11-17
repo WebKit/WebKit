@@ -39,7 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../parser/;../../runtime/;../../VM/;../../wtf/;../../debugger/;../../bytecompiler/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../wrec/;../../parser/;../../runtime/;../../VM/;../../wtf/;../../debugger/;../../bytecompiler/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="__STD_C"
 			/>
 			<Tool
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../parser/;../../runtime/;../../VM/;../../wtf/;../../debugger/;../../bytecompiler/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../wrec/;../../parser/;../../runtime/;../../VM/;../../wtf/;../../debugger/;../../bytecompiler/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="__STD_C"
 			/>
 			<Tool
@@ -178,7 +178,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../parser/;../../runtime/;../../VM/;../../wtf/;../../debugger/;../../bytecompiler/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../wrec/;../../parser/;../../runtime/;../../VM/;../../wtf/;../../debugger/;../../bytecompiler/;&quot;$(WebKitLibrariesDir)\include\icu&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;../../../icu/include;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="__STD_C"
 			/>
 			<Tool

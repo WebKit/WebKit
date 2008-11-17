@@ -4,6 +4,14 @@
         
         Try to fix Windows build.
 
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try to fix Windows build.
+
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
 
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
