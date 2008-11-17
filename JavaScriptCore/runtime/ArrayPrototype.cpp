@@ -24,7 +24,7 @@
 #include "config.h"
 #include "ArrayPrototype.h"
 
-#include "Machine.h"
+#include "Interpreter.h"
 #include "ObjectPrototype.h"
 #include "Lookup.h"
 #include "Operations.h"

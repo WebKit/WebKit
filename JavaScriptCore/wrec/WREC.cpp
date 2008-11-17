@@ -29,7 +29,7 @@
 #if ENABLE(WREC)
 
 #include "CharacterClassConstructor.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "pcre_internal.h"
 
 #define __ m_assembler.

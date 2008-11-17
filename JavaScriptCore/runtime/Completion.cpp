@@ -26,7 +26,7 @@
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Parser.h"
 #include "Debugger.h"
 #include <stdio.h>

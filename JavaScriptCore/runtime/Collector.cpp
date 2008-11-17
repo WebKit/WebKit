@@ -28,7 +28,7 @@
 #include "JSLock.h"
 #include "JSString.h"
 #include "JSValue.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Tracing.h"
 #include <algorithm>
 #include <setjmp.h>

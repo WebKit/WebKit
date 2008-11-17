@@ -31,7 +31,7 @@
 
 #include "JSFunction.h"
 #include "CodeBlock.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Parser.h"
 
 namespace JSC {

@@ -36,7 +36,7 @@
 #include "JSLock.h"
 #include "JSNotAnObject.h"
 #include "JSStaticScopeObject.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Parser.h"
 #include "Collector.h"
 #include "Lexer.h"

@@ -33,7 +33,7 @@
 #include "ExecState.h"
 #include "JSObject.h"
 #include "JSNotAnObject.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Nodes.h"
 
 namespace JSC {

@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Machine_h
-#define Machine_h
+#ifndef Interpreter_h
+#define Interpreter_h
 
 #include "ArgList.h"
 #include "JSCell.h"
@@ -362,4 +362,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // Machine_h
+#endif // Interpreter_h

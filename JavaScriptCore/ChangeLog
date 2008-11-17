@@ -2,6 +2,41 @@
 
         Reviewed by Sam Weinig.
         
+        Moved VM/Machine.h => interpreter/Interpreter.h
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * VM/ExceptionHelpers.cpp:
+        * VM/Machine.cpp:
+        * VM/Machine.h: Removed.
+        * VM/SamplingTool.cpp:
+        * bytecode/CodeBlock.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+        * debugger/DebuggerCallFrame.cpp:
+        * interpreter: Added.
+        * interpreter/Interpreter.h: Copied from VM/Machine.h.
+        * profiler/ProfileGenerator.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/Collector.cpp:
+        * runtime/Completion.cpp:
+        * runtime/ExecState.h:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * wrec/WREC.cpp:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Moved runtime/Interpreter.cpp => runtime/Completion.cpp.
 
         Moved functions from Interpreter.h to Completion.h, and removed

@@ -64,6 +64,7 @@ JavaScriptCore Bakefile project file.
         <include>$(SRCDIR)/profiler</include>
         <include>$(SRCDIR)/runtime</include>
         <include>$(SRCDIR)/VM</include>
+        <include>$(SRCDIR)/interpreter</include>
         <include>$(SRCDIR)/bytecode</include>
         <include>$(SRCDIR)/wrec</include>
         <include>$(SRCDIR)/wtf</include>
@@ -101,6 +102,7 @@ JavaScriptCore Bakefile project file.
         <include>$(WK_ROOT)/JavaScriptCore/profiler</include>
         <include>$(WK_ROOT)/JavaScriptCore/runtime</include>
         <include>$(WK_ROOT)/JavaScriptCore/VM</include>
+        <include>$(WK_ROOT)/JavaScriptCore/interpreter</include>
         <include>$(WK_ROOT)/JavaScriptCore/bytecode</include>
         <include>$(WK_ROOT)/JavaScriptCore/wrec</include>
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>

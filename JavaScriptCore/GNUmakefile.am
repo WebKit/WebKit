@@ -2,6 +2,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/API \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/JavaScriptCore/VM \
+	-I$(srcdir)/JavaScriptCore/interpreter \
 	-I$(srcdir)/JavaScriptCore/bytecode \
 	-I$(srcdir)/JavaScriptCore/bytecompiler \
 	-I$(srcdir)/JavaScriptCore/debugger \
@@ -81,7 +82,7 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecode/Instruction.h \
 	JavaScriptCore/bytecompiler/Label.h \
 	JavaScriptCore/VM/Machine.cpp \
-	JavaScriptCore/VM/Machine.h \
+	JavaScriptCore/interpreter/Interpreter.h \
 	JavaScriptCore/bytecode/Opcode.cpp \
 	JavaScriptCore/bytecode/Opcode.h \
 	JavaScriptCore/VM/Register.h \

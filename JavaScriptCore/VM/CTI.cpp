@@ -31,7 +31,7 @@
 #include "CodeBlock.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 

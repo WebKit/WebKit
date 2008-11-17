@@ -29,7 +29,7 @@
 #include "GlobalEvalFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Parser.h"
 #include "dtoa.h"
 #include "Lexer.h"

@@ -49,7 +49,7 @@
 #include "GlobalEvalFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLock.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "MathObject.h"
 #include "NativeErrorConstructor.h"
 #include "NativeErrorPrototype.h"

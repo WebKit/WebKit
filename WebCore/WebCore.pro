@@ -90,6 +90,7 @@ DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
 INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders \
                $$PWD/../JavaScriptCore/VM \
+               $$PWD/../JavaScriptCore/interpreter \
                $$PWD/../JavaScriptCore/bytecode \
                $$PWD/../JavaScriptCore/debugger \
                $$PWD/../JavaScriptCore/parser \

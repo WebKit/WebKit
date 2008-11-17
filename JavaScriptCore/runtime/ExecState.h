@@ -26,7 +26,7 @@
 // FIXME: Rename this file to CallFrame.h.
 
 #include "JSGlobalData.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "ScopeChain.h"
 
 namespace JSC  {

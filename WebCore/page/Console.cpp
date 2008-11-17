@@ -42,7 +42,7 @@
 #include <runtime/ArgList.h>
 #include <runtime/Completion.h>
 #include <runtime/JSObject.h>
-#include <VM/Machine.h>
+#include <interpreter/Interpreter.h>
 #include <profiler/Profiler.h>
 #include <stdio.h>
 

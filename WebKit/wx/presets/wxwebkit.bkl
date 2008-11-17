@@ -140,6 +140,7 @@ and WebCore. Include this file to use these settings.
         <include>$(WK_ROOT)/JavaScriptCore/profiler</include>
         <include>$(WK_ROOT)/JavaScriptCore/runtime</include>
         <include>$(WK_ROOT)/JavaScriptCore/VM</include>
+        <include>$(WK_ROOT)/JavaScriptCore/interpreter</include>
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
     </template>
     

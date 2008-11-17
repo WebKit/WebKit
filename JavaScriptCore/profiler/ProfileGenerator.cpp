@@ -30,7 +30,7 @@
 #include "JSGlobalObject.h"
 #include "JSStringRef.h"
 #include "JSFunction.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Profile.h"
 #include "Profiler.h"
 #include "Tracing.h"

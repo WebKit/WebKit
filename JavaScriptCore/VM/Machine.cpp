@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "Machine.h"
+#include "Interpreter.h"
 
 #include "Arguments.h"
 #include "BatchedTransitionOptimizer.h"

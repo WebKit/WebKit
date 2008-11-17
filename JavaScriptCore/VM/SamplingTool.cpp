@@ -30,7 +30,7 @@
 #include "SamplingTool.h"
 
 #include "CodeBlock.h"
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Opcode.h"
 
 #if !PLATFORM(WIN_OS)

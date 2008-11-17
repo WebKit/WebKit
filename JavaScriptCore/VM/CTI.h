@@ -32,7 +32,7 @@
 
 #define WTF_USE_CTI_REPATCH_PIC 1
 
-#include "Machine.h"
+#include "Interpreter.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
 #include "X86Assembler.h"

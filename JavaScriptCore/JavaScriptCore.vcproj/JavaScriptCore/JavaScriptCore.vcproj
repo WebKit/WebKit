@@ -1286,7 +1286,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\Machine.h"
+				RelativePath="..\..\interpreter\Interpreter.h"
 				>
 			</File>
 			<File

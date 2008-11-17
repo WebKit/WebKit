@@ -43,7 +43,7 @@
 #include "JSFile.h"
 #include "XMLHttpRequest.h"
 #include <runtime/Error.h>
-#include <VM/Machine.h>
+#include <interpreter/Interpreter.h>
 
 using namespace JSC;
 
