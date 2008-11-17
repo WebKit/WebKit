@@ -305,7 +305,7 @@ for my $dir (@projects) {
             chdir ".." or die;
             next;
         }
-        $result = buildQMakeQtProject($dir, $clean);
+        $result = buildQMakeQtProject($dir, $clean, @ARGV);
     } elsif (isOSX()) {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, $overrideFeatureDefinesString, @coverageSupportOption, @ARGV;
     } elsif (isCygwin()) {

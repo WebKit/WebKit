@@ -884,11 +884,12 @@ sub buildQMakeProject($@)
     return $result;
 }
 
-sub buildQMakeQtProject($$)
+sub buildQMakeQtProject($$@)
 {
-    my ($project, $clean) = @_;
+    my ($project, $clean, @buildArgs) = @_;
 
-    my @buildArgs = ("CONFIG+=qt-port");
+    push @buildArgs, "CONFIG+=qt-port";
+
     return buildQMakeProject($clean, @buildArgs);
 }
 

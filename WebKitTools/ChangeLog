@@ -1,3 +1,13 @@
+2008-11-17  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22309>
+        Pass the remaining options to build system on Qt-port
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2008-11-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
