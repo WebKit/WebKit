@@ -26,126 +26,14 @@
 #ifndef X86Assembler_h
 #define X86Assembler_h
 
-#if ENABLE(MASM) && PLATFORM(X86)
+#include <wtf/Platform.h>
 
+#if ENABLE(ASSEMBLER) && PLATFORM(X86)
+
+#include "AssemblerBuffer.h"
 #include <wtf/Assertions.h>
-#include <wtf/AlwaysInline.h>
-#include <wtf/FastMalloc.h>
-
-#if HAVE(MMAN)
-#include <sys/mman.h>
-#endif
-
-#include <string.h>
 
 namespace JSC {
-
-class AssemblerBuffer {
-public:
-    AssemblerBuffer(int capacity)
-        : m_buffer(static_cast<char*>(fastMalloc(capacity)))
-        , m_capacity(capacity)
-        , m_size(0)
-    {
-    }
-
-    ~AssemblerBuffer()
-    {
-        fastFree(m_buffer);
-    }
-
-    void ensureSpace(int space)
-    {
-        if (m_size > m_capacity - space)
-            grow();
-    }
-
-    bool isAligned(int alignment)
-    {
-        return !(m_size & (alignment - 1));
-    }
-    
-    void putByteUnchecked(int value)
-    {
-        ASSERT(!(m_size > m_capacity - 4));
-        m_buffer[m_size] = value;
-        m_size++;
-    }
-
-    void putByte(int value)
-    {
-        if (m_size > m_capacity - 4)
-            grow();
-        putByteUnchecked(value);
-    }
-    
-    void putShortUnchecked(int value)
-    {
-        ASSERT(!(m_size > m_capacity - 4));
-        *reinterpret_cast<short*>(&m_buffer[m_size]) = value;
-        m_size += 2;
-    }
-
-    void putShort(int value)
-    {
-        if (m_size > m_capacity - 4)
-            grow();
-        putShortUnchecked(value);
-    }
-    
-    void putIntUnchecked(int value)
-    {
-        *reinterpret_cast<int*>(&m_buffer[m_size]) = value;
-        m_size += 4;
-    }
-
-    void putInt(int value)
-    {
-        if (m_size > m_capacity - 4)
-            grow();
-        putIntUnchecked(value);
-    }
-
-    void* data()
-    {
-        return m_buffer;
-    }
-    
-    int size()
-    {
-        return m_size;
-    }
-
-    AssemblerBuffer* reset()
-    {
-        m_size = 0;
-        return this;
-    }
-    
-    void* executableCopy()
-    {
-        if (!m_size)
-            return 0;
-
-        void* result = WTF::fastMallocExecutable(m_size);
-
-        if (!result)
-            return 0;
-
-        return memcpy(result, m_buffer, m_size);
-    }
-
-private:
-    void grow()
-    {
-        m_capacity += m_capacity / 2;
-        m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
-    }
-
-    char* m_buffer;
-    int m_capacity;
-    int m_size;
-};
 
 #define MODRM(type, reg, rm) ((type << 6) | (reg << 3) | (rm))
 #define SIB(type, reg, rm) MODRM(type, reg, rm)
@@ -1271,6 +1159,6 @@ typedef Vector<X86Assembler::JmpSrc> JmpSrcVector;
 
 } // namespace JSC
 
-#endif // ENABLE(MASM) && PLATFORM(X86)
+#endif // ENABLE(ASSEMBLER) && PLATFORM(X86)
 
 #endif // X86Assembler_h

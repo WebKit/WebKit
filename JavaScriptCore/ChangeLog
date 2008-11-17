@@ -1,5 +1,37 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Moved masm => assembler and split "AssemblerBuffer.h" out of "X86Assembler.h".
+        
+        Also renamed ENABLE_MASM to ENABLE_ASSEMBLER.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler: Added.
+        * assembler/AssemblerBuffer.h: Copied from masm/X86Assembler.h.
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        (JSC::AssemblerBuffer::ensureSpace):
+        (JSC::AssemblerBuffer::isAligned):
+        (JSC::AssemblerBuffer::putByteUnchecked):
+        (JSC::AssemblerBuffer::putByte):
+        (JSC::AssemblerBuffer::putShortUnchecked):
+        (JSC::AssemblerBuffer::putShort):
+        (JSC::AssemblerBuffer::putIntUnchecked):
+        (JSC::AssemblerBuffer::putInt):
+        (JSC::AssemblerBuffer::data):
+        (JSC::AssemblerBuffer::size):
+        (JSC::AssemblerBuffer::reset):
+        (JSC::AssemblerBuffer::executableCopy):
+        (JSC::AssemblerBuffer::grow):
+        * assembler/X86Assembler.h: Copied from masm/X86Assembler.h.
+        * masm: Removed.
+        * masm/X86Assembler.h: Removed.
+        * wtf/Platform.h:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix gtk build.

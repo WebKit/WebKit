@@ -90,7 +90,6 @@
 		8613F45B0E3A433E00C948FD /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 8613F4590E3A433E00C948FD /* SamplingTool.h */; };
 		8683B02E0E636482004C19EE /* CTI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8683B02B0E636482004C19EE /* CTI.cpp */; };
 		8683B02F0E636482004C19EE /* CTI.h in Headers */ = {isa = PBXBuildFile; fileRef = 8683B02C0E636482004C19EE /* CTI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		869081410E640C89000D36ED /* X86Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 869081400E640C89000D36ED /* X86Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869083150E6518D7000D36ED /* WREC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 869083130E6518D7000D36ED /* WREC.cpp */; };
 		869083160E6518D7000D36ED /* WREC.h in Headers */ = {isa = PBXBuildFile; fileRef = 869083140E6518D7000D36ED /* WREC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -123,6 +122,8 @@
 		95FDFA140E22998F0006FB00 /* HeavyProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */; };
 		95FDFA160E2299980006FB00 /* HeavyProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95FDFA150E2299980006FB00 /* HeavyProfile.h */; };
 		960097A60EBABB58007A7297 /* LabelScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 960097A50EBABB58007A7297 /* LabelScope.h */; };
+		9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB130ED12B4E001D649F /* AssemblerBuffer.h */; };
+		9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9688CB140ED12B4E001D649F /* X86Assembler.h */; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
@@ -534,7 +535,6 @@
 		8613F4590E3A433E00C948FD /* SamplingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SamplingTool.h; path = VM/SamplingTool.h; sourceTree = "<group>"; };
 		8683B02B0E636482004C19EE /* CTI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTI.cpp; path = VM/CTI.cpp; sourceTree = "<group>"; };
 		8683B02C0E636482004C19EE /* CTI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTI.h; path = VM/CTI.h; sourceTree = "<group>"; };
-		869081400E640C89000D36ED /* X86Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Assembler.h; sourceTree = "<group>"; };
 		869083130E6518D7000D36ED /* WREC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WREC.cpp; sourceTree = "<group>"; };
 		869083140E6518D7000D36ED /* WREC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WREC.h; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
@@ -591,6 +591,8 @@
 		95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeavyProfile.cpp; path = profiler/HeavyProfile.cpp; sourceTree = "<group>"; };
 		95FDFA150E2299980006FB00 /* HeavyProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeavyProfile.h; path = profiler/HeavyProfile.h; sourceTree = "<group>"; };
 		960097A50EBABB58007A7297 /* LabelScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelScope.h; sourceTree = "<group>"; };
+		9688CB130ED12B4E001D649F /* AssemblerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBuffer.h; sourceTree = "<group>"; };
+		9688CB140ED12B4E001D649F /* X86Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Assembler.h; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExceptionHelpers.h; path = VM/ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -825,10 +827,10 @@
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				1432EBD70A34CAD400717B9F /* API */,
+				9688CB120ED12B4E001D649F /* assembler */,
 				7E39D81D0EC38EFA003AF11A /* bytecompiler */,
 				149B15DF0D81F887009CB8C7 /* compiler */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
-				8690813F0E640C89000D36ED /* masm */,
 				7E39D8370EC3A388003AF11A /* parser */,
 				65417203039E01F90058BFEB /* pcre */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
@@ -1287,14 +1289,6 @@
 			path = runtime;
 			sourceTree = "<group>";
 		};
-		8690813F0E640C89000D36ED /* masm */ = {
-			isa = PBXGroup;
-			children = (
-				869081400E640C89000D36ED /* X86Assembler.h */,
-			);
-			path = masm;
-			sourceTree = "<group>";
-		};
 		869083120E6518D7000D36ED /* wrec */ = {
 			isa = PBXGroup;
 			children = (
@@ -1338,6 +1332,15 @@
 			name = profiler;
 			sourceTree = "<group>";
 			usesTabs = 0;
+		};
+		9688CB120ED12B4E001D649F /* assembler */ = {
+			isa = PBXGroup;
+			children = (
+				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
+				9688CB140ED12B4E001D649F /* X86Assembler.h */,
+			);
+			path = assembler;
+			sourceTree = "<group>";
 		};
 		E195678D09E7CF1200B89D13 /* unicode */ = {
 			isa = PBXGroup;
@@ -1560,7 +1563,6 @@
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
 				8683B02F0E636482004C19EE /* CTI.h in Headers */,
-				869081410E640C89000D36ED /* X86Assembler.h in Headers */,
 				869083160E6518D7000D36ED /* WREC.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
@@ -1578,6 +1580,8 @@
 				7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */,
 				7E4C89140ECA0F9A00DBEEEC /* EvalCodeCache.h in Headers */,
 				FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */,
+				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
+				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
