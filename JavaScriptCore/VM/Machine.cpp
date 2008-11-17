@@ -644,7 +644,7 @@ Interpreter::Interpreter()
 void Interpreter::initialize(JSGlobalData* globalData)
 {
 #if ENABLE(CTI)
-    CTI::compileCTIMachineTrampolines(globalData);
+    JIT::compileCTIMachineTrampolines(globalData);
 #else
     UNUSED_PARAM(globalData);
 #endif
@@ -653,7 +653,7 @@ void Interpreter::initialize(JSGlobalData* globalData)
 Interpreter::~Interpreter()
 {
 #if ENABLE(CTI)
-    CTI::freeCTIMachineTrampolines(this);
+    JIT::freeCTIMachineTrampolines(this);
 #endif
 }
 
@@ -938,8 +938,8 @@ JSValue* Interpreter::execute(ProgramNode* programNode, CallFrame* callFrame, Sc
         m_reentryDepth++;
 #if ENABLE(CTI)
         if (!codeBlock->ctiCode)
-            CTI::compile(scopeChain->globalData, codeBlock);
-        result = CTI::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
+            JIT::compile(scopeChain->globalData, codeBlock);
+        result = JIT::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
 #else
         result = privateExecute(Normal, &m_registerFile, newCallFrame, exception);
 #endif
@@ -1004,8 +1004,8 @@ JSValue* Interpreter::execute(FunctionBodyNode* functionBodyNode, CallFrame* cal
         m_reentryDepth++;
 #if ENABLE(CTI)
         if (!codeBlock->ctiCode)
-            CTI::compile(scopeChain->globalData, codeBlock);
-        result = CTI::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
+            JIT::compile(scopeChain->globalData, codeBlock);
+        result = JIT::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
 #else
         result = privateExecute(Normal, &m_registerFile, newCallFrame, exception);
 #endif
@@ -1096,8 +1096,8 @@ JSValue* Interpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject
         m_reentryDepth++;
 #if ENABLE(CTI)
         if (!codeBlock->ctiCode)
-            CTI::compile(scopeChain->globalData, codeBlock);
-        result = CTI::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
+            JIT::compile(scopeChain->globalData, codeBlock);
+        result = JIT::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
 #else
         result = privateExecute(Normal, &m_registerFile, newCallFrame, exception);
 #endif
@@ -4110,7 +4110,7 @@ NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBloc
         vPC[6] = chain;
         vPC[7] = slot.cachedOffset();
         codeBlock->refStructures(vPC);
-        CTI::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, structure->previousID(), structure, slot.cachedOffset(), chain, returnAddress);
+        JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, structure->previousID(), structure, slot.cachedOffset(), chain, returnAddress);
         return;
     }
     
@@ -4121,9 +4121,9 @@ NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBloc
 
 #if USE(CTI_REPATCH_PIC)
     UNUSED_PARAM(callFrame);
-    CTI::patchPutByIdReplace(codeBlock, structure, slot.cachedOffset(), returnAddress);
+    JIT::patchPutByIdReplace(codeBlock, structure, slot.cachedOffset(), returnAddress);
 #else
-    CTI::compilePutByIdReplace(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, slot.cachedOffset(), returnAddress);
+    JIT::compilePutByIdReplace(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, slot.cachedOffset(), returnAddress);
 #endif
 }
 
@@ -4140,7 +4140,7 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
 
     if (isJSArray(baseValue) && propertyName == callFrame->propertyNames().length) {
 #if USE(CTI_REPATCH_PIC)
-        CTI::compilePatchGetArrayLength(callFrame->scopeChain()->globalData, codeBlock, returnAddress);
+        JIT::compilePatchGetArrayLength(callFrame->scopeChain()->globalData, codeBlock, returnAddress);
 #else
         ctiRepatchCallByReturnAddress(returnAddress, m_ctiArrayLengthTrampoline);
 #endif
@@ -4183,9 +4183,9 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
         codeBlock->refStructures(vPC);
         
 #if USE(CTI_REPATCH_PIC)
-        CTI::patchGetByIdSelf(codeBlock, structure, slot.cachedOffset(), returnAddress);
+        JIT::patchGetByIdSelf(codeBlock, structure, slot.cachedOffset(), returnAddress);
 #else
-        CTI::compileGetByIdSelf(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, slot.cachedOffset(), returnAddress);
+        JIT::compileGetByIdSelf(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, slot.cachedOffset(), returnAddress);
 #endif
         return;
     }
@@ -4209,7 +4209,7 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
         vPC[6] = slot.cachedOffset();
         codeBlock->refStructures(vPC);
 
-        CTI::compileGetByIdProto(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, slotBaseObject->structure(), slot.cachedOffset(), returnAddress);
+        JIT::compileGetByIdProto(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, slotBaseObject->structure(), slot.cachedOffset(), returnAddress);
         return;
     }
 
@@ -4251,7 +4251,7 @@ NEVER_INLINE void Interpreter::tryCTICacheGetByID(CallFrame* callFrame, CodeBloc
     vPC[7] = slot.cachedOffset();
     codeBlock->refStructures(vPC);
 
-    CTI::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, chain, count, slot.cachedOffset(), returnAddress);
+    JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, structure, chain, count, slot.cachedOffset(), returnAddress);
 }
 
 #ifndef NDEBUG
@@ -4688,7 +4688,7 @@ void* Interpreter::cti_op_call_JSFunction(CTI_ARGS)
     CodeBlock* newCodeBlock = &asFunction(ARG_src1)->m_body->bytecode(callDataScopeChain);
 
     if (!newCodeBlock->ctiCode)
-        CTI::compile(ARG_globalData, newCodeBlock);
+        JIT::compile(ARG_globalData, newCodeBlock);
 
     return newCodeBlock;
 }
@@ -4747,7 +4747,7 @@ void* Interpreter::cti_vm_dontLazyLinkCall(CTI_ARGS)
     JSFunction* callee = asFunction(ARG_src1);
     CodeBlock* codeBlock = &callee->m_body->bytecode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
-        CTI::compile(ARG_globalData, codeBlock);
+        JIT::compile(ARG_globalData, codeBlock);
 
     ctiRepatchCallByReturnAddress(ARG_returnAddress2, ARG_globalData->interpreter->m_ctiVirtualCallLink);
 
@@ -4761,10 +4761,10 @@ void* Interpreter::cti_vm_lazyLinkCall(CTI_ARGS)
     JSFunction* callee = asFunction(ARG_src1);
     CodeBlock* codeBlock = &callee->m_body->bytecode(callee->m_scopeChain.node());
     if (!codeBlock->ctiCode)
-        CTI::compile(ARG_globalData, codeBlock);
+        JIT::compile(ARG_globalData, codeBlock);
 
     CallLinkInfo* callLinkInfo = &ARG_callFrame->callerFrame()->codeBlock()->getCallLinkInfo(ARG_returnAddress2);
-    CTI::linkCall(callee, codeBlock, codeBlock->ctiCode, callLinkInfo, ARG_int3);
+    JIT::linkCall(callee, codeBlock, codeBlock->ctiCode, callLinkInfo, ARG_int3);
 
     return codeBlock->ctiCode;
 }

@@ -55,7 +55,7 @@ namespace JSC {
 
     class JSObject : public JSCell {
         friend class BatchedTransitionOptimizer;
-        friend class CTI;
+        friend class JIT;
         friend class JSCell;
 
     public:

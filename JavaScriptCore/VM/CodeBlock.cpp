@@ -979,7 +979,7 @@ void CodeBlock::unlinkCallers()
     size_t size = linkedCallerList.size();
     for (size_t i = 0; i < size; ++i) {
         CallLinkInfo* currentCaller = linkedCallerList[i];
-        CTI::unlinkCall(currentCaller);
+        JIT::unlinkCall(currentCaller);
         currentCaller->setUnlinked();
     }
     linkedCallerList.clear();

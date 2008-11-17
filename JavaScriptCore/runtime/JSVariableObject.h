@@ -41,7 +41,7 @@ namespace JSC {
     class Register;
 
     class JSVariableObject : public JSObject {
-        friend class CTI;
+        friend class JIT;
 
     public:
         SymbolTable& symbolTable() const { return *d->symbolTable; }

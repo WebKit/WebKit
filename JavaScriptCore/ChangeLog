@@ -1,5 +1,110 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by a few people on squirrelfish-dev.
+        
+        Renamed CTI => JIT.
+
+        * VM/CTI.cpp:
+        (JSC::JIT::killLastResultRegister):
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitGetVirtualRegisters):
+        (JSC::JIT::emitPutCTIArgFromVirtualRegister):
+        (JSC::JIT::emitPutCTIArg):
+        (JSC::JIT::emitGetCTIArg):
+        (JSC::JIT::emitPutCTIArgConstant):
+        (JSC::JIT::getConstantImmediateNumericArg):
+        (JSC::JIT::emitPutCTIParam):
+        (JSC::JIT::emitGetCTIParam):
+        (JSC::JIT::emitPutToCallFrameHeader):
+        (JSC::JIT::emitGetFromCallFrameHeader):
+        (JSC::JIT::emitPutVirtualRegister):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::printBytecodeOperandTypes):
+        (JSC::JIT::emitAllocateNumber):
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedFastCall):
+        (JSC::JIT::emitCTICall):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::linkSlowCaseIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNum):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNums):
+        (JSC::JIT::getDeTaggedConstantImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithPotentiallyReTagImmediate):
+        (JSC::JIT::emitFastArithImmToInt):
+        (JSC::JIT::emitFastArithIntToImmOrSlowCase):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+        (JSC::JIT::emitArithIntToImmWithJump):
+        (JSC::JIT::emitTagAsBoolImmediate):
+        (JSC::JIT::JIT):
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallEvalSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileLinkPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::freeCTIMachineTrampolines):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::emitGetVariableObjectRegister):
+        (JSC::JIT::emitPutVariableObjectRegister):
+        * VM/CTI.h:
+        (JSC::JIT::compile):
+        (JSC::JIT::compileGetByIdSelf):
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdReplace):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compileCTIMachineTrampolines):
+        (JSC::JIT::compilePatchGetArrayLength):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::unlinkCallers):
+        * VM/Machine.cpp:
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::~Interpreter):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::tryCTICachePutByID):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_call_JSFunction):
+        (JSC::Interpreter::cti_vm_dontLazyLinkCall):
+        (JSC::Interpreter::cti_vm_lazyLinkCall):
+        * VM/Machine.h:
+        * VM/RegisterFile.h:
+        * parser/Nodes.h:
+        * runtime/JSArray.h:
+        * runtime/JSCell.h:
+        * runtime/JSFunction.h:
+        * runtime/JSImmediate.h:
+        * runtime/JSNumberCell.h:
+        * runtime/JSObject.h:
+        * runtime/JSString.h:
+        * runtime/JSVariableObject.h:
+        * runtime/ScopeChain.h:
+        * runtime/Structure.h:
+        * runtime/TypeInfo.h:
+        * runtime/UString.h:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix wx build.

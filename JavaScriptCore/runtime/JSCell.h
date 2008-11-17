@@ -30,7 +30,7 @@
 namespace JSC {
 
     class JSCell : public JSValue {
-        friend class CTI;
+        friend class JIT;
         friend class GetterSetter;
         friend class Heap;
         friend class JSNumberCell;
