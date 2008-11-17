@@ -31,6 +31,7 @@ VPATH = \
     $(JavaScriptCore)/pcre \
     $(JavaScriptCore)/docs \
     $(JavaScriptCore)/runtime \
+    $(JavaScriptCore)/interpreter \
 #
 
 .PHONY : all
@@ -70,5 +71,5 @@ Grammar.cpp: Grammar.y
 chartables.c : dftables
 	$^ $@
 
-$(JavaScriptCore)/docs/bytecode.html: make-bytecode-docs.pl Machine.cpp 
+$(JavaScriptCore)/docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
 	perl $^ $@

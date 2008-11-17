@@ -1282,7 +1282,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\Machine.cpp"
+				RelativePath="..\..\interpreter\Interpreter.cpp"
 				>
 			</File>
 			<File

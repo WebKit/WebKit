@@ -122,10 +122,12 @@ sources['bytecode'] = [
     'bytecode/CodeBlock.cpp',
     'bytecode/Opcode.cpp',
 ]
+sources['interpreter'] = [
+    'interpreter/Interpreter.cpp',
+]
 sources['VM'] = [
     'VM/CTI.cpp',
     'VM/ExceptionHelpers.cpp',
-    'VM/Machine.cpp',
     'VM/RegisterFile.cpp',
     'VM/SamplingTool.cpp',
 ]

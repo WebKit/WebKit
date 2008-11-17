@@ -59,7 +59,7 @@ SOURCES += \
     bytecompiler/BytecodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
-    VM/Machine.cpp \
+    interpreter/Interpreter.cpp \
     bytecode/Opcode.cpp \
     VM/SamplingTool.cpp \
     VM/RegisterFile.cpp

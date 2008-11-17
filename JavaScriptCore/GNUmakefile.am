@@ -81,7 +81,7 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/ExceptionHelpers.h \
 	JavaScriptCore/bytecode/Instruction.h \
 	JavaScriptCore/bytecompiler/Label.h \
-	JavaScriptCore/VM/Machine.cpp \
+	JavaScriptCore/interpreter/Interpreter.cpp \
 	JavaScriptCore/interpreter/Interpreter.h \
 	JavaScriptCore/bytecode/Opcode.cpp \
 	JavaScriptCore/bytecode/Opcode.h \
