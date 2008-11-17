@@ -26,11 +26,12 @@
 #ifndef APICast_h
 #define APICast_h
 
-#include "UString.h"
-#include "ExecState.h"
-
 namespace JSC {
+    class ExecState;
     class PropertyNameArray;
+    class JSGlobalData;
+    class JSObject;
+    class JSValue;
 }
 
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
