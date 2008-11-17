@@ -1242,7 +1242,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\JIT\JIT.cpp"
+				RelativePath="..\..\jit\JIT.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -1254,7 +1254,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\JIT\JIT.h"
+				RelativePath="..\..\jit\JIT.h"
 				>
 			</File>
 			<File

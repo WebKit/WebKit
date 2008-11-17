@@ -127,8 +127,8 @@ sources['interpreter'] = [
     'interpreter/Interpreter.cpp',
     'interpreter/RegisterFile.cpp',
 ]
-sources['JIT'] = [
-    'JIT/JIT.cpp',
+sources['jit'] = [
+    'jit/JIT.cpp',
 ]
 sources['wrec'] = [
     'wrec/CharacterClassConstructor.cpp',
