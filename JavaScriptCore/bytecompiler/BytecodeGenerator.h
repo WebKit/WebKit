@@ -33,7 +33,7 @@
 #include "CodeBlock.h"
 #include "HashTraits.h"
 #include "Instruction.h"
-#include "LabelID.h"
+#include "Label.h"
 #include "LabelScope.h"
 #include "Machine.h"
 #include "RegisterID.h"

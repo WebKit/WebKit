@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "CodeGenerator.h"
+#include "BytecodeGenerator.h"
 
 #include "BatchedTransitionOptimizer.h"
 #include "JSFunction.h"

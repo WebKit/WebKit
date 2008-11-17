@@ -1,5 +1,32 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Some file moves:
+        
+        VM/LabelID.h => bytecompiler/Label.h
+        VM/RegisterID.h => bytecompiler/RegisterID.h
+        VM/SegmentedVector.h => bytecompiler/SegmentedVector.h
+        bytecompiler/CodeGenerator.* => bytecompiler/BytecodeGenerator.*
+
+        * AllInOneFile.cpp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/LabelID.h: Removed.
+        * VM/RegisterID.h: Removed.
+        * VM/SegmentedVector.h: Removed.
+        * bytecompiler/BytecodeGenerator.cpp: Copied from bytecompiler/CodeGenerator.cpp.
+        * bytecompiler/BytecodeGenerator.h: Copied from bytecompiler/CodeGenerator.h.
+        * bytecompiler/CodeGenerator.cpp: Removed.
+        * bytecompiler/CodeGenerator.h: Removed.
+        * bytecompiler/Label.h: Copied from VM/LabelID.h.
+        * bytecompiler/LabelScope.h:
+        * bytecompiler/RegisterID.h: Copied from VM/RegisterID.h.
+        * bytecompiler/SegmentedVector.h: Copied from VM/SegmentedVector.h.
+        * jsc.cpp:
+        * parser/Nodes.cpp:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix Windows build.

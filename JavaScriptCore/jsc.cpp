@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#include "CodeGenerator.h"
+#include "BytecodeGenerator.h"
 #include "Completion.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
