@@ -78,7 +78,7 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
 	JavaScriptCore/VM/ExceptionHelpers.h \
 	JavaScriptCore/VM/Instruction.h \
-	JavaScriptCore/VM/LabelID.h \
+	JavaScriptCore/bytecompiler/Label.h \
 	JavaScriptCore/VM/Machine.cpp \
 	JavaScriptCore/VM/Machine.h \
 	JavaScriptCore/VM/Opcode.cpp \

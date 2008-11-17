@@ -2,6 +2,14 @@
 
         Not reviewed.
         
+        Try to fix gtk build.
+
+        * GNUmakefile.am:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
         Try to fix Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
