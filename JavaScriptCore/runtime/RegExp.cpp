@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RegExp.h"
 
-#include "CTI.h"
+#include "JIT.h"
 #include "Lexer.h"
 #include <pcre/pcre.h>
 #include <stdio.h>

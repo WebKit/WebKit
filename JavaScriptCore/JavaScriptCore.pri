@@ -2,7 +2,7 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/parser $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/interpreter $$PWD/profiler $$PWD/wrec $$PWD/API $$PWD/.. \
+INCLUDEPATH += $$PWD $$PWD/parser $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/interpreter $$PWD/jit $$PWD/profiler $$PWD/wrec $$PWD/API $$PWD/.. \
                $$PWD/ForwardingHeaders $$PWD/bytecode $$PWD/assembler
 DEFINES += BUILDING_QT__
 
@@ -55,7 +55,7 @@ SOURCES += \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
     bytecode/CodeBlock.cpp \
-    VM/CTI.cpp \
+    JIT/JIT.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     runtime/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
@@ -89,7 +89,7 @@ SOURCES += \
     runtime/ErrorConstructor.cpp \
     runtime/ErrorInstance.cpp \
     runtime/ErrorPrototype.cpp \
-    runtime/ExecState.cpp \
+    interpreter/CallFrame.cpp \
     runtime/FunctionConstructor.cpp \
     runtime/FunctionPrototype.cpp \
     runtime/GetterSetter.cpp \

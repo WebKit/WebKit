@@ -65,7 +65,6 @@ sources['runtime'] = [
     'runtime/ErrorConstructor.cpp',
     'runtime/ErrorInstance.cpp',
     'runtime/ErrorPrototype.cpp',
-    'runtime/ExecState.cpp',
     'runtime/ExceptionHelpers.cpp',
     'runtime/FunctionConstructor.cpp',
     'runtime/FunctionPrototype.cpp',
@@ -74,7 +73,6 @@ sources['runtime'] = [
     'runtime/Identifier.cpp',
     'runtime/InitializeThreading.cpp',
     'runtime/InternalFunction.cpp',
-    'runtime/interpreter.cpp',
     'runtime/JSActivation.cpp',
     'runtime/JSArray.cpp',
     'runtime/JSCell.cpp',
@@ -125,11 +123,12 @@ sources['bytecode'] = [
     'bytecode/SamplingTool.cpp',
 ]
 sources['interpreter'] = [
+    'interpreter/CallFrame.cpp',
     'interpreter/Interpreter.cpp',
     'interpreter/RegisterFile.cpp',
 ]
-sources['VM'] = [
-    'VM/CTI.cpp',
+sources['JIT'] = [
+    'JIT/JIT.cpp',
 ]
 sources['wrec'] = [
     'wrec/CharacterClassConstructor.cpp',

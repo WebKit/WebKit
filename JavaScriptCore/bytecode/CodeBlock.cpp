@@ -30,7 +30,7 @@
 #include "config.h"
 #include "CodeBlock.h"
 
-#include "CTI.h"
+#include "JIT.h"
 #include "JSValue.h"
 #include "Interpreter.h"
 #include "Debugger.h"

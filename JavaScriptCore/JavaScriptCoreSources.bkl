@@ -92,7 +92,7 @@ Source files for JSCore.
         runtime/ErrorConstructor.cpp
         runtime/ErrorInstance.cpp
         runtime/ErrorPrototype.cpp
-        runtime/ExecState.cpp
+        interpreter/ExecState.cpp
         runtime/FunctionConstructor.cpp
         runtime/FunctionPrototype.cpp
         runtime/GetterSetter.cpp

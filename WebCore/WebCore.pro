@@ -89,7 +89,6 @@ unix|win32-*:!embedded:!wince*:!symbian {
 DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
 INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders \
-               $$PWD/../JavaScriptCore/VM \
                $$PWD/../JavaScriptCore/interpreter \
                $$PWD/../JavaScriptCore/bytecode \
                $$PWD/../JavaScriptCore/debugger \
@@ -97,6 +96,7 @@ INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingH
                $$PWD/../JavaScriptCore/runtime \
                $$PWD/../JavaScriptCore/bindings \
                $$PWD/../JavaScriptCore/wrec \
+               $$PWD/../JavaScriptCore/jit \
                $$PWD/../JavaScriptCore/wtf \
 
 contains(CONFIG, debug_and_release_target) {

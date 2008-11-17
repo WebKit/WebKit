@@ -58,7 +58,7 @@
 #include <stdio.h>
 
 #if ENABLE(JIT)
-#include "CTI.h"
+#include "JIT.h"
 #endif
 
 #if PLATFORM(DARWIN)

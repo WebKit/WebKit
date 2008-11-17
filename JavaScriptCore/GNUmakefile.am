@@ -1,15 +1,16 @@
 javascriptcore_cppflags += \
 	-I$(srcdir)/JavaScriptCore/API \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I$(srcdir)/JavaScriptCore/VM \
 	-I$(srcdir)/JavaScriptCore/interpreter \
 	-I$(srcdir)/JavaScriptCore/bytecode \
 	-I$(srcdir)/JavaScriptCore/bytecompiler \
 	-I$(srcdir)/JavaScriptCore/debugger \
+	-I$(srcdir)/JavaScriptCore/jit \
 	-I$(srcdir)/JavaScriptCore/pcre \
 	-I$(srcdir)/JavaScriptCore/profiler \
 	-I$(srcdir)/JavaScriptCore/runtime \
 	-I$(srcdir)/JavaScriptCore/wrec \
+	-I$(srcdir)/JavaScriptCore/jit \
 	-I$(srcdir)/JavaScriptCore/assembler \
 	-I$(srcdir)/JavaScriptCore/wtf/unicode \
 	-I$(top_builddir)/JavaScriptCore/pcre \
@@ -72,8 +73,8 @@ javascriptcore_sources += \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/OpaqueJSString.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/WebKitAvailability.h \
 	JavaScriptCore/JavaScriptCorePrefix.h \
-	JavaScriptCore/VM/CTI.cpp \
-	JavaScriptCore/VM/CTI.h \
+	JavaScriptCore/jit/JIT.cpp \
+	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
 	JavaScriptCore/bytecode/CodeBlock.h \
 	JavaScriptCore/bytecode/EvalCodeCache.h \
