@@ -150,7 +150,7 @@ Source files for JSCore.
         runtime/ExceptionHelpers.cpp
         interpreter/Interpreter.cpp
         bytecode/Opcode.cpp
-        VM/SamplingTool.cpp
+        bytecode/SamplingTool.cpp
         interpreter/RegisterFile.cpp
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">

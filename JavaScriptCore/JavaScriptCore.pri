@@ -61,7 +61,7 @@ SOURCES += \
     runtime/JSPropertyNameIterator.cpp \
     interpreter/Interpreter.cpp \
     bytecode/Opcode.cpp \
-    VM/SamplingTool.cpp \
+    bytecode/SamplingTool.cpp \
     interpreter/RegisterFile.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code

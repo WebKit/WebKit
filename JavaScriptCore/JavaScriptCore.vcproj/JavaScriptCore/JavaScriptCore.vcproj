@@ -1310,11 +1310,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\SamplingTool.cpp"
+				RelativePath="..\..\bytecode\SamplingTool.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\SamplingTool.h"
+				RelativePath="..\..\bytecode\SamplingTool.h"
 				>
 			</File>
 		</Filter>

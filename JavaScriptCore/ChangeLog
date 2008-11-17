@@ -1,5 +1,24 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Moved VM/SamplingTool.* => bytecode/SamplingTool.*.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/SamplingTool.cpp: Removed.
+        * VM/SamplingTool.h: Removed.
+        * bytecode/SamplingTool.cpp: Copied from VM/SamplingTool.cpp.
+        * bytecode/SamplingTool.h: Copied from VM/SamplingTool.h.
+        * jsc.cpp:
+        (runWithScripts):
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix Windows build.

@@ -320,7 +320,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
 
 #if ENABLE(OPCODE_SAMPLING)
     Interpreter* interpreter = globalObject->globalData()->interpreter;
-    interpreter->setSampler(new SamplingTool(machine));
+    interpreter->setSampler(new SamplingTool(interpreter));
 #endif
 
     bool success = true;

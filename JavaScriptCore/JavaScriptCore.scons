@@ -122,6 +122,7 @@ sources['runtime'] = [
 sources['bytecode'] = [
     'bytecode/CodeBlock.cpp',
     'bytecode/Opcode.cpp',
+    'bytecode/SamplingTool.cpp',
 ]
 sources['interpreter'] = [
     'interpreter/Interpreter.cpp',
@@ -129,7 +130,6 @@ sources['interpreter'] = [
 ]
 sources['VM'] = [
     'VM/CTI.cpp',
-    'VM/SamplingTool.cpp',
 ]
 sources['wrec'] = [
     'wrec/CharacterClassConstructor.cpp',

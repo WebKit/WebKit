@@ -87,8 +87,8 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecode/Opcode.h \
 	JavaScriptCore/interpreter/Register.h \
 	JavaScriptCore/bytecompiler/RegisterID.h \
-	JavaScriptCore/VM/SamplingTool.cpp \
-	JavaScriptCore/VM/SamplingTool.h \
+	JavaScriptCore/bytecode/SamplingTool.cpp \
+	JavaScriptCore/bytecode/SamplingTool.h \
 	JavaScriptCore/bytecompiler/SegmentedVector.h \
 	JavaScriptCore/config.h \
 	JavaScriptCore/debugger/DebuggerCallFrame.cpp \
