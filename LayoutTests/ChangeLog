@@ -1,6 +1,18 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
+
+        Sped up two of the slowest JS layout tests by replacing some hand-rolled
+        "force GC" code with something orders of magnitude faster.
+
+        * fast/js/resources/duplicate-param-gc-crash.js:
+        (gc):
+        * fast/js/resources/var-shadows-arg-gc-crash.js:
+        (gc):
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
         
         Removed ascii-regexp-subject.html because it was the slowest JS test (20s
         on my iMac) and it didn't actually verify anything.

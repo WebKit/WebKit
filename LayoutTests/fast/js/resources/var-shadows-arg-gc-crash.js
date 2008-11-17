@@ -2,7 +2,14 @@ description(
 'Tests to ensure that activations mark their values correctly in the face of duplicate parameter names and does not crash.'
 );
 
-var s = {};
+function gc()
+{
+    if (window.GCController)
+        GCController.collect();
+    else
+        for (var i = 0; i < 10000; ++i) // Allocate a sufficient number of objects to force a GC.
+            ({});
+}
 
 function eatRegisters(param)
 {
@@ -22,9 +29,7 @@ var testClosure = test();
 
 var extra = test();
 eatRegisters(0);
-for (var i = 0; i < 1000000; ++i) {
-    s = [{}];
-}
+gc();
 
 shouldBe('testClosure()', '"success"');
 
