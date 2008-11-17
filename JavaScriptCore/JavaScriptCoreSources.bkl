@@ -147,7 +147,7 @@ Source files for JSCore.
     </set>
     <set append="1" var="JSCORE_VM_SOURCES">
         bytecode/CodeBlock.cpp
-        VM/ExceptionHelpers.cpp
+        runtime/ExceptionHelpers.cpp
         interpreter/Interpreter.cpp
         bytecode/Opcode.cpp
         VM/SamplingTool.cpp

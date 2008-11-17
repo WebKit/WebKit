@@ -43,6 +43,7 @@
 		1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1421359A0A677F4F00A8195E /* JSBase.cpp */; };
 		1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D77B0ED20D7300B89619 /* Interpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D7D30ED2128200B89619 /* Interpreter.cpp */; };
+		1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */; };
 		143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		1440057F0A5335640005F061 /* JSNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 1440F6420A4F8B6A0005F061 /* JSNode.c */; };
 		144005CB0A5338D10005F061 /* JSNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440F6410A4F8B6A0005F061 /* JSNode.h */; };
@@ -133,7 +134,6 @@
 		969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07940ED1D3AE00F1F681 /* Opcode.cpp */; };
 		969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
-		A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
@@ -396,6 +396,7 @@
 		1429D77B0ED20D7300B89619 /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
 		1429D7D30ED2128200B89619 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
 		1429D85B0ED218E900B89619 /* RegisterFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterFile.cpp; sourceTree = "<group>"; };
+		1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionHelpers.cpp; sourceTree = "<group>"; };
 		1440051F0A531D3B0005F061 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = tests/Node.h; sourceTree = "<group>"; };
 		144005200A531D3B0005F061 /* Node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Node.c; path = tests/Node.c; sourceTree = "<group>"; };
 		144007480A536CC20005F061 /* NodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeList.h; path = tests/NodeList.h; sourceTree = "<group>"; };
@@ -596,7 +597,6 @@
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
-		A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExceptionHelpers.cpp; path = VM/ExceptionHelpers.cpp; sourceTree = "<group>"; };
 		A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
 		A7E42C180E3938830065A544 /* JSStaticScopeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStaticScopeObject.h; sourceTree = "<group>"; };
@@ -959,7 +959,6 @@
 			children = (
 				8683B02B0E636482004C19EE /* CTI.cpp */,
 				8683B02C0E636482004C19EE /* CTI.h */,
-				A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */,
 				8613F4580E3A433E00C948FD /* SamplingTool.cpp */,
 				8613F4590E3A433E00C948FD /* SamplingTool.h */,
 			);
@@ -1161,6 +1160,7 @@
 				BC02E98B0E183E38000F9297 /* ErrorInstance.h */,
 				BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */,
 				BC02E9070E1839DB000F9297 /* ErrorPrototype.h */,
+				1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */,
 				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
 				14BD53F40A3E12D800BAF59C /* ExecState.cpp */,
 				14BD53F30A3E12D800BAF59C /* ExecState.h */,
@@ -1899,7 +1899,6 @@
 				95742F650DD11F5A000917FB /* Profile.cpp in Sources */,
 				A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */,
 				A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */,
-				A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* JSGlobalData.cpp in Sources */,
 				95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */,
@@ -1919,6 +1918,7 @@
 				969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */,
 				969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */,
 				1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */,
+				1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

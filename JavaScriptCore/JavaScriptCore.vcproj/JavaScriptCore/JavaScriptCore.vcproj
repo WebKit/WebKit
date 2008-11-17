@@ -1262,7 +1262,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\ExceptionHelpers.cpp"
+				RelativePath="..\..\runtime\ExceptionHelpers.cpp"
 				>
 			</File>
 			<File

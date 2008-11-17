@@ -77,7 +77,7 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecode/CodeBlock.cpp \
 	JavaScriptCore/bytecode/CodeBlock.h \
 	JavaScriptCore/bytecode/EvalCodeCache.h \
-	JavaScriptCore/VM/ExceptionHelpers.cpp \
+	JavaScriptCore/runtime/ExceptionHelpers.cpp \
 	JavaScriptCore/runtime/ExceptionHelpers.h \
 	JavaScriptCore/bytecode/Instruction.h \
 	JavaScriptCore/bytecompiler/Label.h \

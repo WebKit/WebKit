@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
         
+        Moved VM/ExceptionHelpers.cpp => runtime/ExceptionHelpers.cpp.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/ExceptionHelpers.cpp: Removed.
+        * runtime/ExceptionHelpers.cpp: Copied from VM/ExceptionHelpers.cpp.
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Moved VM/RegisterFile.cpp => interpreter/RegisterFile.cpp.
 
         * AllInOneFile.cpp:

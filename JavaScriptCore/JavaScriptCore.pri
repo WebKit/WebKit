@@ -57,7 +57,7 @@ SOURCES += \
     bytecode/CodeBlock.cpp \
     VM/CTI.cpp \
     bytecompiler/BytecodeGenerator.cpp \
-    VM/ExceptionHelpers.cpp \
+    runtime/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
     interpreter/Interpreter.cpp \
     bytecode/Opcode.cpp \

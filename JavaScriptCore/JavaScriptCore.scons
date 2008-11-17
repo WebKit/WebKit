@@ -66,6 +66,7 @@ sources['runtime'] = [
     'runtime/ErrorInstance.cpp',
     'runtime/ErrorPrototype.cpp',
     'runtime/ExecState.cpp',
+    'runtime/ExceptionHelpers.cpp',
     'runtime/FunctionConstructor.cpp',
     'runtime/FunctionPrototype.cpp',
     'runtime/GetterSetter.cpp',
@@ -128,7 +129,6 @@ sources['interpreter'] = [
 ]
 sources['VM'] = [
     'VM/CTI.cpp',
-    'VM/ExceptionHelpers.cpp',
     'VM/SamplingTool.cpp',
 ]
 sources['wrec'] = [
