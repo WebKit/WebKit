@@ -371,12 +371,13 @@ if (count == 0)
 
 <h3>Names</h3>
 <ol>
-<li>Use CamelCase. Capitalize the first letter of a class, struct, protocol, or namespace name. Lower-case the first letter of a variable or function name. Fully capitalize acronyms.
+<li>Use CamelCase. Capitalize the first letter of a class, struct, protocol, or namespace name. Lower-case the first letter of a variable or function name. Fully capitalize acronyms if their first letter is capitalized.
 <h4 class="right">Right:</h4>
 <pre class="code">
 struct Data;
 size_t bufferSize;
 class HTMLDocument;
+String mimeType();
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
@@ -384,6 +385,7 @@ class HTMLDocument;
 struct data;
 size_t buffer_size;
 class HtmlDocument;
+String MIMEType();
 </pre>
 </li>
 

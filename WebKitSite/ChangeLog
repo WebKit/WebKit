@@ -1,3 +1,11 @@
+2008-11-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Clarify an edge case for acronym capitalization.
+
+        * coding/coding-style.html:
+
 2008-11-11  Simon Fraser  <simon.fraser@apple.com>
 
         Update leaves animation sample.
