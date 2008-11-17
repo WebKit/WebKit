@@ -100,7 +100,7 @@ Source files for JSCore.
         runtime/Identifier.cpp
         runtime/InitializeThreading.cpp
         runtime/InternalFunction.cpp
-        runtime/Interpreter.cpp
+        runtime/Completion.cpp
         runtime/JSActivation.cpp
         runtime/JSArray.cpp
         runtime/JSCell.cpp

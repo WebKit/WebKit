@@ -39,7 +39,7 @@
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/Completion.h>
-#include <runtime/Interpreter.h>
+#include <runtime/Completion.h>
 #include <wtf/Assertions.h>
 #include <parser/SourceProvider.h>
 

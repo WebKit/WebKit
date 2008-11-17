@@ -1,3 +1,13 @@
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Updated for JavaScriptCore renames.
+
+        * ForwardingHeaders/runtime/Completion.h: Copied from ForwardingHeaders/runtime/Interpreter.h.
+        * ForwardingHeaders/runtime/Interpreter.h: Removed.
+        * WebView/WebScriptDebugDelegate.mm:
+
 2008-11-16  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.

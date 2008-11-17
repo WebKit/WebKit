@@ -32,7 +32,7 @@
 #include "COMEnumVariant.h"
 #include "WebKitDLL.h"
 
-#include <JavaScriptCore/Interpreter.h>
+#include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSLock.h>

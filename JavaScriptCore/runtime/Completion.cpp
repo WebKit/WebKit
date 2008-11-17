@@ -21,9 +21,8 @@
  */
 
 #include "config.h"
-#include "Interpreter.h"
-
 #include "Completion.h"
+
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"

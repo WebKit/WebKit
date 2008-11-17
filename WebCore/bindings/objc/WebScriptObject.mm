@@ -44,7 +44,7 @@
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSLock.h>
 #import <runtime/Completion.h>
-#import <runtime/Interpreter.h>
+#import <runtime/Completion.h>
 
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;

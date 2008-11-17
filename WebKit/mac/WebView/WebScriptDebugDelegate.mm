@@ -37,7 +37,7 @@
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSFunction.h>
 #import <runtime/JSLock.h>
-#import <runtime/Interpreter.h>
+#import <runtime/Completion.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/ScriptController.h>

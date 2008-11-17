@@ -34,7 +34,7 @@
 #include "WorkerContext.h"
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
-#include <runtime/Interpreter.h>
+#include <runtime/Completion.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;

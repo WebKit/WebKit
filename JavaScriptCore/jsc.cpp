@@ -25,7 +25,6 @@
 #include "BytecodeGenerator.h"
 #include "Completion.h"
 #include "InitializeThreading.h"
-#include "Interpreter.h"
 #include "JSArray.h"
 #include "JSLock.h"
 #include "PrototypeFunction.h"

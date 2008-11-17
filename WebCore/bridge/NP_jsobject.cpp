@@ -41,7 +41,7 @@
 #include <runtime/PropertyNameArray.h>
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
-#include <runtime/Interpreter.h>
+#include <runtime/Completion.h>
 
 using WebCore::String;
 using WebCore::StringSourceProvider;

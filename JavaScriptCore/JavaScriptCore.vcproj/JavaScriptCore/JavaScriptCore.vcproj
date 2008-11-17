@@ -501,7 +501,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Interpreter.cpp"
+				RelativePath="..\..\runtime\Completion.cpp"
 				>
 			</File>
 			<File

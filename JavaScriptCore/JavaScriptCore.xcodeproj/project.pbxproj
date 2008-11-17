@@ -180,7 +180,6 @@
 		BC18C40E0E16F5CD00B34460 /* HashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92F08EA173A00F7300B /* HashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C40F0E16F5CD00B34460 /* Identifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A349A038AE7C6008635CE /* Identifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */ = {isa = PBXBuildFile; fileRef = E178633F0D9BEC0000D74E75 /* InitializeThreading.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4120E16F5CD00B34460 /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8640255597D01FF60F7 /* Interpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */; };
@@ -593,6 +592,7 @@
 		969A07930ED1D3AE00F1F681 /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instruction.h; sourceTree = "<group>"; };
 		969A07940ED1D3AE00F1F681 /* Opcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Opcode.cpp; sourceTree = "<group>"; };
 		969A07950ED1D3AE00F1F681 /* Opcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opcode.h; sourceTree = "<group>"; };
+		969A09220ED1E09C00F1F681 /* Completion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Completion.cpp; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExceptionHelpers.h; path = VM/ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -727,8 +727,6 @@
 		F692A85E0255597D01FF60F7 /* JSFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFunction.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A85F0255597D01FF60F7 /* JSFunction.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSFunction.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8620255597D01FF60F7 /* JSString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSString.h; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8630255597D01FF60F7 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8640255597D01FF60F7 /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8650255597D01FF60F7 /* Lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lexer.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8660255597D01FF60F7 /* Lexer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8680255597D01FF60F7 /* Lookup.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lookup.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -1136,6 +1134,7 @@
 				14F3488E0E95EF8A003648BC /* CollectorHeapIterator.h */,
 				65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */,
 				65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */,
+				969A09220ED1E09C00F1F681 /* Completion.cpp */,
 				F5BB2BC5030F772101FCFE1D /* Completion.h */,
 				BCA62DFF0E2826310004F30D /* ConstructData.cpp */,
 				BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */,
@@ -1171,8 +1170,6 @@
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
 				BC11667A0E199C05008066DD /* InternalFunction.h */,
-				F692A8630255597D01FF60F7 /* Interpreter.cpp */,
-				F692A8640255597D01FF60F7 /* Interpreter.h */,
 				14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */,
 				14DA818E0D99FD2000B0A4FB /* JSActivation.h */,
 				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
@@ -1420,7 +1417,6 @@
 				BC18C40E0E16F5CD00B34460 /* HashTraits.h in Headers */,
 				BC18C40F0E16F5CD00B34460 /* Identifier.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
-				BC18C4120E16F5CD00B34460 /* Interpreter.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,

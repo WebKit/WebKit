@@ -29,7 +29,7 @@
 #include "PlatformString.h"
 #include <debugger/DebuggerCallFrame.h>
 #include <runtime/JSGlobalObject.h>
-#include <runtime/Interpreter.h>
+#include <runtime/Completion.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>

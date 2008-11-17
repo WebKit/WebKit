@@ -96,7 +96,7 @@ SOURCES += \
     runtime/GlobalEvalFunction.cpp \
     runtime/Identifier.cpp \
     runtime/InternalFunction.cpp \
-    runtime/Interpreter.cpp \
+    runtime/Completion.cpp \
     runtime/JSArray.cpp \
     runtime/JSCell.cpp \
     runtime/JSFunction.cpp \

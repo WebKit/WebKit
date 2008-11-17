@@ -1,5 +1,22 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Updated for JavaScriptCore renames.
+
+        * ForwardingHeaders/runtime/Interpreter.h: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/WorkerScriptController.cpp:
+        * bindings/objc/WebScriptObject.mm:
+        * bridge/NP_jsobject.cpp:
+        * bridge/jni/jni_jsobject.mm:
+        * html/CanvasRenderingContext2D.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        * page/Console.cpp:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
 
         Try to fix wx build.

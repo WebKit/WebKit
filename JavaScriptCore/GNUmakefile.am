@@ -300,8 +300,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Identifier.h \
 	JavaScriptCore/runtime/InternalFunction.cpp \
 	JavaScriptCore/runtime/InternalFunction.h \
-	JavaScriptCore/runtime/Interpreter.cpp \
-	JavaScriptCore/runtime/Interpreter.h \
+	JavaScriptCore/runtime/Completion.cpp \
 	JavaScriptCore/runtime/JSArray.cpp \
 	JavaScriptCore/runtime/JSArray.h \
 	JavaScriptCore/runtime/JSCell.cpp \

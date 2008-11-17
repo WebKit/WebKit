@@ -15857,10 +15857,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\runtime\Interpreter.h"
-					>
-				</File>
-				<File
 					RelativePath="..\ForwardingHeaders\runtime\JSLock.h"
 					>
 				</File>
