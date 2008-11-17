@@ -29,10 +29,6 @@
 #include "UString.h"
 #include <stddef.h> // for size_t
 
-// The magic number 0x4000 is not important here, it is being subtracted back out (avoiding using zero since this
-// can have unexpected effects in this type of macro, particularly where multiple-inheritance is involved).
-#define OBJECT_OFFSET(class, member) (reinterpret_cast<ptrdiff_t>(&(reinterpret_cast<class*>(0x4000)->member)) - 0x4000)
-
 namespace JSC {
 
     class Identifier;

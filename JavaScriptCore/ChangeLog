@@ -2,6 +2,36 @@
 
         Reviewed by Sam Weinig.
         
+        Renamed OBJECT_OFFSET => FIELD_OFFSET
+
+        Nixed use of OBJECT_OFFSET outside of CTI.cpp by making CTI a friend in
+        more places.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCallInitializeCallFrame):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        (JSC::CTI::emitGetVariableObjectRegister):
+        (JSC::CTI::emitPutVariableObjectRegister):
+        * runtime/JSValue.h:
+        * runtime/JSVariableObject.h:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Renames:
         
         X86Assembler::copy => X86Assembler::executableCopy
