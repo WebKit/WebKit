@@ -2,6 +2,30 @@
 
         Reviewed by Sam Weinig.
         
+        Renames:
+        
+        X86Assembler::copy => X86Assembler::executableCopy
+        AssemblerBuffer::copy => AssemblerBuffer::executableCopy
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        * masm/X86Assembler.h:
+        (JSC::AssemblerBuffer::executableCopy):
+        (JSC::X86Assembler::executableCopy):
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp):
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Renamed WREC => JSC::WREC, removing JSC:: prefix in a lot of places.
         Renamed WRECFunction => WREC::CompiledRegExp, and deployed this type
         name in place of a few casts.

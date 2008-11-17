@@ -3041,7 +3041,7 @@ void CTI::privateCompile()
 
     ASSERT(m_jmpTable.isEmpty());
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
@@ -3114,7 +3114,7 @@ void CTI::privateCompileGetByIdSelf(Structure* structure, size_t cachedOffset, v
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::eax, X86::eax);
     __ ret();
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
@@ -3155,7 +3155,7 @@ void CTI::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
 
     X86Assembler::JmpSrc success = __ emitUnlinkedJmp();
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     // Use the repatch information to link the failure cases back to the original slow case routine.
@@ -3198,7 +3198,7 @@ void CTI::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
 
     __ ret();
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
@@ -3244,7 +3244,7 @@ void CTI::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
 
     bucketsOfFail.append(__ emitUnlinkedJmp());
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     for (unsigned i = 0; i < bucketsOfFail.size(); ++i)
@@ -3268,7 +3268,7 @@ void CTI::privateCompilePutByIdReplace(Structure* structure, size_t cachedOffset
     __ movl_rm(X86::edx, cachedOffset * sizeof(JSValue*), X86::eax);
     __ ret();
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
     
     X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_put_by_id_fail));
@@ -3364,7 +3364,7 @@ void CTI::privateCompilePutByIdTransition(Structure* oldStructure, Structure* ne
         failureJump = __ emitUnlinkedJmp();
     }
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     if (failureCases.size())
@@ -3569,7 +3569,7 @@ void CTI::privateCompileCTIMachineTrampolines()
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     X86Assembler::link(code, array_failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_fail));
@@ -3650,7 +3650,7 @@ void CTI::privateCompilePatchGetArrayLength(void* returnAddress)
     __ movl_rr(X86::ecx, X86::eax);
     X86Assembler::JmpSrc success = __ emitUnlinkedJmp();
 
-    void* code = __ copy();
+    void* code = __ executableCopy();
     ASSERT(code);
 
     // Use the repatch information to link the failure cases back to the original slow case routine.

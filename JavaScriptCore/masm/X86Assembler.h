@@ -122,7 +122,7 @@ public:
         return this;
     }
     
-    void* copy()
+    void* executableCopy()
     {
         if (!m_size)
             return 0;
@@ -183,6 +183,7 @@ class X86Assembler {
 public:
     typedef X86::RegisterID RegisterID;
     typedef X86::XMMRegisterID XMMRegisterID;
+
     typedef enum {
         OP_ADD_EvGv                     = 0x01,
         OP_ADD_GvEv                     = 0x03,
@@ -1106,9 +1107,9 @@ public:
         reinterpret_cast<intptr_t*>(where)[-1] = (reinterpret_cast<intptr_t>(destination) - where);
     }
     
-    void* copy() 
+    void* executableCopy() 
     {
-        return m_buffer->copy();
+        return m_buffer->executableCopy();
     }
 
 #if COMPILER(MSVC)
