@@ -51,7 +51,7 @@ namespace JSC {
     class ScopeChainNode;
     class SamplingTool;
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
 
 #if USE(CTI_ARGUMENT)
 #define CTI_ARGS void** args
@@ -168,7 +168,7 @@ namespace JSC {
         void setSampler(SamplingTool* sampler) { m_sampler = sampler; }
         SamplingTool* sampler() { return m_sampler; }
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
 
         static void SFX_CALL cti_timeout_check(CTI_ARGS);
         static void SFX_CALL cti_register_file_check(CTI_ARGS);
@@ -276,7 +276,7 @@ namespace JSC {
         
         AssemblerBuffer* assemblerBuffer() const { return m_assemblerBuffer.get(); }
 
-#endif // ENABLE(CTI)
+#endif // ENABLE(JIT)
 
         // Default number of ticks before a timeout check should be done.
         static const int initialTickCountThreshold = 1024;
@@ -322,7 +322,7 @@ namespace JSC {
         
         bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         static void throwStackOverflowPreviousFrame(CallFrame**, JSGlobalData*, void*& returnAddress);
 
         void tryCTICacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
@@ -331,7 +331,7 @@ namespace JSC {
 
         SamplingTool* m_sampler;
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         void* m_ctiArrayLengthTrampoline;
         void* m_ctiStringLengthTrampoline;
         void* m_ctiVirtualCallPreLink;

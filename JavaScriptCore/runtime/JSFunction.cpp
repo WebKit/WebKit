@@ -54,7 +54,7 @@ JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode
 
 JSFunction::~JSFunction()
 {
-#if ENABLE(CTI) 
+#if ENABLE(JIT) 
     // JIT code for other functions may have had calls linked directly to the code for this function; these links
     // are based on a check for the this pointer value for this JSFunction - which will no longer be valid once
     // this memory is freed and may be reused (potentially for another, different JSFunction).

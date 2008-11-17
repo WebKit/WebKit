@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CTI.h"
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
 
 #include "CodeBlock.h"
 #include "JSArray.h"
@@ -3694,4 +3694,4 @@ void JIT::emitPutVariableObjectRegister(RegisterID src, RegisterID variableObjec
 
 } // namespace JSC
 
-#endif // ENABLE(CTI)
+#endif // ENABLE(JIT)

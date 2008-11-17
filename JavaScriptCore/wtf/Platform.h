@@ -404,16 +404,16 @@
 #endif
 
 // CTI only supports x86 at the moment, and has only been tested on Mac and Windows.
-#if !defined(ENABLE_CTI) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
-#define ENABLE_CTI 1
+#if !defined(ENABLE_JIT) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
+#define ENABLE_JIT 1
 #endif
 
 // WREC only supports x86 at the moment, and has only been tested on Mac and Windows.
-#if !defined(ENABLE_WREC) && ENABLE(CTI) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
+#if !defined(ENABLE_WREC) && ENABLE(JIT) && PLATFORM(X86) && (PLATFORM(MAC) || PLATFORM(WIN))
 #define ENABLE_WREC 1
 #endif
 
-#if ENABLE(CTI) || ENABLE(WREC)
+#if ENABLE(JIT) || ENABLE(WREC)
 #define ENABLE_MASM 1
 #endif
 

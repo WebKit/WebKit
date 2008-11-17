@@ -1,5 +1,33 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Renamed ENABLE_CTI and ENABLE(CTI) to ENABLE_JIT and ENABLE(JIT).
+
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * VM/CodeBlock.h:
+        (JSC::CodeBlock::CodeBlock):
+        * VM/Machine.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::~Interpreter):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * VM/Machine.h:
+        * bytecompiler/CodeGenerator.cpp:
+        (JSC::prepareJumpTableForStringSwitch):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+        * runtime/JSGlobalData.h:
+        * wrec/WREC.h:
+        * wtf/Platform.h:
+        * wtf/TCSystemAlloc.cpp:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix gtk build.

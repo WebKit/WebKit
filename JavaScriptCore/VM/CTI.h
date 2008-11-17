@@ -26,15 +26,17 @@
 #ifndef CTI_h
 #define CTI_h
 
-#if ENABLE(CTI)
+#include <wtf/Platform.h>
+
+#if ENABLE(JIT)
 
 #define WTF_USE_CTI_REPATCH_PIC 1
 
 #include "Machine.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
-#include <masm/X86Assembler.h>
-#include <profiler/Profiler.h>
+#include "X86Assembler.h"
+#include "Profiler.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 
@@ -477,6 +479,6 @@ namespace JSC {
     };
 }
 
-#endif // ENABLE(CTI)
+#endif // ENABLE(JIT)
 
 #endif // CTI_h

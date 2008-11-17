@@ -73,7 +73,7 @@ namespace JSC {
 
     struct OffsetLocation {
         int32_t branchOffset;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         void* ctiOffset;
 #endif
     };
@@ -164,7 +164,7 @@ namespace JSC {
     struct StringJumpTable {
         typedef HashMap<RefPtr<UString::Rep>, OffsetLocation> StringOffsetTable;
         StringOffsetTable offsetTable;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         void* ctiDefault; // FIXME: it should not be necessary to store this.
 #endif
 
@@ -177,7 +177,7 @@ namespace JSC {
             return loc->second.branchOffset;
         }
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         inline void* ctiForValue(UString::Rep* value)
         {
             StringOffsetTable::const_iterator end = offsetTable.end();
@@ -193,7 +193,7 @@ namespace JSC {
         // FIXME: The two Vectors can be combind into one Vector<OffsetLocation>
         Vector<int32_t> branchOffsets;
         int32_t min;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         Vector<void*> ctiOffsets;
         void* ctiDefault;
 #endif
@@ -205,7 +205,7 @@ namespace JSC {
                 branchOffsets[key] = offset;
         }
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         inline void* ctiForValue(int32_t value)
         {
             if (value >= min && static_cast<uint32_t>(value - min) < ctiOffsets.size())
@@ -219,7 +219,7 @@ namespace JSC {
         CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
             : ownerNode(ownerNode)
             , globalData(0)
-#if ENABLE(CTI)
+#if ENABLE(JIT)
             , ctiCode(0)
 #endif
             , numCalleeRegisters(0)
@@ -237,7 +237,7 @@ namespace JSC {
 
         ~CodeBlock();
 
-#if ENABLE(CTI) 
+#if ENABLE(JIT) 
         void unlinkCallers();
 #endif
 
@@ -312,7 +312,7 @@ namespace JSC {
 
         ScopeNode* ownerNode;
         JSGlobalData* globalData;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         void* ctiCode;
 #endif
 
@@ -354,7 +354,7 @@ namespace JSC {
         Vector<SimpleJumpTable> characterSwitchJumpTables;
         Vector<StringJumpTable> stringSwitchJumpTables;
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         HashMap<void*, unsigned> ctiReturnAddressVPCMap;
 #endif
 

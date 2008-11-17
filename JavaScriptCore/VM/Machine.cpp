@@ -57,7 +57,7 @@
 #include "SamplingTool.h"
 #include <stdio.h>
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
 #include "CTI.h"
 #endif
 
@@ -89,7 +89,7 @@ static void* op_throw_end_indirect;
 static void* op_call_indirect;
 #endif
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
 
 static ALWAYS_INLINE Instruction* vPCForPC(CodeBlock* codeBlock, void* pc)
 {
@@ -101,14 +101,14 @@ static ALWAYS_INLINE Instruction* vPCForPC(CodeBlock* codeBlock, void* pc)
     return codeBlock->instructions.begin() + vPCIndex;
 }
 
-#else // ENABLE(CTI)
+#else // ENABLE(JIT)
 
 static ALWAYS_INLINE Instruction* vPCForPC(CodeBlock*, void* pc)
 {
     return static_cast<Instruction*>(pc);
 }
 
-#endif // ENABLE(CTI)
+#endif // ENABLE(JIT)
 
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, ScopeChain& sc)
@@ -605,7 +605,7 @@ NEVER_INLINE JSValue* Interpreter::callEval(CallFrame* callFrame, RegisterFile* 
 
 Interpreter::Interpreter()
     : m_sampler(0)
-#if ENABLE(CTI)
+#if ENABLE(JIT)
     , m_ctiArrayLengthTrampoline(0)
     , m_ctiStringLengthTrampoline(0)
     , m_ctiVirtualCallPreLink(0)
@@ -643,7 +643,7 @@ Interpreter::Interpreter()
 
 void Interpreter::initialize(JSGlobalData* globalData)
 {
-#if ENABLE(CTI)
+#if ENABLE(JIT)
     JIT::compileCTIMachineTrampolines(globalData);
 #else
     UNUSED_PARAM(globalData);
@@ -652,7 +652,7 @@ void Interpreter::initialize(JSGlobalData* globalData)
 
 Interpreter::~Interpreter()
 {
-#if ENABLE(CTI)
+#if ENABLE(JIT)
     JIT::freeCTIMachineTrampolines(this);
 #endif
 }
@@ -936,7 +936,7 @@ JSValue* Interpreter::execute(ProgramNode* programNode, CallFrame* callFrame, Sc
         SamplingTool::CallRecord callRecord(m_sampler);
 
         m_reentryDepth++;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         if (!codeBlock->ctiCode)
             JIT::compile(scopeChain->globalData, codeBlock);
         result = JIT::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
@@ -1002,7 +1002,7 @@ JSValue* Interpreter::execute(FunctionBodyNode* functionBodyNode, CallFrame* cal
         SamplingTool::CallRecord callRecord(m_sampler);
 
         m_reentryDepth++;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         if (!codeBlock->ctiCode)
             JIT::compile(scopeChain->globalData, codeBlock);
         result = JIT::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
@@ -1094,7 +1094,7 @@ JSValue* Interpreter::execute(EvalNode* evalNode, CallFrame* callFrame, JSObject
         SamplingTool::CallRecord callRecord(m_sampler);
 
         m_reentryDepth++;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         if (!codeBlock->ctiCode)
             JIT::compile(scopeChain->globalData, codeBlock);
         result = JIT::execute(codeBlock->ctiCode, &m_registerFile, newCallFrame, scopeChain->globalData, exception);
@@ -1468,7 +1468,7 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
         return noValue();
     }
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
     // Currently with CTI enabled we never interpret functions
     ASSERT_NOT_REACHED();
 #endif
@@ -4056,7 +4056,7 @@ CallFrame* Interpreter::findFunctionCallFrame(CallFrame* callFrame, InternalFunc
     return 0;
 }
 
-#if ENABLE(CTI)
+#if ENABLE(JIT)
 
 NEVER_INLINE void Interpreter::tryCTICachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, void* returnAddress, JSValue* baseValue, const PutPropertySlot& slot)
 {
@@ -5973,6 +5973,6 @@ JSValue* Interpreter::cti_vm_throw(CTI_ARGS)
 #undef VM_THROW_EXCEPTION_2
 #undef VM_THROW_EXCEPTION_AT_END
 
-#endif // ENABLE(CTI)
+#endif // ENABLE(JIT)
 
 } // namespace JSC

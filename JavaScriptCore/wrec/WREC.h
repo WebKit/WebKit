@@ -31,7 +31,7 @@
 #if ENABLE(WREC)
 
 #include "UString.h"
-#include <masm/X86Assembler.h>
+#include "X86Assembler.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
 

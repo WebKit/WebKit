@@ -66,7 +66,7 @@ namespace JSC {
         Interpreter* interpreter;
 
         JSValue* exception;
-#if ENABLE(CTI)
+#if ENABLE(JIT)
         void* exceptionLocation;
 #endif
 
