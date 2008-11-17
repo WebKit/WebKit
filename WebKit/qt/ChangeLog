@@ -1,3 +1,11 @@
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try to fix qt build.
+
+        * Api/qwebframe.cpp:
+
 2008-11-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Tor Arne Vestbø and Simon Hausmann.
