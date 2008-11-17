@@ -2,6 +2,17 @@
 
         Not reviewed.
         
+        Try to fix a few more builds.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.scons:
+        * JavaScriptCoreSources.bkl:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
         Try to fix gtk build.
 
         * GNUmakefile.am:

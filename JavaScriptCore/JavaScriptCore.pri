@@ -55,7 +55,7 @@ SOURCES += \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
     VM/CodeBlock.cpp \
-    bytecompiler/CodeGenerator.cpp \
+    bytecompiler/BytecodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
     runtime/JSPropertyNameIterator.cpp \
     VM/Machine.cpp \

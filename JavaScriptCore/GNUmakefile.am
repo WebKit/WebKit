@@ -84,10 +84,10 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/Opcode.cpp \
 	JavaScriptCore/VM/Opcode.h \
 	JavaScriptCore/VM/Register.h \
-	JavaScriptCore/VM/RegisterID.h \
+	JavaScriptCore/bytecompiler/RegisterID.h \
 	JavaScriptCore/VM/SamplingTool.cpp \
 	JavaScriptCore/VM/SamplingTool.h \
-	JavaScriptCore/VM/SegmentedVector.h \
+	JavaScriptCore/bytecompiler/SegmentedVector.h \
 	JavaScriptCore/config.h \
 	JavaScriptCore/debugger/DebuggerCallFrame.cpp \
 	JavaScriptCore/debugger/DebuggerCallFrame.h \
@@ -230,8 +230,8 @@ javascriptcore_built_sources += \
 javascriptcore_sources += \
 	JavaScriptCore/VM/RegisterFile.cpp \
 	JavaScriptCore/VM/RegisterFile.h \
-	JavaScriptCore/bytecompiler/CodeGenerator.cpp \
-	JavaScriptCore/bytecompiler/CodeGenerator.h \
+	JavaScriptCore/bytecompiler/BytecodeGenerator.cpp \
+	JavaScriptCore/bytecompiler/BytecodeGenerator.h \
 	JavaScriptCore/bytecompiler/LabelScope.h \
 	JavaScriptCore/debugger/Debugger.cpp \
 	JavaScriptCore/debugger/Debugger.h \

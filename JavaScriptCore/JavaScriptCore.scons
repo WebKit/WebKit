@@ -19,7 +19,7 @@ sources['API'] = [
     'API/OpaqueJSString.cpp',
 ]
 sources['bytecompiler'] = [
-    'bytecompiler/CodeGenerator.cpp',
+    'bytecompiler/BytecodeGenerator.cpp',
 ]
 sources['debugger'] = [
     'debugger/Debugger.cpp',

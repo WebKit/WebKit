@@ -42,7 +42,7 @@ Source files for JSCore.
         API/OpaqueJSString.cpp
     </set>
     <set append="1" var="JSCORE_BYTECOMPILER_SOURCES">
-        bytecompiler/CodeGenerator.cpp
+        bytecompiler/BytecodeGenerator.cpp
     </set>
     <set append="1" var="JSCORE_DEBUGGER_SOURCES">
         debugger/Debugger.cpp
