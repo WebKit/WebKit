@@ -1,5 +1,14 @@
 2008-11-16  Greg Bolsinga  <bolsinga@apple.com>
 
+        Reviewed by Geoffrey Garen.
+
+        Use RefPtr and PassRefPtr where appropriate.
+
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::createTemplateDocumentData):
+
+2008-11-16  Greg Bolsinga  <bolsinga@apple.com>
+
         Fix build break for real.
 
         * loader/FTPDirectoryDocument.cpp:
