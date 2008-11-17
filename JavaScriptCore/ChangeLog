@@ -1,5 +1,13 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+        
+        Try to fix Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Moved masm => assembler and split "AssemblerBuffer.h" out of "X86Assembler.h".
