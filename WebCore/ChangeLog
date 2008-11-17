@@ -1,3 +1,11 @@
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+
+        Try to fix wx build.
+
+        * webcore-base.bkl:
+
 2008-11-17  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
