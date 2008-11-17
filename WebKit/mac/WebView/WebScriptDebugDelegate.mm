@@ -33,7 +33,7 @@
 #import "WebScriptDebugDelegate.h"
 #import "WebViewInternal.h"
 #import <debugger/DebuggerCallFrame.h>
-#import <runtime/ExecState.h>
+#import <interpreter/CallFrame.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSFunction.h>
 #import <runtime/JSLock.h>

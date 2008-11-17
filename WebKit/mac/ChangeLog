@@ -1,3 +1,11 @@
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try to fix Mac build.
+
+        * WebView/WebScriptDebugDelegate.mm:
+
 2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Sam Weinig.
