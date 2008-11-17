@@ -2,6 +2,28 @@
 
         Reviewed by Sam Weinig.
         
+        Renamed WREC => JSC::WREC, removing JSC:: prefix in a lot of places.
+        Renamed WRECFunction => WREC::CompiledRegExp, and deployed this type
+        name in place of a few casts.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::~RegExp):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * wrec/CharacterClassConstructor.cpp:
+        * wrec/CharacterClassConstructor.h:
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp):
+        * wrec/WREC.h:
+        (JSC::WREC::Generator::Generator):
+        (JSC::WREC::Parser::Parser):
+        (JSC::WREC::Parser::parseAlternative):
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Renamed BytecodeInterpreter => Interpreter.
 
         * JavaScriptCore.exp:
