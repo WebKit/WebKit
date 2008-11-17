@@ -1,3 +1,14 @@
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig and Antti Koivisto.
+        
+        Clarified the last coding style rule, which was a baffling in its 
+        initial form.
+        
+        (Now let's see if our code ever starts following this rule!)
+
+        * coding/coding-style.html:
+
 2008-11-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe
