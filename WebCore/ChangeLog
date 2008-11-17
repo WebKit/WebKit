@@ -1,3 +1,22 @@
+2008-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=22118
+        
+        Fix resize corner tracking in transformed elements by using 
+        mapping the point into local coords using absoluteToLocal,
+        rather than convertToLayerCoords.
+        
+        Test: fast/css/resize-corner-tracking-transformed.html
+
+        * page/EventHandler.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::absoluteToContents):
+        (WebCore::RenderLayer::offsetFromResizeCorner):
+        (WebCore::RenderLayer::isPointInResizeControl):
+        * rendering/RenderLayer.h:
+
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
