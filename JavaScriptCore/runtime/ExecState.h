@@ -26,7 +26,6 @@
 // FIXME: Rename this file to CallFrame.h.
 
 #include "JSGlobalData.h"
-#include "Interpreter.h"
 #include "RegisterFile.h"
 #include "ScopeChain.h"
 
@@ -34,6 +33,7 @@ namespace JSC  {
 
     class Arguments;
     class JSActivation;
+    class Interpreter;
 
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.

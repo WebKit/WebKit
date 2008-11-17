@@ -29,6 +29,10 @@
 #include "UString.h"
 #include "ExecState.h"
 
+namespace JSC {
+    class PropertyNameArray;
+}
+
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSContext* JSGlobalContextRef;
