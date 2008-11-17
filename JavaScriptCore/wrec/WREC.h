@@ -95,20 +95,15 @@ namespace JSC { namespace WREC {
 
         typedef X86Assembler::JmpSrc JmpSrc;
         typedef X86Assembler::JmpDst JmpDst;
+        typedef X86Assembler::RegisterID RegisterID;
 
         // these regs setup by the params
-        static const X86Assembler::RegisterID inputRegister = X86::eax;
-        static const X86Assembler::RegisterID currentPositionRegister = X86::edx;
-        static const X86Assembler::RegisterID lengthRegister = X86::ecx;
-        static const X86Assembler::RegisterID currentValueRegister = X86::esi;
-        static const X86Assembler::RegisterID outputRegister = X86::edi;
-        static const X86Assembler::RegisterID quantifierCountRegister = X86::ebx;
-
-        friend class GenerateAtomFunctor;
-        friend class GeneratePatternCharacterFunctor;
-        friend class GenerateCharacterClassFunctor;
-        friend class GenerateBackreferenceFunctor;
-        friend class GenerateParenthesesNonGreedyFunctor;
+        static const RegisterID inputRegister = X86::eax;
+        static const RegisterID currentPositionRegister = X86::edx;
+        static const RegisterID lengthRegister = X86::ecx;
+        static const RegisterID currentValueRegister = X86::esi;
+        static const RegisterID outputRegister = X86::edi;
+        static const RegisterID quantifierCountRegister = X86::ebx;
 
         void generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
         void generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);

@@ -1,5 +1,62 @@
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Nixed X86:: and X86Assembler:: prefixes in a lot of places using typedefs.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetVirtualRegister):
+        (JSC::CTI::emitGetVirtualRegisters):
+        (JSC::CTI::emitPutCTIArgFromVirtualRegister):
+        (JSC::CTI::emitPutCTIArg):
+        (JSC::CTI::emitGetCTIArg):
+        (JSC::CTI::emitPutCTIParam):
+        (JSC::CTI::emitGetCTIParam):
+        (JSC::CTI::emitPutToCallFrameHeader):
+        (JSC::CTI::emitGetFromCallFrameHeader):
+        (JSC::CTI::emitPutVirtualRegister):
+        (JSC::CTI::emitNakedCall):
+        (JSC::CTI::emitNakedFastCall):
+        (JSC::CTI::emitCTICall):
+        (JSC::CTI::emitJumpSlowCaseIfNotJSCell):
+        (JSC::CTI::emitJumpSlowCaseIfNotImmNum):
+        (JSC::CTI::emitJumpSlowCaseIfNotImmNums):
+        (JSC::CTI::emitFastArithDeTagImmediate):
+        (JSC::CTI::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::CTI::emitFastArithReTagImmediate):
+        (JSC::CTI::emitFastArithPotentiallyReTagImmediate):
+        (JSC::CTI::emitFastArithImmToInt):
+        (JSC::CTI::emitFastArithIntToImmOrSlowCase):
+        (JSC::CTI::emitFastArithIntToImmNoCheck):
+        (JSC::CTI::emitArithIntToImmWithJump):
+        (JSC::CTI::emitTagAsBoolImmediate):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::compileOpStrictEq):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::CTI::compileBinaryArithOp):
+        (JSC::CTI::compileBinaryArithOpSlowCase):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        (JSC::CTI::privateCompileCTIMachineTrampolines):
+        (JSC::CTI::privateCompilePatchGetArrayLength):
+        (JSC::CTI::emitGetVariableObjectRegister):
+        (JSC::CTI::emitPutVariableObjectRegister):
+        * VM/CTI.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JmpTable::JmpTable):
+        (JSC::SlowCaseEntry::SlowCaseEntry):
+        (JSC::CTI::JSRInfo::JSRInfo):
+        * wrec/WREC.h:
+
+2008-11-16  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix Qt build.
