@@ -32,7 +32,6 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Machine.h"
-#include "wrec/WREC.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 
