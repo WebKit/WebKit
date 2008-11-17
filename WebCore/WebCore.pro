@@ -94,7 +94,8 @@ INCLUDEPATH += $$PWD $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingH
                $$PWD/../JavaScriptCore/parser \
                $$PWD/../JavaScriptCore/runtime \
                $$PWD/../JavaScriptCore/bindings \
-               $$PWD/../JavaScriptCore/wtf
+               $$PWD/../JavaScriptCore/wrec \
+               $$PWD/../JavaScriptCore/wtf \
 
 contains(CONFIG, debug_and_release_target) {
     CONFIG(debug, debug|release) {
