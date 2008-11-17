@@ -3,7 +3,7 @@ VPATH += $$PWD
 
 INCLUDEPATH += tmp
 INCLUDEPATH += $$PWD $$PWD/parser $$PWD/bytecompiler $$PWD/debugger $$PWD/runtime $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/wrec $$PWD/API $$PWD/.. \
-               $$PWD/ForwardingHeaders
+               $$PWD/ForwardingHeaders $$PWD/bytecode
 DEFINES += BUILDING_QT__
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
