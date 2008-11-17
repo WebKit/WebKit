@@ -1,6 +1,6 @@
 # Perl Compatible Regular Expressions - Qt4 build info
 VPATH += $$PWD
-INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/parser/tmp
+INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/tmp
 DEPENDPATH += $$PWD
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
