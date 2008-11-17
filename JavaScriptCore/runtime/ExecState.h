@@ -27,6 +27,7 @@
 
 #include "JSGlobalData.h"
 #include "Interpreter.h"
+#include "RegisterFile.h"
 #include "ScopeChain.h"
 
 namespace JSC  {
