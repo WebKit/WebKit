@@ -23,7 +23,7 @@
 
 #include "ArgList.h"
 #include "CollectorHeapIterator.h"
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSString.h"

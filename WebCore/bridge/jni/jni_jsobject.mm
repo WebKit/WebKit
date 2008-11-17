@@ -35,7 +35,7 @@
 #include "ScriptController.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
-#include <runtime/ExecState.h>
+#include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/Completion.h>

@@ -1,5 +1,39 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Moved runtime/ExecState.* => interpreter/CallFrame.*.
+
+        * API/JSBase.cpp:
+        * API/OpaqueJSString.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerCallFrame.h:
+        * interpreter/CallFrame.cpp: Copied from runtime/ExecState.cpp.
+        * interpreter/CallFrame.h: Copied from runtime/ExecState.h.
+        * interpreter/Interpreter.cpp:
+        * parser/Nodes.cpp:
+        * profiler/ProfileGenerator.cpp:
+        * profiler/Profiler.cpp:
+        * runtime/ClassInfo.h:
+        * runtime/Collector.cpp:
+        * runtime/Completion.cpp:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/ExecState.cpp: Removed.
+        * runtime/ExecState.h: Removed.
+        * runtime/Identifier.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSLock.cpp:
+        * runtime/JSNumberCell.h:
+        * runtime/JSObject.h:
+        * runtime/JSString.h:
+        * runtime/Lookup.h:
+        * runtime/PropertyNameArray.h:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix Windows build.

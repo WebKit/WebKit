@@ -25,7 +25,7 @@
 #include "config.h"
 #include "NodeIterator.h"
 
-#include <runtime/ExecState.h>
+#include <interpreter/CallFrame.h>
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "NodeFilter.h"

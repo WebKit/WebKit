@@ -140,8 +140,8 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/Profiler.h \
 	JavaScriptCore/profiler/TreeProfile.cpp \
 	JavaScriptCore/profiler/TreeProfile.h \
-	JavaScriptCore/runtime/ExecState.cpp \
-	JavaScriptCore/runtime/ExecState.h \
+	JavaScriptCore/interpreter/CallFrame.cpp \
+	JavaScriptCore/interpreter/CallFrame.h \
 	JavaScriptCore/runtime/InitializeThreading.cpp \
 	JavaScriptCore/runtime/InitializeThreading.h \
 	JavaScriptCore/runtime/JSActivation.cpp \

@@ -26,7 +26,7 @@
 #include "NodeFilter.h"
 
 #include "Node.h"
-#include <runtime/ExecState.h>
+#include <interpreter/CallFrame.h>
 
 using namespace JSC;
 

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "Identifier.h"
 
-#include "ExecState.h"
+#include "CallFrame.h"
 #include <new> // for placement new
 #include <string.h> // for strlen
 #include <wtf/Assertions.h>

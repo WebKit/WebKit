@@ -21,7 +21,7 @@
 #ifndef KJS_lookup_h
 #define KJS_lookup_h
 
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "Identifier.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"

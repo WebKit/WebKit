@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ExecState.h"
+#include "CallFrame.h"
 
 #include "CodeBlock.h"
 

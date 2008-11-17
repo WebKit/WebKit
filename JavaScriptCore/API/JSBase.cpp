@@ -31,7 +31,7 @@
 #include "Completion.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"
-#include <runtime/ExecState.h>
+#include <interpreter/CallFrame.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/Completion.h>
 #include <runtime/JSGlobalObject.h>

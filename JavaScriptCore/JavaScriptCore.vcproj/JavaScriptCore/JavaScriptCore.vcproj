@@ -437,11 +437,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ExecState.cpp"
+				RelativePath="..\..\interpreter\CallFrame.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ExecState.h"
+				RelativePath="..\..\interpreter\CallFrame.h"
 				>
 			</File>
 			<File

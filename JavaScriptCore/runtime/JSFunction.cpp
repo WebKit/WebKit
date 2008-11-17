@@ -27,7 +27,7 @@
 
 #include "CodeBlock.h"
 #include "CommonIdentifiers.h"
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"

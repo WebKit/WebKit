@@ -26,7 +26,7 @@
 #include "config.h"
 #include "OpaqueJSString.h"
 
-#include <runtime/ExecState.h>
+#include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/Identifier.h>
 

@@ -30,7 +30,7 @@
 #include "ExceptionHelpers.h"
 
 #include "CodeBlock.h"
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "JSObject.h"
 #include "JSNotAnObject.h"
 #include "Interpreter.h"

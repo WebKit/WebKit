@@ -1,3 +1,20 @@
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Updated for JavaScriptCore rename.
+
+        * ForwardingHeaders/interpreter/CallFrame.h: Copied from WebCore/ForwardingHeaders/runtime/ExecState.h.
+        * ForwardingHeaders/runtime/ExecState.h: Removed.
+        * bindings/objc/WebScriptObject.mm:
+        * bridge/c/c_instance.cpp:
+        * bridge/jni/jni_jsobject.mm:
+        * dom/Node.cpp:
+        * dom/NodeFilter.cpp:
+        * dom/NodeIterator.cpp:
+        * dom/TreeWalker.cpp:
+        * inspector/JavaScriptCallFrame.h:
+
 2008-11-17  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Sam Weinig.

@@ -23,7 +23,7 @@
 #include "config.h"
 #include "Completion.h"
 
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "Interpreter.h"

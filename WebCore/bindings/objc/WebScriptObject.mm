@@ -40,7 +40,7 @@
 #import "runtime_object.h"
 #import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>
-#import <runtime/ExecState.h>
+#import <interpreter/CallFrame.h>
 #import <runtime/JSGlobalObject.h>
 #import <runtime/JSLock.h>
 #import <runtime/Completion.h>

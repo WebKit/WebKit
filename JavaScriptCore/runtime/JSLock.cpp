@@ -22,7 +22,7 @@
 #include "JSLock.h"
 
 #include "Collector.h"
-#include "ExecState.h"
+#include "CallFrame.h"
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <pthread.h>

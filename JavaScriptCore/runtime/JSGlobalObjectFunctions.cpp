@@ -25,7 +25,7 @@
 #include "config.h"
 #include "JSGlobalObjectFunctions.h"
 
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "GlobalEvalFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"

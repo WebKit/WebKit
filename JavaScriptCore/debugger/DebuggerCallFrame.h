@@ -29,7 +29,7 @@
 #ifndef DebuggerCallFrame_h
 #define DebuggerCallFrame_h
 
-#include "ExecState.h"
+#include "CallFrame.h"
 
 namespace JSC {
     

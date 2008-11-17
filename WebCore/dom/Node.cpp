@@ -55,7 +55,7 @@
 #include "Text.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
-#include <runtime/ExecState.h>
+#include <interpreter/CallFrame.h>
 #include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 

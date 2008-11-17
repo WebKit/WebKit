@@ -21,7 +21,7 @@
 #ifndef PropertyNameArray_h
 #define PropertyNameArray_h
 
-#include "ExecState.h"
+#include "CallFrame.h"
 #include "Identifier.h"
 #include "Structure.h"
 #include <wtf/HashSet.h>
