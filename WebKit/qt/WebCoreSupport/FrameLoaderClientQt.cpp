@@ -1043,12 +1043,12 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
     QString urlStr(url.string());
     QUrl qurl = urlStr;
 
-    QObject *object = 0;
+    QObject* object = 0;
 
     if (mimeType == "application/x-qt-plugin" || mimeType == "application/x-qt-styled-widget") {
         object = m_webFrame->page()->createPlugin(classid, qurl, params, values);
 #ifndef QT_NO_STYLE_STYLESHEET
-        QWidget *widget = qobject_cast<QWidget *>(object);
+        QWidget* widget = qobject_cast<QWidget*>(object);
         if (widget && mimeType == "application/x-qt-styled-widget") {
 
             QString styleSheet = element->getAttribute("style");
@@ -1078,12 +1078,14 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
 #endif
 
         if (object) {
-            QWidget *widget = qobject_cast<QWidget *>(object);
-            QWidget *view = m_webFrame->page()->view();
+            QWidget* widget = qobject_cast<QWidget*>(object);
+            QWidget* view = m_webFrame->page()->view();
             if (widget && view) {
                 widget->setParent(view);
-                QtPluginWidget* w= new QtPluginWidget();
+                QtPluginWidget* w = new QtPluginWidget();
                 w->setPlatformWidget(widget);
+                // Make sure it's invisible until properly placed into the layout
+                w->setFrameRect(IntRect(0, 0, 0, 0));
                 return w;
             }
             // FIXME: make things work for widgetless plugins as well

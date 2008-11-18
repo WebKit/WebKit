@@ -1,5 +1,14 @@
 2008-11-18  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Rubber-stamped by Simon Hausmann.
+
+        Make sure QWidget based plugins are invisible until placed into the layout
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
+2008-11-18  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon Hausmann.
 
         React properly to frame rect changes for QWidget based plugins
