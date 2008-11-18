@@ -2451,7 +2451,10 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     BOOL windowIsKey = [window isKeyWindow];
     BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    page->focusController()->setActive(windowIsKey);
+    NSResponder *firstResponder = [window firstResponder]; 
+    if ([firstResponder isKindOfClass:[NSView class]] 
+        && [(NSView*)firstResponder isDescendantOf:[[self mainFrame] frameView]])
+        page->focusController()->setActive(windowIsKey);
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
     frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);

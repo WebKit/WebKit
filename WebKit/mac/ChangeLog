@@ -1,3 +1,20 @@
+2008-11-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix for <rdar://problem/6373102> REGRESSION (r36919): In a new mail 
+        message, the caret appears in message body by default
+
+        This fixes a regression caused by http://trac.webkit.org/changeset/
+        36919. That change was too sweeping; we do not want to 
+        unconditionally set the page to be active, but we can be looser 
+        than the original constraints. This patch set the window active if 
+        the first responder is or is a descendant of the main frame's frame 
+        view.
+
+        * WebView/WebView.mm:
+        (-[WebView _updateFocusedAndActiveStateForFrame:]):
+
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
