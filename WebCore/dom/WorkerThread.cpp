@@ -33,6 +33,7 @@
 #include "JSWorkerContext.h"
 #include "Worker.h"
 #include "WorkerContext.h"
+#include "WorkerMessagingProxy.h"
 #include "WorkerTask.h"
 
 using namespace JSC;
@@ -77,6 +78,7 @@ void* WorkerThread::workerThread()
     WorkerScriptController* script = workerContext->script();
 
     script->evaluate(m_scriptURL, 1, m_sourceCode);
+    m_messagingProxy->confirmWorkerThreadMessage(workerContext->hasPendingActivity()); // This wasn't really a message, but it counts as one for GC.
 
     while (true) {
         RefPtr<WorkerTask> task;

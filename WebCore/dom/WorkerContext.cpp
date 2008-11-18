@@ -30,6 +30,7 @@
 
 #include "WorkerContext.h"
 
+#include "ActiveDOMObject.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
@@ -75,6 +76,17 @@ KURL WorkerContext::completeURL(const String& url) const
         return KURL();
     // FIXME: does this need to provide a charset, like Document::completeURL does?
     return KURL(m_location->url(), url);
+}
+
+bool WorkerContext::hasPendingActivity() const
+{
+    ActiveDOMObjectsMap& activeObjects = activeDOMObjects();
+    ActiveDOMObjectsMap::const_iterator activeObjectsEnd = activeObjects.end();
+    for (ActiveDOMObjectsMap::const_iterator iter = activeObjects.begin(); iter != activeObjectsEnd; ++iter) {
+        if (iter->first->hasPendingActivity())
+            return true;
+    }
+    return false;
 }
 
 void WorkerContext::postMessage(const String& message)

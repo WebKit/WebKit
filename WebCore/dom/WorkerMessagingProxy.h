@@ -53,18 +53,27 @@ namespace WebCore {
         void workerObjectDestroyed();
         void workerContextDestroyed();
 
+        void confirmWorkerThreadMessage(bool hasPendingActivity);
+        void reportWorkerThreadActivity(bool hasPendingActivity);
+        bool workerThreadHasPendingActivity() const;
+
     private:
         friend class MessageWorkerTask;
         friend class WorkerContextDestroyedTask;
+        friend class WorkerThreadActivityReportTask;
 
         ~WorkerMessagingProxy();
 
         void workerContextDestroyedInternal();
+        void reportWorkerThreadActivityInternal(bool confirmingMessage, bool hasPendingActivity);
         Worker* workerObject() const { return m_workerObject; }
 
         RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
         Worker* m_workerObject;
         RefPtr<WorkerThread> m_workerThread;
+
+        unsigned m_unconfirmedMessageCount; // Unconfirmed messages from worker object to worker thread.
+        bool m_workerThreadHadPendingActivity; // The latest confirmation from worker thread reported that it was still active.
 
         Vector<RefPtr<WorkerTask> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
     };

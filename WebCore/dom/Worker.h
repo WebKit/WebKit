@@ -63,6 +63,8 @@ namespace WebCore {
 
         void postMessage(const String& message);
 
+        virtual bool hasPendingActivity() const;
+
         virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
         virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);

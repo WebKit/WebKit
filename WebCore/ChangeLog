@@ -1,5 +1,48 @@
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22308
+        Improve Worker GC behavior
+
+        * dom/ActiveDOMObject.cpp: (WebCore::ActiveDOMObject::hasPendingActivity):
+        * dom/ActiveDOMObject.h:
+        Made hasPendingActivity() virtual, letting Worker add behavior to it.
+
+        * bindings/js/WorkerScriptController.cpp: (WebCore::WorkerScriptController::evaluate):
+        * dom/WorkerThread.cpp: (WebCore::WorkerThread::workerThread):
+        Tell message proxy whether there are active objects in the worker whenever JS execution
+        finishes.
+
+        * dom/ScriptExecutionContext.h: (WebCore::ScriptExecutionContext::activeDOMObjects):
+        Added a typedef for activeDOMObjects() return type, necessary to declare iterators.
+
+        * dom/Worker.h:
+        * dom/Worker.cpp: (WebCore::Worker::hasPendingActivity): A Worker is active if it is still
+        loading, or if it has unconfirmed messages, or it the worker thread has pending activity.
+
+        * dom/WorkerContext.h:
+        * dom/WorkerContext.cpp: (WebCore::WorkerContext::hasPendingActivity): Check all registered
+        active objects for pending activity.
+
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::performTask):
+        (WebCore::WorkerThreadActivityReportTask::create):
+        (WebCore::WorkerThreadActivityReportTask::WorkerThreadActivityReportTask):
+        (WebCore::WorkerThreadActivityReportTask::performTask):
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyed):
+        (WebCore::WorkerMessagingProxy::workerContextDestroyedInternal):
+        (WebCore::WorkerMessagingProxy::confirmWorkerThreadMessage):
+        (WebCore::WorkerMessagingProxy::reportWorkerThreadActivity):
+        (WebCore::WorkerMessagingProxy::reportWorkerThreadActivityInternal):
+        (WebCore::WorkerMessagingProxy::workerThreadHasPendingActivity):
+        * dom/WorkerMessagingProxy.h:
+        Track outstanding messages, and activity reported by worker thread.
+
+2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
+
         Rubber-stamped by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=22306

@@ -54,7 +54,8 @@ namespace WebCore {
         void stopActiveDOMObjects();
         void createdActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
         void destroyedActiveDOMObject(ActiveDOMObject*);
-        const HashMap<ActiveDOMObject*, void*>& activeDOMObjects() const { return m_activeDOMObjects; }
+        typedef const HashMap<ActiveDOMObject*, void*> ActiveDOMObjectsMap;
+        ActiveDOMObjectsMap& activeDOMObjects() const { return m_activeDOMObjects; }
 
         // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch.
         void processMessagePortMessagesSoon();

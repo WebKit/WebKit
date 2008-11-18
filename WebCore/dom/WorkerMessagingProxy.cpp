@@ -66,6 +66,8 @@ private:
         ExceptionCode ec = 0;
         context->dispatchEvent(evt.release(), ec);
         ASSERT(!ec);
+
+        context->thread()->messagingProxy()->confirmWorkerThreadMessage(context->hasPendingActivity());
     }
 
 private:
@@ -132,10 +134,38 @@ private:
     WorkerMessagingProxy* m_messagingProxy;
 };
 
+class WorkerThreadActivityReportTask : public ScriptExecutionContext::Task {
+public:
+    static PassRefPtr<WorkerThreadActivityReportTask> create(WorkerMessagingProxy* messagingProxy, bool confirmingMessage, bool hasPendingActivity)
+    {
+        return adoptRef(new WorkerThreadActivityReportTask(messagingProxy, confirmingMessage, hasPendingActivity));
+    }
+
+private:
+    WorkerThreadActivityReportTask(WorkerMessagingProxy* messagingProxy, bool confirmingMessage, bool hasPendingActivity)
+        : m_messagingProxy(messagingProxy)
+        , m_confirmingMessage(confirmingMessage)
+        , m_hasPendingActivity(hasPendingActivity)
+    {
+    }
+
+    virtual void performTask(ScriptExecutionContext* context)
+    {
+        m_messagingProxy->reportWorkerThreadActivityInternal(m_confirmingMessage, m_hasPendingActivity);
+    }
+
+private:
+    WorkerMessagingProxy* m_messagingProxy;
+    bool m_confirmingMessage;
+    bool m_hasPendingActivity;
+};
+
 
 WorkerMessagingProxy::WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext> scriptExecutionContext, Worker* workerObject)
     : m_scriptExecutionContext(scriptExecutionContext)
     , m_workerObject(workerObject)
+    , m_unconfirmedMessageCount(1) // Worker initialization counts as a pending message.
+    , m_workerThreadHadPendingActivity(false)
 {
     ASSERT(m_workerObject);
     ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
@@ -156,6 +186,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(const String& message)
 
 void WorkerMessagingProxy::postMessageToWorkerContext(const String& message)
 {
+    ++m_unconfirmedMessageCount;
     if (m_workerThread)
         m_workerThread->messageQueue().append(MessageWorkerContextTask::create(message));
     else
@@ -176,9 +207,9 @@ void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
     if (m_workerThread)
-        m_workerThread->messageQueue().kill();
+        m_workerThread->messageQueue().kill(); // FIXME: (1) rudely killing a thread won't work when we allow nested workers; (2) need to interrupt currently running JS.
     else
-        workerContextDestroyedInternal(); // It never existed, just do out cleanup.
+        workerContextDestroyedInternal(); // It never existed, just do our cleanup.
 }
 
 void WorkerMessagingProxy::workerContextDestroyed()
@@ -189,7 +220,35 @@ void WorkerMessagingProxy::workerContextDestroyed()
 
 void WorkerMessagingProxy::workerContextDestroyedInternal()
 {
+    ASSERT(!m_workerObject);
     delete this;
+}
+
+void WorkerMessagingProxy::confirmWorkerThreadMessage(bool hasPendingActivity)
+{
+    m_scriptExecutionContext->postTask(WorkerThreadActivityReportTask::create(this, true, hasPendingActivity));
+    // Will execute reportWorkerThreadActivityInternal() on context's thread.
+}
+
+void WorkerMessagingProxy::reportWorkerThreadActivity(bool hasPendingActivity)
+{
+    m_scriptExecutionContext->postTask(WorkerThreadActivityReportTask::create(this, false, hasPendingActivity));
+    // Will execute reportWorkerThreadActivityInternal() on context's thread.
+}
+
+void WorkerMessagingProxy::reportWorkerThreadActivityInternal(bool confirmingMessage, bool hasPendingActivity)
+{
+    if (confirmingMessage) {
+        ASSERT(m_unconfirmedMessageCount);
+        --m_unconfirmedMessageCount;
+    }
+
+    m_workerThreadHadPendingActivity = hasPendingActivity;
+}
+
+bool WorkerMessagingProxy::workerThreadHasPendingActivity() const
+{
+    return m_unconfirmedMessageCount || m_workerThreadHadPendingActivity;
 }
 
 } // namespace WebCore
