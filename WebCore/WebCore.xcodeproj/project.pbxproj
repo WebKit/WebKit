@@ -4170,6 +4170,7 @@
 		E14799B40ECDE9D800292BF3 /* WorkerMessagingProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14799B30ECDE9D800292BF3 /* WorkerMessagingProxy.cpp */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
+		E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */; };
 		E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A302BB0DE8370300C52F2C /* StringBuilder.h */; };
 		E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A302C00DE8376900C52F2C /* StringBuilder.cpp */; };
 		E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */; };
@@ -8816,6 +8817,7 @@
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E14799A60ECDE3A400292BF3 /* WorkerMessagingProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerMessagingProxy.h; sourceTree = "<group>"; };
 		E14799B30ECDE9D800292BF3 /* WorkerMessagingProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerMessagingProxy.cpp; sourceTree = "<group>"; };
+		E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoaderClient.cpp; sourceTree = "<group>"; };
 		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		E1A302C00DE8376900C52F2C /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
 		E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelCustom.cpp; sourceTree = "<group>"; };
@@ -13305,6 +13307,7 @@
 				656D37220ADBA5DE00A4554D /* FormState.h */,
 				932E16080AF578340025F408 /* FrameLoader.cpp */,
 				656D37240ADBA5DE00A4554D /* FrameLoader.h */,
+				E182504E0ED2F20200499A8F /* FrameLoaderClient.cpp */,
 				656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */,
 				93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */,
 				51E4ADB20C42B4CF0042BC55 /* FTPDirectoryDocument.cpp */,
@@ -18212,6 +18215,7 @@
 				E108224F0EC3156700E93953 /* WorkerTask.cpp in Sources */,
 				0FD723830EC8BD9300CA5DD7 /* FloatQuad.cpp in Sources */,
 				E14799B40ECDE9D800292BF3 /* WorkerMessagingProxy.cpp in Sources */,
+				E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
