@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x102
+  RenderBlock {wml} at (0,0) size 800x102
+    RenderBlock {card} at (8,16) size 784x70
+      RenderBlock {p} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 743x36
+          text run at (0,0) width 743: "Test comment in WML, the text in the comment should not be displayed, if it passes, you can only see the text: \"Hello"
+          text run at (0,18) width 137: "World!\" after this line"
+      RenderBlock {p} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 84x18
+          text run at (0,0) width 84: "Hello World!"

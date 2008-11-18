@@ -446,7 +446,11 @@ void XMLTokenizer::parse()
         case QXmlStreamReader::EntityReference: {
             //qDebug()<<"---------- ENTITY = "<<m_stream.name().toString()
             //        <<", t = "<<m_stream.text().toString();
-            if (isXHTMLDocument()) {
+            if (isXHTMLDocument()
+#if ENABLE(WML)
+                || isWMLDocument()
+#endif
+               ) {
                 QString entity = m_stream.name().toString();
                 UChar c = decodeNamedEntity(entity.toUtf8().constData());
                 if (m_currentNode->isTextNode() || enterText()) {

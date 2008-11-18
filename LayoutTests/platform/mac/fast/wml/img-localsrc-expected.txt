@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x170
+  RenderBlock {wml} at (0,0) size 800x170
+    RenderBlock {card} at (8,16) size 784x138
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 189x18
+          text run at (0,0) width 189: "Test for img element in WML"
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 369x18
+          text run at (0,0) width 369: "This image is specified by localsrc attribute of img element"
+      RenderBlock (anonymous) at (0,68) size 784x36
+        RenderText {#text} at (0,0) size 59x18
+          text run at (0,0) width 59: "test code:"
+        RenderText {#cdata-section} at (59,0) size 784x36
+          text run at (59,0) width 4: " "
+          text run at (63,0) width 721: "<p>Local<img height=\"60\" width=\"40\" vspace=\"40\" hspace=\"60\" align=\"middle\" localsrc=\"resources/smile.gif\""
+          text run at (0,18) width 157: "alt=\"smile\"/>Image</p> "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {br} at (0,0) size 0x0
+      RenderBlock {p} at (0,120) size 784x18
+        RenderText {#text} at (0,0) size 36x18
+          text run at (0,0) width 36: "Local"
+        RenderInline {img} at (0,0) size 0x18
+        RenderText {#text} at (36,0) size 39x18
+          text run at (36,0) width 39: "Image"

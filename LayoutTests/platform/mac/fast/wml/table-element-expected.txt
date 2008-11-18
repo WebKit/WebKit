@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x230
+  RenderBlock {wml} at (0,0) size 800x230
+    RenderBlock {card} at (8,16) size 784x198
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 195x18
+          text run at (0,0) width 195: "Test for table element in WML"
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 79x18
+          text run at (0,0) width 79: "source code:"
+      RenderBlock (anonymous) at (0,68) size 784x36
+        RenderText {#cdata-section} at (0,0) size 765x36
+          text run at (0,0) width 230: "<table columns=\"3\" align=\"LRR\"> "
+          text run at (230,0) width 31: "<tr> "
+          text run at (261,0) width 121: "<td>Cell one</td> "
+          text run at (382,0) width 192: "<td>C<br/>ell<br/> two</td> "
+          text run at (574,0) width 129: "<td>Cell three</td> "
+          text run at (703,0) width 35: "</tr> "
+          text run at (738,0) width 27: "<tr>"
+          text run at (0,18) width 99: "<td> one </td> "
+          text run at (99,18) width 38: "<td/> "
+          text run at (137,18) width 114: "<td>C three</td> "
+          text run at (251,18) width 35: "</tr> "
+          text run at (286,18) width 56: "</table> "
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {br} at (0,0) size 0x0
+      RenderBlock {p} at (0,120) size 784x78
+        RenderTable {table} at (0,0) size 146x78
+          RenderTableSection (anonymous) at (0,0) size 146x78
+            RenderTableRow {tr} at (0,2) size 146x54
+              RenderTableCell {td} at (2,20) size 53x18 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 53x18
+                  text run at (0,0) width 53: "Cell one"
+              RenderTableCell {td} at (57,2) size 24x54 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 11x18
+                  text run at (0,0) width 11: "C"
+                RenderBR {br} at (11,0) size 0x18
+                RenderText {#text} at (0,18) size 15x18
+                  text run at (0,18) width 15: "ell"
+                RenderBR {br} at (15,18) size 0x18
+                RenderText {#text} at (0,36) size 24x18
+                  text run at (0,36) width 24: "two"
+              RenderTableCell {td} at (83,20) size 61x18 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 61x18
+                  text run at (0,0) width 61: "Cell three"
+            RenderTableRow {tr} at (0,58) size 146x18
+              RenderTableCell {td} at (2,58) size 53x18 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 23x18
+                  text run at (0,0) width 23: "one"
+              RenderTableCell {td} at (57,67) size 24x0 [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {td} at (83,58) size 61x18 [r=1 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 46x18
+                  text run at (0,0) width 46: "C three"

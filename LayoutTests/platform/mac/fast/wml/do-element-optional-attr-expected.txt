@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x152
+  RenderBlock {wml} at (0,0) size 800x152
+    RenderBlock {card} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 181x18
+          text run at (0,0) width 181: "Test for do element in WML"
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 731x18
+          text run at (0,0) width 731: "There are two do element in this card, the first one will display, the second won't because its optional attribute is true"
+      RenderBlock (anonymous) at (0,68) size 784x0
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {go} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {go} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+    RenderBlock {card} at (8,84) size 784x18
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 144x18
+          text run at (0,0) width 144: "This is the second card"
+    RenderBlock {card} at (8,118) size 784x18
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 129x18
+          text run at (0,0) width 129: "This is the third card"

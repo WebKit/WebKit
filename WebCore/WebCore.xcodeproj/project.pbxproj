@@ -55,6 +55,8 @@
 		088C977C0ECB6E29000534BA /* WMLTagNames.in in Resources */ = {isa = PBXBuildFile; fileRef = 4C6B99430E52E37300487BB7 /* WMLTagNames.in */; };
 		089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 089582530E857A7E00F82C83 /* ImageLoader.cpp */; };
 		089582560E857A7E00F82C83 /* ImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 089582540E857A7E00F82C83 /* ImageLoader.h */; };
+		0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */; };
+		0897C14D0ED2EBA500AE06DB /* WMLBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0897C14B0ED2EBA400AE06DB /* WMLBRElement.h */; };
 		08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A484750E5272C500C3FE76 /* ScriptElement.cpp */; };
 		08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A484760E5272C500C3FE76 /* ScriptElement.h */; };
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
@@ -4773,6 +4775,8 @@
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
 		089582540E857A7E00F82C83 /* ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageLoader.h; sourceTree = "<group>"; };
+		0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLBRElement.cpp; sourceTree = "<group>"; };
+		0897C14B0ED2EBA400AE06DB /* WMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLBRElement.h; sourceTree = "<group>"; };
 		08A484750E5272C500C3FE76 /* ScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElement.cpp; sourceTree = "<group>"; };
 		08A484760E5272C500C3FE76 /* ScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElement.h; sourceTree = "<group>"; };
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
@@ -9428,6 +9432,8 @@
 			children = (
 				4C6B99180E52E37300487BB7 /* WMLAElement.cpp */,
 				4C6B99190E52E37300487BB7 /* WMLAElement.h */,
+				0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */,
+				0897C14B0ED2EBA400AE06DB /* WMLBRElement.h */,
 				4C6B991C0E52E37300487BB7 /* WMLAttributeNames.in */,
 				4C6B991F0E52E37300487BB7 /* WMLCardElement.cpp */,
 				4C6B99200E52E37300487BB7 /* WMLCardElement.h */,
@@ -16296,6 +16302,7 @@
 				E108224B0EC3153A00E93953 /* WorkerTask.h in Headers */,
 				0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */,
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
+				0897C14D0ED2EBA500AE06DB /* WMLBRElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18215,6 +18222,7 @@
 				E108224F0EC3156700E93953 /* WorkerTask.cpp in Sources */,
 				0FD723830EC8BD9300CA5DD7 /* FloatQuad.cpp in Sources */,
 				E14799B40ECDE9D800292BF3 /* WorkerMessagingProxy.cpp in Sources */,
+				0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */,
 				E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

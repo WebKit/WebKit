@@ -1370,6 +1370,7 @@ contains(DEFINES, ENABLE_XBL=1) {
 contains(DEFINES, ENABLE_WML=1) {
     SOURCES += \
         wml/WMLAElement.cpp \
+        wml/WMLBRElement.cpp \
         wml/WMLCardElement.cpp \
         wml/WMLElement.cpp \
         wml/WMLDocument.cpp \

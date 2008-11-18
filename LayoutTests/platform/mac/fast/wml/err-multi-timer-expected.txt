@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {wml} at (0,0) size 800x76
+    RenderBlock {card} at (8,16) size 784x52
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {timer} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {timer} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 281x18
+          text run at (0,0) width 281: "Test for error of meta multi-timer in one card"
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 585x18
+          text run at (0,0) width 585: "You should NOT see this text, because of the error that more than one timer exist in one card"

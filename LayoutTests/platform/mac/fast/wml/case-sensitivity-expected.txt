@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x170
+  RenderBlock {wml} at (0,0) size 800x170
+    RenderBlock {card} at (8,16) size 784x146
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 210x18
+          text run at (0,0) width 210: "Test for Case sensitivity in WML"
+      RenderBlock {p} at (0,34) size 784x36
+        RenderText {#text} at (0,0) size 426x18
+          text run at (0,0) width 426: "compare the result of inserting <br/> and <BR/> into the same text, "
+        RenderBR {br} at (426,0) size 0x18
+        RenderText {#text} at (0,18) size 289x18
+          text run at (0,18) width 289: "the former should work, and the latter doesn't."
+      RenderTable {table} at (0,86) size 188x60
+        RenderTableSection (anonymous) at (0,0) size 188x60
+          RenderTableRow {tr} at (0,2) size 188x36
+            RenderTableCell {td} at (2,2) size 184x36 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 62x18
+                text run at (0,0) width 62: "Test case "
+              RenderBR {br} at (62,0) size 0x18
+              RenderText {#text} at (0,18) size 122x18
+                text run at (0,18) width 122: "sensitivity in WML"
+          RenderTableRow {tr} at (0,40) size 188x18
+            RenderTableCell {td} at (2,40) size 184x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 62x18
+                text run at (0,0) width 62: "Test case "
+              RenderInline {BR} at (0,0) size 0x18
+              RenderText {#text} at (62,0) size 122x18
+                text run at (62,0) width 122: "sensitivity in WML"

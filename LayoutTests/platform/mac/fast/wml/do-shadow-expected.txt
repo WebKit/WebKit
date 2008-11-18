@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x272
+  RenderBlock {wml} at (0,0) size 800x272
+    RenderBlock (anonymous) at (0,0) size 800x0
+      RenderInline {template} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {prev} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {card} at (8,16) size 784x86
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 182x18
+          text run at (0,0) width 182: "Test for do-shadow in WML"
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 329x18
+          text run at (0,0) width 329: "This is first card, which won't shadow deck-level do"
+      RenderBlock (anonymous) at (0,68) size 784x18
+        RenderInline {anchor} at (0,0) size 79x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {go} at (0,0) size 79x18
+            RenderText {#text} at (0,0) size 79x18
+              text run at (0,0) width 79: "Go to card 2"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+    RenderBlock {card} at (8,118) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 415x18
+          text run at (0,0) width 415: "deck-level do is shadowed with noop. It is not exposed to the user"
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {noop} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {anchor} at (0,0) size 79x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {go} at (0,0) size 79x18
+            RenderText {#text} at (0,0) size 79x18
+              text run at (0,0) width 79: "Go to card 3"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+    RenderBlock {card} at (8,186) size 784x70
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 588x18
+          text run at (0,0) width 588: "deck-level do is shadowed. It is replaced by a card-level do because they have the same name"
+      RenderBlock {p} at (0,34) size 784x36
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {go} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {br} at (0,0) size 0x18
+        RenderInline {anchor} at (0,0) size 79x18
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {go} at (0,0) size 79x18
+            RenderText {#text} at (0,18) size 79x18
+              text run at (0,18) width 79: "Go to card 1"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

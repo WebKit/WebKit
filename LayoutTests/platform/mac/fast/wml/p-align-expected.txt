@@ -1,0 +1,47 @@
+layer at (0,0) size 1176x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 1176x470
+  RenderBlock {wml} at (0,0) size 800x470
+    RenderBlock {card} at (8,16) size 784x438
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 280x18
+          text run at (0,0) width 280: "Test for align attribute of p element in WML"
+      RenderBlock (anonymous) at (0,34) size 784x36
+        RenderBR {br} at (0,0) size 0x18
+        RenderText {#cdata-section} at (0,18) size 122x18
+          text run at (0,18) width 122: "<p align=\"center\">"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,86) size 784x72
+        RenderText {#text} at (10,0) size 763x54
+          text run at (10,0) width 763: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP"
+          text run at (16,18) width 752: "CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who"
+          text run at (221,36) width 341: "wish to extend their knowledge to the wireless world. "
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,54) size 1168x18
+          text run at (0,54) width 1168: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      RenderBlock (anonymous) at (0,174) size 784x36
+        RenderBR {br} at (0,0) size 0x18
+        RenderText {#cdata-section} at (0,18) size 113x18
+          text run at (0,18) width 113: "<p align=\"right\">"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,226) size 784x72
+        RenderText {#text} at (21,0) size 763x54
+          text run at (21,0) width 763: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP"
+          text run at (32,18) width 752: "CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who"
+          text run at (443,36) width 341: "wish to extend their knowledge to the wireless world. "
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,54) size 1168x18
+          text run at (0,54) width 1168: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      RenderBlock (anonymous) at (0,314) size 784x36
+        RenderBR {br} at (0,0) size 0x18
+        RenderText {#cdata-section} at (0,18) size 104x18
+          text run at (0,18) width 104: "<p align=\"left\">"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,366) size 784x72
+        RenderText {#text} at (0,0) size 763x54
+          text run at (0,0) width 763: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP"
+          text run at (0,18) width 752: "CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who"
+          text run at (0,36) width 341: "wish to extend their knowledge to the wireless world. "
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,54) size 1168x18
+          text run at (0,54) width 1168: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

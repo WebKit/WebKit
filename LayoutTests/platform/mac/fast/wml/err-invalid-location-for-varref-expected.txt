@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {wml} at (0,0) size 800x84
+    RenderBlock {card} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 231x18
+          text run at (0,0) width 231: "Test for variable reference validation"
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 645x18
+          text run at (0,0) width 645: "An error will occur when loading the card because the variable reference is placed in a invalid location"
+      RenderBlock (anonymous) at (0,68) size 784x0
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {refresh} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+            RenderInline {setvar} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

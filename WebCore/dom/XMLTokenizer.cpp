@@ -90,6 +90,16 @@ ScriptElement* castToScriptElement(Element* element)
     return 0;
 }
 
+#if ENABLE(WML)
+bool XMLTokenizer::isWMLDocument() const
+{
+    if (m_doc)
+        return m_doc->isWMLDocument();
+
+    return false;
+}
+#endif
+
 void XMLTokenizer::setCurrentNode(Node* n)
 {
     bool nodeNeedsReference = n && n != m_doc;
@@ -285,7 +295,7 @@ void XMLTokenizer::insertErrorMessageBlock()
     }
 #endif
 #if ENABLE(WML)
-    else if (doc->isWMLDocument()) {
+    else if (isWMLDocument()) {
         RefPtr<Node> rootElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "html", ec);
         RefPtr<Node> body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "body", ec);
         rootElement->appendChild(body, ec);

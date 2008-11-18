@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x94
+  RenderBlock {wml} at (0,0) size 800x94
+    RenderBlock {card} at (8,16) size 784x70
+      RenderBlock {p} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 220x18
+          text run at (0,0) width 220: "Test for CDATA Section in WML"
+        RenderBR {br} at (220,0) size 0x18
+        RenderText {#text} at (0,18) size 271x18
+          text run at (0,18) width 271: "If it passes, you can see the following text :"
+      RenderBlock (anonymous) at (0,52) size 784x18
+        RenderText {#cdata-section} at (0,0) size 172x18
+          text run at (0,0) width 172: "This is <B> a CDATA test"
+        RenderText {#text} at (0,0) size 0x0

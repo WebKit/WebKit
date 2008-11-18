@@ -1,0 +1,54 @@
+layer at (0,0) size 1964x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 1964x492
+  RenderBlock {wml} at (0,0) size 800x492
+    RenderBlock {card} at (8,8) size 784x468
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#cdata-section} at (0,0) size 314x18
+          text run at (0,0) width 314: "<p> default mode is \"wrap\" for the first p element"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 284x18
+          text run at (0,0) width 284: "Test for mode attribute of p element in WML"
+      RenderBlock (anonymous) at (0,68) size 784x36
+        RenderBR {br} at (0,0) size 0x18
+        RenderText {#cdata-section} at (0,18) size 348x18
+          text run at (0,18) width 348: "<p> it will use the mode of previous paragraph element"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,120) size 784x72
+        RenderText {#text} at (0,0) size 763x54
+          text run at (0,0) width 763: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP"
+          text run at (0,18) width 752: "CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who"
+          text run at (0,36) width 341: "wish to extend their knowledge to the wireless world. "
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,54) size 1956x18
+          text run at (0,54) width 1956: "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      RenderBlock (anonymous) at (0,208) size 784x36
+        RenderBR {br} at (0,0) size 0x18
+        RenderText {#cdata-section} at (0,18) size 136x18
+          text run at (0,18) width 136: "<p mode=\"nowrap\">"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,260) size 784x36
+        RenderText {#text} at (0,0) size 1860x18
+          text run at (0,0) width 1860: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who wish to extend their knowledge to the wireless world."
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,18) size 1956x18
+          text run at (0,18) width 1956: "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      RenderBlock (anonymous) at (0,312) size 784x18
+        RenderText {#cdata-section} at (0,0) size 296x18
+          text run at (0,0) width 296: "The next two paragraphs shouldn't be wrapped"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,346) size 784x36
+        RenderText {#text} at (0,0) size 1860x18
+          text run at (0,0) width 1860: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who wish to extend their knowledge to the wireless world."
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,18) size 1956x18
+          text run at (0,18) width 1956: "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      RenderBlock (anonymous) at (0,398) size 784x18
+        RenderBR {br} at (0,0) size 0x18
+      RenderBlock {p} at (0,432) size 784x36
+        RenderText {#text} at (0,0) size 1860x18
+          text run at (0,0) width 1860: "Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who wish to extend their knowledge to the wireless world."
+        RenderBR {br} at (0,0) size 0x0
+        RenderText {#text} at (0,18) size 1956x18
+          text run at (0,18) width 1956: "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"

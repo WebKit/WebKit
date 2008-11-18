@@ -2785,6 +2785,7 @@ webcore_cppflags += \
 
 webcore_sources += \
 	WebCore/wml/WMLAElement.cpp \
+	WebCore/wml/WMLBRElement.cpp \
 	WebCore/wml/WMLCardElement.cpp \
 	WebCore/wml/WMLElement.cpp \
 	WebCore/wml/WMLDocument.cpp \

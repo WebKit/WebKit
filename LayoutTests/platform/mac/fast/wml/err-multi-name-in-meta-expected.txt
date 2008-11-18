@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x166
+  RenderBlock {html} at (0,0) size 800x166
+    RenderBody {body} at (8,16) size 784x134
+      RenderBlock {parsererror} at (16,0) size 752x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x22
+          RenderText {#text} at (0,0) size 324x22
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {div} at (18,60) size 716x14
+          RenderText {#text} at (0,0) size 378x14
+            text run at (0,0) width 378: "error on line 5 at column 35: Attribute name redefined"
+            text run at (378,0) width 0: " "
+        RenderBlock {h3} at (18,92) size 716x22
+          RenderText {#text} at (0,0) size 429x22
+            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,150) size 784x0
+        RenderInline {wml} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0

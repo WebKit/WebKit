@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x214
+  RenderBlock {wml} at (0,0) size 800x214
+    RenderBlock {card} at (8,16) size 784x182
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 198x18
+          text run at (0,0) width 198: "Test for text emphasis of WML"
+      RenderBlock {p} at (0,34) size 784x148
+        RenderText {#text} at (0,0) size 44x18
+          text run at (0,0) width 44: "normal"
+        RenderBR {br} at (44,0) size 0x18
+        RenderInline {em} at (0,0) size 74x18
+          RenderText {#text} at (0,18) size 74x18
+            text run at (0,18) width 74: "emphasized"
+        RenderBR {br} at (74,18) size 0x18
+        RenderInline {strong} at (0,0) size 43x18
+          RenderText {#text} at (0,36) size 43x18
+            text run at (0,36) width 43: "strong"
+        RenderBR {br} at (43,36) size 0x18
+        RenderInline {b} at (0,0) size 30x18
+          RenderText {#text} at (0,54) size 30x18
+            text run at (0,54) width 30: "bold"
+        RenderBR {br} at (30,54) size 0x18
+        RenderInline {i} at (0,0) size 31x18
+          RenderText {#text} at (0,72) size 31x18
+            text run at (0,72) width 31: "italic"
+        RenderBR {br} at (31,72) size 0x18
+        RenderInline {u} at (0,0) size 59x18
+          RenderText {#text} at (0,90) size 59x18
+            text run at (0,90) width 59: "underline"
+        RenderBR {br} at (59,90) size 0x18
+        RenderInline {big} at (0,0) size 25x22
+          RenderText {#text} at (0,108) size 25x22
+            text run at (0,108) width 25: "big"
+        RenderBR {br} at (25,111) size 0x18
+        RenderInline {small} at (0,0) size 29x15
+          RenderText {#text} at (0,132) size 29x15
+            text run at (0,132) width 29: "small"
+        RenderText {#text} at (0,0) size 0x0

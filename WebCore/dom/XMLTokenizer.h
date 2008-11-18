@@ -72,6 +72,9 @@ namespace WebCore {
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
         bool isXHTMLDocument() const { return m_isXHTMLDocument; }
+#if ENABLE(WML)
+        bool isWMLDocument() const;
+#endif
 
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource* finishedObj);

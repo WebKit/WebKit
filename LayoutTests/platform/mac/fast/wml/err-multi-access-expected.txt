@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {wml} at (0,0) size 800x76
+    RenderBlock {card} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 164x18
+          text run at (0,0) width 164: "Test for multi-access error"
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 508x18
+          text run at (0,0) width 508: "You should not see this text, because of the error of multi-access in head element"

@@ -29,7 +29,9 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "Document.h"
 #include "HTMLNames.h"
+#include "NodeList.h"
 #include "WMLNames.h"
 
 namespace WebCore {
@@ -54,17 +56,56 @@ bool WMLPElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry
 void WMLPElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == HTMLNames::alignAttr) {
-        String v = attr->value();
-        if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
+        const AtomicString& value = attr->value();
+        if (equalIgnoringCase(value, "middle") || equalIgnoringCase(value, "center"))
             addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitCenter);
-        else if (equalIgnoringCase(attr->value(), "left"))
+        else if (equalIgnoringCase(value, "left"))
             addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitLeft);
-        else if (equalIgnoringCase(attr->value(), "right"))
+        else if (equalIgnoringCase(value, "right"))
             addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addCSSProperty(attr, CSSPropertyTextAlign, v);
+            addCSSProperty(attr, CSSPropertyTextAlign, value);
+    } else if (attr->name() == modeAttr) {
+        m_mode = attr->value();
+        if (m_mode == "wrap")
+            addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
+        else if (m_mode == "nowrap")
+            addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueNowrap);
     } else
         WMLElement::parseMappedAttribute(attr);
+}
+
+void WMLPElement::insertedIntoDocument()
+{
+    WMLElement::insertedIntoDocument();
+
+    // If not explicitly specified, the linewrap mode is identical to 
+    // the line-wrap mode of the previous paragraph in the text flow of
+    // a card. The default mode for the first paragraph in a card is wrap.
+    if (!m_mode.isEmpty())
+        return;
+
+    RefPtr<NodeList> nodeList = document()->getElementsByTagNameNS(wmlNamespaceURI, "p");
+    if (!nodeList)
+        return;
+
+    int length = nodeList->length();
+    if (length < 2)
+        return;
+
+    // Assure we're the last inserted paragraph element
+    // This only works while parsing, otherwhise this statement is never true.
+    if (nodeList->item(length - 1) != this)
+        return;
+
+    WMLPElement* lastParagraph = static_cast<WMLPElement*>(nodeList->item(length - 2));
+    ASSERT(lastParagraph);
+
+    String lastMode = lastParagraph->getAttribute(modeAttr);
+    if (lastMode.isEmpty() || lastMode == "wrap") // Default value, do nothing.
+        return;
+
+    setAttribute(modeAttr, lastMode);
 }
 
 }

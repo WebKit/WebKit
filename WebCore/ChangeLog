@@ -1,3 +1,51 @@
+2008-11-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22334
+
+        Add WMLBRElement, correcting <br/> behaviour in WML.
+        Enable entity replacment for WML documents.
+        Handle WML specific <p> 'mode' attribute.
+
+        Generate layout tests results for fast/wml.
+
+        Tests cases that pass now:
+        fast/wml/br-element-in-table.wml
+        fast/wml/br-element-in-text.wml
+        fast/wml/case-sensitivity.wml
+        fast/wml/cdata-section.wml
+        fast/wml/comment.wml
+        fast/wml/entity.wml
+        fast/wml/p-align.wml
+        fast/wml/p-mode.wml
+        fast/wml/text-emphasis.wml
+        fast/wml/validate-dtd.wml
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::isWMLDocument):
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * dom/XMLTokenizer.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::internalSubset):
+        (WebCore::getEntityHandler):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parse):
+        * wml/WMLBRElement.cpp: Added.
+        (WebCore::WMLBRElement::WMLBRElement):
+        (WebCore::WMLBRElement::mapToEntry):
+        (WebCore::WMLBRElement::parseMappedAttribute):
+        (WebCore::WMLBRElement::createRenderer):
+        * wml/WMLBRElement.h: Added.
+        * wml/WMLPElement.cpp:
+        (WebCore::WMLPElement::parseMappedAttribute):
+        (WebCore::WMLPElement::insertedIntoDocument):
+        * wml/WMLPElement.h:
+        * wml/WMLTagNames.in:
+
 2008-11-18  Aaron Boodman  aa@chromium.org
 
         Reviewed by Maciej Stachowiak.

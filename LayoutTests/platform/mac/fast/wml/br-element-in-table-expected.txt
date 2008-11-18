@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x136
+  RenderBlock {wml} at (0,0) size 800x136
+    RenderBlock {card} at (8,16) size 784x112
+      RenderBlock {p} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 765x36
+          text run at (0,0) width 765: "This test case is used to test br element in a table. each cell is aligned to left, and the BR will break the \"xxxxxxxx\" text in"
+          text run at (0,18) width 60: "the last td"
+      RenderTable {table} at (0,52) size 155x60
+        RenderTableSection (anonymous) at (0,0) size 155x60
+          RenderTableRow {tr} at (0,2) size 155x18
+            RenderTableCell {td} at (2,2) size 53x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 53x18
+                text run at (0,0) width 53: "Cell one"
+            RenderTableCell {td} at (57,2) size 54x18 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 54x18
+                text run at (0,0) width 54: "Cell two"
+            RenderTableCell {td} at (113,2) size 40x18 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 15x18
+                text run at (0,0) width 15: "c3"
+          RenderTableRow {tr} at (0,22) size 155x36
+            RenderTableCell {td} at (2,31) size 53x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 33x18
+                text run at (0,0) width 33: "cell a"
+            RenderTableCell {td} at (57,31) size 54x18 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 34x18
+                text run at (0,0) width 34: "cell b"
+            RenderTableCell {td} at (113,22) size 40x36 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 40x18
+                text run at (0,0) width 40: "xxxxx"
+              RenderBR {br} at (40,0) size 0x18
+              RenderText {#text} at (0,18) size 24x18
+                text run at (0,18) width 24: "xxx"

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {wml} at (0,0) size 800x76
+    RenderBlock {card} at (8,16) size 784x52
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {refresh} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {do} at (0,0) size 0x0 [bgcolor=#D3D3D3]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {refresh} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 399x18
+          text run at (0,0) width 399: "Test for the error that more than one do element has same name"
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 518x18
+          text run at (0,0) width 518: "You should NOT see this text, because of the error of name-conflict of do element"
