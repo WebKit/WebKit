@@ -1,3 +1,13 @@
+2008-11-18  Aaron Boodman  aa@chromium.org
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22301
+        Always call dispatchDidFinishDocumentLoad before Window's onload event.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedParsing):
+
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
