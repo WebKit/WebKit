@@ -1017,6 +1017,7 @@ webcore_sources += \
 	WebCore/loader/FrameLoader.cpp \
 	WebCore/loader/FrameLoader.h \
 	WebCore/loader/FrameLoaderClient.h \
+	WebCore/loader/FrameLoaderClient.cpp \
 	WebCore/loader/FrameLoaderTypes.h \
 	WebCore/loader/ImageDocument.cpp \
 	WebCore/loader/ImageDocument.h \

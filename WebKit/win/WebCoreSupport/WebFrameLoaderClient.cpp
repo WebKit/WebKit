@@ -479,42 +479,13 @@ void WebFrameLoaderClient::savePlatformDataToCachedPage(CachedPage* cachedPage)
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
-    Frame* frame = core(m_webFrame);
-    ASSERT(frame);
+    WebView* view = m_webFrame->webView();
 
-    Page* page = frame->page();
-    ASSERT(page);
-
-    bool isMainFrame = frame == page->mainFrame();
-
-    if (isMainFrame && frame->view())
-        frame->view()->setParentVisible(false);
-
-    frame->setView(0);
-
-    WebView* webView = m_webFrame->webView();
-
-    FrameView* frameView;
-    if (isMainFrame) {
-        RECT rect;
-        webView->frameRect(&rect);
-        frameView = new FrameView(frame, IntRect(rect).size());
-    } else
-        frameView = new FrameView(frame);
-
-    frame->setView(frameView);
-    frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
-
-    m_webFrame->updateBackground();
-
-    if (isMainFrame)
-        frameView->setParentVisible(true);
-
-    if (frame->ownerRenderer())
-        frame->ownerRenderer()->setWidget(frameView);
-
-    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
-        frame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
+    RECT rect;
+    webView->frameRect(&rect);
+    bool transparent = webView->transparent();
+    Color backgroundColor = transparent ? Color::transparent : Color::white;
+    WebCore::FrameLoaderClient::transitionToCommittedForNewPage(core(m_webFrame), IntRect(rect).size(), backgroundColor, transparent);
 }
 
 bool WebFrameLoaderClient::canCachePage() const

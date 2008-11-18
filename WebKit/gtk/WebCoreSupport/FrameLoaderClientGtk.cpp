@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FrameLoaderClientGtk.h"
 
+#include "Color.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -753,42 +754,22 @@ void FrameLoaderClient::transitionToCommittedFromCachedPage(CachedPage*)
 
 void FrameLoaderClient::transitionToCommittedForNewPage()
 {
+    WebKitWebView* containingWindow = getViewFromFrame(m_frame);
+    IntSize size = IntSize(GTK_WIDGET(containingWindow)->allocation.width,
+                           GTK_WIDGET(containingWindow)->allocation.height);
+    bool transparent = webkit_web_view_get_transparent(containingWindow);
+    Color backgroundColor = transparent ? WebCore::Color::transparent : WebCore::Color::white;
     Frame* frame = core(m_frame);
     ASSERT(frame);
 
-    Page* page = frame->page();
-    ASSERT(page);
+    WebCore::FrameLoaderClient::transitionToCommittedForNewPage(frame, size, backgroundColor, transparent);
 
-    WebKitWebView* containingWindow = getViewFromFrame(m_frame);
-    bool isMainFrame = frame == page->mainFrame();
+    // We need to do further manipulation on the FrameView if it was the mainFrame
+    if (frame != frame->page()->mainFrame())
+        return;
 
-    if (isMainFrame && frame->view())
-        frame->view()->setParentVisible(false);
-
-    frame->setView(0);
-
-    FrameView* frameView;
-    if (isMainFrame) {
-        IntSize size = IntSize(GTK_WIDGET(containingWindow)->allocation.width,
-                               GTK_WIDGET(containingWindow)->allocation.height);
-        frameView = new FrameView(frame, size);
-        WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
-        frameView->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
-    } else
-        frameView = new FrameView(frame);
-
-    frame->setView(frameView);
-    // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
-    frameView->deref();
-
-    if (isMainFrame)
-        frameView->setParentVisible(true);
-
-    if (frame->ownerRenderer())
-        frame->ownerRenderer()->setWidget(frameView);
-
-    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
-        frame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW_GET_PRIVATE(containingWindow);
+    frame->view()->setGtkAdjustments(priv->horizontalAdjustment, priv->verticalAdjustment);
 }
 
 }

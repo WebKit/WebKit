@@ -822,8 +822,12 @@ void QWebPagePrivate::leaveEvent(QEvent *ev)
 void QWebPage::setPalette(const QPalette &pal)
 {
     d->palette = pal;
-    if (d->mainFrame)
-        d->mainFrame->d->updateBackground();
+    if (!d->mainFrame || !d->mainFrame->d->frame->view())
+        return;
+
+    QBrush brush = pal.brush(QPalette::Base);
+    QColor backgroundColor = brush.style() == Qt::SolidPattern ? brush.color() : QColor();
+    QWebFramePrivate::core(d->mainFrame)->view()->updateBackgroundRecursively(backgroundColor, !backgroundColor.alpha());
 }
 
 QPalette QWebPage::palette() const

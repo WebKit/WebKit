@@ -3,6 +3,7 @@
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
+ * Coypright (C) 2008 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -211,28 +212,10 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     ASSERT(m_frame);
     ASSERT(m_webFrame);
 
-    Page* page = m_frame->page();
-    ASSERT(page);
-
-    bool isMainFrame = m_frame == page->mainFrame();
-
-    m_frame->setView(0);
-
-    FrameView* frameView;
-    if (isMainFrame)
-        frameView = new FrameView(m_frame, m_webFrame->page()->viewportSize());
-    else
-        frameView = new FrameView(m_frame);
-
-    m_frame->setView(frameView);
-    // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
-    frameView->deref();
-
-    if (m_webFrame && m_webFrame->page())
-        m_webFrame->d->updateBackground();
-
-    if (m_frame->ownerRenderer())
-        m_frame->ownerRenderer()->setWidget(frameView);
+    QBrush brush = m_webFrame->page()->palette().brush(QPalette::Base);
+    QColor backgroundColor = brush.style() == Qt::SolidPattern ? brush.color() : QColor();
+    WebCore::FrameLoaderClient::transitionToCommittedForNewPage(m_frame, m_webFrame->page()->viewportSize(),
+                                                                backgroundColor, !backgroundColor.alpha());
 }
 
 

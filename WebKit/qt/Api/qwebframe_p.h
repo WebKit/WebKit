@@ -78,8 +78,6 @@ public:
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy; 
 
-    void updateBackground();
-
     static WebCore::Frame* core(QWebFrame*);
     static QWebFrame* kit(WebCore::Frame*);
 

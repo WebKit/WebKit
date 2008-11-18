@@ -1,3 +1,25 @@
+2008-11-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Attempt to share transitionToCommittedForNewPage of FrameLoaderClient with the different ports
+
+        After Hyatt's work on Widget and ScrollView there is little difference
+        between the implementation of Qt, Gtk+ and Win. In fact any kind of
+        difference is mostly a bug. Alp has fixed two of such errors for the Gtk+
+        port and the Qt port has at least one of them left.
+
+        The only difference between the implementations is in getting the the
+        IntSize for the new FrameView, the background color to be applied and
+        eventually some post processing.
+
+        Unify the implementations by providing a static helper function that
+        takes a Frame, IntSize, color and transparency bit and calling it from
+        the Gtk+, the Qt and the Windows port.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+
 2008-11-16  Christian Dywan  <christian@twoasts.de>
 
         Reviewed by Holger Freyther.
