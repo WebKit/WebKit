@@ -1,3 +1,43 @@
+2008-11-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - first cut at https://bugs.webkit.org/show_bug.cgi?id=10957
+          <rdar://problem/5516594> please add support for HTTP-only cookies
+
+        Test: http/tests/xmlhttprequest/get-dangerous-headers.html
+
+        No test for HTTP-only support in JavaScript yet, since the Mac and Win changes
+        require an updated CFNetwork.
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::isHTTPOnly): Added.
+        (WebCore::filterCookies): Added.
+        (WebCore::cookies): Use filterCookies to prevent getting HTTP-only cookies.
+        (WebCore::setCookies): Use filterCookies to prevent setting HTTP-only cookies.
+
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::isHTTPOnly): Added.
+        (WebCore::filterCookies): Added.
+        (WebCore::setCookies): Use filterCookies to prevent getting HTTP-only cookies.
+        (WebCore::cookies): Use filterCookies to prevent getting HTTP-only cookies.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSetCookieHeader): Added.
+        (WebCore::XMLHttpRequest::getAllResponseHeaders): Hide Set-Cookie headers from
+        clients that don't have local-resource privileges.
+        (WebCore::XMLHttpRequest::getResponseHeader): Ditto.
+
+        - clean soup-specific details out of shared cookie jar header
+
+        * platform/CookieJar.h: Removed the soup-specific parts of this.
+        * platform/network/soup/CookieJarSoup.cpp: Changed to include
+        CookieJarSoup.h. Tweaked implementation a bit to handle UTF-8 better.
+        * platform/network/soup/CookieJarSoup.h: Added. Has the Soup-specified
+        part of CookieJar.h.
+        * platform/network/soup/ResourceHandleSoup.cpp: Changed to include
+        CookieJarSoup.h.
+
 2008-11-18  Steve Falkenburg  <sfalken@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=22329

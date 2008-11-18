@@ -24,7 +24,7 @@
 #include "ResourceHandle.h"
 
 #include "Base64.h"
-#include "CookieJar.h"
+#include "CookieJarSoup.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "HTTPParsers.h"

@@ -1,3 +1,15 @@
+2008-11-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - add a test for XMLHttpRequest Set-Cookie blocking
+
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers-expected.txt:
+        Updated since we now log attempts to get headers that are not allowed cross-domain to the console.
+        * http/tests/xmlhttprequest/get-dangerous-headers-expected.txt: Added.
+        * http/tests/xmlhttprequest/get-dangerous-headers.html: Added.
+        * http/tests/xmlhttprequest/resources/get-set-cookie.cgi: Tweak script a bit.
+
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Darin Adler.

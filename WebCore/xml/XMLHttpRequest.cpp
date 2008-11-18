@@ -166,6 +166,11 @@ static bool isValidHeaderValue(const String& name)
     return !name.contains('\r') && !name.contains('\n');
 }
 
+static bool isSetCookieHeader(const String& name)
+{
+    return equalIgnoringCase(name, "set-cookie") || equalIgnoringCase(name, "set-cookie2");
+}
+
 XMLHttpRequest::XMLHttpRequest(Document* doc)
     : ActiveDOMObject(doc, this)
     , m_async(true)
@@ -840,7 +845,19 @@ void XMLHttpRequest::overrideMimeType(const String& override)
 {
     m_mimeTypeOverride = override;
 }
-    
+
+static void reportUnsafeUsage(Document* document, const String& message)
+{
+    if (!document)
+        return;
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+    // It's not good to report the bad usage without indicating what source line it came from.
+    // We should pass additional parameters so we can tell the console where the mistake occurred.
+    frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String());
+}
+
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
     if (m_state != OPENED || m_loader) {
@@ -861,8 +878,7 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
     if (!document()->securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
-        if (document() && document()->frame())
-            document()->frame()->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Refused to set unsafe header \"" + name + "\"", 1, String());
+        reportUnsafeUsage(document(), "Refused to set unsafe header \"" + name + "\"");
         return;
     }
 
@@ -889,18 +905,27 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
     }
 
     Vector<UChar> stringBuilder;
-    String separator(": ");
 
     HTTPHeaderMap::const_iterator end = m_response.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = m_response.httpHeaderFields().begin(); it!= end; ++it) {
+        // Hide Set-Cookie header fields from the XMLHttpRequest client for these reasons:
+        //     1) If the client did have access to the fields, then it could read HTTP-only
+        //        cookies; those cookies are supposed to be hidden from scripts.
+        //     2) There's no known harm in hiding Set-Cookie header fields entirely; we don't
+        //        know any widely used technique that requires access to them.
+        //     3) Firefox has implemented this policy.
+        if (isSetCookieHeader(it->first) && !document()->securityOrigin()->canLoadLocalResources())
+            continue;
+
         if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first))
             continue;
 
         stringBuilder.append(it->first.characters(), it->first.length());
-        stringBuilder.append(separator.characters(), separator.length());
+        stringBuilder.append(':');
+        stringBuilder.append(' ');
         stringBuilder.append(it->second.characters(), it->second.length());
-        stringBuilder.append((UChar)'\r');
-        stringBuilder.append((UChar)'\n');
+        stringBuilder.append('\r');
+        stringBuilder.append('\n');
     }
 
     return String::adopt(stringBuilder);
@@ -916,8 +941,16 @@ String XMLHttpRequest::getResponseHeader(const String& name, ExceptionCode& ec) 
     if (!isValidToken(name))
         return "";
 
-    if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name))
+    // See comment in getAllResponseHeaders above.
+    if (isSetCookieHeader(name) && !document()->securityOrigin()->canLoadLocalResources()) {
+        reportUnsafeUsage(document(), "Refused to get unsafe header \"" + name + "\"");
         return "";
+    }
+
+    if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name)) {
+        reportUnsafeUsage(document(), "Refused to get unsafe header \"" + name + "\"");
+        return "";
+    }
 
     return m_response.httpHeaderField(name);
 }

@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2008 Xan Lopez <xan@gnome.org>
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,24 +18,16 @@
  */
 
 #include "config.h"
+#include "CookieJarSoup.h"
+
 #include "CString.h"
-#include "CookieJar.h"
-
 #include "KURL.h"
-#include "PlatformString.h"
-#include "StringHash.h"
-
-#include <libsoup/soup.h>
 
 namespace WebCore {
 
 SoupCookieJar* getCookieJar()
 {
-    static SoupCookieJar* jar = NULL;
-
-    if (!jar)
-        jar = soup_cookie_jar_new();
-
+    static SoupCookieJar* jar = soup_cookie_jar_new();
     return jar;
 }
 
@@ -60,7 +53,7 @@ String cookies(const Document* /*document*/, const KURL& url)
     char* cookies = soup_cookie_jar_get_cookies(jar, uri, FALSE);
     soup_uri_free(uri);
 
-    String result(cookies);
+    String result(String::fromUTF8(cookies));
     g_free(cookies);
 
     return result;

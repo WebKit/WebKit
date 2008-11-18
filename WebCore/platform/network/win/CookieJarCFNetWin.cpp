@@ -27,23 +27,60 @@
 #include "CookieJar.h"
 
 #include "CookieStorageWin.h"
+#include "Document.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include "Document.h"
 #include "ResourceHandle.h"
-#include <windows.h>
-#include <CoreFoundation/CoreFoundation.h>
 #include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <windows.h>
 
 namespace WebCore {
 
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
 
+typedef Boolean (*IsHTTPOnlyFunction)(CFHTTPCookieRef);
+
+static IsHTTPOnlyFunction findIsHTTPOnlyFunction()
+{
+    return reinterpret_cast<IsHTTPOnlyFunction>(GetProcAddress(GetModuleHandleA("CFNetwork"), "CFHTTPCookieIsHTTPOnly"));
+}
+
+static bool isHTTPOnly(CFHTTPCookieRef cookie)
+{
+    // Once we require a newer version of CFNetwork with the CFHTTPCookieIsHTTPOnly function,
+    // we can change this to be a normal function call and eliminate findIsHTTPOnlyFunction.
+    static IsHTTPOnlyFunction function = findIsHTTPOnlyFunction();
+    return function && function(cookie);
+}
+
+static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
+{
+    CFIndex count = CFArrayGetCount(unfilteredCookies);
+    RetainPtr<CFMutableArrayRef> filteredCookies(AdoptCF, CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks));
+    for (CFIndex i = 0; i < count; ++i) {
+        CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(unfilteredCookies, i);
+
+        // <rdar://problem/5632883> CFHTTPCookieStorage would store an empty cookie,
+        // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
+        // that, but we also need to avoid sending cookies that were previously stored, and
+        // there's no harm to doing this check because such a cookie is never valid.
+        if (!CFStringGetLength(CFHTTPCookieGetName(cookie)))
+            continue;
+
+        if (isHTTPOnly(cookie))
+            continue;
+
+        CFArrayAppendValue(filteredCookies.get(), cookie);
+    }
+    return filteredCookies;
+}
+
 void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, const String& value)
 {
-    // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
+    // <rdar://problem/5632883> CFHTTPCookieStorage stores an empty cookie, which would be sent as "Cookie: =".
     if (value.isEmpty())
         return;
 
@@ -59,13 +96,14 @@ void setCookies(Document* /*document*/, const KURL& url, const KURL& policyURL, 
     String cookieString = value.contains('=') ? value : value + "=";
 
     RetainPtr<CFStringRef> cookieStringCF(AdoptCF, cookieString.createCFString());
-    RetainPtr<CFDictionaryRef> headerFieldsCF(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, (const void**)&s_setCookieKeyCF, 
-        (const void**)&cookieStringCF, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr<CFDictionaryRef> headerFieldsCF(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault,
+        (const void**)&s_setCookieKeyCF, (const void**)&cookieStringCF, 1,
+        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault,
         headerFieldsCF.get(), urlCF.get()));
 
-    CFHTTPCookieStorageSetCookies(cookieStorage, cookiesCF.get(), urlCF.get(), policyURLCF.get());
+    CFHTTPCookieStorageSetCookies(cookieStorage, filterCookies(cookiesCF.get()).get(), urlCF.get(), policyURLCF.get());
 }
 
 String cookies(const Document* /*document*/, const KURL& url)
@@ -74,24 +112,11 @@ String cookies(const Document* /*document*/, const KURL& url)
     if (!cookieStorage)
         return String();
 
-    String cookieString;
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
-    bool secure = equalIgnoringCase(url.protocol(), "https");
-
+    bool secure = url.protocolIs("https");
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), secure));
-
-    // <rdar://problem/5632883> CFHTTPCookieStorage happily stores an empty cookie, which would be sent as "Cookie: =".
-    // We have a workaround in setCookies() to prevent that, but we also need to avoid sending cookies that were previously stored.
-    CFIndex count = CFArrayGetCount(cookiesCF.get());
-    RetainPtr<CFMutableArrayRef> cookiesForURLFilteredCopy(AdoptCF, CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks));
-    for (CFIndex i = 0; i < count; ++i) {
-        CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
-        if (CFStringGetLength(CFHTTPCookieGetName(cookie)) != 0)
-            CFArrayAppendValue(cookiesForURLFilteredCopy.get(), cookie);
-    }
-    RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesForURLFilteredCopy.get()));
-
+    RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, filterCookies(cookiesCF.get()).get()));
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 

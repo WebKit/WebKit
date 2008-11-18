@@ -34,53 +34,77 @@
 typedef unsigned NSUInteger;
 #endif
 
+@interface NSHTTPCookie (WebCoreHTTPOnlyCookies)
+- (BOOL)isHTTPOnly;
+@end
+
 namespace WebCore {
 
-String cookies(const Document* /*document*/, const KURL& url)
+static bool isHTTPOnly(NSHTTPCookie *cookie)
+{
+    // Once we require a newer version of Foundation with the isHTTPOnly method,
+    // we can eliminate the instancesRespondToSelector: check.
+    static bool supportsHTTPOnlyCookies = [NSHTTPCookie instancesRespondToSelector:@selector(isHTTPOnly)];
+    return supportsHTTPOnlyCookies && [cookie isHTTPOnly];
+}
+
+static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
+{
+    NSUInteger count = [unfilteredCookies count];
+    RetainPtr<NSMutableArray> filteredCookies(AdoptNS, [[NSMutableArray alloc] initWithCapacity:count]);
+
+    for (NSUInteger i = 0; i < count; ++i) {
+        NSHTTPCookie *cookie = (NSHTTPCookie *)[unfilteredCookies objectAtIndex:i];
+
+        // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
+        // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
+        // that, but we also need to avoid sending cookies that were previously stored, and
+        // there's no harm to doing this check because such a cookie is never valid.
+        if (![[cookie name] length])
+            continue;
+
+        if (isHTTPOnly(cookie))
+            continue;
+
+        [filteredCookies.get() addObject:cookie];
+    }
+
+    return filteredCookies;
+}
+
+String cookies(const Document*, const KURL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSURL *cookieURL = url;
-    NSArray *cookiesForURL = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
-
-    // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would happily store an empty cookie, which would be sent as "Cookie: =".
-    // We have a workaround in setCookies() to prevent that, but we also need to avoid sending cookies that were previously stored.
-    NSUInteger count = [cookiesForURL count];
-    RetainPtr<NSMutableArray> cookiesForURLFilteredCopy(AdoptNS, [[NSMutableArray alloc] initWithCapacity:count]);
-    for (NSUInteger i = 0; i < count; ++i) {
-        NSHTTPCookie *cookie = (NSHTTPCookie *)[cookiesForURL objectAtIndex:i];
-        if ([[cookie name] length] != 0)
-            [cookiesForURLFilteredCopy.get() addObject:cookie];
-    }
-
-    NSDictionary *header = [NSHTTPCookie requestHeaderFieldsWithCookies:cookiesForURLFilteredCopy.get()];
-    return [header objectForKey:@"Cookie"];
+    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
+    return [[NSHTTPCookie requestHeaderFieldsWithCookies:filterCookies(cookies).get()] objectForKey:@"Cookie"];
 
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
-void setCookies(Document* /*document*/, const KURL& url, const KURL& policyBaseURL, const String& cookieStr)
+void setCookies(Document*, const KURL& url, const KURL& policyBaseURL, const String& cookieStr)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would happily store an empty cookie, which would be sent as "Cookie: =".
+    // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
+    // which would be sent as "Cookie: =".
     if (cookieStr.isEmpty())
         return;
 
-    NSURL *cookieURL = url;
-    
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
-    
+
+    NSURL *cookieURL = url;    
     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL];
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:cookies forURL:cookieURL mainDocumentURL:policyBaseURL];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:filterCookies(cookies).get() forURL:cookieURL mainDocumentURL:policyBaseURL];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool cookiesEnabled(const Document* /*document*/)
+bool cookiesEnabled(const Document*)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
