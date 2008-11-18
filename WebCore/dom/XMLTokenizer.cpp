@@ -5,6 +5,7 @@
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Torch Mobile Inc.  http://www.torchmobile.com/
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -275,9 +276,16 @@ void XMLTokenizer::insertErrorMessageBlock()
     }
 #if ENABLE(SVG)
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
-        // Until our SVG implementation has text support, it is best if we 
-        // wrap the erroneous SVG document in an xhtml document and render
-        // the combined document with error messages.
+        RefPtr<Node> rootElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "html", ec);
+        RefPtr<Node> body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "body", ec);
+        rootElement->appendChild(body, ec);
+        body->appendChild(documentElement, ec);
+        doc->appendChild(rootElement.get(), ec);
+        documentElement = body.get();
+    }
+#endif
+#if ENABLE(WML)
+    else if (doc->isWMLDocument()) {
         RefPtr<Node> rootElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "html", ec);
         RefPtr<Node> body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI, "body", ec);
         rootElement->appendChild(body, ec);

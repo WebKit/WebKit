@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<template>
+<do type="accept" name="do1" label="Template Do">
+<prev/>
+</do>
+</template>
+
+<card id="first">
+<p> Test for do-shadow in WML</p>
+<p>This is first card, which won't shadow deck-level do</p>
+<anchor>
+<go href="#second">Go to card 2</go>
+</anchor>
+</card>
+
+<card id="second">
+<p>deck-level do is shadowed with noop. It is not exposed to the user </p>
+<do type="options" name="do1" label="second do">
+<noop/>
+</do>
+<anchor>
+<go href="#third">Go to card 3</go>
+</anchor>
+</card>
+
+<card id="third">
+<p>deck-level do is shadowed. It is replaced by a card-level do because they have the same name</p>
+<p>
+<do type="options" name="do1" label="do1">
+<go href="./test.wml"/>
+</do>
+<br/>
+<anchor>
+<go href="#first">Go to card 1</go>
+</anchor>
+</p>
+</card>
+</wml>
+

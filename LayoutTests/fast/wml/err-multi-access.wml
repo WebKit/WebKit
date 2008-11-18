@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<head>
+<access path="/" domain="domain"/>
+<access path="/path" domain="domain"/>
+</head>
+<card id="card1">
+  <p> Test for multi-access error</p>
+  You should not see this text, because of the error of multi-access in head element
+</card>
+</wml>

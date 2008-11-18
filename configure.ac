@@ -451,6 +451,14 @@ AC_ARG_ENABLE(svg,
               [],[enable_svg="yes"])
 AC_MSG_RESULT([$enable_svg])
 
+# check whether to enable WML support
+AC_MSG_CHECKING([whether to enable WML support])
+AC_ARG_ENABLE(wml,
+              AC_HELP_STRING([--enable-wml],
+                             [enable support for WML [default=no]]),
+              [],[enable_wml="no"])
+AC_MSG_RESULT([$enable_wml])
+
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
@@ -702,6 +710,7 @@ AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
+AM_CONDITIONAL([ENABLE_WML],[test "$enable_wml" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 
@@ -742,6 +751,7 @@ Features:
  SVG use element support                                  : $enable_svg_use_element
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
+ WML support                                              : $enable_wml
 GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon

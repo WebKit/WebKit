@@ -4,6 +4,8 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Torch Mobile Inc.  All rights reserved.
+ *               http://www.torchmobile.com/
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -295,6 +297,9 @@ public:
 #endif
     virtual bool isPluginDocument() const { return false; }
     virtual bool isMediaDocument() const { return false; }
+#if ENABLE(WML)
+    virtual bool isWMLDocument() const { return false; }
+#endif
     
     CSSStyleSelector* styleSelector() const { return m_styleSelector; }
 

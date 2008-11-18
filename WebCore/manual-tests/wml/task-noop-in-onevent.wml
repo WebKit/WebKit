@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card> 
+<p> Test for noop task in onevent element of WML</p>
+<p> If it passes, you will see the card one in this deck</p>
+  <onevent type="onentimer">
+  <noop/>
+  </onevent>
+<p> This is Card one </p>
+</card> 
+</wml> 

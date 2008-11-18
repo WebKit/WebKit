@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card id="firstcard" title="Test for Setvar element">
+ <p> Test for setvar element in WML </p>
+ <p>This is the first card , has variable: VAR='$var'</p>
+ <p>Click "Refresh" will update the value of VAR varaible which specified by setvar element</p>
+  <do name="Refresh" type="accept"> 
+   <refresh>
+   <setvar name="var" value="VALUE"/>
+   </refresh>
+  </do>
+ </card>
+</wml>
+

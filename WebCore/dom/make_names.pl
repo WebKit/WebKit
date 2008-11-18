@@ -212,7 +212,7 @@ sub printConstructors
     for my $name (sort keys %names) {
         my $ucName = $names{$name}{'interfaceName'};
 
-        print F "$parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
+        print F "static $parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
         print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
         print F "}\n\n";

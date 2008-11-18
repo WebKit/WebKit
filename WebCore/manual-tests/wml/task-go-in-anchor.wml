@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card title="Anchor Tag">
+<p> Test for WML go task enclosed with anchor element </p>
+<p> click 'Next page' to go to test.wml </p>
+<p>
+<anchor>Next page<go href="../test.wml"/> </anchor>
+</p>
+</card>
+</wml>

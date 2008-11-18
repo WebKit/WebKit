@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<head>
+<meta http-equiv="Content-Type" http-equiv="Content-Type" Content="text/vnd.wap.wml; Charset=gb2312"/>
+</head>
+ <card id="card1">
+  <p> Test for meta multi-http-equiv error</p>
+  You should not see this text, because of the error of multi-http-equiv in meta element
+ </card>
+</wml>

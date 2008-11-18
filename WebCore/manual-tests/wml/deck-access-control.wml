@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card onenterforward="targetdeck.wml">
+<p> Test for Deck Access control in WML. </p>
+<p> This deck will try to jump to "targetdeck.wml" when it is loaded. But it will <strong>FAIL</strong> because "targetdeck.wml" just allows "access-target.wml" to access it.</p>
+<p> You can click 'Go' to enter 'access-target.wml', and then enter 'targetdeck.wml' from there</p>
+<anchor title="go to access-target.wml"><go href="./access-target.wml">Go</go></anchor>
+</card>
+</wml>

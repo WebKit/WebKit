@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<template id="2">
+<do name="go" type="accept" label="Template do">
+<go href="#firstcard"/>
+</do>
+</template>
+ <card id="firstcard" title="One">
+ <p> Test for do element in template in WML</p>
+ <p> Whichever card you entered, you can see the template do button because it's global</p>
+  <p>This is the first card</p>
+  <p><anchor><go href="#secondcard"/>Go to card2</anchor></p>
+ </card>
+
+ <card id="secondcard" title="Two">
+ <p> Test for do element in template in WML</p>
+ <p> Whichever card you entered, you can see the template do button because it's global</p>
+  <p>This is the second card </p>
+  <anchor>Go to card 3
+  <go href="#thirdcard"/>
+  </anchor>
+ </card>
+
+ <card id="thirdcard" title="Three">
+ <p> Test for do element in template in WML</p>
+ <p> Whichever card you entered, you can see the template do button because it's global</p>
+  <p>This is the third card</p>
+  <anchor>Back<prev/></anchor>
+ </card>
+</wml>

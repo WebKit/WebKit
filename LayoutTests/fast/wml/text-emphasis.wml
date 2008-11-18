@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card title="Text Formatting">
+  <p> Test for text emphasis of WML </p>
+  <p>
+   normal<br/>
+   <em>emphasized</em><br/>
+   <strong>strong</strong><br/>
+   <b>bold</b><br/>
+   <i>italic</i><br/>
+   <u>underline</u><br/>
+   <big>big</big><br/>
+   <small>small</small>
+  </p>
+ </card>
+</wml>

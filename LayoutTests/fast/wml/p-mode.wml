@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapfourm.org/DTD/wml_1.1.xml">
+
+<wml>
+<card id="card1" title="Card1"> 
+<![CDATA[ <p> default mode is "wrap" for the first p element ]]>
+<p> Test for mode attribute of p element in WML </p>
+<br/>
+<![CDATA[ <p> it will use the mode of previous paragraph element]]>
+<p>
+Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who wish to extend their knowledge to the wireless world. 
+<br/>
+HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+</p>
+<br/>
+<![CDATA[ <p mode="nowrap">]]>
+<p mode="nowrap">
+Here you can learn various mobile technologies like WAP / WAP 2.0, WML, WMLScript, XHTML MP, WCSS / WAP CSS, UAProf and SMS through our free tutorials, articles and examples. This web site can help web programmers who wish to extend their knowledge to the wireless world. 
+<br/>
+HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+</p>
+</card>
+</wml>

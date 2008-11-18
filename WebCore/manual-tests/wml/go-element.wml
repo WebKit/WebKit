@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card id="card1" title="One">
+  <p> Test for go element in WML </p>
+  <br/>
+  Case 1: jump among one deck
+  <do name="go" type="accept" label="Go to card2">
+   <go href="#card2" sendreferer="true" />
+  </do>
+  <p/>
+  Case 2: jump from one deck to another one
+  <do name="go2" type="accept" label="Go to test.wml">
+   <go href="../test.wml"/>
+  </do>
+  <p/>
+  Case 3: jump to test.wml and post data with post method
+  <do name="go3" type="accept" label="Post to test.wml">
+   <go href="../test.wml" method="post" accept-charset="utf-8, latin1">
+    <postfield name="var1" value="hello"/>
+    <postfield name="var2" value=" world"/>
+   </go>
+  </do>
+  <p/>
+  Case 4: jump to test.wml and send request with get method 
+  <do name="go4" type="accept" label="get from test.wml" sendreferer="true">
+   <go href="../test.wml" method="get" accept-charset="utf-8,latin1,iso-8859-1">
+    <postfield name="var1" value="hello"/>
+    <postfield name="var2" value="friend"/>
+   </go>
+  </do>
+ </card>
+
+ <card id="card2" title="Two">
+  <p align="center">
+  This is the second card
+ </p>
+ </card>
+</wml>
+

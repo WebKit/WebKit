@@ -441,6 +441,56 @@ sub checkWebCoreSVGSupport
     return $hasSVG;
 }
 
+sub hasWMLSupport
+{
+    return 0 if isCygwin();
+
+    my $path = shift;
+
+    if (isQt()) {
+        # FIXME: Check built library for WML support, just like Gtk does it below.
+        return 0;
+    }
+
+    if (isGtk() and $path =~ /WebCore/) {
+        $path .= "/../.libs/webkit-1.0.so";
+    }
+
+    my $hasWMLSupport = 0;
+    if (-e $path) {
+        open NM, "-|", "nm", $path or die;
+        while (<NM>) {
+            $hasWMLSupport = 1 if /WMLElement/;
+        }
+        close NM;
+    }
+    return $hasWMLSupport;
+}
+
+sub removeLibraryDependingOnWML
+{
+    my $frameworkName = shift;
+    my $shouldHaveWML = shift;
+
+    my $path = builtDylibPathForName($frameworkName);
+    return unless -x $path;
+
+    my $hasWML = hasWMLSupport($path);
+    system "rm -f $path" if ($shouldHaveWML xor $hasWML);
+}
+
+sub checkWebCoreWMLSupport
+{
+    my $required = shift;
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $hasWML = hasWMLSupport($path);
+    if ($required && !$hasWML) {
+        die "$framework at \"$path\" does not include WML Support, please run build-webkit --wml\n";
+    }
+    return $hasWML;
+}
+
 sub isQt()
 {
     determineIsQt();

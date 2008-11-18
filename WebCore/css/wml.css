@@ -1,0 +1,551 @@
+/*
+ * The default style sheet used to render HTML.
+ *
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved.
+ *               http://www.torchmobile.com/
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+@namespace "http://www.wapforum.org/DTD/wml_1.1.xml"
+
+wml {
+    display: block
+}
+
+/* children of the <head> element all have display:none */
+head {
+    display: none
+}
+
+meta {
+    display: none
+}
+
+access {
+    display: none
+}
+
+/* generic block-level elements */
+
+card {
+    display: block;
+    margin: 8px
+}
+
+p {
+    display: block;
+    margin: 1.0__qem 0px
+}
+
+div {
+    display: block
+}
+
+layer {
+    display: block
+}
+
+marquee {
+    display: inline-block;
+    overflow: -webkit-marquee
+}
+
+address {
+    display: block
+}
+
+blockquote {
+    display: block;
+    margin: 1__qem 40px 1em 40px
+}
+
+q {
+    display: inline
+}
+
+q:before {
+    content: '"'
+    /* FIXME: content: open-quote; */
+}
+
+q:after {
+    content: '"'
+    /* FIXME: content: close-quote; */
+}
+
+center {
+    display: block;
+    /* special centering to be able to emulate the html4/netscape behaviour */
+    text-align: -webkit-center
+}
+
+hr {
+    display: block;
+    margin: 0.5em auto;
+    border-style: inset;
+    border-width: 1px
+}
+
+map {
+    display: inline
+}
+
+/* tables */
+
+table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 2px;
+    border-color: gray
+}
+
+table[align="center"] {
+    margin-left: auto;
+    margin-right: auto
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit
+}
+
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit
+}
+
+tfoot {
+    display: table-footer-group;
+    vertical-align: middle;
+    border-color: inherit
+}
+
+/* for tables without table section elements (can happen with XHTML or dynamically created tables) */
+table > tr {
+    vertical-align: middle;
+}
+
+col {
+    display: table-column
+}
+
+colgroup {
+    display: table-column-group
+}
+
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit
+}
+
+td, th {
+    display: table-cell;
+    vertical-align: inherit
+}
+
+th {
+    font-weight: bold
+}
+
+caption {
+    display: table-caption;
+    text-align: -webkit-center
+}
+
+/* lists */
+
+ul, menu, dir {
+    display: block;
+    list-style-type: disc;
+    margin: 1__qem 0 1em 0;
+    -webkit-padding-start: 40px
+}
+
+ol {
+    display: block;
+    list-style-type: decimal;
+    margin: 1__qem 0 1em 0;
+    -webkit-padding-start: 40px
+}
+
+li {
+    display: list-item
+}
+
+ul ul, ol ul {
+    list-style-type: circle
+}
+
+ol ol ul, ol ul ul, ul ol ul, ul ul ul {
+    list-style-type: square
+}
+
+dd {
+    display: block;
+    -webkit-margin-start: 40px
+}
+
+dl {
+    display: block;
+    margin: 1__qem 0 1em 0
+}
+
+dt {
+    display: block
+}
+
+ol ul, ul ol, ul ul, ol ol {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+/* form elements */
+
+form {
+    display: block;
+    margin: 0__qem 0 1em 0
+}
+
+label {
+    cursor: default;
+}
+
+legend {
+    display: block;
+    padding-left: 2px;
+    padding-right: 2px;
+    border: none
+}
+
+fieldset {
+    display: block;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding: 0.35em 0.75em 0.625em;
+    border: 2px groove ThreeDFace
+}
+
+button {
+    -webkit-appearance: button;
+}
+
+do {
+    background-color: lightgray;
+}
+
+input, textarea, keygen, select, button, isindex {
+    margin: 0__qem;
+    font: -webkit-small-control;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: -webkit-auto;
+}
+
+input[type="hidden"] {
+    display: none
+}
+
+input, input[type="password"], input[type="search"], isindex {
+    -webkit-appearance: textfield;
+    padding: 1px;
+    background-color: white;
+    border: 2px inset;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    cursor: auto;
+}
+
+input[type="search"] {
+    -webkit-appearance: searchfield;
+    -webkit-box-sizing: border-box;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
+}
+
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: searchfield-decoration;
+}
+
+input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: searchfield-results-decoration;
+}
+
+input[type="search"]::-webkit-search-results-button {
+    -webkit-appearance: searchfield-results-button;
+}
+
+textarea {
+    -webkit-appearance: textarea;
+    background-color: white;
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    -webkit-box-orient: vertical;
+    resize: auto;
+    cursor: auto;
+}
+
+input[type="password"] {
+    -webkit-text-security: disc !important;
+}
+
+input[type="hidden"], input[type="image"], input[type="file"] {
+    -webkit-appearance: initial;
+    padding: initial;
+    background-color: initial;
+    border: initial;
+}
+
+input[type="file"] {
+    -webkit-box-align: baseline;
+}
+
+input:-webkit-autofill {
+    background-color: #FAFFBD !important;
+    background-image:none !important;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin: 3px 0.5ex;
+    padding: initial;
+    background-color: initial;
+    border: initial;
+}
+
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button {
+    -webkit-appearance: push-button;
+    white-space: pre
+}
+
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
+    -webkit-box-align: center;
+    text-align: center;
+    cursor: default;
+    color: ButtonText;
+    padding: 2px 6px 3px 6px;
+    border: 2px outset ButtonFace;
+    background-color: ButtonFace;
+    -webkit-box-sizing: border-box
+}
+
+input[type="range"] {
+    -webkit-appearance: slider-horizontal;
+    padding: initial;
+    border: initial;
+    margin: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: sliderthumb-horizontal;
+}
+
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, button:disabled, select:disabled, keygen:disabled, optgroup:disabled, option:disabled {
+    color: GrayText
+}
+
+input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]:active::-webkit-file-upload-button, button:active {
+    border-style: inset
+}
+
+input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
+    border-style: outset
+}
+
+area, param {
+    display: none
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+    -webkit-box-sizing: border-box;
+}
+
+input[type="radio"] {
+    -webkit-appearance: radio;
+    -webkit-box-sizing: border-box;
+}
+
+keygen, select {
+    -webkit-appearance: menulist;
+    -webkit-box-sizing: border-box;
+    -webkit-box-align: center;
+    border: 1px solid;
+    -webkit-border-radius: 5px;
+    white-space: pre;
+    -webkit-rtl-ordering: logical;
+    color: black;
+    background-color: white;
+    cursor: default;
+}
+
+select[size],
+select[multiple],
+select[size][multiple] {
+    -webkit-appearance: listbox;
+    -webkit-box-align: start;
+    border: 1px inset gray;
+    -webkit-border-radius: initial;
+    white-space: initial;
+}
+
+select[size="0"],
+select[size="1"] {
+    -webkit-appearance: menulist;
+    -webkit-box-align: center;
+    border: 1px solid;
+    -webkit-border-radius: 5px;
+    white-space: pre;
+}
+
+optgroup {
+    font-weight: bolder;
+}
+
+option {
+    font-weight: normal;
+}
+
+/* inline elements */
+
+u, ins {
+    text-decoration: underline
+}
+
+strong, b {
+    font-weight: bolder
+}
+
+i, cite, em, var, address {
+    font-style: italic
+}
+
+tt, code, kbd, samp {
+    font-family: monospace
+}
+
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1__qem 0
+}
+
+big {
+    font-size: larger
+}
+
+small {
+    font-size: smaller
+}
+
+s, strike, del {
+    text-decoration: line-through
+}
+
+sub {
+    vertical-align: sub;
+    font-size: smaller
+}
+
+sup {
+    vertical-align: super;
+    font-size: smaller
+}
+
+nobr {
+    white-space: nowrap
+}
+
+/* states */
+
+:focus { 
+    outline: auto 5px -webkit-focus-ring-color
+}
+
+/* Read-only text fields do not show a focus ring but do still receive focus */
+wml:focus, card:focus, input[readonly]:focus { 
+    outline: none
+}
+  
+input:focus, textarea:focus, isindex:focus, keygen:focus, select:focus {
+    outline-offset: -2px
+}
+
+input[type="button"]:focus,
+input[type="checkbox"]:focus,
+input[type="file"]:focus,
+input[type="hidden"]:focus,
+input[type="image"]:focus,
+input[type="radio"]:focus,
+input[type="reset"]:focus,
+input[type="search"]:focus,
+input[type="submit"]:focus,
+input[type="file"]:focus::-webkit-file-upload-button {
+    outline-offset: 0
+}
+    
+a:-webkit-any-link {
+    color: -webkit-link;
+    text-decoration: underline;
+}
+
+a:-webkit-any-link:active {
+    color: -webkit-activelink
+}
+
+anchor:-webkit-any-link {
+    color: -webkit-link;
+    text-decoration: underline;
+}
+
+anchor:-webkit-any-link:active {
+    color: -webkit-activelink
+}
+
+/* other elements */
+
+noframes {
+    display: none
+}
+
+frameset, frame {
+    display: block
+}
+
+frameset {
+    border-color: inherit
+}
+
+iframe {
+    border: 2px inset
+}
+
+/* noscript is handled internally, as it depends on settings */

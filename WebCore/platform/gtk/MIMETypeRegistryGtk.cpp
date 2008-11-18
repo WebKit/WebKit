@@ -54,6 +54,8 @@ static const ExtensionMap extensionMap [] = {
     { "xml", "text/xml" },
     { "xsl", "text/xsl" },
     { "xhtml", "application/xhtml+xml" },
+    { "wml", "text/vnd.wap.wml" },
+    { "wmlc", "application/vnd.wap.wmlc" },
     { 0, 0 }
 };
 

@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008 Torch Mobile Inc.  All rights reserved.
+ *               http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -270,6 +272,9 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_finishedParsingDuringLowBandwidthDisplay(false)
     , m_needToSwitchOutLowBandwidthDisplay(false)
 #endif 
+#if ENABLE(WML)
+    , m_forceReloadWmlDeck(false)
+#endif
 {
 }
 
@@ -2874,8 +2879,21 @@ void FrameLoader::clientRedirected(const KURL& url, double seconds, double fireD
     m_quickRedirectComing = lockHistory && m_documentLoader && !isJavaScriptFormAction;
 }
 
+#if ENABLE(WML)
+void FrameLoader::setForceReloadWmlDeck(bool reload)
+{
+    m_forceReloadWmlDeck = reload;
+}
+#endif
+
 bool FrameLoader::shouldReload(const KURL& currentURL, const KURL& destinationURL)
 {
+#if ENABLE(WML)
+    // As for WML deck, sometimes it's supposed to be reloaded even if the same URL with fragment
+    if (m_forceReloadWmlDeck)
+        return true;
+#endif
+
     // This function implements the rule: "Don't reload if navigating by fragment within
     // the same URL, but do reload if going to a new URL or to the same URL with no
     // fragment identifier at all."
@@ -4292,7 +4310,11 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form.
     
+#if ENABLE(WML)
+    if (!formData && urlsMatchItem(item) && !m_frame->document()->isWMLDocument()) {
+#else
     if (!formData && urlsMatchItem(item)) {
+#endif
         // Must do this maintenance here, since we don't go through a real page reload
         saveScrollPositionAndViewStateToItem(m_currentHistoryItem.get());
 

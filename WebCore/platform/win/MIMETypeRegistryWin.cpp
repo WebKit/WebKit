@@ -109,6 +109,8 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
         mimetypeMap.add("ico", "image/ico");
         mimetypeMap.add("cur", "image/ico");
         mimetypeMap.add("bmp", "image/bmp");
+        mimetypeMap.add("wml", "text/vnd.wap.wml");
+        mimetypeMap.add("wmlc", "application/vnd.wap.wmlc");
     }
     String result = mimetypeMap.get(ext);
     if (result.isEmpty()) {

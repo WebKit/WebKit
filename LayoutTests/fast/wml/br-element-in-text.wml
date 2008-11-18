@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card title="Paragraphs">
+ <p> This test case is used to test br element in text</p>
+  This is a piece of text <br/>with a line break
+ </card>
+</wml> 

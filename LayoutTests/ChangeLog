@@ -1,3 +1,42 @@
+2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add initial set of WML layout tests, excluding results. These tests
+        will become useful once the whole WML support patch has landed.
+
+        * fast/wml: Added.
+        * fast/wml/br-element-in-table.wml: Added.
+        * fast/wml/br-element-in-text.wml: Added.
+        * fast/wml/card-element.wml: Added.
+        * fast/wml/case-sensitivity.wml: Added.
+        * fast/wml/cdata-section.wml: Added.
+        * fast/wml/comment.wml: Added.
+        * fast/wml/do-element-optional-attr.wml: Added.
+        * fast/wml/do-shadow.wml: Added.
+        * fast/wml/do-template.wml: Added.
+        * fast/wml/entity.wml: Added.
+        * fast/wml/err-event-binding-conflict.wml: Added.
+        * fast/wml/err-invalid-location-for-varref.wml: Added.
+        * fast/wml/err-invalid-tablecolumn-number.wml: Added.
+        * fast/wml/err-invalid-variable-name.wml: Added.
+        * fast/wml/err-multi-access.wml: Added.
+        * fast/wml/err-multi-http-equiv-in-meta.wml: Added.
+        * fast/wml/err-multi-name-in-meta.wml: Added.
+        * fast/wml/err-multi-timer.wml: Added.
+        * fast/wml/err-samename-do.wml: Added.
+        * fast/wml/err-unallowed-task-in-anchor.wml: Added.
+        * fast/wml/img-localsrc.wml: Added.
+        * fast/wml/img-src-localsrc-alt.wml: Added.
+        * fast/wml/img-src.wml: Added.
+        * fast/wml/p-align.wml: Added.
+        * fast/wml/p-mode.wml: Added.
+        * fast/wml/show-first-card.wml: Added.
+        * fast/wml/table-element.wml: Added.
+        * fast/wml/test.wml: Added.
+        * fast/wml/text-emphasis.wml: Added.
+        * fast/wml/validate-dtd.wml: Added.
+
 2008-11-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

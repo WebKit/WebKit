@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<template>
+<onevent type="onenterforward">
+<go href="#card2"/>
+</onevent>
+</template>
+<card id="card1" title="Card One">
+<onevent type="onenterforward">
+<go href="#card3"/>
+</onevent>
+<p>Test for onevent shadowing in WML</p>
+<p>The card-level onevent will shadow the deck-level onevent. As a result, card 1 won't jump to card2  but to card 3 according to the card-level onevent's requirement. After entered the card 3, the deck-level onevent element isn't shadowed by this card, so it will jump to card 2 immediately.</p>
+</card>
+<card id="card2" title="Card two" >
+<p>This is card 2</p>
+</card>
+<card id="card3" title="Card Three">
+<p>This is card 3</p>
+</card>
+</wml>

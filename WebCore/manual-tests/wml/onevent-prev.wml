@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+
+<card id="card1" title="Card 1"> 
+<p>Test for onevent element which binds prev task with onenterforward event</p>
+<p>Clicking "Go" will cause it to jump to the card2, but which binds prev task to onenterforward event within onevent element, as a result, it will jump back to card 1</p>
+<anchor title="Go to card2">Go
+<go href="#card2"/>
+</anchor>
+</card>
+
+<card id="card2" title="Card 2">
+<p>Test for onevent element which binds prev task with onenterforward event</p>
+<p>This is card2. When card 2 is entered forward, it will jump back to the previous page </p>
+ <onevent type="onenterforward">
+ <prev/>
+ </onevent>
+</card>
+</wml> 
+

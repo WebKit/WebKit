@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card>
+<p> Test for input emptyok attribute in WML </p>
+For the following input elements, input is required:
+<br/>
+format=N*M;emptyok=false<input name="x2" emptyok="false" format="N*M"/>
+<br/>
+format=*M;emptyok=false<input name="x3" emptyok="false" format="*M"/>
+<br/>
+For the following input elements, input is not required:
+<br/>
+default<input name="x4"/> 
+<br/>
+format=*M<input name="x5" format="*M"/> 
+<br/>
+emptyok=true<input name="x6" emptyok="true"/>
+<br/>
+format=n*M;emptyok=true<input name="x7" emptyok="true" format="n*M"/>
+<br/>
+format=*M;emptyok=true<input name="x8" emptyok="true" format="*M"/>
+</card>
+</wml>

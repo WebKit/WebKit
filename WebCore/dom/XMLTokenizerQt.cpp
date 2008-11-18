@@ -5,6 +5,7 @@
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Torch Mobile Inc.  http://www.torchmobile.com/
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -744,6 +745,14 @@ void XMLTokenizer::parseDtd()
         || (publicId == QLatin1String("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))) {
         setIsXHTMLDocument(true); // controls if we replace entities or not.
     }
+#if ENABLE(WML)
+    else if (m_doc->isWMLDocument()
+             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.3//EN")
+             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.2//EN")
+             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.1//EN")
+             && publicId != QLatin1String("-//WAPFORUM//DTD WML 1.0//EN"))
+        handleError(fatal, "Invalid DTD Public ID", lineNumber(), columnNumber());
+#endif
     if (!m_parsingFragment)
         m_doc->addChild(DocumentType::create(m_doc, name, publicId, systemId));
     

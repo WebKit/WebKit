@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="card1">
+  <do name="do" type="accept">
+  <refresh/>
+  </do>
+  <do name="do" type="accept">
+  <refresh/>
+  </do>
+  <p> Test for the error that more than one do element has same name</p>
+  You should NOT see this text, because of the error of name-conflict of do element 
+</card>
+</wml>

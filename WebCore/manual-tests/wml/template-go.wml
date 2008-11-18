@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<template>
+ <do name="go" type="accept" label="Template Go">
+  <go href="#card2"/>
+ </do>
+</template>
+<card id="card1" title="Card 1">
+<p>Test for template element in WML. Template go button is global</p>
+<p> This is Card one, click 'Template Go' to jump to Card two</p>
+</card>
+<card id="card2" title="Card 2">
+<p>This is card two. <br/>The global template Go button is still visible for me</p>
+</card>
+</wml>

@@ -1,3 +1,13 @@
+2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add --(no-)wml build flags.
+
+        * Scripts/build-webkit:
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

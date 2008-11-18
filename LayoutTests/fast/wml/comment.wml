@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card id="card1" title="Card 1">
+  <p> Test comment in WML, the text in the comment should not be displayed, if it passes, you can only see the text: "Hello World!" after this line </p>
+  <p>
+    <!-- This is a comment , it should not be displayed-->
+    Hello World!
+  </p>
+ </card>
+</wml>

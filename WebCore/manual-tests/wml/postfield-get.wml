@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml"><wml>
+<card>
+<p>Test for postfield element in WML </p>
+<p>
+ Click "Get" to Send data by get method<br />
+ <do type="accept" label="Get">
+  <go href="../test.wml" method="get">
+   <postfield name="i" value="2"/>
+   <postfield name="j" value="30"/>
+  </go>
+ </do>
+</p>
+</card>
+</wml> 

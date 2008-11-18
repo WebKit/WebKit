@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card id="no1" title="Card 1"> 
+<p> Test for variable name validation </p>
+<do type="accept" name="refresh">
+  <refresh>
+    <setvar name="$+var" value="varaible2"/>
+  </refresh>
+</do>
+</card>
+</wml>

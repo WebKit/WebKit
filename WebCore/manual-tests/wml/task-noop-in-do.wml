@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card id="card1">
+<p> Test for Noop task in do element of WML. </p>
+<p> If it passes, you should not see the "Back" button</p>
+ <do name="do" type="accept" label="Back">
+ <noop/>
+ </do>
+</card> 
+</wml> 

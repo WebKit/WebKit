@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card id="no1" title="Test entity">
+<p>Test for Entities in WML page</p>
+&quot;       &#34;
+<br/>
+&amp;        &#38;
+<br/>
+&apos;       &#x27;
+<br/>
+&lt;         &#60;
+<br/>
+&gt;         &#62;
+<br/>
+=&nbsp;=&#160;=
+<br/>
+AA&shy;AA&#173;AA
+<br/> 
+<p> &lt;hello&gt; </p>
+</card>
+
+<card id="card2" title="$(cardid) title">This is card 2</card>
+</wml>

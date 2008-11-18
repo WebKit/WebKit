@@ -338,15 +338,22 @@ my %ignoredFiles = ();
 my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources);
 my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
+
+# FIXME: We should fix webkitdirs.pm:hasSVG/WMLSupport() to do the correct feature detection for Cygwin.
 if (checkWebCoreSVGSupport(0)) { 
     $supportedFileExtensions{'svg'} = 1;
 } elsif (isCygwin()) {
-    # FIXME: We should fix webkitdirs.pm:hasSVGSupport() to do the correct
-    # check for Windows instead of forcing this here.
     $supportedFileExtensions{'svg'} = 1;
 } else {
     $ignoredLocalDirectories{'svg'} = 1;
 }
+
+if (checkWebCoreWMLSupport(0)) { 
+    $supportedFileExtensions{'wml'} = 1;
+} else {
+    $ignoredDirectories{'fast/wml'} = 1;
+}
+
 if (!$testHTTP) {
     $ignoredDirectories{'http'} = 1;
 }

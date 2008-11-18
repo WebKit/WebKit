@@ -1,0 +1,46 @@
+namespace="WML"
+namespaceURI="http://www.wapforum.org/DTD/wml_1.1.xml"
+guardFactoryWith="ENABLE(WML)"
+
+a
+card
+p
+
+#if 0
+# These elements don't need a correponsponding WML*Element class.
+b
+big
+br
+em
+i
+small
+strong
+u
+#endif
+
+#if 0
+# Not yet implemented
+access
+anchor
+do
+fieldset
+go
+head
+img interfaceName=WMLImageElement
+input
+meta
+noop
+onevent
+optgroup
+option
+postfield
+prev
+refresh
+select
+setvar
+table
+td
+template
+timer
+tr
+#endif

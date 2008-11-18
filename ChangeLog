@@ -1,3 +1,11 @@
+2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add WML build support for Gtk as well.
+
+        * configure.ac:
+
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

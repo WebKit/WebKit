@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="card1">
+  <onevent type="onenterforward">
+  <refresh/>
+  </onevent>
+  <onevent type="onenterforward">
+  <prev/>
+  </onevent>
+  <p> Test for the error event-binding conflict</p>
+  You should NOT see this text, because of the error of event-binding error in card element 
+</card>
+</wml>

@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Torch Mobile Inc.  All rights reserved.
+ *               http://www.torchmobile.com/
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -260,6 +262,9 @@ namespace WebCore {
         void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
         void clientRedirected(const KURL&, double delay, double fireDate, bool lockHistory, bool isJavaScriptFormAction);
         bool shouldReload(const KURL& currentURL, const KURL& destinationURL);
+#if ENABLE(WML)
+        void setForceReloadWmlDeck(bool);
+#endif
 
         bool isQuickRedirectComing() const;
 
@@ -680,6 +685,10 @@ namespace WebCore {
         
         String m_pendingSourceInLowBandwidthDisplay;        
         HashSet<CachedResource*> m_externalRequestsInLowBandwidthDisplay;
+#endif
+
+#if ENABLE(WML)
+        bool m_forceReloadWmlDeck;
 #endif
     };
 

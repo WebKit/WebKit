@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card id="firstcard" title="One">
+  <p>Test for do element in WML </p>
+  <p> There are two do element in this card, the first one will display, the second won't because its optional attribute is true</p>
+  <do name="go" type="accept" label="Do 1" optional="false">
+  <go href="#thirdcard"/>
+  </do>
+  <do name="go2" type="accept" label="Do 2" optional="true">
+  <go href="#secondcard"/>
+  </do>
+ </card>
+
+ <card id="secondcard" title="Two">
+  <p>This is the second card</p>
+ </card>
+
+ <card id="thirdcard" title="Three">
+  <p>This is the third card</p>
+ </card>
+</wml>
+

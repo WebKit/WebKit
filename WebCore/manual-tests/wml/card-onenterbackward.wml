@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="card1" title="Card 1" onenterbackward="#card3"> 
+<p>Test for card onenterbackward intrinsic event</p>
+<p> Click "Go" to jump to the card2, if you go back from card2, it will jump to card3</p>
+<anchor title="go to card2">
+<go href="#card2">Go</go>
+</anchor>
+</card>
+<card id="card2" title="Card 2"> 
+<p>This is card2,click "Back" will back to the previous page</p> 
+<anchor>
+Back
+<prev />
+</anchor>
+</card>
+<card id="card3" title="Card 3" >
+<p>This is card3</p>
+</card>
+</wml> 

@@ -2768,6 +2768,35 @@ DerivedSources/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlin
 
 endif # END ENABLE_SVG
 
+# ----
+# WML Support
+# ----
+if ENABLE_WML
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_WML=1
+
+webcore_built_sources += \
+	DerivedSources/WMLElementFactory.cpp \
+	DerivedSources/WMLNames.cpp
+
+webcore_cppflags += \
+	-DENABLE_WML=1 \
+	-I\$(top_srcdir)/WebCore/wml
+
+webcore_sources += \
+	WebCore/wml/WMLAElement.cpp \
+	WebCore/wml/WMLCardElement.cpp \
+	WebCore/wml/WMLElement.cpp \
+	WebCore/wml/WMLDocument.cpp \
+	WebCore/wml/WMLPageState.cpp \
+	WebCore/wml/WMLPElement.cpp
+
+# WML tag and attribute names
+DerivedSources/WMLNames.cpp: DerivedSources/WMLElementFactory.cpp;
+
+DerivedSources/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wml/WMLTagNames.in $(WebCore)/wml/WMLAttributeNames.in
+	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+endif # END ENABLE_WML
+
 DerivedSources/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
@@ -2818,7 +2847,8 @@ USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/html4.css \
 	$(WebCore)/css/quirks.css \
 	$(WebCore)/css/view-source.css \
-	$(WebCore)/css/svg.css
+	$(WebCore)/css/svg.css \
+	$(WebCore)/wml/wml.css
 
 # new-style JavaScript bindings
 SCRIPTS_BINDINGS = \
@@ -2933,6 +2963,7 @@ webcore_dist += \
 	WebCore/css/quirks.css \
 	WebCore/css/view-source.css \
 	WebCore/css/svg.css \
+	WebCore/css/wml.css \
 	WebCore/css/CSSGrammar.y \
 	WebCore/css/CSSValueKeywords.in \
 	WebCore/css/SVGCSSPropertyNames.in \

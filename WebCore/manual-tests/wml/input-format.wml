@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<card title="Input">
+<p> Test for input format in WML</p>
+<p>
+Password(default:*M):<input name="default"/>
+<br/>
+Password(6M): <input name="Pwd" type="password" format="6M"/>
+<br/>
+Password(AAa): <input name="Pwd2" type="password" format="AAa"/> 
+<br/>
+one-numeric+lowercase(N*a):<input name="upper" format="N*a"/> 
+<br/>
+Uppercase+non-numeric(AAA;size=8):<input name="upper" size="8" format="AAA"/> 
+<br/>
+Lowercase+non-numeric(aaa;size=8;width=2):<input name="lower" size="8" width="2" format="aaa"/>
+<br/>
+Numeric(5N;maxlen=3):<input name="numeric" maxlength="3" format="5N"/>
+<br/>
+Numeirc+symbols(nnn):<input name="numeric+" format="nnn"/>
+<br/>
+Uppercase+numeric+symbols(XXX):<input name="upper+" format="XXX"/>
+<br/>
+Lowercase+numeric+symbols(xxx):<input name="lower+" format="xxx"/>
+<br/>
+Uppercase+numeric+symbols(MMM):<input name="def_upper+" format="MMM"/>
+<br/>
+Lowercase+numeric+symbols(mmm):<input name="def_lower+" format="mmm"/>
+<br/>
+Mixed data(a\-NN*x)<input name="any" format="a\-NN*x"/>
+<br/>
+</p>
+</card>
+</wml>

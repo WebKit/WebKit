@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card id="card1" ontimer="test.wml">
+ <timer id="timer1" name="t1" value="20"/>
+ <timer id="timer2" name="t2" value="30"/>
+  <p> Test for error of meta multi-timer in one card </p>
+  You should NOT see this text, because of the error that more than one timer exist in one card 
+ </card>
+</wml>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card title="Paragraphs">
+ <p> This test case is used to test br element in a table. each cell is aligned to left, and the BR will break the "xxxxxxxx" text in the last td</p>
+ <table columns='3' align="LLL">
+    <tr>
+     <td id="c1">Cell one</td>
+     <td id="c2">Cell two</td>
+     <td id="c3">c3</td>
+    </tr>
+    <tr>
+     <td id="a">cell a</td>
+     <td id="b">cell b</td>
+     <td id="c">xxxxx<br/>xxx</td>
+    </tr>
+ </table>
+ </card>
+</wml> 

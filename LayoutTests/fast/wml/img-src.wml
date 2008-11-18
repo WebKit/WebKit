@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card title="Test image">
+ <p> Test for img element in WML </p>
+ <p> This image is specified by src attribute of img element</p>
+ test code:<![CDATA[
+ <p>Network <img height="60" width="40" vspace="40" hspace="60" align="middle" src="http://wap.baidu.com/logo.gif" alt="smile"/>Image</p>
+ ]]>
+ <br/>
+ <p>Network <img height="60" width="40" vspace="40" hspace="60" align="middle" src="http://wap.baidu.com/logo.gif" alt="smile"/>Image</p>
+ </card>
+</wml> 

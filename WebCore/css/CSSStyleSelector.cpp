@@ -5,6 +5,8 @@
  * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008 Torch Mobile Inc.  All rights reserved.
+ *               http://www.torchmobile.com/
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -806,12 +808,18 @@ static inline const AtomicString* linkAttribute(Node* node)
 
     ASSERT(node->isElementNode());
     Element* element = static_cast<Element*>(node);
-    if (element->isHTMLElement())
+    if (element->isHTMLElement()
+#if ENABLE(WML)
+        || element->isWMLElement()
+#endif
+       )
         return &element->getAttribute(hrefAttr);
+
 #if ENABLE(SVG)
     if (element->isSVGElement())
         return &element->getAttribute(XLinkNames::hrefAttr);
 #endif
+
     return 0;
 }
 
@@ -1048,6 +1056,17 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(svgSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
+    }
+#endif
+
+#if ENABLE(WML)
+    static bool loadedWMLUserAgentSheet;
+    if (e->isWMLElement() && !loadedWMLUserAgentSheet) {
+        // WML rules.
+        loadedWMLUserAgentSheet = true;
+        CSSStyleSheet* wmlSheet = parseUASheet(wmlUserAgentStyleSheet, sizeof(wmlUserAgentStyleSheet));
+        defaultStyle->addRulesFromSheet(wmlSheet, screenEval());
+        defaultPrintStyle->addRulesFromSheet(wmlSheet, printEval());
     }
 #endif
 

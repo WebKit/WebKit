@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml xmlns="http://www.wapforum.org/DTD/wml_1.1.xml">
+ <card id='card1'>
+ <p> This page is assistant page. Many test pages will jump here. </p>
+ <p>Click "Back" to go back to the previous page</p>
+ <anchor> Back <prev/></anchor>
+ </card>
+</wml>

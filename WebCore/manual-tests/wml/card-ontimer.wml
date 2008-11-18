@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+
+<wml>
+<head>
+<meta http-equiv="Cache-Control" content="max-age=0"/>
+</head>
+<card id="card1" ontimer="#card2" title="Card one">
+<p> Test for card ontimer intrinsic event in WML </p>
+<timer name="time1" value="50"/>
+<p>
+This is card one<br/>The timer is triggered by the ontimer intrinsic event(ontimer as attribute of card element)<br/>When the timer is timeout(after 5s), will jump to card two.
+</p>
+</card>
+<card id="card2">
+This is Card two
+</card>
+</wml>
+

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card>
+ <p> Test for table element in WML </p>
+ <p> source code: </p>
+ <![CDATA[
+   <table columns="3" align="LRR"> 
+    <tr>
+     <td>Cell one</td>
+     <td>C<br/>ell<br/> two</td>
+     <td>Cell three</td>
+    </tr>
+    <tr>
+    <td> one </td>
+    <td/>
+    <td>C three</td>
+    </tr>
+   </table>
+ ]]>
+ <br/>
+  <p>
+   <table columns="3" align="LRR"> 
+    <tr>
+     <td>Cell one</td>
+     <td>C<br/>ell<br/> two</td>
+     <td>Cell three</td>
+    </tr>
+    <tr>
+    <td> one </td>
+    <td/>
+    <td>C three</td>
+    </tr>
+   </table>
+ </p>
+ </card>
+</wml> 

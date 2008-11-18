@@ -1,3 +1,157 @@
+2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22324 (Add basic subset of WML elements)
+
+        Add first bits of WML support. Only <card> & <p> and <a> elements are supported in this first patch.
+        Support for most other elements will be added step-by-step (merging in small chunks from a big patch).
+
+        WML is not build by default.
+
+        * DerivedSources.make: Handle WMLNames/WMLElementFactory generation.
+        * GNUmakefile.am: Add new files and generator hooks.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSStyleSelector.cpp: Load wml.css on demand, just like it's done for SVG.
+        (WebCore::linkAttribute):
+        (WebCore::CSSStyleSelector::styleForElement):c
+        * css/wml.css: Added.
+        * dom/DOMImplementation.cpp: Handle WMLDocument creation
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp: Handle WMLElement creation.
+        (WebCore::Document::createElement):
+        * dom/Document.h: Add helper function identifying WML documents.
+        (WebCore::Document::isWMLDocument):
+        * dom/Node.h: Add heper function identifying WML elements.
+        (WebCore::Node::isWMLElement):
+        * dom/XMLTokenizer.cpp: Handle errors in WML documents
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * dom/XMLTokenizerLibxml2.cpp: Add WML DTD checks.
+        (WebCore::XMLTokenizer::internalSubset):
+        * dom/XMLTokenizerQt.cpp: Ditto.
+        (WebCore::):
+        * dom/make_names.pl: Force internal linkage for the "tagConstructor" functions, avoiding SVG<->WML clashes.
+        * history/BackForwardList.cpp: Add WML specific function for clearing the history.
+        (WebCore::BackForwardList::clearWmlPageHistory):
+        * history/BackForwardList.h:
+        * loader/FrameLoader.cpp: Add WML specific 'shouldReload' logic.
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::setForceReloadWmlDeck):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp: Add WBXML support (only enabled on Linux/Qt at the moment)
+        (WebCore::MainResourceLoader::addData):
+        * page/Frame.cpp: Initialize WMLNames.
+        (WebCore::Frame::Frame):
+        * page/Page.cpp: Maintain WMLPageState object per Page.
+        (WebCore::Page::Page):
+        (WebCore::Page::setWMLPageState):
+        (WebCore::Page::wmlPageState):
+        * page/Page.h:
+        * platform/MIMETypeRegistry.cpp: Recognize WML extensions.
+        (WebCore::initializeSupportedNonImageMimeTypes):
+        * platform/gtk/MIMETypeRegistryGtk.cpp: Ditto.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * platform/qt/MIMETypeRegistryQt.cpp: Ditto.
+        (WebCore::):
+        * platform/win/MIMETypeRegistryWin.cpp: Ditto.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        * manual-tests/wml: Added.
+        * manual-tests/wml/a-br-element.wml: Added.
+        * manual-tests/wml/a-element.wml: Added.
+        * manual-tests/wml/a-img-element.wml: Added.
+        * manual-tests/wml/access-target.wml: Added.
+        * manual-tests/wml/anchor-br-element.wml: Added.
+        * manual-tests/wml/anchor-element.wml: Added.
+        * manual-tests/wml/anchor-img-element.wml: Added.
+        * manual-tests/wml/card-newcontext-attr.wml: Added.
+        * manual-tests/wml/card-onenterbackward.wml: Added.
+        * manual-tests/wml/card-onenterforward.wml: Added.
+        * manual-tests/wml/card-ontimer.wml: Added.
+        * manual-tests/wml/deck-access-control.wml: Added.
+        * manual-tests/wml/go-element.wml: Added.
+        * manual-tests/wml/input-emptyok.wml: Added.
+        * manual-tests/wml/input-format.wml: Added.
+        * manual-tests/wml/onevent-go.wml: Added.
+        * manual-tests/wml/onevent-noop.wml: Added.
+        * manual-tests/wml/onevent-prev.wml: Added.
+        * manual-tests/wml/onevent-refresh.wml: Added.
+        * manual-tests/wml/onevent-shadow.wml: Added.
+        * manual-tests/wml/postfield-get.wml: Added.
+        * manual-tests/wml/postfield-post.wml: Added.
+        * manual-tests/wml/select-element.wml: Added.
+        * manual-tests/wml/select-onpick-event.wml: Added.
+        * manual-tests/wml/setvar-element.wml: Added.
+        * manual-tests/wml/targetdeck.wml: Added.
+        * manual-tests/wml/task-go-in-anchor.wml: Added.
+        * manual-tests/wml/task-noop-in-do.wml: Added.
+        * manual-tests/wml/task-noop-in-onevent.wml: Added.
+        * manual-tests/wml/task-prev-in-anchor.wml: Added.
+        * manual-tests/wml/task-refresh-in-anchor.wml: Added.
+        * manual-tests/wml/template-go.wml: Added.
+        * manual-tests/wml/template-onevent.wml: Added.
+        * manual-tests/wml/template-ontimer.wml: Added.
+        * manual-tests/wml/timer.wml: Added.
+        * manual-tests/wml/variable-substitution.wml: Added.
+        * wml: Added.
+        * wml/WMLAElement.cpp: Added.
+        (WebCore::WMLAElement::WMLAElement):
+        (WebCore::WMLAElement::parseMappedAttribute):
+        (WebCore::WMLAElement::supportsFocus):
+        (WebCore::WMLAElement::isFocusable):
+        (WebCore::WMLAElement::isMouseFocusable):
+        (WebCore::WMLAElement::isKeyboardFocusable):
+        (WebCore::WMLAElement::defaultEventHandler):
+        (WebCore::WMLAElement::accessKeyAction):
+        (WebCore::WMLAElement::isURLAttribute):
+        (WebCore::WMLAElement::target):
+        * wml/WMLAElement.h: Added.
+        * wml/WMLAttributeNames.in: Added.
+        * wml/WMLCardElement.cpp: Added.
+        (WebCore::WMLCardElement::WMLCardElement):
+        * wml/WMLCardElement.h: Added.
+        * wml/WMLDocument.cpp: Added.
+        (WebCore::WMLDocument::WMLDocument):
+        (WebCore::WMLDocument::~WMLDocument):
+        * wml/WMLDocument.h: Added.
+        (WebCore::WMLDocument::create):
+        (WebCore::WMLDocument::isWMLDocument):
+        * wml/WMLElement.cpp: Added.
+        (WebCore::WMLElement::WMLElement):
+        (WebCore::WMLElement::mapToEntry):
+        (WebCore::WMLElement::parseMappedAttribute):
+        (WebCore::WMLElement::rendererIsNeeded):
+        (WebCore::WMLElement::createRenderer):
+        * wml/WMLElement.h: Added.
+        (WebCore::WMLElement::isWMLElement):
+        * wml/WMLPElement.cpp: Added.
+        (WebCore::WMLPElement::WMLPElement):
+        (WebCore::WMLPElement::mapToEntry):
+        (WebCore::WMLPElement::parseMappedAttribute):
+        * wml/WMLPElement.h: Added.
+        * wml/WMLPageState.cpp: Added.
+        (WebCore::WMLPageState::WMLPageState):
+        (WebCore::WMLPageState::~WMLPageState):
+        (WebCore::WMLPageState::reset):
+        (WebCore::WMLPageState::setNeedCheckDeckAccess):
+        (WebCore::WMLPageState::isDeckAccessible):
+        * wml/WMLPageState.h: Added.
+        (WebCore::WMLPageState::storeVariable):
+        (WebCore::WMLPageState::storeVariables):
+        (WebCore::WMLPageState::getVaribale):
+        (WebCore::WMLPageState::hasVariables):
+        (WebCore::WMLPageState::historyLength):
+        (WebCore::WMLPageState::setHistoryLength):
+        (WebCore::WMLPageState::page):
+        (WebCore::WMLPageState::activeCard):
+        (WebCore::WMLPageState::setActiveCard):
+        (WebCore::WMLPageState::setDeckAccessDomain):
+        (WebCore::WMLPageState::setDeckAccessPath):
+        (WebCore::WMLPageState::hasDeckAccess):
+        * wml/WMLTagNames.in: Added.
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

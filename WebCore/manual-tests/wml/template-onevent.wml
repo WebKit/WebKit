@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<template>
+<onevent type="onenterforward">
+<go href="#card2"/>
+</onevent>
+</template>
+<card id="card1">
+<p>Test for template element in WML</p>
+<p>When other page enter forward this page, it first show card 1, and then immediately jump to card 2 because of the template onenterforward event</p>
+</card>
+<card id="card2" title="card 2">
+<p>
+This is card 2
+</p>
+</card>
+</wml>

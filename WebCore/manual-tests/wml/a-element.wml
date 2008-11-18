@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+ <card title="A element Test">
+  <p>Test for A element. <br/>When mouse moves into link, "go to test.wml" will appear, click the link, will jump to test.wml</p>
+  
+  <p>
+   <a href="../test.wml" title="go to test.wml" >Next page</a>
+  </p>
+ </card>
+</wml> 
+
