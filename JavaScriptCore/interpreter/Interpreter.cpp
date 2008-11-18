@@ -3979,7 +3979,7 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
 #if !HAVE(COMPUTED_GOTO)
     } // iterator loop ends
 #endif
-    #undef NEXT_INSTRUCTION()
+    #undef NEXT_INSTRUCTION
     #undef DEFINE_OPCODE
     #undef CHECK_FOR_EXCEPTION
     #undef CHECK_FOR_TIMEOUT

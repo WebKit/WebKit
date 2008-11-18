@@ -1,3 +1,10 @@
+2008-11-18  Dan Bernstein  <mitz@apple.com>
+
+        - try to fix the Windows build
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2008-11-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
