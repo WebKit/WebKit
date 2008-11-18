@@ -41,7 +41,7 @@ namespace JSC {
 
 namespace JSC { namespace WREC {
 
-    class CharacterClass;
+    struct CharacterClass;
 
     class Parser {
     public:

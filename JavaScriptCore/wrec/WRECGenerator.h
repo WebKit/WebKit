@@ -37,10 +37,10 @@
 
 namespace JSC { namespace WREC {
 
-    class CharacterClass;
     class CharacterRange;
     class GenerateAtomFunctor;
     class Parser;
+    struct CharacterClass;
 
     class Generator {
     public:
