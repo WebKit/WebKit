@@ -482,8 +482,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     WebView* view = m_webFrame->webView();
 
     RECT rect;
-    webView->frameRect(&rect);
-    bool transparent = webView->transparent();
+    view->frameRect(&rect);
+    bool transparent = view->transparent();
     Color backgroundColor = transparent ? Color::transparent : Color::white;
     WebCore::FrameLoaderClient::transitionToCommittedForNewPage(core(m_webFrame), IntRect(rect).size(), backgroundColor, transparent);
 }

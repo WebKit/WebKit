@@ -1,5 +1,12 @@
 2008-11-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Try to fix the Windows build. It is view and not webView.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+
+2008-11-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Simon Hausmann.
 
         Attempt to share transitionToCommittedForNewPage of FrameLoaderClient with the different ports
