@@ -1,3 +1,9 @@
+2008-11-18  Dan Bernstein  <mitz@apple.com>
+
+        - Windows build fix
+
+        * assembler/X86Assembler.h:
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

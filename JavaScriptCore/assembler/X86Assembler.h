@@ -31,6 +31,7 @@
 #if ENABLE(ASSEMBLER) && PLATFORM(X86)
 
 #include "AssemblerBuffer.h"
+#include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
