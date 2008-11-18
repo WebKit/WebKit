@@ -1,3 +1,14 @@
+2008-11-18  Steve Falkenburg  <sfalken@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=22329
+        Improper bitwise and tests against 0 in Windows context menu code
+
+        Reviewed by John Sullivan.
+
+        * platform/win/ContextMenuItemWin.cpp:
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::enabled):
+
 2008-11-18  John Sullivan  <sullivan@apple.com>
 
         Yet more Mac build fixing
