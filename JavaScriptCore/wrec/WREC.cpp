@@ -45,9 +45,8 @@ static const int MaxPatternSize = (1 << 16);
 
 CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
 {
-    // TODO: better error messages
     if (pattern.size() > MaxPatternSize) {
-        *error_ptr = "regular expression too large";
+        *error_ptr = "Regular expression too large.";
         return 0;
     }
 
@@ -76,12 +75,8 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
     //     Parsing the disjunction should fully consume the pattern.
     JmpSrcVector failures;
     parser.parseDisjunction(failures);
-    if (parser.isEndOfPattern()) {
-        parser.setError(Parser::Error_malformedPattern);
-    }
-    if (parser.error()) {
-        // TODO: better error messages
-        *error_ptr = "TODO: better error messages";
+    if (!parser.atEndOfPattern() || parser.error()) {
+        *error_ptr = "Regular expression malformed.";
         return 0;
     }
 
