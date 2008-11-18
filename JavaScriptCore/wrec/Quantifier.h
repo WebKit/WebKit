@@ -23,33 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WREC_h
-#define WREC_h
+#ifndef Quantifier_h
+#define Quantifier_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(WREC)
 
-#include <wtf/unicode/Unicode.h>
-
-#if COMPILER(GCC)
-#define WREC_CALL __attribute__ ((regparm (3)))
-#else
-#define WREC_CALL
-#endif
-
-namespace JSC {
-    class Interpreter;
-    class UString;
-}
-
 namespace JSC { namespace WREC {
 
-    typedef int (*CompiledRegExp)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
-    CompiledRegExp compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+    struct Quantifier {
+        enum Type {
+            None,
+            Greedy,
+            NonGreedy,
+            Error,
+        };
+
+        Quantifier()
+            : type(None)
+        {
+        }
+
+        Quantifier(Type type, unsigned min = 0, unsigned max = noMaxSpecified)
+            : type(type)
+            , min(min)
+            , max(max)
+        {
+        }
+
+        Type type;
+
+        unsigned min;
+        unsigned max;
+
+        static const unsigned noMaxSpecified = UINT_MAX;
+    };
 
 } } // namespace JSC::WREC
 
 #endif // ENABLE(WREC)
 
-#endif // WREC_h
+#endif // Quantifier_h

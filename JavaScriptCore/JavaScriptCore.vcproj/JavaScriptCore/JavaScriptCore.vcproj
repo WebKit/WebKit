@@ -1354,6 +1354,51 @@
 			Name="wrec"
 			>
 			<File
+				RelativePath="..\..\wrec\CharacterClass.cpp"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\WRECParser.h"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\WRECFunctors.cpp"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\WRECGenerator.cpp"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\CharacterClass.h"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\WRECFunctors.h"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\Quantifier.h"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\WRECGenerator.h"
+				>
+			</File>
+
+			<File
+				RelativePath="..\..\wrec\WRECParser.cpp"
+				>
+			</File>
+
+			<File
 				RelativePath="..\..\wrec\CharacterClassConstructor.cpp"
 				>
 			</File>

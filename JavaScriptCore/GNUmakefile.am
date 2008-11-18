@@ -161,10 +161,19 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StructureChain.h \
 	JavaScriptCore/runtime/StructureTransitionTable.h \
 	JavaScriptCore/runtime/TypeInfo.h \
+	JavaScriptCore/wrec/CharacterClass.cpp \
+	JavaScriptCore/wrec/CharacterClass.h \
 	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
+	JavaScriptCore/wrec/Quantifier.h \
 	JavaScriptCore/wrec/WREC.cpp \
 	JavaScriptCore/wrec/WREC.h \
+	JavaScriptCore/wrec/WRECFunctors.cpp \
+	JavaScriptCore/wrec/WRECFunctors.h \
+	JavaScriptCore/wrec/WRECGenerator.cpp \
+	JavaScriptCore/wrec/WRECGenerator.h \
+	JavaScriptCore/wrec/WRECParser.cpp \
+	JavaScriptCore/wrec/WRECParser.h \
 	JavaScriptCore/wtf/ASCIICType.h \
 	JavaScriptCore/wtf/AVLTree.h \
 	JavaScriptCore/wtf/AlwaysInline.h \

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WREC_h
-#define WREC_h
+#ifndef CharacterClass_h
+#define CharacterClass_h
 
 #include <wtf/Platform.h>
 
@@ -32,24 +32,37 @@
 
 #include <wtf/unicode/Unicode.h>
 
-#if COMPILER(GCC)
-#define WREC_CALL __attribute__ ((regparm (3)))
-#else
-#define WREC_CALL
-#endif
-
-namespace JSC {
-    class Interpreter;
-    class UString;
-}
-
 namespace JSC { namespace WREC {
 
-    typedef int (*CompiledRegExp)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
-    CompiledRegExp compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+    struct CharacterRange {
+        UChar begin;
+        UChar end;
+    };
+
+    struct CharacterClass {
+        static const CharacterClass& newline();
+        static const CharacterClass& digits();
+        static const CharacterClass& spaces();
+        static const CharacterClass& wordchar();
+        static const CharacterClass& nondigits();
+        static const CharacterClass& nonspaces();
+        static const CharacterClass& nonwordchar();
+
+        const UChar* matches;
+        unsigned numMatches;
+
+        const CharacterRange* ranges;
+        unsigned numRanges;
+
+        const UChar* matchesUnicode;
+        unsigned numMatchesUnicode;
+
+        const CharacterRange* rangesUnicode;
+        unsigned numRangesUnicode;
+    };
 
 } } // namespace JSC::WREC
 
 #endif // ENABLE(WREC)
 
-#endif // WREC_h
+#endif // CharacterClass_h

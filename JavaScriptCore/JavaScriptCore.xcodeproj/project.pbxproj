@@ -50,6 +50,15 @@
 		1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8DC0ED2205B00B89619 /* CallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D92D0ED22D7000B89619 /* JIT.cpp */; };
 		1429D9300ED22D7000B89619 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D92E0ED22D7000B89619 /* JIT.h */; };
+		1429D9C40ED23C3900B89619 /* CharacterClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D9C20ED23C3900B89619 /* CharacterClass.cpp */; };
+		1429D9C50ED23C3900B89619 /* CharacterClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D9C30ED23C3900B89619 /* CharacterClass.h */; };
+		1429DA4A0ED245EC00B89619 /* Quantifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429DA490ED245EC00B89619 /* Quantifier.h */; };
+		1429DA820ED2482900B89619 /* WRECFunctors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429DA800ED2482900B89619 /* WRECFunctors.cpp */; };
+		1429DA830ED2482900B89619 /* WRECFunctors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429DA810ED2482900B89619 /* WRECFunctors.h */; };
+		1429DABF0ED263E700B89619 /* WRECParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429DABD0ED263E700B89619 /* WRECParser.h */; };
+		1429DAC00ED263E700B89619 /* WRECParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429DABE0ED263E700B89619 /* WRECParser.cpp */; };
+		1429DAE00ED2645B00B89619 /* WRECGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429DADE0ED2645B00B89619 /* WRECGenerator.h */; };
+		1429DAE10ED2645B00B89619 /* WRECGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429DADF0ED2645B00B89619 /* WRECGenerator.cpp */; };
 		143A97E60A4A06E200456B66 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		1440057F0A5335640005F061 /* JSNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 1440F6420A4F8B6A0005F061 /* JSNode.c */; };
 		144005CB0A5338D10005F061 /* JSNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440F6410A4F8B6A0005F061 /* JSNode.h */; };
@@ -403,6 +412,15 @@
 		1429D8DC0ED2205B00B89619 /* CallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrame.h; sourceTree = "<group>"; };
 		1429D92D0ED22D7000B89619 /* JIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JIT.cpp; sourceTree = "<group>"; };
 		1429D92E0ED22D7000B89619 /* JIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIT.h; sourceTree = "<group>"; };
+		1429D9C20ED23C3900B89619 /* CharacterClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CharacterClass.cpp; sourceTree = "<group>"; };
+		1429D9C30ED23C3900B89619 /* CharacterClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterClass.h; sourceTree = "<group>"; };
+		1429DA490ED245EC00B89619 /* Quantifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quantifier.h; sourceTree = "<group>"; };
+		1429DA800ED2482900B89619 /* WRECFunctors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WRECFunctors.cpp; sourceTree = "<group>"; };
+		1429DA810ED2482900B89619 /* WRECFunctors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WRECFunctors.h; sourceTree = "<group>"; };
+		1429DABD0ED263E700B89619 /* WRECParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WRECParser.h; sourceTree = "<group>"; };
+		1429DABE0ED263E700B89619 /* WRECParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WRECParser.cpp; sourceTree = "<group>"; };
+		1429DADE0ED2645B00B89619 /* WRECGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WRECGenerator.h; sourceTree = "<group>"; };
+		1429DADF0ED2645B00B89619 /* WRECGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WRECGenerator.cpp; sourceTree = "<group>"; };
 		1440051F0A531D3B0005F061 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = tests/Node.h; sourceTree = "<group>"; };
 		144005200A531D3B0005F061 /* Node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Node.c; path = tests/Node.c; sourceTree = "<group>"; };
 		144007480A536CC20005F061 /* NodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeList.h; path = tests/NodeList.h; sourceTree = "<group>"; };
@@ -1281,10 +1299,19 @@
 		869083120E6518D7000D36ED /* wrec */ = {
 			isa = PBXGroup;
 			children = (
+				1429D9C20ED23C3900B89619 /* CharacterClass.cpp */,
+				1429D9C30ED23C3900B89619 /* CharacterClass.h */,
 				7E2ADD8F0E79AC1100D50C51 /* CharacterClassConstructor.cpp */,
 				7E2ADD8D0E79AAD500D50C51 /* CharacterClassConstructor.h */,
+				1429DA490ED245EC00B89619 /* Quantifier.h */,
 				869083130E6518D7000D36ED /* WREC.cpp */,
 				869083140E6518D7000D36ED /* WREC.h */,
+				1429DA800ED2482900B89619 /* WRECFunctors.cpp */,
+				1429DA810ED2482900B89619 /* WRECFunctors.h */,
+				1429DADF0ED2645B00B89619 /* WRECGenerator.cpp */,
+				1429DADE0ED2645B00B89619 /* WRECGenerator.h */,
+				1429DABE0ED263E700B89619 /* WRECParser.cpp */,
+				1429DABD0ED263E700B89619 /* WRECParser.h */,
 			);
 			path = wrec;
 			sourceTree = "<group>";
@@ -1584,6 +1611,11 @@
 				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
 				1429D9300ED22D7000B89619 /* JIT.h in Headers */,
+				1429D9C50ED23C3900B89619 /* CharacterClass.h in Headers */,
+				1429DA4A0ED245EC00B89619 /* Quantifier.h in Headers */,
+				1429DA830ED2482900B89619 /* WRECFunctors.h in Headers */,
+				1429DABF0ED263E700B89619 /* WRECParser.h in Headers */,
+				1429DAE00ED2645B00B89619 /* WRECGenerator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1919,6 +1951,10 @@
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
 				1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */,
 				1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */,
+				1429D9C40ED23C3900B89619 /* CharacterClass.cpp in Sources */,
+				1429DA820ED2482900B89619 /* WRECFunctors.cpp in Sources */,
+				1429DAC00ED263E700B89619 /* WRECParser.cpp in Sources */,
+				1429DAE10ED2645B00B89619 /* WRECGenerator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

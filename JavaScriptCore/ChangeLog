@@ -1,5 +1,69 @@
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Split WREC classes out into individual files, with a few modifications
+        to more closely match the WebKit coding style.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.scons:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/X86Assembler.h:
+        * runtime/RegExp.cpp:
+        * wrec/CharacterClass.cpp: Copied from wrec/CharacterClassConstructor.cpp.
+        (JSC::WREC::CharacterClass::newline):
+        (JSC::WREC::CharacterClass::digits):
+        (JSC::WREC::CharacterClass::spaces):
+        (JSC::WREC::CharacterClass::wordchar):
+        (JSC::WREC::CharacterClass::nondigits):
+        (JSC::WREC::CharacterClass::nonspaces):
+        (JSC::WREC::CharacterClass::nonwordchar):
+        * wrec/CharacterClass.h: Copied from wrec/CharacterClassConstructor.h.
+        * wrec/CharacterClassConstructor.cpp:
+        (JSC::WREC::CharacterClassConstructor::addSortedRange):
+        (JSC::WREC::CharacterClassConstructor::append):
+        * wrec/CharacterClassConstructor.h:
+        * wrec/Quantifier.h: Copied from wrec/WREC.h.
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp):
+        * wrec/WREC.h:
+        * wrec/WRECFunctors.cpp: Copied from wrec/WREC.cpp.
+        * wrec/WRECFunctors.h: Copied from wrec/WREC.cpp.
+        (JSC::WREC::GenerateAtomFunctor::~GenerateAtomFunctor):
+        (JSC::WREC::GeneratePatternCharacterFunctor::GeneratePatternCharacterFunctor):
+        (JSC::WREC::GenerateCharacterClassFunctor::GenerateCharacterClassFunctor):
+        (JSC::WREC::GenerateBackreferenceFunctor::GenerateBackreferenceFunctor):
+        (JSC::WREC::GenerateParenthesesNonGreedyFunctor::GenerateParenthesesNonGreedyFunctor):
+        * wrec/WRECGenerator.cpp: Copied from wrec/WREC.cpp.
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+        (JSC::WREC::Generator::generateCharacterClassInverted):
+        (JSC::WREC::Generator::generateCharacterClass):
+        (JSC::WREC::Generator::generateParentheses):
+        (JSC::WREC::Generator::generateAssertionBOL):
+        (JSC::WREC::Generator::generateAssertionEOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+        * wrec/WRECGenerator.h: Copied from wrec/WREC.h.
+        * wrec/WRECParser.cpp: Copied from wrec/WREC.cpp.
+        (JSC::WREC::Parser::parseGreedyQuantifier):
+        (JSC::WREC::Parser::parseCharacterClassQuantifier):
+        (JSC::WREC::Parser::parseParentheses):
+        (JSC::WREC::Parser::parseCharacterClass):
+        (JSC::WREC::Parser::parseEscape):
+        (JSC::WREC::Parser::parseTerm):
+        * wrec/WRECParser.h: Copied from wrec/WREC.h.
+        (JSC::WREC::Parser::):
+        (JSC::WREC::Parser::Parser):
+        (JSC::WREC::Parser::setError):
+        (JSC::WREC::Parser::error):
+        (JSC::WREC::Parser::recordSubpattern):
+        (JSC::WREC::Parser::numSubpatterns):
+        (JSC::WREC::Parser::ignoreCase):
+        (JSC::WREC::Parser::multiline):
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
         
         Try to fix a few builds.

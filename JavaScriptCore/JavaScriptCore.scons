@@ -131,8 +131,17 @@ sources['jit'] = [
     'jit/JIT.cpp',
 ]
 sources['wrec'] = [
+    'wrec/CharacterClass.cpp'
+    'wrec/CharacterClass.h'
     'wrec/CharacterClassConstructor.cpp',
+    'wrec/Quantifier.h'
     'wrec/WREC.cpp'
+    'wrec/WRECFunctors.cpp'
+    'wrec/WRECFunctors.h'
+    'wrec/WRECGenerator.cpp'
+    'wrec/WRECGenerator.h'
+    'wrec/WRECParser.cpp'
+    'wrec/WRECParser.h'
 ]
 sources['wtf'] = [
     'wtf/Assertions.cpp',

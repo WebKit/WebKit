@@ -32,6 +32,7 @@
 
 #include "AssemblerBuffer.h"
 #include <wtf/Assertions.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 

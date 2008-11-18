@@ -23,33 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WREC_h
-#define WREC_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "WRECFunctors.h"
 
 #if ENABLE(WREC)
 
-#include <wtf/unicode/Unicode.h>
+#include "WRECGenerator.h"
 
-#if COMPILER(GCC)
-#define WREC_CALL __attribute__ ((regparm (3)))
-#else
-#define WREC_CALL
-#endif
-
-namespace JSC {
-    class Interpreter;
-    class UString;
-}
+using namespace WTF;
 
 namespace JSC { namespace WREC {
 
-    typedef int (*CompiledRegExp)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
-    CompiledRegExp compileRegExp(Interpreter*, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+void GeneratePatternCharacterFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+{
+    wrec->generatePatternCharacter(failures, m_ch);
+}
+
+void GeneratePatternCharacterFunctor::backtrack(Generator* wrec)
+{
+    wrec->generateBacktrack1();
+}
+
+void GenerateCharacterClassFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+{
+    wrec->generateCharacterClass(failures, *m_charClass, m_invert);
+}
+
+void GenerateCharacterClassFunctor::backtrack(Generator* wrec)
+{
+    wrec->generateBacktrack1();
+}
+
+void GenerateBackreferenceFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+{
+    wrec->generateBackreference(failures, m_subpatternId);
+}
+
+void GenerateBackreferenceFunctor::backtrack(Generator* wrec)
+{
+    wrec->generateBacktrackBackreference(m_subpatternId);
+}
+
+void GenerateParenthesesNonGreedyFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+{
+    wrec->generateParenthesesNonGreedy(failures, m_start, m_success, m_fail);
+}
+
+void GenerateParenthesesNonGreedyFunctor::backtrack(Generator*)
+{
+    // FIXME: do something about this.
+    CRASH();
+}
 
 } } // namespace JSC::WREC
 
 #endif // ENABLE(WREC)
-
-#endif // WREC_h

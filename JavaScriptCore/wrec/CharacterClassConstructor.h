@@ -30,36 +30,12 @@
 
 #if ENABLE(WREC)
 
-#include "UString.h"
+#include "CharacterClass.h"
+#include <wtf/AlwaysInline.h>
+#include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace WREC {
-
-    struct CharacterClassRange {
-        UChar begin;
-        UChar end;
-    };
-
-    struct CharacterClass {
-        const UChar* matches;
-        unsigned numMatches;
-
-        const CharacterClassRange* ranges;
-        unsigned numRanges;
-
-        const UChar* matchesUnicode;
-        unsigned numMatchesUnicode;
-
-        const CharacterClassRange* rangesUnicode;
-        unsigned numRangesUnicode;
-    };
-
-    CharacterClass& getCharacterClassNewline();
-    CharacterClass& getCharacterClassDigits();
-    CharacterClass& getCharacterClassSpaces();
-    CharacterClass& getCharacterClassWordchar();
-    CharacterClass& getCharacterClassNondigits();
-    CharacterClass& getCharacterClassNonspaces();
-    CharacterClass& getCharacterClassNonwordchar();
 
     class CharacterClassConstructor {
     public:
@@ -85,7 +61,7 @@ namespace JSC { namespace WREC {
         }
         
         void put(UChar ch);
-        void append(CharacterClass& other);
+        void append(const CharacterClass& other);
 
         bool isUpsideDown() { return m_isUpsideDown; }
 
@@ -103,7 +79,7 @@ namespace JSC { namespace WREC {
 
     private:
         void addSorted(Vector<UChar>& matches, UChar ch);
-        void addSortedRange(Vector<CharacterClassRange>& ranges, UChar lo, UChar hi);
+        void addSortedRange(Vector<CharacterRange>& ranges, UChar lo, UChar hi);
 
         int m_charBuffer;
         bool m_isPendingDash;
@@ -111,9 +87,9 @@ namespace JSC { namespace WREC {
         bool m_isUpsideDown;
 
         Vector<UChar> m_matches;
-        Vector<CharacterClassRange> m_ranges;
+        Vector<CharacterRange> m_ranges;
         Vector<UChar> m_matchesUnicode;
-        Vector<CharacterClassRange> m_rangesUnicode;
+        Vector<CharacterRange> m_rangesUnicode;
     };
 
 } } // namespace JSC::WREC
