@@ -1,3 +1,13 @@
+2008-11-18  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix the bug where select elements are painted without border.
+        http://trolltech.com/developer/task-tracker/index_html?id=218957&method=entry
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMenuList):
+
 2008-11-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Not reviewed.
