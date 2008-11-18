@@ -1,0 +1,54 @@
+<body>
+<p>Test Worker constructor functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+try {
+    new Worker({toString:function(){throw "exception"}})
+    log("FAIL: toString exception not propagated.");
+} catch (ex) {
+    if (ex == "exception")
+        log("PASS: toString exception propagated correctly.");
+    else
+        log("FAIL: unexpected exception (" + ex + ") received instead of one propagated from toString.");
+}
+
+try {
+    var foo = {toString:function(){new Worker(foo)}}
+    new Worker(foo);
+    log("FAIL: no exception when trying to create workers recursively");
+} catch (ex) {
+    log("PASS: trying to create workers recursively resulted in an exception (" + ex + ")");
+}
+
+try {
+    new Worker();
+    log("FAIL: invoking Worker constructor without arguments did not result in an exception");
+} catch (ex) {
+    log("PASS: invoking Worker constructor without arguments resulted in an exception (" + ex + ")");
+}
+
+try {
+    var worker = new Worker("does-not-exist.js");
+    worker.onerror = function() {
+        log("PASS: onerror invoked for a script that could not be loaded.");
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+} catch (ex) {
+    log("FAIL: unexpected exception " + ex);
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</body>

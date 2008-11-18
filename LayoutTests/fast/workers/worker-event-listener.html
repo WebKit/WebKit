@@ -1,0 +1,36 @@
+<body>
+<p>Test EventTarget methods on workers. Should print "SUCCESS".</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var worker = new Worker('resources/worker-event-listener.js');
+worker.postMessage("");
+worker.onmessage = function(evt) {
+    log(evt.data);
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    
+}
+gc();
+</script>
+</body>
+</html>

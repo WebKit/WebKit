@@ -1,3 +1,13 @@
+2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22337
+        Enable workers by default
+
+        * Configurations/WebKit.xcconfig: Define ENABLE_WORKERS (change from ENABLE_WORKER_THREADS,
+        which was accidentally committed before).
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
