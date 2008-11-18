@@ -1376,8 +1376,6 @@ contains(DEFINES, ENABLE_WML=1) {
         wml/WMLPElement.cpp
 
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_WML=1
-    DEFINES += ENABLE_WBXML=1
-    LIBS += -lwbxml2 
 
     WML_NAMES = $$PWD/wml/WMLTagNames.in
 

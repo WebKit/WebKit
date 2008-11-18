@@ -1,5 +1,23 @@
 2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Mark Rowe.
+
+        Remove WBXML code. MainResourceLoader is not an appropriate location.
+        Revert until we find a better place.
+
+        The mime type which belongs to wmlc should be enabled anyway so WML documents get build.
+        Remove the ENABLE(WBXML) blocks around these types in MIMETypeRegistry / DOMImplementation.
+
+        * WebCore.pro:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::addData):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes):
+
+2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Not reviewed. Build fix.
 
         Oops, disable WML by default on Qt.

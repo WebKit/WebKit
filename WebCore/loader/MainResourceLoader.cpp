@@ -46,11 +46,6 @@
 #include "ResourceHandle.h"
 #include "Settings.h"
 
-#if ENABLE(WBXML)
-#include "wbxml.h"
-#include "wbxml_conv.h"
-#endif
-
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 
 namespace WebCore {
@@ -148,30 +143,6 @@ bool MainResourceLoader::isPostOrRedirectAfterPost(const ResourceRequest& newReq
 
 void MainResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
-#if ENABLE(WBXML)
-    if (length && m_response.mimeType() == "application/vnd.wap.wmlc") {
-        WB_UTINY* wbxml = reinterpret_cast<WB_UTINY*>(data);
-        WB_ULONG wbxml_len = length;
-        WB_ULONG xml_len = 0;
-        WB_UTINY* xml = 0;
-        WBXMLError ret = WBXML_OK; 
-        WBXMLGenXMLParams params;
- 
-        // Init default parameters
-        params.lang = WBXML_LANG_UNKNOWN;
-        params.gen_type = WBXML_GEN_XML_INDENT;
-        params.indent = 1;
-        params.keep_ignorable_ws = FALSE;
- 
-        ret = wbxml_conv_wbxml2xml_withlen(wbxml, wbxml_len, &xml, &xml_len, &params);
-        if (ret != WBXML_OK)
-            return;
-
-        data = reinterpret_cast<char*>(xml);
-        length = xml_len;
-    }
-#endif
-
     ResourceLoader::addData(data, length, allAtOnce);
     frameLoader()->receivedData(data, length);
 }

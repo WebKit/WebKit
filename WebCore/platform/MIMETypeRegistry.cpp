@@ -185,8 +185,6 @@ static void initializeSupportedNonImageMimeTypes()
     static const char* types[] = {
 #if ENABLE(WML)
         "text/vnd.wap.wml",
-#endif
-#if ENABLE(WBXML)
         "application/vnd.wap.wmlc",
 #endif
         "text/html",

@@ -325,14 +325,10 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return Document::createXHTML(frame);
 
 #if ENABLE(WML)
-    if (type == "text/vnd.wap.wml"
-#if ENABLE(WBXML)
-        || type == "application/vnd.wap.wmlc"
-#endif
-        )
+    if (type == "text/vnd.wap.wml" || type == "application/vnd.wap.wmlc")
         return WMLDocument::create(frame);
 #endif
-        
+
 #if ENABLE(FTPDIR)
     // Plugins cannot take FTP from us either
     if (type == "application/x-ftp-directory")
