@@ -1,5 +1,22 @@
 2008-11-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Sam Weinig.
+        
+        Minor RegExp cleanup.
+        
+        SunSpider says no change.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match): Renamed "regExpObj" to "regExpConstructor".
+
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp): Instead of checking for a NULL output vector,
+        ASSERT that the output vector is not NULL. (The rest of WREC is not
+        safe to use with a NULL output vector, and we probably don't want to
+        spend the time and/or performance to make it safe.)
+
+2008-11-18  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin Adler.
         
         A little more renaming and refactoring.
