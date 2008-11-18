@@ -623,6 +623,7 @@ This file contains the list of files needed to build WebCore.
         loader/DocumentLoader.cpp
         loader/FormState.cpp
         loader/FrameLoader.cpp
+        loader/FrameLoaderClient.cpp
         loader/FTPDirectoryDocument.cpp
         loader/FTPDirectoryParser.cpp
         loader/ImageDocument.cpp
