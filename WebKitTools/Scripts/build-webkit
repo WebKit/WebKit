@@ -39,6 +39,7 @@ use POSIX;
 
 my $originalWorkingDirectory = getcwd();
 
+my $channelMessagingSupport = 0;
 my $databaseSupport = 1;
 my $domStorageSupport = 1;
 my $iconDatabaseSupport = 1;
@@ -70,6 +71,7 @@ Usage: $programName [options] [options to pass to build system]
   --clean                       Cleanup the build directory
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
+  --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
   --[no-]offline-web-applications   Toggle Offline Web Application Support (default : $offlineWebApplicationSupport)
   --[no-]database               Toggle Database Support (default: $databaseSupport)
   --[no-]dom-storage            Toggle DOM Storage Support (default: $domStorageSupport)
@@ -91,7 +93,8 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
 EOF
 
-GetOptions('database!' => \$databaseSupport,
+GetOptions('channel-messaging!' => \$channelMessagingSupport,
+           'database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
            'icon-database!' => \$iconDatabaseSupport,
            'offline-web-applications!' => \$offlineWebApplicationSupport,
@@ -160,6 +163,7 @@ if (isWx()) {
 my $productDir = productDir();
 my @overrideFeatureDefinesOption = ();
 
+push @overrideFeatureDefinesOption, "ENABLE_CHANNEL_MESSAGING" if $channelMessagingSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DATABASE" if $databaseSupport;
 push @overrideFeatureDefinesOption, "ENABLE_DOM_STORAGE" if $domStorageSupport;
 push @overrideFeatureDefinesOption, "ENABLE_ICONDATABASE" if $iconDatabaseSupport;
