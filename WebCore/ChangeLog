@@ -1,3 +1,10 @@
+2008-11-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix. Not reviewed.
+
+        * GNUmakefile.am: Fix USER_AGENT_STYLESHEETS, wml.css is in css/,
+        not in wml/.
+
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
