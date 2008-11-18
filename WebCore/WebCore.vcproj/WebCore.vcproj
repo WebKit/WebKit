@@ -1736,23 +1736,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSWorker.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorker.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSWorker.h"
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorker.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSWorkerContext.lut.h"
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerContext.lut.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSWorkerLocation.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerLocation.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\WebKitBuild\obj\WebCore\DerivedSources\JSWorkerLocation.h"
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSWorkerLocation.h"
 				>
 			</File>
 			<File
