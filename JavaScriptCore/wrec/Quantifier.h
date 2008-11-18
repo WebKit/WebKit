@@ -30,6 +30,8 @@
 
 #if ENABLE(WREC)
 
+#include <limits.h>
+
 namespace JSC { namespace WREC {
 
     struct Quantifier {
