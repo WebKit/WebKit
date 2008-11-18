@@ -114,7 +114,6 @@
 #include "XMLTokenizer.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
-#include <runtime/JSLock.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(DATABASE)
