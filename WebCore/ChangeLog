@@ -1,3 +1,9 @@
+2008-11-18  John Sullivan  <sullivan@apple.com>
+
+        Yet more Mac build fixing
+
+        * WebCore.base.exp: Export __ZTVN7WebCore17FrameLoaderClientE
+
 2008-11-18  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon Hausmann.
