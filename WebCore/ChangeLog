@@ -1,3 +1,13 @@
+2008-11-18  Ada Chan  <adachan@apple.com>
+
+        Bug 22344: Make select popup window opaque
+        https://bugs.webkit.org/show_bug.cgi?id=22344
+
+        Reviewed by Steve Falkenburg.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::show):
+
 2008-11-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.

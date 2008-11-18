@@ -50,8 +50,6 @@ static const int defaultAnimationDuration = 200;
 // Maximum height of a popup window
 static const int maxPopupHeight = 320;
 
-static const int popupWindowAlphaPercent = 95;
-
 const int optionSpacingMiddle = 1;
 const int popupWindowBorderWidth = 1;
 
@@ -99,7 +97,7 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
     if (!m_popup) {
         registerPopup();
 
-        DWORD exStyle = WS_EX_LAYERED | WS_EX_LTRREADING;
+        DWORD exStyle = WS_EX_LTRREADING;
 
         // Even though we already know our size and location at this point, we pass (0,0,0,0) as our size/location here.
         // We need to wait until after the call to ::SetWindowLongPtr to set our size so that in our WM_SIZE handler we can get access to the PopupMenu object
@@ -112,7 +110,6 @@ void PopupMenu::show(const IntRect& r, FrameView* v, int index)
             return;
 
         ::SetWindowLongPtr(m_popup, 0, (LONG_PTR)this);
-        ::SetLayeredWindowAttributes(m_popup, 0, (255 * popupWindowAlphaPercent) / 100, LWA_ALPHA);
     }
 
     if (!m_scrollbar)
