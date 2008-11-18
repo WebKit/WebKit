@@ -419,9 +419,13 @@ JSValue* jsDOMWindowBaseImage(ExecState* exec, const Identifier&, const Property
 
 JSValue* jsDOMWindowBaseMessageChannel(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
+#if ENABLE(CHANNEL_MESSAGING)
     if (!static_cast<JSDOMWindowBase*>(asObject(slot.slotBase()))->allowsAccessFrom(exec))
         return jsUndefined();
     return getDOMConstructor<JSMessageChannelConstructor>(exec, static_cast<JSDOMWindowBase*>(asObject(slot.slotBase())));
+#else
+    return jsUndefined();
+#endif
 }
 
 JSValue* jsDOMWindowBaseOption(ExecState* exec, const Identifier&, const PropertySlot& slot)

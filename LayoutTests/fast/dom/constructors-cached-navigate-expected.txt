@@ -6,8 +6,8 @@ PASS testFrame.contentWindow.Image is testFrame.contentWindow.Image
 PASS testFrame.contentWindow.Image !== window.Image is true
 PASS testFrame.contentWindow.Image.testProperty is "property set successfully"
 PASS testFrame.contentWindow.MessageChannel is testFrame.contentWindow.MessageChannel
-PASS testFrame.contentWindow.MessageChannel !== window.MessageChannel is true
-PASS testFrame.contentWindow.MessageChannel.testProperty is "property set successfully"
+FAIL testFrame.contentWindow.MessageChannel !== window.MessageChannel should be true. Was false.
+FAIL Testing MessageChannel threw TypeError: Result of expression 'testFrame.contentWindow[constructor]' [undefined] is not an object.
 PASS testFrame.contentWindow.Option is testFrame.contentWindow.Option
 PASS testFrame.contentWindow.Option !== window.Option is true
 PASS testFrame.contentWindow.Option.testProperty is "property set successfully"
@@ -24,11 +24,11 @@ PASS storedConstructors.Image.testProperty is "property set successfully"
 PASS testFrame.contentWindow.Image.testProperty is undefined.
 PASS testFrame.contentWindow.Image.cachedOnOwnerDocument is true
 PASS testFrame.contentWindow.MessageChannel is testFrame.contentWindow.MessageChannel
-PASS testFrame.contentWindow.MessageChannel !== window.MessageChannel is true
-PASS testFrame.contentWindow.MessageChannel !== storedConstructors.MessageChannel is true
-PASS storedConstructors.MessageChannel.testProperty is "property set successfully"
-PASS testFrame.contentWindow.MessageChannel.testProperty is undefined.
-PASS testFrame.contentWindow.MessageChannel.cachedOnOwnerDocument is true
+FAIL testFrame.contentWindow.MessageChannel !== window.MessageChannel should be true. Was false.
+FAIL testFrame.contentWindow.MessageChannel !== storedConstructors.MessageChannel should be true. Was false.
+FAIL storedConstructors.MessageChannel.testProperty should be property set successfully. Threw exception TypeError: Result of expression 'storedConstructors.MessageChannel' [undefined] is not an object.
+FAIL testFrame.contentWindow.MessageChannel.testProperty should be undefined. Threw exception TypeError: Result of expression 'testFrame.contentWindow.MessageChannel' [undefined] is not an object.
+FAIL testFrame.contentWindow.MessageChannel.cachedOnOwnerDocument should be true. Threw exception TypeError: Result of expression 'testFrame.contentWindow.MessageChannel' [undefined] is not an object.
 PASS testFrame.contentWindow.Option is testFrame.contentWindow.Option
 PASS testFrame.contentWindow.Option !== window.Option is true
 PASS testFrame.contentWindow.Option !== storedConstructors.Option is true

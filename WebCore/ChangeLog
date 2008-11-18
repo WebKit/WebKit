@@ -1,3 +1,16 @@
+2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22306
+        Disable channel messaging support
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (jsDOMWindowBaseMessageChannel):
+        * page/DOMWindow.idl:
+        Hide MesssagePort and MessageChannel global constructors. Due to the way MessageChannel
+        constructor is added, it remains enumerable, but undefined.
+
 2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Mark Rowe.

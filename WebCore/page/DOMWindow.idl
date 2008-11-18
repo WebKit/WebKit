@@ -343,7 +343,9 @@ module window {
         attribute MessageEventConstructor MessageEvent;
         attribute EventExceptionConstructor EventException;
 
+#if ENABLE(CHANNEL_MESSAGING)
         attribute MessagePortConstructor MessagePort;
+#endif
 
         attribute ClipboardConstructor Clipboard;
 

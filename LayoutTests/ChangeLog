@@ -1,3 +1,44 @@
+2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22306
+        Disable channel messaging support
+
+        * fast/events/message-port-no-wrapper.html-disabled: Added a test that I had in my tree.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/constructors-cached-expected.txt:
+        * fast/dom/constructors-cached-navigate-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        Updated results.
+
+        * fast/events/destroyed-atomic-string.html: Removed.
+        * fast/events/destroyed-atomic-string.html-disabled: Copied from LayoutTests/fast/events/destroyed-atomic-string.html.
+        * fast/events/message-channel-gc-2.html: Removed.
+        * fast/events/message-channel-gc-2.html-disabled: Copied from LayoutTests/fast/events/message-channel-gc-2.html.
+        * fast/events/message-channel-gc-3.html: Removed.
+        * fast/events/message-channel-gc-3.html-disabled: Copied from LayoutTests/fast/events/message-channel-gc-3.html.
+        * fast/events/message-channel-gc.html: Removed.
+        * fast/events/message-channel-gc.html-disabled: Copied from LayoutTests/fast/events/message-channel-gc.html.
+        * fast/events/message-channel-listener-circular-ownership.html: Removed.
+        * fast/events/message-channel-listener-circular-ownership.html-disabled: Copied from LayoutTests/fast/events/message-channel-listener-circular-ownership.html.
+        * fast/events/message-port-constructor-for-deleted-document.html: Removed.
+        * fast/events/message-port-constructor-for-deleted-document.html-disabled: Copied from LayoutTests/fast/events/message-port-constructor-for-deleted-document.html.
+        * fast/events/message-port-deleted-document.html: Removed.
+        * fast/events/message-port-deleted-document.html-disabled: Copied from LayoutTests/fast/events/message-port-deleted-document.html.
+        * fast/events/message-port-deleted-frame.html: Removed.
+        * fast/events/message-port-deleted-frame.html-disabled: Copied from LayoutTests/fast/events/message-port-deleted-frame.html.
+        * fast/events/message-port-inactive-document.html: Removed.
+        * fast/events/message-port-inactive-document.html-disabled: Copied from LayoutTests/fast/events/message-port-inactive-document.html.
+        * fast/events/message-port-onclose.html: Removed.
+        * fast/events/message-port-onclose.html-disabled: Copied from LayoutTests/fast/events/message-port-onclose.html.
+        * fast/events/message-port.html: Removed.
+        * fast/events/message-port.html-disabled: Copied from LayoutTests/fast/events/message-port.html.
+        * http/tests/security/MessagePort/event-listener-context.html: Removed.
+        * http/tests/security/MessagePort/event-listener-context.html-disabled: Copied from LayoutTests/http/tests/security/MessagePort/event-listener-context.html.
+        Disabled MessagePort tests.
+
 2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
