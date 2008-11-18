@@ -1,3 +1,15 @@
+2008-11-18  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Don't mark scrollbars as focused in QtWebKit
+
+        When initing from the widget we also got the focus state,
+        but this does not make sense for scrollbars.
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::styleOptionSlider):
+
 2008-11-18  Alexey Proskuryakov  <ap@webkit.org>
 
         More Mac build fixing.
