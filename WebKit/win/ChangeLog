@@ -1,3 +1,16 @@
+2008-11-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22056
+
+        Move setting the background color and transparency from WebKit/win
+        to WebCore. This allows WebKit/win, WebKit/Qt and WebKit/Gtk+
+        to share this code.
+
+        * WebFrame.cpp:
+        (WebFrame::updateBackground):
+
 2008-11-16  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
