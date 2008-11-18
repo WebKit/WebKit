@@ -1,63 +1,43 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x308
-  RenderBlock {html} at (0,0) size 800x308
-    RenderBody {body} at (8,16) size 784x284
-      RenderBlock {parsererror} at (16,0) size 752x148 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-        RenderBlock {h3} at (18,20) size 716x22
-          RenderText {#text} at (0,0) size 324x22
-            text run at (0,0) width 324: "This page contains the following errors:"
-        RenderBlock {div} at (18,60) size 716x28
-          RenderText {#text} at (0,0) size 399x28
-            text run at (0,0) width 399: "error on line 18 at column 109: Entity 'nbsp' not defined"
-            text run at (399,0) width 0: " "
-            text run at (0,14) width 392: "error on line 20 at column 125: Entity 'shy' not defined"
-            text run at (392,14) width 0: " "
-        RenderBlock {h3} at (18,106) size 716x22
-          RenderText {#text} at (0,0) size 429x22
-            text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,164) size 784x0
-        RenderInline {wml} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,164) size 784x120
-        RenderBlock {card} at (8,0) size 768x86
-          RenderBlock {p} at (0,0) size 768x18
-            RenderText {#text} at (0,0) size 193x18
-              text run at (0,0) width 193: "Test for Entities in WML page"
-          RenderBlock (anonymous) at (0,34) size 768x18
-            RenderText {#text} at (0,0) size 22x18
-              text run at (0,0) width 11: "\" "
-              text run at (11,0) width 11: "\" "
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (22,0) size 32x18
-              text run at (22,0) width 16: "& "
-              text run at (38,0) width 16: "& "
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (54,0) size 14x18
-              text run at (54,0) width 7: "' "
-              text run at (61,0) width 7: "' "
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (68,0) size 26x18
-              text run at (68,0) width 13: "< "
-              text run at (81,0) width 13: "< "
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (94,0) size 26x18
-              text run at (94,0) width 13: "> "
-              text run at (107,0) width 13: "> "
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (120,0) size 35x18
-              text run at (120,0) width 35: "== = "
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (155,0) size 72x18
-              text run at (155,0) width 48: "AAAA"
-              text run at (203,0) width 24: "AA"
-            RenderInline {br} at (0,0) size 0x0
-            RenderText {#text} at (0,0) size 0x0
-          RenderBlock {p} at (0,68) size 768x18
-            RenderText {#text} at (0,0) size 49x18
-              text run at (0,0) width 49: "<hello>"
-        RenderBlock {card} at (8,102) size 768x18
-          RenderText {#text} at (0,0) size 85x18
-            text run at (0,0) width 85: "This is card 2"
-      RenderBlock (anonymous) at (0,292) size 784x0
-        RenderInline {wml} at (0,0) size 0x0
+layer at (0,0) size 800x252
+  RenderBlock {wml} at (0,0) size 800x252
+    RenderBlock {card} at (8,16) size 784x194
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 193x18
+          text run at (0,0) width 193: "Test for Entities in WML page"
+      RenderBlock (anonymous) at (0,34) size 784x126
+        RenderText {#text} at (0,0) size 22x18
+          text run at (0,0) width 11: "\" "
+          text run at (11,0) width 11: "\" "
+        RenderBR {br} at (22,0) size 0x18
+        RenderText {#text} at (0,18) size 32x18
+          text run at (0,18) width 16: "& "
+          text run at (16,18) width 16: "& "
+        RenderBR {br} at (32,18) size 0x18
+        RenderText {#text} at (0,36) size 14x18
+          text run at (0,36) width 7: "' "
+          text run at (7,36) width 7: "' "
+        RenderBR {br} at (14,36) size 0x18
+        RenderText {#text} at (0,54) size 26x18
+          text run at (0,54) width 13: "< "
+          text run at (13,54) width 13: "< "
+        RenderBR {br} at (26,54) size 0x18
+        RenderText {#text} at (0,72) size 26x18
+          text run at (0,72) width 13: "> "
+          text run at (13,72) width 13: "> "
+        RenderBR {br} at (26,72) size 0x18
+        RenderText {#text} at (0,90) size 39x18
+          text run at (0,90) width 39: "= = = "
+        RenderBR {br} at (39,90) size 0x18
+        RenderText {#text} at (0,108) size 76x18
+          text run at (0,108) width 24: "AA"
+          text run at (24,108) width 24: "AA"
+          text run at (48,108) width 28: "AA "
+        RenderBR {br} at (76,108) size 0x18
+      RenderBlock {p} at (0,176) size 784x18
+        RenderText {#text} at (0,0) size 49x18
+          text run at (0,0) width 49: "<hello>"
+    RenderBlock {card} at (8,226) size 784x18
+      RenderText {#text} at (0,0) size 85x18
+        text run at (0,0) width 85: "This is card 2"

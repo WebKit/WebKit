@@ -1,5 +1,11 @@
 2008-11-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Not reviewed. Checked in wrong result in last commit.
+
+        * platform/mac/fast/wml/entity-expected.txt:
+
+2008-11-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Sam Weinig.
 
         Add results for all WML tests, including pixel results.
