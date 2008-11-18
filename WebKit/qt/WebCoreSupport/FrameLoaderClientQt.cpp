@@ -999,6 +999,24 @@ public:
         if (platformWidget())
             platformWidget()->update(r);
     }
+    virtual void frameRectsChanged() const
+    {
+        if (!platformWidget())
+            return;
+
+        IntRect windowRect = convertToContainingWindow(IntRect(0, 0, frameRect().width(), frameRect().height()));
+        platformWidget()->setGeometry(windowRect);
+
+        ScrollView* parentScrollView = parent();
+        if (!parentScrollView)
+            return;
+
+        ASSERT(parentScrollView->isFrameView());
+        IntRect clipRect(static_cast<FrameView*>(parentScrollView)->windowClipRect());
+        clipRect.move(-windowRect.x(), -windowRect.y());
+        clipRect.intersect(platformWidget()->rect());
+        platformWidget()->setMask(QRegion(clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height()));
+    }
 };
 
 Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames,
