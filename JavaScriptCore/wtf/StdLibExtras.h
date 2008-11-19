@@ -27,8 +27,8 @@
 
 // Use these to declare and define a static local variable (static T;) so that
 //  it is leaked so that its destructors are not called at exit. Using this
-//  macro also allows workarounds for various compiler bugs.
-#if COMPILER(GCC) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 0) && (__GNUC_PATCHLEVEL__ == 1) && (__APPLE_CC__ == 5465)
+//  macro also allows workarounds a compiler bug present in Apple's version of GCC 4.0.1.
+#if COMPILER(GCC) && defined(__APPLE_CC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 1
 #define DEFINE_STATIC_LOCAL(type, name, arguments) \
     static type* name##Ptr = new type arguments; \
     type& name = *name##Ptr

@@ -1,3 +1,15 @@
+2008-11-19  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Expand the workaround for Apple GCC compiler bug <rdar://problem/6354696> to all versions of GCC 4.0.1.
+        It has been observed with builds 5465 (Xcode 3.0) and 5484 (Xcode 3.1), and there is no evidence
+        that it has been fixed in newer builds of GCC 4.0.1.
+
+        This addresses <https://bugs.webkit.org/show_bug.cgi?id=22351> (WebKit nightly crashes on launch on 10.4.11).
+
+        * wtf/StdLibExtras.h:
+
 2008-11-18  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak and Geoff Garen.
