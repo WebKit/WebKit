@@ -170,7 +170,7 @@ enum CharCategory {
     Symbol_Math = U_MASK(QChar::Symbol_Math),
     Symbol_Currency = U_MASK(QChar::Symbol_Currency),
     Symbol_Modifier = U_MASK(QChar::Symbol_Modifier),
-    Symbol_Other = U_MASK(QChar::Symbol_Other),
+    Symbol_Other = U_MASK(QChar::Symbol_Other)
 };
 
 
