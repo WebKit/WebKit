@@ -379,6 +379,7 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
             m_requestsLoading.remove(loader);
+            loader->clearClient();
             request->docLoader()->decrementRequestCount();
 
             // Existing resource is ok, just use it updating the expiration time.
