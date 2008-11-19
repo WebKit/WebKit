@@ -113,14 +113,14 @@ RegExp::~RegExp()
 #endif
 }
 
-int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
+int RegExp::match(const UString& s, int startOffset, OwnArrayPtr<int>* ovector)
 {
-    if (i < 0)
-        i = 0;
+    if (startOffset < 0)
+        startOffset = 0;
     if (ovector)
         ovector->clear();
 
-    if (i > s.size() || s.isNull())
+    if (startOffset > s.size() || s.isNull())
         return -1;
 
 #if ENABLE(WREC)
@@ -136,7 +136,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
         else
             ovector->set(offsetVector);
 
-        int result = m_wrecFunction(s.data(), i, s.size(), offsetVector);
+        int result = m_wrecFunction(s.data(), startOffset, s.size(), offsetVector);
 
         if (result < 0) {
 #ifndef NDEBUG
@@ -165,7 +165,7 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
             ovector->set(offsetVector);
         }
 
-        int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const UChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
+        int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const UChar*>(s.data()), s.size(), startOffset, offsetVector, offsetVectorSize);
     
         if (numMatches < 0) {
 #ifndef NDEBUG

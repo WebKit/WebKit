@@ -1,5 +1,33 @@
 2008-11-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22361
+        A little more RegExp refactoring.
+        
+        Consistently named variables holding the starting position at which
+        regexp matching should begin to "startOffset".
+        
+        A few more "regExpObject" => "regExpConstructor" changes.
+        
+        Refactored RegExpObject::match for clarity, and replaced a slow "get"
+        of the "global" property with a fast access to the global bit.
+        
+        Made the error message you see when RegExpObject::match has no input a
+        little more informative, as in Firefox.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+
+2008-11-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         A little more refactoring.

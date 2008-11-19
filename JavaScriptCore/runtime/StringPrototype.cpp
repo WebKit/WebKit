@@ -221,7 +221,7 @@ JSValue* stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue* thisValue, 
         RegExp* reg = asRegExpObject(pattern)->regExp();
         bool global = reg->global();
 
-        RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
+        RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
 
         int lastIndex = 0;
         int startPosition = 0;
@@ -234,7 +234,7 @@ JSValue* stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue* thisValue, 
             int matchIndex;
             int matchLen;
             int* ovector;
-            regExpObj->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+            regExpConstructor->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
             if (matchIndex < 0)
                 break;
 
@@ -414,15 +414,15 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject*, JSValue* thisValue, co
          */
         reg = RegExp::create(&exec->globalData(), a0->toString(exec));
     }
-    RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
+    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength;
-    regExpObj->performMatch(reg.get(), u, 0, pos, matchLength);
+    regExpConstructor->performMatch(reg.get(), u, 0, pos, matchLength);
     if (!(reg->global())) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
             return jsNull();
-        return regExpObj->arrayOfMatches(exec);
+        return regExpConstructor->arrayOfMatches(exec);
     }
 
     // return array of matches
@@ -432,7 +432,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject*, JSValue* thisValue, co
         list.append(jsSubstring(exec, u, pos, matchLength));
         lastIndex = pos;
         pos += matchLength == 0 ? 1 : matchLength;
-        regExpObj->performMatch(reg.get(), u, pos, pos, matchLength);
+        regExpConstructor->performMatch(reg.get(), u, pos, pos, matchLength);
     }
     if (imp)
         imp->setLastIndex(lastIndex);
@@ -464,10 +464,10 @@ JSValue* stringProtoFuncSearch(ExecState* exec, JSObject*, JSValue* thisValue, c
          */
         reg = RegExp::create(&exec->globalData(), a0->toString(exec));
     }
-    RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
+    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength;
-    regExpObj->performMatch(reg.get(), u, 0, pos, matchLength);
+    regExpConstructor->performMatch(reg.get(), u, 0, pos, matchLength);
     return jsNumber(exec, pos);
 }
 

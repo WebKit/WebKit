@@ -106,43 +106,6 @@ void setRegExpObjectLastIndex(ExecState* exec, JSObject* baseObject, JSValue* va
     asRegExpObject(baseObject)->setLastIndex(value->toInteger(exec));
 }
 
-bool RegExpObject::match(ExecState* exec, const ArgList& args)
-{
-    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-
-    UString input;
-    if (!args.isEmpty())
-        input = args.at(exec, 0)->toString(exec);
-    else {
-        input = regExpConstructor->input();
-        if (input.isNull()) {
-            throwError(exec, GeneralError, "No input.");
-            return false;
-        }
-    }
-
-    bool global = get(exec, exec->propertyNames().global)->toBoolean(exec);
-    int lastIndex = 0;
-    if (global) {
-        if (d->lastIndex < 0 || d->lastIndex > input.size()) {
-            d->lastIndex = 0;
-            return false;
-        }
-        lastIndex = static_cast<int>(d->lastIndex);
-    }
-
-    int foundIndex;
-    int foundLength;
-    regExpConstructor->performMatch(d->regExp.get(), input, lastIndex, foundIndex, foundLength);
-
-    if (global) {
-        lastIndex = foundIndex < 0 ? 0 : foundIndex + foundLength;
-        d->lastIndex = lastIndex;
-    }
-
-    return foundIndex >= 0;
-}
-
 JSValue* RegExpObject::test(ExecState* exec, const ArgList& args)
 {
     return jsBoolean(match(exec, args));
@@ -164,6 +127,41 @@ CallType RegExpObject::getCallData(CallData& callData)
 {
     callData.native.function = callRegExpObject;
     return CallTypeHost;
+}
+
+// Shared implementation used by test and exec.
+bool RegExpObject::match(ExecState* exec, const ArgList& args)
+{
+    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+
+    UString input = args.isEmpty() ? regExpConstructor->input() : args.at(exec, 0)->toString(exec);
+    if (input.isNull()) {
+        throwError(exec, GeneralError, "No input to " + toString(exec) + ".");
+        return false;
+    }
+
+    if (!regExp()->global()) {
+        int position;
+        int length;
+        regExpConstructor->performMatch(d->regExp.get(), input, 0, position, length);
+        return position >= 0;
+    }
+
+    if (d->lastIndex < 0 || d->lastIndex > input.size()) {
+        d->lastIndex = 0;
+        return false;
+    }
+
+    int position;
+    int length;
+    regExpConstructor->performMatch(d->regExp.get(), input, static_cast<int>(d->lastIndex), position, length);
+    if (position < 0) {
+        d->lastIndex = 0;
+        return false;
+    }
+
+    d->lastIndex = position + length;
+    return true;
 }
 
 } // namespace JSC

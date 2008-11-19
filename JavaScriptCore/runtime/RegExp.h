@@ -48,7 +48,7 @@ namespace JSC {
         bool isValid() const { return !m_constructionError; }
         const char* errorMessage() const { return m_constructionError; }
 
-        int match(const UString&, int offset, OwnArrayPtr<int>* ovector = 0);
+        int match(const UString&, int startOffset, OwnArrayPtr<int>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
     private:
