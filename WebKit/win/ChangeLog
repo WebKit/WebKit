@@ -1,5 +1,11 @@
 2008-11-18  Adele Peterson  <adele@apple.com>
 
+        Reverting last change.  I just realized it causes the view to never get cleared out.
+
+        * WebView.cpp: (WebView::paintIntoBackingStore):
+
+2008-11-18  Adele Peterson  <adele@apple.com>
+
         Reviewed by John Sullivan.
 
         Don't fill the view with white if its transparent.
