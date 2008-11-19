@@ -65,13 +65,13 @@ enum {
     WebMenuItemTagDefaultDirection,
     WebMenuItemTagLeftToRight,
     WebMenuItemTagRightToLeft,
+    WebMenuItemPDFSinglePageScrolling,
+    WebMenuItemPDFFacingPagesScrolling,
+    WebMenuItemTagInspectElement,
     WebMenuItemTagTextDirectionMenu,
     WebMenuItemTagTextDirectionDefault,
     WebMenuItemTagTextDirectionLeftToRight,
     WebMenuItemTagTextDirectionRightToLeft,
-    WebMenuItemPDFSinglePageScrolling,
-    WebMenuItemPDFFacingPagesScrolling,
-    WebMenuItemTagInspectElement,
     WebMenuItemTagBaseApplication = 10000
 };
 @class WebSecurityOrigin;

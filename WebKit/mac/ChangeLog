@@ -1,3 +1,13 @@
+2008-11-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22331
+          <rdar://problem/6381657> REGRESSION: Contextual menu no longer has an "Inspect Element" item
+
+        * WebView/WebUIDelegatePrivate.h: Reorder new enum values after existing
+        ones.
+
 2008-11-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele Peterson.
