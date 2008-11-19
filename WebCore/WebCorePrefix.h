@@ -119,7 +119,7 @@
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif
 
-/* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
+/* Work around a bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #if defined(__APPLE__)
 #undef try
 #undef catch
