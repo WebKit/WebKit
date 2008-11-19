@@ -1,5 +1,26 @@
 2008-11-19  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22341
+        Text codecs should not use static data without locking
+
+        * platform/text/TextCodecICU.cpp:
+        * platform/text/mac/TextCodecMac.cpp:
+        Made cached converters per-thread.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::encodingRegistryMutex): Added a mutex for codec maps access.
+        (WebCore::addToTextCodecMap): Don't use TextEncoding just to cacnonicalize the name, as it
+        causes a dedalock due to a recursive call into registry.
+        (WebCore::buildBaseTextCodecMaps): Added assertions.
+        (WebCore::newTextCodec): Take a lock to avoid concurrent access to codec maps.
+        (WebCore::atomicCanonicalTextEncodingName): Ditto.
+        (WebCore::noExtendedTextEncodingNameUsed): Added a comment, explaining why locking is not
+        necessary here.
+
+2008-11-19  Alexey Proskuryakov  <ap@webkit.org>
+
         Touch WebCorePrefix.h to force a rebuild, needed because of changed feature defines.
 
         * WebCorePrefix.h:

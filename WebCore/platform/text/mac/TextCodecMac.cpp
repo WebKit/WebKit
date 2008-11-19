@@ -32,7 +32,10 @@
 #include "CharsetData.h"
 #include "PlatformString.h"
 #include <wtf/Assertions.h>
+#include <wtf/Threading.h>
+#include <wtf/ThreadSpecific.h>
 
+using namespace WTF;
 using std::auto_ptr;
 using std::min;
 
@@ -43,8 +46,24 @@ namespace WebCore {
 
 const size_t ConversionBufferSize = 16384;
 
-static TECObjectRef cachedConverterTEC;
-static TECTextEncodingID cachedConverterEncoding = invalidEncoding;
+struct TECConverterWrapper {
+    TECConverterWrapper() : converter(0), encoding(invalidEncoding) { }
+    ~TECConverterWrapper() { if (converter) TECDisposeConverter(converter); }
+
+    TECObjectRef converter;
+    TECTextEncodingID encoding;
+};
+
+static TECConverterWrapper& cachedConverterTEC()
+{
+#if ENABLE(WORKERS)
+    AtomicallyInitializedStatic(ThreadSpecific<TECConverterWrapper>*, cachedConverter = new ThreadSpecific<TECConverterWrapper>);
+    return **cachedConverter;
+#else
+    TECConverterWrapper* cachedConverter = new TECConverterWrapper;
+    return *cachedConverter;
+#endif
+}
 
 void TextCodecMac::registerEncodingNames(EncodingNameRegistrar registrar)
 {
@@ -91,22 +110,26 @@ TextCodecMac::~TextCodecMac()
 void TextCodecMac::releaseTECConverter() const
 {
     if (m_converterTEC) {
-        if (cachedConverterTEC != 0)
-            TECDisposeConverter(cachedConverterTEC);
-        cachedConverterTEC = m_converterTEC;
-        cachedConverterEncoding = m_encoding;
+        TECConverterWrapper& cachedConverter = cachedConverterTEC();
+        if (cachedConverter.converter)
+            TECDisposeConverter(cachedConverter.converter);
+        cachedConverter.converter = m_converterTEC;
+        cachedConverter.encoding = m_encoding;
         m_converterTEC = 0;
     }
 }
 
 OSStatus TextCodecMac::createTECConverter() const
 {
-    bool cachedEncodingEqual = cachedConverterEncoding == m_encoding;
-    cachedConverterEncoding = invalidEncoding;
+    TECConverterWrapper& cachedConverter = cachedConverterTEC();
 
-    if (cachedEncodingEqual && cachedConverterTEC) {
-        m_converterTEC = cachedConverterTEC;
-        cachedConverterTEC = 0;
+    bool cachedEncodingEqual = cachedConverter.encoding == m_encoding;
+    cachedConverter.encoding = invalidEncoding;
+
+    if (cachedEncodingEqual && cachedConverter.converter) {
+        m_converterTEC = cachedConverter.converter;
+        cachedConverter.converter = 0;
+
         TECClearConverterContextInfo(m_converterTEC);
     } else {
         OSStatus status = TECCreateConverter(&m_converterTEC, m_encoding,
@@ -116,7 +139,7 @@ OSStatus TextCodecMac::createTECConverter() const
 
         TECSetBasicOptions(m_converterTEC, kUnicodeForceASCIIRangeMask);
     }
-    
+
     return noErr;
 }
 

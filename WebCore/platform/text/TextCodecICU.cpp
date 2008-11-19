@@ -34,7 +34,10 @@
 #include <unicode/ucnv_cb.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>
+#include <wtf/Threading.h>
+#include <wtf/ThreadSpecific.h>
 
+using namespace WTF;
 using std::auto_ptr;
 using std::min;
 
@@ -42,7 +45,23 @@ namespace WebCore {
 
 const size_t ConversionBufferSize = 16384;
 
-static UConverter* cachedConverterICU;
+struct ICUConverterWrapper {
+    ICUConverterWrapper() : converter(0) { }
+    ~ICUConverterWrapper() { if (converter) ucnv_close(converter); }
+
+    UConverter* converter;
+};
+
+static UConverter*& cachedConverterICU()
+{
+#if ENABLE(WORKERS)
+    AtomicallyInitializedStatic(ThreadSpecific<ICUConverterWrapper>*, cachedConverter = new ThreadSpecific<ICUConverterWrapper>);
+    return (**cachedConverter).converter;
+#else
+    static UConverter* cachedConverter;
+    return cachedConverter;
+#endif
+}
 
 static auto_ptr<TextCodec> newTextCodecICU(const TextEncoding& encoding, const void*)
 {
@@ -201,9 +220,10 @@ TextCodecICU::~TextCodecICU()
 void TextCodecICU::releaseICUConverter() const
 {
     if (m_converterICU) {
-        if (cachedConverterICU)
-            ucnv_close(cachedConverterICU);
-        cachedConverterICU = m_converterICU;
+        UConverter*& cachedConverter = cachedConverterICU();
+        if (cachedConverter)
+            ucnv_close(cachedConverter);
+        cachedConverter = m_converterICU;
         m_converterICU = 0;
     }
 }
@@ -217,12 +237,13 @@ void TextCodecICU::createICUConverter() const
 
     UErrorCode err;
 
-    if (cachedConverterICU) {
+    UConverter*& cachedConverter = cachedConverterICU();
+    if (cachedConverter) {
         err = U_ZERO_ERROR;
-        const char* cachedName = ucnv_getName(cachedConverterICU, &err);
+        const char* cachedName = ucnv_getName(cachedConverter, &err);
         if (U_SUCCESS(err) && m_encoding == cachedName) {
-            m_converterICU = cachedConverterICU;
-            cachedConverterICU = 0;
+            m_converterICU = cachedConverter;
+            cachedConverter = 0;
             return;
         }
     }
