@@ -1,3 +1,10 @@
+2008-11-19  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, remove file referenced in the qrc file that does not
+        exist and is not needed.
+
+        * tests/qwebframe/qwebframe.qrc:
+
 2008-11-18  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber-stamped by Tor Arne Vestbø.

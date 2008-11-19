@@ -1,6 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
 <file>image.png</file>
-<file>workbench.png</file>
 </qresource>
 </RCC>
