@@ -1,3 +1,12 @@
+2008-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure to copy the MIME type.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:DOMElement:]):
+
 2008-11-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

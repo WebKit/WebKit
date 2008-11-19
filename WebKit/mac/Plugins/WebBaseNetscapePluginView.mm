@@ -73,6 +73,7 @@
     _element = anElement;
     _sourceURL.adoptNS([URL copy]);
     _baseURL.adoptNS([baseURL copy]);
+    _MIMEType.adoptNS([MIME copy]);
     
     [self setAttributeKeys:keys andValues:values];
     if (loadManually)
