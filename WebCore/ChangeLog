@@ -1,3 +1,14 @@
+2008-11-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - WebCore part of https://bugs.webkit.org/show_bug.cgi?id=22331
+          <rdar://problem/6381657> REGRESSION: Contextual menu no longer has an "Inspect Element" item
+
+        * platform/ContextMenuItem.h:
+        (WebCore::ContextMenuAction): Reorder this enum to keep it in sync with
+        the one in WebUIDelegate.h.
+
 2008-11-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
