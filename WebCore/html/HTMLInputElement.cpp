@@ -1535,6 +1535,15 @@ void HTMLInputElement::setUseMap(const String &value)
     setAttribute(usemapAttr, value);
 }
 
+void HTMLInputElement::setAutofilled(bool b)
+{
+    if (b == m_autofilled)
+        return;
+        
+    m_autofilled = b;
+    setChanged();
+}
+
 FileList* HTMLInputElement::files()
 {
     if (inputType() != FILE)

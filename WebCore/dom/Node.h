@@ -287,6 +287,7 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
+    virtual bool isAutofilled() const { return false; }
     virtual bool isControl() const { return false; } // Eventually the notion of what is a control will be extensible.
     virtual bool isEnabled() const { return true; }
     virtual bool isChecked() const { return false; }
