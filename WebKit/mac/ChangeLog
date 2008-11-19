@@ -1,3 +1,28 @@
+2008-11-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        First step toward fixing <rdar://problem/6263293> WebScriptDebugDelegate
+        should use intptr_t for sourceId, not int
+        
+        Added a conditional typedef (currently disabled) to switch sourceId to
+        intptr_t in non-Tiger, non-Leopard builds.
+
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.m:
+        (-[WebDefaultScriptDebugDelegate webView:didParseSource:fromURL:sourceId:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:exceptionWasRaised:sourceId:line:forWebFrame:]):
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::sourceParsed):
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::exception):
+
 2008-11-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

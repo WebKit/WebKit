@@ -28,7 +28,6 @@
 
 #import <WebKit/WebScriptDebugDelegate.h>
 #import "WebDefaultScriptDebugDelegate.h"
-
 #import "WebTypesInternal.h"
 
 @implementation WebDefaultScriptDebugDelegate
@@ -45,7 +44,7 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
                                                 fromURL:(NSString *)url
-                                               sourceId:(int)sid
+                                               sourceId:(WebSourceId)sid
                                             forWebFrame:(WebFrame *)webFrame
 {
 }
@@ -53,7 +52,7 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 - (void)webView:(WebView *)webView       didParseSource:(NSString *)source
                                          baseLineNumber:(NSUInteger)lineNumber
                                                 fromURL:(NSURL *)url
-                                               sourceId:(int)sid
+                                               sourceId:(WebSourceId)sid
                                             forWebFrame:(WebFrame *)webFrame
 {
 }
@@ -67,28 +66,28 @@ static WebDefaultScriptDebugDelegate *sharedDelegate = nil;
 }
 
 - (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame
-                                               sourceId:(int)sid
+                                               sourceId:(WebSourceId)sid
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
 }
 
 - (void)webView:(WebView *)webView willExecuteStatement:(WebScriptCallFrame *)frame
-                                               sourceId:(int)sid
+                                               sourceId:(WebSourceId)sid
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
 }
 
 - (void)webView:(WebView *)webView   willLeaveCallFrame:(WebScriptCallFrame *)frame
-                                               sourceId:(int)sid
+                                               sourceId:(WebSourceId)sid
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
 }
 
 - (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
-                                               sourceId:(int)sid
+                                               sourceId:(WebSourceId)sid
                                                    line:(int)lineno
                                             forWebFrame:(WebFrame *)webFrame
 {
