@@ -1,3 +1,9 @@
+2008-11-18  Sam Weinig  <sam@webkit.org>
+
+        Fix incorrect result.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-11-18  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Checked in wrong result in last commit.
