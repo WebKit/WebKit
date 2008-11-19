@@ -1,3 +1,11 @@
+2008-11-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Holger Hans Peter Freyther.
+
+        Flip check added in recent refactoring so the background gets updated when the background color is valid, not invalid.
+
+        * loader/FrameLoaderClient.cpp: (WebCore::FrameLoaderClient::transitionToCommittedForNewPage):
+
 2008-11-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.

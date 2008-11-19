@@ -66,7 +66,7 @@ void FrameLoaderClient::transitionToCommittedForNewPage(Frame* frame, const IntS
     // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
     frameView->deref();
 
-    if (!backgroundColor.isValid())
+    if (backgroundColor.isValid())
         frameView->updateBackgroundRecursively(backgroundColor, transparent);
 
     if (isMainFrame)
