@@ -30,7 +30,6 @@
 #include "JSCustomSQLTransactionErrorCallback.h"
 
 #include "CString.h"
-#include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "ScriptController.h"
@@ -83,7 +82,7 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException())
-        m_frame->domWindow()->console()->reportCurrentException(exec);
+        reportCurrentException(exec);
         
     Document::updateDocumentsRendering();
     

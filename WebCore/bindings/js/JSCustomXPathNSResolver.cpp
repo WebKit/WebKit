@@ -105,7 +105,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
     String result;
     if (exec->hadException())
-        m_frame->domWindow()->console()->reportCurrentException(exec);
+        reportCurrentException(exec);
     else {
         if (!retval->isUndefinedOrNull())
             result = retval->toString(exec);

@@ -401,6 +401,25 @@ UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue* value)
     return value->toString(exec);
 }
 
+void reportException(JSC::ExecState* exec, JSValue* exception)
+{
+    UString errorMessage = exception->toString(exec);
+    JSObject* exceptionObject = exception->toObject(exec);
+    int lineNumber = exceptionObject->get(exec, Identifier(exec, "line"))->toInt32(exec);
+    UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
+    exec->clearException();
+
+    ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    scriptExecutionContext->reportException(errorMessage, lineNumber, exceptionSourceURL);
+}
+
+void reportCurrentException(JSC::ExecState* exec)
+{
+    JSValue* exception = exec->exception();
+    exec->clearException();
+    reportException(exec, exception);
+}
+
 void setDOMException(ExecState* exec, ExceptionCode ec)
 {
     if (!ec || exec->hadException())

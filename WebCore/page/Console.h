@@ -93,9 +93,6 @@ namespace WebCore {
         void group(JSC::ExecState*, const JSC::ArgList&);
         void groupEnd();
 
-        void reportException(JSC::ExecState*, JSC::JSValue*);
-        void reportCurrentException(JSC::ExecState*);
-
         static bool shouldPrintExceptions();
         static void setShouldPrintExceptions(bool);
 

@@ -441,24 +441,6 @@ void Console::warn(ExecState* exec, const ArgList& args)
     printToStandardOut(WarningMessageLevel, exec, args, url);
 }
 
-void Console::reportException(ExecState* exec, JSValue* exception)
-{
-    UString errorMessage = exception->toString(exec);
-    JSObject* exceptionObject = exception->toObject(exec);
-    int lineNumber = exceptionObject->get(exec, Identifier(exec, "line"))->toInt32(exec);
-    UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-    addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, exceptionSourceURL);
-    if (exec->hadException())
-        exec->clearException();
-}
-
-void Console::reportCurrentException(ExecState* exec)
-{
-    JSValue* exception = exec->exception();
-    exec->clearException();
-    reportException(exec, exception);
-}
-
 static bool printExceptions = false;
 
 bool Console::shouldPrintExceptions()

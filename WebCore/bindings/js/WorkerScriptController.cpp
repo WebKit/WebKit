@@ -30,6 +30,7 @@
 
 #include "WorkerScriptController.h"
 
+#include "JSDOMBinding.h"
 #include "JSWorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
@@ -82,9 +83,8 @@ JSValue* WorkerScriptController::evaluate(const String& sourceURL, int baseLine,
     if (comp.complType() == Normal || comp.complType() == ReturnValue)
         return comp.value();
 
-    // FIXME: send exceptions to console.
     if (comp.complType() == Throw)
-        fprintf(stderr, "%s\n", comp.value()->toString(exec).UTF8String().c_str());
+        reportException(exec, comp.value());
     return noValue();
 }
 

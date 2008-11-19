@@ -146,6 +146,9 @@ namespace WebCore {
 
     const JSC::HashTable* getHashTableForGlobalData(JSC::JSGlobalData&, const JSC::HashTable* staticTable);
 
+    void reportException(JSC::ExecState*, JSC::JSValue* exception);
+    void reportCurrentException(JSC::ExecState*);
+
     // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
     void setDOMException(JSC::ExecState*, ExceptionCode);
 

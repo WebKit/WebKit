@@ -61,10 +61,9 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     if (!scriptExecutionContext)
         return;
 
-    Frame* frame = 0;
     if (scriptExecutionContext->isDocument()) {
         JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject);
-        frame = window->impl()->frame();
+        Frame* frame = window->impl()->frame();
         if (!frame)
             return;
         // The window must still be active in its frame. See <https://bugs.webkit.org/show_bug.cgi?id=21921>.
@@ -113,12 +112,9 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
         globalObject->setCurrentEvent(savedEvent);
 
-        if (exec->hadException()) {
-            if (frame)
-                frame->domWindow()->console()->reportCurrentException(exec);
-            else
-                exec->clearException(); // FIXME: Report exceptions in non-Document contexts.
-        } else {
+        if (exec->hadException())
+            reportCurrentException(exec);
+        else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval->toString(exec));
             if (m_isInline) {
@@ -128,7 +124,8 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
             }
         }
 
-        Document::updateDocumentsRendering();
+        if (scriptExecutionContext->isDocument())
+            Document::updateDocumentsRendering();
         deref();
     }
 }
@@ -280,10 +277,9 @@ void JSLazyEventListener::parseCode() const
     if (m_parsed)
         return;
 
-    Frame* frame = 0;
     if (globalObject()->scriptExecutionContext()->isDocument()) {
         JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject());
-        frame = window->impl()->frame();
+        Frame* frame = window->impl()->frame();
         if (!frame)
             return;
         // FIXME: Is this check needed for non-Document contexts?

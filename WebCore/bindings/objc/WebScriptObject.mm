@@ -92,7 +92,7 @@ static void addExceptionToConsole(ExecState* exec)
     JSDOMWindow* window = asJSDOMWindow(exec->dynamicGlobalObject());
     if (!window || !exec->hadException())
         return;
-    window->impl()->console()->reportCurrentException(exec);
+    reportCurrentException(exec);
 }
 
 } // namespace WebCore

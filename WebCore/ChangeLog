@@ -1,3 +1,70 @@
+2008-11-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22310
+        Worker exceptions should be printed to console
+
+        * dom/Document.cpp: (WebCore::Document::reportException):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * dom/WorkerContext.cpp: (WebCore::WorkerContext::reportException):
+        * dom/WorkerContext.h:
+        Added a reportException() method on ScriptExecutionContext. It forwards the exception info
+        up until it finds a Document context, and then it prints it to console.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent): Don't talk to Console directly, use
+        ScriptExecutionContext::reportException. Also, fixed a bug where Document::updateDocumentsRendering()
+        could be called from workers.
+        (WebCore::JSLazyEventListener::parseCode): Moved variable declaration inside if block for clarity.
+
+        * bindings/js/WorkerScriptController.cpp: (WebCore::WorkerScriptController::evaluate):
+        Report exceptions to ScriptExecutionContext.
+
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerTask::performTask):
+        (WebCore::WorkerExceptionTask::create):
+        (WebCore::WorkerExceptionTask::WorkerExceptionTask):
+        (WebCore::WorkerExceptionTask::performTask):
+        (WebCore::WorkerMessagingProxy::postWorkerException):
+        * dom/WorkerMessagingProxy.h:
+        Added a task for posting exception information.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        (WebCore::reportCurrentException):
+        * bindings/js/JSDOMBinding.h:
+        Added helper methods for reporting exceptions via ScriptExecutionContext.
+
+        * page/Console.cpp:
+        * page/Console.h:
+        Removed methods for directly reporting exceptions to console.
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        (WebCore::JSCustomPositionCallback::handleEvent):
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        (WebCore::JSCustomPositionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::addExceptionToConsole):
+        Switch to JSDOMBinding methods for reporting exceptions.
+
 2008-11-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

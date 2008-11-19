@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSCustomPositionErrorCallback.h"
 
-#include "Console.h"
 #include "CString.h"
 #include "Frame.h"
 #include "JSPositionError.h"
@@ -79,7 +78,7 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     globalObject->stopTimeoutCheck();
     
     if (exec->hadException())
-        m_frame->domWindow()->console()->reportCurrentException(exec);
+        reportCurrentException(exec);
 }
     
 } // namespace WebCore

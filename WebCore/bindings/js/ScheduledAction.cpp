@@ -24,11 +24,11 @@
 #include "ScheduledAction.h"
 
 #include "CString.h"
-#include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
 #include <runtime/JSLock.h>
@@ -74,7 +74,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
             call(exec, m_function, callType, callData, windowShell, args);
             window->stopTimeoutCheck();
             if (exec->hadException())
-                frame->domWindow()->console()->reportCurrentException(exec);
+                reportCurrentException(exec);
         }
     } else
         frame->loader()->executeScript(m_code);

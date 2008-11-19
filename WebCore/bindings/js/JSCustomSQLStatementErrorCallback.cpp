@@ -30,7 +30,6 @@
 #include "JSCustomSQLStatementErrorCallback.h"
 
 #include "CString.h"
-#include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "ScriptController.h"
@@ -90,7 +89,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {
-        m_frame->domWindow()->console()->reportCurrentException(exec);
+        reportCurrentException(exec);
             
         // The spec says:
         // "If the error callback returns false, then move on to the next statement..."

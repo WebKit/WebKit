@@ -88,7 +88,7 @@ private:
     {
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext*)
     {
         Worker* workerObject = m_messagingProxy->workerObject();
         if (!workerObject)
@@ -110,6 +110,32 @@ private:
 private:
     String m_message;
     WorkerMessagingProxy* m_messagingProxy;
+};
+
+class WorkerExceptionTask : public ScriptExecutionContext::Task {
+public:
+    static PassRefPtr<WorkerExceptionTask> create(const String& errorMessage, int lineNumber, const String& sourceURL)
+    {
+        return adoptRef(new WorkerExceptionTask(errorMessage, lineNumber, sourceURL));
+    }
+
+private:
+    WorkerExceptionTask(const String& errorMessage, int lineNumber, const String& sourceURL)
+        : m_errorMessage(errorMessage.copy())
+        , m_lineNumber(lineNumber)
+        , m_sourceURL(sourceURL.copy())
+    {
+    }
+
+    virtual void performTask(ScriptExecutionContext* context)
+    {
+        context->reportException(m_errorMessage, m_lineNumber, m_sourceURL);
+    }
+
+private:
+    String m_errorMessage;
+    int m_lineNumber;
+    String m_sourceURL;
 };
 
 class WorkerContextDestroyedTask : public ScriptExecutionContext::Task {
@@ -191,6 +217,11 @@ void WorkerMessagingProxy::postMessageToWorkerContext(const String& message)
         m_workerThread->messageQueue().append(MessageWorkerContextTask::create(message));
     else
         m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message));
+}
+
+void WorkerMessagingProxy::postWorkerException(const String& errorMessage, int lineNumber, const String& sourceURL)
+{
+    m_scriptExecutionContext->postTask(WorkerExceptionTask::create(errorMessage, lineNumber, sourceURL));
 }
 
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<WorkerThread> workerThread)

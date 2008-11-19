@@ -30,7 +30,6 @@
 #include "JSCustomSQLTransactionCallback.h"
 
 #include "CString.h"
-#include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "Logging.h"
@@ -129,7 +128,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {
-        m_data->frame()->domWindow()->console()->reportCurrentException(exec);
+        reportCurrentException(exec);
         
         raisedException = true;
     }
