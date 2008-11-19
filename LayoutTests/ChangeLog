@@ -1,3 +1,12 @@
+2008-11-18  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Skip some more tests to make the Gtk+ build bot pass. We will
+        have to investigate why some tests only fail on the build bot.
+
+        * platform/gtk/Skipped:
+
 2008-11-18  Sam Weinig  <sam@webkit.org>
 
         Fix incorrect result.
