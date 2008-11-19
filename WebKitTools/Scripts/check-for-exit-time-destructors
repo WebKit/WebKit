@@ -92,23 +92,11 @@ for my $file (sort @files) {
     my $shortName = $file;
     $shortName =~ s/.*\///;
 
-    if ($target eq "WebCore") {
-        next if $shortName eq "AccessibilityRenderObject.o";
-        next if $shortName eq "CSSStyleSelector.o";
-        next if $shortName eq "FontCache.o";
-        next if $shortName eq "JSHTMLElementWrapperFactory.o";
-        next if $shortName eq "JSSVGAnimatedLength.o";
-        next if $shortName eq "JSSVGAnimatedRect.o";
-        next if $shortName eq "JSSVGElementWrapperFactory.o";
-        next if $shortName eq "JSSVGLength.o";
-        next if $shortName eq "JSSVGRect.o";
-        next if $shortName eq "StyleTransformData.o";
-    }
-
     $sawError = 1 if printFunctions($shortName, $file);
 }
 
 if ($sawError and !$coverageBuild) {
+    print "Use DEFINE_STATIC_LOCAL from <wtf/StdLibExtras.h>\n";
     unlink $executablePath;
     exit 1;
 }
