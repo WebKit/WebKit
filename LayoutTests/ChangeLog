@@ -1,3 +1,14 @@
+2008-11-18  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak and Geoff Garen.
+
+        Add tests for bug 22287: ASSERTION FAILED: Not enough jumps linked in slow case codegen in CTI::privateCompileSlowCases())
+        <https://bugs.webkit.org/show_bug.cgi?id=22287>
+
+        * fast/js/number-cell-reuse-expected.txt: Added.
+        * fast/js/number-cell-reuse.html: Added.
+        * fast/js/resources/number-cell-reuse.js: Added.
+
 2008-11-18  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Mark Rowe.
