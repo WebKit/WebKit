@@ -377,7 +377,7 @@ ALWAYS_INLINE void JIT::emitAllocateNumber(JSGlobalData* globalData, unsigned by
 
 ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, X86::RegisterID r)
 {
-    JmpSrc call = __ emitCall(r);
+    JmpSrc call = __ call(r);
     m_calls.append(CallRecord(call, bytecodeIndex));
 
     return call;
@@ -385,14 +385,14 @@ ALWAYS_INLINE JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, X86::RegisterID 
 
 ALWAYS_INLINE  JmpSrc JIT::emitNakedCall(unsigned bytecodeIndex, void* function)
 {
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
     return call;
 }
 
 ALWAYS_INLINE  JmpSrc JIT::emitNakedFastCall(unsigned bytecodeIndex, void* function)
 {
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, reinterpret_cast<CTIHelper_v>(function), bytecodeIndex));
     return call;
 }
@@ -404,9 +404,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -423,9 +423,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -442,9 +442,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -461,9 +461,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -480,9 +480,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -499,9 +499,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -518,9 +518,9 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 #else
     UNUSED_PARAM(vPC);
 #endif
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc call = __ emitCall();
+    JmpSrc call = __ call();
     m_calls.append(CallRecord(call, helper, bytecodeIndex));
 #if ENABLE(OPCODE_SAMPLING)
     __ movl_i32m(m_interpreter->sampler()->encodeSample(vPC, false), m_interpreter->sampler()->sampleSlot());
@@ -533,7 +533,7 @@ ALWAYS_INLINE JmpSrc JIT::emitCTICall(Instruction* vPC, unsigned bytecodeIndex, 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex)
 {
     __ testl_i32r(JSImmediate::TagMask, reg);
-    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(__ jne(), bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, unsigned bytecodeIndex, int vReg)
@@ -556,7 +556,7 @@ ALWAYS_INLINE bool JIT::linkSlowCaseIfNotJSCell(const Vector<SlowCaseEntry>::ite
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNum(RegisterID reg, unsigned bytecodeIndex)
 {
     __ testl_i32r(JSImmediate::TagBitTypeInteger, reg);
-    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJe(), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(__ je(), bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmNums(RegisterID reg1, RegisterID reg2, unsigned bytecodeIndex)
@@ -580,7 +580,7 @@ ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 ALWAYS_INLINE JmpSrc JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
     __ subl_i8r(JSImmediate::TagBitTypeInteger, reg);
-    return __ emitUnlinkedJe();
+    return __ je();
 }
 
 ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID reg)
@@ -601,7 +601,7 @@ ALWAYS_INLINE void JIT::emitFastArithImmToInt(RegisterID reg)
 ALWAYS_INLINE void JIT::emitFastArithIntToImmOrSlowCase(RegisterID reg, unsigned bytecodeIndex)
 {
     __ addl_rr(reg, reg);
-    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), bytecodeIndex));
+    m_slowCases.append(SlowCaseEntry(__ jo(), bytecodeIndex));
     emitFastArithReTagImmediate(reg);
 }
 
@@ -614,7 +614,7 @@ ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID reg)
 ALWAYS_INLINE JmpSrc JIT::emitArithIntToImmWithJump(RegisterID reg)
 {
     __ addl_rr(reg, reg);
-    JmpSrc jmp = __ emitUnlinkedJo();
+    JmpSrc jmp = __ jo();
     emitFastArithReTagImmediate(reg);
     return jmp;
 }
@@ -729,7 +729,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned i,
 
         emitCTICall(instruction, i, Interpreter::cti_op_call_eval);
         __ cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::eax);
-        wasEval = __ emitUnlinkedJne();
+        wasEval = __ jne();
     }
 
     // This plants a check for a cached JSFunction value, so we can plant a fast link to the callee.
@@ -737,7 +737,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned i,
     emitGetVirtualRegister(callee, X86::ecx, i);
     __ cmpl_i32r(asInteger(JSImmediate::impossibleValue()), X86::ecx);
     JmpDst addressOfLinkedFunctionCheck = __ label();
-    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+    m_slowCases.append(SlowCaseEntry(__ jne(), i));
     ASSERT(X86Assembler::getDifferenceBetweenLabels(addressOfLinkedFunctionCheck, __ label()) == repatchOffsetOpCallCall);
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
 
@@ -790,9 +790,9 @@ void JIT::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
     emitGetVirtualRegisters(src1, X86::eax, src2, X86::edx, i);
 
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc firstNotImmediate = __ emitUnlinkedJe();
+    JmpSrc firstNotImmediate = __ je();
     __ testl_i32r(JSImmediate::TagMask, X86::edx);
-    JmpSrc secondNotImmediate = __ emitUnlinkedJe();
+    JmpSrc secondNotImmediate = __ je();
 
     __ cmpl_rr(X86::edx, X86::eax);
     if (negated)
@@ -802,7 +802,7 @@ void JIT::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
     __ movzbl_rr(X86::eax, X86::eax);
     emitTagAsBoolImmediate(X86::eax);
             
-    JmpSrc bothWereImmediates = __ emitUnlinkedJmp();
+    JmpSrc bothWereImmediates = __ jmp();
 
     __ link(firstNotImmediate, __ label());
 
@@ -815,16 +815,16 @@ void JIT::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
     __ movzbl_rr(X86::edx, X86::edx); // edx is now 1 if edx was the 0 immediate
     __ orl_rr(X86::ecx, X86::edx);
 
-    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJnz(), i));
+    m_slowCases.append(SlowCaseEntry(__ jnz(), i));
 
     __ movl_i32r(asInteger(jsBoolean(negated)), X86::eax);
 
-    JmpSrc firstWasNotImmediate = __ emitUnlinkedJmp();
+    JmpSrc firstWasNotImmediate = __ jmp();
 
     __ link(secondNotImmediate, __ label());
     // check that eax is not the zero immediate (we know it must be immediate)
     __ cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
-    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJe(), i));
+    m_slowCases.append(SlowCaseEntry(__ je(), i));
 
     __ movl_i32r(asInteger(jsBoolean(negated)), X86::eax);
 
@@ -837,7 +837,7 @@ void JIT::compileOpStrictEq(Instruction* instruction, unsigned i, CompileOpStric
 void JIT::emitSlowScriptCheck(Instruction* vPC, unsigned bytecodeIndex)
 {
     __ subl_i8r(1, X86::esi);
-    JmpSrc skipTimeout = __ emitUnlinkedJne();
+    JmpSrc skipTimeout = __ jne();
     emitCTICall(vPC, bytecodeIndex, Interpreter::cti_timeout_check);
 
     emitGetCTIParam(CTI_ARGS_globalData, X86::ecx);
@@ -866,7 +866,7 @@ void JIT::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSourc
     __ cvtsi2sd_rr(tempReg1, tempXmm);
     // Compare & branch if immediate. 
     __ ucomis_rr(tempXmm, xmmSource);
-    JmpSrc resultIsImm = __ emitUnlinkedJe();
+    JmpSrc resultIsImm = __ je();
     JmpDst resultLookedLikeImmButActuallyIsnt = __ label();
     
     // Store the result to the JSNumberCell and jump.
@@ -874,15 +874,15 @@ void JIT::putDoubleResultToJSNumberCellOrJSImmediate(X86::XMMRegisterID xmmSourc
     if (jsNumberCell != X86::eax)
         __ movl_rr(jsNumberCell, X86::eax);
     emitPutVirtualRegister(dst);
-    *wroteJSNumberCell = __ emitUnlinkedJmp();
+    *wroteJSNumberCell = __ jmp();
 
     __ link(resultIsImm, __ label());
     // value == (double)(JSImmediate)value... or at least, it looks that way...
     // ucomi will report that (0 == -0), and will report true if either input in NaN (result is unordered).
-    __ link(__ emitUnlinkedJp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
+    __ link(__ jp(), resultLookedLikeImmButActuallyIsnt); // Actually was a NaN
     __ pextrw_irr(3, xmmSource, tempReg2);
     __ cmpl_i32r(0x8000, tempReg2);
-    __ link(__ emitUnlinkedJe(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
+    __ link(__ je(), resultLookedLikeImmButActuallyIsnt); // Actually was -0
     // Yes it really really really is representable as a JSImmediate.
     emitFastArithIntToImmNoCheck(tempReg1);
     if (tempReg1 != X86::eax)
@@ -905,26 +905,26 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
 
         // Check op2 is a number
         __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::edx);
-        JmpSrc op2imm = __ emitUnlinkedJne();
+        JmpSrc op2imm = __ jne();
         if (!types.second().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::edx, i, src2);
             __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::edx);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
         }
 
         // (1) In this case src2 is a reusable number cell.
         //     Slow case if src1 is not a number type.
         __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-        JmpSrc op1imm = __ emitUnlinkedJne();
+        JmpSrc op1imm = __ jne();
         if (!types.first().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, src1);
             __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
         }
 
         // (1a) if we get here, src1 is also a number cell
         __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
-        JmpSrc loadedDouble = __ emitUnlinkedJmp();
+        JmpSrc loadedDouble = __ jmp();
         // (1b) if we get here, src1 is an immediate
         __ link(op1imm, __ label());
         emitFastArithImmToInt(X86::eax);
@@ -941,7 +941,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         }
 
         putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::edx, dst, &wasJSNumberCell2, X86::xmm1, X86::ecx, X86::eax);
-        wasJSNumberCell2b = __ emitUnlinkedJmp();
+        wasJSNumberCell2b = __ jmp();
 
         // (2) This handles cases where src2 is an immediate number.
         //     Two slow cases - either src1 isn't an immediate, or the subtract overflows.
@@ -952,26 +952,26 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
 
         // Check op1 is a number
         __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-        JmpSrc op1imm = __ emitUnlinkedJne();
+        JmpSrc op1imm = __ jne();
         if (!types.first().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, src1);
             __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
         }
 
         // (1) In this case src1 is a reusable number cell.
         //     Slow case if src2 is not a number type.
         __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::edx);
-        JmpSrc op2imm = __ emitUnlinkedJne();
+        JmpSrc op2imm = __ jne();
         if (!types.second().definitelyIsNumber()) {
             emitJumpSlowCaseIfNotJSCell(X86::edx, i, src2);
             __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::edx);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
         }
 
         // (1a) if we get here, src2 is also a number cell
         __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::edx, X86::xmm1);
-        JmpSrc loadedDouble = __ emitUnlinkedJmp();
+        JmpSrc loadedDouble = __ jmp();
         // (1b) if we get here, src2 is an immediate
         __ link(op2imm, __ label());
         emitFastArithImmToInt(X86::edx);
@@ -991,7 +991,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         emitPutVirtualRegister(dst);
 
         putDoubleResultToJSNumberCellOrJSImmediate(X86::xmm0, X86::eax, dst, &wasJSNumberCell1, X86::xmm1, X86::ecx, X86::edx);
-        wasJSNumberCell1b = __ emitUnlinkedJmp();
+        wasJSNumberCell1b = __ jmp();
 
         // (2) This handles cases where src1 is an immediate number.
         //     Two slow cases - either src2 isn't an immediate, or the subtract overflows.
@@ -1003,10 +1003,10 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
     if (opcodeID == op_add) {
         emitFastArithDeTagImmediate(X86::eax);
         __ addl_rr(X86::edx, X86::eax);
-        m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+        m_slowCases.append(SlowCaseEntry(__ jo(), i));
     } else  if (opcodeID == op_sub) {
         __ subl_rr(X86::edx, X86::eax);
-        m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+        m_slowCases.append(SlowCaseEntry(__ jo(), i));
         emitFastArithReTagImmediate(X86::eax);
     } else {
         ASSERT(opcodeID == op_mul);
@@ -1014,17 +1014,17 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, u
         emitFastArithImmToInt(X86::edx);
         JmpSrc op1Zero = emitFastArithDeTagImmediateJumpIfZero(X86::eax);
         __ testl_rr(X86::edx, X86::edx);
-        JmpSrc op2NonZero = __ emitUnlinkedJne();
+        JmpSrc op2NonZero = __ jne();
         __ link(op1Zero, __ label());
         // if either input is zero, add the two together, and check if the result is < 0.
         // If it is, we have a problem (N < 0), (N * 0) == -0, not representatble as a JSImmediate. 
         __ movl_rr(X86::eax, X86::ecx);
         __ addl_rr(X86::edx, X86::ecx);
-        m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJs(), i));
+        m_slowCases.append(SlowCaseEntry(__ js(), i));
         // Skip the above check if neither input is zero
         __ link(op2NonZero, __ label());
         __ imull_rr(X86::edx, X86::eax);
-        m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+        m_slowCases.append(SlowCaseEntry(__ jo(), i));
         emitFastArithReTagImmediate(X86::eax);
     }
     emitPutVirtualRegister(dst);
@@ -1125,13 +1125,13 @@ void JIT::privateCompileMainPass()
                 emitGetVirtualRegister(src2, X86::eax, i);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 __ addl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
-                m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+                m_slowCases.append(SlowCaseEntry(__ jo(), i));
                 emitPutVirtualRegister(dst);
             } else if (JSValue* value = getConstantImmediateNumericArg(src2)) {
                 emitGetVirtualRegister(src1, X86::eax, i);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 __ addl_i32r(getDeTaggedConstantImmediate(value), X86::eax);
-                m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+                m_slowCases.append(SlowCaseEntry(__ jo(), i));
                 emitPutVirtualRegister(dst);
             } else {
                 OperandTypes types = OperandTypes::fromInt(instruction[i + 4].u.operand);
@@ -1159,7 +1159,7 @@ void JIT::privateCompileMainPass()
         }
         case op_jmp: {
             unsigned target = instruction[i + 1].u.operand;
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJmp(), i + 1 + target));
+            m_jmpTable.append(JmpTable(__ jmp(), i + 1 + target));
             i += 2;
             break;
         }
@@ -1168,7 +1168,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(srcDst, X86::eax, i);
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             __ addl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+            m_slowCases.append(SlowCaseEntry(__ jo(), i));
             emitPutVirtualRegister(srcDst);
             i += 2;
             break;
@@ -1177,7 +1177,7 @@ void JIT::privateCompileMainPass()
             emitSlowScriptCheck(instruction + i, i);
 
             unsigned target = instruction[i + 1].u.operand;
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJmp(), i + 1 + target));
+            m_jmpTable.append(JmpTable(__ jmp(), i + 1 + target));
             i += 2;
             break;
         }
@@ -1190,13 +1190,13 @@ void JIT::privateCompileMainPass()
                 emitGetVirtualRegister(instruction[i + 1].u.operand, X86::edx, i);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
                 __ cmpl_i32r(asInteger(src2imm), X86::edx);
-                m_jmpTable.append(JmpTable(__ emitUnlinkedJl(), i + 3 + target));
+                m_jmpTable.append(JmpTable(__ jl(), i + 3 + target));
             } else {
                 emitGetVirtualRegisters(instruction[i + 1].u.operand, X86::eax, instruction[i + 2].u.operand, X86::edx, i);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
                 __ cmpl_rr(X86::edx, X86::eax);
-                m_jmpTable.append(JmpTable(__ emitUnlinkedJl(), i + 3 + target));
+                m_jmpTable.append(JmpTable(__ jl(), i + 3 + target));
             }
             i += 4;
             break;
@@ -1210,13 +1210,13 @@ void JIT::privateCompileMainPass()
                 emitGetVirtualRegister(instruction[i + 1].u.operand, X86::edx, i);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
                 __ cmpl_i32r(asInteger(src2imm), X86::edx);
-                m_jmpTable.append(JmpTable(__ emitUnlinkedJle(), i + 3 + target));
+                m_jmpTable.append(JmpTable(__ jle(), i + 3 + target));
             } else {
                 emitGetVirtualRegisters(instruction[i + 1].u.operand, X86::eax, instruction[i + 2].u.operand, X86::edx, i);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
                 __ cmpl_rr(X86::edx, X86::eax);
-                m_jmpTable.append(JmpTable(__ emitUnlinkedJle(), i + 3 + target));
+                m_jmpTable.append(JmpTable(__ jle(), i + 3 + target));
             }
             i += 4;
             break;
@@ -1247,7 +1247,7 @@ void JIT::privateCompileMainPass()
             // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
             __ cmpl_i32m(repatchGetByIdDefaultStructure, FIELD_OFFSET(JSCell, m_structure), X86::eax);
             ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetPutByIdStructure);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             // Plant a load from a bogus ofset in the object's property map; we will patch this later, if it is to be used.
             __ movl_mr(FIELD_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
@@ -1276,7 +1276,7 @@ void JIT::privateCompileMainPass()
 
             __ cmpl_i32m(repatchGetByIdDefaultStructure, FIELD_OFFSET(JSCell, m_structure), X86::eax);
             ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetGetByIdStructure);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
             ASSERT(X86Assembler::getDifferenceBetweenLabels(hotPathBegin, __ label()) == repatchOffsetGetByIdBranchToSlowCase);
 
             __ movl_mr(FIELD_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
@@ -1297,7 +1297,7 @@ void JIT::privateCompileMainPass()
             __ orl_rr(X86::edx, X86::ecx);
             __ testl_i32r(JSImmediate::TagMask, X86::ecx);
 
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJnz(), i));
+            m_slowCases.append(SlowCaseEntry(__ jnz(), i));
 
             // check that all are object type - this is a bit of a bithack to avoid excess branching;
             // we check that the sum of the three type codes from Structures is exactly 3 * ObjectType,
@@ -1311,14 +1311,14 @@ void JIT::privateCompileMainPass()
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::edx, X86::edx);
             __ cmpl_rm(X86::ecx, FIELD_OFFSET(Structure, m_typeInfo.m_type), X86::edx);
 
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             // check that baseVal's flags include ImplementsHasInstance but not OverridesHasInstance
             __ movl_mr(FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::edx, X86::ecx);
             __ andl_i32r(ImplementsHasInstance | OverridesHasInstance, X86::ecx);
             __ cmpl_i32r(ImplementsHasInstance, X86::ecx);
 
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             emitGetVirtualRegister(instruction[i + 2].u.operand, X86::ecx, i); // reload value
             emitGetVirtualRegister(instruction[i + 4].u.operand, X86::edx, i); // reload proto
@@ -1333,10 +1333,10 @@ void JIT::privateCompileMainPass()
             __ movl_mr(FIELD_OFFSET(Structure, m_prototype), X86::ecx, X86::ecx);
             
             __ cmpl_rr(X86::ecx, X86::edx);
-            JmpSrc exit = __ emitUnlinkedJe();
+            JmpSrc exit = __ je();
 
             __ cmpl_i32r(asInteger(jsNull()), X86::ecx);
-            JmpSrc goToLoop = __ emitUnlinkedJne();
+            JmpSrc goToLoop = __ jne();
             __ link(goToLoop, loop);
 
             __ movl_i32r(asInteger(jsBoolean(false)), X86::eax);
@@ -1371,7 +1371,7 @@ void JIT::privateCompileMainPass()
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 emitFastArithDeTagImmediate(X86::eax);
                 __ imull_i32r(X86::eax, value, X86::eax);
-                m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+                m_slowCases.append(SlowCaseEntry(__ jo(), i));
                 emitFastArithReTagImmediate(X86::eax);
                 emitPutVirtualRegister(dst);
             } else if (src2Value && ((value = JSImmediate::intValue(src2Value)) > 0)) {
@@ -1379,7 +1379,7 @@ void JIT::privateCompileMainPass()
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 emitFastArithDeTagImmediate(X86::eax);
                 __ imull_i32r(X86::eax, value, X86::eax);
-                m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+                m_slowCases.append(SlowCaseEntry(__ jo(), i));
                 emitFastArithReTagImmediate(X86::eax);
                 emitPutVirtualRegister(dst);
             } else
@@ -1498,10 +1498,10 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
 
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            JmpSrc isImmediate = __ emitUnlinkedJne();
+            JmpSrc isImmediate = __ jne();
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
             __ cmpl_i32m(ObjectType, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type), X86::ecx);
-            JmpSrc isObject = __ emitUnlinkedJe();
+            JmpSrc isObject = __ je();
 
             __ link(isImmediate, __ label());
             emitGetVirtualRegister(instruction[i + 2].u.operand, X86::eax, i);
@@ -1516,14 +1516,14 @@ void JIT::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::edx, i);
             emitFastArithImmToInt(X86::edx);
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
             __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
             __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::ecx);
             __ cmpl_rm(X86::edx, FIELD_OFFSET(JSArray, m_fastAccessCutoff), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJbe(), i));
+            m_slowCases.append(SlowCaseEntry(__ jbe(), i));
 
             // Get the value from the vector
             __ movl_mr(FIELD_OFFSET(ArrayStorage, m_vector[0]), X86::ecx, X86::edx, sizeof(JSValue*), X86::eax);
@@ -1550,22 +1550,22 @@ void JIT::privateCompileMainPass()
             emitJumpSlowCaseIfNotImmNum(X86::edx, i);
             emitFastArithImmToInt(X86::edx);
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
             __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             // This is an array; get the m_storage pointer into ecx, then check if the index is below the fast cutoff
             __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::ecx);
             __ cmpl_rm(X86::edx, FIELD_OFFSET(JSArray, m_fastAccessCutoff), X86::eax);
-            JmpSrc inFastVector = __ emitUnlinkedJa();
+            JmpSrc inFastVector = __ ja();
             // No; oh well, check if the access if within the vector - if so, we may still be okay.
             __ cmpl_rm(X86::edx, FIELD_OFFSET(ArrayStorage, m_vectorLength), X86::ecx);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJbe(), i));
+            m_slowCases.append(SlowCaseEntry(__ jbe(), i));
 
             // This is a write to the slow part of the vector; first, we have to check if this would be the first write to this location.
             // FIXME: should be able to handle initial write to array; increment the the number of items in the array, and potentially update fast access cutoff. 
             __ cmpl_i8m(0, FIELD_OFFSET(ArrayStorage, m_vector[0]), X86::ecx, X86::edx, sizeof(JSValue*));
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJe(), i));
+            m_slowCases.append(SlowCaseEntry(__ je(), i));
 
             // All good - put the value into the array.
             __ link(inFastVector, __ label());
@@ -1582,14 +1582,14 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
 
             __ cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
-            JmpSrc isZero = __ emitUnlinkedJe();
+            JmpSrc isZero = __ je();
             __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJne(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ jne(), i + 2 + target));
 
             __ cmpl_i32r(asInteger(JSImmediate::trueImmediate()), X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJe(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ je(), i + 2 + target));
             __ cmpl_i32r(asInteger(JSImmediate::falseImmediate()), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             __ link(isZero, __ label());
             i += 3;
@@ -1608,15 +1608,15 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(srcVReg, X86::eax, i);
 
             __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            JmpSrc notImmediate = __ emitUnlinkedJe();
+            JmpSrc notImmediate = __ je();
 
             __ cmpl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            JmpSrc zeroImmediate = __ emitUnlinkedJe();
+            JmpSrc zeroImmediate = __ je();
             emitFastArithImmToInt(X86::eax);
             __ negl_r(X86::eax); // This can't overflow as we only have a 31bit int at this point
             JmpSrc overflow = emitArithIntToImmWithJump(X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
-            JmpSrc immediateNegateSuccess = __ emitUnlinkedJmp();
+            JmpSrc immediateNegateSuccess = __ jmp();
 
             if (!isSSE2Present()) {
                 __ link(zeroImmediate, __ label());
@@ -1635,7 +1635,7 @@ void JIT::privateCompileMainPass()
                     emitJumpSlowCaseIfNotJSCell(X86::eax, i, srcVReg);
                     Structure* numberStructure = m_globalData->numberStructure.get();
                     __ cmpl_i32m(reinterpret_cast<unsigned>(numberStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-                    m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+                    m_slowCases.append(SlowCaseEntry(__ jne(), i));
                 }
                 __ movsd_mr(FIELD_OFFSET(JSNumberCell, m_value), X86::eax, X86::xmm0);
                 // We need 3 copies of the sign bit mask so we can assure alignment and pad for the 128bit load
@@ -1673,14 +1673,14 @@ void JIT::privateCompileMainPass()
             __ movl_i32r(globalObject, X86::eax);
             __ movl_mr(structureAddress, X86::edx);
             __ cmpl_rm(X86::edx, FIELD_OFFSET(JSCell, m_structure), X86::eax);
-            JmpSrc noMatch = __ emitUnlinkedJne(); // Structures don't match
+            JmpSrc noMatch = __ jne(); // Structures don't match
 
             // Load cached property
             __ movl_mr(FIELD_OFFSET(JSGlobalObject, m_propertyStorage), X86::eax, X86::eax);
             __ movl_mr(offsetAddr, X86::edx);
             __ movl_mr(0, X86::eax, X86::edx, sizeof(JSValue*), X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
-            JmpSrc end = __ emitUnlinkedJmp();
+            JmpSrc end = __ jmp();
 
             // Slow case
             __ link(noMatch, __ label());
@@ -1699,7 +1699,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(srcDst, X86::eax, i);
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             __ subl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+            m_slowCases.append(SlowCaseEntry(__ jo(), i));
             emitPutVirtualRegister(srcDst);
             i += 2;
             break;
@@ -1711,13 +1711,13 @@ void JIT::privateCompileMainPass()
                 emitGetVirtualRegister(instruction[i + 1].u.operand, X86::edx, i);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
                 __ cmpl_i32r(asInteger(src2imm), X86::edx);
-                m_jmpTable.append(JmpTable(__ emitUnlinkedJge(), i + 3 + target));
+                m_jmpTable.append(JmpTable(__ jge(), i + 3 + target));
             } else {
                 emitGetVirtualRegisters(instruction[i + 1].u.operand, X86::eax, instruction[i + 2].u.operand, X86::edx, i);
                 emitJumpSlowCaseIfNotImmNum(X86::eax, i);
                 emitJumpSlowCaseIfNotImmNum(X86::edx, i);
                 __ cmpl_rr(X86::edx, X86::eax);
-                m_jmpTable.append(JmpTable(__ emitUnlinkedJge(), i + 3 + target));
+                m_jmpTable.append(JmpTable(__ jge(), i + 3 + target));
             }
             i += 4;
             break;
@@ -1726,7 +1726,7 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(instruction[i + 2].u.operand, X86::eax, i);
             __ xorl_i8r(JSImmediate::FullTagTypeBool, X86::eax);
             __ testl_i32r(JSImmediate::FullTagTypeMask, X86::eax); // i8?
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
             __ xorl_i8r((JSImmediate::FullTagTypeBool | JSImmediate::ExtendedPayloadBitBoolValue), X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -1737,14 +1737,14 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
 
             __ cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJe(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ je(), i + 2 + target));
             __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            JmpSrc isNonZero = __ emitUnlinkedJne();
+            JmpSrc isNonZero = __ jne();
 
             __ cmpl_i32r(asInteger(JSImmediate::falseImmediate()), X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJe(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ je(), i + 2 + target));
             __ cmpl_i32r(asInteger(JSImmediate::trueImmediate()), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             __ link(isNonZero, __ label());
             i += 3;
@@ -1756,13 +1756,13 @@ void JIT::privateCompileMainPass()
 
             emitGetVirtualRegister(src, X86::eax, i);
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            JmpSrc isImmediate = __ emitUnlinkedJnz();
+            JmpSrc isImmediate = __ jnz();
 
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
             __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setnz_r(X86::eax);
 
-            JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
+            JmpSrc wasNotImmediate = __ jmp();
 
             __ link(isImmediate, __ label());
 
@@ -1775,7 +1775,7 @@ void JIT::privateCompileMainPass()
 
             __ movzbl_rr(X86::eax, X86::eax);
             __ cmpl_i32r(0, X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJnz(), i + 2 + target));            
+            m_jmpTable.append(JmpTable(__ jnz(), i + 2 + target));            
 
             i += 3;
             break;
@@ -1786,13 +1786,13 @@ void JIT::privateCompileMainPass()
 
             emitGetVirtualRegister(src, X86::eax, i);
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            JmpSrc isImmediate = __ emitUnlinkedJnz();
+            JmpSrc isImmediate = __ jnz();
 
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
             __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setz_r(X86::eax);
 
-            JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
+            JmpSrc wasNotImmediate = __ jmp();
 
             __ link(isImmediate, __ label());
 
@@ -1805,7 +1805,7 @@ void JIT::privateCompileMainPass()
 
             __ movzbl_rr(X86::eax, X86::eax);
             __ cmpl_i32r(0, X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJnz(), i + 2 + target));            
+            m_jmpTable.append(JmpTable(__ jnz(), i + 2 + target));            
 
             i += 3;
             break;
@@ -1816,7 +1816,7 @@ void JIT::privateCompileMainPass()
             __ movl_rr(X86::eax, X86::edx);
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             __ addl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::edx);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+            m_slowCases.append(SlowCaseEntry(__ jo(), i));
             emitPutVirtualRegister(srcDst, X86::edx);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -1834,7 +1834,7 @@ void JIT::privateCompileMainPass()
             int target = instruction[i + 2].u.operand;
             __ movl_i32m(0, sizeof(Register) * retAddrDst, X86::edi);
             JmpDst addrPosition = __ label();
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJmp(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ jmp(), i + 2 + target));
             JmpDst sretTarget = __ label();
             m_jsrSites.append(JSRInfo(addrPosition, sretTarget));
             i += 3;
@@ -1946,14 +1946,14 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(instruction[i + 1].u.operand, X86::eax, i);
 
             __ cmpl_i32r(asInteger(JSImmediate::zeroImmediate()), X86::eax);
-            JmpSrc isZero = __ emitUnlinkedJe();
+            JmpSrc isZero = __ je();
             __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJne(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ jne(), i + 2 + target));
 
             __ cmpl_i32r(asInteger(JSImmediate::trueImmediate()), X86::eax);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJe(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ je(), i + 2 + target));
             __ cmpl_i32r(asInteger(JSImmediate::falseImmediate()), X86::eax);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
 
             __ link(isZero, __ label());
             i += 3;
@@ -1980,7 +1980,7 @@ void JIT::privateCompileMainPass()
             __ movl_rr(X86::eax, X86::edx);
             emitJumpSlowCaseIfNotImmNum(X86::eax, i);
             __ subl_i8r(getDeTaggedConstantImmediate(JSImmediate::oneImmediate()), X86::edx);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJo(), i));
+            m_slowCases.append(SlowCaseEntry(__ jo(), i));
             emitPutVirtualRegister(srcDst, X86::edx);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
             i += 3;
@@ -2035,9 +2035,9 @@ void JIT::privateCompileMainPass()
             unsigned target = instruction[i + 3].u.operand;
             emitCTICall(instruction + i, i, Interpreter::cti_op_next_pname);
             __ testl_rr(X86::eax, X86::eax);
-            JmpSrc endOfIter = __ emitUnlinkedJe();
+            JmpSrc endOfIter = __ je();
             emitPutVirtualRegister(instruction[i + 1].u.operand);
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJmp(), i + 3 + target));
+            m_jmpTable.append(JmpTable(__ jmp(), i + 3 + target));
             __ link(endOfIter, __ label());
             i += 4;
             break;
@@ -2075,14 +2075,14 @@ void JIT::privateCompileMainPass()
             emitGetVirtualRegister(srcVReg, X86::eax, i);
             
             __ testl_i32r(JSImmediate::TagBitTypeInteger, X86::eax);
-            JmpSrc wasImmediate = __ emitUnlinkedJnz();
+            JmpSrc wasImmediate = __ jnz();
 
             emitJumpSlowCaseIfNotJSCell(X86::eax, i, srcVReg);
 
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
             __ cmpl_i32m(NumberType, FIELD_OFFSET(Structure, m_typeInfo.m_type), X86::ecx);
             
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJne(), i));
+            m_slowCases.append(SlowCaseEntry(__ jne(), i));
             
             __ link(wasImmediate, __ label());
 
@@ -2118,7 +2118,7 @@ void JIT::privateCompileMainPass()
             emitPutCTIArgConstant(count, 0);
             emitCTICall(instruction + i, i, Interpreter::cti_op_jmp_scopes);
             unsigned target = instruction[i + 2].u.operand;
-            m_jmpTable.append(JmpTable(__ emitUnlinkedJmp(), i + 2 + target));
+            m_jmpTable.append(JmpTable(__ jmp(), i + 2 + target));
             i += 3;
             break;
         }
@@ -2230,13 +2230,13 @@ void JIT::privateCompileMainPass()
 
             emitGetVirtualRegister(src1, X86::eax, i);
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            JmpSrc isImmediate = __ emitUnlinkedJnz();
+            JmpSrc isImmediate = __ jnz();
 
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
             __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setnz_r(X86::eax);
 
-            JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
+            JmpSrc wasNotImmediate = __ jmp();
 
             __ link(isImmediate, __ label());
 
@@ -2260,13 +2260,13 @@ void JIT::privateCompileMainPass()
 
             emitGetVirtualRegister(src1, X86::eax, i);
             __ testl_i32r(JSImmediate::TagMask, X86::eax);
-            JmpSrc isImmediate = __ emitUnlinkedJnz();
+            JmpSrc isImmediate = __ jnz();
 
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
             __ testl_i32m(MasqueradesAsUndefined, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::ecx);
             __ setz_r(X86::eax);
 
-            JmpSrc wasNotImmediate = __ emitUnlinkedJmp();
+            JmpSrc wasNotImmediate = __ jmp();
 
             __ link(isImmediate, __ label());
 
@@ -2320,7 +2320,7 @@ void JIT::privateCompileMainPass()
             emitJumpSlowCaseIfNotJSCell(X86::eax, i);
             __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::edx);
             __ testl_i32m(NeedsThisConversion, FIELD_OFFSET(Structure, m_typeInfo.m_flags), X86::edx);
-            m_slowCases.append(SlowCaseEntry(__ emitUnlinkedJnz(), i));
+            m_slowCases.append(SlowCaseEntry(__ jnz(), i));
 
             i += 2;
             break;
@@ -2328,7 +2328,7 @@ void JIT::privateCompileMainPass()
         case op_profile_will_call: {
             emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
             __ cmpl_i32m(0, X86::eax);
-            JmpSrc noProfiler = __ emitUnlinkedJe();
+            JmpSrc noProfiler = __ je();
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::eax);
             emitCTICall(instruction + i, i, Interpreter::cti_op_profile_will_call);
             __ link(noProfiler, __ label());
@@ -2339,7 +2339,7 @@ void JIT::privateCompileMainPass()
         case op_profile_did_call: {
             emitGetCTIParam(CTI_ARGS_profilerReference, X86::eax);
             __ cmpl_i32m(0, X86::eax);
-            JmpSrc noProfiler = __ emitUnlinkedJe();
+            JmpSrc noProfiler = __ je();
             emitPutCTIArgFromVirtualRegister(instruction[i + 1].u.operand, 0, X86::eax);
             emitCTICall(instruction + i, i, Interpreter::cti_op_profile_did_call);
             __ link(noProfiler, __ label());
@@ -2467,19 +2467,19 @@ void JIT::privateCompileSlowCases()
             emitPutCTIArg(X86::edx, 4);
             emitCTICall(instruction + i, i, Interpreter::cti_op_get_by_val);
             emitPutVirtualRegister(instruction[i + 1].u.operand);
-            __ link(__ emitUnlinkedJmp(), m_labels[i + 4]);
+            __ link(__ jmp(), m_labels[i + 4]);
 
             // This is slow case that handles accesses to arrays above the fast cut-off.
             // First, check if this is an access to the vector
             __ link((++iter)->from, __ label());
             __ cmpl_rm(X86::edx, FIELD_OFFSET(ArrayStorage, m_vectorLength), X86::ecx);
-            __ link(__ emitUnlinkedJbe(), beginGetByValSlow);
+            __ link(__ jbe(), beginGetByValSlow);
 
             // okay, missed the fast region, but it is still in the vector.  Get the value.
             __ movl_mr(FIELD_OFFSET(ArrayStorage, m_vector[0]), X86::ecx, X86::edx, sizeof(JSValue*), X86::ecx);
             // Check whether the value loaded is zero; if so we need to return undefined.
             __ testl_rr(X86::ecx, X86::ecx);
-            __ link(__ emitUnlinkedJe(), beginGetByValSlow);
+            __ link(__ je(), beginGetByValSlow);
             __ movl_rr(X86::ecx, X86::eax);
             emitPutVirtualRegister(instruction[i + 1].u.operand, X86::eax);
 
@@ -2542,7 +2542,7 @@ void JIT::privateCompileSlowCases()
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
                 emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_less);
                 __ testl_rr(X86::eax, X86::eax);
-                __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
+                __ link(__ jne(), m_labels[i + 3 + target]);
             } else {
                 __ link(iter->from, __ label());
                 __ link((++iter)->from, __ label());
@@ -2550,7 +2550,7 @@ void JIT::privateCompileSlowCases()
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_less);
                 __ testl_rr(X86::eax, X86::eax);
-                __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
+                __ link(__ jne(), m_labels[i + 3 + target]);
             }
             i += 4;
             break;
@@ -2614,7 +2614,7 @@ void JIT::privateCompileSlowCases()
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
                 emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_lesseq);
                 __ testl_rr(X86::eax, X86::eax);
-                __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
+                __ link(__ jne(), m_labels[i + 3 + target]);
             } else {
                 __ link(iter->from, __ label());
                 __ link((++iter)->from, __ label());
@@ -2622,7 +2622,7 @@ void JIT::privateCompileSlowCases()
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(instruction + i, i, Interpreter::cti_op_loop_if_lesseq);
                 __ testl_rr(X86::eax, X86::eax);
-                __ link(__ emitUnlinkedJne(), m_labels[i + 3 + target]);
+                __ link(__ jne(), m_labels[i + 3 + target]);
             }
             i += 4;
             break;
@@ -2651,7 +2651,7 @@ void JIT::privateCompileSlowCases()
             emitPutCTIArg(X86::edx, 4);
             emitPutCTIArg(X86::ecx, 8);
             emitCTICall(instruction + i, i, Interpreter::cti_op_put_by_val);
-            __ link(__ emitUnlinkedJmp(), m_labels[i + 4]);
+            __ link(__ jmp(), m_labels[i + 4]);
 
             // slow cases for immediate int accesses to arrays
             __ link((++iter)->from, __ label());
@@ -2673,7 +2673,7 @@ void JIT::privateCompileSlowCases()
             emitCTICall(instruction + i, i, Interpreter::cti_op_jtrue);
             __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
-            __ link(__ emitUnlinkedJne(), m_labels[i + 2 + target]);
+            __ link(__ jne(), m_labels[i + 2 + target]);
             i += 3;
             break;
         }
@@ -2698,7 +2698,7 @@ void JIT::privateCompileSlowCases()
                 emitPutCTIArgFromVirtualRegister(instruction[i + 2].u.operand, 4, X86::ecx);
                 emitCTICall(instruction + i, i, Interpreter::cti_op_jless);
                 __ testl_rr(X86::eax, X86::eax);
-                __ link(__ emitUnlinkedJe(), m_labels[i + 3 + target]);
+                __ link(__ je(), m_labels[i + 3 + target]);
             } else {
                 __ link(iter->from, __ label());
                 __ link((++iter)->from, __ label());
@@ -2706,7 +2706,7 @@ void JIT::privateCompileSlowCases()
                 emitPutCTIArg(X86::edx, 4);
                 emitCTICall(instruction + i, i, Interpreter::cti_op_jless);
                 __ testl_rr(X86::eax, X86::eax);
-                __ link(__ emitUnlinkedJe(), m_labels[i + 3 + target]);
+                __ link(__ je(), m_labels[i + 3 + target]);
             }
             i += 4;
             break;
@@ -2726,7 +2726,7 @@ void JIT::privateCompileSlowCases()
             emitCTICall(instruction + i, i, Interpreter::cti_op_jtrue);
             __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
-            __ link(__ emitUnlinkedJe(), m_labels[i + 2 + target]); // inverted!
+            __ link(__ je(), m_labels[i + 2 + target]); // inverted!
             i += 3;
             break;
         }
@@ -2781,7 +2781,7 @@ void JIT::privateCompileSlowCases()
             emitCTICall(instruction + i, i, Interpreter::cti_op_jtrue);
             __ testl_rr(X86::eax, X86::eax);
             unsigned target = instruction[i + 2].u.operand;
-            __ link(__ emitUnlinkedJne(), m_labels[i + 2 + target]);
+            __ link(__ jne(), m_labels[i + 2 + target]);
             i += 3;
             break;
         }
@@ -2908,9 +2908,9 @@ void JIT::privateCompileSlowCases()
 
             // Fast check for JS function.
             __ testl_i32r(JSImmediate::TagMask, X86::ecx);
-            JmpSrc callLinkFailNotObject = __ emitUnlinkedJne();
+            JmpSrc callLinkFailNotObject = __ jne();
             __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsFunctionVptr), X86::ecx);
-            JmpSrc callLinkFailNotJSFunction = __ emitUnlinkedJne();
+            JmpSrc callLinkFailNotJSFunction = __ jne();
 
             // First, in the case of a construct, allocate the new object.
             if (opcodeID == op_construct) {
@@ -2928,7 +2928,7 @@ void JIT::privateCompileSlowCases()
             m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation =
                 emitNakedCall(i, m_interpreter->m_ctiVirtualCallPreLink);
 
-            JmpSrc storeResultForFirstRun = __ emitUnlinkedJmp();
+            JmpSrc storeResultForFirstRun = __ jmp();
 
             // This is the address for the cold path *after* the first run (which tries to link the call).
             m_callStructureStubCompilationInfo[callLinkInfoIndex].coldPathOther = __ label();
@@ -2941,9 +2941,9 @@ void JIT::privateCompileSlowCases()
 
             // Check for JSFunctions.
             __ testl_i32r(JSImmediate::TagMask, X86::ecx);
-            JmpSrc isNotObject = __ emitUnlinkedJne();
+            JmpSrc isNotObject = __ jne();
             __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsFunctionVptr), X86::ecx);
-            JmpSrc isJSFunction = __ emitUnlinkedJe();
+            JmpSrc isJSFunction = __ je();
 
             // This handles host functions
             JmpDst notJSFunctionlabel = __ label();
@@ -2951,7 +2951,7 @@ void JIT::privateCompileSlowCases()
             __ link(callLinkFailNotObject, notJSFunctionlabel);
             __ link(callLinkFailNotJSFunction, notJSFunctionlabel);
             emitCTICall(instruction + i, i, ((opcodeID == op_construct) ? Interpreter::cti_op_construct_NotJSConstruct : Interpreter::cti_op_call_NotJSFunction));
-            JmpSrc wasNotJSFunction = __ emitUnlinkedJmp();
+            JmpSrc wasNotJSFunction = __ jmp();
 
             // Next, handle JSFunctions...
             __ link(isJSFunction, __ label());
@@ -3005,7 +3005,7 @@ void JIT::privateCompileSlowCases()
         ASSERT_WITH_MESSAGE((iter + 1) == m_slowCases.end() || firstTo != (iter + 1)->to,"Not enough jumps linked in slow case codegen.");
         ASSERT_WITH_MESSAGE(firstTo == iter->to, "Too many jumps linked in slow case codegen.");
 
-        __ link(__ emitUnlinkedJmp(), m_labels[i]);
+        __ link(__ jmp(), m_labels[i]);
     }
 
     ASSERT(propertyAccessInstructionIndex == m_codeBlock->propertyAccessInstructions.size());
@@ -3034,7 +3034,7 @@ void JIT::privateCompile()
         emitGetCTIParam(CTI_ARGS_registerFile, X86::eax);
         __ leal_mr(m_codeBlock->numCalleeRegisters * sizeof(Register), X86::edi, X86::edx);
         __ cmpl_mr(FIELD_OFFSET(RegisterFile, m_end), X86::eax, X86::edx);
-        slowRegisterFileCheck = __ emitUnlinkedJg();
+        slowRegisterFileCheck = __ jg();
         afterRegisterFileCheck = __ label();
     }
 
@@ -3045,7 +3045,7 @@ void JIT::privateCompile()
     if (m_codeBlock->codeType == FunctionCode) {
         __ link(slowRegisterFileCheck, __ label());
         emitCTICall(m_codeBlock->instructions.begin(), 0, Interpreter::cti_register_file_check);
-        JmpSrc backToBody = __ emitUnlinkedJmp();
+        JmpSrc backToBody = __ jmp();
         __ link(backToBody, afterRegisterFileCheck);
     }
 
@@ -3115,9 +3115,9 @@ void JIT::privateCompileGetByIdSelf(Structure* structure, size_t cachedOffset, v
 {
     // Check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ emitUnlinkedJne();
+    JmpSrc failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-    JmpSrc failureCases2 = __ emitUnlinkedJne();
+    JmpSrc failureCases2 = __ jne();
 
     // Checks out okay! - getDirectOffset
     __ movl_mr(FIELD_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
@@ -3151,19 +3151,19 @@ void JIT::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
 
     // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ emitUnlinkedJne();
+    JmpSrc failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-    JmpSrc failureCases2 = __ emitUnlinkedJne();
+    JmpSrc failureCases2 = __ jne();
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
     __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), static_cast<void*>(prototypeStructureAddress));
-    JmpSrc failureCases3 = __ emitUnlinkedJne();
+    JmpSrc failureCases3 = __ jne();
 
     // Checks out okay! - getDirectOffset
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
 
-    JmpSrc success = __ emitUnlinkedJmp();
+    JmpSrc success = __ jmp();
 
     void* code = __ executableCopy();
     ASSERT(code);
@@ -3194,14 +3194,14 @@ void JIT::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
 
     // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ emitUnlinkedJne();
+    JmpSrc failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-    JmpSrc failureCases2 = __ emitUnlinkedJne();
+    JmpSrc failureCases2 = __ jne();
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
     __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), static_cast<void*>(prototypeStructureAddress));
-    JmpSrc failureCases3 = __ emitUnlinkedJne();
+    JmpSrc failureCases3 = __ jne();
 
     // Checks out okay! - getDirectOffset
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
@@ -3229,9 +3229,9 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
 
     // Check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    bucketsOfFail.append(__ emitUnlinkedJne());
+    bucketsOfFail.append(__ jne());
     __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-    bucketsOfFail.append(__ emitUnlinkedJne());
+    bucketsOfFail.append(__ jne());
 
     Structure* currStructure = structure;
     RefPtr<Structure>* chainEntries = chain->head();
@@ -3243,7 +3243,7 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
         // Check the prototype object's Structure had not changed.
         Structure** prototypeStructureAddress = &(protoObject->m_structure);
         __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), static_cast<void*>(prototypeStructureAddress));
-        bucketsOfFail.append(__ emitUnlinkedJne());
+        bucketsOfFail.append(__ jne());
     }
     ASSERT(protoObject);
 
@@ -3252,7 +3252,7 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
     __ ret();
 
-    bucketsOfFail.append(__ emitUnlinkedJmp());
+    bucketsOfFail.append(__ jmp());
 
     void* code = __ executableCopy();
     ASSERT(code);
@@ -3269,9 +3269,9 @@ void JIT::privateCompilePutByIdReplace(Structure* structure, size_t cachedOffset
 {
     // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ emitUnlinkedJne();
+    JmpSrc failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<uint32_t>(structure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-    JmpSrc failureCases2 = __ emitUnlinkedJne();
+    JmpSrc failureCases2 = __ jne();
 
     // checks out okay! - putDirectOffset
     __ movl_mr(FIELD_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
@@ -3309,35 +3309,35 @@ void JIT::privateCompilePutByIdTransition(Structure* oldStructure, Structure* ne
     Vector<JmpSrc, 16> failureCases;
     // check eax is an object of the right Structure.
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    failureCases.append(__ emitUnlinkedJne());
+    failureCases.append(__ jne());
     __ cmpl_i32m(reinterpret_cast<uint32_t>(oldStructure), FIELD_OFFSET(JSCell, m_structure), X86::eax);
-    failureCases.append(__ emitUnlinkedJne());
+    failureCases.append(__ jne());
     Vector<JmpSrc> successCases;
 
     //  ecx = baseObject
     __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::eax, X86::ecx);
     // proto(ecx) = baseObject->structure()->prototype()
     __ cmpl_i32m(ObjectType, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type), X86::ecx);
-    failureCases.append(__ emitUnlinkedJne());
+    failureCases.append(__ jne());
     __ movl_mr(FIELD_OFFSET(Structure, m_prototype), X86::ecx, X86::ecx);
     
     // ecx = baseObject->m_structure
     for (RefPtr<Structure>* it = chain->head(); *it; ++it) {
         // null check the prototype
         __ cmpl_i32r(asInteger(jsNull()), X86::ecx);
-        successCases.append(__ emitUnlinkedJe());
+        successCases.append(__ je());
 
         // Check the structure id
         __ cmpl_i32m(reinterpret_cast<uint32_t>(it->get()), FIELD_OFFSET(JSCell, m_structure), X86::ecx);
-        failureCases.append(__ emitUnlinkedJne());
+        failureCases.append(__ jne());
         
         __ movl_mr(FIELD_OFFSET(JSCell, m_structure), X86::ecx, X86::ecx);
         __ cmpl_i32m(ObjectType, FIELD_OFFSET(Structure, m_typeInfo) + FIELD_OFFSET(TypeInfo, m_type), X86::ecx);
-        failureCases.append(__ emitUnlinkedJne());
+        failureCases.append(__ jne());
         __ movl_mr(FIELD_OFFSET(Structure, m_prototype), X86::ecx, X86::ecx);
     }
 
-    failureCases.append(__ emitUnlinkedJne());
+    failureCases.append(__ jne());
     for (unsigned i = 0; i < successCases.size(); ++i)
         __ link(successCases[i], __ label());
 
@@ -3349,7 +3349,7 @@ void JIT::privateCompilePutByIdTransition(Structure* oldStructure, Structure* ne
         __ pushl_i32(newStructure->propertyStorageCapacity());
         __ pushl_i32(oldStructure->propertyStorageCapacity());
         __ pushl_r(X86::eax);
-        callTarget = __ emitCall();
+        callTarget = __ call();
         __ addl_i32r(3 * sizeof(void*), X86::esp);
         __ popl_r(X86::edx);
     }
@@ -3370,8 +3370,8 @@ void JIT::privateCompilePutByIdTransition(Structure* oldStructure, Structure* ne
     if (failureCases.size()) {
         for (unsigned i = 0; i < failureCases.size(); ++i)
             __ link(failureCases[i], __ label());
-        __ emitRestoreArgumentReferenceForTrampoline();
-        failureJump = __ emitUnlinkedJmp();
+        __ restoreArgumentReferenceForTrampoline();
+        failureJump = __ jmp();
     }
 
     void* code = __ executableCopy();
@@ -3419,16 +3419,16 @@ void JIT::privateCompileCTIMachineTrampolines()
     
     // Check eax is an array
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc array_failureCases1 = __ emitUnlinkedJne();
+    JmpSrc array_failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
-    JmpSrc array_failureCases2 = __ emitUnlinkedJne();
+    JmpSrc array_failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the storage
     __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::eax);
     __ movl_mr(FIELD_OFFSET(ArrayStorage, m_length), X86::eax, X86::eax);
 
     __ addl_rr(X86::eax, X86::eax);
-    JmpSrc array_failureCases3 = __ emitUnlinkedJo();
+    JmpSrc array_failureCases3 = __ jo();
     __ addl_i8r(1, X86::eax);
     
     __ ret();
@@ -3439,16 +3439,16 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check eax is a string
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc string_failureCases1 = __ emitUnlinkedJne();
+    JmpSrc string_failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsStringVptr), X86::eax);
-    JmpSrc string_failureCases2 = __ emitUnlinkedJne();
+    JmpSrc string_failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the Ustring.
     __ movl_mr(FIELD_OFFSET(JSString, m_value) + FIELD_OFFSET(UString, m_rep), X86::eax, X86::eax);
     __ movl_mr(FIELD_OFFSET(UString::Rep, len), X86::eax, X86::eax);
 
     __ addl_rr(X86::eax, X86::eax);
-    JmpSrc string_failureCases3 = __ emitUnlinkedJo();
+    JmpSrc string_failureCases3 = __ jo();
     __ addl_i8r(1, X86::eax);
     
     __ ret();
@@ -3461,11 +3461,11 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_mr(FIELD_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
-    JmpSrc hasCodeBlock1 = __ emitUnlinkedJne();
+    JmpSrc hasCodeBlock1 = __ jne();
     __ popl_r(X86::ebx);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callJSFunction1 = __ emitCall();
+    JmpSrc callJSFunction1 = __ call();
     emitGetCTIArg(0, X86::ecx);
     emitGetCTIArg(8, X86::edx);
     __ pushl_r(X86::ebx);
@@ -3473,13 +3473,13 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, numParameters), X86::eax);
-    JmpSrc arityCheckOkay1 = __ emitUnlinkedJe();
+    JmpSrc arityCheckOkay1 = __ je();
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
     emitPutCTIArg(X86::eax, 12);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callArityCheck1 = __ emitCall();
+    JmpSrc callArityCheck1 = __ call();
     __ movl_rr(X86::edx, X86::edi);
     emitGetCTIArg(0, X86::ecx);
     emitGetCTIArg(8, X86::edx);
@@ -3490,9 +3490,9 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callDontLazyLinkCall = __ emitCall();
+    JmpSrc callDontLazyLinkCall = __ call();
     __ pushl_r(X86::ebx);
 
     __ jmp_r(X86::eax);
@@ -3503,11 +3503,11 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_mr(FIELD_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
-    JmpSrc hasCodeBlock2 = __ emitUnlinkedJne();
+    JmpSrc hasCodeBlock2 = __ jne();
     __ popl_r(X86::ebx);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callJSFunction2 = __ emitCall();
+    JmpSrc callJSFunction2 = __ call();
     emitGetCTIArg(0, X86::ecx);
     emitGetCTIArg(8, X86::edx);
     __ pushl_r(X86::ebx);
@@ -3515,13 +3515,13 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, numParameters), X86::eax);
-    JmpSrc arityCheckOkay2 = __ emitUnlinkedJe();
+    JmpSrc arityCheckOkay2 = __ je();
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
     emitPutCTIArg(X86::eax, 12);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callArityCheck2 = __ emitCall();
+    JmpSrc callArityCheck2 = __ call();
     __ movl_rr(X86::edx, X86::edi);
     emitGetCTIArg(0, X86::ecx);
     emitGetCTIArg(8, X86::edx);
@@ -3532,9 +3532,9 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callLazyLinkCall = __ emitCall();
+    JmpSrc callLazyLinkCall = __ call();
     __ pushl_r(X86::ebx);
 
     __ jmp_r(X86::eax);
@@ -3545,11 +3545,11 @@ void JIT::privateCompileCTIMachineTrampolines()
     __ movl_mr(FIELD_OFFSET(JSFunction, m_body), X86::ecx, X86::eax);
     __ movl_mr(FIELD_OFFSET(FunctionBodyNode, m_code), X86::eax, X86::eax);
     __ testl_rr(X86::eax, X86::eax);
-    JmpSrc hasCodeBlock3 = __ emitUnlinkedJne();
+    JmpSrc hasCodeBlock3 = __ jne();
     __ popl_r(X86::ebx);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callJSFunction3 = __ emitCall();
+    JmpSrc callJSFunction3 = __ call();
     emitGetCTIArg(0, X86::ecx);
     emitGetCTIArg(8, X86::edx);
     __ pushl_r(X86::ebx);
@@ -3557,13 +3557,13 @@ void JIT::privateCompileCTIMachineTrampolines()
 
     // Check argCount matches callee arity.
     __ cmpl_rm(X86::edx, FIELD_OFFSET(CodeBlock, numParameters), X86::eax);
-    JmpSrc arityCheckOkay3 = __ emitUnlinkedJe();
+    JmpSrc arityCheckOkay3 = __ je();
     __ popl_r(X86::ebx);
     emitPutCTIArg(X86::ebx, 4);
     emitPutCTIArg(X86::eax, 12);
-    __ emitRestoreArgumentReference();
+    __ restoreArgumentReference();
     emitPutCTIParam(X86::edi, CTI_ARGS_callFrame);
-    JmpSrc callArityCheck3 = __ emitCall();
+    JmpSrc callArityCheck3 = __ call();
     __ movl_rr(X86::edx, X86::edi);
     emitGetCTIArg(0, X86::ecx);
     emitGetCTIArg(8, X86::edx);
@@ -3644,21 +3644,21 @@ void JIT::privateCompilePatchGetArrayLength(void* returnAddress)
 
     // Check eax is an array
     __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ emitUnlinkedJne();
+    JmpSrc failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
-    JmpSrc failureCases2 = __ emitUnlinkedJne();
+    JmpSrc failureCases2 = __ jne();
 
     // Checks out okay! - get the length from the storage
     __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::ecx);
     __ movl_mr(FIELD_OFFSET(ArrayStorage, m_length), X86::ecx, X86::ecx);
 
     __ cmpl_i32r(JSImmediate::maxImmediateInt, X86::ecx);
-    JmpSrc failureCases3 = __ emitUnlinkedJa();
+    JmpSrc failureCases3 = __ ja();
 
     __ addl_rr(X86::ecx, X86::ecx);
     __ addl_i8r(1, X86::ecx);
     __ movl_rr(X86::ecx, X86::eax);
-    JmpSrc success = __ emitUnlinkedJmp();
+    JmpSrc success = __ jmp();
 
     void* code = __ executableCopy();
     ASSERT(code);

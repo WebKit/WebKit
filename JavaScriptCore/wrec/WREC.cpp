@@ -53,7 +53,7 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
     X86Assembler assembler(interpreter->assemblerBuffer());
     Parser parser(pattern, ignoreCase, multiline, assembler);
     
-    __ emitConvertToFastCall();
+    __ convertToFastCall();
     // (0) Setup:
     //     Preserve regs & initialize outputRegister.
     __ pushl_r(Generator::outputRegister);
@@ -70,8 +70,8 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
 #ifndef NDEBUG
     // ASSERT that the output register is not null.
     __ testl_rr(Generator::outputRegister, Generator::outputRegister);
-    X86Assembler::JmpSrc outputRegisterNotNull = __ emitUnlinkedJne();
-    __ emitInt3();
+    X86Assembler::JmpSrc outputRegisterNotNull = __ jne();
+    __ int3();
     __ link(outputRegisterNotNull, __ label());
 #endif
     
@@ -111,7 +111,7 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
     __ addl_i8r(1, Generator::currentPositionRegister);
     __ movl_rm(Generator::currentPositionRegister, X86::esp);
     __ cmpl_rr(Generator::lengthRegister, Generator::currentPositionRegister);
-    __ link(__ emitUnlinkedJle(), nextLabel);
+    __ link(__ jle(), nextLabel);
 
     // No more input characters: return failure.
     __ addl_i8r(4, X86::esp);

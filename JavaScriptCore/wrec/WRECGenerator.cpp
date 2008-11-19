@@ -57,7 +57,7 @@ void Generator::generateBackreferenceQuantifier(JmpSrcVector& failures, Quantifi
 
     __ movl_mr((2 * subpatternId) * sizeof(int), outputRegister, currentValueRegister);
     __ cmpl_rm(currentValueRegister, ((2 * subpatternId) + 1) * sizeof(int), outputRegister);
-    JmpSrc skipIfEmpty = __ emitUnlinkedJe();
+    JmpSrc skipIfEmpty = __ je();
 
     ASSERT(quantifierType == Quantifier::Greedy || quantifierType == Quantifier::NonGreedy);
     if (quantifierType == Quantifier::Greedy)
@@ -77,14 +77,14 @@ void Generator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtom
     //     init quantifierCountRegister
     __ pushl_r(quantifierCountRegister);
     __ xorl_rr(quantifierCountRegister, quantifierCountRegister);
-    JmpSrc gotoStart = __ emitUnlinkedJmp();
+    JmpSrc gotoStart = __ jmp();
 
     // (4) Failure case
 
     JmpDst quantifierFailed = __ label();
     // (4.1) Restore original value of quantifierCountRegister from the stack
     __ popl_r(quantifierCountRegister);
-    failures.append(__ emitUnlinkedJmp()); 
+    failures.append(__ jmp()); 
 
     // (3) We just tried an alternative, and it failed - check we can try more.
     
@@ -94,7 +94,7 @@ void Generator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtom
     // (3.2) if there is a limit, and we have reached it, game over. 
     if (max != Quantifier::noMaxSpecified) {
         __ cmpl_i32r(max, quantifierCountRegister);
-        __ link(__ emitUnlinkedJe(), quantifierFailed);
+        __ link(__ je(), quantifierFailed);
     }
 
     // (1) Do a check for the atom
@@ -116,7 +116,7 @@ void Generator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtom
         // ... except if min was 1 no need to keep checking!
         if (min != 1) {
             __ cmpl_i32r(min, quantifierCountRegister);
-            __ link(__ emitUnlinkedJl(), testQuantifiedAtom);
+            __ link(__ jl(), testQuantifiedAtom);
         }
     } else
         __ link(gotoStart, __ label());
@@ -161,13 +161,13 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
         if (max != 1) {
             // if there is a limit, only loop while less than limit, otherwise fall throught to...
             __ cmpl_i32r(max, quantifierCountRegister);
-            __ link(__ emitUnlinkedJne(), readMore);
+            __ link(__ jne(), readMore);
         }
         // ...if there is no min we need jump to the alternative test, if there is we can just fall through to it.
         if (!min)
-            newFailures.append(__ emitUnlinkedJmp());
+            newFailures.append(__ jmp());
     } else
-        __ link(__ emitUnlinkedJmp(), readMore);
+        __ link(__ jmp(), readMore);
     // (1.4) check enough matches to bother trying an alternative...
     if (min) {
         // We will fall through to here if (min && max), after the max check.
@@ -178,7 +178,7 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
         newFailures.clear();
         // 
         __ cmpl_i32r(min, quantifierCountRegister);
-        newFailures.append(__ emitUnlinkedJae());
+        newFailures.append(__ jae());
     }
 
     // (4) Failure case
@@ -186,7 +186,7 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
     JmpDst quantifierFailed = __ label();
     // (4.1) Restore original value of quantifierCountRegister from the stack
     __ popl_r(quantifierCountRegister);
-    failures.append(__ emitUnlinkedJmp()); 
+    failures.append(__ jmp()); 
 
     // (3) Backtrack
 
@@ -195,7 +195,7 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
     __ popl_r(currentPositionRegister);
     // (3.2) check we can retry with fewer matches - backtracking fails if already at the minimum
     __ cmpl_i32r(min, quantifierCountRegister);
-    __ link(__ emitUnlinkedJe(), quantifierFailed);
+    __ link(__ je(), quantifierFailed);
     // (3.3) roll off one match, and retry.
     functor.backtrack(this);
     __ subl_i8r(1, quantifierCountRegister);
@@ -222,7 +222,7 @@ void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
 {
     // check there is more input, read a char.
     __ cmpl_rr(lengthRegister, currentPositionRegister);
-    failures.append(__ emitUnlinkedJe());
+    failures.append(__ je());
     __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
 
     // used for unicode case insensitive
@@ -240,7 +240,7 @@ void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
         } else if ((ch > 0x7f) && ((lower = Unicode::toLower(ch)) != (upper = Unicode::toUpper(ch)))) {
             // handle unicode case sentitive characters - branch to success on upper
             __ cmpl_i32r(upper, currentValueRegister);
-            isUpper = __ emitUnlinkedJe();
+            isUpper = __ je();
             hasUpper = true;
             ch = lower;
         }
@@ -248,7 +248,7 @@ void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
     
     // checks for ch, or lower case version of ch, if insensitive
     __ cmpl_i32r((unsigned short)ch, currentValueRegister);
-    failures.append(__ emitUnlinkedJne());
+    failures.append(__ jne());
 
     if (m_parser.ignoreCase() && hasUpper) {
         // for unicode case insensitive matches, branch here if upper matches.
@@ -272,7 +272,7 @@ void Generator::generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpS
         // check if there are any ranges or matches below lo.  If not, just jl to failure -
         // if there is anything else to check, check that first, if it falls through jmp to failure.
         if ((*matchIndex < matchCount) && (matches[*matchIndex] < lo)) {
-            JmpSrc loOrAbove = __ emitUnlinkedJge();
+            JmpSrc loOrAbove = __ jge();
             
             // generate code for all ranges before this one
             if (which)
@@ -280,27 +280,27 @@ void Generator::generateCharacterClassInvertedRange(JmpSrcVector& failures, JmpS
             
             do {
                 __ cmpl_i32r((unsigned short)matches[*matchIndex], currentValueRegister);
-                matchDest.append(__ emitUnlinkedJe());
+                matchDest.append(__ je());
                 ++*matchIndex;
             } while ((*matchIndex < matchCount) && (matches[*matchIndex] < lo));
-            failures.append(__ emitUnlinkedJmp());
+            failures.append(__ jmp());
 
             __ link(loOrAbove, __ label());
         } else if (which) {
-            JmpSrc loOrAbove = __ emitUnlinkedJge();
+            JmpSrc loOrAbove = __ jge();
 
             generateCharacterClassInvertedRange(failures, matchDest, ranges, which, matchIndex, matches, matchCount);
-            failures.append(__ emitUnlinkedJmp());
+            failures.append(__ jmp());
 
             __ link(loOrAbove, __ label());
         } else
-            failures.append(__ emitUnlinkedJl());
+            failures.append(__ jl());
 
         while ((*matchIndex < matchCount) && (matches[*matchIndex] <= hi))
             ++*matchIndex;
 
         __ cmpl_i32r((unsigned short)hi, currentValueRegister);
-        matchDest.append(__ emitUnlinkedJle());
+        matchDest.append(__ jle());
         // fall through to here, the value is above hi.
 
         // shuffle along & loop around if there are any more matches to handle.
@@ -315,13 +315,13 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
     JmpSrc unicodeFail;
     if (charClass.numMatchesUnicode || charClass.numRangesUnicode) {
         __ cmpl_i8r(0x7f, currentValueRegister);
-        JmpSrc isAscii = __ emitUnlinkedJle();
+        JmpSrc isAscii = __ jle();
     
         if (charClass.numMatchesUnicode) {
             for (unsigned i = 0; i < charClass.numMatchesUnicode; ++i) {
                 UChar ch = charClass.matchesUnicode[i];
                 __ cmpl_i32r((unsigned short)ch, currentValueRegister);
-                matchDest.append(__ emitUnlinkedJe());
+                matchDest.append(__ je());
             }
         }
         
@@ -331,14 +331,14 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
                 UChar hi = charClass.rangesUnicode[i].end;
                 
                 __ cmpl_i32r((unsigned short)lo, currentValueRegister);
-                JmpSrc below = __ emitUnlinkedJl();
+                JmpSrc below = __ jl();
                 __ cmpl_i32r((unsigned short)hi, currentValueRegister);
-                matchDest.append(__ emitUnlinkedJle());
+                matchDest.append(__ jle());
                 __ link(below, __ label());
             }
         }
 
-        unicodeFail = __ emitUnlinkedJmp();
+        unicodeFail = __ jmp();
         __ link(isAscii, __ label());
     }
 
@@ -348,7 +348,7 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
         generateCharacterClassInvertedRange(failures, matchDest, charClass.ranges, charClass.numRanges, &matchIndex, charClass.matches, charClass.numMatches);
         while (matchIndex < charClass.numMatches) {
             __ cmpl_i32r((unsigned short)charClass.matches[matchIndex], currentValueRegister);
-            matchDest.append(__ emitUnlinkedJe());
+            matchDest.append(__ je());
             ++matchIndex;
         }
         JmpDst noMatch = __ label();
@@ -370,7 +370,7 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
                     continue;
             }
             __ cmpl_i32r((unsigned short)ch, currentValueRegister);
-            matchDest.append(__ emitUnlinkedJe());
+            matchDest.append(__ je());
         }
 
         if (unsigned countAZaz = matchesAZaz.size()) {
@@ -379,7 +379,7 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
             for (unsigned i = 0; i < countAZaz; ++i) {
                 char ch = matchesAZaz[i];
                 __ cmpl_i32r((unsigned short)ch, currentValueRegister);
-                matchDest.append(__ emitUnlinkedJe());
+                matchDest.append(__ je());
             }
         }
     }
@@ -391,7 +391,7 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
 void Generator::generateCharacterClass(JmpSrcVector& failures, const CharacterClass& charClass, bool invert)
 {
     __ cmpl_rr(lengthRegister, currentPositionRegister);
-    failures.append(__ emitUnlinkedJe());
+    failures.append(__ je());
     __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
 
     if (invert)
@@ -399,7 +399,7 @@ void Generator::generateCharacterClass(JmpSrcVector& failures, const CharacterCl
     else {
         JmpSrcVector successes;
         generateCharacterClassInverted(successes, charClass);
-        failures.append(__ emitUnlinkedJmp());
+        failures.append(__ jmp());
         JmpDst here = __ label();
         for (unsigned i = 0; i < successes.size(); ++i)
             __ link(successes[i], here);
@@ -435,7 +435,7 @@ Generator::JmpSrc Generator::generateParentheses(ParenthesesType type)
     // (suggestion to fix: make parseDisjunction populate a JmpSrcVector of
     // disjunct successes... this is probably not worth the compile cost in
     // the common case to fix).
-    JmpSrc successfulMatch = __ emitUnlinkedJmp();
+    JmpSrc successfulMatch = __ jmp();
 
     JmpDst originalFailure = __ label();
     for (unsigned i = 0; i < newFailures.size(); ++i)
@@ -451,7 +451,7 @@ Generator::JmpSrc Generator::generateParentheses(ParenthesesType type)
         jumpToFail = successfulMatch;
     else {
         // plant a jump so any fail will link off to 'failures',
-        jumpToFail = __ emitUnlinkedJmp();
+        jumpToFail = __ jmp();
         // link successes to jump here
         __ link(successfulMatch, __ label());
     }
@@ -460,7 +460,7 @@ Generator::JmpSrc Generator::generateParentheses(ParenthesesType type)
 
 void Generator::generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst start, JmpSrc success, JmpSrc fail)
 {
-    __ link(__ emitUnlinkedJmp(), start);
+    __ link(__ jmp(), start);
     __ link(success, __ label());
 
     failures.append(fail);
@@ -468,7 +468,7 @@ void Generator::generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst star
 
 Generator::JmpSrc Generator::generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
 {
-    JmpSrc skip = __ emitUnlinkedJmp();
+    JmpSrc skip = __ jmp();
 
     JmpDst subPatternResetTrampoline = __ label();
     for (unsigned i = 0; i < newFailures.size(); ++i)
@@ -479,7 +479,7 @@ Generator::JmpSrc Generator::generateParenthesesResetTrampoline(JmpSrcVector& ne
         __ movl_i32m(-1, (2 * i + 1) * sizeof(int), outputRegister);
     }
     
-    JmpSrc newFailJump = __ emitUnlinkedJmp();
+    JmpSrc newFailJump = __ jmp();
     __ link(skip, __ label());
     
     return newFailJump;
@@ -492,13 +492,13 @@ void Generator::generateAssertionBOL(JmpSrcVector& failures)
 
         // begin of input == success
         __ cmpl_i8r(0, currentPositionRegister);
-        previousIsNewline.append(__ emitUnlinkedJe());
+        previousIsNewline.append(__ je());
 
         // now check prev char against newline characters.
         __ movzwl_mr(-2, inputRegister, currentPositionRegister, 2, currentValueRegister);
         generateCharacterClassInverted(previousIsNewline, CharacterClass::newline());
 
-        failures.append(__ emitUnlinkedJmp());
+        failures.append(__ jmp());
 
         JmpDst success = __ label();
         for (unsigned i = 0; i < previousIsNewline.size(); ++i)
@@ -506,7 +506,7 @@ void Generator::generateAssertionBOL(JmpSrcVector& failures)
         previousIsNewline.clear();
     } else {
         __ cmpl_i8r(0, currentPositionRegister);
-        failures.append(__ emitUnlinkedJne());
+        failures.append(__ jne());
     }
 }
 
@@ -517,13 +517,13 @@ void Generator::generateAssertionEOL(JmpSrcVector& failures)
 
         // end of input == success
         __ cmpl_rr(lengthRegister, currentPositionRegister);
-        nextIsNewline.append(__ emitUnlinkedJe());
+        nextIsNewline.append(__ je());
 
         // now check next char against newline characters.
         __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
         generateCharacterClassInverted(nextIsNewline, CharacterClass::newline());
 
-        failures.append(__ emitUnlinkedJmp());
+        failures.append(__ jmp());
 
         JmpDst success = __ label();
         for (unsigned i = 0; i < nextIsNewline.size(); ++i)
@@ -531,7 +531,7 @@ void Generator::generateAssertionEOL(JmpSrcVector& failures)
         nextIsNewline.clear();
     } else {
         __ cmpl_rr(lengthRegister, currentPositionRegister);
-        failures.append(__ emitUnlinkedJne());
+        failures.append(__ jne());
     }
 }
 
@@ -544,7 +544,7 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
 
     // (1.1) check for begin of input
     __ cmpl_i8r(0, currentPositionRegister);
-    JmpSrc atBegin = __ emitUnlinkedJe();
+    JmpSrc atBegin = __ je();
     // (1.2) load the last char, and chck if is word character
     __ movzwl_mr(-2, inputRegister, currentPositionRegister, 2, currentValueRegister);
     JmpSrcVector previousIsWord;
@@ -556,12 +556,12 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
 
     // (2.1) check for end of input
     __ cmpl_rr(lengthRegister, currentPositionRegister);
-    notWordBoundary.append(__ emitUnlinkedJe());
+    notWordBoundary.append(__ je());
     // (2.2) load the next char, and chck if is word character
     __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
     generateCharacterClassInverted(wordBoundary, CharacterClass::wordchar());
     // (2.3) If we get here, neither chars are word chars
-    notWordBoundary.append(__ emitUnlinkedJmp());
+    notWordBoundary.append(__ jmp());
 
     // (3) Handle situation where previous was a \w
 
@@ -572,7 +572,7 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
     previousIsWord.clear();
     // (3.1) check for end of input
     __ cmpl_rr(lengthRegister, currentPositionRegister);
-    wordBoundary.append(__ emitUnlinkedJe());
+    wordBoundary.append(__ je());
     // (3.2) load the next char, and chck if is word character
     __ movzwl_mr(inputRegister, currentPositionRegister, 2, currentValueRegister);
     generateCharacterClassInverted(notWordBoundary, CharacterClass::wordchar());
@@ -582,7 +582,7 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
     
     if (invert) {
         // handle the fall through case
-        wordBoundary.append(__ emitUnlinkedJmp());
+        wordBoundary.append(__ jmp());
     
         // looking for non word boundaries, so link boundary fails to here.
         JmpDst success = __ label();
@@ -610,7 +610,7 @@ void Generator::generateBackreference(JmpSrcVector& failures, unsigned subpatter
     // get the start pos of the backref into quantifierCountRegister (multipurpose!)
     __ movl_mr((2 * subpatternId) * sizeof(int), outputRegister, quantifierCountRegister);
 
-    JmpSrc skipIncrement = __ emitUnlinkedJmp();
+    JmpSrc skipIncrement = __ jmp();
     JmpDst topOfLoop = __ label();
     __ addl_i8r(1, currentPositionRegister);
     __ addl_i8r(1, quantifierCountRegister);
@@ -618,22 +618,22 @@ void Generator::generateBackreference(JmpSrcVector& failures, unsigned subpatter
 
     // check if we're at the end of backref (if we are, success!)
     __ cmpl_rm(quantifierCountRegister, ((2 * subpatternId) + 1) * sizeof(int), outputRegister);
-    JmpSrc endOfBackRef = __ emitUnlinkedJe();
+    JmpSrc endOfBackRef = __ je();
     
     __ movzwl_mr(inputRegister, quantifierCountRegister, 2, currentValueRegister);
     
     // check if we've run out of input (this would be a can o'fail)
     __ cmpl_rr(lengthRegister, currentPositionRegister);
-    JmpSrc endOfInput = __ emitUnlinkedJe();
+    JmpSrc endOfInput = __ je();
     
     __ cmpw_rm(currentValueRegister, inputRegister, currentPositionRegister, 2);
-    __ link(__ emitUnlinkedJe(), topOfLoop);
+    __ link(__ je(), topOfLoop);
     
     __ link(endOfInput, __ label());
     // Failure
     __ popl_r(quantifierCountRegister);
     __ popl_r(currentPositionRegister);
-    failures.append(__ emitUnlinkedJmp());
+    failures.append(__ jmp());
     
     // Success
     __ link(endOfBackRef, __ label());
@@ -643,7 +643,7 @@ void Generator::generateBackreference(JmpSrcVector& failures, unsigned subpatter
 
 void Generator::generateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures)
 {
-    successes.append(__ emitUnlinkedJmp());
+    successes.append(__ jmp());
     
     JmpDst here = __ label();
     

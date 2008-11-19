@@ -1,3 +1,153 @@
+2008-11-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        A little more refactoring.
+        
+        Removed the "emit" and "emitUnlinked" prefixes from the assembler.
+        
+        Moved the JmpSrc and JmpDst class definitions to the top of the X86
+        assembler class, in accordance with WebKit style guidelines.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::JmpSrc::JmpSrc):
+        (JSC::X86Assembler::JmpDst::JmpDst):
+        (JSC::X86Assembler::int3):
+        (JSC::X86Assembler::pushl_m):
+        (JSC::X86Assembler::popl_m):
+        (JSC::X86Assembler::movl_rr):
+        (JSC::X86Assembler::addl_rr):
+        (JSC::X86Assembler::addl_i8r):
+        (JSC::X86Assembler::addl_i8m):
+        (JSC::X86Assembler::addl_i32r):
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::andl_rr):
+        (JSC::X86Assembler::andl_i32r):
+        (JSC::X86Assembler::cmpl_i8r):
+        (JSC::X86Assembler::cmpl_rr):
+        (JSC::X86Assembler::cmpl_rm):
+        (JSC::X86Assembler::cmpl_mr):
+        (JSC::X86Assembler::cmpl_i32r):
+        (JSC::X86Assembler::cmpl_i32m):
+        (JSC::X86Assembler::cmpl_i8m):
+        (JSC::X86Assembler::cmpw_rm):
+        (JSC::X86Assembler::orl_rr):
+        (JSC::X86Assembler::orl_mr):
+        (JSC::X86Assembler::orl_i32r):
+        (JSC::X86Assembler::subl_rr):
+        (JSC::X86Assembler::subl_i8r):
+        (JSC::X86Assembler::subl_i8m):
+        (JSC::X86Assembler::subl_i32r):
+        (JSC::X86Assembler::subl_mr):
+        (JSC::X86Assembler::testl_i32r):
+        (JSC::X86Assembler::testl_i32m):
+        (JSC::X86Assembler::testl_rr):
+        (JSC::X86Assembler::xorl_i8r):
+        (JSC::X86Assembler::xorl_rr):
+        (JSC::X86Assembler::sarl_i8r):
+        (JSC::X86Assembler::sarl_CLr):
+        (JSC::X86Assembler::shl_i8r):
+        (JSC::X86Assembler::shll_CLr):
+        (JSC::X86Assembler::imull_rr):
+        (JSC::X86Assembler::imull_i32r):
+        (JSC::X86Assembler::idivl_r):
+        (JSC::X86Assembler::negl_r):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::movzbl_rr):
+        (JSC::X86Assembler::movzwl_mr):
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::movl_i32r):
+        (JSC::X86Assembler::movl_i32m):
+        (JSC::X86Assembler::leal_mr):
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::jmp_m):
+        (JSC::X86Assembler::movsd_mr):
+        (JSC::X86Assembler::xorpd_mr):
+        (JSC::X86Assembler::movsd_rm):
+        (JSC::X86Assembler::movd_rr):
+        (JSC::X86Assembler::cvtsi2sd_rr):
+        (JSC::X86Assembler::cvttsd2si_rr):
+        (JSC::X86Assembler::addsd_mr):
+        (JSC::X86Assembler::subsd_mr):
+        (JSC::X86Assembler::mulsd_mr):
+        (JSC::X86Assembler::addsd_rr):
+        (JSC::X86Assembler::subsd_rr):
+        (JSC::X86Assembler::mulsd_rr):
+        (JSC::X86Assembler::ucomis_rr):
+        (JSC::X86Assembler::pextrw_irr):
+        (JSC::X86Assembler::call):
+        (JSC::X86Assembler::jmp):
+        (JSC::X86Assembler::jne):
+        (JSC::X86Assembler::jnz):
+        (JSC::X86Assembler::je):
+        (JSC::X86Assembler::jl):
+        (JSC::X86Assembler::jb):
+        (JSC::X86Assembler::jle):
+        (JSC::X86Assembler::jbe):
+        (JSC::X86Assembler::jge):
+        (JSC::X86Assembler::jg):
+        (JSC::X86Assembler::ja):
+        (JSC::X86Assembler::jae):
+        (JSC::X86Assembler::jo):
+        (JSC::X86Assembler::jp):
+        (JSC::X86Assembler::js):
+        (JSC::X86Assembler::predictNotTaken):
+        (JSC::X86Assembler::convertToFastCall):
+        (JSC::X86Assembler::restoreArgumentReference):
+        (JSC::X86Assembler::restoreArgumentReferenceForTrampoline):
+        (JSC::X86Assembler::modRm_rr):
+        (JSC::X86Assembler::modRm_rr_Unchecked):
+        (JSC::X86Assembler::modRm_rm):
+        (JSC::X86Assembler::modRm_rm_Unchecked):
+        (JSC::X86Assembler::modRm_rmsib):
+        (JSC::X86Assembler::modRm_opr):
+        (JSC::X86Assembler::modRm_opr_Unchecked):
+        (JSC::X86Assembler::modRm_opm):
+        (JSC::X86Assembler::modRm_opm_Unchecked):
+        (JSC::X86Assembler::modRm_opmsib):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedFastCall):
+        (JSC::JIT::emitCTICall):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::emitJumpSlowCaseIfNotImmNum):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithIntToImmOrSlowCase):
+        (JSC::JIT::emitArithIntToImmWithJump):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlowScriptCheck):
+        (JSC::JIT::putDoubleResultToJSNumberCellOrJSImmediate):
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePutByIdReplace):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateBackreferenceQuantifier):
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier):
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+        (JSC::WREC::Generator::generateCharacterClassInverted):
+        (JSC::WREC::Generator::generateCharacterClass):
+        (JSC::WREC::Generator::generateParentheses):
+        (JSC::WREC::Generator::generateParenthesesNonGreedy):
+        (JSC::WREC::Generator::generateParenthesesResetTrampoline):
+        (JSC::WREC::Generator::generateAssertionBOL):
+        (JSC::WREC::Generator::generateAssertionEOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+        (JSC::WREC::Generator::generateBackreference):
+        (JSC::WREC::Generator::generateDisjunction):
+
 2008-11-19  Simon Hausmann  <hausmann@webkit.org>
 
         Sun CC build fix, removed trailing comman for last enum value.
