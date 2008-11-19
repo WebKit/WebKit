@@ -477,6 +477,70 @@ JSValue* jsDOMWindowBaseXSLTProcessor(ExecState* exec, const Identifier&, const 
 #endif
 }
 
+void setJSDOMWindowBaseEvent(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Event"), value);
+}
+
+void setJSDOMWindowBaseAudio(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Audio"), value);
+}
+
+void setJSDOMWindowBaseImage(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Image"), value);
+}
+
+void setJSDOMWindowBaseMessageChannel(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "MessageChannel"), value);
+}
+
+void setJSDOMWindowBaseOption(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Option"), value);
+}
+
+void setJSDOMWindowBaseWorker(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "Worker"), value);
+}
+
+void setJSDOMWindowBaseXMLHttpRequest(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "XMLHttpRequest"), value);
+}
+
+void setJSDOMWindowBaseXSLTProcessor(ExecState* exec, JSObject* thisObject, JSValue* value)
+{
+    if (!static_cast<JSDOMWindowBase*>(thisObject)->allowsAccessFrom(exec))
+        return;
+    // Shadowing a built-in constructor
+    static_cast<JSDOMWindowBase*>(thisObject)->putDirect(Identifier(exec, "XSLTProcessor"), value);
+}
+
 namespace WebCore {
 
 JSValue* JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -582,68 +646,11 @@ void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSVal
         }
         if (entry->attributes() & ReadOnly)
             return;
-
-        // Don't call the put function for replacable properties.
-        if (!(entry->propertyPutter() == setJSDOMWindowBaseEvent
-                || entry->propertyPutter() == setJSDOMWindowBaseAudio
-                || entry->propertyPutter() == setJSDOMWindowBaseImage
-                || entry->propertyPutter() == setJSDOMWindowBaseOption
-                || entry->propertyPutter() == setJSDOMWindowBaseMessageChannel
-                || entry->propertyPutter() == setJSDOMWindowBaseWorker
-                || entry->propertyPutter() == setJSDOMWindowBaseXMLHttpRequest
-                || entry->propertyPutter() == setJSDOMWindowBaseXSLTProcessor)) {
-            entry->propertyPutter()(exec, this, value);
-            return;
-        }
     }
 
     if (allowsAccessFrom(exec))
         Base::put(exec, propertyName, value, slot);
 }
-
-} // namespace WebCore
-
-void setJSDOMWindowBaseEvent(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseAudio(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseImage(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseMessageChannel(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseOption(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseWorker(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseXMLHttpRequest(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void setJSDOMWindowBaseXSLTProcessor(ExecState*, JSObject*, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-namespace WebCore {
 
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
 {

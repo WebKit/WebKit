@@ -147,6 +147,9 @@ void JSWorkerContext::put(ExecState* exec, const Identifier& propertyName, JSVal
 
 bool JSWorkerContext::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    // Look for overrides before looking at any of our own properties.
+    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot))
+        return true;
     return getStaticValueSlot<JSWorkerContext, Base>(exec, getJSWorkerContextTable(exec), this, propertyName, slot);
 }
 
@@ -251,15 +254,16 @@ bool JSWorkerContextPrototype::getOwnPropertySlot(ExecState* exec, const Identif
     return getStaticFunctionSlot<JSObject>(exec, getJSWorkerContextPrototypeTable(exec), this, propertyName, slot);
 }
 
-void setJSWorkerContextMessageEvent(ExecState*, JSObject*, JSValue*)
+void setJSWorkerContextMessageEvent(ExecState* exec, JSObject* thisObject, JSValue* value)
 {
-    // FIXME: Do we need to override put for global constructors, like JSDOMWindowBase does?
-    ASSERT_NOT_REACHED();
+    // Shadowing a built-in constructor
+    static_cast<JSWorkerContext*>(thisObject)->putDirect(Identifier(exec, "MessageEvent"), value);
 }
 
-void setJSWorkerContextWorkerLocation(ExecState*, JSObject*, JSValue*)
+void setJSWorkerContextWorkerLocation(ExecState* exec, JSObject* thisObject, JSValue* value)
 {
-    ASSERT_NOT_REACHED();
+    // Shadowing a built-in constructor
+    static_cast<JSWorkerContext*>(thisObject)->putDirect(Identifier(exec, "Location"), value);
 }
 
 
