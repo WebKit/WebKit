@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        Test for https://bugs.webkit.org/show_bug.cgi?22370
+        Add a test to check detectability of HTMLCollections.
+
+        * fast/dom/htmlcollection-detectability-expected.txt: Added.
+        * fast/dom/htmlcollection-detectability.html: Added.
+
+2008-11-20  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=22369
         Add test cases covering more basic operations.
 
