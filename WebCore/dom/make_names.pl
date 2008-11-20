@@ -88,9 +88,9 @@ if ($printWrapperFactory) {
 
 sub initializeTagPropertyHash
 {
-    return ('interfaceName' => defaultInterfaceName($_[0]),
-            'applyAudioHack' => 0,
-            'exportString' => 0);
+    return ('exportString' => 0,
+            'interfaceName' => defaultInterfaceName($_[0]),
+            'wrapperOnlyIfMediaIsAvailable' => 0);
 }
 
 sub initializeAttrPropertyHash
@@ -205,12 +205,11 @@ sub printMacros
 
 sub printConstructors
 {
-    my ($F, $namesRef) = @_;
-    my %names = %$namesRef;
+    my $F = shift;
 
     print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
-    for my $name (sort keys %names) {
-        my $ucName = $names{$name}{'interfaceName'};
+    for my $name (sort keys %tags) {
+        my $ucName = $tags{$name}{'interfaceName'};
 
         print F "static $parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
@@ -222,8 +221,9 @@ sub printConstructors
 
 sub printFunctionInits
 {
-    my ($F, $namesRef) = @_;
-    for my $name (sort keys %$namesRef) {
+    my $F = shift;
+
+    for my $name (sort keys %tags) {
         print F "    gFunctionMap->set($parameters{'namespace'}Names::${name}Tag.localName().impl(), ${name}Constructor);\n";
     }
 }
@@ -425,24 +425,23 @@ print F "\nvoid init()
 
 sub printJSElementIncludes
 {
-    my ($F, $namesRef) = @_;
-    my %names = %$namesRef;
-    for my $name (sort keys %names) {
+    my $F = shift;
+    for my $name (sort keys %tags) {
         next if (hasCustomMapping($name));
 
-        my $ucName = $names{$name}{"interfaceName"};
+        my $ucName = $tags{$name}{"interfaceName"};
         print F "#include \"JS${ucName}.h\"\n";
     }
 }
 
 sub printElementIncludes
 {
-    my ($F, $namesRef, $shouldSkipCustomMappings) = @_;
-    my %names = %$namesRef;
-    for my $name (sort keys %names) {
+    my ($F, $shouldSkipCustomMappings) = @_;
+
+    for my $name (sort keys %tags) {
         next if ($shouldSkipCustomMappings && hasCustomMapping($name));
 
-        my $ucName = $names{$name}{"interfaceName"};
+        my $ucName = $tags{$name}{"interfaceName"};
         print F "#include \"${ucName}.h\"\n";
     }
 }
@@ -515,7 +514,7 @@ print F <<END
 END
 ;
 
-printElementIncludes($F, \%tags, 0);
+printElementIncludes($F, 0);
 
 print F <<END
 #include <wtf/HashMap.h>
@@ -532,7 +531,7 @@ namespace WebCore {
 END
 ;
 
-printConstructors($F, \%tags);
+printConstructors($F);
 
 print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
@@ -548,7 +547,7 @@ static inline void createFunctionMapIfNecessary()
 END
 ;
 
-printFunctionInits($F, \%tags);
+printFunctionInits($F);
 
 print F "}\n";
 print F "#endif\n\n" if $parameters{'guardFactoryWith'};
@@ -730,7 +729,7 @@ sub printWrapperFunctions
 
         my $ucName = $names{$name}{"interfaceName"};
         # Hack for the media tags
-        if ($names{$name}{"applyAudioHack"}) {
+        if ($names{$name}{"wrapperOnlyIfMediaIsAvailable"}) {
             print F <<END
 static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
@@ -768,11 +767,11 @@ sub printWrapperFactoryCppFile
 
     print F "#include \"JS$parameters{'namespace'}ElementWrapperFactory.h\"\n";
 
-    printJSElementIncludes($F, \%tags);
+    printJSElementIncludes($F);
 
     print F "\n#include \"$parameters{'namespace'}Names.h\"\n\n";
 
-    printElementIncludes($F, \%tags, 1);
+    printElementIncludes($F, 1);
 
     print F "\n#include <wtf/StdLibExtras.h>\n\n";
     

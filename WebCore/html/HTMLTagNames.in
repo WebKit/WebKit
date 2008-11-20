@@ -9,7 +9,7 @@ address
 applet
 area
 #if ENABLE_VIDEO
-audio applyAudioHack=1
+audio wrapperOnlyIfMediaIsAvailable=1
 #endif
 b
 base
@@ -89,7 +89,7 @@ script
 select
 small
 #if ENABLE_VIDEO
-source applyAudioHack=1
+source wrapperOnlyIfMediaIsAvailable=1
 #endif
 span
 strike
@@ -111,7 +111,7 @@ u
 ul interfaceName=HTMLUListElement
 var
 #if ENABLE_VIDEO
-video applyAudioHack=1
+video wrapperOnlyIfMediaIsAvailable=1
 #endif
 wbr
 xmp
