@@ -1,3 +1,14 @@
+2008-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        https://bugs.webkit.org/show_bug.cgi?id=22111
+        
+        Testcase for hit testing in video controls on transformed video.
+
+        * media/video-controls-transformed-expected.txt: Added.
+        * media/video-controls-transformed.html: Added.
+
 2008-11-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

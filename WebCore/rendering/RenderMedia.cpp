@@ -355,23 +355,36 @@ void RenderMedia::opacityAnimationTimerFired(Timer<RenderMedia>*)
     float opacity = narrowPrecisionToFloat(m_opacityAnimationFrom + (m_opacityAnimationTo - m_opacityAnimationFrom) * time / cOpacityAnimationDuration);
     changeOpacity(m_panel.get(), opacity);
 }
-    
+
+static bool rendererContainsPoint(const RenderObject* r, const IntPoint& absPoint)
+{
+    if (!r)
+        return false;
+    FloatPoint localPoint = r->absoluteToLocal(absPoint, false, true);  // respect transforms
+    return r->borderBox().contains(roundedIntPoint(localPoint));
+}
+
 void RenderMedia::forwardEvent(Event* event)
 {
     if (event->isMouseEvent() && m_controlsShadowRoot) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
-        if (m_muteButton && m_muteButton->renderer() && m_muteButton->renderer()->absoluteBoundingBoxRect().contains(point))
+        if (m_muteButton && rendererContainsPoint(m_muteButton->renderer(), point))
             m_muteButton->defaultEventHandler(event);
-        if (m_playButton && m_playButton->renderer() && m_playButton->renderer()->absoluteBoundingBoxRect().contains(point))
+
+        if (m_playButton && rendererContainsPoint(m_playButton->renderer(), point))
             m_playButton->defaultEventHandler(event);
-        if (m_seekBackButton && m_seekBackButton->renderer() && m_seekBackButton->renderer()->absoluteBoundingBoxRect().contains(point))
+
+        if (m_seekBackButton && rendererContainsPoint(m_seekBackButton->renderer(), point))
             m_seekBackButton->defaultEventHandler(event);
-        if (m_seekForwardButton && m_seekForwardButton->renderer() && m_seekForwardButton->renderer()->absoluteBoundingBoxRect().contains(point))
+
+        if (m_seekForwardButton && rendererContainsPoint(m_seekForwardButton->renderer(), point))
             m_seekForwardButton->defaultEventHandler(event);
-        if (m_timeline && m_timeline->renderer() && m_timeline->renderer()->absoluteBoundingBoxRect().contains(point))
+
+        if (m_timeline && rendererContainsPoint(m_timeline->renderer(), point))
             m_timeline->defaultEventHandler(event);
-        if (m_fullscreenButton && m_fullscreenButton->renderer() && m_fullscreenButton->renderer()->absoluteBoundingBoxRect().contains(point))
+
+        if (m_fullscreenButton && rendererContainsPoint(m_fullscreenButton->renderer(), point))
             m_fullscreenButton->defaultEventHandler(event);
         
         if (event->type() == eventNames().mouseoverEvent) {

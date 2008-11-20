@@ -1,0 +1,9 @@
+Test controls on transformed video.
+
+This test only runs in DRT!
+
+TEST(video.controls) OK
+EVENT(load)
+TEST(!video.paused) OK
+END OF TEST
+

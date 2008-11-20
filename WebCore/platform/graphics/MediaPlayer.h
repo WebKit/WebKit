@@ -67,6 +67,9 @@ public:
     void setFrameView(FrameView* frameView) { m_frameView = frameView; }
     bool inMediaDocument();
     
+    // FIXME: it would be better to just have a getter and setter for size.
+    // This is currently an absolute rect, which is not appropriate for
+    // content with transforms
     IntRect rect() const { return m_rect; }
     void setRect(const IntRect& r);
     
