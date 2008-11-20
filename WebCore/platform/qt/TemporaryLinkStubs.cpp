@@ -107,6 +107,12 @@ NPError PluginView::getValueStatic(NPNVariable, void*) { return NPERR_GENERIC_ER
 PluginView::~PluginView() {}
 #endif
 
+#if defined(Q_OS_WINCE)
+Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const { notImplemented(); }
+bool PluginDatabase::isPreferredPluginDirectory(const String& directory) { notImplemented(); return false; }
+#endif
+
 namespace WebCore {
 
 void getSupportedKeySizes(Vector<String>&) { notImplemented(); }

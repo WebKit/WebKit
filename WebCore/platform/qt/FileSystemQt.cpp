@@ -163,7 +163,7 @@ bool unloadModule(PlatformModule module)
 }
 #endif
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
 bool unloadModule(PlatformModule module)
 {
     return ::FreeLibrary(module);

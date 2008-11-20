@@ -472,6 +472,10 @@ const int VK_MEDIA_LAUNCH_APP1 = 0xB6;
 // VK_LAUNCH_APP2 (B7) Windows 2000/XP: Start Application 2 key
 const int VK_MEDIA_LAUNCH_APP2 = 0xB7;
 
+#endif // !PLATFORM(WIN_OS)
+
+#if !PLATFORM(WIN_OS) || PLATFORM(WIN_CE)
+
 // VK_OEM_1 (BA) Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the ';:' key
 const int VK_OEM_1 = 0xBA;
 
@@ -507,6 +511,10 @@ const int VK_OEM_7 = 0xDE;
 
 // VK_OEM_8 (DF) Used for miscellaneous characters; it can vary by keyboard.
 const int VK_OEM_8 = 0xDF;
+
+#endif // !PLATFORM(WIN_OS) || PLATFORM(WIN_CE)
+
+#if !PLATFORM(WIN_OS)
 
 // VK_OEM_102 (E2) Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
 const int VK_OEM_102 = 0xE2;

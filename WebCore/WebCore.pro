@@ -18,7 +18,7 @@ CONFIG(QTDIR_build) {
 
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
-win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
+win32-*|wince*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
 
 !CONFIG(QTDIR_build) {
      OBJECTS_DIR = tmp
@@ -50,6 +50,14 @@ DEFINES += BUILD_WEBKIT
 
 !CONFIG(QTDIR_build):win32-*: DEFINES += ENABLE_ICONDATABASE=0 ENABLE_DATABASE=0
 win32-*: DEFINES += _HAS_TR1=0
+wince* {
+#    DEFINES += ENABLE_SVG=0 ENABLE_XPATH=0 ENABLE_XBL=0 \
+#               ENABLE_SVG_ANIMATION=0 ENABLE_SVG_USE=0  \
+#               ENABLE_SVG_FOREIGN_OBJECT=0 ENABLE_SVG_AS_IMAGE=0
+
+    INCLUDEPATH += $$PWD/../JavaScriptCore/os-wince
+    INCLUDEPATH += $$PWD/../JavaScriptCore/os-win32
+}
 
 # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
 win32-g++ {
@@ -1121,7 +1129,7 @@ SOURCES += \
     ../WebKit/qt/Api/qwebdatabase.cpp
 
 
-    win32-*: SOURCES += platform/win/SystemTimeWin.cpp
+    win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp
     else: SOURCES += platform/qt/SystemTimeQt.cpp
 
     mac {
@@ -1962,7 +1970,7 @@ addExtraCompilerWithHeader(xpathbison)
 
     VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
 
-    win32-* {
+    win32-*|wince* {
         DLLDESTDIR = $$OUTPUT_DIR/bin
 
         dlltarget.commands = $(COPY_FILE) $(DESTDIR)$(TARGET) $$[QT_INSTALL_BINS]

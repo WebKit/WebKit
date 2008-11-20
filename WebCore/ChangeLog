@@ -1,3 +1,29 @@
+2008-11-20  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Steps towards making the the Qt port of WebKit compile on Windows CE
+
+        https://bugs.webkit.org/show_bug.cgi?id=20746
+
+        * WebCore.pro: Various fixes to include windows specific build options
+        also in the Windows CE build.
+        * loader/icon/IconDatabase.cpp: Removed unnecessary errno.h inclusion.
+        * platform/FileSystem.h: Changed Q_OS_WIN32 to Q_OS_WIN to include CE.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getWindowsContext): SetWorldTransform is
+        not available on CE.
+        * platform/graphics/qt/PathQt.cpp: Added local definition of M_PI.
+        * platform/qt/FileSystemQt.cpp: Changed Q_OS_WIN32 to Q_OS_WIN to include CE.
+        * platform/qt/KeyboardCodes.h: Extend #idefs to define the missing OEM
+        constants on CE.
+        * platform/qt/TemporaryLinkStubs.cpp: Added stubs for plugins.
+        * platform/text/RegularExpression.cpp: Removed unused sys/types.h and
+        pcre.h inclusions.
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::userIdleTime): Don't use GetLastInputInfo on CE, it does not
+        exist.
+
 2008-11-20  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Maciej Stachowiak.

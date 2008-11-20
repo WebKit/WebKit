@@ -1109,6 +1109,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
         memset(bmpInfo.bmBits, 0, bufferSize);
     }
 
+#if !PLATFORM(WIN_CE)
     // Make sure we can do world transforms.
     SetGraphicsMode(bitmapDC, GM_ADVANCED);
 
@@ -1121,7 +1122,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     xform.eDx = -dstRect.x();
     xform.eDy = -dstRect.y();
     ::SetWorldTransform(bitmapDC, &xform);
-
+#endif
 
     return bitmapDC;
 }

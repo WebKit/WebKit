@@ -1,3 +1,13 @@
+2008-09-09  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Steps towards making the Qt port of WebKit compile on Windows CE
+
+        https://bugs.webkit.org/show_bug.cgi?id=20746
+
+        * WebKit.pro: don't build DumpRenderTree on all Win32 platforms
+
 2008-11-17  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
