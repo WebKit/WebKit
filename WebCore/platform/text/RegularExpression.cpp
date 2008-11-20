@@ -30,6 +30,7 @@
 #include "PlatformString.h"
 #include "Logging.h"
 #include <wtf/RefCounted.h>
+#include <pcre/pcre.h>
 
 namespace WebCore {
 
