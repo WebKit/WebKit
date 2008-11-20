@@ -63,6 +63,11 @@ namespace JSC {
         static PassRefPtr<JSGlobalData> createLeaked();
         ~JSGlobalData();
 
+#if ENABLE(JSC_MULTIPLE_THREADS)
+        // Will start tracking threads that use the heap, which is resource-heavy.
+        void makeUsableFromMultipleThreads() { heap.makeUsableFromMultipleThreads(); }
+#endif
+
         Interpreter* interpreter;
 
         JSValue* exception;

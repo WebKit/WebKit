@@ -165,8 +165,12 @@ bool JSGlobalData::sharedInstanceExists()
 JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
-    if (!instance)
+    if (!instance) {
         instance = new JSGlobalData(true);
+#if ENABLE(JSC_MULTIPLE_THREADS)
+        instance->makeUsableFromMultipleThreads();
+#endif
+    }
     return *instance;
 }
 

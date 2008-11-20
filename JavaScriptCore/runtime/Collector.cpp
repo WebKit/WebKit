@@ -121,16 +121,11 @@ Heap::Heap(JSGlobalData* globalData)
     : m_markListSet(0)
 #if ENABLE(JSC_MULTIPLE_THREADS)
     , m_registeredThreads(0)
+    , m_currentThreadRegistrar(0)
 #endif
     , m_globalData(globalData)
 {
     ASSERT(globalData);
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
-    int error = pthread_key_create(&m_currentThreadRegistrar, unregisterThread);
-    if (error)
-        CRASH();
-#endif
 
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -165,11 +160,13 @@ void Heap::destroy()
     freeHeap(&numberHeap);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
+    if (m_currentThreadRegistrar) {
 #ifndef NDEBUG
-    int error =
+        int error =
 #endif
-        pthread_key_delete(m_currentThreadRegistrar);
-    ASSERT(!error);
+            pthread_key_delete(m_currentThreadRegistrar);
+        ASSERT(!error);
+    }
 
     MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
     for (Heap::Thread* t = m_registeredThreads; t;) {
@@ -478,9 +475,19 @@ static inline PlatformThread getCurrentPlatformThread()
 #endif
 }
 
+void Heap::makeUsableFromMultipleThreads()
+{
+    if (m_currentThreadRegistrar)
+        return;
+
+    int error = pthread_key_create(&m_currentThreadRegistrar, unregisterThread);
+    if (error)
+        CRASH();
+}
+
 void Heap::registerThread()
 {
-    if (pthread_getspecific(m_currentThreadRegistrar))
+    if (!m_currentThreadRegistrar || pthread_getspecific(m_currentThreadRegistrar))
         return;
 
     pthread_setspecific(m_currentThreadRegistrar, this);
