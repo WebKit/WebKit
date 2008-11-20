@@ -1,3 +1,41 @@
+2008-11-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Preparation for:
+        <rdar://problem/2610675> Blank line that is quoted can't be deleted
+        
+        To fix this we need to make changes to the code that creates selections to delete
+        when the user does a backward or forward delete with a caret selection.  For certain
+        caret positions, we now want to remove something other than the standard "caret extended
+        backward/forward by one unit".  The problem is that there were two pieces of code 
+        responsible for doing this, one in Editor::deleteWithDirection, and another inside 
+        TypingCommand::deleteKeyPressed.  The code in deleteWithDirection is a recent 
+        addition (r19172), and adding it there caused regressions because it prevented the 
+        code in deleteKeyPressed from ever running.  The regressions were never caught because 
+        JS deletion uses deleteKeyPressed while manual deletion uses deleteWithDirection.
+        
+        This patch removes selection creation code from deleteWithDirection so that deleteKeyPressed
+        can handle it.  That required moving code to handle the kill ring down into deleteKeyPressed.
+        
+        Follow up patches will fix <rdar://problem/2610675>, and attempt to eliminate the rest of the 
+        discrepancies between the behavior of JS deletions and manual deletions, so that we 
+        have better test coverage.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection): Early return if m_frame->document() is null, instead
+        of checking for that periodically throughout the function.  There's really nothing to be done
+        if it's null anyway.
+        Move kill ring code down into deleteKeyPressed.
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::doApply):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::create):
+
 2008-11-20  Darin Adler  <darin@apple.com>
 
         Earlier version reviewed by Justin Garcia.

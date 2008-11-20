@@ -216,54 +216,34 @@ bool Editor::canSmartCopyOrDelete()
 
 bool Editor::deleteWithDirection(SelectionController::EDirection direction, TextGranularity granularity, bool killRing, bool isTypingAction)
 {
-    // Delete the selection, if there is one.
-    // If not, make a selection using the passed-in direction and granularity.
-
-    if (!canEdit())
+    if (!canEdit() || !m_frame->document())
         return false;
 
     if (m_frame->selection()->isRange()) {
-        if (killRing)
-            addToKillRing(selectedRange().get(), false);
         if (isTypingAction) {
-            if (m_frame->document()) {
-                TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity);
-                revealSelectionAfterEditingOperation();
-            }
+            TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity);
+            revealSelectionAfterEditingOperation();
         } else {
+            if (killRing)
+                addToKillRing(selectedRange().get(), false);
             deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
             // Implicitly calls revealSelectionAfterEditingOperation().
         }
-    } else {
-        SelectionController selectionToDelete;
-        selectionToDelete.setSelection(m_frame->selection()->selection());
-        selectionToDelete.modify(SelectionController::EXTEND, direction, granularity);
-        if (killRing && selectionToDelete.isCaret() && granularity != CharacterGranularity)
-            selectionToDelete.modify(SelectionController::EXTEND, direction, CharacterGranularity);
-
-        RefPtr<Range> range = selectionToDelete.toRange();
-
-        if (killRing)
-            addToKillRing(range.get(), false);
-
-        if (!m_frame->selection()->setSelectedRange(range.get(), DOWNSTREAM, (granularity != CharacterGranularity)))
-            return true;
-
+    } else {        
         switch (direction) {
             case SelectionController::FORWARD:
             case SelectionController::RIGHT:
-                if (m_frame->document())
-                    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), false, granularity);
+                TypingCommand::forwardDeleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
                 break;
             case SelectionController::BACKWARD:
             case SelectionController::LEFT:
-                if (m_frame->document())
-                    TypingCommand::deleteKeyPressed(m_frame->document(), false, granularity);
+                TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
                 break;
         }
         revealSelectionAfterEditingOperation();
     }
 
+    // FIXME: We should to move this down into deleteKeyPressed.
     // clear the "start new kill ring sequence" setting, because it was set to true
     // when the selection was updated by deleting the range
     if (killRing)

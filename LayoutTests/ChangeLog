@@ -1,3 +1,19 @@
+2008-11-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        <rdar://problem/2610675> Blank line that is quoted can't be deleted
+        
+        The old selection modification code for caret case deletions set the selection
+        about to be deleted on the frame, instead of just setting the endingSelection.
+
+        * platform/mac/editing/deleting/delete-by-word-001-expected.txt:
+        * platform/mac/editing/deleting/delete-by-word-002-expected.txt:
+        * platform/mac/editing/deleting/delete-to-end-of-paragraph-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+
+
 2008-11-20  Darin Adler  <darin@apple.com>
 
         - update test result for <rdar://problem/4108572> REGRESSION: Can't extend
