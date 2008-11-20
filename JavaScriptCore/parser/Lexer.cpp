@@ -23,14 +23,15 @@
 #include "config.h"
 #include "Lexer.h"
 
-#include "dtoa.h"
 #include "JSFunction.h"
-#include "Nodes.h"
-#include "NodeInfo.h"
 #include "JSGlobalObjectFunctions.h"
+#include "NodeInfo.h"
+#include "Nodes.h"
+#include "dtoa.h"
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/unicode/Unicode.h>
 

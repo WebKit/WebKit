@@ -27,6 +27,7 @@
 #include "Lexer.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <memory>
 
 extern int kjsyyparse(void*);
 
