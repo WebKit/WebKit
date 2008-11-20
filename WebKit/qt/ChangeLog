@@ -6,6 +6,16 @@
         Ports busted by addition of ScriptValue.{h,cpp}
 
         * Api/qwebframe.cpp:
+        (QWebFrame::evaluateJavaScript):
+
+2008-11-19  Darin Fisher  <darin@chromium.org>
+
+        Fix bustage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22373
+        Ports busted by addition of ScriptValue.{h,cpp}
+
+        * Api/qwebframe.cpp:
 
 2008-11-19  Simon Hausmann  <hausmann@webkit.org>
 
