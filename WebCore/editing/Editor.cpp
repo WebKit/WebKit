@@ -101,15 +101,13 @@ EditorClient* Editor::client() const
 void Editor::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (EditorClient* c = client())
-        if (selectionForCommand(event).isContentEditable())
-            c->handleKeyboardEvent(event);
+        c->handleKeyboardEvent(event);
 }
 
 void Editor::handleInputMethodKeydown(KeyboardEvent* event)
 {
     if (EditorClient* c = client())
-        if (selectionForCommand(event).isContentEditable())
-            c->handleInputMethodKeydown(event);
+        c->handleInputMethodKeydown(event);
 }
 
 bool Editor::canEdit() const

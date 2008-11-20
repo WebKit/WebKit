@@ -1,3 +1,11 @@
+2008-11-20  Darin Adler  <darin@apple.com>
+
+        - update test result for <rdar://problem/4108572> REGRESSION: Can't extend
+          selection with shift-arrow in read only mode
+
+        * editing/selection/selection-actions.html: Removed the actions that are
+        supposed to modify selections now.
+
 2008-11-20  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

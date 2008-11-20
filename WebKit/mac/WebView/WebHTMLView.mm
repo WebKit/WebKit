@@ -380,7 +380,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     NSEvent *keyDownEvent; // Kept after handling the event.
     
     NSSize lastLayoutSize;
-    
+
     NSPoint lastScrollPosition;
 
     WebPluginController *pluginController;
@@ -393,22 +393,23 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     NSTimer *autoscrollTimer;
     NSEvent *autoscrollTriggerEvent;
     
-    NSArray* pageRects;
+    NSArray *pageRects;
 
-    NSMutableDictionary* highlighters;
+    NSMutableDictionary *highlighters;
 
-    BOOL resigningFirstResponder;
+#ifdef BUILDING_ON_TIGER
     BOOL nextResponderDisabledOnce;
+#endif
     
     WebTextCompleteController *compController;
     
     BOOL transparentBackground;
 
-    WebHTMLViewInterpretKeyEventsParameters *interpretKeyEventsParameters;
+    WebHTMLViewInterpretKeyEventsParameters* interpretKeyEventsParameters;
     BOOL receivedNOOP;
     
     WebDataSource *dataSource;
-    WebCore::CachedImage *promisedDragTIFFDataSource;
+    WebCore::CachedImage* promisedDragTIFFDataSource;
     
     CFRunLoopTimerRef updateFocusedAndActiveStateTimer;
     CFRunLoopTimerRef updateMouseoverTimer;
@@ -3330,14 +3331,12 @@ noPromisedData:
     BOOL resign = [super resignFirstResponder];
     if (resign) {
         [_private->compController endRevertingChange:NO moveLeft:NO];
-        _private->resigningFirstResponder = YES;
         if (![self maintainsInactiveSelection]) { 
             [self deselectAll];
             if (![[self _webView] _isPerformingProgrammaticFocus])
                 [self clearFocus];
         }
         [self _updateFocusedAndActiveState];
-        _private->resigningFirstResponder = NO;
     }
     return resign;
 }
@@ -4438,8 +4437,19 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #endif
 
+#ifndef BUILDING_ON_TIGER
+
+// Override this so that AppKit will send us arrow keys as key down events so we can
+// support them via the key bindings mechanism.
+- (BOOL)_wantsKeyDownForEvent:(NSEvent *)event
+{
+    return YES;
+}
+
+#else
+
 // Super-hack alert.
-// Workaround for bug 3789278.
+// All this code accomplishes the same thing as the _wantsKeyDownForEvent method above.
 
 // Returns a selector only if called while:
 //   1) first responder is self
@@ -4504,6 +4514,8 @@ static BOOL writingDirectionKeyBindingsEnabled()
         return nil;
     return [super nextResponder];
 }
+
+#endif
 
 // Despite its name, this is called at different times than windowDidBecomeKey is.
 // It takes into account all the other factors that determine when NSCell draws
@@ -5233,7 +5245,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         
         String eventText = text;
         eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-        if (coreFrame) {
+        if (coreFrame && coreFrame->editor()->canEdit()) {
             if (!coreFrame->editor()->hasComposition())
                 eventHandled = coreFrame->editor()->insertText(eventText, event);
             else {

@@ -1,3 +1,19 @@
+2008-11-20  Darin Adler  <darin@apple.com>
+
+        Earlier version reviewed by Justin Garcia.
+
+        - fix <rdar://problem/4108572> REGRESSION: Can't extend selection with shift-arrow in read only mode
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleKeyboardEvent): Remove isContentEditable check -- keyboard events can be
+        handled even when the selection is not in an editable area.
+        (WebCore::Editor::handleInputMethodKeydown): Ditto.
+
+        * editing/EditorCommand.cpp: Changed the enabled rule for operations that change the selection to
+        allow use when there's a selection even if it's not in an editable area. This includes commands
+        like shift-arrow keys to extend the slection, but not commands like arrow keys to move the
+        insertion point.
+
 2008-11-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

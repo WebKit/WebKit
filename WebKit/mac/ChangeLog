@@ -1,3 +1,18 @@
+2008-11-20  Darin Adler  <darin@apple.com>
+
+        Earlier version reviewed by Justin Garcia.
+
+        - part of fix for <rdar://problem/4108572> REGRESSION: Can't extend selection with shift-arrow in read only mode
+          Also resolves <rdar://problem/5000134>.
+
+        * WebView/WebHTMLView.mm: Removed some unused code, and made the Tiger workaround for bug 3789278
+        be Tiger-only.
+        (-[WebHTMLView resignFirstResponder]): Removed code setting unused resigningFirstResponder flag.
+        (-[WebHTMLView _wantsKeyDownForEvent:]): Added. Returns YES.
+        (-[WebHTMLView insertText:]): Don't try to insert text if the selection is not editable. We used
+        to prevent even processing the input, but that's not practical since some commands need to work
+        even in non-editable regions.
+
 2008-11-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon Honeycutt.
