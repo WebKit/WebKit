@@ -1,5 +1,34 @@
 2008-11-20  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Geoffrey Garen.
+
+        Speedup the lexer to offset coming re-parsing patch.
+
+        - .6% progression on Sunspider.
+
+        * bytecompiler/SegmentedVector.h:
+        (JSC::SegmentedVector::shrink): Fixed bug where m_size would not be
+        set when shrinking to 0.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::Lexer):
+        (JSC::Lexer::isIdentStart): Use isASCIIAlpha and isASCII to avoid going into ICU in the common cases.
+        (JSC::Lexer::isIdentPart): Use isASCIIAlphanumeric and isASCII to avoid going into ICU in the common cases
+        (JSC::isDecimalDigit): Use version in ASCIICType.h. Inlining it was a regression.
+        (JSC::Lexer::isHexDigit): Ditto.
+        (JSC::Lexer::isOctalDigit): Ditto.
+        (JSC::Lexer::clear): Resize the m_identifiers SegmentedVector to initial
+        capacity
+        * parser/Lexer.h: Remove unused m_strings vector. Make m_identifiers
+        a SegmentedVector<Identifier> to avoid allocating a new Identifier* for
+        each identifier found.  The SegmentedVector is need so we can passes 
+        references to the Identifier to the parser, which remain valid even when
+        the vector is resized.
+        (JSC::Lexer::makeIdentifier): Inline and return a reference to the added
+        Identifier.
+
+2008-11-20  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Add isASCII to ASCIICType.  Use coming soon!

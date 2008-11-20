@@ -23,14 +23,14 @@
 #ifndef Lexer_h
 #define Lexer_h
 
+#include "Identifier.h"
 #include "Lookup.h"
-#include "UString.h"
-#include <wtf/Vector.h>
+#include "SegmentedVector.h"
 #include "SourceCode.h"
+#include <wtf/Vector.h>
 
 namespace JSC {
 
-    class Identifier;
     class RegExp;
 
     class Lexer : Noncopyable {
@@ -112,7 +112,14 @@ namespace JSC {
         void record16(int);
         void record16(UChar);
 
-        JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer);
+        JSC::Identifier* makeIdentifier(const Vector<UChar>& buffer)
+        {
+            m_identifiers.append(JSC::Identifier(m_globalData, buffer.data(), buffer.size()));
+            return &m_identifiers.last();
+        }
+
+        static const size_t initialReadBufferCapacity = 32;
+        static const size_t initialIdentifierTableCapacity = 64;
 
         int yylineno;
         int yycolumn;
@@ -148,8 +155,7 @@ namespace JSC {
         int m_nextOffset2;
         int m_nextOffset3;
         
-        Vector<UString*> m_strings;
-        Vector<JSC::Identifier*> m_identifiers;
+        SegmentedVector<JSC::Identifier, initialIdentifierTableCapacity> m_identifiers;
 
         JSGlobalData* m_globalData;
 
