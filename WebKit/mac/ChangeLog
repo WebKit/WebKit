@@ -1,3 +1,16 @@
+2008-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test: plugins/netscape-plugin-setwindow-size-2.html
+        
+        Fix bug where NPP_SetWindow wasn't getting called for some plug-ins.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView updateAndSetWindow]):
+        Don't bail if the drawing model is not the CA drawing model. Remove some code 
+        that was doing the wrong thing.
+
 2008-11-19  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Geoff Garen.
