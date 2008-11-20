@@ -2280,26 +2280,11 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     // NPN_New(), which creates the plug-in instance, should never be called while calling a plug-in function for that instance.
     ASSERT(pluginFunctionCallDepth == 0);
 
-    Frame* frame = core([self webFrame]);
-    if (!frame)
-        return NPERR_GENERIC_ERROR;
-    Page* page = frame->page();
-    if (!page)
-        return NPERR_GENERIC_ERROR;
-    
-    bool wasDeferring = page->defersLoading();
-    if (!wasDeferring)
-        page->setDefersLoading(true);
-    
     PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
     
     [[self class] setCurrentPluginView:self];
     NPError npErr = [_pluginPackage.get() pluginFuncs]->newp((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
-    
-    if (!wasDeferring)
-        page->setDefersLoading(false);
-
     LOG(Plugins, "NPP_New: %d", npErr);
     return npErr;
 }

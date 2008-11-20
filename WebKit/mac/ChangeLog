@@ -1,3 +1,14 @@
+2008-11-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Move some frame/page checking code down to the base class.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView start]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _createPlugin]):
+
 2008-11-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
