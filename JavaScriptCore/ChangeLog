@@ -1,3 +1,45 @@
+2008-11-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        A little more WREC refactoring.
+        
+        Removed the "Register" suffix from register names in WREC, and renamed:
+            currentPosition => index
+            currentValue => character
+            quantifierCount => repeatCount
+            
+        Added a top-level parsePattern function to the WREC parser, which
+        allowed me to remove the error() and atEndOfPattern() accessors.
+        
+        Factored out an MSVC customization into a constant.
+        
+        Renamed nextLabel => beginPattern.
+
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateBacktrack1):
+        (JSC::WREC::Generator::generateBacktrackBackreference):
+        (JSC::WREC::Generator::generateBackreferenceQuantifier):
+        (JSC::WREC::Generator::generateNonGreedyQuantifier):
+        (JSC::WREC::Generator::generateGreedyQuantifier):
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClassInvertedRange):
+        (JSC::WREC::Generator::generateCharacterClassInverted):
+        (JSC::WREC::Generator::generateCharacterClass):
+        (JSC::WREC::Generator::generateParentheses):
+        (JSC::WREC::Generator::generateParenthesesResetTrampoline):
+        (JSC::WREC::Generator::generateAssertionBOL):
+        (JSC::WREC::Generator::generateAssertionEOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+        (JSC::WREC::Generator::generateBackreference):
+        (JSC::WREC::Generator::generateDisjunction):
+        (JSC::WREC::Generator::terminateDisjunction):
+        * wrec/WRECGenerator.h:
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::parsePattern):
+
 2008-11-19  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

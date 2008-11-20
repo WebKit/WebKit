@@ -75,8 +75,14 @@ namespace JSC { namespace WREC {
             while (parseTerm(failures)) { }
         }
 
-        void parseDisjunction(JmpSrcVector& failures);
+        bool parsePattern(JmpSrcVector& failures)
+        {
+            parseDisjunction(failures);
 
+            // Parsing the pattern should fully consume it.
+            return peek() == EndOfPattern && m_error == NoError;
+        }
+        void parseDisjunction(JmpSrcVector& failures);
         bool parseTerm(JmpSrcVector& failures);
         bool parseEscape(JmpSrcVector& failures);
         bool parseOctalEscape(JmpSrcVector& failures);
@@ -149,13 +155,6 @@ namespace JSC { namespace WREC {
             return n;
         }
 
-        bool atEndOfPattern()
-        {
-            return peek() == EndOfPattern;
-        }
-        
-        Error error() { return m_error; }
-        
         void recordSubpattern() { ++m_numSubpatterns; }
         unsigned numSubpatterns() { return m_numSubpatterns; }
         
