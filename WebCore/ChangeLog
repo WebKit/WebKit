@@ -1,3 +1,20 @@
+2008-11-19  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        Fix for <rdar://problem/5472507> Remove color property when a user 
+        sets color to black
+
+        This patch prevents us from inserting font nodes during the 
+        ApplyStyleCommand if they will not change the computed style of an 
+        element.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::fontColorChangesComputedStyle):
+        (WebCore::fontSizeChangesComputedStyle):
+        (WebCore::fontFaceChangesComputedStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+
 2008-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

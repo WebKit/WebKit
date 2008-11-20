@@ -1470,6 +1470,33 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
     setNodeAttribute(block, styleAttr, cssText);
 }
 
+static bool fontColorChangesComputedStyle(RenderStyle* computedStyle, StyleChange styleChange)
+{
+    if (styleChange.applyFontColor()) {
+        if (Color(styleChange.fontColor()) != computedStyle->color())
+            return true;
+    }
+    return false;
+}
+
+static bool fontSizeChangesComputedStyle(RenderStyle* computedStyle, StyleChange styleChange)
+{
+    if (styleChange.applyFontSize()) {
+        if (styleChange.fontSize().toInt() != computedStyle->fontSize())
+            return true;
+    }
+    return false;
+}
+
+static bool fontFaceChangesComputedStyle(RenderStyle* computedStyle, StyleChange styleChange)
+{
+    if (styleChange.applyFontFace()) {
+        if (computedStyle->fontDescription().family().family().string() != styleChange.fontFace())
+            return true;
+    }
+    return false;
+}
+
 void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style, Node *startNode, Node *endNode)
 {
     if (m_removeOnly)
@@ -1484,14 +1511,23 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclaration *style
     if (styleChange.applyFontColor() || styleChange.applyFontFace() || styleChange.applyFontSize()) {
         RefPtr<Element> fontElement = createFontElement(document());
         ASSERT(ec == 0);
-        insertNodeBefore(fontElement.get(), startNode);
-        if (styleChange.applyFontColor())
-            fontElement->setAttribute(colorAttr, styleChange.fontColor());
-        if (styleChange.applyFontFace())
-            fontElement->setAttribute(faceAttr, styleChange.fontFace());
-        if (styleChange.applyFontSize())
-            fontElement->setAttribute(sizeAttr, styleChange.fontSize());
-        surroundNodeRangeWithElement(startNode, endNode, fontElement.get());
+        RenderStyle* computedStyle = startNode->computedStyle();
+
+        // We only want to insert a font element if it will end up changing the style of the
+        // text somehow. Otherwise it will be a garbage node that will create problems for us
+        // most notably when we apply a blockquote style for a message reply.
+        if (fontColorChangesComputedStyle(computedStyle, styleChange)
+                || fontFaceChangesComputedStyle(computedStyle, styleChange)
+                || fontSizeChangesComputedStyle(computedStyle, styleChange)) {
+            insertNodeBefore(fontElement.get(), startNode);
+            if (styleChange.applyFontColor())
+                fontElement->setAttribute(colorAttr, styleChange.fontColor());
+            if (styleChange.applyFontFace())
+                fontElement->setAttribute(faceAttr, styleChange.fontFace());
+            if (styleChange.applyFontSize())
+                fontElement->setAttribute(sizeAttr, styleChange.fontSize());
+            surroundNodeRangeWithElement(startNode, endNode, fontElement.get());
+        }
     }
 
     if (styleChange.cssStyle().length() > 0) {
