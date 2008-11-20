@@ -2,6 +2,15 @@
 
         Reviewed by Darin Adler.
 
+        Add isASCII to ASCIICType.  Use coming soon!
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCII):
+
+2008-11-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Add OwnPtr constructor and OwnPtr::adopt that take an auto_ptr.
 
         * wtf/OwnPtr.h:

@@ -44,6 +44,13 @@
 
 namespace WTF {
 
+    inline bool isASCII(char c) { return !(c & ~0x7F); }
+    inline bool isASCII(unsigned short c) { return !(c & ~0x7F); }
+#if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
+    inline bool isASCII(wchar_t c) { return !(c & ~0x7F); }
+#endif
+    inline bool isASCII(int c) { return !(c & ~0x7F); }
+
     inline bool isASCIIAlpha(char c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
     inline bool isASCIIAlpha(unsigned short c) { return (c | 0x20) >= 'a' && (c | 0x20) <= 'z'; }
 #if !COMPILER(MSVC) || defined(_NATIVE_WCHAR_T_DEFINED)
