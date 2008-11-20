@@ -67,8 +67,7 @@ namespace WebCore {
 
         virtual void checkLoaded();
 
-        void setStrictParsing(bool b) { m_strictParsing = b; }
-        bool useStrictParsing() const { return m_strictParsing; }
+        bool useStrictParsing() const { return !m_parent || m_parent->useStrictParsing(); }
 
         virtual void insertedIntoParent() { }
 
@@ -77,13 +76,11 @@ namespace WebCore {
     protected:
         StyleBase(StyleBase* parent)
             : m_parent(parent)
-            , m_strictParsing(!parent || parent->useStrictParsing())
         {
         }
 
     private:
         StyleBase* m_parent;
-        bool m_strictParsing;
     };
 }
 

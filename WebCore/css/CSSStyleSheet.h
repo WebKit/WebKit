@@ -88,6 +88,9 @@ public:
     bool loadCompleted() const { return m_loadCompleted; }
     
     virtual void addSubresourceURLStrings(HashSet<String>&, const String& baseURL) const;
+    
+    void setStrictParsing(bool b) { m_strictParsing = b; }
+    bool useStrictParsing() const { return m_strictParsing; }
 
 private:
     CSSStyleSheet(Node* ownerNode, const String& href, const String& charset);
@@ -100,7 +103,8 @@ private:
     Document* m_doc;
     CSSNamespace* m_namespaces;
     String m_charset;
-    bool m_loadCompleted;
+    bool m_loadCompleted : 1;
+    bool m_strictParsing : 1;
 };
 
 } // namespace

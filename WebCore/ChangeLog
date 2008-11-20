@@ -1,3 +1,30 @@
+2008-11-20  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22379
+        Make CSSOM use less memory
+        
+        - Shrink CSSProperty by half by using bitfields.
+        - Get rid of m_strictParsing field in StyleBase by moving it up to CSSStyleSheet
+          and CSSMutableStyleDeclaration. This reduces size of many highly popular objects.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::operator=):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::setStrictParsing):
+        (WebCore::CSSMutableStyleDeclaration::useStrictParsing):
+        * css/CSSProperty.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::setStrictParsing):
+        (WebCore::CSSStyleSheet::useStrictParsing):
+        * css/StyleBase.h:
+        (WebCore::StyleBase::useStrictParsing):
+        (WebCore::StyleBase::StyleBase):
+
 2008-11-19  Darin Fisher  <darin@chromium.org>
 
         Fix bustage.

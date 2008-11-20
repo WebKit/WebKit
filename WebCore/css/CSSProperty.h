@@ -61,9 +61,9 @@ public:
 
     friend bool operator==(const CSSProperty&, const CSSProperty&);
 
-    // make sure the following fits in 4 bytes.
-    int m_id;
-    int m_shorthandID;  // If this property was set as part of a shorthand, gives the shorthand.
+    // Make sure the following fits in 4 bytes. Really.
+    int m_id : 15;
+    int m_shorthandID : 15; // If this property was set as part of a shorthand, gives the shorthand.
     bool m_important : 1;
     bool m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
 
