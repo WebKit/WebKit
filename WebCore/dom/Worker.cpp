@@ -54,7 +54,7 @@ Worker::Worker(const String& url, Document* doc, ExceptionCode& ec)
     , m_messagingProxy(new WorkerMessagingProxy(doc, this))
 {
     m_scriptURL = doc->completeURL(url);
-    if (!m_scriptURL.isValid()) {
+    if (url.isEmpty() || !m_scriptURL.isValid()) {
         ec = SYNTAX_ERR;
         return;
     }
