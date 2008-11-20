@@ -1,3 +1,16 @@
+2008-11-20  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add tests for bug 22148: nytime.com page crashes browser during load
+        <https://bugs.webkit.org/show_bug.cgi?id=22148>
+
+        This bug was unknowingly fixed in r38322 by a rewrite of the recursion
+        limit code.
+
+        * fast/js/deep-recursion-test-expected.txt:
+        * fast/js/deep-recursion-test.html:
+
 2008-11-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.

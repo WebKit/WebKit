@@ -35,6 +35,35 @@
         shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
     }
 
+    var tooFewArgsDepth = 0;
+
+    function tooFewArgsRecursion(a) {
+        if (tooFewArgsDepth) {
+            tooFewArgsDepth--;
+            tooFewArgsRecursion();
+        }
+    }
+
+    try {
+        tooFewArgsDepth = 10000000;
+        tooFewArgsRecursion();
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+
+    function tooManyArgsRecursion(depth) {
+        if (depth)
+            tooManyArgsRecursion(depth - 1, 1);
+    }
+
+    try {
+        tooManyArgsRecursion(10000000, 1);
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+
     successfullyParsed = true;
 
 </script>
