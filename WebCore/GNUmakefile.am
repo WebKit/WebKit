@@ -347,6 +347,8 @@ webcore_sources += \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
+	WebCore/bindings/js/ScriptValue.cpp \
+	WebCore/bindings/js/ScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
 	WebCore/bridge/NP_jsobject.cpp \
 	WebCore/bridge/NP_jsobject.h \

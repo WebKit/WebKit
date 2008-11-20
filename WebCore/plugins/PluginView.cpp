@@ -52,6 +52,7 @@
 #include "PluginPackage.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include "ScriptValue.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginMainThreadScheduler.h"

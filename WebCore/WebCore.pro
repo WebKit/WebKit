@@ -452,6 +452,7 @@ SOURCES += \
     bindings/js/JSEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/ScriptController.cpp \
+    bindings/js/ScriptValue.cpp \
     bindings/js/PausedTimeouts.cpp \
     bindings/js/ScheduledAction.cpp \
     bridge/NP_jsobject.cpp \
