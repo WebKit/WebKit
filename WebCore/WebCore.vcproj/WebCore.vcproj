@@ -13869,6 +13869,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptValue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\ScriptValue.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\StringSourceProvider.h"
 					>
 				</File>

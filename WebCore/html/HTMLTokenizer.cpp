@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "PreloadScanner.h"
 #include "ScriptController.h"
+#include "ScriptValue.h"
 #include "SystemTime.h"
 #include <wtf/ASCIICType.h>
 

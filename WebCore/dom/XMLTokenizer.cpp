@@ -42,6 +42,7 @@
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "ScriptController.h"
+#include "ScriptValue.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"

@@ -92,6 +92,7 @@
 #include <WebCore/RenderTheme.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
+#include <WebCore/ScriptValue.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/SelectionController.h>
 #include <WebCore/Settings.h>
@@ -2665,8 +2666,8 @@ HRESULT STDMETHODCALLTYPE WebView::stringByEvaluatingJavaScriptFromString(
     if (!coreFrame)
         return E_FAIL;
 
-    JSC::JSValue* scriptExecutionResult = coreFrame->loader()->executeScript(WebCore::String(script), true);
-    if(!scriptExecutionResult)
+    JSC::JSValue* scriptExecutionResult = coreFrame->loader()->executeScript(WebCore::String(script), true).jsValue();
+    if (!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult->isString()) {
         JSLock lock(false);

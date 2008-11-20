@@ -77,6 +77,7 @@
 #import <WebCore/TypingCommand.h>
 #import <WebCore/htmlediting.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/ScriptValue.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
 #import <runtime/JSLock.h>
@@ -654,7 +655,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     ASSERT(_private->coreFrame->document());
     
-    JSValue* result = _private->coreFrame->loader()->executeScript(string, forceUserGesture);
+    JSValue* result = _private->coreFrame->loader()->executeScript(string, forceUserGesture).jsValue();
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";

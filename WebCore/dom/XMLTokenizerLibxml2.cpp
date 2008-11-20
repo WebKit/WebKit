@@ -41,6 +41,7 @@
 #include "HTMLStyleElement.h"
 #include "HTMLTokenizer.h" // for decodeNamedEntity
 #include "ScriptController.h"
+#include "ScriptValue.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"

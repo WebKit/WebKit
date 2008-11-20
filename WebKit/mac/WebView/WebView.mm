@@ -114,6 +114,7 @@
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/ScriptValue.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextResourceDecoder.h>
@@ -3649,7 +3650,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
         return nil;
     if (!coreFrame->document())
         return nil;
-    JSValue* result = coreFrame->loader()->executeScript(script, true);
+    JSValue* result = coreFrame->loader()->executeScript(script, true).jsValue();
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock(false);

@@ -1780,6 +1780,8 @@
 		933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14B70B7D1D5200A53FFD /* JSTextEvent.h */; };
 		93442C9E0D2B335C00338FF9 /* HTMLTableRowsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */; };
 		93442CA00D2B336000338FF9 /* HTMLTableRowsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */; };
+		934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */; };
+		934CC0E20ED39D6F00A658F2 /* ScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CC0E00ED39D6F00A658F2 /* ScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */; };
 		934D9BA70B8C1175007B42A9 /* WebCoreNSStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */; };
@@ -6537,6 +6539,8 @@
 		933A14B70B7D1D5200A53FFD /* JSTextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextEvent.h; sourceTree = "<group>"; };
 		93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableRowsCollection.h; sourceTree = "<group>"; };
 		93442C9F0D2B336000338FF9 /* HTMLTableRowsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTableRowsCollection.cpp; sourceTree = "<group>"; };
+		934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptValue.cpp; sourceTree = "<group>"; };
+		934CC0E00ED39D6F00A658F2 /* ScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptValue.h; sourceTree = "<group>"; };
 		934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSStringExtras.mm; sourceTree = "<group>"; };
 		934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreNSStringExtras.h; sourceTree = "<group>"; };
 		934F71370D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallengeBase.cpp; sourceTree = "<group>"; };
@@ -12998,6 +13002,8 @@
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
 				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
+				934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */,
+				934CC0E00ED39D6F00A658F2 /* ScriptValue.h */,
 				65488D6A0DD5A83D009D83B2 /* StringSourceProvider.h */,
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
@@ -16302,6 +16308,7 @@
 				E108224B0EC3153A00E93953 /* WorkerTask.h in Headers */,
 				0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */,
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
+				934CC0E20ED39D6F00A658F2 /* ScriptValue.h in Headers */,
 				0897C14D0ED2EBA500AE06DB /* WMLBRElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18224,6 +18231,7 @@
 				E14799B40ECDE9D800292BF3 /* WorkerMessagingProxy.cpp in Sources */,
 				0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */,
 				E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */,
+				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

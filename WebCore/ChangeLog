@@ -1,3 +1,30 @@
+2008-11-19  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22345
+        Define ScriptValue as a thin container for a JSC::Value*.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScheduledAction.cpp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptValue.cpp: Added.
+        (WebCore::ScriptValue::getString):
+        * bindings/js/ScriptValue.h: Added.
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::jsValue):
+        * dom/ScriptElement.cpp:
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizerLibxml2.cpp:
+        * html/HTMLTokenizer.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+        (WebCore::FrameLoader::executeScript):
+        * loader/FrameLoader.h:
+
 2008-11-19  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Justin Garcia.
