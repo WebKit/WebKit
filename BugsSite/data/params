@@ -5,7 +5,7 @@
            'LDAPmailattribute' => 'mail',
            'LDAPserver' => '',
            'LDAPuidattribute' => 'uid',
-           'allowbugdeletion' => 0,
+           'allowbugdeletion' => '0',
            'allowemailchange' => '1',
            'allowuserdeletion' => 0,
            'auth_env_email' => '',
@@ -50,8 +50,8 @@
            'mail_delivery_method' => 'sendmail',
            'maintainer' => 'admin@webkit.org',
            'makeproductgroups' => 0,
-           'maxattachmentsize' => '2000',
-           'maxlocalattachment' => '0',
+           'maxattachmentsize' => '20000',
+           'maxlocalattachment' => '10',
            'maxpatchsize' => '2000',
            'maxusermatches' => '1000',
            'mostfreqthreshold' => '2',
@@ -95,12 +95,6 @@ To use the wonders of Bugzilla, you can use the following:
 
 
 
-
-
-
-
-
-
 ',
            'quip_list_entry_control' => 'moderated',
            'rememberlogin' => 'on',
@@ -113,12 +107,12 @@ To use the wonders of Bugzilla, you can use the following:
            'showallproducts' => 0,
            'shutdownhtml' => '',
            'smtpserver' => 'localhost',
-           'ssl' => 'never',
-           'sslbase' => '',
+           'ssl' => 'always',
+           'sslbase' => 'https://bugs.webkit.org/',
            'supportwatchers' => '1',
            'timetrackinggroup' => '',
            'timezone' => 'PDT',
-           'urlbase' => 'http://bugs.webkit.org/',
+           'urlbase' => 'https://bugs.webkit.org/',
            'usebugaliases' => '1',
            'useclassification' => 0,
            'useentrygroupdefault' => 0,
@@ -144,12 +138,6 @@ Some or all of your votes have been removed from bug %bugid%.
 Reason: %reason%
 
 %urlbase%show_bug.cgi?id=%bugid%
-
-
-
-
-
-
 
 
 
@@ -193,13 +181,6 @@ Appended below are the individual URLs to get to all of your NEW bugs that
 haven\'t been touched for a week or more.
 
 You will get this message once a day until you\'ve dealt with these bugs!
-
-
-
-
-
-
-
 
 
 
