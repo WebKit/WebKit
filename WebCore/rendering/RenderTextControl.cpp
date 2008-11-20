@@ -852,9 +852,10 @@ void RenderTextControl::forwardEvent(Event* evt)
     } else if (evt->type() == eventNames().focusEvent)
         capsLockStateMayHaveChanged();
     else {
-        if (evt->isMouseEvent() && m_resultsButton && static_cast<MouseEvent*>(evt)->x() < m_innerText->renderer()->absoluteBoundingBoxRect().x())
+        FloatPoint localPoint = m_innerText->renderer()->absoluteToLocal(FloatPoint(static_cast<MouseEvent*>(evt)->pageX(), static_cast<MouseEvent*>(evt)->pageY()), false, true);
+        if (evt->isMouseEvent() && m_resultsButton && localPoint.x() < m_innerText->renderer()->borderBox().x())
             m_resultsButton->defaultEventHandler(evt);
-        else if (evt->isMouseEvent() && m_cancelButton && static_cast<MouseEvent*>(evt)->x() > m_innerText->renderer()->absoluteBoundingBoxRect().right())
+        else if (evt->isMouseEvent() && m_cancelButton && localPoint.x() > m_innerText->renderer()->borderBox().right())
             m_cancelButton->defaultEventHandler(evt);
         else
             m_innerText->defaultEventHandler(evt);
@@ -986,7 +987,7 @@ void RenderTextControl::showPopup()
         m_searchPopup->saveRecentSearches(name, m_recentSearches);
     }
 
-    m_searchPopup->show(absoluteBoundingBoxRect(), document()->view(), -1);
+    m_searchPopup->show(absoluteBoundingBoxRect(true), document()->view(), -1);
 }
 
 void RenderTextControl::hidePopup()

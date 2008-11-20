@@ -1,5 +1,19 @@
 2008-11-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Adele Peterson.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22190
+        
+        Test for the drawing and event handling of search field parts in a transformed
+        search field.
+
+        * fast/forms/search-transformed.html: Added.
+        * platform/mac/fast/forms/search-transformed-expected.checksum: Added.
+        * platform/mac/fast/forms/search-transformed-expected.png: Added.
+        * platform/mac/fast/forms/search-transformed-expected.txt: Added.
+
+2008-11-19  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Antti Koivisto
 
         https://bugs.webkit.org/show_bug.cgi?id=22111

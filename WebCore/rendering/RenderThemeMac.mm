@@ -475,6 +475,28 @@ IntRect RenderThemeMac::inflateRect(const IntRect& r, const IntSize& size, const
     return result;
 }
 
+FloatRect RenderThemeMac::convertToPaintingRect(const RenderObject* inputRenderer, const RenderObject* partRenderer, const FloatRect& inputRect, const IntRect& r) const
+{
+    FloatRect partRect(inputRect);
+    
+    // Compute an offset between the part renderer and the input renderer
+    FloatSize offsetFromInputRenderer;
+    const RenderObject* renderer = partRenderer;
+    while (renderer && renderer != inputRenderer) {
+        RenderObject* containingRenderer = renderer->container();
+        offsetFromInputRenderer -= renderer->offsetFromContainer(containingRenderer);
+        renderer = containingRenderer;
+    }
+    // If the input renderer was not a container, something went wrong
+    ASSERT(renderer == inputRenderer);
+    // Move the rect into partRenderer's coords
+    partRect.move(offsetFromInputRenderer);
+    // Account for the local drawing offset (tx, ty)
+    partRect.move(r.x(), r.y());
+
+    return partRect;
+}
+
 void RenderThemeMac::updateCheckedState(NSCell* cell, const RenderObject* o)
 {
     bool oldIndeterminate = [cell state] == NSMixedState;
@@ -1243,9 +1265,10 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderO
 
     float zoomLevel = o->style()->effectiveZoom();
 
-    NSRect bounds = [search cancelButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
-    
-    IntRect unzoomedRect(bounds);
+    FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(input->renderer()->borderBox())];
+    localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
+
+    FloatRect unzoomedRect(localBounds);
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
         unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
@@ -1313,8 +1336,10 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
     if ([search searchMenuTemplate] != nil)
         [search setSearchMenuTemplate:nil];
 
-    NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
-    [[search searchButtonCell] drawWithFrame:bounds inView:o->view()->frameView()->documentView()];
+    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderer()->borderBox())];
+    localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
+
+    [[search searchButtonCell] drawWithFrame:localBounds inView:o->view()->frameView()->documentView()];
     [[search searchButtonCell] setControlView:nil];
     return false;
 }
@@ -1342,9 +1367,10 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
 
     float zoomLevel = o->style()->effectiveZoom();
 
-    NSRect bounds = [search searchButtonRectForBounds:NSRect(input->renderer()->absoluteBoundingBoxRect())];
+    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderer()->borderBox())];
+    localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
     
-    IntRect unzoomedRect(bounds);
+    IntRect unzoomedRect(localBounds);
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
         unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);

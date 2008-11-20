@@ -602,6 +602,9 @@ public:
     // Convert a local quad to an absolute quad, taking transforms into account.
     virtual FloatQuad localToAbsoluteQuad(const FloatQuad&, bool fixed = false) const;
 
+    // Return the offset from the container() renderer (excluding transforms)
+    virtual IntSize offsetFromContainer(RenderObject*) const;
+
     // width and height are without margins but include paddings and borders
     virtual int width() const { return 0; }
     virtual int height() const { return 0; }

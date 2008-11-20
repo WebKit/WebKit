@@ -2443,6 +2443,19 @@ FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& localQuad, bool fix
     return FloatQuad();
 }
 
+IntSize RenderObject::offsetFromContainer(RenderObject* o) const
+{
+    ASSERT(o == container());
+
+    IntSize offset;
+    offset.expand(0, o->borderTopExtra());
+
+    if (o->hasOverflowClip())
+        offset -= o->layer()->scrolledContentOffset();
+
+    return offset;
+}
+
 IntRect RenderObject::caretRect(InlineBox* inlineBox, int caretOffset, int* extraWidthToEndOfLine)
 {
    if (extraWidthToEndOfLine)

@@ -1,3 +1,36 @@
+2008-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22190
+
+        Fix the painting and event handling in transformed search fields.
+        When painting the cancel and results button parts,  get the rect from AppKit
+        relative to the input bounds (rather than in absolute coords), then convert
+        it into the coords of the part's renderer (which is the one that is painting).
+        To do this we need to compute an offset relative to some container, so expose
+        a method on RenderObject for that.
+        
+        Also fix the location at which the search popup shows up to take transforms
+        into account, and fix the math that is used to figure out if the search
+        results button, or the cancel button should get the mouse events.
+        
+        Test: fast/forms/search-transformed.html
+
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetFromContainer):
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::forwardEvent):
+        (WebCore::RenderTextControl::showPopup):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::convertToPaintingRect):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2008-11-20  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.

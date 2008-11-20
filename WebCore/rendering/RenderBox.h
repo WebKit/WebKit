@@ -191,7 +191,7 @@ protected:
     
     virtual bool shouldCalculateSizeAsReplaced() const { return isReplaced() && !isInlineBlockOrInlineTable(); }
 
-    IntSize offsetFromContainer(RenderObject*) const;
+    virtual IntSize offsetFromContainer(RenderObject*) const;
     
 private:
     void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
