@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22359
+        Add test for document.write() with multiple parameters.
+
+        * fast/dom/document_write_params-expected.txt: Added.
+        * fast/dom/document_write_params.html: Added.
+
+2008-11-20  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=22387
         Add a test for HTMLOptionsCollection indexed getter and setter.
 
