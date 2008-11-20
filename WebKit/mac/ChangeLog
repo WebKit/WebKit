@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        <rdar://problem/6383762> WebKit r38340 crash on key press in plugin
+        
+        Set the value to 0 before calling NPP_GetValue, in case the plug-in returns NPERR_NO_ERROR but does not 
+        update the value.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+
+2008-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Make sure to copy the MIME type.
         
         * Plugins/WebBaseNetscapePluginView.mm:

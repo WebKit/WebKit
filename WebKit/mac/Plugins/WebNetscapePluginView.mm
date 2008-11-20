@@ -1078,7 +1078,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         [self willCallPlugInFunction];
         {
             JSC::JSLock::DropAllLocks dropAllLocks(false);
-            NPPluginTextInputFuncs *value;
+            NPPluginTextInputFuncs *value = 0;
             if (![_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
                 textInputFuncs = value;
         }
