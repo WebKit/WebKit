@@ -63,6 +63,28 @@ void Parser::parse(JSGlobalData* globalData, int* errLine, UString* errMsg)
     }
 }
 
+void Parser::reparse(JSGlobalData* globalData, FunctionBodyNode* functionBodyNode)
+{
+    ASSERT(!functionBodyNode->data());
+
+    m_source = &functionBodyNode->source();
+    parse(globalData, 0, 0);
+    ASSERT(m_sourceElements);
+    functionBodyNode->adoptData(auto_ptr<ScopeNodeData>(new ScopeNodeData(m_sourceElements.get(),
+                                                                          m_varDeclarations ? &m_varDeclarations->data : 0, 
+                                                                          m_funcDeclarations ? &m_funcDeclarations->data : 0,
+                                                                          m_numConstants)));
+    bool usesArguments = functionBodyNode->usesArguments();
+    functionBodyNode->setFeatures(m_features);
+    if (usesArguments && !functionBodyNode->usesArguments())
+        functionBodyNode->setUsesArguments();
+
+    m_source = 0;
+    m_sourceElements = 0;
+    m_varDeclarations = 0;
+    m_funcDeclarations = 0;
+}
+
 void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 
                               ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants)
 {

@@ -96,10 +96,10 @@ void Lexer::setCode(const SourceCode& source)
     m_stackToken = -1;
     m_lastToken = -1;
 
-    m_position = 0;
+    m_position = source.startOffset();
     m_source = &source;
-    m_code = source.data();
-    m_length = source.length();
+    m_code = source.provider()->data();
+    m_length = source.endOffset();
     m_skipLF = false;
     m_skipCR = false;
     m_error = false;

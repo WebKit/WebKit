@@ -1,5 +1,83 @@
 2008-11-20  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=22385
+        <rdar://problem/6390179>
+        Lazily reparse FunctionBodyNodes on first execution.
+
+        - Saves 57MB on Membuster head.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate): Remove vector shrinking since this is now
+        handled by destroying the ScopeNodeData after generation.
+
+        * parser/Grammar.y: Add alternate NoNode version of the grammar
+        that does not create nodes.  This is used to lazily create FunctionBodyNodes
+        on first execution.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::setCode): Fix bug where on reparse, the Lexer was confused about
+        what position and length meant. Position is the current position in the original
+        data buffer (important for getting correct line/column information) and length
+        the end offset in the original buffer.
+        * parser/Lexer.h:
+        (JSC::Lexer::sourceCode): Positions are relative to the beginning of the buffer.
+
+        * parser/Nodes.cpp:
+        (JSC::ScopeNodeData::ScopeNodeData): Move initialization of ScopeNode data here.
+        (JSC::ScopeNode::ScopeNode): Add constructor that only sets the JSGlobalData
+        for FunctionBodyNode stubs.
+        (JSC::ScopeNode::~ScopeNode): Release m_children now that we don't inherit from
+        BlockNode.
+        (JSC::ScopeNode::releaseNodes): Ditto.
+        (JSC::EvalNode::generateBytecode): Only shrink m_children, as we need to keep around
+        the rest of the data.
+        (JSC::FunctionBodyNode::FunctionBodyNode): Add constructor that only sets the
+        JSGlobalData. 
+        (JSC::FunctionBodyNode::create): Ditto.
+        (JSC::FunctionBodyNode::generateBytecode): If we don't have the data, do a reparse
+        to construct it. Then after generation, destroy the data.
+        (JSC::ProgramNode::generateBytecode): After generation, destroy the AST data.
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::): Add isFuncExprNode for FunctionConstructor.
+        (JSC::StatementNode::): Add isExprStatementNode for FunctionConstructor.
+        (JSC::ExprStatementNode::): Ditto.
+        (JSC::ExprStatementNode::expr): Add accessor for FunctionConstructor.
+        (JSC::FuncExprNode::): Add isFuncExprNode for FunctionConstructor
+
+        (JSC::ScopeNode::adoptData): Adopts a ScopeNodeData.
+        (JSC::ScopeNode::data): Accessor for ScopeNodeData.
+        (JSC::ScopeNode::destroyData): Deletes the ScopeNodeData.
+        (JSC::ScopeNode::setFeatures): Added.
+        (JSC::ScopeNode::varStack): Added assert.
+        (JSC::ScopeNode::functionStack): Ditto.
+        (JSC::ScopeNode::children): Ditto.
+        (JSC::ScopeNode::neededConstants): Ditto.
+        Factor m_varStack, m_functionStack, m_children and m_numConstants into ScopeNodeData.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::reparse): Reparse the SourceCode in the FunctionBodyNode and set
+        set up the ScopeNodeData for it. 
+        * parser/Parser.h:
+
+        * parser/SourceCode.h:
+        (JSC::SourceCode::endOffset): Added for use in the lexer.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::getFunctionBody): Assuming a ProgramNode with one FunctionExpression in it,
+        get the FunctionBodyNode.  Any issues signifies a parse failure in constructFunction. 
+        (JSC::constructFunction): Make parsing functions in the form new Function(""), easier
+        by concatenating the strings together (with some glue) and parsing the function expression
+        as a ProgramNode from which we can receive the FunctionBodyNode. This has the added benefit
+        of not having special parsing code for the arguments and lazily constructing the 
+        FunctionBodyNode's AST on first execution.
+
+        * runtime/Identifier.h:
+        (JSC::operator!=): Added.
+
+2008-11-20  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Speedup the lexer to offset coming re-parsing patch.

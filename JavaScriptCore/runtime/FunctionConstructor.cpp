@@ -66,75 +66,57 @@ CallType FunctionConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
+static FunctionBodyNode* functionBody(ProgramNode* program)
+{
+    if (!program)
+        return 0;
+
+    StatementVector& children = program->children();
+    if (children.size() != 1)
+        return 0;
+
+    ExprStatementNode* exprStatement = static_cast<ExprStatementNode*>(children[0].get()); 
+    ASSERT(exprStatement->isExprStatement());
+    if (!exprStatement || !exprStatement->isExprStatement())
+        return 0;
+
+    FuncExprNode* funcExpr = static_cast<FuncExprNode*>(exprStatement->expr());
+    ASSERT(funcExpr->isFuncExprNode());
+    if (!funcExpr || !funcExpr->isFuncExprNode())
+        return 0;
+
+    FunctionBodyNode* body = funcExpr->body();
+    ASSERT(body);
+    return body;
+}
+
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
-    UString p("");
-    UString body;
-    int argsSize = args.size();
-    if (argsSize == 0)
-        body = "";
-    else if (argsSize == 1)
-        body = args.at(exec, 0)->toString(exec);
+    UString program;
+    if (args.isEmpty())
+        program = "(function(){})";
+    else if (args.size() == 1)
+        program = "(function(){" + args.at(exec, 0)->toString(exec) + "})";
     else {
-        p = args.at(exec, 0)->toString(exec);
-        for (int k = 1; k < argsSize - 1; k++)
-            p += "," + args.at(exec, k)->toString(exec);
-        body = args.at(exec, argsSize - 1)->toString(exec);
+        program = "(function(" + args.at(exec, 0)->toString(exec);
+        for (size_t i = 1; i < args.size() - 1; i++)
+            program += "," + args.at(exec, i)->toString(exec);
+        program += "){" + args.at(exec, args.size() - 1)->toString(exec) + "})";
     }
 
-    // parse the source code
     int errLine;
     UString errMsg;
-    SourceCode source = makeSource(body, sourceURL, lineNumber);
-    RefPtr<FunctionBodyNode> functionBody = exec->globalData().parser->parse<FunctionBodyNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
+    SourceCode source = makeSource(program, sourceURL, lineNumber);
+    RefPtr<ProgramNode> programNode = exec->globalData().parser->parse<ProgramNode>(exec, exec->dynamicGlobalObject()->debugger(), source, &errLine, &errMsg);
 
-    // No program node == syntax error - throw a syntax error
-    if (!functionBody)
-        // We can't return a Completion(Throw) here, so just set the exception
-        // and return it
+    FunctionBodyNode* body = functionBody(programNode.get());
+    if (!body)
         return throwError(exec, SyntaxError, errMsg, errLine, source.provider()->asID(), source.provider()->url());
-
-    // parse parameter list. throw syntax error on illegal identifiers
-    int len = p.size();
-    const UChar* c = p.data();
-    int i = 0;
-    UString param;
-    Vector<Identifier> parameters;
-    while (i < len) {
-        while (*c == ' ' && i < len)
-            c++, i++;
-        if (Lexer::isIdentStart(c[0])) {  // else error
-            param = UString(c, 1);
-            c++, i++;
-            while (i < len && (Lexer::isIdentPart(c[0]))) {
-                param.append(*c);
-                c++, i++;
-            }
-            while (i < len && *c == ' ')
-                c++, i++;
-            if (i == len) {
-                parameters.append(Identifier(exec, param));
-                break;
-            } else if (*c == ',') {
-                parameters.append(Identifier(exec, param));
-                c++, i++;
-                continue;
-            } // else error
-        }
-        return throwError(exec, SyntaxError, "Syntax error in parameter list");
-    }
-    size_t count = parameters.size();
-    functionBody->finishParsing(parameters.releaseBuffer(), count);
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     ScopeChain scopeChain(globalObject, globalObject->globalData(), exec->globalThisValue());
-    JSFunction* function = new (exec) JSFunction(exec, functionName, functionBody.get(), scopeChain.node());
-
-    JSObject* prototype = constructEmptyObject(exec);
-    prototype->putDirect(exec->propertyNames().constructor, function, DontEnum);
-    function->putDirect(exec->propertyNames().prototype, prototype, DontDelete);
-    return function;
+    return new (exec) JSFunction(exec, functionName, body, scopeChain.node());
 }
 
 // ECMA 15.3.2 The Function Constructor

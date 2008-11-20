@@ -2377,21 +2377,53 @@ void ParameterNode::releaseNodes(NodeReleaser& releaser)
     releaser.release(m_next);
 }
 
-// ------------------------------ ScopeNode -----------------------------
+// -----------------------------ScopeNodeData ---------------------------
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
-    : BlockNode(globalData, children)
-    , m_source(source)
-    , m_features(features)
-    , m_numConstants(numConstants)
+ScopeNodeData::ScopeNodeData(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, int numConstants)
+    : m_numConstants(numConstants)
 {
     if (varStack)
         m_varStack = *varStack;
     if (funcStack)
         m_functionStack = *funcStack;
+    if (children)
+        children->releaseContentsIntoVector(m_children);
+}
+
+// ------------------------------ ScopeNode -----------------------------
+
+ScopeNode::ScopeNode(JSGlobalData* globalData)
+    : StatementNode(globalData)
+    , m_features(NoFeatures)
+{
 #if ENABLE(OPCODE_SAMPLING)
     globalData->interpreter->sampler()->notifyOfScope(this);
 #endif
+}
+
+ScopeNode::ScopeNode(JSGlobalData* globalData, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
+    : StatementNode(globalData)
+    , m_data(new ScopeNodeData(children, varStack, funcStack, numConstants))
+    , m_features(features)
+    , m_source(source)
+{
+#if ENABLE(OPCODE_SAMPLING)
+    globalData->interpreter->sampler()->notifyOfScope(this);
+#endif
+}
+
+ScopeNode::~ScopeNode()
+{
+    NodeReleaser::releaseAllNodes(this);
+}
+
+void ScopeNode::releaseNodes(NodeReleaser& releaser)
+{
+    if (!m_data)
+        return;
+    size_t size = m_data->m_children.size();
+    for (size_t i = 0; i < size; ++i)
+        releaser.release(m_data->m_children[i]);
 }
 
 // ------------------------------ ProgramNode -----------------------------
@@ -2435,6 +2467,10 @@ void EvalNode::generateBytecode(ScopeChainNode* scopeChainNode)
 
     BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable, m_code.get());
     generator.generate();
+
+    // Eval code needs to hang on to its declaration stacks to keep declaration info alive until Interpreter::execute time,
+    // so the entire ScopeNodeData cannot be destoyed.
+    children().clear();
 }
 
 EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& source, CodeFeatures features, int numConstants)
@@ -2443,6 +2479,14 @@ EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, V
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
+
+FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData)
+    : ScopeNode(globalData)
+    , m_parameters(0)
+    , m_parameterCount(0)
+    , m_refCount(0)
+{
+}
 
 FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
     : ScopeNode(globalData, sourceCode, children, varStack, funcStack, features, numConstants)
@@ -2482,9 +2526,9 @@ void FunctionBodyNode::mark()
         m_code->mark();
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, CodeFeatures features, int numConstants)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, SourceCode(), features, numConstants);
+    return new FunctionBodyNode(globalData);
 }
 
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
@@ -2494,6 +2538,12 @@ FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceEleme
 
 void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
 {
+    // This branch is only necessary since you can still create a non-stub FunctionBodyNode by
+    // calling Parser::parse<FunctionBodyNode>().   
+    if (!data())
+        scopeChainNode->globalData->parser->reparse(scopeChainNode->globalData, this);
+    ASSERT(data());
+
     ScopeChain scopeChain(scopeChainNode);
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
@@ -2501,6 +2551,8 @@ void FunctionBodyNode::generateBytecode(ScopeChainNode* scopeChainNode)
 
     BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_code->symbolTable, m_code.get());
     generator.generate();
+
+    destroyData();
 }
 
 RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
@@ -2537,6 +2589,8 @@ void ProgramNode::generateBytecode(ScopeChainNode* scopeChainNode)
     
     BytecodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get());
     generator.generate();
+
+    destroyData();
 }
 
 UString FunctionBodyNode::paramString() const

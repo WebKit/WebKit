@@ -51,6 +51,8 @@ namespace JSC {
     public:
         template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
 
+        void reparse(JSGlobalData*, FunctionBodyNode*);
+
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
                               ParserRefCountedData<DeclarationStacks::FunctionStack>*, CodeFeatures features, int lastLine, int numConstants);
 

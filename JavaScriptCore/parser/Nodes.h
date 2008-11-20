@@ -170,6 +170,7 @@ namespace JSC {
         virtual bool isResolveNode() const JSC_FAST_CALL { return false; }
         virtual bool isBracketAccessorNode() const JSC_FAST_CALL { return false; }
         virtual bool isDotAccessorNode() const JSC_FAST_CALL { return false; }
+        virtual bool isFuncExprNode() const JSC_FAST_CALL { return false; } 
 
         virtual ExpressionNode* stripUnaryPlus() { return this; }
 
@@ -191,6 +192,7 @@ namespace JSC {
 
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return false; }
         virtual bool isReturnNode() const JSC_FAST_CALL { return false; }
+        virtual bool isExprStatement() const JSC_FAST_CALL { return false; }
 
         virtual bool isBlock() const JSC_FAST_CALL { return false; }
         virtual bool isLoop() const JSC_FAST_CALL { return false; }
@@ -1742,7 +1744,11 @@ namespace JSC {
         {
         }
 
+        virtual bool isExprStatement() const JSC_FAST_CALL { return true; }
+
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
+
+        ExpressionNode* expr() const { return m_expr.get(); }
 
     private:
         RefPtr<ExpressionNode> m_expr;
@@ -2056,43 +2062,63 @@ namespace JSC {
         RefPtr<ParameterNode> m_next;
     };
 
-    class ScopeNode : public BlockNode {
+    struct ScopeNodeData {
+        typedef DeclarationStacks::VarStack VarStack;
+        typedef DeclarationStacks::FunctionStack FunctionStack;
+
+        ScopeNodeData(SourceElements*, VarStack*, FunctionStack*, int numConstants);
+
+        VarStack m_varStack;
+        FunctionStack m_functionStack;
+        int m_numConstants;
+        StatementVector m_children;
+    };
+
+    class ScopeNode : public StatementNode {
     public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
+        ScopeNode(JSGlobalData*) JSC_FAST_CALL;
         ScopeNode(JSGlobalData*, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, CodeFeatures, int numConstants) JSC_FAST_CALL;
+        virtual ~ScopeNode();
+        virtual void releaseNodes(NodeReleaser&);
+
+        void adoptData(std::auto_ptr<ScopeNodeData> data) { m_data.adopt(data); }
+        ScopeNodeData* data() const { return m_data.get(); }
+        void destroyData() { m_data.clear(); }
 
         const SourceCode& source() const { return m_source; }
         const UString& sourceURL() const JSC_FAST_CALL { return m_source.provider()->url(); }
         intptr_t sourceID() const { return m_source.provider()->asID(); }
 
+        void setFeatures(CodeFeatures features) { m_features = features; }
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return m_features & ArgumentsFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
         bool needsActivation() const { return m_features & (EvalFeature | ClosureFeature | WithFeature | CatchFeature); }
 
-        VarStack& varStack() { return m_varStack; }
-        FunctionStack& functionStack() { return m_functionStack; }
+        VarStack& varStack() { ASSERT(m_data); return m_data->m_varStack; }
+        FunctionStack& functionStack() { ASSERT(m_data); return m_data->m_functionStack; }
+
+        StatementVector& children() { ASSERT(m_data); return m_data->m_children; }
 
         int neededConstants()
         {
+            ASSERT(m_data);
             // We may need 2 more constants than the count given by the parser,
             // because of the various uses of jsUndefined() and jsNull().
-            return m_numConstants + 2;
+            return m_data->m_numConstants + 2;
         }
 
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
 
-        VarStack m_varStack;
-        FunctionStack m_functionStack;
-
     private:
-        SourceCode m_source;
+        OwnPtr<ScopeNodeData> m_data;
         CodeFeatures m_features;
-        int m_numConstants;
+        SourceCode m_source;
     };
 
     class ProgramNode : public ScopeNode {
@@ -2141,9 +2167,9 @@ namespace JSC {
     class FunctionBodyNode : public ScopeNode {
         friend class JIT;
     public:
+        static FunctionBodyNode* create(JSGlobalData*) JSC_FAST_CALL;
         static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
-        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, CodeFeatures, int numConstants) JSC_FAST_CALL;
-        ~FunctionBodyNode();
+        virtual ~FunctionBodyNode();
 
         const Identifier* parameters() const JSC_FAST_CALL { return m_parameters; }
         size_t parameterCount() const { return m_parameterCount; }
@@ -2193,6 +2219,7 @@ namespace JSC {
         }
 
     private:
+        FunctionBodyNode(JSGlobalData*) JSC_FAST_CALL;
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants) JSC_FAST_CALL;
 
         void generateBytecode(ScopeChainNode*) JSC_FAST_CALL;
@@ -2216,6 +2243,8 @@ namespace JSC {
 
         virtual ~FuncExprNode();
         virtual void releaseNodes(NodeReleaser&);
+
+        virtual bool isFuncExprNode() const JSC_FAST_CALL { return true; } 
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) JSC_FAST_CALL;
         JSFunction* makeFunction(ExecState*, ScopeChainNode*) JSC_FAST_CALL;
