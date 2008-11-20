@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22369
+        Add test cases covering more basic operations.
+
+        * fast/js/function-dot-arguments-expected.txt:
+        * fast/js/resources/function-dot-arguments.js:
+        (basicTest): Added
+        (lengthTest): Added
+
+2008-11-20  Pamela Greene  <pam@chromium.org>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=22363
         Add a test for DOM1 and DOM2 versions of add() on a select control.
 

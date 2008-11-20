@@ -1,6 +1,21 @@
 description(
-"This test checks corner cases of 'f.arguments'."
+"This test checks basic and corner cases of 'f.arguments'."
 );
+
+function basicTest(args)
+{
+    return basicTest.arguments;
+}
+shouldBe("basicTest('one')[0]", "'one'");
+shouldBeUndefined("basicTest('one')[2]");
+shouldBe("basicTest('one', 'two', 'three')[1]", "'two'");
+
+function lengthTest()
+{
+    return "" + lengthTest.arguments.length;
+}
+shouldBe("lengthTest()", "'0'");
+shouldBe("lengthTest('From', '%E5%8C%97%E4%BA%AC', 360, '/', 'webkit.org')", "'5'");
 
 function assignTest()
 {
