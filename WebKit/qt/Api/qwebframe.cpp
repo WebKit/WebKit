@@ -60,6 +60,7 @@
 #include "JSDOMWindow.h"
 #include "qt_instance.h"
 #include "ScriptController.h"
+#include "ScriptValue.h"
 #include "JSDOMBinding.h"
 #include "CallFrame.h"
 #include "JSLock.h"
