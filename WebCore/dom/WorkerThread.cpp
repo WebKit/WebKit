@@ -88,7 +88,11 @@ void* WorkerThread::workerThread()
         task->performTask(workerContext.get());
     }
 
-    workerContext = 0; // Destroying the context will notify messaging proxy.
+    workerContext->clearScript();
+    ASSERT(workerContext->hasOneRef());
+    // Destroying the context will notify messaging proxy.
+    // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
+    workerContext = 0;
     m_threadID = 0;
 
     return 0;

@@ -1,3 +1,20 @@
+2008-11-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22380
+        Fix WorkerContext refcounting
+
+        * dom/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        * dom/WorkerContext.h:
+        (WebCore::WorkerContext::script):
+        (WebCore::WorkerContext::clearScript):
+        Added a method to manually destroy WorkerSctriptController.
+
+        * dom/WorkerThread.cpp: (WebCore::WorkerThread::workerThread):
+        Destroy WorkerScriptController to release any references to WorkerContext.
+
 2008-11-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

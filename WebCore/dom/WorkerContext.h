@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerScriptController.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -64,7 +65,8 @@ namespace WebCore {
 
         WorkerLocation* location() const { return m_location.get(); }
 
-        WorkerScriptController* script() { return &m_script; }
+        WorkerScriptController* script() { return m_script.get(); }
+        void clearScript() { return m_script.clear(); }
         WorkerThread* thread() { return m_thread; }
 
         bool hasPendingActivity() const;
@@ -103,7 +105,7 @@ namespace WebCore {
         RefPtr<WorkerLocation> m_location;
         RefPtr<SecurityOrigin> m_securityOrigin;
 
-        WorkerScriptController m_script;
+        OwnPtr<WorkerScriptController> m_script;
         WorkerThread* m_thread;
 
         RefPtr<EventListener> m_onmessageListener;
