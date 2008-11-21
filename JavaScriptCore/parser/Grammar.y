@@ -1244,16 +1244,16 @@ Literal_NoNode:
     NULLTOKEN
   | TRUETOKEN
   | FALSETOKEN
-  | NUMBER
-  | STRING
+  | NUMBER { }
+  | STRING { }
   | '/' /* regexp */ { Lexer& l = *LEXER; if (!l.scanRegExp()) YYABORT; }
   | DIVEQUAL /* regexp with /= */ { Lexer& l = *LEXER; if (!l.scanRegExp()) YYABORT; }
 ;
 
 Property_NoNode:
-    IDENT ':' AssignmentExpr_NoNode
-  | STRING ':' AssignmentExpr_NoNode
-  | NUMBER ':' AssignmentExpr_NoNode
+    IDENT ':' AssignmentExpr_NoNode { }
+  | STRING ':' AssignmentExpr_NoNode { }
+  | NUMBER ':' AssignmentExpr_NoNode { }
   | IDENT IDENT '(' ')' OPENBRACE FunctionBody_NoNode CLOSEBRACE { if (*$1 != "get" && *$1 != "set") YYABORT; }
   | IDENT IDENT '(' FormalParameterList_NoNode ')' OPENBRACE FunctionBody_NoNode CLOSEBRACE { if (*$1 != "get" && *$1 != "set") YYABORT; }
 ;
@@ -1265,17 +1265,17 @@ PropertyList_NoNode:
 
 PrimaryExpr_NoNode:
     PrimaryExprNoBrace_NoNode
-  | OPENBRACE CLOSEBRACE
-  | OPENBRACE PropertyList_NoNode CLOSEBRACE
+  | OPENBRACE CLOSEBRACE { }
+  | OPENBRACE PropertyList_NoNode CLOSEBRACE { }
   /* allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939 */
-  | OPENBRACE PropertyList_NoNode ',' CLOSEBRACE
+  | OPENBRACE PropertyList_NoNode ',' CLOSEBRACE { }
 ;
 
 PrimaryExprNoBrace_NoNode:
     THISTOKEN
   | Literal_NoNode
   | ArrayLiteral_NoNode
-  | IDENT
+  | IDENT { }
   | '(' Expr_NoNode ')'
 ;
 
@@ -1642,8 +1642,8 @@ Statement_NoNode:
 ;
 
 Block_NoNode:
-    OPENBRACE CLOSEBRACE
-  | OPENBRACE SourceElements_NoNode CLOSEBRACE
+    OPENBRACE CLOSEBRACE { }
+  | OPENBRACE SourceElements_NoNode CLOSEBRACE { }
 ;
 
 VariableStatement_NoNode:
@@ -1652,15 +1652,15 @@ VariableStatement_NoNode:
 ;
 
 VariableDeclarationList_NoNode:
-    IDENT
-  | IDENT Initializer_NoNode
+    IDENT { }
+  | IDENT Initializer_NoNode { }
   | VariableDeclarationList_NoNode ',' IDENT
   | VariableDeclarationList_NoNode ',' IDENT Initializer_NoNode
 ;
 
 VariableDeclarationListNoIn_NoNode:
-    IDENT
-  | IDENT InitializerNoIn_NoNode
+    IDENT { }
+  | IDENT InitializerNoIn_NoNode { }
   | VariableDeclarationListNoIn_NoNode ',' IDENT
   | VariableDeclarationListNoIn_NoNode ',' IDENT InitializerNoIn_NoNode
 ;
@@ -1676,8 +1676,8 @@ ConstDeclarationList_NoNode:
 ;
 
 ConstDeclaration_NoNode:
-    IDENT
-  | IDENT Initializer_NoNode
+    IDENT { }
+  | IDENT Initializer_NoNode { }
 ;
 
 Initializer_NoNode:
@@ -1753,8 +1753,8 @@ SwitchStatement_NoNode:
 ;
 
 CaseBlock_NoNode:
-    OPENBRACE CaseClausesOpt_NoNode CLOSEBRACE
-  | OPENBRACE CaseClausesOpt_NoNode DefaultClause_NoNode CaseClausesOpt_NoNode CLOSEBRACE
+    OPENBRACE CaseClausesOpt_NoNode CLOSEBRACE { }
+  | OPENBRACE CaseClausesOpt_NoNode DefaultClause_NoNode CaseClausesOpt_NoNode CLOSEBRACE { }
 ;
 
 CaseClausesOpt_NoNode:
@@ -1778,7 +1778,8 @@ DefaultClause_NoNode:
 ;
 
 LabelledStatement_NoNode:
-    IDENT ':' Statement_NoNode;
+    IDENT ':' Statement_NoNode { }
+;
 
 ThrowStatement_NoNode:
     THROW Expr_NoNode ';'
@@ -1809,7 +1810,7 @@ FunctionExpr_NoNode:
 ;
 
 FormalParameterList_NoNode:
-    IDENT
+    IDENT { }
   | FormalParameterList_NoNode ',' IDENT
 ;
 

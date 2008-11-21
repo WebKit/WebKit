@@ -1,3 +1,9 @@
+2008-11-20  Sam Weinig  <sam@webkit.org>
+
+        Try and fix the tiger build.
+
+        * parser/Grammar.y:
+
 2008-11-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
