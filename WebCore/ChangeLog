@@ -1,3 +1,19 @@
+2008-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=19623
+        
+        When an non-layer object gained a transform, it would only repaint
+        the bounds of the new layer, which could result in redraw artifacts
+        if the new layer was smaller. So if we're gaining a transform, we
+        repaint.
+        
+        Test: fast/repaint/change-transform.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
 2008-11-20  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler. 

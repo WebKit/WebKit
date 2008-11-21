@@ -1,3 +1,18 @@
+2008-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=19623
+        
+        Test for correct repaint when an object gains
+        a layer with a transform that is smaller than the
+        old bounds of the object.
+
+        * fast/repaint/change-transform.html: Added.
+        * platform/mac/fast/repaint/change-transform-expected.checksum: Added.
+        * platform/mac/fast/repaint/change-transform-expected.png: Added.
+        * platform/mac/fast/repaint/change-transform-expected.txt: Added.
+
 2008-11-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
