@@ -21,6 +21,8 @@ PASS "-" < "0" is true
 PASS ["-","0"].sort().toString() is "-,0"
 PASS " " < "-" is true
 PASS [" ","-"].sort().toString() is " ,-"
+PASS "A" < "ABC" is true
+PASS ["A","ABC"].sort().toString() is "A,ABC"
 PASS successfullyParsed is true
 
 TEST COMPLETE
