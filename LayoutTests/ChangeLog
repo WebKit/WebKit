@@ -2,6 +2,17 @@
 
         Reviewed by Antti Koivisto
 
+        https://bugs.webkit.org/show_bug.cgi?id=21247
+
+        Make transition shorthand property accept transition-delay.
+
+        * transitions/transition-shorthand-delay-expected.txt: Added.
+        * transitions/transition-shorthand-delay.html: Added.
+
+2008-11-20  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Antti Koivisto
+
         https://bugs.webkit.org/show_bug.cgi?id=22368
 
         Make sure pauseTransition API takes transition delay into account.

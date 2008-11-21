@@ -1,0 +1,3 @@
+Test for transition shorthand
+
+PASS

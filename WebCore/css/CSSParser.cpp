@@ -1794,7 +1794,8 @@ bool CSSParser::parseTransitionShorthand(bool important)
 {
     const int properties[] = { CSSPropertyWebkitTransitionProperty,
                                CSSPropertyWebkitTransitionDuration,
-                               CSSPropertyWebkitTransitionTimingFunction };
+                               CSSPropertyWebkitTransitionTimingFunction,
+                               CSSPropertyWebkitTransitionDelay };
     const int numProperties = sizeof(properties) / sizeof(properties[0]);
     
     ShorthandScope scope(this, CSSPropertyWebkitTransition);
