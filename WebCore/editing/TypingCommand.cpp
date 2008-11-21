@@ -379,6 +379,11 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             selectionAfterUndo = selectionToDelete;
             break;
         case Selection::CARET: {
+            if (breakOutOfEmptyMailBlockquotedParagraph()) {
+                typingAddedToOpenCommand();
+                return;
+            }
+        
             m_smartDelete = false;
 
             SelectionController selection;

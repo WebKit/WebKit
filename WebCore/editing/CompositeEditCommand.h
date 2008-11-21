@@ -101,6 +101,7 @@ protected:
     void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
     
     bool breakOutOfEmptyListItem();
+    bool breakOutOfEmptyMailBlockquotedParagraph();
     
     Position positionAvoidingSpecialElementBoundary(const Position&, bool alwaysAvoidAnchors = true);
     

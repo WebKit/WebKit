@@ -593,6 +593,20 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), 
     return 0;
 }
 
+Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*))
+{
+    Node* highest = 0;
+    Node* root = highestEditableRoot(p);
+    for (Node* n = p.node(); n; n = n->parentNode()) {
+        if ((*nodeIsOfType)(n))
+            highest = n;
+        if (n == root)
+            break;
+    }
+    
+    return highest;
+}
+
 Node* enclosingTableCell(const Position& p)
 {
     return enclosingNodeOfType(p, &isTableCell);

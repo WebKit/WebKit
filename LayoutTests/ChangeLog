@@ -1,3 +1,16 @@
+2008-11-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/2610675> Blank line that is quoted can't be deleted
+
+        * editing/deleting/2610675-1-expected.txt: Added.
+        * editing/deleting/2610675-1.html: Added.
+        * editing/deleting/2610675-2-expected.txt: Added.
+        * editing/deleting/2610675-2.html: Added.
+        * editing/deleting/2610675-3-expected.txt: Added.
+        * editing/deleting/2610675-3.html: Added.
+
 2008-11-20  Dean Jackson  <dino@apple.com>
 
         Reviewed by Antti Koivisto

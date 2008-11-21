@@ -897,6 +897,62 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     return true;
 }
 
+// If the caret is in an empty quoted paragraph, and either there is nothing before that
+// paragraph, or what is before is unquoted, and the user presses delete, unquote that paragraph.
+bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
+{
+    if (!endingSelection().isCaret())
+        return false;
+        
+    VisiblePosition caret(endingSelection().visibleStart());
+    Node* highestBlockquote = highestEnclosingNodeOfType(caret.deepEquivalent(), &isMailBlockquote);
+    if (!highestBlockquote)
+        return false;
+        
+    if (!isStartOfParagraph(caret) || !isEndOfParagraph(caret))
+        return false;
+    
+    VisiblePosition previous(caret.previous(true));
+    // Only move forward if there's nothing before the caret, or if there's unquoted content before it.
+    if (enclosingNodeOfType(previous.deepEquivalent(), &isMailBlockquote))
+        return false;
+    
+    RefPtr<Node> br = createBreakElement(document());
+    // We want to replace this quoted paragraph with an unquoted one, so insert a br
+    // to hold the caret before the highest blockquote.
+    insertNodeBefore(br.get(), highestBlockquote);
+    VisiblePosition atBR(Position(br.get(), 0));
+    // If the br we inserted collapsed, for example foo<br><blockquote>...</blockquote>, insert 
+    // a second one.
+    if (!isStartOfParagraph(atBR))
+        insertNodeBefore(createBreakElement(document()).get(), br.get());
+    setEndingSelection(Selection(atBR));
+    
+    // If this is an empty paragraph there must be a line break here.
+    if (!lineBreakExistsAtPosition(caret))
+        return false;
+    
+    Position caretPos(caret.deepEquivalent());
+    // A line break is either a br or a preserved newline.
+    ASSERT(caretPos.node()->hasTagName(brTag) || caretPos.node()->isTextNode() && caretPos.node()->renderer()->style()->preserveNewline());
+    
+    if (caretPos.node()->hasTagName(brTag)) {
+        Position beforeBR(positionBeforeNode(caretPos.node()));
+        removeNode(caretPos.node());
+        prune(beforeBR.node());
+    } else {
+        ASSERT(caretPos.offset() == 0);
+        Text* textNode = static_cast<Text*>(caretPos.node());
+        Node* parentNode = textNode->parentNode();
+        // The preserved newline must be the first thing in the node, since otherwise the previous
+        // paragraph would be quoted, and we verified that it wasn't above.
+        deleteTextFromNode(textNode, 0, 1);
+        prune(parentNode);
+    }
+    
+    return true;
+}
+
 // Operations use this function to avoid inserting content into an anchor when at the start or the end of 
 // that anchor, as in NSTextView.
 // FIXME: This is only an approximation of NSTextViews insertion behavior, which varies depending on how

@@ -1,3 +1,26 @@
+2008-11-20  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/2610675> Blank line that is quoted can't be deleted
+        
+        If the caret is in an empty quoted paragraph, and either there is nothing before that
+        paragraph, or what is before is unquoted, and the user presses delete, unquote that
+        paragraph.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph): Added.
+        Removes the line break that holds open an empty paragraph and then attempts to
+        prune the blockquote(s) that held that line break in case they have been emptied
+        out.  Places a line break to create in empty unquoted paragraph in place of the
+        quoted one that was removed.
+        * editing/CompositeEditCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Call breakOutOfEmptyBlockquotedParagraph.
+        * editing/htmlediting.cpp:
+        (WebCore::highestEnclosingNodeOfType): Added.
+        * editing/htmlediting.h:
+
 2008-11-20  Dean Jackson  <dino@apple.com>
 
         Reviewed by Antti Koivisto
