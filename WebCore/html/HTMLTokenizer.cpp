@@ -45,6 +45,7 @@
 #include "PreloadScanner.h"
 #include "ScriptController.h"
 #include "ScriptValue.h"
+#include "StringSourceProvider.h"
 #include "SystemTime.h"
 #include <wtf/ASCIICType.h>
 
@@ -53,8 +54,9 @@
 #define PRELOAD_SCANNER_ENABLED 1
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
-using namespace std;
+using namespace JSC;
 using namespace WTF;
+using namespace std;
 
 namespace WebCore {
 
@@ -500,7 +502,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             else
                 prependingSrc = m_src;
             setSrc(SegmentedString());
-            state = scriptExecution(scriptString, state, String(), startLine);
+            state = scriptExecution(makeSource(scriptString, m_doc->frame() ? m_doc->frame()->document()->url().string() : String(), startLine), state);
         }
     }
 
@@ -542,12 +544,11 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::scriptExecution(const String& str, State state, const String& scriptURL, int baseLine)
+HTMLTokenizer::State HTMLTokenizer::scriptExecution(const SourceCode& sourceCode, State state)
 {
     if (m_fragment || !m_doc->frame())
         return state;
     m_executingScript++;
-    String url = scriptURL.isNull() ? m_doc->frame()->document()->url().string() : scriptURL;
 
     SegmentedString* savedPrependingSrc = m_currentPrependingSrc;
     SegmentedString prependingSrc;
@@ -559,7 +560,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const String& str, State sta
 #endif
 
     m_state = state;
-    m_doc->frame()->loader()->executeScript(url, baseLine, str);
+    m_doc->frame()->loader()->executeScript(sourceCode);
     state = m_state;
 
     state.setAllowYield(true);
@@ -1982,7 +1983,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
             EventTargetNodeCast(n.get())->dispatchEventForType(eventNames().errorEvent, true, false);
         else {
             if (static_cast<HTMLScriptElement*>(n.get())->shouldExecuteAsJavaScript())
-                m_state = scriptExecution(scriptSource, m_state, cachedScriptUrl);
+                m_state = scriptExecution(makeSource(scriptSource, cachedScriptUrl), m_state);
             EventTargetNodeCast(n.get())->dispatchEventForType(eventNames().loadEvent, false, false);
         }
 

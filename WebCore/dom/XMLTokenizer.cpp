@@ -41,13 +41,14 @@
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
-#include "ScriptController.h"
-#include "ScriptValue.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptController.h"
+#include "ScriptValue.h"
+#include "StringSourceProvider.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
@@ -339,7 +340,7 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     if (errorOccurred) 
         scriptElement->dispatchErrorEvent();
     else {
-        m_view->frame()->loader()->executeScript(cachedScriptUrl, 1, scriptSource);
+        m_view->frame()->loader()->executeScript(makeSource(scriptSource, cachedScriptUrl));
         scriptElement->dispatchLoadEvent();
     }
     

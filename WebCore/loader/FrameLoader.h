@@ -49,6 +49,10 @@
 #include "CachedResourceClient.h"
 #endif
 
+namespace JSC {
+    class SourceCode;
+}
+
 namespace WebCore {
 
     class Archive;
@@ -335,7 +339,7 @@ namespace WebCore {
         // Returns true if url is a JavaScript URL.
         bool executeIfJavaScriptURL(const KURL& url, bool userGesture = false, bool replaceDocument = true);
 
-        ScriptValue executeScript(const String& url, int baseLine, const String& script);
+        ScriptValue executeScript(const JSC::SourceCode&);
         ScriptValue executeScript(const String& script, bool forceUserGesture = false);
 
         void gotoAnchor();

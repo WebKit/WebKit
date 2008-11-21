@@ -51,10 +51,11 @@ namespace WebCore {
         String m_source;
     };
 
-    inline JSC::SourceCode makeSource(const String& source, const JSC::UString& url = JSC::UString(), int firstLine = 1)
+    inline JSC::SourceCode makeSource(const String& source, const String& url = String(), int firstLine = 1)
     {
         return JSC::SourceCode(StringSourceProvider::create(source, url), firstLine);
     }
-}
 
-#endif
+} // namespace WebCore
+
+#endif // StringSourceProvider_h

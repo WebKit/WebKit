@@ -68,14 +68,14 @@ void WorkerScriptController::initScript()
     m_workerContextWrapper = new (m_globalData.get()) JSWorkerContext(m_workerContext);
 }
 
-JSValue* WorkerScriptController::evaluate(const String& sourceURL, int baseLine, const String& code)
+JSValue* WorkerScriptController::evaluate(const JSC::SourceCode& sourceCode)
 {
     initScriptIfNeeded();
     JSLock lock(false);
 
     ExecState* exec = m_workerContextWrapper->globalExec();
     m_workerContextWrapper->startTimeoutCheck();
-    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), makeSource(code, sourceURL, baseLine), m_workerContextWrapper);
+    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode, m_workerContextWrapper);
     m_workerContextWrapper->stopTimeoutCheck();
 
     m_workerContext->thread()->messagingProxy()->reportWorkerThreadActivity(m_workerContext->hasPendingActivity());
