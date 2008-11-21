@@ -2,6 +2,17 @@
 
         Reviewed by Dan Bernstein.
 
+        WebKit should be using Device RGB colorspace everywhere for
+        consistency.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22300
+
+        * platform/mac/fast/text/attributed-substring-from-range-001-expected.txt:
+
+2008-11-21  Pierre-Olivier Latour  <pol@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         Add missing reference images for tests added as part of
         https://bugs.webkit.org/show_bug.cgi?id=21261
 

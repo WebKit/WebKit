@@ -267,15 +267,16 @@ static CGColorRef CreateCGColorIfDifferent(NSColor* nsColor, CGColorRef existing
     [rgbColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
     
     // create a new CGColorRef to return
-    CGColorSpaceRef cgColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    CGColorSpaceRef cgColorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef cgColor = CGColorCreate(cgColorSpace, components);
     CGColorSpaceRelease(cgColorSpace);
-    CFMakeCollectable(cgColor);
     
     // check for match with existing color
-    if (existingColor && CGColorEqualToColor(cgColor, existingColor))
-        cgColor = nil;
-
+    if (existingColor && CGColorEqualToColor(cgColor, existingColor)) {
+        CGColorRelease(cgColor);
+        cgColor = 0;
+    }
+    
     return cgColor;
 }
 

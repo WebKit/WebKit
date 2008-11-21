@@ -1521,7 +1521,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
     [dragImage lockFocus];
     
-    [[NSColor colorWithCalibratedRed: 0.7f green: 0.7f blue: 0.7f alpha: 0.8f] set];
+    [[NSColor colorWithDeviceRed: 0.7f green: 0.7f blue: 0.7f alpha: 0.8f] set];
     
     // Drag a rectangle with rounded corners/
     NSBezierPath *path = [NSBezierPath bezierPath];
@@ -1535,8 +1535,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
     [path fill];
     
-    NSColor *topColor = [NSColor colorWithCalibratedWhite:0.0f alpha:0.75f];
-    NSColor *bottomColor = [NSColor colorWithCalibratedWhite:1.0f alpha:0.5f];
+    NSColor *topColor = [NSColor colorWithDeviceWhite:0.0f alpha:0.75f];
+    NSColor *bottomColor = [NSColor colorWithDeviceWhite:1.0f alpha:0.5f];
     if (drawURLString) {
         if (clipURLString)
             urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:urlFont];
@@ -3751,7 +3751,7 @@ noPromisedData:
 
 - (NSString *)_colorAsString:(NSColor *)color
 {
-    NSColor *rgbColor = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    NSColor *rgbColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
     // of fancy color that can't be converted to RGB. Changing that to "transparent"
     // might not be great, but it's probably OK.

@@ -230,7 +230,7 @@ void RenderThemeMac::systemFont(int cssValueId, FontDescription& fontDescription
 
 static RGBA32 convertNSColorToColor(NSColor *color)
 {
-    NSColor *colorInColorSpace = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    NSColor *colorInColorSpace = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     if (colorInColorSpace) {
         static const double scaleFactor = nextafter(256.0, 0.0);
         return makeRGB(static_cast<int>(scaleFactor * [colorInColorSpace redComponent]),
@@ -250,7 +250,7 @@ static RGBA32 convertNSColorToColor(NSColor *color)
                                                                         samplesPerPixel:4
                                                                                hasAlpha:YES
                                                                                isPlanar:NO
-                                                                         colorSpaceName:NSCalibratedRGBColorSpace
+                                                                         colorSpaceName:NSDeviceRGBColorSpace
                                                                             bytesPerRow:4
                                                                            bitsPerPixel:32];
 
@@ -277,7 +277,7 @@ static RGBA32 menuBackgroundColor()
                                                                         samplesPerPixel:4
                                                                                hasAlpha:YES
                                                                                isPlanar:NO
-                                                                         colorSpaceName:NSCalibratedRGBColorSpace
+                                                                         colorSpaceName:NSDeviceRGBColorSpace
                                                                             bytesPerRow:4
                                                                            bitsPerPixel:32];
 

@@ -60,15 +60,15 @@ NSColor* nsColor(const Color& color)
     switch (c) {
         case 0: {
             // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, clearColor, ([NSColor clearColor]));
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, clearColor, ([NSColor colorWithDeviceRed:0.0f green:0.0f blue:0.0f alpha:0.0f]));
             return clearColor.get();
         }
         case Color::black: {
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, blackColor, ([NSColor blackColor]));
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, blackColor, ([NSColor colorWithDeviceRed:0.0f green:0.0f blue:0.0f alpha:1.0f]));
             return blackColor.get();
         }
         case Color::white: {
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, whiteColor, ([NSColor whiteColor]));
+            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, whiteColor, ([NSColor colorWithDeviceRed:1.0f green:1.0f blue:1.0f alpha:1.0f]));
             return whiteColor.get();
         }
         default: {
@@ -80,17 +80,10 @@ NSColor* nsColor(const Color& color)
                 if (cachedRGBAValues[i] == c)
                     return cachedColors[i].get();
 
-#ifdef COLORMATCH_EVERYTHING
-            NSColor* result = [NSColor colorWithCalibratedRed:color.red() / 255.0f
-                                                        green:color.green() / 255.0f
-                                                         blue:color.blue() / 255.0f
-                                                        alpha:color.alpha() /255.0f];
-#else
             NSColor* result = [NSColor colorWithDeviceRed:color.red() / 255.0f
                                                     green:color.green() / 255.0f
                                                      blue:color.blue() / 255.0f
                                                     alpha:color.alpha() /255.0f];
-#endif
 
             static int cursor;
             cachedRGBAValues[cursor] = c;
@@ -159,12 +152,8 @@ void setUsesTestModeFocusRingColor(bool newValue)
 
 + (void)controlTintDidChange
 {
-#ifdef COLORMATCH_EVERYTHING
-#error Not yet implemented.
-#else
     NSColor* color = [[NSColor keyboardFocusIndicatorColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     WebCore::systemFocusRingColor = WebCore::makeRGBAFromNSColor(color);
-#endif
 }
 
 @end
