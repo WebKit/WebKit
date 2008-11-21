@@ -1,7 +1,3 @@
-import os
-import sys
-from subprocess import Popen, PIPE
-
 # The keys in sources are the paths to the directories
 # the values are an array of source files in those directories to compile
 sources = {}
@@ -55,6 +51,7 @@ sources['runtime'] = [
     'runtime/BooleanPrototype.cpp',
     'runtime/CallData.cpp',
     'runtime/Collector.cpp',
+    'runtime/Completion.cpp',
     'runtime/CommonIdentifiers.cpp',
     'runtime/ConstructData.cpp',
     'runtime/DateConstructor.cpp',
@@ -131,25 +128,18 @@ sources['jit'] = [
     'jit/JIT.cpp',
 ]
 sources['wrec'] = [
-    'wrec/CharacterClass.cpp'
-    'wrec/CharacterClass.h'
+    'wrec/CharacterClass.cpp',
     'wrec/CharacterClassConstructor.cpp',
-    'wrec/Quantifier.h'
-    'wrec/WREC.cpp'
-    'wrec/WRECFunctors.cpp'
-    'wrec/WRECFunctors.h'
-    'wrec/WRECGenerator.cpp'
-    'wrec/WRECGenerator.h'
-    'wrec/WRECParser.cpp'
-    'wrec/WRECParser.h'
+    'wrec/WREC.cpp',
+    'wrec/WRECFunctors.cpp',
+    'wrec/WRECGenerator.cpp',
+    'wrec/WRECParser.cpp',
 ]
 sources['wtf'] = [
     'wtf/Assertions.cpp',
     'wtf/FastMalloc.cpp',
     'wtf/HashTable.cpp',
-    'wtf/MainThread.cpp',
     'wtf/RefCountedLeakCounter.cpp',
-    'wtf/TCSystemAlloc.cpp',
     'wtf/dtoa.cpp',
 ]
 sources['wtf/unicode'] = [
@@ -162,16 +152,39 @@ sources['wtf/unicode/icu'] = [
 
 env = Environment()
 
+building_on_win32 = env['PLATFORM'] == 'win32' or env['PLATFORM'] == 'cygwin'
+
+# Scons uses gcc when building under cygwin by default
+# We also have to manually force 8.0 or Scons will try and
+# look up what version to use using the registry and fail
+# due to lack of cygwin-python registry support
+if env['PLATFORM'] == 'cygwin':
+    env['MSVS_VERSION'] = '8.0'
+    # Some systems have PROGRAMFILES, some have ProgramFiles
+    # Scons msvc tool only expects 'ProgramFiles'
+    import os
+    if os.getenv('PROGRAMFILES') and not os.getenv('ProgramFiles'):
+        os.environ['ProgramFiles'] = os.getenv('PROGRAMFILES')
+
+    env.Tool('msvc')
+    env.Tool('mslink')
+    env.Tool('mslib')
+
+# Scons is failing to carry the %PATH% value through correctly
+# Hack IncrediBuild into our path so cl.exe doesn't crash
+if env['PLATFORM'] == 'win32':
+    env.AppendENVPath('PATH', 'c:/Program Files/Xoreax/IncrediBuild')
+
 if env['PLATFORM'] == 'darwin':
     sources['API'].append('API/JSStringRefCF.cpp')
     sources['profiler'].append('profiler/ProfilerServer.mm')
     sources['wtf'].append('wtf/ThreadingPthreads.cpp')
+    sources['wtf'].append('wtf/MainThread.cpp')
     sources['wtf/mac'] = ['wtf/mac/MainThreadMac.mm']
-elif env['PLATFORM'] == 'win32':
-    sources['API'].append('API/JSStringRefBSTR.cpp')
-    sources['wtf'].append('wtf/ThreadingWin.cpp')
-    sources['wtf/win'] = ['wtf/win/MainThreadWin.cpp']
-
+    sources['wtf'].append('wtf/TCSystemAlloc.cpp')
+elif building_on_win32:
+    sources['wtf'].append('wtf/ThreadingNone.cpp')
+    env.Append(CPPDEFINES = ['ENABLE_JSC_MULTIPLE_THREADS=0'])
 
 derived_sources_path = 'DerivedSources/JavaScriptCore/'
 def DerivedSources(path):
@@ -204,11 +217,15 @@ derived_sources_sources = [
 ]
 
 # Generate DerivedSources
-env.Command(derived_sources_results, derived_sources_sources, './make-generated-sources.sh')
-sources[derived_sources_path] = [DerivedSources('grammar.cpp')]
+# Make sure Windows knows where bash (and all the other cygwin commands) live
+if env['PLATFORM'] == 'win32':
+    env.AppendENVPath('PATH', 'C:/cygwin/bin')
+env.Command(derived_sources_results, derived_sources_sources, 'bash make-generated-sources.sh')
+sources[derived_sources_path] = [DerivedSources('Grammar.cpp')]
 
 # Handle os-version specific build settings
 if env['PLATFORM'] == 'darwin':
+    from subprocess import Popen, PIPE
     version_pieces = Popen(["sw_vers", "-productVersion"], stdout = PIPE).communicate()[0].split('.')
     if map(int, version_pieces)[:2] > (10, 5):
         # Dtrace doesn't exist in Tiger, and was broken in Leopard
@@ -216,26 +233,63 @@ if env['PLATFORM'] == 'darwin':
 
 # This build file builds the Chromium port for now, support for
 # others could be added later.
-env['CPPDEFINES'] = 'BUILDING_CHROMIUM__'
+env.Append(CPPDEFINES = ['BUILDING_CHROMIUM__'])
+
+# I'm not certain how many of these windows defines are actually required.
+if building_on_win32:
+    env.Append(CPPDEFINES = ['_WIN32_WINNT=0x0600', 'WINVER=0x0600', 'WIN32', '_WINDOWS', 'NOMINMAX', 'UNICODE', '_UNICODE', '__STD_C', '_HAS_EXCEPTIONS=0'])
 
 # Scons out-of-the-box only supports precompiled headers for MSVC
 # remove this when we fix Scons to understand GCC precompiled headers
 if env['CC'] == 'gcc':
     env['CCFLAGS'] = '-include JavaScriptCorePrefix.h'
-env['PCH'] = 'JavaScriptCorePrefix.h'
+# Turns out the MSVC PCH support is badly broken
+# env['PCH'] = 'JavaScriptCorePrefix.h'
+# env['PCHSTOP'] = 'JavaScriptCorePrefix.h'
 
 if env['PLATFORM'] == 'darwin':
     env['FRAMEWORKS'] = ['CoreFoundation', 'Foundation']
     env['LIBS'] = ['icucore']
+    # Apple does not ship the ICU headers with Mac OS X, so WebKit includes a copy of 3.2 headers
+    env.Append(CPPPATH = 'icu')
 
-include_paths = ['.', '..', 'ForwardingHeaders', 'icu'] + sources.keys()
-env['CPPPATH'] = include_paths
-env.SharedLibrary("JavaScriptCore", sources.values())
+webkit_libraries_path = "../WebKitLibraries/win/"
+def WebKitLibraries(path):
+    return webkit_libraries_path + path
 
+include_paths = ['.', '..', 'ForwardingHeaders'] + sources.keys()
+env.Append(CPPPATH = include_paths)
+if building_on_win32:
+    env.Append(CPPPATH = [WebKitLibraries('include')])
+    env.Prepend(LIBPATH = [WebKitLibraries('lib')])
+    env.Append(LIBS = ['icuin', 'icuuc', 'user32', 'winmm'])
+
+# Save off a copy of the environment for use with jsc
+jsc_env = env.Clone()
+
+if building_on_win32:
+    env.StaticLibrary("JavaScriptCore", sources.values())
+else:
+    env.SharedLibrary("JavaScriptCore", sources.values())
+
+
+env = jsc_env
 
 # Build the jsc testing shell
 shell_sources = ['jsc.cpp']
 build_directory = '.' # This should be changed to point to wherever JavaScriptCore gets built to
 
-env = Environment(CPPPATH = include_paths, LIBS = ['JavaScriptCore', 'edit'], LIBPATH = [build_directory])
+# It's hacky to re-use the same environment from JavaScriptCore
+# but it makes building on windows easier for now
+env['CPPPATH'] = include_paths
+env['LIBS'] = ['JavaScriptCore']
+env['LIBPATH'] = [build_directory]
+
+if env['PLATFORM'] == 'darwin':
+    env.Append(LIBS = ['edit'])
+elif building_on_win32:
+    env.Append(CPPPATH = [WebKitLibraries('include')])
+    env.Prepend(LIBPATH = [WebKitLibraries('lib')])
+    env.Append(LIBS = ['icuin', 'icuuc', 'user32', 'winmm'])
+
 env.Program('jsc', shell_sources)

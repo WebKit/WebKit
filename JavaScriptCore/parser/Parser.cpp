@@ -29,6 +29,8 @@
 #include <wtf/Vector.h>
 #include <memory>
 
+using std::auto_ptr;
+
 extern int kjsyyparse(void*);
 
 namespace JSC {

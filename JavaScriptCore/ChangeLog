@@ -1,3 +1,13 @@
+2008-11-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make JavaScriptCore Chromium build under Windows (cmd only, cygwin almost works)
+        https://bugs.webkit.org/show_bug.cgi?id=22347
+
+        * JavaScriptCore.scons:
+        * parser/Parser.cpp: Add using std::auto_ptr since we use auto_ptr
+
 2008-11-20  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.
