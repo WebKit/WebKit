@@ -1,3 +1,12 @@
+2008-11-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+        
+        Reviewed by Sam Weinig.
+
+        * parser/Parser.cpp:
+        (JSC::Parser::reparse):
+
 2008-11-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
