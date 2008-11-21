@@ -80,6 +80,13 @@ Computed style of an element whose parent's 'display' value is 'none':
     word-wrap: normal
     z-index: auto
     zoom: 1
+    -webkit-animation-delay: 0s
+    -webkit-animation-direction: normal
+    -webkit-animation-duration: 0s
+    -webkit-animation-iteration-count: 1
+    -webkit-animation-name: none
+    -webkit-animation-play-state: running
+    -webkit-animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1)
     -webkit-appearance: none
     -webkit-background-clip: border
     -webkit-background-composite: source-over
@@ -135,8 +142,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-text-stroke-color: rgb(0, 0, 0)
     -webkit-text-stroke-width: 0px
     -webkit-transform: none
-    -webkit-transform-origin-x: 50%
-    -webkit-transform-origin-y: 50%
+    -webkit-transform-origin: 50% 50%
     -webkit-transition-delay: 0s
     -webkit-transition-duration: 0s
     -webkit-transition-property: all

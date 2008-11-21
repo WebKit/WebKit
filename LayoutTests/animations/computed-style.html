@@ -1,0 +1,83 @@
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<style type="text/css" media="screen">
+    #test1 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-animation-name: anim1;
+        -webkit-animation-duration: 10s;
+        -webkit-animation-iteration-count: 10;
+        -webkit-animation-play-state: paused;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-direction: normal;
+    }
+    #test2 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-animation-name: anim2, anim3;
+        -webkit-animation-duration: 5s, 2500ms;
+        -webkit-animation-iteration-count: 10, infinite;
+        -webkit-animation-play-state: paused, running;
+        -webkit-animation-timing-function: linear, ease-in-out;
+        -webkit-animation-direction: normal, alternate;
+    }
+    @-webkit-keyframes anim1 {
+        from { left: 10px; }
+        to { left: 20px; }
+    }
+    @-webkit-keyframes anim2 {
+        from { width: 20px; }
+        to { width: 25px; }
+    }
+    @-webkit-keyframes anim3 {
+        from { left: 10px; }
+        to { left: 20px; }
+    }
+</style>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="test1"></p>
+<p id="test2"></p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests computed style values from animation properties.");
+
+var test1 = document.getElementById("test1");
+var test2 = document.getElementById("test2");
+
+var test1Style = window.getComputedStyle(test1);
+var test2Style = window.getComputedStyle(test2);
+
+shouldBe("test1Style.webkitAnimationName", "'anim1'");
+shouldBe("test2Style.webkitAnimationName", "'anim2, anim3'");
+
+shouldBe("test1Style.webkitAnimationDuration", "'10s'");
+shouldBe("test2Style.webkitAnimationDuration", "'5s, 2.5s'");
+
+shouldBe("test1Style.webkitAnimationIterationCount", "'10'");
+shouldBe("test2Style.webkitAnimationIterationCount", "'10, infinite'");
+
+shouldBe("test1Style.webkitAnimationPlayState", "'paused'");
+shouldBe("test2Style.webkitAnimationPlayState", "'paused, running'");
+
+shouldBe("test1Style.webkitAnimationTimingFunction", "'cubic-bezier(0, 0, 1, 1)'");
+shouldBe("test2Style.webkitAnimationTimingFunction", "'cubic-bezier(0, 0, 1, 1), cubic-bezier(0.42, 0, 0.58, 1)'");
+
+shouldBe("test1Style.webkitAnimationDirection", "'normal'");
+shouldBe("test2Style.webkitAnimationDirection", "'normal, alternate'");
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

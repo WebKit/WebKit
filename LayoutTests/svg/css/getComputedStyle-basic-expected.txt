@@ -160,6 +160,20 @@ rect: style.getPropertyValue(z-index) : auto
 rect: style.getPropertyCSSValue(z-index) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(zoom) : 1
 rect: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-animation-delay) : 0s
+rect: style.getPropertyCSSValue(-webkit-animation-delay) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-direction) : normal
+rect: style.getPropertyCSSValue(-webkit-animation-direction) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-duration) : 0s
+rect: style.getPropertyCSSValue(-webkit-animation-duration) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-iteration-count) : 1
+rect: style.getPropertyCSSValue(-webkit-animation-iteration-count) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-name) : none
+rect: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-play-state) : running
+rect: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+rect: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-clip) : border
@@ -270,10 +284,8 @@ rect: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 rect: style.getPropertyCSSValue(-webkit-text-stroke-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-transform) : none
 rect: style.getPropertyCSSValue(-webkit-transform) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-transform-origin-x) : 0px
-rect: style.getPropertyCSSValue(-webkit-transform-origin-x) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-transform-origin-y) : 0px
-rect: style.getPropertyCSSValue(-webkit-transform-origin-y) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-transform-origin) : 0px 0px
+rect: style.getPropertyCSSValue(-webkit-transform-origin) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-transition-delay) : 0s
 rect: style.getPropertyCSSValue(-webkit-transition-delay) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-transition-duration) : 0s
@@ -536,6 +548,20 @@ g: style.getPropertyValue(z-index) : auto
 g: style.getPropertyCSSValue(z-index) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(zoom) : 1
 g: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-animation-delay) : 0s
+g: style.getPropertyCSSValue(-webkit-animation-delay) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-direction) : normal
+g: style.getPropertyCSSValue(-webkit-animation-direction) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-duration) : 0s
+g: style.getPropertyCSSValue(-webkit-animation-duration) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-iteration-count) : 1
+g: style.getPropertyCSSValue(-webkit-animation-iteration-count) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-name) : none
+g: style.getPropertyCSSValue(-webkit-animation-name) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-play-state) : running
+g: style.getPropertyCSSValue(-webkit-animation-play-state) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+g: style.getPropertyCSSValue(-webkit-animation-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-clip) : border
@@ -646,10 +672,8 @@ g: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 g: style.getPropertyCSSValue(-webkit-text-stroke-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-transform) : none
 g: style.getPropertyCSSValue(-webkit-transform) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-transform-origin-x) : 0px
-g: style.getPropertyCSSValue(-webkit-transform-origin-x) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-transform-origin-y) : 0px
-g: style.getPropertyCSSValue(-webkit-transform-origin-y) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-transform-origin) : 0px 0px
+g: style.getPropertyCSSValue(-webkit-transform-origin) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-transition-delay) : 0s
 g: style.getPropertyCSSValue(-webkit-transition-delay) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-transition-duration) : 0s

@@ -1,0 +1,72 @@
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<style type="text/css" media="screen">
+    #test1 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-transform: translate(0);
+        // default transform origin
+    }
+    #test2 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-transform: translate(0);
+        -webkit-transform-origin: 50% 50%;
+    }
+    #test3 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-transform: translate(0);
+        -webkit-transform-origin: 0% 100%;
+    }
+    #test4 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        -webkit-transform: translate(0);
+        -webkit-transform-origin: 5px 7px;
+    }
+</style>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="test1"></p>
+<p id="test2"></p>
+<p id="test3"></p>
+<p id="test4"></p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests computed style values for transform origin.");
+
+var test1 = document.getElementById("test1");
+var test2 = document.getElementById("test2");
+var test3 = document.getElementById("test3");
+var test4 = document.getElementById("test4");
+
+var test1Style = window.getComputedStyle(test1);
+var test2Style = window.getComputedStyle(test2);
+var test3Style = window.getComputedStyle(test3);
+var test4Style = window.getComputedStyle(test4);
+
+shouldBe("test1Style.webkitTransformOrigin", "'10px 10px'");
+shouldBe("test2Style.webkitTransformOrigin", "'10px 10px'");
+shouldBe("test3Style.webkitTransformOrigin", "'0px 20px'");
+shouldBe("test4Style.webkitTransformOrigin", "'5px 7px'");
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

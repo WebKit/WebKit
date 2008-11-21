@@ -1,3 +1,22 @@
+2008-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        https://bugs.webkit.org/show_bug.cgi?id=20368
+
+        Tests for computed values of animation properties, and
+        change to computed value of transform-origin. Updated tests
+        that dump all computed values, to include animation and changed
+        transform-origin properties.
+
+        * animations/computed-style-expected.txt: Added.
+        * animations/computed-style.html: Added.
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * transforms/computed-style-origin-expected.txt: Added.
+        * transforms/computed-style-origin.html: Added.
+
 2008-11-20  Pamela Greene  <pam@chromium.org>
 
         Reviewed by Darin Adler.
