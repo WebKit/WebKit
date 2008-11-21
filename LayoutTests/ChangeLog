@@ -1,3 +1,16 @@
+2008-11-20  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add some tests for issues found while developing reparsing of function
+        bodies. Also modify existing tests to be more robust in the face of
+        possible changes to parsing.
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/function-dot-arguments-expected.txt:
+        * fast/js/resources/arguments.js:
+        * fast/js/resources/function-dot-arguments.js:
+
 2008-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -508,6 +508,9 @@ function argumentsParam(arguments)
 }
 shouldBeTrue("argumentsParam(true)");
 
+var argumentsFunctionConstructorParam = new Function("arguments", "return arguments;");
+shouldBeTrue("argumentsFunctionConstructorParam(true)");
+
 function argumentsVarUndefined()
 {
     var arguments;

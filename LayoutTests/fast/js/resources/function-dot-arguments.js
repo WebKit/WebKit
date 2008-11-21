@@ -163,14 +163,20 @@ shouldBeTrue("assignForInInitTest()");
 
 function paramInitTest(arguments)
 {
-    function g()
-    {
-        return paramInitTest.arguments;
-    }
-
-    return g();
+    return paramInitTestCheckArguments();
+}
+function paramInitTestCheckArguments()
+{
+    return paramInitTest.arguments;
 }
 shouldBeTrue("paramInitTest(true)");
+
+var paramFunctionConstructorInitTest = Function("arguments", "return paramFunctionConstructorInitTestCheckArguments();");
+function paramFunctionConstructorInitTestCheckArguments()
+{
+    return paramFunctionConstructorInitTest.arguments;
+}
+shouldBeTrue("paramFunctionConstructorInitTest(true)");
 
 function tearOffTest()
 {

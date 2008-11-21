@@ -21,6 +21,7 @@ PASS assignForInitTest() is true
 PASS assignForInitTest2() is true
 PASS assignForInInitTest() is true
 PASS paramInitTest(true) is true
+PASS paramFunctionConstructorInitTest(true) is true
 PASS tearOffTest()[0] is true
 PASS tearOffTest2(true)[0] is true
 PASS lexicalArgumentsLiveRead1(0, 2, 3) is 1

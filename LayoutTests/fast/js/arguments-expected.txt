@@ -125,6 +125,7 @@ PASS access_after_delete_extra_2(1, 2, 3, 4, 5) is 2
 PASS access_after_delete_extra_3(1, 2, 3, 4, 5) is 3
 PASS access_after_delete_extra_5(1, 2, 3, 4, 5) is 5
 PASS argumentsParam(true) is true
+PASS argumentsFunctionConstructorParam(true) is true
 FAIL argumentsVarUndefined() should be undefined. Was [object Arguments]
 FAIL argumentsConstUndefined() should be undefined. Was [object Arguments]
 PASS successfullyParsed is true
