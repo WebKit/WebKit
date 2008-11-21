@@ -3,38 +3,38 @@ namespacePrefix="xhtml"
 namespaceURI="http://www.w3.org/1999/xhtml"
 
 a interfaceName=HTMLAnchorElement
-abbr
-acronym
-address
+abbr JSInterfaceName=HTMLElement
+acronym JSInterfaceName=HTMLElement
+address JSInterfaceName=HTMLElement
 applet
 area
 #if ENABLE_VIDEO
 audio wrapperOnlyIfMediaIsAvailable=1
 #endif
-b
+b JSInterfaceName=HTMLElement
 base
 basefont interfaceName=HTMLBaseFontElement
-bdo
-big
+bdo JSInterfaceName=HTMLElement
+big JSInterfaceName=HTMLElement
 blockquote
 body
 br interfaceName=HTMLBRElement
 button
 canvas
 caption interfaceName=HTMLTableCaptionElement
-center
-cite
-code
+center JSInterfaceName=HTMLElement
+cite JSInterfaceName=HTMLElement
+code JSInterfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
-colgroup
-dd
+colgroup JSInterfaceName=HTMLTableColElement
+dd JSInterfaceName=HTMLElement
 del interfaceName=HTMLModElement
-dfn
+dfn JSInterfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
 div
 dl interfaceName=HTMLDListElement
-dt
-em
+dt JSInterfaceName=HTMLElement
+em JSInterfaceName=HTMLElement
 embed
 fieldset interfaceName=HTMLFieldSetElement
 font
@@ -43,75 +43,75 @@ frame
 frameset interfaceName=HTMLFrameSetElement
 head
 h1 interfaceName=HTMLHeadingElement
-h2
-h3
-h4
-h5
-h6
+h2 JSInterfaceName=HTMLHeadingElement
+h3 JSInterfaceName=HTMLHeadingElement
+h4 JSInterfaceName=HTMLHeadingElement
+h5 JSInterfaceName=HTMLHeadingElement
+h6 JSInterfaceName=HTMLHeadingElement
 hr interfaceName=HTMLHRElement
 html
-i
+i JSInterfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement
 image
 img interfaceName=HTMLImageElement
 input
-ins
+ins JSInterfaceName=HTMLModElement
 isindex interfaceName=HTMLIsIndexElement
-kbd
-keygen
+kbd JSInterfaceName=HTMLElement
+keygen JSInterfaceName=HTMLSelectElement
 label
-layer
+layer JSInterfaceName=HTMLElement
 legend
 li interfaceName=HTMLLIElement
 link
-listing
+listing JSInterfaceName=HTMLPreElement
 map
 marquee
 menu
 meta
-nobr
-noembed
-noframes
-nolayer
-noscript
+nobr JSInterfaceName=HTMLElement
+noembed JSInterfaceName=HTMLElement
+noframes JSInterfaceName=HTMLElement
+nolayer JSInterfaceName=HTMLElement
+noscript JSInterfaceName=HTMLElement
 object
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement
 option
 p interfaceName=HTMLParagraphElement
 param
-plaintext
+plaintext JSInterfaceName=HTMLElement
 pre
 q interfaceName=HTMLQuoteElement
-s
-samp
+s JSInterfaceName=HTMLElement
+samp JSInterfaceName=HTMLElement
 script
 select
-small
+small JSInterfaceName=HTMLElement
 #if ENABLE_VIDEO
 source wrapperOnlyIfMediaIsAvailable=1
 #endif
-span
-strike
-strong
+span JSInterfaceName=HTMLElement
+strike JSInterfaceName=HTMLElement
+strong JSInterfaceName=HTMLElement
 style
-sub
-sup
+sub JSInterfaceName=HTMLElement
+sup JSInterfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
 textarea interfaceName=HTMLTextAreaElement
-tfoot
-th
-thead
+tfoot JSInterfaceName=HTMLTableSectionElement
+th JSInterfaceName=HTMLTableCellElement
+thead JSInterfaceName=HTMLTableSectionElement
 title
 tr interfaceName=HTMLTableRowElement
-tt
-u
+tt JSInterfaceName=HTMLElement
+u JSInterfaceName=HTMLElement
 ul interfaceName=HTMLUListElement
-var
+var JSInterfaceName=HTMLElement
 #if ENABLE_VIDEO
 video wrapperOnlyIfMediaIsAvailable=1
 #endif
-wbr
-xmp
+wbr JSInterfaceName=HTMLElement
+xmp JSInterfaceName=HTMLPreElement

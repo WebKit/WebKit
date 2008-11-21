@@ -45,8 +45,6 @@ my %attrs = ();
 my %parameters = ();
 my $extraDefines = 0;
 my $preprocessor = "/usr/bin/gcc -E -P -x c++";
-my %svgCustomMappings = ();
-my %htmlCustomMappings = ();
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
@@ -90,6 +88,8 @@ sub initializeTagPropertyHash
 {
     return ('exportString' => 0,
             'interfaceName' => defaultInterfaceName($_[0]),
+            # By default, the JSInterfaceName is the same as the interfaceName.
+            'JSInterfaceName' => defaultInterfaceName($_[0]),
             'wrapperOnlyIfMediaIsAvailable' => 0);
 }
 
@@ -122,6 +122,11 @@ sub tagsHandler
 
     if ($property) {
         die "Unknown property $property for tag $tag\n" if !defined($tags{$tag}{$property});
+        # The code rely on JSInterfaceName deriving from interfaceName to check for custom JSInterfaceName.
+        # So just override JSInterfaceName if it was not already set.
+        if ($property eq "interfaceName" && $tags{$tag}{'JSInterfaceName'} eq $tags{$tag}{'interfaceName'}) {
+                $tags{$tag}{'JSInterfaceName'} = $value;
+        }
         $tags{$tag}{$property} = $value;
     }
 }
@@ -427,9 +432,9 @@ sub printJSElementIncludes
 {
     my $F = shift;
     for my $name (sort keys %tags) {
-        next if (hasCustomMapping($name));
+        next if hasCustomJSInterfaceName($name);
 
-        my $ucName = $tags{$name}{"interfaceName"};
+        my $ucName = $tags{$name}{"JSInterfaceName"};
         print F "#include \"JS${ucName}.h\"\n";
     }
 }
@@ -439,7 +444,7 @@ sub printElementIncludes
     my ($F, $shouldSkipCustomMappings) = @_;
 
     for my $name (sort keys %tags) {
-        next if ($shouldSkipCustomMappings && hasCustomMapping($name));
+        next if ($shouldSkipCustomMappings && hasCustomJSInterfaceName($name));
 
         my $ucName = $tags{$name}{"interfaceName"};
         print F "#include \"${ucName}.h\"\n";
@@ -650,86 +655,35 @@ sub defaultInterfaceName
     return $parameters{'namespace'} . upperCaseName($_[0]) . "Element"
 }
 
-sub initializeCustomMappings
+sub hasCustomJSInterfaceName
 {
-    if (!keys %svgCustomMappings) {
-        # These are used to map a tag to another one in WrapperFactory
-        # (for example, "h2" is mapped to "h1" so that they use the same JS Wrapper ("h1" wrapper))
-        # Mapping to an empty string will not generate a wrapper
-        %svgCustomMappings = ('animateMotion' => '',
-                              'hkern' => '',
-                              'mpath' => '');
-        %htmlCustomMappings = ('abbr' => '',
-                               'acronym' => '',
-                               'address' => '',
-                               'b' => '',
-                               'bdo' => '',
-                               'big' => '',
-                               'center' => '',
-                               'cite' => '',
-                               'code' => '',
-                               'colgroup' => 'col',
-                               'dd' => '',
-                               'dfn' => '',
-                               'dt' => '',
-                               'em' => '',
-                               'h2' => 'h1',
-                               'h3' => 'h1',
-                               'h4' => 'h1',
-                               'h5' => 'h1',
-                               'h6' => 'h1',
-                               'i' => '',
-                               'image' => 'img',
-                               'ins' => 'del',
-                               'kbd' => '',
-                               'keygen' => 'select',
-                               'listing' => 'pre',
-                               'layer' => '',
-                               'nobr' => '',
-                               'noembed' => '',
-                               'noframes' => '',
-                               'nolayer' => '',
-                               'noscript' => '',
-                               'plaintext' => '',
-                               's' => '',
-                               'samp' => '',
-                               'small' => '',
-                               'span' => '',
-                               'strike' => '',
-                               'strong' => '',
-                               'sub' => '',
-                               'sup' => '',
-                               'tfoot' => 'tbody',
-                               'th' => 'td',
-                               'thead' => 'tbody',
-                               'tt' => '',
-                               'u' => '',
-                               'var' => '',
-                               'wbr' => '',
-                               'xmp' => 'pre');
-    }
+    my $tag = shift;
+
+    # We have a custom JSInterface if the JSInterfaceName is not the same as the interfaceName.
+    # FIXME: The 'img' tag matches completely the 'image' tag and cannot be distinguished
+    # so we have to check for it.
+    return !($tags{$tag}{'JSInterfaceName'} eq $tags{$tag}{'interfaceName'}) || $tag eq "img";
 }
 
-sub hasCustomMapping
+sub usesDefaultWrapper
 {
     my $name = shift;
-    initializeCustomMappings();
-    return 1 if $parameters{'namespace'} eq "HTML" && exists($htmlCustomMappings{$name});
-    return 1 if $parameters{'namespace'} eq "SVG" && exists($svgCustomMappings{$name});
-    return 0;
+
+    # A tag reuses the default wrapper if its JSInterfaceName matches the default namespace Element.
+    return $tags{$name}{'JSInterfaceName'} eq $parameters{"namespace"} . "Element";
 }
 
 sub printWrapperFunctions
 {
-    my ($F, $namesRef) = @_;
-    my %names = %$namesRef;
-    for my $name (sort keys %names) {
-        # Custom mapping do not need a JS wrapper
-        next if (hasCustomMapping($name));
+    my $F = shift;
 
-        my $ucName = $names{$name}{"interfaceName"};
+    for my $name (sort keys %tags) {
+        # A custom JSInterface means that we reuse another tag's constructor.
+        next if hasCustomJSInterfaceName($name) || usesDefaultWrapper($name);
+
+        my $ucName = $tags{$name}{"JSInterfaceName"};
         # Hack for the media tags
-        if ($names{$name}{"wrapperOnlyIfMediaIsAvailable"}) {
+        if ($tags{$name}{"wrapperOnlyIfMediaIsAvailable"}) {
             print F <<END
 static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
@@ -787,7 +741,7 @@ typedef JSNode* (*Create$parameters{'namespace'}ElementWrapperFunction)(ExecStat
 END
 ;
 
-    printWrapperFunctions($F, \%tags);
+    printWrapperFunctions($F);
 
     print F <<END
 JSNode* createJS$parameters{'namespace'}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
@@ -799,22 +753,12 @@ END
 ;
 
     for my $tag (sort keys %tags) {
-        next if (hasCustomMapping($tag));
+        # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
+        next if usesDefaultWrapper($tag, \%tags);
 
-        my $ucTag = $tags{$tag}{"interfaceName"};
+        my $ucTag = $tags{$tag}{"JSInterfaceName"};
         print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";
     }
-
-    if ($parameters{'namespace'} eq "HTML") {
-        for my $tag (sort keys %htmlCustomMappings) {
-            next if !$htmlCustomMappings{$tag};
-
-            my $ucCustomTag = $tags{$htmlCustomMappings{$tag}}{"interfaceName"};
-            print F "       map.set(${tag}Tag.localName().impl(), create${ucCustomTag}Wrapper);\n";
-        }
-    }
-
-    # Currently SVG has no need to add custom map.set as it only has empty elements
 
     print F <<END
     }

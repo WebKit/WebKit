@@ -14,7 +14,7 @@ altGlyphItem
 #if ENABLE_SVG_ANIMATION
 animate
 animateColor
-animateMotion
+animateMotion JSInterfaceName=SVGElement
 animateTransform
 set
 #endif
@@ -80,7 +80,7 @@ glyph
 glyphRef
 #endif
 #if ENABLE_SVG_FONTS
-hkern interfaceName=SVGHKernElement
+hkern interfaceName=SVGHKernElement, JSInterfaceName=SVGElement
 #endif
 image
 line
@@ -91,7 +91,7 @@ metadata
 #if ENABLE_SVG_FONTS
 missing_glyph
 #endif
-mpath interfaceName=SVGMPathElement
+mpath interfaceName=SVGMPathElement, JSInterfaceName=SVGElement
 path
 pattern
 polygon
