@@ -1,3 +1,17 @@
+2008-11-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Third step in https://bugs.webkit.org/show_bug.cgi?id=22394
+        Be more eager in destroying script decoded data
+
+        Destroy the decoded data when all clients are removed from a CachedScript.
+
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::allClientsRemoved):
+        * loader/CachedScript.h:
+        (WebCore::CachedScript::allClientsRemoved):
+
 2008-11-21  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Dan Bernstein.
