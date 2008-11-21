@@ -1,3 +1,20 @@
+2008-11-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        A little more RegExp refactoring.
+        
+        Deployed a helper function for reading the next character. Used the "link
+        vector of jumps" helper in a place I missed before.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateLoadCharacter):
+        (JSC::WREC::Generator::generatePatternCharacter):
+        (JSC::WREC::Generator::generateCharacterClass):
+        (JSC::WREC::Generator::generateAssertionEOL):
+        (JSC::WREC::Generator::generateAssertionWordBoundary):
+        * wrec/WRECGenerator.h:
+
 2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

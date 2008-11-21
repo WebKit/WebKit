@@ -64,6 +64,7 @@ namespace JSC { namespace WREC {
         void generateEnter();
         void generateSaveIndex();
         void generateIncrementIndex();
+        void generateLoadCharacter(JmpSrcVector& failures);
         void generateLoopIfNotEndOfInput(JmpDst);
         void generateReturnSuccess();
         void generateReturnFailure();

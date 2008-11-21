@@ -92,6 +92,13 @@ void Generator::generateIncrementIndex()
     __ movl_rm(Generator::index, X86::esp);
 }
 
+void Generator::generateLoadCharacter(JmpSrcVector& failures)
+{
+    __ cmpl_rr(length, index);
+    failures.append(__ je());
+    __ movzwl_mr(input, index, 2, character);
+}
+
 void Generator::generateLoopIfNotEndOfInput(JmpDst target)
 {
     __ cmpl_rr(Generator::length, Generator::index);
@@ -274,10 +281,7 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
 
 void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
 {
-    // check there is more input, read a char.
-    __ cmpl_rr(length, index);
-    failures.append(__ je());
-    __ movzwl_mr(input, index, 2, character);
+    generateLoadCharacter(failures);
 
     // used for unicode case insensitive
     bool hasUpper = false;
@@ -441,9 +445,7 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
 
 void Generator::generateCharacterClass(JmpSrcVector& failures, const CharacterClass& charClass, bool invert)
 {
-    __ cmpl_rr(length, index);
-    failures.append(__ je());
-    __ movzwl_mr(input, index, 2, character);
+    generateLoadCharacter(failures);
 
     if (invert)
         generateCharacterClassInverted(failures, charClass);
@@ -451,9 +453,7 @@ void Generator::generateCharacterClass(JmpSrcVector& failures, const CharacterCl
         JmpSrcVector successes;
         generateCharacterClassInverted(successes, charClass);
         failures.append(__ jmp());
-        JmpDst here = __ label();
-        for (unsigned i = 0; i < successes.size(); ++i)
-            __ link(successes[i], here);
+        __ link(successes, __ label());
     }
     
     __ addl_i8r(1, index);
@@ -555,16 +555,9 @@ void Generator::generateAssertionEOL(JmpSrcVector& failures)
     if (m_parser.multiline()) {
         JmpSrcVector nextIsNewline;
 
-        // end of input == success
-        __ cmpl_rr(length, index);
-        nextIsNewline.append(__ je());
-
-        // now check next char against newline characters.
-        __ movzwl_mr(input, index, 2, character);
+        generateLoadCharacter(nextIsNewline); // end of input == success
         generateCharacterClassInverted(nextIsNewline, CharacterClass::newline());
-
         failures.append(__ jmp());
-
         __ link(nextIsNewline, __ label());
     } else {
         __ cmpl_rr(length, index);
@@ -591,26 +584,18 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
 
     // (2) Handle situation where previous was NOT a \w
 
-    // (2.1) check for end of input
-    __ cmpl_rr(length, index);
-    notWordBoundary.append(__ je());
-    // (2.2) load the next char, and chck if is word character
-    __ movzwl_mr(input, index, 2, character);
+    generateLoadCharacter(notWordBoundary);
     generateCharacterClassInverted(wordBoundary, CharacterClass::wordchar());
-    // (2.3) If we get here, neither chars are word chars
+    // (2.1) If we get here, neither chars are word chars
     notWordBoundary.append(__ jmp());
 
     // (3) Handle situation where previous was a \w
 
     // (3.0) link success in first match to here
     __ link(previousIsWord, __ label());
-    // (3.1) check for end of input
-    __ cmpl_rr(length, index);
-    wordBoundary.append(__ je());
-    // (3.2) load the next char, and chck if is word character
-    __ movzwl_mr(input, index, 2, character);
+    generateLoadCharacter(wordBoundary);
     generateCharacterClassInverted(notWordBoundary, CharacterClass::wordchar());
-    // (3.3) If we get here, this is an end of a word, within the input.
+    // (3.1) If we get here, this is an end of a word, within the input.
     
     // (4) Link everything up
     
