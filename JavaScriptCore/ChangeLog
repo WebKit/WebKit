@@ -1,5 +1,11 @@
 2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
 
+        Build fix.
+
+        * wtf/Assertions.h: Use ::abort for C++ code.
+
+2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=22402
