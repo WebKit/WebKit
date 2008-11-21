@@ -60,6 +60,13 @@ namespace JSC { namespace WREC {
         static const RegisterID character = X86::esi;
         static const RegisterID output = X86::edi;
         static const RegisterID repeatCount = X86::ebx; // How many times the current atom repeats in the current match.
+        
+        void generateEnter();
+        void generateSaveIndex();
+        void generateIncrementIndex();
+        void generateLoopIfNotEndOfInput(JmpDst);
+        void generateReturnSuccess();
+        void generateReturnFailure();
 
         void generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);
         void generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max);

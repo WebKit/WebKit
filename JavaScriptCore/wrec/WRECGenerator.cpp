@@ -40,6 +40,73 @@ using namespace WTF;
 
 namespace JSC { namespace WREC {
 
+#if COMPILER(MSVC)
+// MSVC has 3 extra arguments on the stack because it doesn't use the register calling convention.
+static const int outputParameter = 16 + sizeof(const UChar*) + sizeof(unsigned) + sizeof(unsigned);
+#else
+static const int outputParameter = 16;
+#endif
+
+void Generator::generateEnter()
+{
+    __ convertToFastCall();
+
+    // Save callee save registers.
+    __ pushl_r(Generator::output);
+    __ pushl_r(Generator::character);
+    
+    // Initialize output register.
+    __ movl_mr(outputParameter, X86::esp, Generator::output);
+
+#ifndef NDEBUG
+    // ASSERT that the output register is not null.
+    __ testl_rr(Generator::output, Generator::output);
+    X86Assembler::JmpSrc outputNotNull = __ jne();
+    __ int3();
+    __ link(outputNotNull, __ label());
+#endif
+}
+
+void Generator::generateReturnSuccess()
+{
+    // Set return value.
+    __ popl_r(X86::eax); // match begin
+    __ movl_rm(X86::eax, Generator::output);
+    __ movl_rm(Generator::index, 4, Generator::output); // match end
+    
+    // Restore callee save registers.
+    __ popl_r(Generator::character);
+    __ popl_r(Generator::output);
+    __ ret();
+}
+
+void Generator::generateSaveIndex()
+{
+    __ pushl_r(Generator::index);
+}
+
+void Generator::generateIncrementIndex()
+{
+    __ movl_mr(X86::esp, Generator::index);
+    __ addl_i8r(1, Generator::index);
+    __ movl_rm(Generator::index, X86::esp);
+}
+
+void Generator::generateLoopIfNotEndOfInput(JmpDst target)
+{
+    __ cmpl_rr(Generator::length, Generator::index);
+    __ link(__ jle(), target);
+}
+
+void Generator::generateReturnFailure()
+{
+    __ addl_i8r(4, X86::esp);
+    __ movl_i32r(-1, X86::eax);
+    __ popl_r(Generator::character);
+    __ popl_r(Generator::output);
+    __ ret();
+}
+
 void Generator::generateBacktrack1()
 {
     __ subl_i8r(1, index);
