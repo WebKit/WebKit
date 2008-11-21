@@ -85,11 +85,11 @@ void WMLPElement::insertedIntoDocument()
     if (!m_mode.isEmpty())
         return;
 
-    RefPtr<NodeList> nodeList = document()->getElementsByTagNameNS(wmlNamespaceURI, "p");
+    RefPtr<NodeList> nodeList = document()->getElementsByTagName("p");
     if (!nodeList)
         return;
 
-    int length = nodeList->length();
+    unsigned length = nodeList->length();
     if (length < 2)
         return;
 

@@ -2,6 +2,15 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        No need to use getElementsByTagNameNS() in WML documents. Revert to using getElementByTagName() again.
+
+        * wml/WMLPElement.cpp:
+        (WebCore::WMLPElement::insertedIntoDocument):
+
+2008-11-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         Fix some coding style/formatting issues in WMLAElement.
 
         * wml/WMLAElement.cpp:
