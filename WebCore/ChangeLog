@@ -216,7 +216,7 @@
         * dom/WorkerContext.h:
         (WebCore::WorkerContext::script):
         (WebCore::WorkerContext::clearScript):
-        Added a method to manually destroy WorkerSctriptController.
+        Added a method to manually destroy WorkerScriptController.
 
         * dom/WorkerThread.cpp: (WebCore::WorkerThread::workerThread):
         Destroy WorkerScriptController to release any references to WorkerContext.
@@ -495,8 +495,8 @@
 
         * platform/text/TextEncodingRegistry.cpp:
         (WebCore::encodingRegistryMutex): Added a mutex for codec maps access.
-        (WebCore::addToTextCodecMap): Don't use TextEncoding just to cacnonicalize the name, as it
-        causes a dedalock due to a recursive call into registry.
+        (WebCore::addToTextCodecMap): Don't use TextEncoding just to canonicalize the name, as it
+        causes a deadlock due to a recursive call into registry.
         (WebCore::buildBaseTextCodecMaps): Added assertions.
         (WebCore::newTextCodec): Take a lock to avoid concurrent access to codec maps.
         (WebCore::atomicCanonicalTextEncodingName): Ditto.
