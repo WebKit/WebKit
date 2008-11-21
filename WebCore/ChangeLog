@@ -1,3 +1,18 @@
+2008-11-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Destroy script decoded data on a zero-delay timer after
+        decoding.  This means we now have no decoded script data
+        at the end of Membuster.
+
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        (WebCore::CachedScript::allClientsRemoved):
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::decodedDataDeletionTimerFired):
+        * loader/CachedScript.h:
+
 2008-11-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler
