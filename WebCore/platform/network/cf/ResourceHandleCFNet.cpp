@@ -109,6 +109,16 @@ void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLen
         handle->client()->didReceiveData(handle, (const char*)bytes, length, originalLength);
 }
 
+#ifdef _CFURLConnectionClientV2Present
+static void didSendBodyData(CFURLConnectionRef conn, CFIndex bytesWritten, CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite, const void *clientInfo)
+{
+    ResourceHandle* handle = (ResourceHandle*)clientInfo;
+    if (!handle || !handle->client())
+        return;
+    handle->client()->didSendData(handle, totalBytesWritten, totalBytesExpectedToWrite);
+}
+#endif
+
 void didFinishLoading(CFURLConnectionRef conn, const void* clientInfo) 
 {
     ResourceHandle* handle = (ResourceHandle*)clientInfo;
@@ -279,11 +289,17 @@ bool ResourceHandle::start(Frame* frame)
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(d->m_request, d->m_shouldContentSniff));
 
-    // CFURLConnection Callback API currently at version 1
-    const int CFURLConnectionClientVersion = 1;
-    CFURLConnectionClient client = {CFURLConnectionClientVersion, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge};
+    CFURLConnectionClient* client;
+#ifdef _CFURLConnectionClientV2Present
+    // CFURLConnection Callback API currently at version 2
+    CFURLConnectionClient_V2 client_V2 = {2, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData};
+    client = reinterpret_cast<CFURLConnectionClient*>(&client_V2);
+#else
+    CFURLConnectionClient client_V1 = {1, this, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge};
+    client = &client_V1;
+#endif
 
-    d->m_connection.adoptCF(CFURLConnectionCreate(0, request.get(), &client));
+    d->m_connection.adoptCF(CFURLConnectionCreate(0, request.get(), client));
 
     CFURLConnectionScheduleWithCurrentMessageQueue(d->m_connection.get());
     CFURLConnectionScheduleDownloadWithRunLoop(d->m_connection.get(), loaderRunLoop(), kCFRunLoopDefaultMode);

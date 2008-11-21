@@ -1,3 +1,13 @@
+2008-11-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler. 
+
+        Fix for <rdar://problem/6111436> Support upload progress events on Windows
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::didSendBodyData): Added.
+        (WebCore::ResourceHandle::start): Hook up didSendBodyData callback.
+
 2008-11-20  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.
