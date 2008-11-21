@@ -283,7 +283,7 @@ template <HeapType heapType> ALWAYS_INLINE void* Heap::heapAllocate(size_t s)
     ASSERT(heap.operationInProgress == NoOperation);
     ASSERT(heapType == PrimaryHeap || heap.extraCost == 0);
     // FIXME: If another global variable access here doesn't hurt performance
-    // too much, we could CRASH() in NDEBUG builds, which could help ensure we
+    // too much, we could abort() in NDEBUG builds, which could help ensure we
     // don't spend any time debugging cases where we allocate inside an object's
     // deallocation code.
 
@@ -974,7 +974,7 @@ bool Heap::collect()
 
     ASSERT((primaryHeap.operationInProgress == NoOperation) | (numberHeap.operationInProgress == NoOperation));
     if ((primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation))
-        CRASH();
+        abort();
 
     JAVASCRIPTCORE_GC_BEGIN();
     primaryHeap.operationInProgress = Collection;

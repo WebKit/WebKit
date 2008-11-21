@@ -1,3 +1,26 @@
+2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reverted fix for bug 22042 (Replace abort() with CRASH()), because it was breaking
+        FOR_EACH_OPCODE_ID macro somehow, making Safari crash.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::heapAllocate):
+        (JSC::Heap::collect):
+        * wtf/Assertions.h:
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastRealloc):
+        (WTF::InitSizeClasses):
+        (WTF::PageHeapAllocator::New):
+        (WTF::TCMallocStats::do_malloc):
+        * wtf/FastMalloc.h:
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Init):
+        (TCMalloc_SpinLock::Finalize):
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+
 2008-11-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
