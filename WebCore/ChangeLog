@@ -1,3 +1,16 @@
+2008-11-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22392
+        REGRESION: XMLHttpRequest.responseText does unnecessary trip though WebCore::String
+
+        - Use jsOwnedStringOrNull to avoid conversion to WebCore::String.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::responseText):
+        * xml/XMLHttpRequest.idl:
+
 2008-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
