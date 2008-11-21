@@ -3,6 +3,7 @@ namespaceURI="http://www.wapforum.org/DTD/wml_1.1.xml"
 guardFactoryWith="ENABLE(WML)"
 
 a
+anchor
 br interfaceName=WMLBRElement
 card
 p
@@ -21,7 +22,6 @@ u
 #if 0
 # Not yet implemented
 access
-anchor
 do
 fieldset
 go

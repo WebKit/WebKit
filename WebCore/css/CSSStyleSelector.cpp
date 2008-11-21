@@ -102,6 +102,10 @@
 #include "SVGNames.h"
 #endif
 
+#if ENABLE(WML)
+#include "WMLNames.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -808,12 +812,19 @@ static inline const AtomicString* linkAttribute(Node* node)
 
     ASSERT(node->isElementNode());
     Element* element = static_cast<Element*>(node);
-    if (element->isHTMLElement()
-#if ENABLE(WML)
-        || element->isWMLElement()
-#endif
-       )
+    if (element->isHTMLElement())
         return &element->getAttribute(hrefAttr);
+
+#if ENABLE(WML)
+    if (element->isWMLElement()) {
+        // <anchor> elements don't have href attributes, but we still want to
+        // appear as link, so linkAttribute() has to return a non-null value!
+        if (element->hasTagName(WMLNames::anchorTag))
+            return &emptyAtom;
+
+        return &element->getAttribute(hrefAttr);
+    }
+#endif
 
 #if ENABLE(SVG)
     if (element->isSVGElement())

@@ -1,3 +1,41 @@
+2008-11-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22399
+
+        Implement <anchor> support for WML, add WMLVariables file containing helper functions
+        for variable support, and a WMLTaskElement base class for WMLPrev/Go/RefreshElement.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::linkAttribute):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        (WebCore::HitTestResult::isLiveLink):
+        * wml/WMLAnchorElement.cpp: Added.
+        (WebCore::WMLAnchorElement::WMLAnchorElement):
+        (WebCore::WMLAnchorElement::~WMLAnchorElement):
+        (WebCore::WMLAnchorElement::defaultEventHandler):
+        * wml/WMLAnchorElement.h: Added.
+        (WebCore::WMLAnchorElement::registerTask):
+        * wml/WMLTagNames.in:
+        * wml/WMLTaskElement.cpp: Added.
+        (WebCore::WMLTaskElement::WMLTaskElement):
+        (WebCore::WMLTaskElement::~WMLTaskElement):
+        (WebCore::WMLTaskElement::insertedIntoDocument):
+        (WebCore::WMLTaskElement::addVariableSetter):
+        (WebCore::WMLTaskElement::removeVariableSetter):
+        (WebCore::WMLTaskElement::storeVariableState):
+        * wml/WMLTaskElement.h: Added.
+        * wml/WMLVariables.cpp: Added.
+        (WebCore::isValidVariableCharacter):
+        (WebCore::isValidVariableReferenceCharacter):
+        (WebCore::isValidVariableName):
+        (WebCore::substituteVariableReferences):
+        * wml/WMLVariables.h: Added.
+        (WebCore::):
+
 2008-11-21  Julien Chaffraix  <jchaffraix@pleyo.com>
 
         Rubber-stamped by Alexey Proskuryakov.

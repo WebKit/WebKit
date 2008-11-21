@@ -35,8 +35,12 @@
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
+		080081960ED3B2DD00C53BC0 /* WMLAnchorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */; };
+		080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */; };
 		0839476C0ECE4BD600027350 /* WMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */; };
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
+		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
+		084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DBA9E0ED39D360038C226 /* WMLVariables.h */; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
@@ -60,6 +64,8 @@
 		08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A484750E5272C500C3FE76 /* ScriptElement.cpp */; };
 		08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A484760E5272C500C3FE76 /* ScriptElement.h */; };
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
+		08CD61BC0ED3929C002DDF51 /* WMLTaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */; };
+		08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */; };
 		08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
@@ -4773,6 +4779,10 @@
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
+		080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLAnchorElement.cpp; sourceTree = "<group>"; };
+		080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAnchorElement.h; sourceTree = "<group>"; };
+		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
+		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -4782,6 +4792,8 @@
 		08A484750E5272C500C3FE76 /* ScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElement.cpp; sourceTree = "<group>"; };
 		08A484760E5272C500C3FE76 /* ScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElement.h; sourceTree = "<group>"; };
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
+		08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTaskElement.cpp; sourceTree = "<group>"; };
+		08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTaskElement.h; sourceTree = "<group>"; };
 		08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLengthCustom.cpp; sourceTree = "<group>"; };
 		08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLElementFactory.cpp; sourceTree = "<group>"; };
 		08FB84B10ECE373300DC064E /* WMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLElementFactory.h; sourceTree = "<group>"; };
@@ -9436,6 +9448,8 @@
 			children = (
 				4C6B99180E52E37300487BB7 /* WMLAElement.cpp */,
 				4C6B99190E52E37300487BB7 /* WMLAElement.h */,
+				080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */,
+				080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */,
 				0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */,
 				0897C14B0ED2EBA400AE06DB /* WMLBRElement.h */,
 				4C6B991C0E52E37300487BB7 /* WMLAttributeNames.in */,
@@ -9450,6 +9464,10 @@
 				4C6B99350E52E37300487BB7 /* WMLPElement.cpp */,
 				4C6B99360E52E37300487BB7 /* WMLPElement.h */,
 				4C6B99430E52E37300487BB7 /* WMLTagNames.in */,
+				08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */,
+				08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */,
+				084DBA9D0ED39D350038C226 /* WMLVariables.cpp */,
+				084DBA9E0ED39D360038C226 /* WMLVariables.h */,
 			);
 			path = wml;
 			sourceTree = "<group>";
@@ -16310,6 +16328,9 @@
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
 				934CC0E20ED39D6F00A658F2 /* ScriptValue.h in Headers */,
 				0897C14D0ED2EBA500AE06DB /* WMLBRElement.h in Headers */,
+				08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */,
+				084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */,
+				080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18231,6 +18252,9 @@
 				E14799B40ECDE9D800292BF3 /* WorkerMessagingProxy.cpp in Sources */,
 				0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */,
 				E182504F0ED2F20200499A8F /* FrameLoaderClient.cpp in Sources */,
+				08CD61BC0ED3929C002DDF51 /* WMLTaskElement.cpp in Sources */,
+				084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */,
+				080081960ED3B2DD00C53BC0 /* WMLAnchorElement.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

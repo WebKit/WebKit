@@ -36,6 +36,10 @@
 #include "XLinkNames.h"
 #endif
 
+#if ENABLE(WML)
+#include "WMLNames.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -253,6 +257,10 @@ KURL HitTestResult::absoluteLinkURL() const
     else if (m_innerURLElement->hasTagName(SVGNames::aTag))
         urlString = m_innerURLElement->getAttribute(XLinkNames::hrefAttr);
 #endif
+#if ENABLE(WML)
+    else if (m_innerURLElement->hasTagName(WMLNames::aTag))
+        urlString = m_innerURLElement->getAttribute(hrefAttr);
+#endif
     else
         return KURL();
 
@@ -270,7 +278,11 @@ bool HitTestResult::isLiveLink() const
     if (m_innerURLElement->hasTagName(SVGNames::aTag))
         return m_innerURLElement->isLink();
 #endif
-    
+#if ENABLE(WML)
+    if (m_innerURLElement->hasTagName(WMLNames::aTag))
+        return m_innerURLElement->isLink();
+#endif
+
     return false;
 }
 
