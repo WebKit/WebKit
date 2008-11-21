@@ -1,3 +1,18 @@
+2008-11-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Renamed wrec => generator.
+
+        * wrec/WRECFunctors.cpp:
+        (JSC::WREC::GeneratePatternCharacterFunctor::generateAtom):
+        (JSC::WREC::GeneratePatternCharacterFunctor::backtrack):
+        (JSC::WREC::GenerateCharacterClassFunctor::generateAtom):
+        (JSC::WREC::GenerateCharacterClassFunctor::backtrack):
+        (JSC::WREC::GenerateBackreferenceFunctor::generateAtom):
+        (JSC::WREC::GenerateBackreferenceFunctor::backtrack):
+        (JSC::WREC::GenerateParenthesesNonGreedyFunctor::generateAtom):
+
 2008-11-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

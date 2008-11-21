@@ -34,39 +34,39 @@ using namespace WTF;
 
 namespace JSC { namespace WREC {
 
-void GeneratePatternCharacterFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+void GeneratePatternCharacterFunctor::generateAtom(Generator* generator, JmpSrcVector& failures)
 {
-    wrec->generatePatternCharacter(failures, m_ch);
+    generator->generatePatternCharacter(failures, m_ch);
 }
 
-void GeneratePatternCharacterFunctor::backtrack(Generator* wrec)
+void GeneratePatternCharacterFunctor::backtrack(Generator* generator)
 {
-    wrec->generateBacktrack1();
+    generator->generateBacktrack1();
 }
 
-void GenerateCharacterClassFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+void GenerateCharacterClassFunctor::generateAtom(Generator* generator, JmpSrcVector& failures)
 {
-    wrec->generateCharacterClass(failures, *m_charClass, m_invert);
+    generator->generateCharacterClass(failures, *m_charClass, m_invert);
 }
 
-void GenerateCharacterClassFunctor::backtrack(Generator* wrec)
+void GenerateCharacterClassFunctor::backtrack(Generator* generator)
 {
-    wrec->generateBacktrack1();
+    generator->generateBacktrack1();
 }
 
-void GenerateBackreferenceFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+void GenerateBackreferenceFunctor::generateAtom(Generator* generator, JmpSrcVector& failures)
 {
-    wrec->generateBackreference(failures, m_subpatternId);
+    generator->generateBackreference(failures, m_subpatternId);
 }
 
-void GenerateBackreferenceFunctor::backtrack(Generator* wrec)
+void GenerateBackreferenceFunctor::backtrack(Generator* generator)
 {
-    wrec->generateBacktrackBackreference(m_subpatternId);
+    generator->generateBacktrackBackreference(m_subpatternId);
 }
 
-void GenerateParenthesesNonGreedyFunctor::generateAtom(Generator* wrec, JmpSrcVector& failures)
+void GenerateParenthesesNonGreedyFunctor::generateAtom(Generator* generator, JmpSrcVector& failures)
 {
-    wrec->generateParenthesesNonGreedy(failures, m_start, m_success, m_fail);
+    generator->generateParenthesesNonGreedy(failures, m_start, m_success, m_fail);
 }
 
 void GenerateParenthesesNonGreedyFunctor::backtrack(Generator*)
