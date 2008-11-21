@@ -63,9 +63,9 @@ void WMLAElement::parseMappedAttribute(MappedAttribute* attr)
             if (protocolIs(value, "http") || protocolIs(value, "https") || value.startsWith("//"))
                 prefetchDNS(document()->completeURL(value).host());
         }
-    } else if (attr->name() == HTMLNames::nameAttr ||
-             attr->name() == HTMLNames::titleAttr ||
-             attr->name() == HTMLNames::relAttr) {
+    } else if (attr->name() == HTMLNames::nameAttr
+               || attr->name() == HTMLNames::titleAttr
+               || attr->name() == HTMLNames::relAttr) {
         // Do nothing.
     } else
         WMLElement::parseMappedAttribute(attr);
@@ -120,40 +120,41 @@ bool WMLAElement::isKeyboardFocusable(KeyboardEvent* event) const
     return false;
 }
 
-void WMLAElement::defaultEventHandler(Event* evt)
+void WMLAElement::defaultEventHandler(Event* event)
 {
-    if (isLink() && (evt->type() == eventNames().clickEvent || (evt->type() == eventNames().keydownEvent && focused()))) {
+    if (isLink() && (event->type() == eventNames().clickEvent || (event->type() == eventNames().keydownEvent && focused()))) {
         MouseEvent* e = 0;
-        if (evt->type() == eventNames().clickEvent && evt->isMouseEvent())
-            e = static_cast<MouseEvent*>(evt);
+        if (event->type() == eventNames().clickEvent && event->isMouseEvent())
+            e = static_cast<MouseEvent*>(event);
 
         KeyboardEvent* k = 0;
-        if (evt->type() == eventNames().keydownEvent && evt->isKeyboardEvent())
-            k = static_cast<KeyboardEvent*>(evt);
+        if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent())
+            k = static_cast<KeyboardEvent*>(event);
 
         if (e && e->button() == RightButton) {
-            WMLElement::defaultEventHandler(evt);
+            WMLElement::defaultEventHandler(event);
             return;
         }
 
         if (k) {
             if (k->keyIdentifier() != "Enter") {
-                WMLElement::defaultEventHandler(evt);
+                WMLElement::defaultEventHandler(event);
                 return;
             }
-            evt->setDefaultHandled();
-            dispatchSimulatedClick(evt);
+
+            event->setDefaultHandled();
+            dispatchSimulatedClick(event);
             return;
         }
 
         String url = parseURL(getAttribute(HTMLNames::hrefAttr));
 
-        ASSERT(evt->target());
-        ASSERT(evt->target()->toNode());
+        ASSERT(event->target());
+        ASSERT(event->target()->toNode());
         
         /* FIXME: Enable once WMLImageElement is created.
-        if (evt->target()->toNode()->hasTagName(imgTag)) {
-            WMLImageElement* img = static_cast<WMLImageElement*>(evt->target()->toNode());
+        if (event->target()->toNode()->hasTagName(imgTag)) {
+            WMLImageElement* img = static_cast<WMLImageElement*>(event->target()->toNode());
             if (img && img->isServerMap()) {
                 RenderImage* r = static_cast<RenderImage*>(img->renderer());
                 if (r && e) {
@@ -166,21 +167,21 @@ void WMLAElement::defaultEventHandler(Event* evt)
                     url += ",";
                     url += String::number(y);
                 } else {
-                    evt->setDefaultHandled();
-                    WMLElement::defaultEventHandler(evt);
+                    event->setDefaultHandled();
+                    WMLElement::defaultEventHandler(event);
                     return;
                 }
             }
         }
         */
 
-        if (!evt->defaultPrevented() && document()->frame())
-            document()->frame()->loader()->urlSelected(document()->completeURL(url), getAttribute(HTMLNames::targetAttr), evt, false, true);
+        if (!event->defaultPrevented() && document()->frame())
+            document()->frame()->loader()->urlSelected(document()->completeURL(url), getAttribute(HTMLNames::targetAttr), event, false, true);
 
-        evt->setDefaultHandled();
+        event->setDefaultHandled();
     }
 
-    WMLElement::defaultEventHandler(evt);
+    WMLElement::defaultEventHandler(event);
 }
 
 void WMLAElement::accessKeyAction(bool sendToAnyElement)

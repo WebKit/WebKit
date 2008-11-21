@@ -2,6 +2,17 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Fix some coding style/formatting issues in WMLAElement.
+
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::parseMappedAttribute):
+        (WebCore::WMLAElement::defaultEventHandler):
+        * wml/WMLAElement.h:
+
+2008-11-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Alexey Proskuryakov.
+
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22399
 
         Implement <anchor> support for WML, add WMLVariables file containing helper functions
