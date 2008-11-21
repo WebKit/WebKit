@@ -646,6 +646,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(location, it, identifiers, "get_by_id_proto");
             break;
         }
+        case op_get_by_id_proto_list: {
+            printGetByIdOp(location, it, identifiers, "op_get_by_id_proto_list");
+            break;
+        }
         case op_get_by_id_chain: {
             printGetByIdOp(location, it, identifiers, "get_by_id_chain");
             break;
@@ -1019,7 +1023,21 @@ void CodeBlock::derefStructures(Instruction* vPC) const
             vPC[4].u.structure->deref();
         return;
     }
-    
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list)) {
+        PrototypeStructureList* prototypeStructures = vPC[4].u.prototypeStructure;
+        int count = vPC[5].u.operand;
+        for (int i = 0; i < count; ++i) {
+            PrototypeStructureList::ProtoStubInfo& info = prototypeStructures->list[i];
+            ASSERT(info.base);
+            ASSERT(info.proto);
+            ASSERT(info.stubRoutine);
+            info.base->deref();
+            info.proto->deref();
+            WTF::fastFreeExecutable(info.stubRoutine);
+        }
+        return;
+    }
+
     // These instructions don't ref their Structures.
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_get_array_length) || vPC[0].u.opcode == interpreter->getOpcode(op_get_string_length));
 }

@@ -109,6 +109,8 @@ namespace JSC {
     struct CallLinkInfo;
     struct Instruction;
     struct OperandTypes;
+    struct PrototypeStructureList;
+    struct StructureStubInfo;
 
     typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
     typedef JSObject* (SFX_CALL *CTIHelper_o)(CTI_ARGS);
@@ -317,6 +319,14 @@ namespace JSC {
             jit.privateCompileGetByIdProto(structure, prototypeStructure, cachedOffset, returnAddress, callFrame);
         }
 
+#if USE(CTI_REPATCH_PIC)
+        static void compileGetByIdProtoList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PrototypeStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, size_t cachedOffset)
+        {
+            JIT jit(globalData, codeBlock);
+            jit.privateCompileGetByIdProtoList(stubInfo, prototypeStructureList, currentIndex, structure, prototypeStructure, cachedOffset, callFrame);
+        }
+#endif
+
         static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, void* returnAddress)
         {
             JIT jit(globalData, codeBlock);
@@ -368,6 +378,9 @@ namespace JSC {
         void privateCompile();
         void privateCompileGetByIdSelf(Structure*, size_t cachedOffset, void* returnAddress);
         void privateCompileGetByIdProto(Structure*, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
+#if USE(CTI_REPATCH_PIC)
+        void privateCompileGetByIdProtoList(StructureStubInfo*, PrototypeStructureList*, int, Structure*, Structure* prototypeStructure, size_t cachedOffset, CallFrame* callFrame);
+#endif
         void privateCompileGetByIdChain(Structure*, StructureChain*, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
         void privateCompilePutByIdReplace(Structure*, size_t cachedOffset, void* returnAddress);
         void privateCompilePutByIdTransition(Structure*, Structure*, size_t cachedOffset, StructureChain*, void* returnAddress);
@@ -413,6 +426,8 @@ namespace JSC {
 
         void emitJumpSlowCaseIfNotImmNum(RegisterID, unsigned bytecodeIndex);
         void emitJumpSlowCaseIfNotImmNums(RegisterID, RegisterID, unsigned bytecodeIndex);
+
+        JmpSrc checkStructure(RegisterID reg, Structure* structure);
 
         void emitFastArithDeTagImmediate(RegisterID);
         JmpSrc emitFastArithDeTagImmediateJumpIfZero(RegisterID);

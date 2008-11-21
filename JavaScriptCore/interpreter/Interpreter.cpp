@@ -2586,6 +2586,13 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
         uncacheGetByID(callFrame->codeBlock(), vPC);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_get_by_id_proto_list) {
+        // Polymorphic prototype access caching currently only supported when JITting.
+        ASSERT_NOT_REACHED();
+        // This case of the switch must not be empty, else (op_get_by_id_proto_list == op_get_by_id_chain)!
+        vPC += 8;
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_get_by_id_chain) {
         /* op_get_by_id_chain dst(r) base(r) property(id) structure(sID) structureChain(chain) count(n) offset(n)
 
@@ -4523,9 +4530,6 @@ void Interpreter::cti_op_put_by_id_fail(CTI_ARGS)
     PutPropertySlot slot;
     ARG_src1->put(callFrame, ident, ARG_src3, slot);
 
-    // should probably uncachePutByID() ... this would mean doing a vPC lookup - might be worth just bleeding this until the end.
-    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_id_generic));
-
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
@@ -4578,7 +4582,7 @@ JSValue* Interpreter::cti_op_get_by_id_generic(CTI_ARGS)
     return result;
 }
 
-JSValue* Interpreter::cti_op_get_by_id_fail(CTI_ARGS)
+JSValue* Interpreter::cti_op_get_by_id_self_fail(CTI_ARGS)
 {
     CTI_STACK_HACK();
 
@@ -4589,8 +4593,129 @@ JSValue* Interpreter::cti_op_get_by_id_fail(CTI_ARGS)
     PropertySlot slot(baseValue);
     JSValue* result = baseValue->get(callFrame, ident, slot);
 
-    // should probably uncacheGetByID() ... this would mean doing a vPC lookup - might be worth just bleeding this until the end.
-    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    CallFrame* callFrame = ARG_callFrame;
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(callFrame, *ARG_id2, slot);
+
+    CHECK_FOR_EXCEPTION();
+
+    if (baseValue->isObject()
+        && slot.isCacheable()
+        && !asCell(baseValue)->structure()->isDictionary()
+        && slot.slotBase() == asCell(baseValue)->structure()->prototypeForLookup(callFrame)) {
+
+        JSCell* baseCell = asCell(baseValue);
+        Structure* structure = baseCell->structure();
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+        Instruction* vPC = codeBlock->instructions.begin() + vPCIndex;
+
+        ASSERT(slot.slotBase()->isObject());
+
+        JSObject* slotBaseObject = asObject(slot.slotBase());
+
+        // Heavy access to a prototype is a good indication that it's not being
+        // used as a dictionary.
+        if (slotBaseObject->structure()->isDictionary()) {
+            RefPtr<Structure> transition = Structure::fromDictionaryTransition(slotBaseObject->structure());
+            slotBaseObject->setStructure(transition.release());
+            asObject(baseValue)->structure()->setCachedPrototypeChain(0);
+        }
+
+        StructureStubInfo* stubInfo = &codeBlock->getStubInfo(CTI_RETURN_ADDRESS);
+
+        PrototypeStructureList* prototypeStructureList;
+        int listIndex = 1;
+
+        if (vPC[0].u.opcode == ARG_globalData->interpreter->getOpcode(op_get_by_id_proto)) {
+            prototypeStructureList = new PrototypeStructureList(vPC[4].u.structure, vPC[5].u.structure, vPC[6].u.operand, stubInfo->stubRoutine);
+            stubInfo->stubRoutine = 0;
+
+            vPC[0] = ARG_globalData->interpreter->getOpcode(op_get_by_id_proto_list);
+            vPC[4] = prototypeStructureList;
+            vPC[5] = 2;
+        } else {
+            prototypeStructureList = vPC[4].u.prototypeStructure;
+            listIndex = vPC[5].u.operand;
+
+            vPC[5] = listIndex + 1;
+        }
+
+        JIT::compileGetByIdProtoList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, slotBaseObject->structure(), slot.cachedOffset());
+
+        if (listIndex == (PROTOTYPE_LIST_CACHE_SIZE - 1))
+            ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_list_full));
+    } else {
+        ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
+    }
+    return result;
+}
+
+JSValue* Interpreter::cti_op_get_by_id_proto_list_full(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(ARG_callFrame, *ARG_id2, slot);
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Interpreter::cti_op_get_by_id_proto_fail(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(ARG_callFrame, *ARG_id2, slot);
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Interpreter::cti_op_get_by_id_chain_fail(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(ARG_callFrame, *ARG_id2, slot);
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Interpreter::cti_op_get_by_id_array_fail(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(ARG_callFrame, *ARG_id2, slot);
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Interpreter::cti_op_get_by_id_string_fail(CTI_ARGS)
+{
+    CTI_STACK_HACK();
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(ARG_callFrame, *ARG_id2, slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
@@ -4641,11 +4766,10 @@ JSValue* Interpreter::cti_op_del_by_id(CTI_ARGS)
     CTI_STACK_HACK();
 
     CallFrame* callFrame = ARG_callFrame;
-    Identifier& ident = *ARG_id2;
     
     JSObject* baseObj = ARG_src1->toObject(callFrame);
 
-    JSValue* result = jsBoolean(baseObj->deleteProperty(callFrame, ident));
+    JSValue* result = jsBoolean(baseObj->deleteProperty(callFrame, *ARG_id2));
     CHECK_FOR_EXCEPTION_AT_END();
     return result;
 }
@@ -5890,9 +6014,8 @@ void Interpreter::cti_op_put_getter(CTI_ARGS)
 
     ASSERT(ARG_src1->isObject());
     JSObject* baseObj = asObject(ARG_src1);
-    Identifier& ident = *ARG_id2;
     ASSERT(ARG_src3->isObject());
-    baseObj->defineGetter(callFrame, ident, asObject(ARG_src3));
+    baseObj->defineGetter(callFrame, *ARG_id2, asObject(ARG_src3));
 }
 
 void Interpreter::cti_op_put_setter(CTI_ARGS)
@@ -5903,9 +6026,8 @@ void Interpreter::cti_op_put_setter(CTI_ARGS)
 
     ASSERT(ARG_src1->isObject());
     JSObject* baseObj = asObject(ARG_src1);
-    Identifier& ident = *ARG_id2;
     ASSERT(ARG_src3->isObject());
-    baseObj->defineSetter(callFrame, ident, asObject(ARG_src3));
+    baseObj->defineSetter(callFrame, *ARG_id2, asObject(ARG_src3));
 }
 
 JSObject* Interpreter::cti_op_new_error(CTI_ARGS)

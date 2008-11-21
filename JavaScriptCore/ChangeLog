@@ -1,3 +1,57 @@
+2008-11-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add support for (really) polymorphic caching of prototype accesses.
+        
+        If a cached prototype access misses, cti_op_get_by_id_proto_list is called.
+        When this occurs the Structure pointers from the instruction stream are copied
+        off into a new ProtoStubInfo object.  A second prototype access trampoline is
+        generated, and chained onto the first.  Subsequent missed call to
+        cti_op_get_by_id_proto_list_append, which append futher new trampolines, up to
+        PROTOTYPE_LIST_CACHE_SIZE (currently 4).  If any of the misses result in an
+        access other than to a direct prototype property, list formation is halted (or
+        for the initial miss, does not take place at all).
+
+        Separate fail case functions are provided for each access since this contributes
+        to the performance progression (enables better processor branch prediction).
+
+        Overall this is a near 5% progression on v8, with around 10% wins on richards
+        and deltablue.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructures):
+        * bytecode/Instruction.h:
+        (JSC::ProtoStructureList::ProtoStubInfo::set):
+        (JSC::ProtoStructureList::ProtoStructureList):
+        (JSC::Instruction::Instruction):
+        (JSC::Instruction::):
+        * bytecode/Opcode.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_put_by_id_fail):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list_append):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list_full):
+        (JSC::Interpreter::cti_op_get_by_id_proto_fail):
+        (JSC::Interpreter::cti_op_get_by_id_chain_fail):
+        (JSC::Interpreter::cti_op_get_by_id_array_fail):
+        (JSC::Interpreter::cti_op_get_by_id_string_fail):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileGetByIdSelf):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProtoList):
+
 2008-11-20  Sam Weinig  <sam@webkit.org>
 
         Try and fix the tiger build.

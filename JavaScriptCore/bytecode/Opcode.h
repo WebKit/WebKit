@@ -102,6 +102,7 @@ namespace JSC {
         macro(op_get_by_id) \
         macro(op_get_by_id_self) \
         macro(op_get_by_id_proto) \
+        macro(op_get_by_id_proto_list) \
         macro(op_get_by_id_chain) \
         macro(op_get_by_id_generic) \
         macro(op_get_array_length) \
