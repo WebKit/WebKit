@@ -13337,6 +13337,10 @@
 				Name="js"
 				>
 				<File
+					RelativePath="..\bindings\js\CachedScriptSourceProvider.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\GCController.cpp"
 					>
 				</File>

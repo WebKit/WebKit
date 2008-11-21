@@ -1,3 +1,32 @@
+2008-11-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Second step in https://bugs.webkit.org/show_bug.cgi?id=22394
+        Be more eager in destroying script decoded data
+
+        Use a new CachedScriptSourceProvider to keep CachedScripts as
+        CachedScripts, even down into JSC.  This has the added benefit
+        of showing the CachedScripts as live in the Caches window.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CachedScriptSourceProvider.h: Added.
+        (WebCore::CachedScriptSourceProvider::create):
+        (WebCore::CachedScriptSourceProvider::~CachedScriptSourceProvider):
+        (WebCore::CachedScriptSourceProvider::getRange):
+        (WebCore::CachedScriptSourceProvider::data):
+        (WebCore::CachedScriptSourceProvider::length):
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        (WebCore::makeSource):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::notifyFinished):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::notifyFinished):
+
 2008-11-21  Brett Wilson  <brettw@chromium.org>
 
         Fix debug-only build bustage due to a typo in an assert, and add new

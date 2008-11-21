@@ -4017,6 +4017,7 @@
 		BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD0FBCF0DBD625E00B2F630 /* DOMAbstractView.mm */; };
 		BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */; };
 		BCD41ABB0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */; };
+		BCD533640ED6848900887468 /* CachedScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */; };
 		BCD9C2620C17AA67005C90A2 /* JSDOMWindowCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */; };
 		BCD9C2630C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */; };
 		BCD9C2640C17AA67005C90A2 /* JSNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */; };
@@ -8666,6 +8667,7 @@
 		BCD0FBCF0DBD625E00B2F630 /* DOMAbstractView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMAbstractView.mm; sourceTree = "<group>"; };
 		BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRGBColorInternal.h; sourceTree = "<group>"; };
 		BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElementCustom.cpp; sourceTree = "<group>"; };
+		BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedScriptSourceProvider.h; sourceTree = "<group>"; };
 		BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowCustom.cpp; sourceTree = "<group>"; };
 		BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNamedNodeMapCustom.cpp; sourceTree = "<group>"; };
 		BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeCustom.cpp; sourceTree = "<group>"; };
@@ -12968,9 +12970,10 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
-				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
+				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
+				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
 				1432E8460C51493800B1500F /* GCController.h */,
 				E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */,
@@ -12987,9 +12990,11 @@
 				BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */,
 				93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */,
 				93B70D4E09EB0C7C009D8468 /* JSEventListener.h */,
+				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
+				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				B25BE50F0D06B70800B524C6 /* JSEventTargetBase.h */,
-				BC6DC7A00C1A4BFA004E2017 /* JSHTMLAllCollection.h */,
 				9350E70C0E87500B00189FFF /* JSHTMLAllCollection.cpp */,
+				BC6DC7A00C1A4BFA004E2017 /* JSHTMLAllCollection.h */,
 				BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */,
 				BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */,
 				C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */,
@@ -13022,15 +13027,13 @@
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
-				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
+				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
 				934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */,
 				934CC0E00ED39D6F00A658F2 /* ScriptValue.h */,
 				65488D6A0DD5A83D009D83B2 /* StringSourceProvider.h */,
-				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
-				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
-				E1A643F10EC0972500779668 /* WorkerScriptController.h */,
 				E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */,
+				E1A643F10EC0972500779668 /* WorkerScriptController.h */,
 			);
 			path = js;
 			sourceTree = "<group>";
@@ -16334,6 +16337,7 @@
 				E14799A70ECDE3A400292BF3 /* WorkerMessagingProxy.h in Headers */,
 				934CC0E20ED39D6F00A658F2 /* ScriptValue.h in Headers */,
 				0897C14D0ED2EBA500AE06DB /* WMLBRElement.h in Headers */,
+				BCD533640ED6848900887468 /* CachedScriptSourceProvider.h in Headers */,
 				08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */,
 				084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */,
 				080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */,

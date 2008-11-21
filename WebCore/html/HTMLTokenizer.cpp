@@ -30,6 +30,7 @@
 #include "CSSHelper.h"
 #include "Cache.h"
 #include "CachedScript.h"
+#include "CachedScriptSourceProvider.h"
 #include "DocLoader.h"
 #include "DocumentFragment.h"
 #include "EventNames.h"
@@ -1964,14 +1965,14 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         m_pendingScripts.removeFirst();
         ASSERT(cache()->disabled() || cs->accessCount() > 0);
 
-        String scriptSource = cs->script();
         setSrc(SegmentedString());
 
         // make sure we forget about the script before we execute the new one
         // infinite recursion might happen otherwise
-        String cachedScriptUrl(cs->url());
+        JSC::SourceCode sourceCode = makeSource(cs);
         bool errorOccurred = cs->errorOccurred();
         cs->removeClient(this);
+
         RefPtr<Node> n = m_scriptNode.release();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -1983,7 +1984,7 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
             EventTargetNodeCast(n.get())->dispatchEventForType(eventNames().errorEvent, true, false);
         else {
             if (static_cast<HTMLScriptElement*>(n.get())->shouldExecuteAsJavaScript())
-                m_state = scriptExecution(makeSource(scriptSource, cachedScriptUrl), m_state);
+                m_state = scriptExecution(sourceCode, m_state);
             EventTargetNodeCast(n.get())->dispatchEventForType(eventNames().loadEvent, false, false);
         }
 

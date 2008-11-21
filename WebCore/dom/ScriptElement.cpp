@@ -25,6 +25,7 @@
 #include "ScriptElement.h"
 
 #include "CachedScript.h"
+#include "CachedScriptSourceProvider.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
@@ -197,7 +198,7 @@ void ScriptElementData::notifyFinished(CachedResource* o)
     if (cs->errorOccurred())
         m_scriptElement->dispatchErrorEvent();
     else {
-        evaluateScript(makeSource(cs->script(), cs->url()));
+        evaluateScript(makeSource(cs));
         m_scriptElement->dispatchLoadEvent();
     }
 

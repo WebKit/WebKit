@@ -29,6 +29,7 @@
 #include "CDATASection.h"
 #include "CString.h"
 #include "CachedScript.h"
+#include "CachedScriptSourceProvider.h"
 #include "Comment.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -325,9 +326,9 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     ASSERT(m_pendingScript == finishedObj);
     ASSERT(m_pendingScript->accessCount() > 0);
         
-    String cachedScriptUrl = m_pendingScript->url();
-    String scriptSource = m_pendingScript->script();
+    JSC::SourceCode sourceCode = makeSource(m_pendingScript.get());
     bool errorOccurred = m_pendingScript->errorOccurred();
+
     m_pendingScript->removeClient(this);
     m_pendingScript = 0;
     
@@ -340,10 +341,10 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     if (errorOccurred) 
         scriptElement->dispatchErrorEvent();
     else {
-        m_view->frame()->loader()->executeScript(makeSource(scriptSource, cachedScriptUrl));
+        m_view->frame()->loader()->executeScript(sourceCode);
         scriptElement->dispatchLoadEvent();
     }
-    
+
     m_scriptElement = 0;
     
     if (!m_requestingScript)
