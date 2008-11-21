@@ -1,3 +1,14 @@
+2008-11-21  Julien Chaffraix  <jchaffraix@pleyo.com>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Build fix when building without WORKERS on non-POSIX, non-WINDOWS
+        machine.
+
+        Spotted by Mario Bensi.
+
+        * platform/text/TextCodecICU.cpp:
+
 2008-11-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
