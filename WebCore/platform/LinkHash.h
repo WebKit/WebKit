@@ -44,7 +44,7 @@ struct LinkHashHash {
     // See AlreadyHashed::avoidDeletedValue.
     static unsigned avoidDeletedValue(LinkHash hash64)
     {
-        ASSERT(hash);
+        ASSERT(hash64);
         unsigned hash = static_cast<unsigned>(hash64);
         unsigned newHash = hash | (!(hash + 1) << 31);
         ASSERT(newHash);

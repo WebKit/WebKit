@@ -3168,6 +3168,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\LinkHash.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\LinkHash.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\LengthSize.h"
 				>
 			</File>

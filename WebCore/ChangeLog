@@ -1,3 +1,13 @@
+2008-11-21  Brett Wilson  <brettw@chromium.org>
+
+        Fix debug-only build bustage due to a typo in an assert, and add new
+        files to the Windows build.
+
+        * Info.plist:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/LinkHash.h:
+        (WebCore::LinkHashHash::avoidDeletedValue):
+
 2008-11-20  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Eric Seidel.
