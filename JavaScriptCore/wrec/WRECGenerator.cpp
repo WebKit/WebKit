@@ -108,9 +108,7 @@ void Generator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtom
     // (1.2) If we get here, successful match!
     __ addl_i8r(1, repeatCount);
     // (1.3) We needed to read the atom, and we failed - that's terminally  bad news.
-    for (unsigned i = 0; i < newFailures.size(); ++i)
-        __ link(newFailures[i], quantifierFailed);
-    newFailures.clear();
+    __ link(newFailures, quantifierFailed);
     // (1.4) If there is a minimum, check we have read enough ...
     if (min) {
         // ... except if min was 1 no need to keep checking!
@@ -130,9 +128,7 @@ void Generator::generateNonGreedyQuantifier(JmpSrcVector& failures, GenerateAtom
     __ addl_i8r(4, X86::esp);
     __ popl_r(repeatCount);
     // (2.2) link failure cases to jump back up to alternativeFailed.
-    for (unsigned i = 0; i < newFailures.size(); ++i)
-        __ link(newFailures[i], alternativeFailed);
-    newFailures.clear();
+    __ link(newFailures, alternativeFailed);
 }
 
 void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFunctor& functor, unsigned min, unsigned max)
@@ -172,11 +168,7 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
     if (min) {
         // We will fall through to here if (min && max), after the max check.
         // First, also link a
-        JmpDst minimumTest = __ label();
-        for (unsigned i = 0; i < newFailures.size(); ++i)
-            __ link(newFailures[i], minimumTest);
-        newFailures.clear();
-        // 
+        __ link(newFailures, __ label());
         __ cmpl_i32r(min, repeatCount);
         newFailures.append(__ jae());
     }
@@ -203,19 +195,14 @@ void Generator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAtomFun
     // (2) Try an alternative.
 
     // (2.1) point to retry
-    JmpDst tryAlternative = __ label();
-    for (unsigned i = 0; i < newFailures.size(); ++i)
-        __ link(newFailures[i], tryAlternative);
-    newFailures.clear();
+    __ link(newFailures, __ label());
     // (2.2) recursively call to parseAlternative, if it falls through, success!
     __ pushl_r(index);
     m_parser.parseAlternative(newFailures);
     __ addl_i8r(4, X86::esp);
     __ popl_r(repeatCount);
     // (2.3) link failure cases to here.
-    for (unsigned i = 0; i < newFailures.size(); ++i)
-        __ link(newFailures[i], backtrack);
-    newFailures.clear();
+    __ link(newFailures, backtrack);
 }
 
 void Generator::generatePatternCharacter(JmpSrcVector& failures, int ch)
@@ -351,10 +338,7 @@ void Generator::generateCharacterClassInverted(JmpSrcVector& matchDest, const Ch
             matchDest.append(__ je());
             ++matchIndex;
         }
-        JmpDst noMatch = __ label();
-        for (unsigned i = 0; i < failures.size(); ++i)
-            __ link(failures[i], noMatch);
-        failures.clear();
+        __ link(failures, __ label());
     } else if (charClass.numMatches) {
         // optimization: gather 'a','A' etc back together, can mask & test once.
         Vector<char> matchesAZaz;
@@ -437,11 +421,7 @@ Generator::JmpSrc Generator::generateParentheses(ParenthesesType type)
     // the common case to fix).
     JmpSrc successfulMatch = __ jmp();
 
-    JmpDst originalFailure = __ label();
-    for (unsigned i = 0; i < newFailures.size(); ++i)
-        __ link(newFailures[i], originalFailure);
-    newFailures.clear();
-    // fail: restore index
+    __ link(newFailures, __ label());
     __ popl_r(index);
 
     JmpSrc jumpToFail;
@@ -469,11 +449,7 @@ void Generator::generateParenthesesNonGreedy(JmpSrcVector& failures, JmpDst star
 Generator::JmpSrc Generator::generateParenthesesResetTrampoline(JmpSrcVector& newFailures, unsigned subpatternIdBefore, unsigned subpatternIdAfter)
 {
     JmpSrc skip = __ jmp();
-
-    JmpDst subPatternResetTrampoline = __ label();
-    for (unsigned i = 0; i < newFailures.size(); ++i)
-        __ link(newFailures[i], subPatternResetTrampoline);
-    newFailures.clear();
+    __ link(newFailures, __ label());
     for (unsigned i = subpatternIdBefore + 1; i <= subpatternIdAfter; ++i) {
         __ movl_i32m(-1, (2 * i) * sizeof(int), output);
         __ movl_i32m(-1, (2 * i + 1) * sizeof(int), output);
@@ -500,10 +476,7 @@ void Generator::generateAssertionBOL(JmpSrcVector& failures)
 
         failures.append(__ jmp());
 
-        JmpDst success = __ label();
-        for (unsigned i = 0; i < previousIsNewline.size(); ++i)
-            __ link(previousIsNewline[i], success);
-        previousIsNewline.clear();
+        __ link(previousIsNewline, __ label());
     } else {
         __ cmpl_i8r(0, index);
         failures.append(__ jne());
@@ -525,10 +498,7 @@ void Generator::generateAssertionEOL(JmpSrcVector& failures)
 
         failures.append(__ jmp());
 
-        JmpDst success = __ label();
-        for (unsigned i = 0; i < nextIsNewline.size(); ++i)
-            __ link(nextIsNewline[i], success);
-        nextIsNewline.clear();
+        __ link(nextIsNewline, __ label());
     } else {
         __ cmpl_rr(length, index);
         failures.append(__ jne());
@@ -566,10 +536,7 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
     // (3) Handle situation where previous was a \w
 
     // (3.0) link success in first match to here
-    JmpDst section3 = __ label();
-    for (unsigned i = 0; i < previousIsWord.size(); ++i)
-        __ link(previousIsWord[i], section3);
-    previousIsWord.clear();
+    __ link(previousIsWord, __ label());
     // (3.1) check for end of input
     __ cmpl_rr(length, index);
     wordBoundary.append(__ je());
@@ -585,18 +552,12 @@ void Generator::generateAssertionWordBoundary(JmpSrcVector& failures, bool inver
         wordBoundary.append(__ jmp());
     
         // looking for non word boundaries, so link boundary fails to here.
-        JmpDst success = __ label();
-        for (unsigned i = 0; i < notWordBoundary.size(); ++i)
-            __ link(notWordBoundary[i], success);
-        notWordBoundary.clear();
-        
+        __ link(notWordBoundary, __ label());
+
         failures.append(wordBoundary.begin(), wordBoundary.size());
     } else {
         // looking for word boundaries, so link successes here.
-        JmpDst success = __ label();
-        for (unsigned i = 0; i < wordBoundary.size(); ++i)
-            __ link(wordBoundary[i], success);
-        wordBoundary.clear();
+        __ link(wordBoundary, __ label());
         
         failures.append(notWordBoundary.begin(), notWordBoundary.size());
     }
@@ -645,20 +606,13 @@ void Generator::terminateAlternative(JmpSrcVector& successes, JmpSrcVector& fail
 {
     successes.append(__ jmp());
     
-    JmpDst failure = __ label();
-    for (unsigned i = 0; i < failures.size(); ++i)
-        __ link(failures[i], failure);
-    failures.clear();
-    
+    __ link(failures, __ label());
     __ movl_mr(X86::esp, index);
 }
 
 void Generator::terminateDisjunction(JmpSrcVector& successes)
 {
-    JmpDst success = __ label();
-    for (unsigned i = 0; i < successes.size(); ++i)
-        __ link(successes[i], success);
-    successes.clear();
+    __ link(successes, __ label());
 }
 
 } } // namespace JSC::WREC

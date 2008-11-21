@@ -49,7 +49,7 @@ static const int outputParameter = 16 + sizeof(const UChar*) + sizeof(unsigned) 
 #else
 static const int outputParameter = 16;
 #endif
-                    
+
 CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
 {
     if (pattern.size() > MaxPatternSize) {
@@ -98,11 +98,8 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
     __ ret();
     
     // (3) Failure:
-    //     All top-level failures link to here.
-    Generator::JmpDst failure = __ label();
-    for (unsigned i = 0; i < failures.size(); ++i)
-        __ link(failures[i], failure);
-    failures.clear();
+    //     All failures in the top-level disjunction link to here.
+    __ link(failures, __ label());
 
     // Move to the next input character and try again.
     __ movl_mr(X86::esp, Generator::index);
