@@ -1,0 +1,3 @@
+Test for transition delay on layoutTestController API
+
+PASS

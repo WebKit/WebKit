@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+    body {
+      margin: 0;
+    }
+    
+    div {
+      position: relative;
+      left: 100px;
+      height: 200px;
+      width: 200px;
+      background-color: red;
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 4s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-delay: 1s;
+    }
+    
+    .moved {
+      left: 200px;
+    }
+     </style>
+   <script type="text/javascript" charset="utf-8">
+    function endTest() {
+      if (window.layoutTestController) {
+        layoutTestController.pauseTransitionAtTimeOnElementWithId("left", 2.0, "target");
+        var left = window.getComputedStyle(document.getElementById('target')).left;
+        var result = "PASS";
+        if (left != "125px") {
+          result = "FAIL - expected 125px got " + left;
+        }
+        document.getElementById('result').innerHTML = "<p>" + result + "</p>";
+        layoutTestController.notifyDone();
+      }
+    }
+    
+    function startTest() {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+      }
+      
+      document.getElementById("target").className = "moved";
+      window.setTimeout(endTest, 0);
+    }
+   </script>
+</head>
+<body onload="startTest()">
+  <h1>Test for transition delay on layoutTestController API</h1>
+
+  <div id="target">
+  </div>
+
+  <div id="result">
+  </div>
+
+</body>
+</html>

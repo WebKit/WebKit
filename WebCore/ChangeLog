@@ -1,3 +1,16 @@
+2008-11-20  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        https://bugs.webkit.org/show_bug.cgi?id=22368
+
+        Make sure pauseTransition API takes transition delay into account.
+
+        Test: transitions/transition-drt-api-delay.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::pauseAtTime):
+
 2008-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

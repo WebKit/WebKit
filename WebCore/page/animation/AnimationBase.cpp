@@ -803,7 +803,7 @@ void AnimationBase::primeEventTimers()
 void AnimationBase::pauseAtTime(double t)
 {
     updatePlayState(false);
-    m_pauseTime = m_startTime + t;
+    m_pauseTime = m_startTime + t - m_animation->delay();
 }
 
 } // namespace WebCore
