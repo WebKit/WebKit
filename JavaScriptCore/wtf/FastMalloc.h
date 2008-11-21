@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-    // These functions call abort() if an allocation fails.
+    // These functions call CRASH() if an allocation fails.
     void* fastMalloc(size_t n);
     void* fastZeroedMalloc(size_t n);
     void* fastCalloc(size_t n_elements, size_t element_size);

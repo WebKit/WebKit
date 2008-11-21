@@ -1,5 +1,21 @@
 2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22402
+        Replace abort() with CRASH()
+
+        * wtf/Assertions.h: Added a different method to crash, which should work even is 0xbbadbeef
+        is a valid memory address.
+
+        * runtime/Collector.cpp:
+        * wtf/FastMalloc.cpp:
+        * wtf/FastMalloc.h:
+        * wtf/TCSpinLock.h:
+        Replace abort() with CRASH().
+
+2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
         Reverted fix for bug 22042 (Replace abort() with CRASH()), because it was breaking
         FOR_EACH_OPCODE_ID macro somehow, making Safari crash.
 
