@@ -50,6 +50,8 @@
 #include <inttypes.h>
 #endif
 
+#include <stdlib.h>
+
 #ifdef NDEBUG
 #define ASSERTIONS_DISABLED_DEFAULT 1
 #else
@@ -120,7 +122,10 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 /* CRASH -- gets us into the debugger or the crash reporter -- signals are ignored by the crash reporter so we must do better */
 
 #ifndef CRASH
-#define CRASH() *(int *)(uintptr_t)0xbbadbeef = 0
+#define CRASH() do { \
+    *(int *)(uintptr_t)0xbbadbeef = 0; \
+    abort(); \
+} while (false)
 #endif
 
 /* ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED */
