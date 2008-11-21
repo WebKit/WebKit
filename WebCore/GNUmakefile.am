@@ -1195,6 +1195,8 @@ webcore_sources += \
 	WebCore/platform/Length.h \
 	WebCore/platform/LengthBox.h \
 	WebCore/platform/LengthSize.h \
+	WebCore/platform/LinkHash.cpp \
+	WebCore/platform/LinkHash.h \
 	WebCore/platform/LocalizedStrings.h \
 	WebCore/platform/Logging.cpp \
 	WebCore/platform/Logging.h \

@@ -1,3 +1,16 @@
+2008-11-21  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk, Qt, and Wx build fix.
+
+        Add LinkHash.cpp in the build scripts.
+        Add LinkHash.h to Gtk's build script.
+
+        LinkHash.cpp/h was introduced in r38661.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCoreSources.bkl:
+
 2008-11-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

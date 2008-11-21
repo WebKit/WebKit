@@ -719,6 +719,7 @@ This file contains the list of files needed to build WebCore.
         platform/graphics/WidthIterator.cpp
         platform/KURL.cpp
         platform/Length.cpp
+        platform/LinkHash.cpp
         platform/Logging.cpp
         platform/MIMETypeRegistry.cpp
         platform/text/RegularExpression.cpp
