@@ -117,7 +117,7 @@ void PageGroup::removePage(Page* page)
     m_pages.remove(page);
 }
 
-bool PageGroup::isLinkVisited(unsigned visitedLinkHash)
+bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)
 {
     if (!m_visitedLinksPopulated) {
         m_visitedLinksPopulated = true;
@@ -127,10 +127,10 @@ bool PageGroup::isLinkVisited(unsigned visitedLinkHash)
     return m_visitedLinkHashes.contains(visitedLinkHash);
 }
 
-inline void PageGroup::addVisitedLink(unsigned stringHash)
+inline void PageGroup::addVisitedLink(LinkHash stringHash)
 {
     ASSERT(shouldTrackVisitedLinks);
-    unsigned visitedLinkHash = AlreadyHashed::avoidDeletedValue(stringHash);
+    LinkHash visitedLinkHash = LinkHashHash::avoidDeletedValue(stringHash);
     if (!m_visitedLinkHashes.add(visitedLinkHash).second)
         return;
     Page::visitedStateChanged(this, visitedLinkHash);

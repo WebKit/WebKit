@@ -28,6 +28,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include "LinkHash.h"
 #include "StringHash.h"
 
 namespace WebCore {
@@ -49,7 +50,7 @@ namespace WebCore {
         void addPage(Page*);
         void removePage(Page*);
 
-        bool isLinkVisited(unsigned visitedLinkHash);
+        bool isLinkVisited(LinkHash);
 
         void addVisitedLink(const KURL&);
         void addVisitedLink(const UChar*, size_t);
@@ -66,12 +67,13 @@ namespace WebCore {
 #endif
 
     private:
-        void addVisitedLink(unsigned stringHash);
+        void addVisitedLink(LinkHash stringHash);
 
         String m_name;
 
         HashSet<Page*> m_pages;
-        HashSet<unsigned, AlreadyHashed> m_visitedLinkHashes;
+
+        HashSet<LinkHash, LinkHashHash> m_visitedLinkHashes;
         bool m_visitedLinksPopulated;
 
         unsigned m_identifier;

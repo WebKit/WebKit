@@ -24,6 +24,7 @@
 
 #include "CSSFontSelector.h"
 #include "KeyframeList.h"
+#include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "StringHash.h"
@@ -136,7 +137,7 @@ public:
         bool affectedByViewportChange() const;
 
         void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
-        void visitedStateChanged(unsigned visitedHash) { m_checker.visitedStateChanged(visitedHash); }
+        void visitedStateChanged(LinkHash visitedHash) { m_checker.visitedStateChanged(visitedHash); }
 
         void addVariables(CSSVariablesRule* variables);
         CSSValue* resolveVariableDependentValue(CSSVariableDependentValue*);
@@ -191,14 +192,14 @@ public:
             bool checkScrollbarPseudoClass(CSSSelector*, RenderStyle::PseudoId& dynamicPseudo) const;
 
             void allVisitedStateChanged();
-            void visitedStateChanged(unsigned visitedHash);
+            void visitedStateChanged(LinkHash visitedHash);
 
             Document* m_document;
             bool m_strictParsing;
             bool m_collectRulesOnly;
             RenderStyle::PseudoId m_pseudoStyle;
             bool m_documentIsHTML;
-            mutable HashSet<unsigned, AlreadyHashed> m_linksCheckedForVisitedState;
+            mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
         };
 
     private:

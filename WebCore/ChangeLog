@@ -1,3 +1,41 @@
+2008-11-20  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22131
+
+        Factor out visited link hashing and types into a new file, LinkHash.
+        This also changes the hash type to 64 bits, but does not actually use
+        the extra bits yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkPseudoState):
+        (WebCore::CSSStyleSelector::SelectorChecker::visitedStateChanged):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::visitedStateChanged):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * page/Page.cpp:
+        (WebCore::Page::visitedStateChanged):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::isLinkVisited):
+        (WebCore::PageGroup::addVisitedLink):
+        * page/PageGroup.h:
+        * platform/LinkHash.cpp: Added.
+        (WebCore::findSlashDotDotSlash):
+        (WebCore::findSlashSlash):
+        (WebCore::findSlashDotSlash):
+        (WebCore::containsColonSlashSlash):
+        (WebCore::cleanPath):
+        (WebCore::matchLetter):
+        (WebCore::needsTrailingSlash):
+        (WebCore::visitedLinkHash):
+        * platform/LinkHash.h: Added
+        (WebCore::LinkHashHash::hash):
+        (WebCore::LinkHashHash::equal):
+        (WebCore::LinkHashHash::avoidDeletedValue):
+
 2008-11-21  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Alexey Proskuryakov.

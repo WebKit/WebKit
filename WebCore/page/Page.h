@@ -26,6 +26,7 @@
 #include "Chrome.h"
 #include "ContextMenuController.h"
 #include "FrameLoaderTypes.h"
+#include "LinkHash.h"
 #include "PlatformString.h"
 #if PLATFORM(MAC)
 #include "SchedulePair.h"
@@ -171,7 +172,7 @@ namespace WebCore {
         static void removeAllVisitedLinks();
 
         static void allVisitedStateChanged(PageGroup*);
-        static void visitedStateChanged(PageGroup*, unsigned visitedHash);
+        static void visitedStateChanged(PageGroup*, LinkHash visitedHash);
 
 #if ENABLE(DOM_STORAGE)
         SessionStorage* sessionStorage(bool optionalCreate = true);

@@ -1968,6 +1968,8 @@
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
 		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
 		A79546430B5C4CB4007B438F /* DragData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79546420B5C4CB4007B438F /* DragData.cpp */; };
+		A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7AD2F850EC89D07008AB002 /* LinkHash.cpp */; };
+		A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AD2F860EC89D07008AB002 /* LinkHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7B6E69F0B291A9600D0529F /* DragData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B6E69D0B291A9600D0529F /* DragData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA595B0B27BD9E00FA021D /* DragController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA595C0B27BD9E00FA021D /* DragController.cpp */; };
@@ -6709,6 +6711,8 @@
 		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
 		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
 		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
+		A7AD2F850EC89D07008AB002 /* LinkHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkHash.cpp; sourceTree = "<group>"; };
+		A7AD2F860EC89D07008AB002 /* LinkHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkHash.h; sourceTree = "<group>"; };
 		A7B6E69D0B291A9600D0529F /* DragData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragData.h; sourceTree = "<group>"; };
 		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
 		A7CA595C0B27BD9E00FA021D /* DragController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragController.cpp; sourceTree = "<group>"; };
@@ -13438,6 +13442,8 @@
 				BCE65BE90EACDF16007E4533 /* Length.h */,
 				BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */,
 				BCFF64900EAD15C200C1D6F7 /* LengthSize.h */,
+				A7AD2F850EC89D07008AB002 /* LinkHash.cpp */,
+				A7AD2F860EC89D07008AB002 /* LinkHash.h */,
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
@@ -16331,6 +16337,7 @@
 				08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */,
 				084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */,
 				080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */,
+				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18256,6 +18263,7 @@
 				084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */,
 				080081960ED3B2DD00C53BC0 /* WMLAnchorElement.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
+				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
