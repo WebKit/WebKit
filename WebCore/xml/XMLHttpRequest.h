@@ -27,6 +27,7 @@
 #include "FormData.h"
 #include "ResourceResponse.h"
 #include "SubresourceLoaderClient.h"
+#include "ScriptString.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -71,10 +72,10 @@ public:
     void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const String& name, ExceptionCode&) const;
-    const JSC::UString& responseText() const;
+    const ScriptString& responseText() const;
     Document* responseXML() const;
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
-    void setLastSendURL(JSC::UString url) { m_lastSendURL = url; }
+    void setLastSendURL(const String& url) { m_lastSendURL = url; }
 
     XMLHttpRequestUpload* upload();
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
@@ -208,7 +209,7 @@ private:
     // to be able to share the buffer with JavaScript versions of the whole or partial string.
     // In contrast, this string doesn't interact much with the rest of the engine so it's not that
     // big a cost that it isn't a String.
-    JSC::UString m_responseText;
+    ScriptString m_responseText;
     mutable bool m_createdDocument;
     mutable RefPtr<Document> m_responseXML;
 
@@ -224,7 +225,7 @@ private:
     long long m_receivedLength;
     
     unsigned m_lastSendLineNumber;
-    JSC::UString m_lastSendURL;
+    String m_lastSendURL;
 };
 
 } // namespace WebCore

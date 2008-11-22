@@ -203,7 +203,7 @@ public:
     void didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived);
     void didFinishLoading(DocumentLoader*, unsigned long identifier);
     void didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, JSC::UString& sourceString);
+    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const JSC::UString& sourceString);
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
