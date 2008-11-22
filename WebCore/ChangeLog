@@ -1,3 +1,12 @@
+2008-11-21  Alice Liu  <alice.liu@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        fixed <rdar://6340771> crashing on print preview
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawWindowsBitmap):
+
 2008-11-21  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Geoffrey Garen.
