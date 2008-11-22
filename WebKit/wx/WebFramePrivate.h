@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Kevin Ollivier.  All rights reserved.
+ * Copyright (C) 2008 Kevin Ollivier.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +26,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WXWEBVIEWPRIVATE_H
-#define WXWEBVIEWPRIVATE_H
+#ifndef WXWEBFRAMEPRIVATE_H
+#define WXWEBFRAMEPRIVATE_H
 
 #include "config.h"
-#include "HTMLFrameOwnerElement.h"
-#include "Page.h"
+#include "EditCommand.h"
+#include "EditCommandWx.h"
+#include "Frame.h"
 #include "wtf/RefPtr.h"
-#include "KURL.h"
+#include "wtf/Vector.h"
 
-class WebViewPrivate 
-{
+class WebFramePrivate {
+
 public:
-    WebViewPrivate() :
-        page(0)
+    WebFramePrivate() :
+            frame(0)
     {}
-    
-    WebCore::Page* page;
-};
 
-class WebViewFrameData
-{
-public:
-    WebCore::KURL url;
-    WebCore::String name;
-    WebCore::HTMLFrameOwnerElement* ownerElement;
+    WTF::Vector<EditCommandWx> undoStack;
+    WTF::Vector<EditCommandWx> redoStack;
     
-    WebCore::String referrer;
-    bool allowsScrolling;
-    int marginWidth;
-    int marginHeight;    
+    WTF::RefPtr<WebCore::Frame> frame;
 };
 
 #endif

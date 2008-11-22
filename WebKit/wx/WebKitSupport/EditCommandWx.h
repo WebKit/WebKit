@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Kevin Ollivier.  All rights reserved.
+ * Copyright (C) 2008 Kevin Ollivier.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,36 +26,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef WXWEBVIEWPRIVATE_H
-#define WXWEBVIEWPRIVATE_H
+#ifndef WXEDITCOMMAND_H
+#define WXEDITCOMMAND_H
 
-#include "config.h"
-#include "HTMLFrameOwnerElement.h"
-#include "Page.h"
-#include "wtf/RefPtr.h"
-#include "KURL.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-class WebViewPrivate 
+namespace WebCore {
+    class EditCommand;
+}
+
+class EditCommandWx 
 {
 public:
-    WebViewPrivate() :
-        page(0)
-    {}
+    EditCommandWx(WTF::PassRefPtr<WebCore::EditCommand> command) 
+    {
+        m_editCommand = command;
+    }
     
-    WebCore::Page* page;
-};
-
-class WebViewFrameData
-{
-public:
-    WebCore::KURL url;
-    WebCore::String name;
-    WebCore::HTMLFrameOwnerElement* ownerElement;
+    ~EditCommandWx() {}
+    WTF::PassRefPtr<WebCore::EditCommand> editCommand() { return m_editCommand; }
     
-    WebCore::String referrer;
-    bool allowsScrolling;
-    int marginWidth;
-    int marginHeight;    
+private:
+    WTF::RefPtr<WebCore::EditCommand> m_editCommand;
 };
 
 #endif

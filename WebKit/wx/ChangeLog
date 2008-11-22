@@ -1,3 +1,40 @@
+2008-11-21  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Maintain an EditCommand stack in WebFramePrivate, and expose Undo and
+        Redo in wxWebView.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22403
+
+        * WebFrame.cpp:
+        (wxWebFrame::wxWebFrame):
+        (wxWebFrame::Undo):
+        (wxWebFrame::Redo):
+        (wxWebFrame::CanUndo):
+        (wxWebFrame::CanRedo):
+        * WebFrame.h:
+        * WebFramePrivate.h: Added.
+        (WebFramePrivate::WebFramePrivate):
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::createWindow):
+        * WebKitSupport/EditCommandWx.h: Added.
+        (EditCommandWx::EditCommandWx):
+        (EditCommandWx::~EditCommandWx):
+        (EditCommandWx::editCommand):
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::registerCommandForUndo):
+        (WebCore::EditorClientWx::registerCommandForRedo):
+        (WebCore::EditorClientWx::canUndo):
+        (WebCore::EditorClientWx::canRedo):
+        (WebCore::EditorClientWx::undo):
+        (WebCore::EditorClientWx::redo):
+        * WebKitSupport/EditorClientWx.h:
+        * WebView.cpp:
+        (wxWebView::OnMouseEvents):
+        (wxWebView::OnKeyEvents):
+        * WebViewPrivate.h:
+
 2008-11-19  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Geoff Garen.

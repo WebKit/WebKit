@@ -39,7 +39,11 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformString.h"
 #include "SelectionController.h"
+
+#include "WebFrame.h"
+#include "WebFramePrivate.h"
 #include "WebView.h"
+#include "WebViewPrivate.h"
 
 #include <stdio.h>
 
@@ -195,14 +199,28 @@ void EditorClientWx::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClientWx::registerCommandForUndo(PassRefPtr<EditCommand>)
+void EditorClientWx::registerCommandForUndo(PassRefPtr<EditCommand> command)
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->platformWidget());
+        if (webKitWin) {
+            webKitWin->GetMainFrame()->m_impl->undoStack.append(EditCommandWx(command));
+        }
+    }
 }
 
-void EditorClientWx::registerCommandForRedo(PassRefPtr<EditCommand>)
+void EditorClientWx::registerCommandForRedo(PassRefPtr<EditCommand> command)
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->platformWidget());
+        if (webKitWin) {
+            webKitWin->GetMainFrame()->m_impl->redoStack.insert(0, EditCommandWx(command));
+        }
+    }
 }
 
 void EditorClientWx::clearUndoRedoOperations()
@@ -212,24 +230,54 @@ void EditorClientWx::clearUndoRedoOperations()
 
 bool EditorClientWx::canUndo() const
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->platformWidget());
+        if (webKitWin && webKitWin->GetMainFrame()) {
+            return webKitWin->GetMainFrame()->m_impl->undoStack.size() != 0;
+        }
+    }
     return false;
 }
 
 bool EditorClientWx::canRedo() const
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->platformWidget());
+        if (webKitWin && webKitWin->GetMainFrame()) {
+            return webKitWin->GetMainFrame()->m_impl->redoStack.size() != 0;
+        }
+    }
     return false;
 }
 
 void EditorClientWx::undo()
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->platformWidget());
+        if (webKitWin && webKitWin->GetMainFrame()) {
+            webKitWin->GetMainFrame()->m_impl->undoStack.last().editCommand()->unapply();
+            webKitWin->GetMainFrame()->m_impl->undoStack.removeLast();
+        }
+    }
 }
 
 void EditorClientWx::redo()
 {
-    notImplemented();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame) {
+        wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->platformWidget());
+        if (webKitWin && webKitWin->GetMainFrame()) {
+            webKitWin->GetMainFrame()->m_impl->redoStack.first().editCommand()->reapply();
+            webKitWin->GetMainFrame()->m_impl->redoStack.remove(0);
+        }
+    }
 }
 
 void EditorClientWx::handleInputMethodKeydown(KeyboardEvent* event)

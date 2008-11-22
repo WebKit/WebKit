@@ -122,7 +122,7 @@ Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, cons
 
         WebViewPrivate* impl = newFrame->webview->m_impl;
         if (impl)
-            myPage = impl->frame->page();
+            myPage = impl->page;
     }
     
     return myPage;

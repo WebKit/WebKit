@@ -31,9 +31,15 @@
 #include "EditorClient.h"
 #include "Page.h"
 
+#include "WebView.h"
+#include "WebFrame.h"
+
 namespace WebCore {
 
 class EditorClientWx : public EditorClient {
+friend class ::wxWebView;
+friend class ::wxWebFrame;
+
 public:
     virtual ~EditorClientWx();
     void setPage(Page*);
