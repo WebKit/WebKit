@@ -95,6 +95,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 
 #if USE(WXGC)
     wxGCDC* context = (wxGCDC*)ctxt->platformContext();
+    wxGraphicsContext* gc = context->GetGraphicsContext();
 #else
     wxWindowDC* context = ctxt->platformContext();
 #endif
@@ -114,7 +115,26 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 
     // Set the compositing operation.
     ctxt->setCompositeOperation(op);
+    
+#if USE(WXGC)
+    float scaleX = src.width() / dst.width();
+    float scaleY = src.height() / dst.height();
 
+    FloatRect adjustedDestRect = dst;
+    FloatSize selfSize = currentFrameSize();
+    
+    if (src.size() != selfSize) {
+        adjustedDestRect.setLocation(FloatPoint(dst.x() - src.x() / scaleX, dst.y() - src.y() / scaleY));
+        adjustedDestRect.setSize(FloatSize(selfSize.width() / scaleX, selfSize.height() / scaleY));
+    }
+    
+    // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
+    int currHeight = bitmap->GetHeight(); 
+    if (currHeight < selfSize.height())
+        adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / selfSize.height());
+
+    gc->DrawBitmap(*bitmap, adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.width(), adjustedDestRect.height());
+#else
     IntRect srcIntRect(src);
     IntRect dstIntRect(dst);
     bool rescaling = false;
@@ -124,7 +144,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
         wxImage img = bitmap->ConvertToImage();
         img.Rescale(dstIntRect.width(), dstIntRect.height());
         bitmap = new wxBitmap(img);
-    }   
+    } 
+    
     wxMemoryDC mydc; 
     ASSERT(bitmap->GetRefData());
     mydc.SelectObject(*bitmap); 
@@ -143,6 +164,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
         delete bitmap;
         bitmap = NULL;
     }
+#endif
+
     ctxt->restore();
 }
 
@@ -169,23 +192,33 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, c
 #if USE(WXGC)
     wxGraphicsContext* gc = context->GetGraphicsContext();
     gc->ConcatTransform(patternTransform);
-#endif
-
+#else
     wxMemoryDC mydc;
     mydc.SelectObject(*bitmap);
+#endif
 
-    while ( currentW < dstRect.width() ) {
-        while ( currentH < dstRect.height() ) {
+    wxPoint origin(context->GetDeviceOrigin());
+    wxSize clientSize(context->GetSize());
+
+    while ( currentW < dstRect.width()  && currentW < clientSize.x - origin.x ) {
+        while ( currentH < dstRect.height() && currentH < clientSize.y - origin.y) {
+#if USE(WXGC)
+            gc->DrawBitmap(*bitmap, (wxDouble)dstRect.x() + currentW, (wxDouble)dstRect.y() + currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
+#else
             context->Blit((wxCoord)dstRect.x() + currentW, (wxCoord)dstRect.y() + currentH,  
                             (wxCoord)srcRect.width(), (wxCoord)srcRect.height(), &mydc, 
                             (wxCoord)srcRect.x(), (wxCoord)srcRect.y(), wxCOPY, true); 
+#endif
             currentH += srcRect.height();
         }
         currentW += srcRect.width();
         currentH = 0;
     }
     ctxt->restore();
+
+#if !USE(WXGC)
     mydc.SelectObject(wxNullBitmap);
+#endif    
     
     // NB: delete is causing crashes during page load, but not during the deletion
     // itself. It occurs later on when a valid bitmap created in frameAtIndex
