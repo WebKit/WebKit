@@ -37,6 +37,10 @@
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
 		080081960ED3B2DD00C53BC0 /* WMLAnchorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */; };
 		080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */; };
+		080AEC810ED8708B00DF4CCE /* WMLIntrinsicEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */; };
+		080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */; };
+		080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */; };
+		080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 080AEC800ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h */; };
 		0839476C0ECE4BD600027350 /* WMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */; };
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
 		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
@@ -4792,6 +4796,10 @@
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
 		080081940ED3B2DD00C53BC0 /* WMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLAnchorElement.cpp; sourceTree = "<group>"; };
 		080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAnchorElement.h; sourceTree = "<group>"; };
+		080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLIntrinsicEvent.cpp; sourceTree = "<group>"; };
+		080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLIntrinsicEvent.h; sourceTree = "<group>"; };
+		080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLIntrinsicEventHandler.cpp; sourceTree = "<group>"; };
+		080AEC800ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLIntrinsicEventHandler.h; sourceTree = "<group>"; };
 		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
 		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
 		08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLGoElement.cpp; sourceTree = "<group>"; };
@@ -9483,6 +9491,10 @@
 				4C6B99260E52E37300487BB7 /* WMLElement.h */,
 				08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */,
 				08807B6B0ED709AB003F6975 /* WMLGoElement.h */,
+				080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */,
+				080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */,
+				080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */,
+				080AEC800ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h */,
 				0893E4650ECB68F400A28563 /* WMLPageState.cpp */,
 				0893E4660ECB68F400A28563 /* WMLPageState.h */,
 				4C6B99350E52E37300487BB7 /* WMLPElement.cpp */,
@@ -16370,6 +16382,8 @@
 				08807B7F0ED709AB003F6975 /* WMLRefreshElement.h in Headers */,
 				08807B810ED709AB003F6975 /* WMLSetvarElement.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
+				080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */,
+				080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18300,6 +18314,8 @@
 				08807B7E0ED709AB003F6975 /* WMLRefreshElement.cpp in Sources */,
 				08807B800ED709AB003F6975 /* WMLSetvarElement.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
+				080AEC810ED8708B00DF4CCE /* WMLIntrinsicEvent.cpp in Sources */,
+				080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

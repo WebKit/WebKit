@@ -2,6 +2,30 @@
 
         Reviewed by Holger Freyther.
 
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22426
+
+        Add WMLInstrinsicEvent/EventHandler implementation. Code not yet used.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLIntrinsicEvent.cpp: Added.
+        (WebCore::createTaskElement):
+        (WebCore::WMLIntrinsicEvent::WMLIntrinsicEvent):
+        * wml/WMLIntrinsicEvent.h: Added.
+        (WebCore::WMLIntrinsicEvent::create):
+        (WebCore::WMLIntrinsicEvent::createWithTask):
+        (WebCore::WMLIntrinsicEvent::taskElement):
+        * wml/WMLIntrinsicEventHandler.cpp: Added.
+        (WebCore::WMLIntrinsicEventHandler::WMLIntrinsicEventHandler):
+        (WebCore::WMLIntrinsicEventHandler::registerIntrinsicEvent):
+        (WebCore::WMLIntrinsicEventHandler::triggerIntrinsicEvent):
+        (WebCore::WMLIntrinsicEventHandler::hasIntrinsicEvent):
+        * wml/WMLIntrinsicEventHandler.h: Added.
+        (WebCore::):
+
+2008-11-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22423
 
         Add <go> stub implementation. Add complete <prev>/<refresh> and <setvar> implementation.
