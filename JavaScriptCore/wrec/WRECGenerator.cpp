@@ -42,9 +42,9 @@ namespace JSC { namespace WREC {
 
 #if COMPILER(MSVC)
 // MSVC has 3 extra arguments on the stack because it doesn't use the register calling convention.
-static const int outputParameter = 16 + sizeof(const UChar*) + sizeof(unsigned) + sizeof(unsigned);
+static const int outputParameter = 12 + sizeof(const UChar*) + sizeof(unsigned) + sizeof(unsigned);
 #else
-static const int outputParameter = 16;
+static const int outputParameter = 12;
 #endif
 
 void Generator::generateEnter()

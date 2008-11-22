@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
         
+        Fixed many crashes seen 'round the world (but only in release builds).
+        
+        Update outputParameter offset to reflect slight re-ordering of push
+        instructions in r38669.
+
+        * wrec/WRECGenerator.cpp:
+
+2008-11-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         A little more RegExp refactoring.
         
         Deployed a helper function for reading the next character. Used the "link
