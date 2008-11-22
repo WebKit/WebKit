@@ -1,3 +1,29 @@
+2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22397
+        Worker threads are not destroyed if running a JS loop
+
+        Since the event loop is not ever entered again in this case, the fix necessarily involves
+        some shared data hackery.
+
+        * dom/WorkerThread.cpp: (WebCore::WorkerThread::stop):
+        * dom/WorkerThread.h:
+        Added a stop() method, which asks the thread to exit as soon as possible. In the future, it
+        may need to abort other kinds of synchronous processing, such as importScripts or XHR.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::forbidExecution):
+        * bindings/js/WorkerScriptController.h:
+        Added a forbidExecution() method, which interrupts currently running JS, and makes any
+        future calls to evaluate() return immediately.
+
+        * dom/WorkerMessagingProxy.cpp: (WebCore::WorkerMessagingProxy::workerObjectDestroyed):
+        Call WorkerThread::stop().
+
 2008-11-21  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

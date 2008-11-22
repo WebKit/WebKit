@@ -75,28 +75,38 @@ void* WorkerThread::workerThreadStart(void* thread)
 
 void* WorkerThread::workerThread()
 {
-    RefPtr<WorkerContext> workerContext = WorkerContext::create(KURL(m_scriptURL), this);
-    WorkerScriptController* script = workerContext->script();
+    m_workerContext = WorkerContext::create(KURL(m_scriptURL), this);
+    WorkerScriptController* script = m_workerContext->script();
 
     script->evaluate(makeSource(m_sourceCode, m_scriptURL));
-    m_messagingProxy->confirmWorkerThreadMessage(workerContext->hasPendingActivity()); // This wasn't really a message, but it counts as one for GC.
+    m_messagingProxy->confirmWorkerThreadMessage(m_workerContext->hasPendingActivity()); // This wasn't really a message, but it counts as one for GC.
 
     while (true) {
         RefPtr<WorkerTask> task;
         if (!m_messageQueue.waitForMessage(task))
             break;
 
-        task->performTask(workerContext.get());
+        task->performTask(m_workerContext.get());
     }
 
-    workerContext->clearScript();
-    ASSERT(workerContext->hasOneRef());
-    // Destroying the context will notify messaging proxy.
+    m_workerContext->clearScript();
+    ASSERT(m_workerContext->hasOneRef());
+    // The below assignment will destroy the context, which will in turn notify messaging proxy.
     // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
-    workerContext = 0;
-    m_threadID = 0;
+    m_workerContext = 0;
+    
+    // The thread object may be already destroyed from notification now, don't try to access "this".
 
     return 0;
+}
+
+void WorkerThread::stop()
+{
+    // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
+    m_workerContext->script()->forbidExecution();
+
+    // FIXME: Rudely killing the thread won't work when we allow nested workers, because they will try to post notifications of their destruction.
+    m_messageQueue.kill();
 }
 
 } // namespace WebCore

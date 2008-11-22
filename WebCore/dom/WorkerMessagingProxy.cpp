@@ -238,7 +238,7 @@ void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
     if (m_workerThread)
-        m_workerThread->messageQueue().kill(); // FIXME: (1) rudely killing a thread won't work when we allow nested workers; (2) need to interrupt currently running JS.
+        m_workerThread->stop();
     else
         workerContextDestroyedInternal(); // It never existed, just do our cleanup.
 }

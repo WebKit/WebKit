@@ -31,6 +31,7 @@
 
 #include <runtime/Protect.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Threading.h>
 
 namespace JSC {
     class JSGlobalData;
@@ -57,6 +58,8 @@ namespace WebCore {
 
         JSC::JSValue* evaluate(const JSC::SourceCode&);
 
+        void forbidExecution();
+
     private:
         void initScriptIfNeeded()
         {
@@ -68,6 +71,9 @@ namespace WebCore {
         RefPtr<JSC::JSGlobalData> m_globalData;
         WorkerContext* m_workerContext;
         JSC::ProtectedPtr<JSWorkerContext> m_workerContextWrapper;
+
+        Mutex m_sharedDataMutex;
+        bool m_executionForbidded;
     };
 
 } // namespace WebCore

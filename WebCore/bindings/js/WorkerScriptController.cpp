@@ -35,6 +35,7 @@
 #include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
 #include "WorkerThread.h"
+#include <interpreter/Interpreter.h>
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
 #include <runtime/Completion.h>
@@ -47,6 +48,7 @@ namespace WebCore {
 WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     : m_globalData(JSGlobalData::create())
     , m_workerContext(workerContext)
+    , m_executionForbidded(false)
 {
 }
 
@@ -70,6 +72,12 @@ void WorkerScriptController::initScript()
 
 JSValue* WorkerScriptController::evaluate(const JSC::SourceCode& sourceCode)
 {
+    {
+        MutexLocker lock(m_sharedDataMutex);
+        if (m_executionForbidded)
+            return noValue();
+    }
+
     initScriptIfNeeded();
     JSLock lock(false);
 
@@ -86,6 +94,17 @@ JSValue* WorkerScriptController::evaluate(const JSC::SourceCode& sourceCode)
     if (comp.complType() == Throw)
         reportException(exec, comp.value());
     return noValue();
+}
+
+void WorkerScriptController::forbidExecution()
+{
+    // This function is called from another thread.
+    // Mutex protection for m_executionForbidded is needed to guarantee that the value is synchronized between processors, because
+    // if it were not, the worker could re-enter JSC::evaluate(), but with timeout already reset.
+    // It is not critical for Interpreter::m_timeoutTime to be synchronized, we just rely on it reaching the worker thread's processor sooner or later.
+    MutexLocker lock(m_sharedDataMutex);
+    m_executionForbidded = true;
+    m_globalData->interpreter->setTimeoutTime(1); // 1 ms is the smallest timeout that can be set.
 }
 
 } // namespace WebCore
