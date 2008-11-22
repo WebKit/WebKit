@@ -2586,6 +2586,13 @@ JSValue* Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerF
         uncacheGetByID(callFrame->codeBlock(), vPC);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_get_by_id_self_list) {
+        // Polymorphic self access caching currently only supported when JITting.
+        ASSERT_NOT_REACHED();
+        // This case of the switch must not be empty, else (op_get_by_id_self_list == op_get_by_id_chain)!
+        vPC += 8;
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_get_by_id_proto_list) {
         // Polymorphic prototype access caching currently only supported when JITting.
         ASSERT_NOT_REACHED();
@@ -4593,7 +4600,45 @@ JSValue* Interpreter::cti_op_get_by_id_self_fail(CTI_ARGS)
     PropertySlot slot(baseValue);
     JSValue* result = baseValue->get(callFrame, ident, slot);
 
-    CHECK_FOR_EXCEPTION_AT_END();
+    CHECK_FOR_EXCEPTION();
+
+    if (baseValue->isObject()
+        && slot.isCacheable()
+        && !asCell(baseValue)->structure()->isDictionary()
+        && slot.slotBase() == baseValue) {
+
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+        Instruction* vPC = codeBlock->instructions.begin() + vPCIndex;
+
+        ASSERT(slot.slotBase()->isObject());
+
+        StructureStubInfo* stubInfo = &codeBlock->getStubInfo(CTI_RETURN_ADDRESS);
+
+        PolymorphicAccessStructureList* polymorphicStructureList;
+        int listIndex = 1;
+
+        if (vPC[0].u.opcode == ARG_globalData->interpreter->getOpcode(op_get_by_id_self)) {
+            ASSERT(!stubInfo->stubRoutine);
+            polymorphicStructureList = new PolymorphicAccessStructureList(vPC[4].u.structure, 0, vPC[5].u.operand, 0);
+
+            vPC[0] = ARG_globalData->interpreter->getOpcode(op_get_by_id_self_list);
+            vPC[4] = polymorphicStructureList;
+            vPC[5] = 2;
+        } else {
+            polymorphicStructureList = vPC[4].u.polymorphicStructures;
+            listIndex = vPC[5].u.operand;
+
+            vPC[5] = listIndex + 1;
+        }
+
+        JIT::compileGetByIdSelfList(callFrame->scopeChain()->globalData, codeBlock, stubInfo, polymorphicStructureList, listIndex, asCell(baseValue)->structure(), slot.cachedOffset());
+
+        if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
+            ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
+    } else {
+        ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
+    }
     return result;
 }
 
@@ -4634,18 +4679,18 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
 
         StructureStubInfo* stubInfo = &codeBlock->getStubInfo(CTI_RETURN_ADDRESS);
 
-        PrototypeStructureList* prototypeStructureList;
+        PolymorphicAccessStructureList* prototypeStructureList;
         int listIndex = 1;
 
         if (vPC[0].u.opcode == ARG_globalData->interpreter->getOpcode(op_get_by_id_proto)) {
-            prototypeStructureList = new PrototypeStructureList(vPC[4].u.structure, vPC[5].u.structure, vPC[6].u.operand, stubInfo->stubRoutine);
+            prototypeStructureList = new PolymorphicAccessStructureList(vPC[4].u.structure, vPC[5].u.structure, vPC[6].u.operand, stubInfo->stubRoutine);
             stubInfo->stubRoutine = 0;
 
             vPC[0] = ARG_globalData->interpreter->getOpcode(op_get_by_id_proto_list);
             vPC[4] = prototypeStructureList;
             vPC[5] = 2;
         } else {
-            prototypeStructureList = vPC[4].u.prototypeStructure;
+            prototypeStructureList = vPC[4].u.polymorphicStructures;
             listIndex = vPC[5].u.operand;
 
             vPC[5] = listIndex + 1;
@@ -4653,7 +4698,7 @@ JSValue* Interpreter::cti_op_get_by_id_proto_list(CTI_ARGS)
 
         JIT::compileGetByIdProtoList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, slotBaseObject->structure(), slot.cachedOffset());
 
-        if (listIndex == (PROTOTYPE_LIST_CACHE_SIZE - 1))
+        if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_list_full));
     } else {
         ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));

@@ -101,6 +101,7 @@ namespace JSC {
         macro(op_resolve_func) \
         macro(op_get_by_id) \
         macro(op_get_by_id_self) \
+        macro(op_get_by_id_self_list) \
         macro(op_get_by_id_proto) \
         macro(op_get_by_id_proto_list) \
         macro(op_get_by_id_chain) \

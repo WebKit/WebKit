@@ -642,6 +642,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(location, it, identifiers, "get_by_id_self");
             break;
         }
+        case op_get_by_id_self_list: {
+            printGetByIdOp(location, it, identifiers, "get_by_id_self_list");
+            break;
+        }
         case op_get_by_id_proto: {
             printGetByIdOp(location, it, identifiers, "get_by_id_proto");
             break;
@@ -1023,18 +1027,11 @@ void CodeBlock::derefStructures(Instruction* vPC) const
             vPC[4].u.structure->deref();
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list)) {
-        PrototypeStructureList* prototypeStructures = vPC[4].u.prototypeStructure;
-        int count = vPC[5].u.operand;
-        for (int i = 0; i < count; ++i) {
-            PrototypeStructureList::ProtoStubInfo& info = prototypeStructures->list[i];
-            ASSERT(info.base);
-            ASSERT(info.proto);
-            ASSERT(info.stubRoutine);
-            info.base->deref();
-            info.proto->deref();
-            WTF::fastFreeExecutable(info.stubRoutine);
-        }
+    if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
+        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self_list))) {
+        PolymorphicAccessStructureList* polymorphicStructures = vPC[4].u.polymorphicStructures;
+        polymorphicStructures->derefStructures(vPC[5].u.operand);
+        delete polymorphicStructures;
         return;
     }
 

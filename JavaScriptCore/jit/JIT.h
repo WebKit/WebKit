@@ -109,7 +109,7 @@ namespace JSC {
     struct CallLinkInfo;
     struct Instruction;
     struct OperandTypes;
-    struct PrototypeStructureList;
+    struct PolymorphicAccessStructureList;
     struct StructureStubInfo;
 
     typedef JSValue* (SFX_CALL *CTIHelper_j)(CTI_ARGS);
@@ -320,7 +320,12 @@ namespace JSC {
         }
 
 #if USE(CTI_REPATCH_PIC)
-        static void compileGetByIdProtoList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PrototypeStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, size_t cachedOffset)
+        static void compileGetByIdSelfList(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, size_t cachedOffset)
+        {
+            JIT jit(globalData, codeBlock);
+            jit.privateCompileGetByIdSelfList(stubInfo, polymorphicStructures, currentIndex, structure, cachedOffset);
+        }
+        static void compileGetByIdProtoList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, size_t cachedOffset)
         {
             JIT jit(globalData, codeBlock);
             jit.privateCompileGetByIdProtoList(stubInfo, prototypeStructureList, currentIndex, structure, prototypeStructure, cachedOffset, callFrame);
@@ -379,7 +384,8 @@ namespace JSC {
         void privateCompileGetByIdSelf(Structure*, size_t cachedOffset, void* returnAddress);
         void privateCompileGetByIdProto(Structure*, Structure* prototypeStructure, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
 #if USE(CTI_REPATCH_PIC)
-        void privateCompileGetByIdProtoList(StructureStubInfo*, PrototypeStructureList*, int, Structure*, Structure* prototypeStructure, size_t cachedOffset, CallFrame* callFrame);
+        void privateCompileGetByIdSelfList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, size_t cachedOffset);
+        void privateCompileGetByIdProtoList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, Structure* prototypeStructure, size_t cachedOffset, CallFrame* callFrame);
 #endif
         void privateCompileGetByIdChain(Structure*, StructureChain*, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame);
         void privateCompilePutByIdReplace(Structure*, size_t cachedOffset, void* returnAddress);
