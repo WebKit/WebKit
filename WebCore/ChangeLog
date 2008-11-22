@@ -1,3 +1,12 @@
+2008-11-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Forgot to include WMLPageState.* in the last commit.
+
+        * wml/WMLPageState.cpp:
+        (WebCore::WMLPageState::setNeedCheckDeckAccess):
+        * wml/WMLPageState.h:
+        (WebCore::WMLPageState::storeVariables):
+
 2008-11-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

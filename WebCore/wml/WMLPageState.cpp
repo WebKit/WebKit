@@ -61,7 +61,7 @@ void WMLPageState::reset()
 void WMLPageState::setNeedCheckDeckAccess(bool need)
 {
     if (m_hasDeckAccess && need) {
-        // TODO: Report MultiAccessElementsError
+        // FIXME: Report MultiAccessElementsError
     } else {
         m_hasDeckAccess = need;
         m_accessPath = String();
@@ -69,7 +69,7 @@ void WMLPageState::setNeedCheckDeckAccess(bool need)
     }
 }
 
-// TODO: We may want another name, it does far more than just checking wheter the deck is accessable
+// FIXME: We may want another name, it does far more than just checking wheter the deck is accessable
 bool WMLPageState::isDeckAccessible()
 {
     if (!m_hasDeckAccess || !m_page || !m_page->backForwardList() || !m_page->backForwardList()->backItem())

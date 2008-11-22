@@ -33,7 +33,7 @@ class Page;
 class String;
 class WMLCardElement;
 
-typedef HashMap<String, String> VariableMap;
+typedef HashMap<String, String> WMLVariableMap;
 
 class WMLPageState : public RefCounted<WMLPageState> {
 public:
@@ -46,7 +46,7 @@ public:
 
     // variables operations 
     void storeVariable(const String& name, const String& value) { m_variables.set(name, value); }
-    void storeVariables(VariableMap& variables) { m_variables = variables; }
+    void storeVariables(WMLVariableMap& variables) { m_variables = variables; }
     String getVaribale(const String& name) const { return m_variables.get(name); }
     bool hasVariables() const { return m_variables.size(); }
 
@@ -55,7 +55,6 @@ public:
 
     Page* page() const { return m_page; }
 
-    // TODO: Once this code is used, check for refcounting safety
     WMLCardElement* activeCard() const { return m_activeCard; }
     void setActiveCard(WMLCardElement* card) { m_activeCard = card; }
 
@@ -69,7 +68,7 @@ public:
 
 private:
     Page* m_page;
-    VariableMap m_variables;
+    WMLVariableMap m_variables;
     int m_historyLength;
     WMLCardElement* m_activeCard;
     String m_accessDomain;
