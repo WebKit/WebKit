@@ -1,3 +1,14 @@
+2008-11-21  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Implementation of AffineTransform::mapRect for wx.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=22401
+
+        * platform/graphics/wx/AffineTransformWx.cpp:
+        (WebCore::AffineTransform::mapRect):
+
 2008-11-21  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin Adler.

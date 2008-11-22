@@ -83,13 +83,33 @@ void AffineTransform::map(double x, double y, double *x2, double *y2) const
 
 IntRect AffineTransform::mapRect(const IntRect &rect) const
 {
-    notImplemented();
+#if USE(WXGC)
+    double x, y, width, height;
+    x = rect.x();
+    y = rect.y();
+    width = rect.width();
+    height = rect.height();
+    
+    m_transform.TransformPoint(&x, &y);
+    m_transform.TransformDistance(&width, &height);
+    return IntRect(x, y, width, height);
+#endif
     return IntRect();
 }
 
 FloatRect AffineTransform::mapRect(const FloatRect &rect) const
 {
-    notImplemented();
+#if USE(WXGC)
+    double x, y, width, height;
+    x = rect.x();
+    y = rect.y();
+    width = rect.width();
+    height = rect.height();
+    
+    m_transform.TransformPoint(&x, &y);
+    m_transform.TransformDistance(&width, &height);
+    return FloatRect(x, y, width, height);
+#endif
     return FloatRect();
 }
 
