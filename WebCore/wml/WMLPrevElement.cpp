@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved.
  *               http://www.torchmobile.com/
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -19,37 +19,47 @@
  *
  */
 
-#ifndef WMLTaskElement_h
-#define WMLTaskElement_h
+#include "config.h"
 
 #if ENABLE(WML)
-#include "WMLElement.h"
+#include "WMLPrevElement.h"
 
-#include <wtf/HashSet.h>
+#include "Document.h"
+#include "Page.h"
+#include "WMLPageState.h"
 
 namespace WebCore {
 
-class Page;
-class WMLSetvarElement;
+WMLPrevElement::WMLPrevElement(const QualifiedName& tagName, Document* doc)
+    : WMLTaskElement(tagName, doc)
+{
+}
 
-class WMLTaskElement : public WMLElement {
-public:
-    WMLTaskElement(const QualifiedName& tagName, Document*);
-    virtual ~WMLTaskElement();
+WMLPrevElement::~WMLPrevElement()
+{
+}
 
-    virtual void insertedIntoDocument();
-    virtual void executeTask(Event*) = 0;
+void WMLPrevElement::executeTask(Event*)
+{
+    Page* page = document()->page();
+    if (!page)
+        return;
 
-    void registerVariableSetter(WMLSetvarElement*);
+    WMLCardElement* card = page->wmlPageState()->activeCard();
+    if (!card)
+        return;
 
-protected:
-    void storeVariableState(Page*);
+    storeVariableState(page);
 
-private:
-    HashSet<WMLSetvarElement*> m_variableSetterElements;
-};
+/* FIXME
+    // Stop the timer of the current card if it is active
+    if (WMLTimerElement* timer = card->eventTimer())
+        timer->stop();
+*/
+
+    page->goBack();
+}
 
 }
 
-#endif
 #endif

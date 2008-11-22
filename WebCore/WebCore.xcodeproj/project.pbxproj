@@ -41,6 +41,14 @@
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
 		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
 		084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DBA9E0ED39D360038C226 /* WMLVariables.h */; };
+		08807B760ED709AB003F6975 /* WMLGoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */; };
+		08807B770ED709AB003F6975 /* WMLGoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B6B0ED709AB003F6975 /* WMLGoElement.h */; };
+		08807B7C0ED709AB003F6975 /* WMLPrevElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B700ED709AB003F6975 /* WMLPrevElement.cpp */; };
+		08807B7D0ED709AB003F6975 /* WMLPrevElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B710ED709AB003F6975 /* WMLPrevElement.h */; };
+		08807B7E0ED709AB003F6975 /* WMLRefreshElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B720ED709AB003F6975 /* WMLRefreshElement.cpp */; };
+		08807B7F0ED709AB003F6975 /* WMLRefreshElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B730ED709AB003F6975 /* WMLRefreshElement.h */; };
+		08807B800ED709AB003F6975 /* WMLSetvarElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */; };
+		08807B810ED709AB003F6975 /* WMLSetvarElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08807B750ED709AB003F6975 /* WMLSetvarElement.h */; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
 		088C97130ECB6D9D000534BA /* WMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA3AB480E556F2400E9C0C0 /* WMLNames.h */; };
 		088C97510ECB6E28000534BA /* WMLAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99180E52E37300487BB7 /* WMLAElement.cpp */; };
@@ -4786,6 +4794,14 @@
 		080081950ED3B2DD00C53BC0 /* WMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAnchorElement.h; sourceTree = "<group>"; };
 		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
 		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
+		08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLGoElement.cpp; sourceTree = "<group>"; };
+		08807B6B0ED709AB003F6975 /* WMLGoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLGoElement.h; sourceTree = "<group>"; };
+		08807B700ED709AB003F6975 /* WMLPrevElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPrevElement.cpp; sourceTree = "<group>"; };
+		08807B710ED709AB003F6975 /* WMLPrevElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPrevElement.h; sourceTree = "<group>"; };
+		08807B720ED709AB003F6975 /* WMLRefreshElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLRefreshElement.cpp; sourceTree = "<group>"; };
+		08807B730ED709AB003F6975 /* WMLRefreshElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLRefreshElement.h; sourceTree = "<group>"; };
+		08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLSetvarElement.cpp; sourceTree = "<group>"; };
+		08807B750ED709AB003F6975 /* WMLSetvarElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLSetvarElement.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -9465,10 +9481,18 @@
 				4C6B99220E52E37300487BB7 /* WMLDocument.h */,
 				4C6B99250E52E37300487BB7 /* WMLElement.cpp */,
 				4C6B99260E52E37300487BB7 /* WMLElement.h */,
+				08807B6A0ED709AB003F6975 /* WMLGoElement.cpp */,
+				08807B6B0ED709AB003F6975 /* WMLGoElement.h */,
 				0893E4650ECB68F400A28563 /* WMLPageState.cpp */,
 				0893E4660ECB68F400A28563 /* WMLPageState.h */,
 				4C6B99350E52E37300487BB7 /* WMLPElement.cpp */,
 				4C6B99360E52E37300487BB7 /* WMLPElement.h */,
+				08807B700ED709AB003F6975 /* WMLPrevElement.cpp */,
+				08807B710ED709AB003F6975 /* WMLPrevElement.h */,
+				08807B720ED709AB003F6975 /* WMLRefreshElement.cpp */,
+				08807B730ED709AB003F6975 /* WMLRefreshElement.h */,
+				08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */,
+				08807B750ED709AB003F6975 /* WMLSetvarElement.h */,
 				4C6B99430E52E37300487BB7 /* WMLTagNames.in */,
 				08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */,
 				08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */,
@@ -16341,6 +16365,10 @@
 				08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */,
 				084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */,
 				080081970ED3B2DD00C53BC0 /* WMLAnchorElement.h in Headers */,
+				08807B770ED709AB003F6975 /* WMLGoElement.h in Headers */,
+				08807B7D0ED709AB003F6975 /* WMLPrevElement.h in Headers */,
+				08807B7F0ED709AB003F6975 /* WMLRefreshElement.h in Headers */,
+				08807B810ED709AB003F6975 /* WMLSetvarElement.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18267,6 +18295,10 @@
 				084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */,
 				080081960ED3B2DD00C53BC0 /* WMLAnchorElement.cpp in Sources */,
 				934CC0E10ED39D6F00A658F2 /* ScriptValue.cpp in Sources */,
+				08807B760ED709AB003F6975 /* WMLGoElement.cpp in Sources */,
+				08807B7C0ED709AB003F6975 /* WMLPrevElement.cpp in Sources */,
+				08807B7E0ED709AB003F6975 /* WMLRefreshElement.cpp in Sources */,
+				08807B800ED709AB003F6975 /* WMLSetvarElement.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

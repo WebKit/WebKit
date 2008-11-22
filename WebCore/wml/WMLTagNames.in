@@ -6,7 +6,11 @@ a
 anchor
 br interfaceName=WMLBRElement
 card
+go
 p
+prev
+refresh
+setvar
 
 #if 0
 # These elements don't need a correponsponding WML*Element class.
@@ -24,7 +28,6 @@ u
 access
 do
 fieldset
-go
 head
 img interfaceName=WMLImageElement
 input
@@ -34,10 +37,7 @@ onevent
 optgroup
 option
 postfield
-prev
-refresh
 select
-setvar
 table
 td
 template

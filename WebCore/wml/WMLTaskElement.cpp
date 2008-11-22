@@ -28,6 +28,7 @@
 #include "WMLAnchorElement.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
+#include "WMLSetvarElement.h"
 
 namespace WebCore {
 
@@ -68,24 +69,16 @@ void WMLTaskElement::insertedIntoDocument()
     }
 }
 
-#if 0
-void WMLTaskElement::addVariableSetter(WMLSetvarElement* element)
+void WMLTaskElement::registerVariableSetter(WMLSetvarElement* element)
 {
     ASSERT(element);
     m_variableSetterElements.add(element);
 }
 
-void WMLTaskElement::removeVariableSetter(WMLSetvarElement* element)
-{
-    ASSERT(element);
-    m_variableSetterElements.remove(element);
-}
-#endif
-
 void WMLTaskElement::storeVariableState(Page* page)
 {
     ASSERT(page);
-#if 0
+
     if (m_variableSetterElements.isEmpty())
         return;
 
@@ -108,7 +101,6 @@ void WMLTaskElement::storeVariableState(Page* page)
     ASSERT(pageState);
 
     pageState->storeVariables(variables);
-#endif
 }
 
 }

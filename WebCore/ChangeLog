@@ -1,5 +1,45 @@
 2008-11-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Holger Freyther.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22423
+
+        Add <go> stub implementation. Add complete <prev>/<refresh> and <setvar> implementation.
+        Activate code handling <setvar> registration in WMLTaskElement.
+
+        * wml/WMLGoElement.cpp: Added.
+        (WebCore::WMLGoElement::WMLGoElement):
+        (WebCore::WMLGoElement::~WMLGoElement):
+        (WebCore::WMLGoElement::parseMappedAttribute):
+        (WebCore::WMLGoElement::executeTask):
+        * wml/WMLGoElement.h: Added.
+        * wml/WMLPrevElement.cpp: Added.
+        (WebCore::WMLPrevElement::WMLPrevElement):
+        (WebCore::WMLPrevElement::~WMLPrevElement):
+        (WebCore::WMLPrevElement::executeTask):
+        * wml/WMLPrevElement.h: Added.
+        * wml/WMLRefreshElement.cpp: Added.
+        (WebCore::WMLRefreshElement::WMLRefreshElement):
+        (WebCore::WMLRefreshElement::~WMLRefreshElement):
+        (WebCore::WMLRefreshElement::executeTask):
+        * wml/WMLRefreshElement.h: Added.
+        * wml/WMLSetvarElement.cpp: Added.
+        (WebCore::WMLSetvarElement::WMLSetvarElement):
+        (WebCore::WMLSetvarElement::~WMLSetvarElement):
+        (WebCore::WMLSetvarElement::parseMappedAttribute):
+        (WebCore::WMLSetvarElement::insertedIntoDocument):
+        (WebCore::WMLSetvarElement::name):
+        (WebCore::WMLSetvarElement::value):
+        * wml/WMLSetvarElement.h: Added.
+        * wml/WMLTagNames.in:
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::registerVariableSetter):
+        (WebCore::WMLTaskElement::storeVariableState):
+        * wml/WMLTaskElement.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2008-11-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Not reviewed. Forgot to include WMLPageState.* in the last commit.
 
         * wml/WMLPageState.cpp:

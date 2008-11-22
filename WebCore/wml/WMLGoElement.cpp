@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved.
  *               http://www.torchmobile.com/
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -19,37 +19,45 @@
  *
  */
 
-#ifndef WMLTaskElement_h
-#define WMLTaskElement_h
+#include "config.h"
 
 #if ENABLE(WML)
-#include "WMLElement.h"
+#include "WMLGoElement.h"
 
-#include <wtf/HashSet.h>
+#include "Document.h"
+#include "Page.h"
+#include "WMLPageState.h"
 
 namespace WebCore {
 
-class Page;
-class WMLSetvarElement;
+WMLGoElement::WMLGoElement(const QualifiedName& tagName, Document* doc)
+    : WMLTaskElement(tagName, doc)
+{
+}
 
-class WMLTaskElement : public WMLElement {
-public:
-    WMLTaskElement(const QualifiedName& tagName, Document*);
-    virtual ~WMLTaskElement();
+WMLGoElement::~WMLGoElement()
+{
+}
 
-    virtual void insertedIntoDocument();
-    virtual void executeTask(Event*) = 0;
+void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)
+{
+    WMLTaskElement::parseMappedAttribute(attr);
+}
 
-    void registerVariableSetter(WMLSetvarElement*);
+void WMLGoElement::executeTask(Event*)
+{
+    Page* page = document()->page();
+    if (!page)
+        return;
 
-protected:
-    void storeVariableState(Page*);
+    WMLCardElement* card = page->wmlPageState()->activeCard();
+    if (!card)
+        return;
 
-private:
-    HashSet<WMLSetvarElement*> m_variableSetterElements;
-};
+    storeVariableState(page);
+    // FIXME: Implement <go> functionality.
+}
 
 }
 
-#endif
 #endif

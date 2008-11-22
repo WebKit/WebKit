@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved.
  *               http://www.torchmobile.com/
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
@@ -19,34 +19,28 @@
  *
  */
 
-#ifndef WMLTaskElement_h
-#define WMLTaskElement_h
+#ifndef WMLSetvarElement_h
+#define WMLSetvarElement_h
 
 #if ENABLE(WML)
 #include "WMLElement.h"
 
-#include <wtf/HashSet.h>
-
 namespace WebCore {
 
-class Page;
-class WMLSetvarElement;
-
-class WMLTaskElement : public WMLElement {
+class WMLSetvarElement : public WMLElement {
 public:
-    WMLTaskElement(const QualifiedName& tagName, Document*);
-    virtual ~WMLTaskElement();
+    WMLSetvarElement(const QualifiedName& tagName, Document*);
+    virtual ~WMLSetvarElement();
 
+    virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
-    virtual void executeTask(Event*) = 0;
 
-    void registerVariableSetter(WMLSetvarElement*);
-
-protected:
-    void storeVariableState(Page*);
+    String name() const;
+    String value() const;
 
 private:
-    HashSet<WMLSetvarElement*> m_variableSetterElements;
+    String m_name;
+    String m_value;
 };
 
 }
