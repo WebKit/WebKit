@@ -1,24 +1,26 @@
-<p>This tests insertion before/after links in certain situations.  Inserting before a link should always put the text outside the link unless insertion is happening at the start of a paragraph.  Inserting after should always insert inside the link, unless insertion is happening at the end of the document.</p>
-<div id="div" contenteditable="true"><a id="link" href="http://www.google.com/">link.</a> This <a href="http://www.google.com/">This should.</a></div>
+<div id="description">This tests insertion before/after links.  Text should always be inserted at the start or end of a link should be inserted outside of it.</div>
+<div id="edit" contenteditable="true"><a id="link" href="http://www.google.com/">this should</a> <a href="http://www.google.com/">this should</a></div>
 
 <script>
 
 if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+    window.layoutTestController.dumpAsText();
     
-var div = document.getElementById("div");
+var edit = document.getElementById("edit");
 var sel = window.getSelection();
 
-sel.setPosition(div, 0);
+sel.setPosition(edit, 0);
 
-document.execCommand("InsertText", false, "This text should be in a ");
+document.execCommand("InsertText", false, "this text should not be in a link");
 sel.modify("move", "forward", "word");
 sel.modify("move", "forward", "word");
 
-document.execCommand("InsertText", false, " should not.");
+document.execCommand("InsertText", false, "this should not");
 
-sel.modify("move", "forward", "line");
+sel.modify("move", "forward", "paragraphBoundary");
 
-document.execCommand("InsertText", false, " This should not.");
+document.execCommand("InsertText", false, "this should not");
 
+if (window.layoutTestController)
+    document.body.innerText = document.getElementById("description").innerText + "\n\n" + edit.innerHTML;
 </script>

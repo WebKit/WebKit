@@ -869,7 +869,7 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
     // because there is work that it must do in this situation.
     // The old selection can be invalid here and calling shouldChangeSelection can produce some strange calls.
     // See <rdar://problem/5729315> Some shouldChangeSelectedDOMRange contain Ranges for selections that are no longer valid
-    // Don't clear the typing style or removedAnchor with this selection change.  We do those things elsewhere if necessary.
+    // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
     if (newSelection == m_frame->selection()->selection() || m_frame->shouldChangeSelection(newSelection))
         m_frame->selection()->setSelection(newSelection, false, false);
         

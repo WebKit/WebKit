@@ -1,3 +1,27 @@
+2008-11-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/5381788> Match NSTextView editing behavior at the end of hyperlink text
+        
+        Removed tests for behaviors that we're no longer interested in:
+        * editing/deleting/delete-link-1.html: Removed.
+        * platform/mac/editing/deleting/delete-link-1-expected.checksum: Removed.
+        * platform/mac/editing/deleting/delete-link-1-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-link-1-expected.txt: Removed.
+        * editing/execCommand/19653-4-expected.txt: Removed.
+        * editing/execCommand/19653-4.html: Removed.
+        
+        Reflects new behavior (don't remember removed anchors):
+        * platform/mac/editing/deleting/5168598-expected.txt:
+        
+        Reflects new behavior.  Also made this test cross-platform:
+        * editing/inserting/insert-before-link-1-expected.txt: Added.
+        * editing/inserting/insert-before-link-1.html:
+        * platform/mac/editing/inserting/insert-before-link-1-expected.checksum: Removed.
+        * platform/mac/editing/inserting/insert-before-link-1-expected.png: Removed.
+        * platform/mac/editing/inserting/insert-before-link-1-expected.txt: Removed.
+
 2008-11-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

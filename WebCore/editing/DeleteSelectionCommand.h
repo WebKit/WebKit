@@ -53,7 +53,6 @@ private:
     void initializeStartEnd(Position&, Position&);
     void initializePositionData();
     void saveTypingStyleState();
-    void saveFullySelectedAnchor();
     void insertPlaceholderForAncestorBlockContent();
     bool handleSpecialCaseBRDelete();
     void handleGeneralDelete();

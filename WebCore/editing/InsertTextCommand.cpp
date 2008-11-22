@@ -56,13 +56,6 @@ void InsertTextCommand::doApply()
 Position InsertTextCommand::prepareForTextInsertion(const Position& p)
 {
     Position pos = p;
-    // If an anchor was removed and the selection hasn't changed, we restore it.
-    RefPtr<Node> anchor = document()->frame()->editor()->removedAnchor();
-    if (anchor) {
-        insertNodeAt(anchor.get(), pos);
-        document()->frame()->editor()->setRemovedAnchor(0);
-        pos = Position(anchor.get(), 0);
-    }
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     if (!pos.node()->isTextNode()) {
@@ -148,10 +141,7 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
     if (!startPosition.isCandidate())
         startPosition = startPosition.downstream();
     
-    // FIXME: This typing around anchor behavior doesn't exactly match TextEdit.  In TextEdit,
-    // you won't be placed inside a link when typing after it if you've just placed the caret
-    // there with the mouse.
-    startPosition = positionAvoidingSpecialElementBoundary(startPosition, false);
+    startPosition = positionAvoidingSpecialElementBoundary(startPosition);
     
     Position endPosition;
     

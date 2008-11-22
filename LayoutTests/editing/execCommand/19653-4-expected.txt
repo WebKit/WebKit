@@ -1,2 +1,0 @@
-This tests to make sure that a deleted anchor is restored when even brand new TypingCommand is created after it is removed. The text below should be in an anchor.
-<font class="Apple-style-span" color="#0000EE"><span class="Apple-style-span" style="text-decoration: underline;"><a id="a" href="http://www.apple.com/">Anchor</a></span></font>

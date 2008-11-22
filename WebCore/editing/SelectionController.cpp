@@ -97,7 +97,7 @@ void SelectionController::moveTo(const Position &base, const Position &extent, E
     setSelection(Selection(base, extent, affinity), true, true, userTriggered);
 }
 
-void SelectionController::setSelection(const Selection& s, bool closeTyping, bool clearTypingStyleAndRemovedAnchor, bool userTriggered)
+void SelectionController::setSelection(const Selection& s, bool closeTyping, bool clearTypingStyle, bool userTriggered)
 {
     if (m_isDragCaretController) {
         invalidateCaretRect();
@@ -112,17 +112,15 @@ void SelectionController::setSelection(const Selection& s, bool closeTyping, boo
     }
     
     if (s.base().node() && s.base().node()->document() != m_frame->document()) {
-        s.base().node()->document()->frame()->selection()->setSelection(s, closeTyping, clearTypingStyleAndRemovedAnchor, userTriggered);
+        s.base().node()->document()->frame()->selection()->setSelection(s, closeTyping, clearTypingStyle, userTriggered);
         return;
     }
     
     if (closeTyping)
         TypingCommand::closeTyping(m_frame->editor()->lastEditCommand());
 
-    if (clearTypingStyleAndRemovedAnchor) {
+    if (clearTypingStyle)
         m_frame->clearTypingStyle();
-        m_frame->editor()->setRemovedAnchor(0);
-    }
         
     if (m_sel == s)
         return;

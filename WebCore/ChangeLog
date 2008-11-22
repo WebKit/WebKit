@@ -1,3 +1,45 @@
+2008-11-21  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5381788> Match NSTextView editing behavior at the end of hyperlink text
+        
+        Change link editing behavior to match TextEdit and MS Word when editing before and after 
+        a link (Pages has two caret positions at link boundaries, Thunderbird and FF behave like we 
+        used to, so it's difficult to get out of link editing mode):
+        When inserting before or after a link, always insert content outside of the link.  This
+        makes it impossible to get stuck in link editing mode, while making it slightly more 
+        difficult to edit link labels.  WebKit editors that care about this can add UI for editing 
+        link labels, like GMail and GoogleDocs have done.  We never actually had any bugs complaining
+        about how it was difficult to edit link labels at the start/end, the code was just introduced 
+        with another bug fix without much thought.
+        
+        Don't remember removed links anymore, no other editor does this and it made it 
+        difficult/impossible to get out of link editing mode.  This code was added to fix
+        <rdar://problem/4069359>, which is fixed instead by removing the styles from an 
+        enclosing anchor element from those styles that we remember when we delete content.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::removeEnclosingAnchorStyle):
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/DeleteSelectionCommand.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::prepareForTextInsertion):
+        (WebCore::InsertTextCommand::input):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection):
+        * editing/SelectionController.h:
+
 2008-11-21  Alice Liu  <alice.liu@apple.com>
 
         Rubber-stamped by Dan Bernstein.

@@ -86,13 +86,6 @@ void EditCommand::apply()
     // use them perform one if one is necessary (like for the creation of VisiblePositions).
     if (!m_parent)
         updateLayout();
-    
-    // All high level commands, and all commands that a TypingCommand spawns, except for
-    // text insertions, which should restore a removed anchor, should clear it.
-    if (!m_parent && !isTypingCommand())
-        frame->editor()->setRemovedAnchor(0);
-    if (m_parent && m_parent->isTypingCommand() && !isInsertTextCommand())
-        frame->editor()->setRemovedAnchor(0);
 
     DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
     deleteButtonController->disable();

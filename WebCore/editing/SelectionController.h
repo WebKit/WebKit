@@ -57,7 +57,7 @@ public:
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
 
     const Selection& selection() const { return m_sel; }
-    void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyleAndRemovedAnchor = true, bool userTriggered = false);
+    void setSelection(const Selection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();

@@ -71,9 +71,6 @@ void RemoveFormatCommand::doApply()
     if (string.isEmpty())
         return;
     
-    // Normally, deleting a fully selected anchor and then inserting text will re-create
-    // the removed anchor, but we don't want that behavior here. 
-    frame->editor()->setRemovedAnchor(0);
     // Insert the content with the default style.
     // See <rdar://problem/5794382> RemoveFormat doesn't always reset text alignment
     frame->setTypingStyle(defaultStyle.get());
