@@ -403,7 +403,7 @@ sub hasSVGSupport
     }
 
     if (isGtk() and $path =~ /WebCore/) {
-        $path .= "/../.libs/webkit-1.0.so";
+        $path .= "/../.libs/libwebkit-1.0.so";
     }
 
     my $hasSVGSupport = 0;

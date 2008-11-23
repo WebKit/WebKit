@@ -1,3 +1,11 @@
+2008-11-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Holger Freyther. Landed by Jan Alonzo.
+
+        Get SVG tests tested on GTK port.
+
+        * Scripts/webkitdirs.pm:
+
 2008-11-19  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by Darin Adler.
