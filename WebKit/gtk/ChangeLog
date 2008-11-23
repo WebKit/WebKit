@@ -1,5 +1,21 @@
 2008-11-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Rubber-stamped by Sam Weinig.
+
+        Add gtk-doc configuration/source for the WebKit/Gtk+ Reference Manual
+
+        These files will be used by gtk-doc to generate the documentation. They
+        contain information how to group the symbols of our API, which objects
+        to inspect during the generation of the manual and how to display the
+        manual.
+
+        * docs/webkitgtk-docs.sgml: Added.
+        * docs/webkitgtk-overrides.txt: Added.
+        * docs/webkitgtk-sections.txt: Added.
+        * docs/webkitgtk.types: Added.
+
+2008-11-23  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Sam Weinig.
 
         Make gtk-doc happy with the existing API documentation
