@@ -40,6 +40,7 @@ typedef struct _WebKitWebBackForwardListPrivate WebKitWebBackForwardListPrivate;
 struct _WebKitWebBackForwardList {
     GObject parent_instance;
 
+    /*< private >*/
     WebKitWebBackForwardListPrivate *priv;
 };
 

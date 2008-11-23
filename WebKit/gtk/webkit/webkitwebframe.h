@@ -41,12 +41,14 @@ typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
 struct _WebKitWebFrame {
     GObject parent_instance;
 
+    /*< private >*/
     WebKitWebFramePrivate *priv;
 };
 
 struct _WebKitWebFrameClass {
     GObjectClass parent_class;
 
+    /*< public >*/
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);

@@ -1,3 +1,24 @@
+2008-11-23  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Sam Weinig.
+
+        Make gtk-doc happy with the existing API documentation
+
+        - Mark the *Private pointers in the struct private
+        - Use Returns: where gtk-doc wants us to
+        - Fix the parameters to make gtk-doc happy
+        - Fix signal references
+
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitwebbackforwardlist.cpp:
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebinspector.cpp:
+        (_WebKitWebInspectorPrivate::webkit_web_inspector_class_init):
+        * webkit/webkitwebview.cpp:
+        * webkit/webkitwebview.h:
+
 2008-11-19  Darin Fisher  <darin@chromium.org>
 
         Bustage fix.

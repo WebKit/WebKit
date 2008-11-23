@@ -312,9 +312,9 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
 
 /**
  * webkit_web_history_item_get_title:
- * @webHistoryItem: a #WebKitWebHistoryItem
+ * @web_history_item: a #WebKitWebHistoryItem
  *
- * Returns the page title of @webHistoryItem
+ * Returns: the page title of @web_history_item
  */
 G_CONST_RETURN gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* webHistoryItem)
 {
@@ -332,11 +332,11 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* we
 
 /**
  * webkit_web_history_item_get_alternate_title:
- * @webHistoryItem: a #WebKitWebHistoryItem
+ * @web_history_item: a #WebKitWebHistoryItem
  *
- * Returns the alternate title of @webHistoryItem
+ * Returns the alternate title of @web_history_item
  *
- * Return value: the alternate title of @webHistoryItem
+ * Return value: the alternate title of @web_history_item
  */
 G_CONST_RETURN gchar* webkit_web_history_item_get_alternate_title(WebKitWebHistoryItem* webHistoryItem)
 {
@@ -354,10 +354,10 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_alternate_title(WebKitWebHisto
 
 /**
  * webkit_web_history_item_set_alternate_title:
- * @webHistoryItem: a #WebKitWebHistoryItem
+ * @web_history_item: a #WebKitWebHistoryItem
  * @title: the alternate title for @this history item
  *
- * Sets an alternate title for @webHistoryItem
+ * Sets an alternate title for @web_history_item
  */
 void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistoryItem, const gchar* title)
 {
@@ -372,11 +372,11 @@ void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistor
 
 /**
  * webkit_web_history_item_get_uri:
- * @webHistoryItem: a #WebKitWebHistoryItem
+ * @web_history_item: a #WebKitWebHistoryItem
  *
  * Returns the URI of @this
  *
- * Return value: the URI of @webHistoryItem
+ * Return value: the URI of @web_history_item
  */
 G_CONST_RETURN gchar* webkit_web_history_item_get_uri(WebKitWebHistoryItem* webHistoryItem)
 {
@@ -394,11 +394,11 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_uri(WebKitWebHistoryItem* webH
 
 /**
  * webkit_web_history_item_get_original_uri:
- * @webHistoryItem: a #WebKitWebHistoryItem
+ * @web_history_item: a #WebKitWebHistoryItem
  *
- * Returns the original URI of @webHistoryItem.
+ * Returns the original URI of @web_history_item.
  *
- * Return value: the original URI of @webHistoryITem
+ * Return value: the original URI of @web_history_item
  */
 G_CONST_RETURN gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryItem* webHistoryItem)
 {
@@ -416,11 +416,11 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryI
 
 /**
  * webkit_web_history_item_get_last_visisted_time :
- * @webHistoryItem: a #WebKitWebHistoryItem
+ * @web_history_item: a #WebKitWebHistoryItem
  *
- * Returns the last time @webHistoryItem was visited
+ * Returns the last time @web_history_item was visited
  *
- * Return value: the time in seconds this @webHistoryItem was last visited
+ * Return value: the time in seconds this @web_history_item was last visited
  */
 gdouble webkit_web_history_item_get_last_visited_time(WebKitWebHistoryItem* webHistoryItem)
 {

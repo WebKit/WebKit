@@ -116,7 +116,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      *
      * Emitted when the inspector window should be displayed. Notice
      * that the window must have been created already by handling
-     * ::inspect-web-view.
+     * #WebKitWebInspector::inspect-web-view.
      *
      * Since: 1.0.3
      */
@@ -173,13 +173,13 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      *
      * Emitted when the inspector window should be closed. You can
      * destroy the window or hide it so that it can be displayed again
-     * by handling ::show-window later on.
+     * by handling #WebKitWebInspector::show-window later on.
      *
      * Notice that the inspected #WebKitWebView may no longer exist
      * when this signal is emitted.
      *
      * Notice, too, that if you decide to destroy the window,
-     * ::inspect-web-view will be emmited again, when the user
+     * #WebKitWebInspector::inspect-web-view will be emmited again, when the user
      * inspects an element.
      *
      * Since: 1.0.3
@@ -313,7 +313,7 @@ void webkit_web_inspector_set_web_view(WebKitWebInspector *web_inspector, WebKit
  *
  * Obtains the #WebKitWebView that is used to render the
  * inspector. The #WebKitWebView instance is created by the
- * application, by handling the ::inspect-web-view signal. This means
+ * application, by handling the #WebKitWebInspector::inspect-web-view signal. This means
  * that this method may return %NULL if the user hasn't inspected
  * anything.
  *

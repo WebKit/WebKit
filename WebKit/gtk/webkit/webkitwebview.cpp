@@ -1088,7 +1088,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::select-all:
      * @web_view: the object which received the signal
      *
-     * The ::select-all signal is a keybinding signal which gets emitted to
+     * The #WebKitWebView::select-all signal is a keybinding signal which gets emitted to
      * select the complete contents of the text view.
      *
      * The default bindings for this signal is Ctrl-a.
@@ -1105,7 +1105,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::cut-clipboard:
      * @web_view: the object which received the signal
      *
-     * The ::cut-clipboard signal is a keybinding signal which gets emitted to
+     * The #WebKitWebView::cut-clipboard signal is a keybinding signal which gets emitted to
      * cut the selection to the clipboard.
      *
      * The default bindings for this signal are Ctrl-x and Shift-Delete.
@@ -1122,7 +1122,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::copy-clipboard:
      * @web_view: the object which received the signal
      *
-     * The ::copy-clipboard signal is a keybinding signal which gets emitted to
+     * The #WebKitWebView::copy-clipboard signal is a keybinding signal which gets emitted to
      * copy the selection to the clipboard.
      *
      * The default bindings for this signal are Ctrl-c and Ctrl-Insert.
@@ -1139,7 +1139,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::paste-clipboard:
      * @web_view: the object which received the signal
      *
-     * The ::paste-clipboard signal is a keybinding signal which gets emitted to
+     * The #WebKitWebView::paste-clipboard signal is a keybinding signal which gets emitted to
      * paste the contents of the clipboard into the Web view.
      *
      * The default bindings for this signal are Ctrl-v and Shift-Insert.
@@ -1574,7 +1574,7 @@ WebKitWebSettings* webkit_web_view_get_settings(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_inspector:
- * @webView: a #WebKitWebView
+ * @web_view: a #WebKitWebView
  *
  * Obtains the #WebKitWebInspector associated with the
  * #WebKitWebView. Every #WebKitWebView object has a
@@ -1598,7 +1598,7 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_maintains_back_forward_list:
- * @webView: a #WebKitWebView
+ * @web_view: a #WebKitWebView
  * @flag: to tell the view to maintain a back or forward list
  *
  * Set the view to maintain a back or forward list of history items.
@@ -1612,7 +1612,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
 
 /**
  * webkit_web_view_get_back_forward_list:
- * @webView: a #WebKitWebView
+ * @web_view: a #WebKitWebView
  *
  * Returns a #WebKitWebBackForwardList
  *
@@ -1632,7 +1632,7 @@ WebKitWebBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* w
 
 /**
  * webkit_web_view_go_to_back_forward_item:
- * @webView: a #WebKitWebView
+ * @web_view: a #WebKitWebView
  * @item: a #WebKitWebHistoryItem*
  *
  * Go to the specified #WebKitWebHistoryItem

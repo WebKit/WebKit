@@ -55,12 +55,14 @@ typedef enum
 struct _WebKitWebView {
     GtkContainer parent_instance;
 
+    /*< private >*/
     WebKitWebViewPrivate *priv;
 };
 
 struct _WebKitWebViewClass {
     GtkContainerClass parent_class;
 
+    /*< public >*/
     /*
      * default handler/virtual methods
      * DISCUSS: create_web_view needs a request and should we make this a signal with default handler? this would
@@ -172,7 +174,7 @@ webkit_web_view_load_html_string                (WebKitWebView        *web_view,
 
 WEBKIT_API gboolean
 webkit_web_view_search_text                     (WebKitWebView        *web_view,
-                                                 const gchar          *string,
+                                                 const gchar          *text,
                                                  gboolean              case_sensitive,
                                                  gboolean              forward,
                                                  gboolean              wrap);
