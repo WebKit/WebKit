@@ -3,8 +3,8 @@
         Reviewed by Camron Zwarich.
 
         Implement repatching for get by id chain.
-        Previously the access is performed in a function stufb, in the reptach form
-        the trampoline is not called to; instead the hot patch is relinkde to jump
+        Previously the access is performed in a function stub, in the repatch form
+        the trampoline is not called to; instead the hot path is relinked to jump
         directly to the trampoline, if it fails it will jump to the slow case.
 
         https://bugs.webkit.org/show_bug.cgi?id=22449
