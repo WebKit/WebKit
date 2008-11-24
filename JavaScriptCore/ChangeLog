@@ -1,3 +1,13 @@
+2008-11-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Camron Zwarich.
+
+        Replace accidentally deleted immediate check from get by id chain trampoline.
+        https://bugs.webkit.org/show_bug.cgi?id=22413
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2008-11-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
