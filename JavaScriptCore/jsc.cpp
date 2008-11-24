@@ -51,7 +51,7 @@
 #include <signal.h>
 #endif
 
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) && !PLATFORM(WIN_CE)
 #include <crtdbg.h>
 #include <windows.h>
 #endif
@@ -256,7 +256,7 @@ JSValue* functionQuit(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
     cleanupGlobalData(&exec->globalData());
     exit(EXIT_SUCCESS);
-#if !COMPILER(MSVC)
+#if !COMPILER(MSVC) && !PLATFORM(WIN_CE)
     // MSVC knows that exit(0) never returns, so it flags this return statement as unreachable.
     return jsUndefined();
 #endif

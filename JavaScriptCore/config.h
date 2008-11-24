@@ -32,7 +32,7 @@
 #define max max
 #define min min
 
-#if !COMPILER(MSVC7)
+#if !COMPILER(MSVC7) && !PLATFORM(WIN_CE)
 // We need to define this before the first #include of stdlib.h or it won't contain rand_s.
 #ifndef _CRT_RAND_S
 #define _CRT_RAND_S

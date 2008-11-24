@@ -210,6 +210,20 @@
 #define WTF_PLATFORM_BIG_ENDIAN 1
 #endif
 
+/* PLATFORM(WIN_CE) && PLATFORM(QT)
+   We can not determine the endianess at compile time. For
+   Qt for Windows CE the endianess is specified in the
+   device specific makespec
+*/
+#if PLATFORM(WIN_CE) && PLATFORM(QT)
+#   include <QtGlobal>
+#   undef WTF_PLATFORM_BIG_ENDIAN
+#   undef WTF_PLATFORM_MIDDLE_ENDIAN
+#   if Q_BYTE_ORDER == Q_BIG_EDIAN
+#       define WTF_PLATFORM_BIG_ENDIAN 1
+#   endif
+#endif
+
 /* Compiler */
 
 /* COMPILER(MSVC) */
@@ -324,7 +338,11 @@
 #elif PLATFORM(WIN_OS)
 
 #define HAVE_FLOAT_H 1
+#if PLATFORM(WIN_CE)
+#define HAVE_ERRNO_H 0
+#else
 #define HAVE_SYS_TIMEB_H 1
+#endif
 #define HAVE_VIRTUALALLOC 1
 
 #elif PLATFORM(SYMBIAN)

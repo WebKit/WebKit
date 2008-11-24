@@ -1,3 +1,27 @@
+2008-11-24  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20746
+
+        Various small compilation fixes to make the Qt port of WebKit
+        compile on Windows CE.
+
+        * config.h: Don't set _CRT_RAND_S for CE, it's not available.
+        * jsc.cpp: Disabled use of debugger includes for CE. It
+          does not have the debugging functions.
+        * runtime/DateMath.cpp: Use localtime() on Windows CE.
+        * wtf/Assertions.cpp: Compile on Windows CE without debugger.
+        * wtf/Assertions.h: Include windows.h before defining ASSERT.
+        * wtf/MathExtras.h: Include stdlib.h instead of xmath.h.
+        * wtf/Platform.h: Disable ERRNO_H and detect endianess based
+          on the Qt endianess. On Qt for Windows CE the endianess is
+          defined by the vendor specific build spec.
+        * wtf/Threading.h: Use the volatile-less atomic functions.
+        * wtf/dtoa.cpp: Compile without errno.
+        * wtf/win/MainThreadWin.cpp: Don't include windows.h on CE after
+        Assertions.h due to the redefinition of ASSERT.
+
 2008-11-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Camron Zwarich.

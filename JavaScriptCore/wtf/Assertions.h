@@ -128,6 +128,14 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 
 /* ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED */
 
+#if PLATFORM(WIN_CE)
+/* FIXME: We include this here only to avoid a conflict with the ASSERT macro. */
+#include <windows.h>
+#undef min
+#undef max
+#undef ERROR
+#endif
+
 #if PLATFORM(WIN_OS)
 /* FIXME: Change to use something other than ASSERT to avoid this conflict with win32. */
 #undef ASSERT

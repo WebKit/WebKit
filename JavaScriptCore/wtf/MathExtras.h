@@ -40,8 +40,11 @@
 #endif
 
 #if COMPILER(MSVC)
-
+#if PLATFORM(WIN_CE)
+#include <stdlib.h>
+#else
 #include <xmath.h>
+#endif
 #include <limits>
 
 #if HAVE(FLOAT_H)

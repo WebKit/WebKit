@@ -31,7 +31,9 @@
 
 #include "Assertions.h"
 #include "Threading.h"
+#if !PLATFORM(WIN_CE)
 #include <windows.h>
+#endif
 
 namespace WTF {
 

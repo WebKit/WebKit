@@ -135,7 +135,11 @@
 #include "config.h"
 #include "dtoa.h"
 
+#if HAVE(ERRNO_H)
 #include <errno.h>
+#else
+#define NO_ERRNO
+#endif
 #include <float.h>
 #include <math.h>
 #include <stdint.h>
