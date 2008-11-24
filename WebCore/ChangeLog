@@ -1,3 +1,10 @@
+2008-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build: selectionRect() -> selectionBounds().
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromSelection):
+
 2008-11-24  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Darin Adler.
