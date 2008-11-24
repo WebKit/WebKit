@@ -13881,6 +13881,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptSourceCode.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptString.h"
 					>
 				</File>

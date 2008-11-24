@@ -29,7 +29,6 @@
 #include "CDATASection.h"
 #include "CString.h"
 #include "CachedScript.h"
-#include "CachedScriptSourceProvider.h"
 #include "Comment.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -48,6 +47,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "StringSourceProvider.h"
 #include "TextResourceDecoder.h"
@@ -326,7 +326,7 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
     ASSERT(m_pendingScript == finishedObj);
     ASSERT(m_pendingScript->accessCount() > 0);
         
-    JSC::SourceCode sourceCode = makeSource(m_pendingScript.get());
+    ScriptSourceCode sourceCode(m_pendingScript.get());
     bool errorOccurred = m_pendingScript->errorOccurred();
 
     m_pendingScript->removeClient(this);

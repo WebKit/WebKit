@@ -28,6 +28,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "CachedScript.h"
 #include <parser/SourceCode.h>
 
 namespace WebCore {

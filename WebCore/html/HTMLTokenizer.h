@@ -34,10 +34,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
-namespace JSC {
-    class SourceCode;
-}
-
 namespace WebCore {
 
 class CachedScript;
@@ -50,6 +46,7 @@ class FrameView;
 class HTMLParser;
 class Node;
 class PreloadScanner;
+class ScriptSourceCode;
 
 /**
  * @internal
@@ -181,7 +178,7 @@ private:
     State parseEntity(SegmentedString&, UChar*& dest, State, unsigned& cBufferPos, bool start, bool parsingTag);
     State parseProcessingInstruction(SegmentedString&, State);
     State scriptHandler(State);
-    State scriptExecution(const JSC::SourceCode&, State);
+    State scriptExecution(const ScriptSourceCode&, State);
     void setSrc(const SegmentedString&);
  
     // check if we have enough space in the buffer.

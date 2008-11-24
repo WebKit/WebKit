@@ -1,3 +1,46 @@
+2008-11-24  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22448
+        Create an abstraction for JSC::SourceCode
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/CachedScriptSourceProvider.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptSourceCode.h: Added.
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::length):
+        (WebCore::ScriptSourceCode::jsSourceCode):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::Workevn ScriptController::evaluate):
+        * bindings/js/WorkerScriptController.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::insertedIntoDocument):
+        (WebCore::ScriptElement::childrenChanged):
+        (WebCore::ScriptElementData::evaluateScript):
+        (WebCore::ScriptElementData::notifyFinished):
+        * dom/ScriptElement.h:
+        * dom/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        * dom/WorkerThread.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::notifyFinished):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::endElementNs):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::XMLTokenizer::parseEndElement):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeScript):
+        * loader/FrameLoader.h:
+
 2008-11-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

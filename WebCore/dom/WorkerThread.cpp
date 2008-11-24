@@ -31,13 +31,12 @@
 #include "WorkerThread.h"
 
 #include "JSWorkerContext.h"
-#include "StringSourceProvider.h"
+#include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
 #include "WorkerTask.h"
-
-using namespace JSC;
 
 namespace WebCore {
 
@@ -78,11 +77,11 @@ void* WorkerThread::workerThread()
     {
         // Mutex protection is necessary because stop() can be called before the context is fully created.
         MutexLocker lock(m_workerContextMutex);
-        m_workerContext = WorkerContext::create(KURL(m_scriptURL), this);
+        m_workerContext = WorkerContext::create(m_scriptURL, this);
     }
 
     WorkerScriptController* script = m_workerContext->script();
-    script->evaluate(makeSource(m_sourceCode, m_scriptURL));
+    script->evaluate(ScriptSourceCode(m_sourceCode, m_scriptURL));
     m_messagingProxy->confirmWorkerThreadMessage(m_workerContext->hasPendingActivity()); // This wasn't really a message, but it counts as one for GC.
 
     while (true) {

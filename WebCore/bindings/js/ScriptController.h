@@ -40,7 +40,6 @@ struct NPObject;
 
 namespace JSC {
     class JSGlobalObject;
-    class SourceCode;
 
     namespace Bindings {
         class Instance;
@@ -55,6 +54,7 @@ class EventListener;
 class HTMLPlugInElement;
 class Frame;
 class Node;
+class ScriptSourceCode;
 class ScriptValue;
 class String;
 class Widget;
@@ -79,7 +79,7 @@ public:
         return m_windowShell->window();
     }
 
-    ScriptValue evaluate(const JSC::SourceCode&);
+    ScriptValue evaluate(const ScriptSourceCode&);
 
     PassRefPtr<EventListener> createInlineEventListener(const String& functionName, const String& code, Node*);
 #if ENABLE(SVG)

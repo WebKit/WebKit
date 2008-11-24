@@ -32,11 +32,12 @@
 
 #include "JSDOMBinding.h"
 #include "JSWorkerContext.h"
+#include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "WorkerContext.h"
 #include "WorkerMessagingProxy.h"
 #include "WorkerThread.h"
 #include <interpreter/Interpreter.h>
-#include <parser/SourceCode.h>
 #include <runtime/Completion.h>
 #include <runtime/Completion.h>
 #include <runtime/JSLock.h>
@@ -70,7 +71,7 @@ void WorkerScriptController::initScript()
     m_workerContextWrapper = new (m_globalData.get()) JSWorkerContext(m_workerContext);
 }
 
-JSValue* WorkerScriptController::evaluate(const JSC::SourceCode& sourceCode)
+ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
     {
         MutexLocker lock(m_sharedDataMutex);
@@ -83,7 +84,7 @@ JSValue* WorkerScriptController::evaluate(const JSC::SourceCode& sourceCode)
 
     ExecState* exec = m_workerContextWrapper->globalExec();
     m_workerContextWrapper->startTimeoutCheck();
-    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode, m_workerContextWrapper);
+    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper);
     m_workerContextWrapper->stopTimeoutCheck();
 
     m_workerContext->thread()->messagingProxy()->reportWorkerThreadActivity(m_workerContext->hasPendingActivity());

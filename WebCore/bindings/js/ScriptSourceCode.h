@@ -28,44 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptString_h
-#define ScriptString_h
+#ifndef ScriptSourceCode_h
+#define ScriptSourceCode_h
 
-#include <runtime/JSLock.h>
-#include <runtime/UString.h>
+#include "CachedScriptSourceProvider.h"
+#include "StringSourceProvider.h"
+#include "KURL.h"
 
 namespace WebCore {
 
-class String;
-
-class ScriptString {
+class ScriptSourceCode {
 public:
-    ScriptString(const char* s) : m_str(s) {}
-    ScriptString(const JSC::UString& s) : m_str(s) {}
-
-    operator JSC::UString() const { return m_str; }
-
-    bool isNull() const { return m_str.isNull(); }
-    size_t size() const { return m_str.size(); }
-
-    ScriptString& operator=(const char* s)
+    ScriptSourceCode(const String& source, const KURL& url = KURL(), int startLine = 1)
+        : m_code(makeSource(source, url.isNull() ? String() : url.string(), startLine))
     {
-        JSC::JSLock lock(false);
-        m_str = s;
-        return *this;
     }
 
-    ScriptString& operator+=(const String& s)
+    ScriptSourceCode(CachedScript* cs)
+        : m_code(makeSource(cs))
     {
-        JSC::JSLock lock(false);
-        m_str += s;
-        return *this;
     }
+
+    bool isEmpty() const { return m_code.length() == 0; }
+
+    const JSC::SourceCode& jsSourceCode() const { return m_code; }
 
 private:
-    JSC::UString m_str;
+    JSC::SourceCode m_code;
 };
 
 } // namespace WebCore
 
-#endif // ScriptString_h
+#endif // ScriptSourceCode_h

@@ -80,18 +80,16 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "Settings.h"
-#include "StringSourceProvider.h"
 #include "SystemTime.h"
 #include "TextResourceDecoder.h"
 #include "WindowFeatures.h"
 #include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
-#include <runtime/JSLock.h>
-#include <runtime/JSObject.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -108,8 +106,6 @@
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
 #endif
-
-using namespace JSC;
 
 namespace WebCore {
 
@@ -776,10 +772,10 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
 
 ScriptValue FrameLoader::executeScript(const String& script, bool forceUserGesture)
 {
-    return executeScript(makeSource(script, forceUserGesture ? String() : m_URL.string()));
+    return executeScript(ScriptSourceCode(script, forceUserGesture ? KURL() : m_URL));
 }
 
-ScriptValue FrameLoader::executeScript(const SourceCode& sourceCode)
+ScriptValue FrameLoader::executeScript(const ScriptSourceCode& sourceCode)
 {
     if (!m_frame->script()->isEnabled() || m_frame->script()->isPaused())
         return ScriptValue();

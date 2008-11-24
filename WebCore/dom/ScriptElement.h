@@ -24,15 +24,12 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 
-namespace JSC {
-    class SourceCode;
-}
-
 namespace WebCore {
 
 class CachedScript;
 class Element;
 class ScriptElementData;
+class ScriptSourceCode;
 
 class ScriptElement {
 public:
@@ -81,7 +78,7 @@ public:
     void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
 
     void requestScript(const String& sourceUrl);
-    void evaluateScript(const JSC::SourceCode&);
+    void evaluateScript(const ScriptSourceCode&);
     void stopLoadRequest();
 
 private:

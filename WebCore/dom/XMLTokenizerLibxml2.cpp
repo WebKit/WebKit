@@ -47,8 +47,8 @@
 #include "ResourceResponse.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
+#include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "StringSourceProvider.h"
 #include "TextResourceDecoder.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
@@ -807,7 +807,7 @@ void XMLTokenizer::endElementNs()
             } else 
                 m_scriptElement = 0;
         } else
-            m_view->frame()->loader()->executeScript(makeSource(scriptElement->scriptContent(), m_doc->url().string(), m_scriptStartLine));
+            m_view->frame()->loader()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), m_doc->url(), m_scriptStartLine));
 
         m_requestingScript = false;
     }

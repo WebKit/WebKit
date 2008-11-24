@@ -35,13 +35,13 @@
 
 namespace JSC {
     class JSGlobalData;
-    class JSValue;
-    class SourceCode;
 }
 
 namespace WebCore {
 
     class JSWorkerContext;
+    class ScriptSourceCode;
+    class ScriptValue;
     class String;
     class WorkerContext;
 
@@ -56,7 +56,7 @@ namespace WebCore {
             return m_workerContextWrapper;
         }
 
-        JSC::JSValue* evaluate(const JSC::SourceCode&);
+        ScriptValue evaluate(const ScriptSourceCode&);
 
         void forbidExecution();
 
