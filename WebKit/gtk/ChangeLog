@@ -1,3 +1,14 @@
+2008-11-24  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=17122
+        [GTK] Bad font default settings
+
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::webkit_web_settings_class_init):
+        Use default font size 12 instead of 10
+
 2008-11-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Holger Freyther.

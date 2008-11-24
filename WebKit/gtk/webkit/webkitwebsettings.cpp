@@ -167,7 +167,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     "default-font-size",
                                     "Default Font Size",
                                     "The default font size used to display text.",
-                                    5, G_MAXINT, 10,
+                                    5, G_MAXINT, 12,
                                     flags));
 
     g_object_class_install_property(gobject_class,
