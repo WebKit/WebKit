@@ -1,3 +1,15 @@
+2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22439
+        Won't load stylesheets with filenames less than 2 characters long in xhtml.
+
+        * http/tests/misc/.htaccess:
+        * http/tests/misc/a: Added.
+        * http/tests/misc/single-character-pi-stylesheet-expected.txt: Added.
+        * http/tests/misc/single-character-pi-stylesheet.xhtml: Added.
+
 2008-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

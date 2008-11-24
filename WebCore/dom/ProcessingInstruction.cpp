@@ -136,39 +136,35 @@ void ProcessingInstruction::checkStyleSheet()
         m_title = attrs.get("title");
         m_media = attrs.get("media");
 
-        if (href.length() > 1) {
-            if (href[0] == '#') {
-                m_localHref = href.substring(1);
+        if (href.length() > 1 && href[0] == '#') {
+            m_localHref = href.substring(1);
 #if ENABLE(XSLT)
-                // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
-                // to kick off import/include loads that can hang off some parent sheet.
-                if (m_isXSL) {
-                    m_sheet = XSLStyleSheet::createEmbedded(this, m_localHref);
-                    m_loading = false;
-                }
-#endif
+            // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
+            // to kick off import/include loads that can hang off some parent sheet.
+            if (m_isXSL) {
+                m_sheet = XSLStyleSheet::createEmbedded(this, m_localHref);
+                m_loading = false;
             }
+#endif
+        } else {
+            m_loading = true;
+            document()->addPendingSheet();
+            if (m_cachedSheet)
+                m_cachedSheet->removeClient(this);
+#if ENABLE(XSLT)
+            if (m_isXSL)
+                m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href).string());
             else
-            {
-                m_loading = true;
-                document()->addPendingSheet();
-                if (m_cachedSheet)
-                    m_cachedSheet->removeClient(this);
-#if ENABLE(XSLT)
-                if (m_isXSL)
-                    m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href).string());
-                else
 #endif
-                {
-                    String charset = attrs.get("charset");
-                    if (charset.isEmpty())
-                        charset = document()->frame()->loader()->encoding();
+            {
+                String charset = attrs.get("charset");
+                if (charset.isEmpty())
+                    charset = document()->frame()->loader()->encoding();
 
-                    m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href).string(), charset);
-                }
-                if (m_cachedSheet)
-                    m_cachedSheet->addClient(this);
+                m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href).string(), charset);
             }
+            if (m_cachedSheet)
+                m_cachedSheet->addClient(this);
         }
     }
 }
