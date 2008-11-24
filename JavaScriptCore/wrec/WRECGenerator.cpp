@@ -52,15 +52,15 @@ void Generator::generateEnter()
     __ convertToFastCall();
 
     // Save callee save registers.
-    __ pushl_r(Generator::output);
-    __ pushl_r(Generator::character);
+    __ pushl_r(output);
+    __ pushl_r(character);
     
     // Initialize output register.
-    __ movl_mr(outputParameter, X86::esp, Generator::output);
+    __ movl_mr(outputParameter, X86::esp, output);
 
 #ifndef NDEBUG
     // ASSERT that the output register is not null.
-    __ testl_rr(Generator::output, Generator::output);
+    __ testl_rr(output, output);
     X86Assembler::JmpSrc outputNotNull = __ jne();
     __ int3();
     __ link(outputNotNull, __ label());
@@ -71,25 +71,25 @@ void Generator::generateReturnSuccess()
 {
     // Set return value.
     __ popl_r(X86::eax); // match begin
-    __ movl_rm(X86::eax, Generator::output);
-    __ movl_rm(Generator::index, 4, Generator::output); // match end
+    __ movl_rm(X86::eax, output);
+    __ movl_rm(index, 4, output); // match end
     
     // Restore callee save registers.
-    __ popl_r(Generator::character);
-    __ popl_r(Generator::output);
+    __ popl_r(character);
+    __ popl_r(output);
     __ ret();
 }
 
 void Generator::generateSaveIndex()
 {
-    __ pushl_r(Generator::index);
+    __ pushl_r(index);
 }
 
 void Generator::generateIncrementIndex()
 {
-    __ movl_mr(X86::esp, Generator::index);
-    __ addl_i8r(1, Generator::index);
-    __ movl_rm(Generator::index, X86::esp);
+    __ movl_mr(X86::esp, index);
+    __ addl_i8r(1, index);
+    __ movl_rm(index, X86::esp);
 }
 
 void Generator::generateLoadCharacter(JmpSrcVector& failures)
@@ -101,7 +101,7 @@ void Generator::generateLoadCharacter(JmpSrcVector& failures)
 
 void Generator::generateLoopIfNotEndOfInput(JmpDst target)
 {
-    __ cmpl_rr(Generator::length, Generator::index);
+    __ cmpl_rr(length, index);
     __ link(__ jle(), target);
 }
 
@@ -109,8 +109,8 @@ void Generator::generateReturnFailure()
 {
     __ addl_i8r(4, X86::esp);
     __ movl_i32r(-1, X86::eax);
-    __ popl_r(Generator::character);
-    __ popl_r(Generator::output);
+    __ popl_r(character);
+    __ popl_r(output);
     __ ret();
 }
 

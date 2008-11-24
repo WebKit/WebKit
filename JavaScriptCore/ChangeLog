@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
         
+        Removed some unnecessary "Generator::" prefixes.
+
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateEnter):
+        (JSC::WREC::Generator::generateReturnSuccess):
+        (JSC::WREC::Generator::generateSaveIndex):
+        (JSC::WREC::Generator::generateIncrementIndex):
+        (JSC::WREC::Generator::generateLoopIfNotEndOfInput):
+        (JSC::WREC::Generator::generateReturnFailure):
+
+2008-11-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Made a bunch of WREC::Parser functions private, and added an explicit
         "reset()" function, so a parser can be reused.
 
