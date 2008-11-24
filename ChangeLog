@@ -1,3 +1,15 @@
+2008-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        [Gtk+] Add configure option to enable Web Workers and enable it by default
+
+        Add --enable-workers to the buildsystem (used by build-webkit) add
+        the to be build files to the GNUmakefile.am and change build-webkit
+        to enable Web Workers by default.
+
+        * configure.ac:
+
 2008-09-09  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.

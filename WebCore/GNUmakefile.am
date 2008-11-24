@@ -137,6 +137,7 @@ IDL_BINDINGS += \
 	WebCore/dom/WebKitTransitionEvent.idl \
 	WebCore/dom/WheelEvent.idl \
 	WebCore/dom/Worker.idl \
+	WebCore/dom/WorkerLocation.idl \
 	WebCore/html/CanvasGradient.idl \
 	WebCore/html/CanvasPattern.idl \
 	WebCore/html/CanvasPixelArray.idl \
@@ -2113,14 +2114,37 @@ endif # END ENABLE_XSLT
 
 # ----
 # Web Workers support
-# Not yet enabled
 # ----
+if ENABLE_WORKERS
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_WORKERS=1
+
+webcore_cppflags += \
+	-DENABLE_WORKERS=1
+
+webcore_built_nosources += \
+	WebCore/bindings/js/JSWorkerContext.lut.h
+
 webcore_sources += \
-	WebCore/bindings/js/JSDedicatedWorkerConstructor.h \
+	WebCore/bindings/js/JSWorkerConstructor.cpp \
+	WebCore/bindings/js/JSWorkerConstructor.h \
+	WebCore/bindings/js/JSWorkerContext.cpp \
 	WebCore/bindings/js/JSWorkerContext.h \
-	WebCore/dom/DedicatedWorker.h \
+	WebCore/bindings/js/JSWorkerCustom.cpp \
+	WebCore/bindings/js/WorkerScriptController.cpp \
+	WebCore/bindings/js/WorkerScriptController.h \
+	WebCore/dom/WorkerContext.cpp \
+	WebCore/dom/WorkerContext.h \
+	WebCore/dom/Worker.cpp \
 	WebCore/dom/Worker.h \
-	WebCore/dom/WorkerContext.h
+	WebCore/dom/WorkerLocation.cpp \
+	WebCore/dom/WorkerLocation.h \
+	WebCore/dom/WorkerMessagingProxy.cpp \
+	WebCore/dom/WorkerMessagingProxy.h \
+	WebCore/dom/WorkerTask.cpp \
+	WebCore/dom/WorkerTask.h \
+	WebCore/dom/WorkerThread.cpp \
+	WebCore/dom/WorkerThread.h
+endif
 
 # ----
 # SVG Support

@@ -459,6 +459,14 @@ AC_ARG_ENABLE(wml,
               [],[enable_wml="no"])
 AC_MSG_RESULT([$enable_wml])
 
+# check whether to enable Web Workers support
+AC_MSG_CHECKING([whether to enable Web Workers support])
+AC_ARG_ENABLE(web_workers,
+              AC_HELP_STRING([--enable-workers],
+                             [enable support for Web Workers [default=yes]]),
+              [],[enable_web_workers="yes"])
+AC_MSG_RESULT([$enable_web_workers])
+
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
@@ -711,6 +719,7 @@ AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WML],[test "$enable_wml" = "yes"])
+AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_web_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 
@@ -752,6 +761,7 @@ Features:
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
  WML support                                              : $enable_wml
+ Web Workers support                                      : $enable_web_workers
 GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
