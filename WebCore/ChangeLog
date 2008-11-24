@@ -1,3 +1,17 @@
+2008-11-24  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22444
+
+        Correct bad default constructor for Cairo FontPlatformData so that
+        the m_scaledFont member is initialized.  Previously this would be
+        set to 0xbaadf00d, which would result in infinite loops while
+        attempting to deal with the font cache.
+
+        * platform/graphics/win/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize m_scaledFont to 0
+
 2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
