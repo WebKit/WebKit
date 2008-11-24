@@ -98,7 +98,7 @@ int HTMLElement::tagPriority() const
 
 PassRefPtr<Node> HTMLElement::cloneNode(bool deep)
 {
-    RefPtr<HTMLElement> clone = HTMLElementFactory::createHTMLElement(tagQName().localName(), document(), 0, false);
+    RefPtr<HTMLElement> clone = HTMLElementFactory::createHTMLElement(tagQName(), document(), 0, false);
     if (!clone)
         return 0;
 

@@ -896,7 +896,7 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
     if (CreateErrorCheckFunc errorCheckFunc = gFunctionMap.get(t->tagName.impl()))
         proceed = (this->*errorCheckFunc)(t, result);
     if (proceed)
-        result = HTMLElementFactory::createHTMLElement(t->tagName, document, m_currentFormElement.get());
+        result = HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, t->tagName, xhtmlNamespaceURI), document, m_currentFormElement.get());
     return result.release();
 }
 

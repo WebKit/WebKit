@@ -304,7 +304,7 @@ PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, Except
         return 0;
     }
     AtomicString lowerName = name.string().impl()->isLower() ? name : AtomicString(name.string().lower());
-    return HTMLElementFactory::createHTMLElement(lowerName, this, 0, false);
+    return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, lowerName, xhtmlNamespaceURI), this, 0, false);
 }
 
 static void addItemToMap(HTMLDocument::NameCountMap& map, const AtomicString& name)

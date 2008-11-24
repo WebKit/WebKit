@@ -39,7 +39,7 @@ class QualifiedName;
 class HTMLElementFactory {
 public:
     PassRefPtr<Element> createElement(const QualifiedName&, Document*, bool createdByParser = true);
-    static PassRefPtr<HTMLElement> createHTMLElement(const AtomicString& tagName, Document*, HTMLFormElement* = 0, bool createdByParser = true);
+    static PassRefPtr<HTMLElement> createHTMLElement(const QualifiedName& tagName, Document*, HTMLFormElement* = 0, bool createdByParser = true);
 };
 
 }
