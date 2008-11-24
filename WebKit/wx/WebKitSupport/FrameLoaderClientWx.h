@@ -149,7 +149,7 @@ namespace WebCore {
         virtual void transitionToCommittedFromCachedPage(WebCore::CachedPage*);
         virtual void transitionToCommittedForNewPage();
         
-        virtual void updateGlobalHistory(const KURL&);
+        virtual void updateGlobalHistory();
         virtual bool shouldGoToHistoryItem(HistoryItem*) const;
         virtual void saveScrollPositionAndViewStateToItem(HistoryItem*);
         virtual bool canCachePage() const;

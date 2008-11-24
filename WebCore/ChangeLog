@@ -1,3 +1,17 @@
+2008-11-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22470
+          remove unneeded URL argument from FrameLoaderClient::updateGlobalHistory
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::updateGlobalHistory): Remove argument.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateHistoryForStandardLoad): Don't pass the URL.
+        (WebCore::FrameLoader::updateHistoryForRedirectWithLockedHistory): Ditto.
+        * loader/FrameLoaderClient.h: Remove argument.
+
 2008-11-24  Finnur Thorarinsson  <finnur.webkit@gmail.com>
 
         Reviewed by Darin Adler.

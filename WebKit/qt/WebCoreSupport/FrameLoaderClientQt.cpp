@@ -604,11 +604,11 @@ void FrameLoaderClientQt::registerForIconNotification(bool)
     notImplemented();
 }
 
-void FrameLoaderClientQt::updateGlobalHistory(const WebCore::KURL& url)
+void FrameLoaderClientQt::updateGlobalHistory()
 {
     QWebHistoryInterface *history = QWebHistoryInterface::defaultInterface();
     if (history)
-        history->addHistoryEntry(url.prettyURL());
+        history->addHistoryEntry(m_webFrame->loader()->documentLoader()->urlForHistory().prettyURL());
 }
 
 bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) const

@@ -529,7 +529,7 @@ void FrameLoaderClientWx::partClearedInBegin()
     notImplemented();
 }
 
-void FrameLoaderClientWx::updateGlobalHistory(const WebCore::KURL&)
+void FrameLoaderClientWx::updateGlobalHistory()
 {
     notImplemented();
 }

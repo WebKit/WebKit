@@ -715,12 +715,12 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     [dataSource(loader) _finishedLoading];
 }
 
-void WebFrameLoaderClient::updateGlobalHistory(const KURL& url)
+void WebFrameLoaderClient::updateGlobalHistory()
 {
-    DocumentLoader* documentLoader = core(m_webFrame.get())->loader()->documentLoader();
-    ASSERT(url == documentLoader->urlForHistory());
-    const String& title = documentLoader->title();
-    bool wasFailure = documentLoader->urlForHistoryReflectsFailure();
+    DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+    const KURL& url = loader->urlForHistory();
+    const String& title = loader->title();
+    bool wasFailure = loader->urlForHistoryReflectsFailure();
     [[WebHistory optionalSharedHistory] _visitedURL:url withTitle:title wasFailure:wasFailure];
 }
 

@@ -2,6 +2,18 @@
 
         Reviewed by Dan Bernstein.
 
+        - https://bugs.webkit.org/show_bug.cgi?id=22470
+          remove unneeded URL argument from FrameLoaderClient::updateGlobalHistory
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Get the URL from the
+        DocumentLoader, just as we do the title and the failure flag.
+        * WebCoreSupport/WebFrameLoaderClient.h: Remove argument.
+
+2008-11-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         - finish https://bugs.webkit.org/show_bug.cgi?id=22295
           track which history items are from page load failures
 
