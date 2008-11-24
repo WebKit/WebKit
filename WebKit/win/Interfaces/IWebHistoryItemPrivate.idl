@@ -56,4 +56,5 @@ interface IWebHistoryItemPrivate : IUnknown
     HRESULT isTargetItem([out, retval] BOOL* result);
     [local] HRESULT children([out] unsigned* childCount, [out, retval] SAFEARRAY** children);
     HRESULT lastVisitWasFailure([out, retval] BOOL* wasFailure);
+    HRESULT setLastVisitWasFailure([in] BOOL wasFailure);
 }

@@ -686,6 +686,11 @@ KURL DocumentLoader::urlForHistory() const
     return m_originalRequestCopy.url();
 }
 
+bool DocumentLoader::urlForHistoryReflectsFailure() const
+{
+    return m_substituteData.isValid() || m_response.httpStatusCode() >= 400;
+}
+
 void DocumentLoader::loadFromCachedPage(PassRefPtr<CachedPage> cachedPage)
 {
     LOG(PageCache, "WebCorePageCache: DocumentLoader %p loading from cached page %p", this, cachedPage.get());

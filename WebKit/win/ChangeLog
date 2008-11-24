@@ -1,3 +1,27 @@
+2008-11-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - finish https://bugs.webkit.org/show_bug.cgi?id=22295
+          track which history items are from page load failures
+
+        Last time around I did this only for the back/forward list and missed the
+        global history list.
+
+        * Interfaces/IWebHistoryItemPrivate.idl: Added setLastVisitWasFailure.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory): Added code to check for failure
+        and pass the argument in to WebHistory.
+
+        * WebHistory.cpp: (WebHistory::addItem): Added wasFailure argument.
+        Set the flag on the newly created history item.
+        * WebHistory.h: Ditto.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::setLastVisitWasFailure): Added.
+        * WebHistoryItem.h: Ditto.
+
 2008-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix call to Frame::selectionBounds in Windows build.

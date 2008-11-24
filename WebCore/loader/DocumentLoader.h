@@ -163,7 +163,9 @@ namespace WebCore {
 
         void stopRecordingResponses();
         const String& title() const { return m_pageTitle; }
+
         KURL urlForHistory() const;
+        bool urlForHistoryReflectsFailure() const;
         
         void loadFromCachedPage(PassRefPtr<CachedPage>);
         void setLoadingFromCachedPage(bool loading) { m_loadingFromCachedPage = loading; }

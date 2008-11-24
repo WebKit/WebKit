@@ -1,3 +1,16 @@
+2008-11-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - finish https://bugs.webkit.org/show_bug.cgi?id=22295
+          track which history items are from page load failures
+
+        * WebCore.base.exp: Exported new function.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::urlForHistoryReflectsFailure): Added.
+        * loader/DocumentLoader.h: Ditto.
+
 2008-11-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

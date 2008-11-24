@@ -1,3 +1,25 @@
+2008-11-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - finish https://bugs.webkit.org/show_bug.cgi?id=22295
+          track which history items are from page load failures
+
+        Last time around I did this only for the back/forward list and missed the
+        global history list.
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:wasFailure:]): Added wasFailure argument.
+        Set the flag on the newly created history item. Also eliminated the use of
+        autorelease on the added-items array.
+        * History/WebHistoryInternal.h: Ditto.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::updateGlobalHistory): Added code to check for failure
+        and pass the argument in to WebHistory. Given that this function gets other
+        data from the DocumentLoader, I think we should get rid of the KURL argument,
+        but that's a separate issue so I don't do it in this patch.
+
 2008-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix call to Frame::selectionBounds in Tiger build.

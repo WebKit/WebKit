@@ -31,14 +31,8 @@
 #import "WebHistoryItemInternal.h"
 #import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
-#import "WebTypesInternal.h"
-#import <Foundation/NSError.h>
-#import <WebCore/Page.h>
+#import <WebCore/HistoryItem.h>
 #import <WebCore/PageGroup.h>
-#import <wtf/Assertions.h>
-#import <wtf/HashMap.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/Vector.h>
 
 using namespace WebCore;
 
@@ -789,12 +783,15 @@ WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 @implementation WebHistory (WebInternal)
 
-- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title;
+- (void)_visitedURL:(NSURL *)URL withTitle:(NSString *)title wasFailure:(BOOL)wasFailure
 {
     WebHistoryItem *entry = [_historyPrivate visitedURL:URL withTitle:title];
-    
-    [self _sendNotification:WebHistoryItemsAddedNotification
-                    entries:[NSArray arrayWithObject:entry]];
+    if (wasFailure)
+        core(entry)->setLastVisitWasFailure(true);
+
+    NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
+    [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];
+    [entries release];
 }
 
 - (void)_addVisitedLinksToPageGroup:(WebCore::PageGroup&)group

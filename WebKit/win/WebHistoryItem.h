@@ -98,6 +98,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE isTargetItem(BOOL* result);
     virtual HRESULT STDMETHODCALLTYPE children(unsigned* childCount, SAFEARRAY** children);
     virtual HRESULT STDMETHODCALLTYPE lastVisitWasFailure(BOOL* wasFailure);
+    virtual HRESULT STDMETHODCALLTYPE setLastVisitWasFailure(BOOL wasFailure);
 
     // WebHistoryItem
     WebCore::HistoryItem* historyItem() const;
