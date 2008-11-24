@@ -1,3 +1,16 @@
+2008-11-24  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18703
+        "Changing the 'size' property on a text input does not affect its length"
+
+        Added a new test to verify that the width of text input 
+        fields can be modified by javascript using the "size" attribute.
+
+        * fast/js/text-field-resize-expected.txt: Added.
+        * fast/js/text-field-resize.html: Added.
+
 2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

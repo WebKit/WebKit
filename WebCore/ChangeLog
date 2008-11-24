@@ -1,3 +1,19 @@
+2008-11-24  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18703
+        "Changing the 'size' property on a text input does not affect its length"
+
+        Text fields would not repaint themselves after having their "size" 
+        attributes modified.  This fix tells the object to recalculate its 
+        width and repaint itself when its "size" attribute is parsed.
+
+        Test: fast/js/text-field-resize.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+
 2008-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

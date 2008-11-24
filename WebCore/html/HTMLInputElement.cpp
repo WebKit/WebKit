@@ -640,6 +640,8 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         setChanged();
     } else if (attr->name() == sizeAttr) {
         m_size = !attr->isNull() ? attr->value().toInt() : 20;
+        if (renderer())
+            renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (attr->name() == altAttr) {
         if (renderer() && inputType() == IMAGE)
             static_cast<RenderImage*>(renderer())->updateAltText();
