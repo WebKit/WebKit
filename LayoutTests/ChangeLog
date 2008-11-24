@@ -1,3 +1,11 @@
+2008-11-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        Some tests in plugins/ directory now pass.
+
+        * platform/gtk/Skipped:
+
 2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

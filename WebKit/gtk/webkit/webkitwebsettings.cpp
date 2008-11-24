@@ -24,6 +24,11 @@
 #include "webkitwebsettings.h"
 #include "webkitprivate.h"
 
+#include "FileSystem.h"
+#include "PluginDatabase.h"
+
+using namespace WebCore;
+
 extern "C" {
 
 G_DEFINE_TYPE(WebKitWebSettings, webkit_web_settings, G_TYPE_OBJECT)
@@ -514,6 +519,22 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  NULL));
 
     return copy;
+}
+
+/**
+ * webkit_web_settings_add_extra_plugin_directory:
+ * @web_view: a #WebKitWebView
+ * @directory: the directory to add
+ *
+ * Adds the @directory to paths where @web_view will search for plugins.
+ *
+ * Since: 1.0.3
+ */
+void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* webView, const gchar* directory)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    PluginDatabase::installedPlugins()->addExtraPluginDirectory(filenameToString(directory));
 }
 
 }

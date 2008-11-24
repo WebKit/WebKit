@@ -1,3 +1,21 @@
+2008-11-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22039
+
+        [Gtk+] Implement TestNetscapePlugin for Gtk+ port and add it to the
+        build.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (setDefaultsToConsistentStateValuesForTesting):
+        * DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h: Added.
+        * DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h: Added.
+        * DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h: Added.
+        * GNUmakefile.am:
+
 2008-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.

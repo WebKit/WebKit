@@ -52,6 +52,7 @@ extern "C" {
 extern GSList* webkit_web_frame_get_children(WebKitWebFrame* frame);
 extern gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame);
 extern gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame);
+extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 }
 
 volatile bool done;
@@ -215,6 +216,8 @@ static void setDefaultsToConsistentStateValuesForTesting()
                  "default-monospace-font-size", 13,
                  "minimum-font-size", 1,
                  NULL);
+
+    webkit_web_settings_add_extra_plugin_directory(webView, TEST_PLUGIN_DIR);
 }
 
 static void runTest(const string& testPathOrURL)

@@ -26,6 +26,9 @@
 #include "TestObject.h"
 #include "PluginObject.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 static bool testEnumerate(NPObject *npobj, NPIdentifier **value, uint32_t *count);
 static bool testHasProperty(NPObject *obj, NPIdentifier name);
 static bool testGetProperty(NPObject*, NPIdentifier name, NPVariant*);

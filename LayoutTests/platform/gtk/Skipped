@@ -2116,7 +2116,6 @@ geolocation
 http
 media
 platform
-plugins
 printing
 scrollbars
 security
@@ -2127,3 +2126,27 @@ transforms
 transitions
 traversal
 webarchive
+
+# Tests in plugins/ directory
+# Tests that need ObjC plugin
+plugins/call-as-function-test.html
+plugins/jsobjc-dom-wrappers.html
+plugins/jsobjc-simple.html
+plugins/root-object-premature-delete-crash.html
+plugins/throw-on-dealloc.html
+plugins/undefined-property-crash.html
+# Tests failing
+plugins/embed-attributes-setting.html
+plugins/get-url-that-the-resource-load-delegate-will-disallow.html
+plugins/get-url-with-blank-target.html
+plugins/mouse-events.html
+plugins/netscape-get-property-return-value.html
+plugins/netscape-plugin-setwindow-size.html
+plugins/open-and-close-window-with-plugin.html
+plugins/plugin-javascript-access.html
+# Tests crashing
+plugins/netscape-enumerate.html
+plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
+# Tests generating new results
+plugins/embed-attributes-style.html
+plugins/netscape-dom-access.html

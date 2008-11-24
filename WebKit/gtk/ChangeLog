@@ -1,3 +1,16 @@
+2008-11-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22039
+
+        Implement a semi-private function for adding a directory to
+        PluginDatabase's paths.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        (_WebKitWebSettingsPrivate::webkit_web_settings_add_extra_plugin_directory):
+
 2008-11-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Sam Weinig.

@@ -2,6 +2,9 @@ noinst_PROGRAMS += \
 	Programs/GtkLauncher \
 	Programs/DumpRenderTree
 
+lib_LTLIBRARIES += \
+	TestNetscapePlugin/libtestnetscapeplugin.la
+
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/WebKit/gtk \
@@ -28,6 +31,7 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(top_builddir)/WebKit/gtk \
+	-DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
@@ -70,7 +74,26 @@ Programs_DumpRenderTree_LDADD = \
 	$(CAIRO_LIBS) \
 	$(GTK_LIBS)
 
+# TestNetscapePlugin
+TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
+	-I$(srcdir)/WebKitTools/DumpRenderTree \
+	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/ForwardingHeaders \
+	-I$(srcdir)/WebCore \
+	-I$(srcdir)/WebCore/bridge \
+	-I$(srcdir)/WebCore/plugins \
+	-I$(srcdir)/WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
+TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
+	WebKitTools/DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn.subproj/TestObject.h
+
 # clean target
 CLEANFILES += \
 	Programs/GtkLauncher \
-	Programs/DumpRenderTree
+	Programs/DumpRenderTree \
+	TestNetscapePlugin/libtestnetscapeplugin.la

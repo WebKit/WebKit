@@ -29,6 +29,9 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include <string.h>
+#include <stdlib.h>
+
 static void pluginInvalidate(NPObject*);
 static bool pluginHasProperty(NPObject*, NPIdentifier name);
 static bool pluginHasMethod(NPObject*, NPIdentifier name);
