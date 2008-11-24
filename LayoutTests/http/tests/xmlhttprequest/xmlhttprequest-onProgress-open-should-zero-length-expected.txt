@@ -1,8 +1,4 @@
-Test case for Bug 18655: [XHR] OnProgress needs more test case
-
-This test verify that open reset m_receivedLength.
-
-This test is not guaranteed to pass as we assume that the server responses' sizes are close in 2 different requests to the same resource.
+Verify that XMLHttpRequest.open resets received size.
 
 You should see PASSED once.
 

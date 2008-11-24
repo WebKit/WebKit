@@ -2,6 +2,21 @@
 
         Reviewed by Mark Rowe.
 
+        https://bugs.webkit.org/show_bug.cgi?id=22428
+        xmlhttprequest-onProgress-open-should-zero-length.html fails intermittently
+
+        * http/tests/xmlhttprequest/resources/big-response.php: Reduce the size of big response
+        to make the test faster, but practically guarantee that the response will be delivered in
+        many chunks.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html:
+        Made the test more reliable by comparing final response position with known resource size.
+
+2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
         https://bugs.webkit.org/show_bug.cgi?id=22439
         Won't load stylesheets with filenames less than 2 characters long in xhtml.
 
