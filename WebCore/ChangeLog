@@ -27743,7 +27743,7 @@
 
         Reviewed by Mitzpettel
 
-        <rdar://problem/6163636> - Many images broken in Mail
+        <rdar://problem/6153432> - Many images broken in Mail
 
         This can be traced back to the preload scanner.  With that change, CachedResources are created a lot 
         sooner than before and confuse the WebArchive machinery.  
