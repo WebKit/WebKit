@@ -288,9 +288,6 @@ fast/text/reset-drag-on-mouse-down.html
 fast/text/plain-text-line-breaks.html
 fast/text/zero-width-characters.html
 fast/tokenizer/ignore-tags-in-iframe.html
-fast/workers/worker-constructor.html
-fast/workers/worker-event-listener.html
-fast/workers/worker-gc.html
 fast/workers/worker-location.html
 fast/xpath/id-simple.html
 fast/xsl/mozilla-tests.xml

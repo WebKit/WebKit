@@ -1,3 +1,15 @@
+2008-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Mark Rowe.
+
+        [Gtk+] We are passing all but one worker test. Enable them.
+
+        We fail on fast/workers/worker-location.html due some weird
+        issue with the bidi resolver "skipping" whitespace at the end
+        of the line.
+
+        * platform/gtk/Skipped:
+
 2008-11-24  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Mark Rowe.
