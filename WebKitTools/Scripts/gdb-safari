@@ -31,7 +31,7 @@
 use strict;
 use File::Temp qw/:mktemp/;
 use FindBin;
-use Getopt::Long;
+use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
 

@@ -1,3 +1,11 @@
+2008-11-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Let gdb-safari accept the --debug and --release options once more.
+
+        * Scripts/gdb-safari:
+
 2008-11-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Holger Freyther. Landed by Jan Alonzo.
