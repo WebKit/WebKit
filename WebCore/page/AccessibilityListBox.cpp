@@ -150,30 +150,28 @@ AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTML
     return listBoxObject;
 }
 
-AccessibilityObject* AccessibilityListBox::doAccessibilityHitTest(const IntPoint& point)
+AccessibilityObject* AccessibilityListBox::doAccessibilityHitTest(const IntPoint& point) const
 {
     // the internal HTMLSelectElement methods for returning a listbox option at a point
     // ignore optgroup elements.
     if (!m_renderer)
         return 0;
     
-    Node *element = m_renderer->element();
+    Node* element = m_renderer->element();
     if (!element)
         return 0;
-
-    if (!hasChildren())
-        addChildren();
     
     IntRect parentRect = boundingBoxRect();
     
-    unsigned length = m_children.size();
+    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(element)->listItems();
+    unsigned length = listItems.size();
     for (unsigned i = 0; i < length; i++) {
         IntRect rect = static_cast<RenderListBox*>(m_renderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), i);
         if (rect.contains(point))
-            return m_children[i].get();
+            return listBoxOptionAccessibilityObject(listItems[i]);
     }
     
-    return this;
+    return axObjectCache()->get(m_renderer);
 }
 
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2008-11-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 22461: AccessibilityListBox::doAccessibilityHitTest() signature does not match the base class
+        https://bugs.webkit.org/show_bug.cgi?id=22461
+ 
+        Changing AccessibilityListBox to use its parent's signature for hit testing
+
+        * page/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * page/AccessibilityListBox.h:
+
 2008-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build: selectionRect() -> selectionBounds().
