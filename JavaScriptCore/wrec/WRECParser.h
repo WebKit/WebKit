@@ -56,18 +56,31 @@ namespace JSC { namespace WREC {
             UnsupportedParentheses,
         };
 
-        static const int EndOfPattern = -1;
-
         Parser(const UString& pattern, bool ignoreCase, bool multiline, X86Assembler& assembler)
             : m_generator(*this, assembler)
             , m_data(pattern.data())
             , m_size(pattern.size())
-            , m_index(0)
             , m_ignoreCase(ignoreCase)
             , m_multiline(multiline)
-            , m_numSubpatterns(0)
-            , m_error(NoError)
         {
+            reset();
+        }
+        
+        Generator& generator() { return m_generator; }
+
+        bool ignoreCase() const { return m_ignoreCase; }
+        bool multiline() const { return m_multiline; }
+
+        void recordSubpattern() { ++m_numSubpatterns; }
+        unsigned numSubpatterns() const { return m_numSubpatterns; }
+        
+        bool parsePattern(JmpSrcVector& failures)
+        {
+            reset();
+
+            parseDisjunction(failures);
+
+            return peek() == EndOfPattern && m_error == NoError; // Parsing the pattern should fully consume it.
         }
 
         void parseAlternative(JmpSrcVector& failures)
@@ -75,13 +88,6 @@ namespace JSC { namespace WREC {
             while (parseTerm(failures)) { }
         }
 
-        bool parsePattern(JmpSrcVector& failures)
-        {
-            parseDisjunction(failures);
-
-            // Parsing the pattern should fully consume it.
-            return peek() == EndOfPattern && m_error == NoError;
-        }
         void parseDisjunction(JmpSrcVector& failures);
         bool parseTerm(JmpSrcVector& failures);
         bool parseEscape(JmpSrcVector& failures);
@@ -91,9 +97,16 @@ namespace JSC { namespace WREC {
         bool parseCharacterClassQuantifier(JmpSrcVector& failures, const CharacterClass& charClass, bool invert);
         bool parsePatternCharacterQualifier(JmpSrcVector& failures, int ch);
         bool parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned subpatternId);
-
         ALWAYS_INLINE Quantifier parseGreedyQuantifier();
         Quantifier parseQuantifier();
+
+    private:
+        void reset()
+        {
+            m_index = 0;
+            m_numSubpatterns = 0;
+            m_error = NoError;
+        }
 
         int peek()
         {
@@ -155,15 +168,8 @@ namespace JSC { namespace WREC {
             return n;
         }
 
-        void recordSubpattern() { ++m_numSubpatterns; }
-        unsigned numSubpatterns() { return m_numSubpatterns; }
-        
-        bool ignoreCase() { return m_ignoreCase; }
-        bool multiline() { return m_multiline; }
-        
-        Generator& generator() { return m_generator; }
+        static const int EndOfPattern = -1;
 
-    private:
         Generator m_generator;
         const UChar* m_data;
         unsigned m_size;

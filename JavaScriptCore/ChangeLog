@@ -1,3 +1,21 @@
+2008-11-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Made a bunch of WREC::Parser functions private, and added an explicit
+        "reset()" function, so a parser can be reused.
+
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::Parser):
+        (JSC::WREC::Parser::generator):
+        (JSC::WREC::Parser::ignoreCase):
+        (JSC::WREC::Parser::multiline):
+        (JSC::WREC::Parser::recordSubpattern):
+        (JSC::WREC::Parser::numSubpatterns):
+        (JSC::WREC::Parser::parsePattern):
+        (JSC::WREC::Parser::parseAlternative):
+        (JSC::WREC::Parser::reset):
+
 2008-11-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Camron Zwarich.
