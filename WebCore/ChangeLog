@@ -1,3 +1,13 @@
+2008-11-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22421
+        Added ScriptValue to Visual Studio and XCode projects.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2008-11-22  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Holger Freyther.

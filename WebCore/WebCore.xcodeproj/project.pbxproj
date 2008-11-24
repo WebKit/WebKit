@@ -526,6 +526,7 @@
 		37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ACCE620DA2AA960089E602 /* FontDescription.cpp */; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
+		416F45F00ED7B311008215B6 /* ScriptString.h in Headers */ = {isa = PBXBuildFile; fileRef = 416F45EF0ED7B311008215B6 /* ScriptString.h */; };
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; };
 		4415292F0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */; };
 		441B05560CD779B6007C1F18 /* DOMCSSStyleSheetPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAEA0CB84DC7007647C5 /* DOMCSSStyleSheetPrivate.h */; };
@@ -5320,6 +5321,7 @@
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
 		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
+		416F45EF0ED7B311008215B6 /* ScriptString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptString.h; sourceTree = "<group>"; };
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
 		4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInImageElement.cpp; sourceTree = "<group>"; };
 		4429AAEA0CB84DC7007647C5 /* DOMCSSStyleSheetPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMCSSStyleSheetPrivate.h; sourceTree = "<group>"; };
@@ -13065,6 +13067,7 @@
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
 				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
+				416F45EF0ED7B311008215B6 /* ScriptString.h */,
 				934CC0DF0ED39D6F00A658F2 /* ScriptValue.cpp */,
 				934CC0E00ED39D6F00A658F2 /* ScriptValue.h */,
 				65488D6A0DD5A83D009D83B2 /* StringSourceProvider.h */,
@@ -16382,6 +16385,7 @@
 				08807B7F0ED709AB003F6975 /* WMLRefreshElement.h in Headers */,
 				08807B810ED709AB003F6975 /* WMLSetvarElement.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
+				416F45F00ED7B311008215B6 /* ScriptString.h in Headers */,
 				080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */,
 				080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */,
 			);
