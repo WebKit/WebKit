@@ -1,5 +1,12 @@
 2008-11-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix call to Frame::selectionBounds in Tiger build.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+
+2008-11-24  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein
 
         Via: https://bugs.webkit.org/show_bug.cgi?id=22433
