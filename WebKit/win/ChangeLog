@@ -1,3 +1,10 @@
+2008-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix call to Frame::selectionBounds in Windows build.
+
+        * WebView.cpp:
+        (WebView::selectionRect):
+
 2008-11-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
