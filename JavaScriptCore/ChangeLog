@@ -1,3 +1,19 @@
+2008-11-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Camron Zwarich.
+
+        Implement repatching for get by id chain.
+        Previously the access is performed in a function stufb, in the reptach form
+        the trampoline is not called to; instead the hot patch is relinkde to jump
+        directly to the trampoline, if it fails it will jump to the slow case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22449
+        3% progression on deltablue.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2008-11-24  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon Hausmann.

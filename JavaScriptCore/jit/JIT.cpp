@@ -3146,11 +3146,8 @@ void JIT::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
     StructureStubInfo& info = m_codeBlock->getStubInfo(returnAddress);
 
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
-#if USE(CTI_REPATCH_PIC)
     ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_list));
-#else
-    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_fail));
-#endif
+
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a Structure that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
@@ -3214,15 +3211,9 @@ void JIT::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
 
     void* code = __ executableCopy();
 
-#if USE(CTI_REPATCH_PIC)
-    X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_list));
-    X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_list));
-    X86Assembler::link(code, failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_list));
-#else
     X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_fail));
     X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_fail));
     X86Assembler::link(code, failureCases3, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_fail));
-#endif
 
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
 
@@ -3307,6 +3298,12 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
 void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, void* returnAddress, CallFrame* callFrame)
 {
+#if USE(CTI_REPATCH_PIC)
+    StructureStubInfo& info = m_codeBlock->getStubInfo(returnAddress);
+
+    // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_generic));
+
     ASSERT(count);
     
     Vector<JmpSrc> bucketsOfFail;
@@ -3319,7 +3316,54 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     Structure* currStructure = structure;
     RefPtr<Structure>* chainEntries = chain->head();
     JSObject* protoObject = 0;
-    for (unsigned i = 0; i<count; ++i) {
+    for (unsigned i = 0; i < count; ++i) {
+        protoObject = asObject(currStructure->prototypeForLookup(callFrame));
+        currStructure = chainEntries[i].get();
+
+        // Check the prototype object's Structure had not changed.
+        Structure** prototypeStructureAddress = &(protoObject->m_structure);
+        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), static_cast<void*>(prototypeStructureAddress));
+        bucketsOfFail.append(__ jne());
+    }
+    ASSERT(protoObject);
+
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
+    __ movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
+    __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
+    JmpSrc success = __ jmp();
+
+    void* code = __ executableCopy();
+
+    // Use the repatch information to link the failure cases back to the original slow case routine.
+    void* slowCaseBegin = reinterpret_cast<char*>(info.callReturnLocation) - repatchOffsetGetByIdSlowCaseCall;
+
+    for (unsigned i = 0; i < bucketsOfFail.size(); ++i)
+        X86Assembler::link(code, bucketsOfFail[i], slowCaseBegin);
+
+    // On success return back to the hot patch code, at a point it will perform the store to dest for us.
+    intptr_t successDest = reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset;
+    X86Assembler::link(code, success, reinterpret_cast<void*>(successDest));
+
+    // Track the stub we have created so that it will be deleted later.
+    info.stubRoutine = code;
+
+    // Finally repatch the jump to slow case back in the hot path to jump here instead.
+    intptr_t jmpLocation = reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
+    X86Assembler::repatchBranchOffset(jmpLocation, code);
+#else
+    ASSERT(count);
+    
+    Vector<JmpSrc> bucketsOfFail;
+
+    // Check eax is an object of the right Structure.
+    __ testl_i32r(JSImmediate::TagMask, X86::eax);
+    bucketsOfFail.append(__ jne());
+    bucketsOfFail.append(checkStructure(X86::eax, structure));
+
+    Structure* currStructure = structure;
+    RefPtr<Structure>* chainEntries = chain->head();
+    JSObject* protoObject = 0;
+    for (unsigned i = 0; i < count; ++i) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
         currStructure = chainEntries[i].get();
 
@@ -3335,8 +3379,6 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
     __ ret();
 
-    bucketsOfFail.append(__ jmp());
-
     void* code = __ executableCopy();
 
     for (unsigned i = 0; i < bucketsOfFail.size(); ++i)
@@ -3345,6 +3387,7 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
 
     ctiRepatchCallByReturnAddress(returnAddress, code);
+#endif
 }
 
 void JIT::privateCompilePutByIdReplace(Structure* structure, size_t cachedOffset, void* returnAddress)
