@@ -343,7 +343,7 @@ module window {
         attribute MessageEventConstructor MessageEvent;
         attribute EventExceptionConstructor EventException;
 
-#if ENABLE(CHANNEL_MESSAGING)
+#if ENABLE_CHANNEL_MESSAGING
         attribute MessagePortConstructor MessagePort;
 #endif
 
