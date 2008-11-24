@@ -1,3 +1,30 @@
+2008-11-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Via: https://bugs.webkit.org/show_bug.cgi?id=22433
+        
+        Rename RenderView::selectionRect() to selectionBounds(), to remove
+        longstanding ambiguity with the base class selectionRect() method.
+        Do the same on Frame for consistency with RenderView. Assert
+        that RenderView::selectionRect() is never called.
+
+        * WebCore.base.exp:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        * page/DragController.cpp:
+        (WebCore::dragLocForSelectionDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionBounds):
+        (WebCore::Frame::revealSelection):
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::selectionImage):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionRect):
+        (WebCore::RenderView::selectionBounds):
+        * rendering/RenderView.h:
+
 2008-11-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

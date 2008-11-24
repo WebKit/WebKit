@@ -4774,7 +4774,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // The HIDictionaryWindowShow function requires the origin, in CG screen coordinates, of the first character of text in the selection.
     // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
     // (but no worse than we did in Tiger)
-    NSRect rect = coreFrame->selectionRect();
+    NSRect rect = coreFrame->selectionBounds();
 
     NSDictionary *attributes = [attrString fontAttributesInRange:NSMakeRange(0,1)];
     NSFont *font = [attributes objectForKey:NSFontAttributeName];
@@ -5583,7 +5583,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (NSRect)selectionRect
 {
     if ([self _hasSelection])
-        return core([self _frame])->selectionRect();
+        return core([self _frame])->selectionBounds();
     return NSZeroRect;
 }
 
@@ -5619,7 +5619,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (NSRect)selectionImageRect
 {
     if ([self _hasSelection])
-        return core([self _frame])->selectionRect();
+        return core([self _frame])->selectionBounds();
     return NSZeroRect;
 }
 

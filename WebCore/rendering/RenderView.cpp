@@ -265,7 +265,17 @@ RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)
     return child ? child : object->nextInPreOrderAfterChildren();
 }
 
-IntRect RenderView::selectionRect(bool clipToVisibleContent) const
+IntRect RenderView::selectionRect(bool clipToVisibleContent)
+{
+    // The virtual selectionRect() should never be called on the RenderView.
+    // We assert because there used to be ambiguity between
+    // RenderView::selectionRect(bool) and
+    // virtual RenderObject::selectionRect(bool) const
+    ASSERT_NOT_REACHED();
+    return RenderBlock::selectionRect(clipToVisibleContent);
+}
+
+IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 {
     document()->updateRendering();
 
