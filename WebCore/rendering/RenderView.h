@@ -84,7 +84,6 @@ public:
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty, bool topLevel = true);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool topLevel = true);
 
-    virtual IntRect selectionRect(bool);
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
 
     void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }
@@ -131,6 +130,10 @@ public:
     // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
     void disableLayoutState() { m_layoutStateDisableCount++; }
     void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
+
+private:
+    // selectionRect should never be called on a RenderView
+    virtual IntRect selectionRect(bool);
 
 protected:
     FrameView* m_frameView;
