@@ -91,7 +91,7 @@ private:
     virtual void performTask(ScriptExecutionContext*)
     {
         Worker* workerObject = m_messagingProxy->workerObject();
-        if (!workerObject)
+        if (!workerObject || m_messagingProxy->askedToTerminate())
             return;
 
         RefPtr<Event> evt = MessageEvent::create(m_message, "", "", 0, 0);
@@ -190,8 +190,9 @@ private:
 WorkerMessagingProxy::WorkerMessagingProxy(PassRefPtr<ScriptExecutionContext> scriptExecutionContext, Worker* workerObject)
     : m_scriptExecutionContext(scriptExecutionContext)
     , m_workerObject(workerObject)
-    , m_unconfirmedMessageCount(1) // Worker initialization counts as a pending message.
+    , m_unconfirmedMessageCount(0)
     , m_workerThreadHadPendingActivity(false)
+    , m_askedToTerminate(false)
 {
     ASSERT(m_workerObject);
     ASSERT((m_scriptExecutionContext->isDocument() && isMainThread())
@@ -212,10 +213,13 @@ void WorkerMessagingProxy::postMessageToWorkerObject(const String& message)
 
 void WorkerMessagingProxy::postMessageToWorkerContext(const String& message)
 {
-    ++m_unconfirmedMessageCount;
-    if (m_workerThread)
+    if (m_askedToTerminate)
+        return;
+
+    if (m_workerThread) {
+        ++m_unconfirmedMessageCount;
         m_workerThread->messageQueue().append(MessageWorkerContextTask::create(message));
-    else
+    } else
         m_queuedEarlyTasks.append(MessageWorkerContextTask::create(message));
 }
 
@@ -228,10 +232,18 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<WorkerThread> workerTh
 {
     m_workerThread = workerThread;
 
-    unsigned taskCount = m_queuedEarlyTasks.size();
-    for (unsigned i = 0; i < taskCount; ++i)
-        m_workerThread->messageQueue().append(m_queuedEarlyTasks[i]);
-    m_queuedEarlyTasks.clear();
+    if (m_askedToTerminate) {
+        // Worker.terminate() could be called from JS before the thread was created.
+        m_workerThread->stop();
+    } else {
+        unsigned taskCount = m_queuedEarlyTasks.size();
+        ASSERT(!m_unconfirmedMessageCount);
+        m_unconfirmedMessageCount = taskCount + 1; // Worker initialization counts as a pending message.
+
+        for (unsigned i = 0; i < taskCount; ++i)
+            m_workerThread->messageQueue().append(m_queuedEarlyTasks[i]);
+        m_queuedEarlyTasks.clear();
+    }
 }
 
 void WorkerMessagingProxy::workerObjectDestroyed()
@@ -251,8 +263,20 @@ void WorkerMessagingProxy::workerContextDestroyed()
 
 void WorkerMessagingProxy::workerContextDestroyedInternal()
 {
-    ASSERT(!m_workerObject);
-    delete this;
+    // WorkerContextDestroyedTask is always the last to be performed, so the proxy is not needed for communication
+    // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.
+    if (!m_workerObject)
+        delete this;
+}
+
+void WorkerMessagingProxy::terminate()
+{
+    if (m_askedToTerminate)
+        return;
+    m_askedToTerminate = true;
+
+    if (m_workerThread)
+        m_workerThread->stop();
 }
 
 void WorkerMessagingProxy::confirmWorkerThreadMessage(bool hasPendingActivity)
@@ -269,7 +293,7 @@ void WorkerMessagingProxy::reportWorkerThreadActivity(bool hasPendingActivity)
 
 void WorkerMessagingProxy::reportWorkerThreadActivityInternal(bool confirmingMessage, bool hasPendingActivity)
 {
-    if (confirmingMessage) {
+    if (confirmingMessage && !m_askedToTerminate) {
         ASSERT(m_unconfirmedMessageCount);
         --m_unconfirmedMessageCount;
     }
@@ -279,7 +303,7 @@ void WorkerMessagingProxy::reportWorkerThreadActivityInternal(bool confirmingMes
 
 bool WorkerMessagingProxy::workerThreadHasPendingActivity() const
 {
-    return m_unconfirmedMessageCount || m_workerThreadHadPendingActivity;
+    return (m_unconfirmedMessageCount || m_workerThreadHadPendingActivity) && !m_askedToTerminate;
 }
 
 } // namespace WebCore

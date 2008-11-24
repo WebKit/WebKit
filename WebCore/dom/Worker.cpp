@@ -92,6 +92,11 @@ void Worker::postMessage(const String& message)
     m_messagingProxy->postMessageToWorkerContext(message);
 }
 
+void Worker::terminate()
+{
+    m_messagingProxy->terminate();
+}
+
 bool Worker::hasPendingActivity() const
 {
     return m_messagingProxy->workerThreadHasPendingActivity() || ActiveDOMObject::hasPendingActivity();

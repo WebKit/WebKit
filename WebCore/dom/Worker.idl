@@ -32,6 +32,8 @@ module threads {
         attribute EventListener onmessage;
         void postMessage(in DOMString message);
 
+        void terminate();
+
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type, 
                                        in EventListener listener, 

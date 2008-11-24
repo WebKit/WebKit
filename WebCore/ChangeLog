@@ -1,5 +1,41 @@
 2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22455
+        Add support for Worker.terminate()
+
+        Test: fast/workers/worker-terminate.html
+
+        * dom/Worker.idl:
+        * dom/Worker.cpp:
+        * dom/Worker.h:
+        Added terminate().
+
+        * dom/WorkerMessagingProxy.h: (WebCore::WorkerMessagingProxy::askedToTerminate):
+        * dom/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerTask::performTask): Don't dispatch messages if the worker was asked
+        to terminate (this is not mentioned in draft spec, but makes sense anyway).
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy): The proxy now remembers if it was
+        asked to terminate in m_askedToTerminate member variable. Also, changed m_unconfirmedMessageCount
+        to only track messages that were posted to worker thread, avoiding a leak if the script
+        could not be loaded.
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext): Return early if terminating.
+        (WebCore::WorkerMessagingProxy::workerThreadCreated): Stop the thread if already asked for.
+        (WebCore::WorkerMessagingProxy::workerContextDestroyedInternal): Even if worker context
+        was destroyed, the worker object may still be alive now, so don't delete self in this case.
+        (WebCore::WorkerMessagingProxy::terminate): Stop the thread if it was already created, or
+        remember to stop it when it is created.
+        (WebCore::WorkerMessagingProxy::reportWorkerThreadActivityInternal): Don't track activity
+        if the thread asked to stop anyway.
+        (WebCore::WorkerMessagingProxy::workerThreadHasPendingActivity): Ditto.
+
+        * dom/WorkerThread.cpp:
+        * dom/WorkerThread.h:
+        Fixed a race condition in stop().
+
+2008-11-24  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=22439

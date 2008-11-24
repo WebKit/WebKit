@@ -66,6 +66,7 @@ namespace WebCore {
         WorkerMessagingProxy* m_messagingProxy;
 
         RefPtr<WorkerContext> m_workerContext;
+        Mutex m_workerContextMutex;
 
         MessageQueue<RefPtr<WorkerTask> > m_messageQueue;
     };
