@@ -1,3 +1,34 @@
+2008-11-21  Dean Jackson  <dino@apple.com>
+
+        CSSAnimation.html:
+        
+        * animation-name should accept IDENT not <string>
+        * animation-play-state marked as "about to be removed"
+        * more description of when an animation is applied, that
+          they snapshot keyframes and values as they start and
+          how they need to be removed to reset.
+        
+        CSSTransitions.html:
+        
+        * list of animatable properties and how to animate property
+          types.
+        * specify that values for bezier points outside of [0,1] are
+          invalid.
+
+        CSSTransforms.html:
+        
+        * split into 2d and 3d specifications
+        * transform-origin now matches background-position definition.
+        * describe how to animate between lists of transforms
+
+        CSSTransforms3D.html
+        
+        * new specification which is the 3d parts of transforms
+        * perspective must be > 0
+        * perspective-origin also matches background-position
+        * describe how to animate between lists of transforms, but this
+          time in 3d which is harder.
+
 2008-10-10  Dean Jackson  <dino@apple.com>
 
         Keyframe example had "0" rather than "0%".

@@ -446,6 +446,20 @@
     background-color: #dfdfdf;
     }
 
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #dfdfdf;
+    }
+    
+    td, th {
+      text-align: left;
+      padding: 0.2em 1em;
+      border: 1px solid black;
+    }
+    
     </style>
   </head>
   <body>
@@ -453,7 +467,7 @@
       CSS Transitions
     </h1>
     <h2>
-      4 September 2008
+      21 November 2008
     </h2>
     <dl>
       <dt>
@@ -496,14 +510,9 @@
       Transitions are a presentational effect. The computed value of a property transitions over time from the old value to the new value. Therefore if a script queries the computed style of a property as it is transitioning, it will see an intermediate value that represents the current animated value of the property.
     </p>
     <p>
-      Only animatable CSS properties can be transitioned.
+      Only animatable CSS properties can be transitioned. See the table at the end of this document for a list 
+      of properties that are animatable.
     </p>
-    <div class="todo">
-      Every CSS property definition should specify the following additional information: whether or not its value is animatable and how it should animate. Animatable properties are all of those which allow values of the type &lt;integer&gt;, &lt;number&gt;, &lt;length&gt;, &lt;percentage&gt;, &lt;color&gt;, &lt;time&gt;, &lt;angle&gt; or &lt;transform-list&gt;. See <em>Coordinate System Transformations</em> for more information about how transforms animate.
-    </div>
-    <div class="issue">
-      Some properties that take keyword values are interesting in the context of animation as well. For example, visibility. Visibility could be supported by saying that hidden/collapse = 0 and visible &gt; 0. This matches nicely with typical timing functions and animations and would cause an object to show when an animation started and hide when one ended (if going from 1 to 0 or 0 to 1).
-    </div>
     <p>
       The transition for a property is defined using a number of new properties. For example:
     </p>
@@ -557,7 +566,7 @@ div {
             <em>Value:</em>
           </td>
           <td>
-            'none' | 'all' | [ &lt;IDENT&gt; ] [ ','  &lt;IDENT&gt; ]*
+            none | all | [ &lt;IDENT&gt; ] [ ','  &lt;IDENT&gt; ]*
           </td>
         </tr>
         <tr>
@@ -710,10 +719,26 @@ div {
       2.3 The <span class="prop-name">'transition-timing-function'</span> Property
     </h3>
     <p>
-      The <span class="prop-name">'transition-timing-function'</span> property describes how the intermediate values used during a transition will be calculated. It allows for a transition to change speed over its duration. These effects are commonly called <em>easing</em> functions. In either case, a mathematical function that provides a smooth curve is used.
+      The <span class="prop-name">'transition-timing-function'</span> property
+      describes how the intermediate values used during a transition will be
+      calculated. It allows for a transition to change speed over its
+      duration. These effects are commonly called <em>easing</em> functions.
+      In either case, a mathematical function that provides a smooth curve is
+      used.
     </p>
     <p>
-      The timing function is specified using a <a href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves">cubic bezier curve</a>, which is defined by four control points, P<sub>0</sub> through P<sub>3</sub> (see Figure 1). P<sub>0</sub> and P<sub>3</sub> are always set to (0,0) and (1,1). The <span class="prop-name">'transition-timing-function'</span> property is used to specify the values for points P<sub>1</sub> and P<sub>2</sub>. These can be set to preset values using the keywords listed below, or can be set to specific values using the <span class="prop-value">'cubic-bezier'</span> function. In the <span class="prop-value">'cubic-bezier'</span> function, P<sub>1</sub> and P<sub>2</sub> are each specified by both an X and Y value.
+      The timing function is specified using a <a
+      href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves">cubic
+      bezier curve</a>, which is defined by four control points, P<sub>0</sub>
+      through P<sub>3</sub> (see Figure 1). P<sub>0</sub> and P<sub>3</sub>
+      are always set to (0,0) and (1,1). The <span
+      class="prop-name">'transition-timing-function'</span> property is used
+      to specify the values for points P<sub>1</sub> and P<sub>2</sub>. These
+      can be set to preset values using the keywords listed below, or can be
+      set to specific values using the <span
+      class="prop-value">'cubic-bezier'</span> function. In the <span
+      class="prop-value">'cubic-bezier'</span> function, P<sub>1</sub> and
+      P<sub>2</sub> are each specified by both an X and Y value.
     </p>
     <div class="figure">
       <img src="TimingFunction.png">
@@ -722,7 +747,9 @@ div {
       Timing Function Control Points
     </p>
     <p>
-      The timing function takes as its input the current elapsed percentage of the transition duration and outputs a percentage that determines how close the transition is to its goal state.
+      The timing function takes as its input the current elapsed percentage of
+      the transition duration and outputs a percentage that determines how
+      close the transition is to its goal state.
     </p>
     <table class="propdef">
       <tbody>
@@ -830,7 +857,11 @@ div {
         cubic-bezier
       </dt>
       <dd>
-        Specifies a <a href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve">cubic-bezier curve</a>. The four values specify points P<sub>1</sub> and P<sub>2</sub> of the curve as (x1, y1, x2, y2).
+        Specifies a <a
+        href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve">cubic-bezier
+        curve</a>. The four values specify points P<sub>1</sub> and
+        P<sub>2</sub> of the curve as (x1, y1, x2, y2). All values must be
+        in the range [0, 1] or the definition is invalid.
       </dd>
     </dl><!-- ======================================================================================================= -->
     <h3>
@@ -1118,7 +1149,7 @@ interface TransitionEvent : Event {
         <b>transitionend</b>
       </dt>
       <dd>
-        The transitionend event occurs at the completion of the transition
+        The 'transitionend' event occurs at the completion of the transition
         <ul>
           <li>Bubbles: Yes
           </li>
@@ -1129,6 +1160,279 @@ interface TransitionEvent : Event {
         </ul>
       </dd>
     </dl>
+    
+    <h2>
+      4 Animation of property types
+    </h2>
+    
+    <p>
+      The following describes how each property type undergoes transition or
+      animation.
+    </p>
+    
+    <ul>
+      <li>
+        <strong>color</strong>: interpolated via red, green, blue and alpha
+        components (treating each as a number, see below).
+      </li>
+      <li>
+        <strong>length</strong>: interpolated as real numbers.
+      </li>
+      <li>
+        <strong>percentage</strong>: interpolated as real numbers.
+      </li>
+      <li>
+        <strong>integer</strong>: interpolated via discrete steps (whole
+        numbers). The interpolation happens in real number space and is
+        converted to an integer using <code>floor()</code>.
+      </li>
+      <li>
+        <strong>number</strong>: interpolated as real (floating point)
+        numbers.
+      </li>
+      <li>
+        <strong>transform list</strong>: see <a href="CSSTransforms.html">
+          CSS Transforms specification</a>.
+      </li>
+      <li>
+        <strong>rectangle</strong>: interpolated via the x, y,
+        width and height components (treating each as a number).
+      </li>
+      <li>
+        <strong>visibility</strong>: interpolated via a discrete
+        step. The interpolation happens in real number space between 0 and 1,
+        where 1 is "visible" and all other values are "hidden".
+      </li>
+      <li>
+        <strong>shadow</strong>: interpolated via the color, x, y
+        and blur components (treating them as color and numbers where
+        appropriate).
+      </li>
+      <li>
+        <strong>gradient</strong>: interpolated via the
+        positions and colors of each stop. They must have the same type
+        (radial or linear) and same number of stops in order to be animated.
+      </li>
+      <li>
+        <strong>paint server</strong> (SVG): interpolation is only supported
+        between</strong>: gradient to gradient and color to color. They then
+        work as above.
+      </li>
+      <li>
+        <strong>space-separated list of above</strong>: each item in the list
+        is interpolated using the rules above.
+      </li>
+    </ul>
+
+    <h2>
+      5 Animatable properties
+    </h2>
+    
+    <h3>
+      5.1 Properties from CSS
+    </h3>
+
+   <table>
+     <tr>
+       <th>Property Name</th>
+       <th>Type</th>
+     </tr>
+     <tr>
+       <td>background-color</td><td>color</tr>
+     <tr>
+       <td>background-image</td><td>only gradients</td>
+     </tr>
+     <tr>
+       <td>background-position</td><td>percentage, length</td>
+     </tr>
+     <tr>
+       <td>border-bottom-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>border-bottom-width</td><td>length</td>
+     </tr>
+     <tr>
+       <td>border-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>border-left-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>border-left-width</td><td>length</td>
+     </tr>
+     <tr>
+       <td>border-right-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>border-right-width</td><td>length</td>
+     </tr>
+     <tr>
+       <td>border-spacing</td><td>length</td>
+     </tr>
+     <tr>
+       <td>border-top-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>border-top-width</td><td>length</td>
+     </tr>
+     <tr>
+       <td>border-width</td><td>length</td>
+     </tr>
+     <tr>
+       <td>bottom</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>crop</td><td>rectangle</td>
+     </tr>
+     <tr>
+       <td>font-size</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>font-weight</td><td>number</td>
+     </tr>
+     <tr>
+       <td>grid-*</td><td>various</td>
+     </tr>
+     <tr>
+       <td>height</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>left</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>letter-spacing</td><td>length</td>
+     </tr>
+     <tr>
+       <td>line-height</td><td>number, length, percentage</td>
+     </tr>
+     <tr>
+       <td>margin-bottom</td><td>length</td>
+     </tr>
+     <tr>
+       <td>margin-left</td><td>length</td>
+     </tr>
+     <tr>
+       <td>margin-right</td><td>length</td>
+     </tr>
+     <tr>
+       <td>margin-top</td><td>length</td>
+     </tr>
+     <tr>
+       <td>max-height</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>max-width</td><td>length, percentage </td>
+     </tr>
+     <tr>
+       <td>min-height</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>min-width</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>opacity</td><td>number</td>
+     </tr>
+     <tr>
+       <td>outline-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>outline-offset</td><td>integer</td>
+     </tr>
+     <tr>
+       <td>outline-width</td><td>length</td>
+     </tr>
+     <tr>
+       <td>padding-bottom</td><td>length</td>
+     </tr>
+     <tr>
+       <td>padding-left</td><td>length</td>
+     </tr>
+     <tr>
+       <td>padding-right</td><td>length</td>
+     </tr>
+     <tr>
+       <td>padding-top</td><td>length</td>
+     </tr>
+     <tr>
+       <td>right</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>text-indent</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>text-shadow</td><td>shadow</td>
+     </tr>
+     <tr>
+       <td>top</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>vertical-align</td><td>keywords, length, percentage</td>
+     </tr>
+     <tr>
+       <td>visibility</td><td>visibility</td>
+     </tr>
+     <tr>
+       <td>width</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>word-spacing</td><td>length, percentage</td>
+     </tr>
+     <tr>
+       <td>z-index</td><td>integer</td>
+     </tr>
+     <tr>
+       <td>zoom</td><td>number</td>
+     </tr>
+   </table>
+
+   <h3>
+      5.2 Properties from SVG
+   </h3>
+
+   <table>
+     <tr>
+       <th>Property Name</th><th>Type</th>
+     </tr>
+     <tr>
+       <td>stop-color</td><td>color</td>
+     </tr>
+     <tr>
+       <td>stop-opacity</td><td>float</td>
+     </tr>
+     <tr>
+       <td>fill</td><td>paint server</td>
+     </tr>
+     <tr>
+       <td>fill-opacity</td><td>float</td>
+     </tr>
+     <tr>
+       <td>stroke</td><td>paint server</td>
+     </tr>
+     <tr>
+       <td>stroke-dasharray</td><td>list of numbers</td>
+     </tr>
+     <tr>
+       <td>stroke-dashoffset</td><td>number</td>
+     </tr>
+     <tr>
+       <td>stroke-miterlimit</td><td>number</td>
+     </tr>
+     <tr>
+       <td>stroke-opacity</td><td>float</td>
+     </tr>
+     <tr>
+       <td>stroke-width</td><td>float</td>
+     </tr>
+     <tr>
+       <td>viewport-fill</td><td>color</td>
+     </tr>
+     <tr>
+       <td>viewport-fill-opacity</td><td>color</td>
+     </tr>
+    </table>
     
     
   </body>

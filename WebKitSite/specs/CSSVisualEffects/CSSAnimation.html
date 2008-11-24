@@ -453,7 +453,7 @@
       CSS Animation
     </h1>
     <h2>
-      10 October 2008
+      21 November 2008
     </h2>
     <dl>
       <dt>
@@ -705,12 +705,33 @@ div {
       of style applied by script).
     </p>
 
+    <p>
+      An animation applies to an element if the element has a value for
+      <span class="prop-name">'animation-name'</span> that references a valid
+      keyframes rule. Once an animation has started it continues until it ends
+      or the <span class="prop-name">'animation-name'</span> is removed. The values
+      used for the keyframes and animation properties are snapshotted at the
+      time the animation starts. Changing them during the execution of the
+      animation has no effect. Note also, that changing the value of 
+      <span class="prop-name">'animation-name'</span> does not necessarily
+      restart an animation (e.g. if a list of animations are applied and
+      one is removed from the list, only that animation will stop; The other
+      animations will continue). In order to restart an animation, it must be
+      removed then reapplied. 
+    </p>
+
     <!-- ======================================================================================================= -->
     <h3>
       3.2 The <span class="prop-name">'animation-name'</span> Property
     </h3>
     <p>
-      The <span class="prop-name">'animation-name'</span> property defines a name for the animation. The name is used to select the keyframe at-rule that provides the property values for the animation. If the name does not match any keyframe at-rule, there are no properties to be animated and the animation will not execute. Furthermore, if the animation name is 'none' then there will be no animation. This can be used to override any inherited animations.
+      The <span class="prop-name">'animation-name'</span> property defines a
+      list of animations that apply. Each name is used to select the keyframe at-rule
+      that provides the property values for the animation. If the name does
+      not match any keyframe at-rule, there are no properties to be animated
+      and the animation will not execute. Furthermore, if the animation name
+      is 'none' then there will be no animation. This can be used to override
+      any animations coming from the cascade.
     </p>
     <table class="propdef">
       <tbody>
@@ -727,7 +748,7 @@ div {
             <em>Value:</em>
           </td>
           <td>
-            &lt;string&gt; [, &lt;string&gt;]*
+            none | IDENT [, none | IDENT ]*
           </td>
         </tr>
         <tr>
@@ -735,7 +756,7 @@ div {
             <em>Initial:</em>
           </td>
           <td>
-            ""
+            none
           </td>
         </tr>
         <tr>
@@ -1141,6 +1162,13 @@ div {
     <h3>
       3.7 The <span class="prop-name">'animation-play-state'</span> Property
     </h3>
+    
+    <div class="issue">
+      We are considering removing 'animation-play-state' since its behaviour can
+      be replicated using other techniques. For example, by querying the 
+      computed style, removing the animation and then setting style.
+    </div>
+    
     <p>
       The <span class="prop-name">'animation-play-state'</span> property defines whether the animation is running or paused. A running animation can be paused by setting this property to <span class="prop-value">'paused'</span>. To continue running a paused animation this property can be set to <span class="prop-value">'running'</span>. A paused animation will continue to display the current value of the animation in a static state, as if the time of the animation is constant. When a paused animation is resumed, it restarts from the current value, not necessarily from the beginning of the animation.
     </p>
@@ -1516,7 +1544,7 @@ interface AnimationEvent : Event {
         <b>animationstart</b>
       </dt>
       <dd>
-        The animationstart event occurs at the start of the animation
+        The 'animationstart' event occurs at the start of the animation
         <ul>
           <li>Bubbles: Yes
           </li>
@@ -1530,7 +1558,7 @@ interface AnimationEvent : Event {
         <b>animationend</b>
       </dt>
       <dd>
-        The animationend event occurs when the animation finishes.
+        The 'animationend' event occurs when the animation finishes.
         <ul>
           <li>Bubbles: Yes
           </li>
@@ -1544,7 +1572,7 @@ interface AnimationEvent : Event {
         <b>animationiteration</b>
       </dt>
       <dd>
-        The animationiteration event occurs at the end of each iteration of an animation for which <code>animation-iteration-count</code> is greater than one. This event does not occur for animations with an iteration count of one.
+        The 'animationiteration' event occurs at the end of each iteration of an animation for which <code>animation-iteration-count</code> is greater than one. This event does not occur for animations with an iteration count of one.
         <ul>
           <li>Bubbles: Yes
           </li>
