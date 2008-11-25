@@ -378,6 +378,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     NSInteger spellCheckerDocumentTag;
 
     BOOL smartInsertDeleteEnabled;
+    BOOL selectTrailingWhitespaceEnabled;
         
 #if ENABLE(DASHBOARD_SUPPORT)
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
@@ -2015,6 +2016,18 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 - (void)_clearMainFrameName
 {
     _private->page->mainFrame()->tree()->clearName();
+}
+
+- (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag
+{
+    _private->selectTrailingWhitespaceEnabled = flag;
+    if (flag)
+        [self setSmartInsertDeleteEnabled:false];
+}
+
+- (BOOL)isSelectTrailingWhitespaceEnabled
+{
+    return _private->selectTrailingWhitespaceEnabled;
 }
 
 @end
@@ -4053,6 +4066,8 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
 {
     _private->smartInsertDeleteEnabled = flag;
+    if (flag)
+        [self setSelectTrailingWhitespaceEnabled:false];
 }
 
 - (BOOL)smartInsertDeleteEnabled

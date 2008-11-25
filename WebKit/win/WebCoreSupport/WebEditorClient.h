@@ -75,6 +75,7 @@ public:
     void webViewDidChangeSelection(WebNotification*);
 
     bool smartInsertDeleteEnabled();
+    bool isSelectTrailingWhitespaceEnabled();
 
     void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
     void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);

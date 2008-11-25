@@ -219,7 +219,10 @@ public:
     void toggleUnderline();
     void setBaseWritingDirection(WritingDirection);
 
+    // smartInsertDeleteEnabled and selectTrailingWhitespaceEnabled are 
+    // mutually exclusive, meaning that enabling one will disable the other.
     bool smartInsertDeleteEnabled();
+    bool isSelectTrailingWhitespaceEnabled();
     
     bool hasBidiSelection() const;
 

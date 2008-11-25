@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+     layoutTestController.dumpAsText();
+     layoutTestController.setSmartInsertDeleteEnabled(false);
+     layoutTestController.setSelectTrailingWhitespaceEnabled(true);
+}
+</script>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<pre>
+This tests that double-clicking a word on the Windows platform selects the whitespace after the word.  You should see the word "PASS" below.
+<p>
+<script type="text/javascript">
+    if (window.layoutTestController) {
+        eventSender.mouseMoveTo(20, 10);
+        eventSender.mouseDown();
+        eventSender.leapForward(1);
+        eventSender.mouseUp();
+        eventSender.leapForward(100);
+        eventSender.mouseDown();
+        eventSender.leapForward(1);
+        eventSender.mouseUp();
+        var sel = window.getSelection();
+        var range = sel.getRangeAt(0);
+        if (range.toString() != "This ")
+            document.write("FAIL");
+        else
+            document.write("PASS");
+    } else
+        document.write("This test is only expected to pass when run in automated mode, with access to LayoutTestController.");
+</script>
+</body>
+</html>

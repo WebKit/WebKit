@@ -398,6 +398,9 @@ Could be worth adding to the API.
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews;
 - (BOOL)_usesDocumentViews;
 
+- (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag;
+- (BOOL)isSelectTrailingWhitespaceEnabled;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

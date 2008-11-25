@@ -222,6 +222,11 @@ bool WebEditorClient::smartInsertDeleteEnabled()
     return [m_webView smartInsertDeleteEnabled];
 }
 
+bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
+{
+    return [m_webView isSelectTrailingWhitespaceEnabled];
+}
+
 bool WebEditorClient::shouldApplyStyle(CSSStyleDeclaration* style, Range* range)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView

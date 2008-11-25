@@ -1,3 +1,26 @@
+2008-11-24  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15643
+
+        Added support for clients that wish to disable smart insert/delete
+        and enable the "trailing whitespace selection" work-around.
+
+        Tests: editing/selection/doubleclick-whitespace.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectTrailingWhitespaceEnabled):
+        * editing/Editor.h:
+        * editing/Selection.cpp:
+        (WebCore::Selection::includeTrailingWhitespace):
+        * editing/Selection.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::selectTrailingWhitespaceEnabled):
+        * page/EditorClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+
 2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Forgot to include WMLPageState.h in last commit.

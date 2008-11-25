@@ -1,5 +1,18 @@
 2008-11-24  Glenn Wilson  <gwilson@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15643
+
+        New test added to verify that LayoutTestController and other clients
+        can disable smart insert/delete and enable selection of trailing whitespace
+        as a workaround for smart insert/delete.
+
+        * editing/selection/doubleclick-whitespace-expected.txt: Added.
+        * editing/selection/doubleclick-whitespace.html: Added.
+
+2008-11-24  Glenn Wilson  <gwilson@chromium.org>
+
         Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=18703

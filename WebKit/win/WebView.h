@@ -390,7 +390,13 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE smartInsertDeleteEnabled( 
         /* [in] */ BOOL *enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE setSelectTrailingWhitespaceEnabled( 
+        /* [in] */ BOOL flag);
     
+    virtual HRESULT STDMETHODCALLTYPE isSelectTrailingWhitespaceEnabled( 
+        /* [in] */ BOOL *enabled);
+
     virtual HRESULT STDMETHODCALLTYPE setContinuousSpellCheckingEnabled( 
         /* [in] */ BOOL flag);
     
@@ -867,6 +873,7 @@ protected:
     unsigned m_paintCount;
     bool m_hasSpellCheckerDocumentTag;
     bool m_smartInsertDeleteEnabled;
+    bool m_selectTrailingWhitespaceEnabled;
     bool m_didClose;
     bool m_hasCustomDropTarget;
     unsigned m_inIMEComposition;

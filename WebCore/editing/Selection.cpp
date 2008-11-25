@@ -193,6 +193,14 @@ bool Selection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
+void Selection::appendTrailingWhitespace()
+{
+    VisiblePosition end = VisiblePosition(m_end, m_affinity);
+    while (end.isNotNull() && isSpaceOrNewline(end.characterAfter()))
+        end = end.next();
+    m_end = end.deepEquivalent();
+}
+
 void Selection::validate()
 {
     // Move the selection to rendered positions, if possible.

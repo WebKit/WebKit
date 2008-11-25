@@ -263,6 +263,11 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool profilingEnabled)
     [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:profilingEnabled];
 }
 
+void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
+{
+    [[mainFrame webView] setSelectTrailingWhitespaceEnabled:flag];
+}
+
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)

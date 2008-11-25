@@ -1,0 +1,6 @@
+This tests that double-clicking a word on the Windows platform selects the whitespace after the word.  You should see the word "PASS" below.
+
+PASS
+
+
+

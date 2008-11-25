@@ -1,3 +1,21 @@
+2008-11-24  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15643
+
+        Added support for changing the "trailing whitespace" work-around
+        in LayoutTestController (so layout tests can verify this functionality)
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setSelectTrailingWhitespaceEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setSelectTrailingWhitespaceEnabled):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setSelectTrailingWhitespaceEnabled):
+
 2008-11-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

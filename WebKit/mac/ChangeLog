@@ -1,3 +1,21 @@
+2008-11-24  Glenn Wilson  <gwilson@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15643
+
+        Added API support for the "trailing whitespace" work-around.  This includes an APIs
+        to get and set the state of this configuration variable.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::selectTrailingWhitespaceEnabled):
+        * WebView/WebView.mm:
+        (-[WebView setSelectTrailingWhitespaceEnabled:]):
+        (-[WebView isSelectTrailingWhitespaceEnabled]):
+        (-[WebView setSmartInsertDeleteEnabled:]):
+        * WebView/WebViewPrivate.h:
+
 2008-11-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

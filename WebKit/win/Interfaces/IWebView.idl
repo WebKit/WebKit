@@ -1014,6 +1014,16 @@ interface IWebViewEditing : IUnknown
         - (void)setGrammarCheckingEnabled:(BOOL)flag
     */
     HRESULT setGrammarCheckingEnabled(BOOL enabled);
+
+    /*
+        - (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag;
+    */
+    HRESULT setSelectTrailingWhitespaceEnabled([in] BOOL flag);
+
+    /*
+        - (BOOL)selectTrailingWhitespaceEnabled;
+    */
+    HRESULT isSelectTrailingWhitespaceEnabled([out, retval] BOOL* enabled);
 }
 
 /*
