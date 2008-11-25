@@ -1,3 +1,13 @@
+2008-11-25  Dean Jackson  <dino@apple.com>
+
+        Add a new work-in-progress proposal for pointer-events in
+        HTML content. Also note that the Media Queries extensions
+        are not at all official.
+
+        * specs/MediaQueriesExtensions.html:
+        * specs/PointerEventsProperty.html: Added.
+        * specs/index.html:
+
 2008-11-25  Jack Wootten  <jackwootton@gmail.com>
 
         Bug 20125: http://webkit.org/ missing link to key documentation for new developers.

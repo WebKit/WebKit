@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>
-      Extensions to CSS3 Media Queries
+      The 'pointer-events' property
     </title>
     <link href="CSSVisualEffects/base.css" rel="stylesheet" type="text/css">
     <style type="text/css">
@@ -468,10 +468,10 @@
   </head>
   <body>
     <h1>
-      Extensions to CSS 3 Media Queries
+      The 'pointer-events' property
     </h1>
     <h2>
-      24 November 2008
+      25 November 2008
     </h2>
     <dl>
       <dt>
@@ -496,256 +496,112 @@
     </h2>
 
     <p>
-      This document introduces extensions to the <a
-      href="http://www.w3.org/TR/css3-mediaqueries/">CSS 3 Media Queries</a>
-      specification. It allows for media queries that can test for CSS Transformations, 
-      Animations and Transitions, and a new DOM interface for evaluating media
-      queries from script.
+      This document describes how the <a
+      href="http://www.w3.org/TR/SVG/interact.html#PointerEventsProperty">SVG
+      pointer-events property</a> is extended for use in (X)HTML content.
     </p>
 
     <!-- ======================================================================================================= -->
 
     <h2>
-      2 The <code>transform-2d</code> media feature
+      2 The <span class="prop-name">pointer-events</span> property
     </h2>
     
-    <div class=media-feature>
-      <span class=label>Value:</span> &lt;integer&gt;<br>
-      <span class=label>Applies to:</span> visual media types<br>
-      <span class=label>Accepts min/max prefixes:</span> no<br>
-    </div>
-
     <p>
-      The &lsquo;<code>transform-2d</code>&rsquo; media feature describes the
-      availability of <a
-      href="http://www.webkit.org/specs/CSSVisualEffects/CSSTransforms.html">
-      CSS Transforms</a> for two-dimensions. This includes the <span
-      class="prop-name">transform</span> property, the transformation
-      functions <code>matrix</code>, <code>translate</code>,
-      <code>translateX</code>, <code>translateY</code>, <code>scale</code>,
-      <code>scaleX</code>, <code>scaleY</code>, <code>rotate</code>,
-      <code>skew</code>, <code>skewX</code> and <code>skewY</code>, and the
-      <span class="prop-name">transform-origin</span> property with X and Y
-      values.
+      In different circumstances, authors may want to control under what
+      circumstances particular elements can become the target of pointer
+      events. For example, the author might want a given element to ignore
+      pointer events under all circumstances so that elements underneath the
+      given element will become the target of pointer events.
     </p>
 
     <p>
-      The User Agent will return a value of 0 if the feature is not supported,
-      and any other value if it is supported.
+      The 'pointer-events' property specifies under what circumstances a given
+      element can be the target element for a pointer event. It
+      affects the circumstances under which the following are processed:
     </p>
-
-    <div class=example>
-      <pre>
-&lt;link rel="stylesheet" media="screen and (transform-2d)" /&gt;</span>
-      </pre>
-
-       <p>
-         In the example above, the style sheet will apply only to screens that
-         support two-dimensional transforms.
-      </p>
-    </div>
-
-    <h2>
-      3 The <code>transform-3d</code> media feature
-    </h2>
-
-    <div class=media-feature>
-      <span class=label>Value:</span> &lt;integer&gt;<br>
-      <span class=label>Applies to:</span> visual media types<br>
-      <span class=label>Accepts min/max prefixes:</span> no<br>
-    </div>
-
+    
+    <ul>
+      <li>user interface events such as mouse clicks</li>
+      <li>dynamic pseudo-classes (i.e., :hover, :active and :focus)</li>
+      <li>hyperlinks</li>
+    </ul>
+    
     <p>
-      The &lsquo;<code>transform-3d</code>&rsquo; media feature describes the
-      availability of <a
-      href="http://www.webkit.org/specs/CSSVisualEffects/CSSTransforms3D.html">
-      CSS Transforms</a> for three-dimensions. This includes the <span
-      class="prop-name">transform</span> property, all transformation
-      functions, the <span class="prop-name">transform-origin</span> property
-      with X, Y and Z values, the <span
-      class="prop-name">transform-style</span> property, the <span
-      class="prop-name">transform-perspective</span> property, the <span
-      class="prop-name">transform-perspective-origin</span> property and the
-      <span class="prop-name">transform-backface-visibility</span> property.
+      The <span class="prop-name">pointer-events</span> property was originally defined for <a
+      href="http://www.w3.org/TR/SVG/interact.html#PointerEventsProperty">SVG content</a>
+      and, as such, accepts property values specific to vector graphics (eg. relating to
+      graphical fill and stroke). The following definition only applies to the property
+      when used with HTML content. Note that the property has a new initial value, "auto",
+      which behaves as "visiblePainted" in SVG content and "visible" in non-SVG content.
     </p>
-
-    <p>
-      The User Agent will return a value of 0 if the feature is not supported,
-      and any other value if it is supported. Since 3D transformations are a 
-      superset of 2D transformations, if &lsquo;<code>transform-3d</code>&rsquo;
-      evaluates to true, &lsquo;<code>transform-2d</code>&rsquo; must also evaluate
-      to true.
-    </p>
-
-    <div class=example>
-      <pre>
-&lt;link rel="stylesheet" media="screen and (transform-3d)" /&gt;</span>
-      </pre>
-
-       <p>
-         In the example above, the style sheet will apply only to screens that
-         support three-dimensional transforms.
-      </p>
-    </div>
-
-    <h2>
-      4 The <code>transition</code> media feature
-    </h2>
-
-    <div class=media-feature>
-      <span class=label>Value:</span> &lt;integer&gt;<br>
-      <span class=label>Applies to:</span> visual media types<br>
-      <span class=label>Accepts min/max prefixes:</span> no<br>
-    </div>
-
-    <p>
-      The &lsquo;<code>transition</code>&rsquo; media feature describes the
-      availability of <a
-      href="http://www.webkit.org/specs/CSSVisualEffects/CSSTransitions.html">
-      CSS Transitions</a>. This includes the
-      <span class="prop-name">transition-property</span> property,
-      the <span class="prop-name">transition-duration</span> property,
-      the <span class="prop-name">transition-timing-function</span> property,
-      and the <span class="prop-name">transition-delay</span> property.
-    </p>
-
-    <p>
-      The User Agent will return a value of 0 if the feature is not supported,
-      and any other value if it is supported.
-    </p>
-
-    <div class=example>
-      <pre>
-&lt;link rel="stylesheet" media="screen and (transition)" /&gt;</span>
-      </pre>
-
-       <p>
-         In the example above, the style sheet will apply only to screens that
-         support CSS Transitions.
-      </p>
-    </div>
-
-    <h2>
-      5 The <code>animation</code> media feature
-    </h2>
-
-    <div class=media-feature>
-      <span class=label>Value:</span> &lt;integer&gt;<br>
-      <span class=label>Applies to:</span> visual media types<br>
-      <span class=label>Accepts min/max prefixes:</span> no<br>
-    </div>
-
-    <p>
-      The &lsquo;<code>animation</code>&rsquo; media feature describes the
-      availability of <a
-      href="http://www.webkit.org/specs/CSSVisualEffects/CSSAnimations.html">
-      CSS Animations</a>. This includes the
-      <span class="prop-name">animation-name</span> property,
-      the <span class="prop-name">animation-duration</span> property,
-      the <span class="prop-name">animation-timing-function</span> property,
-      the <span class="prop-name">animation-delay</span> property,
-      the <span class="prop-name">animation-iteration-count</span> property,
-      the <span class="prop-name">animation-play-state</span> property,
-      the <span class="prop-name">animation-direction</span> property
-      and the <code>@keyframes</code> at-rule.
-    </p>
-
-    <p>
-      The User Agent will return a value of 0 if the feature is not supported,
-      and any other value if it is supported.
-    </p>
-
-    <div class=example>
-      <pre>
-&lt;link rel="stylesheet" media="screen and (animation)" /&gt;</span>
-      </pre>
-
-       <p>
-         In the example above, the style sheet will apply only to screens that
-         support CSS Animations.
-      </p>
-    </div>
-
-    <h2>
-      6 DOM Interface
-    </h2>
-
+    
+    <div class="propdef">
       <dl>
-        <dt>
-          <b>Interface <i><a id = "DOM-Window" name='DOM-Window'>Window</a></i></b>
-        </dt>
+        <dt><span class="prop-name">'pointer-events'</span></dt>
         <dd>
-          <p>
-            The following function is added to the <code>Window</code> interface.
-          </p>
-          <dl>
-
-            <dt>
-              <b>IDL Definition</b>
-            </dt>
-            <dd>
-              <div class='idl-code'>
-                <pre>
-  interface Window {
-    ...
-    boolean evaluateMediaQuery(in DOMString query);
-    ...
-  };</pre>
-              </div>
-            </dd> <!-- IDL -->
-
-            <dt>
-              <b>Methods</b>
-            </dt>
-            <dd>
-              <dl>
-                <!-- ============================================================ -->
-                <dt>
-                  <code class='method-name'><a id="DOM-Window-evaluateMediaQuery" name='DOM-Window-evaluateMediaQuery'>evaluateMediaQuery</a></code>
-                </dt>
-                <dd>
-                  <div class='method'>
-                    The <code>evaluateMediaQuery</code> method evaluates the query parameter as a 
-                    media query and returns the result.
-                    <div class='parameters'>
-                      <b>Parameters</b>
-                      <div class='paramtable'>
-                        <dl>
-                          <dt>
-                            <code class='parameter-name'>query</code> of type <code>DOMString</code>
-                          </dt>
-                          <dd>
-                            The CSS 3 Media Query to evaluate.<br>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div><!-- parameters -->
-                    <div class='return-value'>
-                      <b>Return Value</b>
-                    </div>
-                     <div class='returnvalue'>
-                        <dl>
-                          <dt>
-                            <code>boolean</code>
-                          </dt>
-                          <dd>
-                            True if the query evaluates on the current media, false otherwise.<br>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                    <div>
-                      <b>No Exceptions</b>
-                    </div>
-                  </div>
-                </dd>
-              </dl>
-            </dd> <!-- Methods -->
-          </dl>
-        </dd> <!-- Interface Window -->
+          <table summary="pointer-events property">
+            <tr>
+              <td><em>Value:</em></td>
+              <td>
+                auto | visible | none | visiblePainted | visibleFill | visibleStroke |
+                painted | fill | stroke | all
+              </td>
+            </tr>
+            <tr>
+              <td><em>Initial:</em></td>
+              <td>auto</td>
+            </tr>
+            <tr>
+              <td><em>Applies to:</em></td>
+              <td>all
+              elements</td>
+            </tr>
+            <tr>
+              <td><em>Inherited:</em></td>
+              <td>yes</td>
+            </tr>
+            <tr>
+              <td><em>Percentages:</em></td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td><em>Media:</em></td>
+              <td>visual</td>
+            </tr>
+          </table>
+        </dd>
       </dl>
+    </div>
+    <dl>
+      <dt><span class="prop-value">auto</span></dt>
+      <dd>
+        In SVG content, behave as <span class="prop-value">visiblePainted</span>.
+        Otherwise, behave as <span class="prop-value">visible</span>.
+      </dd>
+      <dt><span class="prop-value">visible</span></dt>
+      <dd>
+        The given element receives pointer events.
+      </dd>
+      <dt><span class="prop-value">none</span></dt>
+      <dd>
+        The given element does not receive pointer events.
+      </dd>
+      <dt><span class="prop-value">visiblePainted</span></dt>
+      <dt><span class="prop-value">visibleFill</span></dt>
+      <dt><span class="prop-value">visibleStroke</span></dt>
+      <dt><span class="prop-value">painted</span></dt>
+      <dt><span class="prop-value">fill</span></dt>
+      <dt><span class="prop-value">stroke</span></dt>
+      <dt><span class="prop-value">all</span></dt>
+      <dd>
+        In SVG content, behave as defined by the <a
+        href="http://www.w3.org/TR/SVG/interact.html#PointerEventsProperty">SVG
+        specification</a>. Otherwise, behave as <span
+        class="prop-value">visible</span>.
+      </dd>
+    </dl>
     
-
     
   </body>
 </html>
