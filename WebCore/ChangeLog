@@ -1,9 +1,9 @@
 2008-11-24  Antti Koivisto  <antti@apple.com>
 
-        Reviewed by Geoff Garen.
+        Reviewed by Geoff Garen and Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=22214
-        Keep dead resourcs in memory cache in purgeable memory.
+        Keep dead resources in memory cache in purgeable memory.
         <rdar://problem/6333088>
         
         OS X 10.5 has purgeable memory kernel facility that allows marking reserved memory
