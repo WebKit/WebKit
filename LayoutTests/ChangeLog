@@ -1,3 +1,17 @@
+2008-11-24  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22350
+        Allow layout tests to run in php cgi mode
+
+        * http/tests/misc/refresh-headers.php:
+        * http/tests/misc/resources/redirect-result.php:
+        * http/tests/misc/resources/referrer-result.php:
+        * http/tests/misc/xhtml.php:
+        Stop using getallheaders(), which is only implemented by mod_php, so that the tests could
+        run through lighttpd.
+
 2008-11-24  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

@@ -2,7 +2,7 @@
 <body>
 <script>
 
-var referer = "<?php $headers = getallheaders(); echo $headers["Referer"]; ?>";
+var referer = "<?php echo $_SERVER["HTTP_REFERER"]; ?>";
 if (referer.match(/referrer.html/)) {
     document.write("PASS: Referer header exists and contains the string 'referrer.html'.");
 } else {

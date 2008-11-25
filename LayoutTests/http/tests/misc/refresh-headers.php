@@ -1,19 +1,16 @@
 <?php
   $gotMaxAge=false;
   $gotNoCache=false;
-  $headers = getallheaders(); 
 
-  foreach ($headers as $name => $content) {
-    if (0 == strcasecmp($name, "Cache-Control") && 0 == strcasecmp($content, "max-age=0"))
-    {
-      $gotMaxAge = true;
-    }
+  if (0 == strcasecmp($_SERVER["HTTP_CACHE_CONTROL"], "max-age=0"))
+  {
+    $gotMaxAge = true;
+  }
     
-    if ((0 == strcasecmp($name, "Cache-Control") && 0 == strcasecmp($content, "no-cache")) ||
-        (0 == strcasecmp($name, "Pragma") && 0 == strcasecmp($content, "no-cache")))
-    {
-      $gotNoCache = true;
-    }
+  if ((0 == strcasecmp($_SERVER["HTTP_CACHE_CONTROL"], "no-cache")) ||
+      (0 == strcasecmp($_SERVER["HTTP_PRAGMA"], "no-cache")))
+  {
+    $gotNoCache = true;
   }
   
   if ($gotNoCache) {
