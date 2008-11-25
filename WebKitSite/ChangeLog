@@ -1,3 +1,14 @@
+2008-11-25  Jack Wootten  <jackwootton@gmail.com>
+
+        Bug 20125: http://webkit.org/ missing link to key documentation for new developers.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20125>
+
+        Reviewed by David Kilzer.
+
+        * projects/documentation/index.html: Added link to "Introduction to
+        WebKit Objective-C Programming Guide".
+
 2008-11-24  Dean Jackson  <dino@apple.com>
 
         Document the work-in-progress proposed extensions to
