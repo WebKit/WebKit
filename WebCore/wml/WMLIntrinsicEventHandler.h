@@ -26,14 +26,16 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
+#include "WMLIntrinsicEvent.h"
+
 namespace WebCore {
 
 enum WMLIntrinsicEventType {
-    WMLIntrinsicEvent_Unknown = 0,
-    WMLIntrinsicEvent_OnEnterForward,
-    WMLIntrinsicEvent_OnEnterBackward,
-    WMLIntrinsicEvent_OnTimer,
-    WMLIntrinsicEvent_OnPick
+    WMLIntrinsicEventUnknown = 0,
+    WMLIntrinsicEventOnEnterForward,
+    WMLIntrinsicEventOnEnterBackward,
+    WMLIntrinsicEventOnTimer,
+    WMLIntrinsicEventOnPick
 };
 
 class WMLIntrinsicEvent;

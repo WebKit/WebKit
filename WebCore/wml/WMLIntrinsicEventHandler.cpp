@@ -24,9 +24,6 @@
 #if ENABLE(WML)
 #include "WMLIntrinsicEventHandler.h"
 
-#include "WMLIntrinsicEvent.h"
-#include "WMLTaskElement.h"
-
 namespace WebCore {
 
 WMLIntrinsicEventHandler::WMLIntrinsicEventHandler()

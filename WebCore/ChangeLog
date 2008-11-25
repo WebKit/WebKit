@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Name enum values in a style guide compatible way.
+        Allow WMLIntrinsicEvent inclusion, without needing other includes.
+
+        * wml/WMLIntrinsicEvent.cpp:
+        (WebCore::createTaskElement):
+        * wml/WMLIntrinsicEvent.h:
+        * wml/WMLIntrinsicEventHandler.cpp:
+        * wml/WMLIntrinsicEventHandler.h:
+        (WebCore::):
+
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
         Add wmlPageStateForDocument() helper function and use it in some places.
 
         * wml/WMLAccessElement.cpp:

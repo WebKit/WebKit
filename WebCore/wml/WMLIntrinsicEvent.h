@@ -27,10 +27,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#include "WMLTaskElement.h"
+
 namespace WebCore {
 
 class Document;
-class WMLTaskElement;
 
 class WMLIntrinsicEvent : public RefCounted<WMLIntrinsicEvent> {
 public:
