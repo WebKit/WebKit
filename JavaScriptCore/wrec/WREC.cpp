@@ -59,16 +59,24 @@ CompiledRegExp compileRegExp(Interpreter* interpreter, const UString& pattern, u
     generator.generateSaveIndex();
 
     Generator::JmpDst beginPattern = __ label();
-    if (!parser.parsePattern(failures)) {
-        *error_ptr = "Regular expression malformed.";
-        return 0;
-    }
+    parser.parsePattern(failures);
     generator.generateReturnSuccess();
 
     __ link(failures, __ label());
     generator.generateIncrementIndex();
-    generator.generateLoopIfNotEndOfInput(beginPattern);
+    generator.generateJumpIfEndOfInput(failures);
+    parser.parsePattern(failures);
+    generator.generateReturnSuccess();
+
+    __ link(failures, __ label());
+    generator.generateIncrementIndex();
+    generator.generateJumpIfNotEndOfInput(beginPattern);
     generator.generateReturnFailure();
+
+    if (parser.error()) {
+        *error_ptr = "Regular expression malformed.";
+        return 0;
+    }
 
     *numSubpatterns_ptr = parser.numSubpatterns();
     return reinterpret_cast<CompiledRegExp>(__ executableCopy());

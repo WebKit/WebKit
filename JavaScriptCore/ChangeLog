@@ -2,6 +2,26 @@
 
         Reviewed by Sam Weinig.
         
+        Unroll the regexp matching loop by 1. 10% speedup on simple matching
+        stress test. No change on SunSpider.
+        
+        (I decided not to unroll to arbitrary levels because the returns diminsh
+        quickly.)
+
+        * wrec/WREC.cpp:
+        (JSC::WREC::compileRegExp):
+        * wrec/WRECGenerator.cpp:
+        (JSC::WREC::Generator::generateJumpIfEndOfInput):
+        (JSC::WREC::Generator::generateJumpIfNotEndOfInput):
+        * wrec/WRECGenerator.h:
+        * wrec/WRECParser.h:
+        (JSC::WREC::Parser::error):
+        (JSC::WREC::Parser::parsePattern):
+
+2008-11-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
         Removed some unnecessary "Generator::" prefixes.
 
         * wrec/WRECGenerator.cpp:

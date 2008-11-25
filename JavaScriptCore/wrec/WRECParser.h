@@ -74,13 +74,16 @@ namespace JSC { namespace WREC {
         void recordSubpattern() { ++m_numSubpatterns; }
         unsigned numSubpatterns() const { return m_numSubpatterns; }
         
-        bool parsePattern(JmpSrcVector& failures)
+        Error error() const { return m_error; }
+        
+        void parsePattern(JmpSrcVector& failures)
         {
             reset();
 
             parseDisjunction(failures);
 
-            return peek() == EndOfPattern && m_error == NoError; // Parsing the pattern should fully consume it.
+            if (peek() != EndOfPattern)
+                m_error = MalformedPattern; // Parsing the pattern should fully consume it.
         }
 
         void parseAlternative(JmpSrcVector& failures)
