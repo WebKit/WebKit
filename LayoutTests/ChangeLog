@@ -1,3 +1,16 @@
+2008-11-25  Darin Fisher  <darin@chromium.org>
+
+        Disabling these newly added tests since they fail in some configurations.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=21635
+
+        * http/tests/misc/submit-get-in-utf7.html: Removed.
+        * http/tests/misc/submit-get-in-utf7.html-disabled: Copied from http/tests/misc/submit-get-in-utf7.html.
+        * http/tests/misc/submit-post-in-utf7.html: Removed.
+        * http/tests/misc/submit-post-in-utf7.html-disabled: Copied from http/tests/misc/submit-post-in-utf7.html.
+        * http/tests/misc/url-in-utf7.html: Removed.
+        * http/tests/misc/url-in-utf7.html-disabled: Copied from http/tests/misc/url-in-utf7.html.
+
 2008-11-25  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.
