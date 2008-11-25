@@ -1,3 +1,9 @@
+2008-11-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix - we don't support PurgeableBuffer on Leopard for now.
+        
+        * platform/PurgeableBuffer.h:
+
 2008-11-25  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Mark Rowe.
