@@ -1,3 +1,25 @@
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Oliver Hunt & Eric Seidel.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22431
+
+        Implement WMLAccessElement. It just propogates two attributes values to WMLPageState.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLAccessElement.cpp: Added.
+        (WebCore::WMLAccessElement::WMLAccessElement):
+        (WebCore::WMLAccessElement::parseMappedAttribute):
+        * wml/WMLAccessElement.h: Added.
+        * wml/WMLTagNames.in:
+        * wml/WMLPageState.h: Rename functions.
+        (WebCore::WMLPageState::restrictDeckAccessToDomain):
+        (WebCore::WMLPageState::restrictDeckAccessToPath):
+        * wml/WMLVariables.cpp: Add new helper function.
+        (WebCore::valueContainsVariableReference):
+        * wml/WMLVariables.h:
+        (WebCore::):
+
 2008-11-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

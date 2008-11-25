@@ -72,6 +72,21 @@ bool isValidVariableName(const String& name, bool isReference)
     return true;
 }
 
+bool containsVariableReference(const String& text)
+{
+    int startPos = text.find('$');
+    if (startPos == -1)
+        return false;
+
+    unsigned length = text.length();
+    for (unsigned i = startPos + 1; i < length; ++i) {
+        if (!isValidVariableReferenceCharacter(text[i]) && !isValidVariableCharacter(text[i]))
+            return false;
+    }
+
+    return true;
+}
+
 String substituteVariableReferences(const String& variableReference, Document* document, WMLVariableEscapingMode escapeMode)
 {
     // FIXME!

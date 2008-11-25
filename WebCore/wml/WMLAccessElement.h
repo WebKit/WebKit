@@ -19,27 +19,20 @@
  *
  */
 
-#ifndef WMLVariables_h
-#define WMLVariables_h
+#ifndef WMLAccessElement_h
+#define WMLAccessElement_h
 
 #if ENABLE(WML)
+#include "WMLElement.h"
+
 namespace WebCore {
 
-    class Document;
-    class String;
+class WMLAccessElement : public WMLElement {
+public:
+    WMLAccessElement(const QualifiedName& tagName, Document*);
 
-    enum WMLVariableEscapingMode {
-        WMLVariableEscapingNone = 0,
-        WMLVariableEscapingEscape,
-        WMLVariableEscapingUnescape
-    };
-
-    bool isValidVariableName(const String&, bool isReference);
-    bool containsVariableReference(const String&);
-
-    String substituteVariableReferences(const String& variableReference,
-                                        Document*,
-                                        WMLVariableEscapingMode mode = WMLVariableEscapingNone);
+    virtual void parseMappedAttribute(MappedAttribute*);
+};
 
 }
 
