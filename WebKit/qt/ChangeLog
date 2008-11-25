@@ -1,3 +1,10 @@
+2008-11-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Build fix. Use WebCore::Frame::loader instead of QWebFrame
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::updateGlobalHistory):
+
 2008-11-24  Darin Fisher  <darin@chromium.org>
 
         Fix bustage.

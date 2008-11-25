@@ -608,7 +608,7 @@ void FrameLoaderClientQt::updateGlobalHistory()
 {
     QWebHistoryInterface *history = QWebHistoryInterface::defaultInterface();
     if (history)
-        history->addHistoryEntry(m_webFrame->loader()->documentLoader()->urlForHistory().prettyURL());
+        history->addHistoryEntry(m_frame->loader()->documentLoader()->urlForHistory().prettyURL());
 }
 
 bool FrameLoaderClientQt::shouldGoToHistoryItem(WebCore::HistoryItem *item) const
