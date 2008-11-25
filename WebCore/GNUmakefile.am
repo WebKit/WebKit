@@ -3031,6 +3031,20 @@ webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
 dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
 
+# ----
+# Geolocation
+# ----
+if ENABLE_GEOLOCATION
+
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_GEOLOCATION=1
+webcore_cppflags += \
+	-DENABLE_GEOLOCATION=1
+
+webcore_sources += \
+	WebCore/platform/gtk/GeolocationServiceGtk.h \
+	WebCore/platform/gtk/GeolocationServiceGtk.cpp
+endif # END ENABLE_GEOLOCATION
+
 # Clean rules for WebCore
 
 CLEANFILES += \

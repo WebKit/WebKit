@@ -1,3 +1,25 @@
+2008-11-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22022
+
+        Add GeoleocationServiceGtk stubs and integrate it into the buildsystem
+
+        Add stubs for a Gtk Implementation.
+
+        * GNUmakefile.am:
+        * platform/gtk/GeolocationServiceGtk.cpp: Added.
+        (WebCore::GeolocationService::create):
+        (WebCore::GeolocationServiceGtk::GeolocationServiceGtk):
+        (WebCore::GeolocationServiceGtk::startUpdating):
+        (WebCore::GeolocationServiceGtk::stopUpdating):
+        (WebCore::GeolocationServiceGtk::suspend):
+        (WebCore::GeolocationServiceGtk::resume):
+        (WebCore::GeolocationServiceGtk::lastPosition):
+        (WebCore::GeolocationServiceGtk::lastError):
+        * platform/gtk/GeolocationServiceGtk.h: Added.
+
 2008-11-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix - we don't support PurgeableBuffer on Leopard for now.
