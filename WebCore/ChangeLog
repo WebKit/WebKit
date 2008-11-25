@@ -1,3 +1,15 @@
+2008-11-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=22483
+        Assertion failure in CachedResource::makePurgeable during layout tests
+        
+        Deleting SVG image can re-enter destroyDecodedData.
+
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::destroyDecodedData):
+
 2008-11-25  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

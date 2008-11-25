@@ -320,7 +320,8 @@ void CachedImage::checkNotify()
 
 void CachedImage::destroyDecodedData()
 {
-    if (!hasClients() && (!m_image || m_image->hasOneRef()) && !m_loading) {
+    bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());
+    if (!hasClients() && canDeleteImage && !m_loading) {
         // Image refs the data buffer so we should not make it purgeable while the image is alive. 
         // Invoking addClient() will reconstruct the image object.
         m_image = 0;
