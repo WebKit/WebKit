@@ -1,3 +1,11 @@
+2008-11-24  Dean Jackson  <dino@apple.com>
+
+        Document the work-in-progress proposed extensions to
+        CSS 3 Media Queries.
+
+        * specs/MediaQueriesExtensions.html: Added.
+        * specs/index.html:
+
 2008-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig and Antti Koivisto.
