@@ -50,6 +50,12 @@ static void addEncodingName(HashSet<const char*>& set, const char* name)
         set.add(atomicName);
 }
 
+static const TextEncoding& UTF7Encoding()
+{
+    static TextEncoding globalUTF7Encoding("UTF-7");
+    return globalUTF7Encoding;
+}
+
 TextEncoding::TextEncoding(const char* name)
     : m_name(atomicCanonicalTextEncodingName(name))
 {
@@ -155,9 +161,29 @@ UChar TextEncoding::backslashAsCurrencySymbol() const
     return (m_name == a || m_name == b) ? 0x00A5 : '\\';
 }
 
-const TextEncoding& TextEncoding::closest8BitEquivalent() const
+bool TextEncoding::isNonByteBasedEncoding() const
 {
-    if (*this == UTF16BigEndianEncoding() || *this == UTF16LittleEndianEncoding())
+    return *this == UTF16LittleEndianEncoding()
+           || *this == UTF16BigEndianEncoding()
+           || *this == UTF32BigEndianEncoding()
+           || *this == UTF32LittleEndianEncoding();
+}
+
+const TextEncoding& TextEncoding::closestByteBasedEquivalent() const
+{
+    if (isNonByteBasedEncoding())
+        return UTF8Encoding();
+    return *this; 
+}
+
+// HTML5 specifies that UTF-8 be used in form submission when a form is 
+// is a part of a document in UTF-16 probably because UTF-16 is not a 
+// byte-based encoding and can contain 0x00. By extension, the same
+// should be done for UTF-32. In case of UTF-7, it is a byte-based encoding,
+// but it's fraught with problems and we'd rather steer clear of it.
+const TextEncoding& TextEncoding::encodingForFormSubmission() const
+{
+    if (isNonByteBasedEncoding() || *this == UTF7Encoding())
         return UTF8Encoding();
     return *this;
 }
@@ -197,7 +223,6 @@ const TextEncoding& UTF32LittleEndianEncoding()
     static TextEncoding globalUTF32LittleEndianEncoding("UTF-32LE");
     return globalUTF32LittleEndianEncoding;
 }
-
 
 const TextEncoding& UTF8Encoding()
 {

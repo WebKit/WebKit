@@ -45,7 +45,8 @@ namespace WebCore {
         bool usesVisualOrdering() const;
         bool isJapanese() const;
         UChar backslashAsCurrencySymbol() const;
-        const TextEncoding& closest8BitEquivalent() const;
+        const TextEncoding& closestByteBasedEquivalent() const;
+        const TextEncoding& encodingForFormSubmission() const;
 
         String decode(const char* str, size_t length) const
         {
@@ -57,6 +58,7 @@ namespace WebCore {
 
     private:
         const char* m_name;
+        bool isNonByteBasedEncoding() const;
     };
 
     inline bool operator==(const TextEncoding& a, const TextEncoding& b) { return a.name() == b.name(); }

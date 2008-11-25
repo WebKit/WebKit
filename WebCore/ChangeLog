@@ -1,3 +1,41 @@
+2008-11-24  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        For Unicode encodings other than UTF-8, use UTF-8 for
+        form submission and URL query part encoding.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=21635
+
+        Tests: http/tests/misc/submit-get-in-utf16be.html
+               http/tests/misc/submit-get-in-utf16le.html
+               http/tests/misc/submit-get-in-utf32be.html
+               http/tests/misc/submit-get-in-utf32le.html
+               http/tests/misc/submit-get-in-utf7.html
+               http/tests/misc/submit-post-in-utf16be.html
+               http/tests/misc/submit-post-in-utf16le.html
+               http/tests/misc/submit-post-in-utf32be.html
+               http/tests/misc/submit-post-in-utf32le.html
+               http/tests/misc/submit-post-in-utf7.html
+               http/tests/misc/url-in-utf16be.html
+               http/tests/misc/url-in-utf16le.html
+               http/tests/misc/url-in-utf32be.html
+               http/tests/misc/url-in-utf32le.html
+               http/tests/misc/url-in-utf7.html
+ 
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::setEncoding):
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+        * platform/text/TextEncoding.cpp:
+        (WebCore::UTF7Encoding):
+        (WebCore::TextEncoding::isNonByteBasedEncoding):
+        (WebCore::TextEncoding::closestByteBasedEquivalent):
+        (WebCore::TextEncoding::encodingForFormSubmission):
+        * platform/text/TextEncoding.h:
+
 2008-11-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

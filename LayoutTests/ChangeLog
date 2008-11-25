@@ -1,3 +1,43 @@
+2008-11-25  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        For Unicode encodings other than UTF-8, use UTF-8 for
+        form submission and URL query part encoding.
+
+        See https://bugs.webkit.org/show_bug.cgi?id=21635
+
+        * http/tests/misc/submit-get-in-utf16be-expected.txt: Added.
+        * http/tests/misc/submit-get-in-utf16be.html: Added.
+        * http/tests/misc/submit-get-in-utf16le-expected.txt: Added.
+        * http/tests/misc/submit-get-in-utf16le.html: Added.
+        * http/tests/misc/submit-get-in-utf32be-expected.txt: Added.
+        * http/tests/misc/submit-get-in-utf32be.html: Added.
+        * http/tests/misc/submit-get-in-utf32le-expected.txt: Added.
+        * http/tests/misc/submit-get-in-utf32le.html: Added.
+        * http/tests/misc/submit-get-in-utf7-expected.txt: Added.
+        * http/tests/misc/submit-get-in-utf7.html: Added.
+        * http/tests/misc/submit-post-in-utf16be-expected.txt: Added.
+        * http/tests/misc/submit-post-in-utf16be.html: Added.
+        * http/tests/misc/submit-post-in-utf16le-expected.txt: Added.
+        * http/tests/misc/submit-post-in-utf16le.html: Added.
+        * http/tests/misc/submit-post-in-utf32be-expected.txt: Added.
+        * http/tests/misc/submit-post-in-utf32be.html: Added.
+        * http/tests/misc/submit-post-in-utf32le-expected.txt: Added.
+        * http/tests/misc/submit-post-in-utf32le.html: Added.
+        * http/tests/misc/submit-post-in-utf7-expected.txt: Added.
+        * http/tests/misc/submit-post-in-utf7.html: Added.
+        * http/tests/misc/url-in-utf16be-expected.txt: Added.
+        * http/tests/misc/url-in-utf16be.html: Added.
+        * http/tests/misc/url-in-utf16le-expected.txt: Added.
+        * http/tests/misc/url-in-utf16le.html: Added.
+        * http/tests/misc/url-in-utf32be-expected.txt: Added.
+        * http/tests/misc/url-in-utf32be.html: Added.
+        * http/tests/misc/url-in-utf32le-expected.txt: Added.
+        * http/tests/misc/url-in-utf32le.html: Added.
+        * http/tests/misc/url-in-utf7-expected.txt: Added.
+        * http/tests/misc/url-in-utf7.html: Added.
+
 2008-11-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
