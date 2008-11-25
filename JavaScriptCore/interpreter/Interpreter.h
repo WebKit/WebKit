@@ -191,7 +191,6 @@ namespace JSC {
         static JSValue* SFX_CALL cti_op_get_by_id_proto_list(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_get_by_id_proto_list_full(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_get_by_id_proto_fail(CTI_ARGS);
-        static JSValue* SFX_CALL cti_op_get_by_id_chain_fail(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_get_by_id_array_fail(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_get_by_id_string_fail(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_del_by_id(CTI_ARGS);

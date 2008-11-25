@@ -3155,14 +3155,12 @@ void JIT::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
     __ movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
     // Check eax is an object of the right Structure.
-    __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ jne();
-    JmpSrc failureCases2 = checkStructure(X86::eax, structure);
+    JmpSrc failureCases1 = checkStructure(X86::eax, structure);
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
     __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), prototypeStructureAddress);
-    JmpSrc failureCases3 = __ jne();
+    JmpSrc failureCases2 = __ jne();
 
     // Checks out okay! - getDirectOffset
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
@@ -3175,7 +3173,6 @@ void JIT::privateCompileGetByIdProto(Structure* structure, Structure* prototypeS
     void* slowCaseBegin = reinterpret_cast<char*>(info.callReturnLocation) - repatchOffsetGetByIdSlowCaseCall;
     X86Assembler::link(code, failureCases1, slowCaseBegin);
     X86Assembler::link(code, failureCases2, slowCaseBegin);
-    X86Assembler::link(code, failureCases3, slowCaseBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     intptr_t successDest = reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset;
@@ -3244,7 +3241,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     X86Assembler::link(code, success, reinterpret_cast<void*>(successDest));
 
     structure->ref();
-    polymorphicStructures->list[currentIndex].set(structure, 0, cachedOffset, 0/*code*/);
+    polymorphicStructures->list[currentIndex].set(cachedOffset, code, structure);
 
     // Finally repatch the jump to slow case back in the hot path to jump here instead.
     intptr_t jmpLocation = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
@@ -3260,14 +3257,12 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     __ movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
     // Check eax is an object of the right Structure.
-    __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ jne();
-    JmpSrc failureCases2 = checkStructure(X86::eax, structure);
+    JmpSrc failureCases1 = checkStructure(X86::eax, structure);
 
     // Check the prototype object's Structure had not changed.
     Structure** prototypeStructureAddress = &(protoObject->m_structure);
-    __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), static_cast<void*>(prototypeStructureAddress));
-    JmpSrc failureCases3 = __ jne();
+    __ cmpl_i32m(reinterpret_cast<uint32_t>(prototypeStructure), prototypeStructureAddress);
+    JmpSrc failureCases2 = __ jne();
 
     // Checks out okay! - getDirectOffset
     __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
@@ -3280,7 +3275,6 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     void* lastProtoBegin = prototypeStructures->list[currentIndex - 1].stubRoutine;
     X86Assembler::link(code, failureCases1, lastProtoBegin);
     X86Assembler::link(code, failureCases2, lastProtoBegin);
-    X86Assembler::link(code, failureCases3, lastProtoBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     intptr_t successDest = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset;
@@ -3288,7 +3282,57 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
     structure->ref();
     prototypeStructure->ref();
-    prototypeStructures->list[currentIndex].set(structure, prototypeStructure, cachedOffset, code);
+    prototypeStructures->list[currentIndex].set(cachedOffset, code, structure, prototypeStructure);
+
+    // Finally repatch the jump to slow case back in the hot path to jump here instead.
+    intptr_t jmpLocation = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
+    X86Assembler::repatchBranchOffset(jmpLocation, code);
+}
+
+void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, CallFrame* callFrame)
+{
+    ASSERT(count);
+    
+    Vector<JmpSrc> bucketsOfFail;
+
+    // Check eax is an object of the right Structure.
+    bucketsOfFail.append(checkStructure(X86::eax, structure));
+
+    Structure* currStructure = structure;
+    RefPtr<Structure>* chainEntries = chain->head();
+    JSObject* protoObject = 0;
+    for (unsigned i = 0; i < count; ++i) {
+        protoObject = asObject(currStructure->prototypeForLookup(callFrame));
+        currStructure = chainEntries[i].get();
+
+        // Check the prototype object's Structure had not changed.
+        Structure** prototypeStructureAddress = &(protoObject->m_structure);
+        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), prototypeStructureAddress);
+        bucketsOfFail.append(__ jne());
+    }
+    ASSERT(protoObject);
+
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
+    __ movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
+    __ movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
+    JmpSrc success = __ jmp();
+
+    void* code = __ executableCopy();
+
+    // Use the repatch information to link the failure cases back to the original slow case routine.
+    void* lastProtoBegin = prototypeStructures->list[currentIndex - 1].stubRoutine;
+
+    for (unsigned i = 0; i < bucketsOfFail.size(); ++i)
+        X86Assembler::link(code, bucketsOfFail[i], lastProtoBegin);
+
+    // On success return back to the hot patch code, at a point it will perform the store to dest for us.
+    intptr_t successDest = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset;
+    X86Assembler::link(code, success, reinterpret_cast<void*>(successDest));
+
+    // Track the stub we have created so that it will be deleted later.
+    structure->ref();
+    chain->ref();
+    prototypeStructures->list[currentIndex].set(cachedOffset, code, structure, chain);
 
     // Finally repatch the jump to slow case back in the hot path to jump here instead.
     intptr_t jmpLocation = reinterpret_cast<intptr_t>(stubInfo->hotPathBegin) + repatchOffsetGetByIdBranchToSlowCase;
@@ -3302,15 +3346,13 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     StructureStubInfo& info = m_codeBlock->getStubInfo(returnAddress);
 
     // We don't want to repatch more than once - in future go to cti_op_put_by_id_generic.
-    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_generic));
+    ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_list));
 
     ASSERT(count);
     
     Vector<JmpSrc> bucketsOfFail;
 
     // Check eax is an object of the right Structure.
-    __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    bucketsOfFail.append(__ jne());
     bucketsOfFail.append(checkStructure(X86::eax, structure));
 
     Structure* currStructure = structure;
@@ -3322,7 +3364,7 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
 
         // Check the prototype object's Structure had not changed.
         Structure** prototypeStructureAddress = &(protoObject->m_structure);
-        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), static_cast<void*>(prototypeStructureAddress));
+        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), prototypeStructureAddress);
         bucketsOfFail.append(__ jne());
     }
     ASSERT(protoObject);
@@ -3369,7 +3411,7 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
 
         // Check the prototype object's Structure had not changed.
         Structure** prototypeStructureAddress = &(protoObject->m_structure);
-        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), static_cast<void*>(prototypeStructureAddress));
+        __ cmpl_i32m(reinterpret_cast<uint32_t>(currStructure), prototypeStructureAddress);
         bucketsOfFail.append(__ jne());
     }
     ASSERT(protoObject);
@@ -3382,7 +3424,7 @@ void JIT::privateCompileGetByIdChain(Structure* structure, StructureChain* chain
     void* code = __ executableCopy();
 
     for (unsigned i = 0; i < bucketsOfFail.size(); ++i)
-        X86Assembler::link(code, bucketsOfFail[i], reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_chain_fail));
+        X86Assembler::link(code, bucketsOfFail[i], reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_proto_fail));
 
     m_codeBlock->getStubInfo(returnAddress).stubRoutine = code;
 
@@ -3768,17 +3810,15 @@ void JIT::privateCompilePatchGetArrayLength(void* returnAddress)
     ctiRepatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(Interpreter::cti_op_get_by_id_array_fail));
 
     // Check eax is an array
-    __ testl_i32r(JSImmediate::TagMask, X86::eax);
-    JmpSrc failureCases1 = __ jne();
     __ cmpl_i32m(reinterpret_cast<unsigned>(m_interpreter->m_jsArrayVptr), X86::eax);
-    JmpSrc failureCases2 = __ jne();
+    JmpSrc failureCases1 = __ jne();
 
     // Checks out okay! - get the length from the storage
     __ movl_mr(FIELD_OFFSET(JSArray, m_storage), X86::eax, X86::ecx);
     __ movl_mr(FIELD_OFFSET(ArrayStorage, m_length), X86::ecx, X86::ecx);
 
     __ cmpl_i32r(JSImmediate::maxImmediateInt, X86::ecx);
-    JmpSrc failureCases3 = __ ja();
+    JmpSrc failureCases2 = __ ja();
 
     __ addl_rr(X86::ecx, X86::ecx);
     __ addl_i8r(1, X86::ecx);
@@ -3791,7 +3831,6 @@ void JIT::privateCompilePatchGetArrayLength(void* returnAddress)
     void* slowCaseBegin = reinterpret_cast<char*>(info.callReturnLocation) - repatchOffsetGetByIdSlowCaseCall;
     X86Assembler::link(code, failureCases1, slowCaseBegin);
     X86Assembler::link(code, failureCases2, slowCaseBegin);
-    X86Assembler::link(code, failureCases3, slowCaseBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     intptr_t successDest = reinterpret_cast<intptr_t>(info.hotPathBegin) + repatchOffsetGetByIdPropertyMapOffset;

@@ -1,3 +1,46 @@
+2008-11-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Polymorpic caching for get by id chain.  Similar to the polymorphic caching already implemented
+        for self and proto accesses (implemented by allowing multiple trampolines to be JIT genertaed,
+        and linked together) - the get by id chain caching is implemented as a genericization of the
+        proto list caching, allowing cached access lists to contain a mix of proto and proto chain
+        accesses (since in JS style inheritance hierarchies you may commonly see a mix of properties
+        being overridden on the direct prototype, or higher up its prototype chain).
+
+        In order to allow this patch to compile there is a fix to appease gcc 4.2 compiler issues
+        (removing the jumps between fall-through cases in privateExecute).
+        
+        This patch also removes redundant immediate checking from the reptach code, and fixes a related
+        memory leak (failure to deallocate trampolines). 
+
+        ~2% progression on v8 tests (bulk on the win on deltablue)
+
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::):
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        (JSC::PolymorphicAccessStructureList::derefStructures):
+        * interpreter/Interpreter.cpp:
+        (JSC::countPrototypeChainEntriesAndCheckForProxies):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::tryCTICacheGetByID):
+        (JSC::Interpreter::cti_op_get_by_id_self_fail):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::Interpreter::cti_op_get_by_id_proto_list):
+        * interpreter/Interpreter.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdChainList):
+
 2008-11-25  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Alexey Proskuryakov.
