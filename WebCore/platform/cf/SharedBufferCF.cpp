@@ -28,6 +28,8 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include "PurgeableBuffer.h"
+
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(CFDataRef cfData)

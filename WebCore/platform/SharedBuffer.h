@@ -44,6 +44,8 @@ class NSData;
 #endif
 
 namespace WebCore {
+    
+class PurgeableBuffer;
 
 class SharedBuffer : public RefCounted<SharedBuffer> {
 public:
@@ -54,6 +56,12 @@ public:
     static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
     static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
+    
+    // The buffer must be in non-purgeable state before adopted to a SharedBuffer. 
+    // It will stay that way until released.
+    static PassRefPtr<SharedBuffer> adoptPurgeableBuffer(PurgeableBuffer* buffer);
+    
+    ~SharedBuffer();
     
 #if PLATFORM(MAC)
     NSData *createNSData();
@@ -76,6 +84,11 @@ public:
 
     PassRefPtr<SharedBuffer> copy() const;
     
+    bool hasPurgeableBuffer() const { return m_purgeableBuffer.get(); }
+
+    // Ensure this buffer has no other clients before calling this.
+    PurgeableBuffer* releasePurgeableBuffer();
+    
 private:
     SharedBuffer();
     SharedBuffer(const char*, int);
@@ -86,6 +99,7 @@ private:
     bool hasPlatformData() const;
     
     Vector<char> m_buffer;
+    OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if PLATFORM(CF)
     SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;

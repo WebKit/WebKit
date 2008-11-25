@@ -74,7 +74,10 @@ public:
         int size;
         int liveSize;
         int decodedSize;
-        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0) { }
+        int purgeableSize;
+        int purgedSize;
+        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0), purgeableSize(0), purgedSize(0) { }
+        void addResource(CachedResource*);
     };
     
     struct Statistics {

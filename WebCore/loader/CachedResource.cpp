@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "KURL.h"
+#include "PurgeableBuffer.h"
 #include "Request.h"
 #include "SystemTime.h"
 #include <wtf/RefCountedLeakCounter.h>
@@ -138,6 +139,8 @@ void CachedResource::setRequest(Request* request)
 
 void CachedResource::addClient(CachedResourceClient *c)
 {
+    ASSERT(!isPurgeable());
+
     if (m_preloadResult == PreloadNotReferenced) {
         if (isLoaded())
             m_preloadResult = PreloadReferencedWhileComplete;
@@ -313,6 +316,62 @@ bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
     if (cachePolicy == CachePolicyCache)
         return !cacheControlDirectives.isEmpty() && (cacheControlDirectives.contains("no-cache") || (isExpired() && cacheControlDirectives.contains("must-revalidate")));
     return isExpired() || cacheControlDirectives.contains("no-cache");
+}
+
+bool CachedResource::makePurgeable(bool purgeable) 
+{ 
+    if (purgeable) {
+        ASSERT(!hasClients());
+
+        if (m_purgeableData) {
+            ASSERT(!m_data);
+            return true;
+        }
+        if (!m_data)
+            return false;
+        
+        // Should not make buffer purgeable if it has refs othen than this since we don't want two copies.
+        if (!m_data->hasOneRef())
+            return false;
+        
+        // Purgeable buffers are allocated in multiples of the page size (4KB in common CPUs) so it does not make sense for very small buffers.
+        const size_t purgeableThreshold = 4 * 4096;
+        if (m_data->size() < purgeableThreshold)
+            return false;
+        
+        if (m_data->hasPurgeableBuffer()) {
+            m_purgeableData.set(m_data->releasePurgeableBuffer());
+        } else {
+            m_purgeableData.set(PurgeableBuffer::create(m_data->data(), m_data->size()));
+            if (!m_purgeableData)
+                return false;
+        }
+        
+        m_purgeableData->makePurgeable(true);
+        m_data.clear();
+        return true;
+    }
+
+    if (!m_purgeableData)
+        return true;
+    ASSERT(!m_data);
+    ASSERT(!hasClients());
+
+    if (!m_purgeableData->makePurgeable(false))
+        return false; 
+
+    m_data = SharedBuffer::adoptPurgeableBuffer(m_purgeableData.release());
+    return true;
+}
+
+bool CachedResource::isPurgeable() const
+{
+    return m_purgeableData && m_purgeableData->isPurgeable();
+}
+
+bool CachedResource::wasPurged() const
+{
+    return m_purgeableData && m_purgeableData->wasPurged();
 }
 
 }

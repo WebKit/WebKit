@@ -3244,6 +3244,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\PurgeableBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Scrollbar.cpp"
 				>
 			</File>

@@ -29,6 +29,7 @@
 #include "SharedBuffer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <time.h>
 
@@ -39,6 +40,7 @@ class CachedResourceClient;
 class CachedResourceHandleBase;
 class DocLoader;
 class Request;
+class PurgeableBuffer;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
@@ -129,7 +131,7 @@ public:
     
     void setRequest(Request*);
 
-    SharedBuffer* data() const { return m_data.get(); }
+    SharedBuffer* data() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
     void setResponse(const ResourceResponse&);
     const ResourceResponse& response() const { return m_response; }
@@ -164,11 +166,16 @@ public:
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
     
+    bool isPurgeable() const;
+    bool wasPurged() const;
+    
 protected:
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
 
+    bool makePurgeable(bool purgeable);
+    
     HashCountedSet<CachedResourceClient*> m_clients;
 
     String m_url;
@@ -177,6 +184,7 @@ protected:
 
     ResourceResponse m_response;
     RefPtr<SharedBuffer> m_data;
+    OwnPtr<PurgeableBuffer> m_purgeableData;
 
     Type m_type;
     Status m_status;

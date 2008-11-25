@@ -90,6 +90,11 @@ void CachedImage::addClient(CachedResourceClient* c)
 
     if (m_decodedDataDeletionTimer.isActive())
         m_decodedDataDeletionTimer.stop();
+    
+    if (m_data && !m_image && !m_errorOccurred) {
+        createImage();
+        m_image->setData(m_data, true);
+    }
 
     if (m_image && !m_image->rect().isEmpty())
         c->imageChanged(this);
@@ -120,6 +125,8 @@ static Image* nullImage()
 
 Image* CachedImage::image() const
 {
+    ASSERT(!isPurgeable());
+
     if (m_errorOccurred)
         return brokenImage();
 
@@ -161,6 +168,8 @@ bool CachedImage::imageHasRelativeHeight() const
 
 IntSize CachedImage::imageSize(float multiplier) const
 {
+    ASSERT(!isPurgeable());
+
     if (!m_image)
         return IntSize();
     if (multiplier == 1.0f)
@@ -180,6 +189,8 @@ IntSize CachedImage::imageSize(float multiplier) const
 
 IntRect CachedImage::imageRect(float multiplier) const
 {
+    ASSERT(!isPurgeable());
+
     if (!m_image)
         return IntRect();
     if (multiplier == 1.0f || (!m_image->hasRelativeWidth() && !m_image->hasRelativeHeight()))
@@ -309,7 +320,13 @@ void CachedImage::checkNotify()
 
 void CachedImage::destroyDecodedData()
 {
-    if (m_image && !m_errorOccurred)
+    if (!hasClients() && (!m_image || m_image->hasOneRef()) && !m_loading) {
+        // Image refs the data buffer so we should not make it purgeable while the image is alive. 
+        // Invoking addClient() will reconstruct the image object.
+        m_image = 0;
+        setDecodedSize(0);
+        makePurgeable(true);
+    } else if (m_image && !m_errorOccurred)
         m_image->destroyDecodedData();
 }
 

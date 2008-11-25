@@ -1,3 +1,82 @@
+2008-11-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22214
+        Keep dead resourcs in memory cache in purgeable memory.
+        <rdar://problem/6333088>
+        
+        OS X 10.5 has purgeable memory kernel facility that allows marking reserved memory
+        areas as less important. Under memory pressure system can steal pages that have
+        been marked purgeable for (hopefully) better uses. This is ideal for caches.
+        
+        Only resources larger than 16KB will be moved to the purgsable memory.
+
+        * WebCore.base.exp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        (WebCore::Cache::requestUserCSSStyleSheet):
+        (WebCore::Cache::resourceForURL):
+        (WebCore::Cache::pruneDeadResources):
+        (WebCore::Cache::TypeStatistic::addResource):
+        (WebCore::Cache::getStatistics):
+        (WebCore::Cache::dumpStats):
+        * loader/Cache.h:
+        (WebCore::Cache::TypeStatistic::TypeStatistic):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved):
+        (WebCore::CachedCSSStyleSheet::sheetText):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::addClient):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::imageSize):
+        (WebCore::CachedImage::imageRect):
+        (WebCore::CachedImage::destroyDecodedData):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::addClient):
+        (WebCore::CachedResource::makePurgeable):
+        (WebCore::CachedResource::isPurgeable):
+        (WebCore::CachedResource::wasPurged):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::data):
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::allClientsRemoved):
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::destroyDecodedData):
+        * platform/PurgeableBuffer.h: Added.
+        (WebCore::PurgeableBuffer::create):
+        (WebCore::PurgeableBuffer::size):
+        (WebCore::PurgeableBuffer::):
+        (WebCore::PurgeableBuffer::purgePriority):
+        (WebCore::PurgeableBuffer::isPurgeable):
+        (WebCore::PurgeableBuffer::~PurgeableBuffer):
+        (WebCore::PurgeableBuffer::data):
+        (WebCore::PurgeableBuffer::setPurgePriority):
+        (WebCore::PurgeableBuffer::wasPurged):
+        (WebCore::PurgeableBuffer::makePurgeable):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::~SharedBuffer):
+        (WebCore::SharedBuffer::adoptPurgeableBuffer):
+        (WebCore::SharedBuffer::size):
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::clear):
+        (WebCore::SharedBuffer::releasePurgeableBuffer):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::hasPurgeableBuffer):
+        * platform/cf/SharedBufferCF.cpp:
+        * platform/mac/PurgeableBufferMac.cpp: Added.
+        (WebCore::PurgeableBuffer::PurgeableBuffer):
+        (WebCore::PurgeableBuffer::~PurgeableBuffer):
+        (WebCore::PurgeableBuffer::create):
+        (WebCore::PurgeableBuffer::makePurgeable):
+        (WebCore::PurgeableBuffer::wasPurged):
+        (WebCore::PurgeableBuffer::setPurgePriority):
+        (WebCore::PurgeableBuffer::data):
+
 2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos & Eric Seidel.
