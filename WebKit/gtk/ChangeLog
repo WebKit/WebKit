@@ -1,3 +1,13 @@
+2008-11-24  Darin Fisher  <darin@chromium.org>
+
+        Fix bustage.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15643
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::isSelectTrailingWhitespaceEnabled):
+        * WebCoreSupport/EditorClientGtk.h:
+
 2008-11-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -333,6 +333,12 @@ bool EditorClientQt::smartInsertDeleteEnabled()
     return false;
 }
 
+bool EditorClientQt::isSelectTrailingWhitespaceEnabled()
+{
+    notImplemented();
+    return false;
+}
+
 void EditorClientQt::toggleContinuousSpellChecking()
 {
     notImplemented();

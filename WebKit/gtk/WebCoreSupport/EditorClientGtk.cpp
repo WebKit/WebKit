@@ -301,6 +301,12 @@ bool EditorClient::smartInsertDeleteEnabled()
     return false;
 }
 
+bool EditorClient::isSelectTrailingWhitespaceEnabled()
+{
+    notImplemented();
+    return false;
+}
+
 void EditorClient::toggleContinuousSpellChecking()
 {
     notImplemented();
