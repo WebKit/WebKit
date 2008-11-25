@@ -1,3 +1,22 @@
+2008-11-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22073
+        REGRESSION(r33544): Palace in the Sky crashes WebKit
+        
+        HTMLTokenizer::m_hasScriptsWaitingForStylesheets would still be set while
+        there were no scripts left to execute. 
+        
+        If m_hasScriptsWaitingForStylesheets becomes true during script execution
+        bail out from executing more scripts synchronously.
+
+        Test: fast/tokenizer/nested-cached-scripts-and-stylesheet.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::notifyFinished):
+
 2008-11-24  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Geoffrey Garen.
@@ -60,7 +79,7 @@
         areas as less important. Under memory pressure system can steal pages that have
         been marked purgeable for (hopefully) better uses. This is ideal for caches.
         
-        Only resources larger than 16KB will be moved to the purgsable memory.
+        Only resources larger than 16KB will be moved to the purgeable memory.
 
         * WebCore.base.exp:
         * WebCore.vcproj/WebCore.vcproj:

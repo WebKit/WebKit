@@ -1,3 +1,14 @@
+2008-11-24  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Test for https://bugs.webkit.org/show_bug.cgi?id=22073
+        REGRESSION(r33544): Palace in the Sky crashes WebKit
+
+        * fast/tokenizer/nested-cached-scripts-and-stylesheet-expected.txt: Added.
+        * fast/tokenizer/nested-cached-scripts-and-stylesheet.html: Added.
+        * fast/tokenizer/resources/load-stylesheet-and-document-write-script.js: Added.
+
 2008-11-24  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.

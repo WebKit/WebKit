@@ -233,6 +233,7 @@ void HTMLTokenizer::reset()
     m_doctypeToken.reset();
     m_doctypeSearchCount = 0;
     m_doctypeSecondarySearchCount = 0;
+    m_hasScriptsWaitingForStylesheets = false;
 }
 
 void HTMLTokenizer::begin()
@@ -1990,11 +1991,16 @@ void HTMLTokenizer::notifyFinished(CachedResource*)
         // call above, so test afterwards.
         finished = m_pendingScripts.isEmpty();
         if (finished) {
+            ASSERT(!m_hasScriptsWaitingForStylesheets);
             m_state.setLoadingExtScript(false);
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
             if (!m_doc->ownerElement())
                 printf("external script finished execution at %d\n", m_doc->elapsedTime());
 #endif
+        } else if (m_hasScriptsWaitingForStylesheets) {
+            // m_hasScriptsWaitingForStylesheets flag might have changed during the script execution.
+            // If it did we are now blocked waiting for stylesheets and should not execute more scripts until they arrive.
+            finished = true;
         }
 
         // 'm_requestingScript' is true when we are called synchronously from
