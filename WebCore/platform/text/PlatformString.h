@@ -181,6 +181,12 @@ public:
     // to ever prefer copy() over plain old assignment.
     String copy() const;
 
+    // Makes a deep copy like copy() but only for a substring.
+    // (This ensures that you always get something suitable for a thread while subtring
+    // may not.  For example, in the empty string case, StringImpl::substring returns
+    // empty() which is not safe for another thread.)
+    String substringCopy(unsigned pos, unsigned len  = UINT_MAX) const;
+
     bool isNull() const { return !m_impl; }
     bool isEmpty() const;
 

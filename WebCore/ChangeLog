@@ -1,3 +1,39 @@
+2008-11-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Made the PreflightResultCache thread-safe in preparation for usage of XMLHttpRequest by
+        Workers on threads.
+
+        No observable change in behavior, so no test.
+
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        (WebCore::String::substringCopy):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::substringCopy):
+        * platform/text/StringImpl.h:
+        Added the ability to copy a substring.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::PreflightResultCacheItem::PreflightResultCacheItem):
+        (WebCore::PreflightResultCache::PreflightResultCache):
+        (WebCore::PreflightResultCacheItem::addToAccessControlAllowList):
+        (WebCore::PreflightResultCacheItem::parseAccessControlAllowList):
+        (WebCore::PreflightResultCacheItem::parseAccessControlMaxAge):
+        (WebCore::PreflightResultCacheItem::parse):
+        (WebCore::PreflightResultCacheItem::allowsRequest):
+        (WebCore::PreflightResultCache::shared):
+        (WebCore::PreflightResultCache::appendEntry):
+        (WebCore::PreflightResultCache::canSkipPreflight):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        Made the PreflightResultCache threadsafe.
+
+        (WebCore::PreflightResultCacheItem::allowsCrossSiteMethod):
+        (WebCore::PreflightResultCacheItem::allowsCrossSiteHeaders):
+        Consolidation of duplicate logic.
+
 2008-11-24  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Darin Adler.

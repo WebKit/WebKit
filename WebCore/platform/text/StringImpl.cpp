@@ -188,6 +188,17 @@ PassRefPtr<StringImpl> StringImpl::substring(unsigned pos, unsigned len)
     return create(m_data + pos, len);
 }
 
+PassRefPtr<StringImpl> StringImpl::substringCopy(unsigned pos, unsigned len)
+{
+    if (pos >= m_length)
+        pos = m_length;
+    if (len > m_length - pos)
+        len = m_length - pos;
+    if (!len)
+        return adoptRef(new StringImpl);
+    return substring(pos, len);
+}
+
 UChar32 StringImpl::characterStartingAt(unsigned i)
 {
     if (U16_IS_SINGLE(m_data[i]))

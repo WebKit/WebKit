@@ -248,6 +248,13 @@ String String::substring(unsigned pos, unsigned len) const
     return m_impl->substring(pos, len);
 }
 
+String String::substringCopy(unsigned pos, unsigned len) const
+{
+    if (!m_impl) 
+        return String();
+    return m_impl->substringCopy(pos, len);
+}
+
 String String::lower() const
 {
     if (!m_impl)
