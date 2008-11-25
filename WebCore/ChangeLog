@@ -1,5 +1,13 @@
 2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Not reviewed. Forgot to include WMLPageState.h in last commit.
+
+        * wml/WMLPageState.h:
+        (WebCore::WMLPageState::restrictDeckAccessToDomain):
+        (WebCore::WMLPageState::restrictDeckAccessToPath):
+
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Oliver Hunt & Eric Seidel.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=22431
