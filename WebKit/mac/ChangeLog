@@ -1,3 +1,9 @@
+2008-11-24  Darin Fisher  <darin@chromium.org>
+
+        Fix bustage.
+
+        * History/WebHistory.mm:
+
 2008-11-24  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

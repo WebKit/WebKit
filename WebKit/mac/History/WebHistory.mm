@@ -31,6 +31,7 @@
 #import "WebHistoryItemInternal.h"
 #import "WebKitLogging.h"
 #import "WebNSURLExtras.h"
+#import "WebTypesInternal.h"
 #import <WebCore/HistoryItem.h>
 #import <WebCore/PageGroup.h>
 
