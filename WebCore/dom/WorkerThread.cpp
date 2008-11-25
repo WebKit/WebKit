@@ -47,7 +47,7 @@ PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const Strin
 
 WorkerThread::WorkerThread(const KURL& scriptURL, const String& sourceCode, WorkerMessagingProxy* messagingProxy)
     : m_threadID(0)
-    , m_scriptURL(scriptURL.string().copy())
+    , m_scriptURL(scriptURL.copy())
     , m_sourceCode(sourceCode.copy())
     , m_messagingProxy(messagingProxy)
 {

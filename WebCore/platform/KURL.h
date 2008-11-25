@@ -91,6 +91,11 @@ public:
     // base of null or the empty string gives the same result as the
     // standard String constructor.
 
+    // Makes a deep copy. Helpful only if you need to use a KURL on another
+    // thread.  Since the underlying StringImpl objects are immutable, there's
+    // no other reason to ever prefer copy() over plain old assignment.
+    KURL copy() const;
+
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
