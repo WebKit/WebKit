@@ -1,3 +1,14 @@
+2008-11-24  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add tests for bug 13790: Function declarations are not treated as statements (used to affect starcraft2.com)
+        <https://bugs.webkit.org/show_bug.cgi?id=13790>
+
+        * fast/js/function-declaration-statement-expected.txt: Added.
+        * fast/js/function-declaration-statement.html: Added.
+        * fast/js/resources/function-declaration-statement.js: Added.
+
 2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos & Eric Seidel.

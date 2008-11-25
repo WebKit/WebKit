@@ -1,3 +1,21 @@
+2008-11-24  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 13790: Function declarations are not treated as statements (used to affect starcraft2.com)
+        <https://bugs.webkit.org/show_bug.cgi?id=13790>
+
+        Modify the parser to treat function declarations as statements,
+        simplifying the grammar in the process. Technically, according to the
+        grammar in the ECMA spec, function declarations are not statements and
+        can not be used everywhere that statements can, but it is not worth the
+        possibility compatibility issues just to stick to the spec in this case.
+
+        * parser/Grammar.y:
+        * parser/Nodes.cpp:
+        (JSC::FuncDeclNode::emitBytecode): Avoid returning ignoredResult()
+        as a result, because it causes a crash in DoWhileNode::emitBytecode().
+
 2008-11-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

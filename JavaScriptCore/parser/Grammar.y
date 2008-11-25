@@ -260,10 +260,9 @@ static inline void appendToVarDeclarationList(void* globalPtr, ParserRefCountedD
 %type <statementNode>   SwitchStatement LabelledStatement
 %type <statementNode>   ThrowStatement TryStatement
 %type <statementNode>   DebuggerStatement
-%type <statementNode>   SourceElement
 
 %type <expressionNode>  Initializer InitializerNoIn
-%type <funcDeclNode>    FunctionDeclaration
+%type <statementNode>   FunctionDeclaration
 %type <funcExprNode>    FunctionExpr
 %type <functionBodyNode>  FunctionBody
 %type <sourceElements>  SourceElements
@@ -796,6 +795,7 @@ Statement:
     Block
   | VariableStatement
   | ConstStatement
+  | FunctionDeclaration
   | EmptyStatement
   | ExprStatement
   | IfStatement
@@ -1168,13 +1168,14 @@ DebuggerStatement:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); }
+    FUNCTION IDENT '(' ')' OPENBRACE FunctionBody CLOSEBRACE { $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $6, LEXER->sourceCode($5, $7, @5.first_line)), 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | ClosureFeature, 0); DBG($6, @5, @7); $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node)); }
   | FUNCTION IDENT '(' FormalParameterList ')' OPENBRACE FunctionBody CLOSEBRACE
       { 
-          $$ = createNodeInfo(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
+          $$ = createNodeDeclarationInfo<StatementNode*>(new FuncDeclNode(GLOBAL_DATA, *$2, $7, LEXER->sourceCode($6, $8, @6.first_line), $4.m_node.head), 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), ((*$2 == GLOBAL_DATA->propertyNames->arguments) ? ArgumentsFeature : 0) | $4.m_features | ClosureFeature, 0); 
           if ($4.m_features & ArgumentsFeature)
               $7->setUsesArguments(); 
-          DBG($7, @6, @8); 
+          DBG($7, @6, @8);
+          $$.m_funcDeclarations->data.append(static_cast<FuncDeclNode*>($$.m_node));
       }
 ;
 
@@ -1218,24 +1219,19 @@ Program:
 ;
 
 SourceElements:
-    SourceElement                       { $$.m_node = new SourceElements(GLOBAL_DATA);
+    Statement                           { $$.m_node = new SourceElements(GLOBAL_DATA);
                                           $$.m_node->append($1.m_node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           $$.m_funcDeclarations = $1.m_funcDeclarations;
                                           $$.m_features = $1.m_features;
                                           $$.m_numConstants = $1.m_numConstants;
                                         }
-  | SourceElements SourceElement        { $$.m_node->append($2.m_node);
+  | SourceElements Statement            { $$.m_node->append($2.m_node);
                                           $$.m_varDeclarations = mergeDeclarationLists($1.m_varDeclarations, $2.m_varDeclarations);
                                           $$.m_funcDeclarations = mergeDeclarationLists($1.m_funcDeclarations, $2.m_funcDeclarations);
                                           $$.m_features = $1.m_features | $2.m_features;
                                           $$.m_numConstants = $1.m_numConstants + $2.m_numConstants;
                                         }
-;
-
-SourceElement:
-    FunctionDeclaration                 { $$ = createNodeDeclarationInfo<StatementNode*>($1.m_node, 0, new ParserRefCountedData<DeclarationStacks::FunctionStack>(GLOBAL_DATA), $1.m_features, 0); $$.m_funcDeclarations->data.append($1.m_node); }
-  | Statement                           { $$ = $1; }
 ;
  
 // Start NoNodes
@@ -1626,6 +1622,7 @@ Statement_NoNode:
     Block_NoNode
   | VariableStatement_NoNode
   | ConstStatement_NoNode
+  | FunctionDeclaration_NoNode
   | EmptyStatement_NoNode
   | ExprStatement_NoNode
   | IfStatement_NoNode
@@ -1820,13 +1817,8 @@ FunctionBody_NoNode:
 ;
 
 SourceElements_NoNode:
-    SourceElement_NoNode
-  | SourceElements_NoNode SourceElement_NoNode
-;
-
-SourceElement_NoNode:
-    FunctionDeclaration_NoNode
-  | Statement_NoNode
+    Statement_NoNode
+  | SourceElements_NoNode Statement_NoNode
 ;
 
 // End NoNodes
