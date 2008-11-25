@@ -24,10 +24,10 @@
 #if ENABLE(WML)
 #include "WMLRefreshElement.h"
 
-#include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Page.h"
+#include "WMLDocument.h"
 #include "WMLPageState.h"
 
 namespace WebCore {
@@ -43,11 +43,11 @@ WMLRefreshElement::~WMLRefreshElement()
 
 void WMLRefreshElement::executeTask(Event*)
 {
-    Page* page = document()->page();
-    if (!page)
+    WMLPageState* pageState = wmlPageStateForDocument(document());
+    if (!pageState)
         return;
 
-    WMLCardElement* card = page->wmlPageState()->activeCard();
+    WMLCardElement* card = pageState->activeCard();
     if (!card)
         return;
 
@@ -60,10 +60,12 @@ void WMLRefreshElement::executeTask(Event*)
     }
 */
 
-    storeVariableState(page);
+    storeVariableState(pageState);
 
     // Redisplay curremt card with current variable state
-    document()->frame()->loader()->reload();
+    if (Frame* frame = pageState->page()->mainFrame())
+        if (FrameLoader* loader = frame->loader())
+            loader->reload();
 
 /* FIXME
     // After refreshing task, resume the timer if it exsits 

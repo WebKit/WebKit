@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class Page;
+class WMLPageState;
 class WMLSetvarElement;
 
 class WMLTaskElement : public WMLElement {
@@ -43,7 +43,7 @@ public:
     void registerVariableSetter(WMLSetvarElement*);
 
 protected:
-    void storeVariableState(Page*);
+    void storeVariableState(WMLPageState*);
 
 private:
     HashSet<WMLSetvarElement*> m_variableSetterElements;

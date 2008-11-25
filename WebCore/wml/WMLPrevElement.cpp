@@ -24,8 +24,8 @@
 #if ENABLE(WML)
 #include "WMLPrevElement.h"
 
-#include "Document.h"
 #include "Page.h"
+#include "WMLDocument.h"
 #include "WMLPageState.h"
 
 namespace WebCore {
@@ -41,15 +41,15 @@ WMLPrevElement::~WMLPrevElement()
 
 void WMLPrevElement::executeTask(Event*)
 {
-    Page* page = document()->page();
-    if (!page)
+    WMLPageState* pageState = wmlPageStateForDocument(document());
+    if (!pageState)
         return;
 
-    WMLCardElement* card = page->wmlPageState()->activeCard();
+    WMLCardElement* card = pageState->activeCard();
     if (!card)
         return;
 
-    storeVariableState(page);
+    storeVariableState(pageState);
 
 /* FIXME
     // Stop the timer of the current card if it is active
@@ -57,7 +57,7 @@ void WMLPrevElement::executeTask(Event*)
         timer->stop();
 */
 
-    page->goBack();
+    pageState->page()->goBack();
 }
 
 }

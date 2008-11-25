@@ -24,8 +24,7 @@
 #if ENABLE(WML)
 #include "WMLGoElement.h"
 
-#include "Document.h"
-#include "Page.h"
+#include "WMLDocument.h"
 #include "WMLPageState.h"
 
 namespace WebCore {
@@ -46,15 +45,15 @@ void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)
 
 void WMLGoElement::executeTask(Event*)
 {
-    Page* page = document()->page();
-    if (!page)
+    WMLPageState* pageState = wmlPageStateForDocument(document());
+    if (!pageState)
         return;
 
-    WMLCardElement* card = page->wmlPageState()->activeCard();
+    WMLCardElement* card = pageState->activeCard();
     if (!card)
         return;
 
-    storeVariableState(page);
+    storeVariableState(pageState);
     // FIXME: Implement <go> functionality.
 }
 

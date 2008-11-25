@@ -1,3 +1,26 @@
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
+        Add wmlPageStateForDocument() helper function and use it in some places.
+
+        * wml/WMLAccessElement.cpp:
+        (WebCore::WMLAccessElement::parseMappedAttribute):
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::WMLDocument):
+        (WebCore::WMLDocument::finishedParsing):
+        (WebCore::wmlPageStateForDocument):
+        * wml/WMLDocument.h:
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::executeTask):
+        * wml/WMLPrevElement.cpp:
+        (WebCore::WMLPrevElement::executeTask):
+        * wml/WMLRefreshElement.cpp:
+        (WebCore::WMLRefreshElement::executeTask):
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::storeVariableState):
+        * wml/WMLTaskElement.h:
+
 2008-11-24  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Geoff Garen and Sam Weinig.

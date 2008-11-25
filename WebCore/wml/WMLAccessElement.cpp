@@ -24,8 +24,7 @@
 #if ENABLE(WML)
 #include "WMLAccessElement.h"
 
-#include "Document.h"
-#include "Page.h"
+#include "WMLDocument.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
 #include "WMLVariables.h"
@@ -42,23 +41,25 @@ WMLAccessElement::WMLAccessElement(const QualifiedName& tagName, Document* doc)
 void WMLAccessElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == domainAttr) {
-        if (containsVariableReference(attr->value())) {
+        const AtomicString& value = attr->value();
+        if (containsVariableReference(value)) {
             // FIXME: Error rerporting
             // WMLHelper::tokenizer()->reportError(InvalidVariableReferenceError);
             return;
         }
 
-        if (Page* page = document()->page())
-            page->wmlPageState()->restrictDeckAccessToDomain(attr->value());
+        if (WMLPageState* pageState = wmlPageStateForDocument(document()))
+            pageState->restrictDeckAccessToDomain(value);
     } else if (attr->name() == pathAttr) {
-        if (containsVariableReference(attr->value())) {
+        const AtomicString& value = attr->value();
+        if (containsVariableReference(value)) {
             // FIXME: Error reporting
             // WMLHelper::tokenizer()->reportError(InvalidVariableReferenceError);
             return;
         }
 
-        if (Page* page = document()->page()) 
-            page->wmlPageState()->restrictDeckAccessToPath(attr->value());
+        if (WMLPageState* pageState = wmlPageStateForDocument(document()))
+            pageState->restrictDeckAccessToPath(value);
     } else
         WMLElement::parseMappedAttribute(attr);
 }

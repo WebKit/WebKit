@@ -36,6 +36,8 @@ WMLDocument::WMLDocument(Frame* frame)
     clearXMLVersion();
 
     Page* page = this->page();
+    ASSERT(page);
+
     if (page && !page->wmlPageState()) {
         RefPtr<WMLPageState> pageState = new WMLPageState(page);
         page->setWMLPageState(pageState);
@@ -48,25 +50,47 @@ WMLDocument::~WMLDocument()
 
 void WMLDocument::finishedParsing()
 {
-    Page* page = document()->page();
-    ASSERT(page->wmlPageState());
-    if (!page->wmlPageState()->isDeckAccessible()) {
+    WMLPageState* wmlPageState = wmlPageStateForDocument(document());
+    if (!wmlPageState || !wmlPageState->isDeckAccessible()) {
         // FIXME: Error reporting
+        Document::finishedParsing();
         return;
     }
 
     // FIXME: Notify the existance of templates to all cards of the current deck
-    // WMLTemplateElement::registerTemplsInDocument(document()));
+    // WMLTemplateElement::registerTemplatesInDocument(document()));
 
     // Set destination card
-    // TODO: Use return value, once intrinsic event handlers are used
-    WMLCardElement::setActiveCardInDocument(document(), KURL());
-
+    WMLCardElement* card = WMLCardElement::setActiveCardInDocument(document(), KURL());
+    if (!card) {
+        // FIXME: Error reporting
+        Document::finishedParsing();
+        return;
+    }
+ 
     // FIXME: shadow the deck-level do if needed
     // FIXME: handle the intrinsic event
 
-    page->wmlPageState()->setNeedCheckDeckAccess(false);
+    wmlPageState->setNeedCheckDeckAccess(false);
     Document::finishedParsing();
+}
+
+WMLPageState* wmlPageStateForDocument(Document* doc)
+{
+    ASSERT(doc);
+    if (!doc)
+        return 0;
+
+    Page* page = doc->page();
+    ASSERT(page);
+
+    if (!page)
+        return 0;
+
+    WMLPageState* wmlPageState = page->wmlPageState();
+    ASSERT(wmlPageState);
+
+    return wmlPageState;
 }
 
 }

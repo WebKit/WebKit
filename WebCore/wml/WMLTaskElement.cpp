@@ -24,7 +24,6 @@
 #if ENABLE(WML)
 #include "WMLTaskElement.h"
 
-#include "Page.h"
 #include "WMLAnchorElement.h"
 #include "WMLNames.h"
 #include "WMLPageState.h"
@@ -75,11 +74,9 @@ void WMLTaskElement::registerVariableSetter(WMLSetvarElement* element)
     m_variableSetterElements.add(element);
 }
 
-void WMLTaskElement::storeVariableState(Page* page)
+void WMLTaskElement::storeVariableState(WMLPageState* pageState)
 {
-    ASSERT(page);
-
-    if (m_variableSetterElements.isEmpty())
+    if (!pageState || m_variableSetterElements.isEmpty())
         return;
 
     WMLVariableMap variables;
@@ -96,9 +93,6 @@ void WMLTaskElement::storeVariableState(Page* page)
 
     if (variables.isEmpty())
         return;
-
-    WMLPageState* pageState = page->wmlPageState();
-    ASSERT(pageState);
 
     pageState->storeVariables(variables);
 }
