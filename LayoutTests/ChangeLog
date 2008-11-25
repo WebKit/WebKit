@@ -1,3 +1,16 @@
+2008-11-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9001
+        Javascript stops running before replacement page data arrives
+
+        Adding a test for a bug that is longer reproducible.
+
+        * http/tests/misc/resources/hang-connection.php: Added.
+        * http/tests/misc/timer-vs-loading-expected.txt: Added.
+        * http/tests/misc/timer-vs-loading.html: Added.
+
 2008-11-24  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

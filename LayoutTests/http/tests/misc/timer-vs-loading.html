@@ -1,0 +1,32 @@
+<html><head>
+<script language="javascript" type="text/javascript"><!--
+
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function updateClock()
+    {
+        window.setTimeout("success()", 100);
+    }
+
+    function success()
+    {
+        document.getElementById("RESULT").innerHTML = "SUCCESS";
+        if (window.layoutTestController)
+            window.location = "data:text/html,SUCCESS<script>layoutTestController.notifyDone()</scr" + "ipt>";
+    }
+
+    window.setTimeout("updateClock()", 100);
+    setTimeout('window.location = "resources/hang-connection.php"', 0);
+
+--></script>
+
+</head><body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=9001">bug 9001<a>:
+    Javascript stops running before replacement page data arrives.</p>
+
+    <span id="RESULT">WAIT</span><p>
+
+</body></html>
