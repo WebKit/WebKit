@@ -30,6 +30,18 @@ namespace WebCore {
 class WMLCardElement : public WMLElement {
 public:
     WMLCardElement(const QualifiedName&, Document*);
+    virtual ~WMLCardElement();
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+
+    // Switch active card in document to the one specified in the URL reference (foo.wml#mycard)
+    // If the 'targetUrl' doesn't contain a reference, use the first <card> element in the document.
+    static WMLCardElement* setActiveCardInDocument(Document*, const KURL& targetUrl);
+
+private:
+    void setVisibility(bool isVisible);
+
+    bool m_isVisible;
 };
 
 }

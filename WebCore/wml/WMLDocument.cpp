@@ -25,6 +25,7 @@
 #include "WMLDocument.h"
 
 #include "Page.h"
+#include "WMLCardElement.h"
 #include "WMLPageState.h"
 
 namespace WebCore {
@@ -43,6 +44,29 @@ WMLDocument::WMLDocument(Frame* frame)
 
 WMLDocument::~WMLDocument()
 {
+}
+
+void WMLDocument::finishedParsing()
+{
+    Page* page = document()->page();
+    ASSERT(page->wmlPageState());
+    if (!page->wmlPageState()->isDeckAccessible()) {
+        // FIXME: Error reporting
+        return;
+    }
+
+    // FIXME: Notify the existance of templates to all cards of the current deck
+    // WMLTemplateElement::registerTemplsInDocument(document()));
+
+    // Set destination card
+    // TODO: Use return value, once intrinsic event handlers are used
+    WMLCardElement::setActiveCardInDocument(document(), KURL());
+
+    // FIXME: shadow the deck-level do if needed
+    // FIXME: handle the intrinsic event
+
+    page->wmlPageState()->setNeedCheckDeckAccess(false);
+    Document::finishedParsing();
 }
 
 }

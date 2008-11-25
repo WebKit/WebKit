@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x152
-  RenderBlock {wml} at (0,0) size 800x152
+layer at (0,0) size 800x84
+  RenderBlock {wml} at (0,0) size 800x84
     RenderBlock {card} at (8,16) size 784x52
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 181x18
@@ -20,11 +20,3 @@ layer at (0,0) size 800x152
           RenderInline {go} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-    RenderBlock {card} at (8,84) size 784x18
-      RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 144x18
-          text run at (0,0) width 144: "This is the second card"
-    RenderBlock {card} at (8,118) size 784x18
-      RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 129x18
-          text run at (0,0) width 129: "This is the third card"

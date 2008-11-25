@@ -723,7 +723,7 @@ public:
 
     void setDocType(PassRefPtr<DocumentType>);
 
-    void finishedParsing();
+    virtual void finishedParsing();
 
 #if ENABLE(XPATH)
     // XPathEvaluator methods

@@ -1,3 +1,36 @@
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos & Eric Seidel.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22430
+
+        Regenerate WML layout test results after implementing WML specific <card> handling:
+        Only the first <card> element should be visible after loading the document, others
+        can be shown by using the <go> task element.
+
+        * platform/mac/fast/wml/card-element-expected.checksum:
+        * platform/mac/fast/wml/card-element-expected.png:
+        * platform/mac/fast/wml/card-element-expected.txt:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.checksum:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.png:
+        * platform/mac/fast/wml/do-element-optional-attr-expected.txt:
+        * platform/mac/fast/wml/do-shadow-expected.checksum:
+        * platform/mac/fast/wml/do-shadow-expected.png:
+        * platform/mac/fast/wml/do-shadow-expected.txt:
+        * platform/mac/fast/wml/do-template-expected.checksum:
+        * platform/mac/fast/wml/do-template-expected.png:
+        * platform/mac/fast/wml/do-template-expected.txt:
+        * platform/mac/fast/wml/entity-expected.checksum:
+        * platform/mac/fast/wml/entity-expected.png:
+        * platform/mac/fast/wml/entity-expected.txt:
+        * platform/mac/fast/wml/err-unallowed-task-in-anchor-expected.txt:
+        * platform/mac/fast/wml/show-first-card-expected.checksum:
+        * platform/mac/fast/wml/show-first-card-expected.png:
+        * platform/mac/fast/wml/show-first-card-expected.txt:
+        * platform/mac/fast/wml/test-expected.checksum:
+        * platform/mac/fast/wml/test-expected.png:
+        * platform/mac/fast/wml/test-expected.txt:
+
 2008-11-24  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

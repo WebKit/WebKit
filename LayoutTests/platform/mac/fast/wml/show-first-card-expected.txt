@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x102
-  RenderBlock {wml} at (0,0) size 800x102
+layer at (0,0) size 800x76
+  RenderBlock {wml} at (0,0) size 800x76
     RenderBlock {card} at (8,16) size 784x52
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 674x18
@@ -9,6 +9,3 @@ layer at (0,0) size 800x102
       RenderBlock (anonymous) at (0,34) size 784x18
         RenderText {#text} at (0,0) size 261x18
           text run at (0,0) width 261: "If the test passes, you should see this text."
-    RenderBlock {card} at (8,76) size 784x18
-      RenderText {#text} at (0,0) size 431x18
-        text run at (0,0) width 431: "This is card 2, you should NOT see these text while running this test"

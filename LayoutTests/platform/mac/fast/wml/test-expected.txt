@@ -10,7 +10,7 @@ layer at (0,0) size 800x110
         RenderText {#text} at (0,0) size 286x18
           text run at (0,0) width 286: "Click \"Back\" to go back to the previous page"
       RenderBlock (anonymous) at (0,68) size 784x18
-        RenderInline {anchor} at (0,0) size 33x18
+        RenderInline {anchor} at (0,0) size 33x18 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x18
             text run at (0,0) width 33: "Back"
           RenderInline {prev} at (0,0) size 0x0

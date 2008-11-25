@@ -1,3 +1,25 @@
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos & Eric Seidel.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22430
+
+        Regenerate WML layout test results after implementing WML specific <card> handling:
+        Only the first <card> element should be visible after loading the document, others
+        can be shown by using the <go> task element.
+
+        * dom/Document.h: Make 'finishedParsing()' a virtual function.
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::WMLCardElement):
+        (WebCore::WMLCardElement::~WMLCardElement):
+        (WebCore::WMLCardElement::createRenderer):
+        (WebCore::WMLCardElement::setActiveCardInDocument):
+        (WebCore::WMLCardElement::setVisibility):
+        * wml/WMLCardElement.h:
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing): Execute WML specific logic after tokenzing.
+        * wml/WMLDocument.h:
+
 2008-11-24  Glenn Wilson  <gwilson@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

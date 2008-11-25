@@ -37,6 +37,7 @@ public:
     virtual ~WMLDocument();
 
     virtual bool isWMLDocument() const { return true; }
+    virtual void finishedParsing();
 
 private:
     WMLDocument(Frame*);
