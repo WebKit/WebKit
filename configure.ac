@@ -443,6 +443,14 @@ AC_ARG_ENABLE(xslt,
               [],[enable_xslt="yes"])
 AC_MSG_RESULT([$enable_xslt])
 
+# check whether to enable geolocation support
+AC_MSG_CHECKING([whether to enable geolocation support])
+AC_ARG_ENABLE(geolocation,
+              AC_HELP_STRING([--enable-geolocation],
+                             [enable support for geolocation [default=yes]]),
+              [],[enable_geolocation="yes"])
+AC_MSG_RESULT([$enable_geolocation])
+
 # check whether to enable SVG support
 AC_MSG_CHECKING([whether to enable SVG support])
 AC_ARG_ENABLE(svg,
@@ -708,6 +716,7 @@ AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
+AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
@@ -762,6 +771,7 @@ Features:
  XSLT support                                             : $enable_xslt
  WML support                                              : $enable_wml
  Web Workers support                                      : $enable_web_workers
+ Geolocation support                                      : $enable_geolocation
 GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon

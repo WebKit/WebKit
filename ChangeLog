@@ -1,3 +1,16 @@
+2008-11-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22022
+
+        Add Geolocation support to the configure.ac
+
+        Add an option to build WebKit/Gtk+ with Geolocation. The
+        implementation will be using Gypsy.
+
+        * configure.ac:
+
 2008-11-24  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Mark Rowe.
