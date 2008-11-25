@@ -1,3 +1,15 @@
+2008-11-25  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Move the collect() call in Heap::heapAllocate() that is conditionally
+        compiled under COLLECT_ON_EVERY_ALLOCATION so that it is before we get
+        information about the heap. This was causing assertion failures for me
+        while I was reducing a bug.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::heapAllocate):
+
 2008-11-24  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.
