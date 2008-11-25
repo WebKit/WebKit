@@ -216,7 +216,7 @@ sub printConstructors
     for my $name (sort keys %tags) {
         my $ucName = $tags{$name}{'interfaceName'};
 
-        print F "static $parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
+        print F "static PassRefPtr<$parameters{'namespace'}Element> ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
         print F "    return new ${ucName}($parameters{'namespace'}Names::${name}Tag, doc);\n";
         print F "}\n\n";
@@ -526,8 +526,8 @@ print F <<END
 
 using namespace WebCore;
 
-typedef $parameters{'namespace'}Element* (*ConstructorFunc)(Document* doc, bool createdByParser);
-typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
+typedef PassRefPtr<$parameters{'namespace'}Element> (*ConstructorFunction)(Document*, bool createdByParser);
+typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunction> FunctionMap;
 
 static FunctionMap* gFunctionMap = 0;
 
@@ -558,7 +558,7 @@ print F "}\n";
 print F "#endif\n\n" if $parameters{'guardFactoryWith'};
 
 print F <<END
-$parameters{'namespace'}Element* $parameters{'namespace'}ElementFactory::create$parameters{'namespace'}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
+PassRefPtr<$parameters{'namespace'}Element> $parameters{'namespace'}ElementFactory::create$parameters{'namespace'}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
 END
 ;
@@ -577,7 +577,7 @@ print F <<END
 #endif
 
     createFunctionMapIfNecessary();
-    ConstructorFunc func = gFunctionMap->get(qName.localName().impl());
+    ConstructorFunction func = gFunctionMap->get(qName.localName().impl());
     if (func)
         return func(doc, createdByParser);
 
@@ -615,10 +615,12 @@ sub printFactoryHeaderFile
 
     printLicenseHeader($F);
 
-print F "#ifndef $parameters{'namespace'}ELEMENTFACTORY_H\n";
-print F "#define $parameters{'namespace'}ELEMENTFACTORY_H\n\n";
+    print F<<END
+#ifndef $parameters{'namespace'}ElementFactory_h
+#define $parameters{'namespace'}ElementFactory_h
 
-print F "
+#include <wtf/PassRefPtr.h>
+
 namespace WebCore {
     class Element;
     class Document;
@@ -631,18 +633,18 @@ namespace WebCore {
     class $parameters{'namespace'}Element;
 
     // The idea behind this class is that there will eventually be a mapping from namespace URIs to ElementFactories that can dispense
-    // elements.  In a compound document world, the generic createElement function (will end up being virtual) will be called.
-    class $parameters{'namespace'}ElementFactory
-    {
+    // elements. In a compound document world, the generic createElement function (will end up being virtual) will be called.
+    class $parameters{'namespace'}ElementFactory {
     public:
-        WebCore::Element* createElement(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
-        static $parameters{'namespace'}Element* create$parameters{'namespace'}Element(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
+        PassRefPtr<Element> createElement(const WebCore::QualifiedName&, WebCore::Document*, bool createdByParser = true);
+        static PassRefPtr<$parameters{'namespace'}Element> create$parameters{'namespace'}Element(const WebCore::QualifiedName&, WebCore::Document*, bool createdByParser = true);
     };
 }
 
-#endif
+#endif // $parameters{'namespace'}ElementFactory_h
 
-";
+END
+;
 
     close F;
 }
