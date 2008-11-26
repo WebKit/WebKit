@@ -24,20 +24,11 @@
 #if ENABLE(WML)
 #include "WMLSetvarElement.h"
 
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
-#include "Document.h"
 #include "HTMLNames.h"
-#include "NodeList.h"
-#include "WMLNames.h"
-#include "WMLGoElement.h"
-#include "WMLPrevElement.h"
-#include "WMLRefreshElement.h"
+#include "WMLTaskElement.h"
 #include "WMLVariables.h"
 
 namespace WebCore {
-
-using namespace WMLNames;
 
 WMLSetvarElement::WMLSetvarElement(const QualifiedName& tagName, Document* doc)
     : WMLElement(tagName, doc)
@@ -52,14 +43,17 @@ void WMLSetvarElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == HTMLNames::nameAttr) {
         const AtomicString& value = attr->value();
+        String name;
 
         bool isValid = isValidVariableName(value, true);
         if (isValid) {
-            m_name = substituteVariableReferences(value, document());
-            isValid = isValidVariableName(m_name, true);
+            name = substituteVariableReferences(value, document());
+            isValid = isValidVariableName(name, true);
         }
 
-        if (!isValid) {
+        if (isValid)
+            m_name = name;
+        else {
             // FIXME: Error reporting
             // WMLHelper::tokenizer()->reportError(InvalidVariableNameError);
         }
@@ -73,19 +67,15 @@ void WMLSetvarElement::parseMappedAttribute(MappedAttribute* attr)
 void WMLSetvarElement::insertedIntoDocument()
 {
     WMLElement::insertedIntoDocument();
-    
-    Node* ancestor = parentNode();
-    WMLTaskElement* taskElement = 0;
+ 
+    Node* parent = parentNode();
+    ASSERT(parent);
 
-    if (ancestor->hasTagName(goTag))
-        taskElement = static_cast<WMLGoElement*>(ancestor);
-    else if (ancestor->hasTagName(prevTag))
-        taskElement = static_cast<WMLPrevElement*>(ancestor);
-    else if (ancestor->hasTagName(refreshTag))
-        taskElement = static_cast<WMLRefreshElement*>(ancestor);
+    if (!parent || !parent->isWMLElement())
+        return;
 
-    if (taskElement)
-        taskElement->registerVariableSetter(this);
+    if (static_cast<WMLElement*>(parent)->isWMLTaskElement())
+        static_cast<WMLTaskElement*>(parent)->registerVariableSetter(this);
 }
 
 String WMLSetvarElement::name() const

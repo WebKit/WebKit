@@ -1,3 +1,48 @@
+2008-11-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22477
+
+        A WMLTaskElement checks wheter it's parent is an <anchor>/<do>/<onevent> element, and calls registerTask(this) on the parent.
+        Add a isWMLTaskElement() function to WMLElement, making it possible to cast to WMLTaskElement directly.
+
+        Add WMLEventHandlingElement class, inheriting from WMLElement, to serve as common base WMLTemplate/Option/CardElement,
+        centralizing the eventHandler() / createEventHandlerIfNeeded() implementation. Add a isWMLEventHandlingElement()
+        function to WMLElement, so WMLOnEventElement can create event handlers, without knowing wheter it's a
+        <template>/<option> or <card> element.
+
+        Add complete <onevent> support.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::WMLCardElement):
+        (WebCore::WMLCardElement::setActiveCardInDocument):
+        * wml/WMLCardElement.h:
+        (WebCore::WMLCardElement::isVisible):
+        (WebCore::WMLCardElement::setVisible):
+        * wml/WMLElement.h:
+        (WebCore::WMLElement::isWMLTaskElement):
+        * wml/WMLEventHandlingElement.cpp: Added.
+        (WebCore::WMLEventHandlingElement::WMLEventHandlingElement):
+        (WebCore::WMLEventHandlingElement::createEventHandlerIfNeeded):
+        * wml/WMLEventHandlingElement.h: Added.
+        (WebCore::WMLEventHandlingElement::isWMLEventHandlingElement):
+        (WebCore::WMLEventHandlingElement::eventHandler):
+        * wml/WMLOnEventElement.cpp: Added.
+        (WebCore::WMLOnEventElement::WMLOnEventElement):
+        (WebCore::WMLOnEventElement::parseMappedAttribute):
+        (WebCore::WMLOnEventElement::registerTask):
+        * wml/WMLOnEventElement.h: Added.
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::parseMappedAttribute):
+        (WebCore::WMLSetvarElement::insertedIntoDocument):
+        * wml/WMLTagNames.in:
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::insertedIntoDocument):
+        * wml/WMLTaskElement.h:
+        (WebCore::WMLTaskElement::isWMLTaskElement):
+
 2008-11-25  Pierre-Olivier Latour  <pol@apple.com>
 
         Reviewed by Mark Rowe.

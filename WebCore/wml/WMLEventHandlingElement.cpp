@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved.
  *               http://www.torchmobile.com/
  *
@@ -19,33 +19,30 @@
  *
  */
 
-#ifndef WMLCardElement_h
-#define WMLCardElement_h
+#include "config.h"
 
 #if ENABLE(WML)
 #include "WMLEventHandlingElement.h"
 
+#include "WMLIntrinsicEventHandler.h"
+#include "WMLTaskElement.h"
+#include "WMLNames.h"
+
 namespace WebCore {
 
-class WMLCardElement : public WMLEventHandlingElement {
-public:
-    WMLCardElement(const QualifiedName&, Document*);
-    virtual ~WMLCardElement();
+using namespace WMLNames;
 
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+WMLEventHandlingElement::WMLEventHandlingElement(const QualifiedName& tagName, Document* doc)
+    : WMLElement(tagName, doc)
+{
+}
 
-    // Switch active card in document to the one specified in the URL reference (foo.wml#mycard)
-    // If the 'targetUrl' doesn't contain a reference, use the first <card> element in the document.
-    static WMLCardElement* setActiveCardInDocument(Document*, const KURL& targetUrl);
-
-private:
-    bool isVisible() const { return m_isVisible; }
-    void setVisible(bool isVisible) { m_isVisible = isVisible; }
-
-    bool m_isVisible;
-};
+void WMLEventHandlingElement::createEventHandlerIfNeeded()
+{
+    if (!m_eventHandler)
+        m_eventHandler.set(new WMLIntrinsicEventHandler);
+}
 
 }
 
-#endif
 #endif

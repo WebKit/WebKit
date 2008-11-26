@@ -8,6 +8,7 @@ anchor
 br interfaceName=WMLBRElement
 card
 go
+onevent interfaceName=WMLOnEventElement
 p
 prev
 refresh
@@ -33,7 +34,6 @@ img interfaceName=WMLImageElement
 input
 meta
 noop
-onevent
 optgroup
 option
 postfield

@@ -34,7 +34,7 @@ using namespace WMLNames;
 
 static PassRefPtr<WMLTaskElement> createTaskElement(Document* document)
 {
-    return adoptRef(static_cast<WMLTaskElement*>(WMLElementFactory::createWMLElement(goTag, document, false)));
+    return WMLElementFactory::createWMLElement(goTag, document, false);
 }
 
 WMLIntrinsicEvent::WMLIntrinsicEvent(Document* document)

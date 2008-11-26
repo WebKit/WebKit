@@ -37,6 +37,8 @@ public:
     WMLTaskElement(const QualifiedName& tagName, Document*);
     virtual ~WMLTaskElement();
 
+    virtual bool isWMLTaskElement() const { return true; }
+
     virtual void insertedIntoDocument();
     virtual void executeTask(Event*) = 0;
 

@@ -32,6 +32,8 @@ public:
     WMLElement(const QualifiedName& tagName, Document*);
 
     virtual bool isWMLElement() const { return true; }
+    virtual bool isWMLEventHandlingElement() const { return false; }
+    virtual bool isWMLTaskElement() const { return false; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
