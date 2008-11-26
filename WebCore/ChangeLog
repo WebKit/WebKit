@@ -1,3 +1,17 @@
+2008-11-26  David Kilzer  <ddkilzer@apple.com>
+
+        Make CSSStyleSheet::addSubresourceURLStrings() iterative
+
+        Part of the fix for Bug 11850: Webarchive fails to save images referenced in CSS
+        <https://bugs.webkit.org/show_bug.cgi?id=11850>
+
+        Reviewed by Brady Eidson.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceURLStrings): Switch algorithm
+        from recursive to iterative for gathering the list of all CSS
+        stylesheets referenced in @import statements.
+
 2008-11-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Simon Hausmann.
