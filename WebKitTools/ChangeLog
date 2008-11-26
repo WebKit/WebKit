@@ -1,3 +1,18 @@
+2008-11-26  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22488: Make DRT smarter about charset encoding when post-processing webarchive content
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22488>
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (convertWebResourceDataToString): If an IANA charset encoding string
+        is provided, convert it to a CFStringEncoding value and then to an
+        NSStringEncoding value, else fall back to NSUTF8StringEncoding.  We
+        also nil-check dataAsString, so the worst-case scenario is that the
+        data won't be decoded to a string (versus crashing DumpRenderTree).
+
 2008-11-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.

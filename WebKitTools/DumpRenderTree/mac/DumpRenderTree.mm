@@ -671,11 +671,20 @@ static void convertWebResourceDataToString(NSMutableDictionary *resource)
 {
     NSMutableString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
     convertMIMEType(mimeType);
-    
+
     if ([mimeType hasPrefix:@"text/"] || [[WebHTMLRepresentation supportedNonImageMIMETypes] containsObject:mimeType]) {
+        NSString *textEncodingName = [resource objectForKey:@"WebResourceTextEncodingName"];
+        NSStringEncoding stringEncoding;
+        if ([textEncodingName length] > 0)
+            stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName));
+        else
+            stringEncoding = NSUTF8StringEncoding;
+
         NSData *data = [resource objectForKey:@"WebResourceData"];
-        NSString *dataAsString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
-        [resource setObject:dataAsString forKey:@"WebResourceData"];
+        NSString *dataAsString = [[NSString alloc] initWithData:data encoding:stringEncoding];
+        if (dataAsString)
+            [resource setObject:dataAsString forKey:@"WebResourceData"];
+        [dataAsString release];
     }
 }
 
