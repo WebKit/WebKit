@@ -1,3 +1,14 @@
+2008-11-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build script minor fixes. Not reviewed.
+
+        * GNUmakefile.am:
+          - Add ScriptInstance.h (introduced in r38774) to
+        the build.
+          - Move WML and GEOLOCATION conditionals before the SVG
+        conditional to be consistent with the style of the script.
+          - Move GeolocationGtk sources to webcoregtk_sources.
+
 2008-11-26  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler and Eric Seidel.

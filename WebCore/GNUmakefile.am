@@ -351,6 +351,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
+	WebCore/bindings/js/ScriptInstance.h \
 	WebCore/bindings/js/ScriptValue.cpp \
 	WebCore/bindings/js/ScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
@@ -2149,6 +2150,51 @@ webcore_sources += \
 endif
 
 # ----
+# WML Support
+# ----
+if ENABLE_WML
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_WML=1
+
+webcore_built_sources += \
+	DerivedSources/WMLElementFactory.cpp \
+	DerivedSources/WMLNames.cpp
+
+webcore_cppflags += \
+	-DENABLE_WML=1 \
+	-I\$(top_srcdir)/WebCore/wml
+
+webcore_sources += \
+	WebCore/wml/WMLAElement.cpp \
+	WebCore/wml/WMLBRElement.cpp \
+	WebCore/wml/WMLCardElement.cpp \
+	WebCore/wml/WMLElement.cpp \
+	WebCore/wml/WMLDocument.cpp \
+	WebCore/wml/WMLPageState.cpp \
+	WebCore/wml/WMLPElement.cpp
+
+# WML tag and attribute names
+DerivedSources/WMLNames.cpp: DerivedSources/WMLElementFactory.cpp;
+
+DerivedSources/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wml/WMLTagNames.in $(WebCore)/wml/WMLAttributeNames.in
+	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+endif # END ENABLE_WML
+
+# ----
+# Geolocation
+# ----
+if ENABLE_GEOLOCATION
+
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_GEOLOCATION=1
+webcore_cppflags += \
+	-DENABLE_GEOLOCATION=1
+
+webcoregtk_sources += \
+	WebCore/platform/gtk/GeolocationServiceGtk.h \
+	WebCore/platform/gtk/GeolocationServiceGtk.cpp
+endif # END ENABLE_GEOLOCATION
+
+
+# ----
 # SVG Support
 #
 # FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
@@ -2800,35 +2846,6 @@ DerivedSources/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlin
 
 endif # END ENABLE_SVG
 
-# ----
-# WML Support
-# ----
-if ENABLE_WML
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_WML=1
-
-webcore_built_sources += \
-	DerivedSources/WMLElementFactory.cpp \
-	DerivedSources/WMLNames.cpp
-
-webcore_cppflags += \
-	-DENABLE_WML=1 \
-	-I\$(top_srcdir)/WebCore/wml
-
-webcore_sources += \
-	WebCore/wml/WMLAElement.cpp \
-	WebCore/wml/WMLBRElement.cpp \
-	WebCore/wml/WMLCardElement.cpp \
-	WebCore/wml/WMLElement.cpp \
-	WebCore/wml/WMLDocument.cpp \
-	WebCore/wml/WMLPageState.cpp \
-	WebCore/wml/WMLPElement.cpp
-
-# WML tag and attribute names
-DerivedSources/WMLNames.cpp: DerivedSources/WMLElementFactory.cpp;
-
-DerivedSources/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wml/WMLTagNames.in $(WebCore)/wml/WMLAttributeNames.in
-	$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/wml/WMLTagNames.in --attrs $(WebCore)/wml/WMLAttributeNames.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
-endif # END ENABLE_WML
 
 DerivedSources/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
@@ -3032,20 +3049,6 @@ dist_webinspector_DATA = \
 webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
 dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
-
-# ----
-# Geolocation
-# ----
-if ENABLE_GEOLOCATION
-
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_GEOLOCATION=1
-webcore_cppflags += \
-	-DENABLE_GEOLOCATION=1
-
-webcore_sources += \
-	WebCore/platform/gtk/GeolocationServiceGtk.h \
-	WebCore/platform/gtk/GeolocationServiceGtk.cpp
-endif # END ENABLE_GEOLOCATION
 
 # Clean rules for WebCore
 
