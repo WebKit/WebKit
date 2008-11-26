@@ -68,7 +68,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     CGFontRef cgFontRef = CGFontCreateWithPlatformFont(&fontRef);
 #ifndef BUILDING_ON_TIGER
     // Workaround for <rdar://problem/5675504>.
-    if (!CGFontGetNumberOfGlyphs(cgFontRef)) {
+    if (cgFontRef && !CGFontGetNumberOfGlyphs(cgFontRef)) {
         CFRelease(cgFontRef);
         cgFontRef = 0;
     }
