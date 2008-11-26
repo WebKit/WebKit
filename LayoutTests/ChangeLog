@@ -1,3 +1,14 @@
+2008-11-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Testcases for https://bugs.webkit.org/show_bug.cgi?id=22487
+
+        * animations/empty-keyframes-expected.txt: Added.
+        * animations/empty-keyframes.html: Added.
+        * animations/fill-unset-properties-expected.txt: Added.
+        * animations/fill-unset-properties.html: Added.
+
 2008-11-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -1266,8 +1266,12 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     }
     
     // Make sure there is a 0% and a 100% keyframe
-    float first = list.beginKeyframes()->key();
-    float last = (list.endKeyframes()-1)->key();
+    float first = -1;
+    float last = -1;
+    if (list.size() >= 2) {
+        first = list.beginKeyframes()->key();
+        last = (list.endKeyframes()-1)->key();
+    }
     if (first != 0 || last != 1)
         list.clear();
 }

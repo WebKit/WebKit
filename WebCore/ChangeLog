@@ -132,6 +132,19 @@
 
 2008-11-25  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=22487
+        I was not checking for the case of 0 length keyframe lists and dereffing a null pointer.
+
+        Tests: animations/empty-keyframes.html
+               animations/fill-unset-properties.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+
+2008-11-25  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Darin Adler
 
         https://bugs.webkit.org/show_bug.cgi?id=22046
