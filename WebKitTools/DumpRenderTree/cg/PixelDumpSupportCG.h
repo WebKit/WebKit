@@ -35,6 +35,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(WIN)
+#include <windows.h>
+#endif
+
 typedef struct CGContext* CGContextRef;
 
 #if PLATFORM(MAC)
