@@ -212,8 +212,6 @@ fast/js/navigator-mimeTypes-length.html
 fast/js/kde/md5-1.html
 fast/layers/resize-layer-deletion-crash.html
 fast/loader/cancel-load-during-port-block-timer.html
-fast/loader/iframe-crash-on-missing-image.xhtml
-fast/loader/loadInProgress.html
 fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
 fast/loader/local-iFrame-source-from-local.html
@@ -222,7 +220,6 @@ fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
 fast/loader/opaque-base-url.html
 fast/loader/stop-provisional-loads.html
-fast/loader/unloadable-script.html
 fast/loader/xmlhttprequest-missing-file-exception.html
 fast/overflow/scroll-vertical-not-horizontal.html
 fast/parser/assertion-empty-attribute.html
@@ -291,8 +288,6 @@ fast/tokenizer/ignore-tags-in-iframe.html
 fast/workers/worker-location.html
 fast/xpath/id-simple.html
 fast/xsl/mozilla-tests.xml
-
-
 
 
 
@@ -920,6 +915,7 @@ fast/css/percentage-non-integer.html
 fast/css/position-negative-top-margin.html
 fast/css/quirk-orphaned-units.html
 fast/css/resize-corner-tracking.html
+fast/css/resize-corner-tracking-transformed.html
 fast/css/rgb-float.html
 fast/css/rtl-ordering.html
 fast/css/selector-set-attribute.html
@@ -1055,6 +1051,7 @@ fast/dynamic/floating-to-positioned-2.html
 fast/dynamic/floating-to-positioned.html
 fast/dynamic/genContentDestroyChildren.html
 fast/dynamic/insert-before-table-part-in-continuation.html
+fast/dynamic/insertAdjacentElement.html
 fast/dynamic/layer-hit-test-crash.html
 fast/dynamic/link-href-change.html
 fast/dynamic/move-node-with-selection.html
@@ -1236,6 +1233,7 @@ fast/forms/search-cancel-button-style-sharing.html
 fast/forms/search-display-none-cancel-button.html
 fast/forms/search-placeholder-value-changed.html
 fast/forms/search-rtl.html
+fast/forms/search-transformed.html
 fast/forms/searchfield-heights.html
 fast/forms/select-align.html
 fast/forms/select-baseline.html
@@ -1582,6 +1580,7 @@ fast/repaint/bugzilla-6473.html
 fast/repaint/bugzilla-7235.html
 fast/repaint/button-spurious-layout-hint.html
 fast/repaint/caret-outside-block.html
+fast/repaint/change-transform.html
 fast/repaint/clip-with-layout-delta.html
 fast/repaint/clipped-relative.html
 fast/repaint/containing-block-position-change.html
@@ -1627,6 +1626,7 @@ fast/repaint/list-marker-2.html
 fast/repaint/list-marker.html
 fast/repaint/make-children-non-inline.html
 fast/repaint/outline-inset.html
+fast/repaint/outline-child-repaint.html
 fast/repaint/outline-repaint-glitch.html
 fast/repaint/outline-shrinking.html
 fast/repaint/overflow-clip-subtree-layout.html
@@ -1663,6 +1663,9 @@ fast/repaint/text-selection-rect-in-overflow-2.html
 fast/repaint/text-selection-rect-in-overflow.html
 fast/repaint/text-shadow-horizontal.html
 fast/repaint/text-shadow.html
+fast/repaint/transform-absolute-child.html
+fast/repaint/transform-absolute-in-positioned-container.html
+fast/repaint/transform-relative-position.html
 fast/repaint/transform-translate.html
 fast/replaced/001.html
 fast/replaced/002.html
@@ -2090,6 +2093,7 @@ fast/transforms/shadows.html
 fast/transforms/skew-with-unitless-zero.html
 fast/transforms/transform-overflow.html
 fast/transforms/transform-positioned-ancestor.html
+fast/transforms/transformed-focused-text-input.html
 fast/transforms/transforms-with-opacity.html
 fast/xsl/document-function.xml
 fast/xsl/xslt-enc16.xml
