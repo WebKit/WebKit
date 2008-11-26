@@ -147,32 +147,6 @@ bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)
     return Base::deleteProperty(exec, propertyName);
 }
 
-/* Returns the parameter name corresponding to the given index. eg:
- * function f1(x, y, z): getParameterName(0) --> x
- *
- * If a name appears more than once, only the last index at which
- * it appears associates with it. eg:
- * function f2(x, x): getParameterName(0) --> null
- */
-const Identifier& JSFunction::getParameterName(int index)
-{
-    const Identifier* parameters = m_body->parameters();
-
-    if (static_cast<size_t>(index) >= m_body->parameterCount())
-        return m_scopeChain.globalObject()->globalData()->propertyNames->nullIdentifier;
-  
-    const Identifier& name = parameters[index];
-
-    // Are there any subsequent parameters with the same name?
-    size_t size = m_body->parameterCount();
-    for (size_t i = index + 1; i < size; ++i) {
-        if (parameters[i] == name)
-            return m_scopeChain.globalObject()->globalData()->propertyNames->nullIdentifier;
-    }
-
-    return name;
-}
-
 // ECMA 13.2.2 [[Construct]]
 ConstructType JSFunction::getConstructData(ConstructData& constructData)
 {

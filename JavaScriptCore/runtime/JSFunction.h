@@ -54,10 +54,6 @@ namespace JSC {
         JSObject* construct(ExecState*, const ArgList&);
         JSValue* call(ExecState*, JSValue* thisValue, const ArgList&);
 
-        // Note: Returns a null identifier for any parameters that will never get set
-        // due to a later parameter with the same name.
-        const Identifier& getParameterName(int index);
-
         void setScope(const ScopeChain& scopeChain) { m_scopeChain = scopeChain; }
         ScopeChain& scope() { return m_scopeChain; }
 
